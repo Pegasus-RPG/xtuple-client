@@ -31,9 +31,7 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sCalculateTax();
     virtual void sSave();
-    virtual void sShipToList();
     virtual void sInvoiceList();
-    virtual void sParseShipToNumber();
     virtual void populateShipto( int pShiptoid );
     virtual void sPopulateCustomerInfo();
     virtual void sPopulateByInvoiceNumber( int pInvoiceNumber );
@@ -59,7 +57,6 @@ protected slots:
 private:
     int _mode;
     int _cmheadid;
-    int _shiptoid;
     int	_custtaxzoneid;
     bool _ffBillto;
     bool _ffShipto;
@@ -67,7 +64,7 @@ private:
     double _subtotalCache;
     double _freightCache;
     int _taxzoneidCache;
-	bool save();
+    bool save();
 };
 
 #endif // CREDITMEMO_H

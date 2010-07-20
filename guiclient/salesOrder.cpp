@@ -32,7 +32,6 @@
 #include "issueLineToShipping.h"
 #include "mqlutil.h"
 #include "salesOrderItem.h"
-#include "shipToList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
 #include "freightBreakdown.h"
@@ -94,9 +93,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_shippingCharges,     SIGNAL(newID(int)),                             this,         SLOT(sHandleShipchrg(int)));
   connect(_shipVia,             SIGNAL(textChanged(const QString &)),           this,         SLOT(sFillItemList()));
   connect(_shipToAddr,          SIGNAL(changed()),                              this,         SLOT(sConvertShipTo()));
-  connect(_shipToList,          SIGNAL(clicked()),                              this,         SLOT(sShipToList()));
   connect(_shipToName,          SIGNAL(textChanged(const QString &)),           this,         SLOT(sConvertShipTo()));
-  connect(_shipToNumber,        SIGNAL(lostFocus()),                            this,         SLOT(sParseShipToNumber()));
+  connect(_shipTo,              SIGNAL(parsed()),                               this,         SLOT(sParseShipToNumber()));
   connect(_showCanceled,        SIGNAL(toggled(bool)),                          this,         SLOT(sFillItemList()));
   connect(_soitem,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
   connect(_soitem,              SIGNAL(itemSelectionChanged()),                 this,         SLOT(sHandleButtons()));
@@ -121,6 +119,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_shipDate,            SIGNAL(newDate(QDate)),                         this,         SLOT(sShipDateChanged()));
   connect(_cust,                SIGNAL(newCrmacctId(int)),                      _billToAddr,  SLOT(setSearchAcct(int)));
   connect(_cust,                SIGNAL(newCrmacctId(int)),                      _shipToAddr,  SLOT(setSearchAcct(int)));
+  connect(_cust,                SIGNAL(newId(int)),                             _shipTo,      SLOT(setCustid(int)));
 
   connect(_billToAddr,          SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _billToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -145,12 +144,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 
   setFreeFormShipto(false);
 
-#ifndef Q_WS_MAC
-  _shipToList->setMaximumWidth(25);
-#endif
-
   _soheadid          = -1;
-  _shiptoid          = -1;
   _orderNumberGen    = 0;
 
   _numSelected       = 0;
@@ -167,6 +161,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _ignoreSignals = TRUE;
 
   _orderCurrency->setLabel(_orderCurrencyLit);
+
+  _shipTo->setNameVisible(false);
+  _shipTo->setDescriptionVisible(false);
 
   _orderNumber->setValidator(omfgThis->orderVal());
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
@@ -381,7 +378,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _shippingComments->setEnabled(FALSE);
       _custPONumber->setEnabled(FALSE);
       _holdType->setEnabled(FALSE);
-      _shipToList->hide();
       _edit->setText(tr("View"));
       _cust->setType(CLineEdit::AllCustomersAndProspects);
       _comments->setReadOnly(true);
@@ -675,11 +671,11 @@ bool salesOrder::save(bool partial)
     return FALSE;
   }
 
-  if ( (_shiptoid == -1) && (!_shipToAddr->isEnabled()) )
+  if ( (_shipTo->id() == -1) && (!_shipToAddr->isEnabled()) )
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
                               tr("You must select a Ship-To for this Sales Order before you may save it.") );
-    _shipToNumber->setFocus();
+    _shipTo->setFocus();
     return FALSE;
   }
 
@@ -1061,8 +1057,8 @@ bool salesOrder::save(bool partial)
   if (_warehouse->id() != -1)
     q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":custponumber", _custPONumber->text().trimmed());
-  if (_shiptoid > 0)
-    q.bindValue(":shipto_id", _shiptoid);
+  if (_shipTo->id() > 0)
+    q.bindValue(":shipto_id", _shipTo->id());
   q.bindValue(":billtoname",                _billToName->text());
   q.bindValue(":billtoaddress1",        _billToAddr->line1());
   q.bindValue(":billtoaddress2",        _billToAddr->line2());
@@ -1691,7 +1687,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         populateShipto(cust.value("shiptoid").toInt());
       else
       {
-        _shipToNumber->clear();
+        _shipTo->setId(-1);
         _shipToName->clear();
         _shipToAddr->clear();
         _shipToCntct->clear();
@@ -1720,7 +1716,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
     _taxzoneidCache  = -1;
     _custtaxzoneid   = -1;
 
-    _shipToNumber->clear();
+    _shipTo->setId(-1);
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToCntct->clear();
@@ -1728,60 +1724,11 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
   }
 }
 
-void salesOrder::sShipToList()
-{
-  ParameterList params;
-  params.append("cust_id", _cust->id());
-  params.append("shipto_id", _shiptoid);
-
-  shipToList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int shiptoid = newdlg.exec();
-
-  if (shiptoid != -1)
-  {
-    populateShipto(shiptoid);
-    if (_soitem->topLevelItemCount())
-      sRecalculatePrice();
-  }
-}
-
 void salesOrder::sParseShipToNumber()
 {
-  XSqlQuery shiptoid;
-  shiptoid.prepare( "SELECT shipto_id, shipto_active "
-                    "FROM shipto "
-                    "WHERE ( (shipto_cust_id=:shipto_cust_id)"
-                    " AND (UPPER(shipto_num)=UPPER(:shipto_num)) );" );
-  shiptoid.bindValue(":shipto_cust_id", _cust->id());
-  shiptoid.bindValue(":shipto_num", _shipToNumber->text());
-  shiptoid.exec();
-  if (shiptoid.first())
-  {
-    if (shiptoid.value("shipto_id").toInt() != _shiptoid)
-    {
-      if (!shiptoid.value("shipto_active").toBool())
-      {
-        if (QMessageBox::warning(this, tr("Inactive Ship To"),
-                                 tr("<p>This Ship To number is inactive, are you sure you want to proceed?"),
-                                 QMessageBox::Yes,
-                                 QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-
-          populateShipto(shiptoid.value("shipto_id").toInt());
-        else
-          _shipToNumber->clear();
-      }
-      else
-      {
-          populateShipto(shiptoid.value("shipto_id").toInt());
-        if (_soitem->topLevelItemCount())
-          sRecalculatePrice();
-      }
-    }
-  }
-  else if (_shiptoid != -1)
-    populateShipto(-1);
+  populateShipto(_shipTo->id());
+  if (_soitem->topLevelItemCount())
+    sRecalculatePrice();
 }
 
 void salesOrder::populateShipto(int pShiptoid)
@@ -1789,7 +1736,7 @@ void salesOrder::populateShipto(int pShiptoid)
   if (pShiptoid != -1)
   {
     XSqlQuery shipto;
-    shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
+    shipto.prepare( "SELECT shipto_id, shipto_num, shipto_name, shipto_addr_id, "
                     "       cntct_phone, shipto_cntct_id,"
                     "       shipto_shipvia, shipto_shipcomments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
@@ -1803,8 +1750,8 @@ void salesOrder::populateShipto(int pShiptoid)
     if (shipto.first())
     {
       //  Populate the dlg with the shipto information
-      _ignoreSignals = TRUE;
-      _shipToNumber->setText(shipto.value("shipto_num"));
+      _shipTo->blockSignals(true);
+      _shipTo->setId(shipto.value("shipto_id").toInt());
       _shipToName->setText(shipto.value("shipto_name").toString());
       _shipToAddr->setId(shipto.value("shipto_addr_id").toInt());
       _shipToCntct->setId(shipto.value("shipto_cntct_id").toInt());
@@ -1817,7 +1764,7 @@ void salesOrder::populateShipto(int pShiptoid)
       if ( (ISNEW(_mode)) && (shipto.value("shipto_taxzone_id").toInt() > 0) )
         _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
 
-      _ignoreSignals = FALSE;
+      _shipTo->blockSignals(false);
     }
     else if (shipto.lastError().type() != QSqlError::NoError)
     {
@@ -1827,14 +1774,12 @@ void salesOrder::populateShipto(int pShiptoid)
   }
   else
   {
-    _shipToNumber->clear();
+    _shipTo->setId(-1);
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToCntct->clear();
     _shippingComments->clear();
   }
-
-  _shiptoid = pShiptoid;
 
   if (_saved)
     save(true);
@@ -1845,12 +1790,8 @@ void salesOrder::populateShipto(int pShiptoid)
 void salesOrder::sConvertShipTo()
 {
   if (!_ignoreSignals)
-  {
     //  Convert the captive shipto to a free-form shipto
-    _shipToNumber->clear();
-
-    _shiptoid = -1;
-  }
+    _shipTo->setId(-1);
 }
 
 void salesOrder::sNew()
@@ -1866,7 +1807,7 @@ void salesOrder::sNew()
   ParameterList params;
   params.append("sohead_id", _soheadid);
   params.append("cust_id", _cust->id());
-  params.append("shipto_id", _shiptoid);
+  params.append("shipto_id", _shipTo->id());
   params.append("orderNumber", _orderNumber->text().toInt());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
@@ -1890,8 +1831,7 @@ void salesOrder::sNew()
 
 void salesOrder::sCopyToShipto()
 {
-  _shiptoid = -1;
-  _shipToNumber->clear();
+  _shipTo->setId(-1);
   _shipToName->setText(_billToName->text());
   _shipToAddr->setId(_billToAddr->id());
   if (_billToAddr->id() <= 0)
@@ -1914,7 +1854,7 @@ void salesOrder::sEdit()
   ParameterList params;
   params.append("soitem_id", _soitem->id());
   params.append("cust_id", _cust->id());
-  params.append("shipto_id", _shiptoid);
+  params.append("shipto_id", _shipTo->id());
   params.append("orderNumber", _orderNumber->text().toInt());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
@@ -2363,23 +2303,12 @@ void salesOrder::populate()
         _shipToAddr->setCountry(so.value("cohead_shiptocountry").toString());
       }
 
-      _shiptoid = so.value("cohead_shipto_id").toInt();
-      if (_shiptoid == -1)
-        setFreeFormShipto(true);
-      else
-      {
-        XSqlQuery shiptonum;
-        shiptonum.prepare( "SELECT shipto_num "
-                           "FROM shipto "
-                           "WHERE (shipto_id=:shipto_id);" );
-        shiptonum.bindValue(":shipto_id", _shiptoid);
-        shiptonum.exec();
-        if (shiptonum.first())
-          _shipToNumber->setText(shiptonum.value("shipto_num"));
-      }
+      _shipTo->blockSignals(true);
+      _shipTo->setId(so.value("cohead_shipto_id").toInt());
+      _shipTo->blockSignals(false);
 
       if (_mode == cView)
-        _shipToNumber->setEnabled(FALSE);
+        _shipTo->setEnabled(FALSE);
 
       if (so.value("cohead_origin").toString() == "C")
         _origin->setCurrentIndex(0);
@@ -2534,21 +2463,8 @@ void salesOrder::populate()
       _billToCntct->setFax(qu.value("quhead_billto_cntct_fax").toString());
       _billToCntct->setEmailAddress(qu.value("quhead_billto_cntct_email").toString());
 
-      _ignoreSignals = TRUE;
-      _shiptoid      = qu.value("quhead_shipto_id").toInt();
-      if (_shiptoid == -1)
-        setFreeFormShipto(true);
-      else
-      {
-        XSqlQuery shiptonum;
-        shiptonum.prepare( "SELECT shipto_num "
-                           "FROM shipto "
-                           "WHERE (shipto_id=:shipto_id);" );
-        shiptonum.bindValue(":shipto_id", _shiptoid);
-        shiptonum.exec();
-        if (shiptonum.first())
-          _shipToNumber->setText(shiptonum.value("shipto_num"));
-      }
+      _shipTo->blockSignals(true);
+      _shipTo->setId(qu.value("quhead_shipto_id").toInt());
 
       _shipToName->setText(qu.value("quhead_shiptoname").toString());
       _shipToAddr->setLine1(qu.value("quhead_shiptoaddress1").toString());
@@ -2558,10 +2474,10 @@ void salesOrder::populate()
       _shipToAddr->setState(qu.value("quhead_shiptostate").toString());
       _shipToAddr->setPostalCode(qu.value("quhead_shiptozipcode").toString());
       _shipToAddr->setCountry(qu.value("quhead_shiptocountry").toString());
-      _ignoreSignals = FALSE;
+      _shipTo->blockSignals(false);
 
       if (_mode == cViewQuote)
-        _shipToNumber->setEnabled(FALSE);
+        _shipTo->setEnabled(FALSE);
 
       if (qu.value("quhead_origin").toString() == "C")
         _origin->setCurrentIndex(0);
@@ -2901,7 +2817,7 @@ void salesOrder::sFillItemList()
                 "FROM freightDetail('QU', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
     q.bindValue(":head_id", _soheadid);
     q.bindValue(":cust_id", _cust->id());
-    q.bindValue(":shipto_id", _shiptoid);
+    q.bindValue(":shipto_id", _shipTo->id());
     q.bindValue(":orderdate", _orderDate->date());
     q.bindValue(":shipvia", _shipVia->currentText());
     q.bindValue(":curr_id", _orderCurrency->id());
@@ -3067,7 +2983,7 @@ void salesOrder::clear()
 
   _shipDate->clear();
   _cust->setId(-1);
-  _shiptoid = -1;
+  _shipTo->setId(-1);
   _warehouse->setId(_preferences->value("PreferredWarehouse").toInt());
   _salesRep->setCurrentIndex(-1);
   _commission->clear();
@@ -3337,7 +3253,7 @@ void salesOrder::sFreightDetail()
   params.append("order_id", _soheadid);
   params.append("document_number", _orderNumber->text());
   params.append("cust_id", _cust->id());
-  params.append("shipto_id", _shiptoid);
+  params.append("shipto_id", _shipTo->id());
   params.append("orderdate", _orderDate->date());
   params.append("shipvia", _shipVia->currentText());
   params.append("curr_id", _orderCurrency->id());
@@ -3410,7 +3326,6 @@ void salesOrder::setViewMode()
   _shippingComments->setEnabled(FALSE);
   _custPONumber->setEnabled(FALSE);
   _holdType->setEnabled(FALSE);
-  _shipToList->hide();
   _edit->setText(tr("View"));
   _comments->setType(Comments::SalesOrder);
   _comments->setReadOnly(true);
@@ -4539,7 +4454,7 @@ void salesOrder::sRecalculatePrice()
                                   "AND (quhead_id=<? value(\"cohead_id\") ?>) );";
     }
     params.append("cohead_id", _soheadid);
-    params.append("shipto_id", _shiptoid);
+    params.append("shipto_id", _shipTo->id());
     if (_metrics->boolean("IgnoreCustDisc"))
       params.append("ignoreDiscounts", true);
     if (_metrics->value("soPriceEffective") == "ScheduleDate")

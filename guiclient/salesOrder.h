@@ -39,7 +39,6 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sHandleOrderNumber();
     virtual void        sPopulateFOB( int pWarehousid );
     virtual void        sPopulateCustomerInfo( int pCustid );
-    virtual void        sShipToList();
     virtual void        sParseShipToNumber();
     virtual void        populateShipto( int pShiptoid );
     virtual void        sConvertShipTo();
@@ -121,7 +120,6 @@ class salesOrder : public XWidget, public Ui::salesOrder
     bool    _usesPos;
     bool    _ffShipto;
     bool    _captive;
-    int     _shiptoid;
     int     _soheadid;
     int     _lineMode;
     int     _mode;

@@ -23,7 +23,6 @@
 #include "enterPoReceipt.h"
 #include "mqlutil.h"
 #include "returnAuthorizationItem.h"
-#include "shipToList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
 #include "freightBreakdown.h"
@@ -39,14 +38,16 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 {
   setupUi(this);
 
+  _shipTo->setNameVisible(false);
+  _shipTo->setDescriptionVisible(false);
+
   connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sParseShipToNumber()));
+  connect(_shipTo, SIGNAL(newId(int)), this, SLOT(populateShipTo(int)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClick()));
-  connect(_shipToList, SIGNAL(clicked()), this, SLOT(sShipToList()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_freightLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sFreightDetail()));
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
@@ -75,17 +76,12 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_authNumber, SIGNAL(textEdited(QString)), this, SLOT(sCheckNumber()));
   connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
+  connect(_cust, SIGNAL(newId(int)),        _shipTo,     SLOT(setCustid(int)));
 
   _commission->setValidator(omfgThis->percentVal());
   _newso->setReadOnly(true);
 
-#ifndef Q_WS_MAC
-  _shipToList->setMaximumWidth(25);
-#endif
-
   _custtaxzoneid       = -1;
-  _shiptoid            = -1;
-  _ignoreShiptoSignals = false;
   _ignoreSoSignals = false;
   _ignoreWhsSignals = false;
   _ffBillto = TRUE;
@@ -314,13 +310,12 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _notes->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
       _copyToShipto->setEnabled(FALSE);
-      _shipToNumber->setEnabled(FALSE);
+      _shipTo->setEnabled(FALSE);
       _shipToName->setEnabled(FALSE);
       _shipToAddr->setEnabled(FALSE);
       _currency->setEnabled(FALSE);
       _warehouse->setEnabled(FALSE);
       _shipWhs->setEnabled(FALSE);
-      _shipToList->hide();
       _save->hide();
       _new->hide();
       _delete->hide();
@@ -526,8 +521,8 @@ bool returnAuthorization::sSave(bool partial)
   q.bindValue(":rahead_billtostate",    _billToAddr->state());
   q.bindValue(":rahead_billtozip",      _billToAddr->postalCode());
   q.bindValue(":rahead_billtocountry",  _billToAddr->country());
-  if (_shiptoid > 0)
-    q.bindValue(":rahead_shipto_id",    _shiptoid);
+  if (_shipTo->id() > 0)
+    q.bindValue(":rahead_shipto_id",    _shipTo->id());
   q.bindValue(":rahead_shipto_name", _shipToName->text().trimmed());
   q.bindValue(":rahead_shipto_address1", _shipToAddr->line1());
   q.bindValue(":rahead_shipto_address2", _shipToAddr->line2());
@@ -600,21 +595,6 @@ void returnAuthorization::sSaveClick()
     _raheadid=-1;
     close();
   }
-}
-
-void returnAuthorization::sShipToList()
-{
-  ParameterList params;
-  params.append("cust_id", _cust->id());
-  params.append("shipto_id", _shiptoid);
-
-  shipToList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int shiptoid = newdlg.exec();
-
-  if (shiptoid != -1)
-    populateShipto(shiptoid);
 }
 
 void returnAuthorization::sOrigSoChanged()
@@ -718,9 +698,9 @@ void returnAuthorization::sOrigSoChanged()
         _billToName->setEnabled(_ffBillto);
         _billToAddr->setEnabled(_ffBillto);
 
-        _ignoreShiptoSignals = TRUE;
-        _shiptoid = sohead.value("cohead_shipto_id").toInt();
-        _shipToNumber->setText(sohead.value("shipto_num").toString());
+        _shipTo->blockSignals(true);
+        _shipTo->setId(sohead.value("cohead_shipto_id").toInt());
+        _shipTo->blockSignals(false);
         _shipToName->setText(sohead.value("cohead_shiptoname"));
         _shipToAddr->setLine1(sohead.value("cohead_shiptoaddress1").toString());
         _shipToAddr->setLine2(sohead.value("cohead_shiptoaddress2").toString());
@@ -735,9 +715,8 @@ void returnAuthorization::sOrigSoChanged()
           _ffShipto = FALSE;
         _copyToShipto->setEnabled(_ffShipto);
         _shipToName->setEnabled(_ffShipto);
-        _shipToNumber->setEnabled(_ffShipto);
+        _shipTo->setEnabled(_ffShipto);
         _shipToAddr->setEnabled(_ffShipto);
-        _ignoreShiptoSignals = FALSE;
         sSave(true);
         sFillList();
       }
@@ -752,31 +731,12 @@ void returnAuthorization::sOrigSoChanged()
   }
 }
 
-void returnAuthorization::sParseShipToNumber()
-{
-  q.prepare( "SELECT shipto_id "
-             "FROM shiptoinfo "
-             "WHERE ( (shipto_cust_id=:cust_id)"
-             " AND (UPPER(shipto_num)=UPPER(:shipto_num)));" );
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":shipto_num", _shipToNumber->text());
-  q.exec();
-  if (q.first())
-    populateShipto(q.value("shipto_id").toInt());
-  else
-  {
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    populateShipto(-1);
-  }
-}
-
 void returnAuthorization::populateShipto(int pShiptoid)
 {
   if (pShiptoid != -1)
   {
     XSqlQuery query;
-    query.prepare( "SELECT shipto_num, shipto_name,"
+    query.prepare( "SELECT shipto_id, shipto_num, shipto_name,"
                    " shipto_addr_id, shipto_taxzone_id, "
                    " shipto_salesrep_id, shipto_commission "
                    "FROM shiptoinfo "
@@ -785,15 +745,14 @@ void returnAuthorization::populateShipto(int pShiptoid)
     query.exec();
     if (query.first())
     {
-      _shiptoid = pShiptoid;
-      _ignoreShiptoSignals = TRUE;
-      _shipToNumber->setText(query.value("shipto_num"));
+      _shipTo->blockSignals(true);
+      _shipTo->setId(query.value("shipto_id").toInt());
       _shipToName->setText(query.value("shipto_name"));
       _shipToAddr->setId(query.value("shipto_addr_id").toInt());
       _taxzone->setId(query.value("shipto_taxzone_id").toInt());
       _salesRep->setId(query.value("shipto_salesrep_id").toInt());
       _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
-      _ignoreShiptoSignals = FALSE;
+      _shipTo->blockSignals(false);
     }
     else if (query.lastError().type() != QSqlError::NoError)
     {
@@ -803,12 +762,10 @@ void returnAuthorization::populateShipto(int pShiptoid)
   }
   else
   {
-    _shipToNumber->clear();
+    _shipTo->setId(-1);
     _shipToName->clear();
     _shipToAddr->clear();
   }
-
-  _shiptoid = pShiptoid;
 }
 
 void returnAuthorization::sPopulateCustomerInfo()
@@ -861,7 +818,7 @@ void returnAuthorization::sPopulateCustomerInfo()
           _ffShipto = FALSE;
         _copyToShipto->setEnabled(_ffShipto);
         _shipToName->setEnabled(_ffShipto);
-        _shipToNumber->setEnabled(_ffShipto);
+        _shipTo->setEnabled(_ffShipto);
         _shipToAddr->setEnabled(_ffShipto);
         _custEmail = query.value("cust_soemaildelivery").toBool();
         populateShipto(query.value("shiptoid").toInt());
@@ -883,10 +840,10 @@ void returnAuthorization::sPopulateCustomerInfo()
       _billToAddr->setEnabled(TRUE);
       _billToName->clear();
       _billToAddr->clear();
-      _shipToNumber->setEnabled(TRUE);
+      _shipTo->setEnabled(TRUE);
       _shipToName->setEnabled(TRUE);
       _shipToAddr->setEnabled(TRUE);
-      _shipToNumber->clear();
+      _shipTo->setId(-1);
       _shipToName->clear();
       _shipToAddr->clear();
     }
@@ -927,19 +884,13 @@ void returnAuthorization::sCheckAuthorizationNumber()
 
 void returnAuthorization::sClearShiptoNumber()
 {
-  if (!_ignoreShiptoSignals)
-  {
 //  Convert the captive shipto to a free-form shipto
-    _shipToNumber->clear();
-
-    _shiptoid = -1;
-  }
+    _shipTo->setId(-1);
 }
 
 void returnAuthorization::sCopyToShipto()
 {
-  _shiptoid = -1;
-  _shipToNumber->clear();
+  _shipTo->setId(-1);
   _shipToName->setText(_billToName->text());
   if (_billToAddr->id() > 0)
     _shipToAddr->setId(_billToAddr->id());
@@ -1297,9 +1248,9 @@ void returnAuthorization::populate()
     _shipToAddr->setEnabled(_ffShipto);
     _copyToShipto->setEnabled(_ffShipto);
 
-    _ignoreShiptoSignals = TRUE;
-    _shiptoid = rahead.value("rahead_shipto_id").toInt();
-    _shipToNumber->setText(rahead.value("shipto_num").toString());
+    _shipTo->blockSignals(true);
+    _shipTo->setId(rahead.value("rahead_shipto_id").toInt());
+    _shipTo->blockSignals(false);
     _shipToName->setText(rahead.value("rahead_shipto_name"));
     _shipToAddr->setLine1(rahead.value("rahead_shipto_address1").toString());
     _shipToAddr->setLine2(rahead.value("rahead_shipto_address2").toString());
@@ -1308,7 +1259,6 @@ void returnAuthorization::populate()
     _shipToAddr->setState(rahead.value("rahead_shipto_state").toString());
     _shipToAddr->setPostalCode(rahead.value("rahead_shipto_zipcode").toString());
     _shipToAddr->setCountry(rahead.value("rahead_shipto_country").toString());
-    _ignoreShiptoSignals = FALSE;
     _customerPO->setText(rahead.value("rahead_custponumber"));
 
     _currency->setId(rahead.value("rahead_curr_id").toInt());
@@ -2003,7 +1953,7 @@ void returnAuthorization::sRecalcFreight()
               "FROM freightDetail('RA', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
     q.bindValue(":head_id", _raheadid);
     q.bindValue(":cust_id", _cust->id());
-    q.bindValue(":shipto_id", _shiptoid);
+    q.bindValue(":shipto_id", _shipTo->id());
     q.bindValue(":orderdate", _authDate->date());
     q.bindValue(":shipvia", "");
     q.bindValue(":curr_id", _currency->id());
@@ -2038,7 +1988,7 @@ void returnAuthorization::sFreightDetail()
   params.append("order_id", _raheadid);
   params.append("document_number", _authNumber->text());
   params.append("cust_id", _cust->id());
-  params.append("shipto_id", _shiptoid);
+  params.append("shipto_id", _shipTo->id());
   params.append("orderdate", _authDate->date());
   params.append("shipvia", "");
   params.append("curr_id", _currency->id());

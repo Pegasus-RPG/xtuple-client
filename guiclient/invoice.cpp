@@ -17,7 +17,6 @@
 #include <QVariant>
 
 #include "invoiceItem.h"
-#include "shipToList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
 
@@ -38,11 +37,9 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_shipToList, SIGNAL(clicked()), this, SLOT(sShipToList()));
   connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sParseShipToNumber()));
-  connect(_shipToNumber, SIGNAL(returnPressed()), this, SLOT(sParseShipToNumber()));
+  connect(_shipTo, SIGNAL(newId(int)), this, SLOT(populateShipto(int)));
   connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sShipToModified()));
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
@@ -66,19 +63,18 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_shipChrgs, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
+  connect(_cust,      SIGNAL(newId(int)),   _shipTo,     SLOT(setCustid(int)));
 
   setFreeFormShipto(false);
 
-#ifndef Q_WS_MAC
-  _shipToList->setMaximumWidth(25);
-#endif
-
   _custtaxzoneid  = -1;
   _invcheadid	  = -1;
-  _shiptoid	  = -1;
   _taxzoneidCache = -1;
   _loading = false;
   _freightCache = 0;
+
+  _shipTo->setNameVisible(false);
+  _shipTo->setDescriptionVisible(false);
 
   _invcitem->addColumn(tr("#"),           _seqColumn,      Qt::AlignCenter, true,  "invcitem_linenumber" );
   _invcitem->addColumn(tr("Order #"),     _itemColumn,     Qt::AlignLeft,   true,  "soitemnumber"   );
@@ -218,7 +214,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _billToName->setEnabled(FALSE);
       _billToAddr->setEnabled(FALSE);
       _billToPhone->setEnabled(FALSE);
-      _shipToNumber->setEnabled(FALSE);
+      _shipTo->setEnabled(FALSE);
       _shipToName->setEnabled(FALSE);
       _shipToAddr->setEnabled(FALSE);
       _shipToPhone->setEnabled(FALSE);
@@ -228,7 +224,6 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _freight->setEnabled(FALSE);
       _payment->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
-      _shipToList->hide();
       _edit->hide();
       _save->hide();
       _delete->hide();
@@ -313,7 +308,7 @@ void invoice::sPopulateCustomerInfo(int pCustid)
 	  populateShipto(cust.value("shiptoid").toInt());
 	else
 	{
-	  _shipToNumber->clear();
+          _shipTo->setId(-1);
 	  _shipToName->clear();
 	  _shipToAddr->clear();
 	  _shipToPhone->clear();
@@ -336,47 +331,12 @@ void invoice::sPopulateCustomerInfo(int pCustid)
   }
 }
 
-void invoice::sShipToList()
-{
-  ParameterList params;
-  params.append("cust_id", _cust->id());
-  params.append("shipto_id", _shiptoid);
-
-  shipToList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int shiptoid = newdlg.exec();
-  if (shiptoid != -1)
-    populateShipto(shiptoid);
-}
-
-void invoice::sParseShipToNumber()
-{
-  XSqlQuery shiptoid;
-  shiptoid.prepare( "SELECT shipto_id "
-                    "FROM shipto "
-                    "WHERE ( (shipto_cust_id=:shipto_cust_id)"
-                    " AND (UPPER(shipto_num)=UPPER(:shipto_num)) );" );
-  shiptoid.bindValue(":shipto_cust_id", _cust->id());
-  shiptoid.bindValue(":shipto_num", _shipToNumber->text());
-  shiptoid.exec();
-  if (shiptoid.first())
-    populateShipto(shiptoid.value("shipto_id").toInt());
-  else if (_shiptoid != -1)
-    populateShipto(-1);
-  if (shiptoid.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, shiptoid.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
 void invoice::populateShipto(int pShiptoid)
 {
   if (pShiptoid != -1)
   {
     XSqlQuery shipto;
-    shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
+    shipto.prepare( "SELECT shipto_id, shipto_num, shipto_name, shipto_addr_id, "
                     "       cntct_phone, shipto_shipvia, shipto_salesrep_id, "
                     "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
                     "       COALESCE(shipto_shipchrg_id, -1) AS shipto_shipchrg_id,"
@@ -391,7 +351,7 @@ void invoice::populateShipto(int pShiptoid)
       _shipToName->setText(shipto.value("shipto_name"));
       _shipToAddr->setId(shipto.value("shipto_addr_id").toInt());
       _shipToPhone->setText(shipto.value("cntct_phone"));
-      _shipToNumber->setText(shipto.value("shipto_num"));
+      _shipTo->setId(shipto.value("shipto_id").toInt());
       _salesrep->setId(shipto.value("shipto_salesrep_id").toInt());
       _commission->setDouble(shipto.value("commission").toDouble());
       _shipVia->setText(shipto.value("shipto_shipvia"));
@@ -406,19 +366,16 @@ void invoice::populateShipto(int pShiptoid)
   }
   else
   {
-    _shipToNumber->clear();
+    _shipTo->setId(-1);
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToPhone->clear();
   }
-
-  _shiptoid = pShiptoid;
 }
 
 void invoice::sCopyToShipto()
 {
-  _shiptoid = -1;
-  _shipToNumber->clear();
+  _shipTo->setId(-1);
   _shipToName->setText(_billToName->text());
   _shipToAddr->setId(_billToAddr->id());
   _shipToPhone->setText(_billToPhone->text());
@@ -556,7 +513,7 @@ bool invoice::save()
   q.bindValue(":invchead_billto_zipcode",	_billToAddr->postalCode());
   q.bindValue(":invchead_billto_country",	_billToAddr->country());
   q.bindValue(":invchead_billto_phone",		_billToPhone->text());
-  q.bindValue(":invchead_shipto_id",		_shiptoid);
+  q.bindValue(":invchead_shipto_id",		_shipTo->id());
   q.bindValue(":invchead_shipto_name",		_shipToName->text());
   q.bindValue(":invchead_shipto_address1",	_shipToAddr->line1());
   q.bindValue(":invchead_shipto_address2",	_shipToAddr->line2());
@@ -746,21 +703,9 @@ void invoice::populate()
     _shipToAddr->setPostalCode(q.value("invchead_shipto_zipcode").toString());
     _shipToAddr->setCountry(q.value("invchead_shipto_country").toString());
     _shipToPhone->setText(q.value("invchead_shipto_phone").toString());
-    _shiptoid = q.value("invchead_shipto_id").toInt();
-    _shipToNumber->clear();
-    if(_shiptoid != -1)
-    {
-      XSqlQuery shipto;
-      shipto.prepare("SELECT shipto_num FROM shipto WHERE shipto_id=:shipto_id");
-      shipto.bindValue(":shipto_id", _shiptoid);
-      shipto.exec();
-      if(shipto.first())
-        _shipToNumber->setText(shipto.value("shipto_num"));
-      else
-        _shiptoid = -1;
-      if (shipto.lastError().type() != QSqlError::NoError)
-	systemError(this, shipto.lastError().databaseText(), __FILE__, __LINE__);
-    }
+    _shipTo->blockSignals(true);
+    _shipTo->setId(q.value("invchead_shipto_id").toInt());
+    _shipTo->blockSignals(false);
     
     _payment->setLocalValue(q.value("invchead_payment").toDouble());
     _miscChargeDescription->setText(q.value("invchead_misc_descrip"));
@@ -926,8 +871,7 @@ void invoice::setFreeFormShipto(bool pFreeForm)
 
 void invoice::sShipToModified()
 {
-  _shiptoid = -1;
-  _shipToNumber->clear();
+  _shipTo->setId(-1);
 }
 
 void invoice::keyPressEvent( QKeyEvent * e )

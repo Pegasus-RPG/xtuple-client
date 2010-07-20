@@ -33,8 +33,6 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sClose();
     virtual void sPopulateCustomerInfo( int pCustid );
-    virtual void sShipToList();
-    virtual void sParseShipToNumber();
     virtual void populateShipto( int pShiptoid );
     virtual void sCopyToShipto();
     virtual void sSave();
@@ -68,11 +66,10 @@ private:
     int		_custtaxzoneid;
     bool	_ffShipto;
     int		_invcheadid;
-    int		_shiptoid;
     int		_taxzoneidCache;
     bool        _loading;
     double      _freightCache;
-	bool		save();
+    bool        save();
 
 };
 

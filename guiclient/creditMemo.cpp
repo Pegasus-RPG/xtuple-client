@@ -19,7 +19,6 @@
 
 #include "creditMemoItem.h"
 #include "invoiceList.h"
-#include "shipToList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
 
@@ -34,9 +33,8 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_invoiceList, SIGNAL(clicked()), this, SLOT(sInvoiceList()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sParseShipToNumber()));
+  connect(_shipTo, SIGNAL(newId(int)), this, SLOT(populateShipto(int)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_shipToList, SIGNAL(clicked()), this, SLOT(sShipToList()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
@@ -45,14 +43,13 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxzone,	SIGNAL(newID(int)),	this, SLOT(sTaxZoneChanged()));
   connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
+  connect(_cust, SIGNAL(newId(int)),        _shipTo,     SLOT(setCustid(int)));
 
 #ifndef Q_WS_MAC
   _invoiceList->setMaximumWidth(25);
-  _shipToList->setMaximumWidth(25);
 #endif
 
   _custtaxzoneid	= -1;
-  _shiptoid		= -1;
   _freightCache         = 0;
   _taxzoneidCache       = 0;
 
@@ -60,6 +57,9 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   _commission->setValidator(omfgThis->scrapVal());
 
   _currency->setLabel(_currencyLit);
+
+  _shipTo->setNameVisible(false);
+  _shipTo->setDescriptionVisible(false);
 
   _cmitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter, true,  "cmitem_linenumber" );
   _cmitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
@@ -172,11 +172,10 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       _freight->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
       _invoiceList->hide();
-      _shipToNumber->setEnabled(FALSE);
+      _shipTo->setEnabled(FALSE);
       _shipToName->setEnabled(FALSE);
       _shipToAddr->setEnabled(FALSE);
       _currency->setEnabled(FALSE);
-      _shipToList->hide();
       _save->hide();
       _new->hide();
       _delete->hide();
@@ -353,8 +352,8 @@ bool creditMemo::save()
   q.bindValue(":cmhead_billtostate",	_billToAddr->state());
   q.bindValue(":cmhead_billtozip",	_billToAddr->postalCode());
   q.bindValue(":cmhead_billtocountry",	_billToAddr->country());
-  if (_shiptoid > 0)
-    q.bindValue(":cmhead_shipto_id",	_shiptoid);
+  if (_shipTo->id() > 0)
+    q.bindValue(":cmhead_shipto_id",	_shipTo->id());
   q.bindValue(":cmhead_shipto_name", _shipToName->text().trimmed());
   q.bindValue(":cmhead_shipto_address1", _shipToAddr->line1());
   q.bindValue(":cmhead_shipto_address2", _shipToAddr->line2());
@@ -385,21 +384,6 @@ bool creditMemo::save()
   }
 
   return true;
-}
-
-void creditMemo::sShipToList()
-{
-  ParameterList params;
-  params.append("cust_id", _cust->id());
-  params.append("shipto_id", _shiptoid);
-
-  shipToList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int shiptoid = newdlg.exec();
-
-  if (shiptoid != -1)
-    populateShipto(shiptoid);
 }
 
 void creditMemo::sInvoiceList()
@@ -445,7 +429,7 @@ void creditMemo::sInvoiceList()
       _billToAddr->setPostalCode(sohead.value("invchead_billto_zipcode").toString());
       _billToAddr->setCountry(sohead.value("invchead_billto_country").toString());
 
-      _shipToNumber->setEnabled(FALSE);
+      _shipTo->setEnabled(FALSE);
       _shipToName->setEnabled(FALSE);
       _shipToAddr->setEnabled(FALSE);
       _ignoreShiptoSignals = TRUE;
@@ -467,25 +451,6 @@ void creditMemo::sInvoiceList()
   }
 }
 
-void creditMemo::sParseShipToNumber()
-{
-  q.prepare( "SELECT shipto_id "
-             "FROM shiptoinfo "
-             "WHERE ( (shipto_cust_id=:cust_id)"
-             " AND (UPPER(shipto_num)=UPPER(:shipto_num)));" );
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":shipto_num", _shipToNumber->text());
-  q.exec();
-  if (q.first())
-    populateShipto(q.value("shipto_id").toInt());
-  else
-  {
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    populateShipto(-1);
-  }
-}
-
 void creditMemo::populateShipto(int pShiptoid)
 {
   if (pShiptoid != -1)
@@ -498,7 +463,7 @@ void creditMemo::populateShipto(int pShiptoid)
     query.exec();
     if (query.first())
     {
-      _shipToNumber->setText(query.value("shipto_num"));
+      _shipTo->setId(query.value("shipto_id").toInt());
       _shipToName->setText(query.value("shipto_name"));
       _shipToAddr->setId(query.value("shipto_addr_id").toInt());
       _taxzone->setId(query.value("shipto_taxzone_id").toInt());
@@ -513,12 +478,10 @@ void creditMemo::populateShipto(int pShiptoid)
   }
   else
   {
-    _shipToNumber->clear();
+    _shipTo->setId(-1);
     _shipToName->clear();
     _shipToAddr->clear();
   }
-
-  _shiptoid = pShiptoid;
 }
 
 void creditMemo::sPopulateCustomerInfo()
@@ -583,7 +546,7 @@ void creditMemo::sPopulateCustomerInfo()
 
       _shipToName->setEnabled(_ffShipto);
 	  _shipToAddr->setEnabled(_ffShipto);
-      _shipToNumber->clear();
+      _shipTo->setId(-1);
       _shipToName->clear();
       _shipToAddr->clear();
     }
@@ -614,7 +577,7 @@ void creditMemo::sPopulateByInvoiceNumber(int pInvoiceNumber)
       int shiptoid;
       if ((shiptoid = query.value("invchead_shipto_id").toInt()) != -1)
       {
-	query.prepare( "SELECT shipto_num,"
+        query.prepare( "SELECT shipto_id, shipto_num,"
                        "       shipto_name, shipto_addr_id "
                        "FROM shiptoinfo "
                        "WHERE (shipto_id=:shipto_id)" );
@@ -622,7 +585,7 @@ void creditMemo::sPopulateByInvoiceNumber(int pInvoiceNumber)
 	query.exec();
         if (query.first())
         {
-          _shipToNumber->setText(query.value("shipto_num"));
+          _shipTo->setId(query.value("shipto_id").toInt());
           _shipToName->setText(query.value("shipto_name"));
           _shipToAddr->setId(query.value("shipto_addr_id").toInt());
         }
@@ -678,10 +641,9 @@ void creditMemo::sCheckCreditMemoNumber()
         _freight->setEnabled(FALSE);
         _comments->setReadOnly(TRUE);
         _invoiceList->hide();
-        _shipToNumber->setEnabled(FALSE);
+        _shipTo->setEnabled(FALSE);
         _shipToName->setEnabled(FALSE);
         _cmitem->setEnabled(FALSE);
-        _shipToList->hide();
         _save->hide();
         _new->hide();
         _delete->hide();
@@ -705,17 +667,14 @@ void creditMemo::sConvertShipto()
   if ((!_shipToAddr->isEnabled()) && (!_ignoreShiptoSignals))
   {
 //  Convert the captive shipto to a free-form shipto
-    _shipToNumber->clear();
+    _shipTo->setId(-1);
     _shipToAddr->setEnabled(TRUE);
-
-    _shiptoid = -1;
   }
 }
 
 void creditMemo::sCopyToShipto()
 {
-  _shiptoid = -1;
-  _shipToNumber->clear();
+  _shipTo->setId(-1);
   _shipToName->setText(_billtoName->text());
   if (_billToAddr->id() > 0)
     _shipToAddr->setId(_billToAddr->id());
@@ -942,7 +901,9 @@ void creditMemo::populate()
     _shipToName->setEnabled(_ffShipto);
 	_shipToAddr->setEnabled(_ffShipto);
 
-    _shiptoid = cmhead.value("cmhead_shipto_id").toInt();
+    _shipTo->blockSignals(true);
+    _shipTo->setId(cmhead.value("cmhead_shipto_id").toInt());
+    _shipTo->blockSignals(false);
     _shipToName->setText(cmhead.value("cmhead_shipto_name"));
     _shipToAddr->setLine1(cmhead.value("cmhead_shipto_address1").toString());
     _shipToAddr->setLine2(cmhead.value("cmhead_shipto_address2").toString());

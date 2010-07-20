@@ -825,32 +825,9 @@ to be bound by its terms.</comment>
            <item row="0" column="1">
             <layout class="QHBoxLayout">
              <item>
-              <widget class="QLabel" name="_shipToNumberLit">
-               <property name="text">
-                <string>Ship-from #:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="XLineEdit" name="_shipToNumber">
-               <property name="maximumSize">
-                <size>
-                 <width>80</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_shipToList">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="text">
-                <string>...</string>
+              <widget class="ShiptoCluster" name="_shipTo">
+               <property name="label">
+                <string>Ship From#</string>
                </property>
               </widget>
              </item>
@@ -1500,6 +1477,11 @@ to be bound by its terms.</comment>
    <header>projectcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>ShiptoCluster</class>
+   <extends>QWidget</extends>
+   <header>shiptocluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>SoCluster</class>
    <extends>QWidget</extends>
    <header>socluster.h</header>
@@ -1542,7 +1524,7 @@ to be bound by its terms.</comment>
   <tabstop>_copyToShipto</tabstop>
   <tabstop>_billToName</tabstop>
   <tabstop>_billToAddr</tabstop>
-  <tabstop>_shipToNumber</tabstop>
+  <tabstop>_shipTo</tabstop>
   <tabstop>_shipToName</tabstop>
   <tabstop>_shipToAddr</tabstop>
   <tabstop>_customerPO</tabstop>
