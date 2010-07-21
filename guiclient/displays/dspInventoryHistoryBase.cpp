@@ -212,7 +212,7 @@ enum SetResponse dspInventoryHistoryBase::set(const ParameterList &pParams)
   if (pParams.inList("run"))
     sFillList();
 
-  if(_parameter->isVisible())
+  if(_parameter->isVisibleTo(this))
   {
     switch (_parameter->type())
     {
@@ -238,14 +238,14 @@ enum SetResponse dspInventoryHistoryBase::set(const ParameterList &pParams)
 
 bool dspInventoryHistoryBase::setParams(ParameterList & params)
 {
-  if(_itemGroup->isVisible() && !_item->isValid())
+  if(_itemGroup->isVisibleTo(this) && !_item->isValid())
   {
     QMessageBox::critical( this, tr("Item Number Required"),
       tr("You must specify an Item Number."));
     return false;
   }
 
-  if (_orderGroup->isVisible() && _orderNumber->text().trimmed().length() == 0)
+  if (_orderGroup->isVisibleTo(this) && _orderNumber->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Enter Order Search Pattern"),
                            tr("You must enter a Order # pattern to search for." ) );
@@ -273,19 +273,19 @@ bool dspInventoryHistoryBase::setParams(ParameterList & params)
   _dates->appendValue(params);
   params.append("transType", _transType->id());
 
-  if(_itemGroup->isVisible())
+  if(_itemGroup->isVisibleTo(this))
   {
     params.append("item_id", _item->id());
     params.append("includeFormatted"); // ??? originally from dspInventoryHistoryByItem::sFillList()
   }
 
-  if(_orderGroup->isVisible())
+  if(_orderGroup->isVisibleTo(this))
     params.append("orderNumber", _orderNumber->text());
 
-  if (!_orderGroup->isVisible() && _orderType->currentIndex())
+  if (!_orderGroup->isVisibleTo(this) && _orderType->currentIndex())
     params.append("orderType", _orderType->code());
 
-  if(_parameter->isVisible())
+  if(_parameter->isVisibleTo(this))
   {
     _parameter->appendValue(params);
 
@@ -371,7 +371,7 @@ void dspInventoryHistoryBase::sEditTransInfo()
 
 void dspInventoryHistoryBase::sViewWOInfo()
 {
-  QString orderNumber = list()->currentItem()->text(list()->column("ordernumber"));
+  QString orderNumber = list()->currentItem()->text(list()->column("orderlocation"));
   int sep1            = orderNumber.indexOf('-');
   int sep2            = orderNumber.indexOf('-', (sep1 + 1));
   int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
@@ -407,7 +407,7 @@ void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem
   if ( (pItem->text(list()->column("warehous_code")).length()) &&
        ( (pItem->text(list()->column("invhist_transtype")) == "RM") || (pItem->text(list()->column("invhist_transtype")) == "IM") ) )
   {
-    QString orderNumber = list()->currentItem()->text(list()->column("ordernumber"));
+    QString orderNumber = list()->currentItem()->text(list()->column("orderlocation"));
     int sep1            = orderNumber.indexOf('-');
     int sep2            = orderNumber.indexOf('-', (sep1 + 1));
     int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
