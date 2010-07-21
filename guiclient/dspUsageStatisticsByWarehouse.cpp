@@ -10,6 +10,7 @@
 
 #include "dspUsageStatisticsByWarehouse.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -141,13 +142,12 @@ void dspUsageStatisticsByWarehouse::sViewTransactions()
 
 void dspUsageStatisticsByWarehouse::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
-  int intMenuItem;
+  QAction *menuItem;
 
   _column = pColumn;
 
-  intMenuItem = menuThis->insertItem(tr("View Transactions..."), this, SLOT(sViewTransactions()), 0);
-  if (!_privileges->check("ViewInventoryHistory"))
-    menuThis->setItemEnabled(intMenuItem, FALSE);
+  menuItem = menuThis->addAction(tr("View Transactions..."), this, SLOT(sViewTransactions()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryHistory"));
 }
 
 void dspUsageStatisticsByWarehouse::sFillList()

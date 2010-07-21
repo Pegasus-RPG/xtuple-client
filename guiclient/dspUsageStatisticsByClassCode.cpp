@@ -10,6 +10,7 @@
 
 #include "dspUsageStatisticsByClassCode.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -151,48 +152,48 @@ void dspUsageStatisticsByClassCode::viewTransactions(QString pType)
 
 void dspUsageStatisticsByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem("View All Transactions...", this, SLOT(sViewAll()), 0);
+  menuItem = pMenu->addAction("View All Transactions...", this, SLOT(sViewAll()));
   if (!_privileges->check("ViewInventoryHistory"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
   switch (pColumn)
   {
     case 3:
-      menuItem = pMenu->insertItem("View Receipt Transactions...", this, SLOT(sViewReceipt()), 0);
+      menuItem = pMenu->addAction("View Receipt Transactions...", this, SLOT(sViewReceipt()));
       if (!_privileges->check("ViewInventoryHistory"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
       break;
 
     case 4:
-      menuItem = pMenu->insertItem("View Issue Transactions...", this, SLOT(sViewIssue()), 0);
+      menuItem = pMenu->addAction("View Issue Transactions...", this, SLOT(sViewIssue()));
       if (!_privileges->check("ViewInventoryHistory"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
       break;
 
     case 5:
-      menuItem = pMenu->insertItem("View Sold Transactions...", this, SLOT(sViewSold()), 0);
+      menuItem = pMenu->addAction("View Sold Transactions...", this, SLOT(sViewSold()));
       if (!_privileges->check("ViewInventoryHistory"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
       break;
 
     case 6:
-      menuItem = pMenu->insertItem("View Scrap Transactions...", this, SLOT(sViewScrap()), 0);
+      menuItem = pMenu->addAction("View Scrap Transactions...", this, SLOT(sViewScrap()));
       if (!_privileges->check("ViewInventoryHistory"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
       break;
 
     case 7:
-      menuItem = pMenu->insertItem("View Adjustment Transactions...", this, SLOT(sViewAdjustment()), 0);
+      menuItem = pMenu->addAction("View Adjustment Transactions...", this, SLOT(sViewAdjustment()));
       if (!_privileges->check("ViewInventoryHistory"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
       break;
 
     case 8:
-      menuItem = pMenu->insertItem("View Transfer Transactions...", this, SLOT(sViewTransfer()), 0);
+      menuItem = pMenu->addAction("View Transfer Transactions...", this, SLOT(sViewTransfer()));
       if (!_privileges->check("ViewInventoryHistory"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
       break;
   }
 }
