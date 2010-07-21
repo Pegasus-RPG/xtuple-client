@@ -46,7 +46,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="XLineEdit" name="_code">
            <property name="fieldName">
-            <string>code</string>
+            <string notr="true">code</string>
            </property>
           </widget>
          </item>
@@ -63,7 +63,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="XLineEdit" name="_number">
            <property name="fieldName">
-            <string>number</string>
+            <string notr="true">number</string>
            </property>
           </widget>
          </item>
@@ -76,7 +76,7 @@ to be bound by its terms.</comment>
             <bool>true</bool>
            </property>
            <property name="fieldName">
-            <string>active</string>
+            <string notr="true">active</string>
            </property>
            <property name="forgetful">
             <bool>true</bool>
@@ -181,67 +181,67 @@ to be bound by its terms.</comment>
             <bool>false</bool>
            </property>
            <property name="fieldNameChange">
-            <string>contact_change</string>
+            <string notr="true">contact_change</string>
            </property>
            <property name="fieldNameNumber">
-            <string>contact_number</string>
+            <string notr="true">contact_number</string>
            </property>
            <property name="fieldNameActive">
             <string/>
            </property>
            <property name="fieldNameHonorific">
-            <string>honorific</string>
+            <string notr="true">honorific</string>
            </property>
            <property name="fieldNameFirst">
-            <string>first</string>
+            <string notr="true">first</string>
            </property>
            <property name="fieldNameLast">
-            <string>last</string>
+            <string notr="true">last</string>
            </property>
            <property name="fieldNameTitle">
-            <string>job_title</string>
+            <string notr="true">job_title</string>
            </property>
            <property name="fieldNamePhone">
-            <string>voice</string>
+            <string notr="true">voice</string>
            </property>
            <property name="fieldNamePhone2">
-            <string>alternate</string>
+            <string notr="true">alternate</string>
            </property>
            <property name="fieldNameFax">
-            <string>fax</string>
+            <string notr="true">fax</string>
            </property>
            <property name="fieldNameEmailAddress">
-            <string>email</string>
+            <string notr="true">email</string>
            </property>
            <property name="fieldNameWebAddress">
-            <string>web</string>
+            <string notr="true">web</string>
            </property>
            <property name="fieldNameAddressChange" stdset="0">
-            <string>address_change</string>
+            <string notr="true">address_change</string>
            </property>
            <property name="fieldNameAddressNumber" stdset="0">
-            <string>address_number</string>
+            <string notr="true">address_number</string>
            </property>
            <property name="fieldNameLine1">
-            <string>address1</string>
+            <string notr="true">address1</string>
            </property>
            <property name="fieldNameLine2">
-            <string>address2</string>
+            <string notr="true">address2</string>
            </property>
            <property name="fieldNameLine3">
-            <string>address3</string>
+            <string notr="true">address3</string>
            </property>
            <property name="fieldNameCity">
-            <string>city</string>
+            <string notr="true">city</string>
            </property>
            <property name="fieldNameState">
-            <string>state</string>
+            <string notr="true">state</string>
            </property>
            <property name="fieldNamePostalCode">
-            <string>postalcode</string>
+            <string notr="true">postalcode</string>
            </property>
            <property name="fieldNameCountry">
-            <string>country</string>
+            <string notr="true">country</string>
            </property>
           </widget>
          </item>
@@ -325,7 +325,7 @@ to be bound by its terms.</comment>
                  <bool>true</bool>
                 </property>
                 <property name="fieldName">
-                 <string>site</string>
+                 <string notr="true">site</string>
                 </property>
                </widget>
               </item>
@@ -353,7 +353,7 @@ to be bound by its terms.</comment>
                <string>Manager:</string>
               </property>
               <property name="fieldName">
-               <string>manager_code</string>
+               <string notr="true">manager_code</string>
               </property>
              </widget>
             </item>
@@ -441,7 +441,7 @@ to be bound by its terms.</comment>
                    <bool>false</bool>
                   </property>
                   <property name="fieldName">
-                   <string>department</string>
+                   <string notr="true">department</string>
                   </property>
                  </widget>
                 </item>
@@ -464,7 +464,7 @@ to be bound by its terms.</comment>
                    <bool>false</bool>
                   </property>
                   <property name="fieldName">
-                   <string>shift</string>
+                   <string notr="true">shift</string>
                   </property>
                  </widget>
                 </item>
@@ -506,7 +506,7 @@ to be bound by its terms.</comment>
                <string/>
               </property>
               <property name="fieldName">
-               <string>is_user</string>
+               <string notr="true">is_user</string>
               </property>
               <property name="forgetful">
                <bool>true</bool>
@@ -542,7 +542,7 @@ to be bound by its terms.</comment>
                <string/>
               </property>
               <property name="fieldName">
-               <string>is_salesrep</string>
+               <string notr="true">is_salesrep</string>
               </property>
               <property name="forgetful">
                <bool>true</bool>
@@ -588,7 +588,7 @@ to be bound by its terms.</comment>
                <string/>
               </property>
               <property name="fieldName">
-               <string>is_vendor</string>
+               <string notr="true">is_vendor</string>
               </property>
               <property name="forgetful">
                <bool>true</bool>
@@ -649,7 +649,7 @@ to be bound by its terms.</comment>
               <bool>true</bool>
              </property>
              <property name="fieldName">
-              <string>wage_type</string>
+              <string notr="true">wage_type</string>
              </property>
              <item>
               <property name="text">
@@ -681,7 +681,7 @@ to be bound by its terms.</comment>
            <item row="1" column="1">
             <widget class="CurrCluster" name="_rate">
              <property name="fieldNameValue">
-              <string>wage</string>
+              <string notr="true">wage</string>
              </property>
              <property name="currencyEditable" stdset="0">
               <bool>false</bool>
@@ -690,7 +690,7 @@ to be bound by its terms.</comment>
               <bool>false</bool>
              </property>
              <property name="fieldNameCurr">
-              <string>wage_currency</string>
+              <string notr="true">wage_currency</string>
              </property>
             </widget>
            </item>
@@ -710,7 +710,7 @@ to be bound by its terms.</comment>
               <bool>true</bool>
              </property>
              <property name="fieldName">
-              <string>wage_period</string>
+              <string notr="true">wage_period</string>
              </property>
             </widget>
            </item>
@@ -727,7 +727,7 @@ to be bound by its terms.</comment>
            <item row="2" column="1">
             <widget class="CurrCluster" name="_externalRate">
              <property name="fieldNameValue">
-              <string>wage</string>
+              <string notr="true">wage</string>
              </property>
              <property name="currencyEditable" stdset="0">
               <bool>false</bool>
@@ -736,7 +736,7 @@ to be bound by its terms.</comment>
               <bool>false</bool>
              </property>
              <property name="fieldNameCurr">
-              <string>wage_currency</string>
+              <string notr="true">wage_currency</string>
              </property>
             </widget>
            </item>
@@ -756,7 +756,7 @@ to be bound by its terms.</comment>
               <bool>true</bool>
              </property>
              <property name="fieldName">
-              <string>billing_period</string>
+              <string notr="true">billing_period</string>
              </property>
             </widget>
            </item>
@@ -798,7 +798,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="XTextEdit" name="_notes">
            <property name="fieldName">
-            <string>notes</string>
+            <string notr="true">notes</string>
            </property>
           </widget>
          </item>
