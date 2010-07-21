@@ -15,26 +15,23 @@
 #include <QMessageBox>
 #include <QSqlError>
 
-#include <openreports.h>
-#include <parameter.h>
-#include <metasql.h>
-
 #include "adjustmentTrans.h"
 #include "transferTrans.h"
 #include "scrapTrans.h"
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
 #include "countTag.h"
-#include "mqlutil.h"
 
-dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspDetailedInventoryHistoryByLocation", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Detailed Inventory History by Location"));
+  setListLabel(tr("Inventory History"));
+  setReportName("DetailedInventoryHistoryByLocation");
+  setMetaSQLOptions("detailedInventoryHistory", "detail");
+  setUseAltId(true);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_location, SIGNAL(newID(int)), this, SLOT(sPopulateLocationInfo(int)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sPopulateLocations()));
 
@@ -45,20 +42,20 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   
   if (_metrics->value("Application") != "PostBooks")
-    _transType->append(cTransTransfers, tr("Transfers")              );
+    _transType->append(cTransTransfers, tr("Transfers")            );
   
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentIndex(0);
 
-  _invhist->addColumn(tr("Date"), (_dateColumn + 30), Qt::AlignRight, true, "invhist_transdate");
-  _invhist->addColumn(tr("Type"),       _transColumn, Qt::AlignCenter,true, "invhist_transtype");
-  _invhist->addColumn(tr("Order #"),    _orderColumn, Qt::AlignLeft,  true, "ordernumber");
-  _invhist->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
-  _invhist->addColumn(tr("Lot/Serial #"), -1,         Qt::AlignLeft,  true, "lotserial");
-  _invhist->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
-  _invhist->addColumn(tr("Trans-Qty"),    _qtyColumn, Qt::AlignRight, true, "transqty");
-  _invhist->addColumn(tr("Qty. Before"),  _qtyColumn, Qt::AlignRight, true, "qohbefore");
-  _invhist->addColumn(tr("Qty. After"),   _qtyColumn, Qt::AlignRight, true, "qohafter");
+  list()->addColumn(tr("Date"), (_dateColumn + 30), Qt::AlignRight, true, "invhist_transdate");
+  list()->addColumn(tr("Type"),       _transColumn, Qt::AlignCenter,true, "invhist_transtype");
+  list()->addColumn(tr("Order #"),    _orderColumn, Qt::AlignLeft,  true, "ordernumber");
+  list()->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Lot/Serial #"), -1,         Qt::AlignLeft,  true, "lotserial");
+  list()->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
+  list()->addColumn(tr("Trans-Qty"),    _qtyColumn, Qt::AlignRight, true, "transqty");
+  list()->addColumn(tr("Qty. Before"),  _qtyColumn, Qt::AlignRight, true, "qohbefore");
+  list()->addColumn(tr("Qty. After"),   _qtyColumn, Qt::AlignRight, true, "qohafter");
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
@@ -66,13 +63,9 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
   sPopulateLocations();
 }
 
-dspDetailedInventoryHistoryByLocation::~dspDetailedInventoryHistoryByLocation()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspDetailedInventoryHistoryByLocation::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -88,65 +81,44 @@ void dspDetailedInventoryHistoryByLocation::sPopulateLocations()
                          "ORDER BY locationname;" );
   else
   {
-    q.prepare( "SELECT location_id, "
+    XSqlQuery qq;
+    qq.prepare( "SELECT location_id, "
                "       CASE WHEN (LENGTH(location_descrip) > 0) THEN (formatLocationName(location_id) || '-' || location_descrip)"
                "            ELSE formatLocationName(location_id)"
                "       END AS locationname "
                "FROM location "
                "WHERE (location_warehous_id=:warehous_id) "
                "ORDER BY locationname;" );
-    _warehouse->bindValue(q);
-    q.exec();
-    _location->populate(q);
+    _warehouse->bindValue(qq);
+    qq.exec();
+    _location->populate(qq);
   }
 }
 
 void dspDetailedInventoryHistoryByLocation::sPopulateLocationInfo(int pLocationid)
 {
-  q.prepare( "SELECT formatBoolYN(location_netable) AS netable,"
+  XSqlQuery qq;
+  qq.prepare( "SELECT formatBoolYN(location_netable) AS netable,"
              "       formatBoolYN(location_restrict) AS restricted "
              "FROM location, warehous "
              "WHERE ( (location_warehous_id=warehous_id)"
              " AND (location_id=:location_id) );" );
-  q.bindValue(":location_id", pLocationid);
-  q.exec();
-  if (q.first())
+  qq.bindValue(":location_id", pLocationid);
+  qq.exec();
+  if (qq.first())
   {
-    _netable->setText(q.value("netable").toString());
-    _restricted->setText(q.value("restricted").toString());
+    _netable->setText(qq.value("netable").toString());
+    _restricted->setText(qq.value("restricted").toString());
   }
-}
-
-void dspDetailedInventoryHistoryByLocation::sPrint()
-{
-  if (!_dates->allValid())
-  {
-    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
-                          tr("You must enter a valid Start Date and End Date for this report.") );
-    _dates->setFocus();
-    return;
-  }
-
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-  params.append("location_id", _location->id());
-  params.append("transType", _transType->id());
-
-  orReport report("DetailedInventoryHistoryByLocation", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
 
 void dspDetailedInventoryHistoryByLocation::sViewTransInfo()
 {
-  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(1));
+  QString transType(((XTreeWidgetItem *)list()->currentItem())->text(1));
 
   ParameterList params;
   params.append("mode", "view");
-  params.append("invhist_id", _invhist->id());
+  params.append("invhist_id", list()->id());
 
   if (transType == "AD")
   {
@@ -186,9 +158,9 @@ void dspDetailedInventoryHistoryByLocation::sViewTransInfo()
   }
 }
 
-void dspDetailedInventoryHistoryByLocation::sPopulateMenu(QMenu *menuThis)
+void dspDetailedInventoryHistoryByLocation::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
 {
-  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(1));
+  QString transType(((XTreeWidgetItem *)list()->currentItem())->text(1));
 
   if ( (transType == "AD") ||
        (transType == "TW") ||
@@ -199,17 +171,6 @@ void dspDetailedInventoryHistoryByLocation::sPopulateMenu(QMenu *menuThis)
     menuThis->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
 }
 
-void dspDetailedInventoryHistoryByLocation::sFillList()
-{
-  ParameterList params;
-
-  if (! setParams(params))
-    return;
-
-  MetaSQLQuery mql = mqlLoad("detailedInventoryHistory", "detail");
-  q = mql.toQuery(params);
-  _invhist->populate(q, true);
-}
 
 bool dspDetailedInventoryHistoryByLocation::setParams(ParameterList &params)
 {

@@ -11,27 +11,24 @@
 #ifndef DSPDETAILEDINVENTORYHISTORYBYLOTSERIAL_H
 #define DSPDETAILEDINVENTORYHISTORYBYLOTSERIAL_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspDetailedInventoryHistoryByLotSerial.h"
 
-class dspDetailedInventoryHistoryByLotSerial : public XWidget, public Ui::dspDetailedInventoryHistoryByLotSerial
+class dspDetailedInventoryHistoryByLotSerial : public display, public Ui::dspDetailedInventoryHistoryByLotSerial
 {
     Q_OBJECT
 
 public:
     dspDetailedInventoryHistoryByLotSerial(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspDetailedInventoryHistoryByLotSerial();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
     virtual void sViewTransInfo();
-    virtual void sPopulateMenu( QMenu * menuThis );
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
     virtual void sFillList();
-	virtual void sSelect();
+    virtual void sSelect();
 
 protected slots:
     virtual void languageChange();

@@ -228,8 +228,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspCustomersByCharacteristic.ui       \
           dspCustomersByCustomerType.ui         \
           dspDepositsRegister.ui                \
-          dspDetailedInventoryHistoryByLocation.ui      \
-          dspDetailedInventoryHistoryByLotSerial.ui     \
           dspEarnedCommissions.ui                       \
           dspExpediteExceptionsByPlannerCode.ui         \
           dspFinancialReport.ui                         \
@@ -903,8 +901,6 @@ HEADERS = ../common/format.h                    \
           dspCustomersByCharacteristic.h        \
           dspCustomersByCustomerType.h          \
           dspDepositsRegister.h                 \
-          dspDetailedInventoryHistoryByLocation.h       \
-          dspDetailedInventoryHistoryByLotSerial.h      \
           dspEarnedCommissions.h                        \
           dspExpediteExceptionsByPlannerCode.h          \
           dspFinancialReport.h                          \
@@ -1614,8 +1610,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspCustomersByCharacteristic.cpp      \
           dspCustomersByCustomerType.cpp        \
           dspDepositsRegister.cpp               \
-          dspDetailedInventoryHistoryByLocation.cpp     \
-          dspDetailedInventoryHistoryByLotSerial.cpp    \
           dspEarnedCommissions.cpp                      \
           dspExpediteExceptionsByPlannerCode.cpp        \
           dspFinancialReport.cpp                        \

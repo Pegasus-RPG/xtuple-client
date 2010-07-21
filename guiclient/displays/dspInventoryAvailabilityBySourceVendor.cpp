@@ -26,7 +26,7 @@
 #include "purchaseOrder.h"
 #include "purchaseRequest.h"
 
-dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(QWidget* parent, const char* name, Qt::WFlags fl)
+dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspInventoryAvailabilityBySourceVendor", fl)
 {
   setupUi(optionsWidget());

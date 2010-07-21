@@ -11,27 +11,24 @@
 #ifndef DSPDETAILEDINVENTORYHISTORYBYLOCATION_H
 #define DSPDETAILEDINVENTORYHISTORYBYLOCATION_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspDetailedInventoryHistoryByLocation.h"
 
-class dspDetailedInventoryHistoryByLocation : public XWidget, public Ui::dspDetailedInventoryHistoryByLocation
+class dspDetailedInventoryHistoryByLocation : public display, public Ui::dspDetailedInventoryHistoryByLocation
 {
     Q_OBJECT
 
 public:
     dspDetailedInventoryHistoryByLocation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspDetailedInventoryHistoryByLocation();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPopulateLocations();
     virtual void sPopulateLocationInfo( int pLocationid );
-    virtual void sPrint();
     virtual void sViewTransInfo();
-    virtual void sPopulateMenu( QMenu * menuThis );
-    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
 
 protected slots:
     virtual void languageChange();

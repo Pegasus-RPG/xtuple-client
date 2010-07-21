@@ -5,6 +5,8 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspCapacityUOMsByParameter.ui \
            displays/dspCostedBOMBase.ui \
            displays/dspCostedSummarizedBOM.ui \
+           displays/dspDetailedInventoryHistoryByLocation.ui \
+           displays/dspDetailedInventoryHistoryByLotSerial.ui \
            displays/dspExpiredInventoryByClassCode.ui \
            displays/dspIndentedWhereUsed.ui \
            displays/dspInventoryAvailabilityByCustomerType.ui \
@@ -41,6 +43,8 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspCostedIndentedBOM.h \
            displays/dspCostedSingleLevelBOM.h \
            displays/dspCostedSummarizedBOM.h \
+           displays/dspDetailedInventoryHistoryByLocation.h \
+           displays/dspDetailedInventoryHistoryByLotSerial.h \
            displays/dspExpiredInventoryByClassCode.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
@@ -90,6 +94,8 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspCostedIndentedBOM.cpp \
            displays/dspCostedSingleLevelBOM.cpp \
            displays/dspCostedSummarizedBOM.cpp \
+           displays/dspDetailedInventoryHistoryByLocation.cpp \
+           displays/dspDetailedInventoryHistoryByLotSerial.cpp \
            displays/dspExpiredInventoryByClassCode.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \

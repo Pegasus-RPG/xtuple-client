@@ -22,7 +22,7 @@
 #include "dspInventoryLocator.h"
 #include "guiclient.h"
 
-dspItemSitesByItem::dspItemSitesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
+dspItemSitesByItem::dspItemSitesByItem(QWidget* parent, const char*, Qt::WFlags fl)
     : display(parent, "dspItemSitesByItem", fl)
 {
   setupUi(optionsWidget());
