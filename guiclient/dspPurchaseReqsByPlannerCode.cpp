@@ -10,6 +10,7 @@
 
 #include "dspPurchaseReqsByPlannerCode.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -94,21 +95,18 @@ void dspPurchaseReqsByPlannerCode::sPrint()
 
 void dspPurchaseReqsByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
-  if (!_privileges->check("ViewInventoryAvailability"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryAvailability"));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Release P/R..."), this, SLOT(sRelease()), 0);
-  if (!_privileges->check("MaintainPurchaseOrders"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Release P/R..."), this, SLOT(sRelease()));
+  menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
 
-  menuItem = pMenu->insertItem(tr("Delete P/R..."), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainPurchaseRequests"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Delete P/R..."), this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("MaintainPurchaseRequests"));
 }
 
 void dspPurchaseReqsByPlannerCode::sDspRunningAvailability()

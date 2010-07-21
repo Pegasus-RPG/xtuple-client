@@ -25,7 +25,6 @@ public:
     dspQuotesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspQuotesByCustomer();
 
-    virtual void init();
     virtual bool checkSitePrivs(int orderid);
 
 public slots:

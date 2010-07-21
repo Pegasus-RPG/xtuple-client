@@ -11,6 +11,7 @@
 // TODO: add checkboxes to distinguish between sales and transfer orders
 #include "dspShipmentsByDate.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -82,11 +83,10 @@ enum SetResponse dspShipmentsByDate::set(const ParameterList &pParams)
 
 void dspShipmentsByDate::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Print Shipping Form..."), this, SLOT(sPrintShippingForm()), 0);
-  if (!_privileges->check("PrintBillsOfLading"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Print Shipping Form..."), this, SLOT(sPrintShippingForm()));
+  menuItem->setEnabled(_privileges->check("PrintBillsOfLading"));
 }
 
 void dspShipmentsByDate::setParams(ParameterList & params)
@@ -119,7 +119,6 @@ void dspShipmentsByDate::sPrint()
 void dspShipmentsByDate::sPrintShippingForm()
 {
   ParameterList params;
-  params.append("cosmisc_id", _ship->id());
   params.append("shiphead_id", _ship->id());
 
   printShippingForm newdlg(this);

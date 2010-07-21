@@ -10,11 +10,10 @@
 
 #include "dspSummarizedSalesByCustomer.h"
 
-#include <QVariant>
-#include <QWorkspace>
-//#include <QStatusBar>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
 
 #include <openreports.h>
 #include <parameter.h>
@@ -23,19 +22,11 @@
 #include "dspSalesHistoryByCustomer.h"
 #include "mqlutil.h"
 
-/*
- *  Constructs a dspSummarizedSalesByCustomer as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspSummarizedSalesByCustomer::dspSummarizedSalesByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -55,18 +46,11 @@ dspSummarizedSalesByCustomer::dspSummarizedSalesByCustomer(QWidget* parent, cons
     _cohist->hideColumn(5);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspSummarizedSalesByCustomer::~dspSummarizedSalesByCustomer()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspSummarizedSalesByCustomer::languageChange()
 {
   retranslateUi(this);
@@ -74,7 +58,7 @@ void dspSummarizedSalesByCustomer::languageChange()
 
 void dspSummarizedSalesByCustomer::sPopulateMenu(QMenu *menuThis)
 {
-  menuThis->insertItem(tr("View Sales Detail..."), this, SLOT(sViewDetail()), 0);
+  menuThis->addAction(tr("View Sales Detail..."), this, SLOT(sViewDetail()));
 }
 
 void dspSummarizedSalesByCustomer::sViewDetail()

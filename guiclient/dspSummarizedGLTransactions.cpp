@@ -10,11 +10,10 @@
 
 #include "dspSummarizedGLTransactions.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include <QVariant>
 
 #include <openreports.h>
 #include <parameter.h>
@@ -27,19 +26,11 @@
 #include "purchaseOrder.h"
 #include "mqlutil.h"
 
-/*
- *  Constructs a dspSummarizedGLTransactions as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -58,9 +49,6 @@ dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const 
   _gltrans->addColumn( tr("Username"),         _userColumn,       Qt::AlignLeft,   true,  "gltrans_username" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspSummarizedGLTransactions::~dspSummarizedGLTransactions()
 {
   // no need to delete child widgets, Qt does it all for us
@@ -80,18 +68,18 @@ void dspSummarizedGLTransactions::sPopulateMenu(QMenu * menuThis)
   if(_gltrans->altId() == -1)
     return;
 
-  menuThis->insertItem(tr("View..."), this, SLOT(sViewTrans()), 0);
+  menuThis->addAction(tr("View..."), this, SLOT(sViewTrans()));
 
   QTreeWidgetItem * item = _gltrans->currentItem();
   if(0 == item)
     return;
 
   if(item->text(4) == "VO")
-    menuThis->insertItem(tr("View Voucher..."), this, SLOT(sViewDocument()));
+    menuThis->addAction(tr("View Voucher..."), this, SLOT(sViewDocument()));
   else if(item->text(4) == "IN")
-    menuThis->insertItem(tr("View Invoice..."), this, SLOT(sViewDocument()));
+    menuThis->addAction(tr("View Invoice..."), this, SLOT(sViewDocument()));
   else if(item->text(4) == "PO")
-    menuThis->insertItem(tr("View Purchase Order..."), this, SLOT(sViewDocument()));
+    menuThis->addAction(tr("View Purchase Order..."), this, SLOT(sViewDocument()));
 }
 
 

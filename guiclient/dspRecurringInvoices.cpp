@@ -10,6 +10,7 @@
 
 #include "dspRecurringInvoices.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -94,15 +95,14 @@ void dspRecurringInvoices::sView()
 
 void dspRecurringInvoices::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainMiscInvoices"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  if ((!_privileges->check("MaintainMiscInvoices")) && (!_privileges->check("ViewMiscInvoices")))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(_privileges->check("MaintainMiscInvoices") ||
+                       _privileges->check("ViewMiscInvoices"));
 }
 
 void dspRecurringInvoices::sFillList()

@@ -13,58 +13,25 @@
 #include <metasql.h>
 #include "mqlutil.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
+#include <QAction>
+#include <QMenu>
 #include <QMessageBox>
+#include <QVariant>
+
 #include "salesOrder.h"
 
-/*
- *  Constructs a dspQuotesByCustomer as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
-    connect(_selectedPO, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_selectedPO, SIGNAL(toggled(bool)), _poNumber, SLOT(setEnabled(bool)));
-    connect(_poNumber, SIGNAL(activated(int)), this, SLOT(sFillList()));
-    connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspQuotesByCustomer::~dspQuotesByCustomer()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspQuotesByCustomer::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspQuotesByCustomer::init()
-{
-//  statusBar()->hide();
+  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
+  connect(_selectedPO, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_selectedPO, SIGNAL(toggled(bool)), _poNumber, SLOT(setEnabled(bool)));
+  connect(_poNumber, SIGNAL(activated(int)), this, SLOT(sFillList()));
+  connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Starting Order Date"));
@@ -79,6 +46,17 @@ void dspQuotesByCustomer::init()
   _cust->setFocus();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
 }
+
+dspQuotesByCustomer::~dspQuotesByCustomer()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+void dspQuotesByCustomer::languageChange()
+{
+    retranslateUi(this);
+}
+
 
 void dspQuotesByCustomer::sPopulatePo()
 {
@@ -102,13 +80,13 @@ void dspQuotesByCustomer::sPopulatePo()
 
 void dspQuotesByCustomer::sPopulateMenu(QMenu *menuThis)
 {
-  menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
-  menuThis->insertItem(tr("View..."), this, SLOT(sViewOrder()), 0);
+  menuThis->addAction(tr("Edit..."), this, SLOT(sEditOrder()));
+  menuThis->addAction(tr("View..."), this, SLOT(sViewOrder()));
   
   if (_privileges->check("ConvertQuotes"))
   {
-    menuThis->insertSeparator();
-    menuThis->insertItem(tr("Convert..."), this, SLOT(sConvert()), 0);
+    menuThis->addSeparator();
+    menuThis->addAction(tr("Convert..."), this, SLOT(sConvert()));
   }
 
 }

@@ -13,55 +13,22 @@
 #include <metasql.h>
 #include "mqlutil.h"
 
-#include <QVariant>
-//#include <QStatusBar>
+#include <QAction>
+#include <QMenu>
 #include <QMessageBox>
-#include <QWorkspace>
+#include <QVariant>
+
 #include "salesOrder.h"
 
-/*
- *  Constructs a dspQuotesByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspQuotesByItem::dspQuotesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspQuotesByItem::~dspQuotesByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspQuotesByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspQuotesByItem::init()
-{
-//  statusBar()->hide();
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Starting Order Date"));
@@ -78,7 +45,17 @@ void dspQuotesByItem::init()
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())); 
 }
 
-enum SetResponse dspQuotesByItem::set(ParameterList &pParams)
+dspQuotesByItem::~dspQuotesByItem()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+void dspQuotesByItem::languageChange()
+{
+    retranslateUi(this);
+}
+
+enum SetResponse dspQuotesByItem::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
@@ -101,8 +78,8 @@ enum SetResponse dspQuotesByItem::set(ParameterList &pParams)
 
 void dspQuotesByItem::sPopulateMenu(QMenu *menuThis)
 {
-  menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
-  menuThis->insertItem(tr("View..."), this, SLOT(sViewOrder()), 0);
+  menuThis->addAction(tr("Edit..."), this, SLOT(sEditOrder()));
+  menuThis->addAction(tr("View..."), this, SLOT(sViewOrder()));
 }
 
 void dspQuotesByItem::sEditOrder()
@@ -135,8 +112,6 @@ void dspQuotesByItem::sViewOrder()
 
 void dspQuotesByItem::sFillList()
 {
-  _so->clear();
-
   if ((_item->isValid()) && (_dates->allValid()))
   {
     MetaSQLQuery mql = mqlLoad("quoteItems", "detail");

@@ -10,6 +10,7 @@
 
 #include "dspSalesOrdersByCustomer.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
@@ -82,16 +83,16 @@ void dspSalesOrdersByCustomer::sPopulatePo()
 void dspSalesOrdersByCustomer::sPopulateMenu(QMenu *menuThis)
 {
   if(_privileges->check("MaintainSalesOrders"))
-    menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
-  menuThis->insertItem(tr("View..."), this, SLOT(sViewOrder()), 0);
-  menuThis->insertSeparator();
-  menuThis->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
-  menuThis->insertItem(tr("Shipments..."), this, SLOT(sDspShipments()), 0);
+    menuThis->addAction(tr("Edit..."), this, SLOT(sEditOrder()));
+  menuThis->addAction(tr("View..."), this, SLOT(sViewOrder()));
+  menuThis->addSeparator();
+  menuThis->addAction(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()));
+  menuThis->addAction(tr("Shipments..."), this, SLOT(sDspShipments()));
 
   if (_privileges->check("MaintainReturns"))
   {
-    menuThis->insertSeparator();
-    menuThis->insertItem(tr("Create Return Authorization..."), this, SLOT(sCreateRA()));
+    menuThis->addSeparator();
+    menuThis->addAction(tr("Create Return Authorization..."), this, SLOT(sCreateRA()));
   }
 }
 

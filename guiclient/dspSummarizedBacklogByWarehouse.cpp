@@ -10,6 +10,7 @@
 
 #include "dspSummarizedBacklogByWarehouse.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -223,27 +224,27 @@ void dspSummarizedBacklogByWarehouse::sPrintPackingList()
 
 void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if (_so->id() != -1)
   {
-    menuItem = pMenu->insertItem(tr("Inventory Availability by Sales Order..."), this, SLOT(sInventoryAvailabilityBySalesOrder()), 0);
+    menuItem = pMenu->addAction(tr("Inventory Availability by Sales Order..."), this, SLOT(sInventoryAvailabilityBySalesOrder()));
     if (!_privileges->check("ViewInventoryAvailability"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
   
-    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+    menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
     if (!_privileges->check("MaintainSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+    menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
     if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
+    menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDelete()));
     if (!_privileges->check("MaintainSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
   }
 
@@ -252,11 +253,11 @@ void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
        _so->currentItem()->text(2) != tr("Credit")))
   {
     if (_so->id() != -1)
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
 
-    menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
+    menuItem = pMenu->addAction(tr("Print Packing List..."), this, SLOT(sPrintPackingList()));
     if (!_privileges->check("PrintPackingLists"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

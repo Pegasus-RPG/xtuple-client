@@ -10,6 +10,7 @@
 
 #include "dspRunningAvailability.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -26,11 +27,6 @@
 #include "transferOrder.h"
 #include "workOrder.h"
 #include "purchaseOrder.h"
-
-#define ORDERTYPE_COL		0
-#define ORDERNUM_COL		1
-#define DUEDATE_COL		3
-#define RUNNINGAVAIL_COL	7
 
 dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -146,48 +142,49 @@ void dspRunningAvailability::sPrint()
 
 void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
+  
+  QString ordertype = pSelected->text(_availability->column("ordertype"));
 
-  if (pSelected->text(ORDERTYPE_COL) == tr("Planned W/O (firmed)") ||
-      pSelected->text(ORDERTYPE_COL) == tr("Planned W/O") ||
-      pSelected->text(ORDERTYPE_COL) == tr("Planned P/O (firmed)") ||
-      pSelected->text(ORDERTYPE_COL) == tr("Planned P/O") )
+  if (ordertype == tr("Planned W/O (firmed)") ||
+      ordertype == tr("Planned W/O") ||
+      ordertype == tr("Planned P/O (firmed)") ||
+      ordertype == tr("Planned P/O") )
   {
-    if (pSelected->text(ORDERTYPE_COL) == tr("Planned W/O (firmed)") ||
-	pSelected->text(ORDERTYPE_COL) == tr("Planned P/O (firmed)") )
-      pMenu->insertItem(tr("Soften Order..."), this, SLOT(sSoftenOrder()), 0);
+    if (ordertype == tr("Planned W/O (firmed)") ||
+	ordertype == tr("Planned P/O (firmed)") )
+      pMenu->addAction(tr("Soften Order..."), this, SLOT(sSoftenOrder()));
     else
-      pMenu->insertItem(tr("Firm Order..."), this, SLOT(sFirmOrder()), 0);
+      pMenu->addAction(tr("Firm Order..."), this, SLOT(sFirmOrder()));
  
-    pMenu->insertItem(tr("Release Order..."), this, SLOT(sReleaseOrder()), 0);
-    pMenu->insertItem(tr("Delete Order..."), this, SLOT(sDeleteOrder()), 0);
+    pMenu->addAction(tr("Release Order..."), this, SLOT(sReleaseOrder()));
+    pMenu->addAction(tr("Delete Order..."), this, SLOT(sDeleteOrder()));
   }
   
-  else if (pSelected->text(ORDERTYPE_COL).contains("W/O") &&
-	  !(pSelected->text(ORDERTYPE_COL) == tr("Planned W/O Req. (firmed)") ||
-	    pSelected->text(ORDERTYPE_COL) == tr("Planned W/O Req.")))
+  else if (ordertype.contains("W/O") &&
+	  !(ordertype == tr("Planned W/O Req. (firmed)") || ordertype == tr("Planned W/O Req.")))
   {
-    pMenu->insertItem(tr("View Work Order Details..."), this, SLOT(sViewWo()), 0);
-    menuItem = pMenu->insertItem(tr("Work Order Schedule..."), this, SLOT(sDspWoScheduleByWorkOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWorkOrders") ||
+    pMenu->addAction(tr("View Work Order Details..."), this, SLOT(sViewWo()));
+    menuItem = pMenu->addAction(tr("Work Order Schedule..."), this, SLOT(sDspWoScheduleByWorkOrder()));
+    menuItem->setEnabled( _privileges->check("MaintainWorkOrders") ||
 				    _privileges->check("ViewWorkOrders"));
   }
-  else if (pSelected->text(ORDERTYPE_COL) == "S/O")
+  else if (ordertype == "S/O")
   {
-    menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewSo()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewSalesOrders"));
+    menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sViewSo()));
+    menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
   }
 
-  else if (pSelected->text(ORDERTYPE_COL) == "T/O")
+  else if (ordertype == "T/O")
   {
-    menuItem = pMenu->insertItem(tr("View Transfer Order..."), this, SLOT(sViewTo()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewTransferOrders"));
+    menuItem = pMenu->addAction(tr("View Transfer Order..."), this, SLOT(sViewTo()));
+    menuItem->setEnabled(_privileges->check("ViewTransferOrders"));
   }
 
-  else if (pSelected->text(ORDERTYPE_COL) == "P/O")
+  else if (ordertype == "P/O")
   {
-    menuItem = pMenu->insertItem(tr("View Purchase Order..."), this, SLOT(sViewPo()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
+    menuItem = pMenu->addAction(tr("View Purchase Order..."), this, SLOT(sViewPo()));
+    menuItem->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
   }
 
 }
@@ -222,8 +219,8 @@ void dspRunningAvailability::sSoftenOrder()
 void dspRunningAvailability::sReleaseOrder()
 {
   // TODO
-  if (_availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned W/O (firmed)") ||
-      _availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned W/O"))
+  if (_availability->currentItem()->text(_availability->column("ordertype")) == tr("Planned W/O (firmed)") ||
+      _availability->currentItem()->text(_availability->column("ordertype")) == tr("Planned W/O"))
   {
     ParameterList params;
     params.append("mode", "release");
@@ -240,8 +237,8 @@ void dspRunningAvailability::sReleaseOrder()
     }
 #endif
   }
-  else if (_availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned P/O (firmed)") ||
-	  _availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned P/O"))
+  else if (_availability->currentItem()->text(_availability->column("ordertype")) == tr("Planned P/O (firmed)") ||
+	  _availability->currentItem()->text(_availability->column("ordertype")) == tr("Planned P/O"))
   {
     ParameterList params;
     params.append("mode", "release");
@@ -382,11 +379,11 @@ void dspRunningAvailability::sHandleResort()
   for (int i = 0; i < _availability->topLevelItemCount(); i++)
   {
     XTreeWidgetItem *item = _availability->topLevelItem(i);
-    if (item->data(RUNNINGAVAIL_COL, Qt::DisplayRole).toDouble() < 0)
-      item->setTextColor(RUNNINGAVAIL_COL, namedColor("error"));
-    else if (item->data(RUNNINGAVAIL_COL, Qt::DisplayRole).toDouble() < _reorderLevel->toDouble())
-      item->setTextColor(RUNNINGAVAIL_COL, namedColor("warning"));
+    if (item->data(_availability->column("runningavail"), Qt::DisplayRole).toDouble() < 0)
+      item->setTextColor(_availability->column("runningavail"), namedColor("error"));
+    else if (item->data(_availability->column("runningavail"), Qt::DisplayRole).toDouble() < _reorderLevel->toDouble())
+      item->setTextColor(_availability->column("runningavail"), namedColor("warning"));
     else
-      item->setTextColor(RUNNINGAVAIL_COL, namedColor(""));
+      item->setTextColor(_availability->column("runningavail"), namedColor(""));
   }
 }

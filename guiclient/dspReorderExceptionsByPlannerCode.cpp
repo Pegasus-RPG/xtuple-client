@@ -10,6 +10,7 @@
 
 #include "dspReorderExceptionsByPlannerCode.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -94,19 +95,17 @@ void dspReorderExceptionsByPlannerCode::sPrint()
 
 void dspReorderExceptionsByPlannerCode::sPopulateMenu( QMenu *pMenu )
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("View Running Availability..."), this, SLOT(sRunningAvailability()), 0);
-  if (!_privileges->check("ViewInventoryAvailability"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("View Running Availability..."), this, SLOT(sRunningAvailability()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryAvailability"));
 
   if (_exception->altId() == 1)
   {
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
 
-    menuItem = pMenu->insertItem(tr("Create Work Order..."), this, SLOT(sCreateWorkOrder()), 0);
-    if (!_privileges->check("MaintainWorkOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Create Work Order..."), this, SLOT(sCreateWorkOrder()));
+    menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
   }
 }
 

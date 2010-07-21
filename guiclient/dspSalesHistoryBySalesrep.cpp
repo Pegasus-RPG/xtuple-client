@@ -10,11 +10,10 @@
 
 #include "dspSalesHistoryBySalesrep.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QMessageBox>
-#include <QWorkspace>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -22,27 +21,11 @@
 #include <openreports.h>
 #include "salesHistoryInformation.h"
 
-#define UNITPRICE_COL	7
-#define EXTPRICE_COL	8
-#define CURRENCY_COL	9
-#define BUNITPRICE_COL	10
-#define BEXTPRICE_COL	11
-#define UNITCOST_COL	( 12 - (_privileges->check("ViewCustomerPrices") ? 0 : 5))
-#define EXTCOST_COL	(13 - (_privileges->check("ViewCustomerPrices") ? 0 : 5))
-
-/*
- *  Constructs a dspSalesHistoryBySalesrep as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspSalesHistoryBySalesrep::dspSalesHistoryBySalesrep(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -82,18 +65,11 @@ dspSalesHistoryBySalesrep::dspSalesHistoryBySalesrep(QWidget* parent, const char
   _salesrep->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspSalesHistoryBySalesrep::~dspSalesHistoryBySalesrep()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspSalesHistoryBySalesrep::languageChange()
 {
   retranslateUi(this);
@@ -144,42 +120,42 @@ void dspSalesHistoryBySalesrep::sHandleParams()
 {
   if (_showPrices->isChecked())
   {
-    _sohist->showColumn(UNITPRICE_COL);
-    _sohist->showColumn(EXTPRICE_COL);
-    _sohist->showColumn(CURRENCY_COL);
-    _sohist->showColumn(BUNITPRICE_COL);
-    _sohist->showColumn(BEXTPRICE_COL);
+    _sohist->showColumn(_sohist->column("cohist_unitprice"));
+    _sohist->showColumn(_sohist->column("extprice"));
+    _sohist->showColumn(_sohist->column("currAbbr"));
+    _sohist->showColumn(_sohist->column("baseunitprice"));
+    _sohist->showColumn(_sohist->column("baseextprice"));
   }
   else
   {
-    _sohist->hideColumn(UNITPRICE_COL);
-    _sohist->hideColumn(EXTPRICE_COL);
-    _sohist->hideColumn(CURRENCY_COL);
-    _sohist->hideColumn(BUNITPRICE_COL);
-    _sohist->hideColumn(BEXTPRICE_COL);
+    _sohist->hideColumn(_sohist->column("cohist_unitprice"));
+    _sohist->hideColumn(_sohist->column("extprice"));
+    _sohist->hideColumn(_sohist->column("currAbbr"));
+    _sohist->hideColumn(_sohist->column("baseunitprice"));
+    _sohist->hideColumn(_sohist->column("baseextprice"));
   }
 
   if (_showCosts->isChecked())
   {
-    _sohist->showColumn(UNITCOST_COL);
-    _sohist->showColumn(EXTCOST_COL);
+    _sohist->showColumn(_sohist->column("cohist_unitprice"));
+    _sohist->showColumn(_sohist->column("extcost"));
   }
   else
   {
-    _sohist->hideColumn(UNITCOST_COL);
-    _sohist->hideColumn(EXTCOST_COL);
+    _sohist->hideColumn(_sohist->column("cohist_unitprice"));
+    _sohist->hideColumn(_sohist->column("extcost"));
   }
 }
 
 void dspSalesHistoryBySalesrep::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   if (!_privileges->check("EditSalesHistory"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  pMenu->addAction(tr("View..."), this, SLOT(sView()));
 }
 
 void dspSalesHistoryBySalesrep::sEdit()

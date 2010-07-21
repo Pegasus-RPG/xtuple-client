@@ -25,11 +25,10 @@ public:
     dspQuotesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspQuotesByItem();
 
-    virtual void init();
     virtual bool checkSitePrivs(int orderid);
 
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set(const ParameterList & pParams);
     virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sEditOrder();
     virtual void sViewOrder();

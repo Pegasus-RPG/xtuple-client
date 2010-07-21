@@ -10,12 +10,11 @@
 
 #include "dspShipmentsByShipment.h"
 
+#include <QAction>
 #include <QMenu>
-#include <Q3Process>
 #include <QMessageBox>
 #include <QRegExp>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -29,8 +28,6 @@ dspShipmentsByShipment::dspShipmentsByShipment(QWidget* parent, const char* name
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_shipment, SIGNAL(newId(int)), this, SLOT(sFillList(int)));
@@ -79,13 +76,12 @@ enum SetResponse dspShipmentsByShipment::set(const ParameterList &pParams)
 
 void dspShipmentsByShipment::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Print Shipping Form..."), this, SLOT(sPrintShippingForm()), 0);
-  if (!_privileges->check("PrintBillsOfLading"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Print Shipping Form..."), this, SLOT(sPrintShippingForm()));
+  menuItem->setEnabled(_privileges->check("PrintBillsOfLading"));
 
-  menuItem = pMenu->insertItem(tr("Query Shipment Status..."), this, SLOT(sFillURL()), 0);
+  menuItem = pMenu->addAction(tr("Query Shipment Status..."), this, SLOT(sFillURL()));
 }
 
 void dspShipmentsByShipment::sPrint()

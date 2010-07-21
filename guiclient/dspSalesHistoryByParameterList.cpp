@@ -10,10 +10,11 @@
 
 #include "dspSalesHistoryByParameterList.h"
 
-#include <QVariant>
-#include <QSqlError>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
 #include <metasql.h>
 #include <openreports.h>
@@ -200,13 +201,13 @@ void dspSalesHistoryByParameterList::sHandleParams()
 
 void dspSalesHistoryByParameterList::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   if (!_privileges->check("EditSalesHistory"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  pMenu->addAction(tr("View..."), this, SLOT(sView()));
 }
 
 void dspSalesHistoryByParameterList::sEdit()

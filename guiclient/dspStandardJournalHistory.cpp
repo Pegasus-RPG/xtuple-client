@@ -10,11 +10,11 @@
 
 #include "dspStandardJournalHistory.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 #include <QSqlError>
+#include <QVariant>
 
 #include <openreports.h>
 #include <parameter.h>
@@ -25,19 +25,11 @@
 #include "reverseGLSeries.h"
 #include "mqlutil.h"
 
-/*
- *  Constructs a dspStandardJournalHistory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspStandardJournalHistory::dspStandardJournalHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -53,18 +45,11 @@ dspStandardJournalHistory::dspStandardJournalHistory(QWidget* parent, const char
   _gltrans->addColumn(tr("Credit"),       _bigMoneyColumn, Qt::AlignRight,  true,  "credit"  );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspStandardJournalHistory::~dspStandardJournalHistory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspStandardJournalHistory::languageChange()
 {
   retranslateUi(this);
@@ -82,18 +67,15 @@ void dspStandardJournalHistory::sPopulateMenu(QMenu * pMenu)
   if (!qry.first())
     deletable = true;
 
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Delete Journal..."), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("DeletePostedJournals") ||
-      !deletable)
-    pMenu->setItemEnabled(menuItem, false);
+  menuItem = pMenu->addAction(tr("Delete Journal..."), this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("DeletePostedJournals") && deletable);
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Reverse Journal..."), this, SLOT(sReverse()), 0);
-  if (!_privileges->check("PostStandardJournals"))
-    pMenu->setItemEnabled(menuItem, false);
+  menuItem = pMenu->addAction(tr("Reverse Journal..."), this, SLOT(sReverse()));
+  menuItem->setEnabled(_privileges->check("PostStandardJournals"));
 }
 
 void dspStandardJournalHistory::sPrint()
