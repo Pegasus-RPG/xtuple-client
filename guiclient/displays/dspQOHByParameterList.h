@@ -27,7 +27,7 @@ public:
     virtual SetResponse set( const ParameterList & pParams );
 
 public slots:
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int);
     virtual void sViewDetail();
     virtual void sTransfer();
     virtual void sAdjust();

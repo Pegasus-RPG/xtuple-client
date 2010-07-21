@@ -133,7 +133,7 @@ SetResponse dspQOHByParameterList::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspQOHByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspQOHByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
   {

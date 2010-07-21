@@ -72,7 +72,7 @@ void dspExpiredInventoryByClassCode::languageChange()
   retranslateUi(this);
 }
 
-void dspExpiredInventoryByClassCode::sPopulateMenu(QMenu *, QTreeWidgetItem *)
+void dspExpiredInventoryByClassCode::sPopulateMenu(QMenu *, QTreeWidgetItem *, int)
 {
 #if 0
   int menuItem;

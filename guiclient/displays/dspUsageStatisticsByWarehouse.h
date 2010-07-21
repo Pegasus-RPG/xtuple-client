@@ -11,32 +11,14 @@
 #ifndef DSPUSAGESTATISTICSBYWAREHOUSE_H
 #define DSPUSAGESTATISTICSBYWAREHOUSE_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "dspUsageStatisticsBase.h"
 
-#include "ui_dspUsageStatisticsByWarehouse.h"
-
-class dspUsageStatisticsByWarehouse : public XWidget, public Ui::dspUsageStatisticsByWarehouse
+class dspUsageStatisticsByWarehouse : public dspUsageStatisticsBase
 {
     Q_OBJECT
 
 public:
     dspUsageStatisticsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspUsageStatisticsByWarehouse();
-
-    virtual void setParams(ParameterList & params);
-
-public slots:
-    virtual void sPrint();
-    virtual void sViewTransactions();
-    virtual void sPopulateMenu( QMenu * menuThis, QTreeWidgetItem *, int pColumn );
-    virtual void sFillList();
-
-protected slots:
-    virtual void languageChange();
-
-private:
-    int _column;
 
 };
 

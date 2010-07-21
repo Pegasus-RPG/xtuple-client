@@ -90,7 +90,7 @@ bool dspSlowMovingInventoryByClassCode::setParams(ParameterList & params)
 }
 
 
-void dspSlowMovingInventoryByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspSlowMovingInventoryByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
 

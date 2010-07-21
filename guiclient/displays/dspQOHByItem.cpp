@@ -68,7 +68,7 @@ void dspQOHByItem::languageChange()
   retranslateUi(this);
 }
 
-void dspQOHByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspQOHByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
   {

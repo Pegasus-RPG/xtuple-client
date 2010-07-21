@@ -103,7 +103,7 @@ bool dspBOMBase::setParams(ParameterList &params)
   return true;
 }
 
-void dspBOMBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspBOMBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

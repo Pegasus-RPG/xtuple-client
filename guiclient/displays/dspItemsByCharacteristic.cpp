@@ -77,7 +77,7 @@ bool dspItemsByCharacteristic::setParams(ParameterList &params)
   return true;
 }
 
-void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
+void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int)
 {
   XTreeWidgetItem * xselected = static_cast<XTreeWidgetItem*>(selected);
   QAction *menuItem;

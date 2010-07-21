@@ -29,7 +29,7 @@ public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sRelocateInventory();
     virtual void sReassignLotSerial();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int);
 
 protected slots:
     virtual void languageChange();

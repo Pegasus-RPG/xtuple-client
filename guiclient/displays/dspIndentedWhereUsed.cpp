@@ -109,7 +109,7 @@ void dspIndentedWhereUsed::sViewInventoryHistory()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem*)
+void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 

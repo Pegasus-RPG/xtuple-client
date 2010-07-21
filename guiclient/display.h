@@ -40,7 +40,7 @@ public:
 public slots:
     virtual void sPrint();
     virtual void sFillList();
-    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *);
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 
 protected:
     QWidget * optionsWidget();

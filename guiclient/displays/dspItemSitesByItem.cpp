@@ -54,7 +54,7 @@ void dspItemSitesByItem::languageChange()
   retranslateUi(this);
 }
 
-void dspItemSitesByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *pSelected)
+void dspItemSitesByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
 

@@ -69,7 +69,7 @@ enum SetResponse dspItemCostSummary::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspItemCostSummary::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspItemCostSummary::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   if (pSelected->text(1) == "Yes")
   {

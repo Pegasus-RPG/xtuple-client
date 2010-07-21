@@ -123,7 +123,7 @@ void dspQOHByLocation::sRelocate()
     sFillList();
 }
 
-void dspQOHByLocation::sPopulateMenu(QMenu *menu, QTreeWidgetItem*)
+void dspQOHByLocation::sPopulateMenu(QMenu *menu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 

@@ -31,7 +31,7 @@ public slots:
     virtual void sEdit();
     virtual void sInventoryAvailability();
     virtual void sIssueCountTag();
-    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *);
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 
 protected slots:
     virtual void languageChange();

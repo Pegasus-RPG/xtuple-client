@@ -142,7 +142,7 @@ void dspSubstituteAvailabilityByItem::sViewOrders()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspSubstituteAvailabilityByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem*)
+void dspSubstituteAvailabilityByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem*, int)
 {
   menu->addAction(tr("View Allocations..."), this, SLOT(sViewAllocations()));
   menu->addAction(tr("View Orders..."), this, SLOT(sViewOrders()));

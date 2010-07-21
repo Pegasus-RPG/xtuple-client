@@ -209,7 +209,7 @@ void dspItemSitesByParameterList::sIssueCountTag()
   newdlg.exec();
 }
 
-void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

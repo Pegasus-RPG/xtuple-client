@@ -25,7 +25,7 @@ public:
     bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int);
     virtual void sTransfer();
     virtual void sAdjust();
     virtual void sReset();

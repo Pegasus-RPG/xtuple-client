@@ -60,7 +60,7 @@ void dspPendingBOMChanges::languageChange()
   retranslateUi(this);
 }
 
-void dspPendingBOMChanges::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspPendingBOMChanges::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

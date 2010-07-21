@@ -37,7 +37,7 @@ bool dspCapacityUOMsByParameter::setParams(ParameterList &params)
   return true;
 }
 
-void dspCapacityUOMsByParameter::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspCapacityUOMsByParameter::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

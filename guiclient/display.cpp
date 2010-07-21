@@ -49,7 +49,7 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
 
   connect(_data->_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_data->_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_data->_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_data->_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_data->_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled()));
 }
 
@@ -148,7 +148,7 @@ void display::sFillList()
   }
 }
 
-void display::sPopulateMenu(QMenu *, QTreeWidgetItem *)
+void display::sPopulateMenu(QMenu *, QTreeWidgetItem *, int)
 {
 }
 

@@ -8,27 +8,26 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPUSAGESTATISTICSBYITEMGROUP_H
-#define DSPUSAGESTATISTICSBYITEMGROUP_H
+#ifndef __DSPUSAGESTATISTICSBASE_H__
+#define __DSPUSAGESTATISTICSBASE_H__
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspUsageStatisticsByItemGroup.h"
+#include "ui_dspUsageStatisticsBase.h"
 
-class dspUsageStatisticsByItemGroup : public XWidget, public Ui::dspUsageStatisticsByItemGroup
+class dspUsageStatisticsBase : public display, public Ui::dspUsageStatisticsBase
 {
     Q_OBJECT
 
 public:
-    dspUsageStatisticsByItemGroup(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspUsageStatisticsByItemGroup();
+    dspUsageStatisticsBase(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
-    virtual void setParams(ParameterList & params);
+    virtual bool setParams(ParameterList & params);
     virtual void viewTransactions(QString);
 
 public slots:
-    virtual void sPrint();
+    virtual enum SetResponse set(const ParameterList &);
     virtual void sViewAll();
     virtual void sViewReceipt();
     virtual void sViewIssue();
@@ -36,12 +35,15 @@ public slots:
     virtual void sViewScrap();
     virtual void sViewAdjustment();
     virtual void sViewTransfer();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem *, int pColumn );
-    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int pColumn );
+    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();
 
+private:
+    bool _printing;
+
 };
 
-#endif // DSPUSAGESTATISTICSBYITEMGROUP_H
+#endif // __DSPUSAGESTATISTICSBASE_H__

@@ -29,7 +29,7 @@ public:
 public slots:
     virtual void sEdit();
     virtual void sView();
-    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *);
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
     virtual enum SetResponse set(const ParameterList & pParams);
 
 protected slots:

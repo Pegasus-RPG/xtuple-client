@@ -112,7 +112,7 @@ void dspInventoryLocator::sReassignLotSerial()
     sFillList();
 }
 
-void dspInventoryLocator::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspInventoryLocator::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
 

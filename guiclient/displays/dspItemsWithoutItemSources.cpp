@@ -32,7 +32,7 @@ dspItemsWithoutItemSources::dspItemsWithoutItemSources(QWidget* parent, const ch
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
-void dspItemsWithoutItemSources::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspItemsWithoutItemSources::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

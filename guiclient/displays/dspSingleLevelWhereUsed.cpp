@@ -83,7 +83,7 @@ enum SetResponse dspSingleLevelWhereUsed::set(const ParameterList &pParams)
 }
 
 
-void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem *)
+void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

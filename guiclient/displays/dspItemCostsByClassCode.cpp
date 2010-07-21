@@ -90,7 +90,7 @@ bool dspItemCostsByClassCode::setParams(ParameterList &params)
   return true;
 }
 
-void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

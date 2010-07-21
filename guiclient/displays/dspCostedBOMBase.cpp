@@ -114,7 +114,7 @@ bool dspCostedBOMBase::setParams(ParameterList &params)
   return true;
 }
 
-void dspCostedBOMBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspCostedBOMBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
     pMenu->addAction(tr("Maintain Item Costs..."), this, SLOT(sMaintainItemCosts()));

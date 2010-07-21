@@ -327,10 +327,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspUndefinedManufacturedItems.ui      \
           dspUninvoicedReceivings.ui            \
           dspUnusedPurchasedItems.ui            \
-          dspUsageStatisticsByClassCode.ui      \
-          dspUsageStatisticsByItem.ui           \
-          dspUsageStatisticsByItemGroup.ui      \
-          dspUsageStatisticsByWarehouse.ui      \
           dspVendorAPHistory.ui                 \
           dspVoucherRegister.ui                 \
           dspWoHistoryByClassCode.ui            \
@@ -1006,10 +1002,6 @@ HEADERS = ../common/format.h                    \
           dspUndefinedManufacturedItems.h       \
           dspUninvoicedReceivings.h             \
           dspUnusedPurchasedItems.h             \
-          dspUsageStatisticsByClassCode.h       \
-          dspUsageStatisticsByItem.h            \
-          dspUsageStatisticsByItemGroup.h       \
-          dspUsageStatisticsByWarehouse.h       \
           dspVendorAPHistory.h                  \
           dspVoucherRegister.h                  \
           dspWoHistoryByClassCode.h             \
@@ -1721,10 +1713,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspUndefinedManufacturedItems.cpp     \
           dspUninvoicedReceivings.cpp           \
           dspUnusedPurchasedItems.cpp           \
-          dspUsageStatisticsByClassCode.cpp     \
-          dspUsageStatisticsByItem.cpp          \
-          dspUsageStatisticsByItemGroup.cpp     \
-          dspUsageStatisticsByWarehouse.cpp     \
           dspVendorAPHistory.cpp                \
           dspVoucherRegister.cpp                \
           dspWoHistoryByClassCode.cpp           \

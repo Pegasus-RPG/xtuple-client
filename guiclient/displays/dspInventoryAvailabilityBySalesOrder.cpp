@@ -133,7 +133,7 @@ bool dspInventoryAvailabilityBySalesOrder::setParams(ParameterList &params)
   return true;
 }
 
-void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
+void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected, int)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
   QAction *menuItem;

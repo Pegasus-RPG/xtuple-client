@@ -397,7 +397,7 @@ void dspInventoryHistoryBase::sViewWOInfo()
   }
 }
 
-void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
+void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
 {
   QAction *menuItem;
 

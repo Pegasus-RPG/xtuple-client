@@ -30,6 +30,7 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspSingleLevelWhereUsed.ui \
            displays/dspSlowMovingInventoryByClassCode.ui \
            displays/dspSubstituteAvailabilityByItem.ui \
+           displays/dspUsageStatisticsBase.ui \
            displays/dspValidLocationsByItem.ui
 
 HEADERS += displays/dspBOMBase.h \
@@ -74,6 +75,11 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspSlowMovingInventoryByClassCode.h \
            displays/dspSubstituteAvailabilityByItem.h \
            displays/dspSummarizedBOM.h \
+           displays/dspUsageStatisticsBase.h \
+           displays/dspUsageStatisticsByClassCode.h \
+           displays/dspUsageStatisticsByItem.h \
+           displays/dspUsageStatisticsByItemGroup.h \
+           displays/dspUsageStatisticsByWarehouse.h \
            displays/dspValidLocationsByItem.h
 
 SOURCES += displays/dspBOMBase.cpp \
@@ -118,5 +124,10 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspSlowMovingInventoryByClassCode.cpp \
            displays/dspSubstituteAvailabilityByItem.cpp \
            displays/dspSummarizedBOM.cpp \
+           displays/dspUsageStatisticsBase.cpp \
+           displays/dspUsageStatisticsByClassCode.cpp \
+           displays/dspUsageStatisticsByItem.cpp \
+           displays/dspUsageStatisticsByItemGroup.cpp \
+           displays/dspUsageStatisticsByWarehouse.cpp \
            displays/dspValidLocationsByItem.cpp
 
