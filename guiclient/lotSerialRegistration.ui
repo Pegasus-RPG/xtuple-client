@@ -275,9 +275,6 @@ to be bound by its terms.</comment>
           </item>
           <item row="1" column="1">
            <widget class="DLineEdit" name="_soldDate">
-            <property name="toolTip">
-             <string>sold_date</string>
-            </property>
             <property name="fieldName">
              <string notr="true">lsreg_solddate</string>
             </property>
@@ -311,9 +308,6 @@ to be bound by its terms.</comment>
           </item>
           <item row="2" column="1">
            <widget class="DLineEdit" name="_expireDate">
-            <property name="toolTip">
-             <string>expire_date</string>
-            </property>
             <property name="date">
              <date>
               <year>2000</year>
@@ -328,9 +322,6 @@ to be bound by its terms.</comment>
           </item>
           <item row="0" column="1">
            <widget class="DLineEdit" name="_regDate">
-            <property name="toolTip">
-             <string>register_date</string>
-            </property>
             <property name="fieldName">
              <string notr="true">lsreg_regdate</string>
             </property>
