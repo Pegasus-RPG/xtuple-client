@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspInventoryHistoryByParameterList.h"
+#include "dspInventoryHistoryBase.h"
 
 #include <QAction>
 #include <QMenu>
@@ -16,48 +16,50 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <openreports.h>
-
 #include "adjustmentTrans.h"
 #include "countTag.h"
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
-#include "mqlutil.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"
 #include "workOrder.h"
+#include "salesOrderList.h"
 
-dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* name, Qt::WFlags fl)
+  : display(parent, name, fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setListLabel(tr("Inventory History"));
+  setReportName("InventoryHistory");
+  setMetaSQLOptions("inventoryHistory", "detail");
+  setUseAltId(true);
 
-//  (void)statusBar();
+  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
+  connect(_orderNumber, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+#ifndef Q_WS_MAC
+  _salesOrderList->setMaximumWidth(25);
+#endif
 
-  _invhist->setRootIsDecorated(TRUE);
-  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft,  true, "invhist_transdate");
-  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft,  false, "invhist_created");
-  _invhist->addColumn(tr("Site"),                 _whsColumn, Qt::AlignCenter,true, "warehous_code");
-  _invhist->addColumn(tr("Item Number"),                  -1, Qt::AlignLeft,  true, "item_number");
-  _invhist->addColumn(tr("Type"),               _transColumn, Qt::AlignCenter,true, "invhist_transtype");
-  _invhist->addColumn(tr("Order #"),             _itemColumn, Qt::AlignCenter,true, "orderlocation");
-  _invhist->addColumn(tr("UOM"),                  _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
-  _invhist->addColumn(tr("Qty"),                  _qtyColumn, Qt::AlignRight, true, "transqty");
-  _invhist->addColumn(tr("Value"),              _moneyColumn, Qt::AlignRight, true, "transvalue");
-  _invhist->addColumn(tr("From Area"),          _orderColumn, Qt::AlignLeft,  true, "locfrom");
-  _invhist->addColumn(tr("QOH Before"),           _qtyColumn, Qt::AlignRight, false, "qohbefore");
-  _invhist->addColumn(tr("To Area"),            _orderColumn, Qt::AlignLeft,  true, "locto");
-  _invhist->addColumn(tr("QOH After"),            _qtyColumn, Qt::AlignRight, false, "qohafter");
-  _invhist->addColumn(tr("Cost Method"),          _qtyColumn, Qt::AlignLeft,  false, "costmethod");
-  _invhist->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight, false, "invhist_value_before");
-  _invhist->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight, false, "invhist_value_after");
-  _invhist->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,false, "invhist_user");
+  list()->setRootIsDecorated(TRUE);
+  list()->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft,  true, "invhist_transdate");
+  list()->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft,  false, "invhist_created");
+  list()->addColumn(tr("Site"),                 _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  list()->addColumn(tr("Item Number"),                  -1, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Type"),               _transColumn, Qt::AlignCenter,true, "invhist_transtype");
+  list()->addColumn(tr("Order #"),             _itemColumn, Qt::AlignCenter,true, "orderlocation");
+  list()->addColumn(tr("UOM"),                  _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
+  list()->addColumn(tr("Qty"),                  _qtyColumn, Qt::AlignRight, true, "transqty");
+  list()->addColumn(tr("Value"),              _moneyColumn, Qt::AlignRight, true, "transvalue");
+  list()->addColumn(tr("From Area"),          _orderColumn, Qt::AlignLeft,  true, "locfrom");
+  list()->addColumn(tr("QOH Before"),           _qtyColumn, Qt::AlignRight, false, "qohbefore");
+  list()->addColumn(tr("To Area"),            _orderColumn, Qt::AlignLeft,  true, "locto");
+  list()->addColumn(tr("QOH After"),            _qtyColumn, Qt::AlignRight, false, "qohafter");
+  list()->addColumn(tr("Cost Method"),          _qtyColumn, Qt::AlignLeft,  false, "costmethod");
+  list()->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight, false, "invhist_value_before");
+  list()->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight, false, "invhist_value_after");
+  list()->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,false, "invhist_user");
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -79,19 +81,18 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentIndex(0);
   _orderType->setCurrentIndex(0);
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);                                                     
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 }
 
-dspInventoryHistoryByParameterList::~dspInventoryHistoryByParameterList()
+void dspInventoryHistoryBase::languageChange()
 {
-  // no need to delete child widgets, Qt does it all for us
-}
-
-void dspInventoryHistoryByParameterList::languageChange()
-{
+  display::languageChange();
   retranslateUi(this);
 }
 
-enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pParams)
+enum SetResponse dspInventoryHistoryBase::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
@@ -151,9 +152,20 @@ enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pP
   if (valid)
     _parameter->setType(ParameterGroup::ItemGroup);
 
+  param = pParams.value("item_id", &valid);
+  if (valid)
+    _item->setId(param.toInt());
+
   param = pParams.value("warehous_id", &valid);
   if (valid)
     _warehouse->setId(param.toInt());
+
+  param = pParams.value("itemsite_id", &valid);
+  if (valid)
+  {
+    _item->setItemsiteid(param.toInt());
+    _dates->setFocus();
+  }
 
   param = pParams.value("startDate", &valid);
   if (valid)
@@ -200,35 +212,53 @@ enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pP
   if (pParams.inList("run"))
     sFillList();
 
-  switch (_parameter->type())
+  if(_parameter->isVisible())
   {
-    case ParameterGroup::ClassCode:
-      setWindowTitle(tr("Inventory History by Class Code"));
-      break;
-
-    case ParameterGroup::PlannerCode:
-      setWindowTitle(tr("Inventory History by Planner Code"));
-      break;
-
-    case ParameterGroup::ItemGroup:
-      setWindowTitle(tr("Inventory History by Item Group"));
-      break;
-
-    default:
-      break;
+    switch (_parameter->type())
+    {
+      case ParameterGroup::ClassCode:
+        setWindowTitle(tr("Inventory History by Class Code"));
+        break;
+  
+      case ParameterGroup::PlannerCode:
+        setWindowTitle(tr("Inventory History by Planner Code"));
+        break;
+  
+      case ParameterGroup::ItemGroup:
+        setWindowTitle(tr("Inventory History by Item Group"));
+        break;
+  
+      default:
+        break;
+    }
   }
 
   return NoError;
 }
 
-void dspInventoryHistoryByParameterList::setParams(ParameterList & params)
+bool dspInventoryHistoryBase::setParams(ParameterList & params)
 {
+  if(_itemGroup->isVisible() && !_item->isValid())
+  {
+    QMessageBox::critical( this, tr("Item Number Required"),
+      tr("You must specify an Item Number."));
+    return false;
+  }
+
+  if (_orderGroup->isVisible() && _orderNumber->text().trimmed().length() == 0)
+  {
+    QMessageBox::critical( this, tr("Enter Order Search Pattern"),
+                           tr("You must enter a Order # pattern to search for." ) );
+    _orderNumber->setFocus();
+    return false;
+  }
+
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Start Date"),
                            tr("Please enter a valid Start Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
   if (!_dates->endDate().isValid())
@@ -236,52 +266,53 @@ void dspInventoryHistoryByParameterList::setParams(ParameterList & params)
     QMessageBox::critical( this, tr("Enter End Date"),
                            tr("Please enter a valid End Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
   _warehouse->appendValue(params);
-  _parameter->appendValue(params);
   _dates->appendValue(params);
   params.append("transType", _transType->id());
 
-  if (_orderType->currentIndex())
+  if(_itemGroup->isVisible())
+  {
+    params.append("item_id", _item->id());
+    params.append("includeFormatted"); // ??? originally from dspInventoryHistoryByItem::sFillList()
+  }
+
+  if(_orderGroup->isVisible())
+    params.append("orderNumber", _orderNumber->text());
+
+  if (!_orderGroup->isVisible() && _orderType->currentIndex())
     params.append("orderType", _orderType->code());
 
-  if (_parameter->type() == ParameterGroup::ItemGroup)
-    params.append("itemgrp");
-  else if(_parameter->type() == ParameterGroup::PlannerCode)
-    params.append("plancode");
-  else
-    params.append("classcode");
+  if(_parameter->isVisible())
+  {
+    _parameter->appendValue(params);
+
+    if (_parameter->type() == ParameterGroup::ItemGroup)
+      params.append("itemgrp");
+    else if(_parameter->type() == ParameterGroup::PlannerCode)
+      params.append("plancode");
+    else
+      params.append("classcode");
+  }
 
   params.append("average", tr("Average"));
   params.append("standard", tr("Standard"));
   params.append("job", tr("Job"));
   params.append("none", tr("None"));
   params.append("unknown", tr("Unknown"));
+
+  return true;
 }
 
-void dspInventoryHistoryByParameterList::sPrint()
+void dspInventoryHistoryBase::sViewTransInfo()
 {
-  ParameterList params;
-  setParams(params);
-  if (!params.count())
-    return;
-
-  orReport report("InventoryHistory", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspInventoryHistoryByParameterList::sViewTransInfo()
-{
-  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(_invhist->column("invhist_transtype")));
+  QString transType(((XTreeWidgetItem *)list()->currentItem())->text(list()->column("invhist_transtype")));
 
   ParameterList params;
   params.append("mode", "view");
-  params.append("invhist_id", _invhist->id());
+  params.append("invhist_id", list()->id());
 
   if (transType == "AD")
   {
@@ -327,37 +358,38 @@ void dspInventoryHistoryByParameterList::sViewTransInfo()
   }
 }
 
-void dspInventoryHistoryByParameterList::sEditTransInfo()
+void dspInventoryHistoryBase::sEditTransInfo()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("invhist_id", _invhist->id());
+  params.append("invhist_id", list()->id());
 
   transactionInformation newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspInventoryHistoryByParameterList::sViewWOInfo()
+void dspInventoryHistoryBase::sViewWOInfo()
 {
-  QString orderNumber = _invhist->currentItem()->text(_invhist->column("ordernumber"));
+  QString orderNumber = list()->currentItem()->text(list()->column("ordernumber"));
   int sep1            = orderNumber.indexOf('-');
   int sep2            = orderNumber.indexOf('-', (sep1 + 1));
   int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
   int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
 
-  q.prepare( "SELECT wo_id "
+  XSqlQuery qq;
+  qq.prepare( "SELECT wo_id "
              "FROM wo "
              "WHERE ( (wo_number=:wo_number)"
              " AND (wo_subnumber=:wo_subnumber) );" );
-  q.bindValue(":wo_number", mainNumber);
-  q.bindValue(":wo_subnumber", subNumber);
-  q.exec();
-  if (q.first())
+  qq.bindValue(":wo_number", mainNumber);
+  qq.bindValue(":wo_subnumber", subNumber);
+  qq.exec();
+  if (qq.first())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("wo_id", q.value("wo_id"));
+    params.append("wo_id", qq.value("wo_id"));
 
     workOrder *newdlg = new workOrder();
     newdlg->set(params);
@@ -365,17 +397,17 @@ void dspInventoryHistoryByParameterList::sViewWOInfo()
   }
 }
 
-void dspInventoryHistoryByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
+void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
 {
   QAction *menuItem;
 
   menuItem = pMenu->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
   menuItem = pMenu->addAction(tr("Edit Transaction Information..."), this, SLOT(sEditTransInfo()));
 
-  if ( (pItem->text(_invhist->column("warehous_code")).length()) &&
-       ( (pItem->text(_invhist->column("invhist_transtype")) == "RM") || (pItem->text(_invhist->column("invhist_transtype")) == "IM") ) )
+  if ( (pItem->text(list()->column("warehous_code")).length()) &&
+       ( (pItem->text(list()->column("invhist_transtype")) == "RM") || (pItem->text(list()->column("invhist_transtype")) == "IM") ) )
   {
-    QString orderNumber = _invhist->currentItem()->text(_invhist->column("ordernumber"));
+    QString orderNumber = list()->currentItem()->text(list()->column("ordernumber"));
     int sep1            = orderNumber.indexOf('-');
     int sep2            = orderNumber.indexOf('-', (sep1 + 1));
     int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
@@ -399,19 +431,17 @@ void dspInventoryHistoryByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidget
   }
 }
 
-void dspInventoryHistoryByParameterList::sFillList()
+void dspInventoryHistoryBase::sSalesOrderList()
 {
   ParameterList params;
-  setParams(params);
-  if (!params.count())
-    return;
-  MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
-  q = mql.toQuery(params);
+  params.append("sohead_id", _orderNumber->id());
+  params.append("soType", cSoOpen);
 
-  _invhist->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  salesOrderList newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  int id = newdlg.exec();
+  if(id != QDialog::Rejected)
+    _orderNumber->setId(id);
 }
+

@@ -13,6 +13,7 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspInventoryAvailabilityBySalesOrder.ui \
            displays/dspInventoryAvailabilityBySourceVendor.ui \
            displays/dspInventoryAvailabilityByWorkOrder.ui \
+           displays/dspInventoryHistoryBase.ui \
            displays/dspInventoryLocator.ui \
            displays/dspItemCostDetail.ui \
            displays/dspItemCostHistory.ui \
@@ -48,6 +49,10 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspInventoryAvailabilityBySalesOrder.h \
            displays/dspInventoryAvailabilityBySourceVendor.h \
            displays/dspInventoryAvailabilityByWorkOrder.h \
+           displays/dspInventoryHistoryBase.h \
+           displays/dspInventoryHistoryByItem.h \
+           displays/dspInventoryHistoryByOrderNumber.h \
+           displays/dspInventoryHistoryByParameterList.h \
            displays/dspInventoryLocator.h \
            displays/dspItemCostDetail.h \
            displays/dspItemCostHistory.h \
@@ -88,6 +93,10 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspInventoryAvailabilityBySalesOrder.cpp \
            displays/dspInventoryAvailabilityBySourceVendor.cpp \
            displays/dspInventoryAvailabilityByWorkOrder.cpp \
+           displays/dspInventoryHistoryBase.cpp \
+           displays/dspInventoryHistoryByItem.cpp \
+           displays/dspInventoryHistoryByOrderNumber.cpp \
+           displays/dspInventoryHistoryByParameterList.cpp \
            displays/dspInventoryLocator.cpp \
            displays/dspItemCostDetail.cpp \
            displays/dspItemCostHistory.cpp \

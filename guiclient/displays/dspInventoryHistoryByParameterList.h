@@ -11,32 +11,14 @@
 #ifndef DSPINVENTORYHISTORYBYPARAMETERLIST_H
 #define DSPINVENTORYHISTORYBYPARAMETERLIST_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "dspInventoryHistoryBase.h"
 
-#include "ui_dspInventoryHistoryByParameterList.h"
-
-class dspInventoryHistoryByParameterList : public XWidget, public Ui::dspInventoryHistoryByParameterList
+class dspInventoryHistoryByParameterList : public dspInventoryHistoryBase
 {
     Q_OBJECT
 
 public:
     dspInventoryHistoryByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInventoryHistoryByParameterList();
-    virtual void setParams(ParameterList & params);
-
-public slots:
-    virtual SetResponse set(const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sViewTransInfo();
-    virtual void sEditTransInfo();
-    virtual void sViewWOInfo();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pItem );
-    virtual void sFillList();
-
-protected slots:
-    virtual void languageChange();
 
 };
 

@@ -240,9 +240,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspGLTransactions.ui                          \
           dspIncidentsByCRMAccount.ui                   \
           dspInvalidBillsOfMaterials.ui                 \
-          dspInventoryHistoryByItem.ui                  \
-          dspInventoryHistoryByOrderNumber.ui           \
-          dspInventoryHistoryByParameterList.ui         \
           dspInvoiceInformation.ui                      \
           dspInvoiceRegister.ui                         \
           dspItemSourcesByItem.ui                       \
@@ -922,9 +919,6 @@ HEADERS = ../common/format.h                    \
           dspGLTransactions.h                           \
           dspIncidentsByCRMAccount.h                    \
           dspInvalidBillsOfMaterials.h                  \
-          dspInventoryHistoryByItem.h                   \
-          dspInventoryHistoryByOrderNumber.h            \
-          dspInventoryHistoryByParameterList.h          \
           dspInvoiceInformation.h                       \
           dspInvoiceRegister.h                          \
           dspItemSourcesByItem.h                        \
@@ -1640,9 +1634,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspGLTransactions.cpp                         \
           dspIncidentsByCRMAccount.cpp                  \
           dspInvalidBillsOfMaterials.cpp                \
-          dspInventoryHistoryByItem.cpp                 \
-          dspInventoryHistoryByOrderNumber.cpp          \
-          dspInventoryHistoryByParameterList.cpp        \
           dspInvoiceInformation.cpp                     \
           dspInvoiceRegister.cpp                        \
           dspItemSourcesByItem.cpp                      \

@@ -8,36 +8,35 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPINVENTORYHISTORYBYITEM_H
-#define DSPINVENTORYHISTORYBYITEM_H
+#ifndef __DSPINVENTORYHISTORYBASE_H__
+#define __DSPINVENTORYHISTORYBASE_H__
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 #include <parameter.h>
 
-#include "ui_dspInventoryHistoryByItem.h"
+#include "ui_dspInventoryHistoryBase.h"
 
-class dspInventoryHistoryByItem : public XWidget, public Ui::dspInventoryHistoryByItem
+class dspInventoryHistoryBase : public display, public Ui::dspInventoryHistoryBase
 {
     Q_OBJECT
 
 public:
-    dspInventoryHistoryByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInventoryHistoryByItem();
-    virtual void setParams(ParameterList &);
+    dspInventoryHistoryBase(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
+    virtual bool setParams(ParameterList & params);
 
 public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPrint();
+    virtual SetResponse set(const ParameterList & pParams );
     virtual void sViewTransInfo();
     virtual void sEditTransInfo();
     virtual void sViewWOInfo();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pItem );
-    virtual void sFillList();
+    virtual void sSalesOrderList();
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPINVENTORYHISTORYBYITEM_H
+#endif // __DSPINVENTORYHISTORYBASE_H__

@@ -11,30 +11,14 @@
 #ifndef DSPINVENTORYHISTORYBYORDERNUMBER_H
 #define DSPINVENTORYHISTORYBYORDERNUMBER_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "dspInventoryHistoryBase.h"
 
-#include "ui_dspInventoryHistoryByOrderNumber.h"
-
-class dspInventoryHistoryByOrderNumber : public XWidget, public Ui::dspInventoryHistoryByOrderNumber
+class dspInventoryHistoryByOrderNumber : public dspInventoryHistoryBase
 {
     Q_OBJECT
 
 public:
     dspInventoryHistoryByOrderNumber(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInventoryHistoryByOrderNumber();
-    virtual void setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sViewTransInfo();
-    virtual void sPopulateMenu( QMenu * menuThis, QTreeWidgetItem * );
-    virtual void sFillList();
-	virtual void sSalesOrderList();
-
-protected slots:
-    virtual void languageChange();
 
 };
 
