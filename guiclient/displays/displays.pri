@@ -2,6 +2,10 @@
 INCLUDEPATH += displays
 
 FORMS   += displays/dspBOMBase.ui \
+           displays/dspBacklogByCustomer.ui \
+           displays/dspBacklogByItem.ui \
+           displays/dspBacklogByParameterList.ui \
+           displays/dspBacklogBySalesOrder.ui \
            displays/dspCapacityUOMsByParameter.ui \
            displays/dspCostedBOMBase.ui \
            displays/dspCostedSummarizedBOM.ui \
@@ -29,6 +33,8 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspQOHByItem.ui \
            displays/dspQOHByLocation.ui \
            displays/dspQOHByParameterList.ui \
+           displays/dspShipmentsBase.ui \
+           displays/dspShipmentsByDate.ui \
            displays/dspSingleLevelWhereUsed.ui \
            displays/dspSlowMovingInventoryByClassCode.ui \
            displays/dspSubstituteAvailabilityByItem.ui \
@@ -36,6 +42,10 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspValidLocationsByItem.ui
 
 HEADERS += displays/dspBOMBase.h \
+           displays/dspBacklogByCustomer.h \
+           displays/dspBacklogByItem.h \
+           displays/dspBacklogByParameterList.h \
+           displays/dspBacklogBySalesOrder.h \
            displays/dspCapacityUOMsByClassCode.h \
            displays/dspCapacityUOMsByParameter.h \
            displays/dspCapacityUOMsByProductCategory.h \
@@ -74,6 +84,10 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspQOHByItem.h \
            displays/dspQOHByLocation.h \
            displays/dspQOHByParameterList.h \
+           displays/dspShipmentsBase.h \
+           displays/dspShipmentsByDate.h \
+           displays/dspShipmentsBySalesOrder.h \
+           displays/dspShipmentsByShipment.h \
            displays/dspSingleLevelBOM.h \
            displays/dspSingleLevelWhereUsed.h \
            displays/dspSlowMovingInventoryByClassCode.h \
@@ -87,6 +101,10 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspValidLocationsByItem.h
 
 SOURCES += displays/dspBOMBase.cpp \
+           displays/dspBacklogByCustomer.cpp \
+           displays/dspBacklogByItem.cpp \
+           displays/dspBacklogByParameterList.cpp \
+           displays/dspBacklogBySalesOrder.cpp \
            displays/dspCapacityUOMsByClassCode.cpp \
            displays/dspCapacityUOMsByParameter.cpp \
            displays/dspCapacityUOMsByProductCategory.cpp \
@@ -125,6 +143,10 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspQOHByItem.cpp \
            displays/dspQOHByLocation.cpp \
            displays/dspQOHByParameterList.cpp \
+           displays/dspShipmentsBase.cpp \
+           displays/dspShipmentsByDate.cpp \
+           displays/dspShipmentsBySalesOrder.cpp \
+           displays/dspShipmentsByShipment.cpp \
            displays/dspSingleLevelBOM.cpp \
            displays/dspSingleLevelWhereUsed.cpp \
            displays/dspSlowMovingInventoryByClassCode.cpp \

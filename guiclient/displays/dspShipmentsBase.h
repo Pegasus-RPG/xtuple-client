@@ -8,29 +8,31 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPSHIPMENTSBYSHIPMENT_H
-#define DSPSHIPMENTSBYSHIPMENT_H
+#ifndef __DSPSHIPMENTSBASE_H__
+#define __DSPSHIPMENTSBASE_H__
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 #include <parameter.h>
 
-#include "ui_dspShipmentsByShipment.h"
+#include "ui_dspShipmentsBase.h"
 
-class dspShipmentsByShipment : public XWidget, public Ui::dspShipmentsByShipment
+class dspShipmentsBase : public display, public Ui::dspShipmentsBase
 {
     Q_OBJECT
 
 public:
-    dspShipmentsByShipment(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspShipmentsByShipment();
+    dspShipmentsBase(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pItem );
-    virtual void sPrint();
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pItem, int);
     virtual void sPrintShippingForm();
-    virtual void sFillList( int pSoheadid );
+    virtual void sSalesOrderList();
+    virtual void sPopulateSalesOrder(int);
+    virtual void sPopulateShipment(int);
     virtual void sFillURL();
 
 protected slots:
@@ -38,4 +40,4 @@ protected slots:
 
 };
 
-#endif // DSPSHIPMENTSBYSHIPMENT_H
+#endif // __DSPSHIPMENTSBASE_H__

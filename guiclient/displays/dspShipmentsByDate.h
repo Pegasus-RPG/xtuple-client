@@ -12,26 +12,23 @@
 #define DSPSHIPMENTSBYDATE_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspShipmentsByDate.h"
 
-class dspShipmentsByDate : public XWidget, public Ui::dspShipmentsByDate
+class dspShipmentsByDate : public display, public Ui::dspShipmentsByDate
 {
     Q_OBJECT
 
 public:
     dspShipmentsByDate(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspShipmentsByDate();
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void setParams(ParameterList &);
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pItem );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pItem, int);
     virtual void sPrintShippingForm();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

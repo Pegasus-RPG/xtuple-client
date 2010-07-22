@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspShipmentsBySalesOrder.h"
+#include "dspShipmentsBase.h"
 
 #include <QAction>
 #include <QMenu>
@@ -25,16 +25,20 @@
 #include "salesOrderList.h"
 #include "printShippingForm.h"
 
-dspShipmentsBySalesOrder::dspShipmentsBySalesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspShipmentsBase::dspShipmentsBase(QWidget* parent, const char* name, Qt::WFlags fl)
+  : display(parent, name, fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setListLabel(tr("Shipments"));
+  setMetaSQLOptions("shipments", "detail");
+  setUseAltId(true);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_salesOrder, SIGNAL(newId(int)), this, SLOT(sFillList(int)));
+  connect(_shipment, SIGNAL(newId(int)), this, SLOT(sPopulateShipment(int)));
+  connect(_salesOrder, SIGNAL(newId(int)), this, SLOT(sPopulateSalesOrder(int)));
   connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
-  connect(_soship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
+
+  _shipment->setType("SO");
 
 #ifndef Q_WS_MAC
   _salesOrderList->setMaximumWidth(25);
@@ -42,30 +46,26 @@ dspShipmentsBySalesOrder::dspShipmentsBySalesOrder(QWidget* parent, const char* 
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _salesOrder, SLOT(setId(int)));
 
-  _soship->setRootIsDecorated(TRUE);
-  _soship->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft,   true,  "shiphead_number"   );
-  _soship->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter, true,  "shiphead_shipdate" );
-  _soship->addColumn(tr("#"),                   _seqColumn,  Qt::AlignCenter, true,  "linenumber" );
-  _soship->addColumn(tr("Item"),                _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  _soship->addColumn(tr("Description"),         -1,          Qt::AlignLeft,   true,  "itemdescription"   );
-  _soship->addColumn(tr("Site"),                _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
-  _soship->addColumn(tr("Ordered"),             _qtyColumn,  Qt::AlignRight,  true,  "qtyord"  );
-  _soship->addColumn(tr("Shipped"),             _qtyColumn,  Qt::AlignRight,  true,  "qtyshipped"  );
-  _soship->addColumn(tr("Tracking Number"),     _qtyColumn,  Qt::AlignRight,  true,  "shiphead_tracknum"  );
-  _soship->addColumn(tr("Freight at Shipping"), _qtyColumn,  Qt::AlignRight,  true,  "shiphead_freight"  );
+  list()->setRootIsDecorated(TRUE);
+  list()->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft,   true,  "shiphead_number"   );
+  list()->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter, true,  "shiphead_shipdate" );
+  list()->addColumn(tr("#"),                   _seqColumn,  Qt::AlignCenter, true,  "linenumber" );
+  list()->addColumn(tr("Item"),                _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Description"),         -1,          Qt::AlignLeft,   true,  "itemdescription"   );
+  list()->addColumn(tr("Site"),                _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  list()->addColumn(tr("Ordered"),             _qtyColumn,  Qt::AlignRight,  true,  "qtyord"  );
+  list()->addColumn(tr("Shipped"),             _qtyColumn,  Qt::AlignRight,  true,  "qtyshipped"  );
+  list()->addColumn(tr("Tracking Number"),     _qtyColumn,  Qt::AlignRight,  true,  "shiphead_tracknum"  );
+  list()->addColumn(tr("Freight at Shipping"), _qtyColumn,  Qt::AlignRight,  true,  "shiphead_freight"  );
 }
 
-dspShipmentsBySalesOrder::~dspShipmentsBySalesOrder()
+void dspShipmentsBase::languageChange()
 {
-  // no need to delete child widgets, Qt does it all for us
-}
-
-void dspShipmentsBySalesOrder::languageChange()
-{
+  display::languageChange();
   retranslateUi(this);
 }
 
-enum SetResponse dspShipmentsBySalesOrder::set(const ParameterList &pParams)
+enum SetResponse dspShipmentsBase::set(const ParameterList &pParams)
 { 
   XWidget::set(pParams);
   QVariant param;
@@ -78,10 +78,17 @@ enum SetResponse dspShipmentsBySalesOrder::set(const ParameterList &pParams)
     _salesOrder->setEnabled(FALSE);
   }
 
+  param = pParams.value("shiphead_id", &valid);
+  if (valid)
+  {
+    _shipment->setId(param.toInt());
+    _shipment->setEnabled(FALSE);
+  }
+
   return NoError;
 }
 
-void dspShipmentsBySalesOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspShipmentsBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 
@@ -91,29 +98,28 @@ void dspShipmentsBySalesOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   menuItem = pMenu->addAction(tr("Query Shipment Status..."), this, SLOT(sFillURL()));
 }
 
-void dspShipmentsBySalesOrder::sPrint()
+bool dspShipmentsBase::setParams(ParameterList& params)
 {
-  ParameterList params;
-  params.append("sohead_id", _salesOrder->id());
+  if(_salesOrder->isVisibleTo(this))
+    params.append("sohead_id", _salesOrder->id());
 
-  orReport report("ShipmentsBySalesOrder", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
+  if(_shipment->isVisibleTo(this))
+    params.append("shiphead_id", _shipment->id());
+
+  return true;
 }
 
-void dspShipmentsBySalesOrder::sPrintShippingForm()
+void dspShipmentsBase::sPrintShippingForm()
 {
   ParameterList params;
-  params.append("cosmisc_id", _soship->id());
+  params.append("cosmisc_id", list()->id());
 
   printShippingForm newdlg(this);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspShipmentsBySalesOrder::sSalesOrderList()
+void dspShipmentsBase::sSalesOrderList()
 {
   ParameterList params;
   params.append("sohead_id", _salesOrder->id());
@@ -127,10 +133,8 @@ void dspShipmentsBySalesOrder::sSalesOrderList()
     _salesOrder->setId(id);
 }
 
-void dspShipmentsBySalesOrder::sFillList(int pSoheadid)
+void dspShipmentsBase::sPopulateSalesOrder(int pSoheadid)
 {
-  _soship->clear();
-
   if (pSoheadid != -1)
   {
     q.prepare( "SELECT cohead_number,"
@@ -149,20 +153,6 @@ void dspShipmentsBySalesOrder::sFillList(int pSoheadid)
       _custName->setText(q.value("cust_name").toString());
       _custPhone->setText(q.value("cust_phone").toString());
     }
-
-    ParameterList params;
-    params.append("sohead_id", _salesOrder->id());
-    MetaSQLQuery fillm = mqlLoad("shipments", "detail");
-    q = fillm.toQuery(params);
-    if (q.first())
-    {
-      _soship->populate(q, true);
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
   }
   else
   {
@@ -173,7 +163,46 @@ void dspShipmentsBySalesOrder::sFillList(int pSoheadid)
   }
 }
 
-void dspShipmentsBySalesOrder::sFillURL()
+void dspShipmentsBase::sPopulateShipment(int pShipheadid)
+{
+  if (pShipheadid != -1)
+  {
+    q.prepare( "SELECT formatDate(orderdate) AS orderdate,"
+               "       custponumber,"
+               "       cust_name,"
+               "       cust_phone"
+               "  FROM cust, (SELECT cohead_cust_id AS order_cust_id,"
+               "                       cohead_orderdate AS orderdate,"
+               "                       cohead_custponumber AS custponumber"
+               "                  FROM cohead JOIN shiphead ON (shiphead_order_id=cohead_id AND shiphead_order_type='SO')"
+               "                 WHERE(shiphead_id=:shiphead_id)"
+               "                UNION"
+               "                SELECT NULL AS order_cust_id,"
+               "                       tohead_orderdate AS orderdate,"
+               "                       NULL AS custponumber"
+               "                  FROM tohead JOIN shiphead ON (shiphead_order_id=tohead_id AND shiphead_order_type='TO')"
+               "                 WHERE(shiphead_id=:shiphead_id)"
+               "               ) AS taborder "
+               " WHERE(order_cust_id=cust_id);");
+    q.bindValue(":shiphead_id", pShipheadid);
+    q.exec();
+    if (q.first())
+    {
+      //_orderDate->setText(q.value("orderdate").toString());
+      _poNumber->setText(q.value("custponumber").toString());
+      _custName->setText(q.value("cust_name").toString());
+      _custPhone->setText(q.value("cust_phone").toString());
+    }
+  }
+  else
+  {
+    _poNumber->clear();
+    _custName->clear();
+    _custPhone->clear();
+  }
+}
+
+void dspShipmentsBase::sFillURL()
 {
     QString url;
     
@@ -182,7 +211,7 @@ void dspShipmentsBySalesOrder::sFillURL()
                "WHERE ((cosmisc_id=:cosmisc_id) "
                "AND (cosmisc_cohead_id=cohead_id));");
      
-    q.bindValue(":cosmisc_id", _soship->id());
+    q.bindValue(":cosmisc_id", list()->id());
     q.exec();
     if (q.first()) {
      bool findShipper;

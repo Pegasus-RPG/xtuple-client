@@ -8,40 +8,34 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPBACKLOGBYCUSTOMER_H
-#define DSPBACKLOGBYCUSTOMER_H
+#ifndef DSPBACKLOGBYITEM_H
+#define DSPBACKLOGBYITEM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
-#include "ui_dspBacklogByCustomer.h"
+#include "ui_dspBacklogByItem.h"
 
-class dspBacklogByCustomer : public XWidget, public Ui::dspBacklogByCustomer
+class dspBacklogByItem : public display, public Ui::dspBacklogByItem
 {
     Q_OBJECT
 
 public:
-    dspBacklogByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspBacklogByCustomer();
+    dspBacklogByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sHandlePrices( bool pShowPrices );
-    virtual void sPrint();
     virtual void sEditOrder();
     virtual void sViewOrder();
     virtual void sEditItem();
     virtual void sViewItem();
     virtual void sPrintPackingList();
-    virtual void sAddToPackingListBatch();
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPBACKLOGBYCUSTOMER_H
+#endif // DSPBACKLOGBYITEM_H

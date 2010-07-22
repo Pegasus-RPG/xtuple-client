@@ -198,10 +198,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspARApplications.ui                  \
           dspAROpenItems.ui                     \
           dspAllocations.ui                     \
-          dspBacklogByCustomer.ui               \
-          dspBacklogByItem.ui                   \
-          dspBacklogByParameterList.ui          \
-          dspBacklogBySalesOrder.ui             \
           dspBankrecHistory.ui                  \
           dspBillingSelections.ui               \
           dspBookingsByCustomer.ui              \
@@ -291,9 +287,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspSalesOrdersByCustomerPO.ui                 \
           dspSalesOrdersByItem.ui                       \
           dspSalesOrdersByParameterList.ui              \
-          dspShipmentsByDate.ui                         \
-          dspShipmentsBySalesOrder.ui                   \
-          dspShipmentsByShipment.ui                     \
           dspSubLedger.ui                          \
           dspStandardJournalHistory.ui                  \
           dspSummarizedBacklogByWarehouse.ui            \
@@ -871,10 +864,6 @@ HEADERS = ../common/format.h                    \
           dspARApplications.h                   \
           dspAROpenItems.h                      \
           dspAllocations.h                      \
-          dspBacklogByCustomer.h                \
-          dspBacklogByItem.h                    \
-          dspBacklogByParameterList.h           \
-          dspBacklogBySalesOrder.h              \
           dspBankrecHistory.h                   \
           dspBillingSelections.h                \
           dspBookingsByCustomer.h               \
@@ -964,9 +953,6 @@ HEADERS = ../common/format.h                    \
           dspSalesOrdersByCustomerPO.h          \
           dspSalesOrdersByItem.h                \
           dspSalesOrdersByParameterList.h       \
-          dspShipmentsByDate.h                  \
-          dspShipmentsBySalesOrder.h            \
-          dspShipmentsByShipment.h              \
           dspSubLedger.h                   \
           dspStandardJournalHistory.h           \
           dspSummarizedBacklogByWarehouse.h     \
@@ -1580,10 +1566,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspARApplications.cpp                 \
           dspAROpenItems.cpp                    \
           dspAllocations.cpp                    \
-          dspBacklogByCustomer.cpp              \
-          dspBacklogByItem.cpp                  \
-          dspBacklogByParameterList.cpp         \
-          dspBacklogBySalesOrder.cpp            \
           dspBankrecHistory.cpp                 \
           dspBillingSelections.cpp              \
           dspBookingsByCustomer.cpp             \
@@ -1673,9 +1655,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspSalesOrdersByCustomerPO.cpp                \
           dspSalesOrdersByItem.cpp                      \
           dspSalesOrdersByParameterList.cpp             \
-          dspShipmentsByDate.cpp                        \
-          dspShipmentsBySalesOrder.cpp                  \
-          dspShipmentsByShipment.cpp                    \
           dspStandardJournalHistory.cpp                 \
           dspSubLedger.cpp                              \
           dspSummarizedBacklogByWarehouse.cpp           \

@@ -15,54 +15,47 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include "mqlutil.h"
-
-#include <openreports.h>
-
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
 
-dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspBacklogByParameterList", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Backlog by Parameter List"));
+  setListLabel(tr("Backlog"));
+  setReportName("BacklogByParameterList");
+  setMetaSQLOptions("salesOrderItems", "detail");
+  setUseAltId(true);
 
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
-  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  _soitem->addColumn(tr("S/O #/Line #"),_itemColumn, Qt::AlignLeft,  true, "coitem_linenumber");
-  _soitem->addColumn(tr("Customer/Item Number"), -1, Qt::AlignLeft,  true, "item_number");
-  _soitem->addColumn(tr("Order"),       _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
-  _soitem->addColumn(tr("Ship/Sched."), _dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
-  _soitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "uom_name");
-  _soitem->addColumn(tr("Ordered"),      _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
-  _soitem->addColumn(tr("Shipped"),      _qtyColumn, Qt::AlignRight, true, "coitem_qtyshipped");
-  _soitem->addColumn(tr("Balance"),      _qtyColumn, Qt::AlignRight, true, "qtybalance");
+  list()->addColumn(tr("S/O #/Line #"),_itemColumn, Qt::AlignLeft,  true, "coitem_linenumber");
+  list()->addColumn(tr("Customer/Item Number"), -1, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Order"),       _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
+  list()->addColumn(tr("Ship/Sched."), _dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
+  list()->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "uom_name");
+  list()->addColumn(tr("Ordered"),      _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
+  list()->addColumn(tr("Shipped"),      _qtyColumn, Qt::AlignRight, true, "coitem_qtyshipped");
+  list()->addColumn(tr("Balance"),      _qtyColumn, Qt::AlignRight, true, "qtybalance");
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    _soitem->addColumn(tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight, true, "baseextpricebalance");
+    list()->addColumn(tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight, true, "baseextpricebalance");
 
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
   if (! _showPrices->isChecked())
-    _soitem->hideColumn("baseextpricebalance");
-}
-
-dspBacklogByParameterList::~dspBacklogByParameterList()
-{
-  // no need to delete child widgets, Qt does it all for us
+    list()->hideColumn("baseextpricebalance");
 }
 
 void dspBacklogByParameterList::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -156,9 +149,9 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
 void dspBacklogByParameterList::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->showColumn("baseextpricebalance");
+    list()->showColumn("baseextpricebalance");
   else
-    _soitem->hideColumn("baseextpricebalance");
+    list()->hideColumn("baseextpricebalance");
 }
 
 bool dspBacklogByParameterList::setParams(ParameterList &params)
@@ -203,34 +196,21 @@ bool dspBacklogByParameterList::setParams(ParameterList &params)
   return true;
 }
 
-void dspBacklogByParameterList::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("BacklogByParameterList", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
 void dspBacklogByParameterList::sEditOrder()
 {
-  salesOrder::editSalesOrder(_soitem->id(), false);
+  salesOrder::editSalesOrder(list()->id(), false);
 }
 
 void dspBacklogByParameterList::sViewOrder()
 {
-  salesOrder::viewSalesOrder(_soitem->id());
+  salesOrder::viewSalesOrder(list()->id());
 }
 
 void dspBacklogByParameterList::sEditItem()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("soitem_id", _soitem->altId());
+  params.append("soitem_id", list()->altId());
       
   salesOrderItem newdlg(this);
   newdlg.set(params);
@@ -241,7 +221,7 @@ void dspBacklogByParameterList::sViewItem()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("soitem_id", _soitem->altId());
+  params.append("soitem_id", list()->altId());
       
   salesOrderItem newdlg(this);
   newdlg.set(params);
@@ -250,7 +230,7 @@ void dspBacklogByParameterList::sViewItem()
 
 void dspBacklogByParameterList::sPrintPackingList()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     ParameterList params;
@@ -264,7 +244,7 @@ void dspBacklogByParameterList::sPrintPackingList()
 
 void dspBacklogByParameterList::sAddToPackingListBatch()
 {
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
@@ -278,12 +258,12 @@ void dspBacklogByParameterList::sAddToPackingListBatch()
   }
 }
 
-void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu)
+void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
-  if (_soitem->id() <= 0)
+  if (list()->id() <= 0)
     return;
 
-  QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
 
   QAction *menuItem;
 
@@ -297,7 +277,7 @@ void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu)
     if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
       menuItem->setEnabled(false);
 
-    if (_soitem->altId() != -1)
+    if (list()->altId() != -1)
     {
       pMenu->addSeparator();
 
@@ -311,7 +291,7 @@ void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu)
     }
   }
 
-  if (_soitem->id() > 0)
+  if (list()->id() > 0)
   {
     pMenu->addSeparator();
 
@@ -325,18 +305,3 @@ void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu)
   }
 }
 
-void dspBacklogByParameterList::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  MetaSQLQuery mql = mqlLoad("salesOrderItems", "detail");
-  q = mql.toQuery(params);
-  _soitem->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}

@@ -11,22 +11,21 @@
 #ifndef DSPBACKLOGBYSALESORDER_H
 #define DSPBACKLOGBYSALESORDER_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspBacklogBySalesOrder.h"
 
-class dspBacklogBySalesOrder : public XWidget, public Ui::dspBacklogBySalesOrder
+class dspBacklogBySalesOrder : public display, public Ui::dspBacklogBySalesOrder
 {
     Q_OBJECT
 
 public:
     dspBacklogBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspBacklogBySalesOrder();
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sPrint();
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
     virtual void sSalesOrderList();
     virtual void sRunningAvailability();
     virtual void sFillList();

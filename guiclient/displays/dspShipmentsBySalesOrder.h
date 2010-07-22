@@ -11,31 +11,14 @@
 #ifndef DSPSHIPMENTSBYSALESORDER_H
 #define DSPSHIPMENTSBYSALESORDER_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "dspShipmentsBase.h"
 
-#include "ui_dspShipmentsBySalesOrder.h"
-
-class dspShipmentsBySalesOrder : public XWidget, public Ui::dspShipmentsBySalesOrder
+class dspShipmentsBySalesOrder : public dspShipmentsBase
 {
     Q_OBJECT
 
 public:
     dspShipmentsBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspShipmentsBySalesOrder();
-
-public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pItem );
-    virtual void sPrint();
-    virtual void sPrintShippingForm();
-    virtual void sSalesOrderList();
-    virtual void sFillList( int pSoheadid );
-    virtual void sFillURL();
-
-protected slots:
-    virtual void languageChange();
 
 };
 
