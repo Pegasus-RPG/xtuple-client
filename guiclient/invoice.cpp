@@ -348,10 +348,21 @@ void invoice::populateShipto(int pShiptoid)
     shipto.exec();
     if (shipto.first())
     {
+      _shipToAddr->blockSignals(true);
+      _shipTo->blockSignals(true);
+      _shipToName->blockSignals(true);
+      _shipToPhone->blockSignals(true);
+
       _shipToName->setText(shipto.value("shipto_name"));
       _shipToAddr->setId(shipto.value("shipto_addr_id").toInt());
       _shipToPhone->setText(shipto.value("cntct_phone"));
       _shipTo->setId(shipto.value("shipto_id").toInt());
+
+      _shipToAddr->blockSignals(false);
+      _shipTo->blockSignals(false);
+      _shipToName->blockSignals(false);
+      _shipToPhone->blockSignals(false);
+
       _salesrep->setId(shipto.value("shipto_salesrep_id").toInt());
       _commission->setDouble(shipto.value("commission").toDouble());
       _shipVia->setText(shipto.value("shipto_shipvia"));
@@ -366,7 +377,9 @@ void invoice::populateShipto(int pShiptoid)
   }
   else
   {
+    _shipTo->blockSignals(true);
     _shipTo->setId(-1);
+    _shipTo->blockSignals(false);
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToPhone->clear();
@@ -375,11 +388,15 @@ void invoice::populateShipto(int pShiptoid)
 
 void invoice::sCopyToShipto()
 {
+  _shipTo->blockSignals(true);
+  _shipToAddr->blockSignals(true);
   _shipTo->setId(-1);
   _shipToName->setText(_billToName->text());
   _shipToAddr->setId(_billToAddr->id());
   _shipToPhone->setText(_billToPhone->text());
   _taxzone->setId(_custtaxzoneid);
+  _shipTo->blockSignals(false);
+  _shipToAddr->blockSignals(false);
 }
 
 void invoice::sSave()
@@ -871,7 +888,9 @@ void invoice::setFreeFormShipto(bool pFreeForm)
 
 void invoice::sShipToModified()
 {
+  _shipTo->blockSignals(true);
   _shipTo->setId(-1);
+  _shipTo->blockSignals(false);
 }
 
 void invoice::keyPressEvent( QKeyEvent * e )
