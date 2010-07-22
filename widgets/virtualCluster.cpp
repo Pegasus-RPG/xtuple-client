@@ -1052,7 +1052,7 @@ void VirtualList::sSelect()
 
 void VirtualList::sSearch(const QString& pTarget)
 {
-  for (int i; i < _listTab->columnCount(); i++)
+  for (int i = 0; i < _listTab->columnCount(); i++)
   {
     QList<XTreeWidgetItem*> matches = _listTab->findItems(pTarget, Qt::MatchStartsWith, i);
 

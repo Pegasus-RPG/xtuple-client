@@ -94,7 +94,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_shipVia,             SIGNAL(textChanged(const QString &)),           this,         SLOT(sFillItemList()));
   connect(_shipToAddr,          SIGNAL(changed()),                              this,         SLOT(sConvertShipTo()));
   connect(_shipToName,          SIGNAL(textChanged(const QString &)),           this,         SLOT(sConvertShipTo()));
-  connect(_shipTo,              SIGNAL(parsed()),                               this,         SLOT(sParseShipToNumber()));
+  connect(_shipTo,              SIGNAL(newId(int)),                             this,         SLOT(sParseShipToNumber()));
   connect(_showCanceled,        SIGNAL(toggled(bool)),                          this,         SLOT(sFillItemList()));
   connect(_soitem,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
   connect(_soitem,              SIGNAL(itemSelectionChanged()),                 this,         SLOT(sHandleButtons()));
@@ -119,7 +119,6 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_shipDate,            SIGNAL(newDate(QDate)),                         this,         SLOT(sShipDateChanged()));
   connect(_cust,                SIGNAL(newCrmacctId(int)),                      _billToAddr,  SLOT(setSearchAcct(int)));
   connect(_cust,                SIGNAL(newCrmacctId(int)),                      _shipToAddr,  SLOT(setSearchAcct(int)));
-  connect(_cust,                SIGNAL(newId(int)),                             _shipTo,      SLOT(setCustid(int)));
 
   connect(_billToAddr,          SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _billToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -1632,6 +1631,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                                       "before you may create a new Sales Order "
                                       "for the Customer." ) );
           _cust->setId(-1);
+          _shipTo->setCustid(-1);
           _cust->setFocus();
           return;
         }
@@ -1648,6 +1648,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                                       "Credit Warning before you may create a "
                                       "new Sales Order for the Customer." ) );
           _cust->setId(-1);
+          _shipTo->setCustid(-1);
           _cust->setFocus();
           return;
         }
@@ -1682,15 +1683,18 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         _warehouse->setId(cust.value("cust_preferred_warehous_id").toInt());
 
       setFreeFormShipto(cust.value("cust_ffshipto").toBool());
+      _shipTo->setCustid(pCustid);
 
       if (ISNEW(_mode) && cust.value("shiptoid").toInt() != -1)
         populateShipto(cust.value("shiptoid").toInt());
       else
       {
-        _shipTo->setId(-1);
+        _ignoreSignals = true;
+        _shipTo->setId(cust.value("shiptoid").toInt());
         _shipToName->clear();
         _shipToAddr->clear();
         _shipToCntct->clear();
+        _ignoreSignals = false;
       }
 
       if ((_mode == cNew) || (_mode == cNewQuote ) || (_mode == cEdit) || (_mode == cEditQuote ))
@@ -1715,8 +1719,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
     _taxZone->setCurrentIndex(-1);
     _taxzoneidCache  = -1;
     _custtaxzoneid   = -1;
-
-    _shipTo->setId(-1);
+    _shipTo->setCustid(-1);
     _shipToName->clear();
     _shipToAddr->clear();
     _shipToCntct->clear();
@@ -1726,6 +1729,9 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
 
 void salesOrder::sParseShipToNumber()
 {
+  if (_ignoreSignals)
+    return;
+
   populateShipto(_shipTo->id());
   if (_soitem->topLevelItemCount())
     sRecalculatePrice();
@@ -1736,7 +1742,7 @@ void salesOrder::populateShipto(int pShiptoid)
   if (pShiptoid != -1)
   {
     XSqlQuery shipto;
-    shipto.prepare( "SELECT shipto_id, shipto_num, shipto_name, shipto_addr_id, "
+    shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
                     "       cntct_phone, shipto_cntct_id,"
                     "       shipto_shipvia, shipto_shipcomments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
@@ -1750,8 +1756,9 @@ void salesOrder::populateShipto(int pShiptoid)
     if (shipto.first())
     {
       //  Populate the dlg with the shipto information
-      _shipTo->blockSignals(true);
-      _shipTo->setId(shipto.value("shipto_id").toInt());
+      _ignoreSignals=true;
+      if (_shipTo->id() != pShiptoid)
+        _shipTo->setId(pShiptoid);
       _shipToName->setText(shipto.value("shipto_name").toString());
       _shipToAddr->setId(shipto.value("shipto_addr_id").toInt());
       _shipToCntct->setId(shipto.value("shipto_cntct_id").toInt());
@@ -1763,8 +1770,7 @@ void salesOrder::populateShipto(int pShiptoid)
       _shippingComments->setText(shipto.value("shipto_shipcomments").toString());
       if ( (ISNEW(_mode)) && (shipto.value("shipto_taxzone_id").toInt() > 0) )
         _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
-
-      _shipTo->blockSignals(false);
+      _ignoreSignals=false;
     }
     else if (shipto.lastError().type() != QSqlError::NoError)
     {
@@ -1790,8 +1796,13 @@ void salesOrder::populateShipto(int pShiptoid)
 void salesOrder::sConvertShipTo()
 {
   if (!_ignoreSignals)
+  {
     //  Convert the captive shipto to a free-form shipto
+    _shipTo->blockSignals(true);
     _shipTo->setId(-1);
+    _shipTo->setCustid(_cust->id());
+    _shipTo->blockSignals(false);
+  }
 }
 
 void salesOrder::sNew()
@@ -2283,6 +2294,7 @@ void salesOrder::populate()
         _billToAddr->setCountry(so.value("cohead_billtocountry").toString());
       }
 
+      _ignoreSignals=true;
       _shipToName->setText(so.value("cohead_shiptoname").toString());
       if (_shipToAddr->line1() !=so.value("cohead_shiptoaddress1").toString() ||
           _shipToAddr->line2() !=so.value("cohead_shiptoaddress2").toString() ||
@@ -2303,9 +2315,8 @@ void salesOrder::populate()
         _shipToAddr->setCountry(so.value("cohead_shiptocountry").toString());
       }
 
-      _shipTo->blockSignals(true);
       _shipTo->setId(so.value("cohead_shipto_id").toInt());
-      _shipTo->blockSignals(false);
+      _ignoreSignals=false;
 
       if (_mode == cView)
         _shipTo->setEnabled(FALSE);
@@ -2463,7 +2474,7 @@ void salesOrder::populate()
       _billToCntct->setFax(qu.value("quhead_billto_cntct_fax").toString());
       _billToCntct->setEmailAddress(qu.value("quhead_billto_cntct_email").toString());
 
-      _shipTo->blockSignals(true);
+      _ignoreSignals = true;
       _shipTo->setId(qu.value("quhead_shipto_id").toInt());
 
       _shipToName->setText(qu.value("quhead_shiptoname").toString());
@@ -2474,7 +2485,7 @@ void salesOrder::populate()
       _shipToAddr->setState(qu.value("quhead_shiptostate").toString());
       _shipToAddr->setPostalCode(qu.value("quhead_shiptozipcode").toString());
       _shipToAddr->setCountry(qu.value("quhead_shiptocountry").toString());
-      _shipTo->blockSignals(false);
+      _ignoreSignals = false;
 
       if (_mode == cViewQuote)
         _shipTo->setEnabled(FALSE);
@@ -2982,8 +2993,10 @@ void salesOrder::clear()
   _orderNumber->clear();
 
   _shipDate->clear();
+  _ignoreSignals = true;
   _cust->setId(-1);
   _shipTo->setId(-1);
+  _ignoreSignals = false;
   _warehouse->setId(_preferences->value("PreferredWarehouse").toInt());
   _salesRep->setCurrentIndex(-1);
   _commission->clear();

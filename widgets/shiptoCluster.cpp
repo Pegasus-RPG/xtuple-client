@@ -21,7 +21,7 @@
 #include "shiptocluster.h"
 
 ShiptoEdit::ShiptoEdit(QWidget *pParent, const char *pName) :
-   VirtualClusterLineEdit(pParent, "shiptoinfo", "shipto_id", "shipto_num", "shipto_name", "addr_line1","shipto_active" , pName)
+   VirtualClusterLineEdit(pParent, "shiptoinfo", "shipto_id", "shipto_num", "shipto_name", "addr_line1", " (false) ", pName, "shipto_active")
 {
   setTitles(tr("Ship To Address"), tr("Ship To Addresses"));
   setUiName("shipTo");
@@ -37,12 +37,15 @@ ShiptoEdit::ShiptoEdit(QWidget *pParent, const char *pName) :
            "FROM shiptoinfo "
            "  LEFT OUTER JOIN addr ON (shipto_addr_id=addr_id) "
            "WHERE (true) ";
-  _extraClause = " (false) ";
 }
 
 void ShiptoEdit::setId(int pId)
 {
+  if (pId == _id)
+    return;
+
   VirtualClusterLineEdit::setId(pId);
+
   if (pId != -1)
   {
       emit nameChanged(_name);
@@ -61,11 +64,11 @@ void ShiptoEdit::setCustid(int pCustid)
   if (pCustid == _custid)
     return;
 
-  setId(-1);
+  clear();
   _custid = pCustid;
 
   if (_custid != -1)
-    _extraClause = QString(" (shipto_cust_id=%1) AND (shipto_active) ").arg(_custid);
+    _extraClause = QString(" (shipto_cust_id=%1) ").arg(_custid);
   else
     _extraClause = " (false) ";
 
