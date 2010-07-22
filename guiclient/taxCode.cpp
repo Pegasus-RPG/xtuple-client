@@ -166,8 +166,8 @@ void taxCode::sFillList()
                     "             ELSE taxrate_effective END AS effective, "
                     "        CASE WHEN (taxrate_expires = endOfTime()) THEN NULL "
                     "             ELSE taxrate_expires END AS expires, "
-                    "        <? literal (\"always\") ?> AS effective_xtnullrole, "
-                    "        <? literal (\"never\") ?>  AS expires_xtnullrole, "
+                    "        <? value(\"always\") ?> AS effective_xtnullrole, "
+                    "        <? value(\"never\") ?>  AS expires_xtnullrole, "
                     "       CASE WHEN (taxrate_expires < CURRENT_DATE) THEN 'error'"
                     "	         WHEN (taxrate_effective >= CURRENT_DATE) THEN 'emphasis'"
                     "       END AS qtforegroundrole, "
@@ -439,8 +439,8 @@ void taxCode::closeEvent(QCloseEvent *pEvent)
 bool taxCode::setParams(ParameterList &pParams)
 {
   pParams.append("tax_id",      _taxid);
-  pParams.append("always",      tr("'Always'"));
-  pParams.append("never",       tr("'Never'"));
+  pParams.append("always",      tr("Always"));
+  pParams.append("never",       tr("Never"));
 
   return true;
 }
