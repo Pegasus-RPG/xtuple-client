@@ -44,6 +44,8 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
   connect(_cust, SIGNAL(newId(int)),        _shipTo,     SLOT(setCustid(int)));
+  connect(_shipToName, SIGNAL(textChanged(QString)), this, SLOT(sConvertShipto()));
+  connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sConvertShipto()));
 
 #ifndef Q_WS_MAC
   _invoiceList->setMaximumWidth(25);
@@ -463,9 +465,14 @@ void creditMemo::populateShipto(int pShiptoid)
     query.exec();
     if (query.first())
     {
+      _ignoreShiptoSignals = true;
+
       _shipTo->setId(query.value("shipto_id").toInt());
       _shipToName->setText(query.value("shipto_name"));
       _shipToAddr->setId(query.value("shipto_addr_id").toInt());
+
+      _ignoreShiptoSignals = false;
+
       _taxzone->setId(query.value("shipto_taxzone_id").toInt());
       _salesRep->setId(query.value("shipto_salesrep_id").toInt());
       _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
@@ -545,7 +552,7 @@ void creditMemo::sPopulateCustomerInfo()
       _custtaxzoneid	= -1;
 
       _shipToName->setEnabled(_ffShipto);
-	  _shipToAddr->setEnabled(_ffShipto);
+      _shipToAddr->setEnabled(_ffShipto);
       _shipTo->setId(-1);
       _shipToName->clear();
       _shipToAddr->clear();
@@ -585,9 +592,13 @@ void creditMemo::sPopulateByInvoiceNumber(int pInvoiceNumber)
 	query.exec();
         if (query.first())
         {
+          _ignoreShiptoSignals = true;
+
           _shipTo->setId(query.value("shipto_id").toInt());
           _shipToName->setText(query.value("shipto_name"));
           _shipToAddr->setId(query.value("shipto_addr_id").toInt());
+
+          _ignoreShiptoSignals = false;
         }
 	else if (query.lastError().type() != QSqlError::NoError)
 	{
@@ -664,11 +675,13 @@ void creditMemo::sCheckCreditMemoNumber()
 
 void creditMemo::sConvertShipto()
 {
-  if ((!_shipToAddr->isEnabled()) && (!_ignoreShiptoSignals))
+  if (!_ignoreShiptoSignals)
   {
 //  Convert the captive shipto to a free-form shipto
+    _shipTo->blockSignals(true);
     _shipTo->setId(-1);
-    _shipToAddr->setEnabled(TRUE);
+    _shipTo->setCustid(_cust->id());
+    _shipTo->blockSignals(false);
   }
 }
 
@@ -901,9 +914,7 @@ void creditMemo::populate()
     _shipToName->setEnabled(_ffShipto);
 	_shipToAddr->setEnabled(_ffShipto);
 
-    _shipTo->blockSignals(true);
     _shipTo->setId(cmhead.value("cmhead_shipto_id").toInt());
-    _shipTo->blockSignals(false);
     _shipToName->setText(cmhead.value("cmhead_shipto_name"));
     _shipToAddr->setLine1(cmhead.value("cmhead_shipto_address1").toString());
     _shipToAddr->setLine2(cmhead.value("cmhead_shipto_address2").toString());

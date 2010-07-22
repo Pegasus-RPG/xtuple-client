@@ -890,6 +890,7 @@ void invoice::sShipToModified()
 {
   _shipTo->blockSignals(true);
   _shipTo->setId(-1);
+  _shipTo->setCustid(_cust->id());
   _shipTo->blockSignals(false);
 }
 
