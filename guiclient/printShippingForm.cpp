@@ -39,6 +39,7 @@ printShippingForm::printShippingForm(QWidget* parent, const char * name, Qt::Win
   _order->setAllowedTypes(OrderLineEdit::Sales | OrderLineEdit::Transfer);
   _order->setLabel("");
   _shipment->setStatus(ShipmentClusterLineEdit::AllStatus);
+  _shipment->setStrict(true);
 
   _shipformWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
   _shipformWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
