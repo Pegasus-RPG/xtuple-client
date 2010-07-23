@@ -39,7 +39,6 @@ protected slots:
 
 private:
     bool _captive;
-    QPushButton* _print;
     virtual void depopulate();
 
 };
