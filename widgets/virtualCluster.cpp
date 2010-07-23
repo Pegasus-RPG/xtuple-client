@@ -73,6 +73,8 @@ void VirtualCluster::init()
     _description->setObjectName("_description");
     _description->setVisible(false);
     _description->setMaximumWidth(300);
+    if(!(_x_metrics && _x_metrics->boolean("VirtualClusterDisableMultiLineDesc")))
+      _description->setWordWrap(true);
 
     _grid = new QGridLayout(this);
     _grid->setMargin(0);
