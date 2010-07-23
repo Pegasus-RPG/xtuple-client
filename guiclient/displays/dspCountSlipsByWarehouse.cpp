@@ -10,23 +10,21 @@
 
 #include "dspCountSlipsByWarehouse.h"
 
-#include <QMenu>
 #include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
 
-#include <openreports.h>
-#include <parameter.h>
-
-#include <metasql.h>
-#include "mqlutil.h"
+#include "xtreewidget.h"
 
 #define DEBUG true
 
 dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+  : display(parent, "dspCountSlipsByWarehouse", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Count Slips by Site"));
+  setListLabel(tr("Count Slips"));
+  setReportName("CountSlipsByWarehouse");
+  setMetaSQLOptions("countSlip", "detail");
 
   // before connect so we don't repeatedly trigger the query
   if (_preferences->boolean("XCheckBox/forgetful"))
@@ -34,57 +32,23 @@ dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_showUnposted, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_numericSlips, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
-
-  _cntslip->addColumn(tr("Slip #"),     _itemColumn, Qt::AlignLeft,  true, "cntslip_number");
-  _cntslip->addColumn(tr("Tag #"),     _orderColumn, Qt::AlignLeft,  true, "invcnt_tagnumber");
-  _cntslip->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
-  _cntslip->addColumn(tr("Item"),       _itemColumn, Qt::AlignLeft,  true, "item_number");
-  _cntslip->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "descrip");
-  _cntslip->addColumn(tr("Entered"),    _dateColumn, Qt::AlignCenter,true, "cntslip_entered");
-  _cntslip->addColumn(tr("By"),         _userColumn, Qt::AlignCenter,true, "user");
-  _cntslip->addColumn(tr("Qty. Counted"),_qtyColumn, Qt::AlignRight, true, "cntslip_qty");
-  _cntslip->addColumn(tr("Posted"),     _dateColumn, Qt::AlignCenter,true, "cntslip_posted");
+  list()->addColumn(tr("Slip #"),     _itemColumn, Qt::AlignLeft,  true, "cntslip_number");
+  list()->addColumn(tr("Tag #"),     _orderColumn, Qt::AlignLeft,  true, "invcnt_tagnumber");
+  list()->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  list()->addColumn(tr("Item"),       _itemColumn, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "descrip");
+  list()->addColumn(tr("Entered"),    _dateColumn, Qt::AlignCenter,true, "cntslip_entered");
+  list()->addColumn(tr("By"),         _userColumn, Qt::AlignCenter,true, "user");
+  list()->addColumn(tr("Qty. Counted"),_qtyColumn, Qt::AlignRight, true, "cntslip_qty");
+  list()->addColumn(tr("Posted"),     _dateColumn, Qt::AlignCenter,true, "cntslip_posted");
 
   sFillList();
 }
 
-dspCountSlipsByWarehouse::~dspCountSlipsByWarehouse()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspCountSlipsByWarehouse::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
-}
-
-void dspCountSlipsByWarehouse::sPrint()
-{
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-
-  if(_showUnposted->isChecked())
-    params.append("showUnposted");
-
-  if(_numericSlips->isChecked())
-    params.append("asNumeric");
-
-  orReport report("CountSlipsByWarehouse", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspCountSlipsByWarehouse::sPopulateMenu(QMenu *, QTreeWidgetItem *)
-{
 }
 
 void dspCountSlipsByWarehouse::sFillList()
@@ -92,24 +56,18 @@ void dspCountSlipsByWarehouse::sFillList()
   if (DEBUG)
     qDebug("dspCountSlipsByWarehouse::sFillList() about to populate _cntslip");
 
-  MetaSQLQuery mql = mqlLoad("countSlip", "detail");
-  ParameterList params;
-  if (! setParams(params))
-    return;
+  display::sFillList();
 
-  q = mql.toQuery(params);
-  _cntslip->populate(q);
-
-  if (_numericSlips->isChecked() && _cntslip->topLevelItemCount() > 1)
+  if (_numericSlips->isChecked() && list()->topLevelItemCount() > 1)
   {
     if (DEBUG)
       qDebug("dspCountSlipsByWarehouse::sFillList() looking for slip # gaps "
-             "in %d items", _cntslip->topLevelItemCount());
-    XTreeWidgetItem *last =_cntslip->topLevelItem(0);
+             "in %d items", list()->topLevelItemCount());
+    XTreeWidgetItem *last =list()->topLevelItem(0);
     int slipNumber = last->rawValue("slipnumber").toInt();
-    for (int i = 1; i < _cntslip->topLevelItemCount(); i++)
+    for (int i = 1; i < list()->topLevelItemCount(); i++)
     {
-      XTreeWidgetItem *curr = _cntslip->topLevelItem(i);
+      XTreeWidgetItem *curr = list()->topLevelItem(i);
       if (DEBUG)
         qDebug("row %d has slipNumber %d and current %d",
                i, slipNumber, curr->rawValue("slipnumber").toInt());
@@ -118,12 +76,12 @@ void dspCountSlipsByWarehouse::sFillList()
       else if (slipNumber >= 0)
       {
         if (slipNumber == curr->rawValue("slipnumber").toInt() - 2)
-          curr = new XTreeWidgetItem( _cntslip, last, -1,
+          curr = new XTreeWidgetItem( list(), last, -1,
                                     QVariant("----"), "----", "----", "----",
                                     tr("Missing Slip #%1").arg(slipNumber + 1),
                                     "----", "----", "----" );
         else
-          curr = new XTreeWidgetItem( _cntslip, last, -1,
+          curr = new XTreeWidgetItem( list(), last, -1,
                                     QVariant("----"), "----", "----", "----",
                                     tr("Missing Slips #%1 to #%2").arg(slipNumber + 1).arg(curr->rawValue("slipnumber").toInt() - 1),
                                     "----", "----", "----" );
@@ -159,10 +117,9 @@ bool dspCountSlipsByWarehouse::setParams(ParameterList &params)
       _dates->appendValue(params);
   }
   
-  if (_warehouse->isSelected())
-    params.append("warehous_id", _warehouse->id());
+  _warehouse->appendValue(params);
 
-  if (!_showUnposted->isChecked())
+  if (_showUnposted->isChecked())
     params.append("showUnposted");
 
   params.append("byWarehouse");

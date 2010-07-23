@@ -11,27 +11,22 @@
 #ifndef DSPFROZENITEMSITES_H
 #define DSPFROZENITEMSITES_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspFrozenItemSites.h"
 
-class dspFrozenItemSites : public XWidget, public Ui::dspFrozenItemSites
+class dspFrozenItemSites : public display, public Ui::dspFrozenItemSites
 {
     Q_OBJECT
 
 public:
     dspFrozenItemSites(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspFrozenItemSites();
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int);
     virtual void sThaw();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

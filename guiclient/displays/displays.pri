@@ -9,9 +9,12 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspCapacityUOMsByParameter.ui \
            displays/dspCostedBOMBase.ui \
            displays/dspCostedSummarizedBOM.ui \
+           displays/dspCountSlipsByWarehouse.ui \
+           displays/dspCountTagsBase.ui \
            displays/dspDetailedInventoryHistoryByLocation.ui \
            displays/dspDetailedInventoryHistoryByLotSerial.ui \
            displays/dspExpiredInventoryByClassCode.ui \
+           displays/dspFrozenItemSites.ui \
            displays/dspIndentedWhereUsed.ui \
            displays/dspInventoryAvailabilityByCustomerType.ui \
            displays/dspInventoryAvailabilityByItem.ui \
@@ -53,9 +56,15 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspCostedIndentedBOM.h \
            displays/dspCostedSingleLevelBOM.h \
            displays/dspCostedSummarizedBOM.h \
+           displays/dspCountSlipsByWarehouse.h \
+           displays/dspCountTagsBase.h \
+           displays/dspCountTagsByClassCode.h \
+           displays/dspCountTagsByItem.h \
+           displays/dspCountTagsByWarehouse.h \
            displays/dspDetailedInventoryHistoryByLocation.h \
            displays/dspDetailedInventoryHistoryByLotSerial.h \
            displays/dspExpiredInventoryByClassCode.h \
+           displays/dspFrozenItemSites.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
            displays/dspInventoryAvailabilityByCustomerType.h \
@@ -112,9 +121,15 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspCostedIndentedBOM.cpp \
            displays/dspCostedSingleLevelBOM.cpp \
            displays/dspCostedSummarizedBOM.cpp \
+           displays/dspCountSlipsByWarehouse.cpp \
+           displays/dspCountTagsBase.cpp \
+           displays/dspCountTagsByClassCode.cpp \
+           displays/dspCountTagsByItem.cpp \
+           displays/dspCountTagsByWarehouse.cpp \
            displays/dspDetailedInventoryHistoryByLocation.cpp \
            displays/dspDetailedInventoryHistoryByLotSerial.cpp \
            displays/dspExpiredInventoryByClassCode.cpp \
+           displays/dspFrozenItemSites.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \
            displays/dspInventoryAvailabilityByCustomerType.cpp \

@@ -8,28 +8,23 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPCOUNTTAGSBYWAREHOUSE_H
-#define DSPCOUNTTAGSBYWAREHOUSE_H
+#ifndef DSPCOUNTSLIPSBYWAREHOUSE_H
+#define DSPCOUNTSLIPSBYWAREHOUSE_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspCountTagsByWarehouse.h"
+#include "ui_dspCountSlipsByWarehouse.h"
 
-class dspCountTagsByWarehouse : public XWidget, public Ui::dspCountTagsByWarehouse
+class dspCountSlipsByWarehouse : public display, public Ui::dspCountSlipsByWarehouse
 {
     Q_OBJECT
 
 public:
-    dspCountTagsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspCountTagsByWarehouse();
+    dspCountSlipsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sView();
     virtual void sFillList();
 
 protected slots:
@@ -37,4 +32,4 @@ protected slots:
 
 };
 
-#endif // DSPCOUNTTAGSBYWAREHOUSE_H
+#endif // DSPCOUNTSLIPSBYWAREHOUSE_H

@@ -11,29 +11,14 @@
 #ifndef DSPCOUNTTAGSBYCLASSCODE_H
 #define DSPCOUNTTAGSBYCLASSCODE_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "dspCountTagsBase.h"
 
-#include "ui_dspCountTagsByClassCode.h"
-
-class dspCountTagsByClassCode : public XWidget, public Ui::dspCountTagsByClassCode
+class dspCountTagsByClassCode : public dspCountTagsBase
 {
     Q_OBJECT
 
 public:
     dspCountTagsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspCountTagsByClassCode();
-
-    virtual bool setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sView();
-    virtual void sFillList();
-
-protected slots:
-    virtual void languageChange();
 
 };
 

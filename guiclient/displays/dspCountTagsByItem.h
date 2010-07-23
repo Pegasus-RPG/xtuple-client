@@ -11,29 +11,14 @@
 #ifndef DSPCOUNTTAGSBYITEM_H
 #define DSPCOUNTTAGSBYITEM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "dspCountTagsBase.h"
 
-#include "ui_dspCountTagsByItem.h"
-
-class dspCountTagsByItem : public XWidget, public Ui::dspCountTagsByItem
+class dspCountTagsByItem : public dspCountTagsBase
 {
     Q_OBJECT
 
 public:
     dspCountTagsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspCountTagsByItem();
-
-    virtual bool setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sView();
-    virtual void sFillList();
-
-protected slots:
-    virtual void languageChange();
 
 };
 

@@ -213,11 +213,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspCashReceipts.ui                    \
           dspCheckRegister.ui                   \
           dspCountSlipEditList.ui               \
-          dspCountSlipsByWarehouse.ui           \
           dspCountTagEditList.ui                \
-          dspCountTagsByClassCode.ui            \
-          dspCountTagsByItem.ui                 \
-          dspCountTagsByWarehouse.ui            \
           dspCreditCardTransactions.ui          \
           dspCustomerARHistory.ui               \
           dspCustomerInformationExport.ui       \
@@ -229,7 +225,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspFinancialReport.ui                         \
           dspFreightPricesByCustomer.ui                 \
           dspFreightPricesByCustomerType.ui             \
-          dspFrozenItemSites.ui                         \
           dspGLSeries.ui                                \
           dspGLTransactions.ui                          \
           dspIncidentsByCRMAccount.ui                   \
@@ -879,11 +874,7 @@ HEADERS = ../common/format.h                    \
           dspCashReceipts.h                     \
           dspCheckRegister.h                    \
           dspCountSlipEditList.h                \
-          dspCountSlipsByWarehouse.h            \
           dspCountTagEditList.h                 \
-          dspCountTagsByClassCode.h             \
-          dspCountTagsByItem.h                  \
-          dspCountTagsByWarehouse.h             \
           dspCreditCardTransactions.h           \
           dspCustomerARHistory.h                \
           dspCustomerInformationExport.h        \
@@ -895,7 +886,6 @@ HEADERS = ../common/format.h                    \
           dspFinancialReport.h                          \
           dspFreightPricesByCustomer.h                  \
           dspFreightPricesByCustomerType.h              \
-          dspFrozenItemSites.h                          \
           dspGLSeries.h                                 \
           dspGLTransactions.h                           \
           dspIncidentsByCRMAccount.h                    \
@@ -1581,11 +1571,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspCashReceipts.cpp                   \
           dspCheckRegister.cpp                  \
           dspCountSlipEditList.cpp              \
-          dspCountSlipsByWarehouse.cpp          \
           dspCountTagEditList.cpp               \
-          dspCountTagsByClassCode.cpp           \
-          dspCountTagsByItem.cpp                \
-          dspCountTagsByWarehouse.cpp           \
           dspCreditCardTransactions.cpp         \
           dspCustomerARHistory.cpp              \
           dspCustomerInformationExport.cpp      \
@@ -1597,7 +1583,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspFinancialReport.cpp                        \
           dspFreightPricesByCustomer.cpp                \
           dspFreightPricesByCustomerType.cpp            \
-          dspFrozenItemSites.cpp                        \
           dspGLSeries.cpp                               \
           dspGLTransactions.cpp                         \
           dspIncidentsByCRMAccount.cpp                  \
