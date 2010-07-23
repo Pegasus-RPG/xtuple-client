@@ -10,9 +10,10 @@
 
 #include "dspUndefinedManufacturedItems.h"
 
-#include <QVariant>
-#include <QWorkspace>
+#include <QAction>
 #include <QMenu>
+#include <QVariant>
+
 #include <parameter.h>
 #include <metasql.h>
 
@@ -25,7 +26,6 @@ dspUndefinedManufacturedItems::dspUndefinedManufacturedItems(QWidget* parent, co
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -65,17 +65,15 @@ void dspUndefinedManufacturedItems::languageChange()
 
 void dspUndefinedManufacturedItems::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
-  if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit Item..."), this, SLOT(sEditItem()));
+  menuItem->setEnabled(_privileges->check("MaintainItemMasters"));
 
   if (((XTreeWidgetItem *)_item->currentItem())->altId() == 2)
   {
-    menuItem = pMenu->insertItem(tr("Create BOM..."), this, SLOT(sCreateBOM()), 0);
-    if (!_privileges->check("MaintainBOMs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Create BOM..."), this, SLOT(sCreateBOM()));
+    menuItem->setEnabled(_privileges->check("MaintainBOMs"));
   }
 }
 

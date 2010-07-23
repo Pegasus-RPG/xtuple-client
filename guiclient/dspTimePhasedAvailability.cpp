@@ -11,13 +11,14 @@
 #include "dspTimePhasedAvailability.h"
 
 #include <QVariant>
-#include <QWorkspace>
-//#include <QStatusBar>
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+
 #include <datecluster.h>
-#include <openreports.h>
 #include <metasql.h>
+#include <openreports.h>
+
 #include "guiclient.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "dspAllocations.h"
@@ -28,19 +29,11 @@
 #include "submitReport.h"
 #include "mqlutil.h"
 
-/*
- *  Constructs a dspTimePhasedAvailability as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTimePhasedAvailability::dspTimePhasedAvailability(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
@@ -59,18 +52,11 @@ dspTimePhasedAvailability::dspTimePhasedAvailability(QWidget* parent, const char
     _submit->hide();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTimePhasedAvailability::~dspTimePhasedAvailability()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTimePhasedAvailability::languageChange()
 {
   retranslateUi(this);
@@ -210,25 +196,25 @@ void dspTimePhasedAvailability::sCreatePO()
 
 void dspTimePhasedAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
 {
-  int menuItem;
+  QAction *menuItem;
 
   _column = pColumn;
   if (_column > 2)
   {
-    menuItem = pMenu->insertItem(tr("View Availability Detail..."), this, SLOT(sViewAvailability()), 0);
-    menuItem = pMenu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
-    menuItem = pMenu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
+    menuItem = pMenu->addAction(tr("View Availability Detail..."), this, SLOT(sViewAvailability()));
+    menuItem = pMenu->addAction(tr("View Allocations..."), this, SLOT(sViewAllocations()));
+    menuItem = pMenu->addAction(tr("View Orders..."), this, SLOT(sViewOrders()));
   
     if (((XTreeWidgetItem *)pSelected)->altId() == 1)
     {
-      pMenu->insertSeparator();
-      menuItem = pMenu->insertItem(tr("Create W/O..."), this, SLOT(sCreateWO()), 0);
+      pMenu->addSeparator();
+      menuItem = pMenu->addAction(tr("Create W/O..."), this, SLOT(sCreateWO()));
     }
     else if (((XTreeWidgetItem *)pSelected)->altId() == 2)
     {
-      pMenu->insertSeparator();
-      menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
-      menuItem = pMenu->insertItem(tr("Create P/O..."), this, SLOT(sCreatePO()), 0);
+      pMenu->addSeparator();
+      menuItem = pMenu->addAction(tr("Create P/R..."), this, SLOT(sCreatePR()));
+      menuItem = pMenu->addAction(tr("Create P/O..."), this, SLOT(sCreatePO()));
     }
   }
 }

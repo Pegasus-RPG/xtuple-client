@@ -10,34 +10,26 @@
 
 #include "dspTimePhasedSalesByProductCategory.h"
 
-#include <QVariant>
-#include <QWorkspace>
-#include <QMessageBox>
-//#include <QStatusBar>
-#include <QMenu>
-#include <q3valuevector.h>
-#include <datecluster.h>
-#include <parameter.h>
-#include <openreports.h>
-#include <metasql.h>
 #include "dspSalesHistoryByParameterList.h"
 #include "guiclient.h"
-#include "submitReport.h"
 #include "mqlutil.h"
+#include "submitReport.h"
 
-/*
- *  Constructs a dspTimePhasedSalesByProductCategory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <QAction>
+#include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
+#include <datecluster.h>
+#include <metasql.h>
+#include <openreports.h>
+#include <parameter.h>
+
 dspTimePhasedSalesByProductCategory::dspTimePhasedSalesByProductCategory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
@@ -58,18 +50,11 @@ dspTimePhasedSalesByProductCategory::dspTimePhasedSalesByProductCategory(QWidget
   _salesDollars->setEnabled(_privileges->check("ViewCustomerPrices"));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTimePhasedSalesByProductCategory::~dspTimePhasedSalesByProductCategory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTimePhasedSalesByProductCategory::languageChange()
 {
   retranslateUi(this);
@@ -113,13 +98,12 @@ void dspTimePhasedSalesByProductCategory::sViewShipments()
 
 void dspTimePhasedSalesByProductCategory::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
-  int intMenuItem;
+  QAction *menuItem;
 
   _column = pColumn;
 
-  intMenuItem = menuThis->insertItem(tr("View Sales Detail..."), this, SLOT(sViewShipments()), 0);
-  if (!_privileges->check("ViewSalesHistory"))
-    menuThis->setItemEnabled(intMenuItem, FALSE);
+  menuItem = menuThis->addAction(tr("View Sales Detail..."), this, SLOT(sViewShipments()));
+  menuItem->setEnabled(_privileges->check("ViewSalesHistory"));
 }
 
 void dspTimePhasedSalesByProductCategory::sCalculate()

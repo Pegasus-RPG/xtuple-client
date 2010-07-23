@@ -12,6 +12,7 @@
 
 #include <math.h>
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -58,13 +59,13 @@ void dspTrialBalances::languageChange()
 
 void dspTrialBalances::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
-  menuItem = pMenu->insertItem(tr("View Transactions..."), this, SLOT(sViewTransactions()), 0);
+  QAction *menuItem;
+  menuItem = pMenu->addAction(tr("View Transactions..."), this, SLOT(sViewTransactions()));
 
   if (_metrics->boolean("ManualForwardUpdate"))
   {
-    pMenu->insertSeparator();
-    menuItem = pMenu->insertItem(tr("Forward Update"), this, SLOT(sForwardUpdate()), 0);
+    pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("Forward Update"), this, SLOT(sForwardUpdate()));
   }
 }
 

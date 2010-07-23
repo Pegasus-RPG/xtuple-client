@@ -10,12 +10,11 @@
 
 #include "dspVendorAPHistory.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
+#include <QAction>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QMenu>
+#include <QVariant>
 
 #include <openreports.h>
 #include <metasql.h>
@@ -26,19 +25,11 @@
 #include "dspGLSeries.h"
 #include "mqlutil.h"
 
-/*
- *  Constructs a dspVendorAPHistory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -62,18 +53,11 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char* name, Qt::WF
   _vend->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspVendorAPHistory::~dspVendorAPHistory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspVendorAPHistory::languageChange()
 {
   retranslateUi(this);
@@ -108,34 +92,30 @@ enum SetResponse dspVendorAPHistory::set(const ParameterList &pParams)
 
 void dspVendorAPHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
   XTreeWidgetItem * item = (XTreeWidgetItem*)pSelected;
   if (item->id() != -1)
   {
-    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    if (!_privileges->check("EditSalesHistory"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+    menuItem->setEnabled(_privileges->check("EditSalesHistory"));
 
-    pMenu->insertItem(tr("View A/P Open..."), this, SLOT(sView()), 0);
+    pMenu->addAction(tr("View A/P Open..."), this, SLOT(sView()));
 
-    menuItem = pMenu->insertItem(tr("View G/L Series..."), this, SLOT(sViewGLSeries()), 0);
-    if (!_privileges->check("ViewGLTransactions"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("View G/L Series..."), this, SLOT(sViewGLSeries()));
+    menuItem->setEnabled(_privileges->check("ViewGLTransactions"));
 
     if(item->altId() == -1 && item->text(1)==tr("Voucher"))
     {
-      menuItem = pMenu->insertItem(tr("View Voucher..."), this, SLOT(sViewVoucher()), 0);
-      if (!_privileges->check("ViewVouchers"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem = pMenu->addAction(tr("View Voucher..."), this, SLOT(sViewVoucher()));
+      menuItem->setEnabled(_privileges->check("ViewVouchers"));
 
       if(item->rawValue("amount")==item->rawValue("balance"))
       {
-        pMenu->insertSeparator();
+        pMenu->addSeparator();
   
-        menuItem = pMenu->insertItem(tr("Void"), this, SLOT(sVoidVoucher()), 0);
-        if (!_privileges->check("MaintainAPMemos"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem = pMenu->addAction(tr("Void"), this, SLOT(sVoidVoucher()));
+        menuItem->setEnabled(_privileges->check("MaintainAPMemos"));
       }
     } 
   }

@@ -10,12 +10,11 @@
 
 #include "dspTimePhasedBookingsByProductCategory.h"
 
-#include <QVariant>
-#include <QWorkspace>
-#include <QMessageBox>
-//#include <QStatusBar>
+#include <QAction>
 #include <QMenu>
-#include <q3valuevector.h>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <parameter.h>
 #include <datecluster.h>
 #include <openreports.h>
@@ -25,19 +24,11 @@
 #include "submitReport.h"
 #include "mqlutil.h"
 
-/*
- *  Constructs a dspTimePhasedBookingsByProductCategory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTimePhasedBookingsByProductCategory::dspTimePhasedBookingsByProductCategory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -56,18 +47,11 @@ dspTimePhasedBookingsByProductCategory::dspTimePhasedBookingsByProductCategory(Q
   _soitem->addColumn(tr("UOM"),        _uomColumn,  Qt::AlignLeft,   true,  "uom"   );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTimePhasedBookingsByProductCategory::~dspTimePhasedBookingsByProductCategory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTimePhasedBookingsByProductCategory::languageChange()
 {
   retranslateUi(this);
@@ -111,12 +95,12 @@ void dspTimePhasedBookingsByProductCategory::sViewBookings()
 
 void dspTimePhasedBookingsByProductCategory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
 {
-  int menuItem;
+  QAction *menuItem;
 
   _column = pColumn;
 
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
-    menuItem = pMenu->insertItem(tr("View Bookings..."), this, SLOT(sViewBookings()), 0);
+    menuItem = pMenu->addAction(tr("View Bookings..."), this, SLOT(sViewBookings()));
 }
 
 void dspTimePhasedBookingsByProductCategory::sFillList()

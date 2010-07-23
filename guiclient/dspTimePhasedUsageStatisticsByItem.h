@@ -16,7 +16,7 @@
 
 #include "ui_dspTimePhasedUsageStatisticsByItem.h"
 
-#include <Q3ValueList>
+#include <QList>
 
 class dspTimePhasedUsageStatisticsByItem : public XWidget, public Ui::dspTimePhasedUsageStatisticsByItem
 {
@@ -39,7 +39,7 @@ protected slots:
 
 private:
     int _column;
-    Q3ValueList<DatePair> _columnDates;
+    QList<DatePair> _columnDates;
 
     ParameterList buildParameters();
 };

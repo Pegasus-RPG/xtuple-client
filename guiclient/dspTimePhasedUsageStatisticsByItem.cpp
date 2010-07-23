@@ -10,6 +10,7 @@
 
 #include "dspTimePhasedUsageStatisticsByItem.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
@@ -29,9 +30,6 @@ dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* 
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
@@ -120,8 +118,8 @@ void dspTimePhasedUsageStatisticsByItem::sViewTransactions()
   {
     ParameterList params;
     params.append("itemsite_id", _usage->id());
-    params.append("startDate", _columnDates[_column - 2].startDate);
-    params.append("endDate", _columnDates[_column - 2].endDate);
+    params.append("startDate",   _columnDates[_column - 2].startDate);
+    params.append("endDate",     _columnDates[_column - 2].endDate);
     params.append("run");
 
     QString type = _usage->currentItem()->text(0);
@@ -144,13 +142,12 @@ void dspTimePhasedUsageStatisticsByItem::sViewTransactions()
 
 void dspTimePhasedUsageStatisticsByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *, int pColumn)
 {
-  int menuItem;
+  QAction *menuItem;
 
   _column = pColumn;
 
-  menuItem = menu->insertItem(tr("View Transactions..."), this, SLOT(sViewTransactions()), 0);
-  if (!_privileges->check("ViewInventoryHistory"))
-    menu->setItemEnabled(menuItem, FALSE);
+  menuItem = menu->addAction(tr("View Transactions..."), this, SLOT(sViewTransactions()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryHistory"));
 }
 
 void dspTimePhasedUsageStatisticsByItem::sCalculate()

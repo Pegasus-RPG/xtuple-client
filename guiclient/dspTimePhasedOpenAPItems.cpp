@@ -10,6 +10,7 @@
 
 #include "dspTimePhasedOpenAPItems.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -193,11 +194,10 @@ void dspTimePhasedOpenAPItems::sViewOpenItems()
 
 void dspTimePhasedOpenAPItems::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
-  int intMenuItem;
   _column = pColumn;
 
   if ((_column > 1) && (_apopen->id() > 0))
-    intMenuItem = menuThis->insertItem(tr("View Open Items..."), this, SLOT(sViewOpenItems()), 0);
+    menuThis->addAction(tr("View Open Items..."), this, SLOT(sViewOpenItems()));
 }
 
 void dspTimePhasedOpenAPItems::sFillList()

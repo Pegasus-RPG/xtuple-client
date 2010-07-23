@@ -10,6 +10,7 @@
 
 #include "dspUninvoicedReceivings.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -27,8 +28,6 @@ dspUninvoicedReceivings::dspUninvoicedReceivings(QWidget* parent, const char* na
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_agent, SIGNAL(newID(int)), this, SLOT(sFillList()));
@@ -64,19 +63,19 @@ void dspUninvoicedReceivings::languageChange()
 
 void dspUninvoicedReceivings::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   if(_privileges->check("MaintainUninvoicedReceipts"))
   {
     if(_porecv->altId() < 3)
     {
-      menuItem = pMenu->insertItem(tr("Mark as Invoiced..."), this, SLOT(sMarkAsInvoiced()), 0);
-      menuItem = pMenu->insertItem(tr("Correct Receiving..."), this, SLOT(sCorrectReceiving()), 0);
+      menuItem = pMenu->addAction(tr("Mark as Invoiced..."), this, SLOT(sMarkAsInvoiced()));
+      menuItem = pMenu->addAction(tr("Correct Receiving..."), this, SLOT(sCorrectReceiving()));
       if(_porecv->altId() == 2)
-        pMenu->setItemEnabled(menuItem, false);
+        menuItem->setEnabled(false);
     }
     if (_porecv->altId() == 3)
-      menuItem = pMenu->insertItem(tr("Create Credit Memo..."), this, SLOT(sCreateCreditMemo()), 0);
+      menuItem = pMenu->addAction(tr("Create Credit Memo..."), this, SLOT(sCreateCreditMemo()));
   }
 }
 

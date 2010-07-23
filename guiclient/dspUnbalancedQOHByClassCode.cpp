@@ -10,6 +10,7 @@
 
 #include "dspUnbalancedQOHByClassCode.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <metasql.h>
@@ -119,31 +120,28 @@ void dspUnbalancedQOHByClassCode::sIssueCountTag()
 
 void dspUnbalancedQOHByClassCode::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Balance Item Site..."), this, SLOT(sBalance()), 0);
+  menuItem = pMenu->addAction(tr("Balance Item Site..."), this, SLOT(sBalance()));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("View Item Site..."), this, SLOT(sView()), 0);
-  if ((!_privileges->check("MaintainItemSites")) && (!_privileges->check("ViewItemSites")))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("View Item Site..."), this, SLOT(sView()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSites") ||
+                       _privileges->check("ViewItemSites"));
 
-  menuItem = pMenu->insertItem(tr("Edit Item Site..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainItemSites"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit Item Site..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSites"));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("View Inventory Availability..."), this, SLOT(sInventoryAvailability()), 0);
-  if (!_privileges->check("ViewInventoryAvailability"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("View Inventory Availability..."), this, SLOT(sInventoryAvailability()));
+  menuItem->setEnabled(_privileges->check("ViewInventoryAvailability"));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
-  if (!_privileges->check("IssueCountTags"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));
+  menuItem->setEnabled(_privileges->check("IssueCountTags"));
 }
 
 void dspUnbalancedQOHByClassCode::sFillList()

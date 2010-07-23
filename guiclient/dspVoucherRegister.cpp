@@ -10,31 +10,26 @@
 
 #include "dspVoucherRegister.h"
 
-#include <QVariant>
-//#include <QStatusBar>
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
-#include <openreports.h>
-#include <metasql.h>
-#include "mqlutil.h"
-#include "voucher.h"
-#include "miscVoucher.h"
-#include "invoice.h"
-#include "purchaseOrder.h"
-#include "glTransactionDetail.h"
+#include <QVariant>
 
-#define USERNAME_COL	9
-/*
- *  Constructs a dspVoucherRegister as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <metasql.h>
+#include <openreports.h>
+
+#include "glTransactionDetail.h"
+#include "invoice.h"
+#include "miscVoucher.h"
+#include "mqlutil.h"
+#include "purchaseOrder.h"
+#include "voucher.h"
+
 dspVoucherRegister::dspVoucherRegister(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -123,18 +118,19 @@ enum SetResponse dspVoucherRegister::set(const ParameterList &pParams)
 
 void dspVoucherRegister::sPopulateMenu(QMenu * menuThis)
 {
-  menuThis->insertItem(tr("View..."), this, SLOT(sViewTrans()), 0);
+  menuThis->addAction(tr("View..."), this, SLOT(sViewTrans()));
 
-  QTreeWidgetItem * item = _gltrans->currentItem();
+  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(_gltrans->currentItem());
   if(0 == item)
     return;
+  QString doctype = item->rawValue("gltrans_doctype").toString();
 
-  if(item->text(2) == "VO")
-    menuThis->insertItem(tr("View Voucher..."), this, SLOT(sViewDocument()));
-  else if(item->text(2) == "IN")
-    menuThis->insertItem(tr("View Invoice..."), this, SLOT(sViewDocument()));
-  else if(item->text(2) == "PO")
-    menuThis->insertItem(tr("View Purchase Order..."), this, SLOT(sViewDocument()));
+  if (doctype == "VO")
+    menuThis->addAction(tr("View Voucher..."), this, SLOT(sViewDocument()));
+  else if (doctype == "IN")
+    menuThis->addAction(tr("View Invoice..."), this, SLOT(sViewDocument()));
+  else if (doctype == "PO")
+    menuThis->addAction(tr("View Purchase Order..."), this, SLOT(sViewDocument()));
 }
 
 void dspVoucherRegister::sPrint()
@@ -203,9 +199,9 @@ bool dspVoucherRegister::setParams(ParameterList & params)
 void dspVoucherRegister::sShowUsername( bool yes )
 {
   if(yes)
-    _gltrans->showColumn(USERNAME_COL);
+    _gltrans->showColumn(_gltrans->column("gltrans_username"));
   else
-    _gltrans->hideColumn(USERNAME_COL);
+    _gltrans->hideColumn(_gltrans->column("gltrans_username"));
 }
 
 void dspVoucherRegister::sViewTrans()

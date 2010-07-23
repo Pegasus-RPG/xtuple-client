@@ -10,13 +10,11 @@
 
 #include "dspTimePhasedSalesByCustomer.h"
 
-#include <QVariant>
-#include <QWorkspace>
-//#include <QStatusBar>
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
 
-#include <q3valuevector.h>
 #include <datecluster.h>
 #include <parameter.h>
 #include <openreports.h>
@@ -27,19 +25,11 @@
 #include "submitReport.h"
 #include "mqlutil.h"
 
-/*
- *  Constructs a dspTimePhasedSalesByCustomer as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTimePhasedSalesByCustomer::dspTimePhasedSalesByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -58,18 +48,11 @@ dspTimePhasedSalesByCustomer::dspTimePhasedSalesByCustomer(QWidget* parent, cons
   _sohist->addColumn(tr("Customer"), 180,          Qt::AlignLeft,   true,  "cust_name" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTimePhasedSalesByCustomer::~dspTimePhasedSalesByCustomer()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTimePhasedSalesByCustomer::languageChange()
 {
   retranslateUi(this);
@@ -110,15 +93,14 @@ void dspTimePhasedSalesByCustomer::sViewShipments()
 
 void dspTimePhasedSalesByCustomer::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
-  int intMenuItem;
+  QAction *menuItem;
 
   _column = pColumn;
 
   if (pColumn > 1)
   {
-    intMenuItem = menuThis->insertItem(tr("View Sales Detail..."), this, SLOT(sViewShipments()), 0);
-    if (!_privileges->check("ViewSalesHistory"))
-      menuThis->setItemEnabled(intMenuItem, FALSE);
+    menuItem = menuThis->addAction(tr("View Sales Detail..."), this, SLOT(sViewShipments()));
+    menuItem->setEnabled(_privileges->check("ViewSalesHistory"));
   }
 }
 
