@@ -2208,7 +2208,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
               valueidx = _itemchar->index(i, CHAR_VALUE);
               sql     += QString(" OR ((bomdata_char_id=%1) AND (bomdata_value='%2'))")
                          .arg(_itemchar->data(charidx, Qt::UserRole).toString())
-                         .arg(_itemchar->data(valueidx, Qt::DisplayRole).toString());
+                         .arg(_itemchar->data(valueidx, Qt::DisplayRole).toString().replace("'", "''"));
             }
 
             sql +=  " ) ";
@@ -2282,7 +2282,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
             {
               charidx  = _itemchar->index(i, CHAR_ID);
               valueidx = _itemchar->index(i, CHAR_VALUE);
-              sql     += QString(" OR ((bomitem_char_id=%1) AND (bomitem_value='%2'))").arg(_itemchar->data(charidx, Qt::UserRole).toString()).arg(_itemchar->data(valueidx, Qt::DisplayRole).toString());
+              sql     += QString(" OR ((bomitem_char_id=%1) AND (bomitem_value='%2'))").arg(_itemchar->data(charidx, Qt::UserRole).toString()).arg(_itemchar->data(valueidx, Qt::DisplayRole).toString().replace("'", "''"));
             }
 
             sql +=  " ) ";
