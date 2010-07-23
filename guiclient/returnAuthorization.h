@@ -88,6 +88,7 @@ private:
     bool _custEmail;
     bool _ffBillto;
     bool _ffShipto;
+    bool _ignoreShiptoSignals;
     bool _ignoreSoSignals;
     bool _ignoreWhsSignals;
     bool _saved;
