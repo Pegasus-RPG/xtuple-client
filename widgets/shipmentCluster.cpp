@@ -120,7 +120,7 @@ ShipmentClusterLineEdit::ShipmentClusterLineEdit(QWidget* pParent, const char* p
 {
     _type = All;
     _status = AllStatus;
-    //setStrict(false); Why would we do this?  Defeats status and type settings.
+    setStrict(false);
     setType(SalesOrder);
     setStatus(Shipped);
     setTitles(tr("Shipment"), tr("Shipments"));
