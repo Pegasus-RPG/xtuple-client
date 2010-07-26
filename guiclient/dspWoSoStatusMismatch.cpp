@@ -10,29 +10,23 @@
 
 #include "dspWoSoStatusMismatch.h"
 
-#include <QVariant>
-//#include <QStatusBar>
+#include <QAction>
 #include <QMenu>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
 #include <metasql.h>
+
 #include "mqlutil.h"
 #include "closeWo.h"
 #include "dspWoMaterialsByWorkOrder.h"
 
-/*
- *  Constructs a dspWoSoStatusMismatch as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspWoSoStatusMismatch::dspWoSoStatusMismatch(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
@@ -51,18 +45,11 @@ dspWoSoStatusMismatch::dspWoSoStatusMismatch(QWidget* parent, const char* name, 
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspWoSoStatusMismatch::~dspWoSoStatusMismatch()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspWoSoStatusMismatch::languageChange()
 {
   retranslateUi(this);
@@ -96,9 +83,9 @@ void dspWoSoStatusMismatch::sCloseWo()
 void dspWoSoStatusMismatch::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   if ((pSelected->text(1) == "E") || (pSelected->text(1) == "I"))
-    pMenu->insertItem(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatlreq()), 0);
+    pMenu->addAction(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatlreq()));
 
-  pMenu->insertItem(tr("Close W/O..."), this, SLOT(sCloseWo()), 0);
+  pMenu->addAction(tr("Close W/O..."), this, SLOT(sCloseWo()));
 }
 
 void dspWoSoStatusMismatch::sViewWomatlreq()

@@ -12,6 +12,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 
@@ -132,9 +133,9 @@ void dspWoMaterialsByWorkOrder::sPrint()
 
 void dspWoMaterialsByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("View Requirement..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View Requirement..."), this, SLOT(sView()));
 }
 
 void dspWoMaterialsByWorkOrder::sView()

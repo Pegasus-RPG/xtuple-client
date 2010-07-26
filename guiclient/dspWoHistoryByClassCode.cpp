@@ -10,29 +10,21 @@
 
 #include "dspWoHistoryByClassCode.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
+#include <QAction>
 #include <QMenu>
+#include <QVariant>
+
 #include <openreports.h>
 #include <metasql.h>
 
 #include "mqlutil.h"
 #include "workOrder.h"
 
-/*
- *  Constructs a dspWoHistoryByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspWoHistoryByClassCode::dspWoHistoryByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -55,18 +47,11 @@ dspWoHistoryByClassCode::dspWoHistoryByClassCode(QWidget* parent, const char* na
   sHandleCosts(_showCost->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspWoHistoryByClassCode::~dspWoHistoryByClassCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspWoHistoryByClassCode::languageChange()
 {
   retranslateUi(this);
@@ -117,10 +102,10 @@ void dspWoHistoryByClassCode::sEdit()
 
 void dspWoHistoryByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
 }
 
 void dspWoHistoryByClassCode::sHandleCosts(bool pShowCosts)

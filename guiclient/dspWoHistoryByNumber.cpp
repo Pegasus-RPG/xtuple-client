@@ -10,12 +10,11 @@
 
 #include "dspWoHistoryByNumber.h"
 
-#include <QVariant>
-#include <QValidator>
-//#include <QStatusBar>
-#include <QWorkspace>
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include <QValidator>
+#include <QVariant>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -24,21 +23,11 @@
 #include <parameter.h>
 #include "workOrder.h"
 
-#define COST_COL	10
-
-/*
- *  Constructs a dspWoHistoryByNumber as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspWoHistoryByNumber::dspWoHistoryByNumber(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -67,18 +56,11 @@ dspWoHistoryByNumber::dspWoHistoryByNumber(QWidget* parent, const char* name, Qt
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), SLOT(sFillList()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspWoHistoryByNumber::~dspWoHistoryByNumber()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspWoHistoryByNumber::languageChange()
 {
   retranslateUi(this);
@@ -151,18 +133,18 @@ void dspWoHistoryByNumber::sEdit()
 
 void dspWoHistoryByNumber::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
 }
 
 void dspWoHistoryByNumber::sHandleCosts(bool pShowCosts)
 {
   if (pShowCosts)
-    _wo->showColumn(COST_COL);
+    _wo->showColumn(_wo->column("wo_postedvalue"));
   else
-    _wo->hideColumn(COST_COL);
+    _wo->hideColumn(_wo->column("wo_postedvalue"));
 }
 
 void dspWoHistoryByNumber::sFillList()
