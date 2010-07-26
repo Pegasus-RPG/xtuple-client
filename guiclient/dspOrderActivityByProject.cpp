@@ -10,11 +10,11 @@
 
 #include "dspOrderActivityByProject.h"
 
-#include <QVariant>
-#include <QWorkspace>
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
 
@@ -26,19 +26,11 @@
 #include "invoice.h"
 #include "purchaseOrderItem.h"
 
-/*
- *  Constructs a dspOrderActivityByProject as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_cancel, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_project, SIGNAL(newId(int)), this, SLOT(sFillList()));
@@ -61,18 +53,11 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspOrderActivityByProject::~dspOrderActivityByProject()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspOrderActivityByProject::languageChange()
 {
   retranslateUi(this);
@@ -85,45 +70,41 @@ void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
   if(_orders->altId() == 1)
   {
     menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEdit()));
-    if (!_privileges->check("MaintainSalesOrders"))
-      menuItem->setEnabled(false);
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
 
     menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sView()));
-    if (!_privileges->check("MaintainSalesOrders") && !_privileges->check("ViewSalesOrders"))
-      menuItem->setEnabled(false);
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders") ||
+                         _privileges->check("ViewSalesOrders"));
   }
 
   if(_orders->altId() == 2)
   {
     menuItem = pMenu->addAction(tr("Edit Quote..."), this, SLOT(sEdit()));
-    if (!_privileges->check("MaintainQuotes"))
-      menuItem->setEnabled(false);
+    menuItem->setEnabled(_privileges->check("MaintainQuotes"));
 
     menuItem = pMenu->addAction(tr("View Quote..."), this, SLOT(sView()));
-    if (!_privileges->check("MaintainQuotes") && !_privileges->check("ViewQuotes"))
-      menuItem->setEnabled(false);
+    menuItem->setEnabled(_privileges->check("MaintainQuotes") ||
+                         _privileges->check("ViewQuotes"));
   }
 
   if(_orders->altId() == 3)
   {
     menuItem = pMenu->addAction(tr("Edit Invoice..."), this, SLOT(sEdit()));
-    if (!_privileges->check("MaintainMiscInvoices"))
-      menuItem->setEnabled(false);
+    menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
 
     menuItem = pMenu->addAction(tr("View Invoice..."), this, SLOT(sView()));
-    if (!_privileges->check("MaintainMiscInvoices") && !_privileges->check("ViewMiscInvoices"))
-      menuItem->setEnabled(false);
+    menuItem->setEnabled(_privileges->check("MaintainMiscInvoices") ||
+                         _privileges->check("ViewMiscInvoices"));
   }
 
   if(_orders->altId() == 5)
   {
     menuItem = pMenu->addAction(tr("Edit P/O Item..."), this, SLOT(sEdit()));
-    if (!_privileges->check("MaintainPurchaseOrders"))
-      menuItem->setEnabled(false);
+    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
 
     menuItem = pMenu->addAction(tr("View P/O Item..."), this, SLOT(sView()));
-    if (!_privileges->check("MaintainPurchaseOrders") && !_privileges->check("ViewPurchaseOrders"))
-      menuItem->setEnabled(false);
+    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
+                         _privileges->check("ViewPurchaseOrders"));
   }
 
 }
