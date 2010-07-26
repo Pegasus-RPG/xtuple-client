@@ -443,7 +443,7 @@ bool returnAuthorization::sSave(bool partial)
     return false;
   }
 
-  if ( !_warehouse->isValid() )
+  if ( !partial && !_warehouse->isValid() )
   {
     QMessageBox::warning( this, tr("Invalid Receiving Site"),
                          tr("<p>You must enter a valid Receiving Site." ) );
@@ -451,7 +451,7 @@ bool returnAuthorization::sSave(bool partial)
     return false;
   }
 
-  if ( !_shipWhs->isValid() )
+  if ( !partial && !_shipWhs->isValid() )
   {
     QMessageBox::warning( this, tr("Invalid Shipping Site"),
                          tr("<p>You must enter a valid Shipping Site." ) );
@@ -720,7 +720,7 @@ void returnAuthorization::sOrigSoChanged()
         _shipToAddr->setEnabled(_ffShipto);
         _ignoreShiptoSignals = FALSE;
 
-        sSave(true);
+        sSave(false);
         sFillList();
       }
       else if (sohead.lastError().type() != QSqlError::NoError)
