@@ -169,9 +169,9 @@ void editOwners::sModify()
     return;
   }
   int ret = QMessageBox::warning(this, tr("Confirm Ownership Modification"),
-                   tr("Are you sure that you want to change\n"
-                      "the new owner to '"+_newOwner->username()+"' for the\n"
-                      "selected records?"),
+                   tr("<p>Are you sure that you want to change the new owner "
+                      "to '%1' for the selected records?")
+                      .arg(_newOwner->username()),
                    QMessageBox::Yes | QMessageBox::No,
                    QMessageBox::Yes);
 
@@ -193,9 +193,9 @@ void editOwners::sModifyAll()
   }
 
   int ret = QMessageBox::warning(this, tr("Confirm Ownership Modification"),
-                   tr("Are you sure that you want to change\n"
-                      "the new owner to '"+_newOwner->username()+"' for the\n"
-                      "selected records?"),
+                   tr("<p>Are you sure that you want to change the new owner "
+                      "to '%1' for the selected records?")
+                      .arg(_newOwner->username()),
                    QMessageBox::Yes | QMessageBox::No,
                    QMessageBox::Yes);
   

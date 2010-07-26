@@ -72,10 +72,9 @@ bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
   {
     if (q.value("result").toBool())
     {
-      XMessageBox::message( pParent, QMessageBox::Warning, tr("Cannot Correct"),
-                            tr(  "<p>Receipt is a Drop Shipment.  The received quantity may not be changed.  "
-                                 "You must use Purchase Order Return to make corrections." ),
-                            QString::null, QString::null, false );
+      QMessageBox::warning(pParent, tr("Cannot Correct"),
+                            tr("<p>Receipt is a Drop Shipment.  The received quantity may not be changed.  "
+                               "You must use Purchase Order Return to make corrections." ));
       return XDialog::Rejected;
     }
   }
@@ -92,9 +91,8 @@ bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
   {
     if (q.value("result").toBool())
     {
-      XMessageBox::message( pParent, QMessageBox::Warning, tr("Cannot Correct"),
-                            tr(  "<p>Receipt has been split.  The received quantity may not be changed." ),
-                            QString::null, QString::null, false );
+      QMessageBox::warning(pParent, tr("Cannot Correct"),
+                           tr("<p>Receipt has been split.  The received quantity may not be changed."));
       return XDialog::Rejected;
     }
     else
@@ -276,7 +274,7 @@ void enterPoitemReceipt::sReceive()
     
   if(_metrics->boolean("DisallowReceiptExcessQty") && _receivable < _toReceive->toDouble())
   {
-    XMessageBox::message( (isShown() ? this : parentWidget()), QMessageBox::Warning, tr("Cannot Receive"),
+    XMessageBox::message( (isVisible() ? this : parentWidget()), QMessageBox::Warning, tr("Cannot Receive"),
                           tr(  "<p>Cannot receive more quantity than ordered." ),
                           QString::null, QString::null, _snooze );
     return;
@@ -284,7 +282,7 @@ void enterPoitemReceipt::sReceive()
 
   if(_ordertype == "RA" && _receivable < _toReceive->toDouble())
   {
-    XMessageBox::message( (isShown() ? this : parentWidget()), QMessageBox::Warning, tr("Cannot Receive"),
+    XMessageBox::message( (isVisible() ? this : parentWidget()), QMessageBox::Warning, tr("Cannot Receive"),
                           tr(  "<p>Cannot receive more quantity than authorized." ),
                           QString::null, QString::null, _snooze );
     return;
@@ -295,7 +293,7 @@ void enterPoitemReceipt::sReceive()
       (_receivable < _toReceive->toDouble() * (1.0 - tolerance) ||
        _receivable > _toReceive->toDouble() * (1.0 + tolerance)))
   {
-    if(XMessageBox::message( (isShown() ? this : parentWidget()) , QMessageBox::Question, tr("Receipt Qty. Differs"),
+    if(XMessageBox::message( (isVisible() ? this : parentWidget()) , QMessageBox::Question, tr("Receipt Qty. Differs"),
         tr("<p>The Qty entered does not match the receivable Qty for this order. "
 		   "Do you wish to continue anyway?"),
         tr("Yes"), tr("No"), _snooze, 0, 1) == 1)
@@ -361,7 +359,7 @@ void enterPoitemReceipt::sReceive()
     if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
     {
       rollback.exec();
-      XMessageBox::message( (isShown() ? this : parentWidget()), QMessageBox::Warning, tr("Enter PO Receipt"),
+      XMessageBox::message( (isVisible() ? this : parentWidget()), QMessageBox::Warning, tr("Enter PO Receipt"),
                             tr(  "<p>Transaction Cancelled." ),
                             QString::null, QString::null, _snooze );
       return;

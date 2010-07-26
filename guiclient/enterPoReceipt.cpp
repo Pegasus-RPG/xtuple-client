@@ -558,10 +558,10 @@ void enterPoReceipt::sReceiveAll()
 
 void enterPoReceipt::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem * /*selected*/)
 {
-  int     menuItem;
+  QAction *menuItem;
   if (_orderitem->altId() != -1)
-    menuItem = pMenu->insertItem(tr("Print Label..."), this, SLOT(sPrintItemLabel()), 0);
-  menuItem = pMenu->insertItem(tr("Enter Receipt..."), this, SLOT(sEnter()), 0);
+    menuItem = pMenu->addAction(tr("Print Label..."), this, SLOT(sPrintItemLabel()));
+  menuItem = pMenu->addAction(tr("Enter Receipt..."), this, SLOT(sEnter()));
 }
 
 void enterPoReceipt::sBcFind()

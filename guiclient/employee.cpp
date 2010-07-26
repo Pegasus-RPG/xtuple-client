@@ -304,7 +304,7 @@ void employee::sSave(const bool pClose)
   if (_user->isChecked() && pClose)
   {
     q.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
-    q.bindValue(":username", _code->text().lower());
+    q.bindValue(":username", _code->text().toLower());
     q.exec();
     if (q.first())
     {
@@ -330,7 +330,7 @@ void employee::sSave(const bool pClose)
         // don't use sUser() because it asks too many questions
 		ParameterList params;
         params.append("mode",     "new");
-        params.append("username", _code->text().lower());
+        params.append("username", _code->text().toLower());
         user newdlg(this);
         newdlg.set(params);
         newdlg.exec();
@@ -420,7 +420,7 @@ void employee::sSave(const bool pClose)
       {
 		ParameterList params;
 		params.append("crmacct_number", _number->text());
-		params.append("crmacct_name", _code->text().lower());
+		params.append("crmacct_name", _code->text().toLower());
 		params.append("mode", "new");
 		vendor *newdlg = new vendor(this);
 		newdlg->set(params);
@@ -544,7 +544,7 @@ void employee::sSave(const bool pClose)
   q.bindValue(":isusr",       _user->isChecked());
   q.bindValue(":isrep",       _salesrep->isChecked());
   q.bindValue(":isvendor",    _vendor->isChecked());
-  q.bindValue(":notes",       _notes->text());
+  q.bindValue(":notes",       _notes->toPlainText());
   q.bindValue(":origcode",    _empcode);
   q.bindValue(":image",       _image->number());
   q.bindValue(":rate",		  _externalRate->localValue());
@@ -870,7 +870,7 @@ void employee::sVendor()
     else
 	params.append("vend_id", srq.value("vend_id"));
     params.append("crmacct_number", _number->text());
-    params.append("crmacct_name", _code->text().lower());
+    params.append("crmacct_name", _code->text().toLower());
     params.append("mode", "edit");
     vendor *newdlg = new vendor(this);
     newdlg->set(params);
@@ -894,7 +894,7 @@ void employee::sVendor()
       sSave(false);
       ParameterList params;
       params.append("crmacct_number", _number->text());
-      params.append("crmacct_name", _code->text().lower());
+      params.append("crmacct_name", _code->text().toLower());
 	  params.append("mode",     "new");
       vendor *newdlg = new vendor(this);
       newdlg->set(params);
@@ -911,13 +911,13 @@ void employee::sUser()
   usrq.prepare("SELECT usr_username "
                "FROM usr "
                "WHERE (usr_username=:empcode);");
-  usrq.bindValue(":empcode", _code->text().lower());
+  usrq.bindValue(":empcode", _code->text().toLower());
   usrq.exec();
   if (usrq.first() && _privileges->check("MaintainUsers"))
   {
     ParameterList params;
     params.append("mode",     (_mode == cView) ? "view" : "edit");
-    params.append("username", _code->text().lower());
+    params.append("username", _code->text().toLower());
     user newdlg(this);
     newdlg.set(params);
     newdlg.exec();
@@ -940,7 +940,7 @@ void employee::sUser()
       sSave(false);
       ParameterList params;
       params.append("mode",     "new");
-      params.append("username", _code->text().lower());
+      params.append("username", _code->text().toLower());
       user newdlg(this);
       newdlg.set(params);
       newdlg.exec();
@@ -1032,7 +1032,7 @@ void employee::sHandleButtons()
 {
   XSqlQuery usrq;
   usrq.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
-  usrq.bindValue(":username", _code->text().lower());
+  usrq.bindValue(":username", _code->text().toLower());
   usrq.exec();
   if (usrq.first())
   {
