@@ -478,18 +478,13 @@ void glSeries::sFillList()
     _credits->setDouble(q.value("credit").toDouble());
     _diff->setDouble(q.value("diff").toDouble());
 
+    QString stylesheet;
     if (q.value("oob").toBool())
-    {
-      _debits->setPaletteForegroundColor(namedColor("error"));
-      _credits->setPaletteForegroundColor(namedColor("error"));
-      _diff->setPaletteForegroundColor(namedColor("error"));
-    }
-    else
-    {
-      _debits->setPaletteForegroundColor(QColor("black"));
-      _credits->setPaletteForegroundColor(QColor("black"));
-      _diff->setPaletteForegroundColor(QColor("black"));
-    }
+        stylesheet = QString("* { color: %1; }").arg(namedColor("error").name());
+
+    _debits->setStyleSheet(stylesheet);
+    _credits->setStyleSheet(stylesheet);
+    _diff->setStyleSheet(stylesheet);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

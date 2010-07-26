@@ -208,7 +208,7 @@ void image::sFileList()
   {
     if (!first)
       frmtList += QString(tr(" "));
-    ext = (list.at(i)).lower();
+    ext = (list.at(i)).toLower();
 
     if (ext == "jpeg")
       ext = "jpg";

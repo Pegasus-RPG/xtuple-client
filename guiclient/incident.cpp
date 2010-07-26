@@ -10,6 +10,7 @@
 
 #include "incident.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -626,7 +627,7 @@ void incident::sFillTodoList()
 
 void incident::sPopulateTodoMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   bool newPriv = (cNew == _mode || cEdit == _mode) &&
       (_privileges->check("MaintainPersonalTodoList") ||
@@ -640,17 +641,17 @@ void incident::sPopulateTodoMenu(QMenu *pMenu)
       (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
       (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
 
-  menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNewTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, newPriv);
+  menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNewTodoItem()));
+  menuItem->setEnabled(newPriv);
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEditTodoItem()));
+  menuItem->setEnabled(editPriv);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, viewPriv);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sViewTodoItem()));
+  menuItem->setEnabled(viewPriv);
 
-  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDeleteTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDeleteTodoItem()));
+  menuItem->setEnabled(editPriv);
 }
 
 void incident::sHandleTodoPrivs()

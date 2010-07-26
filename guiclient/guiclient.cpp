@@ -198,8 +198,8 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, (pEnabled?"true":"false"));
 
-  setIconSet(QIcon(pIcon));
-  addTo(pToolBar);
+  setIcon(QIcon(pIcon));
+  pToolBar->addAction(this);
 }
 
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
@@ -211,8 +211,8 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, (pEnabled?"true":"false"));
 
-  setIconSet(QIcon(pIcon));
-  addTo(pToolBar);
+  setIcon(QIcon(pIcon));
+  pToolBar->addAction(this);
   setToolTip(pToolTip);
 }
 
@@ -232,8 +232,8 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
 
-  setIconSet(QIcon(pIcon));
-  addTo(pToolBar);
+  setIcon(QIcon(pIcon));
+  pToolBar->addAction(this);
 }
 
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
@@ -245,8 +245,8 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
 {
   init(pParent, pName, pDisplayName, pTarget, pActivateSlot, pAddTo, pEnabled);
 
-  setIconSet(QIcon(pIcon));
-  addTo(pToolBar);
+  setIcon(QIcon(pIcon));
+  pToolBar->addAction(this);
   setToolTip(pToolTip);
 }
 
@@ -500,8 +500,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
       QImage background;
 
       background.loadFromData(QUUDecode(_q.value("image_data").toString()));
-      _workspace->setPaletteBackgroundPixmap(QPixmap::fromImage(background));
-      _workspace->setBackgroundMode(Qt::FixedPixmap);
+      _workspace->setBackground(QBrush(QPixmap::fromImage(background)));
+      //_workspace->setBackgroundMode(Qt::FixedPixmap);
     }
   }
 
@@ -1246,7 +1246,7 @@ void message(const QString &pMessage, int pTimeout)
 
 void resetMessage()
 {
-  omfgThis->statusBar()->message(QObject::tr("Ready..."));
+  omfgThis->statusBar()->showMessage(QObject::tr("Ready..."));
   qApp->processEvents();
 }
 
@@ -1285,8 +1285,9 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
     if(!privname.isEmpty())
       allowed = "Custom"+privname;
 
-    Action * action = new Action( this, QString("custom.")+qry.value("cmd_name").toString(), qry.value("cmd_title").toString(),
-      this, SLOT(sCustomCommand()), customMenu, allowed);
+    char *cmdname = QString("custom." + qry.value("cmd_name").toString()).toAscii().data();
+    Action *action = new Action(this, cmdname, qry.value("cmd_title").toString(),
+                                this, SLOT(sCustomCommand()), customMenu, allowed);
 
     _customCommands.insert(action, qry.value("cmd_id").toInt());
     //actions.append(action);
@@ -1512,7 +1513,7 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
     }
     app.replace("%%", "%");
     QProcess *proc = new QProcess(w);
-    connect(proc, SIGNAL(processExited()), proc, SLOT(deleteLater()));
+    connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
     QStringList args = app.split(QRegExp(" +"));
     QString cmd = args.first();
     args.removeFirst();

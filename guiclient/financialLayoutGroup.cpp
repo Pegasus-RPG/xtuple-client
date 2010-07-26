@@ -347,12 +347,12 @@ void financialLayoutGroup::sToggled()
   _showBudget->setEnabled(on);
   _showDiff->setEnabled(on);
   _showCustom->setEnabled(on);
-  _showStartPrcnt->setEnabled(on && _showStart->isOn());
-  _showEndPrcnt->setEnabled(on && _showEnd->isOn());
-  _showDeltaPrcnt->setEnabled(on && _showDelta->isOn());
-  _showBudgetPrcnt->setEnabled(on && _showBudget->isOn());
-  _showDiffPrcnt->setEnabled(on && _showDiff->isOn());
-  _showCustomPrcnt->setEnabled(on && _showCustom->isOn());
+  _showStartPrcnt->setEnabled(on  && _showStart->isChecked());
+  _showEndPrcnt->setEnabled(on    && _showEnd->isChecked());
+  _showDeltaPrcnt->setEnabled(on  && _showDelta->isChecked());
+  _showBudgetPrcnt->setEnabled(on && _showBudget->isChecked());
+  _showDiffPrcnt->setEnabled(on   && _showDiff->isChecked());
+  _showCustomPrcnt->setEnabled(on && _showCustom->isChecked());
 }
 
 void financialLayoutGroup::sToggleShowPrcnt()

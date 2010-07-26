@@ -180,11 +180,11 @@ void importData::sDelete()
 
 void importData::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem* /* pItem */)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Import Selected"),  this, SLOT(sImportSelected()), 0);
-  menuItem = pMenu->insertItem(tr("Clear Status"),     this, SLOT(sClearStatus()), 0);
-  menuItem = pMenu->insertItem(tr("Delete From List"), this, SLOT(sDelete()), 0);
+  menuItem = pMenu->addAction(tr("Import Selected"),  this, SLOT(sImportSelected()));
+  menuItem = pMenu->addAction(tr("Clear Status"),     this, SLOT(sClearStatus()));
+  menuItem = pMenu->addAction(tr("Delete From List"), this, SLOT(sDelete()));
 }
 
 void importData::sImportAll()
