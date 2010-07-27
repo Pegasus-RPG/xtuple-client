@@ -439,7 +439,7 @@ void invoice::sSave()
                              "indicating the G/L Sales Account number for the "
                              "charge.  Please set the Misc. Charge amount to 0 "
                              "or select a Misc. Charge Sales Account." ) );
-    _tabWidget->setCurrentPage(1);
+    _tabWidget->setCurrentIndex(_tabWidget->indexOf(lineItemsTab));
     _miscChargeAccount->setFocus();
     return;
   }
@@ -897,12 +897,12 @@ void invoice::sShipToModified()
 void invoice::keyPressEvent( QKeyEvent * e )
 {
 #ifdef Q_WS_MAC
-  if(e->key() == Qt::Key_N && e->state() == Qt::ControlModifier)
+  if(e->key() == Qt::Key_N && (e->modifiers() & Qt::ControlModifier))
   {
     _new->animateClick();
     e->accept();
   }
-  else if(e->key() == Qt::Key_E && e->state() == Qt::ControlModifier)
+  else if(e->key() == Qt::Key_E && (e->modifiers() & Qt::ControlModifier))
   {
     _edit->animateClick();
     e->accept();
@@ -920,7 +920,7 @@ void invoice::newInvoice(int pCustid)
   for(int i = 0; i < list.size(); i++)
   {
     QWidget * w = list.at(i);
-    if(QString::compare(w->name(), "invoice new")==0)
+    if(QString::compare(w->objectName(), "invoice new")==0)
     {
       w->setFocus();
       if(omfgThis->showTopLevel())
@@ -951,7 +951,7 @@ void invoice::editInvoice( int pId )
   for(int i = 0; i < list.size(); i++)
   {
     QWidget * w = list.at(i);
-    if(QString::compare(w->name(), n)==0)
+    if(QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
       if(omfgThis->showTopLevel())
@@ -981,7 +981,7 @@ void invoice::viewInvoice( int pId )
   for(int i = 0; i < list.size(); i++)
   {
     QWidget * w = list.at(i);
-    if(QString::compare(w->name(), n)==0)
+    if(QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
       if(omfgThis->showTopLevel())

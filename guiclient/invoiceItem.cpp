@@ -513,9 +513,9 @@ void invoiceItem::sDeterminePrice()
       _custPrice->setLocalValue(price);
       _price->setLocalValue(price);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (itemprice.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemprice.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

@@ -11,14 +11,14 @@
 #include "item.h"
 
 #include <QCloseEvent>
+#include <QDir>
+#include <QDirIterator>
+#include <QFileInfo>
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
-#include <QDir>
-#include <QDirIterator>
-#include <QFileInfo>
 
 #include <metasql.h>
 #include <openreports.h>
@@ -39,11 +39,6 @@
 
 const char *_itemTypes[] = { "P", "M", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
 
-/*
- *  Constructs a item as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -51,7 +46,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _mode=0;
   
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemNumber, SIGNAL(lostFocus()), this, SLOT(sFormatItemNumber()));
@@ -1437,7 +1431,7 @@ void item::sFillTransformationList()
 void item::keyPressEvent( QKeyEvent * e )
 {
 #ifdef Q_WS_MAC
-  if(e->key() == Qt::Key_S && e->state() == Qt::ControlModifier)
+  if(e->key() == Qt::Key_S && (e->modifiers() & Qt::ControlModifier))
   {
     _save->animateClick();
     e->accept();
@@ -1455,7 +1449,7 @@ void item::newItem()
   for(int i = 0; i < list.size(); ++i)
   {
     QWidget * w = list.at(i);
-    if(QString::compare(w->name(), "item new")==0)
+    if(QString::compare(w->objectName(), "item new")==0)
     {
       w->setFocus();
       if(omfgThis->showTopLevel())
@@ -1484,7 +1478,7 @@ void item::editItem( int pId )
   for(int i = 0; i < list.size(); ++i)
   {
     QWidget * w = list.at(i);
-    if(QString::compare(w->name(), n)==0)
+    if(QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
       if(omfgThis->showTopLevel())
@@ -1514,7 +1508,7 @@ void item::viewItem( int pId )
   for(int i = 0; i < list.size(); ++i)
   {
     QWidget * w = list.at(i);
-    if(QString::compare(w->name(), n)==0)
+    if(QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
       if(omfgThis->showTopLevel())

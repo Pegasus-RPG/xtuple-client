@@ -239,7 +239,7 @@ void miscVoucher::sSave()
   q.bindValue(":vohead_amount", _amountToDistribute->localValue());
   q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   q.bindValue(":vohead_curr_id", _amountToDistribute->id());
-  q.bindValue(":vohead_notes", _notes->text());
+  q.bindValue(":vohead_notes",   _notes->toPlainText());
   q.exec();
 
   omfgThis->sVouchersUpdated();

@@ -208,7 +208,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "separator",              NULL,                               NULL,                           mainMenu,      "true",            0, 0, true, NULL },
     { "menu",                   tr("&Utilities"),                   (char*)utilitiesMenu,           mainMenu,      "true",            0, 0, true, NULL },
     { "wo.purgeClosedWorkOrder",tr("Pur&ge Closed Work Orders..."), SLOT(sPurgeClosedWorkOrders()), utilitiesMenu, "PurgeWorkOrders", 0, 0, true, NULL },
-    { "wo.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	}
+    { "wo.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true, NULL}
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));

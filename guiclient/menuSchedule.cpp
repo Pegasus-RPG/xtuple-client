@@ -100,7 +100,7 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     { "ms.dspReorderExceptionsByPlannerCode", tr("Reorder &Exceptions..."), SLOT(sDspReorderExceptionsByPlannerCode()),reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, mainMenu, "true", NULL, NULL, true , NULL },
-    { "ms.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	}
+    { "ms.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true, NULL}
 
   };
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));

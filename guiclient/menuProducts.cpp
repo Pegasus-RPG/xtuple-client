@@ -229,7 +229,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.reassignProductCategoryByProductCategory", tr("&Reassign Product Categories..."), SLOT(sReassignProductCategoryByProductCategory()), utilitiesMenu, "MaintainItemMasters", NULL, NULL, true , NULL },
 
   // Setup
-  { "pd.setup",	tr("&Setup..."),	SLOT(sSetup()),	mainMenu,	NULL,	NULL,	NULL,	true	}
+  { "pd.setup",	    tr("&Setup..."),	  SLOT(sSetup()),     mainMenu,	"true",	NULL, NULL,  true, NULL}
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));

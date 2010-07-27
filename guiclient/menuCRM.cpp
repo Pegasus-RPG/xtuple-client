@@ -136,7 +136,7 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	"EditOwner", NULL, NULL, true, NULL },
     { "crm.createRecurringItems",tr("Create &Recurring Items..."), SLOT(sCreateRecurringItems()),utilitiesMenu, "MaintainIncidents MaintainProjects MaintainPersonalTodoList MaintainOthertodoLists", NULL, NULL, true, NULL },
 
-    { "crm.setup",	tr("&Setup..."),	SLOT(sSetup()),	crmMenu,	NULL,	NULL,	NULL,	true	}
+    { "crm.setup",	tr("&Setup..."),	SLOT(sSetup()),	crmMenu,	NULL,	NULL,	NULL,	true, NULL}
 
   };
 

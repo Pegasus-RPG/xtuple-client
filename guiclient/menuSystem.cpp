@@ -12,16 +12,12 @@
 #include <QApplication>
 #include <QAssistantClient>
 #include <QDir>
-#include <QAction>
-#include <QAction>
-#include <QAction>
-#include <QAction>
 #include <QMenu>
 #include <QMenuBar>
-#include <QToolBar>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QPluginLoader>
+#include <QToolBar>
 #include <QWorkspace>
 
 #include "xtsettings.h"

@@ -10,6 +10,7 @@
 
 #include "items.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -31,7 +32,6 @@ items::items(QWidget* parent, const char* name, Qt::WFlags fl)
   _statusGroupInt->addButton(_showManufactured);
   _statusGroupInt->addButton(_showSold);
 
-  // signals and slots connections
   connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -86,17 +86,15 @@ void items::languageChange()
 
 void items::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainItemMasters"));
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
 
-  menuItem = pMenu->insertItem(tr("Copy..."), this, SLOT(sCopy()), 0);
-  if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Copy..."), this, SLOT(sCopy()));
+  menuItem->setEnabled(_privileges->check("MaintainItemMasters"));
 
   QAction *tmpaction = pMenu->addAction(tr("Delete..."));
   connect(tmpaction, SIGNAL(triggered()), this, SLOT(sDelete()));

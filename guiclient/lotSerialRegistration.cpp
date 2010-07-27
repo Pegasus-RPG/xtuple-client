@@ -10,20 +10,15 @@
 
 #include "lotSerialRegistration.h"
 
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QVariant>
-#include <QMenu>
 #include <QSqlRecord>
+#include <QVariant>
 
 #include "storedProcErrorLookup.h"
 #include "characteristicAssignment.h"
 
-/*
- *  Constructs a lotSerialRegistration as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -31,7 +26,6 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
 
   _lsregid = -1;
 
-  // signals and slots connections
   connect(_save,	SIGNAL(clicked()),              this, SLOT(sSave()));
   connect(_soldDate,    SIGNAL(newDate(const QDate&)),  this, SLOT(sDateUpdated()));
   connect(_crmacct,     SIGNAL(newId(int)),             this, SLOT(sSetSoCustId()));
@@ -52,18 +46,11 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   adjustSize();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 lotSerialRegistration::~lotSerialRegistration()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void lotSerialRegistration::languageChange()
 {
   retranslateUi(this);
@@ -354,7 +341,7 @@ void lotSerialRegistration::sSave()
   q.bindValue(":lsreg_expiredate", _expireDate->date());
   q.bindValue(":lsreg_crmacct_id", _crmacct->id());
   q.bindValue(":lsreg_cntct_id", _cntct->id());
-  q.bindValue(":lsreg_notes", _notes->text());
+  q.bindValue(":lsreg_notes",    _notes->toPlainText());
   if(_so->id() != -1)
     q.bindValue(":lsreg_cohead_id", _so->id());
   if(_shipment->id() != -1)
