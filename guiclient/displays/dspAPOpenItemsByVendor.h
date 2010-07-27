@@ -12,28 +12,27 @@
 #define DSPAPOPENITEMSBYVENDOR_H
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 #include <parameter.h>
 
 #include "ui_dspAPOpenItemsByVendor.h"
 
-class dspAPOpenItemsByVendor : public XWidget, public Ui::dspAPOpenItemsByVendor
+class dspAPOpenItemsByVendor : public display, public Ui::dspAPOpenItemsByVendor
 {
     Q_OBJECT
 
 public:
     dspAPOpenItemsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspAPOpenItemsByVendor();
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected);
+    virtual void sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int);
     virtual void sEdit();
     virtual void sView();
-    virtual void sPrint();
-    virtual void sFillList();
-	virtual void sOnHold();
-	virtual void sOpen();
+    virtual void sOnHold();
+    virtual void sOpen();
 
 protected slots:
     virtual void languageChange();

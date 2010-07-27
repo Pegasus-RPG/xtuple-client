@@ -8,36 +8,32 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPAPAPPLICATIONS_H
-#define DSPAPAPPLICATIONS_H
+#ifndef DSPARAPPLICATIONS_H
+#define DSPARAPPLICATIONS_H
 
 #include "guiclient.h"
 
-#include "xwidget.h"
+#include "display.h"
 #include <QMenu>
 
-#include "ui_dspAPApplications.h"
+#include "ui_dspARApplications.h"
 
-class dspAPApplications : public XWidget, public Ui::dspAPApplications
+class dspARApplications : public display, public Ui::dspARApplications
 {
     Q_OBJECT
 
-  public:
-    dspAPApplications(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspAPApplications();
+public:
+    dspARApplications(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
-  public slots:
-    virtual void sFillList();
-    virtual void sPopulateMenu(QMenu*);
-    virtual void sPrint();
-    virtual void sViewCheck();
+public slots:
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*, int);
     virtual void sViewCreditMemo();
     virtual void sViewDebitMemo();
-    virtual void sViewVoucher();
+    virtual void sViewInvoice();
 
-  protected slots:
+protected slots:
     virtual void languageChange();
 
 };

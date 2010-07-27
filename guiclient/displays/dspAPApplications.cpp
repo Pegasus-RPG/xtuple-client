@@ -15,68 +15,45 @@
 #include <QMessageBox>
 #include <QSqlError>
 
-#include <metasql.h>
-#include <parameter.h>
-#include <openreports.h>
-
 #include "apOpenItem.h"
 #include "check.h"
-#include "mqlutil.h"
 #include "voucher.h"
 
-dspAPApplications::dspAPApplications(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspAPApplications::dspAPApplications(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspAPApplications", fl)
 {
-  setupUi(this);
-
-  connect(_apapply,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),
-                  this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_print,	SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query,	SIGNAL(clicked()), this, SLOT(sFillList()));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("A/P Applications"));
+  setListLabel(tr("Accounts Payable Applications"));
+  setReportName("APApplications");
+  setMetaSQLOptions("apApplications", "detail");
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
     
-  _apapply->addColumn(tr("Vend. #"),    _orderColumn, Qt::AlignLeft,  true, "vend_number");
-  _apapply->addColumn(tr("Vendor"),               -1, Qt::AlignLeft,  true, "vend_name");
-  _apapply->addColumn(tr("Post Date"),   _dateColumn, Qt::AlignCenter,true, "apapply_postdate");
-  _apapply->addColumn(tr("Source"),      _itemColumn, Qt::AlignCenter,true, "apapply_source_doctype");
-  _apapply->addColumn(tr("Doc #"),      _orderColumn, Qt::AlignRight, true, "apapply_source_docnumber");
-  _apapply->addColumn(tr("Apply-To"),    _itemColumn, Qt::AlignCenter,true, "apapply_target_doctype");
-  _apapply->addColumn(tr("Doc #"),      _orderColumn, Qt::AlignRight, true, "apapply_target_docnumber");
-  _apapply->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "apapply_amount");
-  _apapply->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currAbbr");
-  _apapply->addColumn(tr("Amount (in %1)").arg(CurrDisplay::baseCurrAbbr()),_moneyColumn, Qt::AlignRight, true, "base_applied");
+  list()->addColumn(tr("Vend. #"),    _orderColumn, Qt::AlignLeft,  true, "vend_number");
+  list()->addColumn(tr("Vendor"),               -1, Qt::AlignLeft,  true, "vend_name");
+  list()->addColumn(tr("Post Date"),   _dateColumn, Qt::AlignCenter,true, "apapply_postdate");
+  list()->addColumn(tr("Source"),      _itemColumn, Qt::AlignCenter,true, "apapply_source_doctype");
+  list()->addColumn(tr("Doc #"),      _orderColumn, Qt::AlignRight, true, "apapply_source_docnumber");
+  list()->addColumn(tr("Apply-To"),    _itemColumn, Qt::AlignCenter,true, "apapply_target_doctype");
+  list()->addColumn(tr("Doc #"),      _orderColumn, Qt::AlignRight, true, "apapply_target_docnumber");
+  list()->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "apapply_amount");
+  list()->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currAbbr");
+  list()->addColumn(tr("Amount (in %1)").arg(CurrDisplay::baseCurrAbbr()),_moneyColumn, Qt::AlignRight, true, "base_applied");
 
   _vendorgroup->setFocus();
 }
 
-dspAPApplications::~dspAPApplications()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspAPApplications::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
-}
-
-void dspAPApplications::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("APApplications", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
 
 void dspAPApplications::sViewCheck()
 {
-  int checkid = _apapply->currentItem()->id("apapply_source_docnumber");
+  int checkid = list()->currentItem()->id("apapply_source_docnumber");
   if ((checkid == -1) || (checkid == 0))
   {
     XSqlQuery countq;
@@ -85,8 +62,8 @@ void dspAPApplications::sViewCheck()
                  "JOIN checkitem ON (checkhead_id=checkitem_checkhead_id) "
                  "WHERE ((checkhead_number=:number)"
                  "   AND (checkitem_amount=:amount));");
-    countq.bindValue(":number", _apapply->currentItem()->text("apapply_source_docnumber"));
-    countq.bindValue(":amount", _apapply->currentItem()->rawValue("apapply_amount"));
+    countq.bindValue(":number", list()->currentItem()->text("apapply_source_docnumber"));
+    countq.bindValue(":amount", list()->currentItem()->rawValue("apapply_amount"));
     countq.exec();
     if (countq.first())
     {
@@ -115,8 +92,8 @@ void dspAPApplications::sViewCheck()
                  "JOIN checkitem ON (checkhead_id=checkitem_checkhead_id) "
                  "WHERE ((checkhead_number=:number)"
                  "   AND (checkitem_amount=:amount));");
-    chkq.bindValue(":number", _apapply->currentItem()->text("apapply_source_docnumber"));
-    chkq.bindValue(":amount", _apapply->currentItem()->rawValue("apapply_amount"));
+    chkq.bindValue(":number", list()->currentItem()->text("apapply_source_docnumber"));
+    chkq.bindValue(":amount", list()->currentItem()->rawValue("apapply_amount"));
     chkq.exec();
     if (chkq.first())
       checkid = chkq.value("checkhead_id").toInt();
@@ -138,7 +115,7 @@ void dspAPApplications::sViewCreditMemo()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("apopen_id", _apapply->id("apapply_source_docnumber"));
+  params.append("apopen_id", list()->id("apapply_source_docnumber"));
   params.append("docType",   "creditMemo");
   apOpenItem newdlg(this, "", true);
   newdlg.set(params);
@@ -149,7 +126,7 @@ void dspAPApplications::sViewDebitMemo()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("apopen_id", _apapply->id("apapply_target_docnumber"));
+  params.append("apopen_id", list()->id("apapply_target_docnumber"));
   params.append("docType", "debitMemo");
   apOpenItem newdlg(this, "", true);
   newdlg.set(params);
@@ -160,55 +137,39 @@ void dspAPApplications::sViewVoucher()
 {
   ParameterList params;
   params.append("mode",      "view");
-  params.append("vohead_id", _apapply->id("apapply_target_docnumber"));
+  params.append("vohead_id", list()->id("apapply_target_docnumber"));
   voucher *newdlg = new voucher(this, "voucher");
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspAPApplications::sPopulateMenu(QMenu* pMenu)
+void dspAPApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if (_apapply->currentItem()->rawValue("apapply_source_doctype") == "C")
+  if (list()->currentItem()->rawValue("apapply_source_doctype") == "C")
   {
     menuItem = pMenu->addAction(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()));
     menuItem->setEnabled(_privileges->check("MaintainAPMemos") ||
                          _privileges->check("ViewAPMemos"));
   }
-  else if (_apapply->currentItem()->rawValue("apapply_source_doctype") == "K")
+  else if (list()->currentItem()->rawValue("apapply_source_doctype") == "K")
   {
     menuItem = pMenu->addAction(tr("View Source Check..."), this, SLOT(sViewCheck()));
     menuItem->setEnabled(_privileges->check("MaintainPayments"));
   }
 
-  if (_apapply->currentItem()->rawValue("apapply_target_doctype") == "D")
+  if (list()->currentItem()->rawValue("apapply_target_doctype") == "D")
   {
     menuItem = pMenu->addAction(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()));
     menuItem->setEnabled(_privileges->check("MaintainAPMemos") ||
                          _privileges->check("ViewAPMemos"));
   }
-  else if (_apapply->currentItem()->rawValue("apapply_target_doctype") == "V")
+  else if (list()->currentItem()->rawValue("apapply_target_doctype") == "V")
   {
     menuItem = pMenu->addAction(tr("View Apply-To Voucher..."), this, SLOT(sViewVoucher()));
     menuItem->setEnabled(_privileges->check("MaintainVouchers") ||
                          _privileges->check("ViewVouchers"));
-  }
-}
-
-void dspAPApplications::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  MetaSQLQuery mql = mqlLoad("apApplications", "detail");
-  q = mql.toQuery(params);
-  _apapply->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
   }
 }
 

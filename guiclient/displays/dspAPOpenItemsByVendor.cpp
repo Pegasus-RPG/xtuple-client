@@ -13,71 +13,63 @@
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <openreports.h>
-
-#include "mqlutil.h"
 #include "apOpenItem.h"
 
-dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspAPOpenItemsByVendor", fl)
 {
-  setupUi(this);
-
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_apopen, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Open Payables"));
+  setListLabel(tr("Payables"));
+  setReportName("APOpenItemsByVendor");
+  setMetaSQLOptions("apOpenItems", "detail");
+  setUseAltId(true);
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _apopen->addColumn(tr("Doc. Type"),    _orderColumn,    Qt::AlignLeft,   true,  "f_doctype" );
-  _apopen->addColumn(tr("Doc. #"),       _orderColumn,    Qt::AlignLeft,   true,  "apopen_docnumber"  );
-  _apopen->addColumn(tr("Vendor#"),      _orderColumn,    Qt::AlignLeft,   true,  "vend_number"  );
-  _apopen->addColumn(tr("Name"),         -1,              Qt::AlignLeft,   true,  "vend_name"  );
-  _apopen->addColumn(tr("P/O #"),        _orderColumn,    Qt::AlignLeft,   true,  "apopen_ponumber"  );
-  _apopen->addColumn(tr("Invoice #"),    _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"  );
-  _apopen->addColumn(tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter, false, "apopen_docdate" );
-  _apopen->addColumn(tr("Due Date"),     _dateColumn,     Qt::AlignCenter, true,  "apopen_duedate" );
-  _apopen->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "apopen_amount"  );
-  _apopen->addColumn(tr("Paid"),         _moneyColumn,    Qt::AlignRight,  true,  "paid"  );
-  _apopen->addColumn(tr("Balance"),      -1,              Qt::AlignRight,  true,  "balance"  );
-  _apopen->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
-  _apopen->addColumn(tr("Base Balance"), _moneyColumn,    Qt::AlignRight,  true,  "base_balance"  );
-  _apopen->addColumn(tr("Status"),       _moneyColumn,    Qt::AlignCenter, false, "apopen_status"  );
+  list()->addColumn(tr("Doc. Type"),    _orderColumn,    Qt::AlignLeft,   true,  "f_doctype" );
+  list()->addColumn(tr("Doc. #"),       _orderColumn,    Qt::AlignLeft,   true,  "apopen_docnumber"  );
+  list()->addColumn(tr("Vendor#"),      _orderColumn,    Qt::AlignLeft,   true,  "vend_number"  );
+  list()->addColumn(tr("Name"),         -1,              Qt::AlignLeft,   true,  "vend_name"  );
+  list()->addColumn(tr("P/O #"),        _orderColumn,    Qt::AlignLeft,   true,  "apopen_ponumber"  );
+  list()->addColumn(tr("Invoice #"),    _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"  );
+  list()->addColumn(tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter, false, "apopen_docdate" );
+  list()->addColumn(tr("Due Date"),     _dateColumn,     Qt::AlignCenter, true,  "apopen_duedate" );
+  list()->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "apopen_amount"  );
+  list()->addColumn(tr("Paid"),         _moneyColumn,    Qt::AlignRight,  true,  "paid"  );
+  list()->addColumn(tr("Balance"),      -1,              Qt::AlignRight,  true,  "balance"  );
+  list()->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
+  list()->addColumn(tr("Base Balance"), _moneyColumn,    Qt::AlignRight,  true,  "base_balance"  );
+  list()->addColumn(tr("Status"),       _moneyColumn,    Qt::AlignCenter, false, "apopen_status"  );
 
   if (omfgThis->singleCurrency())
   {
-    _apopen->hideColumn(10);
-    _apopen->hideColumn(11);
+    list()->hideColumn(10);
+    list()->hideColumn(11);
   }
   else
   {
-    q.prepare("SELECT currConcat(baseCurrId()) AS currConcat;");
-    q.exec();
+    XSqlQuery qq;
+    qq.prepare("SELECT currConcat(baseCurrId()) AS currConcat;");
+    qq.exec();
     QString currConcat;
-    if (q.first())
-      currConcat = q.value("currConcat").toString();
+    if (qq.first())
+      currConcat = qq.value("currConcat").toString();
     else
       currConcat = tr("?????");
-    _apopen->headerItem()->setText(12, tr("Balance\n(in %1)").arg(currConcat));
+    list()->headerItem()->setText(12, tr("Balance\n(in %1)").arg(currConcat));
   }
 
   _asOf->setDate(omfgThis->dbDate(), true);
   _vendorGroup->setFocus();
 }
 
-dspAPOpenItemsByVendor::~dspAPOpenItemsByVendor()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspAPOpenItemsByVendor::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -113,7 +105,7 @@ enum SetResponse dspAPOpenItemsByVendor::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
+void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int)
 {
   QString status(selected->text(1));
    
@@ -126,7 +118,7 @@ void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *select
   menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
   XSqlQuery menu;
   menu.prepare("SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
-  menu.bindValue(":apopen_id", _apopen->id());
+  menu.bindValue(":apopen_id", list()->id());
   menu.exec();
   if (menu.first())
   {
@@ -147,7 +139,7 @@ void dspAPOpenItemsByVendor::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("apopen_id", _apopen->id());
+  params.append("apopen_id", list()->id());
   apOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);
 
@@ -159,7 +151,7 @@ void dspAPOpenItemsByVendor::sView()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("apopen_id", _apopen->id());
+  params.append("apopen_id", list()->id());
   apOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);
 
@@ -167,51 +159,25 @@ void dspAPOpenItemsByVendor::sView()
     sFillList();
 }
 
-void dspAPOpenItemsByVendor::sPrint()
+bool dspAPOpenItemsByVendor::setParams(ParameterList & params)
 {
-  ParameterList params;
   _vendorGroup->appendValue(params);
   params.append("asofDate", _asOf->date());
   _dates->appendValue(params);
   params.append("creditMemo", tr("Credit Memo"));
   params.append("debitMemo", tr("Debit Memo"));
   params.append("voucher", tr("Voucher"));
-  params.append("includeFormatted", true);
 
-  orReport report("APOpenItemsByVendor", params);
-  if(report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
+  params.append("includeFormatted", true); // report only?
 
-void dspAPOpenItemsByVendor::sFillList()
-{
-  _apopen->clear();
-
-  MetaSQLQuery mql = mqlLoad("apOpenItems", "detail");
-  ParameterList params;
-  _vendorGroup->appendValue(params);
-  params.append("asofDate", _asOf->date());
-  _dates->appendValue(params);
-  params.append("creditMemo", tr("Credit Memo"));
-  params.append("debitMemo", tr("Debit Memo"));
-  params.append("voucher", tr("Voucher"));
-  XSqlQuery qry;
-  qry = mql.toQuery(params);
-  _apopen->populate(qry, true);
-  if (qry.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  return true;
 }
 
 void dspAPOpenItemsByVendor::sOpen()
 {
   XSqlQuery open;
   open.prepare("UPDATE apopen SET apopen_status = 'O' WHERE apopen_id=:apopen_id;");
-  open.bindValue(":apopen_id", _apopen->id());
+  open.bindValue(":apopen_id", list()->id());
   open.exec();
   sFillList();
 }
@@ -219,8 +185,8 @@ void dspAPOpenItemsByVendor::sOpen()
 void dspAPOpenItemsByVendor::sOnHold()
 {
   XSqlQuery selectpayment;
-  selectpayment.prepare("SELECT * FROM apselect WHERE apselect_apopen_id = :apopen_id;");
-  selectpayment.bindValue(":apopen_id", _apopen->id());
+  selectpayment.prepare("SELECT * FROM apselect WHERE apselectlist()_id = :apopen_id;");
+  selectpayment.bindValue(":apopen_id", list()->id());
   selectpayment.exec();
   if (selectpayment.first())
   {
@@ -230,7 +196,7 @@ void dspAPOpenItemsByVendor::sOnHold()
   
   XSqlQuery onhold;
   onhold.prepare("UPDATE apopen SET apopen_status = 'H' WHERE apopen_id=:apopen_id;");
-  onhold.bindValue(":apopen_id", _apopen->id());
+  onhold.bindValue(":apopen_id", list()->id());
   onhold.exec();
   sFillList();
 }

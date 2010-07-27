@@ -14,74 +14,49 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 
 #include <datecluster.h>
-#include <metasql.h>
-#include "mqlutil.h"
-#include <parameter.h>
-#include <openreports.h>
 
 #include "arOpenItem.h"
 #include "creditMemo.h"
 #include "dspInvoiceInformation.h"
 
-dspARApplications::dspARApplications(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspARApplications::dspARApplications(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspARApplications", fl)
 {
-  setupUi(this);
-
-  connect(_arapply,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),
-                  this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_print,	SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query,	SIGNAL(clicked()), this, SLOT(sFillList()));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("A/R Applications"));
+  setListLabel(tr("A/R Applications"));
+  setReportName("ARApplications");
+  setMetaSQLOptions("arApplications", "detail");
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
     
-  _arapply->addColumn(tr("Cust. #"),        _orderColumn, Qt::AlignCenter, true,  "cust_number" );
-  _arapply->addColumn(tr("Customer"),                 -1, Qt::AlignLeft,   true,  "cust_name"   );
-  _arapply->addColumn(tr("Post Date"),       _dateColumn, Qt::AlignCenter, true,  "arapply_postdate" );
-  _arapply->addColumn(tr("Dist. Date"),      _dateColumn, Qt::AlignCenter, true,  "arapply_distdate" );
-  _arapply->addColumn(tr("Source Doc Type"),          10, Qt::AlignCenter, true,  "arapply_source_doctype" );
-  _arapply->addColumn(tr("Source"),	         _itemColumn, Qt::AlignCenter, true,  "doctype" );
-  _arapply->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "source" );
-  _arapply->addColumn(tr("Apply-To Doc Type"),        10, Qt::AlignCenter, true,  "arapply_target_doctype" );
-  _arapply->addColumn(tr("Apply-To"),        _itemColumn, Qt::AlignCenter, true,  "targetdoctype" );
-  _arapply->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "target" );
-  _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight,  true,  "arapply_applied"  );
-  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
-  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_applied"  );
+  list()->addColumn(tr("Cust. #"),        _orderColumn, Qt::AlignCenter, true,  "cust_number" );
+  list()->addColumn(tr("Customer"),                 -1, Qt::AlignLeft,   true,  "cust_name"   );
+  list()->addColumn(tr("Post Date"),       _dateColumn, Qt::AlignCenter, true,  "arapply_postdate" );
+  list()->addColumn(tr("Dist. Date"),      _dateColumn, Qt::AlignCenter, true,  "arapply_distdate" );
+  list()->addColumn(tr("Source Doc Type"),          10, Qt::AlignCenter, true,  "arapply_source_doctype" );
+  list()->addColumn(tr("Source"),	         _itemColumn, Qt::AlignCenter, true,  "doctype" );
+  list()->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "source" );
+  list()->addColumn(tr("Apply-To Doc Type"),        10, Qt::AlignCenter, true,  "arapply_target_doctype" );
+  list()->addColumn(tr("Apply-To"),        _itemColumn, Qt::AlignCenter, true,  "targetdoctype" );
+  list()->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "target" );
+  list()->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight,  true,  "arapply_applied"  );
+  list()->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
+  list()->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_applied"  );
 
-  _arapply->hideColumn(4);
-  _arapply->hideColumn(7);
+  list()->hideColumn(4);
+  list()->hideColumn(7);
 
   _allCustomers->setFocus();
 }
 
-dspARApplications::~dspARApplications()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspARApplications::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
-}
-
-void dspARApplications::sPrint()
-{
-  if (!checkParams())
-    return;
-
-  ParameterList params;
-  setParams(params);
-
-  orReport report("ARApplications", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
 }
 
 void dspARApplications::sViewCreditMemo()
@@ -98,7 +73,7 @@ void dspARApplications::sViewCreditMemo()
 	    "WHERE ((aropen_docnumber=:docnum)"
 	    "  AND (aropen_doctype IN ('C', 'R')) "
 	    ") ORDER BY type LIMIT 1;");
-  q.bindValue(":docnum", _arapply->currentItem()->text(6));
+  q.bindValue(":docnum", list()->currentItem()->text(6));
   q.exec();
   if (q.first())
   {
@@ -127,7 +102,7 @@ void dspARApplications::sViewCreditMemo()
   {
     QMessageBox::information(this, tr("Credit Memo Not Found"),
 			     tr("<p>The Credit Memo #%1 could not be found.")
-			     .arg(_arapply->currentItem()->text(6)));
+			     .arg(list()->currentItem()->text(6)));
     return;
   }
 }
@@ -140,7 +115,7 @@ void dspARApplications::sViewDebitMemo()
   q.prepare("SELECT aropen_id "
 	    "FROM aropen "
 	    "WHERE ((aropen_docnumber=:docnum) AND (aropen_doctype='D'));");
-  q.bindValue(":docnum", _arapply->currentItem()->text(9));
+  q.bindValue(":docnum", list()->currentItem()->text(9));
   q.exec();
   if (q.first())
   {
@@ -162,17 +137,17 @@ void dspARApplications::sViewInvoice()
   ParameterList params;
 
   params.append("mode", "view");
-  params.append("invoiceNumber", _arapply->currentItem()->text(9));
+  params.append("invoiceNumber", list()->currentItem()->text(9));
   dspInvoiceInformation* newdlg = new dspInvoiceInformation();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspARApplications::sPopulateMenu(QMenu* pMenu)
+void dspARApplications::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if (_arapply->currentItem()->text(4) == "C")
+  if (list()->currentItem()->text(4) == "C")
   {
     menuItem = pMenu->addAction(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
@@ -180,14 +155,14 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu)
       menuItem->setEnabled(false);
   }
 
-  if (_arapply->currentItem()->text(7) == "D")
+  if (list()->currentItem()->text(7) == "D")
   {
     menuItem = pMenu->addAction(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()));
     if (! _privileges->check("MaintainARMemos") &&
 	! _privileges->check("ViewARMemos"))
       menuItem->setEnabled(false);
   }
-  else if (_arapply->currentItem()->text(7) == "I")
+  else if (list()->currentItem()->text(7) == "I")
   {
     menuItem = pMenu->addAction(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()));
     if (! _privileges->check("MaintainMiscInvoices") &&
@@ -196,28 +171,7 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu)
   }
 }
 
-void dspARApplications::sFillList()
-{
-  if (!checkParams())
-    return;
-    
-  _arapply->clear();
-
-  ParameterList params;
-  setParams(params);
-
-  MetaSQLQuery mql = mqlLoad("arApplications", "detail");
-  q = mql.toQuery(params);
-  if (q.first())
-    _arapply->populate(q);
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
-bool dspARApplications::checkParams()
+bool dspARApplications::setParams(ParameterList & params)
 {
   if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
   {
@@ -251,11 +205,6 @@ bool dspARApplications::checkParams()
     return false;
   }
   
-  return true; 
-}
-
-void dspARApplications::setParams(ParameterList & params)
-{
   if (_cashReceipts->isChecked())
     params.append("includeCashReceipts");
 
@@ -278,7 +227,7 @@ void dspARApplications::setParams(ParameterList & params)
   params.append("cash", tr("Cash"));
   params.append("wireTransfer", tr("Wire Trans."));
   params.append("other", tr("Other"));
-	params.append("apcheck", tr("A/P Check"));
+  params.append("apcheck", tr("A/P Check"));
 
   if (_selectedCustomer->isChecked())
     params.append("cust_id", _cust->id());
@@ -286,4 +235,6 @@ void dspARApplications::setParams(ParameterList & params)
     params.append("custtype_id", _customerTypes->id());
   else if (_customerTypePattern->isChecked())
     params.append("custtype_pattern", _customerType->text());
+
+  return true; 
 }

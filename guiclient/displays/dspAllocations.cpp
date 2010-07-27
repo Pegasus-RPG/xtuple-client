@@ -12,36 +12,31 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <format.h>
-
-#include "mqlutil.h"
 #include "salesOrder.h"
 #include "transferOrder.h"
 #include "workOrder.h"
 
-dspAllocations::dspAllocations(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspAllocations::dspAllocations(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspAllocations", fl)
 {
-  setupUi(this);
-
-  connect(_allocations, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Item Allocations"));
+  setListLabel(tr("Item Allocations"));
+  setMetaSQLOptions("allocations", "detail");
 
   _item->setReadOnly(TRUE);
   _warehouse->setEnabled(FALSE);
 
-  _allocations->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter,true, "type");
-  _allocations->addColumn(tr("Order #"),      _orderColumn,   Qt::AlignLeft,  true, "order_number");
-  _allocations->addColumn(tr("Parent Item"),  -1,             Qt::AlignLeft,  true, "item_number");
-  _allocations->addColumn(tr("Total Qty."),   _qtyColumn,     Qt::AlignRight, true, "totalqty");
-  _allocations->addColumn(tr("Relieved"),     _qtyColumn,     Qt::AlignRight, true, "relievedqty");
-  _allocations->addColumn(tr("Balance"),      _qtyColumn,     Qt::AlignRight, true, "balanceqty");
-  _allocations->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight, true, "runningbal");
-  _allocations->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter,true, "duedate");
+  list()->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter,true, "type");
+  list()->addColumn(tr("Order #"),      _orderColumn,   Qt::AlignLeft,  true, "order_number");
+  list()->addColumn(tr("Parent Item"),  -1,             Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Total Qty."),   _qtyColumn,     Qt::AlignRight, true, "totalqty");
+  list()->addColumn(tr("Relieved"),     _qtyColumn,     Qt::AlignRight, true, "relievedqty");
+  list()->addColumn(tr("Balance"),      _qtyColumn,     Qt::AlignRight, true, "balanceqty");
+  list()->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight, true, "runningbal");
+  list()->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter,true, "duedate");
 
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -50,13 +45,9 @@ dspAllocations::dspAllocations(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 }
 
-dspAllocations::~dspAllocations()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspAllocations::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -105,7 +96,7 @@ enum SetResponse dspAllocations::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspAllocations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspAllocations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
 
@@ -137,7 +128,7 @@ void dspAllocations::sViewWorkOrder()
   q.prepare( "SELECT womatl_wo_id "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _allocations->id());
+  q.bindValue(":womatl_id", list()->id());
   q.exec();
   if (q.first())
   {
@@ -156,7 +147,7 @@ void dspAllocations::sViewCustomerOrder()
   q.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", _allocations->id());
+  q.bindValue(":coitem_id", list()->id());
   q.exec();
   if (q.first())
     salesOrder::viewSalesOrder(q.value("coitem_cohead_id").toInt());
@@ -167,7 +158,7 @@ void dspAllocations::sEditCustomerOrder()
   q.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", _allocations->id());
+  q.bindValue(":coitem_id", list()->id());
   q.exec();
   if (q.first())
     salesOrder::editSalesOrder(q.value("coitem_cohead_id").toInt(), false);
@@ -178,7 +169,7 @@ void dspAllocations::sViewTransferOrder()
   q.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:toitem_id);" );
-  q.bindValue(":toitem_id", _allocations->id());
+  q.bindValue(":toitem_id", list()->id());
   q.exec();
   if (q.first())
     transferOrder::viewTransferOrder(q.value("toitem_tohead_id").toInt());
@@ -189,47 +180,36 @@ void dspAllocations::sEditTransferOrder()
   q.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:toitem_id);" );
-  q.bindValue(":toitem_id", _allocations->id());
+  q.bindValue(":toitem_id", list()->id());
   q.exec();
   if (q.first())
     transferOrder::editTransferOrder(q.value("toitem_tohead_id").toInt(), false);
 }
 
-void dspAllocations::sFillList()
+bool dspAllocations::setParams(ParameterList &params)
 {
-  _allocations->clear();
-
-  if ( (_item->isValid()) &&
+  if (!( (_item->isValid()) &&
        ( (_leadTime->isChecked()) || (_byDays->isChecked()) ||
          ((_byDate->isChecked()) && (_date->isValid())) ||
-         ((_byRange->isChecked()) && (_startDate->isValid()) && (_endDate->isValid())) ) )
+         ((_byRange->isChecked()) && (_startDate->isValid()) && (_endDate->isValid())) ) ))
+    return false;
+
+  params.append("warehous_id", _warehouse->id());
+  params.append("item_id",	   _item->id());
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
+
+  if (_leadTime->isChecked())
+    params.append("leadTime");
+  else if (_byDays->isChecked())
+    params.append("days", _days->value());
+  else if (_byDate->isChecked())
+    params.append("date", _date->date());
+  else if (_byRange->isChecked())
   {
-    MetaSQLQuery mql = mqlLoad("allocations", "detail");
-
-    ParameterList params;
-    params.append("warehous_id", _warehouse->id());
-    params.append("item_id",	   _item->id());
-    if (_metrics->boolean("MultiWhs"))
-      params.append("MultiWhs");
-
-    if (_leadTime->isChecked())
-      params.append("leadTime");
-    else if (_byDays->isChecked())
-      params.append("days", _days->value());
-    else if (_byDate->isChecked())
-      params.append("date", _date->date());
-    else if (_byRange->isChecked())
-    {
-      params.append("startDate", _startDate->date());
-      params.append("endDate",   _endDate->date());
-    }
-
-    q = mql.toQuery(params);
-    _allocations->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    params.append("startDate", _startDate->date());
+    params.append("endDate",   _endDate->date());
   }
+
+  return true;
 }

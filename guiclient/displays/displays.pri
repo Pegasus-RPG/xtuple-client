@@ -1,7 +1,11 @@
 
 INCLUDEPATH += displays
 
-FORMS   += displays/dspBOMBase.ui \
+FORMS   += displays/dspAllocations.ui \
+           displays/dspAPApplications.ui \
+           displays/dspAPOpenItemsByVendor.ui \
+           displays/dspARApplications.ui \
+           displays/dspBOMBase.ui \
            displays/dspBacklogByCustomer.ui \
            displays/dspBacklogByItem.ui \
            displays/dspBacklogByParameterList.ui \
@@ -11,6 +15,7 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspCostedSummarizedBOM.ui \
            displays/dspCountSlipsByWarehouse.ui \
            displays/dspCountTagsBase.ui \
+           displays/dspDepositsRegister.ui \
            displays/dspDetailedInventoryHistoryByLocation.ui \
            displays/dspDetailedInventoryHistoryByLotSerial.ui \
            displays/dspExpiredInventoryByClassCode.ui \
@@ -44,7 +49,11 @@ FORMS   += displays/dspBOMBase.ui \
            displays/dspUsageStatisticsBase.ui \
            displays/dspValidLocationsByItem.ui
 
-HEADERS += displays/dspBOMBase.h \
+HEADERS += displays/dspAllocations.h \
+           displays/dspAPApplications.h \
+           displays/dspAPOpenItemsByVendor.h \
+           displays/dspARApplications.h \
+           displays/dspBOMBase.h \
            displays/dspBacklogByCustomer.h \
            displays/dspBacklogByItem.h \
            displays/dspBacklogByParameterList.h \
@@ -61,6 +70,7 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspCountTagsByClassCode.h \
            displays/dspCountTagsByItem.h \
            displays/dspCountTagsByWarehouse.h \
+           displays/dspDepositsRegister.h \
            displays/dspDetailedInventoryHistoryByLocation.h \
            displays/dspDetailedInventoryHistoryByLotSerial.h \
            displays/dspExpiredInventoryByClassCode.h \
@@ -109,7 +119,11 @@ HEADERS += displays/dspBOMBase.h \
            displays/dspUsageStatisticsByWarehouse.h \
            displays/dspValidLocationsByItem.h
 
-SOURCES += displays/dspBOMBase.cpp \
+SOURCES += displays/dspAllocations.cpp \
+           displays/dspAPApplications.cpp \
+           displays/dspAPOpenItemsByVendor.cpp \
+           displays/dspARApplications.cpp \
+           displays/dspBOMBase.cpp \
            displays/dspBacklogByCustomer.cpp \
            displays/dspBacklogByItem.cpp \
            displays/dspBacklogByParameterList.cpp \
@@ -126,6 +140,7 @@ SOURCES += displays/dspBOMBase.cpp \
            displays/dspCountTagsByClassCode.cpp \
            displays/dspCountTagsByItem.cpp \
            displays/dspCountTagsByWarehouse.cpp \
+           displays/dspDepositsRegister.cpp \
            displays/dspDetailedInventoryHistoryByLocation.cpp \
            displays/dspDetailedInventoryHistoryByLotSerial.cpp \
            displays/dspExpiredInventoryByClassCode.cpp \

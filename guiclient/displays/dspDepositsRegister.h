@@ -12,26 +12,21 @@
 #define DSPDEPOSITSREGISTER_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspDepositsRegister.h"
 
-class dspDepositsRegister : public XWidget, public Ui::dspDepositsRegister
+class dspDepositsRegister : public display, public Ui::dspDepositsRegister
 {
     Q_OBJECT
 
 public:
     dspDepositsRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspDepositsRegister();
 
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPopulateMenu( QMenu * );
-    virtual void sPrint();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

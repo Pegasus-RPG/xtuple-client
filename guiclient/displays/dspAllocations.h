@@ -12,25 +12,25 @@
 #define DSPALLOCATIONS_H
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 #include <parameter.h>
 
 #include "ui_dspAllocations.h"
 
-class dspAllocations : public XWidget, public Ui::dspAllocations
+class dspAllocations : public display, public Ui::dspAllocations
 {
     Q_OBJECT
 
 public:
     dspAllocations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspAllocations();
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sEditCustomerOrder();
     virtual void sEditTransferOrder();
-    virtual void sFillList();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected, int );
     virtual void sViewCustomerOrder();
     virtual void sViewTransferOrder();
     virtual void sViewWorkOrder();

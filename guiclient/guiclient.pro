@@ -193,11 +193,7 @@ FORMS =   absoluteCalendarItem.ui               \
           display.ui                            \
           distributeInventory.ui                \
           distributeToLocation.ui               \
-          dspAPApplications.ui                  \
-          dspAPOpenItemsByVendor.ui             \
-          dspARApplications.ui                  \
           dspAROpenItems.ui                     \
-          dspAllocations.ui                     \
           dspBankrecHistory.ui                  \
           dspBillingSelections.ui               \
           dspBookingsByCustomer.ui              \
@@ -219,7 +215,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspCustomerInformationExport.ui       \
           dspCustomersByCharacteristic.ui       \
           dspCustomersByCustomerType.ui         \
-          dspDepositsRegister.ui                \
           dspEarnedCommissions.ui                       \
           dspExpediteExceptionsByPlannerCode.ui         \
           dspFinancialReport.ui                         \
@@ -854,11 +849,7 @@ HEADERS = ../common/format.h                    \
           display.h                             \
           distributeInventory.h                 \
           distributeToLocation.h                \
-          dspAPApplications.h                   \
-          dspAPOpenItemsByVendor.h              \
-          dspARApplications.h                   \
           dspAROpenItems.h                      \
-          dspAllocations.h                      \
           dspBankrecHistory.h                   \
           dspBillingSelections.h                \
           dspBookingsByCustomer.h               \
@@ -880,7 +871,6 @@ HEADERS = ../common/format.h                    \
           dspCustomerInformationExport.h        \
           dspCustomersByCharacteristic.h        \
           dspCustomersByCustomerType.h          \
-          dspDepositsRegister.h                 \
           dspEarnedCommissions.h                        \
           dspExpediteExceptionsByPlannerCode.h          \
           dspFinancialReport.h                          \
@@ -1551,11 +1541,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           display.cpp                           \
           distributeInventory.cpp               \
           distributeToLocation.cpp              \
-          dspAPApplications.cpp                 \
-          dspAPOpenItemsByVendor.cpp            \
-          dspARApplications.cpp                 \
           dspAROpenItems.cpp                    \
-          dspAllocations.cpp                    \
           dspBankrecHistory.cpp                 \
           dspBillingSelections.cpp              \
           dspBookingsByCustomer.cpp             \
@@ -1577,7 +1563,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspCustomerInformationExport.cpp      \
           dspCustomersByCharacteristic.cpp      \
           dspCustomersByCustomerType.cpp        \
-          dspDepositsRegister.cpp               \
           dspEarnedCommissions.cpp                      \
           dspExpediteExceptionsByPlannerCode.cpp        \
           dspFinancialReport.cpp                        \
