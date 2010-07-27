@@ -128,8 +128,8 @@ void glTransaction::sPost()
 	return;
   }
 
-  q.prepare( "SELECT insertGLTransaction( 'G/L', :docType, :docNumber, :notes,"
-             "                            :creditAccntid, :debitAccntid, -1, :amount, :distDate ) AS result;" );
+  q.prepare( "SELECT insertGLTransaction( fetchJournalNumber('GL-MISC'), 'G/L', :docType, :docNumber, :notes,"
+             "                            :creditAccntid, :debitAccntid, -1, :amount, :distDate, true, true ) AS result;" );
   q.bindValue(":distDate", _distDate->date());
   q.bindValue(":docType", _docType->text().trimmed());
   q.bindValue(":docNumber", _docNumber->text().trimmed());

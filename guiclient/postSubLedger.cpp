@@ -49,13 +49,25 @@ void postSubLedger::languageChange()
   retranslateUi(this);
 }
 
-bool postSubLedger::sCheck()
-{
-  return false;
-}
-
 void postSubLedger::sPost()
 {
+  XSqlQuery qry;
+  MetaSQLQuery mql = mqlLoad("postSubLedger", "post");
+  QList<XTreeWidgetItem*> selected = _sources->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    _subLedgerDates->appendValue(params);
+    params.append("distDate", _distDate->date());
+    params.append("source", selected.at(i)->rawValue("sltrans_source").toString());
+
+    mql.toQuery(params);
+    if (qry.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
   close();
 }
 

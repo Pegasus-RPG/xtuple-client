@@ -25,7 +25,6 @@ public:
     ~postSubLedger();
 
 public slots:
-    bool sCheck();
     void sPost();
     void sFillList();
     virtual void sSelectionChanged();

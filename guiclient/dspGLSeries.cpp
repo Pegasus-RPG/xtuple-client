@@ -98,21 +98,21 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
       item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
     if(0 != item)
     {
-      if(item->rawValue("gltrans_doctype").toString() == "ST" ||
-         item->rawValue("gltrans_doctype").toString() == "JE")
+      if(item->rawValue("doctype").toString() == "ST" ||
+         item->rawValue("doctype").toString() == "JE")
         reversible = _privileges->check("PostStandardJournals");
 
       // Make sure there is nothing to restricting edits
       ParameterList params;
       params.append("glSequence", _gltrans->id());
-      MetaSQLQuery mql = mqlLoad("glseries", "checkeditable");
+      MetaSQLQuery mql = mqlLoad("dspGLSeries", "checkeditable");
       XSqlQuery qry = mql.toQuery(params);
       if (!qry.first())
       {
         editable = _privileges->check("EditPostedJournals") &&
-                   item->rawValue("gltrans_doctype").toString() == "JE";
-        deletable = _privileges->check("DeletePostedJournals") &&
-                    reversible;
+                   item->rawValue("doctype").toString() == "JE";
+        deletable = (_privileges->check("DeletePostedJournals") &&
+                    (reversible || item->rawValue("doctype").toString() == "SL"));
       }
     }
   }
@@ -182,71 +182,7 @@ void dspGLSeries::sFillList()
   if (! setParams(params))
     return;
 
-  MetaSQLQuery mql("SELECT *, "
-                   "       CASE WHEN <? literal(\"table\") ?>_id = -1 THEN 0"
-                   "       ELSE 1 END AS xtindentrole,"
-                   "       CASE WHEN <? literal(\"table\") ?>_id = -1 THEN <? literal(\"table\") ?>_date"
-                   "       END AS transdate,"    // qtdisplayrole isn't working?
-                   "       'curr' AS debit_xtnumericrole,"
-                   "       'curr' AS credit_xtnumericrole "
-                   "FROM (SELECT DISTINCT "
-                   "       <? literal(\"table\") ?>_sequence AS sequence, "
-                   "       -1 AS <? literal(\"table\") ?>_id, "
-                   "       <? literal(\"table\") ?>_date, "
-                   "       <? literal(\"table\") ?>_source AS source, "
-                   "       <? literal(\"table\") ?>_journalnumber AS journalnumber,"
-                   "       <? literal(\"table\") ?>_doctype AS doctype, '' AS docnumber,"
-                   "       firstLine(<? literal(\"table\") ?>_notes) AS account,"
-                   "       0.0 AS amount,"
-                   "       CAST(NULL AS NUMERIC) AS debit,"
-                   "       CAST(NULL AS NUMERIC) AS credit,"
-                   "       <? literal(\"table\") ?>_posted AS posted "
-                   "FROM <? literal(\"table\") ?> "
-                   "WHERE ( (true) "
-                   "<? if exists(\"gltrans\") ?>"
-                   " AND (gltrans_deleted) "
-                   "<? endif ?>"
-                   " AND (<? literal(\"table\") ?>_date BETWEEN <? value(\"startDate\") ?>"
-                   "                         AND <? value(\"endDate\") ?>)"
-                   "<? if exists(\"source\") ?>"
-                   "   AND (<? literal(\"table\") ?>_source=<? value(\"source\") ?>)"
-                   "<? endif ?>"
-                   "<? if exists(\"startJrnlnum\") ?>"
-                   "   AND (<? literal(\"table\") ?>_journalnumber BETWEEN <? value(\"startJrnlnum\") ?>"
-                   "                                  AND <? value(\"endJrnlnum\") ?>)"
-                   "<? endif ?>"
-                   ") "
-                   "UNION ALL "
-                   "SELECT <? literal(\"table\") ?>_sequence AS sequence, "
-                   "       <? literal(\"table\") ?>_id, "
-                   "       <? literal(\"table\") ?>_date, "
-                   "       NULL, NULL,"
-                   "       NULL, <? literal(\"table\") ?>_docnumber AS docnumber,"
-                   "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-                   "       <? literal(\"table\") ?>_amount,"
-                   "       CASE WHEN (<? literal(\"table\") ?>_amount < 0) THEN (<? literal(\"table\") ?>_amount * -1)"
-                   "       END AS debit,"
-                   "       CASE WHEN (<? literal(\"table\") ?>_amount > 0) THEN <? literal(\"table\") ?>_amount "
-                   "       END AS credit,"
-                   "       NULL AS posted "
-                   "FROM <? literal(\"table\") ?> JOIN accnt ON (gltrans_accnt_id=accnt_id) "
-                   "WHERE ( (true) "
-                   "<? if exists(\"gltrans\") ?>"
-                   " AND (NOT gltrans_deleted) "
-                   "<? endif ?>"
-                   "  AND (<? literal(\"table\") ?>_date BETWEEN <? value(\"startDate\") ?>"
-                   "                         AND <? value(\"endDate\") ?>)"
-                   "<? if exists(\"source\") ?>"
-                   "   AND (<? literal(\"table\") ?>_source=<? value(\"source\") ?>)"
-                   "<? endif ?>"
-                   "<? if exists(\"startJrnlnum\") ?>"
-                   "   AND (<? literal(\"table\") ?>_journalnumber BETWEEN <? value(\"startJrnlnum\") ?>"
-                   "                                  AND <? value(\"endJrnlnum\") ?>)"
-                   "<? endif ?>"
-                   " ) "
-                   ") AS dummy "
-                   "ORDER BY transdate, sequence,"
-                   "         xtindentrole, amount;");
+  MetaSQLQuery mql = mqlLoad("dspGLSeries", "detail");
 
   q = mql.toQuery(params);
   _gltrans->populate(q, true);
