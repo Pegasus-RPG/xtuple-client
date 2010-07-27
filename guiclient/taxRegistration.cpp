@@ -174,7 +174,7 @@ void taxRegistration::sSave()
     q.bindValue(":taxreg_taxzone_id", _taxZone->id()); 
   q.bindValue(":taxreg_taxreg_effective", _dates->startDate()); 
   q.bindValue(":taxreg_taxreg_expires", _dates->endDate()); 
-  q.bindValue(":taxreg_notes", _notes->text());
+  q.bindValue(":taxreg_notes", _notes->toPlainText());
 	
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)

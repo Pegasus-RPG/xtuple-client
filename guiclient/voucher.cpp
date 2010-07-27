@@ -10,6 +10,7 @@
 
 #include "voucher.h"
 
+#include <QAction>
 #include <QCloseEvent>
 #include <QKeyEvent>
 #include <QMenu>
@@ -299,7 +300,7 @@ bool voucher::sSave()
   q.bindValue(":vohead_amount", _amountToDistribute->localValue());
   q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   q.bindValue(":vohead_curr_id", _amountToDistribute->id());
-  q.bindValue(":vohead_notes", _notes->text());
+  q.bindValue(":vohead_notes", _notes->toPlainText());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -881,7 +882,7 @@ void voucher::sPopulateDueDate()
 
 void voucher::sPopulateMenu( QMenu * pMenu )
 {
-  pMenu->insertItem(tr("View P/O Item..."), this, SLOT(sView()), 0);
+  pMenu->addAction(tr("View P/O Item..."), this, SLOT(sView()));
 }
 
 void voucher::sView()
@@ -943,7 +944,7 @@ void voucher::saveDetail()
     q.bindValue(":vohead_amount", _amountToDistribute->localValue());
     q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
     q.bindValue(":vohead_curr_id", _amountToDistribute->id());
-    q.bindValue(":vohead_notes", _notes->text());
+    q.bindValue(":vohead_notes", _notes->toPlainText());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {

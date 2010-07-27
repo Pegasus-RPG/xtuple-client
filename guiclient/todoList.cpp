@@ -18,6 +18,7 @@
 #include "storedProcErrorLookup.h"
 #include "task.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -92,15 +93,13 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->addColumn(tr("Account Name"),      100,  Qt::AlignLeft,   true, "crmacct_name");
   _todoList->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"owner");
 
-  int menuItem;
+  QAction *menuItem;
   QMenu * todoMenu = new QMenu;
-  menuItem = todoMenu->insertItem(tr("Incident"), this, SLOT(sNewIncdt()));
-  if (!_privileges->check("MaintainIncidents"))
-    todoMenu->setItemEnabled(menuItem, FALSE);
-  menuItem = todoMenu->insertItem(tr("To-Do Item"),   this, SLOT(sNew()));
-  if (!_privileges->check("MaintainPersonalTodoList") &&
-      !_privileges->check("MaintainOtherTodoLists"))
-    todoMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = todoMenu->addAction(tr("Incident"), this, SLOT(sNewIncdt()));
+  menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+  menuItem = todoMenu->addAction(tr("To-Do Item"),   this, SLOT(sNew()));
+  menuItem->setEnabled(_privileges->check("MaintainPersonalTodoList") ||
+                       _privileges->check("MaintainOtherTodoLists"));
   _new->setMenu(todoMenu);
 
   if (_preferences->boolean("XCheckBox/forgetful"))
@@ -117,7 +116,7 @@ void todoList::languageChange()
 
 void todoList::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   bool editPriv =
       (omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
@@ -127,63 +126,63 @@ void todoList::sPopulateMenu(QMenu *pMenu)
       (omfgThis->username() == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
       (omfgThis->username() != _todoList->currentItem()->text(3) && _privileges->check("ViewOtherTodoLists"));
 
-  menuItem = pMenu->insertItem(tr("New To-Do..."), this, SLOT(sNew()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("New To-Do..."), this, SLOT(sNew()));
+  menuItem->setEnabled(editPriv);
 
   if (_todoList->currentItem()->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("Edit To-Do..."), this, SLOT(sEdit()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv);
+    menuItem = pMenu->addAction(tr("Edit To-Do..."), this, SLOT(sEdit()));
+    menuItem->setEnabled(editPriv);
 
-    menuItem = pMenu->insertItem(tr("View To-Do..."), this, SLOT(sView()), 0);
-    pMenu->setItemEnabled(menuItem, viewPriv);
+    menuItem = pMenu->addAction(tr("View To-Do..."), this, SLOT(sView()));
+    menuItem->setEnabled(viewPriv);
 
-    menuItem = pMenu->insertItem(tr("Delete To-Do"), this, SLOT(sDelete()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv);
+    menuItem = pMenu->addAction(tr("Delete To-Do"), this, SLOT(sDelete()));
+    menuItem->setEnabled(editPriv);
   }
 
   pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("New Incident..."), this, SLOT(sNewIncdt()), 0);
-  pMenu->setItemEnabled(menuItem,  _privileges->check("MaintainIncidents"));
+  menuItem = pMenu->addAction(tr("New Incident..."), this, SLOT(sNewIncdt()));
+  menuItem->setEnabled( _privileges->check("MaintainIncidents"));
 
   if ((_todoList->altId() == 1 && !_todoList->currentItem()->text(9).isEmpty()) ||
        _todoList->altId() == 2)
   {
-    menuItem = pMenu->insertItem(tr("Edit Incident"), this, SLOT(sEditIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainIncidents"));
-    menuItem = pMenu->insertItem(tr("View Incident"), this, SLOT(sViewIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
-				    _privileges->check("MaintainIncidents"));
+    menuItem = pMenu->addAction(tr("Edit Incident"), this, SLOT(sEditIncident()));
+    menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+    menuItem = pMenu->addAction(tr("View Incident"), this, SLOT(sViewIncident()));
+    menuItem->setEnabled(_privileges->check("ViewIncidents") ||
+                         _privileges->check("MaintainIncidents"));
   }
   pMenu->addSeparator();
 
   if (_todoList->altId() == 3)
   {
-    menuItem = pMenu->insertItem(tr("Edit Task"), this, SLOT(sEditTask()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainProjects"));
-    menuItem = pMenu->insertItem(tr("View Task"), this, SLOT(sViewTask()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewProjects") ||
-      _privileges->check("MaintainProjects"));
+    menuItem = pMenu->addAction(tr("Edit Task"), this, SLOT(sEditTask()));
+    menuItem->setEnabled(_privileges->check("MaintainProjects"));
+    menuItem = pMenu->addAction(tr("View Task"), this, SLOT(sViewTask()));
+    menuItem->setEnabled(_privileges->check("ViewProjects") ||
+                         _privileges->check("MaintainProjects"));
     pMenu->addSeparator();
   }
 
   if (_todoList->altId() >= 3)
   {
-    menuItem = pMenu->insertItem(tr("Edit Project"), this, SLOT(sEditProject()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainProjects"));
-    menuItem = pMenu->insertItem(tr("View Project"), this, SLOT(sViewProject()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewProjects") ||
-      _privileges->check("MaintainProjects"));
+    menuItem = pMenu->addAction(tr("Edit Project"), this, SLOT(sEditProject()));
+    menuItem->setEnabled(_privileges->check("MaintainProjects"));
+    menuItem = pMenu->addAction(tr("View Project"), this, SLOT(sViewProject()));
+    menuItem->setEnabled(_privileges->check("ViewProjects") ||
+                         _privileges->check("MaintainProjects"));
   }
 
   if (!_todoList->currentItem()->text(10).isEmpty())
   {
     pMenu->addSeparator();
-    menuItem = pMenu->insertItem(tr("Edit Customer"), this, SLOT(sEditCustomer()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters"));
-    menuItem = pMenu->insertItem(tr("View Customer"), this, SLOT(sViewCustomer()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewCustomerMasters"));
+    menuItem = pMenu->addAction(tr("Edit Customer"), this, SLOT(sEditCustomer()));
+    menuItem->setEnabled(_privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters"));
+    menuItem = pMenu->addAction(tr("View Customer"), this, SLOT(sViewCustomer()));
+    menuItem->setEnabled(_privileges->check("ViewCustomerMasters"));
   }
 }
 

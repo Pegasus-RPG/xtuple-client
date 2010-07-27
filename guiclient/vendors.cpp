@@ -10,8 +10,9 @@
 
 #include "vendors.h"
 
-#include <QMessageBox>
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 
 #include <openreports.h>
 #include "vendor.h"
@@ -135,19 +136,16 @@ void vendors::sDelete()
 
 void vendors::sPopulateMenu(QMenu *menuThis)
 {
-  int intMenuItem;
+  QAction *menuItem;
 
-  intMenuItem = menuThis->insertItem(tr("Edit Vendor..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainVendors"))
-    menuThis->setItemEnabled(intMenuItem, FALSE);
+  menuItem = menuThis->addAction(tr("Edit Vendor..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainVendors"));
 
-  intMenuItem = menuThis->insertItem(tr("View Vendor..."), this, SLOT(sView()), 0);
-  if ((!_privileges->check("MaintainVendors")) && (!_privileges->check("ViewVendors")))
-    menuThis->setItemEnabled(intMenuItem, FALSE);
+  menuItem = menuThis->addAction(tr("View Vendor..."), this, SLOT(sView()));
+  menuItem->setEnabled(_privileges->check("MaintainVendors") || _privileges->check("ViewVendors"));
 
-  intMenuItem = menuThis->insertItem(tr("Delete Vendor..."), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainVendors"))
-    menuThis->setItemEnabled(intMenuItem, FALSE);
+  menuItem = menuThis->addAction(tr("Delete Vendor..."), this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("MaintainVendors"));
 }
 
 void vendors::sFillList()

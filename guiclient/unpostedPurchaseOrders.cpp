@@ -10,11 +10,11 @@
 
 #include "unpostedPurchaseOrders.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-#include <QWorkspace>
 
 #include <metasql.h>
 #include <parameter.h>
@@ -251,28 +251,28 @@ void unpostedPurchaseOrders::sRelease()
 
 void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
 {
-  int menuItem;
+  QAction *menuItem;
 
   bool canMaintain = (pItem->text(3) == "U" && _privileges->check("MaintainPurchaseOrders")) ||
 		     (pItem->text(3) == "O" && _privileges->check("MaintainPostedPurchaseOrders"));
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  pMenu->setItemEnabled(menuItem, canMaintain);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(canMaintain);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  pMenu->setItemEnabled(menuItem, canMaintain || _privileges->check("ViewPurchaseOrders"));
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(canMaintain || _privileges->check("ViewPurchaseOrders"));
 
-  menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  pMenu->setItemEnabled(menuItem, (pItem->text(3) == "U" && _privileges->check("MaintainPurchaseOrders")));
+  menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDelete()));
+  menuItem->setEnabled((pItem->text(3) == "U" && _privileges->check("MaintainPurchaseOrders")));
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Print..."), this, SLOT(sPrint()), 0);
-  pMenu->setItemEnabled(menuItem, canMaintain);
+  menuItem = pMenu->addAction(tr("Print..."), this, SLOT(sPrint()));
+  menuItem->setEnabled(canMaintain);
 
-  menuItem = pMenu->insertItem(tr("Release..."), this, SLOT(sRelease()), 0);
-  pMenu->setItemEnabled(menuItem, _privileges->check("ReleasePurchaseOrders") &&
-				  pItem->text(3) == "U");
+  menuItem = pMenu->addAction(tr("Release..."), this, SLOT(sRelease()));
+  menuItem->setEnabled(_privileges->check("ReleasePurchaseOrders") &&
+                       pItem->text(3) == "U");
 }
 
 void unpostedPurchaseOrders::sHandleButtons()

@@ -370,7 +370,7 @@ bool userPreferences::save()
                 "  FROM usrpref "
                 " WHERE ( (usrpref_name = 'UseEnhancedAuthentication') "
                 "   AND (usrpref_username=:username) ); ");
-    q.bindValue(":username", _username->text().trimmed().lower());         
+    q.bindValue(":username", _username->text().trimmed().toLower());         
     q.exec();
     if(q.first())
     {

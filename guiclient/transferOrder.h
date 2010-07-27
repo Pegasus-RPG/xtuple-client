@@ -38,8 +38,6 @@ public slots:
 
     virtual void clear();
     virtual void closeEvent( QCloseEvent * pEvent );
-    virtual void dragEnterEvent( QDragEnterEvent * pEvent );
-    virtual void dropEvent( QDropEvent * pEvent );
     virtual void populate();
     virtual void populateOrderNumber();
     virtual void sAction();

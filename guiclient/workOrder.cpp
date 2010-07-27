@@ -10,11 +10,11 @@
 
 #include "workOrder.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
-#include <QMessageBox>
+#include <QVariant>
+
 #include "changeWoQty.h"
 #include "closeWo.h"
 #include "correctProductionPosting.h"
@@ -41,6 +41,7 @@
 #include "scrapWoMaterialFromWIP.h"
 #include "woMaterialItem.h"
 
+#define DEBUG false
 
 workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -405,7 +406,8 @@ void workOrder::sCreate()
     }
     else
     {
-      qDebug("cost " + q.value("itemsite_costmethod").toString());
+      if (DEBUG)
+      qDebug("cost %s", qPrintable(q.value("itemsite_costmethod").toString()));
       if (q.value("itemsite_costmethod").toString() == "J")
       {
         QMessageBox::critical(this,tr("Invalid Item"),
@@ -1086,7 +1088,7 @@ void workOrder::sReprioritizeParent()
     q.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
     q.bindValue(":wo_id", _woid);
     q.bindValue(":newPriority", _priority->value());
-    q.bindValue(":reprioritizeChildren", QVariant(true, 0));
+    q.bindValue(":reprioritizeChildren", true);
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -1118,7 +1120,7 @@ void workOrder::sRescheduleParent()
     q.bindValue(":wo_id", _woid);
     q.bindValue(":startDate", _startDate->date());
     q.bindValue(":dueDate", _dueDate->date());
-    q.bindValue(":rescheduleChildren", QVariant(true, 0));
+    q.bindValue(":rescheduleChildren", true);
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
@@ -1686,8 +1688,8 @@ void workOrder::sSubstituteMatl()
 
 void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
-  QString status(selected->text(3));
-  int     menuItem;
+  QString  status(selected->text(3));
+  QAction *menuItem;
 
   //Check if row is a work order and id is vaild
   if(_woIndentedList->altId() == 1 && _woIndentedList->id() > -1)
@@ -1696,117 +1698,117 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
     {
       if (status == "O")
       {
-        menuItem = pMenu->insertItem(tr("Explode..."), this, SLOT(sExplodeWO()), 0);
+        menuItem = pMenu->addAction(tr("Explode..."), this, SLOT(sExplodeWO()));
         if (!_privileges->check("ExplodeWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
       else if (status == "E")
       {
-        menuItem = pMenu->insertItem(tr("Implode..."), this, SLOT(sImplodeWO()), 0);
+        menuItem = pMenu->addAction(tr("Implode..."), this, SLOT(sImplodeWO()));
         if (!_privileges->check("ImplodeWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
           
-        menuItem = pMenu->insertItem(tr("Release"), this, SLOT(sReleaseWO()), 0);
+        menuItem = pMenu->addAction(tr("Release"), this, SLOT(sReleaseWO()));
         if (!_privileges->check("ReleaseWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
       else if (status == "R")
       {
-        menuItem = pMenu->insertItem(tr("Recall"), this, SLOT(sRecallWO()), 0);
+        menuItem = pMenu->addAction(tr("Recall"), this, SLOT(sRecallWO()));
         if (!_privileges->check("RecallWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
       
       if (((XTreeWidgetItem *)selected)->QTreeWidgetItem::parent() && ((status == "O") || (status == "E")))
       {
-        menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDeleteWO()), 0);
+        menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDeleteWO()));
         if (!_privileges->check("DeleteWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
       else
       {
        if ((status != "C"))
        {
-         menuItem = pMenu->insertItem(tr("Close..."), this, SLOT(sCloseWO()), 0);
+         menuItem = pMenu->addAction(tr("Close..."), this, SLOT(sCloseWO()));
          if (!_privileges->check("CloseWorkOrders"))
-           pMenu->setItemEnabled(menuItem, FALSE);
+           menuItem->setEnabled(false);
        }
-        pMenu->insertSeparator();
+        pMenu->addSeparator();
       }
 
       if ((status == "E") || (status == "R") || (status == "I"))
       {
-        menuItem = pMenu->insertItem(tr("Print Traveler..."), this, SLOT(sPrintTraveler()), 0);
+        menuItem = pMenu->addAction(tr("Print Traveler..."), this, SLOT(sPrintTraveler()));
         if (!_privileges->check("PrintWorkOrderPaperWork"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
 
-        pMenu->insertSeparator();
+        pMenu->addSeparator();
         
         if (status == "O" ||status == "E" || status == "R" || status == "I")
         {
-          menuItem = pMenu->insertItem(tr("New Material..."), this, SLOT(sNewMatl()), 0);
+          menuItem = pMenu->addAction(tr("New Material..."), this, SLOT(sNewMatl()));
           if (!_privileges->check("MaintainWoMaterials"))
-            pMenu->setItemEnabled(menuItem, FALSE);
+            menuItem->setEnabled(false);
               
-          menuItem = pMenu->insertItem(tr("Issue Batch..."), this, SLOT(sIssueMatlBatch()), 0);
+          menuItem = pMenu->addAction(tr("Issue Batch..."), this, SLOT(sIssueMatlBatch()));
           if (!_privileges->check("IssueWoMaterials"))
-            pMenu->setItemEnabled(menuItem, FALSE);
+            menuItem->setEnabled(false);
 
           if (status == "I")
           {
-            menuItem = pMenu->insertItem(tr("Return Batch..."), this, SLOT(sReturnMatlBatch()), 0);
+            menuItem = pMenu->addAction(tr("Return Batch..."), this, SLOT(sReturnMatlBatch()));
             if (!_privileges->check("ReturnWoMaterials"))
-              pMenu->setItemEnabled(menuItem, FALSE);
+              menuItem->setEnabled(false);
           }
-          pMenu->insertSeparator();
+          pMenu->addSeparator();
         }
       }
     }
         
     if (_mode != cView)
     {
-      menuItem = pMenu->insertItem(tr("Post Production..."), this, SLOT(sPostProduction()), 0);
+      menuItem = pMenu->addAction(tr("Post Production..."), this, SLOT(sPostProduction()));
       if (!_privileges->check("PostProduction"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
 
       if (status == "I")
       {
-        menuItem = pMenu->insertItem(tr("Correct Production Posting..."), this, SLOT(sCorrectProductionPosting()), 0);
+        menuItem = pMenu->addAction(tr("Correct Production Posting..."), this, SLOT(sCorrectProductionPosting()));
         if (!_privileges->check("PostProduction"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
 
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
     }
 
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
 
-    menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
+    menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()));
 
     if ((status == "E") || (status == "R") || (status == "I"))
     {
-      menuItem = pMenu->insertItem(tr("Inventory Availability..."), this, SLOT(sInventoryAvailabilityByWorkOrder()), 0);
+      menuItem = pMenu->addAction(tr("Inventory Availability..."), this, SLOT(sInventoryAvailabilityByWorkOrder()));
       if (!_privileges->check("ViewInventoryAvailability"))
-        pMenu->setItemEnabled(menuItem, FALSE);
+        menuItem->setEnabled(false);
     }
 
     if (_mode != cView)
     {
       if ((status == "O") || (status == "E"))
       {
-        pMenu->insertSeparator();
+        pMenu->addSeparator();
 
-        menuItem = pMenu->insertItem(tr("Reprioritize..."), this, SLOT(sReprioritizeWo()), 0);
+        menuItem = pMenu->addAction(tr("Reprioritize..."), this, SLOT(sReprioritizeWo()));
         if (!_privileges->check("ReprioritizeWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
 
-        menuItem = pMenu->insertItem(tr("Reschedule..."), this, SLOT(sRescheduleWO()), 0);
+        menuItem = pMenu->addAction(tr("Reschedule..."), this, SLOT(sRescheduleWO()));
         if (!_privileges->check("RescheduleWorkOrders"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
 
-        menuItem = pMenu->insertItem(tr("Change Quantity..."), this, SLOT(sChangeWOQty()), 0);
+        menuItem = pMenu->addAction(tr("Change Quantity..."), this, SLOT(sChangeWOQty()));
         if (!_privileges->check("ChangeWorkOrderQty"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
     }
   }
@@ -1818,55 +1820,55 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
     {
       if (status == "O" || status == "E" || status == "R" || status == "I")
       {
-         menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditMatl()), 0);
+         menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEditMatl()));
          if (!_privileges->check("MaintainWoMaterials"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
     }
     
-    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewMatl()), 0);
+    menuItem = pMenu->addAction(tr("View..."), this, SLOT(sViewMatl()));
     
     if (_mode != cView)
     {
       if (status == "O" || status == "E")
       {
-          menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDeleteMatl()), 0);
+          menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDeleteMatl()));
           if (!_privileges->check("MaintainWoMaterials"))
-            pMenu->setItemEnabled(menuItem, FALSE);
+            menuItem->setEnabled(false);
       }
       
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
 
       if (status == "O" || status == "E" || status == "R" || status == "I")
       {
-        menuItem = pMenu->insertItem(tr("Issue..."), this, SLOT(sIssueMatl()), 0);
+        menuItem = pMenu->addAction(tr("Issue..."), this, SLOT(sIssueMatl()));
         if (!_privileges->check("IssueWoMaterials"))
-          pMenu->setItemEnabled(menuItem, FALSE);
+          menuItem->setEnabled(false);
       }
       if (status == "I")
       {
-          menuItem = pMenu->insertItem(tr("Return..."), this, SLOT(sReturnMatl()), 0);
+          menuItem = pMenu->addAction(tr("Return..."), this, SLOT(sReturnMatl()));
           if (!_privileges->check("ReturnWoMaterials"))
-            pMenu->setItemEnabled(menuItem, FALSE);
+            menuItem->setEnabled(false);
 
-          menuItem = pMenu->insertItem(tr("Scrap..."), this, SLOT(sScrapMatl()), 0);
+          menuItem = pMenu->addAction(tr("Scrap..."), this, SLOT(sScrapMatl()));
           if (!_privileges->check("ScrapWoMaterials"))
-            pMenu->setItemEnabled(menuItem, FALSE);
+            menuItem->setEnabled(false);
       }
       
       if (status == "O" || status == "E")
       {
-          menuItem = pMenu->insertItem(tr("Substitute..."), this, SLOT(sSubstituteMatl()), 0);
+          menuItem = pMenu->addAction(tr("Substitute..."), this, SLOT(sSubstituteMatl()));
           if (!_privileges->check("MaintainWoMaterials"))
-            pMenu->setItemEnabled(menuItem, FALSE);
+            menuItem->setEnabled(false);
       }
       
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
     }
 
-    menuItem = pMenu->insertItem(tr("Availability..."), this, SLOT(sViewMatlAvailability()), 0);
+    menuItem = pMenu->addAction(tr("Availability..."), this, SLOT(sViewMatlAvailability()));
 
-    menuItem = pMenu->insertItem(tr("Subsitute Availability..."), this, SLOT(sViewMatlSubstituteAvailability()), 0);
+    menuItem = pMenu->addAction(tr("Subsitute Availability..."), this, SLOT(sViewMatlSubstituteAvailability()));
   }
 
 }

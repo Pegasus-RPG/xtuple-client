@@ -674,10 +674,7 @@ int YourPayProcessor::handleResponse(const QString &presponse, const int pccardi
   else
     pparams.append("currid",    pcurrid);
 
-  if (ptype == "A")
-    pparams.append("auth", QVariant(true, 0));
-  else
-    pparams.append("auth", QVariant(false, 1));
+  pparams.append("auth", QVariant(ptype == "A"));
 
   if (! r_time.isEmpty())
     pparams.append("time",     r_time);

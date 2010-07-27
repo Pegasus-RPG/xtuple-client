@@ -9,22 +9,18 @@
  */
 
 #include "taxCode.h"
+
+#include <QAction>
 #include <QCloseEvent>
-#include <QMenu>
 #include <QDoubleValidator>
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <metasql.h>
 #include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include "taxCodeRate.h"
 
-/*
- *  Constructs a taxCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -66,28 +62,21 @@ void taxCode::populateBasis()
 
 void taxCode::sPopulateMenu(QMenu *menuThis)
 {
-  menuThis->insertItem(tr("View"), this, SLOT(sView()), 0);
+  menuThis->addAction(tr("View"), this, SLOT(sView()));
   
   if ((_mode == cNew) || (_mode == cEdit))
   {
-    menuThis->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
-    menuThis->insertItem(tr("Expire"), this, SLOT(sExpire()), 0);
-    menuThis->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
+    menuThis->addAction(tr("Edit"), this, SLOT(sEdit()));
+    menuThis->addAction(tr("Expire"), this, SLOT(sExpire()));
+    menuThis->addAction(tr("Delete"), this, SLOT(sDelete()));
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 taxCode::~taxCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void taxCode::languageChange()
 {
   retranslateUi(this);
