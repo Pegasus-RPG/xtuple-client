@@ -28,7 +28,7 @@ shippingInformation::shippingInformation(QWidget* parent, const char* name, bool
   connect(_item,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)),
 					  this, SLOT(sPopulateMenu(QMenu*)));
   connect(_order, SIGNAL(newId(int, QString)), this, SLOT(sFillList()));
-  connect(_save,	SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox,	SIGNAL(accepted()), this, SLOT(sSave()));
 
   _captive = FALSE;
 
@@ -85,8 +85,6 @@ enum SetResponse shippingInformation::set(const ParameterList &pParams)
 
       _order->setId(q.value("shiphead_order_id").toInt(),
                     q.value("shiphead_order_type").toString());
-
-      _close->setText("&Cancel");
 
       _shipDate->setFocus();
     }
