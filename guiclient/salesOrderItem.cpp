@@ -373,7 +373,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _orderId = -1;
       _itemsrc = -1;
       _warranty->hide();
-      _tabs->removePage(_tabs->page(6));
+      _tabs->removeTab(_tabs->indexOf(supplyTab));
 
       _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
 
@@ -437,7 +437,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _subItemList->hide();
       _qtyOrdered->setFocus();
       _warranty->hide();
-      _tabs->removePage(_tabs->page(6));
+      _tabs->removeTab(_tabs->indexOf(supplyTab));
 
       connect(_qtyOrdered,        SIGNAL(lostFocus()),  this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice,      SIGNAL(lostFocus()),  this, SLOT(sCalculateDiscountPrcnt()));
@@ -473,7 +473,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _subItem->hide();
       _comments->setType(Comments::QuoteItem);
       _warranty->hide();
-      _tabs->removePage(_tabs->page(6));
+      _tabs->removeTab(_tabs->indexOf(supplyTab));
     }
   }
 
@@ -2140,10 +2140,10 @@ void salesOrderItem::sDetermineAvailability( bool p )
       _available->setDouble(availability.value("available").toDouble());
       _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
+      QString stylesheet;
       if (availability.value("available").toDouble() < _availabilityQtyOrdered)
-        _available->setPaletteForegroundColor(QColor("red"));
-      else
-        _available->setPaletteForegroundColor(QColor("black"));
+        stylesheet = QString("* { color: %1; }").arg(namedColor("error").name());
+      _available->setStyleSheet(stylesheet);
 
       if ((_item->itemType() == "M") || (_item->itemType() == "K"))
       {

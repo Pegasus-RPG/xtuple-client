@@ -30,7 +30,7 @@
 #include <QTextStream>
 #include <QUrl>
 #include <QWidget>
-#include <qwebview.h>
+#include <QWebView>
 
 #include <parameter.h>
 #include <metasql.h>
@@ -1341,7 +1341,7 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
     }
 
     XMainWindow *window = new XMainWindow(parent,
-                                          screenq.value("uiform_name").toString(),
+                                          screenq.value("uiform_name").toString().toAscii().data(),
                                           flags);
 
     window->setCentralWidget(ui);

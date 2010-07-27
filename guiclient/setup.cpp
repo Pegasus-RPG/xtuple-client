@@ -401,7 +401,7 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
 {
   QString uiName = item->data(0, Xt::RawRole ).toString();
   QString label = "<span style=\" font-size:14pt; font-weight:600;\">%1</span></p></body></html>";
-  qDebug("setting class name " + uiName );
+  qDebug("setting class name %s", qPrintable(uiName));
 
   if (_idxmap.contains(uiName))
   {

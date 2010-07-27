@@ -11,10 +11,8 @@
 #include "salesOrder.h"
 #include <stdlib.h>
 
-#include <Q3DragObject>
+#include <QAction>
 #include <QCloseEvent>
-#include <QDragEnterEvent>
-#include <QDropEvent>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QMessageBox>
@@ -169,9 +167,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _weight->setValidator(omfgThis->weightVal());
   _commission->setValidator(omfgThis->percentVal());
 
-  _origin->insertItem(tr("Customer"));
-  _origin->insertItem(tr("Internet"));
-  _origin->insertItem(tr("Sales Rep."));
+  _origin->append(0, tr("Customer"),   "C");
+  _origin->append(1, tr("Internet"),   "I");
+  _origin->append(2, tr("Sales Rep."), "S");
 
   _soitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "f_linenumber");
   _soitem->addColumn(tr("Kit Seq. #"),  _seqColumn, Qt::AlignRight, false,"coitem_subnumber");
@@ -427,7 +425,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       sFillCcardList();
     }
 
-    setAcceptDrops(true);
     _captive = FALSE;
     _edit->setEnabled(FALSE);
     _action->setEnabled(FALSE);
@@ -439,7 +436,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
   else if (ISEDIT(_mode))
   {
     _captive = TRUE;
-    setAcceptDrops(TRUE);
     _orderNumber->setEnabled(FALSE);
     _cust->setReadOnly(TRUE);
     _orderCurrency->setEnabled(FALSE);
@@ -785,7 +781,7 @@ bool salesOrder::save(bool partial)
                                "indicating the G/L Sales Account number for the "
                                "charge.  Please set the Misc. Charge amount to 0 "
                                "or select a Misc. Charge Sales Account." ) );
-    _salesOrderInformation->setCurrentPage(1);
+    _salesOrderInformation->setCurrentIndex(_salesOrderInformation->indexOf(_lineItemsPage));
     _miscChargeAccount->setFocus();
     return FALSE;
   }
@@ -1140,12 +1136,7 @@ bool salesOrder::save(bool partial)
   else if (_holdType->currentIndex() == 4)
     q.bindValue(":holdtype", "R");
 
-  if (_origin->currentIndex() == 0)
-    q.bindValue(":origin", "C");
-  else if (_origin->currentIndex() == 1)
-    q.bindValue(":origin", "I");
-  else if (_origin->currentIndex() == 2)
-    q.bindValue(":origin", "S");
+  q.bindValue(":origin", _origin->code());
 
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -1199,50 +1190,50 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
 {
   if ((_mode == cNew) || (_mode == cEdit))
   {
-    int   menuid       = 0;
+    QAction *menuItem;
     bool  didsomething = false;
     if (_numSelected == 1)
     {
       didsomething = true;
       if (_lineMode == cClosed)
-        pMenu->insertItem(tr("Open Line..."), this, SLOT(sAction()), 0);
+        pMenu->addAction(tr("Open Line..."), this, SLOT(sAction()));
       else if (_lineMode == cActiveOpen)
       {
-        pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
-        menuid = pMenu->insertItem(tr("Firm Line..."), this, SLOT(sFirm()), 0);
-        pMenu->setItemEnabled(menuid, _privileges->check("FirmSalesOrder"));
-        pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
+        pMenu->addAction(tr("Edit Line..."), this, SLOT(sEdit()));
+        menuItem = pMenu->addAction(tr("Firm Line..."), this, SLOT(sFirm()));
+        menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
+        pMenu->addAction(tr("Close Line..."), this, SLOT(sAction()));
       }
       else if (_lineMode == cInactiveOpen)
       {
-        pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
-        menuid = pMenu->insertItem(tr("Firm Line..."), this, SLOT(sFirm()), 0);
-        pMenu->setItemEnabled(menuid, _privileges->check("FirmSalesOrder"));
-        pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
-        pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
+        pMenu->addAction(tr("Edit Line..."), this, SLOT(sEdit()));
+        menuItem = pMenu->addAction(tr("Firm Line..."), this, SLOT(sFirm()));
+        menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
+        pMenu->addAction(tr("Close Line..."), this, SLOT(sAction()));
+        pMenu->addAction(tr("Delete Line..."), this, SLOT(sDelete()));
       }
       else
       {
-        menuid = pMenu->insertItem(tr("Soften Line..."), this, SLOT(sSoften()), 0);
-        pMenu->setItemEnabled(menuid, _privileges->check("FirmSalesOrder"));
+        menuItem = pMenu->addAction(tr("Soften Line..."), this, SLOT(sSoften()));
+        menuItem->setEnabled(_privileges->check("FirmSalesOrder"));
       }
     }
 
     if (_metrics->boolean("EnableSOReservations"))
     {
       if (didsomething)
-        pMenu->insertSeparator();
+        pMenu->addSeparator();
 
-      menuid = pMenu->insertItem(tr("Show Reservations..."), this, SLOT(sShowReservations()));
+      menuItem = pMenu->addAction(tr("Show Reservations..."), this, SLOT(sShowReservations()));
 
-      pMenu->insertSeparator();
+      pMenu->addSeparator();
 
-      menuid = pMenu->insertItem(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
-      menuid = pMenu->insertItem(tr("Reserve Stock..."), this, SLOT(sReserveStock()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
-      menuid = pMenu->insertItem(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
+      menuItem = pMenu->addAction(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()));
+      menuItem->setEnabled(_privileges->check("MaintainReservations"));
+      menuItem = pMenu->addAction(tr("Reserve Stock..."), this, SLOT(sReserveStock()));
+      menuItem->setEnabled(_privileges->check("MaintainReservations"));
+      menuItem = pMenu->addAction(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()));
+      menuItem->setEnabled(_privileges->check("MaintainReservations"));
 
       didsomething = true;
     }
@@ -1250,14 +1241,14 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
     if (_metrics->boolean("EnableSOShipping"))
     {
       if (didsomething)
-        pMenu->insertSeparator();
+        pMenu->addSeparator();
 
-      menuid = pMenu->insertItem(tr("Return Stock"), this, SLOT(sReturnStock()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("IssueStockToShipping"));
-      menuid = pMenu->insertItem(tr("Issue Stock..."), this, SLOT(sIssueStock()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("IssueStockToShipping"));
-      menuid = pMenu->insertItem(tr("Issue Line Balance"), this, SLOT(sIssueLineBalance()), 0);
-      pMenu->setItemEnabled(menuid, _privileges->check("IssueStockToShipping"));
+      menuItem = pMenu->addAction(tr("Return Stock"), this, SLOT(sReturnStock()));
+      menuItem->setEnabled(_privileges->check("IssueStockToShipping"));
+      menuItem = pMenu->addAction(tr("Issue Stock..."), this, SLOT(sIssueStock()));
+      menuItem->setEnabled(_privileges->check("IssueStockToShipping"));
+      menuItem = pMenu->addAction(tr("Issue Line Balance"), this, SLOT(sIssueLineBalance()));
+      menuItem->setEnabled(_privileges->check("IssueStockToShipping"));
 
       didsomething = true;
     }
@@ -1273,7 +1264,7 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
       if (createOrder.first())
       {
         if (didsomething)
-          pMenu->insertSeparator();
+          pMenu->addSeparator();
         if (createOrder.value("coitem_order_type").toString() == "P")
         {
           XSqlQuery checkPO;
@@ -1285,11 +1276,11 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
           checkPO.exec();
           if (checkPO.first())
           {
-            menuid = pMenu->insertItem(tr("View Purchase Order..."), this, SLOT(sViewPO()), 0);
-            pMenu->setItemEnabled(menuid, _privileges->check("ViewPurchaseOrders"));
+            menuItem = pMenu->addAction(tr("View Purchase Order..."), this, SLOT(sViewPO()));
+            menuItem->setEnabled(_privileges->check("ViewPurchaseOrders"));
 
-            menuid = pMenu->insertItem(tr("Edit Purchase Order..."), this, SLOT(sMaintainPO()), 0);
-            pMenu->setItemEnabled(menuid, _privileges->check("MaintainPurchaseOrders"));
+            menuItem = pMenu->addAction(tr("Edit Purchase Order..."), this, SLOT(sMaintainPO()));
+            menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
           }
           else if (checkPO.lastError().type() != QSqlError::NoError)
           {
@@ -1307,11 +1298,11 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
           checkPR.exec();
           if (checkPR.first())
           {
-            menuid = pMenu->insertItem(tr("Release P/R..."), this, SLOT(sReleasePR()), 0);
-            pMenu->setItemEnabled(menuid, _privileges->check("MaintainPurchaseOrders"));
+            menuItem = pMenu->addAction(tr("Release P/R..."), this, SLOT(sReleasePR()));
+            menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
 
-            menuid = pMenu->insertItem(tr("View Purchase Request..."), this, SLOT(sViewPR()), 0);
-            pMenu->setItemEnabled(menuid, _privileges->check("ViewPurchaseRequests"));
+            menuItem = pMenu->addAction(tr("View Purchase Request..."), this, SLOT(sViewPR()));
+            menuItem->setEnabled(_privileges->check("ViewPurchaseRequests"));
           }
           else if (checkPR.lastError().type() != QSqlError::NoError)
           {
@@ -1329,11 +1320,11 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
           checkWO.exec();
           if (checkWO.first())
           {
-            menuid = pMenu->insertItem(tr("View Work Order..."), this, SLOT(sViewWO()), 0);
-            pMenu->setItemEnabled(menuid, _privileges->check("ViewWorkOrders"));
+            menuItem = pMenu->addAction(tr("View Work Order..."), this, SLOT(sViewWO()));
+            menuItem->setEnabled(_privileges->check("ViewWorkOrders"));
 
-            menuid = pMenu->insertItem(tr("Edit Work Order..."), this, SLOT(sMaintainWO()), 0);
-            pMenu->setItemEnabled(menuid, _privileges->check("MaintainWorkOrders"));
+            menuItem = pMenu->addAction(tr("Edit Work Order..."), this, SLOT(sMaintainWO()));
+            menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
           }
           else if (checkWO.lastError().type() != QSqlError::NoError)
           {
@@ -2321,13 +2312,7 @@ void salesOrder::populate()
       if (_mode == cView)
         _shipTo->setEnabled(FALSE);
 
-      if (so.value("cohead_origin").toString() == "C")
-        _origin->setCurrentIndex(0);
-      else if (so.value("cohead_origin").toString() == "I")
-        _origin->setCurrentIndex(1);
-      else if (so.value("cohead_origin").toString() == "S")
-        _origin->setCurrentIndex(2);
-
+      _origin->setCode(so.value("cohead_origin").toString());
       _custPONumber->setText(so.value("cohead_custponumber"));
       _shipVia->setText(so.value("cohead_shipvia"));
 
@@ -2490,13 +2475,7 @@ void salesOrder::populate()
       if (_mode == cViewQuote)
         _shipTo->setEnabled(FALSE);
 
-      if (qu.value("quhead_origin").toString() == "C")
-        _origin->setCurrentIndex(0);
-      else if (qu.value("quhead_origin").toString() == "I")
-        _origin->setCurrentIndex(1);
-      else if (qu.value("quhead_origin").toString() == "S")
-        _origin->setCurrentIndex(2);
-
+      _origin->setCode(qu.value("quhead_origin").toString());
       _custPONumber->setText(qu.value("quhead_custponumber"));
       _shipVia->setText(qu.value("quhead_shipvia"));
 
@@ -2986,7 +2965,7 @@ void salesOrder::clear()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 
-  _salesOrderInformation->setCurrentPage(0);
+  _salesOrderInformation->setCurrentIndex(0);
 
   _orderNumber->setEnabled(TRUE);
   _orderNumberGen = 0;
@@ -3105,71 +3084,6 @@ void salesOrder::closeEvent(QCloseEvent *pEvent)
   _preferences->set("SoShowAll", _more->isChecked());
 
   XWidget::closeEvent(pEvent);
-}
-
-void salesOrder::dragEnterEvent(QDragEnterEvent *pEvent)
-{
-  if (!_cust->isValid())
-  {
-    message(tr("<p>You must select a Customer for this Sales Order before you "
-                 "may add Line Items to it."), 5000);
-    pEvent->accept(FALSE);
-  }
-  else
-  {
-    QString dragData;
-
-    if (Q3TextDrag::decode(pEvent, dragData))
-    {
-      if (dragData.contains("itemid="))
-        pEvent->accept(TRUE);
-    }
-    else
-      pEvent->accept(FALSE);
-  }
-}
-
-void salesOrder::dropEvent(QDropEvent *pEvent)
-{
-  QString dropData;
-
-  if (Q3TextDrag::decode(pEvent, dropData))
-  {
-    if (dropData.contains("itemid="))
-    {
-      QString target = dropData.mid((dropData.find("itemid=") + 7), (dropData.length() - 7));
-
-      if (target.contains(","))
-        target = target.left(target.find(","));
-
-      if ( !_saved && ((_mode == cNew) || (_mode == cNewQuote)) )
-      {
-        if (!save(true))
-          return;
-        else
-          populate();
-      }
-
-      ParameterList params;
-      params.append("sohead_id", _soheadid);
-      params.append("cust_id", _cust->id());
-      params.append("orderNumber", _orderNumber->text().toInt());
-      params.append("item_id", target.toInt());
-      params.append("curr_id", _orderCurrency->id());
-      params.append("orderDate", _orderDate->date());
-
-      if (_mode == cNew)
-        params.append("mode", "new");
-      else if (_mode == cNewQuote)
-        params.append("mode", "newQuote");
-
-      salesOrderItem newdlg(this);
-      newdlg.set(params);
-
-      newdlg.exec();
-        sFillItemList();
-    }
-  }
 }
 
 void salesOrder::sHandleShipchrg(int pShipchrgid)
@@ -3304,8 +3218,6 @@ void salesOrder::setViewMode()
     // Undo some changes set for the edit mode
     _captive = false;
 
-    setAcceptDrops(false);
-
     disconnect( _cust,    SIGNAL(valid(bool)),                    _new, SLOT(setEnabled(bool)));
     disconnect( omfgThis, SIGNAL(salesOrdersUpdated(int, bool)),  this, SLOT(sHandleSalesOrderEvent(int, bool)));
 
@@ -3362,12 +3274,12 @@ void salesOrder::setViewMode()
 void salesOrder::keyPressEvent( QKeyEvent *e )
 {
 #ifdef Q_WS_MAC
-  if (e->key() == Qt::Key_N && e->state() == Qt::ControlModifier)
+  if (e->key() == Qt::Key_N && (e->modifiers() & Qt::ControlModifier))
   {
     _new->animateClick();
     e->accept();
   }
-  else if (e->key() == Qt::Key_E && e->state() == Qt::ControlModifier)
+  else if (e->key() == Qt::Key_E && (e->modifiers() & Qt::ControlModifier))
   {
     _edit->animateClick();
     e->accept();
@@ -3388,7 +3300,7 @@ void salesOrder::newSalesOrder(int pCustid, QWidget *parent)
     for (int i = 0; i < list.size(); i++)
     {
       QWidget *w = list.at(i);
-      if (QString::compare(w->name(), "salesOrder new")==0)
+      if (QString::compare(w->objectName(), "salesOrder new")==0)
       {
         w->setFocus();
         if (omfgThis->showTopLevel())
@@ -3420,7 +3332,7 @@ void salesOrder::editSalesOrder( int pId, bool enableSaveAndAdd, QWidget *parent
   for (int i = 0; i < list.size(); i++)
   {
     QWidget *w = list.at(i);
-    if (QString::compare(w->name(), n)==0)
+    if (QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
       if (omfgThis->showTopLevel())
@@ -3452,7 +3364,7 @@ void salesOrder::viewSalesOrder( int pId, QWidget *parent )
   for (int i = 0; i < list.size(); i++)
   {
     QWidget *w = list.at(i);
-    if (QString::compare(w->name(), n)==0)
+    if (QString::compare(w->objectName(), n)==0)
     {
       w->setFocus();
       if (omfgThis->showTopLevel())

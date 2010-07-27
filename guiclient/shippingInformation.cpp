@@ -157,9 +157,9 @@ void shippingInformation::sSave()
 
 void shippingInformation::sPopulateMenu(QMenu *menuThis)
 {
-  menuThis->insertItem(tr("Issue Additional Stock for this Order Line to Shipping..."), this, SLOT(sIssueStock()), 0);
-  menuThis->insertItem(tr("Return ALL Stock Issued for this Order Line to the Site..."), this, SLOT(sReturnAllLineStock()), 0);
-  menuThis->insertItem(tr("View Order Line..."), this, SLOT(sViewLine()), 0);
+  menuThis->addAction(tr("Issue Additional Stock for this Order Line to Shipping..."), this, SLOT(sIssueStock()));
+  menuThis->addAction(tr("Return ALL Stock Issued for this Order Line to the Site..."), this, SLOT(sReturnAllLineStock()));
+  menuThis->addAction(tr("View Order Line..."), this, SLOT(sViewLine()));
 }
 
 void shippingInformation::sIssueStock()

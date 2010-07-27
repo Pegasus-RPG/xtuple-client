@@ -56,8 +56,6 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sClear();
     virtual void        clear();
     virtual void        closeEvent( QCloseEvent *pEvent );
-    virtual void        dragEnterEvent( QDragEnterEvent *pEvent );
-    virtual void        dropEvent( QDropEvent *pEvent );
     virtual void        sFreightChanged();
     virtual void        sHandleShipchrg( int pShipchrgid );
     virtual void        sHandleSalesOrderEvent( int pSoheadid, bool );

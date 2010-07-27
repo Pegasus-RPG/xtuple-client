@@ -11,6 +11,7 @@
 #include "searchForItem.h"
 
 #include <QVariant>
+#include <QAction>
 #include <QMenu>
 #include <parameter.h>
 #include "item.h"
@@ -66,7 +67,7 @@ void searchForItem::languageChange()
 
 void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  int menuItem;
+  QAction *menuItem;
 
   bool hasBOM = false;
   q.prepare("SELECT (count(*) != 0) AS hasBOM"
@@ -77,23 +78,23 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if(q.first())
     hasBOM = q.value("hasBOM").toBool();
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   if (!_privileges->check("MaintainItemMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
   if (((XTreeWidgetItem *)pSelected)->altId() == 1)
   {
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
 
-    menuItem = pMenu->insertItem(tr("View BOM..."), this, SLOT(sViewBOM()), 0);
+    menuItem = pMenu->addAction(tr("View BOM..."), this, SLOT(sViewBOM()));
     if (!hasBOM || !_privileges->check("ViewBOMs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
 
-    menuItem = pMenu->insertItem(tr("Edit BOM..."), this, SLOT(sEditBOM()), 0);
+    menuItem = pMenu->addAction(tr("Edit BOM..."), this, SLOT(sEditBOM()));
     if (!hasBOM || !_privileges->check("MaintainBOMs"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem->setEnabled(false);
   }
 }
 

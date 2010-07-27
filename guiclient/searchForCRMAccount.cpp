@@ -10,6 +10,7 @@
 
 #include "searchForCRMAccount.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -196,13 +197,13 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
 
 void searchForCRMAccount::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  pMenu->setItemEnabled(menuItem, _editpriv);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_editpriv);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  pMenu->setItemEnabled(menuItem, _viewpriv);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(_viewpriv);
 }
 
 void searchForCRMAccount::openSubwindow(const QString& mode)

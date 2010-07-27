@@ -10,10 +10,11 @@
 
 #include "searchForContact.h"
 
+#include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-#include <QMessageBox>
 
 #include <metasql.h>
 #include <parameter.h>
@@ -80,13 +81,13 @@ void searchForContact::languageChange()
 
 void searchForContact::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  pMenu->setItemEnabled(menuItem, _editpriv);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_editpriv);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  pMenu->setItemEnabled(menuItem, _viewpriv);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(_viewpriv);
 
   XSqlQuery chk;
   chk.prepare("SELECT cntctused(:cntct_id) AS inUse");
@@ -97,8 +98,8 @@ void searchForContact::sPopulateMenu(QMenu *pMenu)
     return;
   }
   if (chk.first() && !chk.value("inUse").toBool()) {
-	menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-    pMenu->setItemEnabled(menuItem, _editpriv);
+	menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDelete()));
+    menuItem->setEnabled(_editpriv);
   }
 
 }
