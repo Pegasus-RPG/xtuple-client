@@ -638,7 +638,6 @@ void purchaseOrder::populate()
     _vendor->setId(po.value("vend_id").toInt());
     _taxZone->setId(po.value("pohead_taxzone_id").toInt());
     _poCurrency->setId(po.value("pohead_curr_id").toInt());
-    _tax->setLocalValue(po.value("pohead_tax").toDouble());
     _freight->setLocalValue(po.value("pohead_freight").toDouble());
   }
 
@@ -708,7 +707,7 @@ void purchaseOrder::sSave()
   q.prepare( "UPDATE pohead "
              "SET pohead_warehous_id=:pohead_warehous_id, pohead_orderdate=:pohead_orderdate,"
              "    pohead_shipvia=:pohead_shipvia, pohead_taxzone_id=:pohead_taxzone_id,"
-             "    pohead_tax=:pohead_tax, pohead_freight=:pohead_freight,"
+             "    pohead_freight=:pohead_freight,"
              "    pohead_fob=:pohead_fob, pohead_agent_username=:pohead_agent_username,"
              "    pohead_terms_id=:pohead_terms_id,"
              "    pohead_vendaddr_id=:pohead_vendaddr_id,"
@@ -805,7 +804,6 @@ void purchaseOrder::sSave()
   q.bindValue(":pohead_shiptostate", _shiptoAddr->state());
   q.bindValue(":pohead_shiptozipcode", _shiptoAddr->postalCode());
   q.bindValue(":pohead_shiptocountry", _shiptoAddr->country());
-  q.bindValue(":pohead_tax", _tax->localValue());
   q.bindValue(":pohead_freight", _freight->localValue());
   q.bindValue(":pohead_curr_id", _poCurrency->id());
   if (_status->currentIndex() == 0)
