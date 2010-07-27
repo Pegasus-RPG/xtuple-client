@@ -188,6 +188,7 @@ void accountingPeriod::sSave()
       q.prepare("SELECT COUNT(gltrans_sequence) AS count "
 		"FROM gltrans, period "
 		"WHERE ( (NOT gltrans_posted) "
+		"AND (NOT gltrans_deleted) "
 		"AND (gltrans_date BETWEEN period_start AND period_end) "
 		"AND (period_id=:period_id) );");
       q.bindValue(":period_id", _periodid);
