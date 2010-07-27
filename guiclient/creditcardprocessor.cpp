@@ -1512,21 +1512,32 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 #ifndef QT_NO_OPENSSL
   if(!_metrics->boolean("CCUseCurl"))
   {
+    // PEM files are currently only used for YourPay
     // TODO: The specific reference to YourPay should go away, especially when something other than YourPay starts to use this
-    if (!pemfile.isEmpty() && (_metrics->value("CCCompany") == "YourPay")) // This is currently only used for YourPay
+    if (!pemfile.isEmpty() && (_metrics->value("CCCompany") == "YourPay"))
     {
       QFile pemio(pemfile);
-      QSslCertificate localcert(&pemio);
-      if(!localcert.isNull())
-      {
-        QSslConfiguration sslconf = QSslConfiguration::defaultConfiguration();
-        sslconf.setLocalCertificate(localcert);
-        QSslConfiguration::setDefaultConfiguration(sslconf);
-      }
+      if (pemio.error() != QFile::NoError)
+        QMessageBox::warning(0, tr("Could not open PEM file"),
+                             tr("<p>Failed to open the PEM file %1: %2")
+                             .arg(pemfile, pemio.errorString()));
       else
       {
-        QMessageBox::critical(0, tr("Failed to load PEM file"),
-          tr("Failed to load the PEM file. This may cause communication problems."));
+        QSslCertificate localcert(&pemio);
+        if(!localcert.isNull())
+        {
+          QSslConfiguration sslconf = QSslConfiguration::defaultConfiguration();
+          sslconf.setLocalCertificate(localcert);
+          QSslConfiguration::setDefaultConfiguration(sslconf);
+        }
+        else
+        {
+          QMessageBox::warning(0, tr("Failed to load Certificate"),
+                               tr("<p>Failed to load a Certificate from "
+                                  "the PEM file %1. "
+                                  "This may cause communication problems.")
+                               .arg(pemfile));
+        }
       }
     }
 
