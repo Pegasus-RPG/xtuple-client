@@ -10,6 +10,7 @@
 
 #include "creditMemoEditList.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -87,10 +88,10 @@ void creditMemoEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   _orderid = _cmhead->id();
 
-  pMenu->insertItem("Edit Credit Memo...", this, SLOT(sEditCreditMemo()), 0);
+  pMenu->addAction(tr("Edit Credit Memo..."), this, SLOT(sEditCreditMemo()));
 
   if (((XTreeWidgetItem *)pSelected)->altId() != -1)
-    pMenu->insertItem("Edit Credit Memo Item...", this, SLOT(sEditCreditMemoItem()), 0);
+    pMenu->addAction(tr("Edit Credit Memo Item..."), this, SLOT(sEditCreditMemoItem()));
 }
 
 void creditMemoEditList::sFillList()

@@ -34,7 +34,7 @@
 #include "yourpayprocessor.h"
 #include "paymentechprocessor.h"
 
-#define DEBUG true
+#define DEBUG false
 
 /** \class CreditCardProcessor
 
@@ -1550,7 +1550,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     request.setValue("Host", ccurl.host());
     
     QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-    _http->request(request, prequest.utf8());
+    _http->request(request, prequest.toUtf8());
     while(_http->hasPendingRequests() || _http->currentId() != 0)
     {
       QApplication::processEvents(QEventLoop::WaitForMoreEvents);

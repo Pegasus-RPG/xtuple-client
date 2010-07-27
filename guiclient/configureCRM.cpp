@@ -53,7 +53,7 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
   _opportunityChangeLog->setChecked(_metrics->boolean("OpportunityChangeLog"));
 
   if (! _metrics->value("DefaultAddressCountry").isEmpty())
-    _country->setCurrentText(_metrics->value("DefaultAddressCountry"));
+    _country->setText(_metrics->value("DefaultAddressCountry"));
 
   _strictCountries->setChecked(_metrics->boolean("StrictAddressCountry"));
   _strictCountries->setEnabled(! _strictCountries->isChecked());

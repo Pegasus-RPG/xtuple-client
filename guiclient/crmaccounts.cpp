@@ -10,6 +10,7 @@
 
 #include "crmaccounts.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -158,17 +159,15 @@ void crmaccounts::sFillList()
 
 void crmaccounts::sPopulateMenu( QMenu * pMenu )
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainCRMAccounts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
 
-  pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  pMenu->addAction(tr("View..."), this, SLOT(sView()));
 
-  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainCRMAccounts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
 }
 
 bool crmaccounts::setParams(ParameterList &params)

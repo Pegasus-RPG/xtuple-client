@@ -625,10 +625,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
   pparams.append("ref",         r_ref);
   pparams.append("message",     r_message);
 
-  if (ptype == "A")
-    pparams.append("auth", QVariant(true, 0));
-  else
-    pparams.append("auth", QVariant(false, 1));
+  pparams.append("auth", QVariant(ptype == "A"));
 
   if (DEBUG)
     qDebug("AN:r_error.isEmpty() = %d", r_error.isEmpty());

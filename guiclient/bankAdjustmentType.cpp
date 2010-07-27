@@ -10,16 +10,14 @@
 
 #include "bankAdjustmentType.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QVariant>
 
 bankAdjustmentType::bankAdjustmentType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
@@ -117,7 +115,7 @@ void bankAdjustmentType::sSave()
   q.bindValue(":bankadjtype_name", _name->text());
   q.bindValue(":bankadjtype_descrip", _description->text().trimmed());
   q.bindValue(":bankadjtype_accnt_id", _accnt->id());
-  q.bindValue(":bankadjtype_iscredit", QVariant(_credit->isChecked(),0));
+  q.bindValue(":bankadjtype_iscredit", _credit->isChecked());
   q.exec();
 
   done(_bankadjtypeid);

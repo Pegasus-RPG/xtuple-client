@@ -10,8 +10,9 @@
 
 #include "configureWO.h"
 
-#include <QVariant>
 #include <QValidator>
+#include <QVariant>
+
 #include "guiclient.h"
 
 configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -19,8 +20,6 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_autoExplode, SIGNAL(toggled(bool)), _WOExplosionGroup, SLOT(setDisabled(bool)));
   connect(_autoExplode, SIGNAL(toggled(bool)), _multiLevel, SLOT(setChecked(bool)));
 
@@ -35,16 +34,11 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
   _autoExplode->setChecked(_metrics->boolean("AutoExplodeWO"));
   _workOrderChangeLog->setChecked(_metrics->boolean("WorkOrderChangeLog"));
 
-  _woNumGeneration->insertItem(tr("Automatic"));
-  _woNumGeneration->insertItem(tr("Manual"));
-  _woNumGeneration->insertItem(tr("Automatic, Allow Override"));
+  _woNumGeneration->append(0, tr("Automatic"),                  "A");
+  _woNumGeneration->append(1, tr("Manual"),                     "M");
+  _woNumGeneration->append(2, tr("Automatic, Allow Override"),  "O");
 
-  if (_metrics->value("WONumberGeneration") == "A")
-    _woNumGeneration->setCurrentIndex(0);
-  else if (_metrics->value("WONumberGeneration") == "M")
-    _woNumGeneration->setCurrentIndex(1);
-  else if (_metrics->value("WONumberGeneration") == "O")
-    _woNumGeneration->setCurrentIndex(2);
+  _woNumGeneration->setCode(_metrics->value("WONumberGeneration"));
 
   if (_metrics->value("ExplodeWOEffective") == "E")
     _explodeDateEffective->setChecked(TRUE);
@@ -87,12 +81,7 @@ void configureWO::sSave()
   _metrics->set("AutoExplodeWO", _autoExplode->isChecked());
   _metrics->set("WorkOrderChangeLog", _workOrderChangeLog->isChecked());
 
-  if (_woNumGeneration->currentIndex() == 0)
-    _metrics->set("WONumberGeneration", QString("A"));
-  else if (_woNumGeneration->currentIndex() == 1)
-    _metrics->set("WONumberGeneration", QString("M"));
-  else if (_woNumGeneration->currentIndex() == 2)
-    _metrics->set("WONumberGeneration", QString("O"));
+  _metrics->set("WONumberGeneration", _woNumGeneration->code());
 
   _metrics->set("ExplodeWOEffective", ((_explodeDateEffective->isChecked()) ? QString("E") : QString("S")));
   _metrics->set("WOExplosionLevel", ((_singleLevel->isChecked()) ? QString("S") : QString("M")));

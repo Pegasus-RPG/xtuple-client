@@ -10,6 +10,7 @@
 
 #include "contacts.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
@@ -109,13 +110,12 @@ enum SetResponse contacts::set(const ParameterList& pParams)
 
 void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainContacts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainContacts"));
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
 
   XSqlQuery chk;
   chk.prepare("SELECT cntctused(:cntct_id) AS inUse");
@@ -126,9 +126,8 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*)
     return;
   }
   if (chk.first() && !chk.value("inUse").toBool()) {
-    menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-    if (!_privileges->check("MaintainContacts"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
+    menuItem->setEnabled(_privileges->check("MaintainContacts"));
   }
 }
 

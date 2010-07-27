@@ -351,7 +351,7 @@ void bankAccount::sSave()
   q.bindValue(":bankaccnt_ar",          QVariant(_ar->isChecked()));
   q.bindValue(":bankaccnt_accnt_id",    _assetAccount->id());
   q.bindValue(":bankaccnt_curr_id",     _currency->id());
-  q.bindValue(":bankaccnt_notes",       _notes->text().stripWhiteSpace());
+  q.bindValue(":bankaccnt_notes",       _notes->toPlainText().trimmed());
   q.bindValue(":bankaccnt_ach_enabled", _transmitGroup->isChecked());
   q.bindValue(":bankaccnt_routing",     _routing->text());
 

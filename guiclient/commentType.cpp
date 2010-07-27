@@ -37,8 +37,8 @@ commentType::commentType(QWidget* parent, const char* name, bool modal, Qt::WFla
   q.exec( "SELECT DISTINCT source_module "
           "FROM source "
           "ORDER BY source_module;" );
-  while (q.next())
-    _module->insertItem(q.value("source_module").toString());
+  for (int i = 0; q.next(); i++)
+    _module->insertItem(i, q.value("source_module").toString());
 }
 
 commentType::~commentType()
@@ -81,7 +81,7 @@ enum SetResponse commentType::set(const ParameterList &pParams)
       }
 
       _module->setCurrentIndex(0);
-      sModuleSelected(_module->text(0));
+      sModuleSelected(_module->itemText(0));
     }
     else if (param.toString() == "edit")
     {
@@ -190,17 +190,17 @@ void commentType::populate()
     {
       for (int counter = 0; counter < _module->count(); counter++)
       {
-        if (_module->text(counter) == q.value("source_module").toString())
+        if (_module->itemText(counter) == q.value("source_module").toString())
         {
           _module->setCurrentIndex(counter);
-          sModuleSelected(_module->text(counter));
+          sModuleSelected(_module->itemText(counter));
         }
       }
     }
     else
     {
       _module->setCurrentIndex(0);
-      sModuleSelected(_module->text(0));
+      sModuleSelected(_module->itemText(0));
     }
   }
 }

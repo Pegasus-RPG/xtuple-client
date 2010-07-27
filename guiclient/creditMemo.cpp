@@ -13,7 +13,6 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QValidator>
 #include <QVariant>
 
@@ -285,7 +284,7 @@ void creditMemo::sSave()
 			    "indicating the G/L Sales Account number for the "
 			    "charge. Please set the Misc. Charge amount to 0 "
 			    "or select a Misc. Charge Sales Account." ) );
-    _creditMemoInformation->setCurrentPage(1);
+    _creditMemoInformation->setCurrentIndex(_creditMemoInformation->indexOf(_itemsTab));
     _miscChargeAccount->setFocus();
     return;
   }

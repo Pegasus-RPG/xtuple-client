@@ -155,21 +155,18 @@ void customers::sDelete()
 
 void customers::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem("View...", this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction("View...", this, SLOT(sView()));
 
-  menuItem = pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainCustomerMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction("Edit...", this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainCustomerMasters"));
 
-  menuItem = pMenu->insertItem("Reassign Customer Type", this, SLOT(sReassignCustomerType()), 0);
-  if (!_privileges->check("MaintainCustomerMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction("Reassign Customer Type", this, SLOT(sReassignCustomerType()));
+  menuItem->setEnabled(_privileges->check("MaintainCustomerMasters"));
 
-  menuItem = pMenu->insertItem("Delete", this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainCustomerMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction("Delete", this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("MaintainCustomerMasters"));
 }
 
 void customers::sFillList(int pCustid, bool pLocal)

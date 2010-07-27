@@ -86,9 +86,9 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
 
   if (_metrics->value("CCANVer").isEmpty())
-    _anVersion->setCurrentText("3.1");
+    _anVersion->setItemText(0, "3.1");
   else
-    _anVersion->setCurrentText(_metrics->value("CCANVer"));
+    _anVersion->setItemText(0, _metrics->value("CCANVer"));
   _anDelim->setText(_metrics->value("CCANDelim"));
   _anEncap->setText(_metrics->value("CCANEncap"));
   _anDuplicateWindow->setValue(_metrics->value("CCANDuplicateWindow").toInt());
@@ -189,7 +189,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
   sDuplicateWindow(_anDuplicateWindow->value());
 
   QWidget *encryption = new configureEncryption(this);
-  encryption->setName("_encryption");
+  encryption->setObjectName("_encryption");
   _keyPage->layout()->addWidget(encryption);
   QPushButton *encbutton = encryption->findChild<QPushButton*>("_save");
   if (encbutton)

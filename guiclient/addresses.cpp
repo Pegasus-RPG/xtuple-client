@@ -10,12 +10,15 @@
 
 #include "addresses.h"
 
+#include <QAction>
 #include <QMenu>
-#include <QSqlError>
 #include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
+
 #include <openreports.h>
 #include <metasql.h>
+
 #include "addresses.h"
 #include "address.h"
 
@@ -26,7 +29,6 @@ addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
 {
     setupUi(this);
 
-    // signals and slots connections
     connect(_address, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*, int)));
     connect(_edit,		SIGNAL(clicked()),	this, SLOT(sEdit()));
     connect(_view,		SIGNAL(clicked()),	this, SLOT(sView()));
@@ -52,7 +54,7 @@ addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
       connect(_address, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_address, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
     }
-    else
+    else if (_privileges->check("ViewAddresses"))
     {
       _new->setEnabled(FALSE);
       connect(_address, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
@@ -73,17 +75,16 @@ void addresses::languageChange()
 
 void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainAddresses"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainAddresses"));
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(_privileges->check("ViewAddresses"));
 
-  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainAddresses"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("MaintainAddresses"));
 }
 
 void addresses::sNew()

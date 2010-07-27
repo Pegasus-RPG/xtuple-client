@@ -19,7 +19,7 @@
 
 #include "storedProcErrorLookup.h"
 
-#define DEBUG true
+#define DEBUG false
 
 class AtlasMapMessageHandler : public QAbstractMessageHandler
 {
@@ -36,7 +36,7 @@ class AtlasMapMessageHandler : public QAbstractMessageHandler
                         .arg(sourceLocation.line())
                         .arg(sourceLocation.column())
                         .arg(description)
-                        .arg(identifier);
+                        .arg(identifier.toString());
       switch (type)
       {
         case QtDebugMsg:

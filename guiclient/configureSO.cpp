@@ -189,7 +189,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     _returnAuthorizationNumGeneration->setVisible(false);
     _nextRaNumberLit->setVisible(false);
     _nextRaNumber->setVisible(false);
-    _tab->removePage(_tab->page(3));
+    _tab->removeTab(_tab->indexOf(_returns));
     _enableReturns->setChecked(false);
     _enableReservations->hide();
     _enableReservations->setChecked(false);

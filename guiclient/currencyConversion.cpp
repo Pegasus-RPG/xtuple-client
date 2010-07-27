@@ -29,8 +29,10 @@ class RateValidator : public QDoubleValidator {
 };
 
 RateValidator::RateValidator(QObject* parent, const char* name) :
-  QDoubleValidator(0.00001, 99999.99999, 5, parent, name)
+  QDoubleValidator(0.00001, 99999.99999, 5, parent)
 {
+  if (name)
+    setObjectName(name);
 }
 
 void RateValidator::fixup ( QString & input ) const
@@ -70,7 +72,7 @@ void currencyConversion::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse currencyConversion::set(ParameterList &pParams)
+enum SetResponse currencyConversion::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
   QVariant param;

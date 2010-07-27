@@ -10,10 +10,10 @@
 
 #include "customer.h"
 
+#include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-#include <QCloseEvent>
 
 #include <comment.h>
 #include <metasql.h>
@@ -189,8 +189,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _currency->setLabel(_currencyLit);
   
-  _balanceMethod->insertItem(tr("Balance Forward"));
-  _balanceMethod->insertItem(tr("Open Items"));
+  _balanceMethod->append(0, tr("Balance Forward"), "B");
+  _balanceMethod->append(1, tr("Open Items"),      "O");
 
   _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxauth_code");
   _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
@@ -608,10 +608,7 @@ bool customer::sSave()
     q.bindValue(":cust_cntct_id", _billCntct->id());            // else NULL
   q.bindValue(":cust_custtype_id", _custtype->id());
 
-  if (_balanceMethod->currentIndex() == 0)
-    q.bindValue(":cust_balmethod", "B");
-  else
-    q.bindValue(":cust_balmethod", "O");
+  q.bindValue(":cust_balmethod", _balanceMethod->code());
 
   if (_inGoodStanding->isChecked())
     q.bindValue(":cust_creditstatus", "G");
@@ -962,7 +959,7 @@ void customer::sDeleteShipto()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1078,9 +1075,9 @@ void customer::sFillCharacteristicList()
 
 void customer::sPopulateShiptoMenu(QMenu *menuThis)
 {
-  menuThis->insertItem(tr("Edit..."),   this, SLOT(sEdit()),   0 );
-  menuThis->insertItem(tr("View..."),   this, SLOT(sView()),   0 );
-  menuThis->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0 );
+  menuThis->addAction(tr("Edit..."),   this, SLOT(sEdit()));
+  menuThis->addAction(tr("View..."),   this, SLOT(sView()));
+  menuThis->addAction(tr("Delete..."), this, SLOT(sDelete()));
 }
 
 void customer::sFillShiptoList()
@@ -1247,10 +1244,7 @@ void customer::populate()
 
     _sellingWarehouse->setId(cust.value("cust_preferred_warehous_id").toInt());
 
-    if (cust.value("cust_balmethod").toString() == "B")
-      _balanceMethod->setCurrentIndex(0);
-    else if (cust.value("cust_balmethod").toString() == "O")
-      _balanceMethod->setCurrentIndex(1);
+    _balanceMethod->setCode(cust.value("cust_balmethod").toString());
 
     _active->setChecked(cust.value("cust_active").toBool());
     _backorders->setChecked(cust.value("cust_backorder").toBool());
@@ -1693,10 +1687,7 @@ void customer::sClear()
     _creditLimit->setBaseValue(_metrics->value("SOCreditLimit").toDouble());
     _creditRating->setText(_metrics->value("SOCreditRate"));
 
-    if (_metrics->value("DefaultBalanceMethod") == "B")
-      _balanceMethod->setCurrentIndex(0);
-    else if (_metrics->value("DefaultBalanceMethod") == "O")
-      _balanceMethod->setCurrentIndex(1);
+    _balanceMethod->setCode(_metrics->value("DefaultBalanceMethod"));
 
     if(!_privileges->check("MaintainCustomerMastersCustomerType")
        && !_privileges->check("MaintainCustomerMastersCustomerTypeOnCreate")

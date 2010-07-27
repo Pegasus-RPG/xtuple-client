@@ -123,7 +123,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
     if (! _fundsTypes[i].cc ||
         (_fundsTypes[i].cc && _metrics->boolean("CCAccept") &&
          _privileges->check("ProcessCreditCards")) )
-      _fundsType->addItem(_fundsTypes[i].full, _fundsTypes[i].abbr);
+      _fundsType->append(i, _fundsTypes[i].full, _fundsTypes[i].abbr);
   }
 
   if (!_metrics->boolean("CCAccept") && ! _privileges->check("ProcessCreditCards"))
@@ -555,11 +555,11 @@ bool cashReceipt::save(bool partial)
   }
   _received->setCurrencyDisabled(true);
 
-  QString fundsType = _fundsType->itemData(_fundsType->currentIndex()).toString();
   if (!partial)
   {
     if (!_ccEdit &&
-        (fundsType == "A" || fundsType == "D" || fundsType == "M" || fundsType == "V"))
+        (_fundsType->code() == "A" || _fundsType->code() == "D" ||
+         _fundsType->code() == "M" || _fundsType->code() == "V"))
     {
       if (_cc->id() <= -1)
       {
@@ -640,7 +640,7 @@ bool cashReceipt::save(bool partial)
   q.bindValue(":cashrcpt_number", _number->text());
   q.bindValue(":cashrcpt_cust_id", _cust->id());
   q.bindValue(":cashrcpt_amount", _received->localValue());
-  q.bindValue(":cashrcpt_fundstype", fundsType);
+  q.bindValue(":cashrcpt_fundstype", _fundsType->code());
   q.bindValue(":cashrcpt_docnumber", _docNumber->text());
   q.bindValue(":cashrcpt_docdate", _docDate->date());
   q.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
@@ -846,10 +846,8 @@ void cashReceipt::populate()
     else
       _balCreditMemo->setChecked(true);
 
-    _fundsType->setCurrentItem( _fundsType->findData(q.value("cashrcpt_fundstype"),
-                                                    Qt::UserRole));
-
     _origFunds = q.value("cashrcpt_fundstype").toString();
+    _fundsType->setCode(_origFunds);
     _cust->setId(q.value("cashrcpt_cust_id").toInt());
 
     sFillApplyList();
@@ -901,18 +899,14 @@ void cashReceipt::setCreditCard()
   if (! _metrics->boolean("CCAccept"))
     return;
 
-  for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
-  {
-    if(_fundsType->itemData(_fundsType->currentIndex()) == _fundsTypes[i].abbr)
-      if(!_fundsTypes[i].cc)
-        return;
-  }
+  if (! _fundsTypes[_fundsType->id()].cc)
+    return;
 
   XSqlQuery bankq;
   bankq.prepare("SELECT ccbank_bankaccnt_id"
                 "  FROM ccbank"
                 " WHERE (ccbank_ccard_type=:cardtype);");
-  bankq.bindValue(":cardtype", _fundsType->itemData(_fundsType->currentIndex()));
+  bankq.bindValue(":cardtype", _fundsType->code());
   bankq.exec();
   if (bankq.first())
     _bankaccnt->setId(bankq.value("ccbank_bankaccnt_id").toInt());
@@ -954,7 +948,7 @@ void cashReceipt::setCreditCard()
   MetaSQLQuery mql = mqlLoad("creditCards", "detail");
   ParameterList params;
   params.append("cust_id",    _cust->id());
-  params.append("ccard_type", _fundsType->itemData(_fundsType->currentIndex()));
+  params.append("ccard_type", _fundsType->code());
   params.append("masterCard", tr("MasterCard"));
   params.append("visa",       tr("VISA"));
   params.append("americanExpress", tr("American Express"));

@@ -10,9 +10,9 @@
 
 #include "arWorkBench.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QVariant>
 
 #include <stdlib.h>
 #include <metasql.h>
@@ -27,8 +27,6 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   _aritems = new dspAROpenItems(this, "_aritems", Qt::Widget);
   _aropenFrame->layout()->addWidget(_aritems);
@@ -323,26 +321,26 @@ void arWorkBench::sPostCashrcpt()
 
 void arWorkBench::sPopulateCashRcptMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit Cash Receipt..."), this, SLOT(sEditCashrcpt()), 0);
+  menuItem = pMenu->addAction(tr("Edit Cash Receipt..."), this, SLOT(sEditCashrcpt()));
   if (! _privileges->check("MaintainCashReceipts") &&
       ! _privileges->check("ViewCashReceipts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("View Cash Receipt..."), this, SLOT(sViewCashrcpt()), 0);
+  menuItem = pMenu->addAction(tr("View Cash Receipt..."), this, SLOT(sViewCashrcpt()));
   if (! _privileges->check("ViewCashReceipts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  menuItem = pMenu->insertItem(tr("Delete Cash Receipt..."), this, SLOT(sDeleteCashrcpt()), 0);
+  menuItem = pMenu->addAction(tr("Delete Cash Receipt..."), this, SLOT(sDeleteCashrcpt()));
   if (! _privileges->check("MaintainCashReceipts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 
-  pMenu->insertSeparator();
+  pMenu->addSeparator();
 
-  menuItem = pMenu->insertItem(tr("Post Cash Receipt..."), this, SLOT(sPostCashrcpt()), 0);
+  menuItem = pMenu->addAction(tr("Post Cash Receipt..."), this, SLOT(sPostCashrcpt()));
   if (! _privileges->check("PostCashReceipts"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem->setEnabled(false);
 }
 
 void arWorkBench::sSearchDocNumChanged()

@@ -746,14 +746,15 @@ void crmaccount::sPopulate()
       disconnect(_vendorButton, SIGNAL(clicked()), this, SLOT(sEditVendor()));
       
       QMenu * vendorMenu = new QMenu;
-      int menuItem;
-      menuItem=vendorMenu->insertItem(tr("Edit..."), this, SLOT(sEditVendor()));
-      vendorMenu->setItemEnabled(menuItem, _privileges->check("MaintainVendors") && (_mode = cEdit));
-      menuItem=vendorMenu->insertItem(tr("View..."), this, SLOT(sViewVendor()));
-      vendorMenu->setItemEnabled(menuItem, _privileges->check("ViewVendors") || 
-                                           _privileges->check("MaintainVendors"));
-      menuItem=vendorMenu->insertItem(tr("Workbench..."),   this, SLOT(sVendorInfo()));
-      vendorMenu->setItemEnabled(menuItem, _privileges->check("MaintainVendors"));
+      QAction *menuItem;
+      menuItem=vendorMenu->addAction(tr("Edit..."), this, SLOT(sEditVendor()));
+      menuItem->setEnabled(_privileges->check("MaintainVendors") &&
+                           (_mode == cEdit));
+      menuItem=vendorMenu->addAction(tr("View..."), this, SLOT(sViewVendor()));
+      menuItem->setEnabled(_privileges->check("ViewVendors") ||
+                           _privileges->check("MaintainVendors"));
+      menuItem=vendorMenu->addAction(tr("Workbench..."), this, SLOT(sVendorInfo()));
+      menuItem->setEnabled(_privileges->check("MaintainVendors"));
       _vendorButton->setMenu(vendorMenu);  
       
     }
