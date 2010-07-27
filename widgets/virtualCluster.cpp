@@ -959,11 +959,11 @@ void VirtualList::init()
     _dialogLyt                = new QVBoxLayout(this);
     _dialogLyt->setContentsMargins(5, 5, 5, 5);
 
-    QHBoxLayout* topLyt	      = new QHBoxLayout(this);
-    QVBoxLayout* searchLyt    = new QVBoxLayout(this);
-    QVBoxLayout* buttonsLyt   = new QVBoxLayout(this);
-    QHBoxLayout* searchStrLyt = new QHBoxLayout(this);
-    QVBoxLayout* tableLyt     = new QVBoxLayout(this);
+    QHBoxLayout* topLyt	      = new QHBoxLayout();
+    QVBoxLayout* searchLyt    = new QVBoxLayout();
+    QVBoxLayout* buttonsLyt   = new QVBoxLayout();
+    QHBoxLayout* searchStrLyt = new QHBoxLayout();
+    QVBoxLayout* tableLyt     = new QVBoxLayout();
 
     topLyt->setObjectName("topLyt");
     searchLyt->setObjectName("searchLyt");
@@ -1128,12 +1128,12 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _dialogLyt   = new QVBoxLayout(this);
     _dialogLyt->setContentsMargins(5, 5, 5, 5);
 
-    QHBoxLayout* topLyt = new QHBoxLayout(this);
-    searchLyt    = new QVBoxLayout(this);
-    buttonsLyt   = new QVBoxLayout(this);
-    searchStrLyt = new QHBoxLayout(this);
-    selectorsLyt = new QGridLayout(this);
-    tableLyt     = new QVBoxLayout(this);
+    QHBoxLayout* topLyt = new QHBoxLayout();
+    searchLyt    = new QVBoxLayout();
+    buttonsLyt   = new QVBoxLayout();
+    searchStrLyt = new QHBoxLayout();
+    selectorsLyt = new QGridLayout();
+    tableLyt     = new QVBoxLayout();
 
     topLyt->setObjectName("topLyt");
     searchLyt->setObjectName("searchLyt");

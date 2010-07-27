@@ -196,11 +196,11 @@ VendorInfo::VendorInfo(QWidget *parent, const char *name) :
   layoutMain->setSpacing(2); 
   layoutMain->setObjectName("layoutMain"); 
 
-  QHBoxLayout *layoutNumber = new QHBoxLayout(this);
+  QHBoxLayout *layoutNumber = new QHBoxLayout();
   layoutNumber->setSpacing(6); 
   layoutNumber->setObjectName("layoutNumber"); 
 
-  QHBoxLayout *layoutButtons = new QHBoxLayout(this);
+  QHBoxLayout *layoutButtons = new QHBoxLayout();
   layoutButtons->setSpacing(6); 
   layoutButtons->setObjectName("layoutButtons"); 
 
