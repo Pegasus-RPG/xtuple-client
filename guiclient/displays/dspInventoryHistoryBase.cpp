@@ -20,12 +20,18 @@
 #include "countTag.h"
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
+#include "pocluster.h"
+#include "purchaseOrderList.h"
+#include "salesOrderList.h"
+#include "socluster.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"
+#include "transferOrderList.h"
 #include "workOrder.h"
-#include "salesOrderList.h"
 
+// TODO: handle RA?
+// TODO: is there a way to handle RA and TO entirely in scripts?
 dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* name, Qt::WFlags fl)
   : display(parent, name, fl)
 {
@@ -35,11 +41,13 @@ dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* na
   setMetaSQLOptions("inventoryHistory", "detail");
   setUseAltId(true);
 
-  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
-  connect(_orderNumber, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
+  connect(_orderList,   SIGNAL(clicked()),          this, SLOT(sOrderList()));
+  connect(_orderNumber, SIGNAL(requestList()),      this, SLOT(sOrderList()));
+  connect(_orderType,   SIGNAL(valid(bool)),  _orderList, SLOT(setEnabled(bool)));
+  connect(_orderType,   SIGNAL(newId(int)), _orderNumber, SLOT(clear()));
 
 #ifndef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(25);
+  _orderList->setMaximumWidth(25);
 #endif
 
   list()->setRootIsDecorated(TRUE);
@@ -67,7 +75,8 @@ dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* na
   _transType->append(cTransShipments, tr("Shipments")              );
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   
-  _orderType->append(0, tr("All Orders"),        "" );
+  _orderType->setAllowNull(true);
+  _orderType->setNullStr(tr("All Orders"));
   _orderType->append(1, tr("Sales Orders"),      "SO" );
   _orderType->append(2, tr("Purchase Orders"),   "PO" );
   _orderType->append(3, tr("Work Orders"),       "WO");
@@ -80,7 +89,7 @@ dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* na
   
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentIndex(0);
-  _orderType->setCurrentIndex(0);
+  _orderType->setId(-1);
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);                                                     
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
@@ -196,18 +205,7 @@ enum SetResponse dspInventoryHistoryBase::set(const ParameterList &pParams)
 
   param = pParams.value("ordertype", &valid);
   if (valid)
-  {
-    QString ordertype = param.toString();
-
-    if (ordertype == "SO")
-      _orderType->setCurrentIndex(1);
-    else if (ordertype == "PO")
-      _orderType->setCurrentIndex(2);
-    else if (ordertype == "WO")
-      _orderType->setCurrentIndex(3);
-    else if (ordertype == "TO")
-      _orderType->setCurrentIndex(4);
-  }
+    _orderType->setCode(param.toString());
 
   if (pParams.inList("run"))
     sFillList();
@@ -245,7 +243,7 @@ bool dspInventoryHistoryBase::setParams(ParameterList & params)
     return false;
   }
 
-  if (_orderGroup->isVisibleTo(this) && _orderNumber->text().trimmed().length() == 0)
+  if (_orderNumber->isVisibleTo(this) && _orderNumber->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Enter Order Search Pattern"),
                            tr("You must enter a Order # pattern to search for." ) );
@@ -279,10 +277,10 @@ bool dspInventoryHistoryBase::setParams(ParameterList & params)
     params.append("includeFormatted"); // ??? originally from dspInventoryHistoryByItem::sFillList()
   }
 
-  if(_orderGroup->isVisibleTo(this))
+  if(_orderNumber->isVisibleTo(this))
     params.append("orderNumber", _orderNumber->text());
 
-  if (!_orderGroup->isVisibleTo(this) && _orderType->currentIndex())
+  if (_orderType->isVisibleTo(this) && _orderType->isValid())
     params.append("orderType", _orderType->code());
 
   if(_parameter->isVisibleTo(this))
@@ -431,17 +429,66 @@ void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem
   }
 }
 
-void dspInventoryHistoryBase::sSalesOrderList()
+void dspInventoryHistoryBase::sOrderList()
 {
+  /* TODO: When the order cluster can handle po, so, to, and wo,
+           just replace this whole mess.
+   */
   ParameterList params;
-  params.append("sohead_id", _orderNumber->id());
-  params.append("soType", cSoOpen);
+  if (_orderType->code() == "PO")
+  {
+    params.append("poType", cPOOpen);
 
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
+    purchaseOrderList newdlg(this, "", TRUE);
+    newdlg.set(params);
 
-  int id = newdlg.exec();
-  if(id != QDialog::Rejected)
-    _orderNumber->setId(id);
+    int id = newdlg.exec();
+    if (id != QDialog::Rejected)
+      _orderNumber->setText(newdlg._pohead->currentItem()->text("pohead_number"));
+  }
+  else if (_orderType->code() == "SO")
+  {
+    params.append("soType", cSoOpen);
+
+    salesOrderList newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    int id = newdlg.exec();
+    if(id != QDialog::Rejected)
+      _orderNumber->setText(newdlg._so->currentItem()->text("cohead_number"));
+  }
+  else if (_orderType->code() == "TO")
+  {
+    params.append("toType", cToOpen);
+
+    transferOrderList newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    int id = newdlg.exec();
+    if(id != QDialog::Rejected)
+      _orderNumber->setText(newdlg._to->currentItem()->text("tohead_number"));
+  }
+  else if (_orderType->code() == "WO")
+  {
+    params.append("woType", cWoOpen);
+
+    woList *newdlg = new woList(_orderNumber);
+    newdlg->set(params);
+
+    int id = newdlg->exec();
+    if(id != QDialog::Rejected)
+    {
+      XSqlQuery woq;
+      woq.prepare("SELECT formatWoNumber(:id) AS result;");
+      woq.bindValue(":id", id);
+      woq.exec();
+      if (woq.first())
+        _orderNumber->setText(woq.value("result").toString());
+      else if (woq.lastError().type() != QSqlError::NoError)
+      {
+        QMessageBox::critical(this, tr("Database Error"), woq.lastError().text());
+        return;
+      }
+    }
+  }
 }
-

@@ -16,7 +16,9 @@ dspInventoryHistoryByItem::dspInventoryHistoryByItem(QWidget* parent, const char
   : dspInventoryHistoryBase(parent, "dspInventoryHistoryByItem", fl)
 {
   setWindowTitle(tr("Inventory History by Item"));
-  _orderGroup->hide();
+  _orderNumber->hide();
+  _orderNumberLit->hide();
+  _orderList->hide();
   _parameter->hide();
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));

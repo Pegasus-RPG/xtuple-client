@@ -14,7 +14,9 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   : dspInventoryHistoryBase(parent, "dspInventoryHistoryByParameterList", fl)
 {
   setWindowTitle(tr("Inventory History by Class Code"));
-  _orderGroup->hide();
+  _orderNumber->hide();
+  _orderNumberLit->hide();
+  _orderList->hide();
   _itemGroup->hide();
 }
 

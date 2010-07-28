@@ -28,11 +28,11 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
-    virtual void sViewTransInfo();
     virtual void sEditTransInfo();
-    virtual void sViewWOInfo();
+    virtual void sOrderList();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pItem, int);
-    virtual void sSalesOrderList();
+    virtual void sViewTransInfo();
+    virtual void sViewWOInfo();
 
 protected slots:
     virtual void languageChange();

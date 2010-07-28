@@ -16,7 +16,5 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   setWindowTitle(tr("Inventory History by Order Number"));
   _parameter->hide();
   _itemGroup->hide();
-  _orderType->hide();
-  _orderTypeLit->hide();
 }
 
