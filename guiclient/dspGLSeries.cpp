@@ -42,6 +42,9 @@ dspGLSeries::dspGLSeries(QWidget* parent, const char* name, Qt::WFlags fl)
   _gltrans->addColumn(tr("Debit"), _bigMoneyColumn, Qt::AlignRight, true, "debit");
   _gltrans->addColumn(tr("Credit"),_bigMoneyColumn, Qt::AlignRight, true, "credit");
   _gltrans->addColumn(tr("Posted"),      _ynColumn, Qt::AlignCenter,true, "posted");
+
+  if (!_metrics->boolean("UseSubLedger"))
+    _typeGroup->hide();
 }
 
 dspGLSeries::~dspGLSeries()
@@ -76,6 +79,10 @@ enum SetResponse dspGLSeries::set(const ParameterList &pParams)
     _endJrnlnum->setText(param.toString());
   }
 
+  param = pParams.value("subledger", &valid);
+  if(valid)
+    _subLedger->setChecked(true);
+
   sFillList();
 
   return NoError;
@@ -83,9 +90,6 @@ enum SetResponse dspGLSeries::set(const ParameterList &pParams)
 
 void dspGLSeries::sPopulateMenu(QMenu * pMenu)
 {
-  if (_subLedger->isChecked())
-    return;
-
   QAction *menuItem;
 
   bool editable = false;
@@ -98,21 +102,31 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
       item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
     if(0 != item)
     {
-      if(item->rawValue("doctype").toString() == "ST" ||
-         item->rawValue("doctype").toString() == "JE")
-        reversible = _privileges->check("PostStandardJournals");
-
-      // Make sure there is nothing to restricting edits
-      ParameterList params;
-      params.append("glSequence", _gltrans->id());
-      MetaSQLQuery mql = mqlLoad("dspGLSeries", "checkeditable");
-      XSqlQuery qry = mql.toQuery(params);
-      if (!qry.first())
+      if (_subLedger->isChecked() && !item->rawValue("posted").toBool())
       {
-        editable = _privileges->check("EditPostedJournals") &&
-                   item->rawValue("doctype").toString() == "JE";
-        deletable = (_privileges->check("DeletePostedJournals") &&
-                    (reversible || item->rawValue("doctype").toString() == "SL"));
+        menuItem = pMenu->addAction(tr("Post..."), this, SLOT(sPost()));
+        menuItem->setEnabled(_privileges->check("PostSubLedger"));
+
+        return;
+      }
+      else
+      {
+        if(item->rawValue("doctype").toString() == "ST" ||
+           item->rawValue("doctype").toString() == "JE")
+          reversible = _privileges->check("PostStandardJournals");
+
+        // Make sure there is nothing to restricting edits
+        ParameterList params;
+        params.append("glSequence", _gltrans->id());
+        MetaSQLQuery mql = mqlLoad("glseries", "checkeditable");
+        XSqlQuery qry = mql.toQuery(params);
+        if (!qry.first())
+        {
+          editable = _privileges->check("EditPostedJournals") &&
+                     item->rawValue("doctype").toString() == "JE";
+          deletable = (_privileges->check("DeletePostedJournals") &&
+                       (reversible || item->rawValue("doctype").toString() == "SL"));
+        }
       }
     }
   }
@@ -182,7 +196,7 @@ void dspGLSeries::sFillList()
   if (! setParams(params))
     return;
 
-  MetaSQLQuery mql = mqlLoad("dspGLSeries", "detail");
+  MetaSQLQuery mql = mqlLoad("glseries", "detail");
 
   q = mql.toQuery(params);
   _gltrans->populate(q, true);
@@ -262,5 +276,19 @@ void dspGLSeries::sDelete(bool edited)
   }
 
   omfgThis->sGlSeriesUpdated();
+  sFillList();
+}
+
+void dspGLSeries::sPost()
+{
+  ParameterList params;
+  params.append("sequence", _gltrans->id());
+  MetaSQLQuery mql = mqlLoad("glseries", "postsubledger");
+  XSqlQuery qry = mql.toQuery(params);
+  if (qry.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   sFillList();
 }

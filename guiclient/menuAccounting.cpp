@@ -361,8 +361,8 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.postStandardJournal",	     tr("&Post..."),	   SLOT(sPostStandardJournal()),     glStandardJournalsMenu, "PostStandardJournals",	      NULL, NULL, true, NULL },
     { "gl.postStandardJournalGroup", tr("Post G&roup..."), SLOT(sPostStandardJournalGroup()),glStandardJournalsMenu, "PostStandardJournalGroups",    NULL, NULL, true, NULL },
 
-    { "separator",		     NULL,				   NULL,  glMenu, "true",					      NULL, NULL, true, NULL },
-    { "gl.postSubLedger",   tr("&Post Sub Ledger..."),	   SLOT(sPostSubLedger()), glMenu, "PostSubLedger",	      NULL, NULL, true, NULL },
+    { "separator",		     NULL,				   NULL,  glMenu, "true",					      NULL, NULL, _metrics->boolean("UseSubLedger"), NULL },
+    { "gl.postSubLedger",   tr("&Post Subledger..."),	   SLOT(sPostSubLedger()), glMenu, "PostSubLedger",	      NULL, NULL, _metrics->boolean("UseSubLedger"), NULL },
 
 
     { "separator", NULL, NULL, glMenu, "true", NULL, NULL, true, NULL },
@@ -373,8 +373,8 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "gl.dspSummarizedGLTransactions",	tr("Su&mmarized Transactions..."),	SLOT(sDspSummarizedGLTransactions()),	glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
     { "gl.dspGLSeries",			tr("&Series..."),			SLOT(sDspGLSeries()),			glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
     { "gl.dspStandardJournalHistory",	tr("Standard &Journal History..."),	SLOT(sDspStandardJournalHistory()),	glReportsMenu, "ViewGLTransactions",	NULL, NULL, true, NULL },
-    { "separator", NULL, NULL, glReportsMenu, "true", NULL, NULL, true, NULL },
-    { "gl.dspSubLedger",	tr("Sub Ledger..."),	SLOT(sDspSubLedger()),	glReportsMenu, "ViewSubLedger",	NULL, NULL, true, NULL },
+    { "separator", NULL, NULL, glReportsMenu, "true", NULL, NULL, _metrics->boolean("UseSubLedger"), NULL },
+    { "gl.dspSubLedger",	tr("Subledger..."),	SLOT(sDspSubLedger()),	glReportsMenu, "ViewSubLedger",	NULL, NULL, _metrics->boolean("UseSubLedger"), NULL },
 
     { "menu",			tr("&Bank Reconciliation"), 	(char*)bankrecMenu,		mainMenu,    "true",						NULL, NULL, true, NULL },
     { "gl.reconcileBankaccnt",	tr("&Reconcile..."),SLOT(sReconcileBankaccount()),	bankrecMenu, "MaintainBankRec", QPixmap(":/images/bankReconciliation.png"), toolBar,  true, tr("Reconcile Bank Account") },

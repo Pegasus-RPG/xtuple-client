@@ -21,11 +21,11 @@ copySalesOrder::copySalesOrder(QWidget* parent, const char* name, bool modal, Qt
 {
   setupUi(this);
 
+  _so->setAllowedTypes(OrderLineEdit::Sales);
+
   connect(_so, SIGNAL(newId(int)), this, SLOT(sPopulateSoInfo(int)));
-  connect(_soList, SIGNAL(clicked()), this, SLOT(sSoList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-  connect(_so, SIGNAL(requestList()), this, SLOT(sSoList()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sCopy()));
 
   _captive = FALSE;
 
@@ -66,29 +66,12 @@ enum SetResponse copySalesOrder::set(ParameterList &pParams)
     _captive = TRUE;
     _so->setId(param.toInt());
     _so->setEnabled(FALSE);
-    _soList->setEnabled(FALSE);
 
-    _copy->setFocus();
+    _buttonBox->setFocus();
   }
 
   return NoError;
 }
-
-
-void copySalesOrder::sSoList()
-{
-  ParameterList params;
-  params.append("sohead_id", _so->id());
-  params.append("soType", cSoOpen);
-  
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int id = newdlg.exec();
-  if(id != QDialog::Rejected)
-    _so->setId(id);
-}
-
 
 void copySalesOrder::sPopulateSoInfo(int)
 {

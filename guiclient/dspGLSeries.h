@@ -34,6 +34,7 @@ public slots:
     virtual void sReverse();
     virtual void sEdit();
     virtual void sDelete(bool edited = false);
+    virtual void sPost();
 
 protected slots:
     virtual void languageChange();

@@ -313,6 +313,7 @@ void dspSubLedger::sViewSeries()
   params.append("startDate", q.value("SLtrans_date").toDate());
   params.append("endDate", q.value("SLtrans_date").toDate());
   params.append("journalnumber", q.value("SLtrans_journalnumber").toString());
+  params.append("subledger", true);
 
   dspGLSeries *newdlg = new dspGLSeries();
   newdlg->set(params);

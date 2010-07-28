@@ -181,7 +181,14 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
 
   if (_metrics->boolean("UseSubLedger"))
+  {
     _subLedger->setChecked(true);
+    XSqlQuery qry;
+    qry.exec("SELECT count(sltrans_id) > 0 AS result FROM sltrans WHERE (NOT sltrans_posted);");
+    qry.first();
+    if (qry.value("result").toBool())
+      _postGroup->setEnabled(false);
+  }
   else
     _generalLedger->setChecked(true);
   

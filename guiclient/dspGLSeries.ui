@@ -187,19 +187,19 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox">
+          <widget class="QGroupBox" name="_typeGroup">
            <property name="title">
             <string>Type</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QRadioButton" name="_subLedger">
               <property name="text">
-               <string>Sub Ledger</string>
+               <string>Subledger</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="0" column="0">
              <widget class="QRadioButton" name="_generalLedger">
               <property name="text">
                <string>General Ledger</string>
