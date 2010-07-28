@@ -52,8 +52,6 @@ DEPENDPATH  += $${INCLUDEPATH}
 CONFIG += release thread
 #CONFIG += debug
 
-QT += qt3support
-
 macx:exists(macx.pri) {
   include(macx.pri)
 }

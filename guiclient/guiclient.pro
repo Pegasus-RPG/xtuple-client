@@ -2095,7 +2095,6 @@ include( displays/displays.pri )
 
 QT += xml sql script scripttools network
 QT += webkit xmlpatterns
-Qt += qt3support
 
 RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
 
