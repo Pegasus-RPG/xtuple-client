@@ -10,14 +10,30 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspBacklogByItem.ui \
            displays/dspBacklogByParameterList.ui \
            displays/dspBacklogBySalesOrder.ui \
+           displays/dspBookingsByCustomer.ui \
+           displays/dspBookingsByCustomerGroup.ui \
+           displays/dspBookingsByItem.ui \
+           displays/dspBookingsByProductCategory.ui \
+           displays/dspBookingsBySalesRep.ui \
+           displays/dspBookingsByShipTo.ui \
+           displays/dspBriefEarnedCommissions.ui \
+           displays/dspBriefSalesHistoryByCustomer.ui \
+           displays/dspBriefSalesHistoryByCustomerType.ui \
+           displays/dspBriefSalesHistoryBySalesRep.ui \
            displays/dspCapacityUOMsByParameter.ui \
            displays/dspCostedBOMBase.ui \
            displays/dspCostedSummarizedBOM.ui \
            displays/dspCountSlipsByWarehouse.ui \
            displays/dspCountTagsBase.ui \
+           displays/dspCustomerARHistory.ui \
+           displays/dspCustomerInformationExport.ui \
+           displays/dspCustomersByCharacteristic.ui \
+           displays/dspCustomersByCustomerType.ui \
            displays/dspDepositsRegister.ui \
            displays/dspDetailedInventoryHistoryByLocation.ui \
            displays/dspDetailedInventoryHistoryByLotSerial.ui \
+           displays/dspEarnedCommissions.ui \
+           displays/dspExpediteExceptionsByPlannerCode.ui \
            displays/dspExpiredInventoryByClassCode.ui \
            displays/dspFrozenItemSites.ui \
            displays/dspIndentedWhereUsed.ui \
@@ -58,6 +74,16 @@ HEADERS += displays/dspAllocations.h \
            displays/dspBacklogByItem.h \
            displays/dspBacklogByParameterList.h \
            displays/dspBacklogBySalesOrder.h \
+           displays/dspBookingsByCustomer.h \
+           displays/dspBookingsByCustomerGroup.h \
+           displays/dspBookingsByItem.h \
+           displays/dspBookingsByProductCategory.h \
+           displays/dspBookingsBySalesRep.h \
+           displays/dspBookingsByShipTo.h \
+           displays/dspBriefEarnedCommissions.h \
+           displays/dspBriefSalesHistoryByCustomer.h \
+           displays/dspBriefSalesHistoryByCustomerType.h \
+           displays/dspBriefSalesHistoryBySalesRep.h \
            displays/dspCapacityUOMsByClassCode.h \
            displays/dspCapacityUOMsByParameter.h \
            displays/dspCapacityUOMsByProductCategory.h \
@@ -70,9 +96,15 @@ HEADERS += displays/dspAllocations.h \
            displays/dspCountTagsByClassCode.h \
            displays/dspCountTagsByItem.h \
            displays/dspCountTagsByWarehouse.h \
+           displays/dspCustomerARHistory.h \
+           displays/dspCustomerInformationExport.h \
+           displays/dspCustomersByCharacteristic.h \
+           displays/dspCustomersByCustomerType.h \
            displays/dspDepositsRegister.h \
            displays/dspDetailedInventoryHistoryByLocation.h \
            displays/dspDetailedInventoryHistoryByLotSerial.h \
+           displays/dspEarnedCommissions.h \
+           displays/dspExpediteExceptionsByPlannerCode.h \
            displays/dspExpiredInventoryByClassCode.h \
            displays/dspFrozenItemSites.h \
            displays/dspIndentedBOM.h \
@@ -128,6 +160,16 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspBacklogByItem.cpp \
            displays/dspBacklogByParameterList.cpp \
            displays/dspBacklogBySalesOrder.cpp \
+           displays/dspBookingsByCustomer.cpp \
+           displays/dspBookingsByCustomerGroup.cpp \
+           displays/dspBookingsByItem.cpp \
+           displays/dspBookingsByProductCategory.cpp \
+           displays/dspBookingsBySalesRep.cpp \
+           displays/dspBookingsByShipTo.cpp \
+           displays/dspBriefEarnedCommissions.cpp \
+           displays/dspBriefSalesHistoryByCustomer.cpp \
+           displays/dspBriefSalesHistoryByCustomerType.cpp \
+           displays/dspBriefSalesHistoryBySalesRep.cpp \
            displays/dspCapacityUOMsByClassCode.cpp \
            displays/dspCapacityUOMsByParameter.cpp \
            displays/dspCapacityUOMsByProductCategory.cpp \
@@ -140,9 +182,15 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspCountTagsByClassCode.cpp \
            displays/dspCountTagsByItem.cpp \
            displays/dspCountTagsByWarehouse.cpp \
+           displays/dspCustomerARHistory.cpp \
+           displays/dspCustomerInformationExport.cpp \
+           displays/dspCustomersByCharacteristic.cpp \
+           displays/dspCustomersByCustomerType.cpp \
            displays/dspDepositsRegister.cpp \
            displays/dspDetailedInventoryHistoryByLocation.cpp \
            displays/dspDetailedInventoryHistoryByLotSerial.cpp \
+           displays/dspEarnedCommissions.cpp \
+           displays/dspExpediteExceptionsByPlannerCode.cpp \
            displays/dspExpiredInventoryByClassCode.cpp \
            displays/dspFrozenItemSites.cpp \
            displays/dspIndentedBOM.cpp \

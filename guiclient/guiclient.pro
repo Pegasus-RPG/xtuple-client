@@ -196,27 +196,11 @@ FORMS =   absoluteCalendarItem.ui               \
           dspAROpenItems.ui                     \
           dspBankrecHistory.ui                  \
           dspBillingSelections.ui               \
-          dspBookingsByCustomer.ui              \
-          dspBookingsByCustomerGroup.ui         \
-          dspBookingsByItem.ui                  \
-          dspBookingsByProductCategory.ui       \
-          dspBookingsBySalesRep.ui              \
-          dspBookingsByShipTo.ui                \
-          dspBriefEarnedCommissions.ui          \
-          dspBriefSalesHistoryByCustomer.ui     \
-          dspBriefSalesHistoryByCustomerType.ui \
-          dspBriefSalesHistoryBySalesRep.ui     \
           dspCashReceipts.ui                    \
           dspCheckRegister.ui                   \
           dspCountSlipEditList.ui               \
           dspCountTagEditList.ui                \
           dspCreditCardTransactions.ui          \
-          dspCustomerARHistory.ui               \
-          dspCustomerInformationExport.ui       \
-          dspCustomersByCharacteristic.ui       \
-          dspCustomersByCustomerType.ui         \
-          dspEarnedCommissions.ui                       \
-          dspExpediteExceptionsByPlannerCode.ui         \
           dspFinancialReport.ui                         \
           dspFreightPricesByCustomer.ui                 \
           dspFreightPricesByCustomerType.ui             \
@@ -852,27 +836,11 @@ HEADERS = ../common/format.h                    \
           dspAROpenItems.h                      \
           dspBankrecHistory.h                   \
           dspBillingSelections.h                \
-          dspBookingsByCustomer.h               \
-          dspBookingsByCustomerGroup.h          \
-          dspBookingsByItem.h                   \
-          dspBookingsByProductCategory.h        \
-          dspBookingsBySalesRep.h               \
-          dspBookingsByShipTo.h                 \
-          dspBriefEarnedCommissions.h           \
-          dspBriefSalesHistoryByCustomer.h      \
-          dspBriefSalesHistoryByCustomerType.h  \
-          dspBriefSalesHistoryBySalesRep.h      \
           dspCashReceipts.h                     \
           dspCheckRegister.h                    \
           dspCountSlipEditList.h                \
           dspCountTagEditList.h                 \
           dspCreditCardTransactions.h           \
-          dspCustomerARHistory.h                \
-          dspCustomerInformationExport.h        \
-          dspCustomersByCharacteristic.h        \
-          dspCustomersByCustomerType.h          \
-          dspEarnedCommissions.h                        \
-          dspExpediteExceptionsByPlannerCode.h          \
           dspFinancialReport.h                          \
           dspFreightPricesByCustomer.h                  \
           dspFreightPricesByCustomerType.h              \
@@ -1544,27 +1512,11 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspAROpenItems.cpp                    \
           dspBankrecHistory.cpp                 \
           dspBillingSelections.cpp              \
-          dspBookingsByCustomer.cpp             \
-          dspBookingsByCustomerGroup.cpp        \
-          dspBookingsByItem.cpp                 \
-          dspBookingsByProductCategory.cpp      \
-          dspBookingsBySalesRep.cpp             \
-          dspBookingsByShipTo.cpp               \
-          dspBriefEarnedCommissions.cpp         \
-          dspBriefSalesHistoryByCustomer.cpp    \
-          dspBriefSalesHistoryByCustomerType.cpp        \
-          dspBriefSalesHistoryBySalesRep.cpp            \
           dspCashReceipts.cpp                   \
           dspCheckRegister.cpp                  \
           dspCountSlipEditList.cpp              \
           dspCountTagEditList.cpp               \
           dspCreditCardTransactions.cpp         \
-          dspCustomerARHistory.cpp              \
-          dspCustomerInformationExport.cpp      \
-          dspCustomersByCharacteristic.cpp      \
-          dspCustomersByCustomerType.cpp        \
-          dspEarnedCommissions.cpp                      \
-          dspExpediteExceptionsByPlannerCode.cpp        \
           dspFinancialReport.cpp                        \
           dspFreightPricesByCustomer.cpp                \
           dspFreightPricesByCustomerType.cpp            \
