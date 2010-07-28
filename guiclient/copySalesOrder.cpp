@@ -29,10 +29,6 @@ copySalesOrder::copySalesOrder(QWidget* parent, const char* name, bool modal, Qt
 
   _captive = FALSE;
 
-#ifndef Q_WS_MAC
-  _soList->setMaximumWidth(25);
-#endif
-
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
 
   _soitem->addColumn(tr("#"),        _seqColumn, Qt::AlignRight, true, "coitem_linenumber" );
