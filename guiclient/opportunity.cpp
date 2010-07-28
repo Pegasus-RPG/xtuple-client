@@ -10,10 +10,11 @@
 
 #include "opportunity.h"
 
+#include <QAction>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-#include <QMenu>
 
 #include <openreports.h>
 
@@ -27,11 +28,6 @@
 #include "printSoForm.h"
 #include "characteristicAssignment.h"
 
-/*
- *  Constructs a opportunity as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -39,7 +35,6 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
-  // signals and slots connections
   connect(_crmacct, SIGNAL(newId(int)), this, SLOT(sHandleCrmacct(int)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_deleteTodoItem, SIGNAL(clicked()), this, SLOT(sDeleteTodoItem()));
@@ -499,7 +494,7 @@ void opportunity::sFillTodoList()
 
 void opportunity::sPopulateTodoMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   bool newPriv = (cNew == _mode || cEdit == _mode) &&
       (_privileges->check("MaintainPersonalTodoList") ||
@@ -513,17 +508,17 @@ void opportunity::sPopulateTodoMenu(QMenu *pMenu)
       (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
       (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
 
-  menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNewTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, newPriv);
+  menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNewTodoItem()));
+  menuItem->setEnabled(newPriv);
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEditTodoItem()));
+  menuItem->setEnabled(editPriv);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, viewPriv);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sViewTodoItem()));
+  menuItem->setEnabled(viewPriv);
 
-  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDeleteTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDeleteTodoItem()));
+  menuItem->setEnabled(editPriv);
 }
 
 void opportunity::sHandleTodoPrivs()
@@ -1010,18 +1005,18 @@ void opportunity::sPopulateSalesMenu(QMenu *pMenu)
       (0 == _salesList->currentItem()->altId() && _privileges->check("ConvertQuotes"));
   }
 
-  int menuItem;
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditSale()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  QAction *menuItem;
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEditSale()));
+  menuItem->setEnabled(editPriv);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewSale()), 0);
-  pMenu->setItemEnabled(menuItem, (editPriv || viewPriv));
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sViewSale()));
+  menuItem->setEnabled((editPriv || viewPriv));
 
-  menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDeleteSale()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDeleteSale()));
+  menuItem->setEnabled(editPriv);
 
-  menuItem = pMenu->insertItem(tr("Print..."), this, SLOT(sPrintSale()), 0);
-  pMenu->setItemEnabled(menuItem, (editPriv || viewPriv));
+  menuItem = pMenu->addAction(tr("Print..."), this, SLOT(sPrintSale()));
+  menuItem->setEnabled((editPriv || viewPriv));
 }
 
 void opportunity::sHandleSalesPrivs()
@@ -1035,20 +1030,19 @@ void opportunity::sHandleSalesPrivs()
   bool viewPriv = false;
   bool convertPriv = false;
 
-  int newMenuItem;
+  QAction *menuItem;
   QMenu * newMenu = new QMenu;
-  newMenuItem = newMenu->insertItem(tr("Quote"), this, SLOT(sNewQuote()));
-  newMenu->setItemEnabled(newMenuItem, newQuotePriv);
-  newMenuItem = newMenu->insertItem(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
-  newMenu->setItemEnabled(newMenuItem, newSalesOrderPriv);
+  menuItem = newMenu->addAction(tr("Quote"), this, SLOT(sNewQuote()));
+  menuItem->setEnabled(newQuotePriv);
+  menuItem = newMenu->addAction(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
+  menuItem->setEnabled(newSalesOrderPriv);
   _newSale->setMenu(newMenu);
 
-  int attachMenuItem;
   QMenu * attachMenu = new QMenu;
-  attachMenuItem = attachMenu->insertItem(tr("Quote"), this, SLOT(sAttachQuote()));
-  attachMenu->setItemEnabled(attachMenuItem, newQuotePriv);
-  attachMenuItem = attachMenu->insertItem(tr("Sales Order"), this, SLOT(sAttachSalesOrder()));
-  attachMenu->setItemEnabled(attachMenuItem, newSalesOrderPriv);
+  menuItem = attachMenu->addAction(tr("Quote"), this, SLOT(sAttachQuote()));
+  menuItem->setEnabled(newQuotePriv);
+  menuItem = attachMenu->addAction(tr("Sales Order"), this, SLOT(sAttachSalesOrder()));
+  menuItem->setEnabled(newSalesOrderPriv);
   _attachSale->setMenu(attachMenu);
 
   if(_salesList->currentItem())

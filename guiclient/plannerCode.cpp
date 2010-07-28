@@ -176,7 +176,7 @@ void plannerCode::sSave()
   q.bindValue(":plancode_id", _plancodeid);
   q.bindValue(":plancode_code", _code->text());
   q.bindValue(":plancode_name", _description->text().trimmed());
-  q.bindValue(":plancode_consumefcst", QVariant(FALSE, 0));
+  q.bindValue(":plancode_consumefcst", false);
 
   if (_autoExplode->isChecked())
   {

@@ -10,11 +10,12 @@
 
 #include "prospect.h"
 
+#include <QAction>
+#include <QCloseEvent>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-#include <QCloseEvent>
 
 #include <openreports.h>
 
@@ -294,7 +295,7 @@ void prospect::sSave()
 	       "      NULL, NULL, :prospect_id, NULL, NULL, :cntct, NULL) AS crmacctid;");
     q.bindValue(":number",	_number->text().trimmed());
     q.bindValue(":name",	_name->text().trimmed());
-    q.bindValue(":active",	QVariant(true, 0));
+    q.bindValue(":active",	true);
     q.bindValue(":type",	"O");	// TODO - when will this be "I"?
     q.bindValue(":prospect_id",	_prospectid);
     if (_contact->id() > 0)
@@ -463,10 +464,10 @@ void prospect::sFillQuotesList()
 
 void prospect::sPopulateQuotesMenu(QMenu *menuThis)
 {
-  menuThis->insertItem(tr("Edit..."),   this, SLOT(sEditQuote()),   0 );
-  menuThis->insertItem(tr("View..."),   this, SLOT(sViewQuote()),   0 );
-  menuThis->insertItem(tr("Delete..."), this, SLOT(sDeleteQuote()), 0 );
-  menuThis->insertItem(tr("Print..."),  this, SLOT(sPrintQuote()),  0 );
+  menuThis->addAction(tr("Edit..."),   this, SLOT(sEditQuote()));
+  menuThis->addAction(tr("View..."),   this, SLOT(sViewQuote()));
+  menuThis->addAction(tr("Delete..."), this, SLOT(sDeleteQuote()));
+  menuThis->addAction(tr("Print..."),  this, SLOT(sPrintQuote()));
 }
 
 void prospect::populate()

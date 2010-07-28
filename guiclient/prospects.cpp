@@ -10,10 +10,10 @@
 
 #include "prospects.h"
 
+#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include "prospect.h"
@@ -22,39 +22,35 @@
 prospects::prospects(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_delete,   SIGNAL(clicked()),	this, SLOT(sDelete()));
+  connect(_edit,     SIGNAL(clicked()),	this, SLOT(sEdit()));
+  connect(_new,	     SIGNAL(clicked()),	this, SLOT(sNew()));
+  connect(_prospect, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)),
+                                        this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_view,     SIGNAL(clicked()),	this, SLOT(sView()));
 
-    connect(_delete,	SIGNAL(clicked()),	this, SLOT(sDelete()));
-    connect(_edit,	SIGNAL(clicked()),	this, SLOT(sEdit()));
-    connect(_new,	SIGNAL(clicked()),	this, SLOT(sNew()));
-    connect(_prospect,	SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)),
-						this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_view,	SIGNAL(clicked()),	this, SLOT(sView()));
+  if (_privileges->check("MaintainProspectMasters"))
+  {
+    connect(_prospect, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    connect(_prospect, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_prospect, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  }
+  else
+  {
+    _new->setEnabled(FALSE);
+    connect(_prospect, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+  }
 
-//    statusBar()->hide();
-    
-    if (_privileges->check("MaintainProspectMasters"))
-    {
-      connect(_prospect, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-      connect(_prospect, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-      connect(_prospect, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    }
-    else
-    {
-      _new->setEnabled(FALSE);
-      connect(_prospect, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-    }
+  _prospect->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter, true, "prospect_number" );
+  _prospect->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "prospect_name"   );
+  _prospect->addColumn(tr("Address"), 175,          Qt::AlignLeft,   true, "addr_line1"   );
+  _prospect->addColumn(tr("Phone #"), 100,          Qt::AlignLeft,   true, "cntct_phone"   );
 
-    _prospect->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter, true, "prospect_number" );
-    _prospect->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "prospect_name"   );
-    _prospect->addColumn(tr("Address"), 175,          Qt::AlignLeft,   true, "addr_line1"   );
-    _prospect->addColumn(tr("Phone #"), 100,          Qt::AlignLeft,   true, "cntct_phone"   );
+  connect(omfgThis, SIGNAL(prospectsUpdated()), SLOT(sFillList()));
 
-    connect(omfgThis, SIGNAL(prospectsUpdated()), SLOT(sFillList()));
-
-    sFillList();
+  sFillList();
 }
 
 prospects::~prospects()
@@ -125,20 +121,15 @@ void prospects::sDelete()
 
 void prospects::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
-  menuItem = pMenu->insertItem("View...", this, SLOT(sView()), 0);
+  menuItem = pMenu->addAction("View...", this, SLOT(sView()));
 
-  menuItem = pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-  if (!_privileges->check("MaintainProspectMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction("Edit...", this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainProspectMasters"));
 
-  if (!_privileges->check("MaintainProspectMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  menuItem = pMenu->insertItem("Delete", this, SLOT(sDelete()), 0);
-  if (!_privileges->check("MaintainProspectMasters"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->addAction("Delete", this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("MaintainProspectMasters"));
 }
 
 void prospects::sFillList()

@@ -14,7 +14,6 @@
 #include <QCursor>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include <parameter.h>
@@ -26,8 +25,6 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     : XWidget(parent, name, fl)
 {
     setupUi(this);
-
-//    (void)statusBar();
 
     connect(_addAdjustment, SIGNAL(clicked()),  this, SLOT(sAddAdjustment()));
     connect(_bankaccnt, SIGNAL(newID(int)),     this, SLOT(sBankaccntChanged()));
@@ -299,7 +296,7 @@ void reconcileBankaccount::sReconcile()
 */
 void reconcileBankaccount::populate()
 {
-  qApp->setOverrideCursor(Qt::waitCursor);
+  qApp->setOverrideCursor(QCursor(Qt::WaitCursor));
 
   double begBal = _openBal->localValue();
   double endBal = _endBal->localValue();
@@ -585,14 +582,18 @@ void reconcileBankaccount::populate()
     _clearBal->setDouble(q.value("cleared_amount").toDouble());
     _endBal2->setDouble(q.value("end_amount").toDouble());
     _diffBal->setDouble(q.value("diff_amount").toDouble());
+
+    QString stylesheet;
+
     if(q.value("diff_value").toDouble() == 0.0)
     {
-      _diffBal->setPaletteForegroundColor(QColor("black"));
       if(_startDate->isValid() && _endDate->isValid())
         enableRec = TRUE;
     }
     else
-      _diffBal->setPaletteForegroundColor(QColor("red"));
+      stylesheet = QString("* { color: %1; }").arg(namedColor("error").name());
+
+    _diffBal->setStyleSheet(stylesheet);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

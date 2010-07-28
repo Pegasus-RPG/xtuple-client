@@ -120,7 +120,7 @@ void postInvoices::sPost()
 
   q.prepare("SELECT postInvoices(:postUnprinted, :inclZero) AS result;");
   q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
-  q.bindValue(":inclZero",      QVariant(inclZero, 0));
+  q.bindValue(":inclZero",      inclZero);
   q.exec();
   if (q.first())
   {
@@ -173,8 +173,8 @@ void postInvoices::sSubmit()
 {
   ParameterList params;
   params.append("action_name", "PostInvoices");
-  params.append("postUnprinted", QVariant(_postUnprinted->isChecked(), 0));
-  params.append("printSalesJournal", QVariant(_printJournal->isChecked(), 0));
+  params.append("postUnprinted",     _postUnprinted->isChecked());
+  params.append("printSalesJournal", _printJournal->isChecked());
 
   submitAction newdlg(this, "", TRUE);
   newdlg.set(params);

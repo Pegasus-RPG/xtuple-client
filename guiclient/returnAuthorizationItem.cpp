@@ -1628,10 +1628,10 @@ void returnAuthorizationItem::sDetermineAvailability()
       _available->setDouble(availability.value("available").toDouble());
       _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
+      QString stylesheet;
       if (availability.value("available").toDouble() < _availabilityQtyOrdered)
-        _available->setPaletteForegroundColor(QColor("red"));
-      else
-        _available->setPaletteForegroundColor(QColor("black"));
+        stylesheet = QString("* { color: %1; }").arg(namedColor("error").name());
+      _available->setStyleSheet(stylesheet);
     }
     else if (availability.lastError().type() != QSqlError::NoError)
     {

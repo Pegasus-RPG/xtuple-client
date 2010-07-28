@@ -81,5 +81,5 @@ void printLabelsByTo::sPrint()
 
 void printLabelsByTo::sSetToMin(int pValue)
 {
-  _to->setMinValue(pValue);
+  _to->setMinimum(pValue);
 }

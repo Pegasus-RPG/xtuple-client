@@ -11,9 +11,12 @@
 #include "opportunityList.h"
 
 #include "xdialog.h"
+
+#include <QAction>
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
+
 #include <metasql.h>
 #include <openreports.h>
 
@@ -95,32 +98,32 @@ void opportunityList::languageChange()
 
 void opportunityList::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  QAction *menuItem;
 
   bool editPriv = _privileges->check("MaintainOpportunities");
   bool viewPriv = _privileges->check("VeiwOpportunities") || editPriv;
 
-  menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNew()));
+  menuItem->setEnabled(editPriv);
 
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(editPriv);
 
-  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  pMenu->setItemEnabled(menuItem, viewPriv);
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(viewPriv);
 
-  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
+  menuItem->setEnabled(editPriv);
 
   if (_list->altId() == 0)
   {
-    menuItem = pMenu->insertItem(tr("Deactivate"), this, SLOT(sDeactivate()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv);
+    menuItem = pMenu->addAction(tr("Deactivate"), this, SLOT(sDeactivate()));
+    menuItem->setEnabled(editPriv);
   }
   else
   {
-    menuItem = pMenu->insertItem(tr("Activate"), this, SLOT(sActivate()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv);
+    menuItem = pMenu->addAction(tr("Activate"), this, SLOT(sActivate()));
+    menuItem->setEnabled(editPriv);
   }
 }
 

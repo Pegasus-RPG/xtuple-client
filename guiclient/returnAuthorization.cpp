@@ -421,7 +421,7 @@ bool returnAuthorization::sSave(bool partial)
                             "indicating the G/L Sales Account number for the "
                             "charge. Please set the Misc. Charge amount to 0 "
                             "or select a Misc. Charge Sales Account." ) );
-    _returnAuthInformation->setCurrentPage(1);
+    _returnAuthInformation->setCurrentIndex(_returnAuthInformation->indexOf(_lineItemsPage));
     _miscChargeAccount->setFocus();
     return false;
   }
@@ -1699,8 +1699,9 @@ void returnAuthorization::sRefund()
 
   q.exec("BEGIN;");
 
-  bool _post = _disposition->currentIndex() == 0 && _timing->currentItem() == 0 &&
-                _creditBy->currentIndex() == 3;
+  bool _post = _disposition->currentIndex() == 0 &&
+               _timing->currentIndex() == 0 &&
+               _creditBy->currentIndex() == 3;
 
   q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
   q.bindValue(":rahead_id", _raheadid);
@@ -1803,46 +1804,43 @@ void returnAuthorization::sRefund()
 
 void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *selected)
 {
-  int menuItem;
-  menuItem = pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
+  QAction *menuItem;
+  menuItem = pMenu->addAction(tr("Edit Line..."), this, SLOT(sEdit()));
   if (((XTreeWidgetItem *)selected)->rawValue("raitem_status").toString() == "O")
-    menuItem = pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
+    menuItem = pMenu->addAction(tr("Close Line..."), this, SLOT(sAction()));
   if (((XTreeWidgetItem *)selected)->rawValue("raitem_status").toString() == "C")
-    menuItem = pMenu->insertItem(tr("Open Line..."), this, SLOT(sAction()), 0);
-  menuItem = pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
-  pMenu->insertSeparator();
+    menuItem = pMenu->addAction(tr("Open Line..."), this, SLOT(sAction()));
+  menuItem = pMenu->addAction(tr("Delete Line..."), this, SLOT(sDelete()));
+  pMenu->addSeparator();
 
   if (((XTreeWidgetItem *)selected)->id("oldcohead_number") > -1)
   {
-    pMenu->insertItem(tr("View Original Order..."), this, SLOT(sViewOrigOrder()), 0);
-    if(!_privileges->check("ViewSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    pMenu->addAction(tr("View Original Order..."), this, SLOT(sViewOrigOrder()));
+    menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
   }
   
-    pMenu->insertSeparator();
+  pMenu->addSeparator();
 
   if (((XTreeWidgetItem *)selected)->id("newcohead_number") > -1)
   {
-    menuItem = pMenu->insertItem(tr("Edit New Order..."), this, SLOT(sEditNewOrder()), 0);
-    if(!_privileges->check("MaintainSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-    pMenu->insertItem(tr("View New Order..."), this, SLOT(sViewNewOrder()), 0);
-    if(!_privileges->check("ViewSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->addAction(tr("Edit New Order..."), this, SLOT(sEditNewOrder()));
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
 
-    pMenu->insertSeparator();
+    pMenu->addAction(tr("View New Order..."), this, SLOT(sViewNewOrder()));
+    menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
 
-    menuItem = pMenu->insertItem(tr("Edit New Order Line..."), this, SLOT(sEditNewOrderLine()), 0);
-    if(!_privileges->check("MaintainSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-    pMenu->insertItem(tr("View New Order Line..."), this, SLOT(sViewNewOrderLine()), 0);
-    if(!_privileges->check("ViewSalesOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    pMenu->addSeparator();
+
+    menuItem = pMenu->addAction(tr("Edit New Order Line..."), this, SLOT(sEditNewOrderLine()));
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
+
+    pMenu->addAction(tr("View New Order Line..."), this, SLOT(sViewNewOrderLine()));
+    menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
   
-    pMenu->insertSeparator();
+    pMenu->addSeparator();
 
-    pMenu->insertItem(tr("New Order Shipment Status..."), this, SLOT(sShipmentStatus()), 0);
-    pMenu->insertItem(tr("New Order Shipments..."), this, SLOT(sShipment()), 0);
+    pMenu->addAction(tr("New Order Shipment Status..."), this, SLOT(sShipmentStatus()));
+    pMenu->addAction(tr("New Order Shipments..."), this, SLOT(sShipment()));
   
   }
 }

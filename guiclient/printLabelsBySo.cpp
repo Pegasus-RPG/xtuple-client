@@ -21,7 +21,6 @@ printLabelsBySo::printLabelsBySo(QWidget* parent, const char* name, bool modal, 
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_so, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
@@ -78,5 +77,5 @@ void printLabelsBySo::sPrint()
 
 void printLabelsBySo::sSetToMin(int pValue)
 {
-  _to->setMinValue(pValue);
+  _to->setMinimum(pValue);
 }

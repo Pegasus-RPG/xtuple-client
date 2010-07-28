@@ -326,7 +326,7 @@ void printChecks::sHandleBankAccount(int pBankaccntid)
   {
     _setCheckNumber = q.value("bankaccnt_nextchknum").toInt();
     _nextCheckNum->setText(q.value("bankaccnt_nextchknum").toString());
-    _numberOfChecks->setMaxValue(q.value("numofchecks").toInt());
+    _numberOfChecks->setMaximum(q.value("numofchecks").toInt());
     _numberOfChecks->setValue(q.value("numofchecks").toInt());
     _allrecips_eft_enabled = q.value("allrecip_eft_enabled").toBool();
     _somerecips_eft_enabled = q.value("somerecip_eft_enabled").toBool();

@@ -28,7 +28,6 @@
 
 #define cDelete 0x01
 #define cClose  0x02
-#define ORDERTYPE_COL	12
 
 purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -287,7 +286,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
         }
         else
         {
-          int vendid = q.value("itemsrc_vend_id").toInt();;
+          int vendid = q.value("itemsrc_vend_id").toInt();
           QString vendname = q.value("vend_name").toString();
 
           q.prepare( "SELECT pohead_id "
@@ -374,7 +373,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
               for(int i = 0; i < list.size(); i++)
               {
                 QWidget * w = list.at(i);
-                if(w->isA("purchaseOrder") && w != this)
+                if (strcmp(w->metaObject()->className(), "purchaseOrder") == 0 && w != this)
                 {
                   purchaseOrder *other = (purchaseOrder*)w;
                   if(_poheadid == other->_poheadid)
@@ -442,7 +441,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _freight->setEnabled(FALSE);
       _tax->setEnabled(FALSE);
       _vendaddrList->hide();
-      _purchaseOrderInformation->removePage(_quickEntryTab);
+      _purchaseOrderInformation->removeTab(_purchaseOrderInformation->indexOf(_quickEntryTab));
       _poCurrency->setEnabled(FALSE);
       _qeitemView->setEnabled(FALSE);
       _qesave->setEnabled(FALSE);
@@ -841,7 +840,7 @@ void purchaseOrder::sSave()
 
   if (_mode == cNew)
   {
-    _purchaseOrderInformation->setCurrentPage(0);
+    _purchaseOrderInformation->setCurrentIndex(0);
 
     _agent->setText(omfgThis->username());
     _terms->setId(-1);
@@ -1507,24 +1506,24 @@ void purchaseOrder::saveDetail()
 
 void purchaseOrder::sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected )
 {
-  int menuItem;
+  QAction *menuItem;
 
-  if (pSelected->text(ORDERTYPE_COL) == tr("SO") )
+  if (pSelected->text(_poitem->column("demand_type")) == tr("SO"))
   {
-    menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewSo()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewSalesOrders"));
+    menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sViewSo()));
+    menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
 
-    menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditSo()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainSalesOrders"));
+    menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEditSo()));
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
   }
 
-  else if (pSelected->text(ORDERTYPE_COL) == "WO")
+  else if (pSelected->text(_poitem->column("demand_type")) == "WO")
   {
-    menuItem = pMenu->insertItem(tr("View Work Order..."), this, SLOT(sViewWo()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewWorkOrders")); 
+    menuItem = pMenu->addAction(tr("View Work Order..."), this, SLOT(sViewWo()));
+    menuItem->setEnabled(_privileges->check("ViewWorkOrders")); 
 
-    menuItem = pMenu->insertItem(tr("Edit Work Order..."), this, SLOT(sEditWo()), 0);
-    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWorkOrders"));
+    menuItem = pMenu->addAction(tr("Edit Work Order..."), this, SLOT(sEditWo()));
+    menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
   }
 }
 

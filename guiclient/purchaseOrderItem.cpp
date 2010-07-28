@@ -10,9 +10,10 @@
 
 #include "purchaseOrderItem.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
+#include <QVariant>
+
 #include "taxDetail.h"
 #include "itemCharacteristicDelegate.h"
 #include "itemSourceSearch.h"
@@ -73,9 +74,10 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _received->setValidator(omfgThis->qtyVal());
   _invVendorUOMRatio->setValidator(omfgThis->ratioVal());
 
-  q.exec("SELECT DISTINCT 1,itemsrc_manuf_name FROM itemsrc;");
-  _manufName->populate(q);
-  _manufName->setCurrentText("");
+  q.exec("SELECT DISTINCT itemsrc_manuf_name FROM itemsrc ORDER BY 1;");
+  for (int i = 0; q.next(); i++)
+    _manufName->append(i, q.value("itemsrc_manuf_name").toString());
+  _manufName->setId(-1);
 
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -85,7 +87,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   }
   //If not Revision Control, hide controls
   if (!_metrics->boolean("RevControl"))
-   _tab->removePage(_tab->page(4));
+   _tab->removeTab(_tab->indexOf(_revision));
    
   adjustSize();
   
@@ -497,7 +499,13 @@ void purchaseOrderItem::populate()
       _uom->setText(q.value("poitem_vend_uom").toString());
       _invVendorUOMRatio->setDouble(q.value("poitem_invvenduomratio").toDouble());
       _invVendUOMRatio = q.value("poitem_invvenduomratio").toDouble();
-      _manufName->setCurrentText(q.value("poitem_manuf_name").toString());
+      _manufName->setText(q.value("poitem_manuf_name").toString());
+      if (_manufName->id() < 0)
+      {
+        _manufName->append(_manufName->count(),
+                           q.value("poitem_manuf_name").toString());
+        _manufName->setText(q.value("poitem_manuf_name").toString());
+      }
       _manufItemNumber->setText(q.value("poitem_manuf_item_number").toString());
       _manufItemDescrip->setText(q.value("poitem_manuf_item_descrip").toString());
     }
@@ -540,10 +548,10 @@ void purchaseOrderItem::populate()
         _orderMultiple = q.value("itemsrc_multordqty").toDouble();
         
         if(_manufName->currentText().isEmpty())
-          _manufName->setCurrentText(q.value("itemsrc_manuf_name").toString());
+          _manufName->setText(q.value("itemsrc_manuf_name").toString());
         if(_manufItemNumber->text().isEmpty())
           _manufItemNumber->setText(q.value("itemsrc_manuf_item_number").toString());
-        if(_manufItemDescrip->text().isEmpty())
+        if(_manufItemDescrip->toPlainText().isEmpty())
           _manufItemDescrip->setText(q.value("itemsrc_manuf_item_descrip").toString());
       }
 //  ToDo
@@ -758,7 +766,7 @@ void purchaseOrderItem::sSave()
   q.bindValue(":poitem_duedate", _dueDate->date());
   q.bindValue(":poitem_manuf_name", _manufName->currentText());
   q.bindValue(":poitem_manuf_item_number", _manufItemNumber->text());
-  q.bindValue(":poitem_manuf_item_descrip", _manufItemDescrip->text());
+  q.bindValue(":poitem_manuf_item_descrip", _manufItemDescrip->toPlainText());
   q.bindValue(":poitem_comments", _notes->toPlainText());
   if (_project->isValid())
     q.bindValue(":poitem_prj_id", _project->id());
@@ -911,7 +919,7 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
       _orderQtyMult->clear();
       _invVendorUOMRatio->setDouble(1.0);
       _earliestDate->setDate(omfgThis->dbDate());
-      _manufName->clear();
+      _manufName->setId(-1);
       _manufItemNumber->clear();
       _manufItemDescrip->clear();
   
@@ -980,7 +988,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
         _minimumOrder = src.value("itemsrc_minordqty").toDouble();
         _orderMultiple = src.value("itemsrc_multordqty").toDouble();
         
-        _manufName->setCurrentText(src.value("itemsrc_manuf_name").toString());
+        _manufName->setCode(src.value("itemsrc_manuf_name").toString());
         _manufItemNumber->setText(src.value("itemsrc_manuf_item_number").toString());
         _manufItemDescrip->setText(src.value("itemsrc_manuf_item_descrip").toString());
 
@@ -1008,7 +1016,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
       _orderQtyMult->clear();
       _invVendorUOMRatio->setDouble(1.0);
       _earliestDate->setDate(omfgThis->dbDate());
-      _manufName->clear();
+      _manufName->setId(-1);
       _manufItemNumber->clear();
       _manufItemDescrip->clear();
   

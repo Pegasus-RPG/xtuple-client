@@ -66,7 +66,7 @@ void printArOpenItem::sPrint()
   qry.exec();
   if (qry.first())
     doctype = qry.value("aropen_doctype").toString();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
