@@ -11,23 +11,18 @@
 #ifndef DSPFREIGHTPRICESBYCUSTOMER_H
 #define DSPFREIGHTPRICESBYCUSTOMER_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspFreightPricesByCustomer.h"
 
-class dspFreightPricesByCustomer : public XWidget, public Ui::dspFreightPricesByCustomer
+class dspFreightPricesByCustomer : public display, public Ui::dspFreightPricesByCustomer
 {
     Q_OBJECT
 
 public:
     dspFreightPricesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspFreightPricesByCustomer();
-    virtual bool setParams(ParameterList &);
 
-public slots:
-    virtual void sPrint();
-    virtual void sFillList();
+    virtual bool setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

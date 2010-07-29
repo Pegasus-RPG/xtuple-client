@@ -202,8 +202,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspCountTagEditList.ui                \
           dspCreditCardTransactions.ui          \
           dspFinancialReport.ui                         \
-          dspFreightPricesByCustomer.ui                 \
-          dspFreightPricesByCustomerType.ui             \
           dspGLSeries.ui                                \
           dspGLTransactions.ui                          \
           dspIncidentsByCRMAccount.ui                   \
@@ -842,8 +840,6 @@ HEADERS = ../common/format.h                    \
           dspCountTagEditList.h                 \
           dspCreditCardTransactions.h           \
           dspFinancialReport.h                          \
-          dspFreightPricesByCustomer.h                  \
-          dspFreightPricesByCustomerType.h              \
           dspGLSeries.h                                 \
           dspGLTransactions.h                           \
           dspIncidentsByCRMAccount.h                    \
@@ -1518,8 +1514,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspCountTagEditList.cpp               \
           dspCreditCardTransactions.cpp         \
           dspFinancialReport.cpp                        \
-          dspFreightPricesByCustomer.cpp                \
-          dspFreightPricesByCustomerType.cpp            \
           dspGLSeries.cpp                               \
           dspGLTransactions.cpp                         \
           dspIncidentsByCRMAccount.cpp                  \
