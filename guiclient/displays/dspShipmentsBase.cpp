@@ -22,7 +22,6 @@
 #include <openreports.h>
 
 #include "inputManager.h"
-#include "salesOrderList.h"
 #include "printShippingForm.h"
 
 dspShipmentsBase::dspShipmentsBase(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -34,15 +33,10 @@ dspShipmentsBase::dspShipmentsBase(QWidget* parent, const char* name, Qt::WFlags
   setUseAltId(true);
 
   connect(_shipment, SIGNAL(newId(int)), this, SLOT(sPopulateShipment(int)));
-  connect(_salesOrder, SIGNAL(newId(int)), this, SLOT(sPopulateSalesOrder(int)));
-  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
-  connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
+  connect(_salesOrder, SIGNAL(newId(int,QString)), this, SLOT(sPopulateSalesOrder(int)));
 
+  _salesOrder->setAllowedTypes(OrderLineEdit::Sales);
   _shipment->setType("SO");
-
-#ifndef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(25);
-#endif
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _salesOrder, SLOT(setId(int)));
 
@@ -117,20 +111,6 @@ void dspShipmentsBase::sPrintShippingForm()
   printShippingForm newdlg(this);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void dspShipmentsBase::sSalesOrderList()
-{
-  ParameterList params;
-  params.append("sohead_id", _salesOrder->id());
-  params.append("soType", (cSoOpen | cSoClosed));
-  
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int id = newdlg.exec();
-  if(id != QDialog::Rejected)
-    _salesOrder->setId(id);
 }
 
 void dspShipmentsBase::sPopulateSalesOrder(int pSoheadid)

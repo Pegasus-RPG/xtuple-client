@@ -12,6 +12,7 @@
 
 #define _orderCluster_h
 
+#include "parameter.h"
 #include "virtualCluster.h"
 
 class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
@@ -63,6 +64,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     virtual void          setAllowedStatuses(const OrderStatuses);
     virtual void          setAllowedType(const QString &);
     virtual void          setAllowedTypes(const OrderTypes);
+    virtual void          setCustId(int);
     virtual void          setId(const int, const QString & = QString::null);
 
   signals:
@@ -98,6 +100,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     QString        _toClause;
     QString        _statusClause;
     QString        _typeClause;
+    int         _custid;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(OrderLineEdit::OrderStatuses)
 Q_DECLARE_OPERATORS_FOR_FLAGS(OrderLineEdit::OrderTypes)
@@ -105,6 +108,9 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(OrderLineEdit::OrderTypes)
 class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
 {
   Q_OBJECT
+
+  Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible)
+  Q_PROPERTY(bool    descriptionVisible    READ descriptionVisible    WRITE setDescriptionVisible)
 
   public:
     OrderCluster(QWidget*, const char* = 0);
@@ -128,12 +134,19 @@ class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
     Q_INVOKABLE virtual QString                    to()                const;
     Q_INVOKABLE virtual QString                    type()              const;
 
+    virtual bool        nameVisible();
+    virtual void        setNameVisible(const bool p);
+
+    virtual bool        descriptionVisible();
+    virtual void        setDescriptionVisible(const bool p);
+
   public slots:
     virtual void        setAllowedStatuses(const OrderLineEdit::OrderStatuses);
     virtual void        setAllowedStatuses(const int);
     virtual void        setAllowedType(const QString &);
     virtual void        setAllowedTypes(const OrderLineEdit::OrderTypes);
     virtual void        setAllowedTypes(const int);
+    virtual void        setCustId(int);
     virtual void        setId(const int, const QString& = QString::null);
     virtual void        setFromSitePrivsEnforced(const bool p);
     virtual void        setToSitePrivsEnforced(const bool p);
@@ -148,6 +161,8 @@ class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
     QLabel        *_from;
     QLabel        *_toLit;
     QLabel        *_to;
+    bool           _nameVisible;
+    bool           _descripVisible;
     
 };
 

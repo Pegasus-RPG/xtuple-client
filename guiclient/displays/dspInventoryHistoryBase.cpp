@@ -23,7 +23,6 @@
 #include "pocluster.h"
 #include "purchaseOrderList.h"
 #include "salesOrderList.h"
-#include "socluster.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"

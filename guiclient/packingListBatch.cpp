@@ -23,7 +23,6 @@
 #include "printPackingList.h"
 #include "salesOrder.h"
 #include "salesOrderList.h"
-#include "socluster.h"
 #include "storedProcErrorLookup.h"
 #include "transferOrder.h"
 #include "transferOrderList.h"

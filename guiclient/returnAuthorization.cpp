@@ -38,6 +38,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 {
   setupUi(this);
 
+  _origso->setAllowedTypes(OrderLineEdit::Sales);
+  _newso->setAllowedTypes(OrderLineEdit::Sales);
   _shipTo->setNameVisible(false);
   _shipTo->setDescriptionVisible(false);
 
@@ -57,7 +59,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_taxzone, SIGNAL(newID(int)), this, SLOT(sTaxZoneChanged()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sRecvWhsChanged()));
   connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sShipWhsChanged()));
-  connect(_origso, SIGNAL(newId(int)), this, SLOT(sOrigSoChanged()));
+  connect(_origso, SIGNAL(newId(int,QString)), this, SLOT(sOrigSoChanged()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_shipToName, SIGNAL(textChanged(QString)), this, SLOT(sClearShiptoNumber()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
@@ -92,7 +94,6 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _saved = FALSE;
   _freightCache = 0;
 
-  _origso->setType((cSoReleased));
   _authNumber->setValidator(omfgThis->orderVal());
   _comments->setType(Comments::ReturnAuth);
 
@@ -629,12 +630,9 @@ void returnAuthorization::sOrigSoChanged()
           tr("This sales order is already linked to open return authorization %1.").arg(q.value("rahead_number").toString())  );
       _origso->setId(-1);
       if (_cust->isValid())
-      {
         _origso->setCustId(_cust->id());
-        _origso->setType((cSoReleased | cSoCustomer));
-      }
       else
-        _origso->setType(cSoReleased);
+        _origso->setCustId(-1);
       return;
     }
   }
@@ -720,7 +718,7 @@ void returnAuthorization::sOrigSoChanged()
         _shipToAddr->setEnabled(_ffShipto);
         _ignoreShiptoSignals = FALSE;
 
-        sSave(false);
+        sSave(true);
         sFillList();
       }
       else if (sohead.lastError().type() != QSqlError::NoError)
@@ -776,7 +774,6 @@ void returnAuthorization::sPopulateCustomerInfo()
     if (_cust->isValid())
     {
       _origso->setCustId(_cust->id());
-      _origso->setType((cSoReleased | cSoCustomer));
       
       XSqlQuery query;
       query.prepare( "SELECT custtype_code, cust_salesrep_id,"
@@ -835,7 +832,6 @@ void returnAuthorization::sPopulateCustomerInfo()
     else
     {
       _origso->setCustId(-1);
-      _origso->setType((cSoReleased));
       _salesRep->setCurrentIndex(-1);
       _taxzone->setId(-1);
       _custtaxzoneid = -1;
@@ -1234,7 +1230,7 @@ void returnAuthorization::populate()
     _custType->setText(rahead.value("custtype_code").toString());
     _ignoreSoSignals = TRUE;
     _origso->setId(rahead.value("rahead_orig_cohead_id").toInt());
-    _newso->setId(rahead.value("rahead_new_cohead_id").toInt());
+    _newso->setId(rahead.value("rahead_new_cohead_id").toInt(),"SO");
     _ignoreSoSignals = FALSE;
     _incident->setId(rahead.value("rahead_incdt_id").toInt());
     _project->setId(rahead.value("rahead_prj_id").toInt());

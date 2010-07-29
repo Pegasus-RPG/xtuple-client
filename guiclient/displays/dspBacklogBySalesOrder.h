@@ -26,7 +26,6 @@ public:
 
 public slots:
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
-    virtual void sSalesOrderList();
     virtual void sRunningAvailability();
     virtual void sFillList();
 

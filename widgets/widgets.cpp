@@ -66,8 +66,6 @@
 #include "plugins/shipmentclusterplugin.h"
 #include "plugins/shiptoclusterplugin.h"
 #include "plugins/shiptoeditplugin.h"
-#include "plugins/soclusterplugin.h"
-#include "plugins/solineeditplugin.h"
 #include "plugins/usernameclusterplugin.h"
 #include "plugins/usernamelineeditplugin.h"
 #include "plugins/vendorclusterplugin.h"
@@ -148,8 +146,6 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ShipmentClusterPlugin(this));
   m_plugins.append(new ShiptoClusterPlugin(this));
   m_plugins.append(new ShiptoEditPlugin(this));
-  m_plugins.append(new SoClusterPlugin(this));
-  m_plugins.append(new SoLineEditPlugin(this));
   m_plugins.append(new UsernameClusterPlugin(this));
   m_plugins.append(new UsernameLineEditPlugin(this));
   m_plugins.append(new VendorClusterPlugin(this));

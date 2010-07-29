@@ -303,8 +303,8 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
     // Inventory | Shipping | Forms | Shipping Labels
     { "menu",                            tr("Shipping &Labels"),  (char*)formsShipLabelsMenu,            shippingFormsMenu,   "true",               NULL, NULL, true, NULL },
-    { "sr.printShippingLabelsBySo",      tr("by &S/O #..."),      SLOT(sPrintShippingLabelsBySo()),      formsShipLabelsMenu, "ViewShipping",       NULL, NULL, true, NULL },
-    { "sr.printShippingLabelsByTo",      tr("by &T/O #..."),      SLOT(sPrintShippingLabelsByTo()),      formsShipLabelsMenu, "ViewTransferOrders", NULL, NULL, true, NULL },
+    { "sr.printShippingLabelsBySo",      tr("by &Sales Order..."),      SLOT(sPrintShippingLabelsBySo()),      formsShipLabelsMenu, "ViewShipping",       NULL, NULL, true, NULL },
+    { "sr.printShippingLabelsByTo",      tr("by &Transfer Order..."),      SLOT(sPrintShippingLabelsByTo()),      formsShipLabelsMenu, "ViewTransferOrders", NULL, NULL, true, NULL },
     { "sr.printShippingLabelsByInvoice", tr("by &Invoice..."),    SLOT(sPrintShippingLabelsByInvoice()), formsShipLabelsMenu, "ViewShipping",       NULL, NULL, true, NULL },
 
     // Inventory | Shipping | Reports

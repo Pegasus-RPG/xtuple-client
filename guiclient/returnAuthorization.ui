@@ -516,18 +516,15 @@ to be bound by its terms.</comment>
          <item>
           <layout class="QVBoxLayout">
            <item>
-            <widget class="SoCluster" name="_origso">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::StrongFocus</enum>
-             </property>
+            <widget class="OrderCluster" name="_origso">
              <property name="label">
               <string>Original Order #:</string>
+             </property>
+             <property name="nameVisible">
+              <bool>false</bool>
+             </property>
+             <property name="descriptionVisible">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -539,7 +536,7 @@ to be bound by its terms.</comment>
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>16</height>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -562,12 +559,15 @@ to be bound by its terms.</comment>
          <item>
           <layout class="QVBoxLayout">
            <item>
-            <widget class="SoCluster" name="_newso">
+            <widget class="OrderCluster" name="_newso">
              <property name="enabled">
               <bool>false</bool>
              </property>
              <property name="label">
               <string>New Order #:</string>
+             </property>
+             <property name="descriptionVisible">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -1453,6 +1453,11 @@ to be bound by its terms.</comment>
    <header>incidentcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>OrderCluster</class>
+   <extends>QWidget</extends>
+   <header>ordercluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ProjectCluster</class>
    <extends>QWidget</extends>
    <header>projectcluster.h</header>
@@ -1461,11 +1466,6 @@ to be bound by its terms.</comment>
    <class>ShiptoCluster</class>
    <extends>QWidget</extends>
    <header>shiptocluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SoCluster</class>
-   <extends>QWidget</extends>
-   <header>socluster.h</header>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
@@ -1510,6 +1510,7 @@ to be bound by its terms.</comment>
   <tabstop>_warehouse</tabstop>
   <tabstop>_shipWhs</tabstop>
   <tabstop>_origso</tabstop>
+  <tabstop>_newso</tabstop>
   <tabstop>_project</tabstop>
   <tabstop>_cust</tabstop>
   <tabstop>_copyToShipto</tabstop>

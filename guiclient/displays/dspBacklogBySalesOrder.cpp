@@ -16,7 +16,6 @@
 #include <QVariant>
 
 #include "inputManager.h"
-#include "salesOrderList.h"
 #include "dspRunningAvailability.h"
 
 dspBacklogBySalesOrder::dspBacklogBySalesOrder(QWidget* parent, const char*, Qt::WFlags fl)
@@ -29,12 +28,8 @@ dspBacklogBySalesOrder::dspBacklogBySalesOrder(QWidget* parent, const char*, Qt:
   setMetaSQLOptions("salesOrderItems", "detail");
   setUseAltId(true);
 
-  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
-  connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
-
-#ifndef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(25);
-#endif
+  _salesOrder->setAllowedTypes(OrderLineEdit::Sales);
+  _salesOrder->setAllowedStatuses(OrderLineEdit::Open);
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _salesOrder, SLOT(setId(int)));
 
@@ -71,20 +66,6 @@ bool dspBacklogBySalesOrder::setParams(ParameterList &params)
   params.append("cohead_id", _salesOrder->id()); // metasql
 
   return true;
-}
-
-void dspBacklogBySalesOrder::sSalesOrderList()
-{
-  ParameterList params;
-  params.append("sohead_id", _salesOrder->id());
-  params.append("soType", cSoOpen);
-
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int id = newdlg.exec();
-  if(id != QDialog::Rejected)
-    _salesOrder->setId(id);
 }
 
 void dspBacklogBySalesOrder::sRunningAvailability()

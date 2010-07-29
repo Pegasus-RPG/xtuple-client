@@ -20,7 +20,6 @@
 
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
-#include "socluster.h"
 #include "salesOrder.h"
 #include "salesOrderList.h"
 #include "quoteList.h"

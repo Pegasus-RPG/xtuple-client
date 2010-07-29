@@ -13,124 +13,78 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>625</width>
-    <height>93</height>
+    <width>582</width>
+    <height>108</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Inventory Availability by Sales Order</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_4">
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>5</number>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="_salesOrderLit">
+         <property name="text">
+          <string>Sales Order #:</string>
          </property>
-         <property name="margin">
-          <number>0</number>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <item>
-          <widget class="QLabel" name="_salesOrderLit">
-           <property name="text">
-            <string>Sales Order #:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy">
-            <cstring>_so</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_orderDateLit">
-           <property name="text">
-            <string>Order Date:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy">
-            <cstring>_orderDate</cstring>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item row="0" column="1">
+        <widget class="OrderCluster" name="_so">
+         <property name="label">
+          <string/>
+         </property>
+         <property name="nameVisible">
+          <bool>false</bool>
+         </property>
+         <property name="descriptionVisible">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="_orderDateLit">
+         <property name="text">
+          <string>Order Date:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>_orderDate</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="spacing">
-            <number>0</number>
+          <widget class="DLineEdit" name="_orderDate">
+           <property name="enabled">
+            <bool>false</bool>
            </property>
-           <item>
-            <widget class="SoLineEdit" name="_so">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>100</width>
-               <height>16777215</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_salesOrderList">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="autoDefault">
-              <bool>false</bool>
-             </property>
-             <property name="default">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="DLineEdit" name="_orderDate">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::MinimumExpanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>13</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::MinimumExpanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>13</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -151,7 +105,7 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item>
+   <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QHBoxLayout">
@@ -240,7 +194,7 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item>
+   <item row="0" column="2">
     <layout class="QVBoxLayout">
      <item>
       <widget class="XCheckBox" name="_onlyShowShortages">
@@ -278,7 +232,7 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item>
+   <item row="0" column="3">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -300,29 +254,23 @@ to be bound by its terms.</comment>
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
-   <class>SoLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>socluster.h</header>
+   <class>OrderCluster</class>
+   <extends>QWidget</extends>
+   <header>ordercluster.h</header>
   </customwidget>
   <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
   </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_salesOrderList</tabstop>
   <tabstop>_onlyShowShortages</tabstop>
   <tabstop>_useReservationNetting</tabstop>
   <tabstop>_showWoSupply</tabstop>
-  <tabstop>_so</tabstop>
   <tabstop>_orderDate</tabstop>
  </tabstops>
  <resources/>

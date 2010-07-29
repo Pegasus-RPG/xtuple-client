@@ -23,7 +23,7 @@ copySalesOrder::copySalesOrder(QWidget* parent, const char* name, bool modal, Qt
 
   _so->setAllowedTypes(OrderLineEdit::Sales);
 
-  connect(_so, SIGNAL(newId(int)), this, SLOT(sPopulateSoInfo(int)));
+  connect(_so, SIGNAL(newId(int,QString)), this, SLOT(sPopulateSoInfo(int)));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sCopy()));
 

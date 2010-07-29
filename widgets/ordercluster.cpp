@@ -49,6 +49,9 @@ OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
 
   setAllowedStatuses(OrderLineEdit::AnyStatus);
   setAllowedTypes(OrderLineEdit::AnyType);
+  setNameVisible(true);
+  setDescriptionVisible(true);
+  setLabel(tr("Order #:"));
 }
 
 OrderLineEdit::OrderStatuses OrderCluster::allowedStatuses() const
@@ -165,20 +168,44 @@ void OrderCluster::setAllowedType(const QString &p)
 void OrderCluster::setAllowedTypes(const OrderLineEdit::OrderTypes p)
 {
   ((OrderLineEdit*)_number)->setAllowedTypes(p);
-
-  switch (p)
-  {
-    case OrderLineEdit::Purchase:	setLabel(tr("P/O #:")); break;
-    case OrderLineEdit::Sales:		setLabel(tr("S/O #:")); break;
-    case OrderLineEdit::Transfer:	setLabel(tr("T/O #:")); break;
-    case OrderLineEdit::Return:		setLabel(tr("R/A #:")); break;
-    default:				setLabel(tr("Order #:")); break;
-  }
 }
 
 void OrderCluster::setAllowedTypes(const int p)
 {
   setAllowedTypes((OrderLineEdit::OrderTypes)p);
+}
+
+void OrderCluster::setCustId(int p)
+{
+  ((OrderLineEdit*)_number)->setCustId(p);
+}
+
+bool OrderCluster::descriptionVisible()
+{
+  return _descripVisible;
+}
+
+void OrderCluster::setDescriptionVisible(const bool p)
+{
+  _fromLit->setVisible(p);
+  _from->setVisible(p);
+  _toLit->setVisible(p);
+  _to->setVisible(p);
+
+  _descripVisible=p;
+}
+
+bool OrderCluster::nameVisible()
+{
+  return _nameVisible;
+}
+
+void OrderCluster::setNameVisible(const bool p)
+{
+  _name->setVisible(p);
+  _description->setVisible(p);
+
+  _nameVisible=p;
 }
 
 void OrderCluster::setId(const int pId, const QString &pType)
@@ -260,6 +287,7 @@ OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
 
   _toPrivs=false;
   _fromPrivs=false;
+  _custid = -1;
   
   setTitles(tr("Order"), tr("Orders"));
 
@@ -561,6 +589,15 @@ void OrderLineEdit::setAllowedTypes(const OrderTypes p)
   VirtualClusterLineEdit::setExtraClause(buildExtraClause());
 }
 
+void OrderLineEdit::setCustId(int pId)
+{
+  if (pId != -1)
+    setAllowedTypes(Sales);
+
+  _custid = pId;
+  setExtraClause(buildExtraClause());
+}
+
 void OrderLineEdit::setId(const int pId, const QString &pType)
 {
   if (pId == -1)
@@ -594,6 +631,13 @@ QString OrderLineEdit::buildExtraClause()
   QString tmpClause = clauses.join(" AND ");
   if (DEBUG) qDebug("buildExtraClause returning %s",
                     qPrintable(tmpClause));
+
+  if (_custid != -1 && !tmpClause.isEmpty())
+    tmpClause += " AND ";
+
+  if (_custid != -1)
+    tmpClause += QString(" orderhead_to_id=%1 ").arg(_custid);
+
   return tmpClause;
 }
 
@@ -686,8 +730,6 @@ OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
      ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->fromPrivsClause());
   if (! ((OrderLineEdit*)_parent)->toPrivsClause().isEmpty())
      ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->toPrivsClause());
-    
-  sFillList();
 }
 
 QString OrderList::type() const

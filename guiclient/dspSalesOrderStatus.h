@@ -28,11 +28,11 @@ public:
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
-    virtual void sSalesOrderList();
     virtual void sFillList( int pSoheadid );
 
 protected slots:
     virtual void languageChange();
+
 
 };
 

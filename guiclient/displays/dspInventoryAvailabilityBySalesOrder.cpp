@@ -23,7 +23,6 @@
 #include "inputManager.h"
 #include "purchaseOrder.h"
 #include "reserveSalesOrderItem.h"
-#include "salesOrderList.h"
 #include "storedProcErrorLookup.h"
 #include "workOrder.h"
 
@@ -38,12 +37,8 @@ dspInventoryAvailabilityBySalesOrder::dspInventoryAvailabilityBySalesOrder(QWidg
   setUseAltId(true);
   setAutoUpdateEnabled(true);
 
-  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSoList()));
-  connect(_so, SIGNAL(requestList()), this, SLOT(sSoList()));
-
-#ifndef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(25);
-#endif
+  _so->setAllowedTypes(OrderLineEdit::Sales);
+  _so->setAllowedStatuses(OrderLineEdit::Open);
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
 
@@ -93,23 +88,9 @@ enum SetResponse dspInventoryAvailabilityBySalesOrder::set(const ParameterList &
 
   param = pParams.value("sohead_id", &valid);
   if (valid)
-    _so->setId(param.toInt());
+    _so->setId(param.toInt(),"SO");
 
   return NoError;
-}
-
-void dspInventoryAvailabilityBySalesOrder::sSoList()
-{
-  ParameterList params;
-  params.append("sohead_id", _so->id());
-  params.append("soType", cSoOpen);
-  
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int id = newdlg.exec();
-  if(id != QDialog::Rejected)
-    _so->setId(id);
 }
 
 bool dspInventoryAvailabilityBySalesOrder::setParams(ParameterList &params)

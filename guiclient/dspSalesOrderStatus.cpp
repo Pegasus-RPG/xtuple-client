@@ -26,16 +26,10 @@ dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char* name, Qt::
 {
   setupUi(this);
 
-//  (void)statusBar();
+  _so->setAllowedTypes(OrderLineEdit::Sales);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_so, SIGNAL(newId(int)), this, SLOT(sFillList(int)));
-  connect(_soList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
-  connect(_so, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
-
-#ifndef Q_WS_MAC
-  _soList->setMaximumWidth(25);
-#endif
+  connect(_so, SIGNAL(newId(int,QString)), this, SLOT(sFillList(int)));
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
 
@@ -88,20 +82,6 @@ void dspSalesOrderStatus::sPrint()
     report.print();
   else
     report.reportError(this);
-}
-
-void dspSalesOrderStatus::sSalesOrderList()
-{
-  ParameterList params;
-  params.append("sohead_id", _so->id());
-  params.append("soType", (cSoOpen | cSoClosed));
-  
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  int id = newdlg.exec();
-  if(id != QDialog::Rejected)
-    _so->setId(id);
 }
 
 void dspSalesOrderStatus::sFillList(int pSoheadid)

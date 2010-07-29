@@ -50,5 +50,7 @@ bool dspExpediteExceptionsByPlannerCode::setParams(ParameterList & params)
   params.append("startProduction", tr("Start Production"));
   params.append("expediteProduction", tr("Expedite Production"));
   params.append("days", _days->value());
+
+  return true;
 }
 
