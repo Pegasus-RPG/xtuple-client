@@ -62,6 +62,11 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspItemSourcesByItem.ui \
            displays/dspItemSourcesByVendor.ui \
            displays/dspJobCosting.ui \
+           displays/dspMaterialUsageVarianceByBOMItem.ui \
+           displays/dspMaterialUsageVarianceByComponentItem.ui \
+           displays/dspMaterialUsageVarianceByItem.ui \
+           displays/dspMaterialUsageVarianceByWarehouse.ui \
+           displays/dspMaterialUsageVarianceByWorkOrder.ui \
            displays/dspPendingBOMChanges.ui \
            displays/dspQOHByItem.ui \
            displays/dspQOHByLocation.ui \
@@ -149,6 +154,11 @@ HEADERS += displays/dspAllocations.h \
            displays/dspItemSourcesByVendor.h \
            displays/dspItemsWithoutItemSources.h \
            displays/dspJobCosting.h \
+           displays/dspMaterialUsageVarianceByBOMItem.h \
+           displays/dspMaterialUsageVarianceByComponentItem.h \
+           displays/dspMaterialUsageVarianceByItem.h \
+           displays/dspMaterialUsageVarianceByWarehouse.h \
+           displays/dspMaterialUsageVarianceByWorkOrder.h \
            displays/dspPendingBOMChanges.h \
            displays/dspQOHByItem.h \
            displays/dspQOHByLocation.h \
@@ -244,6 +254,11 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspItemSourcesByVendor.cpp \
            displays/dspItemsWithoutItemSources.cpp \
            displays/dspJobCosting.cpp \
+           displays/dspMaterialUsageVarianceByBOMItem.cpp \
+           displays/dspMaterialUsageVarianceByComponentItem.cpp \
+           displays/dspMaterialUsageVarianceByItem.cpp \
+           displays/dspMaterialUsageVarianceByWarehouse.cpp \
+           displays/dspMaterialUsageVarianceByWorkOrder.cpp \
            displays/dspPendingBOMChanges.cpp \
            displays/dspQOHByItem.cpp \
            displays/dspQOHByLocation.cpp \
