@@ -1320,7 +1320,7 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
   if (screenq.first())
   {
     XUiLoader loader;
-    QByteArray ba = screenq.value("uiform_source").toByteArray();
+    QByteArray ba = screenq.value("uiform_source").toString().toUtf8();
     QBuffer uiFile(&ba);
     if (!uiFile.open(QIODevice::ReadOnly))
     {
@@ -1330,6 +1330,13 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowMod
       return 0;
     }
     QWidget *ui = loader.load(&uiFile);
+    if (! ui)
+    {
+      QMessageBox::critical(0, tr("Could not load UI"),
+                            tr("<p>There was an error creating a window from "
+                               "the UI Form. It may be empty or invalid."));
+      return 0;
+    }
     QSize size = ui->size();
     uiFile.close();
 

@@ -1285,8 +1285,8 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
     if(!privname.isEmpty())
       allowed = "Custom"+privname;
 
-    char *cmdname = QString("custom." + qry.value("cmd_name").toString()).toAscii().data();
-    Action *action = new Action(this, cmdname, qry.value("cmd_title").toString(),
+    QString cmdname = QString("custom." + qry.value("cmd_name").toString());
+    Action *action = new Action(this, cmdname.toAscii().data(), qry.value("cmd_title").toString(),
                                 this, SLOT(sCustomCommand()), customMenu, allowed);
 
     _customCommands.insert(action, qry.value("cmd_id").toInt());

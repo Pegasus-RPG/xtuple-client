@@ -304,7 +304,7 @@ bool xTupleDesignerActions::sSaveToDB()
     return false;
   }
 
-  _designer->setSource(source);
+  _designer->setSource(source); // otherwise the uiform window has the old source
   _designer->formwindow()->setDirty(false);
   return true;
 }

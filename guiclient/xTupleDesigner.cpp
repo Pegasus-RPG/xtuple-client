@@ -326,7 +326,7 @@ void xTupleDesigner::setSource(QString psrc)
   // TODO: memory leak?
   _source = new QBuffer(new QByteArray(psrc.toUtf8()), this);
   _source->open(QIODevice::ReadOnly | QIODevice::Text);
-  _formwindow->setContents(_source);
+  _formwindow->setContents(_source);  // crashes HERE in QMetaObject::changeGuard ()
   _source->reset();
   _formwindow->setFileName("");
   emit nameChanged(name());
