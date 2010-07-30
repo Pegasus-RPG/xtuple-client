@@ -12,25 +12,25 @@
 #define DSPINVALIDBILLSOFMATERIALS_H
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspInvalidBillsOfMaterials.h"
 
-class dspInvalidBillsOfMaterials : public XWidget, public Ui::dspInvalidBillsOfMaterials
+class dspInvalidBillsOfMaterials : public display, public Ui::dspInvalidBillsOfMaterials
 {
     Q_OBJECT
 
 public:
     dspInvalidBillsOfMaterials(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInvalidBillsOfMaterials();
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sEditItem();
     virtual void sCreateItemSite();
     virtual void sEditItemSite();
     virtual void sHandleUpdate();
-    virtual void sFillList();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int);
 
 protected slots:
     virtual void languageChange();

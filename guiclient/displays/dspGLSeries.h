@@ -8,32 +8,34 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPITEMSOURCESBYITEM_H
-#define DSPITEMSOURCESBYITEM_H
+#ifndef DSPGLSERIES_H
+#define DSPGLSERIES_H
 
-#include "xwidget.h"
+#include "guiclient.h"
+#include "display.h"
 
-#include "ui_dspItemSourcesByItem.h"
+#include "ui_dspGLSeries.h"
 
-class dspItemSourcesByItem : public XWidget, public Ui::dspItemSourcesByItem
+class dspGLSeries : public display, public Ui::dspGLSeries
 {
     Q_OBJECT
 
 public:
-    dspItemSourcesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemSourcesByItem();
+    dspGLSeries(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * menuThis );
+    virtual enum SetResponse set(const ParameterList &);
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
+    virtual void sReverse();
     virtual void sEdit();
-    virtual void sBuyCard();
-    virtual void sViewPOs();
-    virtual void sFillList();
+    virtual void sDelete(bool edited = false);
+    virtual void sPost();
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPITEMSOURCESBYITEM_H
+#endif // DSPGLSERIES_H

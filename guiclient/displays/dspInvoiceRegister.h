@@ -12,28 +12,25 @@
 #define DSPINVOICEREGISTER_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspInvoiceRegister.h"
 
-class dspInvoiceRegister : public XWidget, public Ui::dspInvoiceRegister
+class dspInvoiceRegister : public display, public Ui::dspInvoiceRegister
 {
     Q_OBJECT
 
 public:
     dspInvoiceRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspInvoiceRegister();
 
     virtual bool setParams(ParameterList &params);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPopulateMenu( QMenu * );
-    virtual void sPrint();
-    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
     virtual void sViewCreditMemo();
     virtual void sViewInvoice();
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

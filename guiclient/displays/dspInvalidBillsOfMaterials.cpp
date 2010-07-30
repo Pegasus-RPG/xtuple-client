@@ -23,48 +23,46 @@
 #include "item.h"
 #include "itemSite.h"
 
-dspInvalidBillsOfMaterials::dspInvalidBillsOfMaterials(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspInvalidBillsOfMaterials::dspInvalidBillsOfMaterials(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspInvalidBillsOfMaterials", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Bills of Materials without Component Item Sites"));
+  setListLabel(tr("Invalid Bill of Material Items"));
+  setMetaSQLOptions("invalidBillsofMaterials", "detail");
+  setUseAltId(true);
 
-  connect(_exceptions, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_query,  SIGNAL(clicked()),     this, SLOT(sFillList()));
   connect(_update, SIGNAL(toggled(bool)), this, SLOT(sHandleUpdate()));
 
-  _exceptions->addColumn("componentItemid",                 0, Qt::AlignCenter,true, "pitem_id");
-  _exceptions->addColumn("componentSiteId",                 0, Qt::AlignCenter,true, "citem_id");
-  _exceptions->addColumn("warehousId",                      0, Qt::AlignCenter,true, "warehous_id");
-  _exceptions->addColumn(tr("Site"),               _whsColumn, Qt::AlignCenter,true, "warehous_code");
-  _exceptions->addColumn(tr("Parent Item #"),     _itemColumn, Qt::AlignLeft,  true, "parentitem");
-  _exceptions->addColumn(tr("Component Item #"),  _itemColumn, Qt::AlignLeft,  true, "componentitem");
-  _exceptions->addColumn(tr("Component Item Description"), -1, Qt::AlignLeft,  true, "descrip");
+  list()->addColumn("componentItemid",                 0, Qt::AlignCenter,true, "pitem_id");
+  list()->addColumn("componentSiteId",                 0, Qt::AlignCenter,true, "citem_id");
+  list()->addColumn("warehousId",                      0, Qt::AlignCenter,true, "warehous_id");
+  list()->addColumn(tr("Site"),               _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  list()->addColumn(tr("Parent Item #"),     _itemColumn, Qt::AlignLeft,  true, "parentitem");
+  list()->addColumn(tr("Component Item #"),  _itemColumn, Qt::AlignLeft,  true, "componentitem");
+  list()->addColumn(tr("Component Item Description"), -1, Qt::AlignLeft,  true, "descrip");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _update->setChecked(true);
 }
 
-dspInvalidBillsOfMaterials::~dspInvalidBillsOfMaterials()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspInvalidBillsOfMaterials::languageChange()
 {
-    retranslateUi(this);
+  display::languageChange();
+  retranslateUi(this);
 }
 
 void dspInvalidBillsOfMaterials::sEditItem()
 {
-  item::editItem(_exceptions->altId());
+  item::editItem(list()->altId());
 }
 
 void dspInvalidBillsOfMaterials::sCreateItemSite()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("item_id",     _exceptions->currentItem()->rawValue("citem_id").toInt());
-  params.append("warehous_id", _exceptions->currentItem()->rawValue("warehous_id").toInt());
+  params.append("item_id",     list()->currentItem()->rawValue("citem_id").toInt());
+  params.append("warehous_id", list()->currentItem()->rawValue("warehous_id").toInt());
   
   itemSite newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -77,7 +75,7 @@ void dspInvalidBillsOfMaterials::sEditItemSite()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("itemsite_id", _exceptions->id());
+  params.append("itemsite_id", list()->id());
   
   itemSite newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -98,25 +96,16 @@ void dspInvalidBillsOfMaterials::sHandleUpdate()
   }
 }
 
-void dspInvalidBillsOfMaterials::sFillList()
+bool dspInvalidBillsOfMaterials::setParams(ParameterList &params)
 {
-  MetaSQLQuery mql = mqlLoad("invalidBillsofMaterials", "detail");
-  ParameterList params;
 
   if (_warehouse->isSelected())
     params.append("warehous_id", _warehouse->id());
 
-  q = mql.toQuery(params);
-
-  _exceptions->populate(q, TRUE);                               
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  return true;
 }
 
-void dspInvalidBillsOfMaterials::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspInvalidBillsOfMaterials::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

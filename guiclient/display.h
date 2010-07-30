@@ -43,8 +43,8 @@ public slots:
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 
 protected:
-    QWidget * optionsWidget();
-    XTreeWidget * list();
+    Q_INVOKABLE QWidget * optionsWidget();
+    Q_INVOKABLE XTreeWidget * list();
 
 protected slots:
     virtual void languageChange();

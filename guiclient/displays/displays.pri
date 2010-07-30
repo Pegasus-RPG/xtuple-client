@@ -38,7 +38,10 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspFreightPricesByCustomer.ui \
            displays/dspFreightPricesByCustomerType.ui \
            displays/dspFrozenItemSites.ui \
+           displays/dspGLSeries.ui \
+           displays/dspIncidentsByCRMAccount.ui \
            displays/dspIndentedWhereUsed.ui \
+           displays/dspInvalidBillsOfMaterials.ui \
            displays/dspInventoryAvailabilityByCustomerType.ui \
            displays/dspInventoryAvailabilityByItem.ui \
            displays/dspInventoryAvailabilityByParameterList.ui \
@@ -47,6 +50,7 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspInventoryAvailabilityByWorkOrder.ui \
            displays/dspInventoryHistoryBase.ui \
            displays/dspInventoryLocator.ui \
+           displays/dspInvoiceRegister.ui \
            displays/dspItemCostDetail.ui \
            displays/dspItemCostHistory.ui \
            displays/dspItemCostSummary.ui \
@@ -55,6 +59,9 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspItemsByParameter.ui \
            displays/dspItemSitesByItem.ui \
            displays/dspItemSitesByParameterList.ui \
+           displays/dspItemSourcesByItem.ui \
+           displays/dspItemSourcesByVendor.ui \
+           displays/dspJobCosting.ui \
            displays/dspPendingBOMChanges.ui \
            displays/dspQOHByItem.ui \
            displays/dspQOHByLocation.ui \
@@ -111,8 +118,11 @@ HEADERS += displays/dspAllocations.h \
            displays/dspFreightPricesByCustomer.h \
            displays/dspFreightPricesByCustomerType.h \
            displays/dspFrozenItemSites.h \
+           displays/dspGLSeries.h \
+           displays/dspIncidentsByCRMAccount.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
+           displays/dspInvalidBillsOfMaterials.h \
            displays/dspInventoryAvailabilityByCustomerType.h \
            displays/dspInventoryAvailabilityByItem.h \
            displays/dspInventoryAvailabilityByParameterList.h \
@@ -124,6 +134,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspInventoryHistoryByOrderNumber.h \
            displays/dspInventoryHistoryByParameterList.h \
            displays/dspInventoryLocator.h \
+           displays/dspInvoiceRegister.h \
            displays/dspItemCostDetail.h \
            displays/dspItemCostHistory.h \
            displays/dspItemCostSummary.h \
@@ -134,7 +145,10 @@ HEADERS += displays/dspAllocations.h \
            displays/dspItemsByProductCategory.h \
            displays/dspItemSitesByItem.h \
            displays/dspItemSitesByParameterList.h \
+           displays/dspItemSourcesByItem.h \
+           displays/dspItemSourcesByVendor.h \
            displays/dspItemsWithoutItemSources.h \
+           displays/dspJobCosting.h \
            displays/dspPendingBOMChanges.h \
            displays/dspQOHByItem.h \
            displays/dspQOHByLocation.h \
@@ -199,8 +213,11 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspFreightPricesByCustomer.cpp \
            displays/dspFreightPricesByCustomerType.cpp \
            displays/dspFrozenItemSites.cpp \
+           displays/dspGLSeries.cpp \
+           displays/dspIncidentsByCRMAccount.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \
+           displays/dspInvalidBillsOfMaterials.cpp \
            displays/dspInventoryAvailabilityByCustomerType.cpp \
            displays/dspInventoryAvailabilityByItem.cpp \
            displays/dspInventoryAvailabilityByParameterList.cpp \
@@ -212,6 +229,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspInventoryHistoryByOrderNumber.cpp \
            displays/dspInventoryHistoryByParameterList.cpp \
            displays/dspInventoryLocator.cpp \
+           displays/dspInvoiceRegister.cpp \
            displays/dspItemCostDetail.cpp \
            displays/dspItemCostHistory.cpp \
            displays/dspItemCostSummary.cpp \
@@ -222,7 +240,10 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspItemsByProductCategory.cpp \
            displays/dspItemSitesByItem.cpp \
            displays/dspItemSitesByParameterList.cpp \
+           displays/dspItemSourcesByItem.cpp \
+           displays/dspItemSourcesByVendor.cpp \
            displays/dspItemsWithoutItemSources.cpp \
+           displays/dspJobCosting.cpp \
            displays/dspPendingBOMChanges.cpp \
            displays/dspQOHByItem.cpp \
            displays/dspQOHByLocation.cpp \

@@ -12,26 +12,21 @@
 #define DSPJOBCOSTING_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspJobCosting.h"
 
-class dspJobCosting : public XWidget, public Ui::dspJobCosting
+class dspJobCosting : public display, public Ui::dspJobCosting
 {
     Q_OBJECT
 
 public:
     dspJobCosting(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspJobCosting();
 
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sFillList();
-    virtual void sFillList( int, bool );
 
 protected slots:
     virtual void languageChange();

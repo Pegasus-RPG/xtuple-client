@@ -16,40 +16,33 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include "mqlutil.h"
-#include <openreports.h>
-
 #include "arOpenItem.h"
 #include "creditMemo.h"
 #include "dspInvoiceInformation.h"
 
-dspInvoiceRegister::dspInvoiceRegister(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspInvoiceRegister::dspInvoiceRegister(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspInvoiceRegister", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Invoice Register"));
+  setListLabel(tr("Transactions"));
+  setReportName("InvoiceRegister");
+  setMetaSQLOptions("invoiceRegister", "detail");
+  setUseAltId(true);
 
-  connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  _gltrans->addColumn(tr("Date"),     _dateColumn, Qt::AlignCenter,true, "transdate");
-  _gltrans->addColumn(tr("Source"),  _orderColumn, Qt::AlignCenter,true, "gltrans_source");
-  _gltrans->addColumn(tr("Doc Type"),_orderColumn, Qt::AlignLeft,  true, "doctype");
-  _gltrans->addColumn(tr("Doc. #"),  _orderColumn, Qt::AlignCenter,true, "gltrans_docnumber");
-  _gltrans->addColumn(tr("Reference"),         -1, Qt::AlignLeft,  true, "notes");
-  _gltrans->addColumn(tr("Account"),  _itemColumn, Qt::AlignLeft,  true, "account");
-  _gltrans->addColumn(tr("Debit"),   _moneyColumn, Qt::AlignRight, true, "debit");
-  _gltrans->addColumn(tr("Credit"),  _moneyColumn, Qt::AlignRight, true, "credit");
-}
-
-dspInvoiceRegister::~dspInvoiceRegister()
-{
-  // no need to delete child widgets, Qt does it all for us
+  list()->addColumn(tr("Date"),     _dateColumn, Qt::AlignCenter,true, "transdate");
+  list()->addColumn(tr("Source"),  _orderColumn, Qt::AlignCenter,true, "gltrans_source");
+  list()->addColumn(tr("Doc Type"),_orderColumn, Qt::AlignLeft,  true, "doctype");
+  list()->addColumn(tr("Doc. #"),  _orderColumn, Qt::AlignCenter,true, "gltrans_docnumber");
+  list()->addColumn(tr("Reference"),         -1, Qt::AlignLeft,  true, "notes");
+  list()->addColumn(tr("Account"),  _itemColumn, Qt::AlignLeft,  true, "account");
+  list()->addColumn(tr("Debit"),   _moneyColumn, Qt::AlignRight, true, "debit");
+  list()->addColumn(tr("Credit"),  _moneyColumn, Qt::AlignRight, true, "credit");
 }
 
 void dspInvoiceRegister::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -103,11 +96,11 @@ enum SetResponse dspInvoiceRegister::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspInvoiceRegister::sPopulateMenu(QMenu *pMenu)
+void dspInvoiceRegister::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if (_gltrans->altId() == 1)
+  if (list()->altId() == 1)
   {
     menuItem = pMenu->addAction(tr("View Invoice..."), this, SLOT(sViewInvoice()));
     if (! _privileges->check("MaintainMiscInvoices") &&
@@ -115,21 +108,21 @@ void dspInvoiceRegister::sPopulateMenu(QMenu *pMenu)
       menuItem->setEnabled(false);
   }
 
-  else if (_gltrans->altId() == 2)
+  else if (list()->altId() == 2)
   {
     menuItem = pMenu->addAction(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
         ! _privileges->check("ViewARMemos"))
       menuItem->setEnabled(false);
   }
-  else if (_gltrans->altId() == 3)
+  else if (list()->altId() == 3)
   {
     menuItem = pMenu->addAction(tr("View Debit Memo..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
         ! _privileges->check("ViewARMemos"))
       menuItem->setEnabled(false);
   }
-  else if (_gltrans->altId() == 4)
+  else if (list()->altId() == 4)
   {
     menuItem = pMenu->addAction(tr("View Customer Deposit..."), this, SLOT(sViewCreditMemo()));
     if (! _privileges->check("MaintainARMemos") &&
@@ -152,15 +145,15 @@ void dspInvoiceRegister::sViewCreditMemo()
             "WHERE ((aropen_docnumber=:docnum)"
             "  AND  (aropen_doctype=:doctype)"
             ") ORDER BY type LIMIT 1;");
-  q.bindValue(":docnum", _gltrans->currentItem()->text(3));
+  q.bindValue(":docnum", list()->currentItem()->text(3));
   
-  if(_gltrans->altId()==1)
+  if(list()->altId()==1)
     q.bindValue(":doctype", "I");
-  else if(_gltrans->altId()==2)
+  else if(list()->altId()==2)
     q.bindValue(":doctype", "C");
-  else if(_gltrans->altId()==3)
+  else if(list()->altId()==3)
     q.bindValue(":doctype", "D");
-  else if(_gltrans->altId()==4)
+  else if(list()->altId()==4)
     q.bindValue(":doctype", "R");
   q.exec();
   if (q.first())
@@ -187,18 +180,18 @@ void dspInvoiceRegister::sViewCreditMemo()
   }
   else
   {
-    if (_gltrans->altId() == 2)
+    if (list()->altId() == 2)
       QMessageBox::information(this, tr("Credit Memo Not Found"),
                                tr("<p>The Credit Memo #%1 could not be found.")
-                               .arg(_gltrans->currentItem()->text(3)));
-    else if (_gltrans->altId() == 3)
+                               .arg(list()->currentItem()->text(3)));
+    else if (list()->altId() == 3)
       QMessageBox::information(this, tr("Debit Memo Not Found"),
                                tr("<p>The Debit Memo #%1 could not be found.")
-                               .arg(_gltrans->currentItem()->text(3)));
+                               .arg(list()->currentItem()->text(3)));
     else
       QMessageBox::information(this, tr("Document Not Found"),
                                tr("<p>The Document #%1 could not be found.")
-                               .arg(_gltrans->currentItem()->text(3)));
+                               .arg(list()->currentItem()->text(3)));
     return;
   }
 }
@@ -206,7 +199,7 @@ void dspInvoiceRegister::sViewCreditMemo()
 void dspInvoiceRegister::sViewInvoice()
 {
   ParameterList params;
-  params.append("invoiceNumber", _gltrans->currentItem()->text(3));
+  params.append("invoiceNumber", list()->currentItem()->text(3));
 
   dspInvoiceInformation* newdlg = new dspInvoiceInformation();
   newdlg->set(params);
@@ -235,41 +228,22 @@ bool dspInvoiceRegister::setParams(ParameterList &params)
   return true;
 }
 
-void dspInvoiceRegister::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  orReport report("InvoiceRegister", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
 void dspInvoiceRegister::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad("invoiceRegister", "detail");
-
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  q = mql.toQuery(params);
-  _gltrans->populate(q, true);
-  _gltrans->expandAll();
+  display::sFillList();
+  list()->expandAll();
 
   // calculate subtotals and grand total for debit and credit columns and add rows for them
   double debittotal = 0.0;
   double credittotal = 0.0;
-  for (int i = 0; i < _gltrans->topLevelItemCount(); i++)
+  for (int i = 0; i < list()->topLevelItemCount(); i++)
   {
     double debitsum = 0.0;
     double creditsum = 0.0;
     XTreeWidgetItem *item = 0;
-    for (int j = 0; j < _gltrans->topLevelItem(i)->childCount(); j++)
+    for (int j = 0; j < list()->topLevelItem(i)->childCount(); j++)
     {
-      item = _gltrans->topLevelItem(i)->child(j);
+      item = list()->topLevelItem(i)->child(j);
 //      qDebug("in loop @ %d %p", j, item);
       if (item)
       {
@@ -282,12 +256,12 @@ void dspInvoiceRegister::sFillList()
     if (item)
     {
 //      qDebug("adding subtotal %p", item);
-      item = new XTreeWidgetItem(_gltrans->topLevelItem(i), -1, -1, tr("Subtotal"));
-      item->setData(_gltrans->column("debit"),  Qt::EditRole, formatMoney(debitsum));
-      item->setData(_gltrans->column("credit"), Qt::EditRole, formatMoney(creditsum));
+      item = new XTreeWidgetItem(list()->topLevelItem(i), -1, -1, tr("Subtotal"));
+      item->setData(list()->column("debit"),  Qt::EditRole, formatMoney(debitsum));
+      item->setData(list()->column("credit"), Qt::EditRole, formatMoney(creditsum));
     }
   }
-  XTreeWidgetItem *item = new XTreeWidgetItem(_gltrans, -1, -1, tr("Total"));
-  item->setData(_gltrans->column("debit"),  Qt::EditRole, formatMoney(debittotal));
-  item->setData(_gltrans->column("credit"), Qt::EditRole, formatMoney(credittotal));
+  XTreeWidgetItem *item = new XTreeWidgetItem(list(), -1, -1, tr("Total"));
+  item->setData(list()->column("debit"),  Qt::EditRole, formatMoney(debittotal));
+  item->setData(list()->column("credit"), Qt::EditRole, formatMoney(credittotal));
 }

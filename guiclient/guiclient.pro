@@ -202,15 +202,8 @@ FORMS =   absoluteCalendarItem.ui               \
           dspCountTagEditList.ui                \
           dspCreditCardTransactions.ui          \
           dspFinancialReport.ui                         \
-          dspGLSeries.ui                                \
           dspGLTransactions.ui                          \
-          dspIncidentsByCRMAccount.ui                   \
-          dspInvalidBillsOfMaterials.ui                 \
           dspInvoiceInformation.ui                      \
-          dspInvoiceRegister.ui                         \
-          dspItemSourcesByItem.ui                       \
-          dspItemSourcesByVendor.ui                     \
-          dspJobCosting.ui                              \
           dspMRPDetail.ui                               \
           dspMaterialUsageVarianceByBOMItem.ui          \
           dspMaterialUsageVarianceByComponentItem.ui    \
@@ -840,15 +833,8 @@ HEADERS = ../common/format.h                    \
           dspCountTagEditList.h                 \
           dspCreditCardTransactions.h           \
           dspFinancialReport.h                          \
-          dspGLSeries.h                                 \
           dspGLTransactions.h                           \
-          dspIncidentsByCRMAccount.h                    \
-          dspInvalidBillsOfMaterials.h                  \
           dspInvoiceInformation.h                       \
-          dspInvoiceRegister.h                          \
-          dspItemSourcesByItem.h                        \
-          dspItemSourcesByVendor.h                      \
-          dspJobCosting.h                               \
           dspMRPDetail.h                                \
           dspMaterialUsageVarianceByBOMItem.h           \
           dspMaterialUsageVarianceByComponentItem.h     \
@@ -1514,15 +1500,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspCountTagEditList.cpp               \
           dspCreditCardTransactions.cpp         \
           dspFinancialReport.cpp                        \
-          dspGLSeries.cpp                               \
           dspGLTransactions.cpp                         \
-          dspIncidentsByCRMAccount.cpp                  \
-          dspInvalidBillsOfMaterials.cpp                \
           dspInvoiceInformation.cpp                     \
-          dspInvoiceRegister.cpp                        \
-          dspItemSourcesByItem.cpp                      \
-          dspItemSourcesByVendor.cpp                    \
-          dspJobCosting.cpp                             \
           dspMRPDetail.cpp                              \
           dspMaterialUsageVarianceByBOMItem.cpp         \
           dspMaterialUsageVarianceByComponentItem.cpp   \

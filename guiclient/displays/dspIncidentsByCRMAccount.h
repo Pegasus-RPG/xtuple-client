@@ -8,37 +8,34 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPGLSERIES_H
-#define DSPGLSERIES_H
+#ifndef DSPINCIDENTSBYCRMACCOUNT_H
+#define DSPINCIDENTSBYCRMACCOUNT_H
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspGLSeries.h"
+#include "ui_dspIncidentsByCRMAccount.h"
 
-class dspGLSeries : public XWidget, public Ui::dspGLSeries
+class dspIncidentsByCRMAccount : public display, public Ui::dspIncidentsByCRMAccount
 {
     Q_OBJECT
 
 public:
-    dspGLSeries(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspGLSeries();
+    dspIncidentsByCRMAccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set(const ParameterList &);
-    virtual void sPopulateMenu( QMenu * );
-    virtual void sPrint();
-    virtual void sFillList();
-    virtual void sReverse();
-    virtual void sEdit();
-    virtual void sDelete(bool edited = false);
-    virtual void sPost();
+    virtual void sEditCRMAccount();
+    virtual void sEditIncident();
+    virtual void sEditTodoItem();
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
+    virtual void sViewCRMAccount();
+    virtual void sViewIncident();
+    virtual void sViewTodoItem();
 
 protected slots:
     virtual void languageChange();
-
 };
-
-#endif // DSPGLSERIES_H
+#endif // DSPINCIDENTSBYCRMACCOUNT_H

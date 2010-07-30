@@ -18,42 +18,37 @@
 #include <QVariant>
 
 #include <metasql.h>
-#include <openreports.h>
-#include <parameter.h>
 #include "mqlutil.h"
 
 #include "reverseGLSeries.h"
 
-dspGLSeries::dspGLSeries(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspGLSeries::dspGLSeries(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspGLSeries", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Journal Series"));
+  setListLabel(tr("Journal Transactions"));
+  setReportName("GLSeries");
+  setMetaSQLOptions("glseries", "detail");
+  setUseAltId(true);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  _gltrans->addColumn(tr("Date"),      _dateColumn, Qt::AlignCenter,true, "transdate");
-  _gltrans->addColumn(tr("Journal #"),_orderColumn, Qt::AlignRight, true, "journalnumber");
-  _gltrans->addColumn(tr("Source"),   _orderColumn, Qt::AlignCenter,true, "source");
-  _gltrans->addColumn(tr("Doc. Type"), _itemColumn, Qt::AlignCenter,true, "doctype");
-  _gltrans->addColumn(tr("Doc. Num."),_orderColumn, Qt::AlignCenter,true, "docnumber");
-  _gltrans->addColumn(tr("Notes/Account"),      -1, Qt::AlignLeft,  true, "account");
-  _gltrans->addColumn(tr("Debit"), _bigMoneyColumn, Qt::AlignRight, true, "debit");
-  _gltrans->addColumn(tr("Credit"),_bigMoneyColumn, Qt::AlignRight, true, "credit");
-  _gltrans->addColumn(tr("Posted"),      _ynColumn, Qt::AlignCenter,true, "posted");
+  list()->addColumn(tr("Date"),      _dateColumn, Qt::AlignCenter,true, "transdate");
+  list()->addColumn(tr("Journal #"),_orderColumn, Qt::AlignRight, true, "journalnumber");
+  list()->addColumn(tr("Source"),   _orderColumn, Qt::AlignCenter,true, "source");
+  list()->addColumn(tr("Doc. Type"), _itemColumn, Qt::AlignCenter,true, "doctype");
+  list()->addColumn(tr("Doc. Num."),_orderColumn, Qt::AlignCenter,true, "docnumber");
+  list()->addColumn(tr("Notes/Account"),      -1, Qt::AlignLeft,  true, "account");
+  list()->addColumn(tr("Debit"), _bigMoneyColumn, Qt::AlignRight, true, "debit");
+  list()->addColumn(tr("Credit"),_bigMoneyColumn, Qt::AlignRight, true, "credit");
+  list()->addColumn(tr("Posted"),      _ynColumn, Qt::AlignCenter,true, "posted");
 
   if (!_metrics->boolean("UseSubLedger"))
     _typeGroup->hide();
 }
 
-dspGLSeries::~dspGLSeries()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspGLSeries::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -88,14 +83,14 @@ enum SetResponse dspGLSeries::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspGLSeries::sPopulateMenu(QMenu * pMenu)
+void dspGLSeries::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
   bool editable = false;
   bool deletable = false;
   bool reversible = false;
-  XTreeWidgetItem * item = (XTreeWidgetItem*)_gltrans->currentItem();
+  XTreeWidgetItem * item = (XTreeWidgetItem*)list()->currentItem();
   if(0 != item)
   {
     if(item->altId() != -1)
@@ -117,7 +112,7 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
 
         // Make sure there is nothing to restricting edits
         ParameterList params;
-        params.append("glSequence", _gltrans->id());
+        params.append("glSequence", list()->id());
         MetaSQLQuery mql = mqlLoad("glseries", "checkeditable");
         XSqlQuery qry = mql.toQuery(params);
         if (!qry.first())
@@ -176,42 +171,11 @@ bool dspGLSeries::setParams(ParameterList &params)
   return true;
 }
 
-void dspGLSeries::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("GLSeries", params);
-
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspGLSeries::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  MetaSQLQuery mql = mqlLoad("glseries", "detail");
-
-  q = mql.toQuery(params);
-  _gltrans->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
 void dspGLSeries::sEdit()
 {
   ParameterList params;
   ParameterList params2;
-  params.append("glSequence", _gltrans->id());
+  params.append("glSequence", list()->id());
 
   MetaSQLQuery mql("SELECT copyGlSeries(gltrans_sequence) AS sequence,"
                    "  gltrans_journalnumber "
@@ -243,7 +207,7 @@ void dspGLSeries::sEdit()
 void dspGLSeries::sReverse()
 {
   ParameterList params;
-  params.append("glseries", _gltrans->id());
+  params.append("glseries", list()->id());
 
   reverseGLSeries newdlg(this);
   if(newdlg.set(params) != NoError)
@@ -259,7 +223,7 @@ void dspGLSeries::sDelete(bool edited)
     action = tr("edited");
 
   ParameterList params;
-  params.append("glSequence", _gltrans->id());
+  params.append("glSequence", list()->id());
   params.append("notes", tr("Journal %1 by %2 on %3")
                 .arg(action)
                 .arg(omfgThis->username())
@@ -282,7 +246,7 @@ void dspGLSeries::sDelete(bool edited)
 void dspGLSeries::sPost()
 {
   ParameterList params;
-  params.append("sequence", _gltrans->id());
+  params.append("sequence", list()->id());
   MetaSQLQuery mql = mqlLoad("glseries", "postsubledger");
   XSqlQuery qry = mql.toQuery(params);
   if (qry.lastError().type() != QSqlError::NoError)
@@ -292,3 +256,4 @@ void dspGLSeries::sPost()
   }
   sFillList();
 }
+

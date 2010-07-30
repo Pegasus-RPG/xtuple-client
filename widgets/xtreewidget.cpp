@@ -1828,9 +1828,20 @@ void XTreeWidgetItemListfromScriptValue(const QScriptValue &scriptlist, QList<XT
   }
 }
 
+QScriptValue XTreeWidgettoScriptValue(QScriptEngine *engine, XTreeWidget *const &item)
+{
+  return engine->newQObject(item);
+}
+
+void XTreeWidgetfromScriptValue(const QScriptValue &obj, XTreeWidget * &item)
+{
+  item = qobject_cast<XTreeWidget *>(obj.toQObject());
+}
+
 // script exposure of xtreewidgetitem /////////////////////////////////////////
 
 Q_DECLARE_METATYPE(QList<XTreeWidgetItem *>)
+Q_DECLARE_METATYPE(QList<XTreeWidget *>)
 
 QScriptValue constructXTreeWidgetItem(QScriptContext *context,QScriptEngine  *engine)
 {
@@ -1936,6 +1947,8 @@ void setupXTreeWidgetItem(QScriptEngine *engine)
 void setupXTreeWidget(QScriptEngine *engine)
 {
   QScriptValue glob = engine->newObject();
+
+  qScriptRegisterMetaType(engine, XTreeWidgettoScriptValue,     XTreeWidgetfromScriptValue);
 
   glob.setProperty("Replace", QScriptValue(engine, XTreeWidget::Replace), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   glob.setProperty("Append",  QScriptValue(engine, XTreeWidget::Append), QScriptValue::ReadOnly | QScriptValue::Undeletable);

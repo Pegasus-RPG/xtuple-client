@@ -23,10 +23,15 @@
 #include "todoItem.h"
 #include "mqlutil.h"
 
-dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char* name, Qt::WFlags fl)
-  : XWidget(parent, name, fl)
+dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspIncidentsByCRMAccount", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Incidents by CRM Account"));
+  setListLabel(tr("Incidents"));
+  setReportName("IncidentsByCRMAccount");
+  setMetaSQLOptions("incidentsbyCRMAccount", "detail");
+  setUseAltId(true);
 
   QButtonGroup* _crmacctGroupInt = new QButtonGroup(this);
   _crmacctGroupInt->addButton(_allAccts);
@@ -35,30 +40,22 @@ dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char* 
   _createdDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _createdDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  connect(_list,  SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),
-				     this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  list()->addColumn(tr("Account Number"),	    80, Qt::AlignLeft,  true, "crmacct_number");
+  list()->addColumn(tr("Account Name"),		   100, Qt::AlignLeft,  true, "crmacct_name");
+  list()->addColumn(tr("Incident"),	  _orderColumn, Qt::AlignRight, true, "incdt_number");
+  list()->addColumn(tr("Summary"),	            -1, Qt::AlignLeft,  true, "summary");
+  list()->addColumn(tr("Entered/Assigned"), _dateColumn, Qt::AlignLeft,  true, "startdate");
+  list()->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter,true, "status");
+  list()->addColumn(tr("Assigned To"),	   _userColumn, Qt::AlignLeft,  true, "assigned");
+  list()->addColumn(tr("To-Do Due"),	   _dateColumn, Qt::AlignLeft,  true, "duedate");
 
-  _list->addColumn(tr("Account Number"),	    80, Qt::AlignLeft,  true, "crmacct_number");
-  _list->addColumn(tr("Account Name"),		   100, Qt::AlignLeft,  true, "crmacct_name");
-  _list->addColumn(tr("Incident"),	  _orderColumn, Qt::AlignRight, true, "incdt_number");
-  _list->addColumn(tr("Summary"),	            -1, Qt::AlignLeft,  true, "summary");
-  _list->addColumn(tr("Entered/Assigned"), _dateColumn, Qt::AlignLeft,  true, "startdate");
-  _list->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter,true, "status");
-  _list->addColumn(tr("Assigned To"),	   _userColumn, Qt::AlignLeft,  true, "assigned");
-  _list->addColumn(tr("To-Do Due"),	   _dateColumn, Qt::AlignLeft,  true, "duedate");
-
-  _list->setIndentation(10);
-}
-
-dspIncidentsByCRMAccount::~dspIncidentsByCRMAccount()
-{
+  list()->setIndentation(10);
 }
 
 void dspIncidentsByCRMAccount::languageChange()
 {
-    retranslateUi(this);
+  display::languageChange();
+  retranslateUi(this);
 }
 
 enum SetResponse dspIncidentsByCRMAccount::set(const ParameterList &pParams)
@@ -83,33 +80,11 @@ enum SetResponse dspIncidentsByCRMAccount::set(const ParameterList &pParams)
   return NoError;
 }
 
-
-void dspIncidentsByCRMAccount::sPrint()
-{
-  if (_selectedAcct->isChecked() && _crmacct->id() <= 0)
-  {
-    QMessageBox::critical(this, tr("No CRM Account"),
-			  tr("Please select a CRM Account before Printing."),
-			  QMessageBox::Ok, QMessageBox::NoButton);
-    _crmacct->setFocus();
-    return;
-  }
-
-  ParameterList params;
-  setParams(params);
-
-  orReport report("IncidentsByCRMAccount", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspIncidentsByCRMAccount::sPopulateMenu(QMenu *pMenu)
+void dspIncidentsByCRMAccount::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if (_list->altId() == 1)
+  if (list()->altId() == 1)
   {
     menuItem = pMenu->addAction(tr("Edit CRM Account..."), this, SLOT(sEditCRMAccount()));
     menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
@@ -117,7 +92,7 @@ void dspIncidentsByCRMAccount::sPopulateMenu(QMenu *pMenu)
     menuItem->setEnabled( _privileges->check("ViewCRMAccounts") ||
 				    _privileges->check("MaintainCRMAccounts"));
   }
-  else if (_list->altId() == 2)
+  else if (list()->altId() == 2)
   {
     menuItem = pMenu->addAction(tr("Edit Incident..."), this, SLOT(sEditIncident()));
     menuItem->setEnabled(_privileges->check("MaintainIncidents"));
@@ -125,7 +100,7 @@ void dspIncidentsByCRMAccount::sPopulateMenu(QMenu *pMenu)
     menuItem->setEnabled( _privileges->check("ViewIncidents") ||
 				    _privileges->check("MaintainIncidents"));
   }
-  else if (_list->altId() == 3)
+  else if (list()->altId() == 3)
   {
     menuItem = pMenu->addAction(tr("Edit To-Do Item..."), this, SLOT(sEditTodoItem()));
     menuItem->setEnabled(_privileges->check("MaintainOtherTodoLists"));
@@ -139,7 +114,7 @@ void dspIncidentsByCRMAccount::sEditCRMAccount()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("crmacct_id", _list->id());
+  params.append("crmacct_id", list()->id());
 
   crmaccount* newdlg = new crmaccount();
   newdlg->set(params);
@@ -151,7 +126,7 @@ void dspIncidentsByCRMAccount::sEditIncident()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("incdt_id", _list->id());
+  params.append("incdt_id", list()->id());
 
   incident newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -164,7 +139,7 @@ void dspIncidentsByCRMAccount::sEditTodoItem()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("todoitem_id", _list->id());
+  params.append("todoitem_id", list()->id());
 
   todoItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -177,7 +152,7 @@ void dspIncidentsByCRMAccount::sViewCRMAccount()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("crmacct_id", _list->id());
+  params.append("crmacct_id", list()->id());
 
   crmaccount* newdlg = new crmaccount();
   newdlg->set(params);
@@ -189,7 +164,7 @@ void dspIncidentsByCRMAccount::sViewIncident()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("incdt_id", _list->id());
+  params.append("incdt_id", list()->id());
 
   incident newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -201,7 +176,7 @@ void dspIncidentsByCRMAccount::sViewTodoItem()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("todoitem_id", _list->id());
+  params.append("todoitem_id", list()->id());
 
   todoItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -241,18 +216,3 @@ bool dspIncidentsByCRMAccount::setParams(ParameterList &params)
   return true;
 }
 
-void dspIncidentsByCRMAccount::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  MetaSQLQuery mql = mqlLoad("incidentsbyCRMAccount", "detail");
-  q = mql.toQuery(params);
-  _list->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__,__LINE__);
-    return;
-  }
-}

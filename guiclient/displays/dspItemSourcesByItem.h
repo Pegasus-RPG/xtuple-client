@@ -8,31 +8,31 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPITEMSOURCESBYVENDOR_H
-#define DSPITEMSOURCESBYVENDOR_H
+#ifndef DSPITEMSOURCESBYITEM_H
+#define DSPITEMSOURCESBYITEM_H
 
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspItemSourcesByVendor.h"
+#include "ui_dspItemSourcesByItem.h"
 
-class dspItemSourcesByVendor : public XWidget, public Ui::dspItemSourcesByVendor
+class dspItemSourcesByItem : public display, public Ui::dspItemSourcesByItem
 {
     Q_OBJECT
 
 public:
-    dspItemSourcesByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspItemSourcesByVendor();
+    dspItemSourcesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * menuThis );
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
     virtual void sEdit();
     virtual void sBuyCard();
-    virtual void sFillList();
+    virtual void sViewPOs();
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPITEMSOURCESBYVENDOR_H
+#endif // DSPITEMSOURCESBYITEM_H
