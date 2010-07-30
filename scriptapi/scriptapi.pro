@@ -102,7 +102,6 @@ HEADERS += setupscriptapi.h \
     revisionlineeditsetup.h \
     screensetup.h \
     shipmentclusterlineeditsetup.h \
-    solineeditsetup.h \
     vendorgroupsetup.h \
     wcomboboxsetup.h \
     womatlclustersetup.h \
@@ -196,7 +195,6 @@ SOURCES += setupscriptapi.cpp \
     revisionlineeditsetup.cpp \
     screensetup.cpp \
     shipmentclusterlineeditsetup.cpp \
-    solineeditsetup.cpp \
     vendorgroupsetup.cpp \
     wcomboboxsetup.cpp \
     womatlclustersetup.cpp \
