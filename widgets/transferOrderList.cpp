@@ -21,7 +21,7 @@
 
 #include "xtreewidget.h"
 #include "warehousegroup.h"
-#include "socluster.h"
+#include "salesOrderList.h"
 
 transferOrderList::transferOrderList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl )
   : QDialog(parent, fl)
