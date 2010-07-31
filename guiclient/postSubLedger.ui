@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>452</width>
-    <height>479</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,11 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="DateCluster" name="_subLedgerDates"/>
+       <widget class="DateCluster" name="_subLedgerDates">
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
+       </widget>
       </item>
       <item row="0" column="1">
        <spacer name="horizontalSpacer_2">
@@ -39,17 +43,7 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1" rowspan="2">
-    <widget class="QDialogButtonBox" name="_buttonBox">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
+   <item row="0" column="1">
     <widget class="QGroupBox" name="_distGroup">
      <property name="title">
       <string>General Ledger Distribution</string>
@@ -81,50 +75,48 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="spacing">
-      <number>0</number>
+   <item row="0" column="2">
+    <widget class="QDialogButtonBox" name="_buttonBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <item>
-      <widget class="QLabel" name="_sourcesLit">
-       <property name="text">
-        <string>Eligible Sub Ledger Posting Sources</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XTreeWidget" name="_sources">
-       <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
-   <item row="3" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="_selectAll">
-       <property name="text">
-        <string>Select All</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+   <item row="1" column="0">
+    <widget class="XCheckBox" name="_preview">
+     <property name="text">
+      <string>Preview Posting</string>
+     </property>
+     <property name="forgetful">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="_sourcesLit">
+     <property name="text">
+      <string>Eligible Sub Ledger Posting Sources</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="3">
+    <widget class="XTreeWidget" name="_sources"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="XCheckBox" name="_print">
+     <property name="text">
+      <string>Print on Post</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -140,11 +132,22 @@
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_subLedgerDates</tabstop>
+  <tabstop>_distDate</tabstop>
+  <tabstop>_sources</tabstop>
+  <tabstop>_buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -160,22 +163,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selectAll</sender>
-   <signal>clicked()</signal>
-   <receiver>_sources</receiver>
-   <slot>selectAll()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>61</x>
-     <y>450</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>225</x>
-     <y>315</y>
     </hint>
    </hints>
   </connection>

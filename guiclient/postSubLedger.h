@@ -24,19 +24,18 @@ public:
     postSubLedger(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~postSubLedger();
 
+    QPushButton* _post;
+    QPushButton* _query;
+    QPushButton* _selectAll;
+
 public slots:
     void sPost();
     void sFillList();
-    virtual void sSelectionChanged();
+    void sHandlePreview();
+    void sHandleSelection();
 
 protected slots:
     void languageChange();
-
-private:
-    QPushButton* _post;
-    QPushButton* _query;
-
-
 };
 
 #endif // POSTSUBLEDGER_H

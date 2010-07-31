@@ -25,17 +25,20 @@ postSubLedger::postSubLedger(QWidget* parent, const char* name, bool modal, Qt::
   _post->setText(tr("&Post"));
   _post->setEnabled(false);
   _query = _buttonBox->addButton(tr("Query"),QDialogButtonBox::ActionRole);
+  _selectAll = _buttonBox->addButton(tr("Select All"), QDialogButtonBox::ActionRole);
   _subLedgerDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _subLedgerDates->setEndNull(tr("Laest"), omfgThis->endOfTime(), true);
   _distDate->setDate(omfgThis->dbDate());
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sPost()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_sources, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
+  connect(_selectAll, SIGNAL(clicked()), _sources, SLOT(selectAll()));
+  connect(_preview, SIGNAL(toggled(bool)), this, SLOT(sHandlePreview()));
+  connect(_sources, SIGNAL(valid(bool)), this, SLOT(sHandleSelection()));
 
-  _sources->addColumn(tr("Source"), -1, Qt::AlignLeft, true, "sltrans_source");
-  _sources->addColumn(tr("Amount"), -1, Qt::AlignRight, true, "amount");
-  _sources->addColumn(tr("Journals"), -1, Qt::AlignRight, true, "journals");
+  _sources->addColumn(tr("Source"), _docTypeColumn, Qt::AlignLeft, true, "sltrans_source");
+  _sources->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "description");
+  sHandlePreview();
 
   sFillList();
 }
@@ -76,10 +79,23 @@ void postSubLedger::sFillList()
   MetaSQLQuery mql = mqlLoad("postSubLedger", "detail");
   ParameterList params;
   _subLedgerDates->appendValue(params);
+  params.append("AP", tr("Accounts Payable"));
+  params.append("AR", tr("Accounts Receivable"));
+  params.append("GL", tr("General Ledger"));
+  params.append("IM", tr("Inventory Management"));
+  params.append("PD", tr("Products"));
+  params.append("PO", tr("Purchase Order"));
+  params.append("SO", tr("Sales Order"));
+  params.append("SR", tr("Shipping and Receiving"));
+  params.append("WO", tr("Work Order"));
+  params.append("Other", tr("Other"));
+  if (_preview->isChecked())
+    params.append("preview");
 
   XSqlQuery qry;
   qry = mql.toQuery(params);
   _sources->populate(qry, true);
+  _sources->expandAll();
   if (qry.lastError().type() != QSqlError::NoError)
   {
     systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
@@ -87,8 +103,28 @@ void postSubLedger::sFillList()
   }
 }
 
-void postSubLedger::sSelectionChanged()
+void postSubLedger::sHandlePreview()
 {
-  bool hasSelections = _sources->selectedItems().count();
-  _buttonBox->button(QDialogButtonBox::Ok)->setEnabled(hasSelections);
+  _sources->clear();
+  _sources->setColumnCount(2);
+  if (_preview->isChecked())
+  {
+    _sources->addColumn(tr("Debit"), _bigMoneyColumn, Qt::AlignRight, true, "debit");
+    _sources->addColumn(tr("Credit"),_bigMoneyColumn, Qt::AlignRight, true, "credit");
+    _sources->setSelectionMode(QAbstractItemView::SingleSelection);
+    _selectAll->setEnabled(false);
+  }
+  else
+  {
+    _sources->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    _selectAll->setEnabled(true);
+  }
+
+  _sources->addColumn(tr("Journals"), _qtyColumn, Qt::AlignRight, true, "journals");
 }
+
+void postSubLedger::sHandleSelection()
+{
+  _post->setEnabled(_sources->id() == 0);
+}
+
