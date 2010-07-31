@@ -11,6 +11,7 @@
 #include <parameter.h>
 #include <xsqlquery.h>
 
+#include <QCheckBox>
 #include <QtScript>
 #include <QMessageBox>
 #include <QTableWidget>
@@ -824,6 +825,15 @@ void ParameterWidget::changeFilterObject(int index)
       connect(button, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
     }
     break;
+  case CheckBox:
+    {
+      QCheckBox *checkBox = new QCheckBox(_filterGroup);
+      newWidget = checkBox;
+
+      connect(button, SIGNAL(clicked()), checkBox, SLOT( deleteLater() ) );
+      connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
   default:
     {
       QLineEdit *lineEdit = new QLineEdit(_filterGroup);
@@ -840,7 +850,8 @@ void ParameterWidget::changeFilterObject(int index)
     connect(button, SIGNAL(clicked()), newWidget, SLOT( deleteLater() ) );
     newWidget->setObjectName("widget" + row);
     layout->insertWidget(0, newWidget);
-    if (type == Exists) // No signal for exists, so set value now
+    // Get initial values pre-set for special boolean cases
+    if (type == Exists || type == CheckBox)
       storeFilterValue(1, newWidget);
   }
   _saveButton->setDisabled(true);
@@ -1261,6 +1272,12 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
     {
       _saveButton->setDisabled(true);
     }
+  }
+  else if (classname == "QCheckBox")
+  {
+    QCheckBox *checkBox = (QCheckBox *)filter;
+    _filterValues[foundRow] = qMakePair(pp->param, QVariant(checkBox->isChecked()));
+    emit updated();
   }
   else if (pId != -1)
   {
