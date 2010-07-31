@@ -98,6 +98,7 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
     _parameterWidget->appendComboBox(tr("Sub Account"), "subaccnt_id", XComboBox::Subaccounts);
   _parameterWidget->appendComboBox(tr("Account Type"), "accnttype_id", qryType);
   _parameterWidget->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
+  _parameterWidget->append(tr("Posted"), "posted", ParameterWidget::CheckBox);
 
   _parameterWidget->applyDefaultFilterSet();
 }
