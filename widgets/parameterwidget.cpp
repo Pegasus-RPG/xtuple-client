@@ -438,11 +438,10 @@ void ParameterWidget::applySaved(int pId, int filter_id)
       }
       else
       {
-        this->addParam();
+        addParam();
 
         QLayoutItem *test = _filtersLayout->itemAtPosition(windowIdx, 0)->layout()->itemAt(0);
         XComboBox *mybox = (XComboBox*)test->widget();
-
 
         int idx = mybox->findText(key);
 
@@ -498,7 +497,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
             xBox->setId(xid);
           }
           break;
-					case Multiselect:
+         case Multiselect:
           {
             QTableWidget *tab;
             tab = qobject_cast<QTableWidget*>(found);
@@ -528,7 +527,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
             }
           }
           break;
-					default:
+        case CheckBox:
+          QCheckBox *checkBox;
+          checkBox = qobject_cast<QCheckBox*>(found);
+          if (checkBox != 0)
+            checkBox->setChecked(QVariant(tempFilterList[1]).toBool());
+          break;
+        default:
           {
             QLineEdit *lineEdit;
             lineEdit = qobject_cast<QLineEdit*>(found);
@@ -557,7 +562,8 @@ void ParameterWidget::applySaved(int pId, int filter_id)
     {
       k.next();
       ParamProps* pp = k.value();
-      if (pp->defaultValue == 0)
+
+      if (!pp->defaultValue.isValid())
         continue;
 
       int windowIdx = _filtersLayout->rowCount();
@@ -571,9 +577,6 @@ void ParameterWidget::applySaved(int pId, int filter_id)
       mybox->setCurrentIndex(idx);
 
       found = getFilterWidget(windowIdx);
-
-      //tempPair = _types[k.key()];
-      //int widgetType = tempPair.second;
 
       switch (pp->paramType)
       {
@@ -620,7 +623,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           xBox->setId(xid);
         }
         break;
-          case Multiselect:
+       case Multiselect:
         {
           QTableWidget *tab;
           tab = qobject_cast<QTableWidget *>(found);
@@ -643,7 +646,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           }
         }
         break;
-					default:
+      case CheckBox:
+          QCheckBox *checkBox;
+          checkBox = qobject_cast<QCheckBox*>(found);
+          if (checkBox != 0)
+            checkBox->setChecked(pp->defaultValue.toBool());
+          break;
+      default:
         QLineEdit *lineEdit;
         lineEdit = qobject_cast<QLineEdit*>(found);
         if (lineEdit != 0)
