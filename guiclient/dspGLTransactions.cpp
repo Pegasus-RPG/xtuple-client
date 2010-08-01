@@ -31,6 +31,7 @@
 #include "dspWoHistoryByNumber.h"
 #include "transactionInformation.h"
 #include "storedProcErrorLookup.h"
+#include "dspSubLedger.h"
 
 dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -80,6 +81,7 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
   _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true, "gltrans_doctype");
   _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
   _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
+  _gltrans->addColumn(tr("Journal"),   _orderColumn,   Qt::AlignLeft,   false,"gltrans_journalnumber");
   _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
   _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
   _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
@@ -200,6 +202,8 @@ void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
     menuThis->addAction(tr("View Sales Order..."), this, SLOT(sViewDocument()));
   else if(item->rawValue("gltrans_doctype").toString() == "WO")
     menuThis->addAction(tr("View WO History..."), this, SLOT(sViewDocument()));
+  else if(item->rawValue("gltrans_doctype").toString() == "SL")
+    menuThis->addAction(tr("View Subledger..."), this, SLOT(sViewSubledger()));
   else if(item->rawValue("gltrans_source").toString() == "I/M")
     menuThis->addAction(tr("View Inventory History..."), this, SLOT(sViewDocument()));
 }
@@ -355,7 +359,7 @@ void dspGLTransactions::sFillList()
     _gltrans->hideColumn("running");
 
   XSqlQuery r = mql.toQuery(params);
-  _gltrans->populate(r);
+  _gltrans->populate(r,true);
   if (r.lastError().type() != QSqlError::NoError)
   {
     systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
@@ -549,6 +553,21 @@ void dspGLTransactions::sViewDocument()
     newdlg.set(params);
     newdlg.exec();
   }
+}
+
+void dspGLTransactions::sViewSubledger()
+{
+  ParameterList params;
+
+  params.append("startDate", omfgThis->startOfTime());
+  params.append("endDate", omfgThis->endOfTime());
+  params.append("journalnumber", _gltrans->rawValue("gltrans_journalnumber"));
+  params.append("accnt_id", _gltrans->altId());
+  params.append("run");
+
+  dspSubLedger *newdlg = new dspSubLedger();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 bool dspGLTransactions::forwardUpdate()

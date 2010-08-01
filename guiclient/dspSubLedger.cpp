@@ -78,10 +78,12 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
   _sltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true, "sltrans_doctype");
   _sltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
   _sltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
+  _sltrans->addColumn(tr("Journal"),   _orderColumn,   Qt::AlignLeft,   false,"sltrans_journalnumber");
   _sltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
   _sltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
   _sltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
   _sltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "sltrans_posted");
+  _sltrans->addColumn(tr("GL Journal"),_orderColumn,   Qt::AlignLeft,   false, "sltrans_gltrans_journalnumber");
   _sltrans->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "sltrans_username");
 
   _parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
@@ -99,6 +101,7 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
   _parameterWidget->appendComboBox(tr("Account Type"), "accnttype_id", qryType);
   _parameterWidget->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
   _parameterWidget->append(tr("Posted"), "posted", ParameterWidget::CheckBox);
+  _parameterWidget->append(tr("GL Journal"), "journalnumber",    ParameterWidget::Text);
 
   _parameterWidget->applyDefaultFilterSet();
 
@@ -139,6 +142,10 @@ enum SetResponse dspSubLedger::set(const ParameterList &pParams)
   param = pParams.value("posted", &valid);
   if (valid)
     _parameterWidget->setDefault(tr("Posted"), param);
+
+  param = pParams.value("journalnumber", &valid);
+  if (valid)
+    _parameterWidget->setDefault(tr("GL Journal"), param);
 
   param = pParams.value("source", &valid);
   if (valid)
