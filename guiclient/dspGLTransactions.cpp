@@ -113,6 +113,8 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
   _parameterWidget->append(tr("Show Deleted"), "showDeleted", ParameterWidget::Exists);
 
   _parameterWidget->applyDefaultFilterSet();
+
+  _sources << "None" << "A/P" << "A/R" << "G/L" << "I/M" << "P/D" << "P/O" << "S/O" << "S/R" << "W/O";
 }
 
 dspGLTransactions::~dspGLTransactions()
@@ -136,15 +138,15 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 
   param = pParams.value("accnt_id", &valid);
   if (valid)
-    _parameterWidget->setDefault("GL Account", param.toInt(), true);
+    _parameterWidget->setDefault(tr("GL Account"), param.toInt());
 
   param = pParams.value("startDate", &valid);
   if (valid)
-    _parameterWidget->setDefault("Start Date", param.toDate(), true);
+    _parameterWidget->setDefault(tr("Start Date"), param.toDate());
 
   param = pParams.value("endDate", &valid);
   if (valid)
-    _parameterWidget->setDefault("End Date", param.toDate(), true);
+    _parameterWidget->setDefault(tr("End Date"), param.toDate());
 
   param = pParams.value("period_id", &valid);
   if (valid)
@@ -156,10 +158,12 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
     q.exec();
     if (q.first())
     {
-      _parameterWidget->setDefault("Start Date", q.value("period_start").toDate(), true);
-      _parameterWidget->setDefault("End Date", q.value("period_end").toDate(), true);
+      _parameterWidget->setDefault(tr("Start Date"), q.value("period_start").toDate());
+      _parameterWidget->setDefault(tr("End Date"), q.value("period_end").toDate());
     }
   }
+
+  _parameterWidget->applyDefaultFilterSet();
 
   if (pParams.inList("run"))
   {
@@ -228,31 +232,7 @@ bool dspGLTransactions::setParams(ParameterList &params)
 
   param = params.value("source_id", &valid);
   if (valid)
-  {
-    int srcid = param.toInt();
-    QString src;
-
-    if (srcid == 1)
-      src = "A/P";
-    else if (srcid ==2)
-      src = "A/R";
-    else if (srcid ==3)
-      src = "G/L";
-    else if (srcid ==4)
-      src = "I/M";
-    else if (srcid ==5)
-      src = "P/D";
-    else if (srcid ==6)
-      src = "P/O";
-    else if (srcid ==7)
-      src = "S/O";
-    else if (srcid ==8)
-      src = "S/R";
-    else if (srcid ==9)
-      src = "W/O";
-
-    params.append("source", src);
-  }
+    params.append("source", _sources.at(param.toInt()));
 
   param = params.value("num_id", &valid);
   if (valid)

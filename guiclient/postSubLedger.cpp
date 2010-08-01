@@ -9,32 +9,30 @@
  */
 
 #include "postSubLedger.h"
+#include "dspSubLedger.h"
 
 #include <metasql.h>
 #include "mqlutil.h"
 
+#include <QAction>
 #include <QMessageBox>
 #include <QSqlError>
 
-postSubLedger::postSubLedger(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+postSubLedger::postSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
+  : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  _post = _buttonBox->button(QDialogButtonBox::Ok);
-  _post->setText(tr("&Post"));
-  _post->setEnabled(false);
-  _query = _buttonBox->addButton(tr("Query"),QDialogButtonBox::ActionRole);
-  _selectAll = _buttonBox->addButton(tr("Select All"), QDialogButtonBox::ActionRole);
   _subLedgerDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _subLedgerDates->setEndNull(tr("Laest"), omfgThis->endOfTime(), true);
   _distDate->setDate(omfgThis->dbDate());
 
-  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sPost()));
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_selectAll, SIGNAL(clicked()), _sources, SLOT(selectAll()));
   connect(_preview, SIGNAL(toggled(bool)), this, SLOT(sHandlePreview()));
   connect(_sources, SIGNAL(valid(bool)), this, SLOT(sHandleSelection()));
+  connect(_sources, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _sources->addColumn(tr("Source"), _docTypeColumn, Qt::AlignLeft, true, "sltrans_source");
   _sources->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "description");
@@ -71,7 +69,7 @@ void postSubLedger::sPost()
       return;
     }
   }
-  close();
+  sFillList();
 }
 
 void postSubLedger::sFillList()
@@ -126,5 +124,33 @@ void postSubLedger::sHandlePreview()
 void postSubLedger::sHandleSelection()
 {
   _post->setEnabled(_sources->id() == 0);
+}
+
+void postSubLedger::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+{
+  QAction *menuItem;
+  if (_sources->id() == 0)
+  {
+    menuItem = pMenu->addAction(tr("Post"), this, SLOT(sPost()));
+    pMenu->addSeparator();
+  }
+
+  menuItem = pMenu->addAction(tr("View Transactions..."), this, SLOT(sViewTransactions()));
+  menuItem->setEnabled(_privileges->check("ViewSubLedger"));
+}
+
+void postSubLedger::sViewTransactions()
+{
+  ParameterList params;
+  if (_sources->id())
+    params.append("accnt_id", _sources->id());
+  _subLedgerDates->appendValue(params);
+  params.append("source", _sources->rawValue("sltrans_source"));
+  params.append("posted", false);
+  params.append("run");
+
+  dspSubLedger *newdlg = new dspSubLedger();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 

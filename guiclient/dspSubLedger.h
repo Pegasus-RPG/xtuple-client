@@ -38,6 +38,9 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+private:
+    QStringList _sources;
+
 };
 
 #endif // DSPSUBLEDGER_H

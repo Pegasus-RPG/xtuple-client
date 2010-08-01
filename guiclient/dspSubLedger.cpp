@@ -101,6 +101,8 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
   _parameterWidget->append(tr("Posted"), "posted", ParameterWidget::CheckBox);
 
   _parameterWidget->applyDefaultFilterSet();
+
+  _sources << "None" << "A/P" << "A/R" << "G/L" << "I/M" << "P/D" << "P/O" << "S/O" << "S/R" << "W/O";
 }
 
 dspSubLedger::~dspSubLedger()
@@ -124,15 +126,23 @@ enum SetResponse dspSubLedger::set(const ParameterList &pParams)
 
   param = pParams.value("accnt_id", &valid);
   if (valid)
-    _parameterWidget->setDefault("SL Account", param.toInt(), true);
+    _parameterWidget->setDefault(tr("GL Account"), param);
 
   param = pParams.value("startDate", &valid);
   if (valid)
-    _parameterWidget->setDefault("Start Date", param.toDate(), true);
+    _parameterWidget->setDefault(tr("Start Date"), param);
 
   param = pParams.value("endDate", &valid);
   if (valid)
-    _parameterWidget->setDefault("End Date", param.toDate(), true);
+    _parameterWidget->setDefault(tr("End Date"), param);
+
+  param = pParams.value("posted", &valid);
+  if (valid)
+    _parameterWidget->setDefault(tr("Posted"), param);
+
+  param = pParams.value("source", &valid);
+  if (valid)
+    _parameterWidget->setDefault(tr("Source"), _sources.indexOf(param.toString()));
 
   param = pParams.value("period_id", &valid);
   if (valid)
@@ -144,10 +154,12 @@ enum SetResponse dspSubLedger::set(const ParameterList &pParams)
     q.exec();
     if (q.first())
     {
-      _parameterWidget->setDefault("Start Date", q.value("period_start").toDate(), true);
-      _parameterWidget->setDefault("End Date", q.value("period_end").toDate(), true);
+      _parameterWidget->setDefault(tr("Start Date"), q.value("period_start").toDate());
+      _parameterWidget->setDefault(tr("End Date"), q.value("period_end").toDate());
     }
   }
+
+  _parameterWidget->applyDefaultFilterSet();
 
   if (pParams.inList("run"))
   {
@@ -216,31 +228,7 @@ bool dspSubLedger::setParams(ParameterList &params)
 
   param = params.value("source_id", &valid);
   if (valid)
-  {
-    int srcid = param.toInt();
-    QString src;
-
-    if (srcid == 1)
-      src = "A/P";
-    else if (srcid ==2)
-      src = "A/R";
-    else if (srcid ==3)
-      src = "G/L";
-    else if (srcid ==4)
-      src = "I/M";
-    else if (srcid ==5)
-      src = "P/D";
-    else if (srcid ==6)
-      src = "P/O";
-    else if (srcid ==7)
-      src = "S/O";
-    else if (srcid ==8)
-      src = "S/R";
-    else if (srcid ==9)
-      src = "W/O";
-
-    params.append("source", src);
-  }
+    params.append("source", _sources.at(param.toInt()));
 
   param = params.value("num_id", &valid);
   if (valid)
@@ -447,7 +435,7 @@ void dspSubLedger::sViewDocument()
     q.bindValue(":docnumber", docnumber[0]);
     q.exec();
     if(q.first())
-      salesOrder::viewSalesOrder(q.value("cohead_id").toInt());
+      salesOrder::viewSalesOrder(q.value("cohead_id").toInt(), this);
   }
   else if(item->rawValue("sltrans_doctype").toString() == "WO")
   {

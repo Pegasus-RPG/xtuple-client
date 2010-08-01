@@ -917,8 +917,7 @@ void menuAccounting::sPostStandardJournalGroup()
 
 void menuAccounting::sPostSubLedger()
 {
-  postSubLedger newdlg(parent, "", TRUE);
-  newdlg.exec();
+  omfgThis->handleNewWindow(new postSubLedger());
 }
 
 void menuAccounting::sSimpleEntry()

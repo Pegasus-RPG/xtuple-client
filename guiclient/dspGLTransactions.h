@@ -42,6 +42,9 @@ protected slots:
 private slots:
     void handleTotalCheckbox();
 
+private:
+    QStringList _sources;
+
 };
 
 #endif // DSPGLTRANSACTIONS_H

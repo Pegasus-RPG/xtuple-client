@@ -12,27 +12,25 @@
 #define POSTSUBLEDGER_H
 
 #include "guiclient.h"
-#include "xdialog.h"
+#include "xwidget.h"
 
 #include "ui_postSubLedger.h"
 
-class postSubLedger : public XDialog, public Ui::postSubLedger
+class postSubLedger : public XWidget, public Ui::postSubLedger
 {
     Q_OBJECT
 
 public:
-    postSubLedger(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    postSubLedger(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~postSubLedger();
-
-    QPushButton* _post;
-    QPushButton* _query;
-    QPushButton* _selectAll;
 
 public slots:
     void sPost();
     void sFillList();
     void sHandlePreview();
     void sHandleSelection();
+    void sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *);
+    void sViewTransactions();
 
 protected slots:
     void languageChange();

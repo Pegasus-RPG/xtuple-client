@@ -45,13 +45,13 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   parameterWidget->append(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
   parameterWidget->append(tr("Contact"),"cntct_id", ParameterWidget::Contact);
   parameterWidget->append(tr("Category"), "categorylist",
-                           ParameterWidget::Multiselect, 0, false,
+                           ParameterWidget::Multiselect, QVariant(), false,
                            "SELECT incdtcat_id, incdtcat_name"
                            "  FROM incdtcat"
                            " ORDER BY incdtcat_name;");
   parameterWidget->appendComboBox(tr("Status Above"), "status_above", qryStatus, 4);
   parameterWidget->append(tr("Status"), "statuslist",
-                           ParameterWidget::Multiselect, 0, false,
+                           ParameterWidget::Multiselect, QVariant(), false,
                            qryStatus);
   parameterWidget->appendComboBox(tr("Severity"), "severity_id", XComboBox::IncidentSeverity);
   parameterWidget->append(tr("Assigned User"), "assigned_username", ParameterWidget::User, db.userName());
