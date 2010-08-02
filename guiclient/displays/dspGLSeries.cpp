@@ -21,6 +21,7 @@
 #include "mqlutil.h"
 
 #include "reverseGLSeries.h"
+#include "dspSubLedger.h"
 
 dspGLSeries::dspGLSeries(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspGLSeries", fl)
@@ -37,13 +38,15 @@ dspGLSeries::dspGLSeries(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Source"),   _orderColumn, Qt::AlignCenter,true, "source");
   list()->addColumn(tr("Doc. Type"), _itemColumn, Qt::AlignCenter,true, "doctype");
   list()->addColumn(tr("Doc. Num."),_orderColumn, Qt::AlignCenter,true, "docnumber");
-  list()->addColumn(tr("Notes/Account"),      -1, Qt::AlignLeft,  true, "account");
+  list()->addColumn(tr("Notes/Account"),      -1, Qt::AlignLeft,  true, "accnt_id");
   list()->addColumn(tr("Debit"), _bigMoneyColumn, Qt::AlignRight, true, "debit");
   list()->addColumn(tr("Credit"),_bigMoneyColumn, Qt::AlignRight, true, "credit");
   list()->addColumn(tr("Posted"),      _ynColumn, Qt::AlignCenter,true, "posted");
 
   if (!_metrics->boolean("UseSubLedger"))
     _typeGroup->hide();
+
+  _subLedger->setEnabled(_metrics->boolean("ViewSubLedger"));
 }
 
 void dspGLSeries::languageChange()
@@ -136,6 +139,13 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
 
   menuItem = pMenu->addAction(tr("Reverse Journal..."), this, SLOT(sReverse()));
   menuItem->setEnabled(reversible);
+
+  if (item->rawValue("doctype").toString() == "SL")
+  {
+    pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("View Subledger..."), this, SLOT(sViewSubledger()));
+    menuItem->setEnabled(_privileges->check("ViewSubLedger"));
+  }
 
 }
 
@@ -255,5 +265,25 @@ void dspGLSeries::sPost()
     return;
   }
   sFillList();
+}
+
+void dspGLSeries::sViewSubledger()
+{
+  ParameterList params;
+
+  params.append("startDate", omfgThis->startOfTime());
+  params.append("endDate", omfgThis->endOfTime());
+  if (list()->rawValue("accnt_id").toInt() == -1)
+    params.append("journalnumber", list()->rawValue("journalnumber"));
+  else
+  {
+    params.append("journalnumber", list()->rawValue("docnumber"));
+    params.append("accnt_id", list()->rawValue("accnt_id").toInt());
+  }
+  params.append("run");
+
+  dspSubLedger *newdlg = new dspSubLedger();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 

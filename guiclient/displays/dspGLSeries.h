@@ -32,6 +32,7 @@ public slots:
     virtual void sEdit();
     virtual void sDelete(bool edited = false);
     virtual void sPost();
+    virtual void sViewSubledger();
 
 protected slots:
     virtual void languageChange();
