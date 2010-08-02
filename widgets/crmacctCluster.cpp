@@ -123,8 +123,8 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
       type = (qobject_cast<CLineEdit*>(_parent))->type();
     else if (_parent->inherits("CustCluster"))
       type = (qobject_cast<CustCluster*>(_parent))->type();
-    else if (_parent->inherits("CustInfo"))
-      type = (qobject_cast<CustInfo*>(_parent))->type();
+ //   else if (_parent->inherits("CustInfo"))
+ //     type = (qobject_cast<CustInfo*>(_parent))->type();
 
     switch (type)
     {

@@ -637,12 +637,12 @@ to be bound by its terms.</comment>
           <item row="0" column="0">
            <layout class="QHBoxLayout">
             <item>
-             <widget class="CustInfo" name="_cust">
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
+             <widget class="CustCluster" name="_cust">
+              <property name="nameVisible">
+               <bool>false</bool>
               </property>
-              <property name="type">
-               <enum>CLineEdit::ActiveCustomers</enum>
+              <property name="descriptionVisible">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -1432,7 +1432,7 @@ to be bound by its terms.</comment>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>CustInfo</class>
+   <class>CustCluster</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
   </customwidget>

@@ -48,7 +48,6 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/currdisplayplugin.h \
     plugins/custclusterplugin.h \
     plugins/customerselectorplugin.h \
-    plugins/custinfoplugin.h \
     plugins/dateclusterplugin.h \
     plugins/deptclusterplugin.h \
     plugins/dlineeditplugin.h \

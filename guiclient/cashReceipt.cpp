@@ -86,8 +86,6 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _applied->clear();
 
-  _cust->setAutoFocus(false);
-
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
 
   _bankaccnt->setType(XComboBox::ARBankAccounts);

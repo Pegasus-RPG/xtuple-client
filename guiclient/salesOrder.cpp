@@ -74,8 +74,6 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_charge,              SIGNAL(clicked()),                              this,         SLOT(sChargeCC()));
   connect(_clear,               SIGNAL(pressed()),                              this,         SLOT(sClear()));
   connect(_copyToShipto,        SIGNAL(clicked()),                              this,         SLOT(sCopyToShipto()));
-  connect(_cust,                SIGNAL(addressChanged(const int)),              _billToAddr,  SLOT(setId(int)));
-  connect(_cust,                SIGNAL(nameChanged(const QString &)),           _billToName,  SLOT(setText(const QString &)));
   connect(_cust,                SIGNAL(newId(int)),                             this,         SLOT(sPopulateCustomerInfo(int)));
   connect(_delete,              SIGNAL(clicked()),                              this,         SLOT(sDelete()));
   connect(_downCC,              SIGNAL(clicked()),                              this,         SLOT(sMoveDown()));
@@ -1564,41 +1562,46 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                         (ISQUOTE(_mode) && _privileges->check("MaintainProspectMasters"))));
   if (pCustid != -1)
   {
-    QString sql("SELECT cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
+    QString sql("SELECT cust_name, addr_id, "
+                "       cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
                 "       cust_commprcnt AS commission,"
                 "       cust_creditstatus, cust_terms_id,"
                 "       cust_taxzone_id, cust_cntct_id,"
                 "       cust_ffshipto, cust_ffbillto, cust_usespos,"
                 "       cust_blanketpos, cust_shipvia,"
                 "       COALESCE(shipto_id, -1) AS shiptoid,"
-                "       custtype.custtype_code,"
                 "       cust_preferred_warehous_id, "
                 "       cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
                 "       true AS iscustomer "
-                "FROM custtype, custinfo LEFT OUTER JOIN"
-                "     shipto ON ((shipto_cust_id=cust_id)"
-                "                 AND (shipto_default)) "
+                "FROM custinfo "
+                "  LEFT OUTER JOIN cntct  ON (cust_cntct_id=cntct_id) "
+                "  LEFT OUTER JOIN addr   ON (cntct_addr_id=addr_id) "
+                "  LEFT OUTER JOIN shipto ON ((shipto_cust_id=cust_id)"
+                "                         AND (shipto_default)) "
                 "LEFT OUTER JOIN crmacct ON (crmacct_cust_id = cust_id) "
                 "WHERE (cust_id=<? value(\"cust_id\") ?>) "
                 "<? if exists(\"isQuote\") ?>"
-                  "UNION "
-                  "SELECT NULL AS cust_salesrep_id, NULL AS cust_shipchrg_id,"
-                  "       NULL AS cust_shipform_id,"
-                  "       0.0 AS commission,"
-                  "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
-                  "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
-                  "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
-                  "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
-                  "       NULL AS cust_shipvia,"
-                  "       -1 AS shiptoid,"
-                  "       NULL AS custtype_code, NULL AS cust_preferred_warehous_id, "
-                  "       NULL AS cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
-                  "       false AS iscustomer "
-                  "FROM prospect "
-                  "LEFT OUTER JOIN crmacct ON (crmacct_prospect_id = prospect_id) "
-                  "WHERE (prospect_id=<? value(\"cust_id\") ?>) "
-                  "<? endif ?>"
-                    ";" );
+                "UNION "
+                "SELECT prospect_name AS cust_name, addr_id, "
+                "       NULL AS cust_salesrep_id, NULL AS cust_shipchrg_id,"
+                "       NULL AS cust_shipform_id,"
+                "       0.0 AS commission,"
+                "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
+                "       prospect_taxzone_id AS cust_taxzone_id, prospect_cntct_id AS cust_cntct_id, "
+                "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
+                "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
+                "       NULL AS cust_shipvia,"
+                "       -1 AS shiptoid,"
+                "       NULL AS cust_preferred_warehous_id, "
+                "       NULL AS cust_curr_id, COALESCE(crmacct_id,-1) AS crmacct_id, "
+                "       false AS iscustomer "
+                "FROM prospect "
+                "  LEFT OUTER JOIN cntct  ON (prospect_cntct_id=cntct_id) "
+                "  LEFT OUTER JOIN addr   ON (cntct_addr_id=addr_id) "
+                "  LEFT OUTER JOIN crmacct ON (crmacct_prospect_id = prospect_id) "
+                "WHERE (prospect_id=<? value(\"cust_id\") ?>) "
+                "<? endif ?>"
+                ";" );
 
     MetaSQLQuery  mql(sql);
     ParameterList params;
@@ -1622,6 +1625,8 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                                       "before you may create a new Sales Order "
                                       "for the Customer." ) );
           _cust->setId(-1);
+          _billToAddr->setId(-1);
+          _billToName->clear();
           _shipTo->setCustid(-1);
           _cust->setFocus();
           return;
@@ -1639,6 +1644,8 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                                       "Credit Warning before you may create a "
                                       "new Sales Order for the Customer." ) );
           _cust->setId(-1);
+          _billToAddr->setId(-1);
+          _billToName->clear();
           _shipTo->setCustid(-1);
           _cust->setFocus();
           return;
@@ -1649,6 +1656,8 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       }
 
       _cust->setInfoVisible(cust.value("iscustomer").toBool());
+      _billToName->setText(cust.value("cust_name").toString());
+      _billToAddr->setId(cust.value("addr_id").toInt());
       sFillCcardList();
       _usesPos     = cust.value("cust_usespos").toBool();
       _blanketPos  = cust.value("cust_blanketpos").toBool();

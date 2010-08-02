@@ -275,6 +275,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
   param = pParams.value("cust_id", &valid);
   if (valid)
   {
+    qDebug("cust_id:%d", param.toInt());
     _number->setEditMode(true);
     setId(param.toInt());
     _captive=true;

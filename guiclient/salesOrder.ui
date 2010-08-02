@@ -481,15 +481,12 @@ to be bound by its terms.</comment>
           <item row="0" column="0">
            <layout class="QHBoxLayout">
             <item>
-             <widget class="CustInfo" name="_cust">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>36</height>
-               </size>
+             <widget class="CustCluster" name="_cust">
+              <property name="nameVisible">
+               <bool>false</bool>
               </property>
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
+              <property name="descriptionVisible">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -580,7 +577,14 @@ to be bound by its terms.</comment>
           <item row="0" column="0">
            <layout class="QHBoxLayout">
             <item>
-             <widget class="ShiptoCluster" name="_shipTo"/>
+             <widget class="ShiptoCluster" name="_shipTo">
+              <property name="nameVisible">
+               <bool>false</bool>
+              </property>
+              <property name="descriptionVisible">
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
             <item>
              <spacer>
@@ -1891,7 +1895,7 @@ to be bound by its terms.</comment>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>CustInfo</class>
+   <class>CustCluster</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
   </customwidget>

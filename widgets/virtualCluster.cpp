@@ -622,6 +622,7 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
     _activeClause = "";
 
   _extraClause = "";
+  _model = 0;
 }
 
 void VirtualClusterLineEdit::setTitles(const QString& s, const QString& p)
@@ -681,7 +682,10 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
     qDebug("VCLE %s::silentSetId(%d)", qPrintable(objectName()), pId);
 
   if (pId == -1)
+  {
     XLineEdit::clear();
+    _model = 0;
+  }
   else
   {
     XSqlQuery idQ;
@@ -697,6 +701,11 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
 
       _id = pId;
       _valid = true;
+
+      QSqlQueryModel* qmodel = new QSqlQueryModel(this);
+      qmodel->setQuery(idQ);
+      _model = qmodel;
+
       setText(idQ.value("number").toString());
       if (_hasName)
         _name = (idQ.value("name").toString());

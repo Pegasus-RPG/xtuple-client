@@ -27,7 +27,9 @@ allocateReservations::allocateReservations(QWidget* parent, const char* name, bo
 {
   setupUi(this);
 
-  connect(_allocate, SIGNAL(clicked()), this, SLOT(sAllocate()));
+  _submit = _buttonBox->addButton(tr("Submit"), QDialogButtonBox::ActionRole);
+
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sAllocate()));
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustomerSelected()));
 

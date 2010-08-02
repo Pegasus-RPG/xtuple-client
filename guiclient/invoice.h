@@ -25,9 +25,9 @@ public:
     invoice(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~invoice();
 
-    static void newInvoice( int pCustid );
-    static void editInvoice( int pId );
-    static void viewInvoice( int pId );
+    static void newInvoice( int pCustid, QWidget *parent = 0 );
+    static void editInvoice( int pId, QWidget *parent = 0 );
+    static void viewInvoice( int pId, QWidget *parent = 0 );
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );

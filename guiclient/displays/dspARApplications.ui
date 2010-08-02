@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>699</width>
-    <height>184</height>
+    <width>693</width>
+    <height>196</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,34 +58,14 @@ to be bound by its terms.</comment>
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout">
-            <property name="spacing">
-             <number>0</number>
+           <widget class="CustCluster" name="_cust">
+            <property name="nameVisible">
+             <bool>false</bool>
             </property>
-            <item>
-             <widget class="CustInfo" name="_cust">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+            <property name="descriptionVisible">
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -217,7 +197,7 @@ to be bound by its terms.</comment>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>CustInfo</class>
+   <class>CustCluster</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
   </customwidget>
@@ -240,12 +220,12 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_allCustomers</tabstop>
   <tabstop>_selectedCustomer</tabstop>
-  <tabstop>_cust</tabstop>
   <tabstop>_selectedCustomerType</tabstop>
   <tabstop>_customerTypes</tabstop>
   <tabstop>_customerTypePattern</tabstop>
@@ -299,8 +279,8 @@ to be bound by its terms.</comment>
      <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
+     <x>294</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>

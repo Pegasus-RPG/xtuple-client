@@ -32,6 +32,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_cust, SIGNAL(newId(int)),   _shipTo,     SLOT(setCustid(int)));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -63,7 +64,6 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_shipChrgs, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
-  connect(_cust,      SIGNAL(newId(int)),   _shipTo,     SLOT(setCustid(int)));
 
   setFreeFormShipto(false);
 
@@ -277,19 +277,25 @@ void invoice::sPopulateCustomerInfo(int pCustid)
   if (pCustid != -1)
   {
     XSqlQuery cust;
-    cust.prepare( "SELECT cust_salesrep_id, cust_commprcnt * 100 AS commission,"
+    cust.prepare( "SELECT cust_name, COALESCE(cntct_addr_id,-1) AS addr_id, "
+                  "       cust_salesrep_id, cust_commprcnt * 100 AS commission,"
                   "       cust_creditstatus, cust_terms_id, "
                   "       COALESCE(cust_taxzone_id, -1) AS cust_taxzone_id,"
                   "       COALESCE(cust_shipchrg_id, -1) AS cust_shipchrg_id,"
                   "       cust_ffshipto, cust_ffbillto, "
                   "       COALESCE(shipto_id, -1) AS shiptoid, "
                   "       cust_curr_id "
-                  "FROM custinfo LEFT OUTER JOIN shipto ON ( (shipto_cust_id=cust_id) AND (shipto_default) ) "
+                  "FROM custinfo "
+                  "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id) "
+                  "  LEFT OUTER JOIN shipto ON ( (shipto_cust_id=cust_id) "
+                  "                         AND (shipto_default) ) "
                   "WHERE (cust_id=:cust_id);" );
     cust.bindValue(":cust_id", pCustid);
     cust.exec();
     if (cust.first())
     {
+        _billToName->setText(cust.value("cust_name").toString());
+        _billToAddr->setId(cust.value("addr_id").toInt());
 	_salesrep->setId(cust.value("cust_salesrep_id").toInt());
 	_commission->setDouble(cust.value("commission").toDouble());
 	_terms->setId(cust.value("cust_terms_id").toInt());
@@ -913,7 +919,7 @@ void invoice::keyPressEvent( QKeyEvent * e )
   e->ignore();
 }
 
-void invoice::newInvoice(int pCustid)
+void invoice::newInvoice(int pCustid, QWidget *parent )
 {
   // Check for an Item window in new mode already.
   QWidgetList list = omfgThis->windowList();
@@ -938,12 +944,12 @@ void invoice::newInvoice(int pCustid)
   if(-1 != pCustid)
     params.append("cust_id", pCustid);
 
-  invoice *newdlg = new invoice();
+  invoice *newdlg = new invoice(parent);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void invoice::editInvoice( int pId )
+void invoice::editInvoice( int pId, QWidget *parent  )
 {
   // Check for an Item window in edit mode for the specified invoice already.
   QString n = QString("invoice edit %1").arg(pId);
@@ -968,12 +974,12 @@ void invoice::editInvoice( int pId )
   params.append("invchead_id", pId);
   params.append("mode", "edit");
 
-  invoice *newdlg = new invoice();
+  invoice *newdlg = new invoice(parent);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void invoice::viewInvoice( int pId )
+void invoice::viewInvoice( int pId, QWidget *parent  )
 {
   // Check for an Item window in edit mode for the specified invoice already.
   QString n = QString("invoice view %1").arg(pId);
@@ -998,7 +1004,7 @@ void invoice::viewInvoice( int pId )
   params.append("invchead_id", pId);
   params.append("mode", "view");
 
-  invoice *newdlg = new invoice();
+  invoice *newdlg = new invoice(parent);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

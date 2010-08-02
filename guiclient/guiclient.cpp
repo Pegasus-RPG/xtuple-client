@@ -333,37 +333,6 @@ class xTupleGuiClientInterface : public GuiClientInterface
   }
 };
 
-class xTupleCustInfoAction : public CustInfoAction
-{
-  public:
-    void customerInformation(QWidget* parent, int pCustid)
-    {
-      ParameterList params;
-      params.append("cust_id", pCustid);
-      if (_privileges->check("ViewCustomerMasters"))
-        params.append("mode","edit");
-      else
-        params.append("mode","view");
-
-      QWidget * w = parent;
-      while(w && !w->isWindow())
-        w = w->parentWidget();
-      if(w && w->isModal())
-      {
-        params.append("modal");
-        customer * newdlg = new customer(w, 0, Qt::Window);
-        newdlg->set(params);
-        omfgThis->handleNewWindow(newdlg);
-      }
-      else
-      {
-        customer * newdlg = new customer();
-        newdlg->set(params);
-        omfgThis->handleNewWindow(newdlg);
-      }
-    }
-};
-
 GUIClient *omfgThis;
 GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
@@ -527,9 +496,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
   XTreeWidget::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   XComboBox::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
-
-  xTupleCustInfoAction* ciAction = new xTupleCustInfoAction();
-  CustInfo::_custInfoAction = ciAction;
 
   _splash->showMessage(tr("Completing Initialzation"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();

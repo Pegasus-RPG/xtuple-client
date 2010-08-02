@@ -25,7 +25,6 @@
 #include "plugins/currclusterplugin.h"
 #include "plugins/currdisplayplugin.h"
 #include "plugins/custclusterplugin.h"
-#include "plugins/custinfoplugin.h"
 #include "plugins/customerselectorplugin.h"
 #include "plugins/dateclusterplugin.h"
 #include "plugins/deptclusterplugin.h"
@@ -106,7 +105,6 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new CurrDisplayPlugin(this));
   m_plugins.append(new CustClusterPlugin(this));
   m_plugins.append(new CustomerSelectorPlugin(this));
-  m_plugins.append(new CustInfoPlugin(this));
   m_plugins.append(new DateClusterPlugin(this));
   m_plugins.append(new DeptClusterPlugin(this));
   m_plugins.append(new DLineEditPlugin(this));

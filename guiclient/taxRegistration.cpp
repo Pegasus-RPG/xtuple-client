@@ -19,8 +19,11 @@ taxRegistration::taxRegistration(QWidget* parent, const char* name, bool modal, 
 {
   setupUi(this);
 
+  _save = _buttonBox->button(QDialogButtonBox::Save);
+  _save->setEnabled(false);
+
   connect(_number,  SIGNAL(textChanged(QString)), this, SLOT(sHandleButtons()));
-  connect(_save,    SIGNAL(clicked()),		  this, SLOT(sSave()));
+  connect(_buttonBox,    SIGNAL(accepted()),		  this, SLOT(sSave()));
   connect(_taxauth, SIGNAL(newID(int)),		  this, SLOT(sHandleButtons()));
  
   _taxregid = -1;
@@ -93,12 +96,13 @@ enum SetResponse taxRegistration::set(const ParameterList pParams)
       _vend->setEnabled(false);
       _taxauth->setEnabled(false);
       _number->setEnabled(false);
-	  _taxZone->setEnabled(false); 
-	  _dates->setEnabled(false);  
-	  _notes->setEnabled(false);  
+      _taxZone->setEnabled(false);
+      _dates->setEnabled(false);
+      _notes->setEnabled(false);
 
-      _close->setText(tr("Close"));
-      _save->hide();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 

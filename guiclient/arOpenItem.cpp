@@ -26,13 +26,16 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 {
   setupUi(this);
 
-  connect(_save,           SIGNAL(clicked()),                 this, SLOT(sSave()));
-  connect(_close,          SIGNAL(clicked()),                 this, SLOT(sClose()));
+  _save = _buttonBox->button(QDialogButtonBox::Save);
+  _save->setDisabled(true);
+
+  connect(_buttonBox,      SIGNAL(accepted()),                 this, SLOT(sSave()));
+  connect(_buttonBox,      SIGNAL(rejected()),                 this, SLOT(sClose()));
   connect(_cust,           SIGNAL(newId(int)),                this, SLOT(sPopulateCustInfo(int)));
+  connect(_cust,           SIGNAL(valid(bool)),               _save, SLOT(setEnabled(bool)));
   connect(_terms,          SIGNAL(newID(int)),                this, SLOT(sPopulateDueDate()));
   connect(_docDate,        SIGNAL(newDate(const QDate&)),     this, SLOT(sPopulateDueDate()));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_amount,         SIGNAL(noConversionRate()),            this, SLOT(noConversionRate()));
 
   _last = -1;
   _aropenid = -1;
@@ -157,9 +160,9 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _rsnCode->setEnabled(FALSE);
       _altPrepaid->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
-      _save->hide();
-
-      _close->setText(tr("&Close"));
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
     else
       return UndefinedError;

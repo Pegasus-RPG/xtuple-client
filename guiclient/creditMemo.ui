@@ -443,7 +443,14 @@ to be bound by its terms.</comment>
                      <number>0</number>
                     </property>
                     <item>
-                     <widget class="CustInfo" name="_cust"/>
+                     <widget class="CustCluster" name="_cust">
+                      <property name="nameVisible">
+                       <bool>false</bool>
+                      </property>
+                      <property name="descriptionVisible">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
                     </item>
                     <item>
                      <spacer>
@@ -944,7 +951,7 @@ to be bound by its terms.</comment>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>CustInfo</class>
+   <class>CustCluster</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
   </customwidget>
@@ -994,25 +1001,26 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_memoNumber</tabstop>
-  <tabstop>_memoDate</tabstop>
-  <tabstop>_cust</tabstop>
-  <tabstop>_copyToShipto</tabstop>
-  <tabstop>_billtoName</tabstop>
-  <tabstop>_shipTo</tabstop>
-  <tabstop>_shipToName</tabstop>
   <tabstop>_invoiceNumber</tabstop>
+  <tabstop>_memoDate</tabstop>
   <tabstop>_salesRep</tabstop>
   <tabstop>_commission</tabstop>
   <tabstop>_taxzone</tabstop>
-  <tabstop>_customerPO</tabstop>
-  <tabstop>_hold</tabstop>
   <tabstop>_rsnCode</tabstop>
-  <tabstop>_creditMemoInformation</tabstop>
+  <tabstop>_hold</tabstop>
+  <tabstop>_cust</tabstop>
+  <tabstop>_copyToShipto</tabstop>
+  <tabstop>_billtoName</tabstop>
+  <tabstop>_billToAddr</tabstop>
+  <tabstop>_shipTo</tabstop>
+  <tabstop>_shipToName</tabstop>
+  <tabstop>_shipToAddr</tabstop>
+  <tabstop>_customerPO</tabstop>
   <tabstop>_cmitem</tabstop>
-  <tabstop>_currency</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
+  <tabstop>_currency</tabstop>
   <tabstop>_miscChargeDescription</tabstop>
   <tabstop>_miscChargeAccount</tabstop>
   <tabstop>_miscCharge</tabstop>
@@ -1021,6 +1029,7 @@ to be bound by its terms.</comment>
   <tabstop>_comments</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_creditMemoInformation</tabstop>
  </tabstops>
  <resources/>
  <connections>

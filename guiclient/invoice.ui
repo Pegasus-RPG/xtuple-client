@@ -404,9 +404,12 @@ to be bound by its terms.</comment>
              <item row="0" column="0">
               <layout class="QHBoxLayout">
                <item>
-                <widget class="CustInfo" name="_cust">
-                 <property name="focusPolicy">
-                  <enum>Qt::StrongFocus</enum>
+                <widget class="CustCluster" name="_cust">
+                 <property name="nameVisible">
+                  <bool>false</bool>
+                 </property>
+                 <property name="descriptionVisible">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -1325,7 +1328,7 @@ to be bound by its terms.</comment>
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>CustInfo</class>
+   <class>CustCluster</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
   </customwidget>
@@ -1434,22 +1437,6 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_cust</sender>
-   <signal>nameChanged(QString)</signal>
-   <receiver>_billToName</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_custCurrency</sender>
    <signal>newID(int)</signal>
    <receiver>_subtotal</receiver>
@@ -1766,22 +1753,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cust</sender>
-   <signal>addressChanged(int)</signal>
-   <receiver>_billToAddr</receiver>
-   <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>129</x>
-     <y>210</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>209</x>
-     <y>313</y>
     </hint>
    </hints>
   </connection>
