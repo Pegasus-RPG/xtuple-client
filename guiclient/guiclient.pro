@@ -205,11 +205,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspGLTransactions.ui                          \
           dspInvoiceInformation.ui                      \
           dspMRPDetail.ui                               \
-          dspMaterialUsageVarianceByBOMItem.ui          \
-          dspMaterialUsageVarianceByComponentItem.ui    \
-          dspMaterialUsageVarianceByItem.ui             \
-          dspMaterialUsageVarianceByWarehouse.ui        \
-          dspMaterialUsageVarianceByWorkOrder.ui        \
           dspOrderActivityByProject.ui                  \
           dspOrders.ui                                  \
           dspPOsByDate.ui                               \
@@ -836,11 +831,6 @@ HEADERS = ../common/format.h                    \
           dspGLTransactions.h                           \
           dspInvoiceInformation.h                       \
           dspMRPDetail.h                                \
-          dspMaterialUsageVarianceByBOMItem.h           \
-          dspMaterialUsageVarianceByComponentItem.h     \
-          dspMaterialUsageVarianceByItem.h              \
-          dspMaterialUsageVarianceByWarehouse.h         \
-          dspMaterialUsageVarianceByWorkOrder.h         \
           dspOrderActivityByProject.h                   \
           dspOrders.h                                   \
           dspPOsByDate.h                                \
@@ -1503,11 +1493,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspGLTransactions.cpp                         \
           dspInvoiceInformation.cpp                     \
           dspMRPDetail.cpp                              \
-          dspMaterialUsageVarianceByBOMItem.cpp         \
-          dspMaterialUsageVarianceByComponentItem.cpp   \
-          dspMaterialUsageVarianceByItem.cpp            \
-          dspMaterialUsageVarianceByWarehouse.cpp       \
-          dspMaterialUsageVarianceByWorkOrder.cpp       \
           dspOrderActivityByProject.cpp                 \
           dspOrders.cpp                                 \
           dspPOsByDate.cpp                              \
