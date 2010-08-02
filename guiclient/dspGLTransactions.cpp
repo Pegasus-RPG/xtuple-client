@@ -81,7 +81,7 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
   _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true, "gltrans_doctype");
   _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
   _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
-  _gltrans->addColumn(tr("Journal"),   _orderColumn,   Qt::AlignLeft,   false,"gltrans_journalnumber");
+  _gltrans->addColumn(tr("Journal #"),  _orderColumn,   Qt::AlignLeft,   false,"gltrans_journalnumber");
   _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
   _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
   _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
