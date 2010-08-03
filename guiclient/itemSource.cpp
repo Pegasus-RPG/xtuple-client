@@ -38,7 +38,6 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cTooling);
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
-  _vendor->setType(__activeVendors);
 
   _captive = false;
   _new = false;

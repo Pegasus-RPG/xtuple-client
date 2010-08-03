@@ -43,12 +43,14 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
     hideme->hide();
     hideme = _po->findChild<QWidget*>("_vendGroup");
     hideme->hide();
-    QRadioButton *radiobutton = _po->findChild<QRadioButton*>("_selectedVendor");
-    radiobutton->setChecked(true);
-    VendorInfo *povend = _po->findChild<VendorInfo*>("_vend");
+    VendorGroup *povend = _po->findChild<VendorGroup*>("_vend");
+    if (povend)
+    {
+      povend->setState(VendorGroup::Selected);
+      connect(povend, SIGNAL(newVendId(int)), _po,    SLOT(sFillList()));
+      connect(_vend,      SIGNAL(newId(int)), povend, SLOT(setVendId(int)));
+    }
     _po->show();
-    connect(povend,      SIGNAL(newId(int)), _po,           SLOT(sFillList()));
-    connect(_vend,       SIGNAL(newId(int)), povend,        SLOT(setId(int)));
   }
   else
     _tabWidget->setTabEnabled(_tabWidget->indexOf(_poTab), false);

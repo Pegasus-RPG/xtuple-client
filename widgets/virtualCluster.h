@@ -186,6 +186,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual void sSearch();
         virtual void setId(const int);
         virtual void setNumber(const QString&);
+        virtual void setShowInactive(const bool);
 
         virtual void setUiName(const QString& name);
         virtual void setEditPriv(const QString& priv);
@@ -254,6 +255,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         bool _hasName;
         bool _hasActive;
         bool _strict;
+        bool _showInactive;
 
         virtual void silentSetId(const int);
 
@@ -343,6 +345,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         virtual void setLabel(const QString& p);
         virtual void setStrict(const bool b);
         virtual void setReadOnly(const bool b);
+        virtual void setShowInactive(const bool);
         virtual void sRefresh();
         virtual void updateMapperData();
 

@@ -91,7 +91,6 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/usernamelineeditplugin.h \
     plugins/vendorclusterplugin.h \
     plugins/vendorgroupplugin.h \
-    plugins/vendorinfoplugin.h \
     plugins/vendorlineeditplugin.h \
     plugins/warehousegroupplugin.h \
     plugins/wcomboboxplugin.h \

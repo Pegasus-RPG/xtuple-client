@@ -17,16 +17,14 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <mqlutil.h>
 #include <openreports.h>
 
+#include "changePoitemQty.h"
+#include "dspRunningAvailability.h"
 #include "purchaseOrder.h"
 #include "purchaseOrderItem.h"
 #include "reschedulePoitem.h"
-#include "changePoitemQty.h"
-#include "dspRunningAvailability.h"
-#include "mqlutil.h"
-
-#define POITEM_STATUS_COL 8
 
 dspPoItemsByItem::dspPoItemsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -42,17 +40,15 @@ dspPoItemsByItem::dspPoItemsByItem(QWidget* parent, const char* name, Qt::WFlags
 
   _agent->setText(omfgThis->username());
 
-  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
   _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight,  true,  "pohead_number"  );
-  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitemstatus" );
+  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
+  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitem_status" );
   _poitem->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft,   true,  "vend_name"   );
   _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter, true,  "poitem_duedate" );
   _poitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_ordered"  );
+  _poitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "itemuom" );
   _poitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_received"  );
   _poitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_returned"  );
-  _poitem->addColumn(tr("Item Status"), 10,           Qt::AlignCenter, true,  "poitem_status" );
-
-  _poitem->hideColumn(POITEM_STATUS_COL);
 }
 
 dspPoItemsByItem::~dspPoItemsByItem()
@@ -147,8 +143,9 @@ void dspPoItemsByItem::sPrint()
 void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   QAction *menuItem;
+  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(pSelected);
 
-  if (pSelected->text(POITEM_STATUS_COL) == "U")
+  if (item && item->rawValue("poitem_status") == "U")
   {
     menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
@@ -164,7 +161,7 @@ void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
   pMenu->addSeparator();
 
-  if (pSelected->text(POITEM_STATUS_COL) == "U")
+  if (item && item->rawValue("poitem_status") == "U")
   {
     menuItem = pMenu->addAction(tr("Edit Item..."), this, SLOT(sEditItem()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
@@ -174,7 +171,7 @@ void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
                        _privileges->check("ViewPurchaseOrders"));
 
-  if (pSelected->text(POITEM_STATUS_COL) != "C")
+  if (item && item->rawValue("poitem_status") != "C")
   {
     menuItem = pMenu->addAction(tr("Reschedule..."), this, SLOT(sReschedule()));
     menuItem->setEnabled(_privileges->check("ReschedulePurchaseOrders"));
@@ -185,12 +182,12 @@ void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     pMenu->addSeparator();
   }
 
-  if (pSelected->text(POITEM_STATUS_COL) == "O")
+  if (item && item->rawValue("poitem_status") == "O")
   {
     menuItem = pMenu->addAction(tr("Close Item..."), this, SLOT(sCloseItem()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   }
-  else if (pSelected->text(POITEM_STATUS_COL) == "C")
+  else if (item && item->rawValue("poitem_status") == "C")
   {
     menuItem = pMenu->addAction(tr("Open Item..."), this, SLOT(sOpenItem()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));

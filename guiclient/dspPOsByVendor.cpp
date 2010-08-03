@@ -53,9 +53,7 @@ bool dspPOsByVendor::setParams(ParameterList &params)
 {
   _dates->appendValue(params);
   _warehouse->appendValue(params);
-
-  if(_selectedVendor->isChecked())
-    params.append("vend_id", _vend->id());
+  _vend->appendValue(params);
 
   if(_showClosed->isChecked())
     params.append("showClosed");

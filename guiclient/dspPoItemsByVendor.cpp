@@ -26,15 +26,13 @@
 #include "dspRunningAvailability.h"
 #include "mqlutil.h"
 
-#define POITEM_STATUS_COL 11
-
 dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_vendor, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
+  connect(_vendor, SIGNAL(updated()), this, SLOT(sPopulatePo()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
@@ -43,17 +41,17 @@ dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char* name, Qt::WF
   _agent->setText(omfgThis->username());
 
   _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight,  true,  "pohead_number"  );
-  _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter, true,  "warehousecode"  );
-  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitemstatus" );
+  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehous_code"  );
+  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitem_status" );
+  _poitem->addColumn(tr("Vendor"),      _itemColumn,  Qt::AlignLeft,   true,  "vend_name"   );
   _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter, true,  "poitem_duedate" );
-  _poitem->addColumn(tr("Item #"),      _itemColumn,  Qt::AlignLeft,   true,  "itemnumber"   );
+  _poitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "itemnumber"   );
   _poitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
   _poitem->addColumn(tr("Vend. Item #"), _itemColumn, Qt::AlignLeft,   true,  "poitem_vend_item_number");
   _poitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "itemuom" );
   _poitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_ordered"  );
   _poitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_received"  );
   _poitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_returned"  );
-  _poitem->addColumn(tr("Item Status"), 10,           Qt::AlignCenter, false, "poitem_status" );
 
   _vendor->setFocus();
 }
@@ -72,9 +70,8 @@ void dspPoItemsByVendor::setParams(ParameterList & params)
 {
   params.append("byVendor");
 
-  params.append("vend_id", _vendor->id());
-
   _warehouse->appendValue(params);
+  _vendor->appendValue(params);
 
   if (_selectedPurchasingAgent->isChecked())
     params.append("agentUsername", _agent->currentText());
@@ -119,8 +116,9 @@ void dspPoItemsByVendor::sPrint()
 void dspPoItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   QAction *menuItem;
+  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(pSelected);
 
-  if (pSelected->text(POITEM_STATUS_COL) == "U")
+  if (item && item->rawValue("poitem_status") == "U")
   {
     menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
@@ -136,7 +134,7 @@ void dspPoItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
   pMenu->addSeparator();
 
-  if (pSelected->text(POITEM_STATUS_COL) == "U")
+  if (item && item->rawValue("poitem_status") == "U")
   {
     menuItem = pMenu->addAction(tr("Edit Item..."), this, SLOT(sEditItem()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
@@ -146,7 +144,7 @@ void dspPoItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
                        _privileges->check("ViewPurchaseOrders"));
 
-  if (pSelected->text(POITEM_STATUS_COL) != "C")
+  if (item && item->rawValue("poitem_status") != "C")
   {
     menuItem = pMenu->addAction(tr("Reschedule..."), this, SLOT(sReschedule()));
     menuItem->setEnabled(_privileges->check("ReschedulePurchaseOrders"));
@@ -157,12 +155,12 @@ void dspPoItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     pMenu->addSeparator();
   }
 
-  if (pSelected->text(POITEM_STATUS_COL) == "O")
+  if (item && item->rawValue("poitem_status") == "O")
   {
     menuItem = pMenu->addAction(tr("Close Item..."), this, SLOT(sCloseItem()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   }
-  else if (pSelected->text(POITEM_STATUS_COL) == "C")
+  else if (item && item->rawValue("poitem_status") == "C")
   {
     menuItem = pMenu->addAction(tr("Open Item..."), this, SLOT(sOpenItem()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
@@ -171,24 +169,25 @@ void dspPoItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
 void dspPoItemsByVendor::sRunningAvailability()
 {
-  q.prepare("SELECT poitem_itemsite_id "
-            "FROM poitem "
-            "WHERE (poitem_id=:poitemid); ");
-  q.bindValue(":poitemid", _poitem->altId());
-  q.exec();
-  if (q.first())
+  XSqlQuery raq;
+  raq.prepare("SELECT poitem_itemsite_id "
+              "FROM poitem "
+              "WHERE (poitem_id=:poitemid); ");
+  raq.bindValue(":poitemid", _poitem->altId());
+  raq.exec();
+  if (raq.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("poitem_itemsite_id").toInt());
+    params.append("itemsite_id", raq.value("poitem_itemsite_id").toInt());
     params.append("run");
 
     dspRunningAvailability *newdlg = new dspRunningAvailability();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (raq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, raq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -261,14 +260,15 @@ void dspPoItemsByVendor::sChangeQty()
 
 void dspPoItemsByVendor::sCloseItem()
 {
-  q.prepare( "UPDATE poitem "
-             "SET poitem_status='C' "
-             "WHERE (poitem_id=:poitem_id);" );
-  q.bindValue(":poitem_id", _poitem->altId());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery closeq;
+  closeq.prepare("UPDATE poitem "
+                 "SET poitem_status='C' "
+                 "WHERE (poitem_id=:poitem_id);" );
+  closeq.bindValue(":poitem_id", _poitem->altId());
+  closeq.exec();
+  if (closeq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, closeq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -276,14 +276,15 @@ void dspPoItemsByVendor::sCloseItem()
 
 void dspPoItemsByVendor::sOpenItem()
 {
-  q.prepare( "UPDATE poitem "
-             "SET poitem_status='O' "
-             "WHERE (poitem_id=:poitem_id);" );
-  q.bindValue(":poitem_id", _poitem->altId());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery openq;
+  openq.prepare( "UPDATE poitem "
+                 "SET poitem_status='O' "
+                 "WHERE (poitem_id=:poitem_id);" );
+  openq.bindValue(":poitem_id", _poitem->altId());
+  openq.exec();
+  if (openq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, openq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -291,19 +292,14 @@ void dspPoItemsByVendor::sOpenItem()
 
 void dspPoItemsByVendor::sFillList()
 {
-  _poitem->clear();
-
   ParameterList params;
   setParams(params);
   MetaSQLQuery mql = mqlLoad("poItems", "detail");
-  q = mql.toQuery(params);
-  if (q.first())
+  XSqlQuery itemq = mql.toQuery(params);
+  _poitem->populate(itemq, true);
+  if (itemq.lastError().type() != QSqlError::NoError)
   {
-    _poitem->populate(q, true);
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -312,18 +308,19 @@ void dspPoItemsByVendor::sPopulatePo()
 {
   _poNumber->clear();
 
-  if ( _vendor->isValid())
+  if (_vendor->isSelectedVend())
   {
-    q.prepare( "SELECT pohead_id, pohead_number "
+    XSqlQuery poq;
+    poq.prepare( "SELECT pohead_id, pohead_number "
                "FROM pohead "
                "WHERE ( (pohead_vend_id=:vend_id) ) "
                "ORDER BY pohead_number;" );
-    q.bindValue(":vend_id", _vendor->id());
-    q.exec();
-    _poNumber->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
+    poq.bindValue(":vend_id", _vendor->vendId());
+    poq.exec();
+    _poNumber->populate(poq);
+    if (poq.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, poq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -335,9 +332,9 @@ void dspPoItemsByVendor::sSearch( const QString &pTarget )
   int i;
   for (i = 0; i < _poitem->topLevelItemCount(); i++)
   {
-    if ( _poitem->topLevelItem(i)->text(4).startsWith(pTarget, Qt::CaseInsensitive) ||
-         _poitem->topLevelItem(i)->text(5).contains(pTarget, Qt::CaseInsensitive) ||
-         _poitem->topLevelItem(i)->text(6).startsWith(pTarget, Qt::CaseInsensitive) )
+    if ( _poitem->topLevelItem(i)->text(_poitem->column("itemnumber")).startsWith(pTarget, Qt::CaseInsensitive) ||
+         _poitem->topLevelItem(i)->text(_poitem->column("itemdescrip")).contains(pTarget, Qt::CaseInsensitive) ||
+         _poitem->topLevelItem(i)->text(_poitem->column("poitem_vend_item_number")).startsWith(pTarget, Qt::CaseInsensitive) )
       break;
   }
 
@@ -357,9 +354,9 @@ void dspPoItemsByVendor::sSearchNext()
     currentIndex = 0;
   for (i = currentIndex; i < _poitem->topLevelItemCount(); i++)
   {
-    if ( _poitem->topLevelItem(i)->text(4).startsWith(target, Qt::CaseInsensitive) ||
-         _poitem->topLevelItem(i)->text(5).contains(target, Qt::CaseInsensitive)  ||
-         _poitem->topLevelItem(i)->text(6).startsWith(target, Qt::CaseInsensitive) )
+    if ( _poitem->topLevelItem(i)->text(_poitem->column("itemnumber")).startsWith(target, Qt::CaseInsensitive) ||
+         _poitem->topLevelItem(i)->text(_poitem->column("itemdescrip")).contains(target, Qt::CaseInsensitive) ||
+         _poitem->topLevelItem(i)->text(_poitem->column("poitem_vend_item_number")).startsWith(target, Qt::CaseInsensitive) )
       break;
   }
 

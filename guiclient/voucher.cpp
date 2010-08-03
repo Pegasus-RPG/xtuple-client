@@ -61,9 +61,6 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _poNumber->findChild<QWidget*>("_to")->hide();
   _poNumber->setMinimumHeight(32);
   
-  /* a VendorCluster keeps the vend_id handy and handles address info easily */
-  _vendor->setVisible(false);
-
   _poitem->addColumn(tr("#"),               _whsColumn,   Qt::AlignCenter, true,  "poitem_linenumber" );
   _poitem->addColumn(tr("Status"),          _uomColumn,   Qt::AlignCenter, true,  "poitemstatus" );
   _poitem->addColumn(tr("Item Number"),     _itemColumn,  Qt::AlignLeft,   true,  "itemnumber"   );
@@ -81,6 +78,8 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _miscDistrib->addColumn(tr("Account"),    -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" ); 
+
+  _vendid = -1;
 
   setWindowModified(false);
 }
@@ -252,7 +251,7 @@ bool voucher::sSave()
                " AND (pohead_vend_id=:vend_id)"
                " AND (vohead_id<>:vohead_id) );" );
     q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
-    q.bindValue(":vend_id", _vendor->id());
+    q.bindValue(":vend_id",   _vendid);
     q.bindValue(":vohead_id", _voheadid);
     q.exec();
     if (q.first())
@@ -290,7 +289,7 @@ bool voucher::sSave()
   q.bindValue(":vohead_pohead_id", _poNumber->id());
   if (_taxzone->isValid())
     q.bindValue(":vohead_taxzone_id", _taxzone->id());
-  q.bindValue(":vohead_vend_id",  _vendor->id());
+  q.bindValue(":vohead_vend_id",  _vendid);
   q.bindValue(":vohead_terms_id", _terms->id());
   q.bindValue(":vohead_distdate", _distributionDate->date());
   q.bindValue(":vohead_docdate", _invoiceDate->date());
@@ -344,7 +343,8 @@ void voucher::sHandleVoucherNumber()
 {
   if (_voucherNumber->text().length() == 0)
   {
-    if ((_metrics->value("VoucherNumberGeneration") == "A") || (_metrics->value("VoucherNumberGeneration") == "O"))
+    if ((_metrics->value("VoucherNumberGeneration") == "A") ||
+        (_metrics->value("VoucherNumberGeneration") == "O"))
       populateNumber();
     else
     {
@@ -381,7 +381,7 @@ void voucher::sHandleVoucherNumber()
 
 void voucher::sPopulate()
 {
-  setWindowTitle(tr("Voucher for P/O #") + _poNumber->number());
+  setWindowTitle(tr("Voucher for P/O # %1").arg(_poNumber->number()));
 }
 
 void voucher::sDistributions()
@@ -688,10 +688,13 @@ void voucher::sFillMiscList()
 void voucher::sPopulatePoInfo()
 {
   XSqlQuery po;
-  po.prepare( "SELECT pohead_terms_id, pohead_taxzone_id, vend_1099, "
-             "       pohead_curr_id, vend_id "
-             "FROM pohead JOIN vendinfo ON (pohead_vend_id=vend_id)"
-             "WHERE (pohead_id=:pohead_id);" );
+  po.prepare("SELECT pohead_terms_id, pohead_taxzone_id, vend_1099, "
+             "       pohead_curr_id, vend_id, vend_number, vend_name,"
+             "       addr_line1, addr_line2"
+             "  FROM pohead"
+             "  JOIN vendinfo ON (pohead_vend_id=vend_id)"
+             "  LEFT OUTER JOIN addr ON (vend_addr_id=addr_id)"
+             " WHERE (pohead_id=:pohead_id);" );
   po.bindValue(":pohead_id", _poNumber->id());
   po.exec();
   if (po.first())
@@ -702,7 +705,12 @@ void voucher::sPopulatePoInfo()
     _terms->setId(po.value("pohead_terms_id").toInt());
     _taxzone->setId(po.value("pohead_taxzone_id").toInt());
     _amountToDistribute->setId(po.value("pohead_curr_id").toInt());
-    _vendor->setId(po.value("vend_id").toInt());
+    _vendid = po.value("vend_id").toInt();
+    _vendor->setText(po.value("vend_number").toString());
+    _vendName->setText(po.value("vend_name").toString());
+    // TODO: replace with a compact AddressCluster when such exists
+    _vendAddress1->setText(po.value("addr_line1").toString());
+    _vendAddress2->setText(po.value("addr_line2").toString());
   }
   else if (po.lastError().type() != QSqlError::NoError)
   {
@@ -935,7 +943,7 @@ void voucher::saveDetail()
     q.bindValue(":vohead_pohead_id", _poNumber->id());
     if (_taxzone->isValid())
       q.bindValue(":vohead_taxzone_id", _taxzone->id());
-    q.bindValue(":vohead_vend_id",  _vendor->id());
+    q.bindValue(":vohead_vend_id",  _vendid);
     q.bindValue(":vohead_terms_id", _terms->id());
     q.bindValue(":vohead_distdate", _distributionDate->date());
     q.bindValue(":vohead_docdate", _invoiceDate->date());
@@ -968,7 +976,6 @@ void voucher::enableWindowModifiedSetting()
   connect(_reference, SIGNAL(textChanged(const QString&)), this, SLOT(sDataChanged()));
   connect(_taxzone,                    SIGNAL(newID(int)), this, SLOT(sDataChanged()));
   connect(_terms,                      SIGNAL(newID(int)), this, SLOT(sDataChanged()));
-  connect(_vendor,                          SIGNAL(newId(int)), this, SLOT(sDataChanged()));
 }
 
 void voucher::sDataChanged()

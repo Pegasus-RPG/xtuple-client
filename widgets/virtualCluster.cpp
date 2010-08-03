@@ -162,6 +162,11 @@ void VirtualCluster::setStrict(const bool b)
   _number->setStrict(b);
 }
 
+void VirtualCluster::setShowInactive(const bool b)
+{
+  _number->setShowInactive(b);
+}
+
 void VirtualCluster::addNumberWidget(VirtualClusterLineEdit* pNumberWidget)
 {
     _number = pNumberWidget;
@@ -295,6 +300,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     _parsed = true;
     _strict = true;
     _completer = 0;
+    _showInactive = false;
 
     setTableAndColumnNames(pTabName, pIdColumn, pNumberColumn, pNameColumn, pDescripColumn, pActiveColumn);
 
@@ -434,6 +440,11 @@ void VirtualClusterLineEdit::positionMenuLabel()
   }
 }
 
+void VirtualClusterLineEdit::setShowInactive(const bool p)
+{
+  _showInactive = p;
+}
+
 void VirtualClusterLineEdit::setUiName(const QString& name)
 {
   _uiName = name;
@@ -518,7 +529,7 @@ void VirtualClusterLineEdit::sHandleCompleter()
   XSqlQuery numQ;
   numQ.prepare(_query + _numClause +
                (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-               (_hasActive ? _activeClause : "") +
+               ((_hasActive && ! _showInactive) ? _activeClause : "") +
                QString(" ORDER BY %1 LIMIT 10;").arg(_numColName));
   numQ.bindValue(":number", "^" + stripped);
   numQ.exec();
@@ -751,7 +762,7 @@ void VirtualClusterLineEdit::sParse()
         XSqlQuery numQ;
         numQ.prepare(_query + _numClause +
 		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-                    (_hasActive ? _activeClause : "" ) +
+                    ((_hasActive && ! _showInactive) ? _activeClause : "" ) +
                     QString("ORDER BY %1 LIMIT 1;").arg(_numColName));
         numQ.bindValue(":number", "^" + stripped);
         numQ.exec();
@@ -812,7 +823,7 @@ void VirtualClusterLineEdit::sSearch()
       XSqlQuery numQ;
       numQ.prepare(_query + _numClause +
                    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-                   (_hasActive ? _activeClause : "" ) +
+                   ((_hasActive && ! _showInactive) ? _activeClause : "" ) +
                    QString("ORDER BY %1;").arg(_numColName));
       numQ.bindValue(":number", "^" + stripped);
       numQ.exec();
@@ -1085,7 +1096,7 @@ void VirtualList::sFillList()
     XSqlQuery query(_parent->_query +
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
-                    (_parent->_hasActive ? _parent->_activeClause : "") +
+                    ((_parent->_hasActive && ! _parent->_showInactive) ? _parent->_activeClause : "") +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
     _listTab->populate(query);
@@ -1272,7 +1283,7 @@ void VirtualSearch::sFillList()
 		    (search.isEmpty() ? "" :  " AND " + search) +
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
-                    (_parent->_hasActive ? _parent->_activeClause : "") +
+                    ((_parent->_hasActive && ! _parent->_showInactive) ? _parent->_activeClause : "") +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
                     

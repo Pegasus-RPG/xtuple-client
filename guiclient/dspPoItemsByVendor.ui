@@ -40,7 +40,7 @@ to be bound by its terms.</comment>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
             <item row="0" column="0">
-             <widget class="VendorCluster" name="_vendor"/>
+             <widget class="VendorGroup" name="_vendor"/>
             </item>
            </layout>
           </widget>
@@ -238,9 +238,6 @@ to be bound by its terms.</comment>
              </item>
              <item>
               <widget class="QPushButton" name="_query">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
                <property name="text">
                 <string>&amp;Query</string>
                </property>
@@ -399,9 +396,9 @@ to be bound by its terms.</comment>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>VendorCluster</class>
+   <class>VendorGroup</class>
    <extends>QWidget</extends>
-   <header>vendorcluster.h</header>
+   <header>vendorgroup.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
@@ -443,22 +440,6 @@ to be bound by its terms.</comment>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>_vendor</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_query</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_selectedPurchasingAgent</sender>
    <signal>toggled(bool)</signal>

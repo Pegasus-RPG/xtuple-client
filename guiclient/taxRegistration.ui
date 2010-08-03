@@ -45,12 +45,15 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <widget class="VendorInfo" name="_vend">
+        <widget class="VendorCluster" name="_vend">
          <property name="enabled">
           <bool>false</bool>
          </property>
          <property name="focusPolicy">
           <enum>Qt::StrongFocus</enum>
+         </property>
+         <property name="label">
+          <string>Vendor #:</string>
          </property>
         </widget>
        </item>
@@ -256,9 +259,9 @@ to be bound by its terms.</comment>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>VendorInfo</class>
+   <class>VendorCluster</class>
    <extends>QWidget</extends>
-   <header>vendorinfo.h</header>
+   <header>vendorcluster.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
