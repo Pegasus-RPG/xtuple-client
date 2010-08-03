@@ -29,7 +29,9 @@ ShiptoEdit::ShiptoEdit(QWidget *pParent, const char *pName) :
   setViewPriv("ViewShiptos");
   setNewPriv("MaintainShiptos");
 
-  _custid = -1;
+  _custid = 0;
+  setCustid(-1);
+
   _query = "SELECT shipto_id AS id, shipto_num AS number, shipto_name AS name, "
            "  addr_line1 AS description, "
            "  (addr_city || ', ' || addr_state || '  ' || addr_postalcode) AS csv,"
@@ -68,9 +70,17 @@ void ShiptoEdit::setCustid(int pCustid)
   _custid = pCustid;
 
   if (_custid != -1)
+  {
     _extraClause = QString(" (shipto_cust_id=%1) ").arg(_custid);
+    setNewPriv("MaintainShiptos");
+  }
   else
+  {
     _extraClause = " (false) ";
+    setNewPriv("");
+  }
+
+  sUpdateMenu();
 
   emit newCustid(pCustid);
   emit disableList(_custid == -1);
