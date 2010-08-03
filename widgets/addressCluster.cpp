@@ -34,6 +34,7 @@ void AddressCluster::init()
     _grid->removeWidget(_list);
     _grid->removeWidget(_info);
     delete _description;
+    _description = 0;
 
     _addrChange    = new XLineEdit(this);
     _number        = new XLineEdit(this);

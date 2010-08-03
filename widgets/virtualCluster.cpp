@@ -270,6 +270,28 @@ void VirtualCluster::setOrientation(Qt::Orientation orientation)
   _orientation = orientation;
 }
 
+bool VirtualCluster::nameVisible() const
+{
+  return _name && _name->isVisible();
+}
+
+void VirtualCluster::setNameVisible(const bool p)
+{
+  if (_name)
+    _name->setHidden(!p);
+}
+
+bool VirtualCluster::descriptionVisible() const
+{
+  return _description && _description->isVisible();
+}
+
+void VirtualCluster::setDescriptionVisible(const bool p)
+{
+  if (_description)
+    _description->setHidden(!p);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 GuiClientInterface* VirtualClusterLineEdit::_guiClientInterface = 0;

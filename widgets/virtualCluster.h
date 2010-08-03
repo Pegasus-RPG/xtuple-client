@@ -319,11 +319,11 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         virtual Qt::Orientation orientation();
         virtual void setOrientation(Qt::Orientation orientation);
 
-        virtual bool   nameVisible() const { return _name->isVisible(); }
-        virtual void   setNameVisible(const bool p)      { _name->setHidden(!p); }
+        virtual bool   nameVisible() const;
+        virtual void   setNameVisible(const bool p);
 
-        virtual bool   descriptionVisible() const { return _description->isVisible(); }
-        virtual void   setDescriptionVisible(const bool p) { _description->setHidden(!p); }
+        virtual bool   descriptionVisible() const;
+        virtual void   setDescriptionVisible(const bool p);
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
