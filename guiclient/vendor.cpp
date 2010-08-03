@@ -71,7 +71,8 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   _vendaddr->addColumn(tr("Country"),-1, Qt::AlignLeft, true, "vendaddr_country");
   _vendaddr->addColumn(tr("Postal Code"),-1, Qt::AlignLeft, true, "vendaddr_zipcode");
 
-  _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxzone_code");
+  _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxauth_code");
+  _taxreg->addColumn(tr("Tax Zone"),      100, Qt::AlignLeft, true, "taxzone_code");
   _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
 
   _accountType->append(0, "Checking", "K");
@@ -791,12 +792,13 @@ void vendor::sFillAddressList()
 void vendor::sFillTaxregList()
 {
   XSqlQuery taxreg;
-  taxreg.prepare("SELECT taxreg_id, taxreg_taxauth_id, "
-                 "       taxauth_code, taxreg_number "
-                 "FROM taxreg, taxauth "
-                 "WHERE ((taxreg_rel_type='V') "
-                 "  AND  (taxreg_rel_id=:vend_id) "
-                 "  AND  (taxreg_taxauth_id=taxauth_id));");
+  taxreg.prepare("SELECT taxreg_id, taxreg_taxauth_id,"
+                 "       taxauth_code, taxzone_code, taxreg_number"
+                 "  FROM taxreg"
+                 "  JOIN taxauth ON (taxreg_taxauth_id=taxauth_id)"
+                 "  LEFT OUTER JOIN taxzone ON (taxreg_taxzone_id=taxzone_id)"
+                 " WHERE ((taxreg_rel_type='V') "
+                 "    AND (taxreg_rel_id=:vend_id));");
   taxreg.bindValue(":vend_id", _vendid);
   taxreg.exec();
   _taxreg->clear();
