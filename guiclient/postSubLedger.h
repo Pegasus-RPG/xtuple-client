@@ -31,6 +31,7 @@ public slots:
     void sHandleSelection();
     void sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *);
     void sViewTransactions();
+    void sPrint(QList<int>);
 
 protected slots:
     void languageChange();

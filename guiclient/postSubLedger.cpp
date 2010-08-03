@@ -12,6 +12,7 @@
 #include "dspSubLedger.h"
 
 #include <metasql.h>
+#include <openreports.h>
 #include "mqlutil.h"
 
 #include <QAction>
@@ -52,23 +53,33 @@ void postSubLedger::languageChange()
 
 void postSubLedger::sPost()
 {
+  QStringList sources;
+  QList<int> journalnumbers;
   XSqlQuery qry;
   MetaSQLQuery mql = mqlLoad("postSubLedger", "post");
   QList<XTreeWidgetItem*> selected = _sources->selectedItems();
   for (int i = 0; i < selected.size(); i++)
-  {
-    ParameterList params;
-    _subLedgerDates->appendValue(params);
-    params.append("distDate", _distDate->date());
-    params.append("source", selected.at(i)->rawValue("sltrans_source").toString());
+    sources << selected.at(i)->rawValue("sltrans_source").toString();
 
-    mql.toQuery(params);
-    if (qry.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+  ParameterList params;
+  _subLedgerDates->appendValue(params);
+  params.append("distDate", _distDate->date());
+  params.append("source_list", sources);
+
+  XSqlQuery jrnls;
+  jrnls = mql.toQuery(params);
+  if (jrnls.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, jrnls.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
+
+  while (jrnls.next())
+    journalnumbers << jrnls.value("result").toInt();
+
+  if (_print->isChecked() && journalnumbers.size())
+    sPrint(journalnumbers);
+
   sFillList();
 }
 
@@ -154,3 +165,42 @@ void postSubLedger::sViewTransactions()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void postSubLedger::sPrint(QList<int> journalnumbers)
+{
+  if (!journalnumbers.size())
+    return;
+
+  QPrinter printer(QPrinter::HighResolution);
+  bool setupPrinter = true;
+  bool userCanceled = false;
+
+  if (orReport::beginMultiPrint(&printer, userCanceled) == false)
+  {
+    if(!userCanceled)
+      systemError(this, tr("<p>Could not initialize printing system for "
+                           "multiple reports."));
+    return;
+  }
+
+  for (int i = 0; i < journalnumbers.size(); i++)
+  {
+    ParameterList params;
+    params.append("startDate", _distDate->date());
+    params.append("endDate", _distDate->date());
+    params.append("startJrnlnum", journalnumbers.at(i));
+    params.append("endJrnlnum", journalnumbers.at(i));
+    params.append("gltrans", true);
+    params.append("table", "gltrans");
+
+    orReport report("GLSeries", params);
+    if (report.isValid() && report.print(&printer, setupPrinter))
+      setupPrinter = false;
+    else
+    {
+      report.reportError(this);
+      break;
+    }
+  }
+
+  orReport::endMultiPrint(&printer);
+}
