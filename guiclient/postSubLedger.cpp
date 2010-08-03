@@ -190,6 +190,7 @@ void postSubLedger::sPrint(QList<int> journalnumbers)
     params.append("startJrnlnum", journalnumbers.at(i));
     params.append("endJrnlnum", journalnumbers.at(i));
     params.append("gltrans", true);
+    params.append("title",tr("General Ledger Series"));
     params.append("table", "gltrans");
 
     orReport report("GLSeries", params);
