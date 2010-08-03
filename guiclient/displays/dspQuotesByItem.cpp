@@ -10,25 +10,20 @@
 
 #include "dspQuotesByItem.h"
 
-#include <metasql.h>
-#include "mqlutil.h"
-
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
-#include <QVariant>
 
 #include "salesOrder.h"
 
-dspQuotesByItem::dspQuotesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspQuotesByItem::dspQuotesByItem(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspQuotesByItem", fl)
 {
-  setupUi(this);
-
-  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Quote Lookup by Item"));
+  setListLabel(tr("Quotes"));
+  setMetaSQLOptions("quoteItems", "detail");
+  setUseAltId(true);
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Starting Order Date"));
@@ -37,22 +32,18 @@ dspQuotesByItem::dspQuotesByItem(QWidget* parent, const char* name, Qt::WFlags f
 
   _item->setType(ItemLineEdit::cSold);
 
-  _so->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignLeft,   true,  "quhead_number"   );
-  _so->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter, true,  "quhead_quotedate" );
-  _so->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name"   );
-  _so->addColumn(tr("Quoted"),     _qtyColumn,   Qt::AlignRight,  true,  "quitem_qtyord"  );
+  list()->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignLeft,   true,  "quhead_number"   );
+  list()->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter, true,  "quhead_quotedate" );
+  list()->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name"   );
+  list()->addColumn(tr("Quoted"),     _qtyColumn,   Qt::AlignRight,  true,  "quitem_qtyord"  );
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())); 
 }
 
-dspQuotesByItem::~dspQuotesByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
 void dspQuotesByItem::languageChange()
 {
-    retranslateUi(this);
+  display::languageChange();
+  retranslateUi(this);
 }
 
 enum SetResponse dspQuotesByItem::set(const ParameterList &pParams)
@@ -76,7 +67,7 @@ enum SetResponse dspQuotesByItem::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspQuotesByItem::sPopulateMenu(QMenu *menuThis)
+void dspQuotesByItem::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
 {
   menuThis->addAction(tr("Edit..."), this, SLOT(sEditOrder()));
   menuThis->addAction(tr("View..."), this, SLOT(sViewOrder()));
@@ -84,12 +75,12 @@ void dspQuotesByItem::sPopulateMenu(QMenu *menuThis)
 
 void dspQuotesByItem::sEditOrder()
 {
-  if (!checkSitePrivs(_so->altId()))
+  if (!checkSitePrivs(list()->altId()))
     return;
     
   ParameterList params;
   params.append("mode", "editQuote");
-  params.append("quhead_id", _so->altId());
+  params.append("quhead_id", list()->altId());
       
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
@@ -98,30 +89,38 @@ void dspQuotesByItem::sEditOrder()
 
 void dspQuotesByItem::sViewOrder()
 {
-  if (!checkSitePrivs(_so->altId()))
+  if (!checkSitePrivs(list()->altId()))
     return;
     
   ParameterList params;
   params.append("mode", "viewQuote");
-  params.append("quhead_id", _so->altId());
+  params.append("quhead_id", list()->altId());
       
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspQuotesByItem::sFillList()
+bool dspQuotesByItem::setParams(ParameterList & params)
 {
-  if ((_item->isValid()) && (_dates->allValid()))
+  if (!_item->isValid())
   {
-    MetaSQLQuery mql = mqlLoad("quoteItems", "detail");
-    ParameterList params;
-    _dates->appendValue(params);
-    params.append("item_id", _item->id());
-
-    q = mql.toQuery(params);
-    _so->populate(q, true);
+    QMessageBox::warning(this, tr("Item Required"),
+      tr("You must specify an Item Number"));
+    return false;
   }
+
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Dates Required"),
+      tr("You must specify a Start Date and End Date."));
+    return false;
+  }
+
+  _dates->appendValue(params);
+  params.append("item_id", _item->id());
+
+  return true;
 }
 
 bool dspQuotesByItem::checkSitePrivs(int orderid)

@@ -11,25 +11,23 @@
 #ifndef DSPORDERACTIVITYBYPROJECT_H
 #define DSPORDERACTIVITYBYPROJECT_H
 
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspOrderActivityByProject.h"
 
-class dspOrderActivityByProject : public XWidget, public Ui::dspOrderActivityByProject
+class dspOrderActivityByProject : public display, public Ui::dspOrderActivityByProject
 {
     Q_OBJECT
 
 public:
     dspOrderActivityByProject(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspOrderActivityByProject();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPopulateMenu( QMenu * );
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
     virtual void sEdit();
     virtual void sView();
-    virtual void sFillList();
-    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();

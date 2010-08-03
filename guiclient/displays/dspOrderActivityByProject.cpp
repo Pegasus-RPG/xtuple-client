@@ -15,35 +15,25 @@
 #include <QMessageBox>
 #include <QVariant>
 
-#include <openreports.h>
-#include <parameter.h>
-
-#include <metasql.h>
-#include "mqlutil.h"
-
 #include "guiclient.h"
 #include "salesOrder.h"
 #include "invoice.h"
 #include "purchaseOrderItem.h"
 
-dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspOrderActivityByProject", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Order Activity by Project"));
+  setListLabel(tr("Orders"));
+  setReportName("OrderActivityByProject");
+  setMetaSQLOptions("orderActivityByProject", "detail");
+  setUseAltId(true);
 
-  connect(_cancel, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_project, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_project, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-  connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_orders, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-
-  _orders->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft,   true,  "type"   );
-  _orders->addColumn(tr("Order #"),     -1,           Qt::AlignLeft,   true,  "ordernumber"   );
-  _orders->addColumn(tr("Status"),      _orderColumn, Qt::AlignCenter, true,  "status" );
-  _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight,  true,  "qty"  );
+  list()->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft,   true,  "type"   );
+  list()->addColumn(tr("Order #"),     -1,           Qt::AlignLeft,   true,  "ordernumber"   );
+  list()->addColumn(tr("Status"),      _orderColumn, Qt::AlignCenter, true,  "status" );
+  list()->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight,  true,  "qty"  );
   
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -53,21 +43,17 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   }
 }
 
-dspOrderActivityByProject::~dspOrderActivityByProject()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspOrderActivityByProject::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
-void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
+void dspOrderActivityByProject::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if(_orders->altId() == 1)
+  if(list()->altId() == 1)
   {
     menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEdit()));
     menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
@@ -77,7 +63,7 @@ void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
                          _privileges->check("ViewSalesOrders"));
   }
 
-  if(_orders->altId() == 2)
+  if(list()->altId() == 2)
   {
     menuItem = pMenu->addAction(tr("Edit Quote..."), this, SLOT(sEdit()));
     menuItem->setEnabled(_privileges->check("MaintainQuotes"));
@@ -87,7 +73,7 @@ void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
                          _privileges->check("ViewQuotes"));
   }
 
-  if(_orders->altId() == 3)
+  if(list()->altId() == 3)
   {
     menuItem = pMenu->addAction(tr("Edit Invoice..."), this, SLOT(sEdit()));
     menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
@@ -97,7 +83,7 @@ void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
                          _privileges->check("ViewMiscInvoices"));
   }
 
-  if(_orders->altId() == 5)
+  if(list()->altId() == 5)
   {
     menuItem = pMenu->addAction(tr("Edit P/O Item..."), this, SLOT(sEdit()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
@@ -111,29 +97,29 @@ void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
 
 void dspOrderActivityByProject::sEdit()
 {
-  if(_orders->altId() == 1)
+  if(list()->altId() == 1)
   {
-    salesOrder::editSalesOrder(_orders->id(), false);
+    salesOrder::editSalesOrder(list()->id(), false);
   }
-  else if(_orders->altId() == 2)
+  else if(list()->altId() == 2)
   {
     ParameterList params;
     params.append("mode", "editQuote");
-    params.append("quhead_id", _orders->id());
+    params.append("quhead_id", list()->id());
 
     salesOrder *newdlg = new salesOrder();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(_orders->altId() == 3)
+  else if(list()->altId() == 3)
   {
-    invoice::editInvoice(_orders->id());
+    invoice::editInvoice(list()->id());
   }
-  else if(_orders->altId() == 5)
+  else if(list()->altId() == 5)
   {
     ParameterList params;
     params.append("mode", "edit");
-    params.append("poitem_id", _orders->id());
+    params.append("poitem_id", list()->id());
 
     purchaseOrderItem newdlg(this, "", TRUE);
     newdlg.set(params);
@@ -143,29 +129,29 @@ void dspOrderActivityByProject::sEdit()
 
 void dspOrderActivityByProject::sView()
 {
-  if(_orders->altId() == 1)
+  if(list()->altId() == 1)
   {
-    salesOrder::viewSalesOrder(_orders->id());
+    salesOrder::viewSalesOrder(list()->id());
   }
-  else if(_orders->altId() == 2)
+  else if(list()->altId() == 2)
   {
     ParameterList params;
     params.append("mode", "viewQuote");
-    params.append("quhead_id", _orders->id());
+    params.append("quhead_id", list()->id());
 
     salesOrder *newdlg = new salesOrder();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(_orders->altId() == 3)
+  else if(list()->altId() == 3)
   {
-    invoice::viewInvoice(_orders->id());
+    invoice::viewInvoice(list()->id());
   }
-  else if(_orders->altId() == 5)
+  else if(list()->altId() == 5)
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("poitem_id", _orders->id());
+    params.append("poitem_id", list()->id());
 
     purchaseOrderItem newdlg(this, "", TRUE);
     newdlg.set(params);
@@ -173,53 +159,22 @@ void dspOrderActivityByProject::sView()
   }
 }
 
-void dspOrderActivityByProject::sFillList()
+bool dspOrderActivityByProject::setParams(ParameterList &params)
 {
   if(_project->id() == -1)
   {
-    _orders->clear();
-    return;
+    QMessageBox::warning(this, tr("Project Required"),
+      tr("You must specify a Project."));
+    return false;
   }
 
   if( (!_showSo->isChecked()) && (!_showWo->isChecked()) && (!_showPo->isChecked()) )
   {
-    _orders->clear();
-    return;
+    QMessageBox::warning(this, tr("Incomplete Options"),
+      tr("You must select at least one of the Show options."));
+    return false;
   }
 
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  MetaSQLQuery mql = mqlLoad("orderActivityByProject", "detail");
-  q = mql.toQuery(params);
-
-  _orders->populate(q, true);
-}
-
-void dspOrderActivityByProject::sPrint()
-{
-  ParameterList params;
-
-  params.append("prj_id", _project->id());
-
-  if (_showSo->isChecked())
-    params.append("showSo");
-
-  if (_showWo->isChecked())
-    params.append("showWo");
-
-  if (_showPo->isChecked())
-    params.append("showPo");
-
-  orReport report("OrderActivityByProject", params);
-  if(report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-bool dspOrderActivityByProject::setParams(ParameterList &params)
-{
   params.append("prj_id", _project->id());
   
   params.append("so", tr("S/O"));

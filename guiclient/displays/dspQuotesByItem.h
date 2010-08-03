@@ -12,27 +12,25 @@
 #define DSPQUOTESBYITEM_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspQuotesByItem.h"
 
-class dspQuotesByItem : public XWidget, public Ui::dspQuotesByItem
+class dspQuotesByItem : public display, public Ui::dspQuotesByItem
 {
     Q_OBJECT
 
 public:
     dspQuotesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspQuotesByItem();
 
     virtual bool checkSitePrivs(int orderid);
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams);
-    virtual void sPopulateMenu( QMenu * menuThis );
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
     virtual void sEditOrder();
     virtual void sViewOrder();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

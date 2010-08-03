@@ -10,51 +10,41 @@
 
 #include "dspQuotesByCustomer.h"
 
-#include <metasql.h>
-#include "mqlutil.h"
-
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
-#include <QVariant>
 
 #include "salesOrder.h"
 
-dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspQuotesByCustomer", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Quote Lookup by Customer"));
+  setListLabel(tr("Quotes"));
+  setMetaSQLOptions("quotes", "detail");
 
-  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
-  connect(_selectedPO, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_selectedPO, SIGNAL(toggled(bool)), _poNumber, SLOT(setEnabled(bool)));
-  connect(_poNumber, SIGNAL(activated(int)), this, SLOT(sFillList()));
-  connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Starting Order Date"));
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Ending Order Date"));
 
-  _so->addColumn(tr("Quote #"),     _orderColumn, Qt::AlignLeft,   true,  "quhead_number"   );
-  _so->addColumn(tr("Quote Date"),  _dateColumn,  Qt::AlignRight,  true,  "quhead_quotedate"  );
-  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "quhead_shiptoname"   );
-  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "quhead_custponumber"   );
+  list()->addColumn(tr("Quote #"),     _orderColumn, Qt::AlignLeft,   true,  "quhead_number"   );
+  list()->addColumn(tr("Quote Date"),  _dateColumn,  Qt::AlignRight,  true,  "quhead_quotedate"  );
+  list()->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "quhead_shiptoname"   );
+  list()->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "quhead_custponumber"   );
   
   _cust->setFocus();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
 }
 
-dspQuotesByCustomer::~dspQuotesByCustomer()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
 void dspQuotesByCustomer::languageChange()
 {
-    retranslateUi(this);
+  display::languageChange();
+  retranslateUi(this);
 }
 
 
@@ -74,11 +64,9 @@ void dspQuotesByCustomer::sPopulatePo()
     q.exec();
     _poNumber->populate(q);
   }
-
-  sFillList();
 }
 
-void dspQuotesByCustomer::sPopulateMenu(QMenu *menuThis)
+void dspQuotesByCustomer::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
 {
   menuThis->addAction(tr("Edit..."), this, SLOT(sEditOrder()));
   menuThis->addAction(tr("View..."), this, SLOT(sViewOrder()));
@@ -93,12 +81,12 @@ void dspQuotesByCustomer::sPopulateMenu(QMenu *menuThis)
 
 void dspQuotesByCustomer::sEditOrder()
 {
-  if (!checkSitePrivs(_so->id()))
+  if (!checkSitePrivs(list()->id()))
     return;
     
   ParameterList params;
   params.append("mode", "editQuote");
-  params.append("quhead_id", _so->id());
+  params.append("quhead_id", list()->id());
       
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
@@ -107,38 +95,37 @@ void dspQuotesByCustomer::sEditOrder()
 
 void dspQuotesByCustomer::sViewOrder()
 {
-  if (!checkSitePrivs(_so->id()))
+  if (!checkSitePrivs(list()->id()))
     return;
     
   ParameterList params;
   params.append("mode", "viewQuote");
-  params.append("quhead_id", _so->id());
+  params.append("quhead_id", list()->id());
       
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspQuotesByCustomer::sFillList()
+bool dspQuotesByCustomer::setParams(ParameterList & params)
 {
-  _so->clear();
-
-  if ( ( (_allPOs->isChecked()) ||
+  if ( !(( (_allPOs->isChecked()) ||
          ( (_selectedPO->isChecked()) && (_poNumber->currentIndex() != -1) ) ) &&
-       (_dates->allValid())  )
+       (_dates->allValid())  ))
   {
-    MetaSQLQuery mql = mqlLoad("quotes", "detail");
-    ParameterList params;
-    _dates->appendValue(params);
-    params.append("cust_id", _cust->id());
-    params.append("showExpired");
-    params.append("customersOnly");
-    if (_selectedPO->isChecked())
-      params.append("poNumber", _poNumber->currentText());
-
-    q = mql.toQuery(params);
-    _so->populate(q);
+    QMessageBox::warning(this, tr("Invalid Options"),
+      tr("One or more options are not complete."));
+    return false;
   }
+
+  _dates->appendValue(params);
+  params.append("cust_id", _cust->id());
+  params.append("showExpired");
+  params.append("customersOnly");
+  if (_selectedPO->isChecked())
+    params.append("poNumber", _poNumber->currentText());
+
+  return true;
 }
 
 void dspQuotesByCustomer::sConvert()
@@ -159,7 +146,7 @@ void dspQuotesByCustomer::sConvert()
     int counter = 0;
     int soheadid = -1;
 
-    QList<XTreeWidgetItem*> selected = _so->selectedItems();
+    QList<XTreeWidgetItem*> selected = list()->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))

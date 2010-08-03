@@ -12,27 +12,26 @@
 #define DSPQUOTESBYCUSTOMER_H
 
 #include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 #include <parameter.h>
 
 #include "ui_dspQuotesByCustomer.h"
 
-class dspQuotesByCustomer : public XWidget, public Ui::dspQuotesByCustomer
+class dspQuotesByCustomer : public display, public Ui::dspQuotesByCustomer
 {
     Q_OBJECT
 
 public:
     dspQuotesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspQuotesByCustomer();
 
     virtual bool checkSitePrivs(int orderid);
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual void sPopulatePo();
-    virtual void sPopulateMenu( QMenu * menuThis );
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
     virtual void sEditOrder();
     virtual void sViewOrder();
-    virtual void sFillList();
     virtual void sConvert();
 
 protected slots:

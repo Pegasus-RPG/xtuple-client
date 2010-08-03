@@ -16,40 +16,36 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <openreports.h>
-
 #include "dspWoScheduleByWorkOrder.h"
 #include "firmPlannedOrder.h"
-#include "mqlutil.h"
 #include "purchaseRequest.h"
 #include "salesOrder.h"
 #include "transferOrder.h"
 #include "workOrder.h"
 #include "purchaseOrder.h"
 
-dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspRunningAvailability", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Running Availability"));
+  setListLabel(tr("Running Availability"));
+  setReportName("RunningAvailability");
+  setMetaSQLOptions("runningAvailability", "detail");
+  setUseAltId(true);
 
   _ready = true;
 
-  connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_availability,SIGNAL(resorted()), this, SLOT(sHandleResort()));
-  connect(_item,	SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_print,	SIGNAL(clicked()),  this, SLOT(sPrint()));
-  connect(_showPlanned,	SIGNAL(clicked()),  this, SLOT(sFillList()));
-  connect(_warehouse,	SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(list(),       SIGNAL(resorted()), this, SLOT(sHandleResort()));
 
-  _availability->addColumn(tr("Order Type"),    _itemColumn, Qt::AlignLeft,  true, "ordertype");
-  _availability->addColumn(tr("Order #"),       _itemColumn, Qt::AlignLeft,  true, "ordernumber");
-  _availability->addColumn(tr("Source/Destination"),     -1, Qt::AlignLeft,  true, "item_number");
-  _availability->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "duedate");
-  _availability->addColumn(tr("Ordered"),        _qtyColumn, Qt::AlignRight, true, "qtyordered");
-  _availability->addColumn(tr("Received"),       _qtyColumn, Qt::AlignRight, true, "qtyreceived");
-  _availability->addColumn(tr("Balance"),        _qtyColumn, Qt::AlignRight, true, "balance");
-  _availability->addColumn(tr("Running Avail."), _qtyColumn, Qt::AlignRight, true, "runningavail");
+  list()->addColumn(tr("Order Type"),    _itemColumn, Qt::AlignLeft,  true, "ordertype");
+  list()->addColumn(tr("Order #"),       _itemColumn, Qt::AlignLeft,  true, "ordernumber");
+  list()->addColumn(tr("Source/Destination"),     -1, Qt::AlignLeft,  true, "item_number");
+  list()->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "duedate");
+  list()->addColumn(tr("Ordered"),        _qtyColumn, Qt::AlignRight, true, "qtyordered");
+  list()->addColumn(tr("Received"),       _qtyColumn, Qt::AlignRight, true, "qtyreceived");
+  list()->addColumn(tr("Balance"),        _qtyColumn, Qt::AlignRight, true, "balance");
+  list()->addColumn(tr("Running Avail."), _qtyColumn, Qt::AlignRight, true, "runningavail");
 
   _qoh->setValidator(omfgThis->qtyVal());
   _reorderLevel->setValidator(omfgThis->qtyVal());
@@ -65,13 +61,9 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char* name
   }
 }
 
-dspRunningAvailability::~dspRunningAvailability()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspRunningAvailability::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -96,8 +88,15 @@ enum SetResponse dspRunningAvailability::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspRunningAvailability::setParams(ParameterList & params)
+bool dspRunningAvailability::setParams(ParameterList & params)
 {
+  if(!_item->isValid())
+  {
+    QMessageBox::warning(this, tr("Item Required"),
+      tr("You must specify an Item Number."));
+    return false;
+  }
+
   params.append("item_id",	_item->id());
   params.append("warehous_id",	_warehouse->id());
 
@@ -125,26 +124,19 @@ void dspRunningAvailability::setParams(ParameterList & params)
       params.append("Manufacturing");
     params.append("showMRPplan");
   }
+
+  params.append("includeFormatted"); // report only?
+
+  params.append("qoh", _qoh->toDouble()); // metasql only?
+
+  return true;
 }
 
-void dspRunningAvailability::sPrint()
-{
-  ParameterList params;
-  setParams(params);
-  params.append("includeFormatted");
-
-  orReport report("RunningAvailability", params);
-  if (report.isValid())
-      report.print();
-  else
-    report.reportError(this);
-}
-
-void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
   
-  QString ordertype = pSelected->text(_availability->column("ordertype"));
+  QString ordertype = pSelected->text(list()->column("ordertype"));
 
   if (ordertype == tr("Planned W/O (firmed)") ||
       ordertype == tr("Planned W/O") ||
@@ -192,7 +184,7 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
 void dspRunningAvailability::sFirmOrder()
 {
   ParameterList params;
-  params.append("planord_id", _availability->id());
+  params.append("planord_id", list()->id());
 
   firmPlannedOrder newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -205,7 +197,7 @@ void dspRunningAvailability::sSoftenOrder()
   q.prepare( "UPDATE planord "
              "SET planord_firm=FALSE "
              "WHERE (planord_id=:planord_id);" );
-  q.bindValue(":planord_id", _availability->id());
+  q.bindValue(":planord_id", list()->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -219,12 +211,12 @@ void dspRunningAvailability::sSoftenOrder()
 void dspRunningAvailability::sReleaseOrder()
 {
   // TODO
-  if (_availability->currentItem()->text(_availability->column("ordertype")) == tr("Planned W/O (firmed)") ||
-      _availability->currentItem()->text(_availability->column("ordertype")) == tr("Planned W/O"))
+  if (list()->currentItem()->text(list()->column("ordertype")) == tr("Planned W/O (firmed)") ||
+      list()->currentItem()->text(list()->column("ordertype")) == tr("Planned W/O"))
   {
     ParameterList params;
     params.append("mode", "release");
-    params.append("planord_id", _availability->id());
+    params.append("planord_id", list()->id());
 
     workOrder *newdlg = new workOrder();
     newdlg->set(params);
@@ -237,12 +229,12 @@ void dspRunningAvailability::sReleaseOrder()
     }
 #endif
   }
-  else if (_availability->currentItem()->text(_availability->column("ordertype")) == tr("Planned P/O (firmed)") ||
-	  _availability->currentItem()->text(_availability->column("ordertype")) == tr("Planned P/O"))
+  else if (list()->currentItem()->text(list()->column("ordertype")) == tr("Planned P/O (firmed)") ||
+	  list()->currentItem()->text(list()->column("ordertype")) == tr("Planned P/O"))
   {
     ParameterList params;
     params.append("mode", "release");
-    params.append("planord_id", _availability->id());
+    params.append("planord_id", list()->id());
 
     purchaseRequest newdlg(this, "", TRUE);
     newdlg.set(params);
@@ -255,7 +247,7 @@ void dspRunningAvailability::sReleaseOrder()
 void dspRunningAvailability::sDeleteOrder()
 {
   q.prepare( "SELECT deletePlannedOrder(:planord_id, FALSE) AS result;" );
-  q.bindValue(":planord_id", _availability->id());
+  q.bindValue(":planord_id", list()->id());
   q.exec();
   if (q.first())
   {
@@ -280,20 +272,20 @@ void dspRunningAvailability::sDeleteOrder()
 void dspRunningAvailability::sViewSo()
 {
   ParameterList params;
-  salesOrder::viewSalesOrder(_availability->id());
+  salesOrder::viewSalesOrder(list()->id());
 }
 
 void dspRunningAvailability::sViewTo()
 {
   ParameterList params;
-  transferOrder::viewTransferOrder(_availability->id());
+  transferOrder::viewTransferOrder(list()->id());
 }
 
 void dspRunningAvailability::sViewWo()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("wo_id", _availability->id());
+  params.append("wo_id", list()->id());
 
   workOrder *newdlg = new workOrder();
   newdlg->set(params);
@@ -304,7 +296,7 @@ void dspRunningAvailability::sViewPo()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("pohead_id", _availability->id());
+  params.append("pohead_id", list()->id());
 
   purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
@@ -313,7 +305,8 @@ void dspRunningAvailability::sViewPo()
 
 void dspRunningAvailability::sFillList()
 {
-  if (_item->isValid() && _ready)
+  ParameterList params;
+  if (setParams(params) && _ready)
   {
     q.prepare( "SELECT itemsite_qtyonhand,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
@@ -333,18 +326,8 @@ void dspRunningAvailability::sFillList()
       _orderMultiple->setDouble(q.value("multorderqty").toDouble());
       _orderToQty->setDouble(q.value("ordertoqty").toDouble());
 
-      MetaSQLQuery mql = mqlLoad("runningAvailability", "detail");
-      ParameterList params;
-      setParams(params);
-      params.append("qoh",          q.value("itemsite_qtyonhand").toDouble());
+      display::sFillList();
 
-      q = mql.toQuery(params);
-      _availability->populate(q, true);
-      if (q.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-      }
       sHandleResort();
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -353,19 +336,12 @@ void dspRunningAvailability::sFillList()
       return;
     }
   }
-  else
-  {
-    _qoh->setText("0.00");
-    _reorderLevel->setText("0.00");
-    _orderMultiple->setText("0.00");
-    _orderToQty->setText("0.00");
-  }
 }
 
 void dspRunningAvailability::sDspWoScheduleByWorkOrder()
 {
   ParameterList params;
-  params.append("wo_id", _availability->id());
+  params.append("wo_id", list()->id());
   params.append("run");
 
   dspWoScheduleByWorkOrder *newdlg = new dspWoScheduleByWorkOrder();
@@ -376,14 +352,14 @@ void dspRunningAvailability::sDspWoScheduleByWorkOrder()
 
 void dspRunningAvailability::sHandleResort()
 {
-  for (int i = 0; i < _availability->topLevelItemCount(); i++)
+  for (int i = 0; i < list()->topLevelItemCount(); i++)
   {
-    XTreeWidgetItem *item = _availability->topLevelItem(i);
-    if (item->data(_availability->column("runningavail"), Qt::DisplayRole).toDouble() < 0)
-      item->setTextColor(_availability->column("runningavail"), namedColor("error"));
-    else if (item->data(_availability->column("runningavail"), Qt::DisplayRole).toDouble() < _reorderLevel->toDouble())
-      item->setTextColor(_availability->column("runningavail"), namedColor("warning"));
+    XTreeWidgetItem *item = list()->topLevelItem(i);
+    if (item->data(list()->column("runningavail"), Qt::DisplayRole).toDouble() < 0)
+      item->setTextColor(list()->column("runningavail"), namedColor("error"));
+    else if (item->data(list()->column("runningavail"), Qt::DisplayRole).toDouble() < _reorderLevel->toDouble())
+      item->setTextColor(list()->column("runningavail"), namedColor("warning"));
     else
-      item->setTextColor(_availability->column("runningavail"), namedColor(""));
+      item->setTextColor(list()->column("runningavail"), namedColor(""));
   }
 }

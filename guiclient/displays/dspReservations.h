@@ -12,28 +12,28 @@
 #define DSPRESERVATIONS_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspReservations.h"
 
-class dspReservations : public XWidget, public Ui::dspReservations
+class dspReservations : public display, public Ui::dspReservations
 {
     Q_OBJECT
 
 public:
     dspReservations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspReservations();
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sEditCustomerOrder();
     virtual void sEditTransferOrder();
-    virtual void sFillList();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int);
     virtual void sViewCustomerOrder();
     virtual void sViewTransferOrder();
     virtual void sViewWorkOrder();
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

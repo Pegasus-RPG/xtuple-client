@@ -67,10 +67,17 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspMaterialUsageVarianceByItem.ui \
            displays/dspMaterialUsageVarianceByWarehouse.ui \
            displays/dspMaterialUsageVarianceByWorkOrder.ui \
+           displays/dspOrderActivityByProject.ui \
+           displays/dspOrders.ui \
            displays/dspPendingBOMChanges.ui \
            displays/dspQOHByItem.ui \
            displays/dspQOHByLocation.ui \
            displays/dspQOHByParameterList.ui \
+           displays/dspQuotesByCustomer.ui \
+           displays/dspQuotesByItem.ui \
+           displays/dspReorderExceptionsByPlannerCode.ui \
+           displays/dspReservations.ui \
+           displays/dspRunningAvailability.ui \
            displays/dspShipmentsBase.ui \
            displays/dspShipmentsByDate.ui \
            displays/dspSingleLevelWhereUsed.ui \
@@ -159,10 +166,17 @@ HEADERS += displays/dspAllocations.h \
            displays/dspMaterialUsageVarianceByItem.h \
            displays/dspMaterialUsageVarianceByWarehouse.h \
            displays/dspMaterialUsageVarianceByWorkOrder.h \
+           displays/dspOrderActivityByProject.h \
+           displays/dspOrders.h \
            displays/dspPendingBOMChanges.h \
            displays/dspQOHByItem.h \
            displays/dspQOHByLocation.h \
            displays/dspQOHByParameterList.h \
+           displays/dspQuotesByCustomer.h \
+           displays/dspQuotesByItem.h \
+           displays/dspReorderExceptionsByPlannerCode.h \
+           displays/dspReservations.h \
+           displays/dspRunningAvailability.h \
            displays/dspShipmentsBase.h \
            displays/dspShipmentsByDate.h \
            displays/dspShipmentsBySalesOrder.h \
@@ -259,10 +273,17 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspMaterialUsageVarianceByItem.cpp \
            displays/dspMaterialUsageVarianceByWarehouse.cpp \
            displays/dspMaterialUsageVarianceByWorkOrder.cpp \
+           displays/dspOrderActivityByProject.cpp \
+           displays/dspOrders.cpp \
            displays/dspPendingBOMChanges.cpp \
            displays/dspQOHByItem.cpp \
            displays/dspQOHByLocation.cpp \
            displays/dspQOHByParameterList.cpp \
+           displays/dspQuotesByCustomer.cpp \
+           displays/dspQuotesByItem.cpp \
+           displays/dspReorderExceptionsByPlannerCode.cpp \
+           displays/dspReservations.cpp \
+           displays/dspRunningAvailability.cpp \
            displays/dspShipmentsBase.cpp \
            displays/dspShipmentsByDate.cpp \
            displays/dspShipmentsBySalesOrder.cpp \

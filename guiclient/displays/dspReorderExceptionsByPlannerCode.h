@@ -11,25 +11,21 @@
 #ifndef DSPREORDEREXCEPTIONSBYPLANNERCODE_H
 #define DSPREORDEREXCEPTIONSBYPLANNERCODE_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspReorderExceptionsByPlannerCode.h"
 
-class dspReorderExceptionsByPlannerCode : public XWidget, public Ui::dspReorderExceptionsByPlannerCode
+class dspReorderExceptionsByPlannerCode : public display, public Ui::dspReorderExceptionsByPlannerCode
 {
     Q_OBJECT
 
 public:
     dspReorderExceptionsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspReorderExceptionsByPlannerCode();
 
-    bool	setParams(ParameterList&);
+    virtual bool setParams(ParameterList&);
 
 public slots:
-    virtual void sFillList();
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
     virtual void sRunningAvailability();
     virtual void sCreateWorkOrder();
 

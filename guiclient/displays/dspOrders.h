@@ -12,29 +12,28 @@
 #define DSPORDERS_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspOrders.h"
 
-class dspOrders : public XWidget, public Ui::dspOrders
+class dspOrders : public display, public Ui::dspOrders
 {
     Q_OBJECT
 
 public:
     dspOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspOrders();
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPopulateMenu(QMenu * menu );
+    virtual void sPopulateMenu(QMenu * menu, QTreeWidgetItem*, int);
     virtual void sReprioritizeWo();
     virtual void sRescheduleWO();
     virtual void sChangeWOQty();
     virtual void sPrintTraveler();
     virtual void sReschedulePoitem();
     virtual void sChangePoitemQty();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

@@ -14,34 +14,32 @@
 #include <QMenu>
 #include <QVariant>
 
-#include <metasql.h>
-
 #include "changePoitemQty.h"
 #include "changeWoQty.h"
-#include "mqlutil.h"
 #include "printWoTraveler.h"
 #include "reprioritizeWo.h"
 #include "reschedulePoitem.h"
 #include "rescheduleWo.h"
 
-dspOrders::dspOrders(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspOrders::dspOrders(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspOrders", fl)
 {
-  setupUi(this);
-
-  connect(_orders, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Item Orders"));
+  setListLabel(tr("Item Orders"));
+  setMetaSQLOptions("orders", "detail");
+  setUseAltId(true);
 
   _item->setReadOnly(TRUE);
   _warehouse->setEnabled(FALSE);
 
-  _orders->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter, true,  "order_type" );
-  _orders->addColumn(tr("Order #"),      -1,             Qt::AlignLeft,   true,  "order_number"   );
-  _orders->addColumn(tr("Total"),        _qtyColumn,     Qt::AlignRight,  true,  "totalqty"  );
-  _orders->addColumn(tr("Received"),     _qtyColumn,     Qt::AlignRight,  true,  "relievedqty"  );
-  _orders->addColumn(tr("Balance"),      _qtyColumn,     Qt::AlignRight,  true,  "balanceqty"  );
-  _orders->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight,  true,  "runningbalanceqty"  );
-  _orders->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter, true,  "duedate" );
+  list()->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter, true,  "order_type" );
+  list()->addColumn(tr("Order #"),      -1,             Qt::AlignLeft,   true,  "order_number"   );
+  list()->addColumn(tr("Total"),        _qtyColumn,     Qt::AlignRight,  true,  "totalqty"  );
+  list()->addColumn(tr("Received"),     _qtyColumn,     Qt::AlignRight,  true,  "relievedqty"  );
+  list()->addColumn(tr("Balance"),      _qtyColumn,     Qt::AlignRight,  true,  "balanceqty"  );
+  list()->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight,  true,  "runningbalanceqty"  );
+  list()->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter, true,  "duedate" );
 
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -50,13 +48,9 @@ dspOrders::dspOrders(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 }
 
-dspOrders::~dspOrders()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspOrders::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -105,11 +99,11 @@ enum SetResponse dspOrders::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspOrders::sPopulateMenu(QMenu *pMenu)
+void dspOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if (_orders->altId() == 1)
+  if (list()->altId() == 1)
   {
     menuItem = pMenu->addAction(tr("Reschedule P/O Item..."), this, SLOT(sReschedulePoitem()));
     if (!_privileges->check("ReschedulePurchaseOrders"))
@@ -119,7 +113,7 @@ void dspOrders::sPopulateMenu(QMenu *pMenu)
     if (!_privileges->check("ChangePurchaseOrderQty"))
       menuItem->setEnabled(false);
   }
-  else if (_orders->altId() == 2)
+  else if (list()->altId() == 2)
   {
     menuItem = pMenu->addAction(tr("Reprioritize W/O..."), this, SLOT(sReprioritizeWo()));
     if (!_privileges->check("ReprioritizeWorkOrders"))
@@ -142,7 +136,7 @@ void dspOrders::sPopulateMenu(QMenu *pMenu)
 void dspOrders::sReprioritizeWo()
 {
   ParameterList params;
-  params.append("wo_id", _orders->id());
+  params.append("wo_id", list()->id());
 
   reprioritizeWo newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -153,7 +147,7 @@ void dspOrders::sReprioritizeWo()
 void dspOrders::sRescheduleWO()
 {
   ParameterList params;
-  params.append("wo_id", _orders->id());
+  params.append("wo_id", list()->id());
 
   rescheduleWo newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -164,7 +158,7 @@ void dspOrders::sRescheduleWO()
 void dspOrders::sChangeWOQty()
 {
   ParameterList params;
-  params.append("wo_id", _orders->id());
+  params.append("wo_id", list()->id());
 
   changeWoQty newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -175,7 +169,7 @@ void dspOrders::sChangeWOQty()
 void dspOrders::sPrintTraveler()
 {
   ParameterList params;
-  params.append("wo_id", _orders->id());
+  params.append("wo_id", list()->id());
 
   printWoTraveler newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -185,7 +179,7 @@ void dspOrders::sPrintTraveler()
 void dspOrders::sReschedulePoitem()
 {
   ParameterList params;
-  params.append("poitem_id", _orders->id());
+  params.append("poitem_id", list()->id());
 
   reschedulePoitem newdlg(this, "", TRUE);
   if(newdlg.set(params) != UndefinedError)
@@ -196,7 +190,7 @@ void dspOrders::sReschedulePoitem()
 void dspOrders::sChangePoitemQty()
 {
   ParameterList params;
-  params.append("poitem_id", _orders->id());
+  params.append("poitem_id", list()->id());
 
   changePoitemQty newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -204,41 +198,38 @@ void dspOrders::sChangePoitemQty()
     sFillList();
 }
 
-void dspOrders::sFillList()
+bool dspOrders::setParams(ParameterList & params)
 {
-  _orders->clear();
-
-  if ( (_item->isValid()) &&
+  if ( !((_item->isValid()) &&
        ( (_leadTime->isChecked()) || (_byDays->isChecked()) ||
          ((_byDate->isChecked()) && (_date->isValid())) ||
-         (_byRange->isChecked() && _startDate->isValid() && _endDate->isValid()) ) )
+         (_byRange->isChecked() && _startDate->isValid() && _endDate->isValid()) ) ) )
   {
-    MetaSQLQuery mql = mqlLoad("orders", "detail");
-    ParameterList params;
-    params.append("warehous_id", _warehouse->id());
-    params.append("item_id",     _item->id());
-    params.append("itemType",    _item->itemType());
-    if (_leadTime->isChecked())
-      params.append("useLeadTime");
-    else if (_byDays->isChecked())
-      params.append("days",      _days->value());
-    else if (_byDate->isChecked())
-      params.append("date",      _date->date());
-    else if (_byRange->isChecked())
-    {
-      params.append("startDate", _startDate->date());
-      params.append("endDate",   _endDate->date());
-    }
+    return false;
+  }
+
+  params.append("warehous_id", _warehouse->id());
+  params.append("item_id",     _item->id());
+  params.append("itemType",    _item->itemType());
+  if (_leadTime->isChecked())
+    params.append("useLeadTime");
+  else if (_byDays->isChecked())
+    params.append("days",      _days->value());
+  else if (_byDate->isChecked())
+    params.append("date",      _date->date());
+  else if (_byRange->isChecked())
+  {
+    params.append("startDate", _startDate->date());
+    params.append("endDate",   _endDate->date());
+  }
 
   if (_metrics->value("Application") == "Standard")
     params.append("Standard");
 
-    XSqlQuery xtmfg;
-    xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
-    if (xtmfg.first())
-      params.append("Manufacturing");
+  XSqlQuery xtmfg;
+  xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
+  if (xtmfg.first())
+    params.append("Manufacturing");
 
-    q = mql.toQuery(params);
-    _orders->populate(q, true);
-  }
+  return true;
 }

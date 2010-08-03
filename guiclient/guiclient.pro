@@ -205,8 +205,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspGLTransactions.ui                          \
           dspInvoiceInformation.ui                      \
           dspMRPDetail.ui                               \
-          dspOrderActivityByProject.ui                  \
-          dspOrders.ui                                  \
           dspPOsByDate.ui                               \
           dspPOsByVendor.ui                             \
           dspPartiallyShippedOrders.ui                  \
@@ -230,12 +228,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspPricesByItem.ui                            \
           dspPurchaseReqsByItem.ui                      \
           dspPurchaseReqsByPlannerCode.ui               \
-          dspQuotesByCustomer.ui                        \
-          dspQuotesByItem.ui                            \
           dspRecurringInvoices.ui                       \
-          dspReorderExceptionsByPlannerCode.ui          \
-          dspReservations.ui                            \
-          dspRunningAvailability.ui                     \
           dspSalesHistoryByBilltoName.ui                \
           dspSalesHistoryByCustomer.ui                  \
           dspSalesHistoryByItem.ui                      \
@@ -831,8 +824,6 @@ HEADERS = ../common/format.h                    \
           dspGLTransactions.h                           \
           dspInvoiceInformation.h                       \
           dspMRPDetail.h                                \
-          dspOrderActivityByProject.h                   \
-          dspOrders.h                                   \
           dspPOsByDate.h                                \
           dspPOsByVendor.h                              \
           dspPartiallyShippedOrders.h                   \
@@ -856,12 +847,7 @@ HEADERS = ../common/format.h                    \
           dspPricesByItem.h                     \
           dspPurchaseReqsByItem.h               \
           dspPurchaseReqsByPlannerCode.h        \
-          dspQuotesByCustomer.h                 \
-          dspQuotesByItem.h                     \
           dspRecurringInvoices.h                \
-          dspReorderExceptionsByPlannerCode.h   \
-          dspReservations.h                     \
-          dspRunningAvailability.h              \
           dspSalesHistoryByBilltoName.h         \
           dspSalesHistoryByCustomer.h           \
           dspSalesHistoryByItem.h               \
@@ -1493,8 +1479,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspGLTransactions.cpp                         \
           dspInvoiceInformation.cpp                     \
           dspMRPDetail.cpp                              \
-          dspOrderActivityByProject.cpp                 \
-          dspOrders.cpp                                 \
           dspPOsByDate.cpp                              \
           dspPOsByVendor.cpp                            \
           dspPartiallyShippedOrders.cpp                 \
@@ -1518,12 +1502,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspPricesByItem.cpp                           \
           dspPurchaseReqsByItem.cpp                     \
           dspPurchaseReqsByPlannerCode.cpp              \
-          dspQuotesByCustomer.cpp                       \
-          dspQuotesByItem.cpp                           \
           dspRecurringInvoices.cpp                      \
-          dspReorderExceptionsByPlannerCode.cpp         \
-          dspReservations.cpp                           \
-          dspRunningAvailability.cpp                    \
           dspSalesHistoryByBilltoName.cpp               \
           dspSalesHistoryByCustomer.cpp                 \
           dspSalesHistoryByItem.cpp                     \

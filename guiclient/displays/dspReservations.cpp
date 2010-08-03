@@ -14,32 +14,33 @@
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
-#include <metasql.h>
-
+#include "metasql.h"
 #include "mqlutil.h"
+
 #include "salesOrder.h"
 #include "transferOrder.h"
 #include "workOrder.h"
 
-dspReservations::dspReservations(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspReservations::dspReservations(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspReservations", fl)
 {
-  setupUi(this);
-
-  connect(_allocations, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Item Reservations"));
+  setListLabel(tr("Item Reservations"));
+  setMetaSQLOptions("reservations", "detail");
 
   _qoh->setPrecision(omfgThis->qtyVal());
   _available->setPrecision(omfgThis->qtyVal());
 
-  _allocations->setRootIsDecorated(TRUE);
-  _allocations->addColumn(tr("Order/Location LotSerial"), -1,             Qt::AlignLeft,   true,  "order_number"   );
-  _allocations->addColumn(tr("Total Qty."),               _qtyColumn,     Qt::AlignRight,  true,  "totalqty"  );
-  _allocations->addColumn(tr("Relieved"),                 _qtyColumn,     Qt::AlignRight,  true,  "relievedqty"  );
-  _allocations->addColumn(tr("Reserved"),                 _qtyColumn,     Qt::AlignRight,  true,  "reservedqty"  );
-  _allocations->addColumn(tr("Running Bal."),             _qtyColumn,     Qt::AlignRight,  true,  "balanceqty"  );
-  _allocations->addColumn(tr("Required"),                 _dateColumn,    Qt::AlignCenter, true,  "scheddate" );
+  list()->setRootIsDecorated(TRUE);
+  list()->addColumn(tr("Order/Location LotSerial"), -1,             Qt::AlignLeft,   true,  "order_number"   );
+  list()->addColumn(tr("Total Qty."),               _qtyColumn,     Qt::AlignRight,  true,  "totalqty"  );
+  list()->addColumn(tr("Relieved"),                 _qtyColumn,     Qt::AlignRight,  true,  "relievedqty"  );
+  list()->addColumn(tr("Reserved"),                 _qtyColumn,     Qt::AlignRight,  true,  "reservedqty"  );
+  list()->addColumn(tr("Running Bal."),             _qtyColumn,     Qt::AlignRight,  true,  "balanceqty"  );
+  list()->addColumn(tr("Required"),                 _dateColumn,    Qt::AlignCenter, true,  "scheddate" );
 
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -48,13 +49,9 @@ dspReservations::dspReservations(QWidget* parent, const char* name, Qt::WFlags f
   }
 }
 
-dspReservations::~dspReservations()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspReservations::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -89,7 +86,7 @@ enum SetResponse dspReservations::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspReservations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspReservations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
 
@@ -121,7 +118,7 @@ void dspReservations::sViewWorkOrder()
   q.prepare( "SELECT womatl_wo_id "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _allocations->id());
+  q.bindValue(":womatl_id", list()->id());
   q.exec();
   if (q.first())
   {
@@ -140,7 +137,7 @@ void dspReservations::sViewCustomerOrder()
   q.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", _allocations->id());
+  q.bindValue(":coitem_id", list()->id());
   q.exec();
   if (q.first())
     salesOrder::viewSalesOrder(q.value("coitem_cohead_id").toInt());
@@ -151,7 +148,7 @@ void dspReservations::sEditCustomerOrder()
   q.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", _allocations->id());
+  q.bindValue(":coitem_id", list()->id());
   q.exec();
   if (q.first())
     salesOrder::editSalesOrder(q.value("coitem_cohead_id").toInt(), false);
@@ -162,7 +159,7 @@ void dspReservations::sViewTransferOrder()
   q.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:toitem_id);" );
-  q.bindValue(":toitem_id", _allocations->id());
+  q.bindValue(":toitem_id", list()->id());
   q.exec();
   if (q.first())
     transferOrder::viewTransferOrder(q.value("toitem_tohead_id").toInt());
@@ -173,26 +170,33 @@ void dspReservations::sEditTransferOrder()
   q.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:toitem_id);" );
-  q.bindValue(":toitem_id", _allocations->id());
+  q.bindValue(":toitem_id", list()->id());
   q.exec();
   if (q.first())
     transferOrder::editTransferOrder(q.value("toitem_tohead_id").toInt(), false);
 }
 
+bool dspReservations::setParams(ParameterList &params)
+{
+  if(!_item->isValid())
+  {
+    QMessageBox::warning(this, tr("Item Required"),
+      tr("You must specify an Item Number."));
+    return false;
+  }
+
+  params.append("warehous_id", _warehouse->id());
+  params.append("item_id",	   _item->id());
+
+  return true;
+}
+
 void dspReservations::sFillList()
 {
-  _allocations->clear();
-
-  if (_item->isValid())
+  ParameterList params;
+  if(setParams(params))
   {
-    MetaSQLQuery mql = mqlLoad("reservations", "detail");
-
-    ParameterList params;
-    params.append("warehous_id", _warehouse->id());
-    params.append("item_id",	   _item->id());
-
-    q = mql.toQuery(params);
-    _allocations->populate(q);
+    display::sFillList();
 
     QString avails("SELECT itemsite_qtyonhand,"
                    "       qtyunreserved(itemsite_id) AS unreserved "

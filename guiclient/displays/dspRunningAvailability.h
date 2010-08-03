@@ -12,35 +12,33 @@
 #define DSPRUNNINGAVAILABILITY_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspRunningAvailability.h"
 
-class dspRunningAvailability : public XWidget, public Ui::dspRunningAvailability
+class dspRunningAvailability : public display, public Ui::dspRunningAvailability
 {
     Q_OBJECT
 
 public:
     dspRunningAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspRunningAvailability();
-    virtual void setParams(ParameterList&);
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams);
     virtual void sDeleteOrder();
     virtual void sDspWoScheduleByWorkOrder();
-    virtual void sFillList();
     virtual void sFirmOrder();
     virtual void sHandleResort();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
-    virtual void sPrint();
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int);
     virtual void sReleaseOrder();
     virtual void sSoftenOrder();
     virtual void sViewSo();
     virtual void sViewTo();
     virtual void sViewWo();
     virtual void sViewPo();
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
