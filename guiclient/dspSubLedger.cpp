@@ -259,7 +259,7 @@ void dspSubLedger::sPrint()
   if (! setParams(params))
     return;
 
-  orReport report("SubLedger", params);
+  orReport report("Subledger", params);
 
   if (report.isValid())
     report.print();
