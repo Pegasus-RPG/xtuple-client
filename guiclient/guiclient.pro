@@ -207,19 +207,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspMRPDetail.ui                               \
           dspPOsByDate.ui                               \
           dspPOsByVendor.ui                             \
-          dspPartiallyShippedOrders.ui                  \
-          dspPendingAvailability.ui                     \
-          dspPlannedOrdersByItem.ui                     \
-          dspPlannedOrdersByPlannerCode.ui              \
-          dspPoDeliveryDateVariancesByItem.ui           \
-          dspPoDeliveryDateVariancesByVendor.ui         \
           dspPoHistory.ui                               \
-          dspPoItemReceivingsByDate.ui                  \
-          dspPoItemReceivingsByItem.ui                  \
-          dspPoItemReceivingsByVendor.ui                \
-          dspPoItemsByDate.ui                           \
-          dspPoItemsByItem.ui                           \
-          dspPoItemsByVendor.ui                         \
           dspPoPriceVariancesByItem.ui                  \
           dspPoPriceVariancesByVendor.ui                \
           dspPoReturnsByVendor.ui                       \
@@ -826,19 +814,7 @@ HEADERS = ../common/format.h                    \
           dspMRPDetail.h                                \
           dspPOsByDate.h                                \
           dspPOsByVendor.h                              \
-          dspPartiallyShippedOrders.h                   \
-          dspPendingAvailability.h                      \
-          dspPlannedOrdersByItem.h                      \
-          dspPlannedOrdersByPlannerCode.h               \
-          dspPoDeliveryDateVariancesByItem.h            \
-          dspPoDeliveryDateVariancesByVendor.h          \
           dspPoHistory.h                                \
-          dspPoItemReceivingsByDate.h                   \
-          dspPoItemReceivingsByItem.h                   \
-          dspPoItemReceivingsByVendor.h                 \
-          dspPoItemsByDate.h                    \
-          dspPoItemsByItem.h                    \
-          dspPoItemsByVendor.h                  \
           dspPoPriceVariancesByItem.h           \
           dspPoPriceVariancesByVendor.h         \
           dspPoReturnsByVendor.h                \
@@ -1481,19 +1457,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspMRPDetail.cpp                              \
           dspPOsByDate.cpp                              \
           dspPOsByVendor.cpp                            \
-          dspPartiallyShippedOrders.cpp                 \
-          dspPendingAvailability.cpp                    \
-          dspPlannedOrdersByItem.cpp                    \
-          dspPlannedOrdersByPlannerCode.cpp             \
-          dspPoDeliveryDateVariancesByItem.cpp          \
-          dspPoDeliveryDateVariancesByVendor.cpp        \
           dspPoHistory.cpp                              \
-          dspPoItemReceivingsByDate.cpp                 \
-          dspPoItemReceivingsByItem.cpp                 \
-          dspPoItemReceivingsByVendor.cpp               \
-          dspPoItemsByDate.cpp                          \
-          dspPoItemsByItem.cpp                          \
-          dspPoItemsByVendor.cpp                        \
           dspPoPriceVariancesByItem.cpp                 \
           dspPoPriceVariancesByVendor.cpp               \
           dspPoReturnsByVendor.cpp                      \

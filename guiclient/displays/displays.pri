@@ -69,7 +69,19 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspMaterialUsageVarianceByWorkOrder.ui \
            displays/dspOrderActivityByProject.ui \
            displays/dspOrders.ui \
+           displays/dspPartiallyShippedOrders.ui \
+           displays/dspPendingAvailability.ui \
            displays/dspPendingBOMChanges.ui \
+           displays/dspPlannedOrdersByItem.ui \
+           displays/dspPlannedOrdersByPlannerCode.ui \
+           displays/dspPoDeliveryDateVariancesByItem.ui \
+           displays/dspPoDeliveryDateVariancesByVendor.ui \
+           displays/dspPoItemReceivingsByDate.ui \
+           displays/dspPoItemReceivingsByItem.ui \
+           displays/dspPoItemReceivingsByVendor.ui \
+           displays/dspPoItemsByDate.ui \
+           displays/dspPoItemsByItem.ui \
+           displays/dspPoItemsByVendor.ui \
            displays/dspQOHByItem.ui \
            displays/dspQOHByLocation.ui \
            displays/dspQOHByParameterList.ui \
@@ -168,7 +180,19 @@ HEADERS += displays/dspAllocations.h \
            displays/dspMaterialUsageVarianceByWorkOrder.h \
            displays/dspOrderActivityByProject.h \
            displays/dspOrders.h \
+           displays/dspPartiallyShippedOrders.h \
+           displays/dspPendingAvailability.h \
            displays/dspPendingBOMChanges.h \
+           displays/dspPlannedOrdersByItem.h \
+           displays/dspPlannedOrdersByPlannerCode.h \
+           displays/dspPoDeliveryDateVariancesByItem.h \
+           displays/dspPoDeliveryDateVariancesByVendor.h \
+           displays/dspPoItemReceivingsByDate.h \
+           displays/dspPoItemReceivingsByItem.h \
+           displays/dspPoItemReceivingsByVendor.h \
+           displays/dspPoItemsByDate.h \
+           displays/dspPoItemsByItem.h \
+           displays/dspPoItemsByVendor.h \
            displays/dspQOHByItem.h \
            displays/dspQOHByLocation.h \
            displays/dspQOHByParameterList.h \
@@ -275,7 +299,19 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspMaterialUsageVarianceByWorkOrder.cpp \
            displays/dspOrderActivityByProject.cpp \
            displays/dspOrders.cpp \
+           displays/dspPartiallyShippedOrders.cpp \
+           displays/dspPendingAvailability.cpp \
            displays/dspPendingBOMChanges.cpp \
+           displays/dspPlannedOrdersByItem.cpp \
+           displays/dspPlannedOrdersByPlannerCode.cpp \
+           displays/dspPoDeliveryDateVariancesByItem.cpp \
+           displays/dspPoDeliveryDateVariancesByVendor.cpp \
+           displays/dspPoItemReceivingsByDate.cpp \
+           displays/dspPoItemReceivingsByItem.cpp \
+           displays/dspPoItemReceivingsByVendor.cpp \
+           displays/dspPoItemsByDate.cpp \
+           displays/dspPoItemsByItem.cpp \
+           displays/dspPoItemsByVendor.cpp \
            displays/dspQOHByItem.cpp \
            displays/dspQOHByLocation.cpp \
            displays/dspQOHByParameterList.cpp \
