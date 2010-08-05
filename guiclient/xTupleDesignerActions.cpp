@@ -23,6 +23,8 @@
 
 #include "xTupleDesigner.h"
 
+#define DEBUG false
+
 static QAction *separator(QObject *parent)
 {
   QAction *sep = new QAction(parent);
@@ -143,8 +145,9 @@ xTupleDesignerActions::xTupleDesignerActions(xTupleDesigner *parent)
 
 void xTupleDesignerActions::sActiveFormWindowChanged(QDesignerFormWindowInterface *pwindow)
 {
-  qDebug("xTupleDesignerActions::sActiveFormWindowChanged(%p)",
-         pwindow);
+  if (DEBUG)
+    qDebug("xTupleDesignerActions::sActiveFormWindowChanged(%p)",
+           pwindow);
 
   QList<QActionGroup*> actionGroupList;
   actionGroupList.append(_fileActions);
