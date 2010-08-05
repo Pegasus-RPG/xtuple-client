@@ -7,32 +7,35 @@ It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
- <class>dspPoPriceVariancesByVendor</class>
- <widget class="QWidget" name="dspPoPriceVariancesByVendor">
+ <class>dspPoPriceVariancesByItem</class>
+ <widget class="QWidget" name="dspPoPriceVariancesByItem">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>826</width>
-    <height>600</height>
+    <width>552</width>
+    <height>249</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Purchase Price Variances by Vendor</string>
+   <string>Purchase Price Variances by Item</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6">
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="_dateGroup_2">
+        <widget class="QGroupBox" name="_itemGroup">
          <property name="title">
           <string/>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
-           <widget class="VendorGroup" name="_vendorGroup"/>
+           <widget class="ItemCluster" name="_item"/>
           </item>
           <item row="1" column="0">
            <widget class="XCheckBox" name="_notZero">
@@ -74,6 +77,18 @@ to be bound by its terms.</comment>
             </property>
             <item>
              <widget class="QLabel" name="_agentLit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>Purchasing Agent:</string>
               </property>
@@ -128,7 +143,7 @@ to be bound by its terms.</comment>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>0</width>
                 <height>20</height>
                </size>
               </property>
@@ -168,129 +183,32 @@ to be bound by its terms.</comment>
       </layout>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
+      <spacer name="verticalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>13</width>
-         <height>20</height>
+         <width>20</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout">
-         <item>
-          <widget class="QPushButton" name="_close">
-           <property name="text">
-            <string>&amp;Close</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_query">
-           <property name="text">
-            <string>&amp;Query</string>
-           </property>
-           <property name="autoDefault">
-            <bool>true</bool>
-           </property>
-           <property name="default">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_print">
-           <property name="text">
-            <string>&amp;Print</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>10</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
     </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QFrame" name="_frame">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
+   <item>
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>34</width>
+       <height>20</height>
+      </size>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <item row="0" column="0">
-       <layout class="QVBoxLayout">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="_porecvLit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Price Variances:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignVCenter</set>
-          </property>
-          <property name="buddy">
-           <cstring>_porecv</cstring>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="XTreeWidget" name="_porecv"/>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -303,9 +221,9 @@ to be bound by its terms.</comment>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>VendorGroup</class>
+   <class>ItemCluster</class>
    <extends>QWidget</extends>
-   <header>vendorgroup.h</header>
+   <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
@@ -322,22 +240,13 @@ to be bound by its terms.</comment>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
   </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_allPurchasingAgents</tabstop>
   <tabstop>_agent</tabstop>
-  <tabstop>_query</tabstop>
-  <tabstop>_porecv</tabstop>
-  <tabstop>_print</tabstop>
-  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -346,22 +255,6 @@ to be bound by its terms.</comment>
    <signal>toggled(bool)</signal>
    <receiver>_agent</receiver>
    <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
-   <receiver>dspPoPriceVariancesByVendor</receiver>
-   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>20</x>

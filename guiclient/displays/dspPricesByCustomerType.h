@@ -8,32 +8,28 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPPRICESBYCUSTOMER_H
-#define DSPPRICESBYCUSTOMER_H
+#ifndef DSPPRICESBYCUSTOMERTYPE_H
+#define DSPPRICESBYCUSTOMERTYPE_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspPricesByCustomer.h"
+#include "ui_dspPricesByCustomerType.h"
 
-class dspPricesByCustomer : public XWidget, public Ui::dspPricesByCustomer
+class dspPricesByCustomerType : public display, public Ui::dspPricesByCustomerType
 {
     Q_OBJECT
 
 public:
-    dspPricesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspPricesByCustomer();
+    dspPricesByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
     virtual void sHandleCosts( bool pShowCosts );
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPPRICESBYCUSTOMER_H
+#endif // DSPPRICESBYCUSTOMERTYPE_H

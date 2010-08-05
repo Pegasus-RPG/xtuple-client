@@ -82,6 +82,16 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspPoItemsByDate.ui \
            displays/dspPoItemsByItem.ui \
            displays/dspPoItemsByVendor.ui \
+           displays/dspPoPriceVariancesByItem.ui \
+           displays/dspPoPriceVariancesByVendor.ui \
+           displays/dspPoReturnsByVendor.ui \
+           displays/dspPOsByDate.ui \
+           displays/dspPOsByVendor.ui \
+           displays/dspPricesByCustomer.ui \
+           displays/dspPricesByCustomerType.ui \
+           displays/dspPricesByItem.ui \
+           displays/dspPurchaseReqsByItem.ui \
+           displays/dspPurchaseReqsByPlannerCode.ui \
            displays/dspQOHByItem.ui \
            displays/dspQOHByLocation.ui \
            displays/dspQOHByParameterList.ui \
@@ -193,6 +203,16 @@ HEADERS += displays/dspAllocations.h \
            displays/dspPoItemsByDate.h \
            displays/dspPoItemsByItem.h \
            displays/dspPoItemsByVendor.h \
+           displays/dspPoPriceVariancesByItem.h \
+           displays/dspPoPriceVariancesByVendor.h \
+           displays/dspPoReturnsByVendor.h \
+           displays/dspPOsByDate.h \
+           displays/dspPOsByVendor.h \
+           displays/dspPricesByCustomer.h \
+           displays/dspPricesByCustomerType.h \
+           displays/dspPricesByItem.h \
+           displays/dspPurchaseReqsByItem.h \
+           displays/dspPurchaseReqsByPlannerCode.h \
            displays/dspQOHByItem.h \
            displays/dspQOHByLocation.h \
            displays/dspQOHByParameterList.h \
@@ -312,6 +332,16 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspPoItemsByDate.cpp \
            displays/dspPoItemsByItem.cpp \
            displays/dspPoItemsByVendor.cpp \
+           displays/dspPoPriceVariancesByItem.cpp \
+           displays/dspPoPriceVariancesByVendor.cpp \
+           displays/dspPoReturnsByVendor.cpp \
+           displays/dspPOsByDate.cpp \
+           displays/dspPOsByVendor.cpp \
+           displays/dspPricesByCustomer.cpp \
+           displays/dspPricesByCustomerType.cpp \
+           displays/dspPricesByItem.cpp \
+           displays/dspPurchaseReqsByItem.cpp \
+           displays/dspPurchaseReqsByPlannerCode.cpp \
            displays/dspQOHByItem.cpp \
            displays/dspQOHByLocation.cpp \
            displays/dspQOHByParameterList.cpp \

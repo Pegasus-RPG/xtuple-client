@@ -8,30 +8,25 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPPORETURNSBYVENDOR_H
-#define DSPPORETURNSBYVENDOR_H
+#ifndef DSPPOPRICEVARIANCESBYVENDOR_H
+#define DSPPOPRICEVARIANCESBYVENDOR_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspPoReturnsByVendor.h"
+#include "ui_dspPoPriceVariancesByVendor.h"
 
-class dspPoReturnsByVendor : public XWidget, public Ui::dspPoReturnsByVendor
+class dspPoPriceVariancesByVendor : public display, public Ui::dspPoPriceVariancesByVendor
 {
     Q_OBJECT
 
 public:
-    dspPoReturnsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspPoReturnsByVendor();
-    virtual bool setParams(ParameterList &);
+    dspPoPriceVariancesByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
-public slots:
-    virtual void sPrint();
-    virtual void sFillList();
+    virtual bool setParams(ParameterList&);
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPPORETURNSBYVENDOR_H
+#endif // DSPPOPRICEVARIANCESBYVENDOR_H

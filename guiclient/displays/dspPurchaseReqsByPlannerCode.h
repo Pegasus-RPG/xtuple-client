@@ -8,35 +8,31 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPPURCHASEREQSBYITEM_H
-#define DSPPURCHASEREQSBYITEM_H
+#ifndef DSPPURCHASEREQSBYPLANNERCODE_H
+#define DSPPURCHASEREQSBYPLANNERCODE_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspPurchaseReqsByItem.h"
+#include "ui_dspPurchaseReqsByPlannerCode.h"
 
-class dspPurchaseReqsByItem : public XWidget, public Ui::dspPurchaseReqsByItem
+class dspPurchaseReqsByPlannerCode : public display, public Ui::dspPurchaseReqsByPlannerCode
 {
     Q_OBJECT
 
 public:
-    dspPurchaseReqsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspPurchaseReqsByItem();
+    dspPurchaseReqsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int);
     virtual void sDspRunningAvailability();
     virtual void sRelease();
     virtual void sDelete();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPPURCHASEREQSBYITEM_H
+#endif // DSPPURCHASEREQSBYPLANNERCODE_H

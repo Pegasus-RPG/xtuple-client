@@ -8,28 +8,20 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPPOSBYDATE_H
-#define DSPPOSBYDATE_H
+#ifndef DSPPORETURNSBYVENDOR_H
+#define DSPPORETURNSBYVENDOR_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspPOsByDate.h"
+#include "ui_dspPoReturnsByVendor.h"
 
-class dspPOsByDate : public XWidget, public Ui::dspPOsByDate
+class dspPoReturnsByVendor : public display, public Ui::dspPoReturnsByVendor
 {
     Q_OBJECT
 
 public:
-    dspPOsByDate(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspPOsByDate();
+    dspPoReturnsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
-public slots:
-    virtual void sPrint();
-    virtual void sEditOrder();
-    virtual void sViewOrder();
-    virtual void sFillList();
-    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected);
     virtual bool setParams(ParameterList &);
 
 protected slots:
@@ -37,4 +29,4 @@ protected slots:
 
 };
 
-#endif // DSPPOSBYDATE_H
+#endif // DSPPORETURNSBYVENDOR_H

@@ -11,22 +11,18 @@
 #include "dspPOsByDate.h"
 
 #include <QMessageBox>
-#include <QSqlError>
 
-#include <openreports.h>
-#include <metasql.h>
-
-#include "mqlutil.h"
+#include "guiclient.h"
 #include "purchaseOrder.h"
 
-dspPOsByDate::dspPOsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspPOsByDate::dspPOsByDate(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspPOsByDate", fl)
 {
-  setupUi(this);
-
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Purchase Orders by Date"));
+  setListLabel(tr("Purchase Orders"));
+  setReportName("POsByDate");
+  setMetaSQLOptions("purchaseOrders", "detail");
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Starting Due Date:"));
@@ -36,20 +32,16 @@ dspPOsByDate::dspPOsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
 
-  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight, true, "pohead_number");
-  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehousecode");
-  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter,true, "poitem_status");
-  _poitem->addColumn(tr("Vendor"),      _itemColumn,  Qt::AlignLeft,  true, "vend_name");
-  _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "minDueDate");
-}
-
-dspPOsByDate::~dspPOsByDate()
-{
-  // no need to delete child widgets, Qt does it all for us
+  list()->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight, true, "pohead_number");
+  list()->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehousecode");
+  list()->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter,true, "poitem_status");
+  list()->addColumn(tr("Vendor"),      _itemColumn,  Qt::AlignLeft,  true, "vend_name");
+  list()->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "minDueDate");
 }
 
 void dspPOsByDate::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -90,20 +82,7 @@ bool dspPOsByDate::setParams(ParameterList &pParams)
   return true;
 }
 
-void dspPOsByDate::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("POsByDate", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspPOsByDate::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspPOsByDate::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
 
@@ -123,7 +102,7 @@ void dspPOsByDate::sEditOrder()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("pohead_id", _poitem->id());
+  params.append("pohead_id", list()->id());
 
   purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
@@ -134,25 +113,10 @@ void dspPOsByDate::sViewOrder()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("pohead_id", _poitem->id());
+  params.append("pohead_id", list()->id());
 
   purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspPOsByDate::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  MetaSQLQuery mql = mqlLoad("purchaseOrders", "detail");
-  q = mql.toQuery(params);
-  _poitem->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}

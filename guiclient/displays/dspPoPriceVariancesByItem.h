@@ -8,32 +8,25 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPPRICESBYITEM_H
-#define DSPPRICESBYITEM_H
+#ifndef DSPPOPRICEVARIANCESBYITEM_H
+#define DSPPOPRICEVARIANCESBYITEM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspPricesByItem.h"
+#include "ui_dspPoPriceVariancesByItem.h"
 
-class dspPricesByItem : public XWidget, public Ui::dspPricesByItem
+class dspPoPriceVariancesByItem : public display, public Ui::dspPoPriceVariancesByItem
 {
     Q_OBJECT
 
 public:
-    dspPricesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspPricesByItem();
+    dspPoPriceVariancesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
-    virtual bool setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sHandleCosts( bool pShowCosts );
-    virtual void sFillList();
+    virtual bool setParams(ParameterList&);
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPPRICESBYITEM_H
+#endif // DSPPOPRICEVARIANCESBYITEM_H

@@ -8,33 +8,31 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPPOSBYVENDOR_H
-#define DSPPOSBYVENDOR_H
+#ifndef DSPPURCHASEREQSBYITEM_H
+#define DSPPURCHASEREQSBYITEM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspPOsByVendor.h"
+#include "ui_dspPurchaseReqsByItem.h"
 
-class dspPOsByVendor : public XWidget, public Ui::dspPOsByVendor
+class dspPurchaseReqsByItem : public display, public Ui::dspPurchaseReqsByItem
 {
     Q_OBJECT
 
 public:
-    dspPOsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspPOsByVendor();
+    dspPurchaseReqsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
-    virtual void sEditOrder();
-    virtual void sViewOrder();
-    virtual void sFillList();
-    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected);
-    virtual bool setParams(ParameterList &);
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int);
+    virtual void sDspRunningAvailability();
+    virtual void sRelease();
+    virtual void sDelete();
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // DSPPOSBYVENDOR_H
+#endif // DSPPURCHASEREQSBYITEM_H

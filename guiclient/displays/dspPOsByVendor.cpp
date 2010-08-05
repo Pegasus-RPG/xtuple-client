@@ -10,28 +10,23 @@
 
 #include "dspPOsByVendor.h"
 
-#include <QMessageBox>
-#include <QSqlError>
-
-#include <openreports.h>
-
-#include "mqlutil.h"
+#include "guiclient.h"
 #include "purchaseOrder.h"
 
-dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspPOsByVendor", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Purchase Orders by Vendor"));
+  setListLabel(tr("Purchase Orders"));
+  setReportName("POsByVendor");
+  setMetaSQLOptions("purchaseOrders", "detail");
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-
-  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight,  true,  "pohead_number"  );
-  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehousecode" );
-  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitem_status" );
-  _poitem->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft,   true,  "vend_number"   );
-  _poitem->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true,  "sortDate" );
+  list()->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight,  true,  "pohead_number"  );
+  list()->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehousecode" );
+  list()->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitem_status" );
+  list()->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft,   true,  "vend_number"   );
+  list()->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true,  "sortDate" );
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
@@ -39,13 +34,9 @@ dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
   _descrip->setEnabled(_searchDescrip->isChecked());
 }
 
-dspPOsByVendor::~dspPOsByVendor()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspPOsByVendor::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -77,19 +68,7 @@ bool dspPOsByVendor::setParams(ParameterList &params)
   return true;
 }
 
-void dspPOsByVendor::sPrint()
-{
-  ParameterList params;
-  setParams(params);
-
-  orReport report("POsByVendor", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspPOsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
+void dspPOsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
 
@@ -109,7 +88,7 @@ void dspPOsByVendor::sEditOrder()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("pohead_id", _poitem->id());
+  params.append("pohead_id", list()->id());
 
   purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
@@ -120,25 +99,10 @@ void dspPOsByVendor::sViewOrder()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("pohead_id", _poitem->id());
+  params.append("pohead_id", list()->id());
 
   purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspPOsByVendor::sFillList()
-{
-  MetaSQLQuery mql = mqlLoad("purchaseOrders", "detail");
-
-  ParameterList params;
-  setParams(params);
-
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  _poitem->populate(q, true);
-}

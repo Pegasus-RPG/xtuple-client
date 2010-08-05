@@ -205,17 +205,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspGLTransactions.ui                          \
           dspInvoiceInformation.ui                      \
           dspMRPDetail.ui                               \
-          dspPOsByDate.ui                               \
-          dspPOsByVendor.ui                             \
           dspPoHistory.ui                               \
-          dspPoPriceVariancesByItem.ui                  \
-          dspPoPriceVariancesByVendor.ui                \
-          dspPoReturnsByVendor.ui                       \
-          dspPricesByCustomer.ui                        \
-          dspPricesByCustomerType.ui                    \
-          dspPricesByItem.ui                            \
-          dspPurchaseReqsByItem.ui                      \
-          dspPurchaseReqsByPlannerCode.ui               \
           dspRecurringInvoices.ui                       \
           dspSalesHistoryByBilltoName.ui                \
           dspSalesHistoryByCustomer.ui                  \
@@ -812,17 +802,7 @@ HEADERS = ../common/format.h                    \
           dspGLTransactions.h                           \
           dspInvoiceInformation.h                       \
           dspMRPDetail.h                                \
-          dspPOsByDate.h                                \
-          dspPOsByVendor.h                              \
           dspPoHistory.h                                \
-          dspPoPriceVariancesByItem.h           \
-          dspPoPriceVariancesByVendor.h         \
-          dspPoReturnsByVendor.h                \
-          dspPricesByCustomer.h                 \
-          dspPricesByCustomerType.h             \
-          dspPricesByItem.h                     \
-          dspPurchaseReqsByItem.h               \
-          dspPurchaseReqsByPlannerCode.h        \
           dspRecurringInvoices.h                \
           dspSalesHistoryByBilltoName.h         \
           dspSalesHistoryByCustomer.h           \
@@ -1455,17 +1435,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspGLTransactions.cpp                         \
           dspInvoiceInformation.cpp                     \
           dspMRPDetail.cpp                              \
-          dspPOsByDate.cpp                              \
-          dspPOsByVendor.cpp                            \
           dspPoHistory.cpp                              \
-          dspPoPriceVariancesByItem.cpp                 \
-          dspPoPriceVariancesByVendor.cpp               \
-          dspPoReturnsByVendor.cpp                      \
-          dspPricesByCustomer.cpp                       \
-          dspPricesByCustomerType.cpp                   \
-          dspPricesByItem.cpp                           \
-          dspPurchaseReqsByItem.cpp                     \
-          dspPurchaseReqsByPlannerCode.cpp              \
           dspRecurringInvoices.cpp                      \
           dspSalesHistoryByBilltoName.cpp               \
           dspSalesHistoryByCustomer.cpp                 \
