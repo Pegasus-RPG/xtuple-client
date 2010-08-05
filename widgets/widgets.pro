@@ -74,8 +74,6 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/periodslistviewplugin.h \
     plugins/planordclusterplugin.h \
     plugins/planordlineeditplugin.h \
-    plugins/poclusterplugin.h \
-    plugins/polineeditplugin.h \
     plugins/projectclusterplugin.h \
     plugins/projectlineeditplugin.h \
     plugins/querysetplugin.h \
@@ -136,8 +134,6 @@ SOURCES += widgets.cpp \
     incidentCluster.cpp \
     ordercluster.cpp \
     opportunitycluster.cpp \
-    poCluster.cpp \
-    purchaseOrderList.cpp \
     plCluster.cpp \
     plannedOrderList.cpp \
     vendorcluster.cpp \
@@ -221,8 +217,6 @@ HEADERS += widgets.h \
     incidentcluster.h \
     ordercluster.h \
     opportunitycluster.h \
-    pocluster.h \
-    purchaseOrderList.h \
     plCluster.h \
     plannedOrderList.h \
     vendorcluster.h \
@@ -298,4 +292,3 @@ FORMS += alarmMaint.ui \
 RESOURCES += widgets.qrc
 
 QT +=  sql script
-QT -= qt3support 

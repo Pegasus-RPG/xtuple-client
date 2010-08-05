@@ -552,7 +552,8 @@ void OrderLineEdit::setAllowedType(const QString &p)
 
 void OrderLineEdit::setAllowedTypes(const OrderTypes p)
 {
-  if ((p & Purchase) &&
+  if (_x_metrics &&
+      (p & Purchase) &&
       ((p & Return) || ! _x_metrics->boolean("EnableReturnAuth")) &&
       (p & Sales) &&
       ((p & Transfer) || ! _x_metrics->boolean("MultiWhs")))

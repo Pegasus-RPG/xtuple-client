@@ -96,7 +96,6 @@ HEADERS += setupscriptapi.h \
     orderlineeditsetup.h \
     parametereditproto.h \
     parametergroupsetup.h \
-    polineeditsetup.h \
     projectlineeditsetup.h \
     ralineeditsetup.h \
     revisionlineeditsetup.h \
@@ -189,7 +188,6 @@ SOURCES += setupscriptapi.cpp \
     orderlineeditsetup.cpp \
     parametereditproto.cpp \
     parametergroupsetup.cpp \
-    polineeditsetup.cpp \
     projectlineeditsetup.cpp \
     ralineeditsetup.cpp \
     revisionlineeditsetup.cpp \

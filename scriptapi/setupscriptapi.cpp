@@ -28,7 +28,6 @@
 #include "parametergroupsetup.h"
 #include "parameterlistsetup.h"
 #include "parameterwidget.h"
-#include "polineeditsetup.h"
 #include "projectlineeditsetup.h"
 #include "qactionproto.h"
 #include "qboxlayoutproto.h"
@@ -139,7 +138,6 @@ void setupScriptApi(QScriptEngine *engine)
   setupParameterList(engine);
   setupParameterWidget(engine);
   setupPeriodListViewItem(engine);
-  setupPoLineEdit(engine);
   setupProjectLineEdit(engine);
   setupQActionProto(engine);
   setupQBoxLayoutProto(engine);

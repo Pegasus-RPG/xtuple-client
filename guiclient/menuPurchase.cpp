@@ -20,8 +20,6 @@
 #include "guiclient.h"
 #include "inputManager.h"
 
-#include <pocluster.h>
-
 #include "purchaseOrder.h"
 #include "unpostedPurchaseOrders.h"
 #include "printPurchaseOrder.h"

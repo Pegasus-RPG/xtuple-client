@@ -18,6 +18,10 @@
 class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
+  Q_FLAGS (OrderStatuses)
+  Q_FLAGS (OrderTypes)
+  Q_PROPERTY(OrderStatuses allowedStatuses READ allowedStatuses WRITE setAllowedStatuses)
+  Q_PROPERTY(OrderTypes    allowedTypes    READ allowedTypes    WRITE setAllowedTypes)
 
   public:
     OrderLineEdit(QWidget*, const char* = 0);
@@ -109,6 +113,8 @@ class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
 {
   Q_OBJECT
 
+  Q_PROPERTY(OrderLineEdit::OrderStatuses allowedStatuses READ allowedStatuses WRITE setAllowedStatuses)
+  Q_PROPERTY(OrderLineEdit::OrderTypes    allowedTypes    READ allowedTypes    WRITE setAllowedTypes)
   Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible)
   Q_PROPERTY(bool    descriptionVisible    READ descriptionVisible    WRITE setDescriptionVisible)
 

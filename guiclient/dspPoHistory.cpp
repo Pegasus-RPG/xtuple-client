@@ -24,13 +24,9 @@ dspPoHistory::dspPoHistory(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  connect(_copy,	SIGNAL(clicked()), this, SLOT(sCopy()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_po, SIGNAL(newId(int)), this, SLOT(sFillList()));
-
-  _po->setType((cPOOpen | cPOClosed));
+  connect(_copy,         SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_po, SIGNAL(newId(int, QString)), this, SLOT(sFillList()));
+  connect(_print,        SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter, true, "poitem_linenumber");
   _poitem->addColumn(tr("Item/Doc. #"),  _itemColumn, Qt::AlignLeft,   true, "itemnumber");
