@@ -147,6 +147,9 @@ while _valueBaseWidget is a QLabel; they emit different signals.
 CurrCluster::CurrCluster(QWidget * parent, const char* name)
     : CurrDisplay(parent, name)
 {
+  _baseVisible     = true;
+  _currencyEnabled = true;
+
     setObjectName("CurrCluster");
     setWindowTitle("CurrCluster");
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);

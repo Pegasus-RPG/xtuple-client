@@ -41,6 +41,7 @@ void ContactWidget::init()
     _grid->removeWidget(_list);		// will be reinserted
     _grid->removeWidget(_info);		// will be reinserted
     delete _description;
+    _description = 0;
 
     _grid->setMargin(0);
     _grid->setSpacing(2);
@@ -1161,6 +1162,7 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     delete _searchNumber;
     delete _searchName;
     delete _searchDescrip;
+    _searchNumber = _searchName = _searchDescrip = 0;
 
     _listTab->setColumnCount(0);
 
