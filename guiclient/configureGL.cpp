@@ -177,6 +177,8 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _mandatoryNotes->setChecked(_metrics->boolean("MandatoryGLEntryNotes"));
   _manualFwdUpdate->setChecked(_metrics->boolean("ManualForwardUpdate"));
   _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
+  // TODO hide default tax authority, not used?
+  _taxGroup->setVisible(FALSE);
 
   _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
 
