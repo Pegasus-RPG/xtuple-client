@@ -51,8 +51,6 @@
 #include "plugins/periodslistviewplugin.h"
 #include "plugins/planordclusterplugin.h"
 #include "plugins/planordlineeditplugin.h"
-#include "plugins/poclusterplugin.h"
-#include "plugins/polineeditplugin.h"
 #include "plugins/projectclusterplugin.h"
 #include "plugins/projectlineeditplugin.h"
 #include "plugins/querysetplugin.h"
@@ -129,8 +127,6 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new PeriodsListViewPlugin(this));
   m_plugins.append(new PlanOrdClusterPlugin(this));
   m_plugins.append(new PlanOrdLineEditPlugin(this));
-  m_plugins.append(new PoClusterPlugin(this));
-  m_plugins.append(new PoLineEditPlugin(this));
   m_plugins.append(new ProjectClusterPlugin(this));
   m_plugins.append(new ProjectLineEditPlugin(this));
   m_plugins.append(new QuerySetPlugin(this));
