@@ -207,17 +207,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspMRPDetail.ui                               \
           dspPoHistory.ui                               \
           dspRecurringInvoices.ui                       \
-          dspSalesHistoryByBilltoName.ui                \
-          dspSalesHistoryByCustomer.ui                  \
-          dspSalesHistoryByItem.ui                      \
-          dspSalesHistoryByParameterList.ui             \
-          dspSalesHistoryBySalesrep.ui                  \
-          dspSalesHistoryByShipTo.ui                    \
-          dspSalesOrderStatus.ui                        \
-          dspSalesOrdersByCustomer.ui                   \
-          dspSalesOrdersByCustomerPO.ui                 \
-          dspSalesOrdersByItem.ui                       \
-          dspSalesOrdersByParameterList.ui              \
           dspSubLedger.ui                          \
           dspStandardJournalHistory.ui                  \
           dspSummarizedBacklogByWarehouse.ui            \
@@ -804,17 +793,6 @@ HEADERS = ../common/format.h                    \
           dspMRPDetail.h                                \
           dspPoHistory.h                                \
           dspRecurringInvoices.h                \
-          dspSalesHistoryByBilltoName.h         \
-          dspSalesHistoryByCustomer.h           \
-          dspSalesHistoryByItem.h               \
-          dspSalesHistoryByParameterList.h      \
-          dspSalesHistoryBySalesrep.h           \
-          dspSalesHistoryByShipTo.h             \
-          dspSalesOrderStatus.h                 \
-          dspSalesOrdersByCustomer.h            \
-          dspSalesOrdersByCustomerPO.h          \
-          dspSalesOrdersByItem.h                \
-          dspSalesOrdersByParameterList.h       \
           dspSubLedger.h                   \
           dspStandardJournalHistory.h           \
           dspSummarizedBacklogByWarehouse.h     \
@@ -1437,17 +1415,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspMRPDetail.cpp                              \
           dspPoHistory.cpp                              \
           dspRecurringInvoices.cpp                      \
-          dspSalesHistoryByBilltoName.cpp               \
-          dspSalesHistoryByCustomer.cpp                 \
-          dspSalesHistoryByItem.cpp                     \
-          dspSalesHistoryByParameterList.cpp            \
-          dspSalesHistoryBySalesrep.cpp                 \
-          dspSalesHistoryByShipTo.cpp                   \
-          dspSalesOrderStatus.cpp                       \
-          dspSalesOrdersByCustomer.cpp                  \
-          dspSalesOrdersByCustomerPO.cpp                \
-          dspSalesOrdersByItem.cpp                      \
-          dspSalesOrdersByParameterList.cpp             \
           dspStandardJournalHistory.cpp                 \
           dspSubLedger.cpp                              \
           dspSummarizedBacklogByWarehouse.cpp           \

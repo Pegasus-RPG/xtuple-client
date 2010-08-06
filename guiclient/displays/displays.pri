@@ -100,6 +100,17 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspReorderExceptionsByPlannerCode.ui \
            displays/dspReservations.ui \
            displays/dspRunningAvailability.ui \
+           displays/dspSalesHistoryByBilltoName.ui \
+           displays/dspSalesHistoryByCustomer.ui \
+           displays/dspSalesHistoryByItem.ui \
+           displays/dspSalesHistoryByParameterList.ui \
+           displays/dspSalesHistoryBySalesrep.ui \
+           displays/dspSalesHistoryByShipTo.ui \
+           displays/dspSalesOrdersByCustomer.ui \
+           displays/dspSalesOrdersByCustomerPO.ui \
+           displays/dspSalesOrdersByItem.ui \
+           displays/dspSalesOrdersByParameterList.ui \
+           displays/dspSalesOrderStatus.ui \
            displays/dspShipmentsBase.ui \
            displays/dspShipmentsByDate.ui \
            displays/dspSingleLevelWhereUsed.ui \
@@ -221,6 +232,17 @@ HEADERS += displays/dspAllocations.h \
            displays/dspReorderExceptionsByPlannerCode.h \
            displays/dspReservations.h \
            displays/dspRunningAvailability.h \
+           displays/dspSalesHistoryByBilltoName.h \
+           displays/dspSalesHistoryByCustomer.h \
+           displays/dspSalesHistoryByItem.h \
+           displays/dspSalesHistoryByParameterList.h \
+           displays/dspSalesHistoryBySalesrep.h \
+           displays/dspSalesHistoryByShipTo.h \
+           displays/dspSalesOrdersByCustomer.h \
+           displays/dspSalesOrdersByCustomerPO.h \
+           displays/dspSalesOrdersByItem.h \
+           displays/dspSalesOrdersByParameterList.h \
+           displays/dspSalesOrderStatus.h \
            displays/dspShipmentsBase.h \
            displays/dspShipmentsByDate.h \
            displays/dspShipmentsBySalesOrder.h \
@@ -350,6 +372,17 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspReorderExceptionsByPlannerCode.cpp \
            displays/dspReservations.cpp \
            displays/dspRunningAvailability.cpp \
+           displays/dspSalesHistoryByBilltoName.cpp \
+           displays/dspSalesHistoryByCustomer.cpp \
+           displays/dspSalesHistoryByItem.cpp \
+           displays/dspSalesHistoryByParameterList.cpp \
+           displays/dspSalesHistoryBySalesrep.cpp \
+           displays/dspSalesHistoryByShipTo.cpp \
+           displays/dspSalesOrdersByCustomer.cpp \
+           displays/dspSalesOrdersByCustomerPO.cpp \
+           displays/dspSalesOrdersByItem.cpp \
+           displays/dspSalesOrdersByParameterList.cpp \
+           displays/dspSalesOrderStatus.cpp \
            displays/dspShipmentsBase.cpp \
            displays/dspShipmentsByDate.cpp \
            displays/dspShipmentsBySalesOrder.cpp \
