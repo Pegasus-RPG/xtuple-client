@@ -409,13 +409,6 @@ void creditMemo::sInvoiceList()
     sohead.exec();
     if (sohead.first())
     {
-      _invoiceNumber->setInvoiceNumber(sohead.value("invchead_invcnumber").toString());
-      _salesRep->setId(sohead.value("invchead_salesrep_id").toInt());
-      _commission->setDouble(sohead.value("invchead_commission").toDouble() * 100);
-
-      _taxzone->setId(sohead.value("invchead_taxzone_id").toInt());
-      _customerPO->setText(sohead.value("invchead_ponumber"));
-
       _cust->setEnabled(FALSE);
       _billtoName->setEnabled(FALSE);
       _billToAddr->setEnabled(FALSE);
@@ -443,6 +436,13 @@ void creditMemo::sInvoiceList()
       _shipToAddr->setPostalCode(sohead.value("invchead_shipto_zipcode").toString());
       _shipToAddr->setCountry(sohead.value("invchead_shipto_country").toString());
       _ignoreShiptoSignals = FALSE;
+
+      _invoiceNumber->setInvoiceNumber(sohead.value("invchead_invcnumber").toString());
+      _salesRep->setId(sohead.value("invchead_salesrep_id").toInt());
+      _commission->setDouble(sohead.value("invchead_commission").toDouble() * 100);
+
+      _taxzone->setId(sohead.value("invchead_taxzone_id").toInt());
+      _customerPO->setText(sohead.value("invchead_ponumber"));
     }
     else if (sohead.lastError().type() != QSqlError::NoError)
     {
