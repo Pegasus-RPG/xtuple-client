@@ -81,7 +81,6 @@ public slots:
     virtual void sClear();
     virtual void sNumberEditable(bool);
     virtual void sPrepare();
-    virtual void sDelete();
 
 protected slots:
     virtual void languageChange();

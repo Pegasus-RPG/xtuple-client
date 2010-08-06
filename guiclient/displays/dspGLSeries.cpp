@@ -46,7 +46,7 @@ dspGLSeries::dspGLSeries(QWidget* parent, const char*, Qt::WFlags fl)
   if (!_metrics->boolean("UseSubLedger"))
     _typeGroup->hide();
 
-  _subLedger->setEnabled(_metrics->boolean("ViewSubLedger"));
+  _subLedger->setEnabled(_privileges->boolean("ViewSubLedger"));
 }
 
 void dspGLSeries::languageChange()
@@ -171,9 +171,13 @@ bool dspGLSeries::setParams(ParameterList &params)
   }
 
   if (_subLedger->isChecked())
+  {
+    params.append("title",tr("Subledger Series"));
     params.append("table", "sltrans");
+  }
   else
   {
+    params.append("title",tr("General Ledger Series"));
     params.append("gltrans", true);
     params.append("table", "gltrans");
   }

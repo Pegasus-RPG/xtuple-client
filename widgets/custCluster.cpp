@@ -26,17 +26,18 @@
 
 #define DEBUG false
 
-//  Routines for CLineEdit - a customer and prospect validating QLineEdit
 CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
   VirtualClusterLineEdit(pParent, "cust", "id", "number", "name", "description", 0, pName, "active")
 {
   _crmacctId = -1;
   _type     = AllCustomers;
+  _canEdit = false;
+  _editMode = false;
 
   setTitles(tr("Customer"), tr("Customers"));
   setUiName("customer");
   setEditPriv("MaintainCustomerMasters");
-  setViewPriv("ViewCustomers");
+  setViewPriv("ViewCustomerMasters");
   //setNewPriv("MaintainCustomerMasters");
 
   _query = " SELECT * FROM ( "
@@ -45,7 +46,10 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
            "         cust_name AS name,"
            "         addr_line1 AS description,"
            "         cust_active AS active, "
-           "         crmacct_id, true AS iscustomer "
+           "         cust_creditstatus, "
+           "         crmacct_id, true AS iscustomer, "
+           "         addr.*, cntct.*, "
+           "         formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street "
            "  FROM custinfo "
            "    LEFT OUTER JOIN cntct  ON (cust_cntct_id=cntct_id) "
            "    LEFT OUTER JOIN addr   ON (cntct_addr_id=addr_id) "
@@ -56,13 +60,22 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
            "         prospect_name AS name,"
            "         addr_line1 AS description,"
            "         prospect_active AS active, "
-           "         crmacct_id, false AS iscustomer "
+           "         'G' AS cust_creditstatus, "
+           "         crmacct_id, false AS iscustomer, "
+           "         addr.*, cntct.*, "
+           "         formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street "
            "  FROM prospect "
            "    LEFT OUTER JOIN cntct  ON (prospect_cntct_id=cntct_id) "
            "    LEFT OUTER JOIN addr   ON (cntct_addr_id=addr_id) "
            "    LEFT OUTER JOIN crmacct ON (crmacct_prospect_id=prospect_id) "
            "  ) cust "
            "WHERE (true) ";
+
+  _modeSep = 0;
+  _modeAct = new QAction(tr("Edit Number"), this);
+  _modeAct->setToolTip(tr("Sets number for editing"));
+  _modeAct->setCheckable(true);
+  connect(_modeAct, SIGNAL(triggered(bool)), this, SLOT(setEditMode(bool)));
 }
 
 void CLineEdit::setId(int pId)
@@ -71,9 +84,38 @@ void CLineEdit::setId(int pId)
   VirtualClusterLineEdit::setId(pId);
   if (model())
   {
+    if (model()->data(model()->index(0,ISCUSTOMER)).toBool())
+    {
+      setUiName("customer");
+      setEditPriv("MaintainCustomerMasters");
+      setViewPriv("ViewCustomerMasters");
+      _idColName="cust_id";
+    }
+    else
+    {
+      setUiName("prospect");
+      setEditPriv("MaintainProspectMasters");
+      setViewPriv("ViewProspectMasters");
+      _idColName="prospect_id";
+    }
+    sUpdateMenu();
+
     _crmacctId = model()->data(model()->index(0,CRMACCT_ID)).toInt();
 
     emit newCrmacctId(_crmacctId);
+
+    // Handle Credit Status
+    QString status = model()->data(model()->index(0,CREDITSTATUS)).toString();
+
+    if (!editMode())
+    {
+      if ((status == "G") )
+        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
+      else if (status == "W")
+        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
+      else if (status == "H")
+        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
+    }
   }
 }
 
@@ -107,46 +149,6 @@ void CLineEdit::setType(CLineEditTypes pType)
   }
   list.removeDuplicates();
   setExtraClause(list.join(" AND "));
-}
-
-void CLineEdit::sOpen()
-{
-  if (canOpen())
-  {
-    QString uiName = _uiName;
-    ParameterList params;
-    if (_x_privileges->check(_editPriv))
-      params.append("mode", "edit");
-    else
-      params.append("mode", "view");
-    if (model()->data(model()->index(0,ISCUSTOMER)).toBool())
-      params.append("cust_id", id());
-    else
-    {
-      uiName="prospect";
-      params.append("prospect_id", id());
-    }
-
-    QWidget* w = 0;
-    if (parentWidget()->window())
-    {
-      if (parentWidget()->window()->isModal())
-        w = _guiClientInterface->openWindow(uiName, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
-      else
-        w = _guiClientInterface->openWindow(uiName, params, parentWidget()->window() , Qt::NonModal, Qt::Window);
-    }
-
-    if (w->inherits("QDialog"))
-    {
-      QDialog* newdlg = qobject_cast<QDialog*>(w);
-      int id = newdlg->exec();
-      if (id != QDialog::Rejected)
-      {
-        silentSetId(id);
-        emit valid(_id != -1);
-      }
-    }
-  }
 }
 
 VirtualList* CLineEdit::listFactory()
@@ -213,6 +215,107 @@ VirtualSearch* CLineEdit::searchFactory()
   return search;
 }
 
+bool CLineEdit::canEdit()
+{
+  return _canEdit;
+}
+
+void CLineEdit::setCanEdit(bool p)
+{
+  if (p == _canEdit)
+    return;
+
+  if (!p)
+    setEditMode(false);
+
+  _canEdit=p;
+
+  sUpdateMenu();
+}
+
+bool CLineEdit::editMode()
+{
+  return _editMode;
+}
+
+bool CLineEdit::setEditMode(bool p)
+{
+  if (p == _editMode)
+    return p;
+
+  if (!_canEdit)
+    return false;
+
+  _editMode=p;
+  _modeAct->setChecked(p);
+
+  if (_x_preferences)
+  {
+    if (!_x_preferences->boolean("ClusterButtons"))
+    {
+      if (_editMode)
+        _menuLabel->setPixmap(QPixmap(":/widgets/images/edit.png"));
+      else
+        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
+    }
+
+    if (!_x_metrics->boolean("DisableAutoComplete") && _editMode)
+      disconnect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
+    else if (!_x_metrics->boolean("DisableAutoComplete"))
+      connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
+  }
+  sUpdateMenu();
+
+  emit editable(p);
+  return p;
+}
+
+void CLineEdit::sParse()
+{
+  if (_editMode)
+    return;
+
+  VirtualClusterLineEdit::sParse();
+}
+
+void CLineEdit::sUpdateMenu()
+{
+  VirtualClusterLineEdit::sUpdateMenu();
+  if (_x_preferences)
+  {
+    if (_x_preferences->boolean("ClusterButtons"))
+      return;
+  }
+  else
+    return;
+
+  if (_canEdit)
+  {
+    if (!menu()->actions().contains(_modeAct))
+    {
+      _infoAct->setVisible(false);
+      menu()->addAction(_modeAct);
+    }
+
+    _listAct->setDisabled(_editMode);
+    _searchAct->setDisabled(_editMode);
+    _listAct->setVisible(!_editMode);
+    _searchAct->setVisible(!_editMode);
+  }
+  else
+  {
+    if (menu()->actions().contains(_modeAct))
+    {
+      _infoAct->setVisible(true);
+      menu()->removeAction(_modeAct);
+    }
+  }
+}
+
+bool CLineEdit::canOpen()
+{
+  return VirtualClusterLineEdit::canOpen() && !canEdit();
+}
 
 //////////////////////////////////////////////////////////////
 
@@ -223,6 +326,8 @@ CustCluster::CustCluster(QWidget *pParent, const char *pName) :
 
   CLineEdit* number = static_cast<CLineEdit*>(_number);
   connect(number, SIGNAL(newCrmacctId(int)), this, SIGNAL(newCrmacctId(int)));
+  connect(number, SIGNAL(editable(bool)), this, SIGNAL(editable(bool)));
+  connect(number, SIGNAL(editable(bool)), this, SLOT(sHandleEditMode(bool)));
 
   setLabel(tr("Customer #:"));
   setNameVisible(true);
@@ -234,9 +339,21 @@ void CustCluster::setType(CLineEdit::CLineEditTypes pType)
   static_cast<CLineEdit*>(_number)->setType(pType);
 }
 
-void CustCluster::setEditMode(bool p)
+bool CustCluster::setEditMode(bool p) const
 {
-  // TO DO
+  return static_cast<CLineEdit*>(_number)->setEditMode(p);
 }
+
+void CustCluster::sHandleEditMode(bool p)
+{
+  CLineEdit* number = static_cast<CLineEdit*>(_number);
+
+  if (p)
+    connect(number, SIGNAL(editingFinished()), this, SIGNAL(editingFinished()));
+  else
+    disconnect(number, SIGNAL(editingFinished()), this, SIGNAL(editingFinished()));
+}
+
+
 
 

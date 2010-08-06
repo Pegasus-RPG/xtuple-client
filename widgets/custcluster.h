@@ -25,8 +25,9 @@ class CustInfo;
 #define __allCustomers    0x01
 #define __activeCustomers 0x02
 
-#define CRMACCT_ID      5
-#define ISCUSTOMER      6
+#define CREDITSTATUS    5
+#define CRMACCT_ID      6
+#define ISCUSTOMER      7
 
 class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
 {
@@ -34,7 +35,7 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
 
   Q_ENUMS(CLineEditTypes)
 
-  Q_PROPERTY(CLineEditTypes	type READ type	    WRITE setType	)
+  Q_PROPERTY(CLineEditTypes type READ type WRITE setType )
 
   friend class CustInfo;
 
@@ -50,27 +51,44 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
 
     inline CLineEditTypes	type()	    const { return _type;       }
 
+    bool   canOpen();
+
+    bool   canEdit();
+    void   setCanEdit(bool);
+
+    bool   editMode();
+
   public slots:
+    bool setEditMode(bool);
     void setId(int);
-    void sOpen();
     void setType(CLineEditTypes);
 
   protected slots:
     VirtualList*    listFactory();
     VirtualSearch*  searchFactory();
+    void            sParse();
+    void            sUpdateMenu();
+
+  protected:
+    QAction* _modeSep;
+    QAction* _modeAct;
 
   signals:
     void newCrmacctId(int);
+    void editable(bool);
 
   private:
     CLineEditTypes	_type;
     int                 _crmacctId;
+    bool                _canEdit;
+    bool                _editMode;
 };
 
 class XTUPLEWIDGETS_EXPORT CustCluster : public VirtualCluster
 {
   Q_OBJECT
 
+  Q_PROPERTY(bool canEdit READ canEdit WRITE setCanEdit )
   Q_PROPERTY(CLineEdit::CLineEditTypes	type           READ type	  WRITE setType                          )
 
   public:
@@ -78,18 +96,21 @@ class XTUPLEWIDGETS_EXPORT CustCluster : public VirtualCluster
 
     inline CLineEdit::CLineEditTypes type()  const { return static_cast<CLineEdit*>(_number)->type();          };
 
-    Q_INVOKABLE inline bool editMode() { return _editMode; }
     Q_INVOKABLE void   setType(CLineEdit::CLineEditTypes);
-    
-  public slots:
-    void setEditMode(bool);
+
+    bool canEdit() const { return static_cast<CLineEdit*>(_number)->canEdit(); }
+    void setCanEdit(bool p) const { static_cast<CLineEdit*>(_number)->setCanEdit(p); }
+
+    Q_INVOKABLE bool editMode() { return static_cast<CLineEdit*>(_number)->editMode(); }
+    Q_INVOKABLE bool setEditMode(bool p) const;
+
+  private slots:
+   void sHandleEditMode(bool);
 
   signals:
     void newCrmacctId(int);
-
-  private:
-    bool _editMode;
-
+    void editable(bool);
+    void editingFinished();
 };
 
 #endif

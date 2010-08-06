@@ -126,7 +126,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
   connect(_number, SIGNAL(editingFinished()), this, SLOT(sNumberEdited()));
   connect(_number, SIGNAL(editable(bool)), this, SLOT(sNumberEditable(bool)));
-  connect(_number, SIGNAL(deleteClicked()), this, SLOT(sDelete()));
   connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission()));
   connect(_newShipto, SIGNAL(clicked()), this, SLOT(sNewShipto()));
   connect(_editShipto, SIGNAL(clicked()), this, SLOT(sEditShipto()));
@@ -1553,6 +1552,7 @@ void customer::sLoadCrmAcct(int crmacctId )
 
 void customer::sNumberEdited()
 {
+  qDebug("number edited");
   _notice = TRUE;
   sCheck();
 }
@@ -1762,39 +1762,7 @@ void customer::sPrepare()
                   .arg(__LINE__) );
     return;
   }
-  _number->findChild<QPushButton*>("_new")->click();
+  _number->setEditMode(true);
   _NumberGen = _number->number().toInt();
-
 }
 
-void customer::sDelete()
-{
-  QString question = tr("Are you sure that you want to delete this customer?");
-  if (QMessageBox::question(this, tr("Delete Customer?"),
-                              question,
-                              QMessageBox::Yes,
-                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-    return;
-
-  q.prepare("SELECT deleteCustomer(:cust_id) AS result;");
-  q.bindValue(":cust_id", _number->id());
-  q.exec();
-  if (q.first())
-  {
-    int returnVal = q.value("result").toInt();
-    if (returnVal < 0)
-    {
-      QMessageBox::critical(this, tr("Cannot Delete Customer"),
-			    storedProcErrorLookup("deleteCustomer", returnVal));
-      return;
-    }
-    sClear();
-    omfgThis->sCustomersUpdated(-1, TRUE);
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  _number->setFocus();
-}
