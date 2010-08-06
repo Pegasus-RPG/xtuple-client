@@ -176,6 +176,14 @@ bool itemPricingSchedule::sSave(bool p)
     return false;
   }
 
+  if (_dates->endDate() < _dates->startDate())
+  {
+    QMessageBox::critical( this, tr("Invalid Expiration Date"),
+                           tr("The expiration date cannot be earlier than the effective date.") );
+    _dates->setFocus();
+    return false;
+  }
+
   q.prepare("SELECT ipshead_id"
             "  FROM ipshead"
             " WHERE ((ipshead_name=:ipshead_name)"
