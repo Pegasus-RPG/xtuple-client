@@ -40,7 +40,7 @@ dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* na
   connect(_orderList,   SIGNAL(clicked()),          this, SLOT(sOrderList()));
   connect(_orderNumber, SIGNAL(requestList()),      this, SLOT(sOrderList()));
   connect(_orderType,   SIGNAL(valid(bool)),  _orderList, SLOT(setEnabled(bool)));
-  connect(_orderType,   SIGNAL(newId(int)), _orderNumber, SLOT(clear()));
+  connect(_orderType,   SIGNAL(newID(int)), _orderNumber, SLOT(clear()));
 
 #ifndef Q_WS_MAC
   _orderList->setMaximumWidth(25);
@@ -427,20 +427,19 @@ void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem
 
 void dspInventoryHistoryBase::sOrderList()
 {
-  // TODO: simplify when the order cluster can handle wo.
-  OrderCluster tmpOrderCluster(this, "tmpOrderCluster");
+  // TODO: simplify when the order line edit can handle wo.
+  OrderLineEdit tmpOrderLE(this, "tmpOrderLE");
   ParameterList params;
   if (_orderType->code() == "PO" ||
       _orderType->code() == "SO" ||
       _orderType->code() == "TO")
   {
-    tmpOrderCluster.setAllowedType(_orderType->code());
-    tmpOrderCluster.setAllowedStatuses(OrderLineEdit::Open);
-    OrderList newdlg(&tmpOrderCluster);
+    tmpOrderLE.setAllowedType(_orderType->code());
+    tmpOrderLE.setAllowedStatuses(OrderLineEdit::Open);
+    tmpOrderLE.sList();
+    if (tmpOrderLE.isValid())
+      _orderNumber->setText(tmpOrderLE.text());
 
-    int id = newdlg.exec();
-    if (id != QDialog::Rejected)
-      _orderNumber->setText(tmpOrderCluster.number());
   }
   else if (_orderType->code() == "WO")
   {

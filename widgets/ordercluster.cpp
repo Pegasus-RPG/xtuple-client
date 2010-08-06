@@ -727,10 +727,16 @@ OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
   _listTab->addColumn(tr("From"), -1, Qt::AlignLeft, true, "orderhead_from");
   _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft, true, "orderhead_to");
   
-  if (! ((OrderLineEdit*)_parent)->fromPrivsClause().isEmpty())
-     ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->fromPrivsClause());
-  if (! ((OrderLineEdit*)_parent)->toPrivsClause().isEmpty())
-     ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->toPrivsClause());
+  OrderLineEdit *lineedit = qobject_cast<OrderLineEdit*>(_parent);
+  if (lineedit)
+  {
+    if (! lineedit->fromPrivsClause().isEmpty())
+     lineedit->setExtraClause(lineedit->extraClause() +
+                              lineedit->fromPrivsClause());
+    if (! lineedit->toPrivsClause().isEmpty())
+     lineedit->setExtraClause(lineedit->extraClause() +
+                              lineedit->toPrivsClause());
+  }
 }
 
 QString OrderList::type() const
