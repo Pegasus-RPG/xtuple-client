@@ -124,6 +124,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Sched. Date"),   _dateColumn,  Qt::AlignLeft,   true, "raitem_scheddate"   );
   _raitem->addColumn(tr("Item Type"),     _statusColumn,Qt::AlignLeft,  false, "item_type"   );
 
+  _raitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   _authorizeLine->hide();
   _clearAuthorization->hide();
   _authorizeAll->hide();
