@@ -20,13 +20,10 @@
 #include "countTag.h"
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
-#include "pocluster.h"
-#include "purchaseOrderList.h"
-#include "salesOrderList.h"
+#include "ordercluster.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"
-#include "transferOrderList.h"
 #include "workOrder.h"
 
 // TODO: handle RA?
@@ -430,42 +427,20 @@ void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem
 
 void dspInventoryHistoryBase::sOrderList()
 {
-  /* TODO: When the order cluster can handle po, so, to, and wo,
-           just replace this whole mess.
-   */
+  // TODO: simplify when the order cluster can handle wo.
+  OrderCluster tmpOrderCluster(this, "tmpOrderCluster");
   ParameterList params;
-  if (_orderType->code() == "PO")
+  if (_orderType->code() == "PO" ||
+      _orderType->code() == "SO" ||
+      _orderType->code() == "TO")
   {
-    params.append("poType", cPOOpen);
-
-    purchaseOrderList newdlg(this, "", TRUE);
-    newdlg.set(params);
+    tmpOrderCluster.setAllowedType(_orderType->code());
+    tmpOrderCluster.setAllowedStatuses(OrderLineEdit::Open);
+    OrderList newdlg(&tmpOrderCluster);
 
     int id = newdlg.exec();
     if (id != QDialog::Rejected)
-      _orderNumber->setText(newdlg._pohead->currentItem()->text("pohead_number"));
-  }
-  else if (_orderType->code() == "SO")
-  {
-    params.append("soType", cSoOpen);
-
-    salesOrderList newdlg(this, "", TRUE);
-    newdlg.set(params);
-
-    int id = newdlg.exec();
-    if(id != QDialog::Rejected)
-      _orderNumber->setText(newdlg._so->currentItem()->text("cohead_number"));
-  }
-  else if (_orderType->code() == "TO")
-  {
-    params.append("toType", cToOpen);
-
-    transferOrderList newdlg(this, "", TRUE);
-    newdlg.set(params);
-
-    int id = newdlg.exec();
-    if(id != QDialog::Rejected)
-      _orderNumber->setText(newdlg._to->currentItem()->text("tohead_number"));
+      _orderNumber->setText(tmpOrderCluster.number());
   }
   else if (_orderType->code() == "WO")
   {
