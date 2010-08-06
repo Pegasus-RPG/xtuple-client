@@ -217,17 +217,19 @@ void dspVoucherRegister::sViewTrans()
 
 void dspVoucherRegister::sViewDocument()
 {
-  QTreeWidgetItem * item = _gltrans->currentItem();
+  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(_gltrans->currentItem());
   if(0 == item)
     return;
+  QString doctype = item->rawValue("gltrans_doctype").toString();
+  QString docnumber = item->rawValue("gltrans_docnumber").toString();
 
   ParameterList params;
-  if(item->text(2) == "VO")
+  if(doctype == "VO")
   {
     q.prepare("SELECT vohead_id, vohead_misc"
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
-    q.bindValue(":vohead_number", item->text(3));
+    q.bindValue(":vohead_number", docnumber);
     q.exec();
     if(!q.first())
       return;
@@ -248,24 +250,24 @@ void dspVoucherRegister::sViewDocument()
       omfgThis->handleNewWindow(newdlg);
     }
   }
-  else if(item->text(2) == "IN")
+  else if(doctype == "IN")
   {
     q.prepare("SELECT invchead_id"
               "  FROM invchead"
               " WHERE (invchead_invcnumber=:invchead_invcnumber)");
-    q.bindValue(":invchead_invcnumber", item->text(3));
+    q.bindValue(":invchead_invcnumber", docnumber);
     q.exec();
     if(!q.first())
       return;
 
     invoice::viewInvoice(q.value("invchead_id").toInt());
   }
-  else if(item->text(2) == "PO")
+  else if(doctype == "PO")
   {
     q.prepare("SELECT pohead_id"
               "  FROM pohead"
               " WHERE (pohead_number=:pohead_number)");
-    q.bindValue(":pohead_number", item->text(3));
+    q.bindValue(":pohead_number", docnumber);
     q.exec();
     if(!q.first())
       return;

@@ -68,9 +68,10 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Vend. Item #"),    -1,           Qt::AlignLeft,   true,  "poitem_vend_item_number"   );
   _poitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "poitem_vend_uom" );
   _poitem->addColumn(tr("Ordered"),         _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_ordered"  );
-  _poitem->addColumn(tr("Invoiced"),        _qtyColumn,   Qt::AlignRight,  false, "invoiced" );
+  _poitem->addColumn(tr("Invoiced"),        _qtyColumn,   Qt::AlignRight,  false, "qtyinvoiced" );
   _poitem->addColumn(tr("Uninvoiced"),      _qtyColumn,   Qt::AlignRight,  true,  "qtyreceived"  );
   _poitem->addColumn(tr("Rejected"),        _qtyColumn,   Qt::AlignRight,  true,  "qtyrejected"  );
+  _poitem->addColumn(tr("Quantity"),        _qtyColumn,   Qt::AlignRight,  false, "invoiceqty" );
   _poitem->addColumn(tr("Amount"),          _moneyColumn, Qt::AlignRight,  true,  "invoiceamount"  );
   _poitem->addColumn(tr("PO Unit Price"),   _moneyColumn, Qt::AlignRight,  true,  "poitem_unitprice" );
   _poitem->addColumn(tr("PO Ext Price"),    _moneyColumn, Qt::AlignRight,  true,  "extprice"  );
@@ -164,7 +165,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _dueDate->setEnabled(FALSE);
       _invoiceNum->setEnabled(FALSE);
       _reference->setEnabled(FALSE);
-      _poitem->setEnabled(FALSE);
       _distributions->setEnabled(FALSE);
       _miscDistrib->setEnabled(FALSE);
       _new->setEnabled(FALSE);
@@ -177,6 +177,9 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _save->hide();
 
       _close->setFocus();
+      disconnect(_poitem, SIGNAL(valid(bool)), _distributions, SLOT(setEnabled(bool)));
+      disconnect(_poitem, SIGNAL(valid(bool)), _distributeline, SLOT(setEnabled(bool)));
+      disconnect(_poitem, SIGNAL(valid(bool)), _clear, SLOT(setEnabled(bool)));
       disconnect(_poNumber, SIGNAL(valid(bool)), _distributeall, SLOT(setEnabled(bool)));
     }
   }
@@ -585,7 +588,7 @@ void voucher::sFillList()
                "         FROM porecv"
                "         WHERE ( (porecv_posted)"
                "           AND (porecv_invoiced)"
-               "           AND (porecv_poitem_id=poitem_id) ) ) AS invoiced,"
+               "           AND (porecv_poitem_id=poitem_id) ) ) AS qtyinvoiced,"
                "       ( SELECT COALESCE(SUM(porecv_qty), 0)"
                "         FROM porecv"
                "         WHERE ( (porecv_posted)"
@@ -598,6 +601,10 @@ void voucher::sFillList()
                "           AND (NOT poreject_invoiced)"
                "           AND (poreject_vohead_id IS NULL)"
                "           AND (poreject_poitem_id=poitem_id) ) ) AS qtyrejected,"
+               "       ( SELECT COALESCE(SUM(vodist_qty), 0)"
+               "         FROM vodist"
+               "         WHERE vodist_poitem_id=poitem_id"
+               "           AND vodist_vohead_id=:vohead_id ) AS invoiceqty, "
                "       ( SELECT COALESCE(SUM(vodist_amount), 0)"
                "         FROM vodist"
                "         WHERE vodist_poitem_id=poitem_id"
@@ -610,9 +617,10 @@ void voucher::sFillList()
                "       (poitem_unitprice * poitem_qty_ordered) AS extprice,"
                "       poitem_freight,"
                "       'qty' AS poitem_qty_ordered_xtnumericrole,"
-               "       'qty' AS invoiced_xtnumericrole,"
+               "       'qty' AS qtyinvoiced_xtnumericrole,"
                "       'qty' AS qtyreceived_xtnumericrole,"
                "       'qty' AS qtyrejected_xtnumericrole,"
+               "       'qty' AS invoiceqty_xtnumericrole,"
                "       'curr' AS invoiceamount_xtnumericrole,"
                "       'curr' AS poitem_unitprice_xtnumericrole,"
                "       'curr' AS extprice_xtnumericrole,"
