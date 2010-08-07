@@ -216,6 +216,7 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
   setUiName("item");
   setEditPriv("MaintainItemMasters");
   setViewPriv("ViewItemMasters");
+  setNewPriv("MaintainItemMasters");
 
   setAcceptDrops(TRUE);
   

@@ -38,7 +38,7 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
   setUiName("customer");
   setEditPriv("MaintainCustomerMasters");
   setViewPriv("ViewCustomerMasters");
-  //setNewPriv("MaintainCustomerMasters");
+  setNewPriv("MaintainCustomerMasters");
 
   _query = " SELECT * FROM ( "
            "  SELECT cust_id AS id, "
@@ -80,7 +80,6 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
 
 void CLineEdit::setId(int pId)
 {
-
   VirtualClusterLineEdit::setId(pId);
   if (model())
   {
@@ -89,6 +88,7 @@ void CLineEdit::setId(int pId)
       setUiName("customer");
       setEditPriv("MaintainCustomerMasters");
       setViewPriv("ViewCustomerMasters");
+      setNewPriv("MaintainCustomerMasters");
       _idColName="cust_id";
     }
     else
@@ -96,6 +96,7 @@ void CLineEdit::setId(int pId)
       setUiName("prospect");
       setEditPriv("MaintainProspectMasters");
       setViewPriv("ViewProspectMasters");
+      setNewPriv("MaintainProspectMasters");
       _idColName="prospect_id";
     }
     sUpdateMenu();
@@ -107,16 +108,21 @@ void CLineEdit::setId(int pId)
     // Handle Credit Status
     QString status = model()->data(model()->index(0,CREDITSTATUS)).toString();
 
-    if (!editMode())
+    if (!editMode() && status != "G")
     {
-      if ((status == "G") )
-        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
-      else if (status == "W")
-        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
-      else if (status == "H")
-        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
+      if (status == "W")
+        _menuLabel->setPixmap(QPixmap(":/widgets/images/credit_warn.png"));
+      else
+        _menuLabel->setPixmap(QPixmap(":/widgets/images/credit_hold.png"));
+
+      return;
     }
   }
+
+  if (_editMode)
+    _menuLabel->setPixmap(QPixmap(":/widgets/images/edit.png"));
+  else
+    _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
 }
 
 void CLineEdit::setType(CLineEditTypes pType)
@@ -266,6 +272,12 @@ bool CLineEdit::setEditMode(bool p)
   }
   sUpdateMenu();
 
+  setDisabled(_editMode &&
+              _x_metrics->value("CRMAccountNumberGeneration") == "A");
+
+  if (!_editMode)
+    clear();
+
   emit editable(p);
   return p;
 }
@@ -316,6 +328,7 @@ bool CLineEdit::canOpen()
 {
   return VirtualClusterLineEdit::canOpen() && !canEdit();
 }
+
 
 //////////////////////////////////////////////////////////////
 

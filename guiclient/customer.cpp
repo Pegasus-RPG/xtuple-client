@@ -274,7 +274,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
   param = pParams.value("cust_id", &valid);
   if (valid)
   {
-    qDebug("cust_id:%d", param.toInt());
     _number->setEditMode(true);
     setId(param.toInt());
     _captive=true;
@@ -754,6 +753,7 @@ void customer::sSaveClicked()
   _autoSaved=false;
   _NumberGen = -1;
   omfgThis->sCustomersUpdated(_custid, TRUE);
+  emit saved(_custid);
   if (_captive || isModal())
     close();
   else
@@ -1552,7 +1552,6 @@ void customer::sLoadCrmAcct(int crmacctId )
 
 void customer::sNumberEdited()
 {
-  qDebug("number edited");
   _notice = TRUE;
   sCheck();
 }
@@ -1762,7 +1761,25 @@ void customer::sPrepare()
                   .arg(__LINE__) );
     return;
   }
+
   _number->setEditMode(true);
+  _number->clear();
+
+  // Handle Auto numbering
+  if(((_x_metrics &&
+       _x_metrics->value("CRMAccountNumberGeneration") == "A") ||
+      (_x_metrics->value("CRMAccountNumberGeneration") == "O"))
+    && _number->number().isEmpty() )
+  {
+    XSqlQuery num;
+    num.exec("SELECT fetchCRMAccountNumber() AS number;");
+    if (num.first())
+      _number->setNumber(num.value("number").toString());
+    _custtype->setFocus();
+  }
+  else
+    _number->setFocus();
+
   _NumberGen = _number->number().toInt();
 }
 

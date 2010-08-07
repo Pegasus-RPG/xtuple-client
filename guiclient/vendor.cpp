@@ -530,6 +530,7 @@ void vendor::sSave()
   q.exec("COMMIT;");
   _NumberGen = -1;
   omfgThis->sVendorsUpdated();
+  emit saved(_vendid);
   if (_mode == cNew)
     emit newId(_vendid);
 

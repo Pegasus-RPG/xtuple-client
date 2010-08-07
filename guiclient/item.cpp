@@ -895,6 +895,8 @@ void item::sSave()
     }
   }
 
+  emit saved(_itemid);
+
   close();
 }
 

@@ -491,16 +491,6 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="_newCust">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>+</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <spacer>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -1974,7 +1964,6 @@ to be bound by its terms.</comment>
   <tabstop>_more</tabstop>
   <tabstop>_expire</tabstop>
   <tabstop>_cust</tabstop>
-  <tabstop>_newCust</tabstop>
   <tabstop>_billToName</tabstop>
   <tabstop>_billToAddr</tabstop>
   <tabstop>_billToCntct</tabstop>

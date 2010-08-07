@@ -11,6 +11,7 @@
 #ifndef custCluster_h
 #define custCluster_h
 
+#include "parameter.h"
 #include "widgets.h"
 #include "virtualCluster.h"
 

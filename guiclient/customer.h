@@ -89,6 +89,7 @@ protected slots:
 signals:
     void populated();
     void newId(int);
+    void saved(int);
 
 protected:
     virtual void closeEvent(QCloseEvent*);

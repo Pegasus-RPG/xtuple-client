@@ -19,6 +19,7 @@ VendorLineEdit::VendorLineEdit(QWidget *pParent, const char *pName) :
   setUiName("vendor");
   setEditPriv("MaintainVendors");
   setViewPriv("ViewVendors");
+  setNewPriv("MaintainVendors");
 }
 
 VirtualList *VendorLineEdit::listFactory()

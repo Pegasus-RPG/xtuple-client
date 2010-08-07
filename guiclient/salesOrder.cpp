@@ -81,7 +81,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_editCC,              SIGNAL(clicked()),                              this,         SLOT(sEditCreditCard()));
   connect(_new,                 SIGNAL(clicked()),                              this,         SLOT(sNew()));
   connect(_newCC,               SIGNAL(clicked()),                              this,         SLOT(sNewCreditCard()));
-  connect(_newCust,             SIGNAL(clicked()),                              this,         SLOT(sNewCust()));
+  //connect(_newCust,             SIGNAL(clicked()),                              this,         SLOT(sNewCust()));
   connect(_orderNumber,         SIGNAL(lostFocus()),                            this,         SLOT(sHandleOrderNumber()));
   connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
   connect(_save,                SIGNAL(clicked()),                              this,         SLOT(sSave()));
@@ -235,7 +235,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
     _saveAndAdd->hide();
 
   _more->setChecked(_preferences->boolean("SoShowAll"));
-  _newCust->setVisible(_privileges->check("MaintainCustomerMasters") ||
+  /*_newCust->setVisible(_privileges->check("MaintainCustomerMasters") ||
                        _privileges->check("MaintainProspectMasters"));
 
 #ifndef Q_WS_MAC
@@ -244,6 +244,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _newCust->setMinimumWidth(60);
   _newCust->setMinimumHeight(32);
 #endif
+  */
 
   sHandleMore();
 }
@@ -571,11 +572,11 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _orderDate->setEnabled(FALSE);
     _packDate->setEnabled(FALSE);
   }
-
+/*
   if (ISNEW(_mode))
     _newCust->setEnabled(_privileges->check("MaintainCustomerMasters") ||
                          (ISQUOTE(_mode) && _privileges->check("MaintainProspectMasters")));
-
+*/
   return NoError;
 }
 
@@ -1557,9 +1558,9 @@ void salesOrder::sPopulateFOB(int pWarehousid)
 void salesOrder::sPopulateCustomerInfo(int pCustid)
 {
   _holdType->setCurrentIndex(0);
-  _newCust->setEnabled(pCustid == -1 &&
+  /*_newCust->setEnabled(pCustid == -1 &&
                        (_privileges->check("MaintainCustomerMasters") ||
-                        (ISQUOTE(_mode) && _privileges->check("MaintainProspectMasters"))));
+                        (ISQUOTE(_mode) && _privileges->check("MaintainProspectMasters")))); */
   if (pCustid != -1)
   {
     QString sql("SELECT cust_name, addr_id, "
@@ -2611,7 +2612,7 @@ void salesOrder::sFillItemList()
                   "                         WHERE ((coitem_status='C')"
                   "                           AND  (coitem_cohead_id=:cohead_id)))) THEN"
                   "                  'error'"
-                  "       END AS qtforegroundrole,"
+                  "       END AS coitem_scheddate_qtforegroundrole,"
                   "       CASE WHEN coitem_subnumber = 0 THEN 0"
                   "            ELSE 1 END AS xtindentrole,"
                   "       CASE WHEN coitem_order_type = 'W' THEN TEXT( 'WO')"
@@ -3463,14 +3464,14 @@ void salesOrder::populateCCInfo()
   else
     _authCC->setLocalValue(0);
 }
-
+/*
 void salesOrder::sNewCust()
 {
   QMessageBox ask(this);
   ask.setIcon(QMessageBox::Question);
   QPushButton *cbutton = ask.addButton(tr("Customer"), QMessageBox::YesRole);
   QPushButton *pbutton = ask.addButton(tr("Prospect"), QMessageBox::YesRole);
-  /*QPushButton *cancel  = */ ask.addButton(QMessageBox::Cancel);
+ // QPushButton *cancel  =  ask.addButton(QMessageBox::Cancel);
 
   ask.setWindowTitle(tr("Customer or Prospect?"));
 
@@ -3547,7 +3548,7 @@ void salesOrder::sNewCust()
     }
   }
 }
-
+*/
 void salesOrder::sNewCreditCard()
 {
   ParameterList params;

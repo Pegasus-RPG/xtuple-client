@@ -84,7 +84,6 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sCheckValidContacts();
     virtual void        sHandleMore();
     virtual void        sCalculateTax();
-    virtual void        sNewCust();
     virtual void        sRecalculatePrice();
     virtual void        sOrderDateChanged();
     virtual void        sShipDateChanged();
