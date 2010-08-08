@@ -287,52 +287,11 @@ void prospect::sSave()
 	return;
     }
   }
-  else
-  {
-/*
-// This is now done in a trigger
-    q.prepare( "SELECT createCrmAcct(:number, :name, :active, :type, NULL, "
-	       "      NULL, NULL, :prospect_id, NULL, NULL, :cntct, NULL) AS crmacctid;");
-    q.bindValue(":number",	_number->text().trimmed());
-    q.bindValue(":name",	_name->text().trimmed());
-    q.bindValue(":active",	true);
-    q.bindValue(":type",	"O");	// TODO - when will this be "I"?
-    q.bindValue(":prospect_id",	_prospectid);
-    if (_contact->id() > 0)
-      q.bindValue(":cntct",	_contact->id());
-    q.exec();
-    if (q.first())
-    {
-      int crmacctid = q.value("crmacctid").toInt();
-      if (crmacctid <= 0)
-      {
-	rollback.exec();
-	systemError(this, storedProcErrorLookup("createCrmAcct", crmacctid),
-		    __FILE__, __LINE__);
-	return;
-      }
-      _crmacct->setId(crmacctid);
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
-    // need to save contacts again with updated CRM Account
-    if (saveContact(_contact) < 0)
-    {
-      rollback.exec();
-      _contact->setFocus();
-      return;
-    }
- */
-  }
 
   q.exec("COMMIT;");
   _NumberGen = -1;
   omfgThis->sProspectsUpdated();
+  emit saved(_prospectid);
   if (_mode == cNew)
   {
     omfgThis->sCrmAccountsUpdated(_crmacct->id());

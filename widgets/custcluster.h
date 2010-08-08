@@ -14,6 +14,7 @@
 #include "parameter.h"
 #include "widgets.h"
 #include "virtualCluster.h"
+#include "crmacctcluster.h"
 
 class QLabel;
 class QPushButton;
@@ -61,6 +62,7 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
 
   public slots:
     bool setEditMode(bool);
+    void sNew();
     void setId(int);
     void setType(CLineEditTypes);
 
@@ -80,6 +82,7 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
 
   private:
     CLineEditTypes	_type;
+    CRMAcctLineEdit::CRMAcctSubtype _subtype;
     int                 _crmacctId;
     bool                _canEdit;
     bool                _editMode;

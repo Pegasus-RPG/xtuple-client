@@ -886,38 +886,29 @@ void VirtualClusterLineEdit::sInfo()
 
 void VirtualClusterLineEdit::sNew()
 {
-  if (canOpen())
-  {
-    if (!_x_privileges->check(_newPriv))
-      return;
+  ParameterList params;
+  params.append("mode", "new");
 
-    ParameterList params;
-    params.append("mode", "new");
-
-    sOpenWindow(params);
-  }
+  sOpenWindow(_uiName, params);
 }
 
 void VirtualClusterLineEdit::sOpen()
 {
-  if (canOpen())
-  {
-    ParameterList params;
-    if (_x_privileges->check(_editPriv))
-      params.append("mode", "edit");
-    else
-      params.append("mode", "view");
-    params.append(_idColName, id());
+  ParameterList params;
+  if (_x_privileges->check(_editPriv))
+    params.append("mode", "edit");
+  else
+    params.append("mode", "view");
+  params.append(_idColName, id());
 
-    sOpenWindow(params);
-  }
+  sOpenWindow(_uiName, params);
 }
 
-QWidget* VirtualClusterLineEdit::sOpenWindow(ParameterList params)
+QWidget* VirtualClusterLineEdit::sOpenWindow(const QString &uiName, ParameterList &params)
 {
   QWidget* w = 0;
   if (parentWidget()->window())
-    w = _guiClientInterface->openWindow(_uiName, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
+    w = _guiClientInterface->openWindow(uiName, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
 
   if (w->inherits("QDialog"))
   {

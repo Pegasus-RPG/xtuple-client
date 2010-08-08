@@ -204,7 +204,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual void sHandleCompleter();
         virtual void sParse();
         virtual void sUpdateMenu();
-        virtual QWidget* sOpenWindow(ParameterList params);
+        virtual QWidget* sOpenWindow(const QString& uiName, ParameterList &params);
 
         virtual void setTitles(const QString&, const QString& = 0);
         inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; }

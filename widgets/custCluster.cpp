@@ -11,6 +11,7 @@
 //#include <QApplication>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QSqlError>
 #include <QVBoxLayout>
@@ -19,10 +20,9 @@
 #include <parameter.h>
 #include <xsqlquery.h>
 
-#include "crmacctcluster.h"
-
 #include "custcluster.h"
 #include "format.h"
+#include "storedProcErrorLookup.h"
 
 #define DEBUG false
 
@@ -31,6 +31,7 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
 {
   _crmacctId = -1;
   _type     = AllCustomers;
+  _subtype  = CRMAcctLineEdit::Cust;
   _canEdit = false;
   _editMode = false;
 
@@ -76,6 +77,87 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
   _modeAct->setToolTip(tr("Sets number for editing"));
   _modeAct->setCheckable(true);
   connect(_modeAct, SIGNAL(triggered(bool)), this, SLOT(setEditMode(bool)));
+}
+
+void CLineEdit::sNew()
+{
+  QString uiName="customer";
+  ParameterList params;
+  QMessageBox ask(this);
+  ask.setIcon(QMessageBox::Question);
+  QPushButton *pbutton = ask.addButton(tr("Prospect"), QMessageBox::YesRole);
+  ask.addButton(tr("Customer"), QMessageBox::YesRole);
+  ask.setWindowTitle(tr("Customer or Prospect?"));
+
+  if (_subtype == CRMAcctLineEdit::Prospect ||
+      (_subtype == CRMAcctLineEdit::CustAndProspect &&
+       !_x_privileges->check("MaintainCustomerMasters")))
+  {
+    params.append("mode", "new");
+    uiName="prospect";
+  }
+  if (_subtype == CRMAcctLineEdit::CustAndProspect &&
+       !_x_privileges->check("MaintainProspectMasters"))
+    params.append("mode", "new");
+  else
+  {
+    if (_subtype == CRMAcctLineEdit::Cust)
+      ask.setText(tr("<p>Would you like to create a new Customer or convert "
+                     "an existing Prospect?"));
+    else
+      ask.setText(tr("<p>Would you like to create a new Customer or "
+                     "a new Prospect?"));
+
+    ask.exec();
+
+    if (ask.clickedButton() == pbutton &&
+        _subtype == CRMAcctLineEdit::Cust)  // converting prospect
+    {
+      int prospectid = -1;
+      if (_x_preferences->value("DefaultEllipsesAction") == "search")
+      {
+        CRMAcctSearch* search = new CRMAcctSearch(this);
+        search->setSubtype(CRMAcctLineEdit::Prospect);
+        prospectid = search->exec();
+      }
+      else
+      {
+        CRMAcctList* list = new CRMAcctList(this);
+        list->setSubtype(CRMAcctLineEdit::Prospect);
+        prospectid = list->exec();
+      }
+
+      if (prospectid > 0)
+      {
+        XSqlQuery convertq;
+        convertq.prepare("SELECT convertProspectToCustomer(:id) AS result;");
+        convertq.bindValue(":id", prospectid);
+        convertq.exec();
+        if (convertq.first())
+        {
+          int result = convertq.value("result").toInt();
+          if (result < 0)
+          {
+            QMessageBox::critical(this, tr("Processing Error"),
+                                  storedProcErrorLookup("convertProspectToCustomer", result));
+            return;
+          }
+          params.append("cust_id", prospectid);
+          params.append("mode", "edit");
+        }
+      }
+      else
+        return;
+    }
+    else
+    {
+      params.append("mode", "new");
+      if (ask.clickedButton() == pbutton)
+        uiName = "prospect";
+    }
+  }
+
+  sOpenWindow(uiName, params);
 }
 
 void CLineEdit::setId(int pId)
@@ -128,30 +210,31 @@ void CLineEdit::setId(int pId)
 void CLineEdit::setType(CLineEditTypes pType)
 {
   _type = pType;
-
   QStringList list;
   switch (_type)
   {
-    case ActiveCustomers:
-      list.append("active");
-      // fall-through
-    case AllCustomers:
-      list.append("iscustomer");
-      break;
+  case ActiveCustomers:
+    list.append("active");
+    // fall-through
+  case AllCustomers:
+    list.append("iscustomer");
+    _subtype = CRMAcctLineEdit::Cust;
+    break;
 
-    case ActiveProspects:
-      list.append("active");
-      // fall-through
-    case AllProspects:
-      list.append("NOT iscustomer");
-      break;
+  case ActiveProspects:
+    list.append("active");
+    // fall-through
+  case AllProspects:
+    list.append("NOT iscustomer");
+    _subtype = CRMAcctLineEdit::Prospect;
+    break;
 
-    case ActiveCustomersAndProspects:
-      list.append("active");
-      // fall-through
-      break;
+  case ActiveCustomersAndProspects:
+    list.append("active");
+    // fall-through
   case AllCustomersAndProspects:
-      break;
+    _subtype = CRMAcctLineEdit::CustAndProspect;
+    break;
   }
   list.removeDuplicates();
   setExtraClause(list.join(" AND "));
@@ -160,64 +243,14 @@ void CLineEdit::setType(CLineEditTypes pType)
 VirtualList* CLineEdit::listFactory()
 {
   CRMAcctList* list = new CRMAcctList(this);
-  enum CRMAcctLineEdit::CRMAcctSubtype subtype = CRMAcctLineEdit::Cust;
-  switch (_type)
-  {
-    list->setShowInactive(true);
-    case ActiveCustomers:
-      list->setShowInactive(false);
-      // fall-through
-    case AllCustomers:
-      break;
-
-    case ActiveProspects:
-      list->setShowInactive(false);
-      // fall-through
-    case AllProspects:
-      subtype = CRMAcctLineEdit::Prospect;
-      break;
-
-    case ActiveCustomersAndProspects:
-      list->setShowInactive(false);
-      // fall-through
-    case AllCustomersAndProspects:
-      subtype = CRMAcctLineEdit::CustAndProspect;
-      break;
-  }
-
-  list->setSubtype(subtype);
+  list->setSubtype(_subtype);
   return list;
 }
 
 VirtualSearch* CLineEdit::searchFactory()
 {
   CRMAcctSearch* search = new CRMAcctSearch(this);
-  enum CRMAcctLineEdit::CRMAcctSubtype subtype = CRMAcctLineEdit::Cust;
-  switch (_type)
-  {
-    search->setShowInactive(true);
-    case ActiveCustomers:
-      search->setShowInactive(false);
-      // fall-through
-    case AllCustomers:
-      break;
-
-    case ActiveProspects:
-      search->setShowInactive(false);
-      // fall-through
-    case AllProspects:
-      subtype = CRMAcctLineEdit::Prospect;
-      break;
-
-    case ActiveCustomersAndProspects:
-      search->setShowInactive(false);
-      // fall-through
-    case AllCustomersAndProspects:
-      subtype = CRMAcctLineEdit::CustAndProspect;
-      break;
-  }
-
-  search->setSubtype(subtype);
+  search->setSubtype(_subtype);
   return search;
 }
 
@@ -322,6 +355,19 @@ void CLineEdit::sUpdateMenu()
       menu()->removeAction(_modeAct);
     }
   }
+
+  // Handle New
+  bool canNew = false;
+
+  if (_subtype == CRMAcctLineEdit::Cust)
+    canNew = (_x_privileges->check("MaintainCustomerMasters"));
+  else if (_subtype == CRMAcctLineEdit::Prospect)
+    canNew = (_x_privileges->check("MaintainProspectMasters"));
+  else
+    canNew = (_x_privileges->check("MaintainCustomerMasters") ||
+              _x_privileges->check("MaintainProspectMasters"));
+
+  _newAct->setEnabled(canNew && isEnabled());
 }
 
 bool CLineEdit::canOpen()
