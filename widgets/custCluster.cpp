@@ -86,7 +86,8 @@ void CLineEdit::sNew()
   QMessageBox ask(this);
   ask.setIcon(QMessageBox::Question);
   QPushButton *pbutton = ask.addButton(tr("Prospect"), QMessageBox::YesRole);
-  ask.addButton(tr("Customer"), QMessageBox::YesRole);
+  QPushButton *cbutton = ask.addButton(tr("Customer"), QMessageBox::YesRole);
+  ask.setDefaultButton(cbutton);
   ask.setWindowTitle(tr("Customer or Prospect?"));
 
   if (_subtype == CRMAcctLineEdit::Prospect ||
