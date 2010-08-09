@@ -19,7 +19,7 @@
 #include "xcheckbox.h"
 #include "xdatawidgetmapper.h"
 
-#include <QAbstractItemModel>
+#include <QSqlQueryModel>
 #include <QAction>
 #include <QDialogButtonBox>
 #include <QCheckBox>
@@ -35,6 +35,11 @@
 
 class QGridLayout;
 class VirtualClusterLineEdit;
+
+#define ID              1
+#define NUMBER          2
+#define DESCRIPTION     3
+#define ACTIVE          4
 
 class XTUPLEWIDGETS_EXPORT VirtualList : public QDialog
 {
@@ -173,7 +178,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
        Q_INVOKABLE inline virtual QString editPriv()       const { return _editPriv; }
        Q_INVOKABLE inline virtual QString viewPriv()       const { return _viewPriv; }
 
-       Q_INVOKABLE inline virtual QAbstractItemModel* model() const { return _model;}
+       Q_INVOKABLE inline virtual QSqlQueryModel* model() const { return _model;}
 
     public slots:
         virtual void clear();
@@ -265,7 +270,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
         QString _cText;
 
-        QAbstractItemModel* _model;
+        QSqlQueryModel* _model;
 };
 
 /*

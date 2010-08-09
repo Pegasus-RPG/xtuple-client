@@ -135,7 +135,6 @@ SOURCES += widgets.cpp \
     ordercluster.cpp \
     opportunitycluster.cpp \
     plCluster.cpp \
-    plannedOrderList.cpp \
     vendorcluster.cpp \
     vendorgroup.cpp \
     salesOrderList.cpp \
@@ -218,7 +217,6 @@ HEADERS += widgets.h \
     ordercluster.h \
     opportunitycluster.h \
     plCluster.h \
-    plannedOrderList.h \
     vendorcluster.h \
     vendorgroup.h \
     salesOrderList.h \

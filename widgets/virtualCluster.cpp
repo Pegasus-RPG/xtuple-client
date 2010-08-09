@@ -656,7 +656,7 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
     _activeClause = "";
 
   _extraClause = "";
-  _model = 0;
+  _model = new QSqlQueryModel(this);
 }
 
 void VirtualClusterLineEdit::setTitles(const QString& s, const QString& p)
@@ -685,7 +685,7 @@ void VirtualClusterLineEdit::clear()
     _name = "";
     _id = -1;	// calling setId() or silentSetId() is recursive
     _valid = false;
-    _model = 0;
+    _model = new QSqlQueryModel(this);
     if (oldvalid != _valid)
       emit valid(_valid);
     if (oldid != _id)
@@ -719,7 +719,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
   if (pId == -1)
   {
     XLineEdit::clear();
-    _model = 0;
+    _model = new QSqlQueryModel(this);
   }
   else
   {
@@ -737,9 +737,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
       _id = pId;
       _valid = true;
 
-      QSqlQueryModel* qmodel = new QSqlQueryModel(this);
-      qmodel->setQuery(idQ);
-      _model = qmodel;
+      _model->setQuery(idQ);
 
       setText(idQ.value("number").toString());
       if (_hasName)
