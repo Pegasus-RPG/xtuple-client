@@ -17,7 +17,6 @@
 #include <xsqlquery.h>
 #include <parameter.h>
 
-#include "plannedOrderList.h"
 #include "plCluster.h"
 
 PlanOrdLineEdit::PlanOrdLineEdit(QWidget* pParent, const char* pName) :
