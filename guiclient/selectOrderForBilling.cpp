@@ -156,8 +156,8 @@ void selectOrderForBilling::clear()
   _miscCharge->clear();
   _freight->clear();
   _salesTax->clear();
-  _total->clear();
   _payment->clear();
+  _total->clear();
 }
 
 void selectOrderForBilling::sSave()
