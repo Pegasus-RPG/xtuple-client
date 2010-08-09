@@ -880,9 +880,6 @@ to be bound by its terms.</comment>
          <property name="focusPolicy">
           <enum>Qt::StrongFocus</enum>
          </property>
-         <property name="alternatingRowColors">
-          <bool>false</bool>
-         </property>
          <property name="rootIsDecorated">
           <bool>true</bool>
          </property>

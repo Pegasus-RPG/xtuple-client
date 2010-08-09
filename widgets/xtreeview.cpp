@@ -42,10 +42,8 @@ XTreeView::XTreeView(QWidget *parent) :
   header()->setClickable(true);
   header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  setAlternatingRowColors(true);
-  QPalette muted = palette();
-  muted.setColor(QPalette::AlternateBase, QColor(0xEE, 0xEE, 0xEE));
-  setPalette(muted);
+  if (_x_preferences)
+    setAlternatingRowColors(!_x_preferences->boolean("NoAlternatingRowColors"));
 
   _mapper = new XDataWidgetMapper(this);
   _model = new XSqlTableModel(this);

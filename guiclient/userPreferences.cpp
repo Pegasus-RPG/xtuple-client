@@ -225,10 +225,7 @@ void userPreferences::sPopulate()
   else
     _ellipsesAction->setId(1);
 
-  if (_pref->boolean("ClusterButtons"))
-    _clusterButtons->setChecked(true);
-  else
-    _clusterMenu->setChecked(true);
+  _alternating->setChecked(!_pref->boolean("NoAlternatingRowColors"));
     
   //Hide for PostBooks 
   if (_metrics->value("Application") == "PostBooks")
@@ -290,7 +287,7 @@ void userPreferences::sSave(bool close)
   else
     _pref->set("DefaultEllipsesAction", QString("list"));
 
-  _pref->set("ClusterButtons", _clusterButtons->isChecked());
+  _pref->set("NoAlternatingRowColors", !_alternating->isChecked());
 
   if(_interfaceWorkspace->isChecked())
     _pref->set("InterfaceWindowOption", QString("Workspace"));

@@ -122,7 +122,8 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   setSelectionBehavior(QAbstractItemView::SelectRows);
   header()->setStretchLastSection(false);
   header()->setClickable(true);
-  // setMultiSelection(FALSE);
+  if (_x_preferences)
+    setAlternatingRowColors(!_x_preferences->boolean("NoAlternatingRowColors"));
 
   connect(header(),       SIGNAL(sectionClicked(int)),                                      this, SLOT(sHeaderClicked(int)));
   connect(this,           SIGNAL(itemSelectionChanged()),                                   this, SLOT(sSelectionChanged()));

@@ -54,6 +54,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="alternatingRowColors">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item row="0" column="1">
