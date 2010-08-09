@@ -314,8 +314,6 @@ bool voucher::sSave()
 
   _voheadid = -1;
 
-  setWindowModified(false);
-
   if (cNew != _mode)
   {
     close();
@@ -335,6 +333,8 @@ bool voucher::sSave()
   _poitem->clear();
   _miscDistrib->clear();
   _notes->setText("");
+
+  setWindowModified(false);
 
   ParameterList params;
   params.append("mode", "new");
