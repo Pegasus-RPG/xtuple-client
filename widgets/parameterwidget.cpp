@@ -57,6 +57,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
 
   _initialized = false;
   _shared = false;
+  _hideWhenEmbedded = true;
   setSavedFilters(-1);
   _filterSignalMapper = new QSignalMapper(this);
   _saveButton->setDisabled(true);
@@ -128,7 +129,7 @@ void ParameterWidget::applyDefaultFilterSet()
   QString pname;
 
   //hides parameterwidget when it's embedded within another widget with a parent
-  if (this->parent() && this->parent()->parent())
+  if (_hideWhenEmbedded && this->parent() && this->parent()->parent())
   {
     clearFilters();
     hide();
@@ -1394,6 +1395,16 @@ bool ParameterWidget::containsUsedType(QString value)
   }
 
   return false;
+}
+
+bool ParameterWidget::isHideWhenEmbedded() const
+{
+  return _hideWhenEmbedded;
+}
+
+void ParameterWidget::setHideWhenEmbedded(bool hwe)
+{
+  _hideWhenEmbedded = hwe;
 }
 
 // script exposure ///////////////////////////////////////////////////////////

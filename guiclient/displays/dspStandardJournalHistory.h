@@ -8,29 +8,32 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPSUMMARIZEDBANKRECHISTORY_H
-#define DSPSUMMARIZEDBANKRECHISTORY_H
+#ifndef DSPSTANDARDJOURNALHISTORY_H
+#define DSPSTANDARDJOURNALHISTORY_H
 
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspSummarizedBankrecHistory.h"
+#include "ui_dspStandardJournalHistory.h"
 
-class dspSummarizedBankrecHistory : public XWidget, public Ui::dspSummarizedBankrecHistory
+class dspStandardJournalHistory : public display, public Ui::dspStandardJournalHistory
 {
     Q_OBJECT
 
 public:
-    dspSummarizedBankrecHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSummarizedBankrecHistory();
-    virtual bool setParams(ParameterList &);
+    dspStandardJournalHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
-    virtual void sPrint();
-    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
 
 protected slots:
     virtual void languageChange();
 
+    virtual void sReverse();
+    virtual void sDelete();
+
+
 };
 
-#endif // DSPSUMMARIZEDBANKRECHISTORY_H
+#endif // DSPSTANDARDJOURNALHISTORY_H

@@ -115,7 +115,10 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspShipmentsByDate.ui \
            displays/dspSingleLevelWhereUsed.ui \
            displays/dspSlowMovingInventoryByClassCode.ui \
+           displays/dspStandardJournalHistory.ui \
+           displays/dspSubLedger.ui \
            displays/dspSubstituteAvailabilityByItem.ui \
+           displays/dspSummarizedBankrecHistory.ui \
            displays/dspUsageStatisticsBase.ui \
            displays/dspValidLocationsByItem.ui
 
@@ -250,7 +253,10 @@ HEADERS += displays/dspAllocations.h \
            displays/dspSingleLevelBOM.h \
            displays/dspSingleLevelWhereUsed.h \
            displays/dspSlowMovingInventoryByClassCode.h \
+           displays/dspStandardJournalHistory.h \
+           displays/dspSubLedger.h \
            displays/dspSubstituteAvailabilityByItem.h \
+           displays/dspSummarizedBankrecHistory.h \
            displays/dspSummarizedBOM.h \
            displays/dspUsageStatisticsBase.h \
            displays/dspUsageStatisticsByClassCode.h \
@@ -390,7 +396,10 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspSingleLevelBOM.cpp \
            displays/dspSingleLevelWhereUsed.cpp \
            displays/dspSlowMovingInventoryByClassCode.cpp \
+           displays/dspStandardJournalHistory.cpp \
+           displays/dspSubLedger.cpp \
            displays/dspSubstituteAvailabilityByItem.cpp \
+           displays/dspSummarizedBankrecHistory.cpp \
            displays/dspSummarizedBOM.cpp \
            displays/dspUsageStatisticsBase.cpp \
            displays/dspUsageStatisticsByClassCode.cpp \

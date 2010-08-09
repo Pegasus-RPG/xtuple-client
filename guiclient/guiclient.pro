@@ -207,10 +207,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspMRPDetail.ui                               \
           dspPoHistory.ui                               \
           dspRecurringInvoices.ui                       \
-          dspSubLedger.ui                          \
-          dspStandardJournalHistory.ui                  \
           dspSummarizedBacklogByWarehouse.ui            \
-          dspSummarizedBankrecHistory.ui                \
           dspSummarizedGLTransactions.ui                \
           dspSummarizedSalesByCustomer.ui               \
           dspSummarizedSalesByCustomerByItem.ui         \
@@ -793,10 +790,7 @@ HEADERS = ../common/format.h                    \
           dspMRPDetail.h                                \
           dspPoHistory.h                                \
           dspRecurringInvoices.h                \
-          dspSubLedger.h                   \
-          dspStandardJournalHistory.h           \
           dspSummarizedBacklogByWarehouse.h     \
-          dspSummarizedBankrecHistory.h         \
           dspSummarizedGLTransactions.h         \
           dspSummarizedSalesByCustomer.h        \
           dspSummarizedSalesByCustomerByItem.h  \
@@ -1415,10 +1409,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspMRPDetail.cpp                              \
           dspPoHistory.cpp                              \
           dspRecurringInvoices.cpp                      \
-          dspStandardJournalHistory.cpp                 \
-          dspSubLedger.cpp                              \
           dspSummarizedBacklogByWarehouse.cpp           \
-          dspSummarizedBankrecHistory.cpp               \
           dspSummarizedGLTransactions.cpp               \
           dspSummarizedSalesByCustomer.cpp              \
           dspSummarizedSalesByCustomerByItem.cpp        \

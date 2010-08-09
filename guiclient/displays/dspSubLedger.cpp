@@ -14,10 +14,6 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <openreports.h>
-
-#include "mqlutil.h"
 #include "glTransactionDetail.h"
 #include "dspGLSeries.h"
 #include "invoice.h"
@@ -32,10 +28,14 @@
 #include "transactionInformation.h"
 #include "storedProcErrorLookup.h"
 
-dspSubLedger::dspSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspSubLedger::dspSubLedger(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspSubLedger", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Subledger Transactions"));
+  setListLabel(tr("Transactions"));
+  setReportName("Subledger");
+  setMetaSQLOptions("subledger", "detail");
 
   QString qryType = QString( "SELECT  1, '%1' UNION "
                              "SELECT  2, '%2' UNION "
@@ -69,23 +69,20 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
                               "GROUP BY accnt_number "
                               "ORDER BY accnt_number;");
  
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_sltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  list()->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true, "sltrans_date");
+  list()->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true, "sltrans_source");
+  list()->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true, "sltrans_doctype");
+  list()->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
+  list()->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
+  list()->addColumn(tr("Journal#"),  _orderColumn,   Qt::AlignLeft,   false,"sltrans_journalnumber");
+  list()->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
+  list()->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
+  list()->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
+  list()->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "sltrans_posted");
+  list()->addColumn(tr("GL Journal #"),_orderColumn,   Qt::AlignLeft,   false, "sltrans_gltrans_journalnumber");
+  list()->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "sltrans_username");
 
-  _sltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true, "sltrans_date");
-  _sltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true, "sltrans_source");
-  _sltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true, "sltrans_doctype");
-  _sltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
-  _sltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
-  _sltrans->addColumn(tr("Journal#"),  _orderColumn,   Qt::AlignLeft,   false,"sltrans_journalnumber");
-  _sltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
-  _sltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
-  _sltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
-  _sltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "sltrans_posted");
-  _sltrans->addColumn(tr("GL Journal #"),_orderColumn,   Qt::AlignLeft,   false, "sltrans_gltrans_journalnumber");
-  _sltrans->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "sltrans_username");
-
+  _parameterWidget->setHideWhenEmbedded(false);
   _parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
   _parameterWidget->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
   _parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
@@ -108,13 +105,9 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
   _sources << "None" << "A/P" << "A/R" << "G/L" << "I/M" << "P/D" << "P/O" << "S/O" << "S/R" << "W/O";
 }
 
-dspSubLedger::~dspSubLedger()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspSubLedger::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -177,7 +170,7 @@ enum SetResponse dspSubLedger::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspSubLedger::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
+void dspSubLedger::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem, int)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)pItem;
   if(0 == item)
@@ -253,41 +246,11 @@ bool dspSubLedger::setParams(ParameterList &params)
   return true;
 }
 
-void dspSubLedger::sPrint()
-{  
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("Subledger", params);
-
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspSubLedger::sFillList()
-{
-  MetaSQLQuery mql = mqlLoad("subledger", "detail");
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  XSqlQuery r = mql.toQuery(params);
-  _sltrans->populate(r);
-  if (r.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
 void dspSubLedger::sViewTrans()
 {
   ParameterList params;
 
-  params.append("sltrans_id", _sltrans->id());
+  params.append("sltrans_id", list()->id());
 
   glTransactionDetail newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -299,7 +262,7 @@ void dspSubLedger::sViewSeries()
   q.prepare("SELECT sltrans_date, sltrans_journalnumber"
             "  FROM sltrans"
             " WHERE (sltrans_id=:sltrans_id)");
-  q.bindValue(":sltrans_id", _sltrans->id());
+  q.bindValue(":sltrans_id", list()->id());
   q.exec();
   if(!q.first())
     return;
@@ -318,7 +281,7 @@ void dspSubLedger::sViewSeries()
 
 void dspSubLedger::sViewDocument()
 {
-  XTreeWidgetItem * item = (XTreeWidgetItem*)_sltrans->currentItem();
+  XTreeWidgetItem * item = (XTreeWidgetItem*)list()->currentItem();
   if(0 == item)
     return;
 

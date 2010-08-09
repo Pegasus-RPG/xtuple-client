@@ -12,25 +12,22 @@
 #define DSPSUBLEDGER_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspSubLedger.h"
 
-class dspSubLedger : public XWidget, public Ui::dspSubLedger
+class dspSubLedger : public display, public Ui::dspSubLedger
 {
     Q_OBJECT
 
 public:
     dspSubLedger(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSubLedger();
+
     virtual bool setParams(ParameterList &params);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
-    virtual void sPrint();
-    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*, int);
     virtual void sViewTrans();
     virtual void sViewSeries();
     virtual void sViewDocument();
