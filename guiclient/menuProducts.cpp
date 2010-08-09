@@ -73,6 +73,8 @@
 
 #include "menuProducts.h"
 
+#include "userPreferences.h"
+
 menuProducts::menuProducts(GUIClient *Pparent) :
  QObject(Pparent)
 {
@@ -121,6 +123,10 @@ menuProducts::menuProducts(GUIClient *Pparent) :
 
   actionProperties acts[] = {
   
+#ifdef Q_WS_MACX
+  { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              mainMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true },
+#endif
+
   // Product | Reports
   { "menu",	tr("&Reports"), (char*)reportsMenu,	mainMenu, "true", NULL, NULL, true , NULL },
   
@@ -230,6 +236,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
 
   // Setup
   { "pd.setup",	    tr("&Setup..."),	  SLOT(sSetup()),     mainMenu,	"true",	NULL, NULL,  true, NULL}
+
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -550,5 +557,10 @@ void menuProducts::sSetup()
   setup newdlg(parent);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void menuProducts::sPreferences()
+{
+  userPreferences(parent, "", true).exec();
 }
 

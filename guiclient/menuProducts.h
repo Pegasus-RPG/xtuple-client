@@ -89,6 +89,8 @@ class menuProducts : public QObject
 
     void sSetup();
 
+    void sPreferences();
+
   private:
     GUIClient *parent;
 
