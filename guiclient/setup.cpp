@@ -89,10 +89,10 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   modeVal = mode("MaintainSalesCategories", "ViewSalesCategories");
   insert(tr("Sales Categories"),  "salesCategories", AccountMapping, Xt::AccountingModule | Xt::SalesModule, modeVal, modeVal);
 
-  // Master Information
   modeVal = mode("MaintainBankAccounts");
-  insert(tr("Bank Accounts"), "bankAccounts", MasterInformation, Xt::AccountingModule, modeVal, modeVal);
+  insert(tr("Bank Accounts"), "bankAccounts", AccountMapping, Xt::AccountingModule, modeVal, modeVal);
 
+  // Master Information
   modeVal = mode("MaintainAdjustmentTypes", "ViewAdjustmentTypes");
   insert(tr("Bank Adjustment Types"), "bankAdjustmentTypes", MasterInformation, Xt::AccountingModule, modeVal, modeVal);
 
