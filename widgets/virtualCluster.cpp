@@ -698,7 +698,10 @@ void VirtualClusterLineEdit::setId(const int pId)
     qDebug("VCLE %s::setId(%d)", qPrintable(objectName()), pId);
 
     if (pId == -1 || pId == 0)
+    {
 	clear();
+        emit parsed();
+    }
     else
     {
       bool changed = (pId != _id);

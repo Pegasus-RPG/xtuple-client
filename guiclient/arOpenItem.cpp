@@ -62,6 +62,8 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _journalNumber->setEnabled(FALSE);
   _commissionPaid->setEnabled(FALSE);
+
+  _altAccntid->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 arOpenItem::~arOpenItem()

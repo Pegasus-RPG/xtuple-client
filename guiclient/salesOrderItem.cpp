@@ -211,6 +211,8 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _availability->setEnabled(_showAvailability->isChecked());
   _showIndented->setEnabled(_showAvailability->isChecked());
 
+  _altCosAccnt->setType(GLCluster::cRevenue | GLCluster::cExpense);
+
   // TO DO **** Fix tab order issues and offer alternate means for "Express Tab Order"  ****
 }
 

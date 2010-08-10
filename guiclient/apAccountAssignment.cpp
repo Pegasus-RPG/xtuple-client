@@ -26,6 +26,10 @@ apAccountAssignment::apAccountAssignment(QWidget* parent, const char* name, bool
   connect(_vendorTypePattern, SIGNAL(toggled(bool)), _vendorType, SLOT(setEnabled(bool)));
 
   _vendorTypes->setType(XComboBox::VendorTypes);
+
+  _ap->setType(GLCluster::cLiability);
+  _prepaid->setType(GLCluster::cAsset);
+  _discount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 apAccountAssignment::~apAccountAssignment()

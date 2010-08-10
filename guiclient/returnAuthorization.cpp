@@ -153,6 +153,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
     _shipWhs->hide();
     _shipWhsLit->hide();
   } 
+
+  _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 returnAuthorization::~returnAuthorization()

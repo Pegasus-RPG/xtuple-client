@@ -38,6 +38,13 @@ salesAccount::salesAccount(QWidget* parent, const char* name, bool modal, Qt::WF
     _cowLit->setVisible(false);
     _cow->setVisible(false);
   }
+
+  _sales->setType(GLCluster::cRevenue);
+  _credit->setType(GLCluster::cRevenue);
+  _cos->setType(GLCluster::cExpense);
+  _returns->setType(GLCluster::cRevenue);
+  _cor->setType(GLCluster::cExpense);
+  _cow->setType(GLCluster::cExpense);
 }
 
 salesAccount::~salesAccount()

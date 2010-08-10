@@ -92,10 +92,10 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   modeVal = mode("MaintainBankAccounts");
   insert(tr("Bank Accounts"), "bankAccounts", AccountMapping, Xt::AccountingModule, modeVal, modeVal);
 
-  // Master Information
   modeVal = mode("MaintainAdjustmentTypes", "ViewAdjustmentTypes");
-  insert(tr("Bank Adjustment Types"), "bankAdjustmentTypes", MasterInformation, Xt::AccountingModule, modeVal, modeVal);
+  insert(tr("Bank Adjustment Types"), "bankAdjustmentTypes", AccountMapping, Xt::AccountingModule, modeVal, modeVal);
 
+  // Master Information
   modeVal = mode("MaintainCalendars");
   insert(tr("Calendars"), "calendars", MasterInformation,  Xt::SystemModule, modeVal, modeVal);
 

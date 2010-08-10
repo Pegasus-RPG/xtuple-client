@@ -236,6 +236,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 
   _more->setChecked(_preferences->boolean("SoShowAll"));
 
+  _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
+
   sHandleMore();
 }
 

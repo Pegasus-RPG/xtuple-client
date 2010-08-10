@@ -42,6 +42,8 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _taxitems->addColumn(tr("Amount"),    _moneyColumn,   Qt::AlignRight, true, "taxrate_amount" );
   _taxitems->addColumn(tr("Currency"),  -1,             Qt::AlignLeft,  true, "curr_name" );
   sFillList(); 
+
+  _account->setType(GLCluster::cRevenue | GLCluster::cLiability | GLCluster::cExpense);
 }
 
 void taxCode::populateBasis()

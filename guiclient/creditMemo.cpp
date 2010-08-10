@@ -73,6 +73,7 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   _cmitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight,  true,  "cmitem_unitprice"  );
   _cmitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight,  true,  "extprice"  );
 
+  _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 creditMemo::~creditMemo()

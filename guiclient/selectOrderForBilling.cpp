@@ -86,7 +86,9 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   }
 
   _paymentLit->hide();
-  _payment->hide(); // Issue 10254:  if no objections over time, we should ultimately remove this. 
+  _payment->hide(); // Issue 10254:  if no objections over time, we should ultimately remove this.
+
+  _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 selectOrderForBilling::~selectOrderForBilling()

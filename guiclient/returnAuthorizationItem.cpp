@@ -132,6 +132,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
     _tab->removeTab(_tab->indexOf(_lotserial));
   
   adjustSize();
+
+  _altcosAccntid->setType(GLCluster::cRevenue | GLCluster::cExpense);
   
   q.exec("BEGIN;"); //In case problems or we cancel out
 }

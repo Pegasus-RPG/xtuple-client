@@ -72,15 +72,21 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
     public slots:
       void sList();
       void sSearch();
+      void setId(const int);
 
     protected slots:
       accountList* listFactory();
       accountSearch* searchFactory();
-      void sHandleCompleter();
+      void buildExtraClause();
+      void sParse();
+
+    protected:
+            QMap<QString, QString> _typeMap;
 
     private:
       unsigned int _type;
       bool _showExternal;
+      QStringList  _types;
 };
 
 
@@ -101,10 +107,10 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
       cEquity     = 0x10
     };
 
-    void setType(unsigned int pType) { static_cast<GLClusterLineEdit*>(_number)->setType(pType); }
-    unsigned int type()  const       { return static_cast<GLClusterLineEdit*>(_number)->type(); }
-    bool showExternal()              { return static_cast<GLClusterLineEdit*>(_number)->showExternal(); }
-    void setShowExternal(bool p)     { static_cast<GLClusterLineEdit*>(_number)->setShowExternal(p); }
+    Q_INVOKABLE void setType(unsigned int pType) { static_cast<GLClusterLineEdit*>(_number)->setType(pType); }
+    Q_INVOKABLE unsigned int type()  const       { return static_cast<GLClusterLineEdit*>(_number)->type(); }
+    Q_INVOKABLE bool showExternal()              { return static_cast<GLClusterLineEdit*>(_number)->showExternal(); }
+    Q_INVOKABLE void setShowExternal(bool p)     { static_cast<GLClusterLineEdit*>(_number)->setShowExternal(p); }
 
 };
 

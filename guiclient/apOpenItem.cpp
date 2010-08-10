@@ -42,6 +42,8 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _terms->setType(XComboBox::APTerms);
   _journalNumber->setEnabled(FALSE);
+
+  _altAccntid->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 apOpenItem::~apOpenItem()

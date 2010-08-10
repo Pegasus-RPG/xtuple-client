@@ -23,52 +23,76 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
 
   _showExternal = false;
 
-  _query = "SELECT accnt_id, formatGLAccount(accnt_id) AS number, accnt_descrip AS name, accnt_extref AS description "
+  _query = "SELECT accnt_id AS id, formatGLAccount(accnt_id) AS number, "
+           "  accnt_descrip AS name, accnt_extref AS description, "
+           "  NULL AS active, accnt_type, "
+           "  COALESCE(company_external,false) AS external "
            "FROM accnt "
            "  LEFT OUTER JOIN company ON (accnt_company=company_number) "
            "WHERE (true) ";
+
+  _typeMap.insert("A", tr("Asset"));
+  _typeMap.insert("L",tr("Liability"));
+  _typeMap.insert("R", tr("Revenue"));
+  _typeMap.insert("E",tr("Expense"));
+  _typeMap.insert("Q", tr("Equity"));
+
+  setType(GLCluster::cUndefined);
+;}
+
+void GLClusterLineEdit::setId(const int pId)
+{
+  setStrict(false);
+  qDebug("number b4 set:%s", qPrintable(text()));
+  VirtualClusterLineEdit::setId(pId);
+    qDebug("number after set:%s", qPrintable(text()));
+  setStrict(true);
 }
 
 void GLClusterLineEdit::setType(unsigned int pType)
 {
   _type = pType;
+  buildExtraClause();
 }
 
 void GLClusterLineEdit::setShowExternal(bool p)
 {
   _showExternal = p;
+  buildExtraClause();
 }
 
-void GLClusterLineEdit::sHandleCompleter()
+void GLClusterLineEdit::buildExtraClause()
 {
   _extraClause.clear();
-  QStringList types;
+  _types.clear();
 
   if(_type > 0)
   {
-    if(_type & GLCluster::cAsset)
-      types << ("'A'");
-    if(_type & GLCluster::cLiability)
-      types << ("'L'");
-    if(_type & GLCluster::cExpense)
-      types << ("'E'");
-    if(_type & GLCluster::cRevenue)
-      types << ("'R'");
-    if(_type & GLCluster::cEquity)
-      types << ("'Q'");
+    if(_type & GLCluster::cAsset ||
+       _type & GLCluster::cUndefined)
+      _types << ("A");
+    if(_type & GLCluster::cLiability ||
+       _type & GLCluster::cUndefined)
+      _types << ("L");
+    if(_type & GLCluster::cExpense ||
+       _type & GLCluster::cUndefined)
+      _types << ("E");
+    if(_type & GLCluster::cRevenue ||
+       _type & GLCluster::cUndefined)
+      _types << ("R");
+    if(_type & GLCluster::cEquity ||
+       _type & GLCluster::cUndefined)
+      _types << ("Q");
   }
 
-  if(!types.isEmpty())
-    _extraClause = "(accnt_type IN (" + types.join(",") + "))";
+  if(!_types.isEmpty())
+    _extraClause = "(accnt_type IN ('" + _types.join("','") + "'))";
 
   if (!_extraClause.isEmpty() && !_showExternal)
     _extraClause += " AND ";
 
   if (!_showExternal)
     _extraClause += "(NOT COALESCE(company_external, false)) ";
-
-  VirtualClusterLineEdit::sHandleCompleter();
-  _extraClause.clear();
 }
 
 void GLClusterLineEdit::sList()
@@ -123,6 +147,44 @@ void GLClusterLineEdit::sSearch()
                           .arg(metaObject()->className()));
 
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+}
+
+void GLClusterLineEdit::sParse()
+{
+  int oldid = _id;
+  setStrict(false);
+  VirtualClusterLineEdit::sParse();
+
+  if (_id != oldid &&
+      model()->rowCount())
+  {
+    bool external = model()->data(model()->index(0,6)).toBool();
+    QString type = model()->data(model()->index(0,5)).toString();
+
+    if (external)
+    {
+      QMessageBox::critical(this,tr("External Number"),
+                            tr("You may not use an Account associated with an external Company."));
+      setId(-1);
+    }
+    else if (!_types.contains(type))
+    {
+      QStringList _typeNameList;
+      for (int i = 0; i < _types.count(); i++)
+        _typeNameList.append(_typeMap.value(_types.at(i)));
+      QString _typeNames = _typeNameList.join(" or ");
+
+      QString msg = tr("The Account used here would typically be type %1. "
+                       "Selecting this Account may cause unexpected results in your "
+                       "General Ledger. Are you sure this is the Account you "
+                       "want to use here?").arg(_typeNames);
+      if (QMessageBox::warning(this, tr("Non-standard Account Type"),msg,
+                               QMessageBox::No | QMessageBox::Default |
+                               QMessageBox::Yes  | QMessageBox::Escape) == QMessageBox::No)
+        setId(-1);
+    }
+  }
+  setStrict(true);
 }
 
 accountList* GLClusterLineEdit::listFactory()
@@ -182,6 +244,7 @@ accountList::accountList(QWidget* pParent, Qt::WFlags pFlags) :
 
   setWindowTitle(tr("Account Numbers"));
   _titleLit->setText(tr("Chart of Accounts"));
+  _parent = (GLClusterLineEdit*)(pParent);
 }
 
 XTreeWidget* accountList::xtreewidget()
@@ -355,11 +418,11 @@ void accountSearch::set(ParameterList &pParams)
 void accountSearch::sFillList()
 {
   QString sql("SELECT accnt_id, *,"
-              "       CASE WHEN(accnt_type='A') THEN 'Asset'"
-              "            WHEN(accnt_type='E') THEN 'Expense'"
-              "            WHEN(accnt_type='L') THEN 'Liability'"
-              "            WHEN(accnt_type='Q') THEN 'Equity'"
-              "            WHEN(accnt_type='R') THEN 'Revenue'"
+              "       CASE WHEN(accnt_type='A') THEN '" + tr("Asset") + "'"
+              "            WHEN(accnt_type='E') THEN '" + tr("Expense") + "'"
+              "            WHEN(accnt_type='L') THEN '" + tr("Liability") + "'"
+              "            WHEN(accnt_type='Q') THEN '" + tr("Equity") + "'"
+              "            WHEN(accnt_type='R') THEN '" + tr("Revenue") + "'"
               "            ELSE accnt_type"
               "       END AS accnt_type_qtdisplayrole "
               "FROM (accnt LEFT OUTER JOIN"

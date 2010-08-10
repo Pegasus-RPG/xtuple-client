@@ -24,6 +24,20 @@ costCategory::costCategory(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
+  _asset->setType(GLCluster::cAsset);
+  _expense->setType(GLCluster::cExpense);
+  _wip->setType(GLCluster::cAsset);
+  _inventoryCost->setType(GLCluster::cExpense | GLCluster::cAsset);
+  _adjustment->setType(GLCluster::cExpense);
+  _invScrap->setType(GLCluster::cExpense);
+  _mfgScrap->setType(GLCluster::cExpense);
+  _transformClearing->setType(GLCluster::cAsset);
+  _purchasePrice->setType(GLCluster::cExpense | GLCluster::cAsset);
+  _liability->setType(GLCluster::cLiability);
+  _freight->setType(GLCluster::cExpense);
+  _shippingAsset->setType(GLCluster::cAsset);
+  _toLiabilityClearing->setType(GLCluster::cLiability);
+
   _transformClearingLit->setVisible(_metrics->boolean("Transforms")); 
   _transformClearing->setVisible(_metrics->boolean("Transforms"));
   _toLiabilityClearingLit->setVisible(_metrics->boolean("MultiWhs"));

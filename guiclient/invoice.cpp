@@ -103,6 +103,8 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _recurring->setParent(-1, "I");
   _recurring->setMax(_metrics->value("RecurringInvoiceBuffer").toInt());
+
+  _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 invoice::~invoice()

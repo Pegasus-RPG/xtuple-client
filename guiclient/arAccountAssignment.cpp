@@ -33,6 +33,12 @@ arAccountAssignment::arAccountAssignment(QWidget* parent, const char* name, bool
     _deferred->hide();
     _deferredLit->hide();
   }
+
+  _ar->setType(GLCluster::cAsset);
+  _prepaid->setType(GLCluster::cRevenue);
+  _freight->setType(GLCluster::cRevenue | GLCluster::cLiability);
+  _deferred->setType(GLCluster::cLiability);
+  _discount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 arAccountAssignment::~arAccountAssignment()
