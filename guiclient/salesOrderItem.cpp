@@ -2512,7 +2512,7 @@ void salesOrderItem::sHandleWo(bool pCreate)
 
 void salesOrderItem::sPopulateOrderInfo()
 {
-  if (_createOrder->isChecked())
+  if (_createOrder->isChecked() && ((_mode == cNew) || (_mode == cEdit) || (_mode == cView)))
   {
     XSqlQuery checkpo;
     checkpo.prepare( "SELECT pohead_id, poitem_id, poitem_status "
