@@ -11,28 +11,25 @@
 #ifndef DSPTODOBYUSERANDINCIDENT_H
 #define DSPTODOBYUSERANDINCIDENT_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspTodoByUserAndIncident.h"
 
-class dspTodoByUserAndIncident : public XWidget, public Ui::dspTodoByUserAndIncident
+class dspTodoByUserAndIncident : public display, public Ui::dspTodoByUserAndIncident
 {
     Q_OBJECT
 
 public:
     dspTodoByUserAndIncident(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspTodoByUserAndIncident();
+
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual void sEditIncident();
     virtual void sEditTodoItem();
-    virtual void sFillList();
-    virtual void sPopulateMenu(QMenu*);
-    virtual void sPrint();
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*, int);
     virtual void sViewIncident();
     virtual void sViewTodoItem();
-    virtual void setParams(ParameterList&);
 
 protected slots:
     virtual void languageChange();

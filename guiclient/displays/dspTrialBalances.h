@@ -8,32 +8,35 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPSUMMARIZEDSALESBYCUSTOMERTYPE_H
-#define DSPSUMMARIZEDSALESBYCUSTOMERTYPE_H
+#ifndef DSPTRIALBALANCES_H
+#define DSPTRIALBALANCES_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspSummarizedSalesByCustomerType.h"
+#include "ui_dspTrialBalances.h"
 
-class dspSummarizedSalesByCustomerType : public XWidget, public Ui::dspSummarizedSalesByCustomerType
+class dspTrialBalances : public display, public Ui::dspTrialBalances
 {
     Q_OBJECT
 
 public:
-    dspSummarizedSalesByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSummarizedSalesByCustomerType();
+    dspTrialBalances(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
-    virtual bool checkParameters();
-    virtual void setParams(ParameterList & params);
+    virtual bool setParams(ParameterList &);
 
 public slots:
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int);
+    virtual void sViewTransactions();
+    virtual void sForwardUpdate();
     virtual void sPrint();
     virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
+ 
+protected:
+    virtual bool forwardUpdate();
 
 };
 
-#endif // DSPSUMMARIZEDSALESBYCUSTOMERTYPE_H
+#endif // DSPTRIALBALANCES_H

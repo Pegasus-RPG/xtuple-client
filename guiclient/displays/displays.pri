@@ -119,6 +119,16 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspSubLedger.ui \
            displays/dspSubstituteAvailabilityByItem.ui \
            displays/dspSummarizedBankrecHistory.ui \
+           displays/dspSummarizedGLTransactions.ui \
+           displays/dspSummarizedSalesByCustomer.ui \
+           displays/dspSummarizedSalesByCustomerByItem.ui \
+           displays/dspSummarizedSalesByCustomerType.ui \
+           displays/dspSummarizedSalesByCustomerTypeByItem.ui \
+           displays/dspSummarizedSalesByItem.ui \
+           displays/dspSummarizedSalesBySalesRep.ui \
+           displays/dspSummarizedSalesHistoryByShippingZone.ui \
+           displays/dspTodoByUserAndIncident.ui \
+           displays/dspTrialBalances.ui \
            displays/dspUsageStatisticsBase.ui \
            displays/dspValidLocationsByItem.ui
 
@@ -258,6 +268,16 @@ HEADERS += displays/dspAllocations.h \
            displays/dspSubstituteAvailabilityByItem.h \
            displays/dspSummarizedBankrecHistory.h \
            displays/dspSummarizedBOM.h \
+           displays/dspSummarizedGLTransactions.h \
+           displays/dspSummarizedSalesByCustomer.h \
+           displays/dspSummarizedSalesByCustomerByItem.h \
+           displays/dspSummarizedSalesByCustomerType.h \
+           displays/dspSummarizedSalesByCustomerTypeByItem.h \
+           displays/dspSummarizedSalesByItem.h \
+           displays/dspSummarizedSalesBySalesRep.h \
+           displays/dspSummarizedSalesHistoryByShippingZone.h \
+           displays/dspTodoByUserAndIncident.h \
+           displays/dspTrialBalances.h \
            displays/dspUsageStatisticsBase.h \
            displays/dspUsageStatisticsByClassCode.h \
            displays/dspUsageStatisticsByItem.h \
@@ -401,6 +421,16 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspSubstituteAvailabilityByItem.cpp \
            displays/dspSummarizedBankrecHistory.cpp \
            displays/dspSummarizedBOM.cpp \
+           displays/dspSummarizedGLTransactions.cpp \
+           displays/dspSummarizedSalesByCustomer.cpp \
+           displays/dspSummarizedSalesByCustomerByItem.cpp \
+           displays/dspSummarizedSalesByCustomerType.cpp \
+           displays/dspSummarizedSalesByCustomerTypeByItem.cpp \
+           displays/dspSummarizedSalesByItem.cpp \
+           displays/dspSummarizedSalesBySalesRep.cpp \
+           displays/dspSummarizedSalesHistoryByShippingZone.cpp \
+           displays/dspTodoByUserAndIncident.cpp \
+           displays/dspTrialBalances.cpp \
            displays/dspUsageStatisticsBase.cpp \
            displays/dspUsageStatisticsByClassCode.cpp \
            displays/dspUsageStatisticsByItem.cpp \

@@ -8,29 +8,31 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPSUMMARIZEDSALESHISTORYBYSHIPPINGZONE_H
-#define DSPSUMMARIZEDSALESHISTORYBYSHIPPINGZONE_H
+#ifndef DSPSUMMARIZEDGLTRANSACTIONS_H
+#define DSPSUMMARIZEDGLTRANSACTIONS_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspSummarizedSalesHistoryByShippingZone.h"
+#include "ui_dspSummarizedGLTransactions.h"
 
-class dspSummarizedSalesHistoryByShippingZone : public XWidget, public Ui::dspSummarizedSalesHistoryByShippingZone
+class dspSummarizedGLTransactions : public display, public Ui::dspSummarizedGLTransactions
 {
     Q_OBJECT
 
 public:
-    dspSummarizedSalesHistoryByShippingZone(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSummarizedSalesHistoryByShippingZone();
+    dspSummarizedGLTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
     virtual bool setParams(ParameterList &);
+
 public slots:
-    virtual void sFillList();
-    virtual void sPrint();
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
+    virtual void sViewTrans();
+    virtual void sViewDocument();
 
 protected slots:
     virtual void languageChange();
 
+
 };
 
-#endif // DSPSUMMARIZEDSALESHISTORYBYSHIPPINGZONE_H
+#endif // DSPSUMMARIZEDGLTRANSACTIONS_H

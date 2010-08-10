@@ -11,25 +11,18 @@
 #ifndef DSPSUMMARIZEDSALESBYCUSTOMERTYPEBYITEM_H
 #define DSPSUMMARIZEDSALESBYCUSTOMERTYPEBYITEM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspSummarizedSalesByCustomerTypeByItem.h"
 
-class dspSummarizedSalesByCustomerTypeByItem : public XWidget, public Ui::dspSummarizedSalesByCustomerTypeByItem
+class dspSummarizedSalesByCustomerTypeByItem : public display, public Ui::dspSummarizedSalesByCustomerTypeByItem
 {
     Q_OBJECT
 
 public:
     dspSummarizedSalesByCustomerTypeByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSummarizedSalesByCustomerTypeByItem();
 
-    virtual bool checkParameters();
-    virtual void setParams(ParameterList &);
-
-public slots:
-    virtual void sPrint();
-    virtual void sFillList();
+    virtual bool setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

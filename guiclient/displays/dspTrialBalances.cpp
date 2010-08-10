@@ -17,47 +17,42 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include <openreports.h>
-
+#include "guiclient.h"
 #include "dspGLTransactions.h"
 #include "storedProcErrorLookup.h"
-#include "mqlutil.h"
+#include "metasql.h"
 
-dspTrialBalances::dspTrialBalances(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspTrialBalances", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Trial Balances"));
+  setListLabel(tr("Trial Balances"));
+  setReportName("TrialBalances");
+  setMetaSQLOptions("trialBalances", "detail");
+  setUseAltId(true);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_trialbal, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-
-  _trialbal->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter, true,  "period_start" );
-  _trialbal->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter, true,  "period_end" );
-  _trialbal->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignCenter, true,  "account" );
-  _trialbal->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "accnt_descrip"   );
-  _trialbal->addColumn(tr("Beg. Bal."),   _bigMoneyColumn, Qt::AlignRight,  true,  "beginning"  );
-  _trialbal->addColumn("",                25,              Qt::AlignLeft,   true,  "beginningsense"   );
-  _trialbal->addColumn(tr("Debits"),      _bigMoneyColumn, Qt::AlignRight,  true,  "debits"  );
-  _trialbal->addColumn(tr("Credits"),     _bigMoneyColumn, Qt::AlignRight,  true,  "credits"  );
-  _trialbal->addColumn(tr("Difference"),  _bigMoneyColumn, Qt::AlignRight,  true,  "diff"  );
-  _trialbal->addColumn("",                25,              Qt::AlignLeft,   true,  "diffsense"   );
-  _trialbal->addColumn(tr("End Bal."),    _bigMoneyColumn, Qt::AlignRight,  true,  "ending"  );
-  _trialbal->addColumn("",                25,              Qt::AlignLeft,   true,  "endingsense"   );
-}
-
-dspTrialBalances::~dspTrialBalances()
-{
-  // no need to delete child widgets, Qt does it all for us
+  list()->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter, true,  "period_start" );
+  list()->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter, true,  "period_end" );
+  list()->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignCenter, true,  "account" );
+  list()->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "accnt_descrip"   );
+  list()->addColumn(tr("Beg. Bal."),   _bigMoneyColumn, Qt::AlignRight,  true,  "beginning"  );
+  list()->addColumn("",                25,              Qt::AlignLeft,   true,  "beginningsense"   );
+  list()->addColumn(tr("Debits"),      _bigMoneyColumn, Qt::AlignRight,  true,  "debits"  );
+  list()->addColumn(tr("Credits"),     _bigMoneyColumn, Qt::AlignRight,  true,  "credits"  );
+  list()->addColumn(tr("Difference"),  _bigMoneyColumn, Qt::AlignRight,  true,  "diff"  );
+  list()->addColumn("",                25,              Qt::AlignLeft,   true,  "diffsense"   );
+  list()->addColumn(tr("End Bal."),    _bigMoneyColumn, Qt::AlignRight,  true,  "ending"  );
+  list()->addColumn("",                25,              Qt::AlignLeft,   true,  "endingsense"   );
 }
 
 void dspTrialBalances::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
-void dspTrialBalances::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void dspTrialBalances::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
   menuItem = pMenu->addAction(tr("View Transactions..."), this, SLOT(sViewTransactions()));
@@ -72,8 +67,8 @@ void dspTrialBalances::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 void dspTrialBalances::sViewTransactions()
 {
   ParameterList params;
-  params.append("accnt_id", _trialbal->id());
-  params.append("period_id", _trialbal->altId());
+  params.append("accnt_id", list()->id());
+  params.append("period_id", list()->altId());
   params.append("run");
 
   dspGLTransactions *newdlg = new dspGLTransactions();
@@ -87,8 +82,8 @@ void dspTrialBalances::sForwardUpdate()
              "FROM trialbal "
              "WHERE ( (trialbal_period_id=:period_id)"
              " AND (trialbal_accnt_id=:accnt_id) );");
-  q.bindValue(":accnt_id", _trialbal->id());
-  q.bindValue(":period_id", _trialbal->altId());
+  q.bindValue(":accnt_id", list()->id());
+  q.bindValue(":period_id", list()->altId());
   q.exec();
   if (q.first())
   {
@@ -108,7 +103,7 @@ void dspTrialBalances::sForwardUpdate()
   sFillList();
 }
 
-void dspTrialBalances::setParams(ParameterList & params)
+bool dspTrialBalances::setParams(ParameterList & params)
 {
   if (_selectedAccount->isChecked())
     params.append("accnt_id", _account->id());
@@ -118,6 +113,8 @@ void dspTrialBalances::setParams(ParameterList & params)
     
   if (_showZero->isChecked() || (_selectedAccount->isChecked() && _selectedPeriod->isChecked()))
     params.append("showZero");
+
+  return true;
 }
 
 void dspTrialBalances::sPrint()
@@ -128,38 +125,19 @@ void dspTrialBalances::sPrint()
       return;
   }
   
-  ParameterList params;
-  setParams(params);
-
-  orReport report("TrialBalances", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
+  display::sPrint();
 }
 
 void dspTrialBalances::sFillList()
 {
-  _trialbal->clear();
+  list()->clear();
   if (!_metrics->boolean("ManualForwardUpdate"))
   {
     if (!forwardUpdate())
       return;
   }
   
-  ParameterList params;
-  setParams(params);
-  MetaSQLQuery mql = mqlLoad("trialBalances", "detail");
-  XSqlQuery r = mql.toQuery(params);
-  if (r.first())
-  {
-    _trialbal->populate(r, true);
-  }
-  else if (r.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  display::sFillList();
 }
 
 bool dspTrialBalances::forwardUpdate()

@@ -11,27 +11,22 @@
 #ifndef DSPSUMMARIZEDSALESBYCUSTOMER_H
 #define DSPSUMMARIZEDSALESBYCUSTOMER_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspSummarizedSalesByCustomer.h"
 
-class dspSummarizedSalesByCustomer : public XWidget, public Ui::dspSummarizedSalesByCustomer
+class dspSummarizedSalesByCustomer : public display, public Ui::dspSummarizedSalesByCustomer
 {
     Q_OBJECT
 
 public:
     dspSummarizedSalesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSummarizedSalesByCustomer();
 
-    virtual bool checkParameters();
+    virtual bool setParams(ParameterList & params);
 
 public slots:
-    virtual void sPopulateMenu( QMenu * menuThis );
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
     virtual void sViewDetail();
-    virtual void sPrint();
-    virtual void sFillList();
-    virtual void setParams(ParameterList & params);
 
 protected slots:
     virtual void languageChange();

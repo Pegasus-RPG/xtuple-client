@@ -208,14 +208,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspPoHistory.ui                               \
           dspRecurringInvoices.ui                       \
           dspSummarizedBacklogByWarehouse.ui            \
-          dspSummarizedGLTransactions.ui                \
-          dspSummarizedSalesByCustomer.ui               \
-          dspSummarizedSalesByCustomerByItem.ui         \
-          dspSummarizedSalesByCustomerType.ui           \
-          dspSummarizedSalesByCustomerTypeByItem.ui     \
-          dspSummarizedSalesByItem.ui                   \
-          dspSummarizedSalesBySalesRep.ui               \
-          dspSummarizedSalesHistoryByShippingZone.ui    \
           dspTaxHistory.ui                              \
           dspTimePhasedAvailability.ui                  \
           dspTimePhasedBookingsByCustomer.ui            \
@@ -229,8 +221,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspTimePhasedSalesByItem.ui           \
           dspTimePhasedSalesByProductCategory.ui\
           dspTimePhasedUsageStatisticsByItem.ui \
-          dspTodoByUserAndIncident.ui           \
-          dspTrialBalances.ui                   \
           dspUnbalancedQOHByClassCode.ui        \
           dspUndefinedManufacturedItems.ui      \
           dspUninvoicedReceivings.ui            \
@@ -791,14 +781,6 @@ HEADERS = ../common/format.h                    \
           dspPoHistory.h                                \
           dspRecurringInvoices.h                \
           dspSummarizedBacklogByWarehouse.h     \
-          dspSummarizedGLTransactions.h         \
-          dspSummarizedSalesByCustomer.h        \
-          dspSummarizedSalesByCustomerByItem.h  \
-          dspSummarizedSalesByCustomerType.h    \
-          dspSummarizedSalesByCustomerTypeByItem.h      \
-          dspSummarizedSalesByItem.h                    \
-          dspSummarizedSalesBySalesRep.h                \
-          dspSummarizedSalesHistoryByShippingZone.h     \
           dspTaxHistory.h                               \
           dspTimePhasedAvailability.h                   \
           dspTimePhasedBookingsByCustomer.h             \
@@ -812,8 +794,6 @@ HEADERS = ../common/format.h                    \
           dspTimePhasedSalesByItem.h            \
           dspTimePhasedSalesByProductCategory.h \
           dspTimePhasedUsageStatisticsByItem.h  \
-          dspTodoByUserAndIncident.h            \
-          dspTrialBalances.h                    \
           dspUnbalancedQOHByClassCode.h         \
           dspUndefinedManufacturedItems.h       \
           dspUninvoicedReceivings.h             \
@@ -1410,14 +1390,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspPoHistory.cpp                              \
           dspRecurringInvoices.cpp                      \
           dspSummarizedBacklogByWarehouse.cpp           \
-          dspSummarizedGLTransactions.cpp               \
-          dspSummarizedSalesByCustomer.cpp              \
-          dspSummarizedSalesByCustomerByItem.cpp        \
-          dspSummarizedSalesByCustomerType.cpp          \
-          dspSummarizedSalesByCustomerTypeByItem.cpp    \
-          dspSummarizedSalesByItem.cpp                  \
-          dspSummarizedSalesBySalesRep.cpp              \
-          dspSummarizedSalesHistoryByShippingZone.cpp   \
           dspTaxHistory.cpp                             \
           dspTimePhasedAvailability.cpp                 \
           dspTimePhasedBookingsByCustomer.cpp           \
@@ -1431,8 +1403,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspTimePhasedSalesByItem.cpp                  \
           dspTimePhasedSalesByProductCategory.cpp       \
           dspTimePhasedUsageStatisticsByItem.cpp        \
-          dspTodoByUserAndIncident.cpp          \
-          dspTrialBalances.cpp                  \
           dspUnbalancedQOHByClassCode.cpp       \
           dspUndefinedManufacturedItems.cpp     \
           dspUninvoicedReceivings.cpp           \
