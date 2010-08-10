@@ -145,7 +145,7 @@ void selectOrderForBilling::clear()
   _custName->clear();
   _poNumber->clear();
   _shipToName->clear();
-  _custCurrency->setId(-1);
+  _custCurrency->setCurrentIndex(0);
   _taxZone->setId(-1);
   _soitem->clear();
   _shipvia->clear();
