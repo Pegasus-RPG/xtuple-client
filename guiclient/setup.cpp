@@ -220,7 +220,6 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   modeVal = mode("MaintainVendorTypes", "ViewVendorTypes");
   insert(tr("Vendor Types"),  "vendorTypes", MasterInformation, Xt::PurchaseModule | Xt::AccountingModule, modeVal, modeVal);
-
 }
 
 setup::~setup()
@@ -244,6 +243,10 @@ enum SetResponse setup::set(const ParameterList &pParams)
   }
   else
     populate();
+
+  param = pParams.value("uiName", &valid);
+  if (valid)
+    setCurrentIndex(param.toString());
 
   return NoError;
 }
@@ -313,7 +316,8 @@ int setup::mode(const QString &editPriv, const QString &viewPriv)
 void setup::populate(bool first)
 {
   _tree->clear();
-  _idxmap.clear();
+  _idxMap.clear();
+  _treeMap.clear();
   while (_stack->count())
   {
     QWidget* w = _stack->widget(0);
@@ -361,6 +365,9 @@ void setup::populate(bool first)
       // Store the save methad name
       if (!ip.saveMethod.isEmpty())
         _methodMap.insert(ip.uiName, ip.saveMethod);
+
+      // Store ui name with id in map
+      _treeMap.insert(ip.uiName,id);
     }
   }
 
@@ -376,7 +383,6 @@ void setup::populate(bool first)
   _tree->expandAll();
   if (_tree->topLevelItemCount() && first)
     setCurrentIndex(_tree->topLevelItem(0));
-
 }
 
 /*! Emits the \a saving() signal which triggers any widgets to save that have a mapped \a savedMethod()
@@ -397,14 +403,23 @@ void setup::save(bool close)
     accept();
 }
 
+void setup::setCurrentIndex(const QString &uiName)
+{
+  if (_treeMap.contains(uiName))
+  {
+    _tree->setId(_treeMap.value(uiName));
+    setCurrentIndex(_tree->currentItem());
+  }
+}
+
 void setup::setCurrentIndex(XTreeWidgetItem* item)
 {
   QString uiName = item->data(0, Xt::RawRole ).toString();
   QString label = "<span style=\" font-size:14pt; font-weight:600;\">%1</span></p></body></html>";
 
-  if (_idxmap.contains(uiName))
+  if (_idxMap.contains(uiName))
   {
-    _stack->setCurrentIndex(_idxmap.value(uiName));
+    _stack->setCurrentIndex(_idxMap.value(uiName));
     _stackLit->setText(label.arg(item->text(0)));
     return;
   }
@@ -516,7 +531,7 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
       }
 
       int idx = _stack->count();
-      _idxmap.insert(uiName,idx);
+      _idxMap.insert(uiName,idx);
       _stack->addWidget(w);
       _stack->setCurrentIndex(idx);
 

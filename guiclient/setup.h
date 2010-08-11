@@ -47,6 +47,7 @@ public slots:
     int mode(const QString &editPriv, const QString &viewPriv = QString());
     void populate(bool first = true);
     void save(bool close = true);
+    void setCurrentIndex(const QString &uiName);
 
 signals:
     void saving();
@@ -64,8 +65,9 @@ private:
       QString saveMethod;
     };
     QMap<QString, ItemProps>    _itemMap;
-    QMap<QString, int>          _idxmap;
-    QMap<QString, QString>      _methodMap;        
+    QMap<QString, int>          _idxMap;
+    QMap<QString, QString>      _methodMap;
+    QMap<QString, int>          _treeMap;
 
     XTreeWidgetItem*            _configItem;
     XTreeWidgetItem*            _mapItem;

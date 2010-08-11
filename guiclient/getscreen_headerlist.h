@@ -577,6 +577,7 @@
 #include "selectPayment.h"
 #include "selectPayments.h"
 #include "selectShippedOrders.h"
+#include "setup.h"
 #include "shipOrder.h"
 #include "shippingChargeType.h"
 #include "shippingChargeTypes.h"
