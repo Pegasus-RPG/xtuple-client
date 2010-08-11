@@ -221,17 +221,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspTimePhasedSalesByItem.ui           \
           dspTimePhasedSalesByProductCategory.ui\
           dspTimePhasedUsageStatisticsByItem.ui \
-          dspUnbalancedQOHByClassCode.ui        \
-          dspUndefinedManufacturedItems.ui      \
-          dspUninvoicedReceivings.ui            \
-          dspUnusedPurchasedItems.ui            \
-          dspVendorAPHistory.ui                 \
-          dspVoucherRegister.ui                 \
-          dspWoHistoryByClassCode.ui            \
-          dspWoHistoryByItem.ui                 \
-          dspWoHistoryByNumber.ui               \
-          dspWoMaterialsByItem.ui               \
-          dspWoMaterialsByWorkOrder.ui          \
           dspWoScheduleByItem.ui                \
           dspWoScheduleByParameterList.ui       \
           dspWoScheduleByWorkOrder.ui           \
@@ -794,17 +783,6 @@ HEADERS = ../common/format.h                    \
           dspTimePhasedSalesByItem.h            \
           dspTimePhasedSalesByProductCategory.h \
           dspTimePhasedUsageStatisticsByItem.h  \
-          dspUnbalancedQOHByClassCode.h         \
-          dspUndefinedManufacturedItems.h       \
-          dspUninvoicedReceivings.h             \
-          dspUnusedPurchasedItems.h             \
-          dspVendorAPHistory.h                  \
-          dspVoucherRegister.h                  \
-          dspWoHistoryByClassCode.h             \
-          dspWoHistoryByItem.h                  \
-          dspWoHistoryByNumber.h                \
-          dspWoMaterialsByItem.h                \
-          dspWoMaterialsByWorkOrder.h           \
           dspWoScheduleByItem.h                 \
           dspWoScheduleByParameterList.h        \
           dspWoScheduleByWorkOrder.h            \
@@ -1403,17 +1381,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspTimePhasedSalesByItem.cpp                  \
           dspTimePhasedSalesByProductCategory.cpp       \
           dspTimePhasedUsageStatisticsByItem.cpp        \
-          dspUnbalancedQOHByClassCode.cpp       \
-          dspUndefinedManufacturedItems.cpp     \
-          dspUninvoicedReceivings.cpp           \
-          dspUnusedPurchasedItems.cpp           \
-          dspVendorAPHistory.cpp                \
-          dspVoucherRegister.cpp                \
-          dspWoHistoryByClassCode.cpp           \
-          dspWoHistoryByItem.cpp                \
-          dspWoHistoryByNumber.cpp              \
-          dspWoMaterialsByItem.cpp              \
-          dspWoMaterialsByWorkOrder.cpp         \
           dspWoScheduleByItem.cpp               \
           dspWoScheduleByParameterList.cpp      \
           dspWoScheduleByWorkOrder.cpp          \

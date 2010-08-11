@@ -129,8 +129,19 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspSummarizedSalesHistoryByShippingZone.ui \
            displays/dspTodoByUserAndIncident.ui \
            displays/dspTrialBalances.ui \
+           displays/dspUnbalancedQOHByClassCode.ui \
+           displays/dspUndefinedManufacturedItems.ui \
+           displays/dspUninvoicedReceivings.ui \
+           displays/dspUnusedPurchasedItems.ui \
            displays/dspUsageStatisticsBase.ui \
-           displays/dspValidLocationsByItem.ui
+           displays/dspValidLocationsByItem.ui \
+           displays/dspVendorAPHistory.ui \
+           displays/dspVoucherRegister.ui \
+           displays/dspWoHistoryByClassCode.ui \
+           displays/dspWoHistoryByItem.ui \
+           displays/dspWoHistoryByNumber.ui \
+           displays/dspWoMaterialsByItem.ui \
+           displays/dspWoMaterialsByWorkOrder.ui
 
 HEADERS += displays/dspAllocations.h \
            displays/dspAPApplications.h \
@@ -278,12 +289,23 @@ HEADERS += displays/dspAllocations.h \
            displays/dspSummarizedSalesHistoryByShippingZone.h \
            displays/dspTodoByUserAndIncident.h \
            displays/dspTrialBalances.h \
+           displays/dspUnbalancedQOHByClassCode.h \
+           displays/dspUndefinedManufacturedItems.h \
+           displays/dspUninvoicedReceivings.h \
+           displays/dspUnusedPurchasedItems.h \
            displays/dspUsageStatisticsBase.h \
            displays/dspUsageStatisticsByClassCode.h \
            displays/dspUsageStatisticsByItem.h \
            displays/dspUsageStatisticsByItemGroup.h \
            displays/dspUsageStatisticsByWarehouse.h \
-           displays/dspValidLocationsByItem.h
+           displays/dspValidLocationsByItem.h \
+           displays/dspVendorAPHistory.h \
+           displays/dspVoucherRegister.h \
+           displays/dspWoHistoryByClassCode.h \
+           displays/dspWoHistoryByItem.h \
+           displays/dspWoHistoryByNumber.h \
+           displays/dspWoMaterialsByItem.h \
+           displays/dspWoMaterialsByWorkOrder.h
 
 SOURCES += displays/dspAllocations.cpp \
            displays/dspAPApplications.cpp \
@@ -431,10 +453,21 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspSummarizedSalesHistoryByShippingZone.cpp \
            displays/dspTodoByUserAndIncident.cpp \
            displays/dspTrialBalances.cpp \
+           displays/dspUnbalancedQOHByClassCode.cpp \
+           displays/dspUndefinedManufacturedItems.cpp \
+           displays/dspUninvoicedReceivings.cpp \
+           displays/dspUnusedPurchasedItems.cpp \
            displays/dspUsageStatisticsBase.cpp \
            displays/dspUsageStatisticsByClassCode.cpp \
            displays/dspUsageStatisticsByItem.cpp \
            displays/dspUsageStatisticsByItemGroup.cpp \
            displays/dspUsageStatisticsByWarehouse.cpp \
-           displays/dspValidLocationsByItem.cpp
+           displays/dspValidLocationsByItem.cpp \
+           displays/dspVendorAPHistory.cpp \
+           displays/dspVoucherRegister.cpp \
+           displays/dspWoHistoryByClassCode.cpp \
+           displays/dspWoHistoryByItem.cpp \
+           displays/dspWoHistoryByNumber.cpp \
+           displays/dspWoMaterialsByItem.cpp \
+           displays/dspWoMaterialsByWorkOrder.cpp
 
