@@ -44,6 +44,7 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   // signals and slots connections
   _save = _buttonBox->button(QDialogButtonBox::Save);
   _save->setEnabled(false);
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_docType, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleButtons()));
   connect(_fileList, SIGNAL(clicked()), this, SLOT(sFileList()));
 
