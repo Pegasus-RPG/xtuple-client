@@ -38,14 +38,12 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
   _typeMap.insert("Q", tr("Equity"));
 
   setType(GLCluster::cUndefined);
-;}
+}
 
 void GLClusterLineEdit::setId(const int pId)
 {
   setStrict(false);
-  qDebug("number b4 set:%s", qPrintable(text()));
   VirtualClusterLineEdit::setId(pId);
-    qDebug("number after set:%s", qPrintable(text()));
   setStrict(true);
 }
 
