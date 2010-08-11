@@ -33,6 +33,7 @@ void setupXt(QScriptEngine *engine)
   glob.setProperty("ScheduleModule",     QScriptValue(engine, Xt::ScheduleModule),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
   glob.setProperty("InventoryModule",    QScriptValue(engine, Xt::InventoryModule), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   glob.setProperty("ProductsModule",     QScriptValue(engine, Xt::ProductsModule),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  glob.setProperty("SystemModule",       QScriptValue(engine, Xt::SystemModule),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("Xt", glob, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
