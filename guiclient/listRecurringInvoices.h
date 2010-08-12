@@ -8,21 +8,21 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPRECURRINGINVOICES_H
-#define DSPRECURRINGINVOICES_H
+#ifndef LISTRECURRINGINVOICES_H
+#define LISTRECURRINGINVOICES_H
 
 #include "guiclient.h"
 #include "xwidget.h"
 #include <parameter.h>
-#include "ui_dspRecurringInvoices.h"
+#include "ui_listRecurringInvoices.h"
 
-class dspRecurringInvoices : public XWidget, public Ui::dspRecurringInvoices
+class listRecurringInvoices : public XWidget, public Ui::listRecurringInvoices
 {
     Q_OBJECT
 
 public:
-    dspRecurringInvoices(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspRecurringInvoices();
+    listRecurringInvoices(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    ~listRecurringInvoices();
     virtual bool checkSitePrivs(int invcid);
 
 public slots:
@@ -37,4 +37,4 @@ protected slots:
 
 };
 
-#endif // DSPRECURRINGINVOICES_H
+#endif // LISTRECURRINGINVOICES_H

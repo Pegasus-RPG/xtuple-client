@@ -206,7 +206,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspInvoiceInformation.ui                      \
           dspMRPDetail.ui                               \
           dspPoHistory.ui                               \
-          dspRecurringInvoices.ui                       \
           dspTaxHistory.ui                              \
           dspTimePhasedAvailability.ui                  \
           dspTimePhasedBookingsByCustomer.ui            \
@@ -318,6 +317,7 @@ FORMS =   absoluteCalendarItem.ui               \
           itemtax.ui                    \
           labelForm.ui                  \
           labelForms.ui                 \
+          listRecurringInvoices.ui      \
           locales.ui                    \
           location.ui                   \
           locations.ui                  \
@@ -762,7 +762,6 @@ HEADERS = ../common/format.h                    \
           dspInvoiceInformation.h                       \
           dspMRPDetail.h                                \
           dspPoHistory.h                                \
-          dspRecurringInvoices.h                \
           dspTaxHistory.h                               \
           dspTimePhasedAvailability.h                   \
           dspTimePhasedBookingsByCustomer.h             \
@@ -882,6 +881,7 @@ HEADERS = ../common/format.h                    \
           jsHighlighter.h               \
           labelForm.h                   \
           labelForms.h                  \
+          listRecurringInvoices.h       \
           locales.h                     \
           location.h                    \
           locations.h                   \
@@ -1354,7 +1354,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspInvoiceInformation.cpp                     \
           dspMRPDetail.cpp                              \
           dspPoHistory.cpp                              \
-          dspRecurringInvoices.cpp                      \
           dspTaxHistory.cpp                             \
           dspTimePhasedAvailability.cpp                 \
           dspTimePhasedBookingsByCustomer.cpp           \
@@ -1472,6 +1471,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           jsHighlighter.cpp             \
           labelForm.cpp                 \
           labelForms.cpp                \
+          listRecurringInvoices.cpp     \
           locales.cpp                   \
           location.cpp                  \
           locations.cpp                 \

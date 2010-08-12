@@ -54,7 +54,7 @@
 
 // AR
 #include "invoice.h"
-#include "dspRecurringInvoices.h"
+#include "listRecurringInvoices.h"
 #include "unpostedInvoices.h"
 #include "printInvoices.h"
 #include "reprintInvoices.h"
@@ -292,7 +292,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Accounts Receivable | Invoices
     { "menu", tr("&Invoice"), (char*)arInvoicesMenu,	arMenu, "true",	 NULL, NULL, true, NULL },
     { "ar.createInvoice", tr("&New..."), SLOT(sCreateInvoice()), arInvoicesMenu, "MaintainMiscInvoices", NULL, NULL, true , NULL },
-    { "ar.dspRecurringInvoices", tr("&List Recurring Invoices..."),	SLOT(sRecurringInvoices()), arInvoicesMenu, "SelectBilling",	NULL, NULL,  true, NULL },
+    { "ar.listRecurringInvoices", tr("&List Recurring Invoices..."),	SLOT(sRecurringInvoices()), arInvoicesMenu, "SelectBilling",	NULL, NULL,  true, NULL },
     { "ar.listUnpostedInvoices", tr("&List Unposted..."), SLOT(sUnpostedInvoices()), arInvoicesMenu, "SelectBilling", QPixmap(":/images/unpostedInvoices.png"), toolBar, true , tr("List Unposted Invoices") },
     { "separator", NULL, NULL, arInvoicesMenu, "true", NULL, NULL, true, NULL },
     { "ar.postInvoices", tr("&Post..."), SLOT(sPostInvoices()), arInvoicesMenu, "PostMiscInvoices", NULL, NULL, true , NULL },
@@ -717,7 +717,7 @@ void menuAccounting::sCreateInvoice()
 
 void menuAccounting::sRecurringInvoices()
 {
-  omfgThis->handleNewWindow(new dspRecurringInvoices());
+  omfgThis->handleNewWindow(new listRecurringInvoices());
 }
 
 void menuAccounting::sUnpostedInvoices()

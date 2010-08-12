@@ -7,8 +7,8 @@ It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
- <class>dspRecurringInvoices</class>
- <widget class="QWidget" name="dspRecurringInvoices">
+ <class>listRecurringInvoices</class>
+ <widget class="QWidget" name="listRecurringInvoices">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -166,7 +166,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
-   <receiver>dspRecurringInvoices</receiver>
+   <receiver>listRecurringInvoices</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

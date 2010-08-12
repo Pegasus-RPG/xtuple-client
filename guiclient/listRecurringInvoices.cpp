@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspRecurringInvoices.h"
+#include "listRecurringInvoices.h"
 
 #include <QAction>
 #include <QMenu>
@@ -24,7 +24,7 @@
 #include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
-dspRecurringInvoices::dspRecurringInvoices(QWidget* parent, const char* name, Qt::WFlags fl)
+listRecurringInvoices::listRecurringInvoices(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
@@ -61,22 +61,22 @@ dspRecurringInvoices::dspRecurringInvoices(QWidget* parent, const char* name, Qt
   sFillList();
 }
 
-dspRecurringInvoices::~dspRecurringInvoices()
+listRecurringInvoices::~listRecurringInvoices()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-void dspRecurringInvoices::languageChange()
+void listRecurringInvoices::languageChange()
 {
     retranslateUi(this);
 }
 
-void dspRecurringInvoices::sNew()
+void listRecurringInvoices::sNew()
 {
   invoice::newInvoice(-1);
 }
 
-void dspRecurringInvoices::sEdit()
+void listRecurringInvoices::sEdit()
 {
   QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
   for (int i = 0; i < selected.size(); i++)
@@ -85,7 +85,7 @@ void dspRecurringInvoices::sEdit()
       
 }
 
-void dspRecurringInvoices::sView()
+void listRecurringInvoices::sView()
 {
   QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
   for (int i = 0; i < selected.size(); i++)
@@ -93,7 +93,7 @@ void dspRecurringInvoices::sView()
         invoice::viewInvoice(((XTreeWidgetItem*)(selected[i]))->id());
 }
 
-void dspRecurringInvoices::sPopulateMenu(QMenu *pMenu)
+void listRecurringInvoices::sPopulateMenu(QMenu *pMenu)
 {
   QAction *menuItem;
 
@@ -105,7 +105,7 @@ void dspRecurringInvoices::sPopulateMenu(QMenu *pMenu)
                        _privileges->check("ViewMiscInvoices"));
 }
 
-void dspRecurringInvoices::sFillList()
+void listRecurringInvoices::sFillList()
 {
   _invchead->clear();
 
@@ -126,7 +126,7 @@ void dspRecurringInvoices::sFillList()
   }
 }
 
-bool dspRecurringInvoices::checkSitePrivs(int invcid)
+bool listRecurringInvoices::checkSitePrivs(int invcid)
 {
   if (_preferences->boolean("selectedSites"))
   {
