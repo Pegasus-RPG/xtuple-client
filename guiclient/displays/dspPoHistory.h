@@ -11,24 +11,22 @@
 #ifndef DSPPOHISTORY_H
 #define DSPPOHISTORY_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
 #include "ui_dspPoHistory.h"
 
-class dspPoHistory : public XWidget, public Ui::dspPoHistory
+class dspPoHistory : public display, public Ui::dspPoHistory
 {
     Q_OBJECT
 
 public:
     dspPoHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspPoHistory();
+
     virtual bool setParams(ParameterList &);
 
 public slots:
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*, int);
     virtual void sCopy();
-    virtual void sFillList();
-    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();

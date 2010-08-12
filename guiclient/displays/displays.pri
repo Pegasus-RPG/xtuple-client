@@ -76,6 +76,7 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspPlannedOrdersByPlannerCode.ui \
            displays/dspPoDeliveryDateVariancesByItem.ui \
            displays/dspPoDeliveryDateVariancesByVendor.ui \
+           displays/dspPoHistory.ui \
            displays/dspPoItemReceivingsByDate.ui \
            displays/dspPoItemReceivingsByItem.ui \
            displays/dspPoItemReceivingsByVendor.ui \
@@ -238,6 +239,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspPlannedOrdersByPlannerCode.h \
            displays/dspPoDeliveryDateVariancesByItem.h \
            displays/dspPoDeliveryDateVariancesByVendor.h \
+           displays/dspPoHistory.h \
            displays/dspPoItemReceivingsByDate.h \
            displays/dspPoItemReceivingsByItem.h \
            displays/dspPoItemReceivingsByVendor.h \
@@ -408,6 +410,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspPlannedOrdersByPlannerCode.cpp \
            displays/dspPoDeliveryDateVariancesByItem.cpp \
            displays/dspPoDeliveryDateVariancesByVendor.cpp \
+           displays/dspPoHistory.cpp \
            displays/dspPoItemReceivingsByDate.cpp \
            displays/dspPoItemReceivingsByItem.cpp \
            displays/dspPoItemReceivingsByVendor.cpp \

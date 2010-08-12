@@ -205,7 +205,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspGLTransactions.ui                          \
           dspInvoiceInformation.ui                      \
           dspMRPDetail.ui                               \
-          dspPoHistory.ui                               \
           dspTaxHistory.ui                              \
           dspTimePhasedAvailability.ui                  \
           dspTimePhasedBookingsByCustomer.ui            \
@@ -761,7 +760,6 @@ HEADERS = ../common/format.h                    \
           dspGLTransactions.h                           \
           dspInvoiceInformation.h                       \
           dspMRPDetail.h                                \
-          dspPoHistory.h                                \
           dspTaxHistory.h                               \
           dspTimePhasedAvailability.h                   \
           dspTimePhasedBookingsByCustomer.h             \
@@ -1353,7 +1351,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspGLTransactions.cpp                         \
           dspInvoiceInformation.cpp                     \
           dspMRPDetail.cpp                              \
-          dspPoHistory.cpp                              \
           dspTaxHistory.cpp                             \
           dspTimePhasedAvailability.cpp                 \
           dspTimePhasedBookingsByCustomer.cpp           \
