@@ -221,9 +221,7 @@ FORMS =   absoluteCalendarItem.ui               \
           dspTimePhasedSalesByItem.ui           \
           dspTimePhasedSalesByProductCategory.ui\
           dspTimePhasedUsageStatisticsByItem.ui \
-          dspWoScheduleByItem.ui                \
           dspWoScheduleByParameterList.ui       \
-          dspWoScheduleByWorkOrder.ui           \
           dspWoSoStatus.ui                      \
           dspWoSoStatusMismatch.ui              \
           duplicateAccountNumbers.ui            \
@@ -783,9 +781,7 @@ HEADERS = ../common/format.h                    \
           dspTimePhasedSalesByItem.h            \
           dspTimePhasedSalesByProductCategory.h \
           dspTimePhasedUsageStatisticsByItem.h  \
-          dspWoScheduleByItem.h                 \
           dspWoScheduleByParameterList.h        \
-          dspWoScheduleByWorkOrder.h            \
           dspWoSoStatus.h                       \
           dspWoSoStatusMismatch.h               \
           duplicateAccountNumbers.h             \
@@ -1381,9 +1377,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspTimePhasedSalesByItem.cpp                  \
           dspTimePhasedSalesByProductCategory.cpp       \
           dspTimePhasedUsageStatisticsByItem.cpp        \
-          dspWoScheduleByItem.cpp               \
           dspWoScheduleByParameterList.cpp      \
-          dspWoScheduleByWorkOrder.cpp          \
           dspWoSoStatus.cpp                     \
           dspWoSoStatusMismatch.cpp             \
           duplicateAccountNumbers.cpp           \

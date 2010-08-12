@@ -8,24 +8,20 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPWOSCHEDULEBYWORKORDER_H
-#define DSPWOSCHEDULEBYWORKORDER_H
+#ifndef DSPWOSCHEDULEBYITEM_H
+#define DSPWOSCHEDULEBYITEM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
-#include "ui_dspWoScheduleByWorkOrder.h"
+#include "ui_dspWoScheduleByItem.h"
 
-class dspWoScheduleByWorkOrder : public XWidget, public Ui::dspWoScheduleByWorkOrder
+class dspWoScheduleByItem : public display, public Ui::dspWoScheduleByItem
 {
     Q_OBJECT
 
 public:
-    dspWoScheduleByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspWoScheduleByWorkOrder();
+    dspWoScheduleByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
-    virtual enum SetResponse set(const ParameterList&);
     virtual bool setParams(ParameterList &);
 
 public slots:
@@ -36,14 +32,11 @@ public slots:
     virtual void sDspRunningAvailability();
     virtual void sEdit();
     virtual void sExplodeWO();
-    virtual void sFillList();
-    virtual void sHandleAutoUpdate( bool pAutoUpdate );
     virtual void sImplodeWO();
     virtual void sInventoryAvailabilityByWorkOrder();
     virtual void sIssueWoMaterialItem();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * selected, int);
     virtual void sPostProduction();
-    virtual void sPrint();
     virtual void sPrintTraveler();
     virtual void sRecallWO();
     virtual void sReleaseWO();
@@ -58,4 +51,4 @@ protected slots:
 
 };
 
-#endif // DSPWOSCHEDULEBYWORKORDER_H
+#endif // DSPWOSCHEDULEBYITEM_H

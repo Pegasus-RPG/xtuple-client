@@ -8,17 +8,14 @@
  * to be bound by its terms.
  */
 
-#include "dspWoScheduleByWorkOrder.h"
+#include "dspWoScheduleByItem.h"
 
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 
-#include <metasql.h>
-#include "mqlutil.h"
-#include <openreports.h>
-
+#include "guiclient.h"
 #include "bom.h"
 #include "changeWoQty.h"
 #include "closeWo.h"
@@ -36,71 +33,49 @@
 #include "storedProcErrorLookup.h"
 #include "workOrder.h"
 
-dspWoScheduleByWorkOrder::dspWoScheduleByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspWoScheduleByItem", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Work Order Schedule by Item"));
+  setListLabel(tr("Work Orders"));
+  setReportName("WOScheduleByParameterList");
+  setMetaSQLOptions("workOrderSchedule", "detail");
+  setUseAltId(true);
+  setAutoUpdateEnabled(true);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
-
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
+  _item->setDefaultType(ItemLineEdit::cGeneralManufactured);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  
-  _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft,   true,  "wonumber"   );
-  _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter, true,  "wo_status" );
-  _wo->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter, false,  "wo_priority" );
-  _wo->addColumn(tr("Site"),       _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
-  _wo->addColumn(tr("Ordered"),    _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
-  _wo->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
-  _wo->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter, true,  "wo_startdate" );
-  _wo->addColumn(tr("Due Date"),   _dateColumn,   Qt::AlignCenter, true,  "wo_duedate" );
+
+  list()->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft,   true,  "wonumber"   );
+  list()->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter, true,  "wo_status" );
+  list()->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter, true,  "wo_priority" );
+  list()->addColumn(tr("Site"),       _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
+  list()->addColumn(tr("Ordered"),    _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
+  list()->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
+  list()->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter, true,  "wo_startdate" );
+  list()->addColumn(tr("Due Date"),   _dateColumn,   Qt::AlignCenter, true,  "wo_duedate" );
   
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
-  _workorder->setType(~cWoClosed);
-  _workorder->setFocus();
+  _item->setFocus();
 }
 
-dspWoScheduleByWorkOrder::~dspWoScheduleByWorkOrder()
+void dspWoScheduleByItem::languageChange()
 {
-  // no need to delete child widgets, Qt does it all for us
-}
-
-void dspWoScheduleByWorkOrder::languageChange()
-{
+  display::languageChange();
   retranslateUi(this);
 }
 
-enum SetResponse dspWoScheduleByWorkOrder::set(const ParameterList &pParams)
+bool dspWoScheduleByItem::setParams(ParameterList &pParams)
 {
-  XWidget::set(pParams);
-  QVariant param;
-  bool	   valid = false;
-
-  param = pParams.value("wo_id", &valid);
-  if (valid)
-    _workorder->setId(param.toInt());
-
-  if (pParams.inList("run"))
-  {
-    sFillList();
-    return NoError_Run;
-  }
-
-  return NoError;
-}
-
-bool dspWoScheduleByWorkOrder::setParams(ParameterList &pParams)
-{
-  if (! _workorder->isValid())
+  if (! _item->isValid())
   {
     QMessageBox::warning(this, tr("Missing Data"),
-			 tr("You must enter a work order."));
-    _workorder->setFocus();
+			 tr("You must enter a item."));
+    _item->setFocus();
     return false;
   }
   if (! _dates->allValid())
@@ -113,7 +88,7 @@ bool dspWoScheduleByWorkOrder::setParams(ParameterList &pParams)
 
   _warehouse->appendValue(pParams);
   _dates->appendValue(pParams);
-  pParams.append("wo_id", _workorder->id());
+  pParams.append("item_id", _item->id());
 
   if (_showOnlyRI->isChecked())
     pParams.append("showOnlyRI");
@@ -124,105 +99,92 @@ bool dspWoScheduleByWorkOrder::setParams(ParameterList &pParams)
   return true;
 }
 
-void dspWoScheduleByWorkOrder::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("WOScheduleByParameterList", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void dspWoScheduleByWorkOrder::sView()
+void dspWoScheduleByItem::sView()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   workOrder *newdlg = new workOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByWorkOrder::sEdit()
+void dspWoScheduleByItem::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   workOrder *newdlg = new workOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByWorkOrder::sPostProduction()
+void dspWoScheduleByItem::sPostProduction()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   postProduction newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sCorrectProductionPosting()
+void dspWoScheduleByItem::sCorrectProductionPosting()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   correctProductionPosting newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sReleaseWO()
+void dspWoScheduleByItem::sReleaseWO()
 {
   q.prepare("SELECT releaseWo(:wo_id, FALSE);");
-  q.bindValue(":wo_id", _wo->id());
+  q.bindValue(":wo_id", list()->id());
   q.exec();
 
-  omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(list()->id(), TRUE);
 }
 
-void dspWoScheduleByWorkOrder::sRecallWO()
+void dspWoScheduleByItem::sRecallWO()
 {
   q.prepare("SELECT recallWo(:wo_id, FALSE);");
-  q.bindValue(":wo_id", _wo->id());
+  q.bindValue(":wo_id", list()->id());
   q.exec();
 
-  omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(list()->id(), TRUE);
 }
 
-void dspWoScheduleByWorkOrder::sExplodeWO()
+void dspWoScheduleByItem::sExplodeWO()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   explodeWo newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sImplodeWO()
+void dspWoScheduleByItem::sImplodeWO()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   implodeWo newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sDeleteWO()
+void dspWoScheduleByItem::sDeleteWO()
 {
   q.prepare( "SELECT wo_ordtype "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
-  q.bindValue(":wo_id", _wo->id());
+  q.bindValue(":wo_id", list()->id());
   q.exec();
   if (q.first())
   {
@@ -250,7 +212,7 @@ void dspWoScheduleByWorkOrder::sDeleteWO()
       return;
 
     q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
-    q.bindValue(":wo_id", _wo->id());
+    q.bindValue(":wo_id", list()->id());
     q.exec();
     if (q.first())
     {
@@ -267,7 +229,7 @@ void dspWoScheduleByWorkOrder::sDeleteWO()
       return;
     }
 
-    omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
+    omfgThis->sWorkOrdersUpdated(list()->id(), TRUE);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -276,60 +238,60 @@ void dspWoScheduleByWorkOrder::sDeleteWO()
   }
 }
 
-void dspWoScheduleByWorkOrder::sCloseWO()
+void dspWoScheduleByItem::sCloseWO()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   closeWo newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sPrintTraveler()
+void dspWoScheduleByItem::sPrintTraveler()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   printWoTraveler newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sReprioritizeWo()
+void dspWoScheduleByItem::sReprioritizeWo()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   reprioritizeWo newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sRescheduleWO()
+void dspWoScheduleByItem::sRescheduleWO()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   rescheduleWo newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sChangeWOQty()
+void dspWoScheduleByItem::sChangeWOQty()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
 
   changeWoQty newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sViewWomatl()
+void dspWoScheduleByItem::sViewWomatl()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
   params.append("run");
 
   dspWoMaterialsByWorkOrder *newdlg = new dspWoMaterialsByWorkOrder();
@@ -337,10 +299,10 @@ void dspWoScheduleByWorkOrder::sViewWomatl()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByWorkOrder::sInventoryAvailabilityByWorkOrder()
+void dspWoScheduleByItem::sInventoryAvailabilityByWorkOrder()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
   params.append("run");
 
   dspInventoryAvailabilityByWorkOrder *newdlg = new dspInventoryAvailabilityByWorkOrder();
@@ -348,7 +310,7 @@ void dspWoScheduleByWorkOrder::sInventoryAvailabilityByWorkOrder()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
+void dspWoScheduleByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int)
 {
   QString  status(selected->text(1));
   QAction *menuItem;
@@ -464,39 +426,19 @@ void dspWoScheduleByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
   menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()));
 }
 
-void dspWoScheduleByWorkOrder::sFillList()
-{
-  _wo->clear();
-  MetaSQLQuery mql = mqlLoad("workOrderSchedule", "detail");
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  q = mql.toQuery(params);
-  q.exec();
-  _wo->populate(q, true);
-}
-
-void dspWoScheduleByWorkOrder::sHandleAutoUpdate(bool pAutoUpdate)
-{
-  if (pAutoUpdate)
-    connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
-  else
-    disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
-}
-
-void dspWoScheduleByWorkOrder::sIssueWoMaterialItem()
+void dspWoScheduleByItem::sIssueWoMaterialItem()
 {
   issueWoMaterialItem newdlg(this);
   ParameterList params;
-  params.append("wo_id", _wo->id());
+  params.append("wo_id", list()->id());
   if (newdlg.set(params) == NoError)
     newdlg.exec();
 }
 
-void dspWoScheduleByWorkOrder::sDspRunningAvailability()
+void dspWoScheduleByItem::sDspRunningAvailability()
 {
   ParameterList params;
-  params.append("itemsite_id", _wo->altId());
+  params.append("itemsite_id", list()->altId());
   params.append("run");
 
   dspRunningAvailability *newdlg = new dspRunningAvailability();
@@ -504,10 +446,10 @@ void dspWoScheduleByWorkOrder::sDspRunningAvailability()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByWorkOrder::sViewBOM()
+void dspWoScheduleByItem::sViewBOM()
 {
   q.prepare("SELECT itemsite_item_id FROM itemsite WHERE (itemsite_id=:id);");
-  q.bindValue(":id", _wo->altId());
+  q.bindValue(":id", list()->altId());
   q.exec();
   if (q.first())
   {

@@ -141,7 +141,9 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspWoHistoryByItem.ui \
            displays/dspWoHistoryByNumber.ui \
            displays/dspWoMaterialsByItem.ui \
-           displays/dspWoMaterialsByWorkOrder.ui
+           displays/dspWoMaterialsByWorkOrder.ui \
+           displays/dspWoScheduleByItem.ui \
+           displays/dspWoScheduleByWorkOrder.ui
 
 HEADERS += displays/dspAllocations.h \
            displays/dspAPApplications.h \
@@ -305,7 +307,9 @@ HEADERS += displays/dspAllocations.h \
            displays/dspWoHistoryByItem.h \
            displays/dspWoHistoryByNumber.h \
            displays/dspWoMaterialsByItem.h \
-           displays/dspWoMaterialsByWorkOrder.h
+           displays/dspWoMaterialsByWorkOrder.h \
+           displays/dspWoScheduleByItem.h \
+           displays/dspWoScheduleByWorkOrder.h
 
 SOURCES += displays/dspAllocations.cpp \
            displays/dspAPApplications.cpp \
@@ -469,5 +473,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspWoHistoryByItem.cpp \
            displays/dspWoHistoryByNumber.cpp \
            displays/dspWoMaterialsByItem.cpp \
-           displays/dspWoMaterialsByWorkOrder.cpp
+           displays/dspWoMaterialsByWorkOrder.cpp \
+           displays/dspWoScheduleByItem.cpp \
+           displays/dspWoScheduleByWorkOrder.cpp
 
