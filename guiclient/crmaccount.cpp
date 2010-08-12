@@ -64,6 +64,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
   _owner->setUsername(omfgThis->username());
+  _owner->setType(UsernameLineEdit::UsersActive);
     
   connect(_close,		SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_competitor,		SIGNAL(clicked()), this, SLOT(sCompetitor()));
