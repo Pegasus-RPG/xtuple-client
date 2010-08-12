@@ -164,7 +164,7 @@ void CLineEdit::sNew()
 void CLineEdit::setId(int pId)
 {
   VirtualClusterLineEdit::setId(pId);
-  if (model())
+  if (model() && _id != -1)
   {
     if (model()->data(model()->index(0,ISCUSTOMER)).toBool())
     {
