@@ -18,45 +18,48 @@
 #include <metasql.h>
 #include <openreports.h>
 
+#include "guiclient.h"
 #include "dspInventoryAvailabilityBySalesOrder.h"
 #include "salesOrder.h"
 #include "printPackingList.h"
 #include "storedProcErrorLookup.h"
 #include "mqlutil.h"
 
-dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspSummarizedBacklogByWarehouse", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Summarized Backlog by Site"));
+  setListLabel(tr("Backlog"));
+  setReportName("SummarizedBacklogByWarehouse");
+  setMetaSQLOptions("summarizedBacklogByWarehouse", "detail");
+  setUseAltId(true);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _customerType->setType(ParameterGroup::CustomerType);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _so->addColumn(tr("Order#/Shipment#"),         _itemColumn, Qt::AlignLeft, true, "cohead_number");
-  _so->addColumn(tr("Customer/Ship Via"),            -1, Qt::AlignLeft,  true, "cust_name");
-  _so->addColumn(tr("Hold Type/Shipped"),   _orderColumn*2, Qt::AlignRight, true, "f_holdtype");
-  _so->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight, true, "cohead_orderdate");
-  _so->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight, true, "scheddate");
-  _so->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight, true, "cohead_packdate");
+  list()->addColumn(tr("Order#/Shipment#"),         _itemColumn, Qt::AlignLeft, true, "cohead_number");
+  list()->addColumn(tr("Customer/Ship Via"),            -1, Qt::AlignLeft,  true, "cust_name");
+  list()->addColumn(tr("Hold Type/Shipped"),   _orderColumn*2, Qt::AlignRight, true, "f_holdtype");
+  list()->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight, true, "cohead_orderdate");
+  list()->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight, true, "scheddate");
+  list()->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight, true, "cohead_packdate");
   if (_privileges->check("ViewCustomerPrices") ||
       _privileges->check("MaintainCustomerPrices"))
   {
-    _so->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight, true, "sales");
-    _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight, true, "cost");
-    _so->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight, true, "margin");
+    list()->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight, true, "sales");
+    list()->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight, true, "cost");
+    list()->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight, true, "margin");
   }
-  _so->addColumn(tr("Sales Rep"),           _itemColumn, Qt::AlignRight, true, "salesrep_name");
-  _so->addColumn(tr("Time Received"),       _dateColumn, Qt::AlignRight, false, "cohead_created");
-  _so->addColumn(tr("Pack List Batch"),     _dateColumn, Qt::AlignRight, false, "packed");
+  list()->addColumn(tr("Sales Rep"),           _itemColumn, Qt::AlignRight, true, "salesrep_name");
+  list()->addColumn(tr("Time Received"),       _dateColumn, Qt::AlignRight, false, "cohead_created");
+  list()->addColumn(tr("Pack List Batch"),     _dateColumn, Qt::AlignRight, false, "packed");
 
-  _so->setRootIsDecorated(TRUE);
-  _so->setDragString("soheadid=");
+  list()->setRootIsDecorated(TRUE);
+  list()->setDragString("soheadid=");
 
   if ( (!_privileges->check("ViewCustomerPrices")) && (!_privileges->check("MaintainCustomerPrices")) )
     _showPrices->setEnabled(FALSE);
@@ -67,27 +70,23 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   sFillList();
 }
 
-dspSummarizedBacklogByWarehouse::~dspSummarizedBacklogByWarehouse()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspSummarizedBacklogByWarehouse::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
 void dspSummarizedBacklogByWarehouse::sHandlePrices(bool pShowPrices)
 {
   if(pShowPrices){
-    _so->showColumn("sales");
-    _so->showColumn("cost");
-    _so->showColumn("margin");
+    list()->showColumn("sales");
+    list()->showColumn("cost");
+    list()->showColumn("margin");
   }
   else{
-    _so->hideColumn("sales");
-    _so->hideColumn("cost");
-    _so->hideColumn("margin");
+    list()->hideColumn("sales");
+    list()->hideColumn("cost");
+    list()->hideColumn("margin");
   }
 }
 
@@ -118,24 +117,11 @@ bool dspSummarizedBacklogByWarehouse::setParams(ParameterList &params)
   return true;
 }
 
-void dspSummarizedBacklogByWarehouse::sPrint()
-{
-  ParameterList params;
-  if (setParams(params))
-  {
-    orReport report("SummarizedBacklogByWarehouse", params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }
-}
-
 void dspSummarizedBacklogByWarehouse::sInventoryAvailabilityBySalesOrder()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("sohead_id", _so->id());
+  params.append("sohead_id", list()->id());
       
   dspInventoryAvailabilityBySalesOrder *newdlg = new dspInventoryAvailabilityBySalesOrder();
   newdlg->set(params);
@@ -144,12 +130,12 @@ void dspSummarizedBacklogByWarehouse::sInventoryAvailabilityBySalesOrder()
 
 void dspSummarizedBacklogByWarehouse::sEdit()
 {
-  salesOrder::editSalesOrder(_so->id(), false);
+  salesOrder::editSalesOrder(list()->id(), false);
 }
 
 void dspSummarizedBacklogByWarehouse::sView()
 {
-  salesOrder::viewSalesOrder(_so->id());
+  salesOrder::viewSalesOrder(list()->id());
 }
 
 void dspSummarizedBacklogByWarehouse::sDelete()
@@ -160,7 +146,7 @@ void dspSummarizedBacklogByWarehouse::sDelete()
 			     QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     q.prepare("SELECT deleteSo(:sohead_id) AS result;");
-    q.bindValue(":sohead_id", _so->id());
+    q.bindValue(":sohead_id", list()->id());
     q.exec();
     if (q.first())
     {
@@ -182,7 +168,7 @@ void dspSummarizedBacklogByWarehouse::sDelete()
                        "SET coitem_status='C' "
                        "WHERE ((coitem_status<>'X')"
 		       "   AND (coitem_cohead_id=:sohead_id));" );
-            q.bindValue(":sohead_id", _so->id());
+            q.bindValue(":sohead_id", list()->id());
             q.exec();
 	    if (q.lastError().type() != QSqlError::NoError)
 	    {
@@ -212,21 +198,21 @@ void dspSummarizedBacklogByWarehouse::sDelete()
 void dspSummarizedBacklogByWarehouse::sPrintPackingList()
 {
   ParameterList params;
-  if (_so->altId() > 0)
-    params.append("cosmisc_id", _so->altId());
+  if (list()->altId() > 0)
+    params.append("cosmisc_id", list()->altId());
   else
-    params.append("sohead_id", _so->id());
+    params.append("sohead_id", list()->id());
 
   printPackingList newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
+void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if (_so->id() != -1)
+  if (list()->id() != -1)
   {
     menuItem = pMenu->addAction(tr("Inventory Availability by Sales Order..."), this, SLOT(sInventoryAvailabilityBySalesOrder()));
     if (!_privileges->check("ViewInventoryAvailability"))
@@ -248,11 +234,11 @@ void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
 
   }
 
-  if (_so->altId() > -1 ||
-      (_so->id() != -1 && _so->currentItem()->text(2) != tr("Pack") &&
-       _so->currentItem()->text(2) != tr("Credit")))
+  if (list()->altId() > -1 ||
+      (list()->id() != -1 && list()->currentItem()->text(2) != tr("Pack") &&
+       list()->currentItem()->text(2) != tr("Credit")))
   {
-    if (_so->id() != -1)
+    if (list()->id() != -1)
       pMenu->addSeparator();
 
     menuItem = pMenu->addAction(tr("Print Packing List..."), this, SLOT(sPrintPackingList()));
@@ -263,16 +249,13 @@ void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
 
 void dspSummarizedBacklogByWarehouse::sFillList()
 {
-
   ParameterList params;
   if (setParams(params))
   {
-    MetaSQLQuery mql = mqlLoad("summarizedBacklogByWarehouse", "detail");
-    q = mql.toQuery(params);
-    _so->populate(q);
-    if (q.first())
+    display::sFillList();
+
+    if (list()->topLevelItemCount())
     {
-   
       MetaSQLQuery totm = mqlLoad("summarizedBacklogByWarehouse", "totals");
       q = totm.toQuery(params);
       if (q.first())

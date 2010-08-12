@@ -118,6 +118,7 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspStandardJournalHistory.ui \
            displays/dspSubLedger.ui \
            displays/dspSubstituteAvailabilityByItem.ui \
+           displays/dspSummarizedBacklogByWarehouse.ui \
            displays/dspSummarizedBankrecHistory.ui \
            displays/dspSummarizedGLTransactions.ui \
            displays/dspSummarizedSalesByCustomer.ui \
@@ -143,7 +144,10 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspWoMaterialsByItem.ui \
            displays/dspWoMaterialsByWorkOrder.ui \
            displays/dspWoScheduleByItem.ui \
-           displays/dspWoScheduleByWorkOrder.ui
+           displays/dspWoScheduleByParameterList.ui \
+           displays/dspWoScheduleByWorkOrder.ui \
+           displays/dspWoSoStatus.ui \
+           displays/dspWoSoStatusMismatch.ui
 
 HEADERS += displays/dspAllocations.h \
            displays/dspAPApplications.h \
@@ -279,6 +283,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspStandardJournalHistory.h \
            displays/dspSubLedger.h \
            displays/dspSubstituteAvailabilityByItem.h \
+           displays/dspSummarizedBacklogByWarehouse.h \
            displays/dspSummarizedBankrecHistory.h \
            displays/dspSummarizedBOM.h \
            displays/dspSummarizedGLTransactions.h \
@@ -309,7 +314,10 @@ HEADERS += displays/dspAllocations.h \
            displays/dspWoMaterialsByItem.h \
            displays/dspWoMaterialsByWorkOrder.h \
            displays/dspWoScheduleByItem.h \
-           displays/dspWoScheduleByWorkOrder.h
+           displays/dspWoScheduleByParameterList.h \
+           displays/dspWoScheduleByWorkOrder.h \
+           displays/dspWoSoStatus.h \
+           displays/dspWoSoStatusMismatch.h
 
 SOURCES += displays/dspAllocations.cpp \
            displays/dspAPApplications.cpp \
@@ -445,6 +453,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspStandardJournalHistory.cpp \
            displays/dspSubLedger.cpp \
            displays/dspSubstituteAvailabilityByItem.cpp \
+           displays/dspSummarizedBacklogByWarehouse.cpp \
            displays/dspSummarizedBankrecHistory.cpp \
            displays/dspSummarizedBOM.cpp \
            displays/dspSummarizedGLTransactions.cpp \
@@ -475,5 +484,8 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspWoMaterialsByItem.cpp \
            displays/dspWoMaterialsByWorkOrder.cpp \
            displays/dspWoScheduleByItem.cpp \
-           displays/dspWoScheduleByWorkOrder.cpp
+           displays/dspWoScheduleByParameterList.cpp \
+           displays/dspWoScheduleByWorkOrder.cpp \
+           displays/dspWoSoStatus.cpp \
+           displays/dspWoSoStatusMismatch.cpp
 

@@ -207,7 +207,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspMRPDetail.ui                               \
           dspPoHistory.ui                               \
           dspRecurringInvoices.ui                       \
-          dspSummarizedBacklogByWarehouse.ui            \
           dspTaxHistory.ui                              \
           dspTimePhasedAvailability.ui                  \
           dspTimePhasedBookingsByCustomer.ui            \
@@ -221,9 +220,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspTimePhasedSalesByItem.ui           \
           dspTimePhasedSalesByProductCategory.ui\
           dspTimePhasedUsageStatisticsByItem.ui \
-          dspWoScheduleByParameterList.ui       \
-          dspWoSoStatus.ui                      \
-          dspWoSoStatusMismatch.ui              \
           duplicateAccountNumbers.ui            \
           editICMWatermark.ui           \
           editOwners.ui                 \
@@ -767,7 +763,6 @@ HEADERS = ../common/format.h                    \
           dspMRPDetail.h                                \
           dspPoHistory.h                                \
           dspRecurringInvoices.h                \
-          dspSummarizedBacklogByWarehouse.h     \
           dspTaxHistory.h                               \
           dspTimePhasedAvailability.h                   \
           dspTimePhasedBookingsByCustomer.h             \
@@ -781,9 +776,6 @@ HEADERS = ../common/format.h                    \
           dspTimePhasedSalesByItem.h            \
           dspTimePhasedSalesByProductCategory.h \
           dspTimePhasedUsageStatisticsByItem.h  \
-          dspWoScheduleByParameterList.h        \
-          dspWoSoStatus.h                       \
-          dspWoSoStatusMismatch.h               \
           duplicateAccountNumbers.h             \
           editICMWatermark.h                    \
           editOwners.h                          \
@@ -1363,7 +1355,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspMRPDetail.cpp                              \
           dspPoHistory.cpp                              \
           dspRecurringInvoices.cpp                      \
-          dspSummarizedBacklogByWarehouse.cpp           \
           dspTaxHistory.cpp                             \
           dspTimePhasedAvailability.cpp                 \
           dspTimePhasedBookingsByCustomer.cpp           \
@@ -1377,9 +1368,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspTimePhasedSalesByItem.cpp                  \
           dspTimePhasedSalesByProductCategory.cpp       \
           dspTimePhasedUsageStatisticsByItem.cpp        \
-          dspWoScheduleByParameterList.cpp      \
-          dspWoSoStatus.cpp                     \
-          dspWoSoStatusMismatch.cpp             \
           duplicateAccountNumbers.cpp           \
           editICMWatermark.cpp                  \
           editOwners.cpp                        \

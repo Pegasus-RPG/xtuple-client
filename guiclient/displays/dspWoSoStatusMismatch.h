@@ -8,29 +8,25 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPWOSOSTATUS_H
-#define DSPWOSOSTATUS_H
+#ifndef DSPWOSOSTATUSMISMATCH_H
+#define DSPWOSOSTATUSMISMATCH_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_dspWoSoStatus.h"
+#include "ui_dspWoSoStatusMismatch.h"
 
-class dspWoSoStatus : public XWidget, public Ui::dspWoSoStatus
+class dspWoSoStatusMismatch : public display, public Ui::dspWoSoStatusMismatch
 {
     Q_OBJECT
 
 public:
-    dspWoSoStatus(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspWoSoStatus();
+    dspWoSoStatusMismatch(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
     virtual bool setParams(ParameterList & );
 
 public slots:
-    virtual void sPrint();
     virtual void sCloseWo();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
-    virtual void sFillList();
-    virtual void sHandleAutoUpdate( bool pAutoUpdate );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected, int);
     virtual void sViewWomatlreq();
 
 protected slots:
@@ -38,4 +34,4 @@ protected slots:
 
 };
 
-#endif // DSPWOSOSTATUS_H
+#endif // DSPWOSOSTATUSMISMATCH_H

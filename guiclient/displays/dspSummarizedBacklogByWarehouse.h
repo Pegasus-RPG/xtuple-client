@@ -11,34 +11,31 @@
 #ifndef DSPSUMMARIZEDBACKLOGBYWAREHOUSE_H
 #define DSPSUMMARIZEDBACKLOGBYWAREHOUSE_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspSummarizedBacklogByWarehouse.h"
 
-class dspSummarizedBacklogByWarehouse : public XWidget, public Ui::dspSummarizedBacklogByWarehouse
+class dspSummarizedBacklogByWarehouse : public display, public Ui::dspSummarizedBacklogByWarehouse
 {
     Q_OBJECT
 
 public:
     dspSummarizedBacklogByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspSummarizedBacklogByWarehouse();
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sHandlePrices( bool pShowPrices );
-    virtual void sPrint();
     virtual void sInventoryAvailabilityBySalesOrder();
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
     virtual void sPrintPackingList();
-    virtual void sPopulateMenu( QMenu * pMenu );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
     virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
-    virtual bool setParams(ParameterList &);
 
 };
 

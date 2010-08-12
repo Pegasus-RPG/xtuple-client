@@ -12,18 +12,16 @@
 #define DSPWOSCHEDULEBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspWoScheduleByParameterList.h"
 
-class dspWoScheduleByParameterList : public XWidget, public Ui::dspWoScheduleByParameterList
+class dspWoScheduleByParameterList : public display, public Ui::dspWoScheduleByParameterList
 {
     Q_OBJECT
 
 public:
     dspWoScheduleByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspWoScheduleByParameterList();
 
     virtual bool setParams(ParameterList &);
 
@@ -36,14 +34,11 @@ public slots:
     virtual void sDspRunningAvailability();
     virtual void sEdit();
     virtual void sExplodeWO();
-    virtual void sFillList();
-    virtual void sHandleAutoUpdate( bool pAutoUpdate );
     virtual void sImplodeWO();
     virtual void sInventoryAvailabilityByWorkOrder();
     virtual void sIssueWoMaterialItem();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected, int);
     virtual void sPostProduction();
-    virtual void sPrint();
     virtual void sPrintTraveler();
     virtual void sRecallWO();
     virtual void sReleaseWO();
@@ -57,9 +52,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void sHandleButtons();
-
 
 };
 
