@@ -84,6 +84,10 @@ enum SetResponse address::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      q.exec("SELECT fetchNextNumber('AddressNumber') AS result;");
+      q.first();
+      _addr->setNumber(q.value("result").toString());
+      _addr->setLine1("Address" + QDateTime::currentDateTime().toString());
       int addrSaveResult = _addr->save(AddressCluster::CHANGEONE);
       if (addrSaveResult < 0)
       {
@@ -94,6 +98,7 @@ enum SetResponse address::set(const ParameterList &pParams)
 	return UndefinedError;
       }
       _comments->setId(_addr->id());
+      _addr->setLine1("");
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       _addr->setFocus();
