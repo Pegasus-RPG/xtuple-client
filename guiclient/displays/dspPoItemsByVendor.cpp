@@ -48,6 +48,7 @@ dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char*, Qt::WFlags 
   list()->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
   list()->addColumn(tr("Vend. Item #"), _itemColumn, Qt::AlignLeft,   true,  "poitem_vend_item_number");
   list()->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "itemuom" );
+  list()->addColumn(tr("Vend. UOM"),   _uomColumn,   Qt::AlignCenter, true,  "poitem_vend_uom" );
   list()->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_ordered"  );
   list()->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_received"  );
   list()->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_returned"  );
