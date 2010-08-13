@@ -80,7 +80,7 @@ void dspTimePhasedSalesByCustomerByItem::sPrint()
 void dspTimePhasedSalesByCustomerByItem::sViewShipments()
 {
   ParameterList params;
-  params.append("cust_id", _sohist->id());
+  params.append("cust_id", _cust->id());
   params.append("startDate", _columnDates[_column - 2].startDate);
   params.append("endDate", _columnDates[_column - 2].endDate);
   params.append("run");
