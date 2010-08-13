@@ -97,6 +97,8 @@ void message(const QString &, int = 0);
 void resetMessage();
 void audioAccept();
 void audioReject();
+QString translationFile(const QString localestr, const QString component);
+QString translationFile(const QString localestr, const QString component, QString &version);
 
 extern bool _evaluation;
 

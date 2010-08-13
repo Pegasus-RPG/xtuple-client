@@ -361,18 +361,6 @@ int main(int argc, char *argv[])
                   " AND (usr_locale_id=locale_id) );" );
   if (langq.first())
   {
-    QStringList paths;
-    paths << "dict";
-    paths << "";
-    paths << "../dict";
-    paths << app.applicationDirPath() + "/dict";
-    paths << app.applicationDirPath();
-    paths << app.applicationDirPath() + "/../dict";
-#if defined Q_WS_MACX
-    paths << app.applicationDirPath() + "/../../../dict";
-    paths << app.applicationDirPath() + "/../../..";
-#endif
-    
     QStringList files;
     if (!langq.value("locale_lang_file").toString().isEmpty())
       files << langq.value("locale_lang_file").toString();
@@ -391,47 +379,42 @@ int main(int argc, char *argv[])
 
     if(!langext.isEmpty())
     {
-      files << "xTuple." + langext;
-      files << "openrpt." + langext;
-      files << "reports." + langext;
+      files << "xTuple";
+      files << "openrpt";
+      files << "reports";
 
-      XSqlQuery pkglist("SELECT pkghead_name FROM pkghead WHERE packageIsEnabled(pkghead_name);");
+      XSqlQuery pkglist("SELECT pkghead_name"
+                        "  FROM pkghead"
+                        " WHERE packageIsEnabled(pkghead_name);");
       while(pkglist.next())
-      {
-        files << pkglist.value("pkghead_name").toString() + "." + langext;
-      }
+        files << pkglist.value("pkghead_name").toString();
     }
 
     if (files.size() > 0)
     {
-      bool langFound = false;
-
+      QStringList notfound;
       QTranslator *translator = new QTranslator(&app);
       for (QStringList::Iterator fit = files.begin(); fit != files.end(); ++fit)
       {
-        for(QStringList::Iterator pit = paths.begin(); pit != paths.end(); ++pit)
+        if (DEBUG)
+          qDebug("looking for %s", (*fit).toAscii().data());
+        if (translator->load(translationFile(langext, *fit)))
         {
-          if (DEBUG)
-            qDebug("looking for %s in %s",
-                   (*fit).toAscii().data(), (*pit).toAscii().data());
-          if (translator->load(*fit, *pit))
-          {
-            app.installTranslator(translator);
-            langFound = true;
-            qDebug("installed %s/%s",
-                   (*pit).toAscii().data(), (*fit).toAscii().data());
-            translator = new QTranslator(&app);
-            break;
-          }
+          app.installTranslator(translator);
+          qDebug("installed %s", (*fit).toAscii().data());
+          translator = new QTranslator(&app);
         }
+        else
+          notfound << *fit;
       }
 
-      if (!langFound && !_preferences->boolean("IngoreMissingTranslationFiles"))
+      if (! notfound.isEmpty() &&
+          !_preferences->boolean("IngoreMissingTranslationFiles"))
         QMessageBox::warning( 0, QObject::tr("Cannot Load Dictionary"),
                               QObject::tr("<p>The Translation Dictionaries %1 "
                                           "cannot be loaded. Reverting "
                                           "to the default dictionary." )
-                                       .arg(files.join(QObject::tr(", "))));
+                                       .arg(notfound.join(QObject::tr(", "))));
     }
 
     /* set the locale to langabbr_countryabbr, langabbr, {lang# country#}, or

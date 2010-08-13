@@ -1226,6 +1226,82 @@ void audioReject()
   qApp->beep();
 }
 
+/** \brief Find the translation file for a given locale.
+
+    Looks for the translation %file for a particular locale in all of the
+    standard places xTuple ERP knows to look. The first %file found is returned
+    even if it isn't the most complete, specific, or up-to-date.
+
+    \param localestr The locale to look for, in standard format.
+    \param component The application component for which to find a
+                     translation file (empty string means core)
+
+    \return The path to the translation file (may be relative or absolute)
+ */
+QString translationFile(QString localestr, const QString component)
+{
+  QString version = QString::null;
+  return translationFile(localestr, component, version);
+}
+
+/** \brief Find the translation file for a given locale.
+
+    This overload should be used primarily by the Update Manager.
+
+    Looks for the translation %file for a particular locale in all
+    of the standard places xTuple ERP knows to look. The first %file
+    found is returned even if it isn't the most complete, specific,
+    or up-to-date.  If translation %file is found for the locale,
+    this overload of translationFile(QString) tries to extract a
+    version number from the translation %file and pass it back to
+    the caller.
+
+    The base translation file is expected to have a \c Version
+    string in the component context. Translations from that base
+    translation %file are expected to translate the \c Version
+    string to something meaningful that can be put in the compatibility
+    matrix. One suggestion is \c major.minor.percent-complete ,
+    where \c major and \c minor are component release numbers and
+    percent-complete indicates how much of the base translation
+    file has been completed.
+
+    \param[in]  localestr The locale to look for, in standard format.
+    \param[in]  component The application component for which to find a
+                          translation file (empty string means core)
+    \param[out] version   The version string found in the translation file or
+                          an empty string if none was found.
+
+    \return The path to the translation file (may be relative or absolute)
+ */
+QString translationFile(QString localestr, const QString component, QString &version)
+{
+  QStringList paths;
+  paths << "dict";
+  paths << "";
+  paths << "../dict";
+  paths << QApplication::applicationDirPath() + "/dict";
+  paths << QApplication::applicationDirPath();
+  paths << QApplication::applicationDirPath() + "/../dict";
+#if defined Q_WS_MACX
+  paths << QApplication::applicationDirPath() + "/../../../dict";
+  paths << QApplication::applicationDirPath() + "/../../..";
+#endif
+
+  QTranslator translator;
+  for (QStringList::Iterator pit = paths.begin(); pit != paths.end(); pit++)
+  {
+    QString filename = *pit + "/" + component + "." + localestr;
+    if (translator.load(filename))
+    {
+      if (! version.isNull())
+        version = translator.translate(component.toAscii().data(), "Version");
+
+      return filename;
+    }
+  }
+
+  return QString::null;
+}
 
 void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
 {
