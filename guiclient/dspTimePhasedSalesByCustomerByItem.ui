@@ -45,12 +45,18 @@ to be bound by its terms.</comment>
             <number>7</number>
            </property>
            <item>
-            <widget class="ParameterGroup" name="_customerType">
-             <property name="title">
-              <string/>
+            <widget class="CustCluster" name="_cust">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <property name="fixedSize">
-              <bool>false</bool>
+             <property name="minimumSize">
+              <size>
+               <width>270</width>
+               <height>75</height>
+              </size>
              </property>
             </widget>
            </item>

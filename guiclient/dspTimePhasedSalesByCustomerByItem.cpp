@@ -42,11 +42,10 @@ dspTimePhasedSalesByCustomerByItem::dspTimePhasedSalesByCustomerByItem(QWidget* 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
   
-  _customerType->setType(ParameterGroup::CustomerType);
   _productCategory->setType(ParameterGroup::ProductCategory);
   
-  _sohist->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft,   true,  "cust_number" );
-  _sohist->addColumn(tr("Customer"), 180,          Qt::AlignLeft,   true,  "cust_name" );
+  _sohist->addColumn(tr("Item #"),  _orderColumn, Qt::AlignLeft,   true,  "item_number" );
+  _sohist->addColumn(tr("Description"), 180,          Qt::AlignLeft,   true,  "item_descrip1" );
 }
 
 dspTimePhasedSalesByCustomerByItem::~dspTimePhasedSalesByCustomerByItem()
@@ -132,7 +131,7 @@ void dspTimePhasedSalesByCustomerByItem::sFillList()
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  MetaSQLQuery mql = mqlLoad("timePhasedSalesByCustomer", "detail");
+  MetaSQLQuery mql = mqlLoad("timePhasedSalesByCustomerByItem", "detail");
   q = mql.toQuery(params);
 
   _sohist->populate(q);
@@ -140,6 +139,12 @@ void dspTimePhasedSalesByCustomerByItem::sFillList()
 
 bool dspTimePhasedSalesByCustomerByItem::setParams(ParameterList & params)
 {
+  if (!_cust->isValid())
+  {
+    return false;
+  }
+
+  params.append("cust_id", _cust->id());
   params.append("period_list", _periods->periodList());
 
   if (_productCategory->isSelected())
@@ -152,15 +157,6 @@ bool dspTimePhasedSalesByCustomerByItem::setParams(ParameterList & params)
     params.append("prodcat_pattern", _productCategory->pattern());
   }
 
-  if (_customerType->isSelected())
-    params.append("custtype_id", _customerType->id());
-  else if (_customerType->isPattern())
-  {
-    QString pattern = _customerType->pattern();
-    if (pattern.length() == 0)
-      return false;
-    params.append("custtype_pattern", _customerType->pattern());
-  }
   return true;
 }
 
@@ -192,7 +188,7 @@ ParameterList dspTimePhasedSalesByCustomerByItem::buildParameters()
 {
   ParameterList params;
 
-  _customerType->appendValue(params);
+  params.append("cust_id", _cust->id());
   _productCategory->appendValue(params);
 
   QList<XTreeWidgetItem*> selected = _periods->selectedItems();
