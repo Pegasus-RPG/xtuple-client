@@ -42,9 +42,6 @@ public slots:
 protected slots:
     virtual void languageChange();
     virtual void sPopulateMenu(QMenu *);
-  
-private:
-    XErrorMessage *_upgradeWarn;
 
 };
 

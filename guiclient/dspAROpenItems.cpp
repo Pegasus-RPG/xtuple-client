@@ -92,6 +92,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
   _aropen->addColumn(baseBalanceTitle,   _moneyColumn, Qt::AlignRight,  true,  "base_balance");
   _aropen->addColumn(tr("Credit Card"),            -1, Qt::AlignLeft,   false, "ccard_number");
+  _aropen->addColumn(tr("Notes"),                  -1, Qt::AlignLeft,   false, "notes");
   
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillList()));

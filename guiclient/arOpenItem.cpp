@@ -542,10 +542,11 @@ void arOpenItem::populate()
                  "       CASE WHEN (arapply_target_doctype = 'I') THEN :invoice"
                  "            WHEN (arapply_target_doctype = 'D') THEN :debitMemo"
                  "            WHEN (arapply_target_doctype = 'K') THEN :apcheck"
+                 "            WHEN (arapply_target_doctype = 'R') THEN :cashreceipt"
                  "            ELSE :other"
                  "       END AS doctype,"
                  "       arapply_target_docnumber AS docnumber,"
-                 "       arapply_postdate, arapply_applied,"
+                 "       arapply_distdate, arapply_postdate, arapply_applied,"
                  "       currConcat(arapply_curr_id) AS currabbr,"
                  "       currToBase(arapply_curr_id, arapply_applied, arapply_postdate) AS baseapplied,"
                  "       'curr' AS arapply_applied_xtnumericrole,"
@@ -557,6 +558,7 @@ void arOpenItem::populate()
       q.bindValue(":invoice", tr("Invoice"));
       q.bindValue(":debitMemo", tr("Debit Memo"));
       q.bindValue(":apcheck", tr("A/P Check"));
+      q.bindValue(":cashreceipt", tr("Cash Receipt"));
     }
 
     q.bindValue(":error", tr("Error"));

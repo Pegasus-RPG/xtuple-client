@@ -70,6 +70,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_received, SIGNAL(idChanged(int)), this, SLOT(sChangeCurrency(int)));
   connect(_distDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
   connect(_applDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
+  connect(_credits, SIGNAL(toggled(bool)), this, SLOT(sFillApplyList()));
   if (_metrics->boolean("CCAccept"))
   {
     connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
@@ -96,7 +97,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _aropen->addColumn(tr("Ord. #"),    _orderColumn,    Qt::AlignCenter, true, "aropen_ordernumber");
   _aropen->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter, true, "aropen_docdate");
   _aropen->addColumn(tr("Due Date"),  _dateColumn,     Qt::AlignCenter, true, "aropen_duedate");
-  _aropen->addColumn(tr("Open"),      _bigMoneyColumn, Qt::AlignRight,  true, "balance");
+  _aropen->addColumn(tr("Balance"),   _bigMoneyColumn, Qt::AlignRight,  true, "balance");
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "balance_curr");
   _aropen->addColumn(tr("Applied"),   _bigMoneyColumn, Qt::AlignRight,  true, "applied");
   _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "applied_curr");
@@ -284,10 +285,11 @@ void cashReceipt::sApplyToBalance()
   applyToBal.exec();
 
   applyToBal.prepare("SELECT applyCashReceiptToBalance(:cashrcpt_id, "
-                     "             :amount, :curr_id) AS result;");
+                     "             :amount, :curr_id, :inclCredits) AS result;");
   applyToBal.bindValue(":cashrcpt_id", _cashrcptid);
   applyToBal.bindValue(":amount", _received->localValue());
   applyToBal.bindValue(":curr_id", _received->id());
+  applyToBal.bindValue(":inclCredits", _credits->isChecked());
   applyToBal.exec();
   if (applyToBal.lastError().type() != QSqlError::NoError)
       systemError(this, applyToBal.lastError().databaseText(), __FILE__, __LINE__);
@@ -365,7 +367,18 @@ void cashReceipt::sApplyLineBalance()
 	       "            :cashrcptitem_aropen_id,:amount,:curr_id) AS result;" );
     q.bindValue(":cashrcpt_id", _cashrcptid);
     q.bindValue(":cashrcptitem_aropen_id", cursor->id());
-    q.bindValue(":amount", _received->localValue());
+    if (_aropen->rawValue("doctype").toString() == "I" ||
+        _aropen->rawValue("doctype").toString() == "D")
+      q.bindValue(":amount", _received->localValue());
+    else
+    {
+      // Total credit available is unapplied credit in receipt currency
+      double credit = _received->convert(_aropen->rawValue("balance_curr").toInt(),
+                                         _received->id(),
+                                         _aropen->rawValue("balance").toDouble(),
+                                         _distDate->date());
+      q.bindValue(":amount", credit);
+    }
     q.bindValue(":curr_id", _received->id());
     q.exec();
     if (q.first())
@@ -695,8 +708,12 @@ void cashReceipt::sFillApplyList()
     params.append("cust_id",     _cust->id());
     params.append("debitMemo",   tr("Debit Memo"));
     params.append("invoice",     tr("Invoice"));
+    params.append("creditMemo",  tr("Credit Memo"));
+    params.append("cashdeposit", tr("Customer Deposit"));
     if (_posted)
-       params.append("posted", true);
+      params.append("posted", true);
+    else if (!_credits->isChecked())
+      params.append("noCredits");
     XSqlQuery apply;
     apply = mql.toQuery(params);
     _aropen->populate(apply, true);

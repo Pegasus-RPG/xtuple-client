@@ -55,8 +55,6 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
   _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_applied"  );
   
-  _upgradeWarn = new XErrorMessage(this);
-  
   _new->setEnabled(_privileges->check("MaintainCashReceipts"));
   
   sHandleButtons(false);
@@ -149,15 +147,7 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
     pParams.append("LegacyDisplayMode");
   }
   else
-  { 
     _arapply->showColumn("cashrcpt_number");
-    if(_metrics->boolean("LegacyCashReceipts"))
-    {
-      _upgradeWarn->showMessage(
-        tr("This feature was introduced in version 3.3.0.  "
-           "Cash Receipts prior to this version will not be displayed."));
-    }
-  }
   return true;
 }
 
