@@ -98,7 +98,7 @@ void items::sPopulateMenu(QMenu *pMenu)
 
   QAction *tmpaction = pMenu->addAction(tr("Delete..."));
   connect(tmpaction, SIGNAL(triggered()), this, SLOT(sDelete()));
-  tmpaction->setEnabled(_privileges->check("MaintainItemMasters"));
+  tmpaction->setEnabled(_privileges->check("DeleteItemMasters"));
   tmpaction->setObjectName("items.popup.delete");
 }
 
