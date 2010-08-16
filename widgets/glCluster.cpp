@@ -37,6 +37,7 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
   _typeMap.insert("E",tr("Expense"));
   _typeMap.insert("Q", tr("Equity"));
 
+  setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
   setType(GLCluster::cUndefined);
 }
 
@@ -45,6 +46,13 @@ void GLClusterLineEdit::setId(const int pId)
   setStrict(false);
   VirtualClusterLineEdit::setId(pId);
   setStrict(true);
+}
+
+void GLClusterLineEdit::setNumber(const QString &pNumber)
+{
+  _parsed = false;
+  setText(pNumber);
+  VirtualClusterLineEdit::sParse();
 }
 
 void GLClusterLineEdit::setType(unsigned int pType)
