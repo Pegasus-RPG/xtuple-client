@@ -11,35 +11,25 @@
 #ifndef DSPTIMEPHASEDBOOKINGSBYITEM_H
 #define DSPTIMEPHASEDBOOKINGSBYITEM_H
 
-#include "xwidget.h"
-#include <QList>
-#include <parameter.h>
+#include "displayTimePhased.h"
+
 #include "ui_dspTimePhasedBookingsByItem.h"
 
-class dspTimePhasedBookingsByItem : public XWidget, public Ui::dspTimePhasedBookingsByItem
+class dspTimePhasedBookingsByItem : public displayTimePhased, public Ui::dspTimePhasedBookingsByItem
 {
     Q_OBJECT
 
 public:
     dspTimePhasedBookingsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspTimePhasedBookingsByItem();
 
-    virtual ParameterList buildParameters();
-    virtual bool setParams(ParameterList &);
+    virtual bool setParamsTP(ParameterList &);
 
 public slots:
-    virtual void sPrint();
     virtual void sViewBookings();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected, int pColumn );
-    virtual void sFillList();
-    virtual void sSubmit();
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int pColumn);
 
 protected slots:
     virtual void languageChange();
-
-private:
-    int _column;
-    QList<DatePair> _columnDates;
 
 };
 

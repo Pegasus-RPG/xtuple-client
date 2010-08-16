@@ -129,6 +129,11 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspSummarizedSalesByItem.ui \
            displays/dspSummarizedSalesBySalesRep.ui \
            displays/dspSummarizedSalesHistoryByShippingZone.ui \
+           displays/dspTimePhasedAvailability.ui \
+           displays/dspTimePhasedBookingsByCustomer.ui \
+           displays/dspTimePhasedBookingsByItem.ui \
+           displays/dspTimePhasedBookingsByProductCategory.ui \
+           displays/dspTimePhasedUsageStatisticsByItem.ui \
            displays/dspTodoByUserAndIncident.ui \
            displays/dspTrialBalances.ui \
            displays/dspUnbalancedQOHByClassCode.ui \
@@ -296,6 +301,11 @@ HEADERS += displays/dspAllocations.h \
            displays/dspSummarizedSalesByItem.h \
            displays/dspSummarizedSalesBySalesRep.h \
            displays/dspSummarizedSalesHistoryByShippingZone.h \
+           displays/dspTimePhasedAvailability.h \
+           displays/dspTimePhasedBookingsByCustomer.h \
+           displays/dspTimePhasedBookingsByItem.h \
+           displays/dspTimePhasedBookingsByProductCategory.h \
+           displays/dspTimePhasedUsageStatisticsByItem.h \
            displays/dspTodoByUserAndIncident.h \
            displays/dspTrialBalances.h \
            displays/dspUnbalancedQOHByClassCode.h \
@@ -467,6 +477,11 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspSummarizedSalesByItem.cpp \
            displays/dspSummarizedSalesBySalesRep.cpp \
            displays/dspSummarizedSalesHistoryByShippingZone.cpp \
+           displays/dspTimePhasedAvailability.cpp \
+           displays/dspTimePhasedBookingsByCustomer.cpp \
+           displays/dspTimePhasedBookingsByItem.cpp \
+           displays/dspTimePhasedBookingsByProductCategory.cpp \
+           displays/dspTimePhasedUsageStatisticsByItem.cpp \
            displays/dspTodoByUserAndIncident.cpp \
            displays/dspTrialBalances.cpp \
            displays/dspUnbalancedQOHByClassCode.cpp \

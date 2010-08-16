@@ -11,40 +11,32 @@
 #ifndef DSPTIMEPHASEDAVAILABILITY_H
 #define DSPTIMEPHASEDAVAILABILITY_H
 
-#include "xwidget.h"
+#include "displayTimePhased.h"
 #include <QList>
 
 #include "ui_dspTimePhasedAvailability.h"
 
-class dspTimePhasedAvailability : public XWidget, public Ui::dspTimePhasedAvailability
+class dspTimePhasedAvailability : public displayTimePhased, public Ui::dspTimePhasedAvailability
 {
     Q_OBJECT
 
 public:
     dspTimePhasedAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspTimePhasedAvailability();
-    bool setParams(ParameterList & params);
+
+    bool setParamsTP(ParameterList & params);
 
 public slots:
-    virtual void sPrint();
-    virtual void sSubmit();
     virtual void sViewAvailability();
     virtual void sViewOrders();
     virtual void sViewAllocations();
     virtual void sCreateWO();
     virtual void sCreatePR();
     virtual void sCreatePO();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected, int pColumn );
-    virtual void sCalculate();
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int pColumn);
 
 protected slots:
     virtual void languageChange();
 
-private:
-    int _column;
-    QList<DatePair> _columnDates;
-
-    ParameterList buildParameters();
 };
 
 #endif // DSPTIMEPHASEDAVAILABILITY_H

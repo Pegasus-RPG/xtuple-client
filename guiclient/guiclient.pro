@@ -191,6 +191,7 @@ FORMS =   absoluteCalendarItem.ui               \
           department.ui                         \
           departments.ui                        \
           display.ui                            \
+          displayTimePhased.ui                  \
           distributeInventory.ui                \
           distributeToLocation.ui               \
           dspAROpenItems.ui                     \
@@ -206,10 +207,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspInvoiceInformation.ui                      \
           dspMRPDetail.ui                               \
           dspTaxHistory.ui                              \
-          dspTimePhasedAvailability.ui                  \
-          dspTimePhasedBookingsByCustomer.ui            \
-          dspTimePhasedBookingsByItem.ui                \
-          dspTimePhasedBookingsByProductCategory.ui     \
           dspTimePhasedOpenAPItems.ui           \
           dspTimePhasedOpenARItems.ui           \
           dspTimePhasedSalesByCustomer.ui       \
@@ -217,7 +214,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspTimePhasedSalesByCustomerGroup.ui  \
           dspTimePhasedSalesByItem.ui           \
           dspTimePhasedSalesByProductCategory.ui\
-          dspTimePhasedUsageStatisticsByItem.ui \
           duplicateAccountNumbers.ui            \
           editICMWatermark.ui           \
           editOwners.ui                 \
@@ -746,6 +742,7 @@ HEADERS = ../common/format.h                    \
           department.h                          \
           departments.h                         \
           display.h                             \
+          displayTimePhased.h                   \
           distributeInventory.h                 \
           distributeToLocation.h                \
           dspAROpenItems.h                      \
@@ -761,10 +758,6 @@ HEADERS = ../common/format.h                    \
           dspInvoiceInformation.h                       \
           dspMRPDetail.h                                \
           dspTaxHistory.h                               \
-          dspTimePhasedAvailability.h                   \
-          dspTimePhasedBookingsByCustomer.h             \
-          dspTimePhasedBookingsByItem.h                 \
-          dspTimePhasedBookingsByProductCategory.h      \
           dspTimePhasedOpenAPItems.h            \
           dspTimePhasedOpenARItems.h            \
           dspTimePhasedSalesByCustomer.h        \
@@ -772,7 +765,6 @@ HEADERS = ../common/format.h                    \
           dspTimePhasedSalesByCustomerGroup.h   \
           dspTimePhasedSalesByItem.h            \
           dspTimePhasedSalesByProductCategory.h \
-          dspTimePhasedUsageStatisticsByItem.h  \
           duplicateAccountNumbers.h             \
           editICMWatermark.h                    \
           editOwners.h                          \
@@ -1337,6 +1329,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           department.cpp                        \
           departments.cpp                       \
           display.cpp                           \
+          displayTimePhased.cpp                 \
           distributeInventory.cpp               \
           distributeToLocation.cpp              \
           dspAROpenItems.cpp                    \
@@ -1352,10 +1345,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspInvoiceInformation.cpp                     \
           dspMRPDetail.cpp                              \
           dspTaxHistory.cpp                             \
-          dspTimePhasedAvailability.cpp                 \
-          dspTimePhasedBookingsByCustomer.cpp           \
-          dspTimePhasedBookingsByItem.cpp               \
-          dspTimePhasedBookingsByProductCategory.cpp    \
           dspTimePhasedOpenAPItems.cpp                  \
           dspTimePhasedOpenARItems.cpp                  \
           dspTimePhasedSalesByCustomer.cpp              \
@@ -1363,7 +1352,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspTimePhasedSalesByCustomerGroup.cpp         \
           dspTimePhasedSalesByItem.cpp                  \
           dspTimePhasedSalesByProductCategory.cpp       \
-          dspTimePhasedUsageStatisticsByItem.cpp        \
           duplicateAccountNumbers.cpp           \
           editICMWatermark.cpp                  \
           editOwners.cpp                        \

@@ -11,37 +11,25 @@
 #ifndef DSPTIMEPHASEDUSAGESTATISTICSBYITEM_H
 #define DSPTIMEPHASEDUSAGESTATISTICSBYITEM_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "displayTimePhased.h"
 
 #include "ui_dspTimePhasedUsageStatisticsByItem.h"
 
-#include <QList>
-
-class dspTimePhasedUsageStatisticsByItem : public XWidget, public Ui::dspTimePhasedUsageStatisticsByItem
+class dspTimePhasedUsageStatisticsByItem : public displayTimePhased, public Ui::dspTimePhasedUsageStatisticsByItem
 {
     Q_OBJECT
 
 public:
     dspTimePhasedUsageStatisticsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspTimePhasedUsageStatisticsByItem();
-    virtual bool setParams(ParameterList &);
+
+    virtual bool setParamsTP(ParameterList &);
 
 public slots:
-    virtual void sPrint();
-    virtual void sSubmit();
     virtual void sViewTransactions();
-    virtual void sPopulateMenu( QMenu * menu, QTreeWidgetItem *, int pColumn );
-    virtual void sCalculate();
+    virtual void sPopulateMenu(QMenu * menu, QTreeWidgetItem *, int pColumn);
 
 protected slots:
     virtual void languageChange();
-
-private:
-    int _column;
-    QList<DatePair> _columnDates;
-
-    ParameterList buildParameters();
 };
 
 #endif // DSPTIMEPHASEDUSAGESTATISTICSBYITEM_H

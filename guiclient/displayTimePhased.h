@@ -13,22 +13,34 @@
 
 #include "display.h"
 
+#include "calendarTools.h"
+
 class displayTimePhasedPrivate;
 
-class displayTimePhased : public XWidget
+class displayTimePhased : public display
 {
     Q_OBJECT
 
-    friend class displayPrivate;
+    friend class displayTimePhasedPrivate;
 
 public:
     displayTimePhased(QWidget* = 0, const char* = 0, Qt::WindowFlags = 0);
     ~displayTimePhased();
 
-    virtual bool setParams(ParameterList &) = 0;
+    virtual bool setParams(ParameterList &);
+
+public slots:
+    virtual void sFillList();
 
 protected:
     Q_INVOKABLE QWidget * optionsWidget();
+    virtual bool setParamsTP(ParameterList &) = 0;
+
+    int _column;
+    QList<DatePair> _columnDates;
+
+protected slots:
+    virtual void languageChange();
 
 private:
     displayTimePhasedPrivate * _data;
