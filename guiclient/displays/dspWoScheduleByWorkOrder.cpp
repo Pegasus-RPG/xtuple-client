@@ -333,6 +333,8 @@ void dspWoScheduleByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
   QAction *menuItem;
 
   menuItem = pMenu->addAction(tr("Edit W/O"), this, SLOT(sEdit()));
+  if (!_privileges->check("MaintainWorkOrders"))
+    menuItem->setEnabled(false);
   menuItem = pMenu->addAction(tr("View W/O"), this, SLOT(sView()));
 
   pMenu->addSeparator();
