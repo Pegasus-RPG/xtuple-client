@@ -23,7 +23,7 @@
 #include "xcombobox.h"
 #include "xsqltablemodel.h"
 
-#define DEBUG false
+#define DEBUG true
 
 GuiClientInterface* XComboBox::_guiClientInterface = 0;
 
@@ -1045,9 +1045,9 @@ void XComboBox::setCode(QString pString)
     setId(-1);
     setItemText(0, pString);
   }
-  else if (count() == _codes.count())
+  else if (_codes.count())
   {
-    for (int counter = ((allowNull()) ? 1 : 0); counter < count(); counter++)
+    for (int counter = 0; counter < count() - ((allowNull()) ? 1 : 0); counter++)
     {
       if (_codes.at(counter) == pString)
       {
