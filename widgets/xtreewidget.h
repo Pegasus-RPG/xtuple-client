@@ -43,6 +43,13 @@
 #define _docTypeColumn  80
 #define _currencyColumn 80
 
+// TODO: would these be better placed in an enum in xt.h?
+#define ROWROLE_INDENT        0
+#define ROWROLE_HIDDEN        1
+#define ROWROLE_DELETED       2
+// make sure ROWROLE_COUNT = last ROWROLE + 1
+#define ROWROLE_COUNT         3
+
 #include "xsqlquery.h"
 
 class QAction;
@@ -312,12 +319,17 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     int           _scol;
     Qt::SortOrder _sord;
     static void   loadLocale();
-    bool          _working;
     QList<XTreeWidgetPopulateParams> _workingParams;
-    bool          _deleted;
     QTimer        _workingTimer;
     bool          _alwaysLinear;
     bool          _linear;
+
+    QVector<int>    *_colIdx;
+    QVector<int *>  *_colRole;
+    int              _fieldCount;
+    XTreeWidgetItem *_last;
+    int              _rowRole[ROWROLE_COUNT];
+    void             cleanupAfterPopulate();
 
   private slots:
     void  sSelectionChanged();
