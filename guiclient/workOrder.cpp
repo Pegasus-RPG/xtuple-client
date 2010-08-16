@@ -1952,6 +1952,8 @@ void workOrder::populate()
       }
       _mode = cEdit;
     }
+    _assembly->setEnabled(false);
+    _disassembly->setEnabled(false);
     _warehouse->setEnabled(false);
     _comments->setReadOnly(false);
     _documents->setReadOnly(false);
