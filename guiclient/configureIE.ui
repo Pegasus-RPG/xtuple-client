@@ -784,27 +784,6 @@ to be bound by its terms.</comment>
                 </item>
                </layout>
               </widget>
-              <widget class="QWidget" name="page_15">
-               <layout class="QGridLayout" name="gridLayout_24">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="_exportMacDirLit">
-                  <property name="text">
-                   <string>Macintosh Directory:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="FileCluster" name="_exportMacDir">
-                  <property name="fileMode">
-                   <enum>QFileDialog::DirectoryOnly</enum>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
               <widget class="QWidget" name="page_14">
                <layout class="QGridLayout" name="gridLayout_23">
                 <item row="0" column="0">
@@ -819,6 +798,27 @@ to be bound by its terms.</comment>
                 </item>
                 <item row="0" column="1">
                  <widget class="FileCluster" name="_exportWindowsDir">
+                  <property name="fileMode">
+                   <enum>QFileDialog::DirectoryOnly</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="page_15">
+               <layout class="QGridLayout" name="gridLayout_24">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="_exportMacDirLit">
+                  <property name="text">
+                   <string>Macintosh Directory:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="FileCluster" name="_exportMacDir">
                   <property name="fileMode">
                    <enum>QFileDialog::DirectoryOnly</enum>
                   </property>
