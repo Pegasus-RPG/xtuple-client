@@ -56,6 +56,7 @@ class QAction;
 class QMenu;
 class QScriptEngine;
 class XTreeWidget;
+class XTreeWidgetProgress;
 
 void  setupXTreeWidgetItem(QScriptEngine *engine);
 void  setupXTreeWidget(QScriptEngine *engine);
@@ -330,6 +331,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     XTreeWidgetItem *_last;
     int              _rowRole[ROWROLE_COUNT];
     void             cleanupAfterPopulate();
+    XTreeWidgetProgress *_progress;
 
   private slots:
     void  sSelectionChanged();

@@ -25,6 +25,8 @@
 #include <QMenu>
 #include <QMimeData>
 #include <QMouseEvent>
+#include <QProgressBar>
+#include <QPushButton>
 #include <QSqlError>
 #include <QSqlRecord>
 #include <QTextCharFormat>
@@ -38,6 +40,7 @@
 #include <QtScript>
 #include <QMessageBox>
 
+#include "xtreewidgetprogress.h"
 #include "xtsettings.h"
 #include "xsqlquery.h"
 #include "format.h"
@@ -117,6 +120,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _last       = 0;
   for (int i = 0; i < ROWROLE_COUNT; i++)
     _rowRole[i] = 0;
+  _progress = 0;
 
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -270,7 +274,11 @@ void XTreeWidget::populateWorker()
     }
   }
 
-  if (pQuery.at() == QSql::BeforeFirstRow) // always false if old style populate
+  /* initialize if we haven't started reading data from the query,
+     taking into account that some places call xsqlquery::first() before
+     xtreewidget::populate()
+   */
+  if (pQuery.at() == QSql::BeforeFirstRow || (pQuery.at() == 0 && ! _colIdx))
   {
     if (popstyle == Replace)
       clear();
@@ -379,6 +387,18 @@ void XTreeWidget::populateWorker()
         setIndentation( 10);
       else
         setIndentation( 0);
+
+      if (! _linear && ! _progress)
+      {
+        _progress = new XTreeWidgetProgress(this);
+        connect(_progress, SIGNAL(cancel()), &_workingTimer, SLOT(stop()));
+      }
+      if (_progress)
+      {
+        _progress->setValue(0);
+        _progress->setMaximum(pQuery.size());
+        _progress->show();
+      }
     }
   }
 
@@ -390,7 +410,10 @@ void XTreeWidget::populateWorker()
     {
       ++cnt;
       if (!_linear && cnt % WORKERROWS == 0)
+      {
+        _progress->setValue(pQuery.at());
         return;
+      }
 
       int id         = pQuery.value(0).toInt();
       int altId      = (pUseAltId) ? pQuery.value(1).toInt() : -1;
@@ -674,6 +697,9 @@ void XTreeWidget::populateWorker()
 
 void XTreeWidget::cleanupAfterPopulate()
 {
+  if (_progress)
+    _progress->hide();
+
   for (unsigned int i = 0; i < sizeof(_rowRole) / sizeof(_rowRole[0]); i++)
     _rowRole[i] = 0;
 
