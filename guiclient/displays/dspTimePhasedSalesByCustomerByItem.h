@@ -11,35 +11,25 @@
 #ifndef DSPTIMEPHASEDSALESBYCUSTOMERBYITEM_H
 #define DSPTIMEPHASEDSALESBYCUSTOMERBYITEM_H
 
-#include "xwidget.h"
-#include <QList>
-#include <parameter.h>
+#include "displayTimePhased.h"
+
 #include "ui_dspTimePhasedSalesByCustomerByItem.h"
 
-class dspTimePhasedSalesByCustomerByItem : public XWidget, public Ui::dspTimePhasedSalesByCustomerByItem
+class dspTimePhasedSalesByCustomerByItem : public displayTimePhased, public Ui::dspTimePhasedSalesByCustomerByItem
 {
     Q_OBJECT
 
 public:
     dspTimePhasedSalesByCustomerByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspTimePhasedSalesByCustomerByItem();
 
-    virtual ParameterList buildParameters();
-    virtual bool setParams(ParameterList &);
+    virtual bool setParamsTP(ParameterList &);
 
 public slots:
-    virtual void sPrint();
     virtual void sViewShipments();
-    virtual void sPopulateMenu( QMenu * menuThis, QTreeWidgetItem *, int pColumn );
-    virtual void sFillList();
-    virtual void sSubmit();
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem *, int pColumn);
 
 protected slots:
     virtual void languageChange();
-
-private:
-    int _column;
-    QList<DatePair> _columnDates;
 
 };
 

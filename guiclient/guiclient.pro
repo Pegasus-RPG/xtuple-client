@@ -209,11 +209,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspTaxHistory.ui                              \
           dspTimePhasedOpenAPItems.ui           \
           dspTimePhasedOpenARItems.ui           \
-          dspTimePhasedSalesByCustomer.ui       \
-          dspTimePhasedSalesByCustomerByItem.ui \
-          dspTimePhasedSalesByCustomerGroup.ui  \
-          dspTimePhasedSalesByItem.ui           \
-          dspTimePhasedSalesByProductCategory.ui\
           duplicateAccountNumbers.ui            \
           editICMWatermark.ui           \
           editOwners.ui                 \
@@ -760,11 +755,6 @@ HEADERS = ../common/format.h                    \
           dspTaxHistory.h                               \
           dspTimePhasedOpenAPItems.h            \
           dspTimePhasedOpenARItems.h            \
-          dspTimePhasedSalesByCustomer.h        \
-          dspTimePhasedSalesByCustomerByItem.h  \
-          dspTimePhasedSalesByCustomerGroup.h   \
-          dspTimePhasedSalesByItem.h            \
-          dspTimePhasedSalesByProductCategory.h \
           duplicateAccountNumbers.h             \
           editICMWatermark.h                    \
           editOwners.h                          \
@@ -1347,11 +1337,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspTaxHistory.cpp                             \
           dspTimePhasedOpenAPItems.cpp                  \
           dspTimePhasedOpenARItems.cpp                  \
-          dspTimePhasedSalesByCustomer.cpp              \
-          dspTimePhasedSalesByCustomerByItem.cpp        \
-          dspTimePhasedSalesByCustomerGroup.cpp         \
-          dspTimePhasedSalesByItem.cpp                  \
-          dspTimePhasedSalesByProductCategory.cpp       \
           duplicateAccountNumbers.cpp           \
           editICMWatermark.cpp                  \
           editOwners.cpp                        \

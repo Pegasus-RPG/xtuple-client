@@ -133,6 +133,11 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspTimePhasedBookingsByCustomer.ui \
            displays/dspTimePhasedBookingsByItem.ui \
            displays/dspTimePhasedBookingsByProductCategory.ui \
+           displays/dspTimePhasedSalesByCustomer.ui \
+           displays/dspTimePhasedSalesByCustomerByItem.ui \
+           displays/dspTimePhasedSalesByCustomerGroup.ui \
+           displays/dspTimePhasedSalesByItem.ui \
+           displays/dspTimePhasedSalesByProductCategory.ui \
            displays/dspTimePhasedUsageStatisticsByItem.ui \
            displays/dspTodoByUserAndIncident.ui \
            displays/dspTrialBalances.ui \
@@ -305,6 +310,11 @@ HEADERS += displays/dspAllocations.h \
            displays/dspTimePhasedBookingsByCustomer.h \
            displays/dspTimePhasedBookingsByItem.h \
            displays/dspTimePhasedBookingsByProductCategory.h \
+           displays/dspTimePhasedSalesByCustomer.h \
+           displays/dspTimePhasedSalesByCustomerByItem.h \
+           displays/dspTimePhasedSalesByCustomerGroup.h \
+           displays/dspTimePhasedSalesByItem.h \
+           displays/dspTimePhasedSalesByProductCategory.h \
            displays/dspTimePhasedUsageStatisticsByItem.h \
            displays/dspTodoByUserAndIncident.h \
            displays/dspTrialBalances.h \
@@ -481,6 +491,11 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspTimePhasedBookingsByCustomer.cpp \
            displays/dspTimePhasedBookingsByItem.cpp \
            displays/dspTimePhasedBookingsByProductCategory.cpp \
+           displays/dspTimePhasedSalesByCustomer.cpp \
+           displays/dspTimePhasedSalesByCustomerByItem.cpp \
+           displays/dspTimePhasedSalesByCustomerGroup.cpp \
+           displays/dspTimePhasedSalesByItem.cpp \
+           displays/dspTimePhasedSalesByProductCategory.cpp \
            displays/dspTimePhasedUsageStatisticsByItem.cpp \
            displays/dspTodoByUserAndIncident.cpp \
            displays/dspTrialBalances.cpp \
