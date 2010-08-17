@@ -19,7 +19,7 @@
 
 #include "xtreewidget.h"
 
-#define DEBUG true
+#define DEBUG false
 
 XTreeWidgetProgress::XTreeWidgetProgress(XTreeWidget *parent)
       : QWidget(parent),
