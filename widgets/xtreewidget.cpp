@@ -435,25 +435,29 @@ void XTreeWidget::populateWorker()
                 qDebug("%s::populate() with id %d altId %d indent %d lastindent %d",
                 qPrintable(objectName()), id, altId, indent, lastindent);
 
+      QObject *parentItem = 0;
+      XTreeWidgetItem *previousItem = _last;
+      _last = new XTreeWidgetItem((XTreeWidgetItem*)0, id, altId);
+
       if (indent == 0)
-        _last = new XTreeWidgetItem(this, id, altId);
+        parentItem = this;
       else if (lastindent < indent)
-        _last = new XTreeWidgetItem(_last, id, altId);
+        parentItem = previousItem;
       else if (lastindent == indent)
-        _last = new XTreeWidgetItem((XTreeWidgetItem *)(_last->QTreeWidgetItem::parent()), id, altId);
+        parentItem = dynamic_cast<XTreeWidgetItem*>(previousItem->QTreeWidgetItem::parent());
       else if (lastindent > indent)
       {
-        XTreeWidgetItem *prev = (XTreeWidgetItem *)(_last->QTreeWidgetItem::parent());
+        XTreeWidgetItem *prev = (XTreeWidgetItem *)(previousItem->QTreeWidgetItem::parent());
         while (prev &&
                prev->data(0, Xt::IndentRole).toInt() >= indent)
           prev = (XTreeWidgetItem *)(prev->QTreeWidgetItem::parent());
         if (prev)
-          _last = new XTreeWidgetItem(prev, id, altId);
+          parentItem = prev;
         else
-          _last = new XTreeWidgetItem(this, id, altId);
+          parentItem = this;
       }
       else
-        _last = new XTreeWidgetItem(this, _last, id, altId);
+        parentItem = this;
 
       if (_rowRole[ROWROLE_INDENT])
         _last->setData(0, Xt::IndentRole, indent);
@@ -591,6 +595,8 @@ void XTreeWidget::populateWorker()
           if (!alignment.isNull())
             _last->setData(col, Qt::TextAlignmentRole, alignment);
         }
+        else
+          _last->setData(col, Qt::TextAlignmentRole, headerItem()->textAlignment(col));
 
         if ((*_colRole)[col][COLROLE_TOOLTIP])
         {
@@ -668,6 +674,12 @@ void XTreeWidget::populateWorker()
                  qPrintable(objectName()));
         _last->setHidden(true);
       }
+
+      if (qobject_cast<XTreeWidget*>(parentItem))
+        qobject_cast<XTreeWidget*>(parentItem)->addTopLevelItem(_last);
+      else if (qobject_cast<XTreeWidgetItem*>(parentItem))
+        qobject_cast<XTreeWidgetItem*>(parentItem)->addChild(_last);
+
     } while (pQuery.next());
 
   setId(pIndex);
