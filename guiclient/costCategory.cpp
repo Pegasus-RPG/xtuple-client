@@ -213,7 +213,7 @@ void costCategory::sSave()
     ;
   if (! error[errIndex].msg.isEmpty())
   {
-    QMessageBox::critical(this, tr("Cannot Save CRM Account"),
+    QMessageBox::critical(this, tr("Cannot Save Cost Category"),
 			  error[errIndex].msg);
     error[errIndex].widget->setFocus();
     return;
