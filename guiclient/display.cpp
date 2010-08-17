@@ -12,12 +12,17 @@
 #include "ui_display.h"
 
 #include <QSqlError>
+#include <QMessageBox>
+#include <QPrinter>
+#include <QPrintDialog>
 
 #include <metasql.h>
 #include <mqlutil.h>
-#include <openreports.h>
+#include <orprerender.h>
+#include <orprintrender.h>
+#include <renderobjects.h>
 #include <parameter.h>
-
+#include <previewdialog.h>
 
 class displayPrivate : public Ui::display
 {
@@ -26,10 +31,13 @@ public:
   {
     setupUi(_parent);
     _print->hide(); // hide the print button until a reportName is set
+    _preview->hide(); // hide the preview button until a reportName is set
     _autoupdate->hide(); // hide until auto update is enabled
     _useAltId = false;
     _autoUpdateEnabled = false;
   }
+
+  void print(bool);
 
   QString reportName;
   QString metasqlName;
@@ -42,12 +50,79 @@ private:
   ::display * _parent;
 };
 
+void displayPrivate::print(bool showPreview)
+{
+  int numCopies = 1;
+
+  ParameterList params;
+  if(!_parent->setParams(params))
+    return;
+
+  XSqlQuery report;
+  report.prepare("SELECT report_grade, report_source "
+                 "  FROM report "
+                 " WHERE (report_name=:report_name)"
+                 " ORDER BY report_grade DESC LIMIT 1");
+  report.bindValue(":report_name", reportName);
+  report.exec();
+  QDomDocument _doc;
+  if (report.first())
+  {
+    QString errorMessage;
+    int     errorLine;
+
+    if (!_doc.setContent(report.value("report_source").toString(), &errorMessage, &errorLine))
+    {
+      QMessageBox::critical(_parent, ::display::tr("Error Parsing Report"),
+        ::display::tr("There was an error Parsing the report definition. %1 %2").arg(errorMessage).arg(errorLine));
+      return;
+    }
+  }
+  else
+  {
+    QMessageBox::critical(_parent, ::display::tr("Report Not Found"),
+      ::display::tr("The report %1 does not exist.").arg(reportName));
+    return;
+  }
+
+  ORPreRender pre;
+  pre.setDom(_doc);
+  pre.setParamList(params);
+  ORODocument * doc = pre.generate();
+
+  if(doc)
+  {
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setNumCopies( numCopies );
+
+    if(showPreview)
+    {
+      PreviewDialog preview (doc, &printer, _parent);
+      if (preview.exec() == QDialog::Rejected)
+        return;
+    }
+
+    ORPrintRender render;
+    render.setupPrinter(doc, &printer);
+
+    QPrintDialog pd(&printer);
+    pd.setMinMax(1, doc->pages());
+    if(pd.exec() == QDialog::Accepted)
+    {
+      render.setPrinter(&printer);
+      render.render(doc);
+    }
+    delete doc;
+  }
+}
+
 display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
     : XWidget(parent, name, flags)
 {
   _data = new displayPrivate(this);
 
   connect(_data->_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_data->_preview, SIGNAL(clicked()), this, SLOT(sPreview()));
   connect(_data->_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_data->_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_data->_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled()));
@@ -78,6 +153,7 @@ void display::setReportName(const QString & reportName)
 {
   _data->reportName = reportName;
   _data->_print->setVisible(!reportName.isEmpty());
+  _data->_preview->setVisible(!reportName.isEmpty());
 }
 
 void display::setMetaSQLOptions(const QString & group, const QString & name)
@@ -115,14 +191,12 @@ bool display::autoUpdateEnabled() const
 
 void display::sPrint()
 {
-  ParameterList params;
-  if (!setParams(params))
-    return;
-  orReport report(_data->reportName, params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
+  _data->print(false);
+}
+
+void display::sPreview()
+{
+  _data->print(true);
 }
 
 void display::sFillList()

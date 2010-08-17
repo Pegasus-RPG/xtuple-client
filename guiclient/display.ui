@@ -49,6 +49,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="_preview">
+         <property name="text">
+          <string>Pre&amp;view</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="_buttonSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
