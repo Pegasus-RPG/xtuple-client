@@ -1028,6 +1028,7 @@ HEADERS = ../common/format.h                    \
           salesReps.h                           \
           scrapTrans.h                          \
           scrapWoMaterialFromWIP.h              \
+          scriptablePrivate.h                   \
           scriptEditor.h                        \
           scripts.h                             \
           scripttoolbox.h                       \
@@ -1609,6 +1610,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           salesReps.cpp                         \
           scrapTrans.cpp                        \
           scrapWoMaterialFromWIP.cpp            \
+          scriptablePrivate.cpp                 \
           scriptEditor.cpp                      \
           scripts.cpp                           \
           scripttoolbox.cpp                     \
