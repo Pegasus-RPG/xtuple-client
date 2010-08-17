@@ -43,7 +43,8 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _modules->addItem(tr("CRM"), Xt::CRMModule);
   _modules->addItem(tr("Manufacture"), Xt::ManufactureModule);
   _modules->addItem(tr("Purchase"), Xt::PurchaseModule);
-  _modules->addItem(tr("Schedule"), Xt::ScheduleModule);
+  if (_metrics->value("Application") != "PostBooks")
+    _modules->addItem(tr("Schedule"), Xt::ScheduleModule);
   _modules->addItem(tr("Inventory"), Xt::InventoryModule);
   _modules->addItem(tr("Products"), Xt::ProductsModule);
   _modules->addItem(tr("System"), Xt::SystemModule);
