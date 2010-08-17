@@ -481,6 +481,12 @@ void initErrorLookupHash()
                                  "before you may delete the selected Customer "
                                  "Type."),                              0, "" },
 
+{ "deleteEmpgrp",       -1, TR("The selected Employee Group cannot be deleted "
+                               "as there are one or more Employees assigned "
+                               "to it. You must reassign these Employees "
+                               "before you may delete the selected Employee "
+                               "Group."),                              0, "" },
+
   { "deleteForm", -1, TR("The selected Check Format cannot be deleted as it is "
                          "used by one or more Bank Accounts. You must reassign "
                          "these Bank Accounts before you may delete the "
