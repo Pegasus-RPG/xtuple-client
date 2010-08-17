@@ -284,33 +284,38 @@ void selectPayments::sSelect()
   for(int i = 0; i < list.size(); i++)
   {
     cursor = (XTreeWidgetItem*)list.at(i);
-    slct.bindValue(":apopen_id", _apopen->id());
+    slct.bindValue(":apopen_id", cursor->id());
     slct.exec();
     if (slct.first())
     {
       if (slct.value("apopen_status").toString() == "H")
-          {
-                QMessageBox::critical( this, tr("Can not do Payment"), tr( "Item is On Hold" ) );
+      {
+        QMessageBox::critical( this, tr("Can not do Payment"), tr( "Item is On Hold" ) );
         return;
-          }
-          else
-          {
-    ParameterList params;
-    params.append("apopen_id", cursor->id());
+      }
+      else
+      {
+        ParameterList params;
+        params.append("apopen_id", cursor->id());
 
-    if(_bankaccnt->id() != -1)
-      params.append("bankaccnt_id", _bankaccnt->id());
+        if(_bankaccnt->id() != -1)
+          params.append("bankaccnt_id", _bankaccnt->id());
 
-    selectPayment newdlg(this, "", TRUE);
-    newdlg.set(params);
-    if(newdlg.exec() != XDialog::Rejected)
-      update = true;
+        selectPayment newdlg(this, "", TRUE);
+        newdlg.set(params);
+        if(newdlg.exec() != XDialog::Rejected)
+          update = true;
+      }
+    }
+    else
+    {
+      QMessageBox::critical( this, tr("Can not do Payment"), tr( "apopen not found" ) );
+      return;
+    }
   }
   _ignoreUpdates = false;
   if(update)
     sFillList();
-}
-  }
 }
 void selectPayments::sSelectLine()
 {
