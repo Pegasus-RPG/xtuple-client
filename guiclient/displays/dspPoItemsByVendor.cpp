@@ -205,7 +205,7 @@ void dspPoItemsByVendor::sEditItem()
   params.append("mode", "edit");
   params.append("poitem_id", list()->altId());
 
-  purchaseOrderItem newdlg(this, "", TRUE);
+  purchaseOrderItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -216,7 +216,7 @@ void dspPoItemsByVendor::sViewItem()
   params.append("mode", "view");
   params.append("poitem_id", list()->altId());
 
-  purchaseOrderItem newdlg(this, "", TRUE);
+  purchaseOrderItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -226,7 +226,7 @@ void dspPoItemsByVendor::sReschedule()
   ParameterList params;
   params.append("poitem_id", list()->altId());
 
-  reschedulePoitem newdlg(this, "", TRUE);
+  reschedulePoitem newdlg(this, "", true);
   if(newdlg.set(params) != UndefinedError)
     if (newdlg.exec() != XDialog::Rejected)
       sFillList();
@@ -237,7 +237,7 @@ void dspPoItemsByVendor::sChangeQty()
   ParameterList params;
   params.append("poitem_id", list()->altId());
 
-  changePoitemQty newdlg(this, "", TRUE);
+  changePoitemQty newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();

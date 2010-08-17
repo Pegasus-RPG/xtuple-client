@@ -34,7 +34,7 @@ dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const 
 
   connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Account #"),         150,               Qt::AlignCenter, true,  "account" );
   list()->addColumn(tr("Date"),              _dateColumn,       Qt::AlignCenter, true,  "gltrans_date" );
   list()->addColumn(tr("Description/Notes"), -1,                Qt::AlignLeft,   true,  "descrip_notes"   );
@@ -98,7 +98,7 @@ void dspSummarizedGLTransactions::sViewTrans()
 
   params.append("gltrans_id", list()->altId());
 
-  glTransactionDetail newdlg(this, "", TRUE);
+  glTransactionDetail newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

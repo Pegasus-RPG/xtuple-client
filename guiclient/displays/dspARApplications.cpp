@@ -30,8 +30,8 @@ dspARApplications::dspARApplications(QWidget* parent, const char*, Qt::WFlags fl
   setReportName("ARApplications");
   setMetaSQLOptions("arApplications", "detail");
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
     
   list()->addColumn(tr("Cust. #"),        _orderColumn, Qt::AlignCenter, true,  "cust_number" );
   list()->addColumn(tr("Customer"),                 -1, Qt::AlignLeft,   true,  "cust_name"   );

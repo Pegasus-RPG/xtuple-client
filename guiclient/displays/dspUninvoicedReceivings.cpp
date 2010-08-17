@@ -70,7 +70,7 @@ void dspUninvoicedReceivings::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 
 void dspUninvoicedReceivings::sMarkAsInvoiced()
 {
-  bool update = TRUE;
+  bool update = true;
   
   q.prepare("SELECT * FROM porecv "
             "WHERE ((porecv_value <> 0) "
@@ -81,10 +81,10 @@ void dspUninvoicedReceivings::sMarkAsInvoiced()
   {
     ParameterList params;
     params.append("porecv_id", list()->id());  
-    poLiabilityDistrib newdlg(this, "", TRUE);
+    poLiabilityDistrib newdlg(this, "", true);
     newdlg.set(params);
     if (newdlg.exec() == XDialog::Rejected)
-      update = FALSE;
+      update = false;
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -118,7 +118,7 @@ void dspUninvoicedReceivings::sCreateCreditMemo()
   ParameterList params;
   params.append("poreject_id", list()->id());
 
-  postPoReturnCreditMemo newdlg(this, "", TRUE);
+  postPoReturnCreditMemo newdlg(this, "", true);
   newdlg.set(params);
 
   if(newdlg.exec() == XDialog::Accepted)

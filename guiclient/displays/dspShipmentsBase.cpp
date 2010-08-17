@@ -40,7 +40,7 @@ dspShipmentsBase::dspShipmentsBase(QWidget* parent, const char* name, Qt::WFlags
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _salesOrder, SLOT(setId(int)));
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft,   true,  "shiphead_number"   );
   list()->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter, true,  "shiphead_shipdate" );
   list()->addColumn(tr("#"),                   _seqColumn,  Qt::AlignCenter, true,  "linenumber" );
@@ -69,14 +69,14 @@ enum SetResponse dspShipmentsBase::set(const ParameterList &pParams)
   if (valid)
   {
     _salesOrder->setId(param.toInt());
-    _salesOrder->setEnabled(FALSE);
+    _salesOrder->setEnabled(false);
   }
 
   param = pParams.value("shiphead_id", &valid);
   if (valid)
   {
     _shipment->setId(param.toInt());
-    _shipment->setEnabled(FALSE);
+    _shipment->setEnabled(false);
   }
 
   return NoError;

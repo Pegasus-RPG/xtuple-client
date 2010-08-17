@@ -29,8 +29,8 @@ dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* 
   // before connect so we don't repeatedly trigger the query
   if (_preferences->boolean("XCheckBox/forgetful"))
     _showUnposted->setChecked(true);
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Slip #"),     _itemColumn, Qt::AlignLeft,  true, "cntslip_number");
   list()->addColumn(tr("Tag #"),     _orderColumn, Qt::AlignLeft,  true, "invcnt_tagnumber");
@@ -104,14 +104,14 @@ bool dspCountSlipsByWarehouse::setParams(ParameterList &params)
       QMessageBox::warning( this, tr("Enter Start Date"),
                             tr("Please enter a valid Start Date.") );
       _dates->setFocus();
-      return FALSE;
+      return false;
     }
     else if (!_dates->endDate().isValid())
     {
       QMessageBox::warning( this, tr("Enter End Date"),
                             tr("Please enter a valid End Date.") );
       _dates->setFocus();
-      return FALSE;
+      return false;
     }
 	else
       _dates->appendValue(params);
@@ -124,5 +124,5 @@ bool dspCountSlipsByWarehouse::setParams(ParameterList &params)
 
   params.append("byWarehouse");
 
-  return TRUE;
+  return true;
 }

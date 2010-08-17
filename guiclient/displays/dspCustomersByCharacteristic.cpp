@@ -120,7 +120,7 @@ void dspCustomersByCharacteristic::sNewCharacteristic()
   params.append("cust_id", list()->id());
   params.append("char_id", _char->id());
 
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -140,7 +140,7 @@ void dspCustomersByCharacteristic::sEditCharacteristic()
     int _charassId = q.value("charass_id").toInt();
     params.append("charass_id", _charassId);
   }
-  characteristicAssignment newdlg(this, "", TRUE);
+  characteristicAssignment newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

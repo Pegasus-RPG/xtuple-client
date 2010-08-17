@@ -27,9 +27,9 @@ dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char*, Qt::WFlag
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
   connect(_selectedPO, SIGNAL(toggled(bool)), _poNumber, SLOT(setEnabled(bool)));
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartCaption(tr("Starting Order Date"));
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
   _dates->setEndCaption(tr("Ending Order Date"));
 
   list()->addColumn(tr("Quote #"),     _orderColumn, Qt::AlignLeft,   true,  "quhead_number"   );

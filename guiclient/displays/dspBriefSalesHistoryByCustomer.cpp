@@ -26,8 +26,8 @@ dspBriefSalesHistoryByCustomer::dspBriefSalesHistoryByCustomer(QWidget* parent, 
 
   _productCategory->setType(ParameterGroup::ProductCategory);
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Doc. #"),     _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
   list()->addColumn(tr("Cust. P/O #"), -1,             Qt::AlignLeft,   true,  "cohist_ponumber"   );
@@ -53,7 +53,7 @@ bool dspBriefSalesHistoryByCustomer::setParams(ParameterList &params)
                            tr("Please enter a valid Customer Number.") );
       _cust->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   if (!_dates->startDate().isValid())
@@ -64,7 +64,7 @@ bool dspBriefSalesHistoryByCustomer::setParams(ParameterList &params)
                            tr("Please enter a valid Start Date.") );
       _dates->setFocus();
     }
-    return FALSE;
+    return false;
   }
   else if (!_dates->endDate().isValid())
   {
@@ -74,7 +74,7 @@ bool dspBriefSalesHistoryByCustomer::setParams(ParameterList &params)
                            tr("Please enter a valid End Date.") );
       _dates->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   params.append("cust_id", _cust->id());
@@ -82,5 +82,5 @@ bool dspBriefSalesHistoryByCustomer::setParams(ParameterList &params)
   _warehouse->appendValue(params);
   _productCategory->appendValue(params);
 
-  return TRUE;
+  return true;
 }

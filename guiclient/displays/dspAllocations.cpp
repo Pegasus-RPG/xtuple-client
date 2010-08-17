@@ -26,8 +26,8 @@ dspAllocations::dspAllocations(QWidget* parent, const char*, Qt::WFlags fl)
   setListLabel(tr("Item Allocations"));
   setMetaSQLOptions("allocations", "detail");
 
-  _item->setReadOnly(TRUE);
-  _warehouse->setEnabled(FALSE);
+  _item->setReadOnly(true);
+  _warehouse->setEnabled(false);
 
   list()->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter,true, "type");
   list()->addColumn(tr("Order #"),      _orderColumn,   Qt::AlignLeft,  true, "order_number");
@@ -66,14 +66,14 @@ enum SetResponse dspAllocations::set(const ParameterList &pParams)
   param = pParams.value("byDate", &valid);
   if (valid)
   {
-    _byDate->setChecked(TRUE);
+    _byDate->setChecked(true);
     _date->setDate(param.toDate());
   }
 
   param = pParams.value("byDays", &valid);
   if (valid)
   {
-    _byDays->setChecked(TRUE);
+    _byDays->setChecked(true);
     _days->setValue(param.toInt());
   }
 

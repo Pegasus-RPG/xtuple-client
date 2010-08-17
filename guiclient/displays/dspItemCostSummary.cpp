@@ -57,7 +57,7 @@ enum SetResponse dspItemCostSummary::set(const ParameterList &pParams)
   if (valid)
   {
     _item->setId(param.toInt());
-    _item->setReadOnly(TRUE);
+    _item->setReadOnly(true);
   }
 
   if (pParams.inList("run"))

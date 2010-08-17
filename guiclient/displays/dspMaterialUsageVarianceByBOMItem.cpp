@@ -25,8 +25,8 @@ dspMaterialUsageVarianceByBOMItem::dspMaterialUsageVarianceByBOMItem(QWidget* pa
   connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateComponentItems(int)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Post Date"),      _dateColumn,  Qt::AlignCenter, true,  "posted" );
   list()->addColumn(tr("Ordered"),        _qtyColumn,   Qt::AlignRight,  true,  "ordered"  );

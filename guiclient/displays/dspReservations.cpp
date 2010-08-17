@@ -34,7 +34,7 @@ dspReservations::dspReservations(QWidget* parent, const char*, Qt::WFlags fl)
   _qoh->setPrecision(omfgThis->qtyVal());
   _available->setPrecision(omfgThis->qtyVal());
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Order/Location LotSerial"), -1,             Qt::AlignLeft,   true,  "order_number"   );
   list()->addColumn(tr("Total Qty."),               _qtyColumn,     Qt::AlignRight,  true,  "totalqty"  );
   list()->addColumn(tr("Relieved"),                 _qtyColumn,     Qt::AlignRight,  true,  "relievedqty"  );

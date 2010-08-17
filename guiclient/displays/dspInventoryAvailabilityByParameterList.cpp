@@ -279,7 +279,7 @@ void dspInventoryAvailabilityByParameterList::sViewAllocations()
   params.append("run");
 
   if (_byLeadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value());
   else if (_byDate->isChecked())
@@ -303,7 +303,7 @@ void dspInventoryAvailabilityByParameterList::sViewOrders()
   params.append("run");
 
   if (_byLeadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value());
   else if (_byDate->isChecked())
@@ -347,7 +347,7 @@ void dspInventoryAvailabilityByParameterList::sPostMiscProduction()
   ParameterList params;
   params.append("itemsite_id", list()->id());
 
-  postMiscProduction newdlg(this, "", TRUE);
+  postMiscProduction newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -358,7 +358,7 @@ void dspInventoryAvailabilityByParameterList::sCreatePR()
   params.append("mode", "new");
   params.append("itemsite_id", list()->id());
 
-  purchaseRequest newdlg(this, "", TRUE);
+  purchaseRequest newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -381,7 +381,7 @@ void dspInventoryAvailabilityByParameterList::sViewSubstituteAvailability()
   params.append("run");
 
   if (_byLeadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value());
   else if (_byDate->isChecked())
@@ -397,7 +397,7 @@ void dspInventoryAvailabilityByParameterList::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -407,7 +407,7 @@ void dspInventoryAvailabilityByParameterList::sEnterMiscCount()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  enterMiscCount newdlg(this, "", TRUE);
+  enterMiscCount newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -416,6 +416,6 @@ void dspInventoryAvailabilityByParameterList::sHandleShowReorder(bool pValue)
 {
   _ignoreReorderAtZero->setEnabled(pValue);
   if (pValue && _preferences->boolean("XCheckBox/forgetful"))
-    _showShortages->setChecked(TRUE);
+    _showShortages->setChecked(true);
 }
 

@@ -38,8 +38,8 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
 
   _customerType->setType(ParameterGroup::CustomerType);
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Order#/Shipment#"),         _itemColumn, Qt::AlignLeft, true, "cohead_number");
   list()->addColumn(tr("Customer/Ship Via"),            -1, Qt::AlignLeft,  true, "cust_name");
@@ -58,11 +58,11 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   list()->addColumn(tr("Time Received"),       _dateColumn, Qt::AlignRight, false, "cohead_created");
   list()->addColumn(tr("Pack List Batch"),     _dateColumn, Qt::AlignRight, false, "packed");
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->setDragString("soheadid=");
 
   if ( (!_privileges->check("ViewCustomerPrices")) && (!_privileges->check("MaintainCustomerPrices")) )
-    _showPrices->setEnabled(FALSE);
+    _showPrices->setEnabled(false);
   sHandlePrices(_showPrices->isChecked());
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList()));
@@ -203,7 +203,7 @@ void dspSummarizedBacklogByWarehouse::sPrintPackingList()
   else
     params.append("sohead_id", list()->id());
 
-  printPackingList newdlg(this, "", TRUE);
+  printPackingList newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

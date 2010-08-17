@@ -38,9 +38,9 @@ dspPoItemsByDate::dspPoItemsByDate(QWidget* parent, const char*, Qt::WFlags fl)
 
   connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartCaption(tr("Starting Due Date:"));
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
   _dates->setEndCaption(tr("Ending Due Date:"));
 
   _agent->setText(omfgThis->username());
@@ -214,7 +214,7 @@ void dspPoItemsByDate::sEditItem()
   params.append("mode", "edit");
   params.append("poitem_id", list()->altId());
 
-  purchaseOrderItem newdlg(this, "", TRUE);
+  purchaseOrderItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -225,7 +225,7 @@ void dspPoItemsByDate::sViewItem()
   params.append("mode", "view");
   params.append("poitem_id", list()->altId());
 
-  purchaseOrderItem newdlg(this, "", TRUE);
+  purchaseOrderItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -235,7 +235,7 @@ void dspPoItemsByDate::sReschedule()
   ParameterList params;
   params.append("poitem_id", list()->altId());
 
-  reschedulePoitem newdlg(this, "", TRUE);
+  reschedulePoitem newdlg(this, "", true);
   if(newdlg.set(params) != UndefinedError)
     if (newdlg.exec() != XDialog::Rejected)
       sFillList();
@@ -246,7 +246,7 @@ void dspPoItemsByDate::sChangeQty()
   ParameterList params;
   params.append("poitem_id", list()->altId());
 
-  changePoitemQty newdlg(this, "", TRUE);
+  changePoitemQty newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();

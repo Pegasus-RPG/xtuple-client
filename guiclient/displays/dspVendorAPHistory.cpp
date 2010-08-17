@@ -32,7 +32,7 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char*, Qt::WFlags 
 
   connect(_searchInvoiceNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchInvoiceNum()));
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Open"),         _dateColumn,     Qt::AlignCenter, true,  "f_open" );
   list()->addColumn(tr("Doc. Type"),    _itemColumn,     Qt::AlignCenter, true,  "documenttype" );
   list()->addColumn(tr("Doc. #"),       _orderColumn,    Qt::AlignRight,  true,  "docnumber"  );
@@ -119,7 +119,7 @@ void dspVendorAPHistory::sEdit()
   params.append("mode", "edit");
   params.append("apopen_id", list()->id());
 
-  apOpenItem newdlg(this, "", TRUE);
+  apOpenItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 
@@ -132,7 +132,7 @@ void dspVendorAPHistory::sView()
   params.append("mode", "view");
   params.append("apopen_id", list()->id());
 
-  apOpenItem newdlg(this, "", TRUE);
+  apOpenItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -153,7 +153,7 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
       QMessageBox::warning( this, tr("Select Number"),
                             tr("Please select a valid Vendor.") );
       _vend->setFocus();
-      return FALSE;
+      return false;
     }
 
     if (!_dates->startDate().isValid())
@@ -161,7 +161,7 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
       QMessageBox::warning( this, tr("Enter Start Date"),
                             tr("Please enter a valid Start Date.") );
       _dates->setFocus();
-      return FALSE;
+      return false;
     }
 
     if (!_dates->endDate().isValid())
@@ -169,7 +169,7 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
       QMessageBox::warning( this, tr("Enter End Date"),
                             tr("Please enter a valid End Date.") );
       _dates->setFocus();
-      return FALSE;
+      return false;
     }
   }
 

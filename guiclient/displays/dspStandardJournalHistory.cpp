@@ -32,7 +32,7 @@ dspStandardJournalHistory::dspStandardJournalHistory(QWidget* parent, const char
   setMetaSQLOptions("standardJournalHistory", "detail");
   setUseAltId(true);
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Date"),         _dateColumn,     Qt::AlignCenter, true,  "gltrans_date" );
   list()->addColumn(tr("Journal #"),    _itemColumn,     Qt::AlignCenter, true,  "gltrans_journalnumber" );
   list()->addColumn(tr("Posted"),       _ynColumn,       Qt::AlignCenter, true,  "gltrans_posted" );

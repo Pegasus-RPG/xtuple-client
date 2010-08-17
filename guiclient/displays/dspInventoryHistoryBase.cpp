@@ -46,7 +46,7 @@ dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* na
   _orderList->setMaximumWidth(25);
 #endif
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft,  true, "invhist_transdate");
   list()->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft,  false, "invhist_created");
   list()->addColumn(tr("Site"),                 _whsColumn, Qt::AlignCenter,true, "warehous_code");
@@ -340,13 +340,13 @@ void dspInventoryHistoryBase::sViewTransInfo()
   }
   else if (transType == "CC")
   {
-    countTag newdlg(this, "", TRUE);
+    countTag newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
   else
   {
-    transactionInformation newdlg(this, "", TRUE);
+    transactionInformation newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
@@ -358,7 +358,7 @@ void dspInventoryHistoryBase::sEditTransInfo()
   params.append("mode", "edit");
   params.append("invhist_id", list()->id());
 
-  transactionInformation newdlg(this, "", TRUE);
+  transactionInformation newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

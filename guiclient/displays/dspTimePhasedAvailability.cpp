@@ -105,7 +105,7 @@ void dspTimePhasedAvailability::sCreatePR()
   params.append("mode", "new");
   params.append("itemsite_id", list()->id());
 
-  purchaseRequest newdlg(this, "", TRUE);
+  purchaseRequest newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

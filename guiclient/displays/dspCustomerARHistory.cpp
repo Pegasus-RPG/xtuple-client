@@ -27,7 +27,7 @@ dspCustomerARHistory::dspCustomerARHistory(QWidget* parent, const char* name, Qt
   setMetaSQLOptions("arHistory", "detail");
   setUseAltId(true);
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Open"),          _dateColumn,     Qt::AlignCenter, true,  "open" );
   list()->addColumn(tr("Doc. Type"),     _itemColumn,     Qt::AlignCenter, true,  "documenttype" );
   list()->addColumn(tr("Doc. #"),        _orderColumn,    Qt::AlignRight,  true,  "docnumber"  );
@@ -93,7 +93,7 @@ void dspCustomerARHistory::sEdit()
   params.append("mode", "edit");
   params.append("aropen_id", list()->id());
 
-  arOpenItem newdlg(this, "", TRUE);
+  arOpenItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -108,7 +108,7 @@ void dspCustomerARHistory::sView()
   else
     params.append("aropen_id", list()->id());
 
-  arOpenItem newdlg(this, "", TRUE);
+  arOpenItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

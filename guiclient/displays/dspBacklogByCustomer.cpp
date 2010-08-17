@@ -33,8 +33,8 @@ dspBacklogByCustomer::dspBacklogByCustomer(QWidget* parent, const char*, Qt::WFl
 
   _cust->setFocus();
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -142,7 +142,7 @@ void dspBacklogByCustomer::sPrintPackingList()
       ParameterList params;
       params.append("sohead_id", cursor->id());
 
-      printPackingList newdlg(this, "", TRUE);
+      printPackingList newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
     }
@@ -174,17 +174,17 @@ void dspBacklogByCustomer::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
   if (list()->id() <= 0)
     return;
 
-  bool hasParents     = FALSE;
-  bool hasChildren    = FALSE;
+  bool hasParents     = false;
+  bool hasChildren    = false;
   QList<XTreeWidgetItem*> selected = list()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)(selected[i]);
     if ( (cursor->altId() == -1) && (!hasParents) )
-      hasParents = TRUE;
+      hasParents = true;
 
     if ( (cursor->altId() != -1) && (!hasChildren) )
-      hasChildren = TRUE;
+      hasChildren = true;
   }
 
   QAction *menuItem;

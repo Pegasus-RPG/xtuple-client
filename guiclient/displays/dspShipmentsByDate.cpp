@@ -29,7 +29,7 @@ dspShipmentsByDate::dspShipmentsByDate(QWidget* parent, const char*, Qt::WFlags 
   setMetaSQLOptions("shipments", "detail");
   setUseAltId(true);
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft,   true,  "shiphead_number"  );
   list()->addColumn(tr("Order Type"),	                 80, Qt::AlignLeft,   true,  "shiphead_order_type"  );
   list()->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter, true,  "shiphead_shipdate");

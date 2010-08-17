@@ -152,7 +152,7 @@ void dspSalesHistoryByBilltoName::sEdit()
   params.append("mode", "edit");
   params.append("sohist_id", list()->id());
 
-  salesHistoryInformation newdlg(this, "", TRUE);
+  salesHistoryInformation newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -165,7 +165,7 @@ void dspSalesHistoryByBilltoName::sView()
   params.append("mode", "view");
   params.append("sohist_id", list()->id());
 
-  salesHistoryInformation newdlg(this, "", TRUE);
+  salesHistoryInformation newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

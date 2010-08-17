@@ -27,8 +27,8 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char*, Qt:
   setMetaSQLOptions("apOpenItems", "detail");
   setUseAltId(true);
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Doc. Type"),    _orderColumn,    Qt::AlignLeft,   true,  "f_doctype" );
   list()->addColumn(tr("Doc. #"),       _orderColumn,    Qt::AlignLeft,   true,  "apopen_docnumber"  );
@@ -94,7 +94,7 @@ enum SetResponse dspAPOpenItemsByVendor::set(const ParameterList &pParams)
   param = pParams.value("asofDate", &valid);
   if (valid)
     _asOf->setDate(param.toDate());
-    _asOf->setEnabled(FALSE);
+    _asOf->setEnabled(false);
 
   if (pParams.inList("run"))
   {
@@ -140,7 +140,7 @@ void dspAPOpenItemsByVendor::sEdit()
   ParameterList params;
   params.append("mode", "edit");
   params.append("apopen_id", list()->id());
-  apOpenItem newdlg(this, "", TRUE);
+  apOpenItem newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -152,7 +152,7 @@ void dspAPOpenItemsByVendor::sView()
   ParameterList params;
   params.append("mode", "view");
   params.append("apopen_id", list()->id());
-  apOpenItem newdlg(this, "", TRUE);
+  apOpenItem newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

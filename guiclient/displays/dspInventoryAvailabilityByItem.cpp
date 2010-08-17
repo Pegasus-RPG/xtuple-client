@@ -85,7 +85,7 @@ enum SetResponse dspInventoryAvailabilityByItem::set(const ParameterList &pParam
   if (valid)
   {
     _item->setId(param.toInt());
-    _item->setReadOnly(TRUE);
+    _item->setReadOnly(true);
   }
 
   param = pParams.value("warehous_id", &valid);
@@ -96,7 +96,7 @@ enum SetResponse dspInventoryAvailabilityByItem::set(const ParameterList &pParam
   if (valid)
   {
     _item->setItemsiteid(param.toInt());
-    _item->setReadOnly(TRUE);
+    _item->setReadOnly(true);
   }
 
   _leadTime->setChecked(pParams.inList("byLeadTime"));
@@ -104,14 +104,14 @@ enum SetResponse dspInventoryAvailabilityByItem::set(const ParameterList &pParam
   param = pParams.value("byDays", &valid);
   if (valid)
   {
-   _byDays->setChecked(TRUE);
+   _byDays->setChecked(true);
    _days->setValue(param.toInt());
   }
 
   param = pParams.value("byDate", &valid);
   if (valid)
   {
-   _byDate->setChecked(TRUE);
+   _byDate->setChecked(true);
    _date->setDate(param.toDate());
   }
 
@@ -247,7 +247,7 @@ void dspInventoryAvailabilityByItem::sViewAllocations()
   params.append("run");
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value() );
   else if (_byDate->isChecked())
@@ -271,7 +271,7 @@ void dspInventoryAvailabilityByItem::sViewOrders()
   params.append("run");
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value());
   else if (_byDate->isChecked())
@@ -316,7 +316,7 @@ void dspInventoryAvailabilityByItem::sCreatePR()
   params.append("mode", "new");
   params.append("itemsite_id", list()->id());
 
-  purchaseRequest newdlg(this, "", TRUE);
+  purchaseRequest newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -338,7 +338,7 @@ void dspInventoryAvailabilityByItem::sViewSubstituteAvailability()
   params.append("itemsite_id", list()->id());
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value() );
   else if (_byDate->isChecked())
@@ -354,7 +354,7 @@ void dspInventoryAvailabilityByItem::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -364,7 +364,7 @@ void dspInventoryAvailabilityByItem::sEnterMiscCount()
   ParameterList params;
   params.append("itemsite_id", list()->id());
 
-  enterMiscCount newdlg(this, "", TRUE);
+  enterMiscCount newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -373,6 +373,6 @@ void dspInventoryAvailabilityByItem::sHandleShowReorder(bool pValue)
 {
   _ignoreReorderAtZero->setEnabled(pValue);
   if (pValue && _preferences->boolean("XCheckBox/forgetful"))
-    _showShortages->setChecked(TRUE);
+    _showShortages->setChecked(true);
 }
 

@@ -58,7 +58,7 @@ enum SetResponse dspItemCostDetail::set(const ParameterList &pParams)
   if (valid)
   {
     _item->setId(param.toInt());
-    _item->setReadOnly(TRUE);
+    _item->setReadOnly(true);
   }
 
   param = pParams.value("costtype", &valid);
@@ -86,9 +86,9 @@ enum SetResponse dspItemCostDetail::set(const ParameterList &pParams)
     if (qq.first())
     {
       _item->setId(qq.value("itemcost_item_id").toInt());
-      _item->setReadOnly(TRUE);
+      _item->setReadOnly(true);
       _costType->setId(qq.value("itemcost_costelem_id").toInt());
-      _costType->setEnabled(FALSE);
+      _costType->setEnabled(false);
     }
     else if (qq.lastError().type() != QSqlError::NoError)
     {

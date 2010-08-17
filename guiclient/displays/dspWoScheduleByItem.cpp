@@ -46,8 +46,8 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char*, Qt::WFlag
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
   _item->setDefaultType(ItemLineEdit::cGeneralManufactured);
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft,   true,  "wonumber"   );
   list()->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter, true,  "wo_status" );
@@ -126,7 +126,7 @@ void dspWoScheduleByItem::sPostProduction()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  postProduction newdlg(this, "", TRUE);
+  postProduction newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -136,27 +136,27 @@ void dspWoScheduleByItem::sCorrectProductionPosting()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  correctProductionPosting newdlg(this, "", TRUE);
+  correctProductionPosting newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
 
 void dspWoScheduleByItem::sReleaseWO()
 {
-  q.prepare("SELECT releaseWo(:wo_id, FALSE);");
+  q.prepare("SELECT releaseWo(:wo_id, false);");
   q.bindValue(":wo_id", list()->id());
   q.exec();
 
-  omfgThis->sWorkOrdersUpdated(list()->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(list()->id(), true);
 }
 
 void dspWoScheduleByItem::sRecallWO()
 {
-  q.prepare("SELECT recallWo(:wo_id, FALSE);");
+  q.prepare("SELECT recallWo(:wo_id, false);");
   q.bindValue(":wo_id", list()->id());
   q.exec();
 
-  omfgThis->sWorkOrdersUpdated(list()->id(), TRUE);
+  omfgThis->sWorkOrdersUpdated(list()->id(), true);
 }
 
 void dspWoScheduleByItem::sExplodeWO()
@@ -164,7 +164,7 @@ void dspWoScheduleByItem::sExplodeWO()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  explodeWo newdlg(this, "", TRUE);
+  explodeWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -174,7 +174,7 @@ void dspWoScheduleByItem::sImplodeWO()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  implodeWo newdlg(this, "", TRUE);
+  implodeWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -211,7 +211,7 @@ void dspWoScheduleByItem::sDeleteWO()
 			      QMessageBox::Yes) == QMessageBox::No)
       return;
 
-    q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
+    q.prepare("SELECT deleteWo(:wo_id, true) AS returnVal;");
     q.bindValue(":wo_id", list()->id());
     q.exec();
     if (q.first())
@@ -229,7 +229,7 @@ void dspWoScheduleByItem::sDeleteWO()
       return;
     }
 
-    omfgThis->sWorkOrdersUpdated(list()->id(), TRUE);
+    omfgThis->sWorkOrdersUpdated(list()->id(), true);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -243,7 +243,7 @@ void dspWoScheduleByItem::sCloseWO()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  closeWo newdlg(this, "", TRUE);
+  closeWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -253,7 +253,7 @@ void dspWoScheduleByItem::sPrintTraveler()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  printWoTraveler newdlg(this, "", TRUE);
+  printWoTraveler newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -263,7 +263,7 @@ void dspWoScheduleByItem::sReprioritizeWo()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  reprioritizeWo newdlg(this, "", TRUE);
+  reprioritizeWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -273,7 +273,7 @@ void dspWoScheduleByItem::sRescheduleWO()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  rescheduleWo newdlg(this, "", TRUE);
+  rescheduleWo newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -283,7 +283,7 @@ void dspWoScheduleByItem::sChangeWOQty()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  changeWoQty newdlg(this, "", TRUE);
+  changeWoQty newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

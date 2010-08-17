@@ -55,7 +55,7 @@ enum SetResponse dspInvoiceRegister::set(const ParameterList &pParams)
   param = pParams.value("accnt_id", &valid);
   if (valid)
   {
-    _selectedAccount->setChecked(TRUE);
+    _selectedAccount->setChecked(true);
     _account->setId(param.toInt());
   }
 

@@ -81,27 +81,27 @@ void dspExpiredInventoryByClassCode::sPopulateMenu(QMenu *, QTreeWidgetItem *, i
   {
     menuItem = pMenu->insertItem(tr("Transfer to another Site..."), this, SLOT(sTransfer()), 0);
     if (!_privileges->check("CreateInterWarehouseTrans"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      pMenu->setItemEnabled(menuItem, false);
 
     menuItem = pMenu->insertItem(tr("Adjust this QOH..."), this, SLOT(sAdjust()), 0);
     if (!_privileges->check("CreateAdjustmentTrans"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      pMenu->setItemEnabled(menuItem, false);
 
     menuItem = pMenu->insertItem(tr("Reset this QOH to 0..."), this, SLOT(sReset()), 0);
     if (!_privileges->check("CreateAdjustmentTrans"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      pMenu->setItemEnabled(menuItem, false);
 
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Enter Misc. Count..."), this, SLOT(sMiscCount()), 0);
     if (!_privileges->check("EnterMiscCounts"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      pMenu->setItemEnabled(menuItem, false);
 
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
     if (!_privileges->check("IssueCountTags"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      pMenu->setItemEnabled(menuItem, false);
   } 
 #endif
 }
@@ -145,7 +145,7 @@ void dspExpiredInventoryByClassCode::sMiscCount()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  enterMiscCount newdlg(this, "", TRUE);
+  enterMiscCount newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec())
     sFillList();
@@ -156,7 +156,7 @@ void dspExpiredInventoryByClassCode::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

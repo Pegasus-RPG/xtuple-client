@@ -30,7 +30,7 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char*, Qt:
                  ItemLineEdit::cPhantom | ItemLineEdit::cKit |
                  ItemLineEdit::cPlanning | ItemLineEdit::cTooling);
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
   list()->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
   list()->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");

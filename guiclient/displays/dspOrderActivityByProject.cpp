@@ -121,7 +121,7 @@ void dspOrderActivityByProject::sEdit()
     params.append("mode", "edit");
     params.append("poitem_id", list()->id());
 
-    purchaseOrderItem newdlg(this, "", TRUE);
+    purchaseOrderItem newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
@@ -153,7 +153,7 @@ void dspOrderActivityByProject::sView()
     params.append("mode", "view");
     params.append("poitem_id", list()->id());
 
-    purchaseOrderItem newdlg(this, "", TRUE);
+    purchaseOrderItem newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }

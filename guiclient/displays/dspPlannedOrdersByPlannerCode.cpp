@@ -130,7 +130,7 @@ void dspPlannedOrdersByPlannerCode::sEditOrder()
   params.append("mode", "edit");
   params.append("planord_id", list()->id());
 
-  plannedOrder newdlg(this, "", TRUE);
+  plannedOrder newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   sFillList();
@@ -141,7 +141,7 @@ void dspPlannedOrdersByPlannerCode::sFirmOrder()
   ParameterList params;
   params.append("planord_id", list()->id());
 
-  firmPlannedOrder newdlg(this, "", TRUE);
+  firmPlannedOrder newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -150,7 +150,7 @@ void dspPlannedOrdersByPlannerCode::sFirmOrder()
 void dspPlannedOrdersByPlannerCode::sSoftenOrder()
 {
   q.prepare( "UPDATE planord "
-             "SET planord_firm=FALSE "
+             "SET planord_firm=false "
              "WHERE (planord_id=:planord_id);" );
   q.bindValue(":planord_id", list()->id());
   q.exec();
@@ -176,7 +176,7 @@ void dspPlannedOrdersByPlannerCode::sReleaseOrder()
     params.append("mode", "release");
     params.append("planord_id", list()->id());
 
-    purchaseRequest newdlg(this, "", TRUE);
+    purchaseRequest newdlg(this, "", true);
     newdlg.set(params);
 
     if (newdlg.exec() != XDialog::Rejected)
@@ -202,7 +202,7 @@ void dspPlannedOrdersByPlannerCode::sDeleteOrder()
   ParameterList params;
   params.append("planord_id", list()->id());
 
-  deletePlannedOrder newdlg(this, "", TRUE);
+  deletePlannedOrder newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

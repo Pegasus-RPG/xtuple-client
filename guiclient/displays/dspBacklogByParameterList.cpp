@@ -31,8 +31,8 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
 
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -236,7 +236,7 @@ void dspBacklogByParameterList::sPrintPackingList()
     ParameterList params;
     params.append("sohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-    printPackingList newdlg(this, "", TRUE);
+    printPackingList newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }

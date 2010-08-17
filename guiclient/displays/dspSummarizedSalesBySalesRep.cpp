@@ -71,7 +71,7 @@ bool dspSummarizedSalesBySalesRep::setParams(ParameterList & params)
                             tr("Please enter a valid Start Date.") );
       _dates->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   if (!_dates->endDate().isValid())
@@ -81,14 +81,14 @@ bool dspSummarizedSalesBySalesRep::setParams(ParameterList & params)
                             tr("Please enter a valid End Date.") );
       _dates->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   if (_productCategory->isPattern())
   {
     QString pattern = _productCategory->pattern();
     if (pattern.length() == 0)
-      return FALSE;
+      return false;
   }
 
   _productCategory->appendValue(params);
@@ -97,5 +97,5 @@ bool dspSummarizedSalesBySalesRep::setParams(ParameterList & params)
 
   params.append("bySalesRep"); // metasql only?
 
-  return TRUE;
+  return true;
 }

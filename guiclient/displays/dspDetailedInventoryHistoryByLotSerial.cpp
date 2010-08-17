@@ -102,7 +102,7 @@ void dspDetailedInventoryHistoryByLotSerial::sViewTransInfo()
   }
   else if (transType == "CC")
   {
-    countTag newdlg(this, "", TRUE);
+    countTag newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }

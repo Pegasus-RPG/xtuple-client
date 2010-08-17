@@ -24,9 +24,9 @@ dspPOsByDate::dspPOsByDate(QWidget* parent, const char*, Qt::WFlags fl)
   setReportName("POsByDate");
   setMetaSQLOptions("purchaseOrders", "detail");
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartCaption(tr("Starting Due Date:"));
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
   _dates->setEndCaption(tr("Ending Due Date:"));
 
   _agent->setType(XComboBox::Agent);

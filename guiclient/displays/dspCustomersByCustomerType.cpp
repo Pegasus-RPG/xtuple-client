@@ -95,7 +95,7 @@ void dspCustomersByCustomerType::sReassignCustomerType()
     params.append("custtype_id", _custTypeId);
   }
 
-  customerTypeList *newdlg = new customerTypeList(this, "", TRUE);
+  customerTypeList *newdlg = new customerTypeList(this, "", true);
   newdlg->set(params);
   int custtypeid = newdlg->exec();
   if ( (custtypeid != -1) && (custtypeid != XDialog::Rejected) )
@@ -106,7 +106,7 @@ void dspCustomersByCustomerType::sReassignCustomerType()
     q.bindValue(":cust_id", list()->id());
     q.bindValue(":custtype_id", custtypeid);
     q.exec();
-    omfgThis->sCustomersUpdated(list()->id(), TRUE);
+    omfgThis->sCustomersUpdated(list()->id(), true);
   }
 }
 

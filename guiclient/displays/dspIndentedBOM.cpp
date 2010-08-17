@@ -18,7 +18,7 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char*, Qt::WFlags fl)
   setWindowTitle(tr("Indented Bill of Materials"));
   setReportName("IndentedBOM");
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Seq #"),        80,           Qt::AlignCenter,true, "bomdata_bomwork_seqnumber");
   list()->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft,  true, "bomdata_item_number");
   list()->addColumn(tr("Description"),  -1,           Qt::AlignLeft,  true, "bomdata_itemdescription");

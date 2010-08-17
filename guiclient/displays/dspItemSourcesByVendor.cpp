@@ -56,7 +56,7 @@ void dspItemSourcesByVendor::sEdit()
   params.append("mode", "edit");
   params.append("itemsrc_id", list()->id());
 
-  itemSource newdlg(this, "", TRUE);
+  itemSource newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

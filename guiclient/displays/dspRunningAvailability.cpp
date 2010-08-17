@@ -78,7 +78,7 @@ enum SetResponse dspRunningAvailability::set(const ParameterList &pParams)
   {
     _ready = false;
     _item->setItemsiteid(param.toInt());
-    _item->setReadOnly(TRUE);
+    _item->setReadOnly(true);
     _showPlanned->setFocus();
     _showPlanned->init();
     _ready = true;
@@ -186,7 +186,7 @@ void dspRunningAvailability::sFirmOrder()
   ParameterList params;
   params.append("planord_id", list()->id());
 
-  firmPlannedOrder newdlg(this, "", TRUE);
+  firmPlannedOrder newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -195,7 +195,7 @@ void dspRunningAvailability::sFirmOrder()
 void dspRunningAvailability::sSoftenOrder()
 {
   q.prepare( "UPDATE planord "
-             "SET planord_firm=FALSE "
+             "SET planord_firm=false "
              "WHERE (planord_id=:planord_id);" );
   q.bindValue(":planord_id", list()->id());
   q.exec();
@@ -236,7 +236,7 @@ void dspRunningAvailability::sReleaseOrder()
     params.append("mode", "release");
     params.append("planord_id", list()->id());
 
-    purchaseRequest newdlg(this, "", TRUE);
+    purchaseRequest newdlg(this, "", true);
     newdlg.set(params);
 
     if (newdlg.exec() != XDialog::Rejected)
@@ -246,7 +246,7 @@ void dspRunningAvailability::sReleaseOrder()
 
 void dspRunningAvailability::sDeleteOrder()
 {
-  q.prepare( "SELECT deletePlannedOrder(:planord_id, FALSE) AS result;" );
+  q.prepare( "SELECT deletePlannedOrder(:planord_id, false) AS result;" );
   q.bindValue(":planord_id", list()->id());
   q.exec();
   if (q.first())

@@ -184,10 +184,10 @@ void dspPoItemReceivingsByVendor::sMarkAsInvoiced()
   {
     ParameterList params;
     params.append("porecv_id", list()->id());  
-    poLiabilityDistrib newdlg(this, "", TRUE);
+    poLiabilityDistrib newdlg(this, "", true);
     newdlg.set(params);
     if (newdlg.exec() == XDialog::Rejected)
-      update = FALSE;
+      update = false;
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

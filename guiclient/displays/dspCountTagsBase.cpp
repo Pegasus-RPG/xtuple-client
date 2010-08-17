@@ -25,8 +25,8 @@ dspCountTagsBase::dspCountTagsBase(QWidget* parent, const char* name, Qt::WFlags
   setListLabel(tr("Count Tags"));
   setMetaSQLOptions("countTags", "detail");
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Tag #"),               -1, Qt::AlignLeft,  true, "invcnt_tagnumber");
   list()->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
@@ -93,7 +93,7 @@ void dspCountTagsBase::sView()
   params.append("mode", "view");
   params.append("cnttag_id", list()->id());
 
-  countTag newdlg(this, "", TRUE);
+  countTag newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

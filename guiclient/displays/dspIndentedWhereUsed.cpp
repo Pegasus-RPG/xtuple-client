@@ -34,7 +34,7 @@ dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char*, Qt::WFl
   else
     _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Seq. #"),               80, Qt::AlignRight, true, "bomwork_seqnumber");
   list()->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
   list()->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "descrip");

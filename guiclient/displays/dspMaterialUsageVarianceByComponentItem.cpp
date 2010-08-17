@@ -25,8 +25,8 @@ dspMaterialUsageVarianceByComponentItem::dspMaterialUsageVarianceByComponentItem
   connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
   connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Post Date"),      _dateColumn,  Qt::AlignCenter, true,  "posted" );
   list()->addColumn(tr("Parent Item"),    _itemColumn,  Qt::AlignLeft,   true,  "parentitemnumber"   );

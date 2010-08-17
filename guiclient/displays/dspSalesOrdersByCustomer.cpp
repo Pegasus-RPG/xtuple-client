@@ -31,9 +31,9 @@ dspSalesOrdersByCustomer::dspSalesOrdersByCustomer(QWidget* parent, const char*,
 
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartCaption(tr("Starting Order Date:"));
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
   _dates->setEndCaption(tr("Ending Order Date:"));
 
   list()->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,   true,  "cohead_number"   );

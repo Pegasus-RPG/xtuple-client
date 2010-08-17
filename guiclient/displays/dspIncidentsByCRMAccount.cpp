@@ -37,8 +37,8 @@ dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char*,
   _crmacctGroupInt->addButton(_allAccts);
   _crmacctGroupInt->addButton(_selectedAcct);
 
-  _createdDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _createdDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _createdDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _createdDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Account Number"),	    80, Qt::AlignLeft,  true, "crmacct_number");
   list()->addColumn(tr("Account Name"),		   100, Qt::AlignLeft,  true, "crmacct_name");
@@ -128,7 +128,7 @@ void dspIncidentsByCRMAccount::sEditIncident()
   params.append("mode", "edit");
   params.append("incdt_id", list()->id());
 
-  incident newdlg(this, "", TRUE);
+  incident newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -141,7 +141,7 @@ void dspIncidentsByCRMAccount::sEditTodoItem()
   params.append("mode", "edit");
   params.append("todoitem_id", list()->id());
 
-  todoItem newdlg(this, "", TRUE);
+  todoItem newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -166,7 +166,7 @@ void dspIncidentsByCRMAccount::sViewIncident()
   params.append("mode", "view");
   params.append("incdt_id", list()->id());
 
-  incident newdlg(this, "", TRUE);
+  incident newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();
@@ -178,7 +178,7 @@ void dspIncidentsByCRMAccount::sViewTodoItem()
   params.append("mode", "view");
   params.append("todoitem_id", list()->id());
 
-  todoItem newdlg(this, "", TRUE);
+  todoItem newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();

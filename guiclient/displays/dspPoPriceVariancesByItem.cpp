@@ -29,8 +29,8 @@ dspPoPriceVariancesByItem::dspPoPriceVariancesByItem(QWidget* parent, const char
   _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured);
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());

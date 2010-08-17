@@ -52,7 +52,7 @@ void dspWoSoStatus::sCloseWo()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  closeWo newdlg(this, "", TRUE);
+  closeWo newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

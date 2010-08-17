@@ -74,7 +74,7 @@ enum SetResponse dspCostedBOMBase::set(const ParameterList &pParams)
   param = pParams.value("item_id", &valid);
   {
     _item->setId(param.toInt());
-    _item->setReadOnly(TRUE);
+    _item->setReadOnly(true);
     param = pParams.value("revision_id", &valid);
     if (valid)
       _revision->setId(param.toInt());
@@ -137,7 +137,7 @@ void dspCostedBOMBase::sViewItemCosting()
 {
   ParameterList params;
   params.append( "item_id", list()->altId() );
-  params.append( "run",     TRUE              );
+  params.append( "run",     true              );
 
   dspItemCostSummary *newdlg = new dspItemCostSummary();
   newdlg->set(params);

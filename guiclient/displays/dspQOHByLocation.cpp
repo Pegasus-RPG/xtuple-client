@@ -31,9 +31,9 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char*, Qt::WFlags fl)
 
   omfgThis->inputManager()->notify(cBCLocation, this, this, SLOT(set(int)));
 
-  _location->setAllowNull(TRUE);
+  _location->setAllowNull(true);
 
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->addColumn(tr("Site"),         _itemColumn, Qt::AlignLeft,   true,  "warehous_code"   );
   list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
   list()->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "f_descrip"   );
@@ -116,7 +116,7 @@ void dspQOHByLocation::sRelocate()
   ParameterList params;
   params.append("itemloc_id", list()->id());
 
-  relocateInventory newdlg(this, "", TRUE);
+  relocateInventory newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec())

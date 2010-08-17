@@ -84,7 +84,7 @@ enum SetResponse dspInventoryAvailabilityBySalesOrder::set(const ParameterList &
 
   param = pParams.value("onlyShowShortages", &valid);
   if (valid)
-    _onlyShowShortages->setChecked(TRUE);
+    _onlyShowShortages->setChecked(true);
 
   param = pParams.value("sohead_id", &valid);
   if (valid)
@@ -278,7 +278,7 @@ void dspInventoryAvailabilityBySalesOrder::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
 
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

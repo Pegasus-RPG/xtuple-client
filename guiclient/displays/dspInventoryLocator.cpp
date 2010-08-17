@@ -93,7 +93,7 @@ void dspInventoryLocator::sRelocateInventory()
   ParameterList params;
   params.append("itemloc_id", list()->id());
 
-  relocateInventory newdlg(this, "", TRUE);
+  relocateInventory newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec())
@@ -105,7 +105,7 @@ void dspInventoryLocator::sReassignLotSerial()
   ParameterList params;
   params.append("itemloc_id", list()->id());
 
-  reassignLotSerial newdlg(this, "", TRUE);
+  reassignLotSerial newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)

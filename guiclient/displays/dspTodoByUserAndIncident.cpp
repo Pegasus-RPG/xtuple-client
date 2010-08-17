@@ -27,10 +27,10 @@ dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char*,
 
   _usr->setType(ParameterGroup::User);
 
-  _dueDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dueDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-  _startDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _startDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dueDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dueDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
+  _startDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _startDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Assigned To"),  _userColumn, Qt::AlignCenter,true, "todoitem_username");
   list()->addColumn(tr("Priority"),    _prcntColumn, Qt::AlignCenter,true, "incdtpriority_name");
@@ -108,7 +108,7 @@ void dspTodoByUserAndIncident::sEditIncident()
   params.append("mode", "edit");
   params.append("incdt_id", list()->altId());
 
-  incident newdlg(this, "", TRUE);
+  incident newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -121,7 +121,7 @@ void dspTodoByUserAndIncident::sEditTodoItem()
   params.append("mode", "edit");
   params.append("todoitem_id", list()->id());
 
-  todoItem newdlg(this, "", TRUE);
+  todoItem newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -134,7 +134,7 @@ void dspTodoByUserAndIncident::sViewIncident()
   params.append("mode", "view");
   params.append("incdt_id", list()->altId());
 
-  incident newdlg(this, "", TRUE);
+  incident newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();
@@ -146,7 +146,7 @@ void dspTodoByUserAndIncident::sViewTodoItem()
   params.append("mode", "view");
   params.append("todoitem_id", list()->id());
 
-  todoItem newdlg(this, "", TRUE);
+  todoItem newdlg(this, "", true);
   newdlg.set(params);
 
   newdlg.exec();

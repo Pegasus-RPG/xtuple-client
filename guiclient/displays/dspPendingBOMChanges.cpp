@@ -33,7 +33,7 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char*, Qt::WFl
 
   _cutoff->setNullString(tr("Latest"));
   _cutoff->setNullDate(omfgThis->endOfTime().addDays(-1));
-  _cutoff->setAllowNullDate(TRUE);
+  _cutoff->setAllowNullDate(true);
   _cutoff->setNull();
 
   list()->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true,  "actiondate" );
@@ -79,7 +79,7 @@ void dspPendingBOMChanges::sEdit()
   params.append("mode", "edit");
   params.append("bomitem_id", list()->id());
 
-  bomItem newdlg(this, "", TRUE);
+  bomItem newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -91,7 +91,7 @@ void dspPendingBOMChanges::sView()
   params.append("mode", "view");
   params.append("bomitem_id", list()->id());
 
-  bomItem newdlg(this, "", TRUE);
+  bomItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

@@ -30,8 +30,8 @@ dspOrders::dspOrders(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("orders", "detail");
   setUseAltId(true);
 
-  _item->setReadOnly(TRUE);
-  _warehouse->setEnabled(FALSE);
+  _item->setReadOnly(true);
+  _warehouse->setEnabled(false);
 
   list()->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter, true,  "order_type" );
   list()->addColumn(tr("Order #"),      -1,             Qt::AlignLeft,   true,  "order_number"   );
@@ -69,14 +69,14 @@ enum SetResponse dspOrders::set(const ParameterList &pParams)
   param = pParams.value("byDate", &valid);
   if (valid)
   {
-    _byDate->setChecked(TRUE);
+    _byDate->setChecked(true);
     _date->setDate(param.toDate());
   }
 
   param = pParams.value("byDays", &valid);
   if (valid)
   {
-    _byDays->setChecked(TRUE);
+    _byDays->setChecked(true);
     _days->setValue(param.toInt());
   }
 
@@ -138,7 +138,7 @@ void dspOrders::sReprioritizeWo()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  reprioritizeWo newdlg(this, "", TRUE);
+  reprioritizeWo newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -149,7 +149,7 @@ void dspOrders::sRescheduleWO()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  rescheduleWo newdlg(this, "", TRUE);
+  rescheduleWo newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -160,7 +160,7 @@ void dspOrders::sChangeWOQty()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  changeWoQty newdlg(this, "", TRUE);
+  changeWoQty newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
@@ -171,7 +171,7 @@ void dspOrders::sPrintTraveler()
   ParameterList params;
   params.append("wo_id", list()->id());
 
-  printWoTraveler newdlg(this, "", TRUE);
+  printWoTraveler newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -181,7 +181,7 @@ void dspOrders::sReschedulePoitem()
   ParameterList params;
   params.append("poitem_id", list()->id());
 
-  reschedulePoitem newdlg(this, "", TRUE);
+  reschedulePoitem newdlg(this, "", true);
   if(newdlg.set(params) != UndefinedError)
     if (newdlg.exec() != XDialog::Rejected)
       sFillList();
@@ -192,7 +192,7 @@ void dspOrders::sChangePoitemQty()
   ParameterList params;
   params.append("poitem_id", list()->id());
 
-  changePoitemQty newdlg(this, "", TRUE);
+  changePoitemQty newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();

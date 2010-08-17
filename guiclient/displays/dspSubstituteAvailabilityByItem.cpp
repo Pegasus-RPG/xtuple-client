@@ -63,22 +63,22 @@ enum SetResponse dspSubstituteAvailabilityByItem::set(const ParameterList &pPara
   if (valid)
   {
     _item->setId(param.toInt());
-    _item->setReadOnly(TRUE);
+    _item->setReadOnly(true);
   }
 
   param = pParams.value("warehous_id", &valid);
   if (valid)
   {
     _warehouse->setId(param.toInt());
-    _warehouse->setEnabled(FALSE);
+    _warehouse->setEnabled(false);
   }
 
   param = pParams.value("itemsite_id", &valid);
   if (valid)
   {
     _item->setItemsiteid(param.toInt());
-    _item->setReadOnly(TRUE);
-    _warehouse->setEnabled(FALSE);
+    _item->setReadOnly(true);
+    _warehouse->setEnabled(false);
   }
 
   _leadTime->setChecked(pParams.inList("byLeadTime"));
@@ -86,14 +86,14 @@ enum SetResponse dspSubstituteAvailabilityByItem::set(const ParameterList &pPara
   param = pParams.value("byDays", &valid);
   if (valid)
   {
-   _byDays->setChecked(TRUE);
+   _byDays->setChecked(true);
    _days->setValue(param.toInt());
   }
 
   param = pParams.value("byDate", &valid);
   if (valid)
   {
-   _byDate->setChecked(TRUE);
+   _byDate->setChecked(true);
    _date->setDate(param.toDate());
   }
 
@@ -113,7 +113,7 @@ void dspSubstituteAvailabilityByItem::sViewAllocations()
   params.append("run");
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value() );
   else if (_byDate->isChecked())
@@ -131,7 +131,7 @@ void dspSubstituteAvailabilityByItem::sViewOrders()
   params.append("run");
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value() );
   else if (_byDate->isChecked())

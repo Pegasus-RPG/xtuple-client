@@ -171,7 +171,7 @@ void dspItemSitesByParameterList::sView()
   params.append("mode", "view");
   params.append("itemsite_id", list()->id());
 
-  itemSite newdlg(this, "", TRUE);
+  itemSite newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -182,7 +182,7 @@ void dspItemSitesByParameterList::sEdit()
   params.append("mode", "edit");
   params.append("itemsite_id", list()->id());
 
-  itemSite newdlg(this, "", TRUE);
+  itemSite newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -204,7 +204,7 @@ void dspItemSitesByParameterList::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

@@ -44,8 +44,8 @@ dspUndefinedManufacturedItems::dspUndefinedManufacturedItems(QWidget* parent, co
 
   if (!_privileges->check("ViewBOMs"))
   {
-    _bom->setChecked(FALSE);
-    _bom->setEnabled(FALSE);
+    _bom->setChecked(false);
+    _bom->setEnabled(false);
   }
 
 }

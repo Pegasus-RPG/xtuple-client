@@ -132,7 +132,7 @@ void dspItemCostsByClassCode::sUpdateCosts()
   ParameterList params;
   params.append("item_id", list()->id());
 
-  updateActualCostsByItem newdlg(this, "", TRUE);
+  updateActualCostsByItem newdlg(this, "", true);
   newdlg.set(params);
   
   if (newdlg.exec() != XDialog::Rejected)
@@ -144,7 +144,7 @@ void dspItemCostsByClassCode::sPostCosts()
   ParameterList params;
   params.append("item_id", list()->id());
 
-  postCostsByItem newdlg(this, "", TRUE);
+  postCostsByItem newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();

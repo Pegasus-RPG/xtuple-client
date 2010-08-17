@@ -25,9 +25,9 @@ dspQuotesByItem::dspQuotesByItem(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("quoteItems", "detail");
   setUseAltId(true);
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartCaption(tr("Starting Order Date"));
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
   _dates->setEndCaption(tr("Ending Order Date"));
 
   _item->setType(ItemLineEdit::cSold);

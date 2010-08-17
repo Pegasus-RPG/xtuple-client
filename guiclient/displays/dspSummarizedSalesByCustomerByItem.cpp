@@ -52,7 +52,7 @@ bool dspSummarizedSalesByCustomerByItem::setParams(ParameterList & params)
                             tr("Please select Customer.") );
       _cust->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   if (!_dates->startDate().isValid())
@@ -62,7 +62,7 @@ bool dspSummarizedSalesByCustomerByItem::setParams(ParameterList & params)
                             tr("Please enter a valid Start Date.") );
       _dates->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   if (!_dates->endDate().isValid())
@@ -72,7 +72,7 @@ bool dspSummarizedSalesByCustomerByItem::setParams(ParameterList & params)
                             tr("Please enter a valid End Date.") );
       _dates->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   _dates->appendValue(params);

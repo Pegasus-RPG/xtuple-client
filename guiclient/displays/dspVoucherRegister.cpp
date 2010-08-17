@@ -33,8 +33,8 @@ dspVoucherRegister::dspVoucherRegister(QWidget* parent, const char*, Qt::WFlags 
   connect(_selectedAccount, SIGNAL(toggled(bool)), _account, SLOT(setEnabled(bool)));
   connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Date"),        _dateColumn,    Qt::AlignCenter, true, "gltrans_date" );
   list()->addColumn(tr("Vend. #"),     _orderColumn,   Qt::AlignRight,  true, "vend_number"  );
@@ -65,7 +65,7 @@ enum SetResponse dspVoucherRegister::set(const ParameterList &pParams)
   param = pParams.value("accnt_id", &valid);
   if (valid)
   {
-    _selectedAccount->setChecked(TRUE);
+    _selectedAccount->setChecked(true);
     _account->setId(param.toInt());
   }
 
@@ -170,7 +170,7 @@ void dspVoucherRegister::sViewTrans()
 
   params.append("gltrans_id", list()->id());
 
-  glTransactionDetail newdlg(this, "", TRUE);
+  glTransactionDetail newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

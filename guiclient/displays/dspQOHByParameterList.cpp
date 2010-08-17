@@ -224,7 +224,7 @@ void dspQOHByParameterList::sMiscCount()
   ParameterList params;
   params.append("itemsite_id", list()->id());
 
-  enterMiscCount newdlg(this, "", TRUE);
+  enterMiscCount newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec())
     sFillList();
@@ -235,7 +235,7 @@ void dspQOHByParameterList::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

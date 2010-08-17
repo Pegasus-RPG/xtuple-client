@@ -77,7 +77,7 @@ enum SetResponse dspSalesHistoryByCustomer::set(const ParameterList &pParams)
   if (valid)
   {
     _cust->setId(param.toInt());
-    _cust->setReadOnly(TRUE);
+    _cust->setReadOnly(true);
   }
 
   param = pParams.value("prodcat_id", &valid);
@@ -166,7 +166,7 @@ void dspSalesHistoryByCustomer::sEdit()
   params.append("mode", "edit");
   params.append("sohist_id", list()->id());
 
-  salesHistoryInformation newdlg(this, "", TRUE);
+  salesHistoryInformation newdlg(this, "", true);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
@@ -179,7 +179,7 @@ void dspSalesHistoryByCustomer::sView()
   params.append("mode", "view");
   params.append("sohist_id", list()->id());
 
-  salesHistoryInformation newdlg(this, "", TRUE);
+  salesHistoryInformation newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

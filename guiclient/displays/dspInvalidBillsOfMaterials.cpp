@@ -64,7 +64,7 @@ void dspInvalidBillsOfMaterials::sCreateItemSite()
   params.append("item_id",     list()->currentItem()->rawValue("citem_id").toInt());
   params.append("warehous_id", list()->currentItem()->rawValue("warehous_id").toInt());
   
-  itemSite newdlg(this, "", TRUE);
+  itemSite newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
   
@@ -77,7 +77,7 @@ void dspInvalidBillsOfMaterials::sEditItemSite()
   params.append("mode", "edit");
   params.append("itemsite_id", list()->id());
   
-  itemSite newdlg(this, "", TRUE);
+  itemSite newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

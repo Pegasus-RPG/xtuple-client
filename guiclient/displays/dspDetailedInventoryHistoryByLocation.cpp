@@ -57,8 +57,8 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
   list()->addColumn(tr("Qty. Before"),  _qtyColumn, Qt::AlignRight, true, "qohbefore");
   list()->addColumn(tr("Qty. After"),   _qtyColumn, Qt::AlignRight, true, "qohafter");
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
   
   sPopulateLocations();
 }
@@ -152,7 +152,7 @@ void dspDetailedInventoryHistoryByLocation::sViewTransInfo()
   }
   else if (transType == "CC")
   {
-    countTag newdlg(this, "", TRUE);
+    countTag newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }

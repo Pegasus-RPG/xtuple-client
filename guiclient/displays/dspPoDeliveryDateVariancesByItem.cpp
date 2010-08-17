@@ -25,8 +25,8 @@ dspPoDeliveryDateVariancesByItem::dspPoDeliveryDateVariancesByItem(QWidget* pare
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
   
   list()->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignRight, true, "recv_order_number");
   list()->addColumn(tr("Vendor"),     _orderColumn, Qt::AlignLeft,  true, "vend_name");

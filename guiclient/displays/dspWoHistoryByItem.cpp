@@ -31,8 +31,8 @@ dspWoHistoryByItem::dspWoHistoryByItem(QWidget* parent, const char*, Qt::WFlags 
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
   _item->setDefaultType(ItemLineEdit::cGeneralManufactured);
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft,   true,  "wonumber"   );
   list()->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter, true,  "wo_status" );
@@ -105,7 +105,7 @@ bool dspWoHistoryByItem::setParams(ParameterList & params)
       QMessageBox::warning(this, tr("Invalid Item"),
                            tr("Enter a valid Item."));
       _item->setFocus();
-      return FALSE;
+      return false;
     }
 
     if (! _dates->startDate().isValid())
@@ -113,7 +113,7 @@ bool dspWoHistoryByItem::setParams(ParameterList & params)
       QMessageBox::warning(this, tr("Invalid Start Date"),
                            tr("Enter a valid Start Date."));
       _dates->setFocus();
-      return FALSE;
+      return false;
     }
 
     if (! _dates->endDate().isValid())
@@ -121,7 +121,7 @@ bool dspWoHistoryByItem::setParams(ParameterList & params)
       QMessageBox::warning(this, tr("Invalid End Date"),
                            tr("Enter a valid End Date."));
       _dates->setFocus();
-      return FALSE;
+      return false;
     }
   }
 

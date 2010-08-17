@@ -54,7 +54,7 @@ void dspPoHistory::sCopy()
   ParameterList params;
   params.append("pohead_id", _po->id());
 
-  copyPurchaseOrder newdlg(this, "", TRUE);
+  copyPurchaseOrder newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

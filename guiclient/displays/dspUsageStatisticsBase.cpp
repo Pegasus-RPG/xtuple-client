@@ -37,8 +37,8 @@ dspUsageStatisticsBase::dspUsageStatisticsBase(QWidget* parent, const char* name
   if (_metrics->boolean("MultiWhs"))
     list()->addColumn(tr("Transfers"), _qtyColumn,  Qt::AlignRight,  true,  "transfer"  );
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
 
 }
 

@@ -79,7 +79,7 @@ void dspItemSitesByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *pSelected, 
 
   menuItem = menu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));
   if (!_privileges->check("IssueCountTags"))
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 }
 
 void dspItemSitesByItem::sViewItemsite()
@@ -88,7 +88,7 @@ void dspItemSitesByItem::sViewItemsite()
   params.append("mode", "view");
   params.append("itemsite_id", list()->id());
 
-  itemSite newdlg(this, "", TRUE);
+  itemSite newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -99,7 +99,7 @@ void dspItemSitesByItem::sEditItemsite()
   params.append("mode", "edit");
   params.append("itemsite_id", list()->id());
 
-  itemSite newdlg(this, "", TRUE);
+  itemSite newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -132,7 +132,7 @@ void dspItemSitesByItem::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

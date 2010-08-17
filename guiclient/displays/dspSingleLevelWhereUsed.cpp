@@ -35,7 +35,7 @@ dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char*, Q
 
   _effective->setNullString(tr("Today"));
   _effective->setNullDate(QDate::currentDate());
-  _effective->setAllowNullDate(TRUE);
+  _effective->setAllowNullDate(true);
   _effective->setNull();
 
   list()->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true, "bomitem_seqnumber");
@@ -89,15 +89,15 @@ void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem *, int)
 
   menuItem = menu->addAction(tr("Edit Bill of Materials..."), this, SLOT(sEditBOM()));
   if (!_privileges->check("MaintainBOMs"))
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 
   menuItem = menu->addAction(tr("Edit Item Master..."), this, SLOT(sEditItem()));
   if (!_privileges->check("MaintainItemMasters"))
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 
   menuItem = menu->addAction(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()));
   if (!_privileges->check("ViewInventoryHistory"))
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 }
 
 void dspSingleLevelWhereUsed::sEditBOM()

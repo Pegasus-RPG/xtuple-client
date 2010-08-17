@@ -75,7 +75,7 @@ bool dspSummarizedSalesByCustomer::setParams(ParameterList & params)
                             tr("Please enter a valid Start Date.") );
       _dates->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   if (!_dates->endDate().isValid())
@@ -85,21 +85,21 @@ bool dspSummarizedSalesByCustomer::setParams(ParameterList & params)
                             tr("Please enter a valid End Date.") );
       _dates->setFocus();
     }
-    return FALSE;
+    return false;
   }
 
   if (_productCategory->isPattern())
   {
     QString pattern = _productCategory->pattern();
     if (pattern.length() == 0)
-      return FALSE;
+      return false;
   }
 
   if (_currency->isPattern())
   {
     QString pattern = _currency->pattern();
     if (pattern.length() == 0)
-      return FALSE;
+      return false;
   }
 
   _dates->appendValue(params);

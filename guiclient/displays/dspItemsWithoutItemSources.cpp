@@ -51,7 +51,7 @@ void dspItemsWithoutItemSources::sCreateItemSource()
   params.append("mode", "new");
   params.append("item_id", list()->id());
 
-  itemSource newdlg(this, "", TRUE);
+  itemSource newdlg(this, "", true);
   newdlg.set(params);
   if (newdlg.exec())
     sFillList();

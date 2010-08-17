@@ -283,7 +283,7 @@ void dspInventoryAvailabilityByWorkOrder::sCreatePR()
   params.append("mode", "new");
   params.append("itemsite_id", list()->id());
 
-  purchaseRequest newdlg(this, "", TRUE);
+  purchaseRequest newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 
@@ -345,7 +345,7 @@ void dspInventoryAvailabilityByWorkOrder::sPostMiscProduction()
   ParameterList params;
   params.append("itemsite_id", list()->id());
 
-  postMiscProduction newdlg(this, "", TRUE);
+  postMiscProduction newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 
@@ -364,7 +364,7 @@ void dspInventoryAvailabilityByWorkOrder::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
 
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -375,7 +375,7 @@ void dspInventoryAvailabilityByWorkOrder::sEnterMiscCount()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  enterMiscCount newdlg(this, "", TRUE);
+  enterMiscCount newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 

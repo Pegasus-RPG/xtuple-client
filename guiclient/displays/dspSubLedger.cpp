@@ -252,7 +252,7 @@ void dspSubLedger::sViewTrans()
 
   params.append("sltrans_id", list()->id());
 
-  glTransactionDetail newdlg(this, "", TRUE);
+  glTransactionDetail newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -374,7 +374,7 @@ void dspSubLedger::sViewDocument()
 
       params.append("mode", "view");
       params.append("apopen_id", q.value("apopen_id").toInt());
-      apOpenItem newdlg(this, "", TRUE);
+      apOpenItem newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
     }
@@ -391,7 +391,7 @@ void dspSubLedger::sViewDocument()
 
       params.append("mode", "view");
       params.append("aropen_id", q.value("aropen_id").toInt());
-      arOpenItem newdlg(this, "", TRUE);
+      arOpenItem newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
     }
@@ -429,7 +429,7 @@ void dspSubLedger::sViewDocument()
     params.append("mode", "view");
     params.append("invhist_id", q.value("sltrans_misc_id").toInt());
 
-    transactionInformation newdlg(this, "", TRUE);
+    transactionInformation newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }

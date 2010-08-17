@@ -154,11 +154,11 @@ void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWid
 
   menuItem = menu->addAction(tr("View Allocations..."), this, SLOT(sViewAllocations()));
   if (item->rawValue("allocated").toDouble() == 0.0)
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 
   menuItem = menu->addAction(tr("View Orders..."), this, SLOT(sViewOrders()));
   if (item->rawValue("ordered").toDouble() == 0.0)
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 
   menuItem = menu->addAction(tr("Running Availability..."), this, SLOT(sRunningAvailability()));
 
@@ -166,11 +166,11 @@ void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWid
 
   menuItem = menu->addAction(tr("Create P/R..."), this, SLOT(sCreatePR()));
   if (!_privileges->check("MaintainPurchaseRequests"))
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 
   menuItem = menu->addAction(tr("Create P/O..."), this, SLOT(sCreatePO()));
   if (!_privileges->check("MaintainPurchaseOrders"))
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 
   menu->addSeparator();
 
@@ -180,11 +180,11 @@ void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWid
 
   menuItem = menu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));
   if (!_privileges->check("IssueCountTags"))
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 
   menuItem = menu->addAction(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()));
   if (!_privileges->check("EnterMiscCounts"))
-    menuItem->setEnabled(FALSE);
+    menuItem->setEnabled(false);
 }
 
 void dspInventoryAvailabilityBySourceVendor::sViewHistory()
@@ -204,7 +204,7 @@ void dspInventoryAvailabilityBySourceVendor::sViewAllocations()
   params.append("run");
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value());
   else if (_byDate->isChecked())
@@ -228,7 +228,7 @@ void dspInventoryAvailabilityBySourceVendor::sViewOrders()
   params.append("run");
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value());
   else if (_byDate->isChecked())
@@ -262,7 +262,7 @@ void dspInventoryAvailabilityBySourceVendor::sCreatePR()
   params.append("mode", "new");
   params.append("itemsite_id", list()->id());
 
-  purchaseRequest newdlg(this, "", TRUE);
+  purchaseRequest newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -285,7 +285,7 @@ void dspInventoryAvailabilityBySourceVendor::sViewSubstituteAvailability()
   params.append("run");
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
+    params.append("byLeadTime", true);
   else if (_byDays->isChecked())
     params.append("byDays", _days->value());
   else if (_byDate->isChecked())
@@ -301,7 +301,7 @@ void dspInventoryAvailabilityBySourceVendor::sIssueCountTag()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  createCountTagsByItem newdlg(this, "", TRUE);
+  createCountTagsByItem newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -311,7 +311,7 @@ void dspInventoryAvailabilityBySourceVendor::sEnterMiscCount()
   ParameterList params;
   params.append("itemsite_id", list()->id());
   
-  enterMiscCount newdlg(this, "", TRUE);
+  enterMiscCount newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -320,5 +320,5 @@ void dspInventoryAvailabilityBySourceVendor::sHandleShowReorder(bool pValue)
 {
   _ignoreReorderAtZero->setEnabled(pValue);
   if (pValue && _preferences->boolean("XCheckBox/forgetful"))
-    _showShortages->setChecked(TRUE);
+    _showShortages->setChecked(true);
 }

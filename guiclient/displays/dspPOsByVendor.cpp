@@ -28,8 +28,8 @@ dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft,   true,  "vend_number"   );
   list()->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true,  "sortDate" );
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
 
   _descrip->setEnabled(_searchDescrip->isChecked());
 }

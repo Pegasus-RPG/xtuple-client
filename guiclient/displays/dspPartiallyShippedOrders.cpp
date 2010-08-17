@@ -34,8 +34,8 @@ dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char
 
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("Hold"),        0,           Qt::AlignCenter,true, "cohead_holdtype");
   list()->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignRight, true, "cohead_number");
@@ -53,7 +53,7 @@ dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char
   sHandlePrices(_showPrices->isChecked());
 
   if ( (!_privileges->check("ViewCustomerPrices")) && (!_privileges->check("MaintainCustomerPrices")) )
-    _showPrices->setEnabled(FALSE);
+    _showPrices->setEnabled(false);
 }
 
 void dspPartiallyShippedOrders::languageChange()
@@ -119,7 +119,7 @@ void dspPartiallyShippedOrders::sPrintPackingList()
   ParameterList params;
   params.append("sohead_id", list()->altId());
 
-  printPackingList newdlg(this, "", TRUE);
+  printPackingList newdlg(this, "", true);
   newdlg.set(params);
   newdlg.exec();
 }

@@ -30,12 +30,12 @@ dspPendingAvailability::dspPendingAvailability(QWidget* parent, const char*, Qt:
 
   _effective->setNullString(tr("Now"));
   _effective->setNullDate(QDate::currentDate());
-  _effective->setAllowNullDate(TRUE);
+  _effective->setAllowNullDate(true);
   _effective->setNull();
 
   _buildDate->setNullString(tr("Latest"));
   _buildDate->setNullDate(omfgThis->endOfTime());
-  _buildDate->setAllowNullDate(TRUE);
+  _buildDate->setAllowNullDate(true);
   _buildDate->setNull();
 
   _qtyToBuild->setValidator(omfgThis->qtyVal());

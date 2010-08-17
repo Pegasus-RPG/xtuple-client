@@ -18,7 +18,7 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char*, Qt::WFl
 {
   setWindowTitle(tr("Costed Indented Bill of Materials"));
   setReportName("CostedIndentedBOM");
-  list()->setRootIsDecorated(TRUE);
+  list()->setRootIsDecorated(true);
   list()->setIndentation(10);
 }
 
