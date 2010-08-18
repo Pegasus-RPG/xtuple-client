@@ -27,15 +27,16 @@ public:
     display(QWidget* = 0, const char* = 0, Qt::WindowFlags = 0);
     ~display();
 
-    virtual bool setParams(ParameterList &) = 0;
+    Q_INVOKABLE virtual bool setParams(ParameterList &) = 0;
 
-    void setReportName(const QString &);
-    void setMetaSQLOptions(const QString &, const QString &);
-    void setListLabel(const QString &);
-    void setUseAltId(bool);
-    bool useAltId() const;
-    void setAutoUpdateEnabled(bool);
-    bool autoUpdateEnabled() const;
+    Q_INVOKABLE void setReportName(const QString &);
+    Q_INVOKABLE QString reportName() const;
+    Q_INVOKABLE void setMetaSQLOptions(const QString &, const QString &);
+    Q_INVOKABLE void setListLabel(const QString &);
+    Q_INVOKABLE void setUseAltId(bool);
+    Q_INVOKABLE bool useAltId() const;
+    Q_INVOKABLE void setAutoUpdateEnabled(bool);
+    Q_INVOKABLE bool autoUpdateEnabled() const;
 
 public slots:
     virtual void sPrint();
@@ -46,6 +47,7 @@ public slots:
 protected:
     Q_INVOKABLE QWidget * optionsWidget();
     Q_INVOKABLE XTreeWidget * list();
+    Q_INVOKABLE ParameterList getParams();
 
 protected slots:
     virtual void languageChange();

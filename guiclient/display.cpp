@@ -156,6 +156,11 @@ void display::setReportName(const QString & reportName)
   _data->_preview->setVisible(!reportName.isEmpty());
 }
 
+QString display::reportName() const
+{
+  return _data->reportName;
+}
+
 void display::setMetaSQLOptions(const QString & group, const QString & name)
 {
   _data->metasqlName = name;
@@ -233,4 +238,13 @@ void display::sAutoUpdateToggled()
     connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
   else
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+}
+
+ParameterList display::getParams()
+{
+  ParameterList params;
+  bool ret = setParams(params);
+  params.append("checkParamsReturn", ret);
+    
+  return params;
 }
