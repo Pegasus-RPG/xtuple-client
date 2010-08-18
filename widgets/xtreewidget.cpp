@@ -47,7 +47,7 @@
 
 #define DEBUG false
 
-#define WORKERINTERVAL 10
+#define WORKERINTERVAL 0
 #define WORKERROWS     100
 
 /* make sure the colroles are kept in sync with
@@ -121,6 +121,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   for (int i = 0; i < ROWROLE_COUNT; i++)
     _rowRole[i] = 0;
   _progress = 0;
+  _subtotals = 0;
 
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -158,6 +159,17 @@ XTreeWidget::~XTreeWidget()
   qApp->restoreOverrideCursor();
 
   cleanupAfterPopulate();
+
+  if (_subtotals)
+  {
+    for (int i = 0; i < _subtotals->size(); i++)
+    {
+      delete (*_subtotals)[i];
+      _subtotals->replace(i, 0);
+    }
+    delete _subtotals;
+    _subtotals = 0;
+  }
 
   if (_x_preferences)
   {
@@ -288,12 +300,20 @@ void XTreeWidget::populateWorker()
       cleanupAfterPopulate(); // plug memory leaks if last populate() never finished
 
       _fieldCount = pQuery.count();
-      _colIdx = new QVector<int>(_roles.size());
       // TODO: rewrite code to use a qmap or some other structure that
       //       doesn't require initializing a Vector or new'd array values
+      _colIdx = new QVector<int>(_roles.size());
+
       _colRole = new QVector<int *>(_fieldCount, 0);
       for (int ref = 0; ref < _fieldCount; ++ref)
         (*_colRole)[ref] = new int[COLROLE_COUNT];
+
+      if (! _subtotals)
+      {
+        _subtotals = new QList<QMap<int, double> *>();
+        for (int i = 0; i < _fieldCount; i++)
+          _subtotals->append(new QMap<int, double>());
+      }
 
       QSqlRecord  currRecord = pQuery.record();
 
@@ -361,7 +381,7 @@ void XTreeWidget::populateWorker()
             role->insert(knownroles.at(k),
                           QString(colname + "_" + knownroles.at(k)));
             if (knownroles.at(k) == "xtrunningrole")
-                          headerItem()->setData(wcol, Qt::UserRole, "xtrunningrole");
+              headerItem()->setData(wcol, Qt::UserRole, "xtrunningrole");
             else if (knownroles.at(k) == "xttotalrole")
                           headerItem()->setData(wcol, Qt::UserRole, "xttotalrole");
           }
@@ -635,8 +655,13 @@ void XTreeWidget::populateWorker()
 
         if ((*_colRole)[col][COLROLE_RUNNING])
         {
-          _last->setData(col, Xt::RunningSetRole,
-                        pQuery.value((*_colRole)[col][COLROLE_RUNNING]).toInt());
+          int set = pQuery.value((*_colRole)[col][COLROLE_RUNNING]).toInt();
+          _last->setData(col, Xt::RunningSetRole, set);
+          if (! _subtotals->at(col)->contains(set))
+            (*_subtotals)[col]->insert(set, pQuery.value((*_colRole)[col][COLROLE_RUNNINGINIT]).toDouble());
+          (*(*_subtotals)[col])[set] += rawValue.toDouble();
+          _last->setData(col, Qt::DisplayRole,
+                         QLocale().toString((*_subtotals)[col]->value(set), 'f', scale));
         }
 
         if ((*_colRole)[col][COLROLE_TOTAL])
@@ -1144,9 +1169,16 @@ void XTreeWidget::populateCalculatedColumns()
         if (!subtotals.contains(set))
           subtotals[set] = topLevelItem(row)->data(col, Xt::RunningInitRole).toDouble();
         subtotals[set] += topLevelItem(row)->data(col, Xt::RawRole).toDouble();
-        topLevelItem(row)->setData(col, Qt::DisplayRole,
-                                   QLocale().toString(subtotals[set], 'f',
-                                                      topLevelItem(row)->data(col, Xt::ScaleRole).toInt()));
+        int scale = topLevelItem(row)->data(col, Xt::ScaleRole).toInt();
+        float maxdiff = pow(10.0, 0 - scale);
+        if (qAbs(subtotals[set] - topLevelItem(row)->data(col, Qt::DisplayRole).toDouble()) < maxdiff)
+        {
+          topLevelItem(row)->setData(col, Qt::DisplayRole,
+                                     QLocale().toString(subtotals[set], 'f', scale));
+          qDebug("'%f' != '%f'\t%f",
+                 subtotals[set], topLevelItem(row)->data(col, Qt::DisplayRole).toDouble(),
+                 subtotals[set] - topLevelItem(row)->data(col, Qt::DisplayRole).toDouble());
+        }
       }
     }
     else if (headerItem()->data(col, Qt::UserRole).toString() == "xttotalrole")
@@ -1332,6 +1364,16 @@ void XTreeWidget::clear()
     qDebug("%s::clear()", qPrintable(objectName()));
   if (! _workingTimer.isActive())
     _workingParams.clear();
+  if (_subtotals)
+  {
+    for (int i = 0; i < _subtotals->size(); i++)
+    {
+      delete (*_subtotals)[i];
+      _subtotals->replace(i, 0);
+    }
+    delete _subtotals;
+    _subtotals = 0;
+  }
   emit valid(FALSE);
   _savedId = false; // was -1;
 

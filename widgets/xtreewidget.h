@@ -332,6 +332,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     int              _rowRole[ROWROLE_COUNT];
     void             cleanupAfterPopulate();
     XTreeWidgetProgress *_progress;
+    QList<QMap<int, double> *> *_subtotals;
 
   private slots:
     void  sSelectionChanged();
