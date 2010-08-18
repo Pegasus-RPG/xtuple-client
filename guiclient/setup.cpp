@@ -70,7 +70,8 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   insert(tr("Manufacture"), "configureWO", Configure, Xt::ManufactureModule, mode("ConfigureWO"), 0, "sSave()");
   insert(tr("Products"), "configurePD", Configure, Xt::ProductsModule, mode("ConfigurePD"), 0, "sSave()" );
   insert(tr("Purchase"), "configurePO", Configure, Xt::PurchaseModule, mode("ConfigurePO"), 0, "sSave()" );
-  insert(tr("Schedule"), "configureMS", Configure, Xt::ScheduleModule, mode("ConfigureMS"), 0, "sSave()" );
+  if (_metrics->value("Application") != "PostBooks")
+    insert(tr("Schedule"), "configureMS", Configure, Xt::ScheduleModule, mode("ConfigureMS"), 0, "sSave()" );
 
   // Account Mappings
   int modeVal;
