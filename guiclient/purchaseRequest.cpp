@@ -265,6 +265,8 @@ void purchaseRequest::sCreate()
     q.exec();
   }
 
+  omfgThis->sPurchaseRequestsUpdated();
+
   if (_captive)
     done(prid);
   else

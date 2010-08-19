@@ -114,6 +114,7 @@ void dspPurchaseReqsByPlannerCode::sRelease()
     delete newdlg;
 
   sFillList();
+  omfgThis->sPurchaseRequestsUpdated();
 }
 
 void dspPurchaseReqsByPlannerCode::sDelete()
@@ -123,5 +124,6 @@ void dspPurchaseReqsByPlannerCode::sDelete()
   q.exec();
 
   sFillList();
+  omfgThis->sPurchaseRequestsUpdated();
 }
 

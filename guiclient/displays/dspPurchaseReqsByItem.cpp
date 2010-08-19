@@ -104,6 +104,9 @@ void dspPurchaseReqsByItem::sRelease()
     omfgThis->handleNewWindow(newdlg);
   else
     delete newdlg;
+
+  sFillList();
+  omfgThis->sPurchaseRequestsUpdated();
 }
 
 void dspPurchaseReqsByItem::sDelete()
@@ -113,5 +116,6 @@ void dspPurchaseReqsByItem::sDelete()
   q.exec();
 
   sFillList();
+  omfgThis->sPurchaseRequestsUpdated();
 }
 
