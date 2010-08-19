@@ -142,6 +142,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       connect(_billed, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
       connect(_billed, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
       connect(_price, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
+      _salescat->setType(XComboBox::SalesCategoriesActive);
     }
     else if (param.toString() == "edit")
     {

@@ -137,6 +137,7 @@ void XComboBox::init()
   insertEditor(SalesOrderCommentTypes,"commentTypes","MaintainCommentTypes");
   insertEditor(SalesOrderItemCommentTypes,"commentTypes","MaintainCommentTypes");
   insertEditor(SalesCategories,"salesCategories","MaintainSalesCategories");
+  insertEditor(SalesCategoriesActive,"salesCategories","MaintainSalesCategories");
   insertEditor(SalesReps,"salesReps","MaintainSalesReps");
   insertEditor(SalesRepsActive,"salesReps","MaintainSalesReps");
   insertEditor(ShipVias,"shipVias","MaintainShipVias");
@@ -771,6 +772,13 @@ void XComboBox::setType(XComboBoxTypes pType)
     case SalesCategories:
       query.exec( "SELECT salescat_id, (salescat_name || '-' || salescat_descrip), salescat_name "
                   "FROM salescat "
+                  "ORDER BY salescat_name;" );
+      break;
+
+    case SalesCategoriesActive:
+      query.exec( "SELECT salescat_id, (salescat_name || '-' || salescat_descrip), salescat_name "
+                  "FROM salescat "
+                  "WHERE (salescat_active) "
                   "ORDER BY salescat_name;" );
       break;
 
@@ -1642,6 +1650,7 @@ void setupXComboBox(QScriptEngine *engine)
   widget.setProperty("RegistrationTypes",    QScriptValue(engine, XComboBox::RegistrationTypes),    QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Reports",              QScriptValue(engine, XComboBox::Reports),              QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("SalesCategories",      QScriptValue(engine, XComboBox::SalesCategories),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("SalesCategoriesActive",QScriptValue(engine, XComboBox::SalesCategoriesActive),QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("SalesReps",            QScriptValue(engine, XComboBox::SalesReps),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("SalesRepsActive",      QScriptValue(engine, XComboBox::SalesRepsActive),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("ShipVias",             QScriptValue(engine, XComboBox::ShipVias),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
