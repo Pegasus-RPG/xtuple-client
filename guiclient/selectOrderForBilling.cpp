@@ -82,6 +82,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   else
   {
     connect(_soitem, SIGNAL(valid(bool)), _select, SLOT(setEnabled(bool)));
+    connect(_soitem, SIGNAL(valid(bool)), _selectBalance, SLOT(setEnabled(bool)));
     connect(_soitem, SIGNAL(valid(bool)), _cancel, SLOT(setEnabled(bool)));
   }
 
@@ -493,6 +494,7 @@ void selectOrderForBilling::sFillList()
     params.append("sohead_id", _so->id());
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
+    _soitem->populate(q);
     if (q.first())
     {
       double subtotal = 0.0;
@@ -500,8 +502,6 @@ void selectOrderForBilling::sFillList()
         subtotal += q.value("extended").toDouble();
       while (q.next());
       _subtotal->setLocalValue(subtotal);
-      
-      _soitem->populate(q);
     }
     else
     {
