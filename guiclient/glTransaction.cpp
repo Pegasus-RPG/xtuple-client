@@ -22,7 +22,8 @@ glTransaction::glTransaction(QWidget* parent, const char* name, bool modal, Qt::
 {
     setupUi(this);
 
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+    _buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Post"));
+    connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sPost()));
 
     _amount->setFocus();
     _captive = FALSE;
@@ -74,10 +75,9 @@ enum SetResponse glTransaction::set(const ParameterList &pParams)
       _debit->setEnabled(FALSE);
       _credit->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
-      _close->setText(tr("&Close"));
-      _post->hide();
-
-      _close->setFocus();
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
     }
   }
 
@@ -145,7 +145,8 @@ void glTransaction::sPost()
     else
     {
       clear();
-      _close->setText(tr("&Close"));
+      _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
+      _buttonBox->addButton(QDialogButtonBox::Close);
       _amount->setFocus();
     }
   }

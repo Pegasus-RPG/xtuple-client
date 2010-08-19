@@ -226,7 +226,10 @@ void glSeries::sNew()
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
+  {
     sFillList();
+    sNew();
+  }
 }
 
 void glSeries::sEdit()
