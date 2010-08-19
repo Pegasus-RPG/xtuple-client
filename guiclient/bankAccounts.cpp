@@ -167,6 +167,7 @@ void bankAccounts::sDelete()
     return;
   }
   sFillList();
+  omfgThis->sBankAccountsUpdated();
 }
 
 void bankAccounts::sPopulateMenu( QMenu * )

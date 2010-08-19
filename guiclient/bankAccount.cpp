@@ -393,6 +393,7 @@ void bankAccount::sSave()
     return;
   }
 
+  omfgThis->sBankAccountsUpdated();
   done(_bankaccntid);
 }
 

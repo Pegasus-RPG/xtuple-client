@@ -258,6 +258,7 @@ class GUIClient : public QMainWindow
     void sBOMsUpdated(int, bool);
     void sBOOsUpdated(int, bool);
     void sBudgetsUpdated(int, bool);
+    void sBankAccountsUpdated();
     void sBankAdjustmentsUpdated(int, bool);
     void sBillingSelectionUpdated(int, int);
     void sCashReceiptsUpdated(int, bool);
@@ -306,6 +307,7 @@ class GUIClient : public QMainWindow
 
     void checksUpdated(int, int, bool);
     void assortmentsUpdated(int, bool);
+    void bankAccountsUpdated();
     void bankAdjustmentsUpdated(int, bool);
     void bbomsUpdated(int, bool);
     void billingSelectionUpdated(int, int);

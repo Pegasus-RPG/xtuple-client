@@ -1117,6 +1117,11 @@ void GUIClient::sCashReceiptsUpdated(int pCashrcptid, bool pLocal)
   emit cashReceiptsUpdated(pCashrcptid, pLocal);
 }
 
+void GUIClient::sBankAccountsUpdated()
+{
+  emit bankAccountsUpdated();
+}
+
 void GUIClient::sBankAdjustmentsUpdated(int pBankadjid, bool pLocal)
 {
   emit bankAdjustmentsUpdated(pBankadjid, pLocal);
