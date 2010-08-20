@@ -439,8 +439,17 @@ bool VirtualClusterLineEdit::eventFilter(QObject *obj, QEvent *event)
 
 void VirtualClusterLineEdit::focusInEvent(QFocusEvent * event)
 {
+  if (!_nullStr.isEmpty())
+    sHandleNullStr();
   sUpdateMenu();
   XLineEdit::focusInEvent(event);
+}
+
+void VirtualClusterLineEdit::focusOutEvent(QFocusEvent * event)
+{
+  if (!_nullStr.isEmpty())
+    sHandleNullStr();
+  XLineEdit::focusOutEvent(event);
 }
 
 void VirtualClusterLineEdit::resizeEvent(QResizeEvent *)
@@ -490,6 +499,15 @@ void VirtualClusterLineEdit::setViewPriv(const QString& priv)
 {
   _viewPriv = priv;
   sUpdateMenu();
+}
+
+void VirtualClusterLineEdit::setNullStr(const QString &text)
+{
+  if (_nullStr == text )
+    return;
+
+  _nullStr = text;
+  sHandleNullStr();
 }
 
 void VirtualClusterLineEdit::sUpdateMenu()
@@ -599,6 +617,25 @@ void VirtualClusterLineEdit::sHandleCompleter()
   rect.setBottomLeft(QPoint(0, height() - 2));
   _completer->complete(rect);
   _parsed = false;
+}
+
+void VirtualClusterLineEdit::sHandleNullStr()
+{
+  QString sheet = styleSheet();
+  QString nullStyle = " { foreground: yellow  }";
+
+  if (!hasFocus() && _id == -1)
+  {
+    setText(_nullStr);
+    sheet.append(nullStyle);
+  }
+  else if (hasFocus() && _id == -1)
+  {
+    clear();
+    sheet.remove(nullStyle);
+  }
+
+  setStyleSheet(sheet);
 }
 
 void VirtualClusterLineEdit::setStrikeOut(bool enable)

@@ -13,6 +13,7 @@
 
 #include "virtualCluster.h"
 #include "parameter.h"
+#include "projectcluster.h"
 #include <QComboBox>
 
 class XTUPLEWIDGETS_EXPORT accountList : public VirtualList
@@ -82,7 +83,7 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
       void sParse();
 
     protected:
-            QMap<QString, QString> _typeMap;
+      QMap<QString, QString> _typeMap;
 
     private:
       unsigned int _type;
@@ -113,6 +114,21 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
     Q_INVOKABLE bool showExternal()              { return static_cast<GLClusterLineEdit*>(_number)->showExternal(); }
     Q_INVOKABLE void setShowExternal(bool p)     { static_cast<GLClusterLineEdit*>(_number)->setShowExternal(p); }
 
+    Q_INVOKABLE bool projectVisible();
+    Q_INVOKABLE bool setProjectVisible(bool p);
+
+    void setOrientation(Qt::Orientation orientation);
+
+  public slots:
+    void setId(const int p);
+
+  protected slots:
+    void sHandleProjectState(int p);
+    void sHandleProjectId();
+
+  private:
+    ProjectLineEdit* _project;
+    QLabel*          _projectLit;
 };
 
 #endif

@@ -27,7 +27,7 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
            "  accnt_descrip AS name, accnt_extref AS description, "
            "  NULL AS active, accnt_type, "
            "  COALESCE(company_external,false) AS external "
-           "FROM accnt "
+           "FROM ONLY accnt "
            "  LEFT OUTER JOIN company ON (accnt_company=company_number) "
            "WHERE (true) ";
 
@@ -44,7 +44,9 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
 void GLClusterLineEdit::setId(const int pId)
 {
   setStrict(false);
+  _query.replace("FROM ONLY accnt","FROM accnt");
   VirtualClusterLineEdit::setId(pId);
+  _query.replace("FROM accnt","FROM ONLY accnt");
   setStrict(true);
 }
 
@@ -173,7 +175,7 @@ void GLClusterLineEdit::sParse()
                             tr("You may not use an Account associated with an external Company."));
       setId(-1);
     }
-    else if (!_types.contains(type))
+    else if (_type && !_types.contains(type))
     {
       QStringList _typeNameList;
       for (int i = 0; i < _types.count(); i++)
@@ -211,7 +213,128 @@ GLCluster::GLCluster(QWidget *pParent, const char *pName) :
   addNumberWidget(new GLClusterLineEdit(this, pName));
   _name->show();
 
+  _projectLit = new QLabel("-", this);
+  _projectLit->setVisible(false);
+  _grid->addWidget(_projectLit, 0, 4);
+  _project = new ProjectLineEdit(this);
+  _project->setAllowedStatuses(ProjectLineEdit::InProcess);
+  _grid->addWidget(_project, 0, 5);
+  _project->setEnabled(false);
+  _project->setVisible(false);
+  _project->setNullStr(tr("Project"));
+  setFocusProxy(_number);
   setOrientation(Qt::Horizontal);
+}
+
+bool GLCluster::projectVisible()
+{
+  return _project->isVisible();
+}
+
+void GLCluster::setId(const int p)
+{
+  int id = p;
+
+  if (_x_metrics)
+  {
+    if (_x_metrics->boolean("EnableProjectAccounting"))
+    {
+      XSqlQuery qry;
+      qry.prepare("SELECT accnt_id, prjaccnt_prj_id "
+                  "FROM prjaccnt "
+                  "WHERE (accnt_id=:accnt_id); ");
+      qry.bindValue(":accnt_id", p);
+      qry.exec();
+      if (qry.first())
+      {
+        id = qry.value("accnt_id").toInt();
+        if (qry.value("prjaccnt_prj_id").toInt() != -1 &&
+            !projectVisible())
+          setProjectVisible(true);
+        if (projectVisible())
+          _project->setId(qry.value("prjaccnt_prj_id").toInt());
+      }
+    }
+
+    VirtualCluster::setId(id);
+  }
+}
+
+bool GLCluster::setProjectVisible(bool p)
+{
+  if (_x_metrics && p == true)
+  {
+    if (!_x_metrics->boolean("EnableProjectAccounting"))
+      return false;
+  }
+
+  GLClusterLineEdit* number = static_cast<GLClusterLineEdit*>(_number);
+  number->disconnect(SLOT(sHandleProjectState()));
+  _project->disconnect(SLOT(sHandleProjectId()));
+
+  _projectLit->setVisible(p);
+  _project->setVisible(p);
+
+  if (p)
+  {
+    connect(number, SIGNAL(newId(int)), this, SLOT(sHandleProjectState()));
+    connect(_project, SIGNAL(newId(int)), this, SLOT(sHandleProjectId(int)));
+  }
+
+  return (p);
+}
+
+void GLCluster::setOrientation(Qt::Orientation orientation)
+{
+  if (orientation == _orientation)
+    return;
+
+  _grid->removeWidget(_name);
+  _grid->removeWidget(_description);
+
+  if (orientation == Qt::Vertical)
+  {
+    _grid->addWidget(_name,   1, 1, 1, -1);
+    _grid->addWidget(_description, 2, 1, 1, -1);
+  }
+  else
+  {
+    _grid->addWidget(_name, 0, 6);
+    _grid->addWidget(_description, 0, 7);
+  }
+
+  _orientation = orientation;
+}
+
+void GLCluster::sHandleProjectState(int p)
+{
+  qDebug("handling state for value %d", p);
+
+  if (p == -1)
+  {
+    _project->setId(-1);
+    _project->setEnabled(false);
+  }
+  else
+  {
+       _project->setEnabled(true);
+    //   _project->setFocus();
+  }
+}
+
+void GLCluster::sHandleProjectId()
+{
+  if (_project->id() != 0)
+  {
+    int id = -1;
+    XSqlQuery qry;
+    qry.prepare("SELECT getPrjAccnt(:prj_id,:accnt_id) AS accnt_id");
+    qry.bindValue(":prj_id", _project->id());
+    qry.bindValue(":accnt_id", _number->id());
+    qry.exec();
+    qry.first();
+    _number->setId(id);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

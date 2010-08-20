@@ -182,8 +182,8 @@ CurrCluster::CurrCluster(QWidget * parent, const char* name)
     
     _valueBaseWidget->setAlignment(Qt::AlignRight|Qt::AlignTop);
 
-    setTabOrder(_currency, _valueLocalWidget);
-    setTabOrder(_valueLocalWidget, 0);
+ //   setTabOrder(_currency, _valueLocalWidget);
+ //   setTabOrder(_valueLocalWidget, 0);
 
     connect(_currency, SIGNAL(newID(int)), this, SLOT(sId(int)));
     connect(_valueLocalWidget, SIGNAL(lostFocus()), this, SLOT(sLostFocus()));
