@@ -288,7 +288,7 @@ void woMaterialItem::sSave()
 void woMaterialItem::sUpdateQtyRequired()
 {
   XSqlQuery qtyreq;
-  qtyreq.prepare("SELECT roundQty(itemuomfractionalbyuom(:itemid, :uomid),"
+  qtyreq.prepare("SELECT roundQty(itemuomfractionalbyuom(:item_id, :uom_id),"
                   "              (:qtyfxd + :qtyper * :qtyord) * (1 + :scrap)) AS qtyreq;");
   qtyreq.bindValue(":item_id", _item->id());
   qtyreq.bindValue(":uom_id", _uom->id());
