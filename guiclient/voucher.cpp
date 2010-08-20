@@ -320,6 +320,8 @@ bool voucher::sSave()
     return true;
   }
 
+  _poNumber->setEnabled(true);
+  _poNumber->setListVisible(true);
   _poNumber->setId(-1);
   _amountToDistribute->clear();
   _amountDistributed->clear();
@@ -406,7 +408,12 @@ void voucher::sDistributions()
       {
         // nothing to do:
         // voucherItem wraps itself in a transaction and rolls back on reject
-    }
+      }
+      else
+      {
+        _poNumber->setEnabled(FALSE);
+        _poNumber->setListVisible(false);
+      }
   }
   sFillList();
   sPopulateDistributed();
@@ -431,6 +438,11 @@ void voucher::sDistributeLine()
         systemError(this,
                     storedProcErrorLookup("distributeVoucherLine", result),
                     __FILE__, __LINE__);
+      else
+      {
+        _poNumber->setEnabled(FALSE);
+        _poNumber->setListVisible(false);
+      }
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -474,8 +486,10 @@ void voucher::sClear()
         return;
         }
      }
-  sFillList();
-  sPopulateDistributed();
+    _poNumber->setEnabled(true);
+    _poNumber->setListVisible(true);
+    sFillList();
+    sPopulateDistributed();
 }
 
 void voucher::sDistributeAll()
@@ -498,6 +512,11 @@ void voucher::sDistributeAll()
         systemError(this,
                     storedProcErrorLookup("distributeVoucherLine", result),
                     __FILE__, __LINE__);
+      else
+      {
+        _poNumber->setEnabled(FALSE);
+        _poNumber->setListVisible(false);
+      }
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
