@@ -425,6 +425,16 @@ to be bound by its terms.</comment>
                </property>
               </spacer>
              </item>
+             <item row="1" column="6">
+              <widget class="ProjectCluster" name="_project">
+               <property name="label">
+                <string>Project:</string>
+               </property>
+               <property name="nameVisible">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -533,6 +543,12 @@ to be bound by its terms.</comment>
                       <property name="label">
                        <string>Ship From#</string>
                       </property>
+                      <property name="nameVisible">
+                       <bool>false</bool>
+                      </property>
+                      <property name="descriptionVisible">
+                       <bool>false</bool>
+                      </property>
                      </widget>
                     </item>
                     <item>
@@ -546,7 +562,7 @@ to be bound by its terms.</comment>
                       <property name="sizeHint" stdset="0">
                        <size>
                         <width>20</width>
-                        <height>32</height>
+                        <height>0</height>
                        </size>
                       </property>
                      </spacer>
@@ -972,6 +988,11 @@ to be bound by its terms.</comment>
    <header>invoicelineedit.h</header>
   </customwidget>
   <customwidget>
+   <class>ProjectCluster</class>
+   <extends>QWidget</extends>
+   <header>projectcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ShiptoCluster</class>
    <extends>QWidget</extends>
    <header>shiptocluster.h</header>
@@ -1008,6 +1029,7 @@ to be bound by its terms.</comment>
   <tabstop>_taxzone</tabstop>
   <tabstop>_rsnCode</tabstop>
   <tabstop>_hold</tabstop>
+  <tabstop>_project</tabstop>
   <tabstop>_cust</tabstop>
   <tabstop>_copyToShipto</tabstop>
   <tabstop>_billtoName</tabstop>

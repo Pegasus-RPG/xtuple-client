@@ -34,7 +34,6 @@ public slots:
     virtual void sInvoiceList();
     virtual void populateShipto( int pShiptoid );
     virtual void sPopulateCustomerInfo();
-    virtual void sPopulateByInvoiceNumber( int pInvoiceNumber );
     virtual void sCheckCreditMemoNumber();
     virtual void sConvertShipto();
     virtual void sCopyToShipto();

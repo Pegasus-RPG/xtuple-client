@@ -338,7 +338,8 @@ bool creditMemo::save()
 	     "    cmhead_taxzone_id=:cmhead_taxzone_id,"
 	     "    cmhead_comments=:cmhead_comments, "
 	     "    cmhead_rsncode_id=:cmhead_rsncode_id, "
-	     "    cmhead_curr_id=:cmhead_curr_id "
+             "    cmhead_curr_id=:cmhead_curr_id, "
+             "    cmhead_prj_id=:cmhead_prj_id "
 	     "WHERE (cmhead_id=:cmhead_id);" );
 
   q.bindValue(":cmhead_id", _cmheadid);
@@ -377,7 +378,8 @@ bool creditMemo::save()
   if (_taxzone->isValid())
     q.bindValue(":cmhead_taxzone_id",	_taxzone->id());
   q.bindValue(":cmhead_curr_id", _currency->id());
-
+  if (_project->isValid())
+    q.bindValue(":cmhead_prj_id", _project->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -444,6 +446,7 @@ void creditMemo::sInvoiceList()
 
       _taxzone->setId(sohead.value("invchead_taxzone_id").toInt());
       _customerPO->setText(sohead.value("invchead_ponumber"));
+      _project->setId(sohead.value("invchead_prj_id").toInt());
     }
     else if (sohead.lastError().type() != QSqlError::NoError)
     {
@@ -556,61 +559,6 @@ void creditMemo::sPopulateCustomerInfo()
       _shipTo->setId(-1);
       _shipToName->clear();
       _shipToAddr->clear();
-    }
-  }
-}
-
-void creditMemo::sPopulateByInvoiceNumber(int pInvoiceNumber)
-{
-  if (pInvoiceNumber == -1)
-  {
-    if (_cust->isValid())
-      sPopulateCustomerInfo();
-  }
-  else
-  {
-    XSqlQuery query;
-    query.prepare( "SELECT invchead_salesrep_id, invchead_shipto_id, "
-		   "   invchead_curr_id "
-                   "FROM invchead "
-                   "WHERE (invchead_invcnumber=text(:invcnumber));" );
-    query.bindValue(":invcnumber", pInvoiceNumber);
-    query.exec();
-    if (query.first())
-    {
-      _salesRep->setId(query.value("invchead_salesrep_id").toInt());
-      _currency->setId(query.value("invchead_curr_id").toInt());
-
-      int shiptoid;
-      if ((shiptoid = query.value("invchead_shipto_id").toInt()) != -1)
-      {
-        query.prepare( "SELECT shipto_id, shipto_num,"
-                       "       shipto_name, shipto_addr_id "
-                       "FROM shiptoinfo "
-                       "WHERE (shipto_id=:shipto_id)" );
-	query.bindValue(":shipto_id", shiptoid);
-	query.exec();
-        if (query.first())
-        {
-          _ignoreShiptoSignals = true;
-
-          _shipTo->setId(query.value("shipto_id").toInt());
-          _shipToName->setText(query.value("shipto_name"));
-          _shipToAddr->setId(query.value("shipto_addr_id").toInt());
-
-          _ignoreShiptoSignals = false;
-        }
-	else if (query.lastError().type() != QSqlError::NoError)
-	{
-	  systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
-      }
-    }
-    else if (query.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-      return;
     }
   }
 }
@@ -929,6 +877,9 @@ void creditMemo::populate()
 
     if (! cmhead.value("cmhead_invcnumber").toString().isEmpty())
       _invoiceNumber->setInvoiceNumber(cmhead.value("cmhead_invcnumber").toString());
+
+    if (!cmhead.value("cmhead_prj_id").isNull())
+      _project->setId(cmhead.value("cmhead_prj_id").toInt());
 
     sCalculateTax();
   }
