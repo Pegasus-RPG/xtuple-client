@@ -6,7 +6,12 @@ TEMPLATE = app
 
 INCLUDEPATH += ../scriptapi \
                ../common \
-               ../widgets ../widgets/tmp/lib .
+               ../widgets ../widgets/tmp/lib \
+               ../../xtuple-build-desktop/scriptapi \
+               ../../xtuple-build-desktop/common \
+               ../../xtuple-build-desktop/widgets \
+               ../../xtuple-build-desktop/widgets/tmp/lib \
+               ../../xtuple-build-desktop/guiclient .
 
 DEPENDPATH  += $${INCLUDEPATH}
 
@@ -18,13 +23,13 @@ win32-msvc* {
   PRE_TARGETDEPS += ../lib/libxtuplecommon.a    \
                     ../lib/libxtuplescriptapi.a \
                     ../lib/libxtuplewidgets.a   \
-                    ../$${OPENRPT_DIR}/lib/libMetaSQL.a  \
-                    ../$${OPENRPT_DIR}/lib/librenderer.a \
-                    ../$${OPENRPT_DIR}/lib/libwrtembed.a \
-                    ../$${OPENRPT_DIR}/lib/libcommon.a
+                    ../$${OPENRPT_BLD}/lib/libMetaSQL.a  \
+                    ../$${OPENRPT_BLD}/lib/librenderer.a \
+                    ../$${OPENRPT_BLD}/lib/libwrtembed.a \
+                    ../$${OPENRPT_BLD}/lib/libcommon.a
 }
 
-LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon \
+LIBS        += -L../lib -L../$${OPENRPT_BLD}/lib -lxtuplecommon \
                -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
                -lxtuplescriptapi -lMetaSQL
 
