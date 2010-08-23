@@ -117,7 +117,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspSingleLevelWhereUsed.ui \
            displays/dspSlowMovingInventoryByClassCode.ui \
            displays/dspStandardJournalHistory.ui \
-           displays/dspSubLedger.ui \
            displays/dspSubstituteAvailabilityByItem.ui \
            displays/dspSummarizedBacklogByWarehouse.ui \
            displays/dspSummarizedBankrecHistory.ui \

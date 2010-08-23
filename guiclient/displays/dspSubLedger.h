@@ -14,9 +14,7 @@
 #include "guiclient.h"
 #include "display.h"
 
-#include "ui_dspSubLedger.h"
-
-class dspSubLedger : public display, public Ui::dspSubLedger
+class dspSubLedger : public display
 {
     Q_OBJECT
 
@@ -31,9 +29,6 @@ public slots:
     virtual void sViewTrans();
     virtual void sViewSeries();
     virtual void sViewDocument();
-
-protected slots:
-    virtual void languageChange();
 
 private:
     QStringList _sources;

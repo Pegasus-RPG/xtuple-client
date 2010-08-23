@@ -33,6 +33,7 @@ public:
     _print->hide(); // hide the print button until a reportName is set
     _preview->hide(); // hide the preview button until a reportName is set
     _autoupdate->hide(); // hide until auto update is enabled
+    _parameterWidget->hide(); // hide until user shows manually
     _useAltId = false;
     _autoUpdateEnabled = false;
   }
@@ -142,6 +143,11 @@ void display::languageChange()
 QWidget * display::optionsWidget()
 {
   return _data->_optionsFrame;
+}
+
+ParameterWidget * display::parameterWidget()
+{
+  return _data->_parameterWidget;
 }
 
 XTreeWidget * display::list()

@@ -27,15 +27,16 @@
 #include "dspWoHistoryByNumber.h"
 #include "transactionInformation.h"
 #include "storedProcErrorLookup.h"
+#include "parameterwidget.h"
 
 dspSubLedger::dspSubLedger(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspSubLedger", fl)
 {
-  setupUi(optionsWidget());
   setWindowTitle(tr("Subledger Transactions"));
   setListLabel(tr("Transactions"));
   setReportName("Subledger");
   setMetaSQLOptions("subledger", "detail");
+  parameterWidget()->show();
 
   QString qryType = QString( "SELECT  1, '%1' UNION "
                              "SELECT  2, '%2' UNION "
@@ -82,67 +83,60 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("GL Journal #"),_orderColumn,   Qt::AlignLeft,   false, "sltrans_gltrans_journalnumber");
   list()->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "sltrans_username");
 
-  _parameterWidget->setHideWhenEmbedded(false);
-  _parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
-  _parameterWidget->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
-  _parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
-  _parameterWidget->append(tr("Document #"), "docnum",    ParameterWidget::Text);
-  _parameterWidget->appendComboBox(tr("Source"), "source_id",    qrySource);
+  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
+  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
+  parameterWidget()->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
+  parameterWidget()->append(tr("Document #"), "docnum",    ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Source"), "source_id",    qrySource);
   if (_metrics->value("GLCompanySize").toInt() > 0)
-  _parameterWidget->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
+  parameterWidget()->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
   if (_metrics->value("GLProfitSize").toInt() >  0)
-    _parameterWidget->appendComboBox(tr("Profit Center"), "prfcntr_id", XComboBox::ProfitCenters);
-  _parameterWidget->appendComboBox(tr("Main Segment"), "num_id", qryAccNum);
+    parameterWidget()->appendComboBox(tr("Profit Center"), "prfcntr_id", XComboBox::ProfitCenters);
+  parameterWidget()->appendComboBox(tr("Main Segment"), "num_id", qryAccNum);
   if (_metrics->value("GLSubaccountSize").toInt() > 0)
-    _parameterWidget->appendComboBox(tr("Sub Account"), "subaccnt_id", XComboBox::Subaccounts);
-  _parameterWidget->appendComboBox(tr("Account Type"), "accnttype_id", qryType);
-  _parameterWidget->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
-  _parameterWidget->append(tr("Posted"), "posted", ParameterWidget::CheckBox);
-  _parameterWidget->append(tr("GL Journal"), "journalnumber",    ParameterWidget::Text);
+    parameterWidget()->appendComboBox(tr("Sub Account"), "subaccnt_id", XComboBox::Subaccounts);
+  parameterWidget()->appendComboBox(tr("Account Type"), "accnttype_id", qryType);
+  parameterWidget()->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
+  parameterWidget()->append(tr("Posted"), "posted", ParameterWidget::CheckBox);
+  parameterWidget()->append(tr("GL Journal"), "journalnumber",    ParameterWidget::Text);
 
-  _parameterWidget->applyDefaultFilterSet();
+  parameterWidget()->applyDefaultFilterSet();
 
   _sources << "None" << "A/P" << "A/R" << "G/L" << "I/M" << "P/D" << "P/O" << "S/O" << "S/R" << "W/O";
-}
-
-void dspSubLedger::languageChange()
-{
-  display::languageChange();
-  retranslateUi(this);
 }
 
 enum SetResponse dspSubLedger::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
 
-  _parameterWidget->setSavedFilters();
+  parameterWidget()->setSavedFilters();
 
   QVariant param;
   bool     valid;
 
   param = pParams.value("accnt_id", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("GL Account"), param);
+    parameterWidget()->setDefault(tr("GL Account"), param);
 
   param = pParams.value("startDate", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("Start Date"), param);
+    parameterWidget()->setDefault(tr("Start Date"), param);
 
   param = pParams.value("endDate", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("End Date"), param);
+    parameterWidget()->setDefault(tr("End Date"), param);
 
   param = pParams.value("posted", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("Posted"), param);
+    parameterWidget()->setDefault(tr("Posted"), param);
 
   param = pParams.value("journalnumber", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("GL Journal"), param);
+    parameterWidget()->setDefault(tr("GL Journal"), param);
 
   param = pParams.value("source", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("Source"), _sources.indexOf(param.toString()));
+    parameterWidget()->setDefault(tr("Source"), _sources.indexOf(param.toString()));
 
   param = pParams.value("period_id", &valid);
   if (valid)
@@ -154,12 +148,12 @@ enum SetResponse dspSubLedger::set(const ParameterList &pParams)
     q.exec();
     if (q.first())
     {
-      _parameterWidget->setDefault(tr("Start Date"), q.value("period_start").toDate());
-      _parameterWidget->setDefault(tr("End Date"), q.value("period_end").toDate());
+      parameterWidget()->setDefault(tr("Start Date"), q.value("period_start").toDate());
+      parameterWidget()->setDefault(tr("End Date"), q.value("period_end").toDate());
     }
   }
 
-  _parameterWidget->applyDefaultFilterSet();
+  parameterWidget()->applyDefaultFilterSet();
 
   if (pParams.inList("run"))
   {
@@ -202,7 +196,7 @@ void dspSubLedger::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem, int)
 
 bool dspSubLedger::setParams(ParameterList &params)
 {
-  _parameterWidget->appendValue(params);
+  parameterWidget()->appendValue(params);
   bool valid;
   QVariant param;
 

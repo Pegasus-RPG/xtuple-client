@@ -16,6 +16,7 @@
 class QTreeWidgetItem;
 class XTreeWidget;
 class displayPrivate;
+class ParameterWidget;
 
 class display : public XWidget
 {
@@ -47,6 +48,7 @@ public slots:
 protected:
     Q_INVOKABLE QWidget * optionsWidget();
     Q_INVOKABLE XTreeWidget * list();
+    Q_INVOKABLE ParameterWidget * parameterWidget();
     Q_INVOKABLE ParameterList getParams();
 
 protected slots:
