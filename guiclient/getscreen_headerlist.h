@@ -528,6 +528,7 @@
 #include "recallOrders.h"
 #include "reconcileBankaccount.h"
 #include "registration.h"
+#include "registrationKey.h"
 #include "rejectCode.h"
 #include "rejectCodes.h"
 #include "relativeCalendarItem.h"

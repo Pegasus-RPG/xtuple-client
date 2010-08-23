@@ -430,6 +430,7 @@ FORMS =   absoluteCalendarItem.ui               \
           recallOrders.ui                       \
           reconcileBankaccount.ui               \
           registration.ui                       \
+          registrationKey.ui                    \
           rejectCode.ui                         \
           rejectCodes.ui                        \
           relativeCalendarItem.ui               \
@@ -996,6 +997,7 @@ HEADERS = ../common/format.h                    \
           recallOrders.h                        \
           reconcileBankaccount.h                \
           registration.h                        \
+          registrationKey.h                     \
           rejectCode.h                          \
           rejectCodes.h                         \
           relativeCalendarItem.h                \
@@ -1578,6 +1580,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           recallOrders.cpp                      \
           reconcileBankaccount.cpp              \
           registration.cpp                      \
+          registrationKey.cpp                   \
           rejectCode.cpp                        \
           rejectCodes.cpp                       \
           relativeCalendarItem.cpp              \

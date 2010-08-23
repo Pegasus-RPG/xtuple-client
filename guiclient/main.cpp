@@ -102,6 +102,7 @@
 #include <parameter.h>
 #include <widgets.h>
 #include "xtupleplugin.h"
+#include "xtupleproductkey.h"
 
 #include "login2.h"
 
@@ -293,6 +294,50 @@ int main(int argc, char *argv[])
     {
       _splash->setPixmap(QPixmap(":/images/splashStdEdition.png"));
       _Name = _Name.arg("Standard");
+    }
+
+    _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    metric.exec("SELECT metric_value"
+                "  FROM metric"
+                " WHERE(metric_name = 'RegistrationKey');");
+    bool checkPass = true;
+    QString checkPassReason;
+    QString rkey = "";
+    if(metric.first())
+      rkey = metric.value("metric_value").toString();
+    XTupleProductKey pkey(rkey);
+    if(pkey.valid() && pkey.version() == 1)
+    {
+      metric.exec("SELECT COUNT(*) as _count"
+                  "  FROM pg_stat_activity"
+                  " WHERE(datid IN (SELECT datid"
+                  "                   FROM pg_stat_activity"
+                  "                  WHERE(procpid=pg_backend_pid())));");
+      int cnt = 50000;
+      if(metric.first())
+        cnt = metric.value("_count").toInt();
+      if(pkey.expiration() < QDate::currentDate())
+      {
+        checkPass = false;
+        checkPassReason = QObject::tr("Your license has expired.");
+      }
+      else if(pkey.users() != 0 && (pkey.users()+1) < cnt)
+      {
+        checkPass = false;
+        checkPassReason = QObject::tr("You have exceeded the number of allowed concurrent users for your license.");
+      }
+    }
+    else
+    {
+      checkPass = false;
+      checkPassReason = QObject::tr("<p>The Registration key installed for this system does not appear to be valid.");
+    }
+    if(!checkPass)
+    {
+      _splash->hide();
+      QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
+// TODO: take some action?
     }
   }
   else
