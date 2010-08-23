@@ -23,7 +23,7 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
 
   _showExternal = false;
 
-  _query = "SELECT accnt_id AS id, formatGLAccount(accnt_id) AS number, "
+  _query = "SELECT accnt_id AS id, public.formatGLAccount(accnt_id) AS number, "
            "  accnt_descrip AS name, accnt_extref AS description, "
            "  NULL AS active, accnt_type, "
            "  COALESCE(company_external,false) AS external "

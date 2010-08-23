@@ -25,12 +25,12 @@
 dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspTrialBalances", fl)
 {
-  setupUi(optionsWidget());
   setWindowTitle(tr("Trial Balances"));
   setListLabel(tr("Trial Balances"));
   setReportName("TrialBalances");
   setMetaSQLOptions("trialBalances", "detail");
   setUseAltId(true);
+  parameterWidget()->show();
 
   list()->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter, true,  "period_start" );
   list()->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter, true,  "period_end" );
@@ -54,17 +54,15 @@ dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WFlags fl)
   if (qry.first())
     periodid = qry.value("period_id").toInt();
 
-  _parameterWidget->setHideWhenEmbedded(false);
-  _parameterWidget->appendComboBox(tr("Period"), "period_id", XComboBox::AccountingPeriods, QVariant(periodid));
-  _parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
-  _parameterWidget->append(tr("Show Zero Amounts"), "showZero", ParameterWidget::Exists);
-  _parameterWidget->applyDefaultFilterSet();
+  parameterWidget()->appendComboBox(tr("Period"), "period_id", XComboBox::AccountingPeriods, QVariant(periodid));
+  parameterWidget()->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
+  parameterWidget()->append(tr("Show Zero Amounts"), "showZero", ParameterWidget::Exists);
+  parameterWidget()->applyDefaultFilterSet();
 }
 
 void dspTrialBalances::languageChange()
 {
   display::languageChange();
-  retranslateUi(this);
 }
 
 void dspTrialBalances::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
@@ -120,7 +118,7 @@ void dspTrialBalances::sForwardUpdate()
 
 bool dspTrialBalances::setParams(ParameterList & params)
 {
-  _parameterWidget->appendValue(params);
+  parameterWidget()->appendValue(params);
 
   return true;
 }

@@ -139,7 +139,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspTimePhasedSalesByProductCategory.ui \
            displays/dspTimePhasedUsageStatisticsByItem.ui \
            displays/dspTodoByUserAndIncident.ui \
-           displays/dspTrialBalances.ui \
            displays/dspUnbalancedQOHByClassCode.ui \
            displays/dspUndefinedManufacturedItems.ui \
            displays/dspUninvoicedReceivings.ui \

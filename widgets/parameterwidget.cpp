@@ -862,7 +862,10 @@ void ParameterWidget::changeFilterObject(int index)
     layout->insertWidget(0, newWidget);
     // Get initial values pre-set for special boolean cases
     if (type == Exists || type == CheckBox)
+    {
       storeFilterValue(1, newWidget);
+      return;
+    }
   }
   _saveButton->setDisabled(true);
 }
@@ -1448,6 +1451,8 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("Contact", QScriptValue(engine, ParameterWidget::Contact), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("GLAccount", QScriptValue(engine, ParameterWidget::GLAccount), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Multiselect", QScriptValue(engine, ParameterWidget::Multiselect), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Exists", QScriptValue(engine, ParameterWidget::Exists), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("CheckBox", QScriptValue(engine, ParameterWidget::CheckBox), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

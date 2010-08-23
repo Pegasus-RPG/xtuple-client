@@ -13,9 +13,7 @@
 
 #include "display.h"
 
-#include "ui_dspTrialBalances.h"
-
-class dspTrialBalances : public display, public Ui::dspTrialBalances
+class dspTrialBalances : public display
 {
     Q_OBJECT
 
