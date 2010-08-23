@@ -63,7 +63,7 @@ exists($${OPENRPT_BLD}) {
 DEPENDPATH  += $${INCLUDEPATH}
 
 ! exists($${OPENRPT_BLD}) {
-    CSVIMP_BLD = $${OPENRPT_BLD}
+    OPENRPT_BLD = $${OPENRPT_DIR}
 }
 
 CONFIG += release thread
