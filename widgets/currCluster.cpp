@@ -159,18 +159,17 @@ CurrCluster::CurrCluster(QWidget * parent, const char* name)
     _currency = new XComboBox(this, "_currency");
     //_currency->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     _currency->setMaximumSize(MAXCURRWIDTH, MAXHEIGHT);
-    _grid->addWidget(_currency, 0, 0);
-
-    _grid->addWidget(_valueLocalWidget, 0, 1);
-
-    _valueBaseLit = new QLabel("", this);
-    _valueBaseLit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    _valueBaseLit->setAlignment(Qt::AlignRight);
-    _grid->addWidget(_valueBaseLit, 1, 0);
+    _grid->addWidget(_valueLocalWidget, 0, 0);
+    _grid->addWidget(_currency, 0, 1);
 
     _valueBaseWidget = new QLabel("", this);
     _valueBaseWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    _grid->addWidget(_valueBaseWidget, 1, 1);
+    _grid->addWidget(_valueBaseWidget, 1, 0);
+
+    _valueBaseLit = new QLabel("", this);
+    _valueBaseLit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    _valueBaseLit->setAlignment(Qt::AlignLeft);
+    _grid->addWidget(_valueBaseLit, 1, 1);
 
     setFocusProxy(_valueLocalWidget);
     setFocusPolicy(Qt::StrongFocus);
@@ -470,14 +469,15 @@ int CurrDisplay::baseId()
   if (_x_preferences && _baseId <= 0)
   {
     XSqlQuery baseQuery;
-    baseQuery.prepare("SELECT curr_id, curr_symbol " //currConcat(curr_id) AS curr_symbol "
+    baseQuery.prepare("SELECT curr_id, "
+                      "  ' ' || curr_abbr || '-' || curr_symbol AS f_curr " //currConcat(curr_id) AS curr_symbol "
 		      "FROM curr_symbol "
 		      "WHERE curr_base = TRUE;");
     baseQuery.exec();
     if (baseQuery.first())
     {
 	_baseId = baseQuery.value("curr_id").toInt();
-	_baseAbbr = baseQuery.value("curr_symbol").toString();
+        _baseAbbr = baseQuery.value("f_curr").toString();
     }
     else if (baseQuery.lastError().number() == 2000 /* NOT FOUND */)
     {
