@@ -31,8 +31,7 @@ financialLayoutGroup::financialLayoutGroup(QWidget* parent, const char* name, bo
 
 
   // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_showSubtotal, SIGNAL(toggled(bool)), this, SLOT(sToggled()));
   connect(_summarize, SIGNAL(toggled(bool)), this, SLOT(sToggled()));
   connect(_summarize, SIGNAL(toggled(bool)), _showSubtotal, SLOT(setDisabled(bool)));
@@ -99,15 +98,15 @@ enum SetResponse financialLayoutGroup::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       
-      _save->setFocus();
+      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
       
-      _close->setFocus();
-      _close->setText(tr("Close"));
-      _save->setHidden(TRUE);
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
       _name->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _subSummGroup->setEnabled(FALSE);

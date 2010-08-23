@@ -33,8 +33,7 @@ financialLayoutItem::financialLayoutItem(QWidget* parent, const char* name, bool
 
 
   // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_showBeginning, SIGNAL(toggled(bool)), _showBeginningPrcnt, SLOT(setEnabled(bool)));
   connect(_showBudget, SIGNAL(toggled(bool)), _showBudgetPrcnt, SLOT(setEnabled(bool)));
   connect(_showDB, SIGNAL(toggled(bool)), _showDBPrcnt, SLOT(setEnabled(bool)));
@@ -141,21 +140,22 @@ enum SetResponse financialLayoutItem::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _save->setFocus();
+      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
-      _save->setHidden(TRUE);
-      _close->setText(tr("Close"));
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
+      _buttonBox->setFocus();
       _selectAccount->setEnabled(FALSE);
-	  _selectSegment->setEnabled(FALSE);
-	  _operationGroup->setEnabled(FALSE);
-	  _showColumns->setEnabled(FALSE);
-	  _showPrcnt->setEnabled(FALSE);
-	  _group->setEnabled(FALSE);
-	  _showCustom->setEnabled(FALSE);
-      _close->setFocus();
+      _selectSegment->setEnabled(FALSE);
+      _operationGroup->setEnabled(FALSE);
+      _showColumns->setEnabled(FALSE);
+      _showPrcnt->setEnabled(FALSE);
+      _group->setEnabled(FALSE);
+      _showCustom->setEnabled(FALSE);
+      _buttonBox->setFocus();
     }
   }
   param = pParams.value("type", &valid);

@@ -34,7 +34,7 @@ dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WFlags fl)
 
   list()->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter, true,  "period_start" );
   list()->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter, true,  "period_end" );
-  list()->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignCenter, true,  "account" );
+  list()->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignLeft, true,  "account" );
   list()->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "accnt_descrip"   );
   list()->addColumn(tr("Beg. Bal."),   _bigMoneyColumn, Qt::AlignRight,  true,  "beginning"  );
   list()->addColumn("",                25,              Qt::AlignLeft,   true,  "beginningsense"   );
@@ -44,6 +44,21 @@ dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn("",                25,              Qt::AlignLeft,   true,  "diffsense"   );
   list()->addColumn(tr("End Bal."),    _bigMoneyColumn, Qt::AlignRight,  true,  "ending"  );
   list()->addColumn("",                25,              Qt::AlignLeft,   true,  "endingsense"   );
+
+  // Determine current period
+  int periodid = -1;
+  XSqlQuery qry;
+  qry.exec("SELECT period_id "
+           "FROM period "
+           "WHERE (current_date BETWEEN period_start AND period_end);");
+  if (qry.first())
+    periodid = qry.value("period_id").toInt();
+
+  _parameterWidget->setHideWhenEmbedded(false);
+  _parameterWidget->appendComboBox(tr("Period"), "period_id", XComboBox::AccountingPeriods, QVariant(periodid));
+  _parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
+  _parameterWidget->append(tr("Show Zero Amounts"), "showZero", ParameterWidget::Exists);
+  _parameterWidget->applyDefaultFilterSet();
 }
 
 void dspTrialBalances::languageChange()
@@ -105,14 +120,7 @@ void dspTrialBalances::sForwardUpdate()
 
 bool dspTrialBalances::setParams(ParameterList & params)
 {
-  if (_selectedAccount->isChecked())
-    params.append("accnt_id", _account->id());
-
-  if (_selectedPeriod->isChecked())
-    params.append("period_id", _period->id());
-    
-  if (_showZero->isChecked() || (_selectedAccount->isChecked() && _selectedPeriod->isChecked()))
-    params.append("showZero");
+  _parameterWidget->appendValue(params);
 
   return true;
 }
