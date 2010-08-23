@@ -169,9 +169,6 @@ to be bound by its terms.</comment>
             <property name="label">
              <string>  Lot/Serial #:</string>
             </property>
-            <property name="infoVisible">
-             <bool>true</bool>
-            </property>
             <property name="fieldName">
              <string notr="true">lsreg_ls_id</string>
             </property>
@@ -388,9 +385,6 @@ to be bound by its terms.</comment>
            <widget class="ShipmentCluster" name="_shipment">
             <property name="focusPolicy">
              <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="infoVisible">
-             <bool>true</bool>
             </property>
             <property name="nameVisible">
              <bool>false</bool>

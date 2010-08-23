@@ -82,9 +82,6 @@ to be bound by its terms.</comment>
        <property name="label">
         <string>   Lot/Serial #:</string>
        </property>
-       <property name="infoVisible">
-        <bool>true</bool>
-       </property>
        <property name="strict">
         <bool>false</bool>
        </property>

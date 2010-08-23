@@ -168,9 +168,6 @@ to be bound by its terms.</comment>
         <layout class="QGridLayout">
          <item row="0" column="0">
           <widget class="ContactWidget" name="_contact">
-           <property name="listVisible">
-            <bool>true</bool>
-           </property>
            <property name="accountVisible">
             <bool>false</bool>
            </property>
@@ -437,9 +434,6 @@ to be bound by its terms.</comment>
                   <property name="focusPolicy">
                    <enum>Qt::StrongFocus</enum>
                   </property>
-                  <property name="infoVisible">
-                   <bool>false</bool>
-                  </property>
                   <property name="fieldName">
                    <string notr="true">department</string>
                   </property>
@@ -459,9 +453,6 @@ to be bound by its terms.</comment>
                  <widget class="ShiftCluster" name="_shift">
                   <property name="focusPolicy">
                    <enum>Qt::StrongFocus</enum>
-                  </property>
-                  <property name="infoVisible">
-                   <bool>false</bool>
                   </property>
                   <property name="fieldName">
                    <string notr="true">shift</string>

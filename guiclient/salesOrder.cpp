@@ -1642,7 +1642,6 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
           _holdType->setCurrentIndex(1);
       }
 
-      _cust->setInfoVisible(cust.value("iscustomer").toBool());
       _billToName->setText(cust.value("cust_name").toString());
       _billToAddr->setId(cust.value("addr_id").toInt());
       sFillCcardList();

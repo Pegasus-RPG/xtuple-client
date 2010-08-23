@@ -145,8 +145,6 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
-
-      _new->setFocus();
     }
     else if (param.toString() == "edit")
     {

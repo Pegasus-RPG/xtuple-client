@@ -51,7 +51,6 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _terms->setType(XComboBox::APTerms);
   _poNumber->setAllowedStatuses(OrderLineEdit::Open);
   _poNumber->setAllowedTypes(OrderLineEdit::Purchase);
-  _poNumber->setInfoVisible(false);
   _poNumber->setLabel("");
   _poNumber->findChild<QWidget*>("_name")->hide();
   _poNumber->findChild<QWidget*>("_description")->hide();
@@ -145,7 +144,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
-      _poNumber->setListVisible(false);
 
       _save->setFocus();
     }
@@ -157,7 +155,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
  
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
-      _poNumber->setListVisible(false);
       _taxzone->setEnabled(FALSE);
       _amountToDistribute->setEnabled(FALSE);
       _distributionDate->setEnabled(FALSE);
@@ -321,7 +318,6 @@ bool voucher::sSave()
   }
 
   _poNumber->setEnabled(true);
-  _poNumber->setListVisible(true);
   _poNumber->setId(-1);
   _amountToDistribute->clear();
   _amountDistributed->clear();
@@ -374,7 +370,6 @@ void voucher::sHandleVoucherNumber()
 
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
-      _poNumber->setListVisible(false);
 
       _mode = cEdit;
       populate();
@@ -412,7 +407,6 @@ void voucher::sDistributions()
       else
       {
         _poNumber->setEnabled(FALSE);
-        _poNumber->setListVisible(false);
       }
   }
   sFillList();
@@ -441,7 +435,6 @@ void voucher::sDistributeLine()
       else
       {
         _poNumber->setEnabled(FALSE);
-        _poNumber->setListVisible(false);
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -487,7 +480,6 @@ void voucher::sClear()
         }
      }
     _poNumber->setEnabled(true);
-    _poNumber->setListVisible(true);
     sFillList();
     sPopulateDistributed();
 }
@@ -515,7 +507,6 @@ void voucher::sDistributeAll()
       else
       {
         _poNumber->setEnabled(FALSE);
-        _poNumber->setListVisible(false);
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
