@@ -782,26 +782,9 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
   _uom->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   _uom->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   _uom->setMinimumWidth(50);
-  if (_x_preferences)
-  {
-    if (_x_preferences->boolean("ClusterButtons"))
-    {
-      _info->hide();
-      _grid->addWidget(_uomLit, 0, 3);
-      _grid->addWidget(_uom, 0, 4);
-    }
-    else
-    {
-      _grid->addWidget(_uomLit, 0, 2);
-      _grid->addWidget(_uom, 0, 3);
-    }
-  }
-  else
-  {
-    _uomLit->hide();
-    _uom->hide();
-  }
 
+  _grid->addWidget(_uomLit, 0, 2);
+  _grid->addWidget(_uom, 0, 3);
 
   _descrip2 = new QLabel(this);
   _descrip2->setObjectName("_descrip2");
@@ -838,8 +821,6 @@ void ItemCluster::addNumberWidget(ItemLineEdit* pNumberWidget)
     _grid->addWidget(_number, 0, 1);
     setFocusProxy(pNumberWidget);
 
-    connect(_list,      SIGNAL(clicked()),      this, SLOT(sEllipses()));
-    connect(_info,      SIGNAL(clicked()),      this, SLOT(sInfo()));
     connect(_number,	SIGNAL(newId(int)),	this,	 SIGNAL(newId(int)));
     connect(_number,	SIGNAL(parsed()), 	this, 	 SLOT(sRefresh()));
     connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
@@ -854,16 +835,9 @@ void ItemCluster::setDescriptionVisible(const bool p)
 void ItemCluster::setReadOnly(const bool pReadOnly)
 {
   if (pReadOnly)
-  {
     _number->setEnabled(FALSE);
-    _list->hide();
-  }
   else
-  {
     _number->setEnabled(TRUE);
-    if (_x_preferences)
-      _list->setVisible(_x_preferences->boolean("ClusterButtons"));
-  }
 }
 
 void ItemCluster::setEnabled(const bool pEnabled)

@@ -33,38 +33,6 @@ void VirtualCluster::init()
     _label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    // TODO: Remove _list and _info, but they are still used by a couple clusters
-    //       Move them up perhaps?
-
-    _list = new QPushButton(tr("..."), this);
-    _list->setObjectName("_list");
-    _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-#ifndef Q_WS_MAC
-        _list->setMaximumWidth(25);
-#else
-    _list->setMinimumWidth(60);
-    _list->setMinimumHeight(32);
-#endif
-    _info = new QPushButton("?", this);
-    _info->setObjectName("_info");
-    _info->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    _info->setEnabled(false);
-#ifndef Q_WS_MAC
-    _info->setMaximumWidth(25);
-#else
-    _info->setMinimumWidth(60);
-    _info->setMinimumHeight(32);
-#endif
-    if (_x_preferences)
-    {
-      if (!_x_preferences->boolean("ClusterButtons"))
-      {
-        _list->hide();
-        _info->hide();
-      }
-    }
-
     _name = new QLabel(this);
     _name->setObjectName("_name");
     _name->setVisible(false);
@@ -81,8 +49,6 @@ void VirtualCluster::init()
     _grid->setSpacing(6);
     if (!_label->text().isEmpty())
       _grid->addWidget(_label,  0, 0);
-    _grid->addWidget(_list,   0, _grid->columnCount() + 1);
-    _grid->addWidget(_info,   0, _grid->columnCount() + 1);
     _grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 0, _grid->columnCount() + 1);
     _orientation = Qt::Horizontal;
     setOrientation(Qt::Vertical);
@@ -147,15 +113,14 @@ void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
 
 void VirtualCluster::setEnabled(const bool p)
 {
-    QList<QWidget*> child = findChildren<QWidget*>();
-    for (int i = 0; i < child.size(); i++)
-    {
-      if (child[i]->inherits("VirtualCluster"))
-	((VirtualCluster*)(child[i]))->setEnabled(p);
-      else
-	child[i]->setEnabled(p || child[i]->inherits("QLabel"));
-    }
-    _info->setEnabled(true);
+  QList<QWidget*> child = findChildren<QWidget*>();
+  for (int i = 0; i < child.size(); i++)
+  {
+    if (child[i]->inherits("VirtualCluster"))
+      ((VirtualCluster*)(child[i]))->setEnabled(p);
+    else
+      child[i]->setEnabled(p || child[i]->inherits("QLabel"));
+  }
 }
 
 void VirtualCluster::setStrict(const bool b)
@@ -170,18 +135,16 @@ void VirtualCluster::setShowInactive(const bool b)
 
 void VirtualCluster::addNumberWidget(VirtualClusterLineEdit* pNumberWidget)
 {
-    _number = pNumberWidget;
-    if (! _number)
-      return;
+  _number = pNumberWidget;
+  if (! _number)
+    return;
 
-    _grid->addWidget(_number, 0, 1);
-    setFocusProxy(pNumberWidget);
+  _grid->addWidget(_number, 0, 1);
+  setFocusProxy(pNumberWidget);
 
-    connect(_list,      SIGNAL(clicked()),      this, SLOT(sEllipses()));
-    connect(_info,      SIGNAL(clicked()),      this, SLOT(sInfo()));
-    connect(_number,	SIGNAL(newId(int)),	this,	 SIGNAL(newId(int)));
-    connect(_number,	SIGNAL(parsed()), 	this, 	 SLOT(sRefresh()));
-    connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
+  connect(_number,	SIGNAL(newId(int)),	this,	 SIGNAL(newId(int)));
+  connect(_number,	SIGNAL(parsed()), 	this, 	 SLOT(sRefresh()));
+  connect(_number,	SIGNAL(valid(bool)),	this,	 SIGNAL(valid(bool)));
 }
 
 void VirtualCluster::sInfo()
@@ -206,35 +169,15 @@ void VirtualCluster::sRefresh()
            qPrintable(objectName()), _number ? _number->_id : -1);
   _name->setText(_number->_name);
   _description->setText(_number->_description);
-  _info->setEnabled(_number && _number->_id > 0);
-}
-
-void VirtualCluster::setInfoVisible(bool p)
-{
-  if (_x_preferences)
-    _info->setVisible(p && _x_preferences->boolean("ClusterButtons"));
-}
-
-void VirtualCluster::setListVisible(bool p)
-{
-  if (_x_preferences)
-    _list->setVisible(p && _x_preferences->boolean("ClusterButtons"));
 }
 
 void VirtualCluster::setReadOnly(const bool b)
 {
   _readOnly = b;
   if (b)
-  {
     _number->setEnabled(false);
-    _list->hide();
-  }
   else
-  {
     _number->setEnabled(true);
-    if (_x_preferences)
-      _list->setVisible(_x_preferences->boolean("ClusterButtons"));
-  }
 }
 
 void VirtualCluster::updateMapperData()
@@ -264,8 +207,8 @@ void VirtualCluster::setOrientation(Qt::Orientation orientation)
   }
   else
   {
-    _grid->addWidget(_name, 0, 4);
-    _grid->addWidget(_description, 0, 5);
+    _grid->addWidget(_name, 0, _grid->columnCount()-2);
+    _grid->addWidget(_description, 0, _grid->columnCount()-2);
   }
 
   _orientation = orientation;
@@ -330,7 +273,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     if (pExtra && QString(pExtra).trimmed().length())
 	_extraClause = pExtra;
 
-    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     clear();
     _titleSingular = tr("Object");
@@ -390,34 +333,29 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 
     _menuLabel = new QLabel(this);
     // Menu set up
-    if (_x_preferences)
-    {
-      if (!_x_preferences->boolean("ClusterButtons"))
-      {
-        _menu = 0;
-        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
-        _menuLabel->installEventFilter(this);
 
-        int height = minimumSizeHint().height();
-        QString sheet = QLatin1String("QLineEdit{ padding-right: ");
-        sheet += QString::number(_menuLabel->pixmap()->width() + 6);
-        sheet += QLatin1String(";}");
-        setStyleSheet(sheet);
-        // Little hack. Somehow style sheet makes widget short. Put back height.
-        setMinimumHeight(height);
+    _menu = 0;
+    _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
+    _menuLabel->installEventFilter(this);
 
-        // Set default menu with standard actions
-        QMenu* menu = new QMenu;
-        menu->addAction(_listAct);
-        menu->addAction(_searchAct);
-        menu->addSeparator();
-        menu->addAction(_infoAct);
-        setMenu(menu);
+    int height = minimumSizeHint().height();
+    QString sheet = QLatin1String("QLineEdit{ padding-right: ");
+    sheet += QString::number(_menuLabel->pixmap()->width() + 6);
+    sheet += QLatin1String(";}");
+    setStyleSheet(sheet);
+    // Little hack. Somehow style sheet makes widget short. Put back height.
+    setMinimumHeight(height);
 
-        connect(this, SIGNAL(valid(bool)), this, SLOT(sUpdateMenu()));
-        connect(menu, SIGNAL(aboutToShow()), this, SLOT(sUpdateMenu()));
-      }
-    }
+    // Set default menu with standard actions
+    QMenu* menu = new QMenu;
+    menu->addAction(_listAct);
+    menu->addAction(_searchAct);
+    menu->addSeparator();
+    menu->addAction(_infoAct);
+    setMenu(menu);
+
+    connect(this, SIGNAL(valid(bool)), this, SLOT(sUpdateMenu()));
+    connect(menu, SIGNAL(aboutToShow()), this, SLOT(sUpdateMenu()));
   }
 
 bool VirtualClusterLineEdit::eventFilter(QObject *obj, QEvent *event)
@@ -439,16 +377,14 @@ bool VirtualClusterLineEdit::eventFilter(QObject *obj, QEvent *event)
 
 void VirtualClusterLineEdit::focusInEvent(QFocusEvent * event)
 {
-  if (!_nullStr.isEmpty())
-    sHandleNullStr();
+  sHandleNullStr();
   sUpdateMenu();
   XLineEdit::focusInEvent(event);
 }
 
 void VirtualClusterLineEdit::focusOutEvent(QFocusEvent * event)
 {
-  if (!_nullStr.isEmpty())
-    sHandleNullStr();
+  sHandleNullStr();
   XLineEdit::focusOutEvent(event);
 }
 
@@ -459,17 +395,11 @@ void VirtualClusterLineEdit::resizeEvent(QResizeEvent *)
 
 void VirtualClusterLineEdit::positionMenuLabel()
 {
-  if (_x_preferences)
-  {
-    if (!_x_preferences->boolean("ClusterButtons"))
-    {
-      _menuLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-      _menuLabel->setStyleSheet("QLabel { margin-right:6}");
+  _menuLabel->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
+  _menuLabel->setStyleSheet("QLabel { margin-right:6}");
 
-      _menuLabel->setGeometry(width() - _menuLabel->pixmap()->width() - 6, 0,
-                              _menuLabel->pixmap()->width() + 6, height());
-    }
-  }
+  _menuLabel->setGeometry(width() - _menuLabel->pixmap()->width() - 6, 0,
+                          _menuLabel->pixmap()->width() + 6, height());
 }
 
 void VirtualClusterLineEdit::setShowInactive(const bool p)
@@ -512,12 +442,7 @@ void VirtualClusterLineEdit::setNullStr(const QString &text)
 
 void VirtualClusterLineEdit::sUpdateMenu()
 {
-  if (_x_preferences)
-  {
-    if (_x_preferences->boolean("ClusterButtons"))
-      return;
-  }
-  else
+  if (! _x_privileges)
     return;
 
   _listAct->setEnabled(isEnabled());
@@ -621,19 +546,26 @@ void VirtualClusterLineEdit::sHandleCompleter()
 
 void VirtualClusterLineEdit::sHandleNullStr()
 {
-  QString sheet = styleSheet();
-  QString nullStyle = " { foreground: yellow  }";
+  if (_nullStr.isEmpty() ||
+      !_parsed)
+    return;
 
-  if (!hasFocus() && _id == -1)
+  QString sheet = styleSheet();
+  QString nullStyle = " QLineEdit{ color: LightGrey; "
+                      "            font: bold italic  }";
+
+  if (!hasFocus() && !_valid)
   {
     setText(_nullStr);
     sheet.append(nullStyle);
   }
-  else if (hasFocus() && _id == -1)
+  else if (hasFocus() && !_valid)
   {
     clear();
     sheet.remove(nullStyle);
   }
+  else
+    sheet.remove(nullStyle);
 
   setStyleSheet(sheet);
 }
@@ -795,6 +727,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
   }
 
   _parsed = TRUE;
+  sHandleNullStr();
   emit parsed();
 }
 

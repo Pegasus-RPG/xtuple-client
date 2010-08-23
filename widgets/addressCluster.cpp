@@ -23,6 +23,17 @@
 
 void AddressCluster::init()
 {
+    _list = new QPushButton(tr("..."), this);
+    _list->setObjectName("_list");
+    _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+#ifndef Q_WS_MAC
+    _list->setMaximumWidth(25);
+#else
+    _list->setMinimumWidth(60);
+    _list->setMinimumHeight(32);
+#endif
+
     _titleSingular = tr("Address");
     _titlePlural   = tr("Addresses");
     _query = "SELECT * FROM address ";
@@ -31,8 +42,6 @@ void AddressCluster::init()
     // handle differences between VirtualCluster and AddressCluster
     _grid->removeWidget(_label);
     _grid->removeWidget(_description);
-    _grid->removeWidget(_list);
-    _grid->removeWidget(_info);
     delete _description;
     _description = 0;
 
@@ -96,7 +105,6 @@ void AddressCluster::init()
 
     QHBoxLayout* hbox = new QHBoxLayout;
     hbox->addWidget(_list);
-    hbox->addWidget(_info);
     _grid->addLayout(hbox, 5, 5, 1, -1, Qt::AlignRight);
 
     _grid->setColumnStretch(0, 0);
@@ -111,7 +119,6 @@ void AddressCluster::init()
 #endif
 
     connect(_list,      SIGNAL(clicked()), this, SLOT(sEllipses()));
-    connect(_info,      SIGNAL(clicked()), this, SLOT(sInfo()));
     connect(_addr1,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_addr2,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_addr3,     SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
@@ -144,7 +151,6 @@ void AddressCluster::init()
     setFocusPolicy(Qt::StrongFocus);
     setLabel("");
     setActiveVisible(false);
-    setInfoVisible(false); // TODO - remove this and implement Info button
     silentSetId(-1);
     _list->show();
     _mode = Edit;
@@ -948,5 +954,4 @@ void AddressCluster::setMode(Mode p)
     widgets.at(i)->setEnabled(enabled);
   if (p == Select)
     _list->setEnabled(true);
-  _info->setEnabled(true);
 }

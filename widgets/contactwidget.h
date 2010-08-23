@@ -360,6 +360,8 @@ private:
   virtual void	silentSetId(const int);
   XDataWidgetMapper* _mapper;
 
+  QPushButton* _list;
+
   int	_id;
   bool _layoutDone;
   int	 _limits;

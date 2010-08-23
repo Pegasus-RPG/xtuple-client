@@ -117,8 +117,6 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
     Q_INVOKABLE bool projectVisible();
     Q_INVOKABLE bool setProjectVisible(bool p);
 
-    void setOrientation(Qt::Orientation orientation);
-
   public slots:
     void setId(const int p);
 
@@ -129,6 +127,7 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
   private:
     ProjectLineEdit* _project;
     QLabel*          _projectLit;
+    bool             _projectVisible;
 };
 
 #endif

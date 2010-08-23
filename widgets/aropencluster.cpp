@@ -25,7 +25,6 @@ AropenCluster::AropenCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)
 {
   addNumberWidget(new AropenLineEdit(this, pName));
-  _info->hide();
 }
 
 AropenLineEdit::DocTypes AropenCluster::allowedDocTypes()  const

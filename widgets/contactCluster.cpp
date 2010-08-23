@@ -153,6 +153,11 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   for (int i = 0; i < 5; ++i)
     _fname->append("");
 
+  _label = new QLabel(this);
+  _label->setObjectName("_label");
+  _label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
   _name->setVisible(false);
   _description->setVisible(true);
 
@@ -371,14 +376,10 @@ void ContactCluster::addNumberWidget(ContactClusterLineEdit* pNumberWidget)
     QHBoxLayout* hbox = new QHBoxLayout;
     QSpacerItem* item = new QSpacerItem(100, 20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     hbox->addWidget(_number);
-    hbox->addWidget(_list);
-    hbox->addWidget(_info);
     hbox->addItem(item);
     _grid->addLayout(hbox, 0, 1, 1, 3);
     setFocusProxy(pNumberWidget);
 
-    connect(_list,      SIGNAL(clicked()),      this,   SLOT(sEllipses()));
-    connect(_info,      SIGNAL(clicked()),      this,   SLOT(sInfo()));
     connect(_number,	SIGNAL(newId(int)),	this,	SIGNAL(newId(int)));
     connect(_number,	SIGNAL(parsed()), 	this, 	SLOT(sRefresh()));
     connect(_number,	SIGNAL(valid(bool)),	this,	SIGNAL(valid(bool)));

@@ -23,14 +23,10 @@ OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
   
   _name->setVisible(true);
   _grid->removeWidget(_number);
-  _grid->removeWidget(_list);
-  _grid->removeWidget(_info);
   _grid->removeWidget(_description);
   _grid->removeWidget(_name);
 
   _grid->addWidget(_number,		0, 1, 1, 2);
-  _grid->addWidget(_list,		0, 3);
-  _grid->addWidget(_info,		0, 4);
   _grid->addWidget(_name,		1, 1);
   _grid->addWidget(_description,	1, 2);
 

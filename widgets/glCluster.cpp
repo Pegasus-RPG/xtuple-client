@@ -37,7 +37,6 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
   _typeMap.insert("E",tr("Expense"));
   _typeMap.insert("Q", tr("Equity"));
 
-  setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
   setType(GLCluster::cUndefined);
 }
 
@@ -213,15 +212,19 @@ GLCluster::GLCluster(QWidget *pParent, const char *pName) :
   addNumberWidget(new GLClusterLineEdit(this, pName));
   _name->show();
 
+  _projectVisible = false;
+
   _projectLit = new QLabel("-", this);
   _projectLit->setVisible(false);
-  _grid->addWidget(_projectLit, 0, 4);
+  _grid->addWidget(_projectLit, 0, _grid->columnCount()-1);
+
   _project = new ProjectLineEdit(this);
   _project->setAllowedStatuses(ProjectLineEdit::InProcess);
-  _grid->addWidget(_project, 0, 5);
   _project->setEnabled(false);
   _project->setVisible(false);
-  _project->setNullStr(tr("Project"));
+  _project->setNullStr(tr("Project Number"));
+  _grid->addWidget(_project, 0, _grid->columnCount()-1);
+
   setFocusProxy(_number);
   setOrientation(Qt::Horizontal);
 }
@@ -241,18 +244,23 @@ void GLCluster::setId(const int p)
     {
       XSqlQuery qry;
       qry.prepare("SELECT accnt_id, prjaccnt_prj_id "
-                  "FROM prjaccnt "
+                  "FROM xtprjaccnt.prjaccnt "
                   "WHERE (accnt_id=:accnt_id); ");
       qry.bindValue(":accnt_id", p);
       qry.exec();
       if (qry.first())
       {
+        qDebug("setting1 prj:%d",qry.value("prjaccnt_prj_id").toInt() );
         id = qry.value("accnt_id").toInt();
+        qDebug("setting accnt:%d",qry.value("accnt_id").toInt() );
         if (qry.value("prjaccnt_prj_id").toInt() != -1 &&
-            !projectVisible())
+            !_projectVisible)
           setProjectVisible(true);
-        if (projectVisible())
+        qDebug("prj visible:%d", projectVisible());
+        if (_projectVisible)
+        {qDebug("setting2 prj:%d",qry.value("prjaccnt_prj_id").toInt() );
           _project->setId(qry.value("prjaccnt_prj_id").toInt());
+        }
       }
     }
 
@@ -269,47 +277,27 @@ bool GLCluster::setProjectVisible(bool p)
   }
 
   GLClusterLineEdit* number = static_cast<GLClusterLineEdit*>(_number);
-  number->disconnect(SLOT(sHandleProjectState()));
-  _project->disconnect(SLOT(sHandleProjectId()));
+  number->disconnect(this, SLOT(sHandleProjectState(int)));
+  _project->disconnect(this, SLOT(sHandleProjectId()));
 
   _projectLit->setVisible(p);
   _project->setVisible(p);
+  _projectVisible = p;
 
   if (p)
   {
-    connect(number, SIGNAL(newId(int)), this, SLOT(sHandleProjectState()));
-    connect(_project, SIGNAL(newId(int)), this, SLOT(sHandleProjectId(int)));
+    setOrientation(Qt::Vertical);
+    connect(number, SIGNAL(newId(int)), this, SLOT(sHandleProjectState(int)));
+    connect(_project, SIGNAL(newId(int)), this, SLOT(sHandleProjectId()));
   }
+  else
+    setOrientation(Qt::Horizontal);
 
   return (p);
 }
 
-void GLCluster::setOrientation(Qt::Orientation orientation)
-{
-  if (orientation == _orientation)
-    return;
-
-  _grid->removeWidget(_name);
-  _grid->removeWidget(_description);
-
-  if (orientation == Qt::Vertical)
-  {
-    _grid->addWidget(_name,   1, 1, 1, -1);
-    _grid->addWidget(_description, 2, 1, 1, -1);
-  }
-  else
-  {
-    _grid->addWidget(_name, 0, 6);
-    _grid->addWidget(_description, 0, 7);
-  }
-
-  _orientation = orientation;
-}
-
 void GLCluster::sHandleProjectState(int p)
 {
-  qDebug("handling state for value %d", p);
-
   if (p == -1)
   {
     _project->setId(-1);
@@ -317,23 +305,29 @@ void GLCluster::sHandleProjectState(int p)
   }
   else
   {
-       _project->setEnabled(true);
-    //   _project->setFocus();
+    _project->setEnabled(true);
+    _project->setFocus();
   }
 }
 
 void GLCluster::sHandleProjectId()
 {
-  if (_project->id() != 0)
+  if (_project->isValid())
   {
-    int id = -1;
     XSqlQuery qry;
     qry.prepare("SELECT getPrjAccnt(:prj_id,:accnt_id) AS accnt_id");
     qry.bindValue(":prj_id", _project->id());
     qry.bindValue(":accnt_id", _number->id());
     qry.exec();
     qry.first();
-    _number->setId(id);
+    _number->setId(qry.value("accnt_id").toInt());
+
+    _description->setText(_project->description());
+  }
+  else
+  {
+    GLClusterLineEdit* number = static_cast<GLClusterLineEdit*>(_number);
+    number->setNumber(number->text());
   }
 }
 

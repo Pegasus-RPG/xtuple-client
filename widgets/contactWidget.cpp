@@ -36,10 +36,19 @@ void ContactWidget::init()
     _minimalLayout = false;
     _searchAcctId = -1;
 
+    _list = new QPushButton(tr("..."), this);
+    _list->setObjectName("_list");
+    _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+  #ifndef Q_WS_MAC
+    _list->setMaximumWidth(25);
+  #else
+    _list->setMinimumWidth(60);
+    _list->setMinimumHeight(32);
+  #endif
+
     _grid->removeWidget(_label);	// will be reinserted
     _grid->removeWidget(_description);
-    _grid->removeWidget(_list);		// will be reinserted
-    _grid->removeWidget(_info);		// will be reinserted
     delete _description;
     _description = 0;
 
@@ -88,7 +97,6 @@ void ContactWidget::init()
     _nameBox->addWidget(_last,		2);
     _nameBox->addWidget(_suffix,	0);
     _nameBox->addWidget(_list,		0, Qt::AlignRight);
-    _nameBox->addWidget(_info,		0, Qt::AlignRight);
     
     //_initialsBox->addWidget(_initialsLit, 0);
     _initialsBox->addWidget(_initials,	  0);
@@ -164,7 +172,6 @@ void ContactWidget::init()
     layout();
 
     connect(_list,	SIGNAL(clicked()),	this, SLOT(sEllipses()));
-    connect(_info,	SIGNAL(clicked()),	this, SLOT(sInfo()));
 
     connect(_honorific,	SIGNAL(newID(int)),		     this, SIGNAL(changed()));
     connect(_first,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
@@ -212,7 +219,6 @@ void ContactWidget::init()
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setLabel("");
     _limits = 0;
-    setInfoVisible(false);	// TODO - remove this and implement Info button
     silentSetId(-1);
     setOwnerVisible(false);
     _mode = Edit;
@@ -1369,5 +1375,4 @@ void ContactWidget::setMode(Mode p)
     widgets.at(i)->setEnabled(enabled);
   if (p == Select)
     _list->setEnabled(true);
-  _info->setEnabled(true);
 }

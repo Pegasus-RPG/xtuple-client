@@ -183,6 +183,9 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
        Q_INVOKABLE inline virtual QString nullStr() const { return _nullStr; }
        Q_INVOKABLE        virtual void setNullStr(const QString &text);
 
+       Q_INVOKABLE inline virtual QString name()        const { return _name; }
+       Q_INVOKABLE inline virtual QString description() const { return _description; }
+
     public slots:
         virtual void clear();
         virtual QString extraClause() const { return _extraClause; }
@@ -298,8 +301,6 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_OBJECT
 
     Q_PROPERTY(QString label          READ label          WRITE setLabel)
-    Q_PROPERTY(bool    infoVisible    READ infoVisible    WRITE setInfoVisible)
-    Q_PROPERTY(bool    listVisible    READ listVisible    WRITE setListVisible)
     Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible)
     Q_PROPERTY(bool    descriptionVisible    READ descriptionVisible    WRITE setDescriptionVisible)
     Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly)
@@ -315,8 +316,6 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         VirtualCluster(QWidget*, VirtualClusterLineEdit* = 0, const char* = 0);
 
         Q_INVOKABLE inline virtual int     id()             const { return _number->id(); }
-                    inline virtual bool    infoVisible()    const { return _info->isVisible(); }
-                    inline virtual bool    listVisible()    const { return _list->isVisible(); }
                     inline virtual QString label()          const { return _label->text(); }
                     inline virtual QString number()         const { return _number->text(); }
         Q_INVOKABLE inline virtual QString description()    const { return _description->text(); }
@@ -345,8 +344,6 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); }
         virtual void setFieldName(QString p)           { _fieldName = p; }
         virtual void setId(const int p)                { _number->setId(p); }
-        virtual void setInfoVisible(const bool p);
-        virtual void setListVisible(const bool p);
         virtual void setName(const QString& p)         { _name->setText(p); }
         virtual void setNumber(const int p)            { _number->setNumber(QString::number(p)); }
         virtual void setNumber(const QString& p)       { _number->setNumber(p); }
@@ -376,8 +373,6 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         QGridLayout*            _grid;
         QLabel*                 _label;
         VirtualClusterLineEdit* _number;
-        QPushButton*            _list;
-        QPushButton*            _info;
         QLabel*                 _description;
         QLabel*                 _name;
         bool                    _readOnly;
