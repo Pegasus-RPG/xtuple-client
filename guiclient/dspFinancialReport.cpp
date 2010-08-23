@@ -68,6 +68,8 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WF
     _shownumbers->setChecked(true);
     _showzeros->setChecked(true);
   }
+
+  _tab->setTabEnabled(_tab->indexOf(_showColumnsTab),false);
 }
 
 dspFinancialReport::~dspFinancialReport()
@@ -947,7 +949,7 @@ void dspFinancialReport::sReportChanged(int flheadid)
 
     if (q.value("flhead_type").toString()== "A")
     {
-      _showColumnsGroup->setEnabled(true);
+      _tab->setTabEnabled(_tab->indexOf(_showColumnsTab),true);
       _trend->setChecked(true);
       _periods->setSelectionMode(QAbstractItemView::ExtendedSelection);
       _flcol->setEnabled(false);
@@ -961,7 +963,7 @@ void dspFinancialReport::sReportChanged(int flheadid)
         _type->setText("Balance Sheet");
       if (q.value("flhead_type").toString()== "C")
         _type->setText("Cash Flow Statement");
-      _showColumnsGroup->setEnabled(false);
+      _tab->setTabEnabled(_tab->indexOf(_showColumnsTab),false);
       _trend->setChecked(false);
       sTogglePeriod();
     }
