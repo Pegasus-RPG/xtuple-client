@@ -308,6 +308,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
     Q_PROPERTY(QString number         READ number         WRITE setNumber         DESIGNABLE false)
     Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false)
+    Q_PROPERTY(QString nullStr        READ nullStr        WRITE setNullStr)
 
     friend class VirtualClusterLineEdit;
 
@@ -335,6 +336,9 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
 
         virtual bool   descriptionVisible() const;
         virtual void   setDescriptionVisible(const bool p);
+
+        virtual QString nullStr() const { return  _number->nullStr(); }
+        virtual void setNullStr(const QString &text) { _number->setNullStr(text); }
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
