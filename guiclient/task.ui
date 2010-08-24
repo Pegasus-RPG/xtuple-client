@@ -574,23 +574,6 @@ to be bound by its terms.</comment>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>_number</tabstop>
-  <tabstop>_status</tabstop>
-  <tabstop>_name</tabstop>
-  <tabstop>_descrip</tabstop>
-  <tabstop>_tab</tabstop>
-  <tabstop>_owner</tabstop>
-  <tabstop>_assignedTo</tabstop>
-  <tabstop>_due</tabstop>
-  <tabstop>_assigned</tabstop>
-  <tabstop>_started</tabstop>
-  <tabstop>_completed</tabstop>
-  <tabstop>_budgetHours</tabstop>
-  <tabstop>_actualHours</tabstop>
-  <tabstop>_budgetExp</tabstop>
-  <tabstop>_actualExp</tabstop>
- </tabstops>
  <resources/>
  <connections>
   <connection>

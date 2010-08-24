@@ -28,7 +28,7 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
     virtual void sClose();
-    virtual void sSave();
+    virtual void sSave(bool partial = false);
     virtual void sPrintTasks();
     virtual void sNewTask();
     virtual void sEditTask();

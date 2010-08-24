@@ -208,7 +208,7 @@ void project::sClose()
   reject();
 }
 
-void project::sSave()
+void project::sSave(bool partial)
 {
   if (_number->text().trimmed().isEmpty())
   {
@@ -295,7 +295,7 @@ void project::sSave()
 
   q.exec("COMMIT;");
 
-  if (_saved)
+  if (!partial)
     done(_prjid);
   else
     _saved=true;

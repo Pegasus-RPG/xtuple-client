@@ -705,29 +705,6 @@ to be bound by its terms.</comment>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>_number</tabstop>
-  <tabstop>_name</tabstop>
-  <tabstop>_descrip</tabstop>
-  <tabstop>_so</tabstop>
-  <tabstop>_po</tabstop>
-  <tabstop>_wo</tabstop>
-  <tabstop>_tab</tabstop>
-  <tabstop>_owner</tabstop>
-  <tabstop>_assignedTo</tabstop>
-  <tabstop>_status</tabstop>
-  <tabstop>_due</tabstop>
-  <tabstop>_assigned</tabstop>
-  <tabstop>_started</tabstop>
-  <tabstop>_completed</tabstop>
-  <tabstop>_prjtask</tabstop>
-  <tabstop>_printTasks</tabstop>
-  <tabstop>_newTask</tabstop>
-  <tabstop>_editTask</tabstop>
-  <tabstop>_viewTask</tabstop>
-  <tabstop>_deleteTask</tabstop>
-  <tabstop>_buttonBox</tabstop>
- </tabstops>
  <resources/>
  <connections>
   <connection>
