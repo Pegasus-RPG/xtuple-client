@@ -21,6 +21,8 @@
 #include "dspGLTransactions.h"
 #include "storedProcErrorLookup.h"
 #include "metasql.h"
+#include "parameterwidget.h"
+#include "xtreewidget.h"
 
 dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspTrialBalances", fl)

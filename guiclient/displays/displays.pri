@@ -39,6 +39,7 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspFreightPricesByCustomerType.ui \
            displays/dspFrozenItemSites.ui \
            displays/dspGLSeries.ui \
+           displays/dspGLTransactions.ui \
            displays/dspIncidentsByCRMAccount.ui \
            displays/dspIndentedWhereUsed.ui \
            displays/dspInvalidBillsOfMaterials.ui \
@@ -203,6 +204,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspFreightPricesByCustomerType.h \
            displays/dspFrozenItemSites.h \
            displays/dspGLSeries.h \
+           displays/dspGLTransactions.h \
            displays/dspIncidentsByCRMAccount.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
@@ -384,6 +386,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspFreightPricesByCustomerType.cpp \
            displays/dspFrozenItemSites.cpp \
            displays/dspGLSeries.cpp \
+           displays/dspGLTransactions.cpp \
            displays/dspIncidentsByCRMAccount.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \

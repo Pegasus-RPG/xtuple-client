@@ -12,23 +12,22 @@
 #define DSPGLTRANSACTIONS_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
 #include "ui_dspGLTransactions.h"
 
-class dspGLTransactions : public XWidget, public Ui::dspGLTransactions
+class dspGLTransactions : public display, public Ui::dspGLTransactions
 {
     Q_OBJECT
 
 public:
     dspGLTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspGLTransactions();
+
     virtual bool setParams(ParameterList &params);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*, int);
     virtual void sPrint();
     virtual void sFillList();
     virtual void sViewTrans();

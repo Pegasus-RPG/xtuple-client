@@ -15,9 +15,8 @@
 #include <QVariant>
 
 #include <metasql.h>
-#include <openreports.h>
+#include <parameterwidget.h>
 
-#include "mqlutil.h"
 #include "glTransactionDetail.h"
 #include "dspGLSeries.h"
 #include "invoice.h"
@@ -33,10 +32,16 @@
 #include "storedProcErrorLookup.h"
 #include "dspSubLedger.h"
 
-dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspGLTransactions::dspGLTransactions(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspGLTransactions", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("General Ledger Transactions"));
+  setListLabel(tr("Transactions"));
+  setReportName("GLTransactions");
+  setMetaSQLOptions("gltransactions", "detail");
+  setUseAltId(true);
+  parameterWidget()->show();
 
   QString qryType = QString( "SELECT  1, '%1' UNION "
                              "SELECT  2, '%2' UNION "
@@ -70,62 +75,55 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
                               "GROUP BY accnt_number "
                               "ORDER BY accnt_number;");
  
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_parameterWidget, SIGNAL(filterChanged()), this, SLOT(handleTotalCheckbox()));
+  connect(parameterWidget(), SIGNAL(filterChanged()), this, SLOT(handleTotalCheckbox()));
   connect(_showRunningTotal, SIGNAL(toggled(bool)), this, SLOT(handleTotalCheckbox()));
 
-  _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true, "gltrans_date");
-  _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true, "gltrans_source");
-  _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true, "gltrans_doctype");
-  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
-  _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
-  _gltrans->addColumn(tr("Journal #"),  _orderColumn,   Qt::AlignLeft,   false,"gltrans_journalnumber");
-  _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
-  _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
-  _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
-  _gltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "gltrans_posted");
-  _gltrans->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "gltrans_username");
-  _gltrans->addColumn(tr("Running Total"), _moneyColumn, Qt::AlignRight,false,"running");
+  list()->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true, "gltrans_date");
+  list()->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true, "gltrans_source");
+  list()->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true, "gltrans_doctype");
+  list()->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
+  list()->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
+  list()->addColumn(tr("Journal #"),  _orderColumn,   Qt::AlignLeft,   false,"gltrans_journalnumber");
+  list()->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
+  list()->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
+  list()->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
+  list()->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "gltrans_posted");
+  list()->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "gltrans_username");
+  list()->addColumn(tr("Running Total"), _moneyColumn, Qt::AlignRight,false,"running");
 
   _beginningBalance->setPrecision(omfgThis->moneyVal());
 
   _beginningBalanceLit->setVisible(_showRunningTotal->isChecked());
   _beginningBalance->setVisible(_showRunningTotal->isChecked());
   if (_showRunningTotal->isChecked())
-    _gltrans->showColumn("running");
+    list()->showColumn("running");
   else
-    _gltrans->hideColumn("running");
+    list()->hideColumn("running");
 
-  _parameterWidget->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
-  _parameterWidget->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
-  _parameterWidget->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
-  _parameterWidget->append(tr("Document #"), "docnum",    ParameterWidget::Text);
-  _parameterWidget->appendComboBox(tr("Source"), "source_id",    qrySource);
+  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
+  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
+  parameterWidget()->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
+  parameterWidget()->append(tr("Document #"), "docnum",    ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Source"), "source_id",    qrySource);
   if (_metrics->value("GLCompanySize").toInt() > 0)
-  _parameterWidget->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
+  parameterWidget()->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
   if (_metrics->value("GLProfitSize").toInt() >  0)
-    _parameterWidget->appendComboBox(tr("Profit Center"), "prfcntr_id", XComboBox::ProfitCenters);
-  _parameterWidget->appendComboBox(tr("Main Segment"), "num_id", qryAccNum);
+    parameterWidget()->appendComboBox(tr("Profit Center"), "prfcntr_id", XComboBox::ProfitCenters);
+  parameterWidget()->appendComboBox(tr("Main Segment"), "num_id", qryAccNum);
   if (_metrics->value("GLSubaccountSize").toInt() > 0)
-    _parameterWidget->appendComboBox(tr("Sub Account"), "subaccnt_id", XComboBox::Subaccounts);
-  _parameterWidget->appendComboBox(tr("Account Type"), "accnttype_id", qryType);
-  _parameterWidget->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
-  _parameterWidget->append(tr("Show Deleted"), "showDeleted", ParameterWidget::Exists);
+    parameterWidget()->appendComboBox(tr("Sub Account"), "subaccnt_id", XComboBox::Subaccounts);
+  parameterWidget()->appendComboBox(tr("Account Type"), "accnttype_id", qryType);
+  parameterWidget()->appendComboBox(tr("Sub Type"), "subType",   qrySubType);
+  parameterWidget()->append(tr("Show Deleted"), "showDeleted", ParameterWidget::Exists);
 
-  _parameterWidget->applyDefaultFilterSet();
+  parameterWidget()->applyDefaultFilterSet();
 
   _sources << "None" << "A/P" << "A/R" << "G/L" << "I/M" << "P/D" << "P/O" << "S/O" << "S/R" << "W/O";
 }
 
-dspGLTransactions::~dspGLTransactions()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
 void dspGLTransactions::languageChange()
 {
+  display::languageChange();
   retranslateUi(this);
 }
 
@@ -133,22 +131,22 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
 
-  _parameterWidget->setSavedFilters();
+  parameterWidget()->setSavedFilters();
 
   QVariant param;
   bool     valid;
 
   param = pParams.value("accnt_id", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("GL Account"), param.toInt());
+    parameterWidget()->setDefault(tr("GL Account"), param.toInt());
 
   param = pParams.value("startDate", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("Start Date"), param.toDate());
+    parameterWidget()->setDefault(tr("Start Date"), param.toDate());
 
   param = pParams.value("endDate", &valid);
   if (valid)
-    _parameterWidget->setDefault(tr("End Date"), param.toDate());
+    parameterWidget()->setDefault(tr("End Date"), param.toDate());
 
   param = pParams.value("period_id", &valid);
   if (valid)
@@ -160,12 +158,12 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
     q.exec();
     if (q.first())
     {
-      _parameterWidget->setDefault(tr("Start Date"), q.value("period_start").toDate());
-      _parameterWidget->setDefault(tr("End Date"), q.value("period_end").toDate());
+      parameterWidget()->setDefault(tr("Start Date"), q.value("period_start").toDate());
+      parameterWidget()->setDefault(tr("End Date"), q.value("period_end").toDate());
     }
   }
 
-  _parameterWidget->applyDefaultFilterSet();
+  parameterWidget()->applyDefaultFilterSet();
 
   if (pParams.inList("run"))
   {
@@ -176,7 +174,7 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
+void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem, int)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)pItem;
   if(0 == item)
@@ -210,7 +208,7 @@ void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
 
 bool dspGLTransactions::setParams(ParameterList &params)
 {
-  _parameterWidget->appendValue(params);
+  parameterWidget()->appendValue(params);
   bool valid;
   QVariant param;
 
@@ -321,16 +319,7 @@ void dspGLTransactions::sPrint()
       return;
   }
   
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  orReport report("GLTransactions", params);
-
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
+  display::sPrint();
 }
 
 void dspGLTransactions::sFillList()
@@ -343,7 +332,6 @@ void dspGLTransactions::sFillList()
       return;
   }
 
-  MetaSQLQuery mql = mqlLoad("gltransactions", "detail");
   ParameterList params;
   if (! setParams(params))
     return;
@@ -351,27 +339,21 @@ void dspGLTransactions::sFillList()
   if (_showRunningTotal->isChecked() &&
       _showRunningTotal->isVisible())
   {
-    _gltrans->showColumn("running");
+    list()->showColumn("running");
     qDebug("begbal %f", params.value("beginningBalance").toDouble());
     _beginningBalance->setDouble(params.value("beginningBalance").toDouble());
   }
   else
-    _gltrans->hideColumn("running");
+    list()->hideColumn("running");
 
-  XSqlQuery r = mql.toQuery(params);
-  _gltrans->populate(r,true);
-  if (r.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  display::sFillList();
 }
 
 void dspGLTransactions::sViewTrans()
 {
   ParameterList params;
 
-  params.append("gltrans_id", _gltrans->id());
+  params.append("gltrans_id", list()->id());
 
   glTransactionDetail newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -383,7 +365,7 @@ void dspGLTransactions::sViewSeries()
   q.prepare("SELECT gltrans_date, gltrans_journalnumber"
             "  FROM gltrans"
             " WHERE (gltrans_id=:gltrans_id)");
-  q.bindValue(":gltrans_id", _gltrans->id());
+  q.bindValue(":gltrans_id", list()->id());
   q.exec();
   if(!q.first())
     return;
@@ -401,7 +383,7 @@ void dspGLTransactions::sViewSeries()
 
 void dspGLTransactions::sViewDocument()
 {
-  XTreeWidgetItem * item = (XTreeWidgetItem*)_gltrans->currentItem();
+  XTreeWidgetItem * item = (XTreeWidgetItem*)list()->currentItem();
   if(0 == item)
     return;
 
@@ -561,8 +543,8 @@ void dspGLTransactions::sViewSubledger()
 
   params.append("startDate", omfgThis->startOfTime());
   params.append("endDate", omfgThis->endOfTime());
-  params.append("journalnumber", _gltrans->rawValue("gltrans_journalnumber"));
-  params.append("accnt_id", _gltrans->altId());
+  params.append("journalnumber", list()->rawValue("gltrans_journalnumber"));
+  params.append("accnt_id", list()->altId());
   params.append("run");
 
   dspSubLedger *newdlg = new dspSubLedger();
@@ -582,19 +564,19 @@ bool dspGLTransactions::forwardUpdate()
   ParameterList params;
   setParams(params);
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.first())
+  XSqlQuery mq = mql.toQuery(params);
+  if (mq.first())
   {
-    int result = q.value("result").toInt();
+    int result = mq.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
       return false;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (mq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, mq.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   return true;
@@ -604,7 +586,7 @@ void dspGLTransactions::handleTotalCheckbox()
 {
   QVariant param;
   ParameterList params;
-  _parameterWidget->appendValue(params);
+  parameterWidget()->appendValue(params);
 
   _showRunningTotal->setVisible(params.inList("accnt_id") &&
                                 !params.inList("source_id") &&
