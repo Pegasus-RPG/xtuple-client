@@ -97,6 +97,8 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QTranslator>
+#include <QHttp>
+#include <QUrl>
 
 #include <dbtools.h>
 #include <parameter.h>
@@ -337,7 +339,16 @@ int main(int argc, char *argv[])
     {
       _splash->hide();
       QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
-// TODO: take some action?
+
+      QHttp *http = new QHttp();
+      
+      QUrl url;
+      url.setPath("/api/regviolation.php");
+      url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
+      url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
+
+      http->setHost("www.xtuple.org");
+      http->get(url.toString());
     }
   }
   else
