@@ -41,6 +41,8 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WF
 {
   setupUi(this);
 
+  _prjid = -1;
+
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -386,13 +388,14 @@ void dspFinancialReport::sFillListStatement()
           qc += ",flstmtitem_pryeardiffprcnt, 'percent' AS flstmtitem_pryeardiffprcnt_xtnumericrole";
         }
       }
-      qc += " FROM financialreport(:flcolid,:periodid,:shownumbers,false)";
+      qc += " FROM financialreport(:flcolid,:periodid,:shownumbers,false,:prjid)";
       if (!_showzeros->isChecked())
         qc += " WHERE (" + qwList.join(" OR ") + "  OR (flstmtitem_type <> 'I'))";
       q.prepare(qc);
       q.bindValue(":flcolid", _flcol->id());
       q.bindValue(":periodid", periodsRef.at(0));
       q.bindValue(":shownumbers", _shownumbers->isChecked());
+      q.bindValue(":prjid", _prjid);
       q.exec();
       _layout->populate(q, true);
       if (q.lastError().type() != QSqlError::NoError)
@@ -449,7 +452,7 @@ void dspFinancialReport::sFillListTrend()
   _layout->setColumnCount(0);
   _layout->addColumn( tr("Group/Account Name"), -1, Qt::AlignLeft, true, "name");
 
-  q.prepare("SELECT financialReport(:flhead_id, :period_id, :interval) AS result;");
+  q.prepare("SELECT financialReport(:flhead_id, :period_id, :interval, :prjid) AS result;");
 
   QString q1c = QString("SELECT r0.flrpt_order AS orderby, r0.flrpt_level AS xtindentrole,"
                         "       :group AS type, flgrp_id AS id,"
@@ -670,6 +673,7 @@ void dspFinancialReport::sFillListTrend()
     q.bindValue(":flhead_id", _flhead->id());
     q.bindValue(":period_id", periodsRef.at(c));
     q.bindValue(":interval", interval);
+    q.bindValue(":prjid", _prjid);
     q.exec();
   }
 
@@ -796,6 +800,12 @@ void dspFinancialReport::sPrint()
     params.append("shownumbers");
   if(_showzeros->isChecked())
     params.append("showzeros");
+
+  if (_prjid != -1)
+  {
+    params.append("project", tr("Project:"));
+    params.append("prj_id", _prjid);
+  }
 
   QList<QVariant> periodList;
   QTreeWidgetItem* selected;

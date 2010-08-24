@@ -145,6 +145,8 @@ enum SetResponse financialLayout::set(const ParameterList &pParams)
       _editCol->setHidden(TRUE);
       _deleteCol->setHidden(TRUE);
 
+      _buttonBox->clear();
+      _buttonBox->addButton(QDialogButtonBox::Close);
       _buttonBox->setFocus();
     }
   }
