@@ -24,8 +24,8 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(sClose()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_printTasks, SIGNAL(clicked()), this, SLOT(sPrintTasks()));
   connect(_newTask, SIGNAL(clicked()), this, SLOT(sNewTask()));
   connect(_editTask, SIGNAL(clicked()), this, SLOT(sEditTask()));

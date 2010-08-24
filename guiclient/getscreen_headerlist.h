@@ -177,6 +177,7 @@
 #include "dspEarnedCommissions.h"
 #include "dspExpediteExceptionsByPlannerCode.h"
 #include "dspExpiredInventoryByClassCode.h"
+#include "dspFinancialReport.h"
 #include "dspFreightPricesByCustomer.h"
 #include "dspFreightPricesByCustomerType.h"
 #include "dspFrozenItemSites.h"
