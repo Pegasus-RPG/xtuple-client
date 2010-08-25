@@ -315,7 +315,7 @@ void GLCluster::sHandleProjectId()
   if (_project->isValid())
   {
     XSqlQuery qry;
-    qry.prepare("SELECT getPrjAccnt(:prj_id,:accnt_id) AS accnt_id");
+    qry.prepare("SELECT getPrjAccntId(:prj_id,:accnt_id) AS accnt_id");
     qry.bindValue(":prj_id", _project->id());
     qry.bindValue(":accnt_id", _number->id());
     qry.exec();

@@ -468,7 +468,7 @@ void dspFinancialReport::sFillListTrend()
     q2c += " accnt_descrip AS name ";
 
   QString q2f = QString(" FROM flitem, accnt ");
-  QString q2w = QString(" WHERE ((true) AND accnt_id IN (SELECT * FROM getflitemaccntid(flitem_id)) ");
+  QString q2w = QString(" WHERE ((true) AND accnt_id IN (SELECT accnt_id FROM flaccnt WHERE flitem_id=flitem_id) ");
 
   QString q3c = QString("SELECT r0.flrpt_order AS orderby, r0.flrpt_level AS xtindentrole,"
                         "       :spec AS type, flspec_id AS id,"
