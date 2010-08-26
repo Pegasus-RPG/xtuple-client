@@ -27,6 +27,8 @@
 
 void VirtualCluster::init()
 {
+    _number = 0;
+
     setFocusPolicy(Qt::StrongFocus);
     _label = new QLabel(this);
     _label->setObjectName("_label");
@@ -70,9 +72,9 @@ VirtualCluster::VirtualCluster(QWidget* pParent,
 {
   setObjectName(pName);
 
-    init();
-    if (pNumberWidget)
-	addNumberWidget(pNumberWidget);
+  init();
+  if (pNumberWidget)
+    addNumberWidget(pNumberWidget);
 }
 
 void VirtualCluster::clear()
@@ -84,6 +86,19 @@ void VirtualCluster::clear()
   _number->clear();
   _name->clear();
   _description->clear();
+}
+
+QString VirtualCluster::nullStr() const
+{
+  if (_number)
+    return _number->nullStr();
+  return QString();
+}
+
+void VirtualCluster::setNullStr(const QString &text)
+{
+  if (_number)
+    _number->setNullStr(text);
 }
 
 void VirtualClusterLineEdit::sEllipses()

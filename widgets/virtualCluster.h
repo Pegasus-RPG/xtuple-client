@@ -337,8 +337,8 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         virtual bool   descriptionVisible() const;
         virtual void   setDescriptionVisible(const bool p);
 
-        virtual QString nullStr() const { return  _number->nullStr(); }
-        virtual void setNullStr(const QString &text) { _number->setNullStr(text); }
+        virtual QString nullStr() const;
+        virtual void setNullStr(const QString &text);
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
