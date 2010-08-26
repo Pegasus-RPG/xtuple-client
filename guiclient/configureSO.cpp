@@ -127,6 +127,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   _enablePromiseDate->setChecked(_metrics->boolean("UsePromiseDate"));
   _calcFreight->setChecked(_metrics->boolean("CalculateFreight"));
   _includePkgWeight->setChecked(_metrics->boolean("IncludePackageWeight"));
+  _quoteafterSO->setChecked(_metrics->boolean("ShowQuotesAfterSO"));
 
   _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
   if (_invoiceNumOfCopies->value())
@@ -311,6 +312,7 @@ void configureSO::sSave()
     }	
   }
 
+  _metrics->set("ShowQuotesAfterSO", _quoteafterSO->isChecked());
   _metrics->set("AllowDiscounts", _allowDiscounts->isChecked());
   _metrics->set("AllowASAPShipSchedules", _allowASAP->isChecked());
   _metrics->set("CustomerChangeLog", _customerChangeLog->isChecked());

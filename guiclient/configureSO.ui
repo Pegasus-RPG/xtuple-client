@@ -531,6 +531,13 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
+              <item row="4" column="0" colspan="2">
+               <widget class="QCheckBox" name="_quoteafterSO">
+                <property name="text">
+                 <string>Show Quotes After Converted to Sales Order</string>
+                </property>
+               </widget>
+              </item>
               </layout>
              </item>
              <item>

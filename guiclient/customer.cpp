@@ -73,6 +73,12 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _quotes->findChild<XCheckBox*>("_showProspects")->setForgetful(true);
   _quotes->findChild<XCheckBox*>("_showProspects")->setChecked(false);
   _quotes->findChild<XCheckBox*>("_showProspects")->hide();
+  if (_metrics->boolean("ShowQuotesAfterSO"))
+  {
+    _quotes->findChild<XCheckBox*>("_convertedtoSo")->show();
+    _quotes->findChild<XCheckBox*>("_convertedtoSo")->setForgetful(true);
+    _quotes->findChild<XCheckBox*>("_convertedtoSo")->setChecked(false);
+  }
   _quotes->findChild<XTreeWidget*>("_quote")->hideColumn("quhead_billtoname");
   
   _orders = new openSalesOrders(this, "openSalesOrders", Qt::Widget);

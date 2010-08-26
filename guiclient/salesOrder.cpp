@@ -196,6 +196,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _cc->addColumn(tr("Name"),    _itemColumn, Qt::AlignLeft, true, "ccard_name");
   _cc->addColumn(tr("Expiration Date"),  -1, Qt::AlignLeft, true, "expiration");
 
+  _quotestatusLit->hide();
+  _quotestaus->hide();
+
   sPopulateFOB(_warehouse->id());
 
   _ignoreSignals = FALSE;
@@ -290,6 +293,9 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _downCC->hide();
       _authorize->hide();
       _charge->hide();
+      _quotestatusLit->show();
+      _quotestaus->show();
+      _quotestaus->setText("Open");
 
       connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
@@ -325,6 +331,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _downCC->hide();
       _authorize->hide();
       _charge->hide();
+      _quotestatusLit->show();
+      _quotestaus->show();
 
       connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
@@ -376,6 +384,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _clear->hide();
       _action->hide();
       _delete->hide();
+      _quotestatusLit->show();
+      _quotestaus->show();
     }
   }
 
@@ -985,7 +995,8 @@ bool salesOrder::save(bool partial)
                "    quhead_billto_cntct_phone,"
                "    quhead_billto_cntct_title,"
                "    quhead_billto_cntct_fax,"
-               "    quhead_billto_cntct_email)"
+               "    quhead_billto_cntct_email,"
+               "    quhead_status)"
                "    VALUES ("
                "    :id, :number, :cust_id,"
                "    :custponumber, :shipto_id,"
@@ -1025,7 +1036,8 @@ bool salesOrder::save(bool partial)
                "    :billto_cntct_phone,"
                "    :billto_cntct_title,"
                "    :billto_cntct_fax,"
-               "    :billto_cntct_email) ");
+               "    :billto_cntct_email,"
+               "    :quhead_status) ");
   q.bindValue(":id", _soheadid );
   q.bindValue(":number", _orderNumber->text().toInt());
   q.bindValue(":orderdate", _orderDate->date());
@@ -1124,6 +1136,7 @@ bool salesOrder::save(bool partial)
     q.bindValue(":holdtype", "R");
 
   q.bindValue(":origin", _origin->code());
+  q.bindValue(":quhead_status", "O");
 
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -2379,7 +2392,11 @@ void salesOrder::populate()
                 "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
                 "       cust_ffshipto, cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id, "
-                "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id "
+                "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id, "
+                "       CASE WHEN quhead_status IN ('O','') THEN 'Open' "
+                "         ELSE CASE WHEN quhead_status ='C' THEN 'Converted' "
+                "         END "
+                "       END AS status "
                 "FROM quhead, custinfo "
                 "WHERE ( (quhead_cust_id=cust_id)"
                 " AND (quhead_id=:quhead_id) )"
@@ -2390,7 +2407,11 @@ void salesOrder::populate()
                 "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
                 "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id, -1) AS quhead_misc_accnt_id, "
-                "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id "
+                "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id, "
+                "       CASE WHEN quhead_status IN ('O','') THEN 'Open' "
+                "         ELSE CASE WHEN quhead_status ='C' THEN 'Converted' "
+                "          END "
+                "       END AS status "
                 "FROM quhead, prospect "
                 "WHERE ( (quhead_cust_id=prospect_id)"
                 " AND (quhead_id=:quhead_id) )"
@@ -2491,6 +2512,8 @@ void salesOrder::populate()
 
       _orderComments->setText(qu.value("quhead_ordercomments").toString());
       _shippingComments->setText(qu.value("quhead_shipcomments").toString());
+
+      _quotestaus->setText(qu.value("status"));
 
       _comments->setId(_soheadid);
       _documents->setId(_soheadid);

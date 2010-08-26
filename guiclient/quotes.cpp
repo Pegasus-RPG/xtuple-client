@@ -32,6 +32,7 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
   
   _cust->hide();
+  _convertedtoSo->hide();
 
   connect(_quote, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_convert, SIGNAL(clicked()), this, SLOT(sConvert()));
@@ -41,10 +42,12 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_convertedtoSo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight, true, "quhead_number");
   _quote->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,  true, "quhead_billtoname");
   _quote->addColumn(tr("P/O Number"), -1,           Qt::AlignLeft,  true, "quhead_custponumber");
+  _quote->addColumn(tr("Status"),    _dateColumn,  Qt::AlignCenter,true, "quhead_status");
   _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter,true, "quhead_quotedate");
   _quote->addColumn(tr("Expires"),    _dateColumn,  Qt::AlignCenter,true, "quhead_expire");
   _quote->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -208,8 +211,23 @@ void quotes::sConvert()
         if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
         {
           int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
+          XSqlQuery check;
+          check.prepare("SELECT * FROM quhead WHERE (quhead_id = :quhead_id) AND (quhead_status ='C');");
+          check.bindValue(":quhead_id", quheadid);
+          check.exec();
+          if (check.first())
+          {
+            QMessageBox::critical(this, tr("Can not Convert"),
+                                tr("<p>One or more of the Selected Quotes have already "
+                                   " been converted to Sales Order."
+                                   "You can not Convert a Sales Order back to Quote."));
+            return;
+          }
+          else
+          {
           convert.bindValue(":quhead_id", quheadid);
           convert.exec();
+          }
           if (convert.first())
           {
             soheadid = convert.value("sohead_id").toInt();
@@ -432,6 +450,8 @@ void quotes::sFillList()
     params.append("customersOnly");
   if ( _showExpired->isChecked())
     params.append("showExpired");
+  if ( _convertedtoSo->isChecked())
+    params.append("showConverted");
   q = mql.toQuery(params);
   _quote->clear();
   _quote->populate(q);

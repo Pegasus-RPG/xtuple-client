@@ -77,6 +77,16 @@ to be bound by its terms.</comment>
                </widget>
               </item>
               <item>
+               <widget class="XCheckBox" name="_convertedtoSo">
+                <property name="text">
+                 <string>Converted to Sales Order</string>
+                </property>
+                <property name="forgetful">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="horizontalSpacer" >
                 <property name="orientation" >
                  <enum>Qt::Horizontal</enum>

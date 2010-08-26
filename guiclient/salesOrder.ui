@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>898</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -430,7 +430,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="3" column="7">
+         <item row="3" column="8">
           <widget class="DLineEdit" name="_expire">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -440,7 +440,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="0" column="7">
+         <item row="0" column="8">
           <layout class="QHBoxLayout">
            <item>
             <spacer>
@@ -469,6 +469,20 @@ to be bound by its terms.</comment>
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="2" column="6">
+          <widget class="QLabel" name="_quotestatusLit">
+           <property name="text">
+            <string>Quote Status:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="8">
+          <widget class="XLineEdit" name="_quotestaus">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
