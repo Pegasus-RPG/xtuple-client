@@ -27,11 +27,12 @@ public:
     maintainBudget(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~maintainBudget();
 
+    Q_INVOKABLE int projectId() { return _prjid; };
+    Q_INVOKABLE void setProjectId(int p) { _prjid = p; }
+
 public slots:
     virtual enum SetResponse set(const ParameterList &);
     virtual void sAccountsAdd();
-    virtual void sAccountsMoveDown();
-    virtual void sAccountsMoveUp();
     virtual void sAccountsRemove();
     virtual void sGenerateTable();
     virtual void sPeriodsAll();
@@ -51,6 +52,7 @@ private:
     int _budgheadid;
     bool _dirty;
     int _mode;
+    int _prjid;
     QList<int> _accountsRef;
     QList<int> _periodsRef;
 
