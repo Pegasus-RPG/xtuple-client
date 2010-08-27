@@ -264,6 +264,7 @@ void maintainBudget::sAccountsAdd()
   for (int i = 0; i < selected.size(); i++)
   {
     int accntid = selected[i]->id();
+
     if (_prjid != -1)
     {
       q.prepare("SELECT getPrjAccntId(:prj_id,:accnt_id) AS accnt_id");
@@ -273,13 +274,20 @@ void maintainBudget::sAccountsAdd()
       if (q.first())
         accntid = q.value("accnt_id").toInt();
     }
+
+    if (_accountsRef.contains(accntid))
+      continue;
+
     q.prepare("SELECT formatGLAccountLong(:accnt_id) AS result;");
     q.bindValue(":accnt_id", accntid);
     q.exec();
     if(q.first())
+    {
       new XTreeWidgetItem(_accounts,
                           accntid,
                           q.value("result"));
+      _accountsRef.append(accntid);
+    }
   }
 }
 
