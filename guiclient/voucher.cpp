@@ -313,6 +313,7 @@ bool voucher::sSave()
 
   if (cNew != _mode)
   {
+    setWindowModified(false);
     close();
     return true;
   }
