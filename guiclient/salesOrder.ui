@@ -1536,6 +1536,9 @@ to be bound by its terms.</comment>
                <property name="focusPolicy">
                 <enum>Qt::StrongFocus</enum>
                </property>
+               <property name="label">
+                <string/>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">

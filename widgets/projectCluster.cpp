@@ -15,6 +15,7 @@ ProjectCluster::ProjectCluster(QWidget* pParent, const char* pName) :
 {
     addNumberWidget(new ProjectLineEdit(this, pName));
     _name->setVisible(true);
+    setLabel(tr("Project #:"));
 }
 
 void ProjectCluster::setType(ProjectLineEdit::ProjectType ptype)

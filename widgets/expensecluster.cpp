@@ -15,6 +15,7 @@ ExpenseCluster::ExpenseCluster(QWidget *pParent, const char *pName) :
 {
   addNumberWidget(new ExpenseLineEdit(this, pName));
   _description->show();
+  setLabel(tr("Expense Category:"));
 }
 
 ExpenseLineEdit::ExpenseLineEdit(QWidget *pParent, const char *pName) :
