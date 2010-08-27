@@ -26,6 +26,12 @@ printSoForm::printSoForm(QWidget* parent, const char* name, bool modal, Qt::WFla
   _so->setAllowedTypes(OrderLineEdit::Sales);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sPrint()));
+  QPushButton *ok = _buttonBox->button(QDialogButtonBox::Ok);
+  if(ok)
+  {
+    connect(_so, SIGNAL(valid(bool)), ok, SLOT(setEnabled(bool)));
+    ok->setEnabled(false);
+  }
 
   _captive = FALSE; 
   _report->populate( "SELECT form_id, form_name "
