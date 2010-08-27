@@ -118,8 +118,10 @@ void maintainBudget::sSave()
   XSqlQuery qry;
   qry.prepare("SELECT budghead_id "
       "FROM budghead "
-      "WHERE (budghead_id != :budghead_id); ");
+      "WHERE ((budghead_id != :budghead_id) "
+      " AND (budghead_name = :budghead_name));");
   qry.bindValue(":budghead_id", _budgheadid);
+  qry.bindValue(":budghead_name", _name->text());
   qry.exec();
   if (qry.first())
   {
@@ -261,15 +263,23 @@ void maintainBudget::sAccountsAdd()
 
   for (int i = 0; i < selected.size(); i++)
   {
-    q.prepare("SELECT getPrjAccnt(:prj_id,:accnt_id) AS accnt_id, "
-              "formatGLAccountLong(getPrjAccnt(:prj_id,:accnt_id)) AS result;");
-    q.bindValue(":prj_id", _prjid);
-    q.bindValue(":accnt_id", selected[i]->id());
+    int accntid = selected[i]->id();
+    if (_prjid != -1)
+    {
+      q.prepare("SELECT getPrjAccntId(:prj_id,:accnt_id) AS accnt_id");
+      q.bindValue(":prj_id", _prjid);
+      q.bindValue(":accnt_id", accntid);
+      q.exec();
+      if (q.first())
+        accntid = q.value("accnt_id").toInt();
+    }
+    q.prepare("SELECT formatGLAccountLong(:accnt_id) AS result;");
+    q.bindValue(":accnt_id", accntid);
     q.exec();
     if(q.first())
-      XTreeWidgetItem *item = new XTreeWidgetItem(_accounts,
-                                                  q.value("accnt_id").toInt(),
-                                                  q.value("result"));
+      new XTreeWidgetItem(_accounts,
+                          accntid,
+                          q.value("result"));
   }
 }
 
