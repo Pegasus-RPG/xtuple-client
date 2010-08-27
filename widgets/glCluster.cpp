@@ -42,11 +42,9 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
 
 void GLClusterLineEdit::setId(const int pId)
 {
-  setStrict(false);
   _query.replace("FROM ONLY accnt","FROM accnt");
   VirtualClusterLineEdit::setId(pId);
   _query.replace("FROM accnt","FROM ONLY accnt");
-  setStrict(true);
 }
 
 void GLClusterLineEdit::setNumber(const QString &pNumber)

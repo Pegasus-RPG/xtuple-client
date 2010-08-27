@@ -64,6 +64,7 @@ ProjectLineEdit::ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, co
   setViewPriv("ViewProjects");
 
   _type = pPrjType;
+  _allowedStatuses = 0x00;
 }
 
 void ProjectLineEdit::buildExtraClause()

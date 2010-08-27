@@ -711,9 +711,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
   else
   {
     XSqlQuery idQ;
-    idQ.prepare(_query + _idClause +
-                (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-                QString(";"));
+    idQ.prepare(_query + _idClause + QString(";"));
     idQ.bindValue(":id", pId);
     idQ.exec();
     if (idQ.first())
