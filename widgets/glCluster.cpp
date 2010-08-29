@@ -47,13 +47,6 @@ void GLClusterLineEdit::setId(const int pId)
   _query.replace("FROM accnt","FROM ONLY accnt");
 }
 
-void GLClusterLineEdit::setNumber(const QString &pNumber)
-{
-  _parsed = false;
-  setText(pNumber);
-  VirtualClusterLineEdit::sParse();
-}
-
 void GLClusterLineEdit::setType(unsigned int pType)
 {
   _type = pType;
@@ -214,14 +207,14 @@ GLCluster::GLCluster(QWidget *pParent, const char *pName) :
 
   _projectLit = new QLabel("-", this);
   _projectLit->setVisible(false);
-  _grid->addWidget(_projectLit, 0, _grid->columnCount()-1);
+  _grid->addWidget(_projectLit, 0, 2);
 
   _project = new ProjectLineEdit(this);
   _project->setAllowedStatuses(ProjectLineEdit::InProcess);
   _project->setEnabled(false);
   _project->setVisible(false);
   _project->setNullStr(tr("Project Number"));
-  _grid->addWidget(_project, 0, _grid->columnCount()-1);
+  _grid->addWidget(_project, 0, 3);
 
   setFocusProxy(_number);
   setOrientation(Qt::Horizontal);
@@ -248,17 +241,12 @@ void GLCluster::setId(const int p)
       qry.exec();
       if (qry.first())
       {
-        qDebug("setting1 prj:%d",qry.value("prjaccnt_prj_id").toInt() );
         id = qry.value("accnt_id").toInt();
-        qDebug("setting accnt:%d",qry.value("accnt_id").toInt() );
         if (qry.value("prjaccnt_prj_id").toInt() != -1 &&
             !_projectVisible)
           setProjectVisible(true);
-        qDebug("prj visible:%d", projectVisible());
         if (_projectVisible)
-        {qDebug("setting2 prj:%d",qry.value("prjaccnt_prj_id").toInt() );
           _project->setId(qry.value("prjaccnt_prj_id").toInt());
-        }
       }
     }
 
@@ -301,6 +289,8 @@ void GLCluster::sHandleProjectState(int p)
     _project->setId(-1);
     _project->setEnabled(false);
   }
+  else if (_project->isEnabled())
+    return;
   else
   {
     _project->setEnabled(true);
@@ -319,13 +309,6 @@ void GLCluster::sHandleProjectId()
     qry.exec();
     qry.first();
     _number->setId(qry.value("accnt_id").toInt());
-
-    _description->setText(_project->description());
-  }
-  else
-  {
-    GLClusterLineEdit* number = static_cast<GLClusterLineEdit*>(_number);
-    number->setNumber(number->text());
   }
 }
 

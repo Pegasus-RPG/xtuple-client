@@ -51,7 +51,8 @@ void VirtualCluster::init()
     _grid->setSpacing(6);
     if (!_label->text().isEmpty())
       _grid->addWidget(_label,  0, 0);
-    _grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 0, _grid->columnCount() + 1);
+    _hspcr = new QSpacerItem(0, 0, QSizePolicy::Expanding);
+    _grid->addItem(_hspcr, 0, _grid->columnCount() + 1);
     _orientation = Qt::Horizontal;
     setOrientation(Qt::Vertical);
     
@@ -214,6 +215,7 @@ void VirtualCluster::setOrientation(Qt::Orientation orientation)
 
   _grid->removeWidget(_name);
   _grid->removeWidget(_description);
+  _grid->removeItem(_hspcr);
 
   if (orientation == Qt::Vertical)
   {
@@ -222,10 +224,10 @@ void VirtualCluster::setOrientation(Qt::Orientation orientation)
   }
   else
   {
-    _grid->addWidget(_name, 0, _grid->columnCount()-2);
-    _grid->addWidget(_description, 0, _grid->columnCount()-2);
+    _grid->addWidget(_name, 0, _grid->columnCount());
+    _grid->addWidget(_description, 0, _grid->columnCount());
   }
-
+  _grid->addItem(_hspcr,0, _grid->columnCount());
   _orientation = orientation;
 }
 
@@ -392,15 +394,8 @@ bool VirtualClusterLineEdit::eventFilter(QObject *obj, QEvent *event)
 
 void VirtualClusterLineEdit::focusInEvent(QFocusEvent * event)
 {
-  sHandleNullStr();
   sUpdateMenu();
   XLineEdit::focusInEvent(event);
-}
-
-void VirtualClusterLineEdit::focusOutEvent(QFocusEvent * event)
-{
-  sHandleNullStr();
-  XLineEdit::focusOutEvent(event);
 }
 
 void VirtualClusterLineEdit::resizeEvent(QResizeEvent *)
@@ -444,15 +439,6 @@ void VirtualClusterLineEdit::setViewPriv(const QString& priv)
 {
   _viewPriv = priv;
   sUpdateMenu();
-}
-
-void VirtualClusterLineEdit::setNullStr(const QString &text)
-{
-  if (_nullStr == text )
-    return;
-
-  _nullStr = text;
-  sHandleNullStr();
 }
 
 void VirtualClusterLineEdit::sUpdateMenu()
@@ -556,6 +542,7 @@ void VirtualClusterLineEdit::sHandleCompleter()
   rect.setWidth(width);
   rect.setBottomLeft(QPoint(0, height() - 2));
   _completer->complete(rect);
+  qDebug("setting false");
   _parsed = false;
 }
 
@@ -569,7 +556,9 @@ void VirtualClusterLineEdit::sHandleNullStr()
   QString nullStyle = " QLineEdit{ color: LightGrey; "
                       "            font: bold italic  }";
 
-  if (!hasFocus() && !_valid)
+  if (!hasFocus() &&
+      text().isEmpty() &&
+      !_valid)
   {
     setText(_nullStr);
     sheet.append(nullStyle);
@@ -579,7 +568,7 @@ void VirtualClusterLineEdit::sHandleNullStr()
     clear();
     sheet.remove(nullStyle);
   }
-  else
+  else if (_valid)
     sheet.remove(nullStyle);
 
   setStyleSheet(sheet);
@@ -739,13 +728,14 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
                             idQ.lastError().databaseText());
   }
 
-  _parsed = TRUE;
+  _parsed = true;
   sHandleNullStr();
   emit parsed();
 }
 
 void VirtualClusterLineEdit::setNumber(const QString& pNumber)
 {
+  qDebug("setting number");
   _parsed = false;
   setText(pNumber);
   sParse();
@@ -762,7 +752,7 @@ void VirtualClusterLineEdit::sParse()
       QString stripped = text().trimmed().toUpper();
       if (stripped.length() == 0)
       {
-	_parsed = TRUE;
+        _parsed = true;
 	setId(-1);
       }
       else
@@ -796,7 +786,8 @@ void VirtualClusterLineEdit::sParse()
       emit valid(_valid);
       emit parsed();
     }
-    _parsed = TRUE;
+    _parsed = true;
+    sHandleNullStr();
 }
 
 void VirtualClusterLineEdit::sList()

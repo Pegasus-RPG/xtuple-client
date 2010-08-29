@@ -74,7 +74,6 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
       void sList();
       void sSearch();
       void setId(const int);
-      void setNumber(const QString&);
 
     protected slots:
       accountList* listFactory();

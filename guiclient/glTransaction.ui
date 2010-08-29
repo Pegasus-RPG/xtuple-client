@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>619</width>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,7 +60,7 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item row="0" column="2" rowspan="2">
+   <item row="0" column="2" rowspan="6">
     <widget class="QDialogButtonBox" name="_buttonBox">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -199,16 +199,36 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item row="4" column="0">
-    <widget class="QLabel" name="_debitLit">
-     <property name="text">
-      <string>Debit:</string>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="topMargin">
+      <number>5</number>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="_debitLit">
+       <property name="text">
+        <string>Debit:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
-   <item row="4" column="1" colspan="2">
+   <item row="4" column="1">
     <widget class="GLCluster" name="_debit">
      <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>
@@ -216,16 +236,36 @@ to be bound by its terms.</comment>
     </widget>
    </item>
    <item row="5" column="0">
-    <widget class="QLabel" name="_creditLit">
-     <property name="text">
-      <string>Credit:</string>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="topMargin">
+      <number>5</number>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="_creditLit">
+       <property name="text">
+        <string>Credit:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
-   <item row="5" column="1" colspan="2">
+   <item row="5" column="1">
     <widget class="GLCluster" name="_credit">
      <property name="focusPolicy">
       <enum>Qt::StrongFocus</enum>

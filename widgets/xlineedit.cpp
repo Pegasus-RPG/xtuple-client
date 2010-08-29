@@ -33,8 +33,8 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   setFont(f);
 #endif
 
-  _parsed = TRUE;
-  _valid = FALSE;
+  _parsed = true;
+  _valid = false;
 
   _id = -1;
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
@@ -172,5 +172,52 @@ void XLineEdit::setData(const QString &text)
 {
   if (_mapper->model())
     _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text);
+}
+
+void XLineEdit::setNullStr(const QString &text)
+{
+  if (_nullStr == text )
+    return;
+
+  _nullStr = text;
+  sHandleNullStr();
+}
+
+void XLineEdit::sHandleNullStr()
+{
+  if (_nullStr.isEmpty())
+    return;
+
+  QString sheet = styleSheet();
+  QString nullStyle = " QLineEdit{ color: LightGrey; "
+                      "            font: bold italic  }";
+
+  if (!hasFocus() &&
+      text().isEmpty())
+  {
+    setText(_nullStr);
+    sheet.append(nullStyle);
+  }
+  else if (hasFocus())
+  {
+    clear();
+    sheet.remove(nullStyle);
+  }
+  else
+    sheet.remove(nullStyle);
+
+  setStyleSheet(sheet);
+}
+
+void XLineEdit::focusInEvent(QFocusEvent * event)
+{
+  sHandleNullStr();
+  QLineEdit::focusInEvent(event);
+}
+
+void XLineEdit::focusOutEvent(QFocusEvent * event)
+{
+  sHandleNullStr();
+  QLineEdit::focusOutEvent(event);
 }
 

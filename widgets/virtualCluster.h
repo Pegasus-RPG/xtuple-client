@@ -180,9 +180,6 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
        Q_INVOKABLE inline virtual QSqlQueryModel* model() const { return _model;}
 
-       Q_INVOKABLE inline virtual QString nullStr() const { return _nullStr; }
-       Q_INVOKABLE        virtual void setNullStr(const QString &text);
-
        Q_INVOKABLE inline virtual QString name()        const { return _name; }
        Q_INVOKABLE inline virtual QString description() const { return _description; }
 
@@ -238,7 +235,6 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
     protected:
         virtual bool eventFilter(QObject *obj, QEvent* event);
         virtual void focusInEvent(QFocusEvent * event);
-        virtual void focusOutEvent(QFocusEvent * event);
         virtual void resizeEvent(QResizeEvent *e);
 
         QAction* _infoAct;
@@ -265,7 +261,6 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QString _editPriv;
         QString _newPriv;
         QString _viewPriv;
-        QString _nullStr;
         bool _hasDescription;
         bool _hasName;
         bool _hasActive;
@@ -379,6 +374,7 @@ class XTUPLEWIDGETS_EXPORT VirtualCluster : public QWidget
         VirtualClusterLineEdit* _number;
         QLabel*                 _description;
         QLabel*                 _name;
+        QSpacerItem*            _hspcr;
         bool                    _readOnly;
 	QString                 _fieldName;
         QString                 _default;

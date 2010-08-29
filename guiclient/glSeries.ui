@@ -154,6 +154,9 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <widget class="QPushButton" name="_edit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>&amp;Edit</string>
        </property>
@@ -161,6 +164,9 @@ to be bound by its terms.</comment>
      </item>
      <item>
       <widget class="QPushButton" name="_delete">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>&amp;Delete</string>
        </property>
@@ -405,6 +411,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>287</x>
      <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_glseries</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>189</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>521</x>
+     <y>168</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_glseries</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_delete</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>189</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>521</x>
+     <y>202</y>
     </hint>
    </hints>
   </connection>
