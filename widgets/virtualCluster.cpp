@@ -542,7 +542,6 @@ void VirtualClusterLineEdit::sHandleCompleter()
   rect.setWidth(width);
   rect.setBottomLeft(QPoint(0, height() - 2));
   _completer->complete(rect);
-  qDebug("setting false");
   _parsed = false;
 }
 
@@ -735,7 +734,6 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
 
 void VirtualClusterLineEdit::setNumber(const QString& pNumber)
 {
-  qDebug("setting number");
   _parsed = false;
   setText(pNumber);
   sParse();
