@@ -27,7 +27,7 @@ public:
     maintainBudget(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~maintainBudget();
 
-    Q_INVOKABLE int projectId() { return _prjid; };
+    Q_INVOKABLE int projectId() { return _prjid; }
     Q_INVOKABLE void setProjectId(int p) { _prjid = p; }
 
 public slots:
