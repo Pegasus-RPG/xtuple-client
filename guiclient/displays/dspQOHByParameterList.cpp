@@ -42,6 +42,8 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char*, Qt::W
 
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
 
+  _asOf->setDate(omfgThis->dbDate(), true);
+
   list()->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
   list()->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft,   true,  "classcode_code"   );
   list()->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
@@ -260,6 +262,7 @@ void dspQOHByParameterList::sFillList()
 bool dspQOHByParameterList::setParams(ParameterList &params)
 {
   params.append("byParameterList");
+  params.append("asOf", _asOf->date());
 
   params.append("none", tr("None"));
   params.append("na", tr("N/A"));

@@ -44,6 +44,8 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char*, Qt::WFlags fl)
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
+  _asOf->setDate(omfgThis->dbDate(), true);
+
   list()->addColumn(tr("Site"),             -1,           Qt::AlignCenter, true,  "warehous_code" );
   list()->addColumn(tr("Default Location"), _itemColumn,  Qt::AlignLeft,   true,  "defaultlocation"   );
   list()->addColumn(tr("Reorder Lvl."),     _qtyColumn,   Qt::AlignRight,  true,  "reorderlevel"  );
@@ -193,6 +195,7 @@ void dspQOHByItem::sFillList()
 bool dspQOHByItem::setParams(ParameterList &params)
 {
   params.append("byItem");
+  params.append("asOf", _asOf->date());
 
   params.append("none", tr("None"));
   params.append("na", tr("N/A"));

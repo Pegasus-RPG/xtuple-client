@@ -32,6 +32,7 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char*, Qt::WFlags fl)
   omfgThis->inputManager()->notify(cBCLocation, this, this, SLOT(set(int)));
 
   _location->setAllowNull(true);
+  _asOf->setDate(omfgThis->dbDate(), true);
 
   list()->setRootIsDecorated(true);
   list()->addColumn(tr("Site"),         _itemColumn, Qt::AlignLeft,   true,  "warehous_code"   );
@@ -39,7 +40,7 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "f_descrip"   );
   list()->addColumn(tr("Lot/Serial #"), 150,         Qt::AlignLeft,   true,  "f_lotserial"   );
   list()->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
-  list()->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "qty"  );
+  list()->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
   list()->addColumn(tr("Reserved"),     _qtyColumn,  Qt::AlignRight,  false, "reservedqty"  );
   
   if(_metrics->boolean("EnableSOReservationsByLocation"))
@@ -167,6 +168,7 @@ void dspQOHByLocation::sFillList()
 bool dspQOHByLocation::setParams(ParameterList &params)
 {
   params.append("byLocation");
+  params.append("asOf", _asOf->date());
 
   params.append("na", tr("N/A"));
 

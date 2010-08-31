@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>419</width>
-    <height>230</height>
+    <width>710</width>
+    <height>259</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -54,6 +54,31 @@ to be bound by its terms.</comment>
            </size>
           </property>
          </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="_asofGroup">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string/>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="_asOfLit">
+          <property name="text">
+           <string>As of Date:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="DLineEdit" name="_asOf"/>
         </item>
        </layout>
       </widget>
@@ -192,6 +217,12 @@ to be bound by its terms.</comment>
  <layoutdefault spacing="5" margin="5"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
