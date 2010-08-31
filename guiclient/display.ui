@@ -42,9 +42,22 @@
      <item>
       <layout class="QVBoxLayout" name="_buttonLayout">
        <item>
+        <widget class="QPushButton" name="_close">
+         <property name="text">
+          <string>&amp;Close</string>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+W</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="_query">
          <property name="text">
           <string>&amp;Query</string>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+R</string>
          </property>
         </widget>
        </item>
@@ -52,6 +65,9 @@
         <widget class="QPushButton" name="_print">
          <property name="text">
           <string>&amp;Print</string>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+P</string>
          </property>
         </widget>
        </item>
@@ -130,10 +146,30 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_close</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_preview</tabstop>
   <tabstop>_list</tabstop>
+  <tabstop>_autoupdate</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>display</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>742</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
