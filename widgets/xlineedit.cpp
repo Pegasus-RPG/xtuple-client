@@ -129,6 +129,7 @@ void XLineEdit::setText(const QVariant &pVariant)
   }
   else
     QLineEdit::setText(pVariant.toString());
+  sHandleNullStr();
 }
 
 
@@ -181,6 +182,8 @@ void XLineEdit::setNullStr(const QString &text)
 
   _nullStr = text;
   sHandleNullStr();
+  if (!_nullStr.isEmpty())
+    connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleNullStr()));
 }
 
 void XLineEdit::sHandleNullStr()
@@ -198,7 +201,8 @@ void XLineEdit::sHandleNullStr()
     setText(_nullStr);
     sheet.append(nullStyle);
   }
-  else if (hasFocus())
+  else if (hasFocus() &&
+           sheet.contains(nullStyle))
   {
     clear();
     sheet.remove(nullStyle);
@@ -211,13 +215,21 @@ void XLineEdit::sHandleNullStr()
 
 void XLineEdit::focusInEvent(QFocusEvent * event)
 {
-  sHandleNullStr();
+  if (!_nullStr.isEmpty())
+  {
+    disconnect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleNullStr()));
+    sHandleNullStr();
+  }
   QLineEdit::focusInEvent(event);
 }
 
 void XLineEdit::focusOutEvent(QFocusEvent * event)
 {
-  sHandleNullStr();
+  if (!_nullStr.isEmpty())
+  {
+    connect(this, SIGNAL(textChanged(QString)), this, SLOT(sHandleNullStr()));
+    sHandleNullStr();
+  }
   QLineEdit::focusOutEvent(event);
 }
 
