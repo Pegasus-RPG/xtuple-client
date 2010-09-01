@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
-    <height>297</height>
+    <width>445</width>
+    <height>294</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -205,7 +205,7 @@ to be bound by its terms.</comment>
       <item row="0" column="0">
        <widget class="QStackedWidget" name="_documentsStack">
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="_selectPage">
          <layout class="QGridLayout" name="gridLayout_10">
