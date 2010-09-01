@@ -28,13 +28,17 @@ public:
     dspFinancialReport(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = 0);
     ~dspFinancialReport();
 
+    Q_INVOKABLE virtual bool setParams(ParameterList &);
+
     Q_INVOKABLE int projectId() { return _prjid; }
     Q_INVOKABLE void setProjectId(int p) { _prjid = p; }
+
+    Q_INVOKABLE QString reportName() const;
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sFillList();
-    virtual void sPrint(bool showPreview = false);
+    virtual void sPrint();
     virtual void sPreview();
     virtual void sPopulateMenu(QMenu * pMenu);
     virtual void sFillListStatement();
@@ -54,6 +58,7 @@ protected slots:
 
 protected:
     virtual bool forwardUpdate();
+    Q_INVOKABLE ParameterList getParams();
     
 private:
     int _prjid;

@@ -788,117 +788,52 @@ void dspFinancialReport::sExpanded( QTreeWidgetItem * item )
 
 void dspFinancialReport::sPreview()
 {
-  sPrint(true);
-}
+  ParameterList params = getParams();
+  if (!params.count())
+    return ;
 
-void dspFinancialReport::sPrint(bool showPreview)
-{
-  ParameterList params;
-  QString interval;
-  QString reportdef;
+  XSqlQuery qry;
+  qry.prepare("SELECT report_source "
+              " FROM report "
+              " WHERE (report_name=:report)"
+              " ORDER BY report_grade DESC "
+              " LIMIT 1;" );
+  qry.bindValue(":report",reportName());
+  qry.exec();
+  qry.first();
 
-  if (_month->isChecked())
-    interval = "M";
-  else if (_quarter->isChecked())
-    interval = "Q";
-  else
-    interval = "Y";
+  QDomDocument _doc;
+  QString errorMessage;
+  int     errorLine;
 
-  if(_shownumbers->isChecked())
-    params.append("shownumbers");
-  if(_showzeros->isChecked())
-    params.append("showzeros");
-
-  if (_prjid != -1)
+  if (!_doc.setContent(qry.value("report_source").toString(), &errorMessage, &errorLine))
   {
-    params.append("project", tr("Project:"));
-    params.append("prj_id", _prjid);
-  }
-
-  QList<QVariant> periodList;
-  QTreeWidgetItem* selected;
-  for (int i = 0; i < _periods->topLevelItemCount(); i++)
-  {
-    if (_periods->topLevelItem(i)->isSelected())
-    {
-      selected =  _periods->topLevelItem(i);
-      periodList.prepend(((XTreeWidgetItem*)(selected))->id());
-    }
-  }
-
-  if(periodList.isEmpty())
-  {
-    QMessageBox::warning(this, tr("No Period(s) Selected"),
-      tr("You must select at least one period to report on.") );
+    QMessageBox::critical(this, tr("Error Parsing Report"),
+                          tr("There was an error Parsing the report definition. %1 %2").arg(errorMessage).arg(errorLine));
     return;
   }
 
-  if (_trend->isChecked())
-  {
-    if (_type->text() == "Ad Hoc")
-      reportdef = "FinancialReport";
-    else
-      reportdef = "FinancialTrend";
+  QPrinter printer(QPrinter::HighResolution);
+  ORPreRender pre;
+  pre.setDom(_doc);
+  pre.setParamList(params);
+  ORODocument * doc = pre.generate();
 
-    params.append("flhead_id", _flhead->id());
-    params.append("period_id_list", periodList);
-    params.append("interval", interval);
+  PreviewDialog preview (doc, &printer, this);
+  preview.exec();
+}
 
-    orReport report(reportdef, params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }
+void dspFinancialReport::sPrint()
+{
+  ParameterList params = getParams();
+  if (!params.count())
+    return ;
+
+  orReport report(reportName(), params);
+  if (report.isValid())
+    report.print();
   else
-  {
-    q.prepare("SELECT r.report_name, report_source "
-        " FROM report r"
-        "   JOIN ("
-        "     SELECT report_name "
-        "     FROM flcol "
-        "       JOIN report fr ON (flcol_report_id=fr.report_id)"
-        "     WHERE (flcol_id=:flcol_id) ) flrpt ON (r.report_name=flrpt.report_name) "
-        " ORDER BY report_grade DESC "
-        " LIMIT 1;" );
-    q.bindValue(":flcol_id",_flcol->id());
-    q.exec();
-    if (q.first())
-    {
-      params.append("flcol_id", _flcol->id());
-      params.append("period_id", periodList.at(0));
-
-      if(showPreview)
-      {
-        QDomDocument _doc;
-        QString errorMessage;
-        int     errorLine;
-
-        if (!_doc.setContent(q.value("report_source").toString(), &errorMessage, &errorLine))
-        {
-          QMessageBox::critical(this, tr("Error Parsing Report"),
-            tr("There was an error Parsing the report definition. %1 %2").arg(errorMessage).arg(errorLine));
-          return;
-        }
-
-        QPrinter printer(QPrinter::HighResolution);
-        ORPreRender pre;
-        pre.setDom(_doc);
-        pre.setParamList(params);
-        ORODocument * doc = pre.generate();
-
-        PreviewDialog preview (doc, &printer, this);
-        if (preview.exec() == QDialog::Rejected)
-          return;
-      }
-
-      orReport report(q.value("report_name").toString(), params);
-      if (report.isValid())
-        report.print();
-      else
-        report.reportError(this);
-    }
-  }
+    report.reportError(this);
 }
 
 void dspFinancialReport::sPopulateMenu( QMenu * pMenu )
@@ -1064,5 +999,94 @@ bool dspFinancialReport::forwardUpdate()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
+  return true;
+}
+
+QString dspFinancialReport::reportName() const
+{
+  if (_trend->isChecked())
+  {
+    if (_type->text() == "Ad Hoc")
+      return "FinancialReport";
+    else
+      return "FinancialTrend";
+  }
+  else
+  {
+    XSqlQuery qry;
+    qry.prepare("SELECT report_name "
+                "FROM flcol "
+                "  JOIN report ON (flcol_report_id=report_id)"
+                "WHERE (flcol_id=:flcol_id);" );
+    qry.bindValue(":flcol_id",_flcol->id());
+    qry.exec();
+    if (qry.first())
+      return qry.value("report_name").toString();
+  }
+  return QString();
+}
+
+ParameterList dspFinancialReport::getParams()
+{
+  ParameterList params;
+  bool ret = setParams(params);
+  params.append("checkParamsReturn", ret);
+
+  return params;
+}
+
+bool dspFinancialReport::setParams(ParameterList &params)
+{
+  QString interval;
+  QString reportdef;
+
+  if (_month->isChecked())
+    interval = "M";
+  else if (_quarter->isChecked())
+    interval = "Q";
+  else
+    interval = "Y";
+
+  if(_shownumbers->isChecked())
+    params.append("shownumbers");
+  if(_showzeros->isChecked())
+    params.append("showzeros");
+
+  if (_prjid != -1)
+  {
+    params.append("project", tr("Project:"));
+    params.append("prj_id", _prjid);
+  }
+
+  QList<QVariant> periodList;
+  QTreeWidgetItem* selected;
+  for (int i = 0; i < _periods->topLevelItemCount(); i++)
+  {
+    if (_periods->topLevelItem(i)->isSelected())
+    {
+      selected =  _periods->topLevelItem(i);
+      periodList.prepend(((XTreeWidgetItem*)(selected))->id());
+    }
+  }
+
+  if(periodList.isEmpty())
+  {
+    QMessageBox::warning(this, tr("No Period(s) Selected"),
+      tr("You must select at least one period to report on.") );
+    return false;
+  }
+
+  if (_trend->isChecked())
+  {
+    params.append("flhead_id", _flhead->id());
+    params.append("period_id_list", periodList);
+    params.append("interval", interval);
+  }
+  else if (!reportName().isEmpty())
+  {
+    params.append("flcol_id", _flcol->id());
+    params.append("period_id", periodList.at(0));
+  }
+
   return true;
 }
