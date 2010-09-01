@@ -21,6 +21,8 @@
 
 #include <metasql.h>
 #include <openreports.h>
+#include <orprerender.h>
+#include <previewdialog.h>
 #include "dspFinancialReport.h"
 #include "storedProcErrorLookup.h"
 
@@ -49,6 +51,7 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WF
   connect(_layout, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(sCollapsed(QTreeWidgetItem*)));
   connect(_layout, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(sExpanded(QTreeWidgetItem*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_preview, SIGNAL(clicked()), this, SLOT(sPreview()));
   connect(_periods, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_periods, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sEditPeriodLabel()));
   connect(_flhead, SIGNAL(newID(int)), this, SLOT(sReportChanged(int)));
@@ -783,7 +786,12 @@ void dspFinancialReport::sExpanded( QTreeWidgetItem * item )
       item->setText(i, "");
 }
 
-void dspFinancialReport::sPrint()
+void dspFinancialReport::sPreview()
+{
+  sPrint(true);
+}
+
+void dspFinancialReport::sPrint(bool showPreview)
 {
   ParameterList params;
   QString interval;
@@ -844,16 +852,45 @@ void dspFinancialReport::sPrint()
   }
   else
   {
-    q.prepare("SELECT report_name "
-        " FROM flcol,report "
-        " WHERE ((flcol_report_id=report_id)"
-        " AND (flcol_id=:flcol_id))");
+    q.prepare("SELECT r.report_name, report_source "
+        " FROM report r"
+        "   JOIN ("
+        "     SELECT report_name "
+        "     FROM flcol "
+        "       JOIN report fr ON (flcol_report_id=fr.report_id)"
+        "     WHERE (flcol_id=:flcol_id) ) flrpt ON (r.report_name=flrpt.report_name) "
+        " ORDER BY report_grade DESC "
+        " LIMIT 1;" );
     q.bindValue(":flcol_id",_flcol->id());
     q.exec();
     if (q.first())
     {
       params.append("flcol_id", _flcol->id());
       params.append("period_id", periodList.at(0));
+
+      if(showPreview)
+      {
+        QDomDocument _doc;
+        QString errorMessage;
+        int     errorLine;
+
+        if (!_doc.setContent(q.value("report_source").toString(), &errorMessage, &errorLine))
+        {
+          QMessageBox::critical(this, tr("Error Parsing Report"),
+            tr("There was an error Parsing the report definition. %1 %2").arg(errorMessage).arg(errorLine));
+          return;
+        }
+
+        QPrinter printer(QPrinter::HighResolution);
+        ORPreRender pre;
+        pre.setDom(_doc);
+        pre.setParamList(params);
+        ORODocument * doc = pre.generate();
+
+        PreviewDialog preview (doc, &printer, this);
+        if (preview.exec() == QDialog::Rejected)
+          return;
+      }
 
       orReport report(q.value("report_name").toString(), params);
       if (report.isValid())
