@@ -11,6 +11,8 @@
 #ifndef DSPORDERACTIVITYBYPROJECT_H
 #define DSPORDERACTIVITYBYPROJECT_H
 
+#include <QMap>
+
 #include "display.h"
 
 #include "ui_dspOrderActivityByProject.h"
@@ -25,12 +27,20 @@ public:
     virtual bool setParams(ParameterList &);
 
 public slots:
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
     virtual void sEdit();
     virtual void sView();
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
+
+protected:
+    virtual void showEvent(QShowEvent *event);
+
+private:
+    bool _run;
 
 };
 
