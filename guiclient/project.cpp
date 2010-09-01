@@ -196,6 +196,7 @@ void project::populate()
   sFillTaskList();
   _comments->setId(_prjid);
   _documents->setId(_prjid);
+  emit populated();
 }
 
 void project::sClose()
@@ -210,18 +211,18 @@ void project::sClose()
   reject();
 }
 
-void project::sSave(bool partial)
+bool project::sSave(bool partial)
 {
   if (_number->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Cannot Save Project"),
       tr("No Project Number was specified. You must specify a project number.") );
-    return;
+    return false;
   }
 
   RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
   if (cp == RecurrenceWidget::NoPolicy)
-    return;
+    return false;
 
   XSqlQuery rollbackq;
   rollbackq.prepare("ROLLBACK;");
@@ -283,7 +284,7 @@ void project::sSave(bool partial)
   {
     rollbackq.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
   QString errmsg;
@@ -292,15 +293,17 @@ void project::sSave(bool partial)
     qDebug("recurring->save failed");
     rollbackq.exec();
     systemError(this, errmsg, __FILE__, __LINE__);
-    return;
+    return false;
   }
 
   q.exec("COMMIT;");
+  emit saved();
 
   if (!partial)
     done(_prjid);
   else
     _saved=true;
+  return true;
 }
 
 void project::sPrintTasks()
@@ -319,7 +322,10 @@ void project::sPrintTasks()
 void project::sNewTask()
 {
   if (!_saved)
-    sSave();
+  {
+    if (!sSave())
+      return;
+  }
     
   ParameterList params;
   params.append("mode", "new");

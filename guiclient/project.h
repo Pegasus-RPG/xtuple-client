@@ -28,7 +28,7 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
     virtual void sClose();
-    virtual void sSave(bool partial = false);
+    virtual bool sSave(bool partial = false);
     virtual void sPrintTasks();
     virtual void sNewTask();
     virtual void sEditTask();
@@ -45,6 +45,10 @@ private:
     int _mode;
     int _prjid;
     bool _saved;
+
+signals:
+    void saved();
+    void populated();
 
 };
 
