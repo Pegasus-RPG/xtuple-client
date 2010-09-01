@@ -16,6 +16,7 @@
 #include <openreports.h>
 #include <comment.h>
 #include "task.h"
+#include "dspOrderActivityByProject.h"
 
 project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -32,6 +33,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_viewTask, SIGNAL(clicked()), this, SLOT(sViewTask()));
   connect(_deleteTask, SIGNAL(clicked()), this, SLOT(sDeleteTask()));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sNumberChanged()));
+  connect(_activity, SIGNAL(clicked()), this, SLOT(sActivity()));
 
   _prjtask->addColumn( tr("Number"),			_itemColumn,	Qt::AlignRight, true, "prjtask_number" );
   _prjtask->addColumn( tr("Name"),				_itemColumn,	Qt::AlignLeft,  true, "prjtask_name"  );
@@ -431,4 +433,15 @@ void project::sNumberChanged()
       _mode = cNew;
     }
   }
+}
+
+void project::sActivity()
+{
+  ParameterList params;
+  params.append("prj_id", _prjid);
+  params.append("run", true);
+
+  dspOrderActivityByProject *newdlg = new dspOrderActivityByProject(this,"dspOrderActivityByProject",Qt::Dialog );
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }

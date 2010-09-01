@@ -36,6 +36,7 @@ public slots:
     virtual void sDeleteTask();
     virtual void sFillTaskList();
     virtual void sNumberChanged();
+    virtual void sActivity();
 
 protected slots:
     virtual void languageChange();

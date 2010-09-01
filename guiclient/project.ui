@@ -331,6 +331,13 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
+            <item>
+             <widget class="QPushButton" name="_activity">
+              <property name="text">
+               <string>Activity...</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
