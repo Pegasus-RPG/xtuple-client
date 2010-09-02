@@ -51,9 +51,9 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     Q_INVOKABLE virtual bool          isSO()                const;
     Q_INVOKABLE virtual bool          isTO()                const;
     Q_INVOKABLE virtual bool          isUnposted()                const;
-    Q_INVOKABLE virtual bool      fromSitePrivsEnforced() const {return _fromPrivs; };
-    Q_INVOKABLE virtual bool      toSitePrivsEnforced()   const {return _toPrivs; };
-    Q_INVOKABLE virtual void      setExtraClause(const QString & p) {VirtualClusterLineEdit::setExtraClause(p);};
+    Q_INVOKABLE virtual bool      fromSitePrivsEnforced() const {return _fromPrivs; }
+    Q_INVOKABLE virtual bool      toSitePrivsEnforced()   const {return _toPrivs; }
+    Q_INVOKABLE virtual void      setExtraClause(const QString & p) {VirtualClusterLineEdit::setExtraClause(p);}
     Q_INVOKABLE virtual void          setExtraClause(const QString &, const QString &);
     Q_INVOKABLE virtual void          setExtraClause(const OrderTypes, const QString &);
     Q_INVOKABLE virtual void      setFromSitePrivsEnforced(const bool p);
@@ -61,8 +61,8 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     Q_INVOKABLE virtual OrderStatus          status();
     Q_INVOKABLE virtual QString          to()                        const;
     Q_INVOKABLE virtual QString          type();
-    Q_INVOKABLE virtual QString       fromPrivsClause() {return _fromPrivsClause;};
-    Q_INVOKABLE virtual QString       toPrivsClause()   {return _toPrivsClause;};
+    Q_INVOKABLE virtual QString       fromPrivsClause() {return _fromPrivsClause;}
+    Q_INVOKABLE virtual QString       toPrivsClause()   {return _toPrivsClause;}
 
   public slots:
     virtual void          setAllowedStatuses(const OrderStatuses);

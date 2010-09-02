@@ -575,6 +575,10 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _packDate->setEnabled(FALSE);
   }
 
+  param = pParams.value("captive", &valid);
+  if (valid)
+    _captive = true;
+
   return NoError;
 }
 
@@ -1182,6 +1186,8 @@ bool salesOrder::save(bool partial)
     populateCMInfo();
     populateCCInfo();
   }
+
+  emit saved(_soheadid);
 
   return TRUE;
 }
@@ -2872,6 +2878,9 @@ void salesOrder::sCalculateTotal()
 
 bool salesOrder::deleteForCancel()
 {
+  if (_captive)
+    return true;
+
   XSqlQuery query;
 
   if (ISNEW(_mode) && _soitem->topLevelItemCount() > 0)

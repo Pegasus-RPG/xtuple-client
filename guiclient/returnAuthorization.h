@@ -81,6 +81,9 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+signals:
+    void saved(int);
+
 private:
     int _mode;
     int _raheadid;

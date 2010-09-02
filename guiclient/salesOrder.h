@@ -101,6 +101,9 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void  languageChange();
     virtual bool  okToProcessCC();
 
+  signals:
+    void saved(int);
+
   private:
     bool    deleteForCancel();
 

@@ -99,7 +99,8 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   if(q.first())
     _agent->setId(q.value("usr_id").toInt());
 
-  _userOrderNumber = FALSE;
+  _captive         = false;
+  _userOrderNumber = false;
   _printed         = false;
 
   setPoheadid(-1);
@@ -480,6 +481,10 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     populate();
   }
 
+  param = pParams.value("captive", &valid);
+  if (valid)
+    _captive = true;
+
   return NoError;
 }
 
@@ -837,7 +842,9 @@ void purchaseOrder::sSave()
     newdlgP.exec();
   }
 
-  if (_mode == cNew)
+  emit saved(_poheadid);
+
+  if (_mode == cNew && !_captive)
   {
     _purchaseOrderInformation->setCurrentIndex(0);
 
@@ -1319,7 +1326,9 @@ void purchaseOrder::populateOrderNumber()
 
 void purchaseOrder::closeEvent(QCloseEvent *pEvent)
 {
-  if ((_mode == cNew) && (_poheadid != -1))
+  if ((_mode == cNew) &&
+      (_poheadid != -1) &&
+      !_captive)
   {
     if (_poitem->topLevelItemCount() > 0 &&
         QMessageBox::question(this, tr("Delete Purchase Order?"),

@@ -563,6 +563,8 @@ bool returnAuthorization::sSave(bool partial)
   
   connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
   
+  emit saved(_raheadid);
+
   return true;
 }
 
@@ -600,6 +602,7 @@ void returnAuthorization::sSaveClick()
   */
     }
     _raheadid=-1;
+
     close();
   }
 }

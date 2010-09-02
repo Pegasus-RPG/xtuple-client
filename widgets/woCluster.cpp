@@ -60,6 +60,7 @@ void WoLineEdit::init()
   setUiName("workOrder");
   setEditPriv("MaintainWorkOrders");
   setViewPriv("ViewWorkOrders");
+  setNewPriv("MaintainWorkOrders");
 
   _warehouseid = -1;
 

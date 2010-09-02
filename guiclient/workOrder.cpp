@@ -632,6 +632,8 @@ void workOrder::sSave()
     newdlg.exec();
   }
 
+  emit saved(_woid);
+
   if (_captive)
     close();
   else if (cNew == _mode)

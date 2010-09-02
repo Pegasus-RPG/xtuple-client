@@ -574,6 +574,32 @@ void OrderLineEdit::setAllowedTypes(const OrderTypes p)
     if (p & Return)
       typeList << "'RA'";
 
+    if (typeList.count() == 1)
+    {
+      if (p & Purchase)
+      {
+        setUiName("purchaseOrder");
+        setNewPriv("MaintainPurchaseOrders");
+      }
+      else if (p & Sales)
+      {
+        setUiName("salesOrder");
+        setNewPriv("MaintainSalesOrders");
+      }
+      else if (p & Transfer && _x_metrics->boolean("MultiWhs"))
+      {
+        setUiName("transferOrder");
+        setNewPriv("MaintainTransferOrders");
+      }
+      else
+      {
+        setUiName("returnAuthorization");
+        setNewPriv("MaintainReturns");
+      }
+    }
+    else
+      setNewPriv("");
+
     _typeClause = "(orderhead_type IN (" + typeList.join(", ") + "))" ;
     _allowedTypes = p;
   }
@@ -701,6 +727,42 @@ void OrderLineEdit::silentSetId(const int pId)
 				      .arg(__LINE__),
 			      idQ.lastError().databaseText());
     }
+  }
+
+  if (isPO())
+  {
+    setUiName("purchaseOrder");
+    setEditPriv("MaintainPurchaseOrders");
+    setViewPriv("ViewPurchaseOrders");
+    _idColName="pohead_id";
+  }
+  else if (isRA())
+  {
+    setUiName("returnAuthorization");
+    setEditPriv("MaintainReturns");
+    setViewPriv("ViewReturns");
+    _idColName="rahead_id";
+  }
+  else if (isSO())
+  {
+    setUiName("salesOrder");
+    setEditPriv("MaintainSalesOrders");
+    setViewPriv("ViewSalesOrders");
+    _idColName="sohead_id";
+  }
+  else if (isTO())
+  {
+    setUiName("transferOrder");
+    setEditPriv("MaintainTransferOrders");
+    setViewPriv("ViewTransferOrders");
+    _idColName="tohead_id";
+  }
+  else
+  {
+    setUiName(QString());
+    setEditPriv(QString());
+    setViewPriv(QString());
+    _idColName="orderhead_id";
   }
 
   _parsed = TRUE;

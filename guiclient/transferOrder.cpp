@@ -409,6 +409,10 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
     _packDate->setEnabled(FALSE);
   }
 
+  param = pParams.value("captive", &valid);
+  if (valid)
+    _captive = true;
+
   // TODO: Why don't the constructor or setId earlier in set() handle this?
   getWhsInfo(_srcWhs->id(), _srcWhs);
   getWhsInfo(_dstWhs->id(), _dstWhs);
@@ -747,6 +751,8 @@ bool transferOrder::save(bool partial)
 
   _saved = true;
   omfgThis->sTransferOrdersUpdated(_toheadid);
+
+  emit saved(_toheadid);
 
   return TRUE;
 }

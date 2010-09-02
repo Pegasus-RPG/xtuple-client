@@ -592,6 +592,7 @@ void crmaccount::sSave()
   omfgThis->sProspectsUpdated();
   omfgThis->sVendorsUpdated();
   omfgThis->sTaxAuthsUpdated(-1);
+  emit saved(_crmacctId);
   close();
 }
 

@@ -861,6 +861,7 @@ void VirtualClusterLineEdit::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
+  params.append("captive", true);
 
   sOpenWindow(_uiName, params);
 }

@@ -48,6 +48,7 @@ CRMAcctLineEdit::CRMAcctLineEdit(QWidget* pParent, const char* pName) :
   setUiName("crmaccount");
   setEditPriv("MaintainCRMAccounts");
   setViewPriv("ViewCRMAccounts");
+  setNewPriv("MaintainCRMAccounts");
 
     setSubtype(Crmacct);
 

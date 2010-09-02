@@ -75,6 +75,9 @@ protected slots:
     virtual bool sQESave();
     virtual void sTabChanged(int);
 
+signals:
+    void saved(int);
+
 private:
     bool 		deleteForCancel();
     void		getWhsInfo(const int, const QWidget*);
