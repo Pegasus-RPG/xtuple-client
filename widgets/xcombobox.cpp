@@ -68,11 +68,11 @@ void XComboBox::init()
   insertEditor(AddressCommentTypes,"commentTypes","MaintainCommentTypes");
   // insertEditor(AdHoc,"",""); Users will insert this one as needed at the implementation
   insertEditor(APBankAccounts,"bankAccounts","MaintainBankAccounts");
-  insertEditor(APTerms,"terms","MaintainTerms");
+  insertEditor(APTerms,"termses","MaintainTerms");
   insertEditor(ARBankAccounts,"bankAccounts","MaintainBankAccounts");
   insertEditor(ARCMReasonCodes,"reasonCodes","MaintainReasonCodes");
   insertEditor(ARDMReasonCodes,"reasonCodes","MaintainReasonCodes");
-  insertEditor(ARTerms,"terms","MaintainTerms");
+  insertEditor(ARTerms,"termses","MaintainTerms");
   insertEditor(AccountingPeriods,"accountingPeriods","MaintainAccountingPeriods");
   insertEditor(Agent,"users","MaintainUsers");
   insertEditor(AllCommentTypes,"commentTypes","MaintainCommentTypes");
@@ -1662,7 +1662,7 @@ void setupXComboBox(QScriptEngine *engine)
   widget.setProperty("TaxAuths",             QScriptValue(engine, XComboBox::TaxAuths),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("TaxCodes",             QScriptValue(engine, XComboBox::TaxCodes),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("TaxTypes",             QScriptValue(engine, XComboBox::TaxTypes),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  widget.setProperty("Terms",                QScriptValue(engine, XComboBox::Terms),                QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Terms",              QScriptValue(engine, XComboBox::Terms),                QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("UOMs",                 QScriptValue(engine, XComboBox::UOMs),                 QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Users",                QScriptValue(engine, XComboBox::Users),                QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("VendorCommentTypes",   QScriptValue(engine, XComboBox::VendorCommentTypes),   QScriptValue::ReadOnly | QScriptValue::Undeletable);

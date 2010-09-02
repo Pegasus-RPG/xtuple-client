@@ -624,7 +624,8 @@ void returnAuthorization::sOrigSoChanged()
               " WHERE((rahead_orig_cohead_id=:cohead_id) "
               "   AND (rahead_id != :rahead_id) "
               "   AND (raitem_rahead_id=rahead_id) "
-              "   AND (raitem_status = 'O')); ");
+              "   AND (raitem_status = 'O') "
+              "   AND (raitem_qtyauthorized > 0)); ");
     q.bindValue(":cohead_id",_origso->id());
     q.bindValue(":rahead_id",_raheadid);
     q.exec();
@@ -682,6 +683,8 @@ void returnAuthorization::sOrigSoChanged()
 
         _taxzone->setId(sohead.value("cohead_taxzone_id").toInt());
         _customerPO->setText(sohead.value("cohead_custponumber"));
+
+        _project->setId(sohead.value("cohead_prj_id").toInt());
 
         _cust->setEnabled(FALSE);
 
