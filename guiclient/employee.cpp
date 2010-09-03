@@ -557,6 +557,7 @@ void employee::sSave(const bool pClose)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  emit saved();
 
   if (_mode == cNew)
   {
@@ -679,6 +680,7 @@ void employee::sPopulate()
     sFillCharassList();
     sFillGroupsList();
     _comments->setId(_empid);
+    emit populated();
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

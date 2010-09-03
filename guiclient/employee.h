@@ -55,6 +55,10 @@ class employee : public XDialog, public Ui::employee
     bool    _createUsers;
     int     _mode;
     int     _origmode;
+
+signals:
+    void saved();
+    void populated();
 };
 
 #endif
