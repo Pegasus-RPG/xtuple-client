@@ -30,6 +30,7 @@
 #include "contactcluster.h"
 #include "filtersave.h"
 #include "glcluster.h"
+#include "projectcluster.h"
 
 #define DEBUG false
 
@@ -485,6 +486,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           if (glCluster != 0)
             glCluster->setId(tempFilterList[1].toInt());
           break;
+        case Project:
+          ProjectCluster *projectCluster;
+          projectCluster = qobject_cast<ProjectCluster*>(found);
+          if (projectCluster != 0)
+            projectCluster->setId(tempFilterList[1].toInt());
+          break;
         case XComBox:
           XComboBox *xBox;
           xBox = qobject_cast<XComboBox*>(found);
@@ -610,6 +617,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         glCluster = qobject_cast<GLCluster*>(found);
         if (glCluster != 0)
           glCluster->setId(pp->defaultValue.toInt());
+        break;
+      case Project:
+        ProjectCluster *projectCluster;
+        projectCluster = qobject_cast<ProjectCluster*>(found);
+        if (projectCluster != 0)
+          projectCluster->setId(pp->defaultValue.toInt());
         break;
       case XComBox:
         XComboBox *xBox;
@@ -762,6 +775,16 @@ void ParameterWidget::changeFilterObject(int index)
 
       connect(button, SIGNAL(clicked()), glCluster, SLOT( deleteLater() ) );
       connect(glCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case Project:
+    {
+      ProjectCluster *projectCluster = new ProjectCluster(_filterGroup);
+      newWidget = projectCluster;
+      projectCluster->setLabel("");
+
+      connect(button, SIGNAL(clicked()), projectCluster, SLOT( deleteLater() ) );
+      connect(projectCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
   case XComBox:
@@ -1453,6 +1476,7 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("Multiselect", QScriptValue(engine, ParameterWidget::Multiselect), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Exists", QScriptValue(engine, ParameterWidget::Exists), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("CheckBox", QScriptValue(engine, ParameterWidget::CheckBox), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Project", QScriptValue(engine, ParameterWidget::Project), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
