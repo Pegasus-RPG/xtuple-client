@@ -32,7 +32,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("opportunities", "detail");
   parameterWidget()->show();
 
-  _new = new QPushButton("&New");
+  _new = new QPushButton(tr("&New"));
   QVBoxLayout* buttonLayout = findChild<QVBoxLayout*>("_buttonLayout");
   buttonLayout->addWidget(_new);
 
