@@ -676,6 +676,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         }
         break;
       }
+      found->setEnabled(pp->enabled);
       windowIdx++;
     }//end of while _defaultTypes
   }
@@ -1101,6 +1102,24 @@ void ParameterWidget::setDefault(QString pName, QVariant pDefault, bool pAutoApp
 
   if (pAutoApply)
     applyDefaultFilterSet();
+}
+
+/*!
+  Enable or disable an existing parameter \a pName to \a pEnabled.  Useful if
+  you want a specific value to be forced based on privilege control or some
+  other specific criteria that would limit the user's selection ability. Is
+  effective the next time a user instantiates the parameter.
+*/
+void ParameterWidget::setEnabled(QString pName, bool pEnabled)
+{
+  int idx = paramIndex(pName);
+  if (idx != -1)
+  {
+    ParamProps* pp = _params[idx];
+    pp->enabled = pEnabled;
+  }
+  else
+    qWarning("Parameter %s not found.", qPrintable(pName));
 }
 
 void ParameterWidget::setFiltersVisabiltyPreference()

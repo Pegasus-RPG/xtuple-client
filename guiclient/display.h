@@ -28,7 +28,7 @@ public:
     display(QWidget* = 0, const char* = 0, Qt::WindowFlags = 0);
     ~display();
 
-    Q_INVOKABLE virtual bool setParams(ParameterList &) = 0;
+    Q_INVOKABLE virtual bool setParams(ParameterList &);
 
     Q_INVOKABLE void setReportName(const QString &);
     Q_INVOKABLE QString reportName() const;
@@ -39,6 +39,9 @@ public:
     Q_INVOKABLE void setAutoUpdateEnabled(bool);
     Q_INVOKABLE bool autoUpdateEnabled() const;
 
+    Q_INVOKABLE XTreeWidget * list();
+    Q_INVOKABLE ParameterWidget * parameterWidget();
+
 public slots:
     virtual void sPrint();
     virtual void sPreview();
@@ -47,8 +50,6 @@ public slots:
 
 protected:
     Q_INVOKABLE QWidget * optionsWidget();
-    Q_INVOKABLE XTreeWidget * list();
-    Q_INVOKABLE ParameterWidget * parameterWidget();
     Q_INVOKABLE ParameterList getParams();
 
 protected slots:

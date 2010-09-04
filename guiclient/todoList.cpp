@@ -33,9 +33,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-	QSqlDatabase db = QSqlDatabase::database();
-
-  _parameterWidget->append(tr("Assigned"), "assigned_username", ParameterWidget::User, db.userName());
+  _parameterWidget->append(tr("Assigned"), "assigned_username", ParameterWidget::User, omfgThis->username());
   _parameterWidget->append(tr("Assigned Pattern"), "assigned_usr_pattern", ParameterWidget::Text);
   _parameterWidget->append(tr("Owner"), "owner_username", ParameterWidget::User);
   _parameterWidget->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);

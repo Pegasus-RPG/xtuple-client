@@ -53,13 +53,9 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _oplistTab->layout()->addWidget(_oplist);
   _oplist->findChild<QWidget*>("_close")->hide();
-  _oplist->findChild<QWidget*>("_usrGroup")->hide();
-  _oplist->findChild<QWidget*>("_dates")->hide();
-  _oplist->findChild<QWidget*>("_more")->hide();
-  _oplist->findChild<QWidget*>("_crmAccountGroup")->hide();
-  _oplist->findChild<QRadioButton*>("_allUsers")->setChecked(true);
-  _oplist->findChild<XTreeWidget*>("_list")->hideColumn("crmacct_number");
-  _oplist->sHandleMore(false);
+  _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
+  _oplist->list()->hideColumn("crmacct_number");
+  _oplist->parameterWidget()->hide();
     
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
@@ -178,7 +174,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
         _crmacctId = q.value("result").toInt();
         _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
         _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
-        _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+        _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
         if (_crmacctId < 0)
         {
           QMessageBox::critical(this, tr("Error creating Initial Account"),
@@ -186,7 +182,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
           _crmacctId = -1;
           _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
           _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
-          _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+          _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
           return UndefinedError;
         }
         _comments->setId(_crmacctId);
@@ -255,7 +251,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     _crmacctId = param.toInt();
     _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
     _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
-    _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+    _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
     sPopulate();
   }
 

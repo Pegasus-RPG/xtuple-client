@@ -155,6 +155,13 @@ XTreeWidget * display::list()
   return _data->_list;
 }
 
+bool display::setParams(ParameterList & params)
+{
+  parameterWidget()->appendValue(params);
+
+  return true;
+}
+
 void display::setReportName(const QString & reportName)
 {
   _data->reportName = reportName;

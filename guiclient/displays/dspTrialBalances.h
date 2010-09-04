@@ -20,8 +20,6 @@ class dspTrialBalances : public display
 public:
     dspTrialBalances(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
-    virtual bool setParams(ParameterList &);
-
 public slots:
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int);
     virtual void sViewTransactions();

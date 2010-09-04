@@ -56,13 +56,9 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _opportunitiesPage->layout()->addWidget(_oplist);
   _oplist->findChild<QWidget*>("_close")->hide();
-  _oplist->findChild<QWidget*>("_usrGroup")->hide();
-  _oplist->findChild<QWidget*>("_dates")->hide();
-  _oplist->findChild<QWidget*>("_more")->hide();
-  _oplist->findChild<QWidget*>("_crmAccountGroup")->hide();
-  _oplist->findChild<QRadioButton*>("_allUsers")->setChecked(true);
-  _oplist->findChild<XTreeWidget*>("_list")->hideColumn("crmacct_number");
-  _oplist->sHandleMore(false);
+  _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
+  _oplist->list()->hideColumn("crmacct_number");
+  _oplist->parameterWidget()->hide();
   
   _quotes = new quotes(this, "quotes", Qt::Widget);
   _quotesPage->layout()->addWidget(_quotes);
@@ -460,7 +456,7 @@ void customer::setValid(bool valid)
     _documents->setId(-1);
     _todoList->findChild<XTreeWidget*>("_todoList")->clear();
     _contacts->findChild<XTreeWidget*>("_contacts")->clear();
-    _oplist->findChild<XTreeWidget*>("_list")->clear();
+    _oplist->list()->clear();
     _quotes->findChild<XTreeWidget*>("_quote")->clear();
     _orders->findChild<XTreeWidget*>("_so")->clear();
     _returns->findChild<XTreeWidget*>("_ra")->clear();
@@ -1275,7 +1271,7 @@ void customer::populate()
     
     _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctid);
     _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctid);
-    _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctid);
+    _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
     
     _quotes->findChild<CustCluster*>("_cust")->setId(_custid);
     _orders->findChild<CustCluster*>("_cust")->setId(_custid);
@@ -1709,7 +1705,7 @@ void customer::sClear()
     _blanketPos->setEnabled(cView != _mode && _usesPOs->isChecked());
     _blanketPos->setChecked(false);
     _currency->setId(CurrCluster::baseId());
-    _inGoodStanding->setChecked(TRUE);
+    _inGoodStanding->setChecked(true);
 
     _shipto->clear();
     _custchar->removeRows(0, _custchar->rowCount());
@@ -1718,7 +1714,7 @@ void customer::sClear()
     
     _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(-1);
     _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(-1);
-    _oplist->findChild<CRMAcctCluster*>("_crmAccount")->setId(-1);
+    _oplist->parameterWidget()->setDefault(tr("CRM Account"), -1, true);
     
     _quotes->findChild<CustCluster*>("_cust")->setId(-1);
     _orders->findChild<CustCluster*>("_cust")->setId(-1);

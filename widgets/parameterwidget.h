@@ -57,7 +57,8 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void clearFilters();
     void removeParam(int);
     void save();
-    void setDefault(QString pName, QVariant pDefault, bool pAutoApply = false);
+    void setDefault(QString pName, QVariant pDefault = QVariant(), bool pAutoApply = false);
+    void setEnabled(QString pName, bool pEnabled);
     void setSavedFilters(int defaultId = -1);
     void setSavedFiltersIndex(QString);
     void setType(QString, QString, enum ParameterWidgetTypes = Text, QVariant pDefault = QVariant(), QVariant extraInfo =  QVariant());
@@ -96,6 +97,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
       bool required;
       XComboBox::XComboBoxTypes comboType;
       QString query;
+      bool enabled;
     };
     QMap<int, ParamProps*> _params;
 

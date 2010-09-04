@@ -118,13 +118,6 @@ void dspTrialBalances::sForwardUpdate()
   sFillList();
 }
 
-bool dspTrialBalances::setParams(ParameterList & params)
-{
-  parameterWidget()->appendValue(params);
-
-  return true;
-}
-
 void dspTrialBalances::sPrint()
 {
   if (!_metrics->boolean("ManualForwardUpdate"))
