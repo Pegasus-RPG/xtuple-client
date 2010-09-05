@@ -55,10 +55,10 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _opportunitiesPage->layout()->addWidget(_oplist);
-  _oplist->findChild<QWidget*>("_close")->hide();
+  _oplist->findChild<QAction*>("_close")->setVisible(false);
   _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
   _oplist->list()->hideColumn("crmacct_number");
-  _oplist->parameterWidget()->hide();
+  _oplist->setParameterWidgetVisible(false);
   
   _quotes = new quotes(this, "quotes", Qt::Widget);
   _quotesPage->layout()->addWidget(_quotes);

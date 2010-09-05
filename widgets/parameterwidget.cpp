@@ -67,7 +67,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   _filterButton->setChecked(false);
 
   connect(_addFilterRow, SIGNAL(clicked()), this, SLOT( addParam() ) );
-  connect(_filterButton, SIGNAL(clicked()), this, SLOT( setFiltersVisabiltyPreference() ) );
+  connect(_filterButton, SIGNAL(toggled(bool)), this, SLOT( setFiltersVisabiltyPreference() ) );
   connect(_filterSignalMapper, SIGNAL(mapped(int)), this, SLOT( removeParam(int) ));
   connect(_saveButton, SIGNAL(clicked()), this, SLOT( save() ) );
   connect(_manageButton, SIGNAL(clicked()), this, SLOT( sManageFilters() ) );
@@ -86,7 +86,6 @@ void ParameterWidget::showEvent(QShowEvent * event)
   if(window())
     pname = window()->objectName() + "/";
   _settingsName = pname + objectName();
-
   if(_x_preferences)
   {
     if (!_x_preferences->boolean(_settingsName + "/checked"))
@@ -287,6 +286,7 @@ void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes
     pp->defaultValue = pDefault;
     pp->required = pRequired;
     pp->query = pExtraInfo;
+    pp->enabled = true;
     _params.insert(_params.count(), pp);
   }
 
@@ -320,6 +320,7 @@ void ParameterWidget::appendComboBox(QString pName, QString pParam, XComboBox::X
     pp->defaultValue = pDefault;
     pp->required = pRequired;
     pp->comboType = pType;
+    pp->enabled = true;
     _params.insert(_params.count(), pp);
   }
 }
@@ -344,6 +345,7 @@ void ParameterWidget::appendComboBox(QString pName, QString pParam, QString pQue
     pp->required = pRequired;
     pp->comboType = XComboBox::Adhoc;
     pp->query = pQuery;
+    pp->enabled = true;
     _params.insert(_params.count(), pp);
   }
 }
@@ -1128,7 +1130,6 @@ void ParameterWidget::setFiltersVisabiltyPreference()
   if(window())
     pname = window()->objectName() + "/";
   _settingsName = pname + this->objectName();
-
   if (!_settingsName.isEmpty() && _x_preferences)
   {
     _x_preferences->set(_settingsName + "/checked", _filterGroup->isVisible());

@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>368</width>
-    <height>41</height>
+    <height>51</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@ to be bound by its terms.</comment>
        <property name="sizeHint" stdset="0">
         <size>
          <width>0</width>
-         <height>20</height>
+         <height>0</height>
         </size>
        </property>
       </spacer>

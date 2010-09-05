@@ -36,7 +36,7 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char*, Qt::WFlags fl)
   setListLabel(tr("Transactions"));
   setReportName("Subledger");
   setMetaSQLOptions("subledger", "detail");
-  parameterWidget()->show();
+  setParameterWidgetVisible(true);
 
   QString qryType = QString( "SELECT  1, '%1' UNION "
                              "SELECT  2, '%2' UNION "
@@ -76,12 +76,12 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
   list()->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
   list()->addColumn(tr("Journal#"),  _orderColumn,   Qt::AlignLeft,   false,"sltrans_journalnumber");
-  list()->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
+  list()->addColumn(tr("Account"),   -1,             Qt::AlignLeft,   true, "account");
   list()->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
   list()->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
   list()->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "sltrans_posted");
   list()->addColumn(tr("GL Journal #"),_orderColumn,   Qt::AlignLeft,   false, "sltrans_gltrans_journalnumber");
-  list()->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "sltrans_username");
+  list()->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   false, "sltrans_username");
 
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
   parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);

@@ -52,7 +52,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _oplistTab->layout()->addWidget(_oplist);
-  _oplist->findChild<QWidget*>("_close")->hide();
+  _oplist->findChild<QAction*>("_close")->setVisible(false);
   _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
   _oplist->list()->hideColumn("crmacct_number");
   _oplist->parameterWidget()->hide();

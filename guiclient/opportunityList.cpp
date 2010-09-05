@@ -15,6 +15,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QSqlError>
+#include <QToolBar>
 #include <QVariant>
 
 #include "guiclient.h"
@@ -30,13 +31,12 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   setListLabel(tr("Opportunities"));
   setReportName("OpportunityList");
   setMetaSQLOptions("opportunities", "detail");
-  parameterWidget()->show();
+  setParameterWidgetVisible(true);
 
-  _new = new QPushButton(tr("&New"));
-  QVBoxLayout* buttonLayout = findChild<QVBoxLayout*>("_buttonLayout");
-  buttonLayout->addWidget(_new);
+  QAction* newAct = findChild<QAction*>("_new");
+  newAct->setVisible(true);
 
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(newAct, SIGNAL(triggered()), this, SLOT(sNew()));
   connect(list(),	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,	SLOT(sPopulateMenu(QMenu*)));
 
   list()->addColumn(tr("Active"),      _orderColumn,    Qt::AlignLeft,   false, "ophead_active" );
@@ -60,7 +60,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
     parameterWidget()->setEnabled(tr("User"), false);
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
-  parameterWidget()->append(tr("CRM Account"), "crmAccountId",  ParameterWidget::Crmacct);
+  parameterWidget()->append(tr("CRM Account"), "crmacct_id",  ParameterWidget::Crmacct);
   parameterWidget()->appendComboBox(tr("Type"), "optype_id", XComboBox::OpportunityTypes);
   parameterWidget()->append(tr("Type"), "optype_pattern",    ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Source Pattern"), "opsource_id", XComboBox::OpportunitySources);
@@ -122,13 +122,8 @@ enum SetResponse opportunityList::set(const ParameterList& pParams)
 void opportunityList::sNew()
 {
   ParameterList params;
-  params.append("mode", "new");
-  /*
-  if (_selected->isChecked())
-    params.append("usr_id", _usr->id());
-  if (_crmAccount->isValid())
-    params.append("crmacct_id",_crmAccount->id());
-*/
+  setParams(params);
+
   opportunity newdlg(this, "", TRUE);
   newdlg.set(params);
 

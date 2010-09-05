@@ -9,6 +9,14 @@ is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>opportunityList</class>
  <widget class="QWidget" name="opportunityList">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>354</width>
+    <height>65</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Opportunity List</string>
   </property>
@@ -49,6 +57,19 @@ to be bound by its terms.</comment>
           <string>Show Inactive</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>

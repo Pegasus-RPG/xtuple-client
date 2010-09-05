@@ -26,8 +26,6 @@ class opportunityList : public display, public Ui::opportunityList
 
     Q_INVOKABLE virtual bool setParams(ParameterList &);
 
-    QPushButton *_new;
-
   public slots:
     virtual SetResponse	set(const ParameterList&);
     virtual void	sDelete();

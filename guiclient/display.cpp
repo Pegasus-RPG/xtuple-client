@@ -30,12 +30,26 @@ public:
   displayPrivate(::display * parent) : _parent(parent)
   {
     setupUi(_parent);
-    _print->hide(); // hide the print button until a reportName is set
-    _preview->hide(); // hide the preview button until a reportName is set
+    _new->setVisible(false);
+    _print->setVisible(false); // hide the print button until a reportName is set
+    _preview->setVisible(false); // hide the preview button until a reportName is set
     _autoupdate->hide(); // hide until auto update is enabled
     _parameterWidget->hide(); // hide until user shows manually
+    _more->setVisible(false); // hide until user shows manually
     _useAltId = false;
     _autoUpdateEnabled = false;
+
+    // Move parameter widget controls into toolbar
+    QLabel* filterListLit = _parent->findChild<QLabel*>("_filterListLit");
+    XComboBox* filterList = _parent->findChild<XComboBox*>("_filterList");
+
+    _filterLitAct = _toolBar->insertWidget(_more, filterListLit);
+    _filterAct = _toolBar->insertWidget(_more, filterList);
+    _filterSep = _toolBar->insertSeparator(_query);
+
+    _filterLitAct->setVisible(false);
+    _filterAct->setVisible(false);
+    _filterSep->setVisible(false);
   }
 
   void print(bool);
@@ -46,6 +60,10 @@ public:
 
   bool _useAltId;
   bool _autoUpdateEnabled;
+
+  QAction* _filterLitAct;
+  QAction* _filterAct;
+  QAction* _filterSep;
 
 private:
   ::display * _parent;
@@ -122,11 +140,16 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
 {
   _data = new displayPrivate(this);
 
-  connect(_data->_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_data->_preview, SIGNAL(clicked()), this, SLOT(sPreview()));
-  connect(_data->_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  QPushButton* filterButton = findChild<QPushButton*>("_filterButton");
+
+  connect(_data->_print, SIGNAL(triggered()), this, SLOT(sPrint()));
+  connect(_data->_preview, SIGNAL(triggered()), this, SLOT(sPreview()));
+  connect(_data->_query, SIGNAL(triggered()), this, SLOT(sFillList()));
   connect(_data->_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_data->_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled()));
+  connect(filterButton, SIGNAL(toggled(bool)), _data->_more, SLOT(setChecked(bool)));
+  connect(_data->_more, SIGNAL(triggered(bool)), filterButton, SLOT(setChecked(bool)));
+  connect(_data->_close, SIGNAL(triggered()), this, SLOT(close()));
 }
 
 display::~display()
@@ -145,14 +168,19 @@ QWidget * display::optionsWidget()
   return _data->_optionsFrame;
 }
 
+XTreeWidget * display::list()
+{
+  return _data->_list;
+}
+
 ParameterWidget * display::parameterWidget()
 {
   return _data->_parameterWidget;
 }
 
-XTreeWidget * display::list()
+QToolBar * display::toolBar()
 {
-  return _data->_list;
+  return _data->_toolBar;
 }
 
 bool display::setParams(ParameterList & params)
@@ -205,6 +233,16 @@ void display::setAutoUpdateEnabled(bool on)
 bool display::autoUpdateEnabled() const
 {
   return _data->_autoUpdateEnabled;
+}
+
+void display::setParameterWidgetVisible(bool show)
+{
+  _data->_parameterWidget->setVisible(show);
+  _data->_parameterWidget->_filterButton->hide(); // _more action is what you see here
+  _data->_more->setVisible(show);
+  _data->_filterLitAct->setVisible(show);
+  _data->_filterAct->setVisible(show);
+  _data->_filterSep->setVisible(show);
 }
 
 void display::sPrint()
