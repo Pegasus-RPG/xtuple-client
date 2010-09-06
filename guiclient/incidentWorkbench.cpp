@@ -19,13 +19,14 @@
 incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "incidentWorkbench", fl)
 {
-  setupUi(optionsWidget());
   setWindowTitle(tr("Incident Workbench"));
   setListLabel(tr("Incidents"));
   setReportName("IncidentWorkbenchList");
   setMetaSQLOptions("incidents", "detail");
   setParameterWidgetVisible(true);
   setNewVisible(true);
+  setSearchVisible(true);
+  setQueryOnStartEnabled(true);
 
   QString qryStatus = QString("SELECT status_seq, "
                               " CASE WHEN status_code = 'N' THEN '%1' "
@@ -90,6 +91,8 @@ enum SetResponse incidentWorkbench::set(const ParameterList &pParams)
   param = pParams.value("run", &valid);
   if (valid)
     sFillList();
+
+  return NoError;
 }
 
 void incidentWorkbench::sNew()
@@ -140,7 +143,9 @@ bool incidentWorkbench::setParams(ParameterList & params)
 
   parameterWidget()->appendValue(params);
 
-  params.append("pattern", _search->text());
+  params.append("pattern", searchText());
+
+  return true;
 }
 
 

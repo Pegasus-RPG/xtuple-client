@@ -55,7 +55,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist->findChild<QAction*>("_close")->setVisible(false);
   _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
   _oplist->list()->hideColumn("crmacct_number");
-  _oplist->parameterWidget()->hide();
+  _oplist->setParameterWidgetVisible(false);
     
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 

@@ -12,9 +12,8 @@
 #define INCIDENTWORKBENCH_H
 
 #include "display.h"
-#include "ui_incidentWorkbench.h"
 
-class incidentWorkbench : public display, public Ui::incidentWorkbench
+class incidentWorkbench : public display
 {
     Q_OBJECT
 

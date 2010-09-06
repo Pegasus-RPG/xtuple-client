@@ -92,12 +92,35 @@
      <property name="bottomMargin">
       <number>6</number>
      </property>
-     <item row="0" column="0">
+     <property name="horizontalSpacing">
+      <number>12</number>
+     </property>
+     <item row="0" column="1">
       <widget class="XCheckBox" name="_autoupdate">
        <property name="text">
         <string>Automatically Update</string>
        </property>
       </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="XCheckBox" name="_queryonstart">
+       <property name="text">
+        <string>Query on start</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -106,24 +129,15 @@
    <property name="text">
     <string>Que&amp;ry</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
-   </property>
   </action>
   <action name="_close">
    <property name="text">
     <string>&amp;Close</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+W</string>
-   </property>
   </action>
   <action name="_print">
    <property name="text">
     <string>&amp;Print</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="_preview">
@@ -142,9 +156,6 @@
   <action name="_new">
    <property name="text">
     <string>&amp;New</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
    </property>
   </action>
  </widget>

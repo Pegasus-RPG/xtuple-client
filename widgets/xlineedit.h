@@ -42,6 +42,8 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
     Q_INVOKABLE inline virtual QString nullStr() const { return _nullStr; }
     Q_INVOKABLE        virtual void setNullStr(const QString &text);
 
+    Q_INVOKABLE bool isNull();
+
   public slots:
     virtual void sParse();
     virtual void setData();
@@ -79,6 +81,7 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
     void keyPressEvent(QKeyEvent *);
     
   private:    
+    bool _isNull;
     QString _default;
     QString _fieldName;
     XDataWidgetMapper *_mapper;

@@ -9,12 +9,14 @@
  */
 
 #include "display.h"
+#include "xlineedit.h"
 #include "ui_display.h"
 
 #include <QSqlError>
 #include <QMessageBox>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QShortcut>
 
 #include <metasql.h>
 #include <mqlutil.h>
@@ -33,10 +35,12 @@ public:
     _new->setVisible(false);
     _print->setVisible(false); // hide the print button until a reportName is set
     _preview->setVisible(false); // hide the preview button until a reportName is set
+    _queryonstart->hide(); // hide until query on start enabled
     _autoupdate->hide(); // hide until auto update is enabled
     _parameterWidget->hide(); // hide until user shows manually
     _more->setVisible(false); // hide until user shows manually
     _useAltId = false;
+    _queryOnStartEnabled = false;
     _autoUpdateEnabled = false;
 
     // Move parameter widget controls into toolbar
@@ -50,6 +54,12 @@ public:
     _filterLitAct->setVisible(false);
     _filterAct->setVisible(false);
     _filterSep->setVisible(false);
+
+    // Add search int toolbar
+    _search = new XLineEdit(_toolBar, "_search");
+    _search->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    _searchAct = _toolBar->insertWidget(_query, _search);
+    _searchAct->setVisible(false);
   }
 
   void print(bool);
@@ -59,11 +69,15 @@ public:
   QString metasqlGroup;
 
   bool _useAltId;
+  bool _queryOnStartEnabled;
   bool _autoUpdateEnabled;
 
   QAction* _filterLitAct;
   QAction* _filterAct;
   QAction* _filterSep;
+  QAction* _searchAct;
+
+  XLineEdit* _search;
 
 private:
   ::display * _parent;
@@ -142,15 +156,25 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
 
   QPushButton* filterButton = findChild<QPushButton*>("_filterButton");
 
+  // Set shortcuts
+  _data->_new->setShortcut(QKeySequence::New);
+  _data->_close->setShortcut(QKeySequence::Close);
+  _data->_query->setShortcut(QKeySequence::Refresh);
+  _data->_print->setShortcut(QKeySequence::Print);
+  _data->_searchAct->setShortcut(QKeySequence::InsertParagraphSeparator);
+  _data->_searchAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+
   // Set tooltips
   _data->_new->setToolTip(tr("New") + " " + _data->_new->shortcut().toString(QKeySequence::NativeText));
   _data->_close->setToolTip(tr("Close") + " " + _data->_close->shortcut().toString(QKeySequence::NativeText));
   _data->_query->setToolTip(tr("Query") + " " + _data->_query->shortcut().toString(QKeySequence::NativeText));
   _data->_print->setToolTip(tr("Print") + " " + _data->_print->shortcut().toString(QKeySequence::NativeText));
+  _data->_search->setNullStr(tr("Search"));
 
   connect(_data->_new, SIGNAL(triggered()), this, SLOT(sNew()));
   connect(_data->_print, SIGNAL(triggered()), this, SLOT(sPrint()));
   connect(_data->_preview, SIGNAL(triggered()), this, SLOT(sPreview()));
+  connect(_data->_searchAct, SIGNAL(triggered()), this, SLOT(sFillList()));
   connect(_data->_query, SIGNAL(triggered()), this, SLOT(sFillList()));
   connect(_data->_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_data->_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled()));
@@ -168,6 +192,15 @@ display::~display()
 void display::languageChange()
 {
   _data->retranslateUi(this);
+}
+
+void display::showEvent(QShowEvent * e)
+{
+  XWidget::showEvent(e);
+
+  if (_data->_queryOnStartEnabled &&
+      _data->_queryonstart->isChecked())
+    sFillList();
 }
 
 QWidget * display::optionsWidget()
@@ -190,9 +223,48 @@ QToolBar * display::toolBar()
   return _data->_toolBar;
 }
 
+QAction * display::newAction()
+{
+  return _data->_new;
+}
+
+QAction * display::closeAction()
+{
+  return _data->_close;
+}
+
+QAction * display::queryAction()
+{
+  return _data->_query;
+}
+
+QAction * display::printAction()
+{
+  return _data->_print;
+}
+
+QAction * display::previewAction()
+{
+  return _data->_preview;
+}
+
+QAction * display::searchAction()
+{
+  return _data->_searchAct;
+}
+
+QString display::searchText()
+{
+  if (!_data->_search->isNull())
+    return _data->_search->text().trimmed();
+  return QString("");
+}
+
 bool display::setParams(ParameterList & params)
 {
   parameterWidget()->appendValue(params);
+  if (!_data->_search->isNull())
+    params.append("pattern", _data->_search->text());
 
   return true;
 }
@@ -230,16 +302,24 @@ bool display::useAltId() const
   return _data->_useAltId;
 }
 
-void display::setAutoUpdateEnabled(bool on)
+void display::setNewVisible(bool show)
 {
-  _data->_autoUpdateEnabled = on;
-  _data->_autoupdate->setVisible(on);
-  sAutoUpdateToggled(); 
+  _data->_new->setVisible(show);
 }
 
-bool display::autoUpdateEnabled() const
+bool display::newVisible() const
 {
-  return _data->_autoUpdateEnabled;
+  return _data->_new->isVisible();
+}
+
+void display::setCloseVisible(bool show)
+{
+  _data->_close->setVisible(show);
+}
+
+bool display::closeVisible() const
+{
+  return _data->_close->isVisible();
 }
 
 void display::setParameterWidgetVisible(bool show)
@@ -252,9 +332,58 @@ void display::setParameterWidgetVisible(bool show)
   _data->_filterSep->setVisible(show);
 }
 
-void display::setNewVisible(bool show)
+bool display::parameterWidgetVisible() const
 {
-  _data->_new->setVisible(show);
+  return _data->_parameterWidget->isVisible();
+}
+
+void display::setSearchVisible(bool show)
+{
+  _data->_searchAct->setVisible(show);
+}
+
+bool display::searchVisible() const
+{
+  return _data->_searchAct->isVisible();
+}
+
+void display::setQueryOnStartEnabled(bool on)
+{
+  _data->_queryOnStartEnabled = on;
+  _data->_queryonstart->setVisible(on);
+
+  // Ensure query on start is checked by default
+  if (on)
+  {
+    QString prefname = window()->objectName() + "/" +
+                       _data->_queryonstart->objectName() + "/checked";
+    XSqlQuery qry;
+    qry.prepare("SELECT usrpref_id "
+                "FROM usrpref "
+                "WHERE ((usrpref_username=current_user) "
+                " AND (usrpref_name=:prefname));");
+    qry.bindValue(":prefname", prefname);
+    qry.exec();
+    if (!qry.first())
+      _preferences->set(prefname, 2);
+  }
+}
+
+bool display::queryOnStartEnabled() const
+{
+  return _data->_queryonstart->isVisible();
+}
+
+void display::setAutoUpdateEnabled(bool on)
+{
+  _data->_autoUpdateEnabled = on;
+  _data->_autoupdate->setVisible(on);
+  sAutoUpdateToggled(); 
+}
+
+bool display::autoUpdateEnabled() const
+{
+  return _data->_autoUpdateEnabled;
 }
 
 void display::sNew()

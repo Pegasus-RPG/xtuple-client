@@ -34,16 +34,39 @@ public:
     Q_INVOKABLE QString reportName() const;
     Q_INVOKABLE void setMetaSQLOptions(const QString &, const QString &);
     Q_INVOKABLE void setListLabel(const QString &);
+
     Q_INVOKABLE void setUseAltId(bool);
     Q_INVOKABLE bool useAltId() const;
-    Q_INVOKABLE void setAutoUpdateEnabled(bool);
-    Q_INVOKABLE void setParameterWidgetVisible(bool);
+
     Q_INVOKABLE void setNewVisible(bool);
+    Q_INVOKABLE bool newVisible() const;
+
+    Q_INVOKABLE void setCloseVisible(bool);
+    Q_INVOKABLE bool closeVisible() const;
+
+    Q_INVOKABLE void setParameterWidgetVisible(bool);
+    Q_INVOKABLE bool parameterWidgetVisible() const;
+
+    Q_INVOKABLE void setSearchVisible(bool);
+    Q_INVOKABLE bool searchVisible() const;
+
+    Q_INVOKABLE void setQueryOnStartEnabled(bool);
+    Q_INVOKABLE bool queryOnStartEnabled() const;
+
+    Q_INVOKABLE void setAutoUpdateEnabled(bool);
     Q_INVOKABLE bool autoUpdateEnabled() const;
 
     Q_INVOKABLE XTreeWidget * list();
     Q_INVOKABLE ParameterWidget * parameterWidget();
-    Q_INVOKABLE QToolBar* toolBar();
+    Q_INVOKABLE QToolBar * toolBar();
+    Q_INVOKABLE QAction * newAction();
+    Q_INVOKABLE QAction * closeAction();
+    Q_INVOKABLE QAction * searchAction();
+    Q_INVOKABLE QAction * queryAction();
+    Q_INVOKABLE QAction * printAction();
+    Q_INVOKABLE QAction * previewAction();
+
+    Q_INVOKABLE QString   searchText();
 
 public slots:
     virtual void sNew();
@@ -55,6 +78,7 @@ public slots:
 protected:
     Q_INVOKABLE QWidget * optionsWidget();
     Q_INVOKABLE ParameterList getParams();
+    virtual void showEvent(QShowEvent*);
 
 protected slots:
     virtual void languageChange();

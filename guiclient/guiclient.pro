@@ -279,7 +279,6 @@ FORMS =   absoluteCalendarItem.ui               \
           incidentResolutions.ui        \
           incidentSeverities.ui         \
           incidentSeverity.ui           \
-          incidentWorkbench.ui          \
           invoice.ui                    \
           invoiceItem.ui                \
           invoiceList.ui                \

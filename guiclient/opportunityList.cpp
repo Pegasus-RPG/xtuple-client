@@ -33,6 +33,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("opportunities", "detail");
   setParameterWidgetVisible(true);
   setNewVisible(true);
+  setSearchVisible(true);
 
   list()->addColumn(tr("Active"),      _orderColumn,    Qt::AlignLeft,   false, "ophead_active" );
   list()->addColumn(tr("Name"),        -1,              Qt::AlignLeft,   true, "ophead_name"  );
@@ -201,8 +202,8 @@ bool opportunityList::setParams(ParameterList &params)
 {
   parameterWidget()->appendValue(params);
 
-  if(!findChild<QLineEdit*>("_search")->text().trimmed().isEmpty())
-    params.append("searchpattern", findChild<QLineEdit*>("_search")->text().trimmed());
+  if (!searchText().isEmpty())
+    params.append("searchpattern", searchText());
 
   if (!findChild<QCheckBox*>("_showInactive")->isChecked())
     params.append("activeOnly");

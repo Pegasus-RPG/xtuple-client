@@ -35,6 +35,7 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
 
   _parsed = true;
   _valid = false;
+  _isNull = true;
 
   _id = -1;
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
@@ -200,6 +201,7 @@ void XLineEdit::sHandleNullStr()
   {
     setText(_nullStr);
     sheet.append(nullStyle);
+    _isNull = true;
   }
   else if (hasFocus() &&
            sheet.contains(nullStyle))
@@ -208,7 +210,10 @@ void XLineEdit::sHandleNullStr()
     sheet.remove(nullStyle);
   }
   else
+  {
+    _isNull = false;
     sheet.remove(nullStyle);
+  }
 
   setStyleSheet(sheet);
 }
@@ -231,5 +236,12 @@ void XLineEdit::focusOutEvent(QFocusEvent * event)
     sHandleNullStr();
   }
   QLineEdit::focusOutEvent(event);
+}
+
+bool XLineEdit::isNull()
+{
+  if (_nullStr.isEmpty() || hasFocus())
+    return text().isEmpty();
+  return _isNull;
 }
 
