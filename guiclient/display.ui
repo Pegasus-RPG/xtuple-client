@@ -25,8 +25,8 @@
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
      </property>
-     <addaction name="_close"/>
      <addaction name="_new"/>
+     <addaction name="_close"/>
      <addaction name="separator"/>
      <addaction name="_more"/>
      <addaction name="_query"/>

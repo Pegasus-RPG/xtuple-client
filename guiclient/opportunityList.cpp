@@ -32,12 +32,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   setReportName("OpportunityList");
   setMetaSQLOptions("opportunities", "detail");
   setParameterWidgetVisible(true);
-
-  QAction* newAct = findChild<QAction*>("_new");
-  newAct->setVisible(true);
-
-  connect(newAct, SIGNAL(triggered()), this, SLOT(sNew()));
-  connect(list(),	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this,	SLOT(sPopulateMenu(QMenu*)));
+  setNewVisible(true);
 
   list()->addColumn(tr("Active"),      _orderColumn,    Qt::AlignLeft,   false, "ophead_active" );
   list()->addColumn(tr("Name"),        -1,              Qt::AlignLeft,   true, "ophead_name"  );
@@ -72,7 +67,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->applyDefaultFilterSet();
 }
 
-void opportunityList::sPopulateMenu(QMenu *pMenu)
+void opportunityList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int)
 {
   QAction *menuItem;
 

@@ -294,6 +294,10 @@ void menuCRM::sAddresses()
 
 void menuCRM::sIncidentWorkbench()
 {
+  ParameterList params;
+  params.append("run");
+  todoList* win = new todoList();
+  win->set(params);
   omfgThis->handleNewWindow(new incidentWorkbench());
 }
 

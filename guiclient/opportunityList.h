@@ -31,7 +31,7 @@ class opportunityList : public display, public Ui::opportunityList
     virtual void	sDelete();
     virtual void	sEdit();
     virtual void	sNew();
-    virtual void	sPopulateMenu(QMenu*);
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
     virtual void	sView();
     virtual void	sDeactivate();
     virtual void	sActivate();

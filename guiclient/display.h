@@ -38,6 +38,7 @@ public:
     Q_INVOKABLE bool useAltId() const;
     Q_INVOKABLE void setAutoUpdateEnabled(bool);
     Q_INVOKABLE void setParameterWidgetVisible(bool);
+    Q_INVOKABLE void setNewVisible(bool);
     Q_INVOKABLE bool autoUpdateEnabled() const;
 
     Q_INVOKABLE XTreeWidget * list();
@@ -45,6 +46,7 @@ public:
     Q_INVOKABLE QToolBar* toolBar();
 
 public slots:
+    virtual void sNew();
     virtual void sPrint();
     virtual void sPreview();
     virtual void sFillList();

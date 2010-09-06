@@ -142,6 +142,13 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
 
   QPushButton* filterButton = findChild<QPushButton*>("_filterButton");
 
+  // Set tooltips
+  _data->_new->setToolTip(tr("New") + " " + _data->_new->shortcut().toString(QKeySequence::NativeText));
+  _data->_close->setToolTip(tr("Close") + " " + _data->_close->shortcut().toString(QKeySequence::NativeText));
+  _data->_query->setToolTip(tr("Query") + " " + _data->_query->shortcut().toString(QKeySequence::NativeText));
+  _data->_print->setToolTip(tr("Print") + " " + _data->_print->shortcut().toString(QKeySequence::NativeText));
+
+  connect(_data->_new, SIGNAL(triggered()), this, SLOT(sNew()));
   connect(_data->_print, SIGNAL(triggered()), this, SLOT(sPrint()));
   connect(_data->_preview, SIGNAL(triggered()), this, SLOT(sPreview()));
   connect(_data->_query, SIGNAL(triggered()), this, SLOT(sFillList()));
@@ -243,6 +250,15 @@ void display::setParameterWidgetVisible(bool show)
   _data->_filterLitAct->setVisible(show);
   _data->_filterAct->setVisible(show);
   _data->_filterSep->setVisible(show);
+}
+
+void display::setNewVisible(bool show)
+{
+  _data->_new->setVisible(show);
+}
+
+void display::sNew()
+{
 }
 
 void display::sPrint()
