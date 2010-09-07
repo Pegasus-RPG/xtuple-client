@@ -761,10 +761,10 @@ void issueToShipping::sFillList()
                 ;
   MetaSQLQuery listm(sql);
   XSqlQuery listq = listm.toQuery(listp);
+  _soitem->populate(listq, true);
   if (listq.first())
   {
     _shipment->setText(listq.value("shiphead_number").toString());
-    _soitem->populate(listq, true);
   }
   if (listq.lastError().type() != QSqlError::NoError)
   {

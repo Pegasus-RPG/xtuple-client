@@ -577,14 +577,12 @@ void returnAuthorizationWorkbench::sFillListReview()
 	ra.bindValue(":closed",tr("Closed"));
         _dates->bindValue(ra);
 	ra.exec();
-	if (ra.first())
-		_ra->populate(ra);
-	else if (ra.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, ra.lastError().databaseText(), __FILE__, __LINE__);
-	  _ra->clear();
-      return;
-    }
+        _ra->populate(ra);
+        if (ra.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, ra.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
   }
 }
 
@@ -603,9 +601,8 @@ void returnAuthorizationWorkbench::sFillListDue()
     setParams(params);
 
     XSqlQuery radue = mql.toQuery(params);
-    if (radue.first())
-      _radue->populate(radue,TRUE);
-    else if (radue.lastError().type() != QSqlError::NoError)
+    _radue->populate(radue,TRUE);
+    if (radue.lastError().type() != QSqlError::NoError)
     {
       systemError(this, radue.lastError().databaseText(), __FILE__, __LINE__);
       return;

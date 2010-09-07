@@ -1984,11 +1984,7 @@ void item::sFillSourceList()
   MetaSQLQuery mql(sql);
   params.append("item_id", _itemid);
   q = mql.toQuery(params);
-
-  if (q.first())
-    _itemsrc->populate(q);
-  else
-    _itemsrc->clear();
+  _itemsrc->populate(q);
 }
 
 void item::sNewSource()

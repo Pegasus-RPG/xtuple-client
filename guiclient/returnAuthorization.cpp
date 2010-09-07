@@ -1094,6 +1094,7 @@ void returnAuthorization::sFillList()
   q.bindValue(":ship", tr("Ship"));
   q.bindValue(":na", tr("N/A"));
   q.exec();
+  _raitem->populate(q, true);
   if ((q.first()) && (_mode == cEdit))
   {
     _cust->setDisabled(_cust->isValid());
@@ -1104,8 +1105,6 @@ void returnAuthorization::sFillList()
     return;
   }
   
-  _raitem->populate(q, true);
-
   sCalculateSubtotal();
   sCalculateNetDue();
   sCalculateTax();

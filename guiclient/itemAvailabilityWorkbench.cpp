@@ -423,11 +423,8 @@ void itemAvailabilityWorkbench::sFillListInvhist()
     _invhistWarehouse->appendValue(params);
     MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
     q = mql.toQuery(params);
-    if (q.first())
-    {
-      _invhist->populate(q, true);
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
+    _invhist->populate(q, true);
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

@@ -1765,9 +1765,9 @@ void returnAuthorizationItem::sFillList()
   q.bindValue(":crmacct_id", _crmacctid);
   q.bindValue(":na", tr("N/A"));
   q.exec();
+  _raitemls->populate(q,true);
   _authLotSerial->setDisabled(q.first());
   _authLotSerial->setChecked(q.first());
-  _raitemls->populate(q,true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

@@ -225,11 +225,7 @@ void itemSources::sFillList()
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-
-  if (q.first())
-    _itemsrc->populate(q);
-  else
-    _itemsrc->clear();
+  _itemsrc->populate(q);
 }
 
 void itemSources::sSearch( const QString &pTarget )
