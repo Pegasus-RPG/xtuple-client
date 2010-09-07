@@ -31,6 +31,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   setListLabel(tr("Opportunities"));
   setReportName("OpportunityList");
   setMetaSQLOptions("opportunities", "detail");
+  setUseAltId(true);
   setParameterWidgetVisible(true);
   setNewVisible(true);
   setSearchVisible(true);
@@ -47,6 +48,8 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   false, "f_currency" );
   list()->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_target_date" );
   list()->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_actual_date" );
+
+  connect(list(),       SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
 
   bool canEditUsers = _privileges->check("MaintainOtherTodoLists");
   parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
@@ -68,7 +71,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->applyDefaultFilterSet();
 }
 
-void opportunityList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int)
+void opportunityList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 

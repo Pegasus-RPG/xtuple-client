@@ -81,6 +81,9 @@
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
+     <property name="populateLinear">
+      <bool>false</bool>
+     </property>
      <zorder>qt_scrollarea_viewport</zorder>
     </widget>
    </item>
@@ -127,22 +130,22 @@
   </layout>
   <action name="_query">
    <property name="text">
-    <string>Que&amp;ry</string>
+    <string>Query</string>
    </property>
   </action>
   <action name="_close">
    <property name="text">
-    <string>&amp;Close</string>
+    <string>Close</string>
    </property>
   </action>
   <action name="_print">
    <property name="text">
-    <string>&amp;Print</string>
+    <string>Print</string>
    </property>
   </action>
   <action name="_preview">
    <property name="text">
-    <string>Pre&amp;view</string>
+    <string>Preview</string>
    </property>
   </action>
   <action name="_more">
@@ -155,7 +158,7 @@
   </action>
   <action name="_new">
    <property name="text">
-    <string>&amp;New</string>
+    <string>New</string>
    </property>
   </action>
  </widget>

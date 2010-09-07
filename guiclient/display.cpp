@@ -165,10 +165,10 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   _data->_searchAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Set tooltips
-  _data->_new->setToolTip(tr("New") + " " + _data->_new->shortcut().toString(QKeySequence::NativeText));
-  _data->_close->setToolTip(tr("Close") + " " + _data->_close->shortcut().toString(QKeySequence::NativeText));
-  _data->_query->setToolTip(tr("Query") + " " + _data->_query->shortcut().toString(QKeySequence::NativeText));
-  _data->_print->setToolTip(tr("Print") + " " + _data->_print->shortcut().toString(QKeySequence::NativeText));
+  _data->_new->setToolTip(_data->_new->text() + " " + _data->_new->shortcut().toString(QKeySequence::NativeText));
+  _data->_close->setToolTip(_data->_close->text() + " " + _data->_close->shortcut().toString(QKeySequence::NativeText));
+  _data->_query->setToolTip(_data->_query->text() + " " + _data->_query->shortcut().toString(QKeySequence::NativeText));
+  _data->_print->setToolTip(_data->_print->text() + " " + _data->_print->shortcut().toString(QKeySequence::NativeText));
   _data->_search->setNullStr(tr("Search"));
 
   connect(_data->_new, SIGNAL(triggered()), this, SLOT(sNew()));

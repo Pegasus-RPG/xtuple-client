@@ -148,4 +148,10 @@ bool incidentWorkbench::setParams(ParameterList & params)
   return true;
 }
 
+void incidentWorkbench::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
+{
+  pMenu->addAction(tr("Edit"), this, SLOT(sEdit()));
+  pMenu->addAction(tr("View"), this, SLOT(sView()));
+}
+
 
