@@ -45,8 +45,6 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
 
   parameterWidget()->applyDefaultFilterSet();
 
-  connect(list(), SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)),
-          this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*, int)));
   connect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(prospectsUpdated()), this, SLOT(sFillList()));

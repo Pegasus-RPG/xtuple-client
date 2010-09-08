@@ -51,8 +51,6 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->setHideWhenEmbedded(false); // Need to handle this manually for now.
   parameterWidget()->applyDefaultFilterSet();
 
-  connect(list(), SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*, int)));
-
   list()->addColumn(tr("First Name"), 80, Qt::AlignLeft, true, "cntct_first_name");
   list()->addColumn(tr("Last Name"), 100, Qt::AlignLeft, true, "cntct_last_name");
   list()->addColumn(tr("Account #"), 80, Qt::AlignLeft, true, "crmacct_number");
