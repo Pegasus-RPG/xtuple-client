@@ -23,6 +23,7 @@
 #include <openreports.h>
 #include <orprerender.h>
 #include <previewdialog.h>
+#include <orprintrender.h>
 #include "dspFinancialReport.h"
 #include "storedProcErrorLookup.h"
 
@@ -818,6 +819,9 @@ void dspFinancialReport::sPreview()
   pre.setDom(_doc);
   pre.setParamList(params);
   ORODocument * doc = pre.generate();
+
+  ORPrintRender render;
+  render.setupPrinter(doc, &printer);
 
   PreviewDialog preview (doc, &printer, this);
   preview.exec();

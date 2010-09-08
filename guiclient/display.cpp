@@ -169,15 +169,15 @@ void displayPrivate::print(bool showPreview)
     QPrinter printer(QPrinter::HighResolution);
     printer.setNumCopies( numCopies );
 
+    ORPrintRender render;
+    render.setupPrinter(doc, &printer);
+
     if(showPreview)
     {
       PreviewDialog preview (doc, &printer, _parent);
       if (preview.exec() == QDialog::Rejected)
         return;
     }
-
-    ORPrintRender render;
-    render.setupPrinter(doc, &printer);
 
     QPrintDialog pd(&printer);
     pd.setMinMax(1, doc->pages());
