@@ -13,20 +13,18 @@
 
 class GroupBalances;
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 #include <QMap>
 #include <parameter.h>
 
 #include "ui_dspFinancialReport.h"
 
-class dspFinancialReport : public XWidget, public Ui::dspFinancialReport
+class dspFinancialReport : public display, public Ui::dspFinancialReport
 {
     Q_OBJECT
 
 public:
     dspFinancialReport(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = 0);
-    ~dspFinancialReport();
 
     Q_INVOKABLE virtual bool setParams(ParameterList &);
 
@@ -50,8 +48,6 @@ public slots:
     virtual bool sCheck();
 
 protected slots:
-    virtual void languageChange();
-
     virtual void sCollapsed( QTreeWidgetItem * item );
     virtual void sExpanded( QTreeWidgetItem * item );
     virtual void sReportChanged(int);
