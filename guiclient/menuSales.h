@@ -146,13 +146,11 @@ class menuSales : public QObject
     void sPrintSASpecialCalendarForm();
 
     void sNewCustomer();
-    void sSearchForCustomer();
     void sCustomers();
     void sCustomerWorkbench();
     void sUpdateCreditStatusByCustomer();
     void sCustomerGroups();
     void sNewProspect();
-    void sSearchForProspect();
     void sProspects();
 
     void sDspCustomerInformationExport();

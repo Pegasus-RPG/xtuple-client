@@ -172,7 +172,6 @@ FORMS =   absoluteCalendarItem.ui               \
           creditMemoEditList.ui                 \
           creditMemoItem.ui                     \
           crmaccount.ui                         \
-          crmaccounts.ui                        \
           currencies.ui                         \
           currency.ui                           \
           currencyConversion.ui                 \
@@ -466,7 +465,6 @@ FORMS =   absoluteCalendarItem.ui               \
           scrapWoMaterialFromWIP.ui             \
           scriptEditor.ui                       \
           scripts.ui                            \
-          searchForCRMAccount.ui                \
           searchForEmp.ui                       \
           searchForItem.ui                      \
           selectBankAccount.ui                  \
@@ -514,7 +512,6 @@ FORMS =   absoluteCalendarItem.ui               \
           taxAdjustment.ui                      \
           taxAssignment.ui                      \
           taxAssignments.ui                     \
-          taxAuthorities.ui                     \
           taxAuthority.ui                       \
           taxBreakdown.ui                       \
           taxClass.ui                           \
@@ -580,7 +577,6 @@ FORMS =   absoluteCalendarItem.ui               \
           vendorType.ui                         \
           vendorTypes.ui                        \
           vendorWorkBench.ui                    \
-          vendors.ui                            \
           viewCheckRun.ui                       \
           voidChecks.ui                         \
           voucher.ui                            \
@@ -1033,7 +1029,6 @@ HEADERS = ../common/format.h                    \
           scriptEditor.h                        \
           scripts.h                             \
           scripttoolbox.h                       \
-          searchForCRMAccount.h                 \
           searchForEmp.h                        \
           searchForItem.h                       \
           selectBankAccount.h                   \
@@ -1614,7 +1609,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           scriptEditor.cpp                      \
           scripts.cpp                           \
           scripttoolbox.cpp                     \
-          searchForCRMAccount.cpp               \
           searchForEmp.cpp                      \
           searchForItem.cpp                     \
           selectBankAccount.cpp                 \

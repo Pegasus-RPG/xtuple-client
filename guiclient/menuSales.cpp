@@ -123,7 +123,6 @@
 #include "printRaForm.h"
 
 #include "customer.h"
-#include "searchForCRMAccount.h"
 #include "customers.h"
 #include "prospect.h"
 #include "prospects.h"
@@ -406,13 +405,11 @@ menuSales::menuSales(GUIClient *pParent) :
     { "menu",	tr("&Prospect"),       (char*)prospectMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.enterNewProspect", tr("&New..."),	SLOT(sNewProspect()), prospectMenu, "MaintainProspectMasters",	NULL, NULL, true, NULL },
     { "so.prospects", tr("&List..."),	SLOT(sProspects()), prospectMenu, "MaintainProspectMasters ViewProspectMasters",	NULL, NULL, true, NULL },
-    { "so.searchForProspect", tr("&Search..."),	SLOT(sSearchForProspect()), prospectMenu, "MaintainProspects ViewProspects",	NULL, NULL, true, NULL },
-   
+
     // Sales | Customer
     { "menu",	tr("&Customer"),       (char*)customerMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "so.enterNewCustomer", tr("&New..."),	SLOT(sNewCustomer()), customerMenu, "MaintainCustomerMasters",	NULL, NULL, true, NULL },
     { "so.customers", tr("&List..."),	SLOT(sCustomers()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL },
-    { "so.searchForCustomer", tr("&Search..."),	SLOT(sSearchForCustomer()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL  }, 
     { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
     { "so.customerWorkbench", tr("&Workbench..."),	SLOT(sCustomerWorkbench()), customerMenu, "MaintainCustomerMasters ViewCustomerMasters",	QPixmap(":/images/customerInformationWorkbench.png"), toolBar,  true, tr("Customer Workbench") }, 
     { "separator",	NULL,	NULL,	customerMenu,	"true",		NULL, NULL, true, NULL },
@@ -1107,17 +1104,6 @@ void menuSales::sCustomerWorkbench()
   omfgThis->handleNewWindow(newdlg);
 }
 
-
-void menuSales::sSearchForCustomer()
-{
-  ParameterList params;
-  params.append("crmaccnt_subtype", "cust");
-
-  searchForCRMAccount *newdlg = new searchForCRMAccount();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 void menuSales::sCustomers()
 {
   omfgThis->handleNewWindow(new customers());
@@ -1139,16 +1125,6 @@ void menuSales::sNewProspect()
   params.append("mode", "new");
 
   prospect *newdlg = new prospect();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuSales::sSearchForProspect()
-{
-  ParameterList params;
-  params.append("crmaccnt_subtype", "prospect");
-
-  searchForCRMAccount *newdlg = new searchForCRMAccount();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

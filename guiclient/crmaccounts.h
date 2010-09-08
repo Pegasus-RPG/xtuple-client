@@ -14,16 +14,12 @@
 #include "display.h"
 #include <parameter.h>
 
-#include "ui_crmaccounts.h"
-
-class crmaccounts : public display, public Ui::crmaccounts
+class crmaccounts : public display
 {
     Q_OBJECT
 
 public:
     crmaccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-
-    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sDelete();

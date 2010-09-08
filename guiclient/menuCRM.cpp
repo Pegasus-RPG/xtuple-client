@@ -25,7 +25,6 @@
 #include "addresses.h"
 #include "crmaccount.h"
 #include "crmaccounts.h"
-#include "searchForCRMAccount.h"
 #include "dspIncidentsByCRMAccount.h"
 #include "dspTodoByUserAndIncident.h"
 #include "incidentWorkbench.h"
@@ -115,7 +114,6 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "menu",		tr("&Account"),		(char*)accountsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
     { "crm.crmaccount",		tr("&New..."),	SLOT(sCRMAccount()),	accountsMenu,	"MaintainCRMAccounts", NULL, NULL, true , NULL },
     { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	"MaintainCRMAccounts ViewCRMAccounts", QPixmap(":/images/accounts.png"), toolBar, true , tr("List Accounts") },
-    { "crm.crmaccountsearch",	tr("&Search..."),SLOT(sSearchForCRMAccount()),accountsMenu,	"MaintainCRMAccounts ViewCRMAccounts", NULL, NULL, true , NULL },
       
     // CRM | Contact
     { "menu",		tr("&Contact"),		(char*)contactsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
@@ -236,11 +234,6 @@ void menuCRM::sCRMAccount()
 void menuCRM::sCRMAccounts()
 {
   omfgThis->handleNewWindow(new crmaccounts());
-}
-
-void menuCRM::sSearchForCRMAccount()
-{
-  omfgThis->handleNewWindow(new searchForCRMAccount());
 }
 
 void menuCRM::sEditOwners()

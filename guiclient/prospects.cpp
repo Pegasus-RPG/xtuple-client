@@ -30,6 +30,7 @@ prospects::prospects(QWidget* parent, const char*, Qt::WFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
   parameterWidget()->append(tr("Prospect Number Pattern"), "prospect_number_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Prospect Name Pattern"), "prospect_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Contact Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);

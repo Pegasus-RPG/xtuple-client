@@ -84,7 +84,6 @@ class menuPurchase : public QObject
     void sPrintVendorForm();
 
     void sNewVendor();
-    void sSearchForVendor();
     void sVendors();
     void sVendorWorkBench();
 

@@ -117,7 +117,6 @@
 #include "taxTypes.h"
 #include "taxZones.h"
 #include "taxAuthorities.h"
-#include "searchForCRMAccount.h"
 #include "taxAssignments.h"
 #include "taxRegistrations.h"
 #include "dspTaxHistory.h"
@@ -421,7 +420,6 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
 
     // Accounting | Tax
     { "menu", tr("&Tax"), (char*)taxMenu, mainMenu,	"true",	NULL, NULL, true, NULL },
-    { "gl.searchForTaxAuth",	tr("&Search for Tax Authority..."), SLOT(sTaxAuthoritySearch()),taxMenu,	"MaintainTaxAuthorities ViewTaxAuthorities", NULL, NULL, true, NULL },
     { "gl.taxAuthorities",	tr("Tax &Authorities..."),	SLOT(sTaxAuthorities()),	taxMenu,	"MaintainTaxAuthorities ViewTaxAuthorities", NULL, NULL, true, NULL },
     { "gl.taxZones",		tr("Tax &Zones..."),		SLOT(sTaxZones()),		taxMenu,	"MaintainTaxZones ViewTaxZones",             NULL, NULL, true, NULL }, 
     { "gl.taxClasses",		tr("Tax &Classes..."),		SLOT(sTaxClasses()),		taxMenu,	"MaintainTaxClasses ViewTaxClasses",         NULL, NULL, true, NULL }, 
@@ -1063,17 +1061,6 @@ void menuAccounting::sTaxAuthorities()
 {
   omfgThis->handleNewWindow(new taxAuthorities());
 }
-
-void menuAccounting::sTaxAuthoritySearch()
-{
-  ParameterList params;
-  params.append("crmaccnt_subtype", "taxauth");
-
-  searchForCRMAccount *newdlg = new searchForCRMAccount();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 
 void menuAccounting::sTaxZones()
 {

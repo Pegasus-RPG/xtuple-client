@@ -23,7 +23,6 @@
 crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "crmaccounts", fl)
 {
-  setupUi(optionsWidget());
   setWindowTitle(tr("Accounts List"));
   setReportName("CRMAccountMasterList");
   setMetaSQLOptions("crmaccounts", "detail");
@@ -32,6 +31,7 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
   parameterWidget()->append(tr("Account Number Pattern"), "crmacct_number_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Account Name Pattern"), "crmacct_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Contact Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);
@@ -146,12 +146,4 @@ void crmaccounts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
 }
 
-bool crmaccounts::setParams(ParameterList &params)
-{
-  display::setParams(params);
-  if (_activeOnly->isChecked())
-    params.append("activeOnly");
-
-  return true;
-}
 

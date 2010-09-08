@@ -66,7 +66,6 @@
 #include "printVendorForm.h"
 
 #include "vendor.h"
-#include "searchForCRMAccount.h"
 #include "vendors.h"
 #include "vendorWorkBench.h"
 
@@ -218,7 +217,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "menu", tr("V&endor"), (char*)vendorMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "po.newVendor", tr("&New..."), SLOT(sNewVendor()), vendorMenu, "MaintainVendors", NULL, NULL, true , NULL },
     { "po.vendors", tr("&List..."), SLOT(sVendors()), vendorMenu, "MaintainVendors ViewVendors", NULL, NULL, true , NULL },
-    { "po.searchForVendor", tr("&Search..."), SLOT(sSearchForVendor()), vendorMenu, "MaintainVendors ViewVendors", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, vendorMenu, "true", NULL, NULL, true , NULL },
     { "po.vendorWorkBench", tr("&Workbench..."), SLOT(sVendorWorkBench()), vendorMenu, "MaintainVendors", NULL, NULL, true , NULL },
 
@@ -537,16 +535,6 @@ void menuPurchase::sNewVendor()
   params.append("mode", "new");
 
   vendor *newdlg = new vendor();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuPurchase::sSearchForVendor()
-{
-  ParameterList params;
-  params.append("crmaccnt_subtype", "vend");
-
-  searchForCRMAccount *newdlg = new searchForCRMAccount();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

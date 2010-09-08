@@ -30,8 +30,9 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
-  parameterWidget()->append(tr("Customer Number Pattern"), "crmacct_number_pattern", ParameterWidget::Text);
-  parameterWidget()->append(tr("Customer Name Pattern"), "crmacct_name_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
+  parameterWidget()->append(tr("Customer Number Pattern"), "cust_number_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Customer Name Pattern"), "cust_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Customer Type Pattern"), "custtype_code_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Contact Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Phone Pattern"), "cntct_phone_pattern", ParameterWidget::Text);
@@ -51,7 +52,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   }
 
   list()->addColumn(tr("Number"),  _orderColumn, Qt::AlignLeft, true, "cust_number");
-  list()->addColumn(tr("Active"),  _ynColumn,    Qt::AlignCenter, true, "cust_active");
+  list()->addColumn(tr("Active"),  _ynColumn,    Qt::AlignCenter, false, "cust_active");
   list()->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "cust_name");
   list()->addColumn(tr("Type"),    _itemColumn,  Qt::AlignLeft, true, "custtype_code");
   list()->addColumn(tr("First"),   50, Qt::AlignLeft  , true, "cntct_first_name" );
@@ -170,26 +171,3 @@ void customers::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
 }
 
-/*
-void customers::sFillList(int pCustid, bool pLocal)
-{
-  XSqlQuery r;
-  r.prepare( "SELECT cust_id, cust_custtype_id,"
-             "       COALESCE(custtype_code, :error) AS custtype, cust_number,"
-             "       cust_active, cust_name, cust_address1, cust_phone "
-             "FROM cust LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id) "
-             "ORDER BY cust_number;" );
-  r.bindValue(":error", tr("Error"));
-  r.exec();
- 
-  if (pLocal)
-    list()->populate(r, pCustid, TRUE);
-  else
-    list()->populate(r, TRUE);
-  if (r.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-*/
