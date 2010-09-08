@@ -189,7 +189,6 @@ FORMS =   absoluteCalendarItem.ui               \
           customerType.ui                       \
           customerTypeList.ui                   \
           customerTypes.ui                      \
-          customers.ui                          \
           databaseInformation.ui                \
           deletePlannedOrder.ui                 \
           deletePlannedOrdersByPlannerCode.ui   \
@@ -408,7 +407,6 @@ FORMS =   absoluteCalendarItem.ui               \
           project.ui                            \
           projects.ui                           \
           prospect.ui                           \
-          prospects.ui                          \
           purchaseOrder.ui                      \
           purchaseOrderItem.ui                  \
           purchaseRequest.ui                    \

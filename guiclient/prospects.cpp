@@ -18,49 +18,50 @@
 
 #include "prospect.h"
 #include "storedProcErrorLookup.h"
+#include "parameterwidget.h"
 
-prospects::prospects(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+prospects::prospects(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "prospects", fl)
 {
-  setupUi(this);
+  setWindowTitle(tr("Prospect List"));
+  setMetaSQLOptions("prospects", "detail");
+  setParameterWidgetVisible(true);
+  setNewVisible(true);
+  setSearchVisible(true);
+  setQueryOnStartEnabled(true);
 
-  connect(_delete,   SIGNAL(clicked()),	this, SLOT(sDelete()));
-  connect(_edit,     SIGNAL(clicked()),	this, SLOT(sEdit()));
-  connect(_new,	     SIGNAL(clicked()),	this, SLOT(sNew()));
-  connect(_prospect, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)),
-                                        this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_view,     SIGNAL(clicked()),	this, SLOT(sView()));
+  parameterWidget()->append(tr("Prospect Number Pattern"), "prospect_number_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Prospect Name Pattern"), "prospect_name_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Contact Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Phone Pattern"), "cntct_phone_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Email Pattern"), "cntct_email_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Street Pattern"), "addr_street_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("City Pattern"), "addr_city_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("State Pattern"), "addr_state_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
 
   if (_privileges->check("MaintainProspectMasters"))
-  {
-    connect(_prospect, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_prospect, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_prospect, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-  }
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
-    _new->setEnabled(FALSE);
-    connect(_prospect, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+    newAction()->setEnabled(FALSE);
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
-  _prospect->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter, true, "prospect_number" );
-  _prospect->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "prospect_name"   );
-  _prospect->addColumn(tr("Address"), 175,          Qt::AlignLeft,   true, "addr_line1"   );
-  _prospect->addColumn(tr("Phone #"), 100,          Qt::AlignLeft,   true, "cntct_phone"   );
+  list()->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter, true, "prospect_number" );
+  list()->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "prospect_name"   );
+  list()->addColumn(tr("First"),   50, Qt::AlignLeft  , true, "cntct_first_name" );
+  list()->addColumn(tr("Last"),    -1, Qt::AlignLeft  , true, "cntct_last_name" );
+  list()->addColumn(tr("Phone"),   100, Qt::AlignLeft  , true, "cntct_phone" );
+  list()->addColumn(tr("Email"),   100, Qt::AlignLeft  , true, "cntct_email" );
+  list()->addColumn(tr("Address"), -1, Qt::AlignLeft  , false, "addr_line1" );
+  list()->addColumn(tr("City"),    75, Qt::AlignLeft  , false, "addr_city" );
+  list()->addColumn(tr("State"),   50, Qt::AlignLeft  , false, "addr_state" );
+  list()->addColumn(tr("Country"), 100, Qt::AlignLeft  , false, "addr_country" );
+  list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , false, "addr_postalcode" );
 
   connect(omfgThis, SIGNAL(prospectsUpdated()), SLOT(sFillList()));
-
-  sFillList();
-}
-
-prospects::~prospects()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-void prospects::languageChange()
-{
-    retranslateUi(this);
 }
 
 void prospects::sNew()
@@ -76,7 +77,7 @@ void prospects::sNew()
 void prospects::sEdit()
 {
   ParameterList params;
-  params.append("prospect_id", _prospect->id());
+  params.append("prospect_id", list()->id());
   params.append("mode", "edit");
 
   prospect *newdlg = new prospect();
@@ -87,7 +88,7 @@ void prospects::sEdit()
 void prospects::sView()
 {
   ParameterList params;
-  params.append("prospect_id", _prospect->id());
+  params.append("prospect_id", list()->id());
   params.append("mode", "view");
 
   prospect *newdlg = new prospect();
@@ -98,7 +99,7 @@ void prospects::sView()
 void prospects::sDelete()
 {
   q.prepare("SELECT deleteProspect(:prospect_id) AS result;");
-  q.bindValue(":prospect_id", _prospect->id());
+  q.bindValue(":prospect_id", list()->id());
   q.exec();
   if (q.first())
   {
@@ -119,7 +120,7 @@ void prospects::sDelete()
   }
 }
 
-void prospects::sPopulateMenu(QMenu *pMenu)
+void prospects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 
@@ -130,21 +131,4 @@ void prospects::sPopulateMenu(QMenu *pMenu)
 
   menuItem = pMenu->addAction("Delete", this, SLOT(sDelete()));
   menuItem->setEnabled(_privileges->check("MaintainProspectMasters"));
-}
-
-void prospects::sFillList()
-{
-  _prospect->clear();
-  q.prepare( "SELECT prospect_id, prospect_number, prospect_name, addr_line1, cntct_phone "
-             "FROM prospect LEFT OUTER JOIN "
-	     "     cntct ON (prospect_cntct_id=cntct_id) LEFT OUTER JOIN "
-	     "     addr  ON (cntct_addr_id=addr_id) "
-             "ORDER BY prospect_number;" );
-  q.exec();
-  _prospect->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 }
