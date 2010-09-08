@@ -116,7 +116,6 @@ void ParameterWidget::appendValue(ParameterList &pParams)
       pParams.remove(tempPair.first);
     }
 
-    qDebug("append: %s  %s", qPrintable(tempPair.first), qPrintable(tempPair.second.toString()));
     pParams.append(tempPair.first, tempPair.second);
   }
 }
@@ -1094,8 +1093,6 @@ void ParameterWidget::save()
 */
 void ParameterWidget::setDefault(QString pName, QVariant pDefault, bool pAutoApply)
 {
-  qDebug("name:%s", qPrintable(pName));
-  qDebug("value:%s", qPrintable(pDefault.toString()));
   int idx = paramIndex(pName);
   if (idx != -1)
   {

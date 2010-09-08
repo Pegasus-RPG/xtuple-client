@@ -402,9 +402,7 @@ bool todoList::setParams(ParameterList &params)
   params.append("resolved", tr("Resolved"));
   params.append("concept", tr("concept"));
   params.append("new", tr("New"));
-  qDebug("gonna append using %p", parameterWidget());
   parameterWidget()->appendValue(params);
-  qDebug("did the append");
 
   return true;
 }

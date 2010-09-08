@@ -38,7 +38,6 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   _attachAct = 0;
   _detachAct = 0;
 
-  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
   parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Phone Pattern"), "cntct_phone_pattern", ParameterWidget::Text);
@@ -52,7 +51,7 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->setHideWhenEmbedded(false); // Need to handle this manually for now.
   parameterWidget()->applyDefaultFilterSet();
 
-  connect(list(), SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+  connect(list(), SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*, int)));
 
   list()->addColumn(tr("First Name"), 80, Qt::AlignLeft, true, "cntct_first_name");
   list()->addColumn(tr("Last Name"), 100, Qt::AlignLeft, true, "cntct_last_name");
