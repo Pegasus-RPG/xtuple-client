@@ -100,13 +100,13 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _aritems = new dspAROpenItems(this, "dspAROpenItems", Qt::Widget);
   _aritems->setObjectName("dspAROpenItems");
   _aritemsPage->layout()->addWidget(_aritems);
-  _aritems->findChild<QWidget*>("_close")->hide();
+  _aritems->setCloseVisible(false);
   _aritems->findChild<QWidget*>("_customerSelector")->hide();
   _aritems->findChild<QWidget*>("_asofGroup")->hide();
   _aritems->findChild<DLineEdit*>("_asOf")->setDate(omfgThis->endOfTime());
   _aritems->findChild<XCheckBox*>("_closed")->show();
-  _aritems->findChild<XTreeWidget*>("_aropen")->hideColumn("cust_number");
-  _aritems->findChild<XTreeWidget*>("_aropen")->hideColumn("cust_name");
+  _aritems->list()->hideColumn("cust_number");
+  _aritems->list()->hideColumn("cust_name");
   
   _cashreceipts = new dspCashReceipts(this, "dspCashReceipts", Qt::Widget);
   _cashreceiptsPage->layout()->addWidget(_cashreceipts);
@@ -461,7 +461,7 @@ void customer::setValid(bool valid)
     _orders->findChild<XTreeWidget*>("_so")->clear();
     _returns->findChild<XTreeWidget*>("_ra")->clear();
     _returns->findChild<XTreeWidget*>("_radue")->clear();
-    _aritems->findChild<XTreeWidget*>("_aropen")->clear();
+    _aritems->list()->clear();
     _cashreceipts->findChild<XTreeWidget*>("_arapply")->clear();
     _cctrans->findChild<XTreeWidget*>("_preauth")->clear();
   }

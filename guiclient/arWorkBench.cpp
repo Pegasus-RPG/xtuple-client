@@ -30,10 +30,9 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _aritems = new dspAROpenItems(this, "_aritems", Qt::Widget);
   _aropenFrame->layout()->addWidget(_aritems);
-  _aritems->findChild<QWidget*>("_close")->hide();
+  _aritems->setCloseVisible(false);
   _aritems->findChild<QWidget*>("_customerSelector")->hide();
-  _aritems->findChild<QWidget*>("_print")->hide();
-  _aritems->findChild<QWidget*>("_query")->hide();
+  _aritems->queryAction()->setVisible(false);
   _aritems->findChild<QWidget*>("_asofGroup")->hide();
   _aritems->findChild<DLineEdit*>("_asOf")->setDate(omfgThis->endOfTime());
   _aritems->findChild<QWidget*>("_dateGroup")->hide();
@@ -91,7 +90,6 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
           _aritems->findChild<QRadioButton*>("_credits"), SLOT(click()));
   connect(_both, SIGNAL(clicked()), 
           _aritems->findChild<QRadioButton*>("_both"), SLOT(click()));
-  connect(_print, SIGNAL(clicked()), _aritems, SLOT(sPrint()));
   connect(_searchDocNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged()));
 
   _cashrcpt->addColumn(tr("Cust. #"),       _bigMoneyColumn, Qt::AlignLeft,  true, "cust_number");                                                                
@@ -195,7 +193,7 @@ void arWorkBench::sFillList()
 
 void arWorkBench::sClear()
 {
-  _aritems->findChild<XTreeWidget*>("_aropen")->clear();
+  _aritems->list()->clear();
   _cashrcpt->clear();
   _cctrans->findChild<XTreeWidget*>("_preauth")->clear();
 }
@@ -345,7 +343,7 @@ void arWorkBench::sPopulateCashRcptMenu(QMenu *pMenu)
 
 void arWorkBench::sSearchDocNumChanged()
 {
-  XTreeWidget *aropen = _aritems->findChild<XTreeWidget*>("_aropen");
+  XTreeWidget *aropen = _aritems->list();
   QString sub = _searchDocNum->text().trimmed();
   if(sub.isEmpty())
     return;
