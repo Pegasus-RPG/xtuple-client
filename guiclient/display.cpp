@@ -366,6 +366,7 @@ bool display::useAltId() const
 void display::setNewVisible(bool show)
 {
   _data->_newAct->setVisible(show);
+  _data->_sep1->setVisible(show || _data->_closeAct->isVisible());
 }
 
 bool display::newVisible() const
@@ -376,6 +377,7 @@ bool display::newVisible() const
 void display::setCloseVisible(bool show)
 {
   _data->_closeAct->setVisible(show);
+  _data->_sep1->setVisible(show || _data->_newAct->isVisible());
 }
 
 bool display::closeVisible() const

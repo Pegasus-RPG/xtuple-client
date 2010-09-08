@@ -39,8 +39,7 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
   {
     _po = new dspPOsByVendor(this, "dspPOsByVendor", Qt::Widget);
     _poTab->layout()->addWidget(_po);
-    hideme = _po->findChild<QWidget*>("_close");
-    hideme->hide();
+    _po->setCloseVisible(false);
     hideme = _po->findChild<QWidget*>("_vendGroup");
     hideme->hide();
     VendorGroup *povend = _po->findChild<VendorGroup*>("_vend");
@@ -59,9 +58,8 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
   {
     _receipts = new dspPoItemReceivingsByVendor(this, "dspPoItemReceivingsByVendor", Qt::Widget);
     _receiptsTab->layout()->addWidget(_receipts);
-    hideme = _receipts->findChild<QWidget*>("_close");
-    hideme->hide();
-    VendorCluster *rcptvend = _receipts->findChild<VendorCluster*>("_vendor");
+    _receipts->setCloseVisible(false);
+    QWidget *rcptvend = _receipts->findChild<QWidget*>("_vendorGroup");
     rcptvend->hide();
     connect(rcptvend,    SIGNAL(newId(int)), _receipts,     SLOT(sFillList()));
     connect(_vend,       SIGNAL(newId(int)), rcptvend,      SLOT(setId(int)));
@@ -120,7 +118,7 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
   {
     _history = new dspVendorAPHistory(this, "dspVendorAPHistory", Qt::Widget);
     _historyTab->layout()->addWidget(_history);
-    _history->findChild<QWidget*>("_close")->hide();
+    _history->setCloseVisible(false);
     _history->findChild<QWidget*>("_vendGroup")->hide();
     _history->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
     _history->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
