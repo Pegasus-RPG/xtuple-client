@@ -28,6 +28,7 @@
 #include "storedProcErrorLookup.h"
 #include "taxRegistration.h"
 #include "xcombobox.h"
+#include "parameterwidget.h"
 
 customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -36,30 +37,28 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _todoList = new todoList(this, "todoList", Qt::Widget);
   _todoListPage->layout()->addWidget(_todoList);
-  _todoList->findChild<QWidget*>("_close")->hide();
-  _todoList->findChild<XCheckBox*>("_autoUpdate")->setForgetful(true);
-  _todoList->findChild<XCheckBox*>("_autoUpdate")->setChecked(false);
-  _todoList->findChild<XCheckBox*>("_autoUpdate")->hide();
-  _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_number");
-  _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_name");
+  _todoList->setCloseVisible(false);
+  _todoList->setParameterWidgetVisible(false);
+  _todoList->setQueryOnStartEnabled(false);
+  _todoList->parameterWidget()->setDefault(tr("Assigned"), QVariant(), true);
+  _todoList->list()->hideColumn("crmacct_number");
+  _todoList->list()->hideColumn("crmacct_name");
   
   _contacts = new contacts(this, "contacts", Qt::Widget);
   _contactsPage->layout()->addWidget(_contacts);
-  _contacts->findChild<QWidget*>("_close")->hide();
-  _contacts->findChild<QWidget*>("_activeOnly")->hide();
-  _contacts->findChild<QWidget*>("_contactsLit")->hide();
-  _contacts->findChild<QWidget*>("_attach")->show();
-  _contacts->findChild<QWidget*>("_detach")->show();
-  _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_number");
-  _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_name");
-  
+  _contacts->setCloseVisible(false);
+  _contacts->list()->hideColumn("crmacct_number");
+  _contacts->list()->hideColumn("crmacct_name");
+  _contacts->setParameterWidgetVisible(false);
+  _contacts->setQueryOnStartEnabled(false);
+
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _opportunitiesPage->layout()->addWidget(_oplist);
   _oplist->setCloseVisible(false);
   _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
   _oplist->list()->hideColumn("crmacct_number");
   _oplist->setParameterWidgetVisible(false);
-  
+
   _quotes = new quotes(this, "quotes", Qt::Widget);
   _quotesPage->layout()->addWidget(_quotes);
   _quotes->findChild<QWidget*>("_close")->hide();
@@ -69,6 +68,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _quotes->findChild<XCheckBox*>("_showProspects")->setForgetful(true);
   _quotes->findChild<XCheckBox*>("_showProspects")->setChecked(false);
   _quotes->findChild<XCheckBox*>("_showProspects")->hide();
+
   if (_metrics->boolean("ShowQuotesAfterSO"))
   {
     _quotes->findChild<XCheckBox*>("_convertedtoSo")->show();
@@ -454,8 +454,8 @@ void customer::setValid(bool valid)
   if (!valid)
   {
     _documents->setId(-1);
-    _todoList->findChild<XTreeWidget*>("_todoList")->clear();
-    _contacts->findChild<XTreeWidget*>("_contacts")->clear();
+    _todoList->list()->clear();
+    _contacts->list()->clear();
     _oplist->list()->clear();
     _quotes->findChild<XTreeWidget*>("_quote")->clear();
     _orders->findChild<XTreeWidget*>("_so")->clear();
@@ -1269,8 +1269,8 @@ void customer::populate()
     _comments->setId(_custid);
     _documents->setId(_crmacctid);
     
-    _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctid);
-    _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctid);
+    _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
+    _contacts->setCrmacctid(_crmacctid);
     _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
     
     _quotes->findChild<CustCluster*>("_cust")->setId(_custid);
@@ -1712,8 +1712,8 @@ void customer::sClear()
     _charass->clear();
     _widgetStack->setCurrentIndex(0);
     
-    _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(-1);
-    _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(-1);
+    _todoList->parameterWidget()->setDefault(tr("CRM Account"), -1, true);
+    _contacts->setCrmacctid(_crmacctid);
     _oplist->parameterWidget()->setDefault(tr("CRM Account"), -1, true);
     
     _quotes->findChild<CustCluster*>("_cust")->setId(-1);

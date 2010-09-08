@@ -27,6 +27,7 @@
 #include "vendorWorkBench.h"
 #include "mqlutil.h"
 #include "lotSerialRegistration.h"
+#include "parameterwidget.h"
 
 #define DEBUG false
 
@@ -37,25 +38,28 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _todoList = new todoList(this, "todoList", Qt::Widget);
   _todoListTab->layout()->addWidget(_todoList);
-  _todoList->findChild<QWidget*>("_close")->hide();
-  _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_number");
-  _todoList->findChild<XTreeWidget*>("_todoList")->hideColumn("crmacct_name");
+  _todoList->setCloseVisible(false);
+  _todoList->list()->hideColumn("crmacct_number");
+  _todoList->list()->hideColumn("crmacct_name");
+  _todoList->parameterWidget()->setDefault(tr("Assigned"), QVariant(), true);
+  _todoList->setParameterWidgetVisible(false);
+  _todoList->setQueryOnStartEnabled(false);
   
   _contacts = new contacts(this, "contacts", Qt::Widget);
   _allPage->layout()->addWidget(_contacts);
-  _contacts->findChild<QWidget*>("_close")->hide();
-  _contacts->findChild<QWidget*>("_activeOnly")->hide();
-  _contacts->findChild<QWidget*>("_attach")->show();
-  _contacts->findChild<QWidget*>("_detach")->show();
-  _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_number");
-  _contacts->findChild<XTreeWidget*>("_contacts")->hideColumn("crmacct_name");
+  _contacts->setCloseVisible(false);
+  _contacts->list()->hideColumn("crmacct_number");
+  _contacts->list()->hideColumn("crmacct_name");
+  _contacts->setParameterWidgetVisible(false);
+  _contacts->setQueryOnStartEnabled(false);
   
   _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
   _oplistTab->layout()->addWidget(_oplist);
-  _oplist->findChild<QAction*>("_close")->setVisible(false);
-  _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
+  _oplist->setCloseVisible(false);
   _oplist->list()->hideColumn("crmacct_number");
+  _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
   _oplist->setParameterWidgetVisible(false);
+  _oplist->setQueryOnStartEnabled(false);
     
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
@@ -172,16 +176,16 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       if (q.first())
       {
         _crmacctId = q.value("result").toInt();
-        _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
-        _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+        _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
+        _contacts->setCrmacctid(_crmacctId);
         _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
         if (_crmacctId < 0)
         {
           QMessageBox::critical(this, tr("Error creating Initial Account"),
                 storedProcErrorLookup("createCrmAcct", _crmacctId));
           _crmacctId = -1;
-          _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
-          _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+          _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
+          _contacts->setCrmacctid(_crmacctId);
           _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
           return UndefinedError;
         }
@@ -249,8 +253,8 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   if (valid)
   {
     _crmacctId = param.toInt();
-    _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
-    _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+    _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
+    _contacts->setCrmacctid(_crmacctId);
     _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
     sPopulate();
   }
@@ -1148,8 +1152,8 @@ void crmaccount::sCheckNumber()
       }
       
       _crmacctId = newq.value("crmacct_id").toInt();
-      _todoList->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
-      _contacts->findChild<CRMAcctCluster*>("_crmAccount")->setId(_crmacctId);
+      _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
+      _contacts->setCrmacctid(_crmacctId);
       _mode = cEdit;
       sPopulate();
 

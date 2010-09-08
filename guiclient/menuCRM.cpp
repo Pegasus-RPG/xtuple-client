@@ -21,7 +21,6 @@
 
 #include "contact.h"
 #include "contacts.h"
-#include "searchForContact.h"
 #include "address.h"
 #include "addresses.h"
 #include "crmaccount.h"
@@ -122,7 +121,6 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "menu",		tr("&Contact"),		(char*)contactsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
     { "crm.contact",	tr("&New..."),		SLOT(sContact()),	contactsMenu,	"MaintainContacts", NULL, NULL, true	, NULL },
     { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	"MaintainContacts ViewContacts", QPixmap(":/images/contacts.png"), toolBar, true , tr("List Contacts") },
-    { "crm.contactsearch",	tr("&Search..."),		SLOT(sSearchForContact()),	contactsMenu,	"MaintainContacts ViewContacts", NULL, NULL, true	, NULL },
     
     // CRM | Address
     { "menu",		tr("A&ddress"),		(char*)addressMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
@@ -266,16 +264,7 @@ void menuCRM::sContact()
 
 void menuCRM::sContacts()
 {
-  ParameterList params;
-  params.append("run");
-  contacts* win = new contacts();
-  win->set(params);
-  omfgThis->handleNewWindow(win);
-}
-
-void menuCRM::sSearchForContact()
-{
-  omfgThis->handleNewWindow(new searchForContact());
+  omfgThis->handleNewWindow(new contacts());
 }
 
 void menuCRM::sAddress()

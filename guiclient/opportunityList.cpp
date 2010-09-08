@@ -28,13 +28,13 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
 {
   setupUi(optionsWidget());
   setWindowTitle(tr("Opportunity List"));
-  setListLabel(tr("Opportunities"));
   setReportName("OpportunityList");
   setMetaSQLOptions("opportunities", "detail");
   setUseAltId(true);
   setParameterWidgetVisible(true);
   setNewVisible(true);
   setSearchVisible(true);
+  setQueryOnStartEnabled(true);
 
   list()->addColumn(tr("Active"),      _orderColumn,    Qt::AlignLeft,   false, "ophead_active" );
   list()->addColumn(tr("Name"),        -1,              Qt::AlignLeft,   true, "ophead_name"  );
@@ -122,6 +122,7 @@ void opportunityList::sNew()
 {
   ParameterList params;
   setParams(params);
+  params.append("mode","new");
 
   opportunity newdlg(this, "", TRUE);
   newdlg.set(params);

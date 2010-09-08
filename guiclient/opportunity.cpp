@@ -245,6 +245,7 @@ bool opportunity::save(bool partial)
 
   if (!q.exec("BEGIN"))
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }

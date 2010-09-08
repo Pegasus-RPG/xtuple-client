@@ -469,7 +469,6 @@ FORMS =   absoluteCalendarItem.ui               \
           scriptEditor.ui                       \
           scripts.ui                            \
           searchForCRMAccount.ui                \
-          searchForContact.ui                   \
           searchForEmp.ui                       \
           searchForItem.ui                      \
           selectBankAccount.ui                  \
@@ -1037,7 +1036,6 @@ HEADERS = ../common/format.h                    \
           scripts.h                             \
           scripttoolbox.h                       \
           searchForCRMAccount.h                 \
-          searchForContact.h                    \
           searchForEmp.h                        \
           searchForItem.h                       \
           selectBankAccount.h                   \
@@ -1619,7 +1617,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           scripts.cpp                           \
           scripttoolbox.cpp                     \
           searchForCRMAccount.cpp               \
-          searchForContact.cpp                  \
           searchForEmp.cpp                      \
           searchForItem.cpp                     \
           selectBankAccount.cpp                 \

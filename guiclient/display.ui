@@ -25,13 +25,6 @@
      <property name="toolButtonStyle">
       <enum>Qt::ToolButtonTextBesideIcon</enum>
      </property>
-     <addaction name="_new"/>
-     <addaction name="_close"/>
-     <addaction name="separator"/>
-     <addaction name="_more"/>
-     <addaction name="_query"/>
-     <addaction name="_print"/>
-     <addaction name="_preview"/>
     </widget>
    </item>
    <item row="1" column="0">
@@ -109,6 +102,9 @@
       <widget class="XCheckBox" name="_queryonstart">
        <property name="text">
         <string>Query on start</string>
+       </property>
+       <property name="forgetful">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

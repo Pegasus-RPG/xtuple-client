@@ -569,7 +569,6 @@
 #include "scrapWoMaterialFromWIP.h"
 #include "scriptEditor.h"
 #include "scripts.h"
-#include "searchForContact.h"
 #include "searchForCRMAccount.h"
 #include "searchForEmp.h"
 #include "searchForItem.h"
