@@ -110,11 +110,11 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _cashreceipts = new dspCashReceipts(this, "dspCashReceipts", Qt::Widget);
   _cashreceiptsPage->layout()->addWidget(_cashreceipts);
-  _cashreceipts->findChild<QWidget*>("_close")->hide();
+  _cashreceipts->setCloseVisible(false);
   _cashreceipts->findChild<QWidget*>("_customerSelector")->hide();
   _cashreceipts->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-90));
-  _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_number");
-  _cashreceipts->findChild<XTreeWidget*>("_arapply")->hideColumn("cust_name");
+  _cashreceipts->list()->hideColumn("cust_number");
+  _cashreceipts->list()->hideColumn("cust_name");
   
   _cctrans = new dspCreditCardTransactions(this, "dspCreditCardTransactions", Qt::Widget);
   _cctransPage->layout()->addWidget(_cctrans);
@@ -462,7 +462,7 @@ void customer::setValid(bool valid)
     _returns->findChild<XTreeWidget*>("_ra")->clear();
     _returns->findChild<XTreeWidget*>("_radue")->clear();
     _aritems->list()->clear();
-    _cashreceipts->findChild<XTreeWidget*>("_arapply")->clear();
+    _cashreceipts->list()->clear();
     _cctrans->findChild<XTreeWidget*>("_preauth")->clear();
   }
 }

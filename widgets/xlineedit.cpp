@@ -193,7 +193,7 @@ void XLineEdit::sHandleNullStr()
     return;
 
   QString sheet = styleSheet();
-  QString nullStyle = " QLineEdit{ color: Grey; "
+  QString nullStyle = " QLineEdit{ color: LightGrey; "
                       "            font: bold italic  }";
 
   if (!hasFocus() &&

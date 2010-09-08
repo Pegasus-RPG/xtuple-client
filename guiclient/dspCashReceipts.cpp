@@ -14,60 +14,41 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <metasql.h>
-#include "mqlutil.h"
-
 #include <datecluster.h>
 #include <openreports.h>
 #include "arOpenItem.h"
 #include "cashReceipt.h"
 #include "storedProcErrorLookup.h"
 
-dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspCashReceipts", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Cash Receipts"));
+  setListLabel(tr("Cash Receipts"));
+  setReportName("CashReceipts");
+  setMetaSQLOptions("cashReceipts", "detail");
+  setUseAltId(true);
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNewCashrcpt()));
-  connect(_post, SIGNAL(clicked()), this, SLOT(sPostCashrcpt()));
-  connect(_reverse, SIGNAL(clicked()), this, SLOT(sReversePosted()));
-  connect(_arapply, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
-  connect(_arapply, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_applications, SIGNAL(toggled(bool)), _arapply, SLOT(clear()));
-  connect(_applications, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons(bool)));
+  connect(_applications, SIGNAL(toggled(bool)), list(), SLOT(clear()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartDate(QDate().currentDate().addDays(-90));
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   
-  _arapply->addColumn(tr("Number"),      _orderColumn,    Qt::AlignCenter, true,  "cashrcpt_number" );
-  _arapply->addColumn(tr("Source"),      _itemColumn,     Qt::AlignLeft,   true,  "source" );
-  _arapply->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignCenter, true,  "cust_number" );
-  _arapply->addColumn(tr("Customer"),    -1,              Qt::AlignLeft,   true,  "cust_name"   );
-  _arapply->addColumn(tr("Posted"),      _ynColumn,       Qt::AlignCenter, true,  "posted" );
-  _arapply->addColumn(tr("Voided"),      _ynColumn,       Qt::AlignCenter, true,  "voided" );
-  _arapply->addColumn(tr("Date"),        _dateColumn,     Qt::AlignCenter, true,  "postdate" );
-  _arapply->addColumn(tr("Apply-To"),    _itemColumn,     Qt::AlignCenter, true,  "target" );
-  _arapply->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight,  true,  "applied"  );
-  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
-  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_applied"  );
+  list()->addColumn(tr("Number"),      _orderColumn,    Qt::AlignLeft, true,  "cashrcpt_number" );
+  list()->addColumn(tr("Source"),      _itemColumn,     Qt::AlignLeft,   true,  "source" );
+  list()->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignLeft, true,  "cust_number" );
+  list()->addColumn(tr("Customer"),    -1,              Qt::AlignLeft,   true,  "cust_name"   );
+  list()->addColumn(tr("Posted"),      _ynColumn,       Qt::AlignCenter, true,  "posted" );
+  list()->addColumn(tr("Voided"),      _ynColumn,       Qt::AlignCenter, true,  "voided" );
+  list()->addColumn(tr("Date"),        _dateColumn,     Qt::AlignCenter, true,  "postdate" );
+  list()->addColumn(tr("Apply-To"),    -1,     Qt::AlignLeft, true,  "target" );
+  list()->addColumn(tr("Amount"),      _moneyColumn, Qt::AlignRight,  true,  "applied"  );
+  list()->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
+  list()->addColumn(tr("Base Amount"), _moneyColumn, Qt::AlignRight,  true,  "base_applied"  );
   
-  _new->setEnabled(_privileges->check("MaintainCashReceipts"));
-  
-  sHandleButtons(false);
-}
-
-dspCashReceipts::~dspCashReceipts()
-{
-  // no need to delete child widgets, Qt does it all for us
-}
-
-void dspCashReceipts::languageChange()
-{
-  retranslateUi(this);
+  newAction()->setEnabled(_privileges->check("MaintainCashReceipts"));
 }
 
 void dspCashReceipts::sPrint()
@@ -82,25 +63,6 @@ void dspCashReceipts::sPrint()
     report.print();
   else
     report.reportError(this);
-}
-
-void dspCashReceipts::sFillList()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  _arapply->clear();
-
-  MetaSQLQuery mql = mqlLoad("cashReceipts", "detail");
-  q = mql.toQuery(params);
-  if (q.first())
-    _arapply->populate(q, true);
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 }
 
 bool dspCashReceipts::setParams(ParameterList &pParams)
@@ -143,22 +105,22 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
     
   if (_applications->isChecked())
   {
-    _arapply->hideColumn("cashrcpt_number");
+    list()->hideColumn("cashrcpt_number");
     pParams.append("LegacyDisplayMode");
   }
   else
-    _arapply->showColumn("cashrcpt_number");
+    list()->showColumn("cashrcpt_number");
   return true;
 }
 
-void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
+void dspCashReceipts::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem = 0;
   
-  if (_arapply->id() > -1)
+  if (list()->id() > -1)
   {
     // Cash Receipt              
-    if (!_arapply->currentItem()->rawValue("posted").toBool() && !_arapply->currentItem()->rawValue("voided").toBool())
+    if (!list()->currentItem()->rawValue("posted").toBool() && !list()->currentItem()->rawValue("voided").toBool())
     {
       menuItem = pMenu->addAction(tr("Edit Cash Receipt..."), this, SLOT(sEditCashrcpt()));
       menuItem->setEnabled(_privileges->check("MaintainCashReceipts"));
@@ -167,14 +129,14 @@ void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
     menuItem = pMenu->addAction(tr("View Cash Receipt..."), this, SLOT(sViewCashrcpt()));
     menuItem->setEnabled(_privileges->check("ViewCashReceipts") || _privileges->check("MaintainCashReceipts"));
 
-    if (!_arapply->currentItem()->rawValue("voided").toBool())
+    if (!list()->currentItem()->rawValue("voided").toBool())
     {      
-      if (!_arapply->currentItem()->rawValue("posted").toBool())
+      if (!list()->currentItem()->rawValue("posted").toBool())
       {   
         menuItem = pMenu->addAction(tr("Post Cash Receipt"), this, SLOT(sPostCashrcpt()));
         menuItem->setEnabled(_privileges->check("PostCashReceipts"));
       }
-      else if (!_arapply->altId())
+      else if (!list()->altId())
       {
         menuItem = pMenu->addAction(tr("Reverse Posted Cash Receipt"), this, SLOT(sReversePosted()));
         menuItem->setEnabled(_privileges->check("ReversePostedCashReceipt"));
@@ -182,7 +144,7 @@ void dspCashReceipts::sPopulateMenu( QMenu * pMenu )
     }
 
     // Open Item
-    if (_arapply->currentItem()->id("target") > -1 )
+    if (list()->currentItem()->id("target") > -1 )
     {
       pMenu->addSeparator();
       menuItem = pMenu->addAction(tr("Edit Receivable Item..."), this, SLOT(sEditAropen()));
@@ -197,7 +159,7 @@ void dspCashReceipts::sEditAropen()
 {   
   ParameterList params;
   params.append("mode", "edit");
-  params.append("aropen_id", _arapply->currentItem()->id("target"));
+  params.append("aropen_id", list()->currentItem()->id("target"));
   arOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);
 
@@ -209,7 +171,7 @@ void dspCashReceipts::sViewAropen()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("aropen_id", _arapply->currentItem()->id("target"));
+  params.append("aropen_id", list()->currentItem()->id("target"));
   arOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
@@ -231,7 +193,7 @@ void dspCashReceipts::sEditCashrcpt()
 {    
   ParameterList params;
   params.append("mode", "edit");
-  params.append("cashrcpt_id", _arapply->currentItem()->id("source"));
+  params.append("cashrcpt_id", list()->currentItem()->id("source"));
 
   cashReceipt *newdlg = new cashReceipt(this);
   newdlg->set(params);
@@ -242,7 +204,7 @@ void dspCashReceipts::sViewCashrcpt()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("cashrcpt_id", _arapply->currentItem()->id("source"));
+  params.append("cashrcpt_id", list()->currentItem()->id("source"));
 
   cashReceipt *newdlg = new cashReceipt(this);
   newdlg->set(params);
@@ -265,7 +227,7 @@ void dspCashReceipts::sPostCashrcpt()
   }
 
   q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
-  q.bindValue(":cashrcpt_id", _arapply->currentItem()->id("source"));
+  q.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
   q.bindValue(":journalNumber", journalNumber);
   q.exec();
   if (q.first())
@@ -287,7 +249,7 @@ void dspCashReceipts::sPostCashrcpt()
   }
     
   tx.exec("COMMIT;");
-  omfgThis->sCashReceiptsUpdated(_arapply->currentItem()->id("source"), TRUE);
+  omfgThis->sCashReceiptsUpdated(list()->currentItem()->id("source"), TRUE);
   sFillList();
 }
 
@@ -301,7 +263,7 @@ void dspCashReceipts::sReversePosted()
                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
   {                     
     q.prepare("SELECT reverseCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R')) AS result;");
-    q.bindValue(":cashrcpt_id", _arapply->currentItem()->id("source"));
+    q.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
     q.exec();
     if (q.first())
     {
@@ -319,76 +281,5 @@ void dspCashReceipts::sReversePosted()
       return;
     }
     sFillList();
-  }
-}
-
-void dspCashReceipts::sHandleButtons(bool valid)
-{      
-  QAction *menuItem = 0;
-  QMenu   *editMenu = new QMenu;
-  QMenu   *viewMenu = new QMenu;   
-
-  _reverse->setVisible(!_applications->isChecked());
-
-  if (valid && _arapply->id() > -1)
-  {
-    // Handle Edit Button
-    // Cash Receipt
-    if (_arapply->currentItem()->rawValue("voided").toBool())
-    {
-      _post->hide();
-      _reverse->hide();
-    }
-    else if (!_arapply->currentItem()->rawValue("posted").toBool())
-    {
-      menuItem = editMenu->addAction(tr("Cash Receipt..."), this, SLOT(sEditCashrcpt()));
-      menuItem->setEnabled(_privileges->check("MaintainCashReceipts"));
-        
-      _post->show();
-      _reverse->setVisible(!_applications->isChecked());
-      _reverse->setEnabled(false);
-      _post->setEnabled(_privileges->check("PostCashReceipts"));
-    }
-    else
-    {
-      _post->show();
-      _reverse->setVisible(!_applications->isChecked());
-      _post->setEnabled(false);
-      _reverse->setEnabled(_privileges->check("ReversePostedCashReceipt")
-                           && _cashreceipts->isChecked()
-                           && !_arapply->altId());
-    } 
-        
-    if (_arapply->currentItem()->id("target") > -1)
-    {
-      menuItem = editMenu->addAction(tr("Receivable Item..."), this, SLOT(sEditAropen()));
-      menuItem->setEnabled(_privileges->check("EditAROpenItem"));
-    }
-    
-    // Handle View Button
-    // Cash Receipt             
-    menuItem = viewMenu->addAction(tr("Cash Receipt..."), this, SLOT(sViewCashrcpt()));
-    menuItem->setEnabled(_privileges->check("ViewCashReceipts") ||
-                         _privileges->check("MaintainCashReceipts"));
-   
-    // Open Item
-    if (_arapply->currentItem()->id("target") > -1)
-    {
-      menuItem = viewMenu->addAction(tr("Receivable Item..."), this, SLOT(sViewAropen()));
-      menuItem->setEnabled(_privileges->check("ViewAROpenItems") ||
-                           _privileges->check("EditAROpenItem"));
-    }   
-    
-    _edit->setMenu(editMenu);
-    _edit->setEnabled(!editMenu->isEmpty());
-    _view->setMenu(viewMenu);
-    _view->setEnabled(!viewMenu->isEmpty());
-  }
-  else
-  {
-    _edit->setEnabled(false);
-    _view->setEnabled(false);
-    _post->setEnabled(false);
-    _reverse->setEnabled(false);
   }
 }

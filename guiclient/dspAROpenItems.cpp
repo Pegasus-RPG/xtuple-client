@@ -74,7 +74,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WFlags fl)
   }
 
   list()->setRootIsDecorated(true);
-  list()->addColumn(tr("Doc. Type"),     _itemColumn, Qt::AlignLeft,   true,  "doctype");
+  list()->addColumn(tr("Doc. Type"),              -1, Qt::AlignLeft,   true,  "doctype");
   list()->addColumn(tr("Posted"),          _ynColumn, Qt::AlignCenter, true,  "posted");
   list()->addColumn(tr("Recurring"),       _ynColumn, Qt::AlignCenter, false, "recurring");
   list()->addColumn(tr("Open"),            _ynColumn, Qt::AlignCenter, false, "open");
