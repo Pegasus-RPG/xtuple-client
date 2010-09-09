@@ -196,7 +196,7 @@ void project::populate()
   sFillTaskList();
   _comments->setId(_prjid);
   _documents->setId(_prjid);
-  emit populated();
+  emit populated(_prjid);
 }
 
 void project::sClose()
@@ -297,7 +297,7 @@ bool project::sSave(bool partial)
   }
 
   q.exec("COMMIT;");
-  emit saved();
+  emit saved(_prjid);
 
   if (!partial)
     done(_prjid);
@@ -372,6 +372,7 @@ void project::sDeleteTask()
             " WHERE (prjtask_id=:prjtask_id); ");
   q.bindValue(":prjtask_id", _prjtask->id());
   q.exec();
+  emit deletedTask();
   sFillTaskList();
 }
 

@@ -47,8 +47,9 @@ private:
     bool _saved;
 
 signals:
-    void saved();
-    void populated();
+    void saved(int);
+    void populated(int);
+    void deletedTask();
 
 };
 
