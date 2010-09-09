@@ -32,7 +32,7 @@ dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WFlags fl)
   setReportName("TrialBalances");
   setMetaSQLOptions("trialBalances", "detail");
   setUseAltId(true);
-  parameterWidget()->show();
+  setParameterWidgetVisible(true);
 
   list()->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter, true,  "period_start" );
   list()->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter, true,  "period_end" );
