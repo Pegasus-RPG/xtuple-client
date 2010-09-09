@@ -61,10 +61,13 @@ public:
     Q_INVOKABLE QToolBar * toolBar();
     Q_INVOKABLE QAction * newAction();
     Q_INVOKABLE QAction * closeAction();
-    Q_INVOKABLE QAction * searchAction();
-    Q_INVOKABLE QAction * queryAction();
+    Q_INVOKABLE QAction * filterSeparator();
+    Q_INVOKABLE QAction * printSeparator();
     Q_INVOKABLE QAction * printAction();
     Q_INVOKABLE QAction * previewAction();
+    Q_INVOKABLE QAction * querySeparator();
+    Q_INVOKABLE QAction * searchAction();
+    Q_INVOKABLE QAction * queryAction();
 
     Q_INVOKABLE QString   searchText();
 

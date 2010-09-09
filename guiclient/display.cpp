@@ -73,6 +73,19 @@ public:
     _sep2 = _toolBar->addSeparator();
     _sep2->setVisible(false);
 
+    // Print buttons
+    _printBtn = new QToolButton(_toolBar);
+    _printBtn->setFocusPolicy(Qt::NoFocus);
+    _printAct = _toolBar->addWidget(_printBtn);
+    _printAct->setVisible(false); // hide the print button until a reportName is set
+
+    _previewBtn = new QToolButton(_toolBar);
+    _printBtn->setFocusPolicy(Qt::NoFocus);
+    _previewAct = _toolBar->addWidget(_previewBtn);
+    _previewAct->setVisible(false); // hide the preview button until a reportName is set
+    _sep3 = _toolBar->addSeparator();
+    _sep3->setVisible(false);
+
     // Optional search widget in toolbar
     _search = new XLineEdit(_toolBar, "_search");
     _search->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -84,15 +97,22 @@ public:
     _queryBtn->setFocusPolicy(Qt::NoFocus);
     _queryAct = _toolBar->addWidget(_queryBtn);
 
-    _printBtn = new QToolButton(_toolBar);
-    _printBtn->setFocusPolicy(Qt::NoFocus);
-    _printAct = _toolBar->addWidget(_printBtn);
-    _printAct->setVisible(false); // hide the print button until a reportName is set
+    /*
+     Experimental
+    QMenu *queryMenu = new QMenu(_queryBtn);
+    QAction *queryOnStartAct = new QAction(queryMenu);
+    queryOnStartAct->setText("Query on start");
+    queryOnStartAct->setCheckable(true);
+    queryMenu->addAction(queryOnStartAct);
 
-    _previewBtn = new QToolButton(_toolBar);
-    _printBtn->setFocusPolicy(Qt::NoFocus);
-    _previewAct = _toolBar->addWidget(_previewBtn);
-    _previewAct->setVisible(false); // hide the preview button until a reportName is set
+    QAction *autoUpdateAct = new QAction(queryMenu);
+    autoUpdateAct->setText("Automatically Update");
+    autoUpdateAct->setCheckable(true);
+    queryMenu->addAction(autoUpdateAct);
+
+    _queryBtn->setPopupMode(QToolButton::MenuButtonPopup);
+    _queryBtn->setMenu(queryMenu);
+    */
   }
 
   void print(bool);
@@ -112,10 +132,11 @@ public:
   QAction* _filterAct;
   QAction* _moreAct;
   QAction* _sep2;
-  QAction* _searchAct;
-  QAction* _queryAct;
   QAction* _printAct;
   QAction* _previewAct;
+  QAction* _sep3;
+  QAction* _searchAct;
+  QAction* _queryAct;
 
   QToolButton * _newBtn;
   QToolButton * _closeBtn;
@@ -210,7 +231,7 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   _data->_queryBtn->setText(tr("Query"));
   _data->_printBtn->setText(tr("Print"));
   _data->_previewBtn->setText(tr("Preview"));
-  _data->_search->setNullStr(tr("Search"));
+  _data->_search->setNullStr(tr("search"));
 
   // Set shortcuts
   _data->_newAct->setShortcut(QKeySequence::New);
@@ -293,9 +314,14 @@ QAction * display::closeAction()
   return _data->_closeAct;
 }
 
-QAction * display::queryAction()
+QAction * display::filterSeparator()
 {
-  return _data->_queryAct;
+  return _data->_sep1;
+}
+
+QAction * display::printSeparator()
+{
+  return _data->_sep2;
 }
 
 QAction * display::printAction()
@@ -308,9 +334,19 @@ QAction * display::previewAction()
   return _data->_previewAct;
 }
 
+QAction * display::querySeparator()
+{
+  return _data->_sep3;
+}
+
 QAction * display::searchAction()
 {
   return _data->_searchAct;
+}
+
+QAction * display::queryAction()
+{
+  return _data->_queryAct;
 }
 
 QString display::searchText()
@@ -334,6 +370,7 @@ void display::setReportName(const QString & reportName)
   _data->reportName = reportName;
   _data->_printAct->setVisible(!reportName.isEmpty());
   _data->_previewAct->setVisible(!reportName.isEmpty());
+  _data->_sep3->setVisible(!reportName.isEmpty());
 }
 
 QString display::reportName() const
