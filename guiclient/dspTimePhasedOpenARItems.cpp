@@ -17,17 +17,12 @@
 #include <QVariant>
 
 #include <metasql.h>
-
-#include <metasql.h>
 #include "mqlutil.h"
-
-#include <openreports.h>
 
 #include <datecluster.h>
 
 #include "printStatementByCustomer.h"
 #include "dspAROpenItems.h"
-#include "submitReport.h"
 
 dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspTimePhasedOpenARItems", fl)

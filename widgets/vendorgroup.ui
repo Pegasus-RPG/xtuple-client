@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>410</width>
-    <height>57</height>
+    <width>356</width>
+    <height>52</height>
    </rect>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
@@ -66,6 +66,9 @@ to be bound by its terms.</comment>
         <widget class="VendorCluster" name="_vend">
          <property name="enabled">
           <bool>true</bool>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
