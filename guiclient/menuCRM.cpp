@@ -80,8 +80,7 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     // CRM | Incident
     { "menu",			tr("&Incident"),	(char*)incidentMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
     { "crm.incident",		tr("&New..."),		SLOT(sIncident()),		incidentMenu,	"AddIncidents MaintainIncidents", NULL, NULL, true , NULL },
-    { "separator",		NULL,				NULL,			incidentMenu,	"true", NULL, NULL, true	, NULL },
-    { "crm.incidentWorkbench",	tr("&Workbench..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	"ViewIncidents MaintainIncidents", QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident Workbench") },
+    { "crm.incidentList",	tr("&List..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	"ViewIncidents MaintainIncidents", QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident List") },
 
     // CRM / To Do
     { "menu",			tr("&To-Do"),	(char*)todoMenu,	crmMenu,	"true", NULL, NULL, true	, NULL },

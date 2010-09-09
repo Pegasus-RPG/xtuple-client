@@ -33,6 +33,7 @@
 #include "projectcluster.h"
 #include "custcluster.h"
 #include "warehouseCluster.h"
+#include "vendorcluster.h"
 
 #define DEBUG false
 
@@ -474,6 +475,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           if (custCluster != 0)
             custCluster->setId(tempFilterList[1].toInt());
           break;
+        case Vendor:
+          VendorCluster *vendCluster;
+          vendCluster = qobject_cast<VendorCluster*>(found);
+          if (vendCluster != 0)
+            vendCluster->setId(tempFilterList[1].toInt());
+          break;
         case Contact:
           ContactCluster *contactCluster;
           contactCluster = qobject_cast<ContactCluster*>(found);
@@ -617,6 +624,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         custCluster = qobject_cast<CustCluster*>(found);
         if (custCluster != 0)
           custCluster->setId(pp->defaultValue.toInt());
+        break;
+      case Vendor:
+        VendorCluster *vendCluster;
+        vendCluster = qobject_cast<VendorCluster*>(found);
+        if (vendCluster != 0)
+          vendCluster->setId(pp->defaultValue.toInt());
         break;
       case Contact:
         ContactCluster *contactCluster;
@@ -785,6 +798,17 @@ void ParameterWidget::changeFilterObject(int index)
 
       connect(button, SIGNAL(clicked()), custCluster, SLOT( deleteLater() ) );
       connect(custCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case Vendor:
+    {
+      VendorCluster *vendCluster = new VendorCluster(_filterGroup);
+      newWidget = vendCluster;
+      vendCluster->setOrientation(Qt::Horizontal);
+      vendCluster->setLabel("");
+
+      connect(button, SIGNAL(clicked()), vendCluster, SLOT( deleteLater() ) );
+      connect(vendCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
   case Contact:
@@ -1522,6 +1546,7 @@ void setupParameterWidget(QScriptEngine *engine)
 
   widget.setProperty("Crmacct", QScriptValue(engine, ParameterWidget::Crmacct), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Customer", QScriptValue(engine, ParameterWidget::Customer), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Vendor", QScriptValue(engine, ParameterWidget::Vendor), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("User", QScriptValue(engine, ParameterWidget::User), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Text", QScriptValue(engine, ParameterWidget::Text), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Date", QScriptValue(engine, ParameterWidget::Date), QScriptValue::ReadOnly | QScriptValue::Undeletable);

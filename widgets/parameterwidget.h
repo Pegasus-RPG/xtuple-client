@@ -36,7 +36,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     {
       Crmacct, User, Text, Date, XComBox, Contact,
       Multiselect, GLAccount, Exists, CheckBox, Project,
-      Customer, Site
+      Customer, Site, Vendor
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
