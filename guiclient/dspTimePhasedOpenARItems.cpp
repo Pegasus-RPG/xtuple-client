@@ -29,28 +29,20 @@
 #include "dspAROpenItems.h"
 #include "submitReport.h"
 
-dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspTimePhasedOpenARItems", fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Receivables Aging"));
+  setReportName("ARAging");
 
-//  (void)statusBar();
-
-  connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_custom, SIGNAL(toggled(bool)), this, SLOT(sToggleCustom()));
-  connect(_print,  SIGNAL(clicked()),     this, SLOT(sPrint()));
-  connect(_query,  SIGNAL(clicked()),     this, SLOT(sFillList()));
-  connect(_submit, SIGNAL(clicked()),     this, SLOT(sSubmit()));
-
   
-  _aropen->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft, true, "araging_cust_number" );
-  _aropen->addColumn(tr("Customer"), 180,          Qt::AlignLeft, true, "araging_cust_name" );
+  list()->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft, true, "araging_cust_number" );
+  list()->addColumn(tr("Customer"), -1,          Qt::AlignLeft, true, "araging_cust_name" );
   
   _asOf->setDate(omfgThis->dbDate(), true);
   sToggleCustom();
-
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
 
   if(_preferences->value("ARAgingDefaultDate") == "doc")
     _useDocDate->setChecked(true);
@@ -65,11 +57,6 @@ dspTimePhasedOpenARItems::~dspTimePhasedOpenARItems()
   if(_useDocDate->isChecked())
     str = "doc";
   _preferences->set("ARAgingDefaultDate", str);
-}
-
-void dspTimePhasedOpenARItems::languageChange()
-{
-  retranslateUi(this);
 }
 
 bool dspTimePhasedOpenARItems::setParams(ParameterList &params)
@@ -109,50 +96,10 @@ bool dspTimePhasedOpenARItems::setParams(ParameterList &params)
   return true;
 }
 
-void dspTimePhasedOpenARItems::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  QString reportName;
-  if(_custom->isChecked())
-    reportName = "TimePhasedOpenARItems";
-  else
-    reportName = "ARAging";
-  orReport report(reportName, params);
-  if (report.isValid())
-    report.print();
-  else
-  {
-    report.reportError(this);
-    return;
-  }
-}
-
-void dspTimePhasedOpenARItems::sSubmit()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  submitReport newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.check() == cNoReportDefinition)
-    QMessageBox::critical( this, tr("Report Definition Not Found"),
-                           tr("<p>The report defintions for this report, "
-                              "\"TimePhasedOpenARItems\" cannot be found. "
-                              "Please contact your Systems Administrator and "
-                              "report this issue." ) );
-  else
-    newdlg.exec();
-}
-
 void dspTimePhasedOpenARItems::sViewOpenItems()
 {
   ParameterList params;
-  params.append("cust_id", _aropen->id());
+  params.append("cust_id", list()->id());
   if (_custom->isChecked())
   {
     params.append("startDate", _periods->getSelected(_column - 1)->startDate());
@@ -194,7 +141,7 @@ void dspTimePhasedOpenARItems::sViewOpenItems()
 void dspTimePhasedOpenARItems::sPrintStatement()
 {
   ParameterList params;
-  params.append("cust_id", _aropen->id());
+  params.append("cust_id", list()->id());
   params.append("print");
 
   printStatementByCustomer newdlg(this, "", TRUE);
@@ -206,7 +153,7 @@ void dspTimePhasedOpenARItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, in
   QAction *menuItem;
   _column = pColumn;
   
-  if ((_column > 1) && (_aropen->id() > 0))
+  if ((_column > 1) && (list()->id() > 0))
   {
     menuItem = pMenu->addAction(tr("View Open Items..."), this, SLOT(sViewOpenItems()));
 
@@ -235,7 +182,7 @@ void dspTimePhasedOpenARItems::sFillCustom()
   }
 
   _columnDates.clear();
-  _aropen->setColumnCount(2);
+  list()->setColumnCount(2);
 
   QString sql("SELECT cust_id, cust_number, cust_name");
   QStringList linetotal;
@@ -253,12 +200,12 @@ void dspTimePhasedOpenARItems::sFillCustom()
            .arg(bucketname)
            .arg(bucketname);
 
-    _aropen->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight, true, bucketname);
+    list()->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
     linetotal << QString("openARItemsValue(cust_id, %2)").arg(cursor->id());
   }
 
-  _aropen->addColumn(tr("Total"), _bigMoneyColumn, Qt::AlignRight, true, "linetotal");
+  list()->addColumn(tr("Total"), _bigMoneyColumn, Qt::AlignRight, true, "linetotal");
 
   sql += ", " + linetotal.join("+") + " AS linetotal,"
          " 'curr' AS linetotal_xtnumericrole,"
@@ -281,7 +228,7 @@ void dspTimePhasedOpenARItems::sFillCustom()
   if (! setParams(params))
     return;
   q = mql.toQuery(params);
-  _aropen->populate(q);
+  list()->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -297,7 +244,7 @@ void dspTimePhasedOpenARItems::sFillStd()
     return;
 
   q = mql.toQuery(params);
-  _aropen->populate(q);
+  list()->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -307,8 +254,10 @@ void dspTimePhasedOpenARItems::sFillStd()
 
 void dspTimePhasedOpenARItems::sToggleCustom()
 {
+  list()->clear();
   if (_custom->isChecked())
   {
+    setReportName("TimePhasedOpenARItems");
     _calendarLit->setHidden(FALSE);
     _calendar->setHidden(FALSE);
     _periods->setHidden(FALSE);
@@ -316,26 +265,27 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     _asOf->setEnabled(FALSE);
     _useGroup->setHidden(TRUE);
 
-    _aropen->setColumnCount(0);
-    _aropen->addColumn(tr("Cust. #"), _orderColumn, Qt::AlignLeft, true, "cust_number");
-    _aropen->addColumn(tr("Customer"),         180, Qt::AlignLeft, true, "cust_name");
+    list()->setColumnCount(0);
+    list()->addColumn(tr("Cust. #"), _orderColumn, Qt::AlignLeft, true, "cust_number");
+    list()->addColumn(tr("Customer"),         180, Qt::AlignLeft, true, "cust_name");
   }
   else
   {
+    setReportName("ARAging");
     _calendarLit->setHidden(TRUE);
     _calendar->setHidden(TRUE);
     _periods->setHidden(TRUE);
     _asOf->setEnabled(TRUE);
     _useGroup->setHidden(FALSE);
 
-    _aropen->setColumnCount(0);
-    _aropen->addColumn(tr("Cust. #"),       _orderColumn, Qt::AlignLeft,  true, "araging_cust_number");
-    _aropen->addColumn(tr("Customer"),               180, Qt::AlignLeft,  true, "araging_cust_name");
-    _aropen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "araging_total_val_sum");
-    _aropen->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "araging_cur_val_sum");
-    _aropen->addColumn(tr("0-30 Days"),  _bigMoneyColumn, Qt::AlignRight, true, "araging_thirty_val_sum");
-    _aropen->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight, true, "araging_sixty_val_sum");
-    _aropen->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight, true, "araging_ninety_val_sum");
-    _aropen->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "araging_plus_val_sum");
+    list()->setColumnCount(0);
+    list()->addColumn(tr("Cust. #"),       _orderColumn, Qt::AlignLeft,  true, "araging_cust_number");
+    list()->addColumn(tr("Customer"),               180, Qt::AlignLeft,  true, "araging_cust_name");
+    list()->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "araging_total_val_sum");
+    list()->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "araging_cur_val_sum");
+    list()->addColumn(tr("0-30 Days"),  _bigMoneyColumn, Qt::AlignRight, true, "araging_thirty_val_sum");
+    list()->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight, true, "araging_sixty_val_sum");
+    list()->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight, true, "araging_ninety_val_sum");
+    list()->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "araging_plus_val_sum");
   }
 }
