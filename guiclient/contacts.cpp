@@ -70,13 +70,13 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
 
   QToolButton * attachBtn = new QToolButton(this);
   attachBtn->setText(tr("Attach"));
-  _attachAct = toolBar()->insertWidget(printAction(), attachBtn);
+  _attachAct = toolBar()->insertWidget(filterSeparator(), attachBtn);
   _attachAct->setEnabled(false);
   _attachAct->setVisible(false);
 
   QToolButton * detachBtn = new QToolButton(this);
   detachBtn->setText(tr("Detach"));
-  _detachAct = toolBar()->insertWidget(printAction(), detachBtn);
+  _detachAct = toolBar()->insertWidget(filterSeparator(), detachBtn);
   _detachAct->setEnabled(false);
   _detachAct->setVisible(false);
 

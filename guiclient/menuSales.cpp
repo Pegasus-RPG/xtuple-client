@@ -528,11 +528,7 @@ void menuSales::sNewSalesOrder()
 
 void menuSales::sOpenSalesOrders()
 {
-  ParameterList params;
-  params.append("run");
-  openSalesOrders* win = new openSalesOrders();
-  win->set(params);
-  omfgThis->handleNewWindow(win);
+  omfgThis->handleNewWindow(new openSalesOrders());
 }
 
 void menuSales::sPackingListBatch()
@@ -557,11 +553,7 @@ void menuSales::sNewQuote()
 
 void menuSales::sQuotes()
 {
-  ParameterList params;
-  params.append("run");
-  quotes* win = new quotes();
-  win->set(params);
-  omfgThis->handleNewWindow(win);
+  omfgThis->handleNewWindow(new quotes());
 }
 
 //  Billing
