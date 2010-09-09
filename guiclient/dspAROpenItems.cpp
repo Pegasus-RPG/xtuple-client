@@ -55,9 +55,10 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WFlags fl)
   setNewVisible(true);
 
   connect(_customerSelector, SIGNAL(updated()), list(), SLOT(clear()));
-  connect(_customerSelector, SIGNAL(updated()), this, SLOT(sHandleStatementButton()));
+  connect(_customerSelector, SIGNAL(updated()), this, SLOT(sHandlePrintGroup()));
   connect(list(), SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
   connect(_closed, SIGNAL(toggled(bool)), this, SLOT(sClosedToggled(bool)));
+  connect(_printList, SIGNAL(toggled(bool)), this, SLOT(sHandleReportName()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -743,9 +744,13 @@ void dspAROpenItems::sPrint()
     return;
   params.append("includeFormatted");
 
-  orReport report("AROpenItems", params);
+  orReport report(reportName(), params);
   if (report.isValid())
+  {
     report.print();
+    if (_printStatement->isChecked())
+      emit finishedPrintingStatement(_customerSelector->custId());
+  }
   else
     report.reportError(this);
 }
@@ -810,27 +815,6 @@ void dspAROpenItems::sPrintItem()
     printArOpenItem newdlg(this, "", true);
     if (newdlg.set(params) == NoError)
       newdlg.exec();
-  }
-}
-
-void dspAROpenItems::sPrintStatement()
-{
-  q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
-  q.bindValue(":cust_id", _customerSelector->custId());
-  q.exec();
-  if (q.first())
-  {
-    ParameterList params;
-    params.append("cust_id", _customerSelector->custId());
-
-    orReport report(q.value("_reportname").toString(), params);
-    if (report.isValid())
-    {
-      if (report.print())
-        emit finishedPrintingStatement(_customerSelector->custId());
-    }
-    else
-      report.reportError(this);
   }
 }
 
@@ -1081,39 +1065,24 @@ void dspAROpenItems::sShipment()
   }
 }
 
-void dspAROpenItems::sHandleStatementButton()
+void dspAROpenItems::sHandleReportName()
 {
-  QToolButton * printBtn = (QToolButton*)toolBar()->widgetForAction(printAction());
-
-  if (_customerSelector->isValid() &&
-      _customerSelector->isSelectedCust())
+  if (_printList->isChecked())
+    setReportName("AROpenItems");
+  else
   {
-    if (printBtn->menu())
-      return;
-    else
-    {
-      printAction()->disconnect();
-      previewAction()->disconnect();
-    }
+    q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
+    q.bindValue(":cust_id", _customerSelector->custId());
+    q.exec();
+    if (q.first())
+      setReportName(q.value("_reportname").toString());
+  }
+}
 
-    printBtn->setPopupMode(QToolButton::MenuButtonPopup);
-    QMenu * printMenu = new QMenu;
-    printMenu->addAction(tr("&List..."), this, SLOT(sPrint()));
-    printMenu->addAction(tr("&Statement..."), this, SLOT(sPrintStatement()));
-    printBtn->setMenu(printMenu);
-#ifdef Q_WS_MAC
-    printBtn->setText(tr("Print ")); // Little hack, menu arrow seems to crowd button on Mac
-#endif
-  }
-  else if (printBtn->menu())
-  {
-    printBtn->setMenu(0);
-    printBtn->setPopupMode(QToolButton::DelayedPopup);
-    connect(printBtn, SIGNAL(clicked()), this, SLOT(sPrint()));
-#ifdef Q_WS_MAC
-    printBtn->setText(tr("Print"));
-#endif
-  }
+void dspAROpenItems::sHandlePrintGroup()
+{
+  _printGroup->setEnabled(_customerSelector->isValid() &&
+                          _customerSelector->isSelectedCust());
 }
 
 bool dspAROpenItems::checkInvoiceSitePrivs(int invcid)

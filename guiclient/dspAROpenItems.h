@@ -53,12 +53,12 @@ public slots:
     virtual void sViewIncident();
     virtual void sPrint();
     virtual void sPrintItem();
-    virtual void sPrintStatement();
     virtual void sPost();
     virtual void sPostInvoice();
     virtual void sPostCreditMemo();
     virtual void sShipment();
-    virtual void sHandleStatementButton();
+    virtual void sHandleReportName();
+    virtual void sHandlePrintGroup();
     virtual void sClosedToggled(bool);
 
 signals:
