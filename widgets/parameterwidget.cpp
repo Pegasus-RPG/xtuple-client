@@ -31,6 +31,8 @@
 #include "filtersave.h"
 #include "glcluster.h"
 #include "projectcluster.h"
+#include "custcluster.h"
+#include "warehouseCluster.h"
 
 #define DEBUG false
 
@@ -58,7 +60,6 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
 
   _initialized = false;
   _shared = false;
-  _hideWhenEmbedded = true;
   setSavedFilters(-1);
   _filterSignalMapper = new QSignalMapper(this);
   _saveButton->setDisabled(true);
@@ -127,15 +128,6 @@ void ParameterWidget::applyDefaultFilterSet()
   QString filter_name;
   int filter_id = -1;
   QString pname;
-
-  //hides parameterwidget when it's embedded within another widget with a parent
-  if (_hideWhenEmbedded && this->parent() && this->parent()->parent())
-  {
-    clearFilters();
-    hide();
-
-    return;
-  }
 
   if(window())
     pname = window()->objectName() + "/";
@@ -476,6 +468,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           if (crmacctCluster != 0)
             crmacctCluster->setId(tempFilterList[1].toInt());
           break;
+        case Customer:
+          CustCluster *custCluster;
+          custCluster = qobject_cast<CustCluster*>(found);
+          if (custCluster != 0)
+            custCluster->setId(tempFilterList[1].toInt());
+          break;
         case Contact:
           ContactCluster *contactCluster;
           contactCluster = qobject_cast<ContactCluster*>(found);
@@ -493,6 +491,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           projectCluster = qobject_cast<ProjectCluster*>(found);
           if (projectCluster != 0)
             projectCluster->setId(tempFilterList[1].toInt());
+          break;
+        case Site:
+          WComboBox *wBox;
+          wBox = qobject_cast<WComboBox*>(found);
+          if (wBox != 0)
+            wBox->setId(tempFilterList[1].toInt());
           break;
         case XComBox:
           XComboBox *xBox;
@@ -608,6 +612,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         if (crmacctCluster != 0)
           crmacctCluster->setId(pp->defaultValue.toInt());
         break;
+      case Customer:
+        CustCluster *custCluster;
+        custCluster = qobject_cast<CustCluster*>(found);
+        if (custCluster != 0)
+          custCluster->setId(pp->defaultValue.toInt());
+        break;
       case Contact:
         ContactCluster *contactCluster;
         contactCluster = qobject_cast<ContactCluster*>(found);
@@ -625,6 +635,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         projectCluster = qobject_cast<ProjectCluster*>(found);
         if (projectCluster != 0)
           projectCluster->setId(pp->defaultValue.toInt());
+        break;
+      case Site:
+        WComboBox *wBox;
+        wBox = qobject_cast<WComboBox*>(found);
+        if (wBox != 0)
+          wBox->setId(pp->defaultValue.toInt());
         break;
       case XComBox:
         XComboBox *xBox;
@@ -712,6 +728,7 @@ void ParameterWidget::changeFilterObject(int index)
   QString row = split.at(0);
   int type = split.at(1).toInt();
   XSqlQuery qry;
+  int siteid = -1;
 
   QWidget *widget = _filterGroup->findChild<QWidget *>("widget" + row);
   QWidget *button = _filterGroup->findChild<QToolButton *>("button" + row);
@@ -759,6 +776,17 @@ void ParameterWidget::changeFilterObject(int index)
       connect(crmacctCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
+  case Customer:
+    {
+      CustCluster *custCluster = new CustCluster(_filterGroup);
+      newWidget = custCluster;
+      custCluster->setOrientation(Qt::Horizontal);
+      custCluster->setLabel("");
+
+      connect(button, SIGNAL(clicked()), custCluster, SLOT( deleteLater() ) );
+      connect(custCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
   case Contact:
     {
       ContactCluster *contactCluster = new ContactCluster(_filterGroup);
@@ -784,10 +812,21 @@ void ParameterWidget::changeFilterObject(int index)
     {
       ProjectCluster *projectCluster = new ProjectCluster(_filterGroup);
       newWidget = projectCluster;
+      projectCluster->setOrientation(Qt::Horizontal);
       projectCluster->setLabel("");
 
       connect(button, SIGNAL(clicked()), projectCluster, SLOT( deleteLater() ) );
       connect(projectCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case Site:
+    {
+      WComboBox *wBox = new WComboBox(_filterGroup);
+      siteid = wBox->id();
+      newWidget = wBox;
+
+      connect(button, SIGNAL(clicked()), wBox, SLOT( deleteLater() ) );
+      connect(wBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
   case XComBox:
@@ -890,6 +929,11 @@ void ParameterWidget::changeFilterObject(int index)
     if (type == Exists || type == CheckBox)
     {
       storeFilterValue(1, newWidget);
+      return;
+    }
+    else if (type == Site)
+    {
+      storeFilterValue(siteid, newWidget);
       return;
     }
   }
@@ -1443,16 +1487,6 @@ bool ParameterWidget::containsUsedType(QString value)
   return false;
 }
 
-bool ParameterWidget::isHideWhenEmbedded() const
-{
-  return _hideWhenEmbedded;
-}
-
-void ParameterWidget::setHideWhenEmbedded(bool hwe)
-{
-  _hideWhenEmbedded = hwe;
-}
-
 // script exposure ///////////////////////////////////////////////////////////
 
 void ParameterWidgetfromScriptValue(const QScriptValue &obj, ParameterWidget* &item)
@@ -1487,6 +1521,7 @@ void setupParameterWidget(QScriptEngine *engine)
   QScriptValue widget = engine->newFunction(constructParameterWidget);
 
   widget.setProperty("Crmacct", QScriptValue(engine, ParameterWidget::Crmacct), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Customer", QScriptValue(engine, ParameterWidget::Customer), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("User", QScriptValue(engine, ParameterWidget::User), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Text", QScriptValue(engine, ParameterWidget::Text), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Date", QScriptValue(engine, ParameterWidget::Date), QScriptValue::ReadOnly | QScriptValue::Undeletable);
@@ -1497,6 +1532,7 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("Exists", QScriptValue(engine, ParameterWidget::Exists), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("CheckBox", QScriptValue(engine, ParameterWidget::CheckBox), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Project", QScriptValue(engine, ParameterWidget::Project), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Site", QScriptValue(engine, ParameterWidget::Site), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

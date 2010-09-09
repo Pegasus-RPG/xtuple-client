@@ -61,13 +61,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _quotes = new quotes(this, "quotes", Qt::Widget);
   _quotesPage->layout()->addWidget(_quotes);
-  _quotes->findChild<QWidget*>("_close")->hide();
-  _quotes->findChild<QWidget*>("_warehouse")->hide();
-  _quotes->findChild<QWidget*>("_quoteLit")->hide();
-  _quotes->findChild<WarehouseGroup*>("_warehouse")->setAll();
-  _quotes->findChild<XCheckBox*>("_showProspects")->setForgetful(true);
-  _quotes->findChild<XCheckBox*>("_showProspects")->setChecked(false);
-  _quotes->findChild<XCheckBox*>("_showProspects")->hide();
+  _quotes->setCloseVisible(false);
+  _quotes->setParameterWidgetVisible(false);
 
   if (_metrics->boolean("ShowQuotesAfterSO"))
   {
@@ -75,7 +70,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _quotes->findChild<XCheckBox*>("_convertedtoSo")->setForgetful(true);
     _quotes->findChild<XCheckBox*>("_convertedtoSo")->setChecked(false);
   }
-  _quotes->findChild<XTreeWidget*>("_quote")->hideColumn("quhead_billtoname");
+  _quotes->list()->hideColumn("quhead_billtoname");
   
   _orders = new openSalesOrders(this, "openSalesOrders", Qt::Widget);
   _ordersPage->layout()->addWidget(_orders);
@@ -457,7 +452,7 @@ void customer::setValid(bool valid)
     _todoList->list()->clear();
     _contacts->list()->clear();
     _oplist->list()->clear();
-    _quotes->findChild<XTreeWidget*>("_quote")->clear();
+    _quotes->list()->clear();
     _orders->findChild<XTreeWidget*>("_so")->clear();
     _returns->findChild<XTreeWidget*>("_ra")->clear();
     _returns->findChild<XTreeWidget*>("_radue")->clear();
@@ -1273,7 +1268,7 @@ void customer::populate()
     _contacts->setCrmacctid(_crmacctid);
     _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
     
-    _quotes->findChild<CustCluster*>("_cust")->setId(_custid);
+    _quotes->parameterWidget()->setDefault(tr("Customer"), _custid, true);
     _orders->findChild<CustCluster*>("_cust")->setId(_custid);
     _returns->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
@@ -1716,7 +1711,7 @@ void customer::sClear()
     _contacts->setCrmacctid(_crmacctid);
     _oplist->parameterWidget()->setDefault(tr("CRM Account"), -1, true);
     
-    _quotes->findChild<CustCluster*>("_cust")->setId(-1);
+    _quotes->parameterWidget()->setDefault(tr("Customer"), -1, true);
     _orders->findChild<CustCluster*>("_cust")->setId(-1);
     _returns->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
     _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);

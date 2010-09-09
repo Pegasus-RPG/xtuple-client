@@ -44,7 +44,6 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Due Date Before"), "dueStartDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Due Date After"), "dueEndDate", ParameterWidget::Date);
 
-  parameterWidget()->setHideWhenEmbedded(false); // Need to handle this manually for now.
   parameterWidget()->applyDefaultFilterSet();
 
   connect(_completed, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -68,7 +67,6 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Account Name"),      100,  Qt::AlignLeft,   true, "crmacct_name");
   list()->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"owner");
 
-  // TO DO: This doesn't seem to turn the New action into a menu as suggested by Qt docs.  Why?
   newAction()->disconnect();
   QToolButton * newBtn = (QToolButton*)toolBar()->widgetForAction(newAction());
   newBtn->setPopupMode(QToolButton::MenuButtonPopup);

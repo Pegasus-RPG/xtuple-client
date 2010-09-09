@@ -35,7 +35,8 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     enum ParameterWidgetTypes
     {
       Crmacct, User, Text, Date, XComBox, Contact,
-      Multiselect, GLAccount, Exists, CheckBox, Project
+      Multiselect, GLAccount, Exists, CheckBox, Project,
+      Customer, Site
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
@@ -43,9 +44,6 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     Q_INVOKABLE void applyDefaultFilterSet();
     Q_INVOKABLE int paramIndex(QString pName);
     Q_INVOKABLE ParameterList parameters();
-    Q_INVOKABLE void setHideWhenEmbedded(bool);
-    Q_INVOKABLE bool isHideWhenEmbedded() const;
-
     
  public slots:
     void addParam();
@@ -87,7 +85,6 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     QMap<int, QPair<QString, QVariant > > _filterValues;
     bool _initialized;
     bool _shared;
-    bool _hideWhenEmbedded;
 
     struct ParamProps {
       QString name;

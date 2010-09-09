@@ -48,7 +48,6 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
 
-  parameterWidget()->setHideWhenEmbedded(false); // Need to handle this manually for now.
   parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("First Name"), 80, Qt::AlignLeft, true, "cntct_first_name");

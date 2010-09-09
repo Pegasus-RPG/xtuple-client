@@ -27,7 +27,7 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "opportunityList", fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Opportunity List"));
+  setWindowTitle(tr("Opportunities"));
   setReportName("OpportunityList");
   setMetaSQLOptions("opportunities", "detail");
   setUseAltId(true);
@@ -67,7 +67,6 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->appendComboBox(tr("Stage"), "opstage_id", XComboBox::OpportunityStages);
   parameterWidget()->append(tr("Stage Pattern"), "opstage_pattern",    ParameterWidget::Text);
 
-  parameterWidget()->setHideWhenEmbedded(false); // Need to handle this manually for now.
   parameterWidget()->applyDefaultFilterSet();
 }
 
