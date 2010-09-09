@@ -58,6 +58,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
   _oplist->list()->hideColumn("crmacct_number");
   _oplist->setParameterWidgetVisible(false);
+  _oplist->setQueryOnStartEnabled(false);
 
   _quotes = new quotes(this, "quotes", Qt::Widget);
   _quotesPage->layout()->addWidget(_quotes);
