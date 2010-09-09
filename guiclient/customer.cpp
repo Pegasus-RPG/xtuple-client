@@ -1596,7 +1596,7 @@ void customer::sHandleButtons()
     _settingsStack->setCurrentIndex(1);
   else if (_taxButton->isChecked())
     _settingsStack->setCurrentIndex(2);
-  else
+  else if (_creditcardsButton->isVisible())
     _settingsStack->setCurrentIndex(3);
     
   if (_contactsButton->isChecked())
@@ -1619,7 +1619,7 @@ void customer::sHandleButtons()
     _receivablesStack->setCurrentIndex(0);
   else if (_cashreceiptsButton->isChecked())
     _receivablesStack->setCurrentIndex(1);
-  else
+  else if (_cctransButton->isVisible())
     _receivablesStack->setCurrentIndex(2);
     
   sFillList();
