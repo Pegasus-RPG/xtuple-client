@@ -23,7 +23,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "customers", fl)
 {
   setUseAltId(true);
-  setWindowTitle(tr("Customer List"));
+  setWindowTitle(tr("Customers"));
   setMetaSQLOptions("customers", "detail");
   setParameterWidgetVisible(true);
   setNewVisible(true);

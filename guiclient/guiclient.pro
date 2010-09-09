@@ -466,7 +466,6 @@ FORMS =   absoluteCalendarItem.ui               \
           scriptEditor.ui                       \
           scripts.ui                            \
           searchForEmp.ui                       \
-          searchForItem.ui                      \
           selectBankAccount.ui                  \
           selectBillingQty.ui                   \
           selectOrderForBilling.ui              \
@@ -1030,7 +1029,6 @@ HEADERS = ../common/format.h                    \
           scripts.h                             \
           scripttoolbox.h                       \
           searchForEmp.h                        \
-          searchForItem.h                       \
           selectBankAccount.h                   \
           selectBillingQty.h                    \
           selectOrderForBilling.h               \
@@ -1610,7 +1608,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           scripts.cpp                           \
           scripttoolbox.cpp                     \
           searchForEmp.cpp                      \
-          searchForItem.cpp                     \
           selectBankAccount.cpp                 \
           selectBillingQty.cpp                  \
           selectOrderForBilling.cpp             \

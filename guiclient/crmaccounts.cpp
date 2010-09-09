@@ -23,7 +23,7 @@
 crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "crmaccounts", fl)
 {
-  setWindowTitle(tr("Accounts List"));
+  setWindowTitle(tr("Accounts"));
   setReportName("CRMAccountMasterList");
   setMetaSQLOptions("crmaccounts", "detail");
   setParameterWidgetVisible(true);

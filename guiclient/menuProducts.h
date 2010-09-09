@@ -41,7 +41,6 @@ class menuProducts : public QObject
     void sNewItem();
     void sItems();
     void sLotSerial();
-    void sSearchForItems();
     void sCopyItem();
     void sItemGroups();
     void sItemImages();

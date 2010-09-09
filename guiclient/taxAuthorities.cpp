@@ -24,7 +24,7 @@
 taxAuthorities::taxAuthorities(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "taxAuthorities", fl)
 {
-  setWindowTitle(tr("Tax Authority List"));
+  setWindowTitle(tr("Tax Authorities"));
   setReportName("TaxAuthoritiesMasterList");
   setMetaSQLOptions("taxAuthorities", "detail");
   setParameterWidgetVisible(true);

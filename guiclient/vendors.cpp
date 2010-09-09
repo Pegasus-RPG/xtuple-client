@@ -20,9 +20,9 @@
 #include "parameterwidget.h"
 
 vendors::vendors(QWidget* parent, const char*, Qt::WFlags fl)
-  : display(parent, "customers", fl)
+  : display(parent, "vendors", fl)
 {
-  setWindowTitle(tr("Vendor List"));
+  setWindowTitle(tr("Vendors"));
   setReportName("VendorMasterList");
   setMetaSQLOptions("vendors", "detail");
   setParameterWidgetVisible(true);

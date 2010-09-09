@@ -23,7 +23,7 @@
 prospects::prospects(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "prospects", fl)
 {
-  setWindowTitle(tr("Prospect List"));
+  setWindowTitle(tr("Prospects"));
   setMetaSQLOptions("prospects", "detail");
   setParameterWidgetVisible(true);
   setNewVisible(true);

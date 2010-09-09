@@ -22,7 +22,6 @@
 
 #include "item.h"
 #include "items.h"
-#include "searchForItem.h"
 #include "copyItem.h"
 #include "itemGroups.h"
 #include "itemImages.h"
@@ -162,7 +161,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "menu",	tr("&Item"), (char*)itemsMenu,	mainMenu, "true", NULL, NULL, true , NULL },
   { "pd.enterNewItem", tr("&New..."), SLOT(sNewItem()), itemsMenu, "MaintainItemMasters", NULL, NULL, true , NULL },
   { "pd.listItems", tr("&List..."), SLOT(sItems()), itemsMenu, "MaintainItemMasters ViewItemMasters", QPixmap(":/images/items.png"), toolBar, true , tr("List Items") },
-  { "pd.searchForItems", tr("&Search..."),SLOT(sSearchForItems()), itemsMenu, "MaintainItemMasters ViewItemMasters", NULL, NULL, true , NULL },
   { "pd.copyItem", tr("&Copy..."), SLOT(sCopyItem()), itemsMenu, "MaintainItemMasters" , NULL, NULL, true, NULL },
   { "separator", NULL, NULL, itemsMenu,	"true", NULL, NULL, true , NULL },
   { "pd.itemAvailabilityWorkbench", tr("&Workbench..."), SLOT(sDspItemAvailabilityWorkbench()), itemsMenu, "ViewItemAvailabilityWorkbench", NULL, NULL, true , NULL },
@@ -313,11 +311,6 @@ void menuProducts::sNewItem()
 void menuProducts::sItems()
 {
   omfgThis->handleNewWindow(new items());
-}
-
-void menuProducts::sSearchForItems()
-{
-  omfgThis->handleNewWindow(new searchForItem());
 }
 
 void menuProducts::sCopyItem()
