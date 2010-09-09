@@ -97,22 +97,18 @@ public:
     _queryBtn->setFocusPolicy(Qt::NoFocus);
     _queryAct = _toolBar->addWidget(_queryBtn);
 
-    /*
-     Experimental
-    QMenu *queryMenu = new QMenu(_queryBtn);
-    QAction *queryOnStartAct = new QAction(queryMenu);
-    queryOnStartAct->setText("Query on start");
-    queryOnStartAct->setCheckable(true);
-    queryMenu->addAction(queryOnStartAct);
 
-    QAction *autoUpdateAct = new QAction(queryMenu);
-    autoUpdateAct->setText("Automatically Update");
-    autoUpdateAct->setCheckable(true);
-    queryMenu->addAction(autoUpdateAct);
+    // Menu actions for query options
+    _queryMenu = new QMenu(_queryBtn);
+    _queryOnStartAct = new QAction(_queryMenu);
+    _queryOnStartAct->setCheckable(true);
+    _queryOnStartAct->setVisible(false);
+    _queryMenu->addAction(_queryOnStartAct);
 
-    _queryBtn->setPopupMode(QToolButton::MenuButtonPopup);
-    _queryBtn->setMenu(queryMenu);
-    */
+    _autoUpdateAct = new QAction(_queryMenu);
+    _autoUpdateAct->setCheckable(true);
+    _autoUpdateAct->setVisible(false);
+    _queryMenu->addAction(_autoUpdateAct);
   }
 
   void print(bool);
@@ -137,6 +133,10 @@ public:
   QAction* _sep3;
   QAction* _searchAct;
   QAction* _queryAct;
+  QAction* _queryOnStartAct;
+  QAction* _autoUpdateAct;
+
+  QMenu* _queryMenu;
 
   QToolButton * _newBtn;
   QToolButton * _closeBtn;
@@ -228,10 +228,12 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   _data->_newBtn->setText(tr("New"));
   _data->_closeBtn->setText(tr("Close"));
   _data->_moreBtn->setText(tr("More"));
-  _data->_queryBtn->setText(tr("Query"));
   _data->_printBtn->setText(tr("Print"));
   _data->_previewBtn->setText(tr("Preview"));
   _data->_search->setNullStr(tr("search"));
+  _data->_queryBtn->setText(tr("Query"));
+  _data->_queryOnStartAct->setText(tr("Query on start"));
+  _data->_autoUpdateAct->setText(tr("Automatically Update"));
 
   // Set shortcuts
   _data->_newAct->setShortcut(QKeySequence::New);
@@ -250,9 +252,14 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   connect(_data->_newBtn, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_data->_closeBtn, SIGNAL(clicked()), this, SLOT(close()));
   connect(_data->_moreBtn, SIGNAL(clicked(bool)), filterButton, SLOT(setChecked(bool)));
-  connect(_data->_queryBtn, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_data->_printBtn, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_data->_previewBtn, SIGNAL(clicked()), this, SLOT(sPreview()));
+  connect(_data->_queryBtn, SIGNAL(clicked()), this, SLOT(sFillList()));
+  // Connect these two simply so checkbox takes care of pref. memory.  Could separate out later.
+  connect(_data->_autoupdate, SIGNAL(toggled(bool)), _data->_autoUpdateAct, SLOT(setChecked(bool)));
+  connect(_data->_autoUpdateAct, SIGNAL(triggered(bool)), _data->_autoupdate, SLOT(setChecked(bool)));
+  connect(_data->_queryonstart, SIGNAL(toggled(bool)), _data->_queryOnStartAct, SLOT(setChecked(bool)));
+  connect(_data->_queryOnStartAct, SIGNAL(triggered(bool)), _data->_queryonstart, SLOT(setChecked(bool)));
 
   connect(_data->_newAct, SIGNAL(triggered()), this, SLOT(sNew()));
   connect(_data->_closeAct, SIGNAL(triggered()), this, SLOT(close()));
@@ -450,8 +457,21 @@ bool display::searchVisible() const
 void display::setQueryOnStartEnabled(bool on)
 {
   _data->_queryOnStartEnabled = on;
-  _data->_queryonstart->setVisible(on);
+  _data->_queryOnStartAct->setVisible(on);
+  //_data->_queryonstart->setVisible(on);
   _data->_queryonstart->setForgetful(!on);
+
+  if (_data->_queryOnStartEnabled ||
+      _data->_autoUpdateEnabled)
+  {
+    _data->_queryBtn->setPopupMode(QToolButton::MenuButtonPopup);
+    _data->_queryBtn->setMenu(_data->_queryMenu);
+  }
+  else
+  {
+    _data->_queryBtn->setPopupMode(QToolButton::DelayedPopup);
+    _data->_queryBtn->setMenu(0);
+  }
 
   // Ensure query on start is checked by default
   if (on)
@@ -478,7 +498,21 @@ bool display::queryOnStartEnabled() const
 void display::setAutoUpdateEnabled(bool on)
 {
   _data->_autoUpdateEnabled = on;
-  _data->_autoupdate->setVisible(on);
+  _data->_autoUpdateAct->setVisible(on);
+ // _data->_autoupdate->setVisible(on);
+
+  if (_data->_queryOnStartEnabled ||
+      _data->_autoUpdateEnabled)
+  {
+    _data->_queryBtn->setPopupMode(QToolButton::MenuButtonPopup);
+    _data->_queryBtn->setMenu(_data->_queryMenu);
+  }
+  else
+  {
+    _data->_queryBtn->setPopupMode(QToolButton::DelayedPopup);
+    _data->_queryBtn->setMenu(0);
+  }
+
   sAutoUpdateToggled(); 
 }
 
