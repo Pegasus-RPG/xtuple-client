@@ -213,7 +213,7 @@ GLCluster::GLCluster(QWidget *pParent, const char *pName) :
   _project->setAllowedStatuses(ProjectLineEdit::InProcess);
   _project->setEnabled(false);
   _project->setVisible(false);
-  _project->setNullStr(tr("Project Number"));
+  _project->setNullStr(tr("project"));
   _grid->addWidget(_project, 0, 3);
 
   setFocusProxy(_number);
