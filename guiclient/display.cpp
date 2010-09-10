@@ -251,6 +251,7 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
 
   connect(_data->_newBtn, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_data->_closeBtn, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_data->_moreBtn, SIGNAL(clicked(bool)), _data->_parameterWidget, SLOT(setVisible(bool)));
   connect(_data->_moreBtn, SIGNAL(clicked(bool)), filterButton, SLOT(setChecked(bool)));
   connect(_data->_printBtn, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_data->_previewBtn, SIGNAL(clicked()), this, SLOT(sPreview()));
@@ -431,7 +432,7 @@ bool display::closeVisible() const
 
 void display::setParameterWidgetVisible(bool show)
 {
-  _data->_parameterWidget->setVisible(show);
+  //_data->_parameterWidget->setVisible(show);
   _data->_parameterWidget->_filterButton->hide(); // _moreBtn is what you see here
   _data->_moreAct->setVisible(show);
   _data->_filterLitAct->setVisible(show);
