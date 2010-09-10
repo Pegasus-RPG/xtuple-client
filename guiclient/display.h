@@ -58,6 +58,7 @@ public:
 
     Q_INVOKABLE XTreeWidget * list();
     Q_INVOKABLE ParameterWidget * parameterWidget();
+    Q_INVOKABLE QWidget * optionsWidget();
     Q_INVOKABLE QToolBar * toolBar();
     Q_INVOKABLE QAction * newAction();
     Q_INVOKABLE QAction * closeAction();
@@ -79,7 +80,6 @@ public slots:
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 
 protected:
-    Q_INVOKABLE QWidget * optionsWidget();
     Q_INVOKABLE ParameterList getParams();
     virtual void showEvent(QShowEvent*);
 

@@ -80,7 +80,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _orders->setParameterWidgetVisible(false);
   _orders->setQueryOnStartEnabled(false);
   _orders->setAutoUpdateEnabled(false);
-  _orders->findChild<QWidget*>("_showClosed")->show();
+  _orders->optionsWidget()->show();
   _orders->list()->hideColumn("cust_number");
   _orders->list()->hideColumn("cohead_billtoname");
   

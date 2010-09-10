@@ -37,7 +37,6 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   setAutoUpdateEnabled(true);
 
   _custid = -1;
-  //_showClosed->hide();
   optionsWidget()->hide();
 
   if (_metrics->boolean("MultiWhs"))
