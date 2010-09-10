@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>671</width>
-    <height>609</height>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,7 +64,7 @@ to be bound by its terms.</comment>
             <number>0</number>
            </property>
            <item>
-            <widget class="QComboBox" name="_ccCompany">
+            <widget class="XComboBox" name="_ccCompany">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -830,7 +830,7 @@ to be bound by its terms.</comment>
          <item row="0" column="0">
           <widget class="QStackedWidget" name="_ccWidgetStack">
            <property name="currentIndex">
-            <number>3</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="_authorizeDotNetStack">
             <layout class="QGridLayout" name="gridLayout_11">
@@ -1338,7 +1338,41 @@ p, li { white-space: pre-wrap; }
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="page_2">
+           <widget class="QWidget" name="_externalStack">
+            <layout class="QVBoxLayout">
+             <item>
+              <widget class="QLabel" name="_extLit">
+               <property name="text">
+                <string>External Processing Options:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="_extOptions">
+               <property name="text">
+                <string>None</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_paymentTechStack">
             <layout class="QVBoxLayout" name="verticalLayout">
              <item>
               <widget class="QLabel" name="_ccPTLit">
@@ -1379,40 +1413,6 @@ p, li { white-space: pre-wrap; }
              </item>
              <item>
               <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="page">
-            <layout class="QVBoxLayout">
-             <item>
-              <widget class="QLabel" name="_extLit">
-               <property name="text">
-                <string>External Processing Options:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="_extOptions">
-               <property name="text">
-                <string>None</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>

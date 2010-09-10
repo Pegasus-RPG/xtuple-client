@@ -128,6 +128,7 @@ FORMS =   absoluteCalendarItem.ui               \
           commentTypes.ui                       \
           companies.ui                          \
           company.ui                            \
+          configcybersourceprocessor.ui         \
           configureCC.ui                        \
           configureCRM.ui                       \
           configureEncryption.ui                \
@@ -663,6 +664,8 @@ HEADERS = ../common/format.h                    \
           commentTypes.h                \
           companies.h                   \
           company.h                     \
+          configcreditcardprocessor.h   \
+          configcybersourceprocessor.h  \
           configureCC.h                 \
           configureCRM.h                \
           configureEncryption.h         \
@@ -727,6 +730,7 @@ HEADERS = ../common/format.h                    \
           customerTypeList.h                    \
           customerTypes.h                       \
           customers.h                           \
+          cybersourceprocessor.h                \
           databaseInformation.h                 \
           deletePlannedOrder.h                  \
           deletePlannedOrdersByPlannerCode.h    \
@@ -1243,6 +1247,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           commentTypes.cpp                      \
           companies.cpp                         \
           company.cpp                           \
+          configcreditcardprocessor.cpp         \
+          configcybersourceprocessor.cpp        \
           configureCC.cpp                       \
           configureCRM.cpp                      \
           configureEncryption.cpp               \
@@ -1307,6 +1313,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           customerTypeList.cpp                  \
           customerTypes.cpp                     \
           customers.cpp                         \
+          cybersourceprocessor.cpp              \
           databaseInformation.cpp               \
           deletePlannedOrder.cpp                \
           deletePlannedOrdersByPlannerCode.cpp  \

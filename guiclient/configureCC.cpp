@@ -8,19 +8,16 @@
  * to be bound by its terms.
  */
 
+// TODO: move individual credit card config to separate classes like cybersource
+
 #include "configureCC.h"
 
 #include <QMessageBox>
 #include <QSqlError>
 
+#include "configcybersourceprocessor.h"
 #include "configureEncryption.h"
 #include "creditcardprocessor.h"
-
-// Change these definitions to match the indices in the _ccCompany combo box
-#define ANINDEX 0
-#define YPINDEX 1
-#define PTINDEX 2
-#define EXTINDEX 3
 
 configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -39,16 +36,17 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
 		    tr("<p>Cannot read encrypted information from database."));
   }
 
-  _ccCompany->addItem("Authorize.Net");
-  _ccCompany->addItem("YourPay");
-  _ccCompany->addItem("Paymentech");
-  _ccCompany->addItem("External");
+  // these ids must match the pages in the stack widget
+  _ccCompany->append(0, "Authorize.Net", "AN");
+  _ccCompany->append(1, "YourPay",       "YP");
+  _ccCompany->append(2, "CyberSource",   "CS");
+  _ccCompany->append(3, "External",      "EXT");
+  if (_metrics->boolean("CCEnablePaymentech"))
+    _ccCompany->append(4, "Paymentech",  "PT");
 
-  if (! _metrics->boolean("CCEnablePaymentech"))
-  {
-    _ccCompany->removeItem(PTINDEX);
-    _ccWidgetStack->removeWidget(_ccWidgetStack->widget(PTINDEX));
-  }
+  ConfigCyberSourceProcessor *cs = new ConfigCyberSourceProcessor(this);
+  _configcclist.append(cs);
+  _ccWidgetStack->insertWidget(_ccWidgetStack->indexOf(_externalStack), cs);
 
   _ccAccept->setChecked(_metrics->boolean("CCAccept"));
   _ccTest->setChecked(_metrics->boolean("CCTest"));
@@ -385,6 +383,10 @@ void configureCC::sSave()
     _metricsenc->load();
   }
 
+  for (int i = 0; i < _configcclist.size(); i++)
+    if (! _configcclist.at(i)->sSave())
+      return;
+
   if (_ccAccept->isChecked())
   {
     CreditCardProcessor *cardproc =
@@ -425,9 +427,9 @@ void configureCC::sDuplicateWindow(int p)
   _anDuplicateWindowAsHMS->setText(time.toString("HH:mm:ss"));
 }
 
-void configureCC::sCCCompanyChanged(const int pindex)
+void configureCC::sCCCompanyChanged(const int /*pindex*/)
 {
-  if (pindex == ANINDEX)
+  if (_ccCompany->code() == "AN")
   {
     _fraudDetectionIgnoredLit->setText(tr("For Authorize.Net please configure "
                                           "CVV and AVS using the Merchant "
@@ -438,7 +440,7 @@ void configureCC::sCCCompanyChanged(const int pindex)
     _avsCheckGroup->setEnabled(false);
     _avsFailGroup->setEnabled(false);
   }
-  else if (pindex == YPINDEX)
+  else if (_ccCompany->code() == "YP")
   {
     _fraudDetectionIgnoredLit->setText("");
     _ccPasswordLit->setText(tr("Password:"));
@@ -447,12 +449,17 @@ void configureCC::sCCCompanyChanged(const int pindex)
     _avsCheckGroup->setEnabled(true);
     _avsFailGroup->setEnabled(true);
   }
-  else if (pindex == PTINDEX)
+  else if (_ccCompany->code() == "PT")
   {
     _fraudDetectionIgnoredLit->setText("");
     _ccPasswordLit->setText(tr("Password:"));
   }
-  else if (pindex == EXTINDEX)
+  else if (_ccCompany->code() == "CS")
+  {
+    _ccLoginLit->setText(tr("Merchant Id:"));
+    _ccPasswordLit->setText(tr("Transaction Key:"));
+  }
+  else if (_ccCompany->code() == "EXT")
   {
   }
 }

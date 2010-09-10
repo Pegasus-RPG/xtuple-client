@@ -176,7 +176,7 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
   return 0;
 }
 
-int  AuthorizeDotNetProcessor::doAuthorize(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  AuthorizeDotNetProcessor::doAuthorize(const int pccardid, const int pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
     qDebug("AN:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",

@@ -11,10 +11,14 @@
 #ifndef CONFIGURECC_H
 #define CONFIGURECC_H
 
+#include <QList>
+
 #include "guiclient.h"
 #include "xdialog.h"
 
 #include "ui_configureCC.h"
+
+class ConfigCreditCardProcessor;
 
 class configureCC : public XDialog, public Ui::configureCC
 {
@@ -31,6 +35,9 @@ public slots:
 protected slots:
     virtual void languageChange();
     virtual void sCCCompanyChanged(const int);
+
+  protected:
+    QList<ConfigCreditCardProcessor*> _configcclist;
 
 signals:
     void saving();
