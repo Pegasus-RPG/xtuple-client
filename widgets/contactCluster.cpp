@@ -214,7 +214,7 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
   _addrLayout->addSpacerItem(_addrSpacer);
 
   connect(this, SIGNAL(valid(bool)), this, SLOT(populate()));
-  connect(_email, SIGNAL(leftClickedURL(QString)), this, SLOT(openUrl(QString)));
+  connect(_email, SIGNAL(leftClickedURL(QString)), this, SLOT(launchEmail(QString)));
   connect(_webaddr, SIGNAL(leftClickedURL(QString)), this, SLOT(openUrl(QString)));
   connect(this, SIGNAL(newId(int)), this, SIGNAL(changed()));
 
@@ -360,6 +360,26 @@ void ContactCluster::populate()
   }
 }
 
+void ContactCluster::launchEmail(QString url)
+{
+  QString extUrl = QString(url);
+  if (!_subjText.isEmpty() ||
+      !_bodyText.isEmpty())
+    extUrl.append("?");
+
+  if (!_subjText.isEmpty())
+  {
+    extUrl.append(_subjText.prepend("subject="));
+    if (!_bodyText.isEmpty())
+      extUrl.append("&");
+  }
+
+  if (!_bodyText.isEmpty())
+    extUrl.append(_bodyText.prepend("body="));
+
+  QDesktopServices::openUrl(QUrl(extUrl));
+}
+
 void ContactCluster::openUrl(QString url)
 {
   QDesktopServices::openUrl(QUrl(url));
@@ -439,5 +459,15 @@ void ContactCluster::setFax(const QString fax)
 void ContactCluster::setEmailAddress(const QString email)
 {
   _email->setText(email);
+}
+
+void ContactCluster::setEmailSubjectText(const QString text)
+{
+  _subjText = text;
+}
+
+void ContactCluster::setEmailBodyText(const QString text)
+{
+  _bodyText = text;
 }
 

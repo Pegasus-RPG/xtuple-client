@@ -1010,7 +1010,22 @@ void ContactWidget::setChange(QString p)
 
 void ContactWidget::sLaunchEmail()
 {
-  QDesktopServices::openUrl(QUrl("mailto:" + _email->text()));
+  QString extUrl = QString(_email->text());
+  if (!_subjText.isEmpty() ||
+      !_bodyText.isEmpty())
+    extUrl.append("?");
+
+  if (!_subjText.isEmpty())
+  {
+    extUrl.append(_subjText.prepend("subject="));
+    if (!_bodyText.isEmpty())
+      extUrl.append("&");
+  }
+
+  if (!_bodyText.isEmpty())
+    extUrl.append(_bodyText.prepend("body="));
+
+  QDesktopServices::openUrl(QUrl("mailto:" + extUrl));
 }
 
 void ContactWidget::sLaunchWebaddr()
@@ -1375,4 +1390,14 @@ void ContactWidget::setMode(Mode p)
     widgets.at(i)->setEnabled(enabled);
   if (p == Select)
     _list->setEnabled(true);
+}
+
+void ContactWidget::setEmailSubjectText(const QString text)
+{
+  _subjText = text;
+}
+
+void ContactWidget::setEmailBodyText(const QString text)
+{
+  _bodyText = text;
 }
