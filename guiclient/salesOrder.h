@@ -94,9 +94,6 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sReleasePR();
     virtual void        sViewPR();
 
-  protected:
-    virtual void keyPressEvent( QKeyEvent *e );
-
   protected slots:
     virtual void  languageChange();
     virtual bool  okToProcessCC();

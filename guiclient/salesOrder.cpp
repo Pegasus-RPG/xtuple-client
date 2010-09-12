@@ -3286,26 +3286,6 @@ void salesOrder::setViewMode()
   _delete->hide();
 }
 
-void salesOrder::keyPressEvent( QKeyEvent *e )
-{
-#ifdef Q_WS_MAC
-  if (e->key() == Qt::Key_N && (e->modifiers() & Qt::ControlModifier))
-  {
-    _new->animateClick();
-    e->accept();
-  }
-  else if (e->key() == Qt::Key_E && (e->modifiers() & Qt::ControlModifier))
-  {
-    _edit->animateClick();
-    e->accept();
-  }
-  if (e->isAccepted())
-    return;
-
-#endif
-  e->ignore();
-}
-
 void salesOrder::newSalesOrder(int pCustid, QWidget *parent)
 {
   // Check for an Item window in new mode already.
