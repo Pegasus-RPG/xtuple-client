@@ -2865,12 +2865,11 @@ void salesOrder::sCalculateTotal()
 
 bool salesOrder::deleteForCancel()
 {
-  if (_captive)
-    return true;
-
   XSqlQuery query;
 
-  if (ISNEW(_mode) && _soitem->topLevelItemCount() > 0)
+  if (ISNEW(_mode) &&
+      _soitem->topLevelItemCount() > 0 &&
+      !_captive)
   {
     int answer;
     if (_mode == cNew)
@@ -2889,7 +2888,8 @@ bool salesOrder::deleteForCancel()
       return false;
   }
 
-  if (_mode == cNew)
+  if (_mode == cNew &&
+      !_captive)
   {
     query.prepare("SELECT deleteSO(:sohead_id, :sohead_number) AS result;");
     query.bindValue(":sohead_id", _soheadid);
@@ -2915,7 +2915,8 @@ bool salesOrder::deleteForCancel()
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
     }
   }
-  else if (_mode == cNewQuote)
+  else if (_mode == cNewQuote &&
+           !_captive)
   {
     query.prepare("SELECT deleteQuote(:head_id, :quhead_number) AS result;");
     query.bindValue(":head_id", _soheadid);
