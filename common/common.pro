@@ -22,6 +22,7 @@ SOURCES = calendarcontrol.cpp \
           metricsenc.cpp \
           qbase64encode.cpp \
           qmd5.cpp \
+          shortcuts.cpp \
           storedProcErrorLookup.cpp \
           xbase32.cpp \
           xtupleproductkey.cpp \
@@ -38,6 +39,7 @@ HEADERS = calendarcontrol.h \
           metricsenc.h \
           qbase64encode.h \
           qmd5.h \
+          shortcuts.h \
           storedProcErrorLookup.h \
           xbase32.h \
           xtupleproductkey.h \

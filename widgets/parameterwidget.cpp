@@ -76,6 +76,12 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT( applySaved(int) ) );
   connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT( setFiltersDefault() ) );
   connect(this, SIGNAL(updated()), this, SLOT( toggleSave() ) );
+
+  _saveButton->setShortcut(QKeySequence::Save);
+  _saveButton->setToolTip(_saveButton->text()
+                          .remove("&")
+                          .append(" ")
+                          .append(_saveButton->shortcut().toString(QKeySequence::NativeText)));
 }
 
 void ParameterWidget::showEvent(QShowEvent * event)

@@ -20,6 +20,7 @@
 #include "xcheckbox.h"
 #include "xsqlquery.h"
 #include "xsqltablemodel.h"
+#include "shortcuts.h"
 
 #include "virtualCluster.h"
 
@@ -1035,6 +1036,7 @@ VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags ) :
       _id = -1;
     }
 
+    shortcuts::setStandardKeys(this);
     sFillList();
 }
 
@@ -1203,6 +1205,7 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
       _parent = 0;
       _id = -1;
     }
+    shortcuts::setStandardKeys(this);
 }
 
 void VirtualSearch::sClose()

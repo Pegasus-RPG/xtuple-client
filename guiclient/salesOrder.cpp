@@ -124,19 +124,6 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 
   _saved = false;
 
-  QAction *_saveAct = new QAction(this);
-  _saveAct->setShortcut(QKeySequence::Save);
-  connect(_saveAct, SIGNAL(triggered()), this, SLOT(sSave()));
-
-  QAction *_closeAct = new QAction(this);
-  _closeAct->setShortcut(QKeySequence::Close);
-  connect(_closeAct, SIGNAL(triggered()), this, SLOT(close()));
-
-  QList<QAction *> _actions;
-  _actions.append(_saveAct);
-  _actions.append(_closeAct);
-  addActions(_actions);
-
   setFreeFormShipto(false);
 
   _soheadid          = -1;

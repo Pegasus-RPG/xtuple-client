@@ -14,6 +14,7 @@
 #include <QMessageBox>
 
 #include "alarmMaint.h"
+#include "shortcuts.h"
 
 const char *_alarmQualifiers[] = { "MB", "HB", "DB", "MA", "HA", "DA" };
 
@@ -25,9 +26,14 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
   setObjectName(name ? name : "alarmMaint");
   setModal(modal);
 
+  _userLookup = _buttonBox->addButton(tr("&User..."), QDialogButtonBox::ActionRole);
+  _contactLookup = _buttonBox->addButton(tr("&Contact..."), QDialogButtonBox::ActionRole);
+
   // signals and slots connections
-  connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_userLookup, SIGNAL(clicked()), _usernameCluster, SLOT(sList()));
+  connect(_contactLookup, SIGNAL(clicked()), _contactCluster, SLOT(sList()));
   connect(_contactCluster, SIGNAL(newId(int)), this, SLOT(sContactLookup(int)));
   connect(_usernameCluster, SIGNAL(newId(int)), this, SLOT(sUserLookup(int)));
 
@@ -56,7 +62,11 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
   }
   _sysmsgAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmSysmsgDefault"));
 
-  sHandleButtons();
+  _contactCluster->hide();
+  _usernameCluster->hide();
+  adjustSize();
+
+  shortcuts::setStandardKeys(this);
 }
 
 alarmMaint::~alarmMaint()
@@ -126,7 +136,7 @@ void alarmMaint::set( const ParameterList & pParams )
     else if(param.toString() == "view")
     {
       _mode = cView;
-      _save->hide();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
     }
   }
 
@@ -166,11 +176,6 @@ void alarmMaint::sSave()
   q.exec();
 
   accept();
-}
-
-void alarmMaint::sHandleButtons()
-{
-  _contactCluster->hide();
 }
 
 void alarmMaint::sUserLookup(int pId)

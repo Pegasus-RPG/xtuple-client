@@ -18,7 +18,7 @@
 
 #include "documents.h"
 #include "docAttach.h"
-
+#include "../common/shortcuts.h"
 #include "imageview.h"
 
 /*
@@ -64,7 +64,8 @@ docAttach::docAttach(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     _fileList->setMinimumHeight(32);
 #endif
 
-  adjustSize();
+    shortcuts::setStandardKeys(this);
+    adjustSize();
 }
 
 /*

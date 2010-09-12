@@ -1049,12 +1049,6 @@ to be bound by its terms.</comment>
          <property name="text">
           <string>&amp;Save</string>
          </property>
-         <property name="autoDefault">
-          <bool>true</bool>
-         </property>
-         <property name="default">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
        <item>

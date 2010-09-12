@@ -14,6 +14,7 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QPushButton>
 #include <QShowEvent>
 #include <QWorkspace>
 
@@ -21,6 +22,7 @@
 #include "xtsettings.h"
 #include "guiclient.h"
 #include "scriptablePrivate.h"
+#include "shortcuts.h"
 
 //
 // XWidgetPrivate
@@ -142,6 +144,8 @@ void XWidget::showEvent(QShowEvent *event)
     QList<XCheckBox*> allxcb = findChildren<XCheckBox*>();
     for (int i = 0; i < allxcb.size(); ++i)
       allxcb.at(i)->init();
+
+    shortcuts::setStandardKeys(this);
   }
 
   _private->callShowEvent(event);
@@ -169,4 +173,5 @@ ParameterList XWidget::get() const
 {
   return _lastSetParams;
 }
+
 

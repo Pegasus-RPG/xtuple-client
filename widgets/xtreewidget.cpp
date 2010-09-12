@@ -152,6 +152,23 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   f.setPointSize(f.pointSize() - 2);
   setFont(f);
 #endif
+
+  // Shortcuts for xtreewidget
+  QString tip;
+  QAction* menuAct = new QAction(this);
+  menuAct->setShortcut(QKeySequence(tr("Ctrl+M")));
+  connect(menuAct, SIGNAL(triggered()), this, SLOT(sShowMenu()));
+  addAction(menuAct);
+  tip = tr("Menu %1").arg(menuAct->shortcut().toString(QKeySequence::NativeText));
+
+  QAction* itemSelectedAct = new QAction(this);
+  itemSelectedAct->setShortcut(QKeySequence(QKeySequence::Open));
+  connect(itemSelectedAct, SIGNAL(triggered()), this, SLOT(sItemSelected()));
+  addAction(itemSelectedAct);
+  tip.append("\n");
+  tip.append(tr("Open %1").arg(itemSelectedAct->shortcut().toString(QKeySequence::NativeText)));
+  setToolTip(tip);
+
 }
 
 XTreeWidget::~XTreeWidget()
@@ -1399,10 +1416,28 @@ void XTreeWidget::sSelectionChanged()
   }
 }
 
+void XTreeWidget::sItemSelected()
+{
+  QList<XTreeWidgetItem*> selected = selectedItems();
+  if (selected.count())
+   sItemSelected(selected.at(0), 0);
+}
+
 void XTreeWidget::sItemSelected(QTreeWidgetItem *pSelected, int)
 {
   if (pSelected)
     emit itemSelected(((XTreeWidgetItem *)pSelected)->_id);
+}
+
+void XTreeWidget::sShowMenu()
+{
+  QList<XTreeWidgetItem*> selected = selectedItems();
+  if (selected.count())
+  {
+    QRect rect = this->visualItemRect(selected.at(0));
+    QPoint point = rect.bottomRight();
+    sShowMenu(point);
+  }
 }
 
 void XTreeWidget::sShowMenu(const QPoint &pntThis)

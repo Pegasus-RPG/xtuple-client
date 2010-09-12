@@ -76,19 +76,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_priceUOM,          SIGNAL(newID(int)),                   this, SLOT(sPriceUOMChanged()));
   connect(_inventoryButton,   SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
 
-  QAction *_saveAct = new QAction(this);
-  _saveAct->setShortcut(QKeySequence::Save);
-  connect(_saveAct, SIGNAL(triggered()), this, SLOT(sSave()));
-
-  QAction *_closeAct = new QAction(this);
-  _closeAct->setShortcut(QKeySequence::Close);
-  connect(_closeAct, SIGNAL(triggered()), this, SLOT(close()));
-
-  QList<QAction *> _actions;
-  _actions.append(_saveAct);
-  _actions.append(_closeAct);
-  addActions(_actions);
-
 #ifndef Q_WS_MAC
   _listPrices->setMaximumWidth(25);
   _subItemList->setMaximumWidth(25);

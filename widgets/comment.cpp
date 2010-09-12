@@ -9,7 +9,7 @@
  */
 
 #include <QHBoxLayout>
-
+#include <QDialogButtonBox>
 #include <QLabel>
 #include <QLayout>
 #include <QMessageBox>
@@ -26,6 +26,7 @@
 
 #include "xcombobox.h"
 #include "comment.h"
+#include "shortcuts.h"
 
 #define cNew  1
 #define cEdit 2
@@ -68,14 +69,6 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   layout8->setSpacing(5);
   layout8->setObjectName("layout8");
 
-  QVBoxLayout *layout181 = new QVBoxLayout(this);
-  layout181->setObjectName("layout181");
-
-  QVBoxLayout *layout180 = new QVBoxLayout(this);
-  layout180->setSpacing(5);
-  layout180->setObjectName("layout180");
-
-
   QLabel *_cmnttypeLit = new QLabel(tr("Comment Type:"), this);
   _cmnttypeLit->setObjectName("_cmnttypeLit");
   layout8->addWidget( _cmnttypeLit );
@@ -94,32 +87,27 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   layout11->addWidget( _comment );
   commentLayout->addLayout( layout11 );
 
-  _close = new QPushButton(tr("&Cancel"), this);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
+  buttonBox->setOrientation(Qt::Vertical);
+  buttonBox->setStandardButtons(QDialogButtonBox::Save | QDialogButtonBox::Cancel);
+
+  _close = buttonBox->button(QDialogButtonBox::Cancel);
   _close->setObjectName("_close");
-  layout180->addWidget( _close );
 
-  _save = new QPushButton(tr("&Save"), this);
+  _save = buttonBox->button(QDialogButtonBox::Save);
   _save->setObjectName("_save");
-  layout180->addWidget( _save );
 
-  _prev = new QPushButton(tr("&Previous"), this);
+  _prev = buttonBox->addButton(tr("&Previous"), QDialogButtonBox::ActionRole);
   _prev->setObjectName("_prev");
-  layout180->addWidget( _prev );
 
-  _next = new QPushButton(tr("&Next"), this);
+  _next = buttonBox->addButton(tr("&Next"), QDialogButtonBox::ActionRole);
   _next->setObjectName("_next");
-  layout180->addWidget( _next );
 
-  layout181->addLayout( layout180 );
-  QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
-  layout181->addItem( spacer_2 );
-
-  _more = new QPushButton(tr("Show &More"), this);
+  _more = buttonBox->addButton(tr("&More"), QDialogButtonBox::ActionRole);
   _more->setObjectName("_more");
   _more->setCheckable(true);
-  layout181->addWidget(_more);
 
-  commentLayout->addLayout( layout181 );
+  commentLayout->addWidget(buttonBox);
 
   moreLayout->addLayout(commentLayout);
 
@@ -139,8 +127,8 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   //clearWState( WState_Polished );
 
 // signals and slots connections
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_next, SIGNAL(clicked()), this, SLOT(sNextComment()));
   connect(_prev, SIGNAL(clicked()), this, SLOT(sPrevComment()));
   connect(_more, SIGNAL(toggled(bool)), _comments, SLOT(setVisible(bool)));
@@ -151,7 +139,9 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   setTabOrder( _save, _close );
 
   _source = Comments::Uninitialized;
-  _cmnttype->setAllowNull(TRUE);
+  _cmnttype->setAllowNull(true);
+
+  shortcuts::setStandardKeys(this);
 }
 
 void comment::set(ParameterList &pParams)
@@ -351,7 +341,7 @@ void comment::set(ParameterList &pParams)
     {
       _mode = cNew;
       
-      _comment->setFocus();
+      _cmnttype->setFocus();
       _next->setVisible(false);
       _prev->setVisible(false);
     }
@@ -371,6 +361,7 @@ void comment::set(ParameterList &pParams)
       _comment->setReadOnly(true);
       _save->hide();
       _close->setText(tr("&Close"));
+      _close->setShortcut(QKeySequence::Close);
       _more->hide();
 
       _close->setFocus();

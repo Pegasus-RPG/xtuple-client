@@ -44,6 +44,7 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags 
 {
   setupUi(optionsWidget());
   setWindowTitle(tr("View Financial Report"));
+  setListLabel(tr("Statement"));
   setReportName("dummy"); // This is really handled locally
 
   _prjid = -1;
