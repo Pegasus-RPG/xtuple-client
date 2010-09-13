@@ -162,7 +162,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.employeeGroups",           tr("Employee &Groups..."),            SLOT(sEmployeeGroups()),         employeeMenu, "ViewEmployeeGroups MaintainEmployeeGroups", NULL, NULL, true },
 
     { "separator",                    NULL,                                 NULL,                              systemMenu, "true",                                      NULL, NULL, true },
-    { "sys.checkForUpdates",          tr("Check For Updates..."),           SLOT(sCheckForUpdates()),          systemMenu, "#superuser",          NULL, NULL, _metrics->boolean("DummyEnableUpdateMgr") },      // TODO: replace metric with 'true' when web service is up and running
+    { "sys.checkForUpdates",          tr("Check For Updates..."),           SLOT(sCheckForUpdates()),          systemMenu, "#superuser",          NULL, NULL, true },
 
   //  Design
     { "menu",           tr("&Design"),                (char*)designMenu,      systemMenu, "true",                        NULL, NULL, true },
