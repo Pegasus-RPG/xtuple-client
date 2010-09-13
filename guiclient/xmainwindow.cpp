@@ -22,6 +22,7 @@
 #include "xtsettings.h"
 #include "guiclient.h"
 #include "scriptablePrivate.h"
+#include "shortcuts.h"
 
 //
 // XMainWindowPrivate
@@ -164,6 +165,8 @@ void XMainWindow::showEvent(QShowEvent *event)
     QList<XCheckBox*> allxcb = findChildren<XCheckBox*>();
     for (int i = 0; i < allxcb.size(); ++i)
       allxcb.at(i)->init();
+
+    shortcuts::setStandardKeys(this);
   }
 
   bool blocked = _private->_action->blockSignals(true);
