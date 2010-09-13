@@ -37,7 +37,7 @@ public:
     _autoupdate->hide(); // hide until auto update is enabled
     _parameterWidget->hide(); // hide until user shows manually
     _more->setVisible(false); // hide until user shows manually
-    _listLabel->setVisible(false);
+    _listLabelFrame->setVisible(false);
     _useAltId = false;
     _queryOnStartEnabled = false;
     _autoUpdateEnabled = false;
@@ -56,6 +56,7 @@ public:
 
     // Move parameter widget controls into toolbar
     QLabel* filterListLit = _parent->findChild<QLabel*>("_filterListLit");
+    filterListLit->setContentsMargins(3,0,3,0);
     XComboBox* filterList = _parent->findChild<XComboBox*>("_filterList");
 
     _moreBtn = new QToolButton(_toolBar);
@@ -394,7 +395,7 @@ void display::setMetaSQLOptions(const QString & group, const QString & name)
 
 void display::setListLabel(const QString & pText)
 {
-  _data->_listLabel->setHidden(pText.isEmpty());
+  _data->_listLabelFrame->setHidden(pText.isEmpty());
   _data->_listLabel->setText(pText);
 }
 

@@ -14,13 +14,13 @@
    <string>display</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="verticalSpacing">
-    <number>0</number>
-   </property>
    <property name="margin">
     <number>0</number>
    </property>
-   <item row="0" column="0">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0" colspan="2">
     <widget class="QToolBar" name="_toolBar">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -30,7 +30,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="1" column="0" colspan="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>0</number>
@@ -60,53 +60,73 @@
        </property>
       </widget>
      </item>
+    </layout>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLabel" name="_listLabel">
-         <property name="text">
-          <string>Results</string>
-         </property>
-         <property name="buddy">
-          <cstring>_list</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="XCheckBox" name="_queryonstart">
-         <property name="text">
-          <string>Query on start</string>
-         </property>
-         <property name="forgetful">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XCheckBox" name="_autoupdate">
-         <property name="text">
-          <string>Automatically Update</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QFrame" name="_listLabelFrame">
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="topMargin">
+         <number>3</number>
+        </property>
+        <property name="bottomMargin">
+         <number>3</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="_listLabel">
+          <property name="text">
+           <string>Results</string>
+          </property>
+          <property name="buddy">
+           <cstring>_list</cstring>
+          </property>
+         </widget>
+        </item>
+       </layout>
+       <zorder>_listLabel</zorder>
+       <zorder>_listLabel</zorder>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="XCheckBox" name="_queryonstart">
+       <property name="text">
+        <string>Query on start</string>
+       </property>
+       <property name="forgetful">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="XCheckBox" name="_autoupdate">
+       <property name="text">
+        <string>Automatically Update</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0" colspan="2">
     <widget class="XTreeWidget" name="_list">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
