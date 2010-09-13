@@ -349,6 +349,7 @@ int main(int argc, char *argv[])
 
       http->setHost("www.xtuple.org");
       http->get(url.toString());
+      _splash->show();
     }
   }
   else
