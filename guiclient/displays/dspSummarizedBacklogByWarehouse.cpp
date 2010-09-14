@@ -47,13 +47,12 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   list()->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight, true, "cohead_orderdate");
   list()->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight, true, "scheddate");
   list()->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight, true, "cohead_packdate");
-  if (_privileges->check("ViewCustomerPrices") ||
-      _privileges->check("MaintainCustomerPrices"))
-  {
+  if (_privileges->check("ViewCustomerPrices"))
     list()->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight, true, "sales");
+  if (_privileges->check("ViewCosts"))
     list()->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight, true, "cost");
+  if (_privileges->check("ViewCustomerPrices") && _privileges->check("ViewCosts"))
     list()->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight, true, "margin");
-  }
   list()->addColumn(tr("Sales Rep"),           _itemColumn, Qt::AlignRight, true, "salesrep_name");
   list()->addColumn(tr("Time Received"),       _dateColumn, Qt::AlignRight, false, "cohead_created");
   list()->addColumn(tr("Pack List Batch"),     _dateColumn, Qt::AlignRight, false, "packed");
@@ -61,7 +60,7 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   list()->setRootIsDecorated(true);
   list()->setDragString("soheadid=");
 
-  if ( (!_privileges->check("ViewCustomerPrices")) && (!_privileges->check("MaintainCustomerPrices")) )
+  if ( (!_privileges->check("ViewCustomerPrices")) && (!_privileges->check("ViewCosts")) )
     _showPrices->setEnabled(false);
   sHandlePrices(_showPrices->isChecked());
 
