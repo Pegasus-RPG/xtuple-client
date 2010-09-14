@@ -382,8 +382,8 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
     bool ignoreErr = (viewElem.attribute("ignore", "false").isEmpty() ||
                       viewElem.attribute("ignore", "false") == "true");
 
-    bool silent = (viewElem.attribute("silent", "true").isEmpty() ||
-                   viewElem.attribute("silent", "true") == "true");
+    bool silent = (viewElem.attribute("silent", "false").isEmpty() ||
+                   viewElem.attribute("silent", "false") == "true");
 
     QString mode = viewElem.attribute("mode", "insert");
     QStringList keyList;
