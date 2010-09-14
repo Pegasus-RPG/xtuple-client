@@ -166,6 +166,9 @@
 &lt;? if exists("warehous_id") ?>
    AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
+&lt;? if exists("item_id") ?>
+  AND  (itemsite_item_id=&lt;? value("item_id") ?>)
+&lt;? endif ?>
 &lt;? if exists("itemgrp_id") ?>
    AND (item_id IN (SELECT itemgrpitem_item_id
                       FROM itemgrpitem
@@ -279,6 +282,9 @@ SELECT invhist_id,
 &lt;? endif ?>
 &lt;? if exists("warehous_id") ?>
    AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("item_id") ?>
+  AND  (itemsite_item_id=&lt;? value("item_id") ?>)
 &lt;? endif ?>
 &lt;? if exists("itemgrp_id") ?>
    AND (item_id IN (SELECT itemgrpitem_item_id
