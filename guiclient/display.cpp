@@ -44,11 +44,13 @@ public:
 
     // Build Toolbar
     _newBtn = new QToolButton(_toolBar);
+    _newBtn->setObjectName("_newBtn");
     _newBtn->setFocusPolicy(Qt::NoFocus);
     _newAct = _toolBar->addWidget(_newBtn);
     _newAct->setVisible(false);
 
     _closeBtn = new QToolButton(_toolBar);
+    _closeBtn->setObjectName("_closeBtn");
     _closeBtn->setFocusPolicy(Qt::NoFocus);
     _closeAct = _toolBar->addWidget(_closeBtn);
 
@@ -60,6 +62,7 @@ public:
     XComboBox* filterList = _parent->findChild<XComboBox*>("_filterList");
 
     _moreBtn = new QToolButton(_toolBar);
+    _moreBtn->setObjectName("_moreBtn");
     _moreBtn->setFocusPolicy(Qt::NoFocus);
     _moreBtn->setCheckable(true);
     _moreAct = _toolBar->addWidget(_moreBtn);
@@ -76,11 +79,13 @@ public:
 
     // Print buttons
     _printBtn = new QToolButton(_toolBar);
+    _printBtn->setObjectName("_printBtn");
     _printBtn->setFocusPolicy(Qt::NoFocus);
     _printAct = _toolBar->addWidget(_printBtn);
     _printAct->setVisible(false); // hide the print button until a reportName is set
 
     _previewBtn = new QToolButton(_toolBar);
+    _previewBtn->setObjectName("_previewBtn");
     _printBtn->setFocusPolicy(Qt::NoFocus);
     _previewAct = _toolBar->addWidget(_previewBtn);
     _previewAct->setVisible(false); // hide the preview button until a reportName is set
@@ -89,12 +94,14 @@ public:
 
     // Optional search widget in toolbar
     _search = new XLineEdit(_toolBar, "_search");
+    _search->setObjectName("_search");
     _search->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     _searchAct = _toolBar->insertWidget(_query, _search);
     _searchAct->setVisible(false);
 
     // Remaining buttons in toolbar
     _queryBtn = new QToolButton(_toolBar);
+    _queryBtn->setObjectName("_queryBtn");
     _queryBtn->setFocusPolicy(Qt::NoFocus);
     _queryAct = _toolBar->addWidget(_queryBtn);
 
