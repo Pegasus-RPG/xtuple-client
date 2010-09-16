@@ -850,6 +850,7 @@ void purchaseOrder::sSave()
 
     _agent->setText(omfgThis->username());
     _terms->setId(-1);
+    _vendor->setReadOnly(false);
     _vendor->setId(-1);
     _taxZone->setId(-1);
 
@@ -918,7 +919,10 @@ void purchaseOrder::sNew()
   purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
+  {
     sFillList();
+    _vendor->setReadOnly(true);
+  }
 }
 
 void purchaseOrder::sEdit()
