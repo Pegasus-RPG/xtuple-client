@@ -146,7 +146,9 @@ void glTransaction::sPost()
     {
       clear();
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
-      _buttonBox->addButton(QDialogButtonBox::Close);
+      QPushButton* button = _buttonBox->addButton(QDialogButtonBox::Close);
+      button->setShortcut(QKeySequence::Close);
+      button->setToolTip(button->text().append(" ").append(button->shortcut().toString(QKeySequence::NativeText)));
       _amount->setFocus();
     }
   }
