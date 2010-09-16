@@ -323,7 +323,7 @@ void project::sNewTask()
 {
   if (!_saved)
   {
-    if (!sSave())
+    if (!sSave(true))
       return;
   }
     
