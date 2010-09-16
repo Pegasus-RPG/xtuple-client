@@ -34,6 +34,7 @@
 #include "plugins/expenseclusterplugin.h"
 #include "plugins/expenselineeditplugin.h"
 #include "plugins/fileclusterplugin.h"
+#include "plugins/filemoveselectorplugin.h"
 #include "plugins/glclusterplugin.h"
 #include "plugins/imageclusterplugin.h"
 #include "plugins/invoiceclusterplugin.h"
@@ -110,6 +111,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ExpenseClusterPlugin(this));
   m_plugins.append(new ExpenseLineEditPlugin(this));
   m_plugins.append(new FileClusterPlugin(this));
+  m_plugins.append(new FileMoveSelectorPlugin(this));
   m_plugins.append(new GLClusterPlugin(this));
   m_plugins.append(new ImageClusterPlugin(this));
   m_plugins.append(new InvoiceClusterPlugin(this));

@@ -23,7 +23,7 @@
 #include "xcombobox.h"
 #include "xsqltablemodel.h"
 
-#define DEBUG true
+#define DEBUG false
 
 GuiClientInterface* XComboBox::_guiClientInterface = 0;
 

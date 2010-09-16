@@ -93,24 +93,19 @@ void configureIE::sSave()
 {
   emit saving();
 
-  if (_importRenameFiles->isChecked())
-    _metrics->set("XMLSuccessTreatment",  QString("Rename"));
-  else if (_importDeleteFiles->isChecked())
-    _metrics->set("XMLSuccessTreatment",  QString("Delete"));
-  else if (_importMoveFiles->isChecked())
-    _metrics->set("XMLSuccessTreatment",  QString("Move"));
-  else if (_importDoNothing->isChecked())
-    _metrics->set("XMLSuccessTreatment",  QString("None"));
-  else
+  if (_importErrorXMLHandling->isChecked() &&
+      _importErrorSelector->option() != FileMoveSelector::Suffix &&
+      _importErrorSelector->option() != FileMoveSelector::ChangeDir)
   {
-    QMessageBox::critical(this, tr("Incomplete Data"),
-                          tr("<p>Please choose whether to delete or rename "
-                             "XML files after they have been successfully "
-                             "imported."));
-    _tabs->setCurrentIndex(_tabs->indexOf(_importTab));
-    _importRenameFiles->setFocus();
+    QMessageBox::critical(this, tr("Inconsistent Selection"),
+                          tr("<p>Please choose to add a suffix after errors, "
+                             "move the import file after errors, or "
+                             "uncheck '%1'.")
+                          .arg(_importErrorXMLHandling->text()));
     return;
   }
+
+  _metrics->set("XMLSuccessTreatment",  _importSuccessSelector->code());
 
   if (_internal->isChecked())
     _metrics->set("XSLTLibrary",          _internal->isChecked());
@@ -155,8 +150,14 @@ void configureIE::sSave()
   _metrics->set("CSVAtlasDefaultDirMac",        _atlasMacDir->text());
   _metrics->set("CSVAtlasDefaultDirWindows",    _atlasWindowsDir->text());
 
-  _metrics->set("XMLSuccessSuffix",            _importRenameSuffix->text());
-  _metrics->set("XMLSuccessDir",               _importMoveDir->text());
+  _metrics->set("XMLSuccessSuffix",       _importSuccessSelector->suffix());
+  _metrics->set("XMLSuccessDir",          _importSuccessSelector->destdir());
+
+  _metrics->set("ImportFailureTreatment", _importErrorSelector->code());
+  _metrics->set("ImportFailureSuffix",    _importErrorSelector->suffix());
+  _metrics->set("ImportFailureDir",       _importErrorSelector->destdir());
+
+  _metrics->set("ImportXMLCreateErrorFile", _importErrorXMLHandling->isChecked());
 
   _metrics->set("XMLExportDefaultDirLinux",    _exportLinuxDir->text());
   _metrics->set("XMLExportDefaultDirMac",      _exportMacDir->text());
@@ -186,17 +187,15 @@ void configureIE::sPopulate()
   _atlasMacDir->setText(_metrics->value("CSVAtlasDefaultDirMac"));
   _atlasWindowsDir->setText(_metrics->value("CSVAtlasDefaultDirWindows"));
 
-  if (_metrics->value("XMLSuccessTreatment") == "Rename")
-    _importRenameFiles->setChecked(true);
-  else if (_metrics->value("XMLSuccessTreatment") == "Delete")
-    _importDeleteFiles->setChecked(true);
-  else if (_metrics->value("XMLSuccessTreatment") == "Move")
-    _importMoveFiles->setChecked(true);
-  else if (_metrics->value("XMLSuccessTreatment") == "None")
-    _importDoNothing->setChecked(true);
+  _importSuccessSelector->setCode(_metrics->value("XMLSuccessTreatment"));
+  _importSuccessSelector->setDestdir(_metrics->value("XMLSuccessDir"));
+  _importSuccessSelector->setSuffix(_metrics->value("XMLSuccessSuffix"));
 
-  _importRenameSuffix->setText(_metrics->value("XMLSuccessSuffix"));
-  _importMoveDir->setText(_metrics->value("XMLSuccessDir"));
+  _importErrorSelector->setCode(_metrics->value("ImportFailureTreatment"));
+  _importErrorSelector->setDestdir(_metrics->value("ImportFailureDir"));
+  _importErrorSelector->setSuffix(_metrics->value("ImportFailureSuffix"));
+
+  _importErrorXMLHandling->setChecked(_metrics->boolean("ImportXMLCreateErrorFile"));
 
   _exportLinuxDir->setText(_metrics->value("XMLExportDefaultDirLinux"));
   _exportMacDir->setText(_metrics->value("XMLExportDefaultDirMac"));

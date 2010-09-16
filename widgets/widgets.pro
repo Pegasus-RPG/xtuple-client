@@ -57,6 +57,7 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/expenseclusterplugin.h \
     plugins/expenselineeditplugin.h \
     plugins/fileclusterplugin.h \
+    plugins/filemoveselectorplugin.h \
     plugins/glclusterplugin.h \
     plugins/imageclusterplugin.h \
     plugins/invoiceclusterplugin.h \
@@ -128,6 +129,7 @@ SOURCES += widgets.cpp \
     warehousegroup.cpp \
     woCluster.cpp \
     filecluster.cpp \
+    filemoveselector.cpp \
     glCluster.cpp \
     imagecluster.cpp \
     invoiceLineEdit.cpp \
@@ -211,6 +213,7 @@ HEADERS += widgets.h \
     warehousegroup.h \
     woCluster.h \
     filecluster.h \
+    filemoveselector.h \
     glcluster.h \
     imagecluster.h \
     invoicelineedit.h \
@@ -278,6 +281,7 @@ FORMS += alarmMaint.ui \
     customerselector.ui \
     docAttach.ui \
     documents.ui \
+    filemoveselector.ui \
     filterManager.ui \
     filterSave.ui \
     imageAssignment.ui \
