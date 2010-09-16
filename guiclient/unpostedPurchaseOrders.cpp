@@ -30,7 +30,7 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char*, Qt:
 {
   setupUi(optionsWidget());
   setUseAltId(true);
-  setWindowTitle(tr("Open Purhase Orders"));
+  setWindowTitle(tr("Open Purchase Orders"));
   setMetaSQLOptions("openpurchaseorders", "detail");
   setParameterWidgetVisible(true);
   setNewVisible(true);
