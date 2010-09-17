@@ -123,7 +123,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   actionProperties acts[] = {
   
 #ifdef Q_WS_MACX
-  { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              mainMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true },
+  { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              mainMenu, "MaintainPreferencesSelf MaintainPreferencesOthers",  NULL,   NULL,   true, NULL },
 #endif
 
   // Product | Reports
