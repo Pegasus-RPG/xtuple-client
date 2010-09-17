@@ -1510,7 +1510,8 @@ void transferOrder::clear()
   _taxzone->setId(-1);
   _whstaxzoneid        = -1;
   _shipVia->setId(-1);
-  _shippingForm->setId(-1);
+//  cannot clear _shippingForm
+//  _shippingForm->setId(-1);
   _freight->clear();
   _orderComments->clear();
   _shippingComments->clear();
