@@ -19,7 +19,7 @@
 incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "incidentWorkbench", fl)
 {
-  setWindowTitle(tr("Incident Workbench"));
+  setWindowTitle(tr("Incidents"));
   setListLabel(tr("Incidents"));
   setReportName("IncidentWorkbenchList");
   setMetaSQLOptions("incidents", "detail");

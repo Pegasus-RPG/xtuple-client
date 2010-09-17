@@ -26,7 +26,7 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "todoList", fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("To-Do List"));
+  setWindowTitle(tr("To-Do Items"));
   setReportName("TodoList");
   setMetaSQLOptions("todolist", "detail");
   setUseAltId(true);

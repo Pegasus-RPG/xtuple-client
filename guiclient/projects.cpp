@@ -23,7 +23,7 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "projects", fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Project List"));
+  setWindowTitle(tr("Projects"));
   setMetaSQLOptions("projects", "detail");
   setNewVisible(true);
   queryAction()->setVisible(false);

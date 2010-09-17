@@ -29,7 +29,7 @@ addresses::addresses(QWidget* parent, const char*, Qt::WFlags fl)
 {
   setupUi(optionsWidget());
   setReportName("AddressesMasterList");
-  setWindowTitle(tr("Address List"));
+  setWindowTitle(tr("Addresses"));
   setMetaSQLOptions("addresses", "detail");
   setNewVisible(true);
   queryAction()->setVisible(false);

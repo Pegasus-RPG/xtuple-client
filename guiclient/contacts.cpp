@@ -26,7 +26,7 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "contacts", fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Contact List"));
+  setWindowTitle(tr("Contacts"));
   setReportName("ContactsMasterList");
   setMetaSQLOptions("contacts", "detail");
   setParameterWidgetVisible(true);
