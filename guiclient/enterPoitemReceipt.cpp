@@ -28,7 +28,7 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
 {
   setupUi(this);
 
-  connect(_receive, SIGNAL(clicked()), this, SLOT(sReceive()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sReceive()));
   connect(_toReceive, SIGNAL(lostFocus()), this, SLOT(sDetermineToReceiveInv()));
 
   _invVendorUOMRatio->setPrecision(omfgThis->ratioVal());
@@ -128,7 +128,6 @@ enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
 
       _toReceiveLit->setText(tr("Correct Qty. to:"));
       _freightLit->setText(tr("Correct Freight to:"));
-      _receive->setText(tr("Co&rrect"));
       _item->setEnabled(false);
       setWindowTitle(tr("Correct Item Receipt"));
     }
