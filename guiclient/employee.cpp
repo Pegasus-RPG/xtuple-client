@@ -133,14 +133,14 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
   if (_privileges->check("MaintainUsers"))
     connect(_user, SIGNAL(toggled(bool)), _userButton, SLOT(setEnabled(bool)));
 
-  _per->append(-1,   "",           "");
+  _per->setAllowNull(false);
   _per->append(0, tr("Hour"),      "Hour");
   _per->append(1, tr("Day"),       "Day");
   _per->append(2, tr("Week"),      "Week");
   _per->append(3, tr("Bi-Weekly"), "Biweek");
   _per->append(4, tr("Year"),      "Year");
 
-  _perExt->append(-1,   "",           "");
+  _per->setAllowNull(false);
   _perExt->append(0, tr("Hour"),      "Hour");
   _perExt->append(1, tr("Day"),       "Day");
   _perExt->append(2, tr("Week"),      "Week");
