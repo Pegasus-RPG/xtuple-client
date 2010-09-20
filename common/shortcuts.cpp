@@ -160,13 +160,5 @@ void shortcuts::setStandardKeys(QWidget* widget)
     pageupAct->setShortcut(QKeySequence::MoveToPreviousPage);
     pageupAct->connect(pageupAct, SIGNAL(triggered()), tabNav, SLOT(pageUp()));
     tab->addAction(pageupAct);
-
-    QString tip;
-    tip.append(tab->tr("Next "))
-        .append(pagedownAct->shortcut().toString(QKeySequence::NativeText))
-        .append("\n")
-        .append(tab->tr("Previous "))
-        .append(pageupAct->shortcut().toString(QKeySequence::NativeText));
-    tab->setToolTip(tip);
   }
 }
