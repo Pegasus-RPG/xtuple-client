@@ -15,7 +15,6 @@
 
 #include "xwidget.h"
 
-// make this a child of XWidget??
 class XAbstractConfigure : public XWidget
 {
   Q_OBJECT
@@ -29,11 +28,6 @@ class XAbstractConfigure : public XWidget
 
   protected slots:
     virtual void languageChange() = 0;
-
-  signals:
-    void saving();
-
 };
-//Q_DECLARE_INTERFACE(XAbstractConfigure, "xTuple.XAbstractConfigure/1.0");
 
 #endif

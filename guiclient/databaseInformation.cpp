@@ -14,10 +14,13 @@
 
 #include <dbtools.h>
 
-databaseInformation::databaseInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+databaseInformation::databaseInformation(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   QString server;
   QString database;
@@ -77,7 +80,7 @@ void databaseInformation::languageChange()
   retranslateUi(this);
 }
 
-void databaseInformation::sSave()
+bool databaseInformation::sSave()
 {
   emit saving();
 
@@ -100,5 +103,5 @@ void databaseInformation::sSave()
 
   omfgThis->setWindowTitle();
 
-  accept();
+  return true;
 }

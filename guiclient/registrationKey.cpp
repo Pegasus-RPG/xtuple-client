@@ -15,9 +15,12 @@
 #include "xtupleproductkey.h"
 
 registrationKey::registrationKey(QWidget* parent, const char * name, Qt::WFlags fl)
-  : XWidget(parent, name, fl)
+  : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   connect(_key, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 
@@ -30,7 +33,7 @@ void registrationKey::languageChange()
   retranslateUi(this);
 }
 
-void registrationKey::sSave()
+bool registrationKey::sSave()
 {
   XTupleProductKey pk(_key->text());
   if(pk.valid())
@@ -38,8 +41,11 @@ void registrationKey::sSave()
   else
   {
     QMessageBox::critical(this, tr("Invalid Registration Key"),
-      tr("The Registration Key you have entered does not appear to be valid."));
+                          tr("<p>The Registration Key you have entered "
+                             "does not appear to be valid."));
+    return false;
   }
+  return true;
 }
 
 void registrationKey::sCheck()

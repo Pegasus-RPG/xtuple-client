@@ -452,14 +452,12 @@ void setup::save(bool close)
 
 void setup::setCurrentIndex(const QString &uiName)
 {
-  qDebug("setup::setCurrentIndex(%s)", qPrintable(uiName));
   if (_itemMap.contains(uiName) && _itemMap.value(uiName).id >= 0)
     _tree->setId(_itemMap.value(uiName).id);
 }
 
 void setup::setCurrentIndex(XTreeWidgetItem* item)
 {
-  qDebug("setup::setCurrentIndex(%p)", item);
   QString uiName = item->data(0, Xt::RawRole).toString();
   QString label = "<span style=\" font-size:14pt; font-weight:600;\">%1</span></p></body></html>";
 

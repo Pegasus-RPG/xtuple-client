@@ -12,10 +12,27 @@
 
 /** \brief Abstract interface definition for xTuple ERP Configure widgets.
 
-  XAbstractConfigure is a pure virtual (abstract) class that defines
-  a simple programming interface that all configuration windows
-  must implement. This is used by the setup window to ensure that all data
-  get saved properly.
+  XAbstractConfigure is an abstract class defining a simple programming
+  interface that all configuration windows must implement. This is
+  used by the Setup window to ensure that all data get saved properly.
+
+  Every configuration UI intended to be included in the Setup window
+  should inherit from XAbstractConfigure. It must implement a
+  languageChange() method and an sSave() method.  The languageChange()
+  method is usually empty; it is required to ensure that the
+  configuration window can be translated. The sSave method returns
+  a boolean. It should return true if the save attempt was successful
+  and false if the save attempt failed. If the save attempt failed,
+  sSave() should set the focus on the failed widget and give the user a
+  QMessageBox explaining the failure.  It is the Setup window's
+  responsibility to handle the failure and focus widget gracefully.
+
+  Child classes of XAbstractConfigure should define a saving() signal
+  and emit it at the beginning of sSave().  This will allow scripts
+  on these child classes to save their own data.
+
+  \todo Find a way for scripts to return failures so they also can
+        handle errors during saving.
 
   \see setup
 

@@ -11,11 +11,11 @@
 #ifndef __REGISTRATIONKEY_H__
 #define __REGISTRATIONKEY_H__
 
-#include "xwidget.h"
+#include "xabstractconfigure.h"
 
 #include "ui_registrationKey.h"
 
-class registrationKey : public XWidget, public Ui::registrationKey
+class registrationKey : public XAbstractConfigure, public Ui::registrationKey
 {
     Q_OBJECT
 
@@ -23,7 +23,7 @@ public:
     registrationKey(QWidget* parent = 0, const char * = 0, Qt::WFlags fl = Qt::Window);
 
 public slots:
-    virtual void sSave();
+    virtual bool sSave();
     virtual void sCheck();
 
 protected slots:
