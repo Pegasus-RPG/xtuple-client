@@ -154,20 +154,15 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
 #endif
 
   // Shortcuts for xtreewidget
-  QString tip;
   QAction* menuAct = new QAction(this);
   menuAct->setShortcut(QKeySequence(tr("Ctrl+M")));
   connect(menuAct, SIGNAL(triggered()), this, SLOT(sShowMenu()));
   addAction(menuAct);
-  tip = tr("Menu %1").arg(menuAct->shortcut().toString(QKeySequence::NativeText));
 
   QAction* itemSelectedAct = new QAction(this);
-  itemSelectedAct->setShortcut(QKeySequence(QKeySequence::Open));
+  itemSelectedAct->setShortcut(QKeySequence(QKeySequence::InsertParagraphSeparator));
   connect(itemSelectedAct, SIGNAL(triggered()), this, SLOT(sItemSelected()));
   addAction(itemSelectedAct);
-  tip.append("\n");
-  tip.append(tr("Open %1").arg(itemSelectedAct->shortcut().toString(QKeySequence::NativeText)));
-  setToolTip(tip);
 
 }
 
