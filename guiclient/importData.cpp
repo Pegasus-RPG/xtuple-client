@@ -18,7 +18,7 @@
 #include "importhelper.h"
 #include "storedProcErrorLookup.h"
 
-#define DEBUG true
+#define DEBUG false
 
 enum ImportFileType { Unknown = -1, Csv, Xml };
 
@@ -42,24 +42,14 @@ void importData::setVisible(bool visible)
   else if (_metrics->value("XMLSuccessTreatment").isEmpty() ||
            _metrics->value("XSLTLibrary").isEmpty()) // not configured properly
   {
-    if (! configureIE::userHasPriv())
-    {
-      systemError(this,
-                  tr("The application is not set up to import data. "
+    QString msg = tr("The application is not set up to import data. "
                      "Have an administrator configure Data Import before "
-                     "trying to import data."),
-                  __FILE__, __LINE__);
-      deleteLater();
-    }
-    else if (QMessageBox::question(this, tr("Setup required"),
-                              tr("<p>You must first set up the application to "
-                                 "import data. Would you like to do this now?"),
-                              QMessageBox::Yes | QMessageBox::No,
-                              QMessageBox::Yes) == QMessageBox::Yes &&
-             configureIE(this, "", true).exec() == XDialog::Accepted)
-      XWidget::setVisible(true);
-    else
-      deleteLater();
+                     "trying to import data.");
+    if (configureIE::userHasPriv())
+      tr("<p>You must first set up the application to import data.");
+
+    systemError(this, msg, __FILE__, __LINE__);
+    deleteLater();
   }
   else
     XWidget::setVisible(true);

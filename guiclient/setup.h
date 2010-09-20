@@ -57,17 +57,18 @@ private slots:
 
 private:
     struct ItemProps {
+      QString title;
       QString uiName;
       int type;
       int modules;
       bool enabled;
       int mode;
       QString saveMethod;
+      int       index;  // in the stack widget
+      int       id;     // for the tree widget
+      QObject  *implementation;
     };
     QMap<QString, ItemProps>    _itemMap;
-    QMap<QString, int>          _idxMap;
-    QMap<QString, QString>      _methodMap;
-    QMap<QString, int>          _treeMap;
 
     XTreeWidgetItem*            _configItem;
     XTreeWidgetItem*            _mapItem;

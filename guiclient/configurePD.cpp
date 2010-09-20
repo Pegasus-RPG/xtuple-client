@@ -16,10 +16,13 @@
 #include "storedProcErrorLookup.h"
 #include "guiclient.h"
 
-configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configurePD::configurePD(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   _inactiveBomItems->setChecked(_metrics->boolean("AllowInactiveBomItems"));
   _exclusive->setChecked(_metrics->boolean("DefaultSoldItemsExclusive"));
@@ -75,7 +78,7 @@ void configurePD::languageChange()
   retranslateUi(this);
 }
 
-void configurePD::sSave()
+bool configurePD::sSave()
 {
   emit saving();
 
@@ -106,7 +109,7 @@ void configurePD::sSave()
         systemError(this, storedProcErrorLookup("CreateRevision", q.value("result").toInt()),
             __FILE__, __LINE__);
         _metrics->set("RevControl", FALSE);
-        return;
+        return false;
       }
       if (q.lastError().type() != QSqlError::NoError)
       {
@@ -115,11 +118,11 @@ void configurePD::sSave()
           .arg(__LINE__),
           q.lastError().databaseText());
         _metrics->set("RevControl", FALSE);
-        return;
+        return false;
       }
     }
     else
-      return;
+      return false;
   }
 
   _metrics->set("Transforms", ((_transforms->isChecked()) && (!_transforms->isHidden())));
@@ -135,4 +138,6 @@ void configurePD::sSave()
     _metrics->set("DefaultWomatlIssueMethod", QString("L"));
   else if (_issueMethod->currentIndex() == 2)
     _metrics->set("DefaultWomatlIssueMethod", QString("M"));
+
+  return true;
 }

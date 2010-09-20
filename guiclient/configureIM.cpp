@@ -18,10 +18,13 @@
 #include "editICMWatermark.h"
 #include "storedProcErrorLookup.h"
 
-configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   connect(_shipformWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditShippingFormWatermark()));
   connect(_shipformNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleShippingFormCopies(int)));
@@ -196,15 +199,16 @@ void configureIM::languageChange()
     retranslateUi(this);
 }
 
-void configureIM::sSave()
+bool configureIM::sSave()
 {
   emit saving();
 
   if(!_costAvg->isChecked() && !_costStd->isChecked())
   { 
     QMessageBox::warning(this, tr("No Cost selected"),
-                         tr("You must have checked Standard Cost, Average Cost or both before saving."));
-    return;
+                         tr("<p>You must have checked Standard Cost, "
+                            "Average Cost or both before saving."));
+    return false;
   }
 
   // Inventory
@@ -237,13 +241,15 @@ void configureIM::sSave()
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("setNextNumber", result), __FILE__, __LINE__);
-        return;
+        _toNextNum->setFocus();
+        return false;
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      _toNextNum->setFocus();
+      return false;
     }
 
     _metrics->set("DefaultTransitWarehouse", _defaultTransWhs->id());
@@ -298,8 +304,11 @@ void configureIM::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    _nextShipmentNum->setFocus();
+    return false;
   }
+
+  return true;
 }
 
 

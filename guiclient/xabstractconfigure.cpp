@@ -8,30 +8,24 @@
  * to be bound by its terms.
  */
 
-#ifndef CONFIGUREWO_H
-#define CONFIGUREWO_H
-
 #include "xabstractconfigure.h"
 
-#include "ui_configureWO.h"
+/** \brief Abstract interface definition for xTuple ERP Configure widgets.
 
-class configureWO : public XAbstractConfigure, public Ui::configureWO
+  XAbstractConfigure is a pure virtual (abstract) class that defines
+  a simple programming interface that all configuration windows
+  must implement. This is used by the setup window to ensure that all data
+  get saved properly.
+
+  \see setup
+
+*/
+
+XAbstractConfigure::XAbstractConfigure(QWidget* parent, Qt::WindowFlags f)
+  : XWidget(parent, f)
 {
-    Q_OBJECT
+}
 
-public:
-    configureWO(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~configureWO();
-
-public slots:
-    virtual bool sSave();
-
-protected slots:
-    virtual void languageChange();
-
-signals:
-    void saving();
-
-};
-
-#endif // CONFIGUREWO_H
+XAbstractConfigure::~XAbstractConfigure()
+{
+}

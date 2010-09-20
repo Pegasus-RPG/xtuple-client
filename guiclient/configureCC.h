@@ -14,13 +14,13 @@
 #include <QList>
 
 #include "guiclient.h"
-#include "xdialog.h"
+#include "xabstractconfigure.h"
 
 #include "ui_configureCC.h"
 
 class ConfigCreditCardProcessor;
 
-class configureCC : public XDialog, public Ui::configureCC
+class configureCC : public XAbstractConfigure, public Ui::configureCC
 {
     Q_OBJECT
 
@@ -30,7 +30,7 @@ public:
 
 public slots:
     virtual void sDuplicateWindow(int);
-    virtual void sSave();
+    virtual bool sSave();
 
 protected slots:
     virtual void languageChange();

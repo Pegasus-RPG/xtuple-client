@@ -18,6 +18,7 @@
 #include "scripttoolbox.h"
 #include "setup.h"
 #include "xt.h"
+#include "xabstractconfigure.h"
 #include "xtreewidget.h"
 #include "xwidget.h"
 
@@ -59,21 +60,21 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _tree->setHeaderHidden(true);
 
   // Configure
-  insert(tr("Accounting"), "configureGL", Configure, Xt::AccountingModule, mode("ConfigureGL"), 0, "sSave()");
-  insert(tr("Credit Card"), "configureCC", Configure, Xt::SystemModule, mode("ConfigureCC"), 0, "sSave()");
-  insert(tr("CRM"), "configureCRM", Configure, Xt::CRMModule, mode("ConfigureCRM"), 0, "sSave()" );
-  insert(tr("Database"), "databaseInformation", Configure, Xt::SystemModule, mode("ConfigDatabaseInfo"), 0, "sSave()");
-  insert(tr("Encryption"), "configureEncryption", Configure, Xt::SystemModule, mode("ConfigureEncryption"), 0, "sSave()");
-  insert(tr("Inventory"), "configureIM", Configure, Xt::InventoryModule, mode("ConfigureIM"), 0, "sSave()" );
-  insert(tr("Import/Export"), "configureIE", Configure, Xt::SystemModule, mode("ConfigureImportExport"), 0, "sSave()");
-  insert(tr("Sales"), "configureSO", Configure, Xt::SalesModule, mode("ConfigureSO"), 0, "sSave()" );
-  insert(tr("Manufacture"), "configureWO", Configure, Xt::ManufactureModule, mode("ConfigureWO"), 0, "sSave()");
-  insert(tr("Products"), "configurePD", Configure, Xt::ProductsModule, mode("ConfigurePD"), 0, "sSave()" );
-  insert(tr("Purchase"), "configurePO", Configure, Xt::PurchaseModule, mode("ConfigurePO"), 0, "sSave()" );
+  insert(tr("Accounting"), "configureGL", Configure, Xt::AccountingModule, mode("ConfigureGL"), 0);
+  insert(tr("Credit Card"), "configureCC", Configure, Xt::SystemModule, mode("ConfigureCC"), 0);
+  insert(tr("CRM"), "configureCRM", Configure, Xt::CRMModule, mode("ConfigureCRM"), 0 );
+  insert(tr("Database"), "databaseInformation", Configure, Xt::SystemModule, mode("ConfigDatabaseInfo"), 0);
+  insert(tr("Encryption"), "configureEncryption", Configure, Xt::SystemModule, mode("ConfigureEncryption"), 0);
+  insert(tr("Inventory"), "configureIM", Configure, Xt::InventoryModule, mode("ConfigureIM"), 0 );
+  insert(tr("Import/Export"), "configureIE", Configure, Xt::SystemModule, mode("ConfigureImportExport"), 0);
+  insert(tr("Sales"), "configureSO", Configure, Xt::SalesModule, mode("ConfigureSO"), 0 );
+  insert(tr("Manufacture"), "configureWO", Configure, Xt::ManufactureModule, mode("ConfigureWO"), 0);
+  insert(tr("Products"), "configurePD", Configure, Xt::ProductsModule, mode("ConfigurePD"), 0 );
+  insert(tr("Purchase"), "configurePO", Configure, Xt::PurchaseModule, mode("ConfigurePO"), 0 );
   if (_metrics->value("Application") != "PostBooks")
   {
-    insert(tr("Registration"), "registrationKey", Configure, Xt::SystemModule, mode("MaintainRegistrationKey"), 0, "sSave()" );
-    insert(tr("Schedule"), "configureMS", Configure, Xt::ScheduleModule, mode("ConfigureMS"), 0, "sSave()" );
+    insert(tr("Registration"), "registrationKey", Configure, Xt::SystemModule, mode("MaintainRegistrationKey"), 0 );
+    insert(tr("Schedule"), "configureMS", Configure, Xt::ScheduleModule, mode("ConfigureMS"), 0 );
   }
 
   // Account Mappings
@@ -266,14 +267,18 @@ void setup::insert(const QString &title, const QString &uiName, int type, int mo
 {
    ItemProps ip;
 
+   ip.title  = title;
    ip.uiName = uiName;
    ip.type = type;
    ip.modules = modules;
    ip.enabled = enabled;
    ip.mode = mode;
    ip.saveMethod = saveMethod;
+   ip.index      = -1;
+   ip.id         = -1;
+   ip.implementation = 0;
 
-   _itemMap.insert(title, ip);
+   _itemMap.insert(uiName, ip);
 }
 
 /*!
@@ -321,8 +326,6 @@ int setup::mode(const QString &editPriv, const QString &viewPriv)
 void setup::populate(bool first)
 {
   _tree->clear();
-  _idxMap.clear();
-  _treeMap.clear();
   while (_stack->count())
   {
     QWidget* w = _stack->widget(0);
@@ -344,6 +347,8 @@ void setup::populate(bool first)
     id++;
     i.next();
     ip = i.value();
+    _itemMap[i.key()].index = -1;
+    _itemMap[i.key()].id    = -1;
 
     if (_modules->currentIndex() == 0 ||
         _modules->itemData(_modules->currentIndex()).toInt() & ip.modules)
@@ -357,8 +362,8 @@ void setup::populate(bool first)
 
       // Set the item on the list
       XTreeWidgetItem* item  = new XTreeWidgetItem(parent, id);
-      item->setData(0, Qt::DisplayRole, QVariant(i.key()));
-      item->setData(0, Xt::RawRole, QVariant(ip.uiName));
+      item->setData(0, Qt::DisplayRole, QVariant(ip.title));
+      item->setData(0, Xt::RawRole, QVariant(i.key()));
 
       if (!ip.enabled)
       {
@@ -367,12 +372,7 @@ void setup::populate(bool first)
       }
       parent->addChild(item);
 
-      // Store the save methad name
-      if (!ip.saveMethod.isEmpty())
-        _methodMap.insert(ip.uiName, ip.saveMethod);
-
-      // Store ui name with id in map
-      _treeMap.insert(ip.uiName,id);
+      _itemMap[i.key()].id = id;
     }
   }
 
@@ -399,6 +399,48 @@ void setup::populate(bool first)
 void setup::save(bool close)
 {
   emit saving();
+
+  QMapIterator<QString, ItemProps> i(_itemMap);
+  while (i.hasNext())
+  {
+    bool ok = false;
+
+    i.next();
+
+    XAbstractConfigure *cw = qobject_cast<XAbstractConfigure*>(i.value().implementation);
+    QScriptEngine  *engine = qobject_cast<QScriptEngine*>(i.value().implementation);
+    QString method = QString(i.value().saveMethod).remove("(").remove(")");
+
+    if (! i.value().implementation)
+      continue;
+    else if (cw)
+      ok = cw->sSave();
+    else if (engine && engine->globalObject().property(method).isFunction())
+    {
+      QScriptValue saveresult = engine->globalObject().property(method).call();
+      if (saveresult.isBool())
+        ok = saveresult.toBool();
+      else
+        qWarning("Problem executing %s method for script %s",
+                 qPrintable(i.value().saveMethod), qPrintable(i.key()));
+    }
+    else
+    {
+      qWarning("Could not call save method for %s; it's a(n) %s (%p)",
+               qPrintable(i.key()),
+               qobject_cast<QObject*>(i.value().implementation) ?
+               qobject_cast<QObject*>(i.value().implementation)->metaObject()->className() : "unknown class",
+               i.value().implementation);
+      ok = true;
+    }
+
+    if (! ok)
+    {
+      setCurrentIndex(i.key());
+      return;
+    }
+  }
+
   _metrics->load();
   _privileges->load();
   _preferences->load();
@@ -410,38 +452,30 @@ void setup::save(bool close)
 
 void setup::setCurrentIndex(const QString &uiName)
 {
-  if (_treeMap.contains(uiName))
-  {
-    _tree->setId(_treeMap.value(uiName));
-    setCurrentIndex(_tree->currentItem());
-  }
+  qDebug("setup::setCurrentIndex(%s)", qPrintable(uiName));
+  if (_itemMap.contains(uiName) && _itemMap.value(uiName).id >= 0)
+    _tree->setId(_itemMap.value(uiName).id);
 }
 
 void setup::setCurrentIndex(XTreeWidgetItem* item)
 {
-  QString uiName = item->data(0, Xt::RawRole ).toString();
+  qDebug("setup::setCurrentIndex(%p)", item);
+  QString uiName = item->data(0, Xt::RawRole).toString();
   QString label = "<span style=\" font-size:14pt; font-weight:600;\">%1</span></p></body></html>";
 
-  if (_idxMap.contains(uiName))
+  if (_itemMap.contains(uiName) && _itemMap.value(uiName).index >= 0)
   {
-    _stack->setCurrentIndex(_idxMap.value(uiName));
+    _stack->setCurrentIndex(_itemMap.value(uiName).index);
     _stackLit->setText(label.arg(item->text(0)));
     return;
   }
-  else if (!item->isDisabled())
+  else if (_itemMap.contains(uiName) && !item->isDisabled())
   {
     // First look for a class...
     QWidget *w = xtGetScreen(uiName, this);
 
     if (w)
-    {
-      //Connect save slot if applicable
-      if (_methodMap.contains(uiName))
-      {
-        QString method = _methodMap.value(uiName);
-        connect(this, SIGNAL(saving()), w, QString("1%1").arg(method).toUtf8().data());
-      }
-    }
+      _itemMap[uiName].implementation = w;
     else
     {
       // No class, so look for an extension
@@ -496,19 +530,8 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
             int line = engine->uncaughtExceptionLineNumber();
             qDebug() << "uncaught exception at line" << line << ":" << result.toString();
           }
-
-          //Connect save slot if applicable
-          if (_methodMap.contains(uiName))
-          {
-            QString method = QString(_methodMap.value(uiName)).remove("(").remove(")");
-
-            if(engine->globalObject().property(method).isFunction())
-            {
-              QScriptValue slot = engine->globalObject().property(method);
-              qScriptConnect(this, SIGNAL(saving()), result, slot );
-            }
-          }
         }
+        _itemMap[uiName].implementation = engine;
       }
     }
 
@@ -523,7 +546,7 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
         buttons->hide();
 
       //Set mode if applicable
-      int mode = _itemMap.value(item->text(0)).mode;
+      int mode = _itemMap.value(uiName).mode;
       if (mode && w->inherits("XDialog"))
       {
         XWidget* x = dynamic_cast<XWidget*>(w);
@@ -532,11 +555,12 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
           params.append("mode", "edit");
         else if (mode == cView)
           params.append("mode", "view");
-        x->set(params);
+        if (x)
+          x->set(params);
       }
 
       int idx = _stack->count();
-      _idxMap.insert(uiName,idx);
+      _itemMap[uiName].index = idx;
       _stack->addWidget(w);
       _stack->setCurrentIndex(idx);
 
@@ -544,6 +568,7 @@ void setup::setCurrentIndex(XTreeWidgetItem* item)
       return;
     }
   }
+
   // Nothing here so try the next one
   XTreeWidgetItem* next = dynamic_cast<XTreeWidgetItem*>(_tree->itemBelow(item));
   if (next)

@@ -11,11 +11,10 @@
 #ifndef CONFIGUREIM_H
 #define CONFIGUREIM_H
 
-#include "xdialog.h"
-#include <parameter.h>
+#include "xabstractconfigure.h"
 #include "ui_configureIM.h"
 
-class configureIM : public XDialog, public Ui::configureIM
+class configureIM : public XAbstractConfigure, public Ui::configureIM
 {
     Q_OBJECT
 
@@ -24,7 +23,7 @@ public:
     ~configureIM();
 
 public slots:
-    virtual void sSave();
+    virtual bool sSave();
 
 protected slots:
     virtual void languageChange();

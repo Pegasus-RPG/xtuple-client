@@ -23,23 +23,13 @@ bool configureIE::userHasPriv()
   return _privileges->check("ConfigureImportExport");
 }
 
-int configureIE::exec()
-{
-  if (userHasPriv())
-    return XDialog::exec();
-  else
-  {
-    systemError(this,
-                tr("You do not have sufficient privilege to view this window"),
-                __FILE__, __LINE__);
-    return XDialog::Rejected;
-  }
-}
-
-configureIE::configureIE(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configureIE::configureIE(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   connect(_atlasMap, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sEditAtlasMap()));
   connect(_atlasMap,   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
@@ -89,7 +79,7 @@ void configureIE::languageChange()
   retranslateUi(this);
 }
 
-void configureIE::sSave()
+bool configureIE::sSave()
 {
   emit saving();
 
@@ -102,7 +92,7 @@ void configureIE::sSave()
                              "move the import file after errors, or "
                              "uncheck '%1'.")
                           .arg(_importErrorXMLHandling->text()));
-    return;
+    return false;
   }
 
   _metrics->set("XMLSuccessTreatment",  _importSuccessSelector->code());
@@ -119,7 +109,7 @@ void configureIE::sSave()
                                "line for at least one platform."));
       _tabs->setCurrentIndex(_tabs->indexOf(_importTab));
       _linuxCmd->setFocus();
-      return;
+      return false;
     }
     else
       _metrics->set("XSLTLibrary",        ! _external->isChecked());
@@ -131,7 +121,7 @@ void configureIE::sSave()
                              "XSLT processor or an external XSLT processor."));
     _tabs->setCurrentIndex(_tabs->indexOf(_importTab));
     _internal->setFocus();
-    return;
+    return false;
   }
 
   _metrics->set("XSLTDefaultDirLinux",    _xsltLinuxDir->text());
@@ -163,7 +153,7 @@ void configureIE::sSave()
   _metrics->set("XMLExportDefaultDirMac",      _exportMacDir->text());
   _metrics->set("XMLExportDefaultDirWindows",  _exportWindowsDir->text());
 
-  accept();
+  return true;
 }
 
 void configureIE::sPopulate()

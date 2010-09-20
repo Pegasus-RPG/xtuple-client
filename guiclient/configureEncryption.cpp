@@ -12,10 +12,13 @@
 
 #include <QMessageBox>
 
-configureEncryption::configureEncryption(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configureEncryption::configureEncryption(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   if (_metricsenc == 0)
   {
@@ -39,7 +42,7 @@ void configureEncryption::languageChange()
   retranslateUi(this);
 }
 
-void configureEncryption::sSave()
+bool configureEncryption::sSave()
 {
   emit saving();
 
@@ -53,5 +56,5 @@ void configureEncryption::sSave()
   if (0 != _metricsenc)
     _metricsenc->load();
 
-  accept();
+  return true;
 }

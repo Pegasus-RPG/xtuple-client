@@ -19,10 +19,13 @@
 #include "configureEncryption.h"
 #include "creditcardprocessor.h"
 
-configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configureCC::configureCC(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   connect(_anDuplicateWindow, SIGNAL(valueChanged(int)), this, SLOT(sDuplicateWindow(int)));
   connect(_ccCompany, SIGNAL(currentIndexChanged(int)), this, SLOT(sCCCompanyChanged(int)));
@@ -186,7 +189,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   sDuplicateWindow(_anDuplicateWindow->value());
 
-  QWidget *encryption = new configureEncryption(this);
+  XAbstractConfigure *encryption = new configureEncryption(this);
   encryption->setObjectName("_encryption");
   _keyPage->layout()->addWidget(encryption);
   QPushButton *encbutton = encryption->findChild<QPushButton*>("_save");
@@ -208,7 +211,7 @@ void configureCC::languageChange()
   retranslateUi(this);
 }
 
-void configureCC::sSave()
+bool configureCC::sSave()
 {
   emit saving();
 
@@ -234,7 +237,8 @@ void configureCC::sSave()
   if (ccbankq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    return;
+    _amexBank->setFocus();
+    return false;
   }
 
   ccbankq.bindValue(":cctype", "D");
@@ -246,7 +250,8 @@ void configureCC::sSave()
   if (ccbankq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    return;
+    _discoverBank->setFocus();
+    return false;
   }
 
   ccbankq.bindValue(":cctype", "M");
@@ -258,7 +263,8 @@ void configureCC::sSave()
   if (ccbankq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    return;
+    _mastercardBank->setFocus();
+    return false;
   }
 
   /*
@@ -271,7 +277,8 @@ void configureCC::sSave()
   if (ccbankq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    return;
+    _paypalBank->setFocus();
+    return false;
   }
   */
 
@@ -284,7 +291,8 @@ void configureCC::sSave()
   if (ccbankq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, ccbankq.lastError().text(), __FILE__, __LINE__);
-    return;
+    _visaBank->setFocus();
+    return false;
   }
 
   _metrics->set("CCANVer",               _anVersion->currentText());
@@ -385,7 +393,7 @@ void configureCC::sSave()
 
   for (int i = 0; i < _configcclist.size(); i++)
     if (! _configcclist.at(i)->sSave())
-      return;
+      return false;
 
   if (_ccAccept->isChecked())
   {
@@ -409,15 +417,15 @@ void configureCC::sSave()
         .arg(cardproc->errorMsg()),
         QMessageBox::Yes | QMessageBox::Default,
         QMessageBox::No) == QMessageBox::Yes)
-        return;
+        return false;
     }
   }
 
   configureEncryption *encryption = _keyPage->findChild<configureEncryption*>("_encryption");
-  if (encryption)
-    encryption->sSave();
+  if (encryption && ! encryption->sSave())
+    return false;
 
-  accept();
+  return true;
 }
 
 void configureCC::sDuplicateWindow(int p)

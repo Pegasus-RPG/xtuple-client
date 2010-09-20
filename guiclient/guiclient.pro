@@ -1167,6 +1167,7 @@ HEADERS = ../common/format.h                    \
           workOrderMaterials.h          \
           xTupleDesigner.h              \
           xTupleDesignerActions.h       \
+          xabstractconfigure.h          \
           xdateinputdialog.h            \
           xdialog.h                     \
           xerrormessage.h               \
@@ -1749,6 +1750,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           workOrderMaterials.cpp                \
           xTupleDesigner.cpp                    \
           xTupleDesignerActions.cpp             \
+          xabstractconfigure.cpp                \
           xdateinputdialog.cpp                  \
           xdialog.cpp                           \
           xerrormessage.cpp                     \

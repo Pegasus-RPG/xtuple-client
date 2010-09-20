@@ -19,10 +19,13 @@
 #include "guiclient.h"
 #include "mqlutil.h"
 
-configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configureCRM::configureCRM(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   _nextInNumber->setValidator(omfgThis->orderVal());
   _nextAcctNumber->setValidator(omfgThis->orderVal());
@@ -108,19 +111,20 @@ void configureCRM::languageChange()
     retranslateUi(this);
 }
 
-void configureCRM::sSave()
+bool configureCRM::sSave()
 {
   emit saving();
 
   const char *numberGenerationTypes[] = { "M", "A", "O" };
 
-  q.prepare( "SELECT setNextIncidentNumber(:innumber);" );
-  q.bindValue(":innumber", _nextInNumber->text().toInt());
-  q.exec();
+  XSqlQuery configq;
+  configq.prepare( "SELECT setNextIncidentNumber(:innumber);" );
+  configq.bindValue(":innumber", _nextInNumber->text().toInt());
+  configq.exec();
   
-  q.prepare( "SELECT setNextCRMAccountNumber(:acnumber);" );
-  q.bindValue(":acnumber", _nextAcctNumber->text().toInt());
-  q.exec();
+  configq.prepare( "SELECT setNextCRMAccountNumber(:acnumber);" );
+  configq.bindValue(":acnumber", _nextAcctNumber->text().toInt());
+  configq.exec();
 
   _metrics->set("CRMAccountNumberGeneration", QString(numberGenerationTypes[_acctGeneration->currentIndex()]));
   
@@ -145,27 +149,29 @@ void configureCRM::sSave()
     _metrics->set("CRMIncidentEmailComments"  , _incdtComments->isChecked());
   }
 
-  q.prepare("UPDATE status SET status_color = :color "
+  configq.prepare("UPDATE status SET status_color = :color "
             "WHERE ((status_type='INCDT') "
             " AND (status_code=:code));");
-  q.bindValue(":code", "N");
-  q.bindValue(":color", _new->text());
-  q.exec();
-  q.bindValue(":code", "F");
-  q.bindValue(":color", _feedback->text());
-  q.exec();
-  q.bindValue(":code", "C");
-  q.bindValue(":color", _confirmed->text());
-  q.exec();
-  q.bindValue(":code", "A");
-  q.bindValue(":color", _assigned->text());
-  q.exec();
-  q.bindValue(":code", "R");
-  q.bindValue(":color", _resolved->text());
-  q.exec();
-  q.bindValue(":code", "L");
-  q.bindValue(":color", _closed->text());
-  q.exec();
+  configq.bindValue(":code", "N");
+  configq.bindValue(":color", _new->text());
+  configq.exec();
+  configq.bindValue(":code", "F");
+  configq.bindValue(":color", _feedback->text());
+  configq.exec();
+  configq.bindValue(":code", "C");
+  configq.bindValue(":color", _confirmed->text());
+  configq.exec();
+  configq.bindValue(":code", "A");
+  configq.bindValue(":color", _assigned->text());
+  configq.exec();
+  configq.bindValue(":code", "R");
+  configq.bindValue(":color", _resolved->text());
+  configq.exec();
+  configq.bindValue(":code", "L");
+  configq.bindValue(":color", _closed->text());
+  configq.exec();
+
+  return true;
 }
 
 /* TODO: introduced option in 3.4.0beta2.

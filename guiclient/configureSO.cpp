@@ -15,10 +15,13 @@
 
 #include "editICMWatermark.h"
 
-configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleInvoiceCopies(int)));
   connect(_creditMemoNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCreditMemoCopies(int)));
@@ -286,7 +289,7 @@ void configureSO::languageChange()
   retranslateUi(this);
 }
 
-void configureSO::sSave()
+bool configureSO::sSave()
 {
   emit saving();
 
@@ -302,7 +305,7 @@ void configureSO::sSave()
                              tr("<p>All existing location reservations will be removed. Are you sure you want to continue?"),
                              QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     {
-      return;
+      return false;
     }
     else
     {
@@ -426,7 +429,7 @@ void configureSO::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
   if (_enableReturns->isChecked() || !_enableReturns->isCheckable())
@@ -444,10 +447,12 @@ void configureSO::sSave()
     if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
   }
   _metrics->set("EnableReturnAuth", (_enableReturns->isChecked() || !_enableReturns->isCheckable()));
+
+  return true;
 }
 
 void configureSO::sHandleInvoiceCopies(int pValue)

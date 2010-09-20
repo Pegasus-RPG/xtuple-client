@@ -15,10 +15,13 @@
 
 #include "guiclient.h"
 
-configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configureWO::configureWO(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   connect(_autoExplode, SIGNAL(toggled(bool)), _WOExplosionGroup, SLOT(setDisabled(bool)));
   connect(_autoExplode, SIGNAL(toggled(bool)), _multiLevel, SLOT(setChecked(bool)));
@@ -70,7 +73,7 @@ void configureWO::languageChange()
   retranslateUi(this);
 }
 
-void configureWO::sSave()
+bool configureWO::sSave()
 {
   emit saving();
 
@@ -91,5 +94,7 @@ void configureWO::sSave()
     _metrics->set("JobItemCosDefault", QString("D"));
   else 
     _metrics->set("JobItemCosDefault", QString("P"));
+
+  return true;
 }
 

@@ -12,11 +12,11 @@
 #define CONFIGUREENCRYPTION_H
 
 #include "guiclient.h"
-#include "xdialog.h"
+#include "xabstractconfigure.h"
 
 #include "ui_configureEncryption.h"
 
-class configureEncryption : public XDialog, public Ui::configureEncryption
+class configureEncryption : public XAbstractConfigure, public Ui::configureEncryption
 {
     Q_OBJECT
 
@@ -25,7 +25,7 @@ public:
     ~configureEncryption();
 
 public slots:
-    virtual void sSave();
+    virtual bool sSave();
 
 protected slots:
     virtual void languageChange();

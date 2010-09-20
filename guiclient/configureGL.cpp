@@ -17,10 +17,13 @@
 #include "configureEncryption.h"
 #include "guiclient.h"
 
-configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+    : XAbstractConfigure(parent, fl)
 {
   setupUi(this);
+
+  if (name)
+    setObjectName(name);
 
   _yearend->setType(GLCluster::cEquity);
   _gainLoss->setType(GLCluster::cExpense);
@@ -211,7 +214,7 @@ void configureGL::languageChange()
   retranslateUi(this);
 }
 
-void configureGL::sSave()
+bool configureGL::sSave()
 {
   emit saving();
 
@@ -251,7 +254,7 @@ void configureGL::sSave()
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                               error[i].msg);
         error[i].widget->setFocus();
-        return;
+        return false;
       }
   }
 
@@ -314,7 +317,8 @@ void configureGL::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    _nextARMemoNumber->setFocus();
+    return false;
   }
 
   q.prepare("SELECT setNextCashRcptNumber(:cashrcpt_number) AS result;");
@@ -323,7 +327,8 @@ void configureGL::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    _nextCashRcptNumber->setFocus();
+    return false;
   }
 
   _metrics->set("HideApplyToBalance", _hideApplyto->isChecked());
@@ -430,7 +435,7 @@ void configureGL::sSave()
                                    "this now?"),
                                     QMessageBox::Yes | QMessageBox::Default,
                                     QMessageBox::No ) == QMessageBox::Yes)
-        configureEncryption(this, "", TRUE).exec();
+        return false;
     }
     else
       QMessageBox::question(this, tr("Set Encryption?"),
@@ -439,4 +444,6 @@ void configureGL::sSave()
                                "checking information for Vendors until the "
                                "system is configured to perform encryption."));
   }
+
+  return true;
 }
