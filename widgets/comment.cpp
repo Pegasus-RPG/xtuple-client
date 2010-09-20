@@ -15,7 +15,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QSqlError>
-#include <QTextEdit>
 #include <QToolTip>
 #include <QVBoxLayout>
 #include <QVariant>
@@ -24,6 +23,7 @@
 
 #include <parameter.h>
 
+#include "xtextedit.h"
 #include "xcombobox.h"
 #include "comment.h"
 #include "shortcuts.h"
@@ -82,8 +82,9 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   layout9->addItem( spacer );
   layout11->addLayout( layout9 );
 
-  _comment = new QTextEdit( this);
+  _comment = new XTextEdit( this);
   _comment->setObjectName("_comment" );
+  _comment->setSpellEnable(true);
   layout11->addWidget( _comment );
   commentLayout->addLayout( layout11 );
 

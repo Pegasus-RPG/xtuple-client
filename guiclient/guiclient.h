@@ -251,15 +251,15 @@ class GUIClient : public QMainWindow
     void loadScriptGlobals(QScriptEngine * engine);
 
     //check hunspell is ready
-    Q_INVOKABLE const bool hunspell_ready();
+    Q_INVOKABLE bool hunspell_ready();
     //spellcheck word, returns 1 if word ok otherwise 0
-    Q_INVOKABLE const int hunspell_check(const QString word);
+    Q_INVOKABLE int hunspell_check(const QString word);
     //suggest words for word, returns number of words in slst
     Q_INVOKABLE const QStringList hunspell_suggest(const QString word);
     //add word to dict (word is valid until spell object is not destroyed)
-    Q_INVOKABLE const int hunspell_add(const QString word);
+    Q_INVOKABLE int hunspell_add(const QString word);
     //add word to dict (word is valid until spell object is not destroyed)
-    Q_INVOKABLE const int hunspell_ignore(const QString word);
+    Q_INVOKABLE int hunspell_ignore(const QString word);
 
   public slots:
     void sReportError(const QString &);

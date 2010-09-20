@@ -332,12 +332,12 @@ class xTupleGuiClientInterface : public GuiClientInterface
     omfgThis->removeDocumentWatch(path);
   }
 
-  const bool hunspell_ready()
+  bool hunspell_ready()
   {
       return omfgThis->hunspell_ready();
   }
 
-  const int hunspell_check(const QString word)
+  int hunspell_check(const QString word)
   {
       return omfgThis->hunspell_check(word);
   }
@@ -347,12 +347,12 @@ class xTupleGuiClientInterface : public GuiClientInterface
       return omfgThis->hunspell_suggest(word);
   }
 
-  const int hunspell_add(const QString word)
+  int hunspell_add(const QString word)
   {
       return omfgThis->hunspell_add(word);
   }
 
-  const int hunspell_ignore(const QString word)
+  int hunspell_ignore(const QString word)
   {
       return omfgThis->hunspell_ignore(word);
   }
@@ -2165,12 +2165,12 @@ void GUIClient::hunspell_uninitialize()
     }
 }
 
-const bool GUIClient::hunspell_ready()
+bool GUIClient::hunspell_ready()
 {
        return _spellReady;
 }
 
-const int GUIClient::hunspell_check(const QString word)
+int GUIClient::hunspell_check(const QString word)
 {     
       QByteArray encodedString = _spellCodec->fromUnicode(word);
       return _spellChecker->spell(encodedString.data());
@@ -2194,7 +2194,7 @@ const QStringList GUIClient::hunspell_suggest(const QString word)
     return wordList;
 }
 
-const int GUIClient::hunspell_add(const QString word)
+int GUIClient::hunspell_add(const QString word)
 {   
     QByteArray encodedString = _spellCodec->fromUnicode(word);
     //check if word has been added before
@@ -2203,7 +2203,7 @@ const int GUIClient::hunspell_add(const QString word)
     return _spellChecker->add(encodedString.data());
 }
 
-const int GUIClient::hunspell_ignore(const QString word)
+int GUIClient::hunspell_ignore(const QString word)
 {
     QByteArray encodedString = _spellCodec->fromUnicode(word);
     return _spellChecker->add(encodedString.data());
