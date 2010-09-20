@@ -36,6 +36,7 @@
 #include "itemtax.h"
 #include "itemSource.h"
 #include "storedProcErrorLookup.h"
+#include "maintainItemCosts.h"
 
 const char *_itemTypes[] = { "P", "M", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
 
@@ -91,6 +92,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewSrc, SIGNAL(clicked()), this, SLOT(sViewSource()));
   connect(_copySrc, SIGNAL(clicked()), this, SLOT(sCopySource()));
   connect(_deleteSrc, SIGNAL(clicked()), this, SLOT(sDeleteSource()));
+  connect(_cost, SIGNAL(clicked()), this, SLOT(sMaintainItemCosts()));
   
   _disallowPlanningType = false;
   _inTransaction = false;
@@ -156,7 +158,11 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     
   if((!_privileges->check("MaintainItemSites")) || (_metrics->boolean("MultiWhs")))
     _site->hide();
-    
+
+  if((!_privileges->check("CreateCosts")) && (!_privileges->check("EnterActualCosts")) &&
+    (!_privileges->check("UpdateActualCosts")))
+    _cost->hide();
+
   if (_privileges->check("MaintainItemSources"))
   {
     connect(_itemsrc, SIGNAL(valid(bool)), _editSrc, SLOT(setEnabled(bool)));
@@ -243,6 +249,8 @@ enum SetResponse item::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _tab->setEnabled(false);
+
+      _cost->hide();
       
       setObjectName("item new");
       _mode = cNew;
@@ -279,6 +287,8 @@ enum SetResponse item::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _tab->setEnabled(true);
+
+      _cost->show();
     	
       setObjectName(QString("item edit %1").arg(_itemid));
       _mode = cEdit;
@@ -314,6 +324,8 @@ enum SetResponse item::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _tab->setEnabled(true);
+
+      _cost->show();
       
       setObjectName(QString("item view %1").arg(_itemid));
       _mode = cView;
@@ -447,6 +459,10 @@ void item::saveCore()
     // TODO: We can enable certain functionality here that needs a saved record
     _newUOM->setEnabled(true);
     _tab->setEnabled(true);
+
+    _cost->show();
+
+    if(QString(_itemTypes[_itemtype->currentIndex()]) == "M") _bom->show(); else _bom->hide();
   }
 } 
 
@@ -1767,6 +1783,7 @@ void item::sNewUOM()
   ParameterList params;
   params.append("mode", "new");
   params.append("item_id", _itemid);
+  params.append("inventoryUOM", _inventoryUOM->id());
 
   itemUOM newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -2086,4 +2103,13 @@ void item::sDeleteSource()
   }
 }
 
+void item::sMaintainItemCosts()
+{
+  ParameterList params;
+  params.append("item_id", _itemid);
+
+  maintainItemCosts *newdlg = new maintainItemCosts();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
 

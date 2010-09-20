@@ -81,6 +81,7 @@ public slots:
     virtual void sViewSource();
     virtual void sCopySource();
     virtual void sDeleteSource();
+    virtual void sMaintainItemCosts();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
