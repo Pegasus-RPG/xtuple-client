@@ -57,7 +57,7 @@ void XTextEdit::contextMenuEvent(QContextMenuEvent *event)
     if(_x_preferences)
        enableSpellPref = (_x_preferences->value("SpellCheck")=="t");
 
-    if(_guiClientInterface->hunspell_ready()
+    if(_guiClientInterface && _guiClientInterface->hunspell_ready()
        && enableSpellPref && _spellStatus
        && this->isEnabled() && !this->isReadOnly())
     {       
@@ -168,7 +168,7 @@ void XTextEditHighlighter::highlightBlock(const QString &text)
     if(_x_preferences)
        enableSpellPref = (_x_preferences->value("SpellCheck")=="t");
 
-    if(_guiClientInterface->hunspell_ready()
+    if(_guiClientInterface && _guiClientInterface->hunspell_ready()
        && enableSpellPref && textEdit->spellEnabled()
        && textEdit->isEnabled() && !textEdit->isReadOnly())
     {
