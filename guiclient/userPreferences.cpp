@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 #include <QSqlError>
+#include <QFile>
 
 #include <qmd5.h>
 #include "storedProcErrorLookup.h"
@@ -190,6 +191,10 @@ void userPreferences::sPopulate()
     _plainText->setChecked(true);
   else
     _richText->setChecked(true);
+
+  _enableSpell->setChecked(_pref->boolean("SpellCheck"));
+
+  //_rememberCheckBoxes->setChecked(! _pref->boolean("XCheckBox/forgetful"));
   
   _inventoryMenu->setChecked(_pref->boolean("ShowIMMenu"));
   _productsMenu->setChecked(_pref->boolean("ShowPDMenu"));
@@ -255,6 +260,23 @@ void userPreferences::sSave(bool close)
     _pref->set("BackgroundImageid", _backgroundImageid);
   else
     _pref->set("BackgroundImageid", -1);
+
+  _pref->set("SpellCheck", _enableSpell->isChecked());
+
+  if(_enableSpell->isChecked())
+  {
+      QString langName = QLocale::languageToString(QLocale().language());
+      QString appPath = QApplication::applicationDirPath();
+      QString fullPathWithoutExt = appPath + "/" + langName;
+      QFile affFile(fullPathWithoutExt + ".aff");
+      QFile dicFile(fullPathWithoutExt + ".dic");
+      if(!affFile.exists() || !dicFile.exists())
+      {
+        QMessageBox::warning( this, tr("Spell Dictionary Missing"),
+                   tr("The Follow Hunspell Files are Required for spell checking <p>")
+                   + fullPathWithoutExt + tr(".aff <p>") + fullPathWithoutExt + tr(".dic"));
+      }
+  }
   
   _pref->set("ShowIMMenu", _inventoryMenu->isChecked());
   _pref->set("ShowPDMenu", _productsMenu->isChecked());

@@ -331,6 +331,31 @@ class xTupleGuiClientInterface : public GuiClientInterface
   {
     omfgThis->removeDocumentWatch(path);
   }
+
+  const bool hunspell_ready()
+  {
+      return omfgThis->hunspell_ready();
+  }
+
+  const int hunspell_check(const QString word)
+  {
+      return omfgThis->hunspell_check(word);
+  }
+
+  const QStringList hunspell_suggest(const QString word)
+  {
+      return omfgThis->hunspell_suggest(word);
+  }
+
+  const int hunspell_add(const QString word)
+  {
+      return omfgThis->hunspell_add(word);
+  }
+
+  const int hunspell_ignore(const QString word)
+  {
+      return omfgThis->hunspell_ignore(word);
+  }
 };
 
 GUIClient *omfgThis;
@@ -496,6 +521,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
   XTreeWidget::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   XComboBox::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
+  XTextEdit::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
+  XTextEditHighlighter::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
 
   _splash->showMessage(tr("Completing Initialzation"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
@@ -545,6 +572,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   // Set up document file watcher
   _fileWatcher = new QFileSystemWatcher();
   connect(_fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleDocument(QString)));
+
+  hunspell_initialize();
 }
 
 GUIClient::~GUIClient()
@@ -555,7 +584,7 @@ GUIClient::~GUIClient()
   //omfgThis = 0;
 
   // Close the database connection
-  QSqlDatabase::database().close();
+  QSqlDatabase::database().close();  
 }
 
 bool GUIClient::singleCurrency()
@@ -730,6 +759,8 @@ void GUIClient::saveToolbarPositions()
 
 void GUIClient::closeEvent(QCloseEvent *event)
 {
+  hunspell_uninitialize();
+
   _shuttingDown = true;
 
   // Remove any temporary document files being watched
@@ -2056,3 +2087,124 @@ void GUIClient::handleDocument(QString path)
   addDocumentWatch(path, id);
 }
 
+void GUIClient::hunspell_initialize()
+{
+    _spellReady = false;
+    QString langName = QLocale::languageToString(QLocale().language());
+    QString appPath = QApplication::applicationDirPath();
+    QString fullPathWithoutExt = appPath + "/" + langName;
+    QFile affFile(fullPathWithoutExt + tr(".aff"));
+    QFile dicFile(fullPathWithoutExt + tr(".dic"));
+    if(affFile.exists() && dicFile.exists())
+    {
+      _spellReady = true;      
+    }
+    _spellChecker = new Hunspell(QString(fullPathWithoutExt+tr(".aff")).toLatin1(),
+                                 QString(fullPathWithoutExt+tr(".dic")).toLatin1());
+
+    QString spell_encoding = QString(_spellChecker->get_dic_encoding());
+    _spellCodec = QTextCodec::codecForName(spell_encoding.toLocal8Bit());
+
+    QString homePath = QDir::homePath().toLatin1();
+    if(_spellReady)
+    {
+        QFile file(homePath + tr("/xTuple/user.dic"));
+        if(file.exists(homePath + tr("/xTuple/user.dic")))
+        {           
+           //open user dictionary if exists
+           _spellChecker->add_dic(QString(homePath + tr("/xTuple/user.dic")).toLatin1());
+        }
+    }
+}
+
+void GUIClient::hunspell_uninitialize()
+{   
+    delete (Hunspell *)(_spellChecker);
+    QString homePath = QDir::homePath().toLatin1();
+    QFile file(homePath + tr("/xTuple/user.dic"));
+
+    if(_spellReady && !_spellAddWords.isEmpty())
+    {
+      //if user directory missing create it
+      QString homePath = QDir::homePath().toLatin1();
+      QDir dir(homePath);
+      if(!dir.exists(homePath + tr("/xTuple")))
+      {
+            dir.mkpath(tr("xTuple"));
+      }
+      //get old words from file
+      if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+      {          
+           QTextStream in(&file);
+           //skip word count line
+           in.readLine();
+           while (!in.atEnd())
+           {
+             //add old words to stringlist
+             QString line = in.readLine();
+             if(!_spellAddWords.contains(line))
+                 _spellAddWords.append(line);
+           }
+           file.close();
+      }
+      //store new words added and old words
+      if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+      {
+         QTextStream out(&file);
+         //add word count to file first line
+         out << _spellAddWords.count() << "\n";
+         //add all new words in sort order
+         _spellAddWords.sort();
+         foreach(QString word, _spellAddWords)
+         {
+           QByteArray encodedString = _spellCodec->fromUnicode(word);
+           out << encodedString.data() << "\n";
+         }
+         file.close();
+      }
+    }
+}
+
+const bool GUIClient::hunspell_ready()
+{
+       return _spellReady;
+}
+
+const int GUIClient::hunspell_check(const QString word)
+{     
+      QByteArray encodedString = _spellCodec->fromUnicode(word);
+      return _spellChecker->spell(encodedString.data());
+}
+
+const QStringList GUIClient::hunspell_suggest(const QString word)
+{
+    char **wlst;
+    QStringList wordList;    
+    QByteArray encodedString = _spellCodec->fromUnicode(word);
+    if(_spellChecker->spell(encodedString.data()) < 1)
+    {
+      int suggestNum = _spellChecker->suggest(&wlst, encodedString.data());
+      if (suggestNum > 0)
+      {
+         for (int i=0; i < suggestNum; i++)
+             wordList.append(_spellCodec->toUnicode(wlst[i]));
+      }
+      _spellChecker->free_list(&wlst, suggestNum);
+    }
+    return wordList;
+}
+
+const int GUIClient::hunspell_add(const QString word)
+{   
+    QByteArray encodedString = _spellCodec->fromUnicode(word);
+    //check if word has been added before
+    if(!_spellAddWords.contains(encodedString.data()))
+        _spellAddWords.append(encodedString.data());
+    return _spellChecker->add(encodedString.data());
+}
+
+const int GUIClient::hunspell_ignore(const QString word)
+{
+    QByteArray encodedString = _spellCodec->fromUnicode(word);
+    return _spellChecker->add(encodedString.data());
+}

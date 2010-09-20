@@ -26,6 +26,7 @@
 #include <xsqlquery.h>
 
 #include "../common/format.h"
+#include "../hunspell/hunspell.hxx"
 
 class QSplashScreen;
 class QWorkspace;
@@ -249,6 +250,17 @@ class GUIClient : public QMainWindow
 
     void loadScriptGlobals(QScriptEngine * engine);
 
+    //check hunspell is ready
+    Q_INVOKABLE const bool hunspell_ready();
+    //spellcheck word, returns 1 if word ok otherwise 0
+    Q_INVOKABLE const int hunspell_check(const QString word);
+    //suggest words for word, returns number of words in slst
+    Q_INVOKABLE const QStringList hunspell_suggest(const QString word);
+    //add word to dict (word is valid until spell object is not destroyed)
+    Q_INVOKABLE const int hunspell_add(const QString word);
+    //add word to dict (word is valid until spell object is not destroyed)
+    Q_INVOKABLE const int hunspell_ignore(const QString word);
+
   public slots:
     void sReportError(const QString &);
     void sTick();
@@ -358,6 +370,8 @@ class GUIClient : public QMainWindow
 
   private slots:
     void handleDocument(QString path);
+    void hunspell_initialize();
+    void hunspell_uninitialize();
 
   private:
     QWorkspace   *_workspace;
@@ -412,6 +426,10 @@ class GUIClient : public QMainWindow
 
     QFileSystemWatcher* _fileWatcher;
     QMap<QString, int> _fileMap;
+    QTextCodec * _spellCodec;
+    Hunspell * _spellChecker;
+    bool _spellReady;
+    QStringList _spellAddWords;
 };
 extern GUIClient *omfgThis;
 

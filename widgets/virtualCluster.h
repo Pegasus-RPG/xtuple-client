@@ -15,6 +15,7 @@
 #include "guiclientinterface.h"
 #include "parameter.h"
 #include "xlineedit.h"
+#include "xtextedit.h"
 #include "xtreewidget.h"
 #include "xcheckbox.h"
 #include "xdatawidgetmapper.h"

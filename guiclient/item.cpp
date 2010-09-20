@@ -44,6 +44,8 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _notes->setSpellEnable(true); 
+
   _mode=0;
   
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));

@@ -1176,7 +1176,7 @@ HEADERS = ../common/format.h                    \
           xuiloader.h                   \
           xwidget.h                     \
           yourpayprocessor.h            \
-          zeroUncountedCountTagsByWarehouse.h   \
+          zeroUncountedCountTagsByWarehouse.h
 
 SOURCES = absoluteCalendarItem.cpp              \
           accountNumber.cpp                     \
@@ -1758,9 +1758,10 @@ SOURCES = absoluteCalendarItem.cpp              \
           xuiloader.cpp                         \
           xwidget.cpp                           \
           yourpayprocessor.cpp                  \
-          zeroUncountedCountTagsByWarehouse.cpp \
+          zeroUncountedCountTagsByWarehouse.cpp
 
 include( displays/displays.pri )
+include( hunspell.pri )
 
 QT += xml sql script scripttools network
 QT += webkit xmlpatterns
