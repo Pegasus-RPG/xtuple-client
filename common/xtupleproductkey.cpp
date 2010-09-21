@@ -23,7 +23,7 @@ bool keyCheck(const QString & key)
     cs += nkey.at(i).toAscii();
   cs = cs % 32;
   static const char _base32Table[] = "ABCDEFGHJKMNPQRSTVWXYZ0123456789";
-  return csChar.at(0).toAscii() == _base32Table[cs];
+  return ((csChar.size() > 0) && (csChar.at(0).toAscii() == _base32Table[cs]));
 }
 
 class XTupleProductKeyPrivate
