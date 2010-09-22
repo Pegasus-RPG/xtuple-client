@@ -516,7 +516,14 @@ to be bound by its terms.</comment>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="Comments" name="_comments"/>
+        <widget class="Comments" name="_comments">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+         <property name="type">
+          <enum>Comments::TodoItem</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
