@@ -209,7 +209,15 @@ void displayPrivate::print(bool showPreview)
 
     if(showPreview)
     {
-      PreviewDialog preview (doc, &printer, _parent);
+      QPrinter * tPrinter = &printer;
+      QPrinter pdfPrinter(QPrinter::HighResolution);
+      if(!printer.isValid())
+      {
+        render.setupPrinter(doc, &pdfPrinter);
+        pdfPrinter.setOutputFormat(QPrinter::PdfFormat);
+        tPrinter = &pdfPrinter;
+      }
+      PreviewDialog preview (doc, tPrinter, _parent);
       if (preview.exec() == QDialog::Rejected)
         return;
     }
