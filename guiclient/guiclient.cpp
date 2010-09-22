@@ -524,7 +524,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   XTextEdit::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   XTextEditHighlighter::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
 
-  _splash->showMessage(tr("Completing Initialzation"), SplashTextAlignment, SplashTextColor);
+  _splash->showMessage(tr("Completing Initialization"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
   _splash->finish(this);
 
