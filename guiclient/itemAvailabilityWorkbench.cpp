@@ -851,7 +851,13 @@ void itemAvailabilityWorkbench::sPrintHistory()
   params.append("item_id", _item->id());
   params.append("transType", _transType->id());
 
-  orReport report("InventoryHistoryByItem", params);
+  params.append("average", tr("Average"));
+  params.append("standard", tr("Standard"));
+  params.append("job", tr("Job"));
+  params.append("none", tr("None"));
+  params.append("unknown", tr("Unknown"));
+
+  orReport report("InventoryHistory", params);
   if(report.isValid())
     report.print();
   else
