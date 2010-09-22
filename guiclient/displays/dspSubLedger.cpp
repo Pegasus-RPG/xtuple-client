@@ -88,6 +88,7 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("GL Account"), "accnt_id",  ParameterWidget::GLAccount);
   parameterWidget()->append(tr("Document #"), "docnum",    ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Source"), "source_id",    qrySource);
+  parameterWidget()->append(tr("Source Pattern"), "source_pattern", ParameterWidget::Text);
   if (_metrics->value("GLCompanySize").toInt() > 0)
   parameterWidget()->appendComboBox(tr("Company"), "company_id", XComboBox::Companies);
   if (_metrics->value("GLProfitSize").toInt() >  0)
@@ -136,7 +137,7 @@ enum SetResponse dspSubLedger::set(const ParameterList &pParams)
 
   param = pParams.value("source", &valid);
   if (valid)
-    parameterWidget()->setDefault(tr("Source"), _sources.indexOf(param.toString()));
+    parameterWidget()->setDefault(tr("Source Pattern"), param.toString());
 
   param = pParams.value("period_id", &valid);
   if (valid)

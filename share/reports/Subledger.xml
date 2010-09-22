@@ -65,7 +65,8 @@
        formatBoolYN(sltrans_posted) AS f_posted,
        sltrans_username AS f_username,
        sltrans_sequence
-FROM sltrans JOIN accnt ON (sltrans_accnt_id=accnt_id) 
+FROM sltrans
+  JOIN accnt ON (sltrans_accnt_id=accnt_id) 
      LEFT OUTER JOIN invhist ON (sltrans_misc_id=invhist_id
                             AND sltrans_docnumber='Misc.') 
 &lt;? if exists("company_id") ?>
@@ -126,6 +127,9 @@ WHERE (
 &lt;? endif ?>
 &lt;? if exists("source") ?>
    AND (sltrans_source=&lt;? value("source") ?>)
+&lt;? endif ?>
+&lt;? if exists("source_pattern") ?>
+   AND (sltrans_source ~* &lt;? value("source_pattern") ?>)
 &lt;? endif ?>
 &lt;? if exists("journalnumber") ?>
    AND (sltrans_gltrans_journalnumber=&lt;? value("journalnumber") ?>)
