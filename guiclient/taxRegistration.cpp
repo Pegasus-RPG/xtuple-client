@@ -125,6 +125,8 @@ void taxRegistration::sSave()
   q.prepare("SELECT taxreg_id"
             "  FROM taxreg"
             " WHERE((taxreg_id != :taxreg_id)"
+            "   AND (taxreg_rel_id = :taxreg_rel_id)"
+            "   AND (taxreg_rel_type = :taxreg_rel_type)"
             "   AND (taxreg_taxauth_id = :taxreg_taxauth_id)"
             "   AND (COALESCE(taxreg_taxzone_id, -1) = :taxreg_taxzone_id)" 
             "   AND (taxreg_number = :taxreg_number))");
@@ -135,6 +137,9 @@ void taxRegistration::sSave()
 	 q.bindValue(":taxreg_taxzone_id", _taxZone->id()); 
   else
 	 q.bindValue(":taxreg_taxzone_id", -1);
+  q.bindValue(":taxreg_rel_id", _relid); //_reltype == "C" ? _cust->id() : _vend->id());
+  if(!_reltype.isEmpty())
+    q.bindValue(":taxreg_rel_type", _reltype);
   q.exec();
   if(q.first())
   {
