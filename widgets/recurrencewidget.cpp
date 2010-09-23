@@ -262,12 +262,11 @@ RecurrenceWidget::RecurrenceWidget(QWidget *parent, const char *pName) :
       _dates->setEndNull(tr("Forever"), _eot.date(), true);
     }
     else
-    {
       qWarning("RecurrenceWidget could not get endOfTime()");
-      _dates->setEndNull(tr("Today"), QDate::currentDate(), true);
-    }
   }
-  else
+
+  _dates->setEndNull(tr("Forever"), _eot.date(), true);
+  if (! _eot.isValid())
     _eot = QDateTime(QDate(2100,12,31), QTime(23, 59, 59, 999));
 
   clear();
