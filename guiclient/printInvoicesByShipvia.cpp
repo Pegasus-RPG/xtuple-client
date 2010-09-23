@@ -44,10 +44,12 @@ printInvoicesByShipvia::printInvoicesByShipvia(QWidget* parent, const char* name
     }
   }
 
-  _shipvia->populate( "SELECT DISTINCT -1, invchead_shipvia "
+  _shipvia->populate( "SELECT MIN(invchead_id), invchead_shipvia "
                       "  FROM invchead "
                       " WHERE ( (NOT invchead_printed)"
-                      "   AND   (NOT invchead_posted) )" );
+                      "   AND   (NOT invchead_posted) )"
+                      " GROUP BY invchead_shipvia"
+                      " ORDER BY invchead_shipvia;" );
 
   if(!_privileges->check("PostMiscInvoices"))
   {
