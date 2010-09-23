@@ -2061,6 +2061,7 @@ void GUIClient::handleDocument(QString path)
   retry.start();
   while (retry.isActive() && !opened)
   {
+    qApp->processEvents();
     // Retry for 5 sec. so OS can finish any housekeeping.
     // In particular, Microsoft Office deletes and copies
     // files on every save which can take a bit of time to
