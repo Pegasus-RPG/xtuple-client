@@ -75,11 +75,14 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
         _startDate->setDate(q.value("start_date").toDate());
         int pmonth = _startDate->date().month();
         QDate pdate = _startDate->date();
-        while (pmonth == _startDate->date().month())
+        if(pdate.isValid())
         {
-          _endDate->setDate(pdate);
-          pdate = pdate.addDays(1);
-          pmonth = pdate.month();
+          while (pmonth == _startDate->date().month())
+          {
+            _endDate->setDate(pdate);
+            pdate = pdate.addDays(1);
+            pmonth = pdate.month();
+          }
         }
         sHandleNumber();
         connect(_year, SIGNAL(newID(int)), this, SLOT(sHandleNumber()));
