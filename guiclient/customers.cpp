@@ -65,7 +65,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Country"), 100, Qt::AlignLeft  , false, "addr_country" );
   list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , false, "addr_postalcode" );
 
-  connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList(int, bool)));
+  connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList()));
 }
 
 void customers::sNew()

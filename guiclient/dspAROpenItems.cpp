@@ -56,7 +56,6 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WFlags fl)
 
   connect(_customerSelector, SIGNAL(updated()), list(), SLOT(clear()));
   connect(_customerSelector, SIGNAL(updated()), this, SLOT(sHandlePrintGroup()));
-  connect(list(), SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
   connect(_closed, SIGNAL(toggled(bool)), this, SLOT(sClosedToggled(bool)));
   connect(_printList, SIGNAL(toggled(bool)), this, SLOT(sHandleReportName()));
 

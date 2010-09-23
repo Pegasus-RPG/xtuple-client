@@ -147,12 +147,12 @@ enum SetResponse prospect::set(const ParameterList &pParams)
       _newQuote->setEnabled(FALSE);
       _save->hide();
 
-      disconnect(_quotes, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick(QMenu*)));
+      disconnect(_quotes, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
       disconnect(_quotes, SIGNAL(valid(bool)),       _editQuote, SLOT(setEnabled(bool)));
       disconnect(_quotes, SIGNAL(valid(bool)),       _editQuote, SLOT(setEnabled(bool)));
       disconnect(_quotes, SIGNAL(valid(bool)),     _deleteQuote, SLOT(setEnabled(bool)));
 
-      connect(_quotes, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick(QMenu*)));
+      connect(_quotes, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));
 
       _close->setText(tr("&Close"));
       _close->setFocus();
