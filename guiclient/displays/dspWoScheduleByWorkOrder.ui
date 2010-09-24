@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>537</width>
-    <height>247</height>
+    <width>538</width>
+    <height>281</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,7 +48,7 @@ to be bound by its terms.</comment>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="1" column="0" rowspan="2">
       <widget class="QGroupBox" name="_dateGroup">
        <property name="title">
         <string>Work Order Start Date</string>
@@ -80,7 +80,7 @@ to be bound by its terms.</comment>
        </layout>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
         <string>Only show work orders that are</string>
@@ -103,7 +103,7 @@ to be bound by its terms.</comment>
        </layout>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2">
+     <item row="3" column="0" colspan="2">
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -115,6 +115,22 @@ to be bound by its terms.</comment>
         </size>
        </property>
       </spacer>
+     </item>
+     <item row="1" column="1">
+      <widget class="QGroupBox" name="_userGroup">
+       <property name="title">
+        <string>User Name</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="UsernameCluster" name="_userName">
+          <property name="label">
+           <string>Name:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
@@ -143,6 +159,11 @@ to be bound by its terms.</comment>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>UsernameCluster</class>
+   <extends>QWidget</extends>
+   <header>usernamecluster.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>

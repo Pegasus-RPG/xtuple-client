@@ -36,6 +36,7 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
   : display(parent, "dspWoScheduleByParameterList", fl)
 {
   setupUi(optionsWidget());
+  setNewVisible(true);
   setWindowTitle(tr("Work Order Schedule"));
   setListLabel(tr("Work Orders"));
   setReportName("WOScheduleByParameterList");
@@ -59,6 +60,7 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
   list()->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignRight,  true,  "wo_startdate"  );
   list()->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight,  true,  "wo_duedate"  );
   list()->addColumn(tr("Condition"),   _dateColumn,   Qt::AlignLeft,   true,  "condition"   );
+  list()->addColumn(tr("User"),        -1,            Qt::AlignLeft,   true,  "wo_username"   );
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 }
@@ -117,13 +119,13 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   
   param = pParams.value("endDate", &valid);
   if (valid)
-    _dates->setEndDate(param.toDate());
+    _dates->setEndDate(param.toDate()); 
     
   if (pParams.inList("run"))
   {
     sFillList();
     return NoError_Run;
-  }
+  }   
 
   return NoError;
 }
@@ -149,6 +151,9 @@ bool dspWoScheduleByParameterList::setParams(ParameterList &pParams)
 
   if (_showOnlyTopLevel->isChecked())
     pParams.append("showOnlyTopLevel");
+
+  if(_userName->username().length() > 0)
+     pParams.append("wo_username", _userName->username());
 
   return true;
 }
@@ -557,5 +562,14 @@ void dspWoScheduleByParameterList::sViewBOM()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void dspWoScheduleByParameterList::sNew()
+{
+    ParameterList params;
+    params.append("mode", "new");
+    workOrder *newdlg = new workOrder();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
 }
 

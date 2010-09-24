@@ -49,6 +49,7 @@ public slots:
     virtual void sViewParentSO();
     virtual void sViewParentWO();
     virtual void sViewWomatl();
+    virtual void sNew();
 
 protected slots:
     virtual void languageChange();
