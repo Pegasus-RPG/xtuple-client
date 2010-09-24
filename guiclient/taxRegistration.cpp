@@ -92,6 +92,8 @@ enum SetResponse taxRegistration::set(const ParameterList pParams)
     }
     else if (param.toString() == "view") 
     {
+      _mode = cView;
+
       _cust->setEnabled(false);
       _vend->setEnabled(false);
       _taxauth->setEnabled(false);
@@ -223,7 +225,8 @@ void taxRegistration::sPopulate()
 
 void taxRegistration::sHandleButtons()
 {
-  _save->setEnabled( (! _number->text().isEmpty() && _taxauth->isValid()) );
+  if (cView != _mode)
+    _save->setEnabled( (! _number->text().isEmpty()) && _taxauth->isValid() );
 }
 
 int taxRegistration::handleReltype()
