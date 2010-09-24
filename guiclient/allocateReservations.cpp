@@ -15,19 +15,12 @@
 
 #include "submitAction.h"
 
-/*
- *  Constructs a allocateReservations as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 allocateReservations::allocateReservations(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  _submit = _buttonBox->addButton(tr("Submit"), QDialogButtonBox::ActionRole);
+  _submit = _buttonBox->addButton(tr("Schedule"), QDialogButtonBox::ActionRole);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sAllocate()));
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
@@ -36,18 +29,11 @@ allocateReservations::allocateReservations(QWidget* parent, const char* name, bo
   _customerTypes->setType(XComboBox::CustomerTypes);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 allocateReservations::~allocateReservations()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void allocateReservations::languageChange()
 {
   retranslateUi(this);

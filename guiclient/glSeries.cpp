@@ -86,7 +86,7 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
 
   _submit = pParams.inList("submit");
   if((_submit)  && (_metrics->boolean("EnableBatchManager")))
-    _post->setText(tr("Submit"));
+    _post->setText(tr("Schedule"));
   else
     _submit = false;
 
