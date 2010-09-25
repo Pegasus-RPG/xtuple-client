@@ -36,7 +36,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     {
       Crmacct, User, Text, Date, XComBox, Contact,
       Multiselect, GLAccount, Exists, CheckBox, Project,
-      Customer, Site, Vendor
+      Customer, Site, Vendor, Item, Employee
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
@@ -49,7 +49,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void addParam();
     void append(QString pName, QString pParam, enum ParameterWidgetTypes pType = Text, QVariant pDefault = QVariant(),  bool pRequired = false, QString pExtraInfo =  QString());
     void appendComboBox(QString pName, QString pParam, QString pQuery, QVariant pDefault = QVariant(), bool pRequired = false);
-    void appendComboBox(QString pName, QString pParam, enum XComboBox::XComboBoxTypes pType, QVariant pDefault = QVariant(), bool pRequired = false);
+    void appendComboBox(QString pName, QString pParam, int pType, QVariant pDefault = QVariant(), bool pRequired = false);
     void applySaved(int pId = 0, int filter_id = 0);
     void changeFilterObject(int index);
     void clearFilters();

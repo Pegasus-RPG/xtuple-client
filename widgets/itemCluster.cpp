@@ -865,6 +865,12 @@ void ItemCluster::setItemsiteid(int intPItemsiteid)
   static_cast<ItemLineEdit* >(_number)->setItemsiteid(intPItemsiteid);
 }
 
+void ItemCluster::setOrientation(Qt::Orientation orientation)
+{
+  _descrip2->setVisible(orientation == Qt::Vertical);
+  VirtualCluster::setOrientation(orientation);
+}
+
 ////////////////////////////////////////////////////////////////////////
 
 itemList::itemList(QWidget* pParent, Qt::WindowFlags pFlags ) :

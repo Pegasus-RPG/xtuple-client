@@ -34,6 +34,8 @@
 #include "custcluster.h"
 #include "warehouseCluster.h"
 #include "vendorcluster.h"
+#include "itemcluster.h"
+#include "empcluster.h"
 
 #define DEBUG false
 
@@ -306,7 +308,7 @@ void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes
   default id that can be set using \a pDefault.  Use \a pRequired to flag whether the parameter is
   required or not.
 */
-void ParameterWidget::appendComboBox(QString pName, QString pParam, XComboBox::XComboBoxTypes pType, QVariant pDefault, bool pRequired)
+void ParameterWidget::appendComboBox(QString pName, QString pParam, int pType, QVariant pDefault, bool pRequired)
 {
   ParamProps *pp = _params.value(_params.count(), 0);
 
@@ -318,7 +320,7 @@ void ParameterWidget::appendComboBox(QString pName, QString pParam, XComboBox::X
     pp->paramType = XComBox;
     pp->defaultValue = pDefault;
     pp->required = pRequired;
-    pp->comboType = pType;
+    pp->comboType = (XComboBox::XComboBoxTypes)pType;
     pp->enabled = true;
     _params.insert(_params.count(), pp);
   }
@@ -505,6 +507,18 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           if (projectCluster != 0)
             projectCluster->setId(tempFilterList[1].toInt());
           break;
+        case Item:
+          ItemCluster *itemCluster;
+          itemCluster = qobject_cast<ItemCluster*>(found);
+          if (itemCluster != 0)
+            itemCluster->setId(tempFilterList[1].toInt());
+          break;
+        case Employee:
+          EmpCluster *employeeCluster;
+          employeeCluster = qobject_cast<EmpCluster*>(found);
+          if (employeeCluster != 0)
+            employeeCluster->setId(tempFilterList[1].toInt());
+          break;
         case Site:
           WComboBox *wBox;
           wBox = qobject_cast<WComboBox*>(found);
@@ -611,7 +625,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         DLineEdit *dLineEdit;
         dLineEdit = qobject_cast<DLineEdit*>(found);
         if (dLineEdit != 0)
-          dLineEdit->setDate(QDate::fromString(pp->defaultValue.toString(), "yyyy-MM-dd"), true);
+          dLineEdit->setDate(pp->defaultValue.toDate(), true);
         break;
       case User:
         UsernameCluster *usernameCluster;
@@ -654,6 +668,18 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         projectCluster = qobject_cast<ProjectCluster*>(found);
         if (projectCluster != 0)
           projectCluster->setId(pp->defaultValue.toInt());
+        break;
+      case Item:
+        ItemCluster *itemCluster;
+        itemCluster = qobject_cast<ItemCluster*>(found);
+        if (itemCluster != 0)
+          itemCluster->setId(pp->defaultValue.toInt());
+        break;
+      case Employee:
+        EmpCluster *employeeCluster;
+        employeeCluster = qobject_cast<EmpCluster*>(found);
+        if (employeeCluster != 0)
+          employeeCluster->setId(pp->defaultValue.toInt());
         break;
       case Site:
         WComboBox *wBox;
@@ -847,6 +873,29 @@ void ParameterWidget::changeFilterObject(int index)
 
       connect(button, SIGNAL(clicked()), projectCluster, SLOT( deleteLater() ) );
       connect(projectCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case Item:
+    {
+      ItemCluster *itemCluster = new ItemCluster(_filterGroup);
+      newWidget = itemCluster;
+      itemCluster->setOrientation(Qt::Horizontal);
+      itemCluster->setLabel("");
+      itemCluster->setNameVisible(false);
+
+      connect(button, SIGNAL(clicked()), itemCluster, SLOT( deleteLater() ) );
+      connect(itemCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case Employee:
+    {
+      EmpCluster *employeeCluster = new EmpCluster(_filterGroup);
+      newWidget = employeeCluster;
+      employeeCluster->setOrientation(Qt::Horizontal);
+      employeeCluster->setLabel("");
+
+      connect(button, SIGNAL(clicked()), employeeCluster, SLOT( deleteLater() ) );
+      connect(employeeCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
   case Site:
@@ -1563,6 +1612,8 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("Exists", QScriptValue(engine, ParameterWidget::Exists), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("CheckBox", QScriptValue(engine, ParameterWidget::CheckBox), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Project", QScriptValue(engine, ParameterWidget::Project), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Item", QScriptValue(engine, ParameterWidget::Item), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Employee", QScriptValue(engine, ParameterWidget::Employee), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Site", QScriptValue(engine, ParameterWidget::Site), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
