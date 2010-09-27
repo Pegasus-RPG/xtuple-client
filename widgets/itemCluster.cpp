@@ -980,6 +980,7 @@ void itemList::sSearch(const QString &pTarget)
 
 void itemList::sFillList()
 {
+  _listTab->clear();
   if (_useQuery)
   {
     _listTab->populate(_sql, _itemid);
