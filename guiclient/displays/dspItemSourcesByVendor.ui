@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>250</width>
-    <height>61</height>
+    <height>70</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,11 +26,12 @@ to be bound by its terms.</comment>
      <property name="spacing">
       <number>0</number>
      </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
      <item>
-      <widget class="VendorCluster" name="_vendor"/>
+      <widget class="VendorCluster" name="_vendor">
+       <property name="label">
+        <string>Vendor:</string>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="Spacer48">
