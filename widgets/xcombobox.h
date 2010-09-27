@@ -101,7 +101,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     XComboBoxTypes type();
     void setType(XComboBoxTypes);
 
-    void setCode(QString);
+    void setCode(const QString&);
 
 
     virtual bool      allowNull()            const  { return _allowNull; };

@@ -1005,7 +1005,6 @@ void XComboBox::setType(XComboBoxTypes pType)
     QString priv = _editorMap.value(type()).second;
     if (_x_privileges->check(priv))
     {
-      _ids.append(-1);
       insertSeparator(count());
       append(-2,tr("Edit List"));
     }
@@ -1041,7 +1040,7 @@ void XComboBox::setLabel(QLabel* pLab)
   }
 }
 
-void XComboBox::setCode(QString pString)
+void XComboBox::setCode(const QString &pString)
 {
   if (DEBUG)
     qDebug("%s::setCode(%d %d %s) with _codes.count %d and _ids.count %d",
@@ -1055,7 +1054,7 @@ void XComboBox::setCode(QString pString)
   }
   else if (_codes.count())
   {
-    for (int counter = 0; counter < count(); counter++)
+    for (int counter = 0; counter < _codes.count(); counter++)
     {
       if (_codes.at(counter) == pString)
       {
@@ -1373,9 +1372,18 @@ void XComboBox::append(int pId, const QString &pText, const QString &pCode)
 
   if (! _ids.contains(pId))
   {
-    _ids.append(pId);
-    addItem(pText);
-    _codes.append(pCode);
+    if (_ids.contains(-2)) // Has edit list
+    {
+      insertItem(count()-2,pText);
+      _ids.insert(_ids.count()-1,pId);
+      _codes.insert(_codes.count()-1,pCode);
+    }
+    else
+    {
+      addItem(pText);
+      _ids.append(pId);
+      _codes.append(pCode);
+    }
   }
 }
 

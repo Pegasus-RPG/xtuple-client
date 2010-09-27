@@ -49,23 +49,23 @@ financialLayoutItem::financialLayoutItem(QWidget* parent, const char* name, bool
 
   _account->setShowExternal(true);
   _company->setType(XComboBox::Companies);
-  _company->append(-1,tr("All"));
-  _company->setText(tr("All"));
+  _company->append(-1,tr("All"),"All");
+  _company->setId(-1);
   _profit->setType(XComboBox::ProfitCenters);
-  _profit->append(-1,tr("All"));
-  _profit->setText(tr("All"));
+  _profit->append(-1,tr("All"),"All");
+  _profit->setId(-1);
   _type->setCurrentIndex(5);
   _sub->setType(XComboBox::Subaccounts);
-  _sub->append(-1,tr("All"));
-  _sub->setText(tr("All"));
+  _sub->append(-1,tr("All"),"All");
+  _sub->setId(-1);
 
-  q.prepare( "SELECT DISTINCT accnt_id, accnt_number "
-                  "FROM accnt "
+  q.prepare( "SELECT DISTINCT accnt_id, accnt_number, accnt_number "
+                  "FROM ONLY accnt "
                   "ORDER BY accnt_number;" );
   q.exec();
   _number->populate(q);
-  _number->append(-1,tr("All"));
-  _number->setText(tr("All"));
+  _number->append(-1,tr("All"),"All");
+  _number->setId(-1);
 
   _subType->setAllowNull(FALSE);
   populateSubTypes();
@@ -348,10 +348,10 @@ void financialLayoutItem::sSave()
   if ( _selectSegment->isChecked() )
   {
     q.bindValue(":flitem_accnt_id", -1);
-    q.bindValue(":flitem_company", _company->currentText());
-    q.bindValue(":flitem_profit", _profit->currentText());
-    q.bindValue(":flitem_number", _number->currentText());
-    q.bindValue(":flitem_sub", _sub->currentText());
+    q.bindValue(":flitem_company", _company->code());
+    q.bindValue(":flitem_profit", _profit->code());
+    q.bindValue(":flitem_number", _number->code());
+    q.bindValue(":flitem_sub", _sub->code());
     q.bindValue(":subaccnttype_id", _subType->id());
 
     if (_type->currentIndex() == 0)
@@ -398,12 +398,12 @@ void financialLayoutItem::populate()
       _selectSegment->setChecked(TRUE);
 
       if (_metrics->value("GLCompanySize").toInt())
-        _company->setText(q.value("flitem_company"));
+        _company->setCode(q.value("flitem_company").toString());
       if (_metrics->value("GLProfitSize").toInt())
-        _profit->setText(q.value("flitem_profit"));
-      _number->setText(q.value("flitem_number"));
+        _profit->setCode(q.value("flitem_profit").toString());
+      _number->setCode(q.value("flitem_number").toString());
       if (_metrics->value("GLSubaccountSize").toInt())
-        _sub->setText(q.value("flitem_sub"));
+        _sub->setCode(q.value("flitem_sub").toString());
 
       if (q.value("flitem_type").toString() == "A")
         _type->setCurrentIndex(0);
