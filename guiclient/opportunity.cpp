@@ -35,7 +35,8 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
   connect(_crmacct, SIGNAL(newId(int)), this, SLOT(sHandleCrmacct(int)));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_deleteTodoItem, SIGNAL(clicked()), this, SLOT(sDeleteTodoItem()));
   connect(_viewTodoItem, SIGNAL(clicked()), this, SLOT(sViewTodoItem()));
   connect(_editTodoItem, SIGNAL(clicked()), this, SLOT(sEditTodoItem()));
@@ -140,7 +141,7 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       _crmacct->setEnabled(true);
-      _save->setFocus();
+      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -167,9 +168,8 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       _attachSale->setEnabled(false);
       _newCharacteristic->setEnabled(FALSE);
 
-      _save->hide();
-      _cancel->setText(tr("&Close"));
-      _cancel->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
+      _cntct->setReadOnly(true);
       _comments->setReadOnly(true);
       _documents->setReadOnly(true);
     }
@@ -258,14 +258,14 @@ bool opportunity::save(bool partial)
               "       ophead_optype_id, ophead_probability_prcnt,"
               "       ophead_amount, ophead_curr_id, ophead_target_date,"
               "       ophead_actual_date,"
-              "       ophead_notes, ophead_active) "
+              "       ophead_notes, ophead_active, ophead_cntct_id) "
               "VALUES(:ophead_name, :ophead_crmacct_id,"
               "       :ophead_owner_username,"
               "       :ophead_opstage_id, :ophead_opsource_id,"
               "       :ophead_optype_id, :ophead_probability_prcnt,"
               "       :ophead_amount, :ophead_curr_id, :ophead_target_date,"
               "       :ophead_actual_date,"
-              "       :ophead_notes, :ophead_active);" );
+              "       :ophead_notes, :ophead_active, :ophead_cntct_id);" );
   else if (cEdit == _mode || _saved)
     q.prepare("UPDATE ophead"
               "   SET ophead_name=:ophead_name,"
@@ -280,7 +280,8 @@ bool opportunity::save(bool partial)
               "       ophead_target_date=:ophead_target_date,"
               "       ophead_actual_date=:ophead_actual_date,"
               "       ophead_notes=:ophead_notes,"
-              "       ophead_active=:ophead_active"
+              "       ophead_active=:ophead_active, "
+              "       ophead_cntct_id=:ophead_cntct_id "
               " WHERE (ophead_id=:ophead_id); ");
 
   q.bindValue(":ophead_id", _opheadid);
@@ -307,6 +308,8 @@ bool opportunity::save(bool partial)
   if(_actualDate->isValid())
     q.bindValue(":ophead_actual_date", _actualDate->date());
   q.bindValue(":ophead_notes", _notes->toPlainText());
+  if (_cntct->isValid())
+    q.bindValue(":ophead_cntct_id", _cntct->id());
 
   if(!q.exec() && q.lastError().type() != QSqlError::NoError)
   {
@@ -349,7 +352,7 @@ void opportunity::populate()
             "       ophead_probability_prcnt, ophead_amount,"
             "       COALESCE(ophead_curr_id, basecurrid()) AS curr_id,"
             "       ophead_target_date, ophead_actual_date,"
-            "       ophead_notes, ophead_active"
+            "       ophead_notes, ophead_active, ophead_cntct_id"
             "  FROM ophead"
             " WHERE(ophead_id=:ophead_id); ");
   q.bindValue(":ophead_id", _opheadid);
@@ -394,6 +397,8 @@ void opportunity::populate()
 
     _comments->setId(_opheadid);
     _documents->setId(_opheadid);
+
+    _cntct->setId(q.value("ophead_cntct_id").toInt());
 
     sFillTodoList();
     sFillSalesList();
