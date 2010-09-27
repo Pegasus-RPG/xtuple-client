@@ -1137,7 +1137,7 @@ void XComboBox::setId(int pTarget)
   }
   else
   {
-    for (int counter = 0; counter < count(); counter++)
+    for (int counter = 0; counter < _ids.count(); counter++)
     {
       if (_ids.at(counter) == pTarget)
       {
