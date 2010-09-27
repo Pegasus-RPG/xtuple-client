@@ -104,6 +104,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _printed         = false;
 
   setPoheadid(-1);
+  _vendaddrid = -1;
 
   _cachedTabIndex = 0;
 
