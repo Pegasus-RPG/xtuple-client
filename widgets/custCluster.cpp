@@ -309,8 +309,8 @@ bool CLineEdit::setEditMode(bool p)
   setDisabled(_editMode &&
               _x_metrics->value("CRMAccountNumberGeneration") == "A");
 
-  if (!_editMode)
-    clear();
+ if (!_editMode)
+   selectAll();
 
   emit editable(p);
   return p;
