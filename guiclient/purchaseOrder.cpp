@@ -78,7 +78,8 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter,true, "poitemstatus");
   _poitem->addColumn(tr("Item"),        _itemColumn,   Qt::AlignLeft,  true, "item_number");
   _poitem->addColumn(tr("Description"), -1,            Qt::AlignLeft,  true, "item_descrip");
-  _poitem->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight, true, "poitem_duedate");
+  _poitem->addColumn(tr("Orgl. Due Date"),_dateColumn, Qt::AlignRight, false, "orgl_duedate");            
+  _poitem->addColumn(tr("Due Date Now"), _dateColumn,  Qt::AlignRight, true, "poitem_duedate");
   _poitem->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight, true, "poitem_qty_ordered");
   _poitem->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignCenter,true, "poitem_vend_uom");
   _poitem->addColumn(tr("Unit Price"),  _priceColumn,  Qt::AlignRight, true, "poitem_unitprice");
@@ -569,6 +570,8 @@ void purchaseOrder::populate()
     _orderNumber->setText(po.value("pohead_number"));
     _warehouse->setId(po.value("warehous_id").toInt());
     _orderDate->setDate(po.value("pohead_orderdate").toDate(), true);
+    if(po.value("pohead_released").isValid())                                                             
+      _releaseDate->setDate(po.value("pohead_released").toDate(), true);
     _agent->setText(po.value("pohead_agent_username").toString());
     _status->setCurrentIndex(po.value("status").toInt());
     _printed = po.value("pohead_printed").toBool();
@@ -1192,6 +1195,7 @@ void purchaseOrder::sFillList()
              "       CASE WHEN (itemsite_id IS NULL) THEN firstLine(poitem_vend_item_descrip)"
              "            ELSE (item_descrip1 || ' ' || item_descrip2)"
              "       END AS item_descrip,"
+             "       poitem_rlsd_duedate AS orgl_duedate, "
              "       (poitem_unitprice * poitem_qty_ordered) AS extprice, "
              "       'qty' AS poitem_qty_ordered_xtnumericrole,"
              "       'purchprice' AS poitem_unitprice_xtnumericrole,"

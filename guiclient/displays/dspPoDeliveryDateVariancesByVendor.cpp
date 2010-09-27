@@ -26,6 +26,9 @@ dspPoDeliveryDateVariancesByVendor::dspPoDeliveryDateVariancesByVendor(QWidget* 
 
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
   
   list()->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight,  true,  "porecv_ponumber"  );
   list()->addColumn(tr("Vendor"),             _orderColumn, Qt::AlignLeft,   true,  "vend_name"   );
@@ -33,8 +36,14 @@ dspPoDeliveryDateVariancesByVendor::dspPoDeliveryDateVariancesByVendor(QWidget* 
   list()->addColumn(tr("Vend. Item #"),       _itemColumn,  Qt::AlignLeft,   true,  "venditemnumber"   );
   list()->addColumn(tr("Vendor Description"), -1,           Qt::AlignLeft,   true,  "venditemdescrip"   );
   list()->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight,  true,  "porecv_qty"  );
-  list()->addColumn(tr("Due Date"),           _dateColumn,  Qt::AlignRight,  true,  "porecv_duedate"  );
-  list()->addColumn(tr("Recv. Date"),         _dateColumn,  Qt::AlignRight,  true,  "porecv_date"  );
+  list()->addColumn(tr("Req. Due"),           _dateColumn,  Qt::AlignCenter, true,  "release_duedate"  );
+  list()->addColumn(tr("Req. Leadtime"),      _dateColumn,  Qt::AlignRight,  true,  "req_leadtime"  );
+  list()->addColumn(tr("Agrd. Due"),          _dateColumn,  Qt::AlignCenter, true,  "argd_duedate"  );
+  list()->addColumn(tr("Agrd. Leadtime"),     _dateColumn,  Qt::AlignRight,  true,  "agrd_leadtime"  );
+  list()->addColumn(tr("Recv. Date"),         _dateColumn,  Qt::AlignCenter, true,  "receivedate"  );
+  list()->addColumn(tr("Real Leadtime"),      _dateColumn,  Qt::AlignRight,  true,  "real_leadtime"  );
+  list()->addColumn(tr("Req. Diff"),          _dateColumn,  Qt::AlignRight,  true,  "req_diff"  );
+  list()->addColumn(tr("Agrd. Diff"),         _dateColumn,  Qt::AlignRight,  true,  "argd_diff"  );
 }
 
 void dspPoDeliveryDateVariancesByVendor::languageChange()

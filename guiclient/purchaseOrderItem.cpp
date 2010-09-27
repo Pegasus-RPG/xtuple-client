@@ -684,7 +684,7 @@ void purchaseOrderItem::sSave()
                "  poitem_unitprice, poitem_freight, poitem_duedate, "
                "  poitem_bom_rev_id, poitem_boo_rev_id, "
                "  poitem_comments, poitem_prj_id, poitem_stdcost, poitem_manuf_name, "
-               "  poitem_manuf_item_number, poitem_manuf_item_descrip ) "
+               "  poitem_manuf_item_number, poitem_manuf_item_descrip, poitem_rlsd_duedate ) "
                "VALUES "
                "( :poitem_id, :poitem_pohead_id, :status, :poitem_linenumber,"
                "  :poitem_taxtype_id, :poitem_tax_recoverable,"
@@ -695,7 +695,7 @@ void purchaseOrderItem::sSave()
                "  :poitem_unitprice, :poitem_freight, :poitem_duedate, "
                "  :poitem_bom_rev_id, :poitem_boo_rev_id, "
                "  :poitem_comments, :poitem_prj_id, stdcost(:item_id), :poitem_manuf_name, "
-               "  :poitem_manuf_item_number, :poitem_manuf_item_descrip) ;" );
+               "  :poitem_manuf_item_number, :poitem_manuf_item_descrip, :poitem_duedate) ;" );
 
     q.bindValue(":status", _poStatus);
     q.bindValue(":item_id", _item->id());
