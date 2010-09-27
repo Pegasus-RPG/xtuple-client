@@ -42,6 +42,7 @@ creditMemoEditList::creditMemoEditList(QWidget* parent, const char* name, Qt::WF
   _cmhead->addColumn(tr("Qty. to Bill"),  _qtyColumn, Qt::AlignRight, true, "qtytobill");
   _cmhead->addColumn(tr("Price"),        _costColumn, Qt::AlignRight, true, "price");
   _cmhead->addColumn(tr("Ext. Price"),  _moneyColumn, Qt::AlignRight, true, "extprice");
+  _cmhead->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillList()));
 
