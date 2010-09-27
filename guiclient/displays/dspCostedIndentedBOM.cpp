@@ -20,6 +20,7 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char*, Qt::WFl
   setReportName("CostedIndentedBOM");
   list()->setRootIsDecorated(true);
   list()->setIndentation(10);
+  list()->setPopulateLinear(true);
 }
 
 bool dspCostedIndentedBOM::setParams(ParameterList &params)
@@ -48,19 +49,19 @@ void dspCostedIndentedBOM::sFillList()
   if (qq.first())
   {
     XTreeWidgetItem *last = new XTreeWidgetItem(list(), -1, -1);
-    last->setText(0, tr("Total Cost"));
+    last->setText(1, tr("Total Cost"));
     if(_useStandardCosts->isChecked())
-      last->setText(9, qq.value("stdextendedcost").toString());
+      last->setText(11, qq.value("stdextendedcost").toString());
     else
-      last->setText(9, qq.value("actextendedcost").toString());
+      last->setText(11, qq.value("actextendedcost").toString());
 
     last = new XTreeWidgetItem( list(), -1, -1);
-    last->setText(0, tr("Actual Cost"));
-    last->setText(9, qq.value("actual").toString());
+    last->setText(1, tr("Actual Cost"));
+    last->setText(11, qq.value("actual").toString());
 
     last = new XTreeWidgetItem( list(), -1, -1);
-    last->setText(0, tr("Standard Cost"));
-    last->setText(9, qq.value("standard").toString());
+    last->setText(1, tr("Standard Cost"));
+    last->setText(11, qq.value("standard").toString());
   }
   else if (qq.lastError().type() != QSqlError::NoError)
   {
