@@ -117,14 +117,19 @@ void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu, QTreeWidgetItem*, int)
   menuItem->setEnabled(_privileges->check("ViewInventoryHistory"));
 }
 
-void dspIndentedWhereUsed::sPrint()
+void dspIndentedWhereUsed::sPreview()
 {
   worksetWrapper(0);
 }
 
-void dspIndentedWhereUsed::sFillList()
+void dspIndentedWhereUsed::sPrint()
 {
   worksetWrapper(1);
+}
+
+void dspIndentedWhereUsed::sFillList()
+{
+  worksetWrapper(2);
 }
 
 void dspIndentedWhereUsed::worksetWrapper(int action)
@@ -138,8 +143,10 @@ void dspIndentedWhereUsed::worksetWrapper(int action)
     _worksetid = qq.value("workset_id").toInt();
 
     if(action == 0)
+      display::sPreview();
+    else if(action == 1)
       display::sPrint();
-    else //if(action == 1)
+    else //if(action == 2)
     {
       display::sFillList();
       list()->expandAll();
