@@ -44,7 +44,7 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
                    "WHERE form_key='Chck' "
                    "ORDER BY form_name;" );
 
-  if (_metrics->boolean("ACHEnabled"))
+  if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
   {
     q.prepare("SELECT fetchMetricText('ACHCompanyName') AS name,"
               "       formatACHCompanyId() AS number;");

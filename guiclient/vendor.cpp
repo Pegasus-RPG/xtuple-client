@@ -82,23 +82,24 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   _ignoreClose = false;
   _NumberGen = -1;
   
+  _transmitStack->setCurrentIndex(0);
   if (_metrics->boolean("EnableBatchManager") &&
-      ! _metrics->boolean("ACHEnabled"))
+      ! (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled")))
   {
     _checksButton->hide();
   }
   else if (! _metrics->boolean("EnableBatchManager") &&
-           _metrics->boolean("ACHEnabled"))
+           (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled")))
   {
     _checksButton->hide();
     _transmitStack->setCurrentIndex(1);
   }
   else if (! _metrics->boolean("EnableBatchManager") &&
-           ! _metrics->boolean("ACHEnabled"))
+           ! (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled")))
     ediTab->setVisible(false);
   // else defaults are OK
 
-  if (_metrics->boolean("ACHEnabled") && omfgThis->_key.isEmpty())
+  if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled") && omfgThis->_key.isEmpty())
     _checksButton->setEnabled(false);
 
   _vendid = -1;

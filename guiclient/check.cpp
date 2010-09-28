@@ -34,7 +34,7 @@ check::check(QWidget* parent, const char* name, Qt::WFlags fl)
   _items->addColumn(tr("Amount (in %1)").arg(CurrDisplay::baseCurrAbbr()),
                                       _moneyColumn, Qt::AlignRight, true, "baseamount");
 
-  _achBatchNumber->setVisible(_metrics->boolean("ACHEnabled"));
+  _achBatchNumber->setVisible(_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"));
 
   _checkid = -1;
 }
