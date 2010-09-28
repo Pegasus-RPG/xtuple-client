@@ -23,6 +23,7 @@
 #include <QCheckBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QPushButton>
 
 #include "xtsettings.h"
 #include "dbtools.h"
