@@ -44,6 +44,8 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   list()->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight,  true,  "qty"  );
   list()->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true,  "uom"  );
   list()->addColumn(tr("Value"),      _qtyColumn,   Qt::AlignRight,  true,  "value"  );
+
+  list()->setPopulateLinear(true);
 }
 
 void dspOrderActivityByProject::languageChange()
@@ -348,6 +350,11 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
       tr("You must specify a Project."));
     return false;
   }
+
+  if (!_showWo->isChecked() &&
+      !_showPo->isChecked() &&
+      !_showSo->isChecked())
+    return false;
 
   params.append("prj_id", _project->id());
   
