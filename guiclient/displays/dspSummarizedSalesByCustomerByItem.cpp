@@ -17,7 +17,7 @@ dspSummarizedSalesByCustomerByItem::dspSummarizedSalesByCustomerByItem(QWidget* 
   : display(parent, "dspSummarizedSalesByCustomerByItem", fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Summarized Sales by Customer by Item<"));
+  setWindowTitle(tr("Summarized Sales by Customer by Item"));
   setListLabel(tr("Sales History"));
   setReportName("SummarizedSalesHistoryByCustomerByItem");
   setMetaSQLOptions("summarizedSalesHistory", "detail");
