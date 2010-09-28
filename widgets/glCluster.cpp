@@ -300,16 +300,13 @@ void GLCluster::sHandleProjectState(int p)
 
 void GLCluster::sHandleProjectId()
 {
-  if (_project->isValid())
-  {
-    XSqlQuery qry;
-    qry.prepare("SELECT getPrjAccntId(:prj_id,:accnt_id) AS accnt_id");
-    qry.bindValue(":prj_id", _project->id());
-    qry.bindValue(":accnt_id", _number->id());
-    qry.exec();
-    qry.first();
-    _number->setId(qry.value("accnt_id").toInt());
-  }
+  XSqlQuery qry;
+  qry.prepare("SELECT getPrjAccntId(:prj_id,:accnt_id) AS accnt_id");
+  qry.bindValue(":prj_id", _project->id());
+  qry.bindValue(":accnt_id", _number->id());
+  qry.exec();
+  qry.first();
+  _number->setId(qry.value("accnt_id").toInt());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
