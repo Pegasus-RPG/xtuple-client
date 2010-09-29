@@ -36,6 +36,7 @@ public slots:
     virtual void sViewAdjustment();
     virtual void sViewTransfer();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int pColumn );
+    virtual void sPreview();
     virtual void sPrint();
 
 protected slots:

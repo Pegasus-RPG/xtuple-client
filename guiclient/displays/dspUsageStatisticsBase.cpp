@@ -113,6 +113,13 @@ void dspUsageStatisticsBase::sPrint()
   _printing = false;
 }
 
+void dspUsageStatisticsBase::sPreview()
+{
+  _printing = true;
+  display::sPreview();
+  _printing = false;
+}
+
 void dspUsageStatisticsBase::sViewAll()
 {
   viewTransactions(QString::null);
