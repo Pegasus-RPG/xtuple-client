@@ -29,7 +29,7 @@ class employee : public XDialog, public Ui::employee
   public slots:
     virtual enum SetResponse set(const ParameterList &);
     virtual void sPopulate();
-    virtual void sSave(const bool = true);
+    virtual bool sSave(const bool = true);
     virtual void reject();
 
   protected slots:

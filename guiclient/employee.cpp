@@ -257,20 +257,20 @@ enum SetResponse employee::set(const ParameterList &pParams)
   return NoError;
 }
 
-void employee::sSave(const bool pClose)
+bool employee::sSave(const bool pClose)
 {
   if (_code->text().length() == 0)
   {
       QMessageBox::warning( this, tr("Cannot Save Employee"),
                             tr("You must enter a valid Employee Code.") );
-      return;
+      return false;
   }
   
   if (_code->text() == _mgr->number())
   {
       QMessageBox::warning( this, tr("Cannot Save Employee"),
                             tr("An Employee cannot be his or her own Manager.") );
-      return;
+      return false;
   }
   
   if (_mode == cNew)
@@ -285,7 +285,7 @@ void employee::sSave(const bool pClose)
       QMessageBox::critical(this, tr("Duplicate Employee"),
         tr("An Employee already exists for the Code specified.") );
       _code->setFocus();
-      return;
+      return false;
     }
     q.prepare("SELECT emp_id"
               "  FROM emp"
@@ -297,7 +297,7 @@ void employee::sSave(const bool pClose)
       QMessageBox::critical(this, tr("Duplicate Employee"),
         tr("An Employee already exists for the Number specified.") );
       _number->setFocus();
-      return;
+      return false;
     }
   }
 
@@ -313,7 +313,7 @@ void employee::sSave(const bool pClose)
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
     else if (_createUsers) // not found
     {
@@ -336,14 +336,14 @@ void employee::sSave(const bool pClose)
         newdlg.exec();
         _user->setChecked(true);
       }
-      return;
+      return false;
     }
     else // not found
     {
       systemError(this, tr("There is no User named %1. Either Cancel creating "
                            "this Employee or use a different Employee Code.")
                          .arg(_code->text()));
-      return;
+      return false;
     }
   }
   
@@ -359,7 +359,7 @@ void employee::sSave(const bool pClose)
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
     else if (_privileges->check("MaintainSalesReps")) // not found
     {
@@ -381,14 +381,14 @@ void employee::sSave(const bool pClose)
         newdlg.set(params);
         newdlg.exec();
       }
-      return;
+      return false;
     }
     else // not found
     {
       systemError(this, tr("There is no User named %1. Either Cancel creating "
                            "this Employee or use a different Employee Code.")
                          .arg(_code->text()));
-      return;
+      return false;
     }
   }
 
@@ -404,7 +404,7 @@ void employee::sSave(const bool pClose)
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
     else if (_privileges->check("MaintainVendors")) // not found
     {
@@ -426,14 +426,14 @@ void employee::sSave(const bool pClose)
 		newdlg->set(params);
 		omfgThis->handleNewWindow(newdlg);
       }
-      return;
+      return false;
     }
     else // not found
     {
       systemError(this, tr("There is no User named %1. Either Cancel creating "
                            "this Employee or use a different Employee Code.")
                          .arg(_code->text()));
-      return;
+      return false;
     }
   }
 
@@ -555,28 +555,34 @@ void employee::sSave(const bool pClose)
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
   emit saved();
 
   if (_mode == cNew)
   {
-    q.exec("SELECT CURRVAL('emp_emp_id_seq') AS result;");
+    q.prepare("SELECT emp_id"
+              "  FROM emp"
+              " WHERE(emp_code=:code)");
+    q.bindValue(":code", _code->text());
+    q.exec();
     if (q.first())
     {
-      _empid = q.value("result").toInt();
+      _empid = q.value("emp_id").toInt();
       _mode  = cEdit;
       _comments->setId(_empid);
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
   }
 
   if (pClose)
     done(_empid);
+
+  return true;
 }
 
 void employee::reject()
@@ -719,6 +725,11 @@ void employee::sEditCharass()
 
 void employee::sNewCharass()
 {
+  if (_mode == cNew)
+  {
+    if (!sSave(false))
+      return;
+  }
   ParameterList params;
   params.append("mode",   "new");
   params.append("emp_id", _empid);
@@ -798,7 +809,8 @@ void employee::sSalesrep()
        _privileges->check("ViewSalesReps"))
       )
   {
-    sSave(false);
+    if (!sSave(false))
+      return;
     ParameterList params;
     if (_mode == cView || ! _privileges->check("MaintainSalesReps"))
       params.append("mode", "view");
@@ -826,7 +838,8 @@ void employee::sSalesrep()
 				  QMessageBox::Yes | QMessageBox::Default,
 				  QMessageBox::No) == QMessageBox::Yes)
     {
-      sSave(false);
+      if (!sSave(false))
+        return;
       ParameterList params;
       params.append("mode",     "new");
       params.append("emp_id",   _empid);
@@ -865,7 +878,8 @@ void employee::sVendor()
       )
   {
     _vendor->setEnabled(true);
-	sSave(false);
+    if (!sSave(false))
+      return;
     ParameterList params;
     if (_mode == cView || ! _privileges->check("MaintainVendors"))
       params.append("mode", "view");
@@ -893,7 +907,8 @@ void employee::sVendor()
 				  QMessageBox::Yes | QMessageBox::Default,
 				  QMessageBox::No) == QMessageBox::Yes)
     {
-      sSave(false);
+      if (!sSave(false))
+        return;
       ParameterList params;
       params.append("crmacct_number", _number->text());
       params.append("crmacct_name", _code->text().toLower());
@@ -939,7 +954,8 @@ void employee::sUser()
 				  QMessageBox::Yes | QMessageBox::Default,
 				  QMessageBox::No) == QMessageBox::Yes)
     {
-      sSave(false);
+      if (!sSave(false))
+        return;
       ParameterList params;
       params.append("mode",     "new");
       params.append("username", _code->text().toLower());
@@ -1032,6 +1048,8 @@ void employee::sViewGroup()
 
 void employee::sHandleButtons()
 {
+  if (!sSave(false))
+    return;
   XSqlQuery usrq;
   usrq.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
   usrq.bindValue(":username", _code->text().toLower());
