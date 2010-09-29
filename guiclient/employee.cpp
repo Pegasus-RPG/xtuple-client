@@ -263,6 +263,7 @@ bool employee::sSave(const bool pClose)
   {
       QMessageBox::warning( this, tr("Cannot Save Employee"),
                             tr("You must enter a valid Employee Code.") );
+      _code->setFocus();
       return false;
   }
   
@@ -270,6 +271,7 @@ bool employee::sSave(const bool pClose)
   {
       QMessageBox::warning( this, tr("Cannot Save Employee"),
                             tr("An Employee cannot be his or her own Manager.") );
+      _code->setFocus();
       return false;
   }
   
@@ -977,6 +979,9 @@ void employee::sUser()
 
 void employee::sAttachGroup()
 {
+  if (!sSave(false))
+    return;
+
   int empgrpid = EmpGroupClusterLineEdit::idFromList(this);
   if (empgrpid != XDialog::Rejected && empgrpid != -1)
   {
@@ -1048,8 +1053,8 @@ void employee::sViewGroup()
 
 void employee::sHandleButtons()
 {
-  if (!sSave(false))
-    return;
+//  if (!sSave(false))
+//    return;
   XSqlQuery usrq;
   usrq.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
   usrq.bindValue(":username", _code->text().toLower());
