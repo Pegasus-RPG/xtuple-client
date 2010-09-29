@@ -738,7 +738,7 @@ void returnAuthorization::sOrigSoChanged()
         return;
       }
     }
-	sRecalcFreight();
+    sRecalcFreight();
   }
 }
 
@@ -940,8 +940,10 @@ void returnAuthorization::sNew()
     newdlg.set(params);
   
     if (newdlg.exec() != XDialog::Rejected)
+    {
       populate();
-	sRecalcFreight();
+      sRecalcFreight();
+    }
   }
 }
 
@@ -973,8 +975,10 @@ void returnAuthorization::sEdit()
         fill = TRUE;
     }
     if (fill)
+    {
       populate();
-	sRecalcFreight();
+      sRecalcFreight();
+    }
   }
 }
 
@@ -1018,7 +1022,7 @@ void returnAuthorization::sDelete()
       }
     }
     populate();
-	sRecalcFreight();
+    sRecalcFreight();
   }
 }
 
@@ -1475,7 +1479,7 @@ void returnAuthorization::sDispositionChanged()
 // Save the change so that disposition of raitems is changed
     sSave(true);
     sFillList();
-	sRecalcFreight();
+    sRecalcFreight();
   }
 }
 
@@ -1693,8 +1697,10 @@ void returnAuthorization::sAction()
 void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)
 {
   if ((pSoheadid == _origso->id()) || (pSoheadid == _newso->id()))
+  {
     sFillList();
-	sRecalcFreight();
+    sRecalcFreight();
+  }
 }
 
 void returnAuthorization::sRefund()
@@ -1974,7 +1980,7 @@ void returnAuthorization::sRecalcFreight()
     if (q.first())
     {
       _freight->setLocalValue(q.value("freight").toDouble());
-	  _freight->setEnabled(FALSE);
+      _freight->setEnabled(FALSE);
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -1990,6 +1996,7 @@ void returnAuthorization::sFreightChanged()
     sSave(true);   
     _freightCache = _freight->localValue();
     sCalculateTax();
+    sCalculateTotal();
   }
 }
 
