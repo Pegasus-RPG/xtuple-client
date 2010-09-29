@@ -710,26 +710,6 @@ WHERE (item_id=&lt;? value("item_id") ?>);
      <column>defaultlocation</column>
     </data>
    </field>
-   <field>
-    <rect>
-     <x>285</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>qoh</column>
-    </data>
-    <format>%.02f</format>
-   </field>
   </detail>
  </section>
  <pgfoot>
@@ -846,27 +826,6 @@ WHERE (item_id=&lt;? value("item_id") ?>);
   </field>
   <field>
    <rect>
-    <x>285</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>detail</query>
-    <column>r_qoh</column>
-   </data>
-   <format>%.02f</format>
-   <tracktotal/>
-  </field>
-  <field>
-   <rect>
     <x>365</x>
     <y>0</y>
     <width>75</width>
@@ -904,6 +863,47 @@ WHERE (item_id=&lt;? value("item_id") ?>);
     <query>detail</query>
     <column>f_nonnetvalue</column>
    </data>
+  </field>
+  <field>
+   <rect>
+    <x>285</x>
+    <y>-17</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>detail</query>
+    <column>qoh</column>
+   </data>
+   <format>%.02f</format>
+  </field>
+  <field>
+   <rect>
+    <x>285</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>detail</query>
+    <column>qoh</column>
+   </data>
+   <format>%.02f</format>
+   <tracktotal/>
   </field>
  </rptfoot>
 </report>
