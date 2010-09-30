@@ -131,7 +131,7 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   modeVal = mode("MaintainCustomerTypes", "ViewCustomerTypes");
   insert(tr("Customer Types"), "customerTypes",  MasterInformation, Xt::SalesModule | Xt::AccountingModule, modeVal, modeVal);
 
-  modeVal = mode("ViewDepartments", "MaintainDepartments");
+  modeVal = mode("MaintainDepartments", "ViewDepartments");
   insert(tr("Departments"), "departments", MasterInformation, Xt::SystemModule, modeVal, modeVal);
 
   modeVal = mode("MaintainCurrencyRates", "ViewCurrencyRates");
