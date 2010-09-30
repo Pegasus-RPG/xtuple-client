@@ -46,6 +46,8 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char*, Qt::WFlags fl)
   if(_metrics->boolean("EnableSOReservationsByLocation"))
     list()->showColumn(6);
 
+  _asofGroup->hide();; // Issue #11793 - Not ready for this yet.
+
   sPopulateLocations();
 }
 

@@ -61,6 +61,8 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char*, Qt::W
   sHandleValue(_showValue->isChecked());
 
   _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
+
+  _asofGroup->hide(); // Issue #11793 - Not ready for this yet.
 }
 
 void dspQOHByParameterList::languageChange()

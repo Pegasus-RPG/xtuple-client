@@ -62,6 +62,8 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char*, Qt::WFlags fl)
   sHandleValue(_showValue->isChecked());
 
   _item->setFocus();
+
+  _asofGroup->hide();; // Issue #11793 - Not ready for this yet.
 }
 
 void dspQOHByItem::languageChange()

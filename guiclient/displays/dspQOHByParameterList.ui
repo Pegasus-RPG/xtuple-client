@@ -13,176 +13,39 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>675</width>
-    <height>295</height>
+    <width>596</width>
+    <height>287</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Quantities on Hand by Parameter List</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="ParameterGroup" name="_parameter">
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <property name="fixedSize">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="ParameterGroup" name="_parameter">
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
-       </property>
+      <widget class="QGroupBox" name="_showGroup">
        <property name="title">
         <string/>
        </property>
-       <property name="fixedSize">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QGroupBox" name="_showGroup">
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QVBoxLayout">
-          <item>
-           <widget class="QRadioButton" name="_showAll">
-            <property name="text">
-             <string>Show All Quantities</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="_showPositive">
-            <property name="text">
-             <string>Only Show Positive Quantities</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="_showNegative">
-            <property name="text">
-             <string>Only Show Negative Quantities</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="_asofGroup">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="QLabel" name="_asOfLit">
-            <property name="text">
-             <string>As of Date:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="DLineEdit" name="_asOf"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Preferred</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="WarehouseGroup" name="_warehouse">
-         <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
-         </property>
-         <property name="title">
-          <string/>
-         </property>
-         <property name="fixedSize">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="_showValue">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="title">
-        <string>Show Inventory Value</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
        <layout class="QVBoxLayout">
         <item>
-         <widget class="QRadioButton" name="_usePostedCosts">
+         <widget class="QRadioButton" name="_showAll">
           <property name="text">
-           <string>Use Posted Costs</string>
+           <string>Show All Quantities</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -190,16 +53,16 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="_useStandardCosts">
+         <widget class="QRadioButton" name="_showPositive">
           <property name="text">
-           <string>Use Standard Costs</string>
+           <string>Only Show Positive Quantities</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="_useActualCosts">
+         <widget class="QRadioButton" name="_showNegative">
           <property name="text">
-           <string>Use Actual Costs</string>
+           <string>Only Show Negative Quantities</string>
           </property>
          </widget>
         </item>
@@ -207,32 +70,86 @@ to be bound by its terms.</comment>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+      <widget class="QGroupBox" name="_asofGroup">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
+       <property name="title">
+        <string/>
        </property>
-      </spacer>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="_asOfLit">
+          <property name="text">
+           <string>As of Date:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="DLineEdit" name="_asOf"/>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
-   <item>
-    <spacer name="verticalSpacer_3">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="1" column="0">
+    <widget class="WarehouseGroup" name="_warehouse">
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
+     <property name="title">
+      <string/>
      </property>
-    </spacer>
+     <property name="fixedSize">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QGroupBox" name="_showValue">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Show Inventory Value</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QRadioButton" name="_usePostedCosts">
+        <property name="text">
+         <string>Use Posted Costs</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="_useStandardCosts">
+        <property name="text">
+         <string>Use Standard Costs</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="_useActualCosts">
+        <property name="text">
+         <string>Use Actual Costs</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -258,7 +175,6 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_parameter</tabstop>
-  <tabstop>_warehouse</tabstop>
   <tabstop>_showAll</tabstop>
   <tabstop>_showPositive</tabstop>
   <tabstop>_showNegative</tabstop>
