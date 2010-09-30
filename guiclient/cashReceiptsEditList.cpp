@@ -193,9 +193,9 @@ void cashReceiptsEditList::sPost()
       tx.exec("ROLLBACK;");
       return;
     }
-    omfgThis->sCashReceiptsUpdated(cursor->id(), TRUE);
   }
   tx.exec("COMMIT;");
+  omfgThis->sCashReceiptsUpdated(-1, TRUE);
   sFillList();
 }
 
