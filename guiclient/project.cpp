@@ -220,6 +220,13 @@ bool project::sSave(bool partial)
     return false;
   }
 
+  if (!partial && !_due->isValid())
+  {
+    QMessageBox::warning( this, tr("Cannot Save Project"),
+      tr("You must specify a due date.") );
+    return false;
+  }
+
   RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
   if (cp == RecurrenceWidget::NoPolicy)
     return false;

@@ -215,6 +215,14 @@ void task::sSave()
       _name->setFocus();
       return;
   }
+
+  if (!_due->isValid())
+  {
+      QMessageBox::warning( this, tr("Cannot Save Project Task"),
+                            tr("You must enter a valid due date.") );
+      _due->setFocus();
+      return;
+  }
   
   if (_mode == cNew)
   {
