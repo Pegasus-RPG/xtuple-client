@@ -88,7 +88,7 @@ void XComboBox::init()
   insertEditor(ClassCodes,"classCodes","MaintainClassCodes");
   insertEditor(Companies,"companies","MaintainChartOfAccounts");
   insertEditor(ContactCommentTypes,"commentTypes","MaintainCommentTypes");
-  insertEditor(CostCategories,"commentTypes","MaintainCommentTypes");
+  insertEditor(CostCategories,"costCategories","MaintainCostCategories");
   insertEditor(Countries,"countries","MaintainCountries");
   insertEditor(Currencies,"currencies","MaintainCurrencies");
   insertEditor(CurrenciesNotBase,"currencies","MaintainCurrencies");
