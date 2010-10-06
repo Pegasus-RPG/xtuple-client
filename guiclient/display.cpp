@@ -119,7 +119,7 @@ public:
     _queryMenu->addAction(_autoUpdateAct);
   }
 
-  void print(bool);
+  void print(ParameterList, bool);
 
   QString reportName;
   QString metasqlName;
@@ -159,13 +159,20 @@ private:
   ::display * _parent;
 };
 
-void displayPrivate::print(bool showPreview)
+void displayPrivate::print(ParameterList pParams, bool showPreview)
 {
   int numCopies = 1;
+  ParameterList params = pParams;
+//  QVariant param;
+//  bool     valid;
 
-  ParameterList params;
-  if(!_parent->setParams(params))
-    return;
+//  param = params.value("reportName", &valid);
+//  if (!valid)
+  if (!params.count())
+  {
+    if(!_parent->setParams(params))
+      return;
+  }
 
   XSqlQuery report;
   report.prepare("SELECT report_grade, report_source "
@@ -542,14 +549,14 @@ void display::sNew()
 {
 }
 
-void display::sPrint()
+void display::sPrint(ParameterList pParams)
 {
-  _data->print(false);
+  _data->print(pParams, false);
 }
 
-void display::sPreview()
+void display::sPreview(ParameterList pParams)
 {
-  _data->print(true);
+  _data->print(pParams, true);
 }
 
 void display::sFillList()
