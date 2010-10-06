@@ -163,11 +163,6 @@ void displayPrivate::print(ParameterList pParams, bool showPreview)
 {
   int numCopies = 1;
   ParameterList params = pParams;
-//  QVariant param;
-//  bool     valid;
-
-//  param = params.value("reportName", &valid);
-//  if (!valid)
   if (!params.count())
   {
     if(!_parent->setParams(params))
