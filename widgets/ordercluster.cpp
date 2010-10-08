@@ -759,9 +759,8 @@ void OrderLineEdit::setId(const int pId, const QString &pType)
       if (!lock.value("locked").toBool())
       {
         QMessageBox::critical(this, tr("Order locked"),
-                              tr("Transactions are being performed against this order "
-                                 "in another window or by another user.  Please try "
-                                 "again later."));
+                              tr("This order is being edited in another window or by "
+                                 "another user.  Please try again later."));
         clear();
         if(!pType.isNull())
           setAllowedTypes(oldTypes);
