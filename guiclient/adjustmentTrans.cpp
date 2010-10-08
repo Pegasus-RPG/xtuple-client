@@ -256,8 +256,6 @@ void adjustmentTrans::sPost()
       close();
     else
     {
-      _close->setText(tr("&Close"));
-      _close->setShortcut(QKeySequence::Close);
       _item->setId(-1);
       _qty->clear();
       _documentNum->clear();

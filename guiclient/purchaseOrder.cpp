@@ -877,8 +877,6 @@ void purchaseOrder::sSave()
     _shiptoCntct->clear();
     _shiptoAddr->clear();
 
-    _close->setText(tr("&Close"));
-
     createHeader();
     _subtotal->clear();
   }
