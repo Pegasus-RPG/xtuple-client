@@ -127,6 +127,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     int     _crmacctid;
     QDate   _orderDateCache;
     QDate   _shipDateCache;
+    bool    _locked;
 };
 
 #endif  // SALESORDER_H

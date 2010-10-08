@@ -137,6 +137,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _custtaxzoneid     = -1;
   _amountOutstanding = 0.0;
   _crmacctid         =-1;
+  _locked            =false;
 
   _captive       = FALSE;
 
@@ -1138,13 +1139,21 @@ bool salesOrder::save(bool partial)
 
   // if this is a new so record and we haven't saved already
   // then we need to lock this record.
-  if ((cNew == _mode) && (!_saved))
+  if ((cNew == _mode) && (!_saved) && !_locked)
   {
     // should I bother to check because no one should have this but us?
-    q.prepare("SELECT lockSohead(:head_id) AS result;");
+    q.prepare("SELECT tryLock(oid::integer, :head_id) AS locked "
+              "FROM pg_class "
+              "WHERE relname=:table;");
     q.bindValue(":head_id", _soheadid);
+    if (ISORDER(_mode))
+      q.bindValue(":table", "cohead");
+    else
+      q.bindValue(":table", "quhead");
     q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    if (q.first())
+      _locked = q.value("locked").toBool();
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -2177,21 +2186,29 @@ void salesOrder::populate()
   if ( (_mode == cNew) || (_mode == cEdit) || (_mode == cView) )
   {
     XSqlQuery so;
-    if (_mode == cEdit)
+    if (_mode == cEdit && !_locked)
     {
       // Lock the record
-      so.prepare("SELECT lockSohead(:sohead_id) AS result;");
+      so.prepare("SELECT tryLock(oid::integer, :sohead_id) AS locked "
+                 "FROM pg_class "
+                 "WHERE relname=:table;");
       so.bindValue(":sohead_id", _soheadid);
+      if (ISORDER(_mode))
+        so.bindValue(":table", "cohead");
+      else
+        so.bindValue(":table", "quhead");
       so.exec();
       if (so.first())
       {
-        if (so.value("result").toBool() != true)
+        if (so.value("locked").toBool() != true)
         {
           QMessageBox::critical( this, tr("Record Currently Being Edited"),
                                  tr("<p>The record you are trying to edit is currently being edited "
                                       "by another user. Continue in View Mode.") );
           setViewMode();
         }
+        else
+          _locked = true;
       }
       else
       {
@@ -2942,16 +2959,24 @@ bool salesOrder::deleteForCancel()
     }
   }
 
-  if (cView != _mode)
+  if (cView != _mode && _locked)
   {
-    query.prepare("SELECT releaseSohead(:sohead_id) AS result;");
+    query.prepare("SELECT pg_advisory_unlock(oid::integer, :sohead_id) AS result "
+                  "FROM pg_class "
+                  "WHERE relname=:table;");
     query.bindValue(":sohead_id", _soheadid);
+    if (ISORDER(_mode))
+      query.bindValue(":table", "cohead");
+    else
+      query.bindValue(":table", "quhead");
     query.exec();
     if (query.first() && !query.value("result").toBool())
         systemError(this, tr("Could not release this Sales Order record."),
                   __FILE__, __LINE__);
     else if (query.lastError().type() != QSqlError::NoError)
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+    else
+      _locked=false;
   }
 
   return true;
@@ -2968,16 +2993,24 @@ void salesOrder::sClear()
 
 void salesOrder::clear()
 {
-  if (cView != _mode)
+  if (cView != _mode && _locked)
   {
-    q.prepare("SELECT releaseSohead(:sohead_id) AS result;");
+    q.prepare("SELECT pg_advisory_unlock(oid::integer, :sohead_id) AS result "
+              "FROM pg_class "
+              "WHERE relname=:table;");
     q.bindValue(":sohead_id", _soheadid);
+    if (ISORDER(_mode))
+      q.bindValue(":table", "cohead");
+    else
+      q.bindValue(":table", "quhead");
     q.exec();
     if (q.first() && !q.value("result").toBool())
       systemError(this, tr("Could not release this Sales Order record."),
                   __FILE__, __LINE__);
     else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    else
+      _locked=false;
   }
 
   _salesOrderInformation->setCurrentIndex(0);
