@@ -25,6 +25,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 
   public:
     OrderLineEdit(QWidget*, const char* = 0);
+    ~OrderLineEdit();
 
     enum OrderStatus
     {
@@ -64,6 +65,9 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     Q_INVOKABLE virtual QString       fromPrivsClause() {return _fromPrivsClause;}
     Q_INVOKABLE virtual QString       toPrivsClause()   {return _toPrivsClause;}
 
+    Q_INVOKABLE virtual bool lockSelected() {return _lock; }
+    Q_INVOKABLE virtual void setLockSelected(bool lock) { _lock = lock; }
+
   public slots:
     virtual void          setAllowedStatuses(const OrderStatuses);
     virtual void          setAllowedType(const QString &);
@@ -85,6 +89,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 
     virtual QString        buildExtraClause();
     virtual void        silentSetId(const int);
+    virtual void        unlock();
 
 
   protected slots:
@@ -97,6 +102,7 @@ class XTUPLEWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
   private:
     bool        _fromPrivs;
     bool        _toPrivs;
+    bool        _lock;
     QString     _toPrivsClause;
     QString     _fromPrivsClause;
     QString        _allClause;
@@ -141,6 +147,9 @@ class XTUPLEWIDGETS_EXPORT OrderCluster : public VirtualCluster
     Q_INVOKABLE virtual OrderLineEdit::OrderStatus status()            const;
     Q_INVOKABLE virtual QString                    to()                const;
     Q_INVOKABLE virtual QString                    type()              const;
+
+    Q_INVOKABLE virtual bool lockSelected();
+    Q_INVOKABLE virtual void setLockSelected(bool lock);
 
     virtual bool        nameVisible();
     virtual void        setNameVisible(const bool p);

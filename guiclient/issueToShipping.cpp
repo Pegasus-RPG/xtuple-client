@@ -40,6 +40,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Sales |
                           OrderLineEdit::Transfer);
+  _order->setLockSelected(true);
 
   _ship->setEnabled(_privileges->check("ShipOrders"));
 

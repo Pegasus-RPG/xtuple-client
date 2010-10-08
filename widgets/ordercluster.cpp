@@ -181,6 +181,16 @@ bool OrderCluster::descriptionVisible()
   return _descripVisible;
 }
 
+bool OrderCluster::lockSelected()
+{
+ return ((OrderLineEdit*)_number)->lockSelected();
+}
+
+void OrderCluster::setLockSelected(bool lock)
+{
+  ((OrderLineEdit*)_number)->setLockSelected(lock);
+}
+
 void OrderCluster::setDescriptionVisible(const bool p)
 {
   _fromLit->setVisible(p);
@@ -284,6 +294,7 @@ OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
   _toPrivs=false;
   _fromPrivs=false;
   _custid = -1;
+  _lock = false;
   
   setTitles(tr("Order"), tr("Orders"));
 
@@ -293,6 +304,11 @@ OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
 	   "       orderhead_type AS name, orderhead_status AS description,"
 	   "       orderhead_from, orderhead_to "
 	   "FROM orderhead WHERE (TRUE) ";
+}
+
+OrderLineEdit::~OrderLineEdit()
+{
+  unlock();
 }
 
 void OrderLineEdit::sNewId(const int p)
@@ -708,16 +724,50 @@ void OrderLineEdit::setCustId(int pId)
 
 void OrderLineEdit::setId(const int pId, const QString &pType)
 {
+  if (pId == _id && pType == _name)
+      return;
+
+  // Release any previous lock
+  unlock();
+
   if (pId == -1)
     clear();
-  else if (pId == _id && pType == _name)
-    return;
   else
   {
     OrderTypes oldTypes = _allowedTypes;
     if(!pType.isNull())
       setAllowedType(pType);
     silentSetId(pId);
+    // Attempt to obtain an application lock on the order
+    if (_lock && _id != -1)
+    {
+      XSqlQuery lock;
+      lock.prepare("SELECT trylock(oid::integer, :id) AS locked "
+                   "FROM pg_class "
+                   "WHERE relname = :table;");
+      lock.bindValue(":id", _id);
+      if (isPO())
+        lock.bindValue(":table","pohead");
+      else if (isSO())
+        lock.bindValue(":table","cohead");
+      else if (isRA())
+        lock.bindValue(":table","rahead");
+      else if (isTO())
+        lock.bindValue(":table","tohead");
+      lock.exec();
+      lock.first();
+      if (!lock.value("locked").toBool())
+      {
+        QMessageBox::critical(this, tr("Order locked"),
+                              tr("Transactions are being performed against this order "
+                                 "in another window or by another user.  Please try "
+                                 "again later."));
+        clear();
+        if(!pType.isNull())
+          setAllowedTypes(oldTypes);
+        return;
+      }
+    }
     if(!pType.isNull())
       setAllowedTypes(oldTypes);
     emit newId(pId, pType);
@@ -784,7 +834,7 @@ void OrderLineEdit::silentSetId(const int pId)
     {
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 				    .arg(__FILE__)
-				    .arg(__LINE__),
+                                    .arg(__LINE__),
 			    countQ.lastError().databaseText());
     }
 
@@ -852,6 +902,27 @@ void OrderLineEdit::silentSetId(const int pId)
 
   _parsed = TRUE;
   emit parsed();
+}
+
+void OrderLineEdit::unlock()
+{
+  if (_lock && _id != -1)
+  {
+    XSqlQuery lock;
+    lock.prepare("SELECT pg_advisory_unlock(oid::integer, :id) "
+                 "FROM pg_class "
+                 "WHERE relname = :table;");
+    lock.bindValue(":id", _id);
+    if (isPO())
+      lock.bindValue(":table","pohead");
+    else if (isSO())
+      lock.bindValue(":table","cohead");
+    else if (isRA())
+      lock.bindValue(":table","rahead");
+    else if (isTO())
+      lock.bindValue(":table","tohead");
+    lock.exec();
+  }
 }
 
 // List ///////////////////////////////////////////////////////////////////////
