@@ -100,6 +100,7 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _saved		= false;
   _taxzoneidCache	= -1;
   _whstaxzoneid		= -1;
+  _locked       = false;
   _srcWhs->setId(_preferences->value("PreferredWarehouse").toInt());
   _trnsWhs->setId(_metrics->value("DefaultTransitWarehouse").toInt());
   _dstWhs->setId(_preferences->value("PreferredWarehouse").toInt());
@@ -119,21 +120,25 @@ void transferOrder::setToheadid(const int pId)
   _qeitem->setHeadId(pId);
   _comments->setId(_toheadid);
        
-  if(_mode == cEdit)
+  if(_mode == cEdit && !_locked)
   {
      XSqlQuery to;
-     to.prepare("SELECT lockTohead(:tohead_id) AS result;");
+     to.prepare("SELECT tryLock(oid::integer, :tohead_id) AS locked "
+                "FROM pg_class "
+                "WHERE relname='tohead';");
      to.bindValue(":tohead_id", _toheadid);
      to.exec();
      if(to.first())
      {
-       if(to.value("result").toBool() != true)
+       if(to.value("locked").toBool() != true)
        {
           QMessageBox::critical( this, tr("Record Currently Being Edited"),
                tr("<p>The record you are trying to edit is currently being edited "
                "by another user. Continue in View Mode.") );
           setViewMode();
        }
+       else
+         _locked=true;
      }
      else
      {
@@ -704,10 +709,14 @@ bool transferOrder::save(bool partial)
   if((cNew == _mode) && (!_saved))
   {
     // should I bother to check because no one should have this but us?
-    q.prepare("SELECT lockTohead(:head_id) AS result;");
+    q.prepare("SELECT tryLock(oid::integer, :head_id) AS locked "
+              "FROM pg_class "
+              "WHERE relname='tohead';");
     q.bindValue(":head_id", _toheadid);
     q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    if (q.first())
+      _locked = q.value("locked").toBool();
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -2118,8 +2127,13 @@ void transferOrder::sHandleTrnsWhs(const int pid)
 
 void transferOrder::sReleaseTohead()
 {
+  if (!_locked)
+    return;
+
   XSqlQuery query;
-  query.prepare("SELECT releaseTohead(:tohead_id) AS result;");
+  query.prepare("SELECT pg_advisory_unlock(oid::integer, :tohead_id) AS result "
+                "FROM pg_class "
+                "WHERE relname='tohead';");
   query.bindValue(":tohead_id", _toheadid);
   query.exec();
   if (query.first() && ! query.value("result").toBool())
@@ -2127,4 +2141,6 @@ void transferOrder::sReleaseTohead()
                 __FILE__, __LINE__);
   else if (query.lastError().type() != QSqlError::NoError)
     systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+  else
+    _locked = false;
 }

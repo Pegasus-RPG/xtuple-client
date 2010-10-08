@@ -105,6 +105,7 @@ private:
     bool		_userEnteredOrderNumber;
     int			_whstaxzoneid;
     QString		doServer;
+    bool        _locked;
 
 
 };
