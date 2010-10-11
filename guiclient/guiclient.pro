@@ -1173,6 +1173,7 @@ HEADERS = ../common/format.h                    \
           xerrormessage.h               \
           xmainwindow.h                 \
           xmessagebox.h                 \
+          xmessageboxmessagehandler.h   \
           xsltMap.h                     \
           xuiloader.h                   \
           xwidget.h                     \
@@ -1756,6 +1757,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           xerrormessage.cpp                     \
           xmainwindow.cpp                       \
           xmessagebox.cpp                       \
+          xmessageboxmessagehandler.cpp         \
           xsltMap.cpp                           \
           xuiloader.cpp                         \
           xwidget.cpp                           \

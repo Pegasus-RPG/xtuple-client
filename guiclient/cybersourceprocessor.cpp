@@ -8,24 +8,31 @@
  * to be bound by its terms.
  */
 
-#include <QDomAttr>
 #include <QDomDocument>
 #include <QDomElement>
 #include <QSqlError>
+#include <QXmlQuery>
 
 #include <currcluster.h>
 
 #include "guiclient.h"
 #include "cybersourceprocessor.h"
+#include "version.h"
+#include "xmessageboxmessagehandler.h"
 
 #define DEBUG true
 
-#define SOAP_ENV_NS "http://schemas.xmlsoap.org/soap/envelope/"
-#define WSSE_NS "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
-//#define NS1_NS "urn:schemas-cybersource-com:transaction-data-1.31"
-#define NS1_NS "https://ics2ws.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_1.53.xsd"
+#define CPDATA_NS   "ns3"
+#define CPTP_NS     "ns1"
+#define SOAP_ENC_NS "SOAP-ENC"
+#define SOAP_ENV_NS "SOAP-ENV"
+#define WSSE_NS     "wsse"
 
-#define TR(a)	QObject::tr(a)
+#define CPDATA_NSVAL   "urn:schemas-cybersource-com:transaction-data-1.53"
+#define CPTP_NSVAL     "urn:schemas-cybersource-com:transaction-data:TransactionProcessor"
+#define SOAP_ENC_NSVAL "http://schemas.xmlsoap.org/soap/encoding/"
+#define SOAP_ENV_NSVAL "http://schemas.xmlsoap.org/soap/envelope/"
+#define WSSE_NSVAL     "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
 
 // convenience function to add <ChildName>Content</ChildName> to the Parent node
 /* TODO: put this in a generic XMLCCProcessor, subclass of creditcardprocessor?
@@ -42,8 +49,35 @@ static QDomElement createChildTextNode(QDomElement parent, QString childName, QS
   return child;
 }
 
+static QString get_r_ref(int pccpayid)
+{
+  XSqlQuery refq;
+  refq.prepare("SELECT ccpay_r_ref FROM ccpay WHERE ccpay_id=:ccpay_id;");
+  refq.bindValue(":ccpay_id", pccpayid);
+  refq.exec();
+  if (refq.first())
+    return refq.value("ccpay_r_ref").toString();
+  
+  return QString();
+  /* deal with errors if we learn that requestToken is required.
+  else if (refq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = refq.lastError().databaseText();
+    return -1;
+  }
+  else
+  {
+    _errorMsg = errorMsg(-17).arg(pccardid);
+    return -17;
+  }
+  */
+}
+
 CyberSourceProcessor::CyberSourceProcessor() : CreditCardProcessor()
 {
+  _extraHeaders.append(qMakePair(QString("Content-Type"), QString("text/xml; charset=uft-8; action=\"runTransaction\"")));
+  _extraHeaders.append(qMakePair(QString("SOAPAction"),   QString("runTransaction")));
+
   _defaultLivePort   = 0;
   _defaultLiveServer = "https://ics2ws.ic3.com/commerce/1.x/transactionProcessor";
   _defaultTestPort   = 0;
@@ -56,45 +90,46 @@ CyberSourceProcessor::CyberSourceProcessor() : CreditCardProcessor()
   _msgHash.insert(-304, tr("CyberSource reports a general system failure"));
   _msgHash.insert(-305, tr("The Merchant ID %1 is too long"));
   _msgHash.insert(-306, tr("SOAP error (probably an xTuple ERP bug): %1"));
+  _msgHash.insert(-307, tr("Error reading response XML: %1"));
   _msgHash.insert(-310, tr("The amount authorized was 0."));
   _msgHash.insert( 310, tr("Only a portion of the total amount requested was authorized"));
 
   if (FraudCheckResult *b = avsCodeLookup('B'))
   {
     b->sev  = NoMatch | PostalCode;
-    b->text = TR("Street Address matches but Postal Code is not verified");
+    b->text = tr("Street Address matches but Postal Code is not verified");
   }
-  _avsCodes.append(new FraudCheckResult('C', NoMatch | Address | PostalCode, TR("Street Address and Postal Code do not match")));
-  _avsCodes.append(new FraudCheckResult('D', Match,   TR("Street Address and Postal Code match")));
+  _avsCodes.append(new FraudCheckResult('C', NoMatch | Address | PostalCode, tr("Street Address and Postal Code do not match")));
+  _avsCodes.append(new FraudCheckResult('D', Match,   tr("Street Address and Postal Code match")));
 
   if (FraudCheckResult *e = avsCodeLookup('E'))
-    e->text = TR("AVS data are invalid or AVS not allowed for this card type");
+    e->text = tr("AVS data are invalid or AVS not allowed for this card type");
 
-  _avsCodes.append(new FraudCheckResult('F', NoMatch | Name, TR("Card holder's name does not match but Postal Code matches")));
-  _avsCodes.append(new FraudCheckResult('H', NoMatch | Name, TR("Card holder's name does not match but Street Address and Postal Code match")));
-  _avsCodes.append(new FraudCheckResult('I', NotProcessed | Address, TR("Address not verified")));
-  _avsCodes.append(new FraudCheckResult('K', NoMatch | Address | PostalCode, TR("Card holder's name matches but Billing Street Address and Postal Code do not match")));
-  _avsCodes.append(new FraudCheckResult('L', NoMatch | Address, TR("Card holder's name and Billing Postal Code match but Street Address does not match")));
-  _avsCodes.append(new FraudCheckResult('M', Match,   TR("Street Address and Postal Code match")));
-  _avsCodes.append(new FraudCheckResult('O', NoMatch | PostalCode, TR("Card holder's name and Billing Street Address match but Postal Code does not match")));
+  _avsCodes.append(new FraudCheckResult('F', NoMatch | Name, tr("Card holder's name does not match but Postal Code matches")));
+  _avsCodes.append(new FraudCheckResult('H', NoMatch | Name, tr("Card holder's name does not match but Street Address and Postal Code match")));
+  _avsCodes.append(new FraudCheckResult('I', NotProcessed | Address, tr("Address not verified")));
+  _avsCodes.append(new FraudCheckResult('K', NoMatch | Address | PostalCode, tr("Card holder's name matches but Billing Street Address and Postal Code do not match")));
+  _avsCodes.append(new FraudCheckResult('L', NoMatch | Address, tr("Card holder's name and Billing Postal Code match but Street Address does not match")));
+  _avsCodes.append(new FraudCheckResult('M', Match,   tr("Street Address and Postal Code match")));
+  _avsCodes.append(new FraudCheckResult('O', NoMatch | PostalCode, tr("Card holder's name and Billing Street Address match but Postal Code does not match")));
 
   if (FraudCheckResult *p = avsCodeLookup('P'))
   {
     p->sev  = NotProcessed | Address;
-    p->text = TR("Postal Code matches but Street Address was not verified");
+    p->text = tr("Postal Code matches but Street Address was not verified");
   }
 
-  _avsCodes.append(new FraudCheckResult('T', NoMatch | Name,     TR("Card holder's name does not match but Street Address matches")));
-  _avsCodes.append(new FraudCheckResult('U', NotProcessed | Address, TR("Address information unavailable; either the US bank does not support non-US AVS or the AVS at a US bank is not functioning properly")));
-  _avsCodes.append(new FraudCheckResult('V', Match,       TR("Card holder's name, Street Address, and Postal Code match")));
-  _avsCodes.append(new FraudCheckResult('1', Unsupported, TR("AVS is not supported for this processor or card type")));
-  _avsCodes.append(new FraudCheckResult('2', Invalid,     TR("The processor returned an unrecognized AVS response")));
+  _avsCodes.append(new FraudCheckResult('T', NoMatch | Name,     tr("Card holder's name does not match but Street Address matches")));
+  _avsCodes.append(new FraudCheckResult('U', NotProcessed | Address, tr("Address information unavailable; either the US bank does not support non-US AVS or the AVS at a US bank is not functioning properly")));
+  _avsCodes.append(new FraudCheckResult('V', Match,       tr("Card holder's name, Street Address, and Postal Code match")));
+  _avsCodes.append(new FraudCheckResult('1', Unsupported, tr("AVS is not supported for this processor or card type")));
+  _avsCodes.append(new FraudCheckResult('2', Invalid,     tr("The processor returned an unrecognized AVS response")));
 
-  _cvvCodes.append(new FraudCheckResult('D', Suspicious,  TR("The bank thinks this transaction is suspicious")));
-  _cvvCodes.append(new FraudCheckResult('I', NoMatch,     TR("The CVV failed the processor's data validation check")));
-  _cvvCodes.append(new FraudCheckResult('1', Unsupported, TR("CVV is not supported by the card association")));
-  _cvvCodes.append(new FraudCheckResult('2', Invalid,     TR("The processor returned an unrecognized CVV response")));
-  _cvvCodes.append(new FraudCheckResult('3', NotAvail,    TR("The processor did not return a CVV result")));
+  _cvvCodes.append(new FraudCheckResult('D', Suspicious,  tr("The bank thinks this transaction is suspicious")));
+  _cvvCodes.append(new FraudCheckResult('I', NoMatch,     tr("The CVV failed the processor's data validation check")));
+  _cvvCodes.append(new FraudCheckResult('1', Unsupported, tr("CVV is not supported by the card association")));
+  _cvvCodes.append(new FraudCheckResult('2', Invalid,     tr("The processor returned an unrecognized CVV response")));
+  _cvvCodes.append(new FraudCheckResult('3', NotAvail,    tr("The processor did not return a CVV result")));
 
   _doc = 0;
 }
@@ -108,7 +143,7 @@ CyberSourceProcessor::~CyberSourceProcessor()
   }
 }
 
-int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, const CCTransaction ptranstype)
+int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString & /*preforder*/, const CCTransaction ptranstype)
 {
   XSqlQuery csq;
   csq.prepare(
@@ -157,51 +192,62 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
     delete _doc;
   _doc = new QDomDocument();
 
-  QDomAttr attr;
-
   QDomNode xmlNode = _doc->createProcessingInstruction("xml",
                                                        "version=\"1.0\" "
                                                        "encoding=\"UTF-8\"");
   _doc->appendChild(xmlNode);
-  
 
-  QDomElement envelope = _doc->createElementNS(SOAP_ENV_NS, "soap:Envelope");
+  QDomElement envelope = _doc->createElement(SOAP_ENV_NS ":Envelope");
+  envelope.setAttribute("xmlns:" CPDATA_NS,   CPDATA_NSVAL);
+  envelope.setAttribute("xmlns:" CPTP_NS,     CPTP_NSVAL);
+  envelope.setAttribute("xmlns:" SOAP_ENC_NS, SOAP_ENC_NSVAL);
+  envelope.setAttribute("xmlns:" SOAP_ENV_NS, SOAP_ENV_NSVAL);
+  envelope.setAttribute("xmlns:" WSSE_NS,     WSSE_NSVAL);
+
   _doc->appendChild(envelope);
 
-  QDomElement header = _doc->createElement("soap:Header");
-  header.setAttribute("xmlns:wsse", WSSE_NS);
+  QDomElement header = _doc->createElement(SOAP_ENV_NS ":Header");
   envelope.appendChild(header);
 
-  QDomElement security = _doc->createElement("wsse:Security");
-  security.setAttribute("soap:mustUnderstand", "1");
+  QDomElement security = _doc->createElement(WSSE_NS ":Security");
+  security.setAttribute(SOAP_ENV_NS ":mustUnderstand", "1");
   header.appendChild(security);
 
-  QDomElement usernametoken = _doc->createElement("wsse:UsernameToken");
+  QDomElement usernametoken = _doc->createElement(WSSE_NS ":UsernameToken");
   security.appendChild(usernametoken);
 
-  createChildTextNode(usernametoken, "wsse:Username",
+  createChildTextNode(usernametoken, WSSE_NS ":Username",
                       _metricsenc->value("CCLogin").toLower());
 
-  QDomElement password = createChildTextNode(usernametoken, "wsse:Password",
+  QDomElement password = createChildTextNode(usernametoken, WSSE_NS ":Password",
                                              _metricsenc->value("CCPassword"));
 
   password.setAttribute("Type",
                         "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText");
 
-  QDomElement body = _doc->createElement("soap:Body");
+  QDomElement body = _doc->createElement(SOAP_ENV_NS ":Body");
   envelope.appendChild(body);
 
-  _requestMessage = _doc->createElementNS(NS1_NS, "ns1:requestMessage");
+  _requestMessage = _doc->createElement(CPDATA_NS ":requestMessage");
   body.appendChild(_requestMessage);
 
-  createChildTextNode(_requestMessage, "ns1:merchantID", 
+  createChildTextNode(_requestMessage, CPDATA_NS ":merchantID", 
                       _metricsenc->value("CCLogin"));
-  createChildTextNode(_requestMessage, "ns1:merchantReferenceCode",
+  createChildTextNode(_requestMessage, CPDATA_NS ":merchantReferenceCode",
                       pneworder);
-
-  if (ptranstype == Reverse || ptranstype == Capture ||
-      ptranstype == Credit  || ptranstype == Void)
-    createChildTextNode(_requestMessage, "ns1:orderRequestToken", preforder);
+  createChildTextNode(_requestMessage, CPDATA_NS ":clientLibrary", "xTuple ERP");
+  createChildTextNode(_requestMessage, CPDATA_NS ":clientLibraryVersion", _Version);
+  createChildTextNode(_requestMessage, CPDATA_NS ":clientEnvironment",
+#ifdef Q_WS_MAC
+                      "Mac OS X"
+#elif defined Q_WS_WIN
+                      "Windows"
+#elif defined Q_WS_X11
+                      "X Windows"
+#else
+                      "undefined Qt client"
+#endif
+                     );
 
   if (ptranstype == Authorize || ptranstype == Charge || ptranstype == Credit)
   {
@@ -221,33 +267,32 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
       }
     }
 
-    QDomElement billto = _doc->createElement("ns1:billTo");
+    QDomElement billto = _doc->createElement(CPDATA_NS ":billTo");
     _requestMessage.appendChild(billto);
     QStringList name = csq.value("ccard_name").toString().split(QRegExp("\\s+"));
-    createChildTextNode(billto, "ns1:firstName",  name.at(0).left(60));
-    createChildTextNode(billto, "ns1:lastName",   name.at(name.size() - 1).left(60));
-    createChildTextNode(billto, "ns1:street1",    csq.value("ccard_address1").toString().left(60));
-    createChildTextNode(billto, "ns1:city",       csq.value("ccard_city").toString().left(50));
-    createChildTextNode(billto, "ns1:state",      csq.value("ccard_state").toString().left(2));
-    createChildTextNode(billto, "ns1:postalCode", csq.value("ccard_zip").toString().left(10));
-    createChildTextNode(billto, "ns1:country",    country.left(2));
-    createChildTextNode(billto, "ns1:email",      csq.value("cntct_email").toString().left(255));
-    createChildTextNode(billto, "ns1:company",    csq.value("cust_name").toString().left(40));
+    createChildTextNode(billto, CPDATA_NS ":firstName",  name.at(0).left(60));
+    createChildTextNode(billto, CPDATA_NS ":lastName",   name.at(name.size() - 1).left(60));
+    createChildTextNode(billto, CPDATA_NS ":street1",    csq.value("ccard_address1").toString().left(60));
+    createChildTextNode(billto, CPDATA_NS ":city",       csq.value("ccard_city").toString().left(50));
+    createChildTextNode(billto, CPDATA_NS ":state",      csq.value("ccard_state").toString().left(2));
+    createChildTextNode(billto, CPDATA_NS ":postalCode", csq.value("ccard_zip").toString().left(10));
+    createChildTextNode(billto, CPDATA_NS ":country",    country.left(2));
+    createChildTextNode(billto, CPDATA_NS ":company",    csq.value("cust_name").toString().left(40));
+    createChildTextNode(billto, CPDATA_NS ":email",      csq.value("cntct_email").toString().left(255));
   }
 
   if (ptranstype == Authorize || ptranstype == Reverse ||
       ptranstype == Capture   || ptranstype == Charge  || ptranstype == Credit)
   {
-    QDomElement purchasetotals = _doc->createElement("ns1:purchaseTotals");
+    QDomElement purchasetotals = _doc->createElement(CPDATA_NS ":purchaseTotals");
     _requestMessage.appendChild(purchasetotals);
-    createChildTextNode(purchasetotals, "ns1:grandTotalAmount",
-                        QString::number(pamount));
+
     XSqlQuery currq;
     currq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");
     currq.bindValue(":currid", pcurrid);
     currq.exec();
     if (currq.first())
-      createChildTextNode(purchasetotals, "ns1:currency",
+      createChildTextNode(purchasetotals, CPDATA_NS ":currency",
                           currq.value("curr_abbr").toString());
     else if (currq.lastError().type() != QSqlError::NoError)
     {
@@ -259,6 +304,9 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
       _errorMsg = errorMsg(-17).arg(pccardid);
       return -17;
     }
+
+    createChildTextNode(purchasetotals, CPDATA_NS ":grandTotalAmount",
+                        QString::number(pamount));
   }
 
   if (ptranstype == Authorize || ptranstype == Charge || ptranstype == Credit)
@@ -282,7 +330,7 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
     else
       cardtype = rawcardtype;
 
-    QDomElement card = _doc->createElement("ns1:card");
+    QDomElement card = _doc->createElement(CPDATA_NS ":card");
     _requestMessage.appendChild(card);
     QString accountNumber = csq.value("ccard_number").toString();
     accountNumber.remove(QRegExp("[^0-9]"));
@@ -291,14 +339,14 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
     if (month.length() == 1)
       month = "0" + month;
 
-    createChildTextNode(card, "ns1:accountNumber",   accountNumber.left(20));
-    createChildTextNode(card, "ns1:expirationMonth", month.left(2));
-    createChildTextNode(card, "ns1:expirationYear",
+    createChildTextNode(card, CPDATA_NS ":accountNumber",   accountNumber.left(20));
+    createChildTextNode(card, CPDATA_NS ":expirationMonth", month.left(2));
+    createChildTextNode(card, CPDATA_NS ":expirationYear",
                         csq.value("ccard_year_expired").toString().left(4));
     if (pcvv > 0)
-      createChildTextNode(card, "ns1:cvNumber",
+      createChildTextNode(card, CPDATA_NS ":cvNumber",
                           QString::number(pcvv).left(4));
-    createChildTextNode(card, "ns1:cardType",        cardtype.left(3));
+    createChildTextNode(card, CPDATA_NS ":cardType",        cardtype.left(3));
   }
 
   if (DEBUG)
@@ -318,7 +366,7 @@ int  CyberSourceProcessor::doAuthorize(const int pccardid, const int pcvv, doubl
   if (returnValue != 0)
     return returnValue;
 
-  QDomElement auth = _doc->createElement("ns1:ccAuthService");
+  QDomElement auth = _doc->createElement(CPDATA_NS ":ccAuthService");
   auth.setAttribute("run", "true");
   _requestMessage.appendChild(auth);
 
@@ -342,15 +390,16 @@ int  CyberSourceProcessor::doCharge(const int pccardid, const int pcvv, const do
            pccardid, pcvv, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
            qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
-  int returnValue = buildCommon(pccardid, pcvv, pamount, pcurrid, pneworder, preforder, Charge);
+  int returnValue = buildCommon(pccardid, pcvv, pamount, pcurrid, pneworder,
+                                preforder, Charge);
   if (returnValue != 0)
     return returnValue;
 
-  QDomElement auth = _doc->createElement("ns1:CCAuthService");
+  QDomElement auth = _doc->createElement(CPDATA_NS ":ccAuthService");
   auth.setAttribute("run", "true");
   _requestMessage.appendChild(auth);
 
-  QDomElement capture = _doc->createElement("ns1:CCCaptureService");
+  QDomElement capture = _doc->createElement(CPDATA_NS ":ccCaptureService");
   capture.setAttribute("run", "true");
   _requestMessage.appendChild(capture);
 
@@ -378,13 +427,17 @@ int CyberSourceProcessor::doChargePreauthorized(const int pccardid, const int pc
   if (returnValue != 0)
     return returnValue;
 
-  QDomElement capture = _doc->createElement("ns1:CCCaptureService");
+  QDomElement capture = _doc->createElement(CPDATA_NS ":ccCaptureService");
   capture.setAttribute("run", "true");
   _requestMessage.appendChild(capture);
 
-  createChildTextNode(capture, "ns1:authRequestId",     preforder);
-  if (pneworder.length() > 0)
-    createChildTextNode(capture, "ns1:orderRequestToken", pneworder);
+  /* TODO: test server returns an XML parse error with it, passes without it
+  QString requestToken = get_r_ref(pccpayid);
+  if (! requestToken.isEmpty())
+    createChildTextNode(_requestMessage, CPDATA_NS ":orderRequestToken", requestToken);
+   */
+
+  createChildTextNode(capture, CPDATA_NS ":authRequestID",     preforder);
 
   if (DEBUG) qDebug("CS::doChargePreauthorized sending %s", qPrintable(_doc->toString()));
   QString response;
@@ -410,13 +463,15 @@ int CyberSourceProcessor::doCredit(const int pccardid, const int pcvv, const dou
   if (returnValue != 0)
     return returnValue;
 
-  QDomElement capture = _doc->createElement("ns1:CCCreditService");
+  QDomElement capture = _doc->createElement(CPDATA_NS ":CCCreditService");
   capture.setAttribute("run", "true");
   _requestMessage.appendChild(capture);
 
-  createChildTextNode(capture, "ns1:captureRequestID",  preforder);
-  if (pneworder.length() > 0)
-    createChildTextNode(capture, "ns1:orderRequestToken", pneworder);
+  createChildTextNode(capture, CPDATA_NS ":captureRequestID",  preforder);
+
+  QString requestToken = get_r_ref(pccpayid);
+  if (! requestToken.isEmpty())
+    createChildTextNode(_requestMessage, CPDATA_NS ":orderRequestToken", requestToken);
 
   if (DEBUG) qDebug("CS::doCredit sending %s", qPrintable(_doc->toString()));
   QString response;
@@ -441,13 +496,15 @@ int CyberSourceProcessor::doReverseAuthorize(const int pccardid, const double pa
   if (returnValue != 0)
     return returnValue;
 
-  QDomElement reverse = _doc->createElement("ns1:CCAuthReversalService");
+  QDomElement reverse = _doc->createElement(CPDATA_NS ":CCAuthReversalService");
   reverse.setAttribute("run", "true");
   _requestMessage.appendChild(reverse);
 
-  createChildTextNode(reverse, "ns1:authRequestID",     preforder.left(26));
-  if (pneworder.length() > 0)
-    createChildTextNode(reverse, "ns1:orderRequestToken", pneworder.left(256));
+  createChildTextNode(reverse, CPDATA_NS ":authRequestID", preforder);
+
+  QString requestToken = get_r_ref(pccpayid);
+  if (! requestToken.isEmpty())
+    createChildTextNode(_requestMessage, CPDATA_NS ":orderRequestToken", requestToken);
 
   if (DEBUG) qDebug("CS::doReverseAuthorize sending %s", qPrintable(_doc->toString()));
 
@@ -469,22 +526,44 @@ int CyberSourceProcessor::doReverseAuthorize(const int pccardid, const double pa
 int CyberSourceProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("CS:doVoidPrevious(%d, %d, %f, %d, %s, %s, %s, %d)",
+    qDebug("CS::doVoidPrevious(%d, %d, %f, %d, %s, %s, %s, %d)",
            pccardid, pcvv, pamount, pcurrid, qPrintable(pneworder), qPrintable(preforder),
            qPrintable(papproval), pccpayid);
+
+  QString requestId;
+  XSqlQuery refq;
+  refq.prepare("SELECT ccpay_r_ref FROM ccpay WHERE ccpay_id=:ccpay_id;");
+  refq.bindValue(":ccpay_id", pccpayid);
+  refq.exec();
+  if (refq.first())
+    requestId = refq.value("ccpay_r_ref").toString();
+  else if (refq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = refq.lastError().databaseText();
+    return -1;
+  }
+  else
+  {
+    _errorMsg = errorMsg(-17).arg(pccardid);
+    return -17;
+  }
 
   QString tmpErrorMsg = _errorMsg;
   int returnValue = buildCommon(pccardid, pcvv, pamount, pcurrid, pneworder, preforder, Void);
   if (returnValue != 0)
     return returnValue;
 
-  QDomElement voidsvc = _doc->createElement("ns1:VoidService");
+  QDomElement voidsvc = _doc->createElement(CPDATA_NS ":voidService");
   voidsvc.setAttribute("run", "true");
   _requestMessage.appendChild(voidsvc);
 
-  createChildTextNode(voidsvc, "ns1:voidRequestID",     preforder);
-  if (pneworder.length() > 0)
-    createChildTextNode(voidsvc, "ns1:orderRequestToken", pneworder);
+  createChildTextNode(voidsvc, CPDATA_NS ":voidRequestID",     preforder);
+
+  /* TODO: test server returns an XML parse error with it, passes without it
+  QString requestToken = get_r_ref(pccpayid);
+  if (! requestToken.isEmpty())
+    createChildTextNode(_requestMessage, CPDATA_NS ":orderRequestToken", requestToken);
+   */
 
   if (DEBUG) qDebug("CS::doVoidPrevious sending %s", qPrintable(_doc->toString()));
 
@@ -503,17 +582,88 @@ int CyberSourceProcessor::doVoidPrevious(const int pccardid, const int pcvv, con
   return returnValue;
 }
 
+/** \brief Return the result of extracting a given value from an XML
+           response from CyberSource.
+
+    The input query can specify a full or relative path within the XML stream.
+    If it starts with a slash ('/') then it's treated as a full path.
+    Otherwise it's treated as a relative path with respect to
+    \c soap:Envelope/soap:Body/c:replyMessage
+
+    Queries with relative paths always return the text() value.
+    Queries with full paths must completely specify what they want returned.
+    In either case, the query is wrapped with namespace handling.
+
+    The xq parameter is expected to be an initialized QXmlQuery with focus
+    already set on the XML to be queried.
+ */
+QVariant CyberSourceProcessor::xqresult(QXmlQuery *xq, QString query, QVariant::Type type)
+{
+  if (DEBUG)
+    qDebug("xqresult(%p, %s, %d)", xq, qPrintable(query), type);
+
+  QVariant result;
+  QString  text;
+  QString fullq = (query.startsWith("/") ?
+              QString("<result xmlns:soap='%1' xmlns:c='%2'>{%3}</result>")
+            : QString("<result xmlns:soap='%1' xmlns:c='%2'>"
+                      "{/soap:Envelope/soap:Body/c:replyMessage/%3/text()}"
+                      "</result>")
+            ).arg(SOAP_ENV_NSVAL, CPDATA_NSVAL, query);
+  xq->setQuery(fullq);
+  if (xq->isValid() && xq->evaluateTo(&text))
+  {
+    text = text.remove(QRegExp("</?result[^>]*>")).simplified();
+    if (DEBUG)
+      qDebug("xqresult() evaluated to %s", qPrintable(text));
+    bool ok = false;
+    switch (type)
+    {
+      case QVariant::Bool: result = text.compare("true", Qt::CaseInsensitive);
+                           break;
+
+      case QVariant::Date:
+      case QVariant::DateTime:
+      case QVariant::Time:
+      {
+        QDateTime tmp = QDateTime::fromString(text.left(19), Qt::ISODate);
+        ok = tmp.isValid();
+        if (ok)
+        {
+          tmp.setTimeSpec(Qt::UTC);
+          switch (type)
+          {
+            case QVariant::Date: result = tmp.date(); break;
+            case QVariant::Time: result = tmp.time(); break;
+            default:             result = tmp;        break;
+          }
+        }
+      }
+      break;
+
+      case QVariant::Double:   result = text.toDouble(&ok);             break;
+      case QVariant::Int:      result = text.toInt(&ok);                break;
+      case QVariant::String:   result = text; ok = true;                break;
+      default:                 result = text;                           break;
+    }
+    if (! ok)
+      xq->messageHandler()->message(QtCriticalMsg,
+                                    tr("Could not convert '%1' to %2")
+                                    .arg(text, QVariant::typeToName(type)),
+                                    tr("CyberSource XML response"));
+  }
+
+  if (DEBUG)
+    qDebug("xqresult() returning %s", qPrintable(result.toString()));
+  return result;
+}
+
 int CyberSourceProcessor::handleResponse(const QString &presponse, const int pccardid, const CCTransaction ptype, double &pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
     qDebug("CS::handleResponse(%s, %d, %d, %f, %d, %s, %d, pparams)",
            qPrintable(presponse), pccardid, ptype, pamount, pcurrid,
            qPrintable(preforder), pccpayid);
-
-  QDomDocument response;
-  response.setContent(presponse);
-
-  QDomElement root = response.documentElement();
 
   QString r_approved;
   QString r_avs;
@@ -532,184 +682,222 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
   QStringList missing;
   QStringList invalid;
 
-  int returnValue = -95;
+  int returnValue = 0;
 
   QString requestedAmtStr;
   QString approvedAmtStr;
+  XMessageBoxMessageHandler msghandler(this);
+  msghandler.setTitle(tr("CyberSource XML Error"));
+  msghandler.setPrefix(tr("<p>There was an error processing the response from "
+                          "CyberSource, line %1 column %2: %3<br>(%4)"));
 
-  for (QDomNode node = root.firstChild(); ! node.isNull(); node = node.nextSibling())
+  QXmlQuery valueq;
+  valueq.setMessageHandler(&msghandler);
+  if (! valueq.setFocus(presponse))
   {
-    if (node.isElement())
+    _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+    returnValue = -307;
+  }
+  else
+  {
+    QVariant fieldVal;
+    fieldVal = xqresult(&valueq, "/soap:Envelope/soap:Body/soap:Fault/faultstring/text()");
+    if (! valueq.isValid())
     {
-      QDomElement elem       = node.toElement();
-      QDomElement reasonElem = elem.elementsByTagNameNS(NS1_NS,
-                                                        "reasonCode").at(0).toElement();
-      if (! reasonElem.isNull())
-        reasonCode = reasonElem.text().toInt();
-
-      if (node.nodeName() == "ccAuthReply")
+      _errorMsg   = errorMsg(-306).arg(msghandler.lastMessage());
+      returnValue = -306;
+    }
+    else if (fieldVal.isValid() && ! fieldVal.toString().isEmpty())
+    {
+      _errorMsg   = errorMsg(-306).arg(fieldVal.toString());
+      returnValue = -306;
+    }
+    else
+    {
+      fieldVal = xqresult(&valueq, "c:reasonCode", QVariant::Int);
+      if (valueq.isValid() && fieldVal.isValid())
+        reasonCode = fieldVal.toInt();
+      else
       {
-        for (QDomNode child = node.firstChild();
-             ! child.isNull(); 
-             child = child.nextSibling())
+        _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+        returnValue = -307;
+      }
+
+      fieldVal = xqresult(&valueq, "c:decision", QVariant::String);
+      if (valueq.isValid() && fieldVal.isValid())
+        r_approved = fieldVal.toString();
+      else
+      {
+        _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+        returnValue = -307;
+      }
+
+      fieldVal = xqresult(&valueq, "c:requestToken");
+      if (valueq.isValid() && fieldVal.isValid())
+      {
+        preforder  = fieldVal.toString();
+        r_ref = fieldVal.toString();
+      }
+      else
+      {
+        _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+        returnValue = -307;
+      }
+
+      fieldVal = xqresult(&valueq, "c:requestID");
+      if (valueq.isValid() && fieldVal.isValid())
+        r_ordernum = fieldVal.toString();
+      else
+      {
+        _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+        returnValue = -307;
+      }
+
+      if (r_approved == "REJECT")
+      {
+        fieldVal = xqresult(&valueq, "c:invalidField");
+        if (valueq.isValid() && fieldVal.isValid())
+          invalid = fieldVal.toStringList();
+
+        fieldVal = xqresult(&valueq, "c:missingField");
+        if (valueq.isValid() && fieldVal.isValid())
+          missing = fieldVal.toStringList();
+      }
+
+      else if (r_approved == "ACCEPT")
+      {
+        switch (ptype)
         {
-          if (child.isElement())
+          case Authorize:
           {
-            QDomElement authchild = child.toElement();
+            fieldVal = xqresult(&valueq, "c:ccAuthReply/c:amount");
+            if (valueq.isValid() && fieldVal.isValid())
+              approvedAmtStr = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
 
-            if (authchild.tagName() == "approvedAmount")
-              approvedAmtStr = authchild.text();
-            else if (authchild.tagName() == "authorizationCode")
-              r_code = authchild.text();
-            else if (authchild.tagName() == "authorizedDateTime")
-              r_tdate = authchild.text();
-            else if (authchild.tagName() == "avsCode")
-              r_avs = authchild.text();
-            else if (DEBUG && authchild.tagName() == "avsCodeRaw")
-              qDebug("CS::handleResponse() got avsCodeRaw %s",
-                     qPrintable(authchild.text()));
-            else if (authchild.tagName() == "cvCode")
-              r_cvv = authchild.text();
-            else if (DEBUG && authchild.tagName() == "cvCodeRaw")
-              qDebug("CS::handleResponse() got cvCodeRaw %s",
-                     qPrintable(authchild.text()));
-            else if (authchild.tagName() == "requestAmount")
-              requestedAmtStr = authchild.text();
-            else if (DEBUG)
-              qDebug("CS::handleResponse() not handling %s/%s = %s",
-                     qPrintable(node.nodeName()),
-                     qPrintable(authchild.tagName()),
-                     qPrintable(authchild.text()));
+            fieldVal = xqresult(&valueq, "c:ccAuthReply/c:authorizationCode");
+            if (valueq.isValid() && fieldVal.isValid())
+              r_code = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
+
+            fieldVal = xqresult(&valueq, "c:ccAuthReply/c:avsCode");
+            if (valueq.isValid() && fieldVal.isValid())
+              r_avs = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
+
+            fieldVal = xqresult(&valueq, "c:ccAuthReply/c:cvCode");
+            if (valueq.isValid() && fieldVal.isValid())
+              r_cvv = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
+
+            fieldVal = xqresult(&valueq, "c:ccAuthReply/c:authorizedDateTime", QVariant::DateTime);
+            if (valueq.isValid() && fieldVal.isValid())
+              r_tdate = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
+
+            // not always present
+            fieldVal = xqresult(&valueq, "c:ccAuthReply/c:requestAmount");
+            if (valueq.isValid() && fieldVal.isValid())
+              requestedAmtStr = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
           }
-        }
-      }
+          break;
 
-      else if (node.nodeName() == "ccAuthReversalReply")
-      {
-        for (QDomNode child = node.firstChild();
-             ! child.isNull();
-             child = child.nextSibling())
-        {
-          if (child.isElement())
+          case Reverse:
           {
-            QDomElement revchild = child.toElement();
-            if (revchild.tagName() == "amount")
-              approvedAmtStr = revchild.text();
-            else if (revchild.tagName() == "authorizationCode")
-              r_code = revchild.text();
-            else if (DEBUG)
-              qDebug("CS::handleResponse() not handling %s/%s = %s",
-                     qPrintable(node.nodeName()),
-                     qPrintable(revchild.tagName()),
-                     qPrintable(revchild.text()));
-          }
-        }
-      }
+            fieldVal = xqresult(&valueq, "c:ccAuthReversalReply/c:amount");
+            if (valueq.isValid() && fieldVal.isValid())
+              approvedAmtStr = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
 
-      else if (node.nodeName() == "ccCaptureReply")
-      {
-        for (QDomNode child = node.firstChild();
-             ! child.isNull();
-             child = child.nextSibling())
-        {
-          if (child.isElement())
+            fieldVal = xqresult(&valueq, "c:ccAuthReversalReply/c:authorizationCode");
+            if (valueq.isValid() && fieldVal.isValid())
+              r_code = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
+          }
+          break;
+
+          case Capture:
           {
-            QDomElement capturechild = child.toElement();
-            if (capturechild.tagName() == "amount")
-              approvedAmtStr = capturechild.text();
-            else if (DEBUG)
-              qDebug("CS::handleResponse() not handling %s/%s = %s",
-                     qPrintable(node.nodeName()),
-                     qPrintable(capturechild.tagName()),
-                     qPrintable(capturechild.text()));
+            fieldVal = xqresult(&valueq, "c:ccCaptureReply/c:amount");
+            if (valueq.isValid() && fieldVal.isValid())
+              approvedAmtStr = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
           }
-        }
-      }
+          break;
 
-      else if (node.nodeName() == "ccCreditReply")
-      {
-        for (QDomNode child = node.firstChild();
-             ! child.isNull();
-             child = child.nextSibling())
-        {
-          if (child.isElement())
+          case Charge:
+            break;
+
+          case Credit:
           {
-            QDomElement capturechild = child.toElement();
-            if (capturechild.tagName() == "amount")
-              approvedAmtStr = capturechild.text();
-            else if (DEBUG)
-              qDebug("CS::handleResponse() not handling %s/%s = %s",
-                     qPrintable(node.nodeName()),
-                     qPrintable(capturechild.tagName()),
-                     qPrintable(capturechild.text()));
+            fieldVal = xqresult(&valueq, "c:ccCreditReply/c:amount");
+            if (valueq.isValid() && fieldVal.isValid())
+              approvedAmtStr = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
           }
-        }
-      }
+          break;
 
-      else if (node.nodeName() == "decision")
-      {
-        if (node.isElement())
-        {
-          r_approved = node.toElement().text();
-        }
-      }
-
-      else if (node.nodeName() == "invalidField")
-        invalid += node.toElement().text();
-
-      else if (node.nodeName() == "missingField")
-        missing += node.toElement().text();
-
-      else if (node.nodeName() == "reasonCode")
-        reasonCode = node.toElement().text().toInt();
-
-      else if (node.nodeName() == "requestToken")
-      {
-        preforder = node.toElement().text();
-        r_ordernum = node.toElement().text();      // transaction id
-      }
-
-      else if (node.nodeName() == "voidReply")
-      {
-        for (QDomNode child = node.firstChild();
-             ! child.isNull();
-             child = child.nextSibling())
-        {
-          if (child.isElement())
+          case Void:
           {
-            QDomElement voidchild = child.toElement();
-            if (voidchild.tagName() == "amount")
-              approvedAmtStr = voidchild.text();
-            else if (DEBUG)
-              qDebug("CS::handleResponse() not handling %s/%s = %s",
-                     qPrintable(node.nodeName()),
-                     qPrintable(voidchild.tagName()),
-                     qPrintable(voidchild.text()));
+            fieldVal = xqresult(&valueq, "c:ccVoidReply/c:amount");
+            if (valueq.isValid() && fieldVal.isValid())
+              approvedAmtStr = fieldVal.toString();
+            else
+            {
+              _errorMsg = errorMsg(-307).arg(msghandler.lastMessage());
+              returnValue = -307;
+            }
           }
+          break;
         }
       }
-
-      else if (node.nodeName() == "soap:Body")
-      {
-        if (node.firstChild().toElement().tagName() == "soap:Fault")
-        {
-          _errorMsg = errorMsg(-306).arg(node.toElement().text());
-          return -306;
-        }
-      }
-
-      else if (DEBUG)
-        qDebug("CS::handleResponse() not handling %s = %s",
-               qPrintable(node.nodeName()),
-               qPrintable(node.toElement().text()));
-
     }
   }
 
   switch (reasonCode)
   {
     case 100: _errorMsg = r_message = errorMsg(0).arg(r_approved);
-              returnValue = 0;
               break;
     case 101: _errorMsg = r_message = errorMsg(-301).arg(missing.join(tr(", ")));
               returnValue = -301;
@@ -741,6 +929,8 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
             }
     case 150: _errorMsg = r_message = errorMsg(-304);
               break;
+    case -1:    // assume _errorMsg and returnValue have already been set
+              break;
     default: _errorMsg = r_message = errorMsg(-303).arg(reasonCode);
              returnValue = -303;
              break;
@@ -769,6 +959,11 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
     returnValue = -12;
     status = "X";
   }
+  else  // assume _errorMsg and returnValue have already been set
+  {
+    r_error = _errorMsg;
+    status = "X";
+  }
 
   // TODO: move this up to CreditCardProcessor::fraudChecks()
   // TODO: change avs and cvv failure check configuration
@@ -790,21 +985,14 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
       _passedAvs = false;
     else if ((avsresult->sev & PostalCode & NotAvail) && zipMustBeAvail)
       _passedAvs = false;
-    else if (avsresult->sev != Match && _metrics->value("CCAvsCheck") == "F")
+    else if (avsresult->sev != Match)
       _passedAvs = false;
-    else if (avsresult->sev != Match && _metrics->value("CCAvsCheck") == "W")
-    {
-      _errorMsg = avsresult->text;
-      returnValue = 97;
-    }
     else
       _passedAvs = true;
   }
   else
   {
-    _errorMsg = TR("AVS did not return a match and there is no description "
-                   "for this failure (%1)").arg(r_avs);
-    returnValue = 97;
+    _passedAvs = false;
   }
 
   CreditCardProcessor::FraudCheckResult *cvvresult = cvvCodeLookup(r_cvv.at(0));
@@ -823,25 +1011,18 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
       _passedCvv = false;
     else if ((cvvresult->sev & IssuerNotCertified) && cvvIssuerMustBeValid)
       _passedCvv = false;
-    else if (cvvresult->sev != Match && _metrics->value("CCCVVCheck") == "F")
+    else if (cvvresult->sev != Match)
       _passedCvv = false;
-    else if (cvvresult->sev != Match && _metrics->value("CCCVVCheck") == "W")
-    {
-      _errorMsg = cvvresult->text;
-      returnValue = 96;
-    }
     else
       _passedCvv = true;
   }
   else
   {
-    _errorMsg = TR("CVV did not return a match and there is no "
-                   "description for this failure (%1)").arg(r_cvv);
-    returnValue = 96;
+    _passedCvv = false;
   }
 
   if (DEBUG)
-    qDebug("CS:%s _passedAvs %d\t%s _passedCvv %d",
+    qDebug("CS::%s _passedAvs %d\t%s _passedCvv %d",
             qPrintable(r_avs), _passedAvs, qPrintable(r_cvv), _passedCvv);
   // end TODO
 
@@ -880,9 +1061,9 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
   pparams.append("auth", QVariant(ptype == Authorize));
 
   if (DEBUG)
-    qDebug("CS:r_error.isEmpty() = %d", r_error.isEmpty());
+    qDebug("CS::r_error.isEmpty() = %d", r_error.isEmpty());
 
-  if (returnValue == 0)
+  if (returnValue >= 0)
     pparams.append("amount", pamount);
   else
     pparams.append("amount", 0);      // no money changed hands this attempt
@@ -895,7 +1076,7 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
 int CyberSourceProcessor::doTestConfiguration()
 {
   if (DEBUG)
-    qDebug("CS:doTestConfiguration() entered");
+    qDebug("CS::doTestConfiguration() entered");
 
   int returnValue = 0;
 
@@ -911,7 +1092,7 @@ int CyberSourceProcessor::doTestConfiguration()
   }
 
   if (DEBUG)
-    qDebug("CS:doTestConfiguration() returning %d", returnValue);
+    qDebug("CS::doTestConfiguration() returning %d", returnValue);
   return returnValue;
 }
 

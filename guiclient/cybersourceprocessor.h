@@ -14,10 +14,12 @@
 #include <QDomElement>
 #include <QObject>
 #include <QString>
+#include <QVariant>
 
 #include "creditcardprocessor.h"
 
 class QDomDocument;
+class QXmlQuery;
 
 class CyberSourceProcessor : public CreditCardProcessor
 {
@@ -38,6 +40,7 @@ class CyberSourceProcessor : public CreditCardProcessor
     virtual int doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams);
     virtual bool handlesCreditCards();
     virtual int  handleResponse(const QString &presponse, const int pccardid, const CCTransaction ptype, double &pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams);
+    virtual QVariant xqresult(QXmlQuery *xq, QString query, QVariant::Type type = QVariant::String);
 
     QDomDocument *_doc;
     QDomElement   _requestMessage;

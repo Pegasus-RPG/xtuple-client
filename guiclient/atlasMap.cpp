@@ -21,6 +21,7 @@
 
 #define DEBUG false
 
+// TODO: replace with XMessageBoxMessageHandler
 class AtlasMapMessageHandler : public QAbstractMessageHandler
 {
   public:
