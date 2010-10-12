@@ -20,7 +20,7 @@
 #include "version.h"
 #include "xmessageboxmessagehandler.h"
 
-#define DEBUG true
+#define DEBUG false
 
 #define CPDATA_NS   "ns3"
 #define CPTP_NS     "ns1"
