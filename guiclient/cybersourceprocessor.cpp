@@ -85,7 +85,7 @@ CyberSourceProcessor::CyberSourceProcessor() : CreditCardProcessor()
 
   _msgHash.insert(-300, tr("The Merchant ID is required"));
   _msgHash.insert(-301, tr("The message sent to CyberSource was incomplete: %1"));
-  _msgHash.insert(-302, tr("The message sent to CyberSource had invalid fields: %1"));
+  _msgHash.insert(-302, tr("The message sent to CyberSource had invalid data in the following field: %1"));
   _msgHash.insert(-303, tr("CyberSource rejected or returned an error for this request (code %1)"));
   _msgHash.insert(-304, tr("CyberSource reports a general system failure"));
   _msgHash.insert(-305, tr("The Merchant ID %1 is too long"));
@@ -463,11 +463,11 @@ int CyberSourceProcessor::doCredit(const int pccardid, const int pcvv, const dou
   if (returnValue != 0)
     return returnValue;
 
-  QDomElement capture = _doc->createElement(CPDATA_NS ":CCCreditService");
+  QDomElement capture = _doc->createElement(CPDATA_NS ":ccCreditService");
   capture.setAttribute("run", "true");
   _requestMessage.appendChild(capture);
 
-  createChildTextNode(capture, CPDATA_NS ":captureRequestID",  preforder);
+  createChildTextNode(capture, CPDATA_NS ":captureRequestID", preforder);
 
   QString requestToken = get_r_ref(pccpayid);
   if (! requestToken.isEmpty())
