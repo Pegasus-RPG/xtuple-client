@@ -130,7 +130,6 @@ void updateReorderLevels::sUpdate()
 
     MetaSQLQuery mql = mqlLoad("updateReorderLevels", method);
     q = mql.toQuery(params);
-    _results->populate(q, true);
     if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -139,6 +138,7 @@ void updateReorderLevels::sUpdate()
 
     if (_preview->isChecked())
     {
+      _results->populate(q, true);
       if (q.first())
       {
         _totalDays->setText(q.value("reordlvl_total_days").toString());
