@@ -295,6 +295,14 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
     menuItem->setEnabled(_privileges->check("MaintainCashReceipts"));
   }
 
+  if ((_metrics->boolean("CCAccept") &&
+       ((XTreeWidgetItem *)pItem)->id("ccard_number") > 0) )
+  {
+    menuItem = pMenu->addAction(tr("Refund"), this, SLOT(sCCRefundCM()));
+    menuItem->setEnabled( _privileges->check("ProcessCreditCards") &&
+                          ((XTreeWidgetItem *)pItem)->rawValue("balance").toDouble() < 0);
+  }
+
   if (((XTreeWidgetItem *)pItem)->id() > -1 && 
      ((XTreeWidgetItem *)pItem)->rawValue("posted").toBool() && 
      ((XTreeWidgetItem *)pItem)->rawValue("open").toBool() )
@@ -304,6 +312,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
     if (!_privileges->check("AddIncidents"))
       menuItem->setEnabled(false);
   }
+
 }
 
 void dspAROpenItems::sApplyAropenCM()
@@ -342,7 +351,7 @@ void dspAROpenItems::sCCRefundCM()
   q.prepare("SELECT ccpay_ccard_id, aropen_amount - aropen_paid AS balance, "
 	    "       aropen_curr_id, aropen_docnumber "
             "FROM aropen "
-            "     JOIN payaropen ON (aropen_id=payaropenlist()_id) "
+            "     JOIN payaropen ON (aropen_id=payaropen_aropen_id) "
             "     JOIN ccpay ON (payaropen_ccpay_id=ccpay_id) "
             "WHERE ((aropen_id=:aropen_id)"
             "  AND  (ccpay_id=:ccpay_id));");
