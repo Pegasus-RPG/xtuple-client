@@ -259,6 +259,7 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   _data->_queryAct->setShortcut(QKeySequence::Refresh);
   _data->_printAct->setShortcut(QKeySequence::Print);
   _data->_searchAct->setShortcut(QKeySequence::InsertParagraphSeparator);
+  _data->_searchAct->setShortcutContext(Qt::WidgetShortcut);
   _data->_searchAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Set tooltips

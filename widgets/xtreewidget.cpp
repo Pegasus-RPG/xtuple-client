@@ -161,6 +161,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
 
   QAction* itemSelectedAct = new QAction(this);
   itemSelectedAct->setShortcut(QKeySequence(QKeySequence::InsertParagraphSeparator));
+  itemSelectedAct->setShortcutContext(Qt::WidgetShortcut);
   connect(itemSelectedAct, SIGNAL(triggered()), this, SLOT(sItemSelected()));
   addAction(itemSelectedAct);
 
