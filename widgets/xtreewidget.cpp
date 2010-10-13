@@ -792,7 +792,11 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
 
     QString pname;
     if (window())
+    {
       pname = window()->objectName() + "/";
+      if (parentWidget()->objectName() != window()->objectName())
+        pname += parentWidget()->objectName() + "/";
+    }
     _settingsName = pname + objectName();
 
     // Load any previously saved information about column widths
