@@ -235,7 +235,7 @@ void dspFinancialReport::sFillListStatement()
         if (q.value("flcol_budget").toBool())
         {
           list()->addColumn(tr("%1\n%2").arg(label.value("flstmthead_qtr").toString()).arg(_columnLabels.value(cBudget)),
-                             _bigMoneyColumn, Qt::AlignRight, true, "flstitem_qtrbudget");
+                             _bigMoneyColumn, Qt::AlignRight, true, "flstmtitem_qtrbudget");
           qc += ",flstmtitem_qtrbudget, 'curr' AS flstmtitem_qtrbudget_xtnumericrole";
           qwList << "(flstmtitem_qtrbudget <> 0)";
           if (q.value("flcol_budgetprcnt").toBool())
