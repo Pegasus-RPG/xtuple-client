@@ -28,7 +28,8 @@ public slots:
     virtual void sPrint();
     virtual void sEditAropen();
     virtual void sEditCashrcpt();
-    virtual void sNewCashrcpt();
+    virtual void sNew();
+    virtual void sNewCashrcpt(); // Legacy code
     virtual void sPostCashrcpt();
     virtual void sViewAropen();
     virtual void sViewCashrcpt();

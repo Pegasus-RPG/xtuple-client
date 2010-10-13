@@ -28,6 +28,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WFlags fl)
   setListLabel(tr("Cash Receipts"));
   setReportName("CashReceipts");
   setMetaSQLOptions("cashReceipts", "detail");
+  setNewVisible(true);
   setUseAltId(true);
 
   connect(_applications, SIGNAL(toggled(bool)), list(), SLOT(clear()));
@@ -175,6 +176,11 @@ void dspCashReceipts::sViewAropen()
   arOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void dspCashReceipts::sNew()
+{
+  sNewCashrcpt();
 }
 
 void dspCashReceipts::sNewCashrcpt()
