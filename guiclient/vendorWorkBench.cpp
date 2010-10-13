@@ -59,7 +59,9 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
     _receipts = new dspPoItemReceivingsByVendor(this, "dspPoItemReceivingsByVendor", Qt::Widget);
     _receiptsTab->layout()->addWidget(_receipts);
     _receipts->setCloseVisible(false);
-    QWidget *rcptvend = _receipts->findChild<QWidget*>("_vendorGroup");
+    hideme = _receipts->findChild<QWidget*>("_vendorGroup");
+    hideme->hide();
+    QWidget *rcptvend = _receipts->findChild<QWidget*>("_vendor");
     rcptvend->hide();
     connect(rcptvend,    SIGNAL(newId(int)), _receipts,     SLOT(sFillList()));
     connect(_vend,       SIGNAL(newId(int)), rcptvend,      SLOT(setId(int)));
