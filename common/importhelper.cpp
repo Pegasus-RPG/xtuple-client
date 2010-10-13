@@ -635,7 +635,7 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
         continue;       // back to top of viewElem for loop
       }
     }
-    else
+    else if (haveSavepoint)
       q.exec("RELEASE SAVEPOINT " + savepointName + ";");
   }
 
