@@ -240,6 +240,10 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _newCharacteristic->setEnabled(FALSE);
       _editCharacteristic->setEnabled(FALSE);
       _save->hide();
+      _newReg->setEnabled(false);
+      disconnect(_reg, SIGNAL(valid(bool)), _editReg, SLOT(setEnabled(bool)));
+      disconnect(_reg, SIGNAL(valid(bool)), _deleteReg, SLOT(setEnabled(bool)));
+      disconnect(_reg, SIGNAL(valid(bool)), _editReg, SLOT(animateClick()));
 
       _close->setFocus();
 
