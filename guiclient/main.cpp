@@ -340,12 +340,28 @@ int main(int argc, char *argv[])
       _splash->hide();
       QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
 
+      metric.exec("SELECT current_database() AS db,"
+                  "       fetchMetricText('DatabaseName') AS dbname,"
+                  "       fetchMetricText('remitto_name') AS name;");
+      QString db = "";
+      QString dbname = "";
+      QString name = "";
+      if(metric.first())
+      {
+        db = metric.value("db").toString();
+        dbname = metric.value("dbname").toString();
+        name = metric.value("name").toString();
+      }
+
       QHttp *http = new QHttp();
       
       QUrl url;
       url.setPath("/api/regviolation.php");
       url.addQueryItem("key", QUrl::toPercentEncoding(rkey));
       url.addQueryItem("error", QUrl::toPercentEncoding(checkPassReason));
+      url.addQueryItem("name", QUrl::toPercentEncoding(name));
+      url.addQueryItem("dbname", QUrl::toPercentEncoding(dbname));
+      url.addQueryItem("db", QUrl::toPercentEncoding(db));
 
       http->setHost("www.xtuple.org");
       http->get(url.toString());
