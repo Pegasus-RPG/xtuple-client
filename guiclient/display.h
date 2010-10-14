@@ -74,8 +74,10 @@ public:
 
 public slots:
     virtual void sNew();
-    virtual void sPrint(ParameterList pParams=ParameterList());
-    virtual void sPreview(ParameterList pParams=ParameterList());
+    virtual void sPrint();
+    virtual void sPrint(ParameterList);
+    virtual void sPreview();
+    virtual void sPreview(ParameterList);
     virtual void sFillList();
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 

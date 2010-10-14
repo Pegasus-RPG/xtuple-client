@@ -545,9 +545,19 @@ void display::sNew()
 {
 }
 
+void display::sPrint()
+{
+  sPrint(ParameterList());
+}
+
 void display::sPrint(ParameterList pParams)
 {
   _data->print(pParams, false);
+}
+
+void display::sPreview()
+{
+  sPreview(ParameterList());
 }
 
 void display::sPreview(ParameterList pParams)
