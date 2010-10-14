@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include <stdio.h>
+
 #include "errorLog.h"
 #include "guiclient.h"
 
@@ -129,31 +131,27 @@ void errorLogListener::clear()
 
 void xTupleMessageOutput(QtMsgType type, const char *pMsg)
 {
+
   QString msg;
   msg = QDateTime::currentDateTime().toString();
   bool notify = false;
+
   switch (type) {
     case QtDebugMsg:
-      if(!xtsettingsValue("catchQDebug").toBool())
-        return;
+      notify = xtsettingsValue("catchQDebug").toBool();
       msg += " Debug: ";
       break;
     case QtWarningMsg:
-      if(!xtsettingsValue("catchQWarning").toBool())
-        return;
+      notify = xtsettingsValue("catchQWarning").toBool();
       msg += " Warning: ";
       break;
     case QtCriticalMsg:
-      if(!xtsettingsValue("catchQCritical").toBool())
-        return;
+      notify = xtsettingsValue("catchQCritical").toBool();
       msg += " Critical: ";
-      notify = true;
       break;
     case QtFatalMsg:
-      if(!xtsettingsValue("catchQFatal").toBool())
-        return;
+      notify = xtsettingsValue("catchQFatal").toBool();
       msg += " Fatal: ";
-      notify = true;
       //abort();
       break;
   }
@@ -162,9 +160,18 @@ void xTupleMessageOutput(QtMsgType type, const char *pMsg)
   if(_errorList.size() > 20)
     _errorList.removeFirst();
 
-  if(listener)
+  if(listener && notify)
     listener->updated(msg);
   if(omfgThis && notify)
     omfgThis->sNewErrorMessage();
+
+  printf("%s\n", qPrintable(msg));
+
+  printf("passed: %d\tdebug: %d\twarning: %d\tcritical: %d\tfatal: %d\tnotify: %d",
+         type, xtsettingsValue("catchQDebug").toBool(),
+               xtsettingsValue("catchQWarning").toBool(),
+               xtsettingsValue("catchQCritical").toBool(),
+               xtsettingsValue("catchQFatal").toBool(),
+               notify);
 }
 
