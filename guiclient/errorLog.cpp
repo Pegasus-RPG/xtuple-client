@@ -166,12 +166,5 @@ void xTupleMessageOutput(QtMsgType type, const char *pMsg)
     omfgThis->sNewErrorMessage();
 
   printf("%s\n", qPrintable(msg));
-
-  printf("passed: %d\tdebug: %d\twarning: %d\tcritical: %d\tfatal: %d\tnotify: %d",
-         type, xtsettingsValue("catchQDebug").toBool(),
-               xtsettingsValue("catchQWarning").toBool(),
-               xtsettingsValue("catchQCritical").toBool(),
-               xtsettingsValue("catchQFatal").toBool(),
-               notify);
 }
 
