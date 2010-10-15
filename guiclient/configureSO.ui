@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>708</width>
-    <height>634</height>
+    <height>661</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,28 +39,16 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="_orderNumGeneration">
+        <widget class="NumberGenComboBox" name="_orderNumGeneration">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <item>
-          <property name="text">
-           <string>Manual</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Allow Override</string>
-          </property>
-         </item>
+         <property name="allowedMethods">
+          <set>NumberGenComboBox::Automatic|NumberGenComboBox::Manual|NumberGenComboBox::Override</set>
+         </property>
         </widget>
        </item>
        <item row="1" column="0">
@@ -74,27 +62,16 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="_quoteNumGeneration">
-         <item>
-          <property name="text">
-           <string>Manual</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Use Quote #'s</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Use Quote #'s, Allow Override</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Use S/O #'s</string>
-          </property>
-         </item>
+        <widget class="NumberGenComboBox" name="_quoteNumGeneration">
+         <property name="sharedText">
+          <string>Automatic, Use S/O #'s</string>
+         </property>
+         <property name="automaticText" stdset="0">
+          <string>Automatic, Use Quote #'s</string>
+         </property>
+         <property name="overrideText" stdset="0">
+          <string>Automatic, Use Quote #'s, Allow Override</string>
+         </property>
         </widget>
        </item>
        <item row="2" column="0">
@@ -108,31 +85,22 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="_returnAuthorizationNumGeneration">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
+        <widget class="NumberGenComboBox" name="_returnAuthorizationNumGeneration">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <item>
-          <property name="text">
-           <string>Manual</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Use R/A #'s</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Use R/A #'s, Allow Override</string>
-          </property>
-         </item>
+         <property name="allowedMethods">
+          <set>NumberGenComboBox::Automatic|NumberGenComboBox::Manual|NumberGenComboBox::Override</set>
+         </property>
+         <property name="automaticText" stdset="0">
+          <string>Automatic, Use R/A #'s</string>
+         </property>
+         <property name="overrideText" stdset="0">
+          <string>Automatic, Use R/A #'s, Allow Override</string>
+         </property>
         </widget>
        </item>
        <item row="3" column="0">
@@ -146,33 +114,22 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QComboBox" name="_creditMemoNumGeneration">
+        <widget class="NumberGenComboBox" name="_creditMemoNumGeneration">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <item>
-          <property name="text">
-           <string>Manual</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Use C/M #'s</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Use C/M #'s, Allow Override</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Automatic, Use S/O #'s</string>
-          </property>
-         </item>
+         <property name="sharedText">
+          <string>Automatic, Use S/O #'s</string>
+         </property>
+         <property name="automaticText" stdset="0">
+          <string>Automatic, Use C/M #'s</string>
+         </property>
+         <property name="overrideText" stdset="0">
+          <string>Automatic, Use C/M #'s, Allow Override</string>
+         </property>
         </widget>
        </item>
        <item row="4" column="0">
@@ -183,30 +140,6 @@ to be bound by its terms.</comment>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QComboBox" name="_invoiceNumGeneration">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <item>
-          <property name="text">
-           <string>Automatic</string>
-          </property>
-         </item>
         </widget>
        </item>
        <item row="0" column="2">
@@ -339,6 +272,13 @@ to be bound by its terms.</comment>
            <width>100</width>
            <height>32767</height>
           </size>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="NumberGenComboBox" name="_invoiceNumGeneration">
+         <property name="allowedMethods">
+          <set>NumberGenComboBox::Automatic|NumberGenComboBox::Override</set>
          </property>
         </widget>
        </item>
@@ -531,13 +471,13 @@ to be bound by its terms.</comment>
                  </layout>
                 </widget>
                </item>
-              <item row="4" column="0" colspan="2">
-               <widget class="QCheckBox" name="_quoteafterSO">
-                <property name="text">
-                 <string>Show Quotes After Converted to Sales Order</string>
-                </property>
-               </widget>
-              </item>
+               <item row="4" column="0" colspan="2">
+                <widget class="QCheckBox" name="_quoteafterSO">
+                 <property name="text">
+                  <string>Show Quotes After Converted to Sales Order</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </item>
              <item>
@@ -1433,6 +1373,11 @@ to be bound by its terms.</comment>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>NumberGenComboBox</class>
+   <extends>QComboBox</extends>
+   <header>numbergencombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -1452,35 +1397,45 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_orderNumGeneration</tabstop>
+  <tabstop>_nextSoNumber</tabstop>
   <tabstop>_quoteNumGeneration</tabstop>
+  <tabstop>_nextQuNumber</tabstop>
   <tabstop>_returnAuthorizationNumGeneration</tabstop>
+  <tabstop>_nextRaNumber</tabstop>
   <tabstop>_creditMemoNumGeneration</tabstop>
+  <tabstop>_nextCmNumber</tabstop>
   <tabstop>_invoiceNumGeneration</tabstop>
+  <tabstop>_nextInNumber</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_printSO</tabstop>
-  <tabstop>_allowDiscounts</tabstop>
-  <tabstop>_priceOverride</tabstop>
-  <tabstop>_hideSOMiscChrg</tabstop>
-  <tabstop>_priceCurrent</tabstop>
-  <tabstop>_priceOrdered</tabstop>
-  <tabstop>_priceScheduled</tabstop>
-  <tabstop>_askUpdatePrice</tabstop>
   <tabstop>_allowASAP</tabstop>
   <tabstop>_enablePromiseDate</tabstop>
-  <tabstop>_calcFreight</tabstop>
-  <tabstop>_includePkgWeight</tabstop>
   <tabstop>_enableReservations</tabstop>
   <tabstop>_locationGroup</tabstop>
+  <tabstop>_lowest</tabstop>
   <tabstop>_highest</tabstop>
   <tabstop>_alpha</tabstop>
+  <tabstop>_customerChangeLog</tabstop>
+  <tabstop>_salesOrderChangeLog</tabstop>
   <tabstop>_saveAndAdd</tabstop>
   <tabstop>_firmAndAdd</tabstop>
   <tabstop>_enableSOShipping</tabstop>
   <tabstop>_autoSelectForBilling</tabstop>
-  <tabstop>_customerChangeLog</tabstop>
-  <tabstop>_salesOrderChangeLog</tabstop>
   <tabstop>_restrictCreditMemos</tabstop>
   <tabstop>_autoAllocateCM</tabstop>
+  <tabstop>_quoteafterSO</tabstop>
+  <tabstop>_allowDiscounts</tabstop>
+  <tabstop>_priceOverride</tabstop>
+  <tabstop>_hideSOMiscChrg</tabstop>
+  <tabstop>_updatePrice</tabstop>
+  <tabstop>_dontUpdatePrice</tabstop>
+  <tabstop>_askUpdatePrice</tabstop>
+  <tabstop>_ignoreCustDisc</tabstop>
+  <tabstop>_calcFreight</tabstop>
+  <tabstop>_includePkgWeight</tabstop>
+  <tabstop>_priceCurrent</tabstop>
+  <tabstop>_priceOrdered</tabstop>
+  <tabstop>_priceScheduled</tabstop>
   <tabstop>_invcCurrdate</tabstop>
   <tabstop>_invcShipdate</tabstop>
   <tabstop>_invcScheddate</tabstop>
@@ -1494,11 +1449,11 @@ to be bound by its terms.</comment>
   <tabstop>_shipform</tabstop>
   <tabstop>_terms</tabstop>
   <tabstop>_balanceMethod</tabstop>
-  <tabstop>_creditLimit</tabstop>
-  <tabstop>_creditRating</tabstop>
   <tabstop>_partial</tabstop>
   <tabstop>_backorders</tabstop>
   <tabstop>_freeFormShiptos</tabstop>
+  <tabstop>_creditLimit</tabstop>
+  <tabstop>_creditRating</tabstop>
   <tabstop>_enableReturns</tabstop>
   <tabstop>_returnAuthChangeLog</tabstop>
   <tabstop>_disposition</tabstop>

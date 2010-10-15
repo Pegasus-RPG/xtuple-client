@@ -45,42 +45,12 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _nextInNumber->setValidator(omfgThis->orderVal());
   _creditLimit->setValidator(omfgThis->moneyVal());
 
-  QString metric = _metrics->value("CONumberGeneration");
-  if (metric == "M")
-    _orderNumGeneration->setCurrentIndex(0);
-  else if (metric == "A")
-    _orderNumGeneration->setCurrentIndex(1);
-  else if (metric == "O")
-    _orderNumGeneration->setCurrentIndex(2);
+  _orderNumGeneration->setMethod(_metrics->value("CONumberGeneration"));
+  _quoteNumGeneration->setMethod(_metrics->value("QUNumberGeneration"));
+  _creditMemoNumGeneration->setMethod(_metrics->value("CMNumberGeneration"));
+  _invoiceNumGeneration->setMethod(_metrics->value("InvcNumberGeneration"));
 
-  metric = _metrics->value("QUNumberGeneration");
-  if (metric == "M")
-    _quoteNumGeneration->setCurrentIndex(0);
-  else if (metric == "A")
-    _quoteNumGeneration->setCurrentIndex(1);
-  else if (metric == "O")
-    _quoteNumGeneration->setCurrentIndex(2);
-  else if (metric == "S")
-    _quoteNumGeneration->setCurrentIndex(3);
-
-  metric = _metrics->value("CMNumberGeneration");
-  if (metric == "M")
-    _creditMemoNumGeneration->setCurrentIndex(0);
-  else if (metric == "A")
-    _creditMemoNumGeneration->setCurrentIndex(1);
-  else if (metric == "O")
-    _creditMemoNumGeneration->setCurrentIndex(2);
-  else if (metric == "S")
-    _creditMemoNumGeneration->setCurrentIndex(3);
-
-  metric = _metrics->value("InvcNumberGeneration");
-  if (metric == "M")
-    _invoiceNumGeneration->setCurrentIndex(0);
-  else if (metric == "A")
-    _invoiceNumGeneration->setCurrentIndex(1);
-  else if (metric == "O")
-    _invoiceNumGeneration->setCurrentIndex(2);
-
+  QString metric;
   metric = _metrics->value("InvoiceDateSource");
   if (metric == "scheddate")
     _invcScheddate->setChecked(true);
@@ -293,7 +263,6 @@ bool configureSO::sSave()
 {
   emit saving();
 
-  const char *numberGenerationTypes[] = { "M", "A", "O", "S" };
   const char *dispositionTypes[] = { "C", "R", "P", "V", "M", "" };
   const char *timingTypes[] = { "I", "R", "" };
   const char *creditMethodTypes[] = { "N", "M", "K", "C", "" };
@@ -328,10 +297,10 @@ bool configureSO::sSave()
   _metrics->set("AutoAllocateCreditMemos", _autoAllocateCM->isChecked());
   _metrics->set("HideSOMiscCharge", _hideSOMiscChrg->isChecked());
   _metrics->set("EnableSOShipping", _enableSOShipping->isChecked());
-  _metrics->set("CONumberGeneration", QString(numberGenerationTypes[_orderNumGeneration->currentIndex()]));
-  _metrics->set("QUNumberGeneration", QString(numberGenerationTypes[_quoteNumGeneration->currentIndex()]));
-  _metrics->set("CMNumberGeneration", QString(numberGenerationTypes[_creditMemoNumGeneration->currentIndex()]));
-  _metrics->set("InvcNumberGeneration", QString(numberGenerationTypes[_invoiceNumGeneration->currentIndex()]));
+  _metrics->set("CONumberGeneration",   _orderNumGeneration->methodCode());
+  _metrics->set("QUNumberGeneration",   _quoteNumGeneration->methodCode());
+  _metrics->set("CMNumberGeneration",   _creditMemoNumGeneration->methodCode());
+  _metrics->set("InvcNumberGeneration", _invoiceNumGeneration->methodCode());
   _metrics->set("DefaultShipFormId", _shipform->id());
   _metrics->set("DefaultShipViaId", _shipvia->id());
   _metrics->set("DefaultCustType", _custtype->id());
@@ -439,7 +408,7 @@ bool configureSO::sSave()
     _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentIndex()]));
     _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
     _metrics->set("DefaultPrintRAOnSave", _printRA->isChecked());
-    _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentIndex()]));
+    _metrics->set("RANumberGeneration", _returnAuthorizationNumGeneration->methodCode());
 
     q.prepare( "SELECT setNextRaNumber(:ranumber);" );
     q.bindValue(":ranumber", _nextRaNumber->text().toInt());

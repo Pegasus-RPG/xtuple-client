@@ -49,6 +49,7 @@ public slots:
     virtual void sShipToModified();
     virtual void populateCMInfo();
     virtual void populateCCInfo();
+    virtual bool sCheckInvoiceNumber();
     virtual void sHandleShipchrg( int pShipchrgid );
     virtual void sTaxZoneChanged();
     virtual void sFreightChanged();

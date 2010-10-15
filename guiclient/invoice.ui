@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>989</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -287,11 +287,7 @@ to be bound by its terms.</comment>
            <item row="0" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <widget class="XLineEdit" name="_invoiceNumber">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-              </widget>
+              <widget class="XLineEdit" name="_invoiceNumber"/>
              </item>
              <item>
               <spacer name="horizontalSpacer">

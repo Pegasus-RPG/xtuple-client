@@ -64,6 +64,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_shipChrgs, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
   connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
+  connect(_invoiceNumber, SIGNAL(editingFinished()), this, SLOT(sCheckInvoiceNumber()));
 
   setFreeFormShipto(false);
 
@@ -143,14 +144,26 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 	    return UndefinedError;
       }
 
-      q.exec("SELECT fetchInvcNumber() AS number;");
-      if (q.first())
-        _invoiceNumber->setText(q.value("number").toString());
-      else if (q.lastError().type() != QSqlError::NoError)
+      if ((_metrics->value("InvcNumberGeneration") == "A") ||
+          (_metrics->value("InvcNumberGeneration") == "O"))
       {
-	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	    return UndefinedError;
+        q.exec("SELECT fetchInvcNumber() AS number;");
+        if (q.first())
+        {
+          _invoiceNumber->setText(q.value("number").toString());
+          if (_metrics->value("InvcNumberGeneration") == "A")
+            _invoiceNumber->setEnabled(false);
+        }
+        else if (q.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          return UndefinedError;
+        }
+
+        _cust->setFocus();
       }
+      else
+        sCheckInvoiceNumber();
 
       _orderDate->setDate(omfgThis->dbDate());
       _shipDate->setDate(omfgThis->dbDate());
@@ -168,7 +181,9 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 				"    0, -1"
 				");");
       q.bindValue(":invchead_id",	 _invcheadid);
-      q.bindValue(":invchead_invcnumber",_invoiceNumber->text());
+      q.bindValue(":invchead_invcnumber",_invoiceNumber->text().isEmpty() ?
+                                               "TEMP" + QString(0 - _invcheadid)
+                                             : _invoiceNumber->text());
       q.bindValue(":invchead_orderdate", _orderDate->date());
       q.bindValue(":invchead_invcdate",	 _invoiceDate->date());
       q.exec();
@@ -181,8 +196,6 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       connect(_cust,	    SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
       connect(_cust,        SIGNAL(valid(bool)), this, SLOT(populateCMInfo()));
       connect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(populateCCInfo()));
-
-      _cust->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -1170,3 +1183,46 @@ void invoice::sFreightChanged()
   }   
 }
 
+bool invoice::sCheckInvoiceNumber()
+{
+  if (cNew == _mode)
+  {
+    if (_invoiceNumber->text().isEmpty())
+    {
+      QMessageBox::warning(this, tr("Enter Invoice Number"),
+                           tr("<p>You must enter an Invoice Number before "
+                              "you may continue."));
+      _invoiceNumber->setFocus();
+    }
+    else
+    {
+      XSqlQuery checkq;
+      checkq.prepare("SELECT invchead_invcnumber"
+                     "  FROM invchead"
+                     " WHERE ((invchead_invcnumber=:number)"
+                     "   AND  (invchead_id != :id));");
+      checkq.bindValue(":number", _invoiceNumber->text());
+      checkq.bindValue(":id",     _invcheadid);
+      checkq.exec();
+      if (checkq.first())
+      {
+        QMessageBox::warning(this, tr("Duplicate Invoice Number"),
+                             tr("<p>%1 is already used by another Invoice. "
+                                "Please enter a different Invoice Number.")
+                             .arg(_invoiceNumber->text()));
+        _invoiceNumber->setFocus();
+      }
+      else if (checkq.lastError().type() != QSqlError::NoError)
+        systemError(this, q.lastError().text(), __FILE__, __LINE__);
+      else
+      {
+        _invoiceNumber->setEnabled(false);
+        return true;
+      }
+    }
+  }
+  else
+    qWarning("invoice::sHandleInvoiceNumber() called but mode isn't cNew");
+
+  return false;
+}
