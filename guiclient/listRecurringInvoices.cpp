@@ -112,6 +112,8 @@ void listRecurringInvoices::sFillList()
   MetaSQLQuery mql = mqlLoad("invoices", "detail");
   ParameterList params;
   params.append("recurringOnly");
+  params.append("minute", tr("Minute"));
+  params.append("hour", tr("Hour"));
   params.append("day", tr("Day"));
   params.append("week", tr("Week"));
   params.append("month", tr("Month"));
