@@ -30,6 +30,7 @@ SOURCES += ../hunspell/utf_info.cxx \
            ../hunspell/affixmgr.cxx \
            ../hunspell/affentry.cxx
 
+DEFINES += HUNSPELL_STATIC
 OTHER_FILES += ../hunspell/license.myspell \
                ../hunspell/license.hunspell
 
