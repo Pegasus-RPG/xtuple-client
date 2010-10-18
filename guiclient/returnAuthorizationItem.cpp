@@ -269,6 +269,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _salePrice->hide();
       _salePriceLit->hide();
       _item->setFocus();
+      _comments->setType(Comments::ReturnAuthItem);
+      _comments->setEnabled(false);
     }
     else if (param.toString() == "edit")
     {
@@ -278,6 +280,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _warehouse->setEnabled(FALSE);
       _shipWhs->setEnabled(FALSE);
       _qtyAuth->setFocus();
+      _comments->setType(Comments::ReturnAuthItem);
+      _comments->setEnabled(true);
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_saleDiscountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateSaleFromDiscount()));
@@ -310,6 +314,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _createOrder->setEnabled(FALSE);
       _scheduledDate->setEnabled(FALSE);
       _warranty->setEnabled(FALSE);
+      _comments->setType(Comments::ReturnAuthItem);
+      _comments->setReadOnly(TRUE);
 
       _save->hide();
       _close->setText(tr("&Close"));
@@ -370,7 +376,10 @@ bool returnAuthorizationItem::sSave()
   {
     q.exec("SELECT NEXTVAL('raitem_raitem_id_seq') AS _raitem_id");
     if (q.first())
+    {
       _raitemid  = q.value("_raitem_id").toInt();
+      _comments->setId(_raitemid);
+    }
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -856,6 +865,7 @@ void returnAuthorizationItem::populate()
                  " AND  (item_id=rcv.itemsite_item_id) "
                  " AND  (rahead_cust_id=crmacct_cust_id) );" );
   raitem.bindValue(":raitem_id", _raitemid);
+  _comments->setId(_raitemid);
   raitem.exec();
   if (raitem.first())
   {
