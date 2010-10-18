@@ -27,6 +27,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   setNewVisible(true);
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
+  setAutoUpdateEnabled(true);
 
   QString qryStatus = QString("SELECT status_seq, "
                               " CASE WHEN status_code = 'N' THEN '%1' "
