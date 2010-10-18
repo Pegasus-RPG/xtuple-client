@@ -80,3 +80,4 @@ win32:exists(win32.pri) {
 unix:exists(unix.pri) {
   include(unix.pri)
 }
+
