@@ -300,6 +300,14 @@ int main(int argc, char *argv[])
 
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
+    metric.exec("SELECT COUNT(*) as _count"
+                "  FROM pg_stat_activity"
+                " WHERE(datid IN (SELECT datid"
+                "                   FROM pg_stat_activity"
+                "                  WHERE(procpid=pg_backend_pid())));");
+    int cnt = 50000;
+    if(metric.first())
+      cnt = metric.value("_count").toInt();
     metric.exec("SELECT metric_value"
                 "  FROM metric"
                 " WHERE(metric_name = 'RegistrationKey');");
@@ -311,14 +319,6 @@ int main(int argc, char *argv[])
     XTupleProductKey pkey(rkey);
     if(pkey.valid() && pkey.version() == 1)
     {
-      metric.exec("SELECT COUNT(*) as _count"
-                  "  FROM pg_stat_activity"
-                  " WHERE(datid IN (SELECT datid"
-                  "                   FROM pg_stat_activity"
-                  "                  WHERE(procpid=pg_backend_pid())));");
-      int cnt = 50000;
-      if(metric.first())
-        cnt = metric.value("_count").toInt();
       if(pkey.expiration() < QDate::currentDate())
       {
         checkPass = false;
@@ -362,6 +362,7 @@ int main(int argc, char *argv[])
       url.addQueryItem("name", QUrl::toPercentEncoding(name));
       url.addQueryItem("dbname", QUrl::toPercentEncoding(dbname));
       url.addQueryItem("db", QUrl::toPercentEncoding(db));
+      url.addQueryItem("cnt", QString::number(cnt));
 
       http->setHost("www.xtuple.org");
       http->get(url.toString());
