@@ -1187,14 +1187,14 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     _listTab->setColumnCount(0);
 
-    _searchFirst	= new XCheckBox(tr("Search First Name"));
-    _searchLast		= new XCheckBox(tr("Search Last Name"));
-    _searchCRMAcct	= new XCheckBox(tr("Search CRM Account"));
-    _searchTitle	= new XCheckBox(tr("Search Title"));
-    _searchPhones	= new XCheckBox(tr("Search Phone Numbers"));
-    _searchEmail	= new XCheckBox(tr("Search Email Address"));
-    _searchWebAddr	= new XCheckBox(tr("Search Web Address"));
-    _searchInactive	= new XCheckBox(tr("Show Inactive Contacts"));
+    _searchFirst	= new XCheckBox(tr("Search First Name"),this);
+    _searchLast		= new XCheckBox(tr("Search Last Name"),this);
+    _searchCRMAcct	= new XCheckBox(tr("Search CRM Account"),this);
+    _searchTitle	= new XCheckBox(tr("Search Title"),this);
+    _searchPhones	= new XCheckBox(tr("Search Phone Numbers"),this);
+    _searchEmail	= new XCheckBox(tr("Search Email Address"),this);
+    _searchWebAddr	= new XCheckBox(tr("Search Web Address"),this);
+    _searchInactive	= new XCheckBox(tr("Show Inactive Contacts"),this);
     
     _searchFirst->setObjectName("_searchName");
     _searchLast->setObjectName("_searchLast");
