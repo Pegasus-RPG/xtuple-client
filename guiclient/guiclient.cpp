@@ -981,7 +981,10 @@ void GUIClient::sTick()
 
 void GUIClient::sNewErrorMessage()
 {
-  if (_errorButton)
+  if (QApplication::closingDown())
+    return;
+
+  if (_errorButton && _metrics)
     _errorButton->setVisible(_metrics->value("Registered") != "Yes" && xtsettingsValue("/xTuple/Registered").toString() != "Yes");
   else
   {
