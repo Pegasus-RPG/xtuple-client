@@ -794,15 +794,13 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     _listTab->setColumnCount(0);
 
-    _searchCrmacct    = new XCheckBox(tr("Search CRM Account"));
-    _searchStreet     = new XCheckBox(tr("Search Street Address"));
-    _searchCity       = new XCheckBox(tr("Search City"));
-    _searchState      = new XCheckBox(tr("Search State"));
-    _searchCountry    = new XCheckBox(tr("Search Country"));
-    _searchPostalCode = new XCheckBox(tr("Search Postal Code"));
-    _searchInactive   = new XCheckBox(tr("Show Inactive Addresses"));
+    _searchStreet     = new XCheckBox(tr("Search Street Address"),this);
+    _searchCity       = new XCheckBox(tr("Search City"),this);
+    _searchState      = new XCheckBox(tr("Search State"),this);
+    _searchCountry    = new XCheckBox(tr("Search Country"),this);
+    _searchPostalCode = new XCheckBox(tr("Search Postal Code"),this);
+    _searchInactive   = new XCheckBox(tr("Show Inactive Addresses"),this);
 
-    _searchCrmacct->setObjectName("_searchCrmacct");
     _searchStreet->setObjectName("_searchStreet");
     _searchCity->setObjectName("_searchCity");
     _searchState->setObjectName("_searchState");
@@ -817,7 +815,6 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     selectorsLyt->addWidget(_searchPostalCode, 4, 0);
     selectorsLyt->addWidget(_searchInactive,   0, 1);
 
-    connect(_searchCrmacct,    SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchStreet,     SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchCity,       SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchState,      SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -844,6 +841,7 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     _searchAcct = new QCheckBox();
     _searchAcct->setMaximumWidth(480);
+    _dialogLyt->addWidget(_searchAcct);
     XSqlQuery crmacct;
     crmacct.prepare("SELECT crmacct_number || ' - ' || crmacct_name AS account "
                     "FROM crmacct "
@@ -853,10 +851,11 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     if (crmacct.first())
     {
       _searchAcct->setChecked(true);
-      _dialogLyt->addWidget(_searchAcct);
       _searchAcct->setText(tr("Only addresses for %1").arg(crmacct.value("account").toString()));
       connect(_searchAcct, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     }
+    else
+      _searchAcct->hide();
 }
 
 void AddressSearch::sFillList()
@@ -865,7 +864,7 @@ void AddressSearch::sFillList()
     if (_search->text().isEmpty() ||
         (!_searchStreet->isChecked() && !_searchCity->isChecked() &&
          !_searchState->isChecked()  && !_searchCountry->isChecked() &&
-         !_searchPostalCode->isChecked()  && !_searchCrmacct->isChecked()))
+         !_searchPostalCode->isChecked() ))
       return;
 
     QString sql = _parent->_query +

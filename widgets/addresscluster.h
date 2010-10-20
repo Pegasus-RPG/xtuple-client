@@ -65,7 +65,6 @@ class XTUPLEWIDGETS_EXPORT AddressSearch : public VirtualSearch
 
     protected:
 	AddressCluster*	_parent;
-        XCheckBox*      _searchCrmacct;
 	XCheckBox*	_searchStreet;
 	XCheckBox*	_searchCity;
 	XCheckBox*	_searchState;
