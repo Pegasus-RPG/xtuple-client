@@ -1155,12 +1155,15 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
 #ifdef Q_WS_MAC
     _search->setMinimumHeight(22);
     selectorsLyt->setVerticalSpacing(6);
+#else
+    _search->setMinimumHeight(20);
 #endif
+
     selectorsLyt->addWidget(_searchNumber,  0, 0);
     selectorsLyt->addWidget(_searchName,    1, 0);
     selectorsLyt->addWidget(_searchDescrip, 2, 0);
     buttonsLyt->addWidget(_buttonBox);
-    buttonsLyt->addItem(new QSpacerItem(20, 20, QSizePolicy::Minimum,
+    buttonsLyt->addItem(new QSpacerItem(20, 0, QSizePolicy::Minimum,
 						QSizePolicy::Expanding));
     tableLyt->addWidget(_titleLit);
     tableLyt->addWidget(_listTab);
