@@ -251,7 +251,7 @@ RecurrenceWidget::RecurrenceWidget(QWidget *parent, const char *pName) :
   setEndTimeVisible(false);
   setStartTimeVisible(false);
 
-  setMaxVisible(false);
+  setMaxVisible(true);
 
   if (_x_preferences)
   {

@@ -103,7 +103,6 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _payment->hide(); // Issue 9895:  if no objections over time, we should ultimately remove this. 
 
   _recurring->setParent(-1, "I");
-  _recurring->setMax(_metrics->value("RecurringInvoiceBuffer").toInt());
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }

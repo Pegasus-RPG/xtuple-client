@@ -680,11 +680,7 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="RecurrenceWidget" name="_recurring">
-         <property name="maxVisible">
-          <bool>false</bool>
-         </property>
-        </widget>
+        <widget class="RecurrenceWidget" name="_recurring"/>
        </item>
       </layout>
      </widget>

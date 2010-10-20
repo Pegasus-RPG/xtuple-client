@@ -649,9 +649,6 @@ to be bound by its terms.</comment>
          <property name="focusPolicy">
           <enum>Qt::StrongFocus</enum>
          </property>
-         <property name="maxVisible">
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
       </layout>

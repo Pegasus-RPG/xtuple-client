@@ -25,7 +25,7 @@ class RecurrenceWidget : public QWidget, public Ui::RecurrenceWidget
   Q_ENUMS(RecurrencePeriod)
   Q_ENUMS(RecurrenceChangePolicy)
 
-  Q_PROPERTY(bool maxVisible       READ maxVisible       WRITE setMaxVisible)
+  Q_PROPERTY(bool maxVisible       READ maxVisible       WRITE setMaxVisible DESIGNABLE false)
   Q_PROPERTY(bool endTimeVisible   READ endTimeVisible   WRITE setEndTimeVisible)
   Q_PROPERTY(bool endDateVisible   READ endDateVisible   WRITE setEndDateVisible)
   Q_PROPERTY(bool startDateVisible READ startDateVisible WRITE setStartDateVisible)
