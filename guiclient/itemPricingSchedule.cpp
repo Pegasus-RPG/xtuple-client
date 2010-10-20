@@ -432,7 +432,14 @@ void itemPricingSchedule::reject()
   q.exec("ROLLBACK;");
   if(_mode == cCopy) 
   {
-    q.prepare("DELETE FROM ipshead WHERE (ipshead_id=:ipshead_id);");
+    q.prepare( "DELETE FROM ipsitem "
+               "WHERE (ipsitem_ipshead_id=:ipshead_id); "
+               "DELETE FROM ipsprodcat "
+               "WHERE (ipsprodcat_ipshead_id=:ipshead_id); "
+               "DELETE FROM ipsfreight "
+               "WHERE (ipsfreight_ipshead_id=:ipshead_id); "
+               "DELETE FROM ipshead "
+               "WHERE (ipshead_id=:ipshead_id);" );
     q.bindValue(":ipshead_id", _ipsheadid);
     q.exec();
   }
