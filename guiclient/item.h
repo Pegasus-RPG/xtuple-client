@@ -35,6 +35,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
+    virtual void setId(int);
     virtual void sSave();
     virtual void sNew();
     virtual void sEdit();
@@ -90,6 +91,7 @@ protected slots:
     virtual void languageChange();
 
 signals:
+    void newId(int);
     void saved(int);
 
 private:

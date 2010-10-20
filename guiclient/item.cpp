@@ -238,10 +238,7 @@ enum SetResponse item::set(const ParameterList &pParams)
 
   param = pParams.value("item_id", &valid);
   if (valid)
-  {
-    _itemid = param.toInt();
-    populate();
-  }
+    setId(param.toInt());
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -2111,5 +2108,15 @@ void item::sMaintainItemCosts()
   maintainItemCosts *newdlg = new maintainItemCosts();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void item::setId(int p)
+{
+  if (_itemid==p)
+    return;
+
+  _itemid=p;
+  populate();
+  emit newId(_itemid);
 }
 
