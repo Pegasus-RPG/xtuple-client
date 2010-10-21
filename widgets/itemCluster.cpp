@@ -587,6 +587,8 @@ void ItemLineEdit::sSearch(ParameterList params)
     params.append("extraClauses", _extraClauses);
 
   itemSearch* newdlg = searchFactory();
+  newdlg->set(params);
+
   QString stripped = text().trimmed();
   if(stripped.length())
   {
