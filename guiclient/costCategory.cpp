@@ -228,7 +228,7 @@ void costCategory::sSave()
   q.exec();
   if (q.first())
   {
-    QMessageBox::critical(this, tr("Cannot Save CRM Account"),
+    QMessageBox::critical(this, tr("Cannot Save Cost Category"),
                           tr("The Name you have entered for this Cost Category is already in use. "
                              "Please enter in a different Name for this Cost Category."));
     _category->setFocus();
