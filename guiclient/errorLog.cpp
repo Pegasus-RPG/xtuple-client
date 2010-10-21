@@ -131,10 +131,10 @@ void errorLogListener::clear()
 
 void xTupleMessageOutput(QtMsgType type, const char *pMsg)
 {
-
   QString msg;
   msg = QDateTime::currentDateTime().toString();
   bool notify = false;
+  bool iserror= (type == QtCriticalMsg) || (type == QtFatalMsg);
 
   switch (type) {
     case QtDebugMsg:
@@ -162,7 +162,7 @@ void xTupleMessageOutput(QtMsgType type, const char *pMsg)
 
   if(listener && notify)
     listener->updated(msg);
-  if(omfgThis && notify)
+  if(omfgThis && notify && iserror)
     omfgThis->sNewErrorMessage();
 
   printf("%s\n", qPrintable(msg));
