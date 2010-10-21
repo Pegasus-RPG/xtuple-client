@@ -1059,6 +1059,8 @@ bool XTreeWidgetItem::operator>(const XTreeWidgetItem &other) const
 */
 void XTreeWidget::sortItems(int column, Qt::SortOrder order)
 {
+  int previd = id();
+
   // if old style then maintain backwards compatibility
   if (_roles.size() <= 0)
   {
@@ -1179,6 +1181,8 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
   }
 
   populateCalculatedColumns();
+
+  setId(previd);
   emit resorted();
 }
 
