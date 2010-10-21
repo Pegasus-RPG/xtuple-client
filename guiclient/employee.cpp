@@ -445,7 +445,7 @@ bool employee::sSave(const bool pClose)
   if (_mode == cNew)
     q.prepare("INSERT INTO api.employee ("
               " code, number, active, start_date,"
-              " contact_number, honorific, first, last, job_title,"
+              " contact_number, honorific, first, middle, last, job_title,"
               " voice, alternate, fax, email,"
               " web, contact_change,"
               " address_number, address1, address2, address3,"
@@ -454,10 +454,10 @@ bool employee::sSave(const bool pClose)
               " site, manager_code,"
               " wage_type, wage, wage_currency, wage_period,"
               " department, shift, is_user, is_salesrep, is_vendor, notes, image, "
-			  " rate, billing_currency, billing_period"
+              " rate, billing_currency, billing_period"
               ") VALUES ("
-			  " :code, :number, :active, :start_date,"
-              " :cntctnumber, :hnfc, :first, :last, :jobtitle,"
+              " :code, :number, :active, :start_date,"
+              " :cntctnumber, :hnfc, :first, :middle, :last, :jobtitle,"
               " :voice, :alt, :fax, :email,"
               " :web, :cntctmode,"
               " :addrnumber, :addr1, :addr2, :addr3,"
@@ -476,6 +476,7 @@ bool employee::sSave(const bool pClose)
               " contact_number=:cntctnumber,"
               " honorific=:hnfc,"
               " first=:first,"
+              " middle=:middle,"
               " last=:last,"
               " job_title=:jobtitle,"
               " voice=:voice,"
@@ -518,6 +519,7 @@ bool employee::sSave(const bool pClose)
   q.bindValue(":cntctnumber", _contact->number());
   q.bindValue(":hnfc",        _contact->honorific());
   q.bindValue(":first",       _contact->first());
+  q.bindValue(":middle",      _contact->middle());
   q.bindValue(":last",        _contact->last());
   q.bindValue(":jobtitle",    _contact->title());
   q.bindValue(":voice",       _contact->phone());
