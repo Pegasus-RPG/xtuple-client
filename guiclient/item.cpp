@@ -1586,7 +1586,7 @@ void item::sNewItemSite()
 void item::sEditItemSite()
 {
   ParameterList params;
-  if (_mode == cEdit)
+  if (_mode == cEdit || _mode == cNew)
     params.append("mode", "edit");
   else
     params.append("mode", "view");
