@@ -36,13 +36,16 @@ public:
     _queryonstart->hide(); // hide until query on start enabled
     _autoupdate->hide(); // hide until auto update is enabled
     _parameterWidget->hide(); // hide until user shows manually
-    _more->setVisible(false); // hide until user shows manually
+    _search->hide();
+    _searchLit->hide();
     _listLabelFrame->setVisible(false);
     _useAltId = false;
     _queryOnStartEnabled = false;
     _autoUpdateEnabled = false;
 
-    // Build Toolbar
+    bool useToolbar = _metrics->boolean("DisplaysUseToolbar");
+
+    // Build Toolbar even if we hide it so we get actions
     _newBtn = new QToolButton(_toolBar);
     _newBtn->setObjectName("_newBtn");
     _newBtn->setFocusPolicy(Qt::NoFocus);
@@ -57,10 +60,6 @@ public:
     _sep1 = _toolBar->addSeparator();
 
     // Move parameter widget controls into toolbar
-    QLabel* filterListLit = _parent->findChild<QLabel*>("_filterListLit");
-    filterListLit->setContentsMargins(3,0,3,0);
-    XComboBox* filterList = _parent->findChild<XComboBox*>("_filterList");
-
     _moreBtn = new QToolButton(_toolBar);
     _moreBtn->setObjectName("_moreBtn");
     _moreBtn->setFocusPolicy(Qt::NoFocus);
@@ -68,11 +67,18 @@ public:
     _moreAct = _toolBar->addWidget(_moreBtn);
     _moreAct->setVisible(false);
 
-    _filterLitAct = _toolBar->insertWidget(_moreAct, filterListLit);
-    _filterLitAct->setVisible(false);
+    if (useToolbar)
+    {
+      QLabel* filterListLit = _parent->findChild<QLabel*>("_filterListLit");
+      filterListLit->setContentsMargins(3,0,3,0);
+      XComboBox* filterList = _parent->findChild<XComboBox*>("_filterList");
 
-    _filterAct = _toolBar->insertWidget(_moreAct, filterList);
-    _filterAct->setVisible(false);
+      _filterLitAct = _toolBar->insertWidget(_moreAct, filterListLit);
+      _filterLitAct->setVisible(false);
+
+      _filterAct = _toolBar->insertWidget(_moreAct, filterList);
+      _filterAct->setVisible(false);
+    }
 
     _sep2 = _toolBar->addSeparator();
     _sep2->setVisible(false);
@@ -92,19 +98,24 @@ public:
     _sep3 = _toolBar->addSeparator();
     _sep3->setVisible(false);
 
-    // Optional search widget in toolbar
-    _search = new XLineEdit(_toolBar, "_search");
-    _search->setObjectName("_search");
-    _search->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-    _searchAct = _toolBar->insertWidget(_query, _search);
-    _searchAct->setVisible(false);
+    if (useToolbar)
+    {
+      // Optional search widget in toolbar
+      _search->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+      _searchAct = _toolBar->addWidget(_search);
+      _searchAct->setVisible(false);
+    }
+    else
+    {
+      _searchAct = new QAction(_search);
+      _search->addAction(_searchAct);
+    }
 
     // Remaining buttons in toolbar
     _queryBtn = new QToolButton(_toolBar);
     _queryBtn->setObjectName("_queryBtn");
     _queryBtn->setFocusPolicy(Qt::NoFocus);
     _queryAct = _toolBar->addWidget(_queryBtn);
-
 
     // Menu actions for query options
     _queryMenu = new QMenu(_queryBtn);
@@ -117,6 +128,21 @@ public:
     _autoUpdateAct->setCheckable(true);
     _autoUpdateAct->setVisible(false);
     _queryMenu->addAction(_autoUpdateAct);
+
+    // Determine whether to show toolbar or buttons
+    _toolBar->setVisible(useToolbar);
+
+    _new->setHidden(useToolbar);
+    _close->setHidden(useToolbar);
+    _print->setHidden(useToolbar);
+    _preview->setHidden(useToolbar);
+    _query->setHidden(useToolbar);
+
+    if (useToolbar)
+    {
+      _parent->layout()->setContentsMargins(0,0,0,0);
+      _parent->layout()->setSpacing(0);
+    }
   }
 
   void print(ParameterList, bool);
@@ -152,8 +178,6 @@ public:
   QToolButton * _queryBtn;
   QToolButton * _previewBtn;
   QToolButton * _printBtn;
-
-  XLineEdit* _search;
 
 private:
   ::display * _parent;
@@ -248,7 +272,6 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   _data->_moreBtn->setText(tr("More"));
   _data->_printBtn->setText(tr("Print"));
   _data->_previewBtn->setText(tr("Preview"));
-  _data->_search->setNullStr(tr("search"));
   _data->_queryBtn->setText(tr("Query"));
   _data->_queryOnStartAct->setText(tr("Query on start"));
   _data->_autoUpdateAct->setText(tr("Automatically Update"));
@@ -258,9 +281,15 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   _data->_closeAct->setShortcut(QKeySequence::Close);
   _data->_queryAct->setShortcut(QKeySequence::Refresh);
   _data->_printAct->setShortcut(QKeySequence::Print);
-  _data->_searchAct->setShortcut(QKeySequence::InsertParagraphSeparator);
-  _data->_searchAct->setShortcutContext(Qt::WidgetShortcut);
-  _data->_searchAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+
+  if (_metrics->boolean("DisplaysUseToolbar"))
+  {
+    _data->_search->setNullStr(tr("search"));
+    _data->_searchAct->setShortcut(QKeySequence::InsertParagraphSeparator);
+    _data->_searchAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  }
+  else
+    connect(_data->_search, SIGNAL(editingFinished()), this, SLOT(sFillList()));
 
   // Set tooltips
   _data->_newBtn->setToolTip(_data->_newBtn->text() + " " + _data->_newAct->shortcut().toString(QKeySequence::NativeText));
@@ -281,14 +310,24 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
   connect(_data->_queryonstart, SIGNAL(toggled(bool)), _data->_queryOnStartAct, SLOT(setChecked(bool)));
   connect(_data->_queryOnStartAct, SIGNAL(triggered(bool)), _data->_queryonstart, SLOT(setChecked(bool)));
 
+  // Connect Actions
   connect(_data->_newAct, SIGNAL(triggered()), this, SLOT(sNew()));
   connect(_data->_closeAct, SIGNAL(triggered()), this, SLOT(close()));
   connect(_data->_queryAct, SIGNAL(triggered()), this, SLOT(sFillList()));
   connect(_data->_printAct, SIGNAL(triggered()), this, SLOT(sPrint()));
+  connect(_data->_previewAct, SIGNAL(triggered()), this, SLOT(sPreview()));
   connect(_data->_searchAct, SIGNAL(triggered()), this, SLOT(sFillList()));
   connect(_data->_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_data->_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled()));
   connect(filterButton, SIGNAL(toggled(bool)), _data->_moreBtn, SLOT(setChecked(bool)));
+
+  // Connect push buttons
+  connect(_data->_new, SIGNAL(clicked()), _data->_newAct, SLOT(trigger()));
+  connect(_data->_close, SIGNAL(clicked()), _data->_closeAct, SLOT(trigger()));
+  connect(_data->_print, SIGNAL(clicked()), _data->_printAct, SLOT(trigger()));
+  connect(_data->_preview, SIGNAL(clicked()), _data->_previewAct, SLOT(trigger()));
+  connect(_data->_query, SIGNAL(clicked()), _data->_queryAct, SLOT(trigger()));
+
 }
 
 display::~display()
@@ -451,12 +490,16 @@ bool display::closeVisible() const
 
 void display::setParameterWidgetVisible(bool show)
 {
-  //_data->_parameterWidget->setVisible(show);
-  _data->_parameterWidget->_filterButton->hide(); // _moreBtn is what you see here
-  _data->_moreAct->setVisible(show);
-  _data->_filterLitAct->setVisible(show);
-  _data->_filterAct->setVisible(show);
-  _data->_sep2->setVisible(show);
+  if (_metrics->boolean("DisplaysUseToolbar"))
+  {
+    _data->_parameterWidget->_filterButton->hide(); // _moreBtn is what you see here
+    _data->_moreAct->setVisible(show);
+    _data->_filterLitAct->setVisible(show);
+    _data->_filterAct->setVisible(show);
+    _data->_sep2->setVisible(show);
+  }
+  else
+    _data->_parameterWidget->setVisible(show);
 }
 
 bool display::parameterWidgetVisible() const
@@ -464,34 +507,41 @@ bool display::parameterWidgetVisible() const
   return _data->_parameterWidget->isVisible();
 }
 
-void display::setSearchVisible(bool show)
-{
-  _data->_searchAct->setVisible(show);
-}
-
 bool display::searchVisible() const
 {
-  return _data->_searchAct->isVisible();
+  return _data->_search->isVisible();
+}
+
+void display::setSearchVisible(bool show)
+{
+  _data->_search->setVisible(show);
+  _data->_searchAct->setVisible(show && _metrics->boolean("DisplaysUseToolbar"));
+  _data->_searchLit->setVisible(show && !_metrics->boolean("DisplaysUseToolbar"));
 }
 
 void display::setQueryOnStartEnabled(bool on)
 {
   _data->_queryOnStartEnabled = on;
-  _data->_queryOnStartAct->setVisible(on);
-  //_data->_queryonstart->setVisible(on);
-  _data->_queryonstart->setForgetful(!on);
-
-  if (_data->_queryOnStartEnabled ||
-      _data->_autoUpdateEnabled)
+  if (_metrics->boolean("DisplaysUseToolbar"))
   {
-    _data->_queryBtn->setPopupMode(QToolButton::MenuButtonPopup);
-    _data->_queryBtn->setMenu(_data->_queryMenu);
+    _data->_queryOnStartAct->setVisible(on);
+
+    if (_data->_queryOnStartEnabled ||
+        _data->_autoUpdateEnabled)
+    {
+      _data->_queryBtn->setPopupMode(QToolButton::MenuButtonPopup);
+      _data->_queryBtn->setMenu(_data->_queryMenu);
+    }
+    else
+    {
+      _data->_queryBtn->setPopupMode(QToolButton::DelayedPopup);
+      _data->_queryBtn->setMenu(0);
+    }
   }
   else
-  {
-    _data->_queryBtn->setPopupMode(QToolButton::DelayedPopup);
-    _data->_queryBtn->setMenu(0);
-  }
+    _data->_queryonstart->setVisible(on);
+
+  _data->_queryonstart->setForgetful(!on);
 
   // Ensure query on start is checked by default
   if (on)
@@ -518,20 +568,25 @@ bool display::queryOnStartEnabled() const
 void display::setAutoUpdateEnabled(bool on)
 {
   _data->_autoUpdateEnabled = on;
-  _data->_autoUpdateAct->setVisible(on);
- // _data->_autoupdate->setVisible(on);
 
-  if (_data->_queryOnStartEnabled ||
-      _data->_autoUpdateEnabled)
+  if (_metrics->boolean("DisplaysUseToolbar"))
   {
-    _data->_queryBtn->setPopupMode(QToolButton::MenuButtonPopup);
-    _data->_queryBtn->setMenu(_data->_queryMenu);
+    _data->_autoUpdateAct->setVisible(on);
+
+    if (_data->_queryOnStartEnabled ||
+        _data->_autoUpdateEnabled)
+    {
+      _data->_queryBtn->setPopupMode(QToolButton::MenuButtonPopup);
+      _data->_queryBtn->setMenu(_data->_queryMenu);
+    }
+    else
+    {
+      _data->_queryBtn->setPopupMode(QToolButton::DelayedPopup);
+      _data->_queryBtn->setMenu(0);
+    }
   }
   else
-  {
-    _data->_queryBtn->setPopupMode(QToolButton::DelayedPopup);
-    _data->_queryBtn->setMenu(0);
-  }
+    _data->_autoupdate->setVisible(on);
 
   sAutoUpdateToggled(); 
 }
