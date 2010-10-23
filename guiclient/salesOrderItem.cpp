@@ -291,9 +291,22 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _charVars.replace(EFFECTIVE, param.toDate());
   }
 
+  param = pParams.value("shipDate", &valid);
+  if (valid)
+    _scheduledDate->setDate(param.toDate());
+
   param = pParams.value("mode", &valid);
   if (valid)
   {
+    QDate asOf;
+
+    if (_metrics->value("soPriceEffective") == "ScheduleDate")
+      asOf = _scheduledDate->date();
+    else if (_metrics->value("soPriceEffective") == "OrderDate")
+      asOf = _netUnitPrice->effective();
+    else
+      asOf = omfgThis->dbDate();
+
     if (param.toString() == "new")
     {
       _mode = cNew;
@@ -310,7 +323,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _orderId = -1;
       _itemsrc = -1;
 
-      _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
+      _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2, '%3'))").arg(_custid).arg(_shiptoid).arg(asOf.toString(Qt::ISODate)) );
 
       prepare();
 
@@ -364,7 +377,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _warranty->hide();
       _tabs->removeTab(_tabs->indexOf(supplyTab));
 
-      _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
+      _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2, '%3'))").arg(_custid).arg(_shiptoid).arg(asOf.toString(Qt::ISODate)) );
 
       prepare();
 
@@ -598,10 +611,6 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _supplyWarehouse->hide();
   }
 
-  param = pParams.value("shipDate", &valid);
-  if (valid)
-    _scheduledDate->setDate(param.toDate());
-
   _modified = false;
 
   return NoError;
@@ -637,17 +646,20 @@ void salesOrderItem::prepare()
       return;
     }
 
-    q.prepare( "SELECT MIN(coitem_scheddate) AS scheddate "
-               "FROM coitem "
-               "WHERE (coitem_cohead_id=:cohead_id);" );
-    q.bindValue(":cohead_id", _soheadid);
-    q.exec();
-    if (q.first())
-      _scheduledDate->setDate(q.value("scheddate").toDate());
-    else if (q.lastError().type() != QSqlError::NoError)
+    if (!_scheduledDate->isValid())
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      q.prepare( "SELECT MIN(coitem_scheddate) AS scheddate "
+                 "FROM coitem "
+                 "WHERE (coitem_cohead_id=:cohead_id);" );
+      q.bindValue(":cohead_id", _soheadid);
+      q.exec();
+      if (q.first())
+        _scheduledDate->setDate(q.value("scheddate").toDate());
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
     }
   }
   else if (_mode == cNewQuote)
@@ -675,17 +687,20 @@ void salesOrderItem::prepare()
       return;
     }
 
-    q.prepare( "SELECT MIN(quitem_scheddate) AS scheddate "
-               "FROM quitem "
-               "WHERE (quitem_quhead_id=:quhead_id);" );
-    q.bindValue(":quhead_id", _soheadid);
-    q.exec();
-    if (q.first())
-      _scheduledDate->setDate(q.value("scheddate").toDate());
-    else if (q.lastError().type() != QSqlError::NoError)
+    if (!_scheduledDate->isValid())
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      q.prepare( "SELECT MIN(quitem_scheddate) AS scheddate "
+                 "FROM quitem "
+                 "WHERE (quitem_quhead_id=:quhead_id);" );
+      q.bindValue(":quhead_id", _soheadid);
+      q.exec();
+      if (q.first())
+        _scheduledDate->setDate(q.value("scheddate").toDate());
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
     }
   }
   _modified = false;
@@ -3421,8 +3436,8 @@ void salesOrderItem::sHandleScheduleDate()
 
     QString sql("SELECT customerCanPurchase(<? value(\"item_id\") ?>, "
                 "<? value(\"cust_id\") ?>, "
-                  "<? value(\"shipto_id\") ?>, "
-                    "<? value(\"shipDate\") ?>) AS canPurchase; ");
+                "<? value(\"shipto_id\") ?>, "
+                "<? value(\"shipDate\") ?>) AS canPurchase; ");
 
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
