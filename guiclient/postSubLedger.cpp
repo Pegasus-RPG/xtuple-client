@@ -25,7 +25,7 @@ postSubLedger::postSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   _subLedgerDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
-  _subLedgerDates->setEndNull(tr("Laest"), omfgThis->endOfTime(), true);
+  _subLedgerDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
   _distDate->setDate(omfgThis->dbDate());
 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
