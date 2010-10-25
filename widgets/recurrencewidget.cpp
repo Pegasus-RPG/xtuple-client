@@ -233,16 +233,10 @@ RecurrenceWidget::RecurrenceWidget(QWidget *parent, const char *pName) :
   if(pName)
     setObjectName(pName);
 
-//_period->append(Never,        tr("Never"),   "");
-  _period->append(Minutely,     tr("Minutes"), "m");
-  _period->append(Hourly,       tr("Hours"),   "H");
-  _period->append(Daily,        tr("Days"),    "D");
-  _period->append(Weekly,       tr("Weeks"),   "W");
-  _period->append(Monthly,      tr("Months"),  "M");
-  _period->append(Yearly,       tr("Years"),   "Y");
-//_period->append(Custom,       tr("Custom"),  "C");
+  setMinPeriod(Minutely);
 
-  _period->setCode("W");
+  if (minPeriod() < Weekly)
+    _period->setCode("W");
 
   _dates->setStartCaption(tr("From:"));
   _dates->setEndCaption(tr("Until:"));
@@ -423,6 +417,11 @@ int RecurrenceWidget::max() const
 bool RecurrenceWidget::maxVisible() const
 {
   return _max->isVisible();
+}
+
+RecurrenceWidget::RecurrencePeriod RecurrenceWidget::minPeriod() const
+{
+  return (RecurrencePeriod)_period->id(0);
 }
 
 bool RecurrenceWidget::modified() const
@@ -787,6 +786,25 @@ void RecurrenceWidget::setMaxVisible(bool p)
 {
   _max->setVisible(p);
   _maxLit->setVisible(p);
+}
+
+void RecurrenceWidget::setMinPeriod(RecurrencePeriod min)
+{
+  _period->clear();
+
+  // fall through all cases in the switch
+  switch (min)
+  {
+    default:
+    // case Never: _period->append(Never,        tr("Never"),   "");
+    case Minutely: _period->append(Minutely,     tr("Minutes"), "m");
+    case Hourly:   _period->append(Hourly,       tr("Hours"),   "H");
+    case Daily:    _period->append(Daily,        tr("Days"),    "D");
+    case Weekly:   _period->append(Weekly,       tr("Weeks"),   "W");
+    case Monthly:  _period->append(Monthly,      tr("Months"),  "M");
+    case Yearly:   _period->append(Yearly,       tr("Years"),   "Y");
+    //case Custom: _period->append(Custom,       tr("Custom"),  "C");
+  }
 }
 
 bool RecurrenceWidget::setParent(int pid, QString ptype)
