@@ -403,6 +403,26 @@ void dspFinancialReport::sFillListStatement()
 
 void dspFinancialReport::sFillListTrend()
 {
+  if( (!_showBegBal->isChecked()) &&
+      (!_showBegBalPrcnt->isChecked()) &&
+      (!_showDebits->isChecked()) &&
+      (!_showDebitsPrcnt->isChecked()) &&
+      (!_showCredits->isChecked()) &&
+      (!_showCreditsPrcnt->isChecked()) &&
+      ((!_showEndBal->isChecked()) && (_type->text() != "Balance Sheet")) &&
+      (!_showEndBalPrcnt->isChecked()) &&
+      (!_showBudget->isChecked()) &&
+      (!_showBudgetPrcnt->isChecked()) &&
+      ((!_showDiff->isChecked()) && (_type->text() != "Income Statement") && (_type->text() != "Cash Flow Statement")) &&
+      (!_showDiffPrcnt->isChecked()) &&
+      (!_showCustom->isChecked()) &&
+      (!_showCustomPrcnt->isChecked()) )
+  {
+    QMessageBox::critical(this, tr("Report Error"),
+                          tr("You must select at least one Column"));
+    return;
+  }
+
   int c = 0;
   QList<int> periodsRef;
   QStringList periods;
