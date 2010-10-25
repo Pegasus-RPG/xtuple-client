@@ -221,12 +221,18 @@ bool importData::importOne(const QString &pFileName, int pType)
     qDebug("importData::importOne(%s, %d)", qPrintable(pFileName), pType);
 
   QString errmsg;
+  QString warnmsg;
   if (pType == Xml || QFileInfo(pFileName).suffix().toUpper() == "XML")
   {
-    if (! ImportHelper::importXML(pFileName, errmsg))
+    if (! ImportHelper::importXML(pFileName, errmsg, warnmsg))
     {
       systemError(this, errmsg);
       return false;
+    }
+    else if (! warnmsg.isEmpty())
+    {
+      QMessageBox::warning(this, tr("XML Import Warnings"), warnmsg);
+      return true;
     }
   }
   else if (pType == Csv || QFileInfo(pFileName).suffix().toUpper() == "CSV")

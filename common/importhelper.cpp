@@ -358,7 +358,7 @@ bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
   return errmsg.isEmpty();
 }
 
-bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
+bool ImportHelper::importXML(const QString &pFileName, QString &errmsg, QString &warnmsg)
 {
   if (DEBUG)
     qDebug("ImportHelper::importXML(%s, errmsg)", qPrintable(pFileName));
@@ -651,7 +651,7 @@ bool ImportHelper::importXML(const QString &pFileName, QString &errmsg)
     QFile::remove(tmpfileName);
 
   if (warnings.size() > 0)
-    QMessageBox::warning(0, tr("XML Import Warnings"), warnings.join("\n"));
+    warnmsg = warnings.join("\n");
 
   QString fileerrmsg;
   if (! handleFilePostImport(pFileName,
@@ -723,10 +723,11 @@ static QScriptValue importXML(QScriptContext *context,
     context->throwError(QScriptContext::UnknownError,
                         "not enough args passed to importXML");
   QString errmsg;
+  QString warnmsg;
   bool result = ImportHelper::importXML(context->argument(0).toString(),
-                                        errmsg);
+                                        errmsg, warnmsg);
 
-  // TODO: how to we pass back errmsg output parameter?
+  // TODO: how to we pass back errmsg and warnmsg output parameter?
 
   return QScriptValue(result);
 }
