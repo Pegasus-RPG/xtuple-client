@@ -33,12 +33,6 @@ configureCC::configureCC(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _enableChargePreauth->setVisible(false);
   _enableCredit->setVisible(false);
 
-  if (_metricsenc == 0)
-  {
-    QMessageBox::critical( this, tr("Cannot Read Configuration"),
-		    tr("<p>Cannot read encrypted information from database."));
-  }
-
   // these ids must match the pages in the stack widget
   _ccCompany->append(0, "Authorize.Net", "AN");
   _ccCompany->append(1, "YourPay",       "YP");
@@ -190,15 +184,21 @@ configureCC::configureCC(QWidget* parent, const char* name, bool /*modal*/, Qt::
   sDuplicateWindow(_anDuplicateWindow->value());
 
   XAbstractConfigure *encryption = new configureEncryption(this);
-  encryption->setObjectName("_encryption");
-  _keyPage->layout()->addWidget(encryption);
-  QPushButton *encbutton = encryption->findChild<QPushButton*>("_save");
-  if (encbutton)
-    encbutton->hide();
-  encbutton = encryption->findChild<QPushButton*>("_close");
-  if (encbutton)
-    encbutton->hide();
-  encryption->show();
+  if (encryption)
+  {
+    encryption->setObjectName("_encryption");
+    _keyPage->layout()->addWidget(encryption);
+    QPushButton *encbutton = encryption->findChild<QPushButton*>("_save");
+    if (encbutton)
+      encbutton->hide();
+    encbutton = encryption->findChild<QPushButton*>("_close");
+    if (encbutton)
+      encbutton->hide();
+    encryption->show();
+  }
+  else if (_metricsenc == 0)
+    QMessageBox::critical( this, tr("Cannot Read Configuration"),
+		    tr("<p>Cannot read encrypted information from database."));
 }
 
 configureCC::~configureCC()
