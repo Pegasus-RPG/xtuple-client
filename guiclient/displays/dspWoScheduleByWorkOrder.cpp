@@ -54,7 +54,6 @@ dspWoScheduleByWorkOrder::dspWoScheduleByWorkOrder(QWidget* parent, const char*,
   list()->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
   list()->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter, true,  "wo_startdate" );
   list()->addColumn(tr("Due Date"),   _dateColumn,   Qt::AlignCenter, true,  "wo_duedate" );
-  list()->addColumn(tr("User"),        -1,            Qt::AlignLeft,   true,  "wo_username"   );
   
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
@@ -113,9 +112,6 @@ bool dspWoScheduleByWorkOrder::setParams(ParameterList &pParams)
 
   if (_showOnlyTopLevel->isChecked())
     pParams.append("showOnlyTopLevel");
-
-  if(_userName->username().length() > 0)
-     pParams.append("wo_username", _userName->username());
 
   return true;
 }

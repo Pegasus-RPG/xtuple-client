@@ -13,173 +13,127 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
-    <height>269</height>
+    <width>646</width>
+    <height>244</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Work Order Schedule</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
-   <item>
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="0">
-      <widget class="ParameterGroup" name="_parameter">
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
-       </property>
-       <property name="title">
-        <string/>
-       </property>
-       <property name="fixedSize">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" colspan="2">
-      <widget class="WarehouseGroup" name="_warehouse">
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
-       </property>
-       <property name="title">
-        <string/>
-       </property>
-       <property name="fixedSize">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" rowspan="2">
-      <widget class="QGroupBox" name="_dateGroup">
-       <property name="title">
-        <string>Work Order Start Date</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="DateCluster" name="_dates">
-          <property name="focusPolicy">
-           <enum>Qt::StrongFocus</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>0</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QGroupBox" name="_statusGroup">
-       <property name="title">
-        <string>Include Status</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_6">
-        <property name="horizontalSpacing">
-         <number>12</number>
-        </property>
-        <item row="1" column="0">
-         <widget class="XCheckBox" name="_open">
-          <property name="text">
-           <string>Open</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="XCheckBox" name="_released">
-          <property name="text">
-           <string>&amp;Released</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="XCheckBox" name="_exploded">
-          <property name="text">
-           <string>Exploded</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="XCheckBox" name="_inprocess">
-          <property name="text">
-           <string>In-Process</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QGroupBox" name="_showGroup">
-       <property name="title">
-        <string>Show Only</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="XCheckBox" name="_showOnlyTopLevel">
-          <property name="text">
-           <string>Top Level</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="3" column="0" colspan="3">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="1" colspan="2">
-      <widget class="QGroupBox" name="_userGroup">
-       <property name="title">
-        <string>User Name</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="UsernameCluster" name="_userName">
-          <property name="label">
-           <string>Name:</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <widget class="ParameterGroup" name="_parameter">
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <property name="fixedSize">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
-   <item>
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="0" column="1" colspan="2">
+    <widget class="WarehouseGroup" name="_warehouse">
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>13</width>
-       <height>20</height>
-      </size>
+     <property name="title">
+      <string/>
      </property>
-    </spacer>
+     <property name="fixedSize">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="_dateGroup">
+     <property name="title">
+      <string>Work Order Start Date</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="DateCluster" name="_dates">
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <spacer>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>0</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QGroupBox" name="_statusGroup">
+     <property name="title">
+      <string>Include Status</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <property name="horizontalSpacing">
+       <number>12</number>
+      </property>
+      <item row="1" column="0">
+       <widget class="XCheckBox" name="_open">
+        <property name="text">
+         <string>Open</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="XCheckBox" name="_released">
+        <property name="text">
+         <string>&amp;Released</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="XCheckBox" name="_exploded">
+        <property name="text">
+         <string>Exploded</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="XCheckBox" name="_inprocess">
+        <property name="text">
+         <string>In-Process</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QGroupBox" name="_showGroup">
+     <property name="title">
+      <string>Show Only</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="XCheckBox" name="_showOnlyTopLevel">
+        <property name="text">
+         <string>Top Level</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -195,11 +149,6 @@ to be bound by its terms.</comment>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
-  </customwidget>
-  <customwidget>
-   <class>UsernameCluster</class>
-   <extends>QWidget</extends>
-   <header>usernamecluster.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
