@@ -992,9 +992,10 @@ int CreditCardProcessor::testConfiguration()
   // now handle warnings
   if (returnValue >= 0)
   {
-    QString serverStr = buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), false);
+    QString serverStr  = buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), false);
+    QString defaultStr = buildURL(defaultServer(),        QString(defaultPort(isLive())), false);
 
-    if (serverStr != defaultServer() && ! _metrics->value("CCPort").isEmpty() &&
+    if (serverStr != defaultStr &&
         _metrics->value("CCPort").toInt() != defaultPort(isLive()) &&
         _metrics->value("CCPort").toInt() != 0)
     {
@@ -1005,7 +1006,7 @@ int CreditCardProcessor::testConfiguration()
                              .arg(defaultPort(isLive()));
       returnValue = 5;
     }
-    else if (serverStr != defaultServer())
+    else if (serverStr != defaultStr)
     {
       _errorMsg = errorMsg(6).arg(isLive() ? tr("Live") : tr("Test"))
                              .arg(_metrics->value("CCServer"))

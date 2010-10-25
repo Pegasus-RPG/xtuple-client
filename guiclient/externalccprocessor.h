@@ -22,6 +22,7 @@ class ExternalCCProcessor : public CreditCardProcessor
 
   public:
     ExternalCCProcessor();
+    Q_INVOKABLE virtual int testConfiguration();
 
   protected:
     virtual int  doAuthorize(const int, const int, double &, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
