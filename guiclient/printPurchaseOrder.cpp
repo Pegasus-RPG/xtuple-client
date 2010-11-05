@@ -68,16 +68,21 @@ enum SetResponse printPurchaseOrder::set(const ParameterList &pParams)
 
 void printPurchaseOrder::sPrint()
 {
-  q.prepare("SELECT pohead_saved FROM pohead WHERE pohead_id=:pohead_id");
+  bool alreadyPrinted = false;
+  q.prepare("SELECT pohead_saved, pohead_printed FROM pohead WHERE pohead_id=:pohead_id");
   q.bindValue(":pohead_id", _po->id());
   q.exec();
-  if(q.first() && (q.value("pohead_saved").toBool() == false))
+  if(q.first())
   {
-    QMessageBox::warning( this, tr("Cannot Print P/O"),
-                         tr("<p>The Purchase Order you are trying to print has "
-                            "not been completed. Please wait until the "
-                            "Purchase Order has been completely saved.") );
-    return;
+    alreadyPrinted = q.value("pohead_printed").toBool();
+    if (q.value("pohead_saved").toBool() == false)
+    {
+      QMessageBox::warning( this, tr("Cannot Print P/O"),
+                           tr("<p>The Purchase Order you are trying to print has "
+                              "not been completed. Please wait until the "
+                              "Purchase Order has been completely saved.") );
+      return;
+    }
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -136,15 +141,18 @@ void printPurchaseOrder::sPrint()
   }
   orReport::endMultiPrint(printer);
 
-  q.prepare( "UPDATE pohead "
-             "SET pohead_printed=TRUE "
-             "WHERE (pohead_id=:pohead_id);" );
-  q.bindValue(":pohead_id", _po->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  if (!alreadyPrinted)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    q.prepare( "UPDATE pohead "
+               "SET pohead_printed=TRUE "
+               "WHERE (pohead_id=:pohead_id);" );
+    q.bindValue(":pohead_id", _po->id());
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   if (_captive)
