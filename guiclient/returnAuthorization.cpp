@@ -155,6 +155,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   } 
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
+  _incident->setDescriptionVisible(true);
 }
 
 returnAuthorization::~returnAuthorization()
