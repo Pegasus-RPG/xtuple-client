@@ -101,7 +101,7 @@ void dspSalesOrdersByParameterList::sPopulateMenu(QMenu *menuThis, QTreeWidgetIt
   menuThis->addAction(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()));
   menuThis->addAction(tr("Shipments..."), this, SLOT(sDspShipments()));
 
-  if (_privileges->check("MaintainReturns"))
+  if ( (_metrics->boolean("EnableReturnAuth")) && (_privileges->check("MaintainReturns")) )
   {
     menuThis->addSeparator();
     menuThis->addAction(tr("Create Return Authorization..."), this, SLOT(sCreateRA()));
