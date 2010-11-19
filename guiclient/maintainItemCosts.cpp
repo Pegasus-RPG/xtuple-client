@@ -290,6 +290,8 @@ void maintainItemCosts::sFillList()
 	       "       itemcost_updated,"
 	       "       currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE) AS actcostBase, "
 	       "       itemcost_curr_id, "
+               "       CASE WHEN (COALESCE(itemcost_posted, startOfTime()) <= startOfTime()) THEN :never"
+               "       END AS itemcost_posted_qtdisplayrole,"
                "       'cost' AS itemcost_stdcost_xtnumericrole, "
                "       'cost' AS itemcost_actcost_xtnumericrole "
                "FROM itemcost LEFT OUTER JOIN costelem ON "
@@ -298,6 +300,7 @@ void maintainItemCosts::sFillList()
                "ORDER BY itemcost_lowlevel, costelem_type;" );
     q.bindValue(":item_id", _item->id());
     q.bindValue(":error", tr("!ERROR!"));
+    q.bindValue(":never", tr("Never"));
     q.exec();
     _itemcost->populate(q, TRUE);
 
