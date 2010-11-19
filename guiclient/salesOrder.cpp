@@ -2578,6 +2578,11 @@ void salesOrder::sFillItemList()
   if (ISORDER(_mode))
   {
     QString sql = "SELECT coitem_id,"
+                  "       CASE WHEN (coitem_status='C') THEN 1"
+                  "            WHEN (coitem_status='X') THEN 4"
+                  "            WHEN ( (coitem_status='O') AND ( (qtyAtShipping('SO', coitem_id) > 0) OR (coitem_qtyshipped > 0) ) ) THEN 2"
+                  "            ELSE 3"
+                  "       END AS closestatus,"
                   "       coitem_scheddate, coitem_qtyord, coitem_price,"
                   "       coitem_subnumber,"
                   "       formatSoLineNumber(coitem_id) AS f_linenumber,"
