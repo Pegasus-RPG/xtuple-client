@@ -34,7 +34,7 @@ dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char*,
 
   list()->addColumn(tr("Assigned To"),  _userColumn, Qt::AlignCenter,true, "todoitem_username");
   list()->addColumn(tr("Priority"),    _prcntColumn, Qt::AlignCenter,true, "incdtpriority_name");
-  list()->addColumn(tr("Incident"),    _orderColumn, Qt::AlignLeft,  true, "incdt_id", "incdt_number");
+  list()->addColumn(tr("Incident"),    _orderColumn, Qt::AlignLeft,  true, "incdt_number");
   list()->addColumn(tr("Task Name"),            100, Qt::AlignLeft,  true, "todoitem_name");
   list()->addColumn(tr("Status"),	 _statusColumn, Qt::AlignCenter,true, "todoitem_status");
   list()->addColumn(tr("Date Due"),     _dateColumn, Qt::AlignCenter,true, "todoitem_due_date");
