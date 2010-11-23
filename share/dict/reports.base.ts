@@ -741,37 +741,6 @@
     </message>
   </context>
   <context>
-    <name>APAssignments Master List</name>
-    <message>
-      <source>A/P Account Assignments Master List</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Vendor Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>A/P Account</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>A/P Account</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Venbor Type</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Report Date:</source>
-      <translation type="unfinished"></translation>
-    </message>
-    <message>
-      <source>Page:</source>
-      <translation type="unfinished"></translation>
-    </message>
-  </context>
-  <context>
     <name>UsersMasterList</name>
     <message>
       <source>Modified Users Master List</source>
