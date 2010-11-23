@@ -2439,7 +2439,7 @@ void salesOrderItem::sHandleWo(bool pCreate)
                                          "Purchase Order Item created for this Sales "
                                          "Order Item. The associated Purchase Order "
                                          "will also be deleted if no other Purchase "
-                                         "Order Item exists for that Purcahse Order. "
+                                         "Order Item exists for that Purchase Order. "
                                          "Are you sure you want to do this?"),
                                     QMessageBox::Yes | QMessageBox::Default,
                                     QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
