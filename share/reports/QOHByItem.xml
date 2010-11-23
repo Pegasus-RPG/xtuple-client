@@ -3,6 +3,12 @@
  <title>Quantities on Hand by Item</title>
  <name>QOHByItem</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -59,44 +65,28 @@ WHERE (item_id=&lt;? value("item_id") ?>);
             ELSE 'N/A'
        END AS f_nnqoh,
        &lt;? if exists("showValue") ?>
-         formatCost(cost)
-       &lt;? else ?>
-         text('')
-       &lt;? endif ?>
-       AS f_unitcost,
-       &lt;? if exists("showValue") ?>
-         formatExtPrice(cost * qoh)
-       &lt;? else ?>
-         text('')
-       &lt;? endif ?>
-       AS f_value,
-       &lt;? if exists("showValue") ?>
+         formatCost(cost) AS f_unitcost,
+         formatExtPrice(cost * qoh) AS f_value,
          CASE WHEN (itemsite_loccntrl) THEN formatExtPrice(cost * nnqoh)
               ELSE 'N/A'
-         END
+         END AS f_nonnetvalue,
+         cost,
+         noNeg(cost * qoh) AS r_value,
+         CASE WHEN (itemsite_loccntrl) THEN noNeg(cost * nnqoh)
+              ELSE 0
+         END AS r_nonnetvalue,
        &lt;? else ?>
-         text('')
+         text(' ') AS f_unitcost,
+         text(' ') AS f_value,
+         text(' ') AS f_nonnetvalue,
+         NULL AS cost,
+         NULL AS r_value,
+         NULL AS r_nonnetvalue,
        &lt;? endif ?>
-       AS f_nonnetvalue,
-       cost,
        qoh,
        nnqoh,
        noNeg(qoh) AS r_qoh,
        noNeg(nnqoh) AS r_nnqoh,
-       &lt;? if exists("showValue") ?>
-         CASE WHEN (itemsite_loccntrl) THEN noNeg(cost * nnqoh)
-              ELSE 0
-         END
-       &lt;? else ?>
-         0
-       &lt;? endif ?>
-       AS r_nonnetvalue,
-       &lt;? if exists("showValue") ?>
-         noNeg(cost * qoh)
-       &lt;? else ?>
-         0
-       &lt;? endif ?>
-       AS r_value,
        &lt;? if exists("showValue") ?>
          &lt;? if exists("usePostedCosts") ?>
            CASE WHEN(itemsite_costmethod='A') THEN text('Average')
@@ -386,7 +376,7 @@ ORDER BY warehous_code;
    <vcenter/>
    <data>
     <query>head</query>
-    <column>lbl_unitcost</column>
+    <column>lbl_nnvalue</column>
    </data>
   </field>
   <field>
@@ -473,7 +463,7 @@ ORDER BY warehous_code;
    <vcenter/>
    <data>
     <query>head</query>
-    <column>lbl_unitcost</column>
+    <column>lbl_nnvalue</column>
    </data>
   </field>
   <label>
@@ -894,7 +884,8 @@ ORDER BY warehous_code;
     <query>detail</query>
     <column>r_nonnetvalue</column>
    </data>
-   <tracktotal>%.02f</tracktotal>
+   <format>%.02f</format>
+   <tracktotal/>
   </field>
   <label>
    <rect>
@@ -930,7 +921,8 @@ ORDER BY warehous_code;
     <query>detail</query>
     <column>r_value</column>
    </data>
-   <tracktotal>%.02f</tracktotal>
+   <format>%.02f</format>
+   <tracktotal/>
   </field>
   <field>
    <rect>
@@ -950,7 +942,8 @@ ORDER BY warehous_code;
     <query>detail</query>
     <column>r_qoh</column>
    </data>
-   <tracktotal>%.02f</tracktotal>
+   <format>%.02f</format>
+   <tracktotal/>
   </field>
   <field>
    <rect>
@@ -970,7 +963,8 @@ ORDER BY warehous_code;
     <query>detail</query>
     <column>r_nnqoh</column>
    </data>
-   <tracktotal>%.02f</tracktotal>
+   <format>%.02f</format>
+   <tracktotal/>
   </field>
  </rptfoot>
 </report>
