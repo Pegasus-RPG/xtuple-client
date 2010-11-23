@@ -160,7 +160,7 @@ bool dspSubstituteAvailabilityByItem::setParams(ParameterList &params)
   if (_byDate->isChecked() && !_date->isValid())
   {
     QMessageBox::warning(this, tr("Date Required"),
-      tr("You must specify a valida date."));
+      tr("You must specify a valid date."));
     return false;
   }
 
