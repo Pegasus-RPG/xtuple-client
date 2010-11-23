@@ -188,7 +188,7 @@ to be bound by its terms.</comment>
         <item row="1" column="0">
          <widget class="QRadioButton" name="_reschedule">
           <property name="text">
-           <string>Schedule Tranfer Order for:</string>
+           <string>Schedule Transfer Order for:</string>
           </property>
          </widget>
         </item>
