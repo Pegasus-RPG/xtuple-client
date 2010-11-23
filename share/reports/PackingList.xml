@@ -136,10 +136,9 @@ SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_num
             ELSE item_descrip2
        END AS item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
-       ( SELECT formatQty(COALESCE(SUM(shipitem_qty), 0))
-         FROM shipitem JOIN shiphead ON (shiphead_id=shipitem_shiphead_id)
-         WHERE ((shipitem_orderitem_id=coitem_id) AND (shiphead_order_type='SO')) ) AS atShipping,
-
+       CASE WHEN (qtyAtShipping('SO', coitem_id, 'B') > 0.0) THEN formatQty(qtyAtShipping('SO', coitem_id, 'B'))
+            ELSE NULL
+       END AS atShipping,
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus
                                            FROM cust,cohead
                                           WHERE coitem_cohead_id=cohead_id

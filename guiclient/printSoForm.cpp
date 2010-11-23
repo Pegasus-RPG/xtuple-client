@@ -80,6 +80,8 @@ void printSoForm::sPrint()
   {
     ParameterList params;
     params.append("sohead_id", _so->id());
+    params.append("includeFormatted", true);
+    params.append("excludeCancelled", true);
 
     orReport report(q.value("report_name").toString(), params);
     if (report.isValid())

@@ -21,7 +21,6 @@
 #include <QVariant>
 
 #include <metasql.h>
-
 #include "creditCard.h"
 #include "creditcardprocessor.h"
 #include "crmacctcluster.h"
@@ -2577,108 +2576,14 @@ void salesOrder::sFillItemList()
   _soitem->clear();
   if (ISORDER(_mode))
   {
-    QString sql = "SELECT coitem_id,"
-                  "       CASE WHEN (coitem_status='C') THEN 1"
-                  "            WHEN (coitem_status='X') THEN 4"
-                  "            WHEN ( (coitem_status='O') AND ( (qtyAtShipping('SO', coitem_id) > 0) OR (coitem_qtyshipped > 0) ) ) THEN 2"
-                  "            ELSE 3"
-                  "       END AS closestatus,"
-                  "       coitem_scheddate, coitem_qtyord, coitem_price,"
-                  "       coitem_subnumber,"
-                  "       formatSoLineNumber(coitem_id) AS f_linenumber,"
-                  "       item_number, item_type,"
-                  "       (item_descrip1 || ' ' || item_descrip2) AS description,"
-                  "       warehous_code,"
-                  "      (CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM custinfo WHERE cust_id=:cust_id)='H') THEN 'H'"
-                  "            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)"
-                  "                                            FROM cohead, invchead, invcitem"
-                  "                                           WHERE ((CAST(invchead_ordernumber AS text)=cohead_number)"
-                  "                                             AND  (invcitem_invchead_id=invchead_id)"
-                  "                                             AND  (invcitem_item_id=item_id)"
-                  "                                             AND  (invcitem_warehous_id=warehous_id)"
-                  "                                             AND  (invcitem_linenumber=coitem_linenumber)"
-                  "                                             AND  (cohead_id=coitem_cohead_id))) >= coitem_qtyord)) THEN 'I'"
-                  "            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)"
-                  "                                            FROM cohead, invchead, invcitem"
-                  "                                           WHERE ((CAST(invchead_ordernumber AS text)=cohead_number)"
-                  "                                             AND  (invcitem_invchead_id=invchead_id)"
-                  "                                             AND  (invcitem_item_id=item_id)"
-                  "                                             AND  (invcitem_warehous_id=warehous_id)"
-                  "                                             AND  (invcitem_linenumber=coitem_linenumber)"
-                  "                                             AND  (cohead_id=coitem_cohead_id))) > 0)) THEN 'P'"
-                  "            WHEN (coitem_status='O' AND (itemsite_qtyonhand - qtyAllocated(itemsite_id, CURRENT_DATE)"
-                  "                                         + qtyOrdered(itemsite_id, CURRENT_DATE))"
-                  "                                          >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'"
-                  "            ELSE coitem_status END "
-                  "       || CASE WHEN (coitem_firm) THEN 'F' ELSE '' END "
-                  "       ) AS enhanced_status, coitem_firm,"
-                  "       quom.uom_name AS qty_uom,"
-                  "       noNeg(coitem_qtyshipped - coitem_qtyreturned) AS qtyshipped,"
-                  "       noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS balance,"
-                  "       qtyAtShipping('SO', coitem_id) AS qtyatshipping,"
-                  "       puom.uom_name AS price_uom,"
-                  "       ROUND((coitem_qtyord * coitem_qty_invuomratio) *"
-                  "             (coitem_price / coitem_price_invuomratio),2) AS extprice,"
-                  "       'qty' AS coitem_qtyord_xtnumericrole,"
-                  "       'qty' AS qtyshipped_xtnumericrole,"
-                  "       'qty' AS balance_xtnumericrole,"
-                  "       'qty' AS qtyatshipping_xtnumericrole,"
-                  "       'salesprice' AS coitem_price_xtnumericrole,"
-                  "       'curr' AS extprice_xtnumericrole,"
-                  "       CASE WHEN fetchMetricBool('EnableSOShipping') AND"
-                  "                 coitem_scheddate > CURRENT_DATE AND"
-                  "                 (noNeg(coitem_qtyord) <> qtyAtShipping('SO', coitem_id)) THEN"
-                  "                 'future'"
-                  "            WHEN fetchMetricBool('EnableSOShipping') AND"
-                  "                 (noNeg(coitem_qtyord) <> qtyAtShipping('SO', coitem_id)) THEN"
-                  "                 'expired'"
-                  "            WHEN (coitem_status NOT IN ('C', 'X') AND"
-                  "                  EXISTS(SELECT coitem_id"
-                  "                         FROM coitem"
-                  "                         WHERE ((coitem_status='C')"
-                  "                           AND  (coitem_cohead_id=:cohead_id)))) THEN"
-                  "                  'error'"
-                  "       END AS coitem_scheddate_qtforegroundrole,"
-                  "       CASE WHEN coitem_subnumber = 0 THEN 0"
-                  "            ELSE 1 END AS xtindentrole,"
-                  "       CASE WHEN coitem_order_type = 'W' THEN TEXT( 'WO')"
-                  "         ELSE CASE WHEN coitem_order_type='P' THEN TEXT('PO' )"
-                  "           ELSE CASE WHEN coitem_order_type='R' THEN TEXT('PR')"
-                  "             ELSE TEXT (' ')"
-                  "           END"
-                  "         END"
-                  "       END AS spplytype,"
-                  "       CASE WHEN coitem_order_type = 'W' THEN (wo_number || '-' || wo_subnumber)"
-                  "         ELSE CASE WHEN coitem_order_type='P' THEN (pohead_number || '-' || poitem_linenumber)"
-                  "           ELSE CASE WHEN coitem_order_type='R' THEN (pr_number || '-' || pr_subnumber)"
-                  "             ELSE TEXT (' ')"
-                  "           END"
-                  "         END"
-                  "       END AS ordrnumbr"
-                  "  FROM coitem"
-                  "       JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
-                  "       JOIN item ON (item_id=itemsite_item_id)"
-                  "       JOIN whsinfo ON (warehous_id=itemsite_warehous_id)"
-                  "       JOIN uom AS quom ON (quom.uom_id=coitem_qty_uom_id)"
-                  "       JOIN uom AS puom ON (puom.uom_id=coitem_price_uom_id)"
-                  "       LEFT OUTER JOIN wo ON (coitem_order_id = wo_id)"
-                  "       LEFT OUTER JOIN pr ON (coitem_order_id = pr_id)"
-                  "       LEFT OUTER JOIN (pohead JOIN poitem ON (pohead_id = poitem_pohead_id))"
-                  "         ON (coitem_order_id = poitem_id)"
-                  " WHERE (coitem_cohead_id=:cohead_id)";
+    MetaSQLQuery mql = mqlLoad("salesOrderItems", "list");
 
+    ParameterList params;
     if (!_showCanceled->isChecked())
-      sql += " AND (coitem_status != 'X') ";
+      params.append("excludeCancelled", true);
 
-    sql += "ORDER BY coitem_linenumber, coitem_subnumber;";
-
-    XSqlQuery fl;
-    fl.prepare(sql);
-    fl.bindValue(":cohead_id", _soheadid);
-    fl.bindValue(":cust_id", _cust->id());
-    fl.exec();
-    _cust->setReadOnly(fl.size() || !ISNEW(_mode));
-    _amountAtShipping->setLocalValue(0.0);
+    params.append("sohead_id", _soheadid);
+    XSqlQuery fl = mql.toQuery(params);
     _soitem->populate(fl, true);
     if (fl.lastError().type() != QSqlError::NoError)
     {
@@ -2686,7 +2591,9 @@ void salesOrder::sFillItemList()
       return;
     }
 
-    sql = "SELECT ROUND(((COALESCE(SUM(shipitem_qty),0)-coitem_qtyshipped) *"
+    _cust->setReadOnly(fl.size() || !ISNEW(_mode));
+    _amountAtShipping->setLocalValue(0.0);
+    QString sql = "SELECT ROUND(((COALESCE(SUM(shipitem_qty),0)-coitem_qtyshipped) *"
           "                  coitem_qty_invuomratio) *"
           "           (coitem_price / coitem_price_invuomratio),2) AS shippingAmount "
           "  FROM coitem LEFT OUTER JOIN "
