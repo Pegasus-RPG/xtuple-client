@@ -129,15 +129,15 @@ void selectPayments::sSelectDue()
                      "<? if exists(\"vend_id\") ?>"
                      ";"
                      "<? elseif exists(\"vendtype_id\") ?>"
-                     "FROM vend "
+                     "FROM vendinfo "
                      "WHERE (vend_vendtype_id=<? value(\"vendtype_id\") ?>);"
                      "<? elseif exists(\"vendtype_pattern\") ?>"
-                     "FROM vend "
+                     "FROM vendinfo "
                      "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
                      "                            FROM vendtype"
                      "                            WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)));"
                      "<? else ?>"
-                     "FROM vend;"
+                     "FROM vendinfo;"
                      "<? endif ?>");
     ParameterList params;
     if (! setParams(params))
@@ -186,15 +186,15 @@ void selectPayments::sSelectDiscount()
                      "<? if exists(\"vend_id\") ?>"
                      ";"
                      "<? elseif exists(\"vendtype_id\") ?>"
-                     "FROM vend "
+                     "FROM vendinfo "
                      "WHERE (vend_vendtype_id=<? value(\"vendtype_id\") ?>);"
                      "<? elseif exists(\"vendtype_pattern\") ?>"
-                     "FROM vend "
+                     "FROM vendinfo "
                      "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
                      "                            FROM vendtype"
                      "                            WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)));"
                      "<? else ?>"
-                     "FROM vend;"
+                     "FROM vendinfo;"
                      "<? endif ?>");
     ParameterList params;
     if (! setParams(params))
@@ -230,25 +230,22 @@ void selectPayments::sClearAll()
         break;
     case VendorGroup::Selected:
       q.prepare( "SELECT clearPayment(apselect_id) AS result "
-                 "FROM apopen, apselect "
-                 "WHERE ( (apselect_apopen_id=apopen_id)"
-                 " AND (apopen_vend_id=:vend_id) );" );
+                 "FROM apopen JOIN apselect ON (apselect_apopen_id=apopen_id) "
+                 "WHERE (apopen_vend_id=:vend_id);" );
       break;
     case VendorGroup::SelectedType:
       q.prepare( "SELECT clearPayment(apselect_id) AS result "
-                 "FROM vend, apopen, apselect "
-                 "WHERE ( (apselect_apopen_id=apopen_id)"
-                 " AND (apopen_vend_id=vend_id)"
-                 " AND (vend_vendtype_id=:vendtype_id) );" );
+                 "FROM vendinfo JOIN apopen ON (apopen_vend_id=vend_id) "
+                 "              JOIN apselect ON (apselect_apopen_id=apopen_id) "
+                 "WHERE (vend_vendtype_id=:vendtype_id) ;" );
       break;
     case VendorGroup::TypePattern:
       q.prepare( "SELECT clearPayment(apselect_id) AS result "
-                 "FROM vend, apopen, apselect "
-                 "WHERE ( (apselect_apopen_id=apopen_id)"
-                 " AND (apopen_vend_id=vend_id)"
-                 " AND (vend_vendtype_id IN (SELECT vendtype_id"
-                 "                           FROM vendtype"
-                 "                           WHERE (vendtype_code ~ :vendtype_pattern))));" );
+                 "FROM vendinfo JOIN apopen ON (apopen_vend_id=vend_id) "
+                 "              JOIN apselect ON (apselect_apopen_id=apopen_id) "
+                 "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
+                 "                            FROM vendtype"
+                 "                            WHERE (vendtype_code ~ :vendtype_pattern)));" );
         break;
     }
 
