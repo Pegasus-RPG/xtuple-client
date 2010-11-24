@@ -185,7 +185,7 @@ bool user::save()
   QString username = _username->text().trimmed().toLower();
   if(omfgThis->useCloud())
     username = username + "_" + omfgThis->company();
-  if (username.length() == 0)
+  if (!username.contains(QRegExp("[A-Za-z]")))
   {
     QMessageBox::warning( this, tr("Cannot save User"),
                           tr( "You must enter a valid Username before you can save this User." ));
