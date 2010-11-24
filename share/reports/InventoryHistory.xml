@@ -3,6 +3,12 @@
  <title>Inventory History</title>
  <name>InventoryHistory</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -160,7 +166,6 @@
 &lt;? endif ?>
 &lt;? if exists("orderNumber") ?>
   AND  (invhist_ordnumber ~ &lt;? value("orderNumber") ?>)
-  AND  (invhist_ordtype = 'SO')
 &lt;? endif ?>
 &lt;? if exists("warehous_id") ?>
    AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
@@ -276,7 +281,6 @@ SELECT invhist_id,
 &lt;? endif ?>
 &lt;? if exists("orderNumber") ?>
   AND  (invhist_ordnumber ~ &lt;? value("orderNumber") ?>)
-  AND  (invhist_ordtype = 'SO')
 &lt;? endif ?>
 &lt;? if exists("warehous_id") ?>
    AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
