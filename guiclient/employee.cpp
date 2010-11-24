@@ -148,6 +148,7 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _perExt->append(4, tr("Year"),      "Year");
 
   _comments->setId(-1);
+  _comments->setReadOnly(true);
 
   _empid = -1;
   _mode = cView;
@@ -181,6 +182,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
       _empid   = param.toInt();
       _empcode = q.value("emp_code").toString();
       _comments->setId(_empid);
+      _comments->setReadOnly(_empid==-1);
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -575,6 +577,7 @@ bool employee::sSave(const bool pClose)
       _empid = q.value("emp_id").toInt();
       _mode  = cEdit;
       _comments->setId(_empid);
+      _comments->setReadOnly(_empid==-1);
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -690,6 +693,7 @@ void employee::sPopulate()
     sFillCharassList();
     sFillGroupsList();
     _comments->setId(_empid);
+    _comments->setReadOnly(_empid==-1);
     emit populated();
   }
   else if (q.lastError().type() != QSqlError::NoError)
