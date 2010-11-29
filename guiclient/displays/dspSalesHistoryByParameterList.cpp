@@ -251,7 +251,7 @@ bool dspSalesHistoryByParameterList::setParams(ParameterList &params)
     params.append("showPrices"); // report only?
 
   if ( (_parameter->isAll()) && (_parameter->type() == ParameterGroup::CustomerGroup) )
-    params.append("custgrp"); // report only?
+    params.append("by_custgrp"); // report only?
 
   return true;
 }
