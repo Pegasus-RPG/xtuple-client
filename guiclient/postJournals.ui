@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>postSubLedger</class>
- <widget class="QWidget" name="postSubLedger">
+ <class>postJournals</class>
+ <widget class="QWidget" name="postJournals">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Post Subledger</string>
+   <string>Post Journals</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
@@ -19,13 +19,13 @@
      <item>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
-        <widget class="QGroupBox" name="_subLedgerGroup">
+        <widget class="QGroupBox" name="_journalGroup">
          <property name="title">
-          <string>Sub Ledger Transaction Dates</string>
+          <string>Transaction Dates</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
-           <widget class="DateCluster" name="_subLedgerDates">
+           <widget class="DateCluster" name="_journalDates">
             <property name="focusPolicy">
              <enum>Qt::StrongFocus</enum>
             </property>
@@ -175,7 +175,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="_sourcesLit">
         <property name="text">
-         <string>Eligible Sub Ledger Posting Sources</string>
+         <string>Eligible Sources</string>
         </property>
        </widget>
       </item>
@@ -221,7 +221,7 @@
   <connection>
    <sender>_cancel</sender>
    <signal>clicked()</signal>
-   <receiver>postSubLedger</receiver>
+   <receiver>postJournals</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

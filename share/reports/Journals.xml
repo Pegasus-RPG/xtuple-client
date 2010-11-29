@@ -1,8 +1,14 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Subledger</title>
- <name>Subledger</name>
+ <title>Journals</title>
+ <name>Journals</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <landscape/>
  <topmargin>50</topmargin>
@@ -346,7 +352,7 @@ ORDER BY sltrans_created,
    </font>
    <right/>
    <vcenter/>
-   <string>Subledger</string>
+   <string>Journals</string>
   </label>
   <field>
    <rect>

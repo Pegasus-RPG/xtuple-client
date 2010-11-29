@@ -5,24 +5,24 @@
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
- * to be bound by its postSubLedger.
+ * to be bound by its postJournals.
  */
 
-#ifndef POSTSUBLEDGER_H
-#define POSTSUBLEDGER_H
+#ifndef POSTJOURNALS_H
+#define POSTJOURNALS_H
 
 #include "guiclient.h"
 #include "xwidget.h"
 
-#include "ui_postSubLedger.h"
+#include "ui_postJournals.h"
 
-class postSubLedger : public XWidget, public Ui::postSubLedger
+class postJournals : public XWidget, public Ui::postJournals
 {
     Q_OBJECT
 
 public:
-    postSubLedger(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~postSubLedger();
+    postJournals(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    ~postJournals();
 
 public slots:
     void sPost();
@@ -37,4 +37,4 @@ protected slots:
     void languageChange();
 };
 
-#endif // POSTSUBLEDGER_H
+#endif // POSTJOURNALS_H

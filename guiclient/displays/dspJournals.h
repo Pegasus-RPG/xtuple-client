@@ -8,18 +8,18 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPSUBLEDGER_H
-#define DSPSUBLEDGER_H
+#ifndef DSPJOURNALS_H
+#define DSPJOURNALS_H
 
 #include "guiclient.h"
 #include "display.h"
 
-class dspSubLedger : public display
+class dspJournals : public display
 {
     Q_OBJECT
 
 public:
-    dspSubLedger(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspJournals(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &params);
 
@@ -35,4 +35,4 @@ private:
 
 };
 
-#endif // DSPSUBLEDGER_H
+#endif // DSPJOURNALS_H

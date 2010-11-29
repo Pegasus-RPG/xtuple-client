@@ -5,11 +5,11 @@
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
- * to be bound by its postSubLedger.
+ * to be bound by its postJournals.
  */
 
-#include "postSubLedger.h"
-#include "dspSubLedger.h"
+#include "postJournals.h"
+#include "dspJournals.h"
 
 #include <metasql.h>
 #include <openreports.h>
@@ -19,13 +19,13 @@
 #include <QMessageBox>
 #include <QSqlError>
 
-postSubLedger::postSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
+postJournals::postJournals(QWidget* parent, const char* name, Qt::WFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  _subLedgerDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
-  _subLedgerDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
+  _journalDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _journalDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
   _distDate->setDate(omfgThis->dbDate());
 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
@@ -42,27 +42,27 @@ postSubLedger::postSubLedger(QWidget* parent, const char* name, Qt::WFlags fl)
   sFillList();
 }
 
-postSubLedger::~postSubLedger()
+postJournals::~postJournals()
 {
 }
 
-void postSubLedger::languageChange()
+void postJournals::languageChange()
 {
   retranslateUi(this);
 }
 
-void postSubLedger::sPost()
+void postJournals::sPost()
 {
   QStringList sources;
   QList<int> journalnumbers;
   XSqlQuery qry;
-  MetaSQLQuery mql = mqlLoad("postSubLedger", "post");
+  MetaSQLQuery mql = mqlLoad("postJournals", "post");
   QList<XTreeWidgetItem*> selected = _sources->selectedItems();
   for (int i = 0; i < selected.size(); i++)
     sources << selected.at(i)->rawValue("sltrans_source").toString();
 
   ParameterList params;
-  _subLedgerDates->appendValue(params);
+  _journalDates->appendValue(params);
   params.append("distDate", _distDate->date());
   params.append("source_list", sources);
 
@@ -83,11 +83,11 @@ void postSubLedger::sPost()
   sFillList();
 }
 
-void postSubLedger::sFillList()
+void postJournals::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad("postSubLedger", "detail");
+  MetaSQLQuery mql = mqlLoad("postJournals", "detail");
   ParameterList params;
-  _subLedgerDates->appendValue(params);
+  _journalDates->appendValue(params);
   params.append("AP", tr("Accounts Payable"));
   params.append("AR", tr("Accounts Receivable"));
   params.append("GL", tr("General Ledger"));
@@ -112,7 +112,7 @@ void postSubLedger::sFillList()
   }
 }
 
-void postSubLedger::sHandlePreview()
+void postJournals::sHandlePreview()
 {
   _sources->clear();
   _sources->setColumnCount(2);
@@ -129,15 +129,15 @@ void postSubLedger::sHandlePreview()
     _selectAll->setEnabled(true);
   }
 
-  _sources->addColumn(tr("Journals"), _qtyColumn, Qt::AlignRight, true, "journals");
+  _sources->addColumn(tr("Entries"), _qtyColumn, Qt::AlignRight, true, "journals");
 }
 
-void postSubLedger::sHandleSelection()
+void postJournals::sHandleSelection()
 {
   _post->setEnabled(_sources->id() == 0);
 }
 
-void postSubLedger::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
+void postJournals::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   QAction *menuItem;
   if (_sources->id() == 0)
@@ -146,26 +146,26 @@ void postSubLedger::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
     pMenu->addSeparator();
   }
 
-  menuItem = pMenu->addAction(tr("View Transactions..."), this, SLOT(sViewTransactions()));
-  menuItem->setEnabled(_privileges->check("ViewSubLedger"));
+  menuItem = pMenu->addAction(tr("View Journal..."), this, SLOT(sViewTransactions()));
+  menuItem->setEnabled(_privileges->check("ViewJournals"));
 }
 
-void postSubLedger::sViewTransactions()
+void postJournals::sViewTransactions()
 {
   ParameterList params;
   if (_sources->id())
     params.append("accnt_id", _sources->id());
-  _subLedgerDates->appendValue(params);
+  _journalDates->appendValue(params);
   params.append("source", _sources->rawValue("sltrans_source"));
   params.append("posted", false);
   params.append("run");
 
-  dspSubLedger *newdlg = new dspSubLedger();
+  dspJournals *newdlg = new dspJournals();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void postSubLedger::sPrint(QList<int> journalnumbers)
+void postJournals::sPrint(QList<int> journalnumbers)
 {
   if (!journalnumbers.size())
     return;

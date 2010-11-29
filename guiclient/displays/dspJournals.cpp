@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspSubLedger.h"
+#include "dspJournals.h"
 
 #include <QMessageBox>
 #include <QSqlError>
@@ -29,13 +29,13 @@
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
-dspSubLedger::dspSubLedger(QWidget* parent, const char*, Qt::WFlags fl)
-  : display(parent, "dspSubLedger", fl)
+dspJournals::dspJournals(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspJournals", fl)
 {
-  setWindowTitle(tr("Subledger Transactions"));
-  setListLabel(tr("Transactions"));
-  setReportName("Subledger");
-  setMetaSQLOptions("subledger", "detail");
+  setWindowTitle(tr("Journals"));
+  setListLabel(tr("Journal Entries"));
+  setReportName("Journals");
+  setMetaSQLOptions("journals", "detail");
   setParameterWidgetVisible(true);
 
   QString qryType = QString( "SELECT  1, '%1' UNION "
@@ -106,7 +106,7 @@ dspSubLedger::dspSubLedger(QWidget* parent, const char*, Qt::WFlags fl)
   _sources << "None" << "A/P" << "A/R" << "G/L" << "I/M" << "P/D" << "P/O" << "S/O" << "S/R" << "W/O";
 }
 
-enum SetResponse dspSubLedger::set(const ParameterList &pParams)
+enum SetResponse dspJournals::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
 
@@ -165,7 +165,7 @@ enum SetResponse dspSubLedger::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspSubLedger::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem, int)
+void dspJournals::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem, int)
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)pItem;
   if(0 == item)
@@ -195,7 +195,7 @@ void dspSubLedger::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem, int)
     menuThis->addAction(tr("View Inventory History..."), this, SLOT(sViewDocument()));
 }
 
-bool dspSubLedger::setParams(ParameterList &params)
+bool dspJournals::setParams(ParameterList &params)
 {
   parameterWidget()->appendValue(params);
   bool valid;
@@ -241,7 +241,7 @@ bool dspSubLedger::setParams(ParameterList &params)
   return true;
 }
 
-void dspSubLedger::sViewTrans()
+void dspJournals::sViewTrans()
 {
   ParameterList params;
 
@@ -252,7 +252,7 @@ void dspSubLedger::sViewTrans()
   newdlg.exec();
 }
 
-void dspSubLedger::sViewSeries()
+void dspJournals::sViewSeries()
 {
   q.prepare("SELECT sltrans_date, sltrans_journalnumber"
             "  FROM sltrans"
@@ -267,14 +267,14 @@ void dspSubLedger::sViewSeries()
   params.append("startDate", q.value("SLtrans_date").toDate());
   params.append("endDate", q.value("SLtrans_date").toDate());
   params.append("journalnumber", q.value("SLtrans_journalnumber").toString());
-  params.append("subledger", true);
+  params.append("journal", true);
 
   dspGLSeries *newdlg = new dspGLSeries();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspSubLedger::sViewDocument()
+void dspJournals::sViewDocument()
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)list()->currentItem();
   if(0 == item)
