@@ -3,6 +3,12 @@
  <title>Bookings By Ship-to</title>
  <name>BookingsByShipTo</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -41,7 +47,7 @@
        item_number, item_descrip1, item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
 formatPrice(currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio) AS unitprice,
-formatExtPrice(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio)
+formatExtPrice(round((coitem_qtyord * coitem_qty_invuomratio)
                    * (currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio),2)) AS f_extprice
   FROM coitem, cohead, cust, itemsite, item, prodcat
  WHERE ((coitem_cohead_id=cohead_id)

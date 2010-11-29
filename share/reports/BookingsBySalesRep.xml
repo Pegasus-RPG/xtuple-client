@@ -3,6 +3,12 @@
  <title>Bookings by Sales Rep.</title>
  <name>BookingsBySalesRep</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -32,35 +38,10 @@
 WHERE (salesrep_id=&lt;? value("salesrep_id") ?>);
     </sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true">
   <name>detail</name>
-  <sql>SELECT cohead_number AS sonumber,
-       formatDate(cohead_orderdate) AS orddate,
-       cust_number, cust_name,
-       item_number, item_descrip1, item_descrip2,
-       formatQty(coitem_qtyord) AS ordered,
-formatPrice(currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio) AS unitprice,
-formatExtPrice(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio)
-                   * (currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio),2)) AS f_extprice
-  FROM coitem, cohead, cust, itemsite, item, prodcat
- WHERE ((coitem_cohead_id=cohead_id)
-   AND (cohead_cust_id=cust_id)
-   AND (coitem_itemsite_id=itemsite_id)
-   AND (coitem_status &lt;> 'X')
-   AND (itemsite_item_id=item_id)
-   AND (item_prodcat_id=prodcat_id)
-   AND (cohead_salesrep_id=&lt;? value("salesrep_id") ?>)
-   AND (cohead_orderdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? if exists("warehous_id") ?>
-   AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
-&lt;? endif ?>
-&lt;? if exists("prodcat_id") ?>
-   AND (prodcat_id=&lt;? value("prodcat_id") ?>)
-&lt;? elseif exists("prodcat_pattern") ?>
-   AND (prodcat_code ~ &lt;? value("prodcat_pattern") ?>)
-&lt;? endif ?>
-)
-ORDER BY cohead_orderdate;</sql>
+  <mqlgroup>salesOrderItems</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>237</height>
@@ -588,8 +569,9 @@ ORDER BY cohead_orderdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_extprice</column>
+     <column>baseextprice</column>
     </data>
+    <format builtin="true">money</format>
    </field>
    <line>
     <xstart>5</xstart>
@@ -652,7 +634,7 @@ ORDER BY cohead_orderdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>sonumber</column>
+     <column>cohead_number</column>
     </data>
    </field>
    <field>
@@ -690,7 +672,7 @@ ORDER BY cohead_orderdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>orddate</column>
+     <column>cohead_orderdate</column>
     </data>
    </field>
    <field>
@@ -728,8 +710,9 @@ ORDER BY cohead_orderdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>ordered</column>
+     <column>coitem_qtyord</column>
     </data>
+    <format builtin="true">qty</format>
    </field>
    <field>
     <rect>
@@ -747,8 +730,9 @@ ORDER BY cohead_orderdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>unitprice</column>
+     <column>baseunitprice</column>
     </data>
+    <format builtin="true">salesprice</format>
    </field>
    <field>
     <rect>
