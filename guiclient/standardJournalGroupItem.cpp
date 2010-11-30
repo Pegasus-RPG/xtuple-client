@@ -96,6 +96,30 @@ enum SetResponse standardJournalGroupItem::set(const ParameterList &pParams)
 
 void standardJournalGroupItem::sSave()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter Effective Date"),
+                           tr("You must enter an effective date for this Standard Journal Group Item.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter Expiration Date"),
+                           tr("You must enter an expiration date for this Standard Journal Group Item.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (_dates->endDate() < _dates->startDate())
+  {
+    QMessageBox::critical( this, tr("Invalid Expiration Date"),
+                           tr("The expiration date cannot be earlier than the effective date.") );
+    _dates->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('stdjrnlgrpitem_stdjrnlgrpitem_id_seq') AS stdjrnlgrpitem_id;");
