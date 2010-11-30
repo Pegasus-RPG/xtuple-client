@@ -27,7 +27,7 @@ dspSalesOrdersByItem::dspSalesOrdersByItem(QWidget* parent, const char*, Qt::WFl
   setupUi(optionsWidget());
   setWindowTitle(tr("Sales Order Lookup by Item"));
   setListLabel(tr("Sales Orders"));
-  setMetaSQLOptions("salesOrders", "detail");
+  setMetaSQLOptions("salesOrderItems", "detail");
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartCaption(tr("Starting Order Date:"));
