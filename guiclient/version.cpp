@@ -13,8 +13,8 @@
 QString _Name = "xTuple ERP: %1 Edition";
 
 #ifndef __USEALTVERSION__
-QString _Version   = "3.6.0RC";
-QString _dbVersion = "3.6.0RC";
+QString _Version   = "3.7.0Dev";
+QString _dbVersion = "3.7.0Dev";
 
 #else
 #include "../altVersion.cpp"
