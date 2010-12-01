@@ -164,10 +164,11 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   
   _whereused->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true,  "bomitem_seqnumber" );
   _whereused->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
-  _whereused->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
+  _whereused->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "descrip"   );
   _whereused->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true,  "uom_name"   );
+  _whereused->addColumn(tr("Fxd. Qty."),   _qtyColumn,   Qt::AlignRight, true,   "qtyfxd");
   _whereused->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
-  _whereused->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "scrap"  );
+  _whereused->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "bomitem_scrap"  );
   _whereused->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter, true,  "bomitem_effective" );
   _whereused->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter, true,  "bomitem_expires" );
   
@@ -283,38 +284,19 @@ void itemAvailabilityWorkbench::sFillListWhereUsed()
 {
   if ((_item->isValid()) && (_effective->isValid()))
   {
-    QString sql( "SELECT bomitem_parent_item_id, item_id, bomitem_seqnumber,"
-                 "       item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-                 "       uom_name, itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
-                 "       (bomitem_scrap * 100) AS scrap,"
-                 "       bomitem_effective, bomitem_expires,"
-                 "       'qtyper' AS qtyper_xtnumericrole,"
-                 "       'percent' AS scrap_xtnumericrole,"
-                 "       CASE WHEN COALESCE(bomitem_effective, startOfTime()) <= startOfTime() THEN :always END AS bomitem_effective_qtdisplayrole,"
-                 "       CASE WHEN COALESCE(bomitem_expires, endOfTime()) >= endOfTime() THEN :never END AS bomitem_expires_qtdisplayrole "
-                 "FROM bomitem, item, uom "
-                 "WHERE ( (bomitem_parent_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
-                 " AND (bomitem_item_id=:item_id)" );
-
-    if (_effective->isNull())
-      sql += "AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))";
-    else
-      sql += " AND (:effective BETWEEN bomitem_effective AND (bomitem_expires-1))";
-
-    sql += ") ORDER BY item_number";
-
-    q.prepare(sql);
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":effective", _effective->date());
-    q.bindValue(":always", tr("Always"));
-    q.bindValue(":never", tr("Never"));
-    q.exec();
-
-    //if (pLocal)
-    //  _whereused->populate(q, TRUE, pItemid);
-    //else
-      _whereused->populate(q, TRUE);
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("effective", _effective->date());
+    params.append("always", tr("Always"));
+    params.append("never", tr("Never"));
+    MetaSQLQuery mql = mqlLoad("whereUsed", "detail");
+    q = mql.toQuery(params);
+    _whereused->populate(q, true);
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   else
     _whereused->clear();
