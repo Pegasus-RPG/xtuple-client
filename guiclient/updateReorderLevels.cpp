@@ -162,7 +162,10 @@ void updateReorderLevels::sSubmit()
     params.append("action_name", "UpdateReorderLevel");
     params.append("period_id_list", _periods->periodString());
     _warehouse->appendValue(params);
-    _parameter->appendValue(params);
+    if (_item->id() != -1)
+      params.append("item_id", _item->id());
+    else
+      _parameter->appendValue(params);
 
     if (_leadTime->isChecked())
       params.append("leadtimepad", _leadTimePad->value());
