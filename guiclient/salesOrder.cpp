@@ -1038,7 +1038,7 @@ bool salesOrder::save(bool partial)
                "    :billto_cntct_email,"
                "    :quhead_status) ");
   q.bindValue(":id", _soheadid );
-  q.bindValue(":number", _orderNumber->text().toInt());
+  q.bindValue(":number", _orderNumber->text());
   q.bindValue(":orderdate", _orderDate->date());
 
   if (_packDate->isValid())
@@ -1362,7 +1362,7 @@ void salesOrder::populateOrderNumber()
       q.exec("SELECT fetchSoNumber() AS sonumber;");
       if (q.first())
       {
-        _orderNumber->setText(q.value("sonumber"));
+        _orderNumber->setText(q.value("sonumber").toString());
         _orderNumberGen = q.value("sonumber").toInt();
 
         if (_metrics->value("CONumberGeneration") == "A")
@@ -1390,7 +1390,7 @@ void salesOrder::populateOrderNumber()
       q.exec();
       if (q.first())
       {
-        _orderNumber->setText(q.value("qunumber"));
+        _orderNumber->setText(q.value("qunumber").toString());
         _orderNumberGen = q.value("qunumber").toInt();
 
         if ( (_metrics->value("QUNumberGeneration") == "A") ||
@@ -1454,7 +1454,7 @@ void salesOrder::sHandleOrderNumber()
     {
       query.prepare("SELECT deleteSO(:sohead_id, :sohead_number) AS result;");
       query.bindValue(":sohead_id", _soheadid);
-      query.bindValue(":sohead_number", QString("%1").arg(_orderNumberGen));
+      query.bindValue(":sohead_number", _orderNumber->text());
       query.exec();
       if (query.first())
       {
@@ -1492,7 +1492,7 @@ void salesOrder::sHandleOrderNumber()
         QString orderNumber = _orderNumber->text();
         clear();
         query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
-        query.bindValue(":orderNumber", _orderNumberGen);
+        query.bindValue(":orderNumber", _orderNumber->text());
         query.exec();
         _orderNumber->setText(orderNumber);
         _userEnteredOrderNumber = FALSE;
@@ -1503,17 +1503,27 @@ void salesOrder::sHandleOrderNumber()
     {
       query.prepare("SELECT deleteQuote(:quhead_id, :quhead_number) AS result;");
       query.bindValue(":quhead_id", _soheadid);
-      query.bindValue(":quhead_number", _orderNumber->text().toInt());
+      query.bindValue(":quhead_number", _orderNumber->text());
       query.exec();
-      if (query.first() && !query.value("result").toBool())
-        systemError(this, tr("Could not delete Quote."),    __FILE__, __LINE__);
+      if (query.first())
+      {
+        int result = query.value("result").toInt();
+        if (result < 0)
+        {
+          systemError(this, storedProcErrorLookup("deleteQuote", result), __FILE__, __LINE__);
+          return;
+        }
+      }
       else if (query.lastError().type() != QSqlError::NoError)
-        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+      {
+          systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
 
       query.prepare( "SELECT quhead_id "
                      "FROM quhead "
                      "WHERE (quhead_number=:quhead_number);" );
-      query.bindValue(":quhead_number", _orderNumber->text().toInt());
+      query.bindValue(":quhead_number", _orderNumber->text());
       query.exec();
       if (query.first())
       {
@@ -1535,7 +1545,7 @@ void salesOrder::sHandleOrderNumber()
             query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
           else
             query.prepare( "SELECT releaseQUNumber(:orderNumber);" );
-          query.bindValue(":orderNumber", _orderNumber->text().toInt());
+          query.bindValue(":orderNumber", _orderNumber->text());
           query.exec();
           _orderNumber->setText(orderNumber);
           _userEnteredOrderNumber = FALSE;
@@ -1827,7 +1837,7 @@ void salesOrder::sNew()
   params.append("sohead_id", _soheadid);
   params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
-  params.append("orderNumber", _orderNumber->text().toInt());
+  params.append("orderNumber", _orderNumber->text());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
   params.append("taxzone_id", _taxZone->id());
@@ -1874,7 +1884,7 @@ void salesOrder::sEdit()
   params.append("soitem_id", _soitem->id());
   params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
-  params.append("orderNumber", _orderNumber->text().toInt());
+  params.append("orderNumber", _orderNumber->text());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
 
@@ -2173,7 +2183,7 @@ void salesOrder::sDelete()
       {
         q.prepare("SELECT deleteQuote(:quhead_id, :quhead_number) AS result;");
         q.bindValue(":quhead_id", _soheadid);
-        q.bindValue(":quhead_number", _orderNumber->text().toInt());
+        q.bindValue(":quhead_number", _orderNumber->text());
         q.exec();
         if (q.first() && !q.value("result").toBool())
           systemError(this, tr("Could not delete Quote."),  __FILE__, __LINE__);
@@ -2437,7 +2447,7 @@ void salesOrder::populate()
     qu.exec();
     if (qu.first())
     {
-      _orderNumber->setText(qu.value("quhead_number"));
+      _orderNumber->setText(qu.value("quhead_number").toString());
       _orderNumber->setEnabled(FALSE);
 
       _orderDateCache = qu.value("quhead_quotedate").toDate();
@@ -2825,7 +2835,7 @@ bool salesOrder::deleteForCancel()
         (_metrics->value("CONumberGeneration") == "O"))
     {
       query.prepare( "SELECT releaseSONumber(:orderNumber);" );
-      query.bindValue(":orderNumber", _orderNumber->text().toInt());
+      query.bindValue(":orderNumber", _orderNumber->text());
       query.exec();
       if (query.lastError().type() != QSqlError::NoError)
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
@@ -2836,10 +2846,15 @@ bool salesOrder::deleteForCancel()
   {
     query.prepare("SELECT deleteQuote(:head_id, :quhead_number) AS result;");
     query.bindValue(":head_id", _soheadid);
-    query.bindValue(":quhead_number", _orderNumber->text().toInt());
+    query.bindValue(":quhead_number", _orderNumber->text());
     query.exec();
-    if (query.first() && !query.value("result").toBool())
-        systemError(this, tr("Could not delete Quote."),    __FILE__, __LINE__);
+    if (query.first())
+    {
+      int result = query.value("result").toInt();
+      if (result < 0)
+        systemError(this, storedProcErrorLookup("deleteQuote", result),
+                    __FILE__, __LINE__);
+    }
     else if (query.lastError().type() != QSqlError::NoError)
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 
@@ -2851,7 +2866,7 @@ bool salesOrder::deleteForCancel()
         query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
       else
         query.prepare( "SELECT releaseQUNumber(:orderNumber);" );
-      query.bindValue(":orderNumber", _orderNumber->text().toInt());
+      query.bindValue(":orderNumber", _orderNumber->text());
       query.exec();
       if (query.lastError().type() != QSqlError::NoError)
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);

@@ -966,7 +966,7 @@ void opportunity::sFillSalesList()
 			"       0 AS sale_extprice_xttotalrole "
             "FROM ( "
             "SELECT quhead_id AS id, 0 AS alt_id, :quote AS sale_type, "
-			"       quhead_number::TEXT AS sale_number, quhead_quotedate AS sale_date, "
+                        "       quhead_number AS sale_number, quhead_quotedate AS sale_date, "
             "       calcQuoteAmt(quhead_id) AS sale_extprice "
             "FROM quhead "
             "WHERE (quhead_ophead_id=:ophead_id) "

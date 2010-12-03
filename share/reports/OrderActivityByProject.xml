@@ -31,10 +31,10 @@ FROM (
 ----- QUOTES -----
 SELECT quhead_id AS id, 
        15 AS type,
-       quhead_number::text AS subtype,
+       quhead_number AS subtype,
        1 AS section,
        &lt;? value("quotes") ?> AS section_qtdisplayrole,
-       quhead_number::text AS name,
+       quhead_number AS name,
        CASE WHEN (quhead_status = 'C') THEN 
          &lt;? value("converted") ?>
             WHEN (quhead_status = 'X') THEN
@@ -59,7 +59,7 @@ UNION ALL
 
 SELECT quitem_id AS id, 
        17 AS type,
-       quhead_number::text AS subtype,
+       quhead_number AS subtype,
        1 AS section,
        &lt;? value("quotes") ?> AS section_qtdisplayrole,
        quitem_linenumber::text AS name, 
@@ -89,7 +89,7 @@ UNION ALL
 
 SELECT quhead_id AS id, 
        18 AS type,
-       quhead_number::text AS subtype,
+       quhead_number AS subtype,
        1 AS section,
        &lt;? value("quotes") ?> AS section_qtdisplayrole,
        &lt;? value("total") ?> AS name,

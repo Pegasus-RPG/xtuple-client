@@ -29,8 +29,6 @@ class QuoteSearch : public VirtualSearch
   public:
     QuoteSearch(QWidget *pParent, Qt::WindowFlags flags = 0);
 
-  public slots:
-    virtual void sFillList();
 };
 
 class QuoteLineEdit : public VirtualClusterLineEdit
