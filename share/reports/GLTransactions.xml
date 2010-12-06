@@ -3,6 +3,12 @@
  <title>G/L Transactions</title>
  <name>GLTransactions</name>
  <description>detail query modified to accomodate "Company", "Profit Center", "Account", "Sub", "Type" &amp; "Sub-Type" filters.</description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <landscape/>
  <topmargin>50</topmargin>
@@ -63,6 +69,7 @@ SELECT -1 AS gltrans_id,
        &lt;? value("beginningBalance") ?> AS gltrans_amount,
        &lt;? value("beginningBalance") ?> AS running,
        NULL AS f_posted,
+       NULL AS f_deleted,
        NULL AS f_username,
        -1 AS gltrans_sequence
  FROM accnt
@@ -631,7 +638,7 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
   <label>
    <rect>
     <x>960</x>
-    <y>25</y>
+    <y>10</y>
     <width>40</width>
     <height>15</height>
    </rect>
@@ -726,6 +733,22 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
    <left/>
    <vcenter/>
    <string>Reference</string>
+  </label>
+  <label>
+   <rect>
+    <x>960</x>
+    <y>25</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Deleted</string>
   </label>
  </pghead>
  <section>
