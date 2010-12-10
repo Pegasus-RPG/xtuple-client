@@ -410,7 +410,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _ratioVal       = new XDoubleValidator(0,            9999999999.0, decimalPlaces("uomratio"), this);
   _weightVal      = new XDoubleValidator(0,              99999999.0, decimalPlaces("weight"), this);
   _runTimeVal     = new XDoubleValidator(0,              99999999.0, 2, this);
-  _orderVal       = new QIntValidator(0, 999999, this);
+  _orderVal       = new QIntValidator(0, 9999999, this);
   _dayVal         = new QIntValidator(0, 9999, this);
 
 #ifdef Q_WS_MACX
