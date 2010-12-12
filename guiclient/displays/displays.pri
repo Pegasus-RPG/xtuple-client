@@ -133,6 +133,8 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspTimePhasedBookingsByCustomer.ui \
            displays/dspTimePhasedBookingsByItem.ui \
            displays/dspTimePhasedBookingsByProductCategory.ui \
+           displays/dspTimePhasedOpenAPItems.ui \
+           displays/dspTimePhasedOpenARItems.ui \
            displays/dspTimePhasedSalesByCustomer.ui \
            displays/dspTimePhasedSalesByCustomerByItem.ui \
            displays/dspTimePhasedSalesByCustomerGroup.ui \
@@ -310,6 +312,8 @@ HEADERS += displays/dspAllocations.h \
            displays/dspTimePhasedBookingsByCustomer.h \
            displays/dspTimePhasedBookingsByItem.h \
            displays/dspTimePhasedBookingsByProductCategory.h \
+           displays/dspTimePhasedOpenAPItems.h \
+           displays/dspTimePhasedOpenARItems.h \
            displays/dspTimePhasedSalesByCustomer.h \
            displays/dspTimePhasedSalesByCustomerByItem.h \
            displays/dspTimePhasedSalesByCustomerGroup.h \
@@ -423,6 +427,8 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspMaterialUsageVarianceByItem.cpp \
            displays/dspMaterialUsageVarianceByWarehouse.cpp \
            displays/dspMaterialUsageVarianceByWorkOrder.cpp \
+           displays/dspTimePhasedOpenAPItems.cpp \
+           displays/dspTimePhasedOpenARItems.cpp \
            displays/dspOrderActivityByProject.cpp \
            displays/dspOrders.cpp \
            displays/dspPartiallyShippedOrders.cpp \

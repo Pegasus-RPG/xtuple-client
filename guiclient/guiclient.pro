@@ -210,8 +210,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspInvoiceInformation.ui                      \
           dspMRPDetail.ui                               \
           dspTaxHistory.ui                              \
-          dspTimePhasedOpenAPItems.ui           \
-          dspTimePhasedOpenARItems.ui           \
           duplicateAccountNumbers.ui            \
           editICMWatermark.ui           \
           editOwners.ui                 \
@@ -752,8 +750,6 @@ HEADERS = ../common/format.h                    \
           dspInvoiceInformation.h                       \
           dspMRPDetail.h                                \
           dspTaxHistory.h                               \
-          dspTimePhasedOpenAPItems.h            \
-          dspTimePhasedOpenARItems.h            \
           duplicateAccountNumbers.h             \
           editICMWatermark.h                    \
           editOwners.h                          \
@@ -1337,8 +1333,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspInvoiceInformation.cpp                     \
           dspMRPDetail.cpp                              \
           dspTaxHistory.cpp                             \
-          dspTimePhasedOpenAPItems.cpp                  \
-          dspTimePhasedOpenARItems.cpp                  \
           duplicateAccountNumbers.cpp           \
           editICMWatermark.cpp                  \
           editOwners.cpp                        \
