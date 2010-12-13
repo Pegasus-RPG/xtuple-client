@@ -1364,6 +1364,7 @@ void salesOrder::populateOrderNumber()
       {
         _orderNumber->setText(q.value("sonumber").toString());
         _orderNumberGen = q.value("sonumber").toInt();
+        _userEnteredOrderNumber = FALSE;
 
         if (_metrics->value("CONumberGeneration") == "A")
           _orderNumber->setEnabled(FALSE);
@@ -1392,6 +1393,7 @@ void salesOrder::populateOrderNumber()
       {
         _orderNumber->setText(q.value("qunumber").toString());
         _orderNumberGen = q.value("qunumber").toInt();
+        _userEnteredOrderNumber = FALSE;
 
         if ( (_metrics->value("QUNumberGeneration") == "A") ||
              (_metrics->value("QUNumberGeneration") == "S") )
