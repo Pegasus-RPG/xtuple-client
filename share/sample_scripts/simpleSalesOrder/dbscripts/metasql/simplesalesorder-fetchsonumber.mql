@@ -1,5 +1,0 @@
--- Group: simplesalesorder
--- Name: fetchsonumber
--- Notes:
-
-SELECT fetchsonumber() AS number;

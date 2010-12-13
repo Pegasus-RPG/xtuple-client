@@ -1,5 +1,0 @@
--- Group: simplesalesorder
--- Name: releasesonumber
--- Notes:
-
-SELECT releasesonumber(<? value("number") ?>);
