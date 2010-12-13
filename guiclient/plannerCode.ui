@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>148</height>
+    <height>155</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,6 +118,20 @@ to be bound by its terms.</comment>
          <property name="spacing">
           <number>0</number>
          </property>
+         <item>
+          <widget class="QCheckBox" name="_mrpexcpResched">
+           <property name="text">
+            <string>Reschedule Unreleased Supply Orders per MRP Exceptions</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="_mrpexcpDelete">
+           <property name="text">
+            <string>Delete Unreleased Supply Orders per MRP Exceptions</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QCheckBox" name="_autoExplode">
            <property name="text">
