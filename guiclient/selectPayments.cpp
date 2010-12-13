@@ -28,6 +28,8 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _ignoreUpdates = true;
+
   connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
   connect(_clearAll, SIGNAL(clicked()), this, SLOT(sClearAll()));
   connect(_selectDate, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillList()));
@@ -43,8 +45,6 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_apopen, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-
-  _ignoreUpdates = false;
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
@@ -66,13 +66,15 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   _apopen->addColumn(tr("Currency"),       _currencyColumn, Qt::AlignLeft,       true, "curr_concat" );
   _apopen->addColumn(tr("Status"),         _currencyColumn, Qt::AlignCenter,     true, "apopen_status" );
 
-  if (omfgThis->singleCurrency())
-  {
-    _apopen->hideColumn("curr_concat");
-    _apopen->headerItem()->setText(11, tr("Running"));
-  }
+//  if (omfgThis->singleCurrency())
+//  {
+//    _apopen->hideColumn("curr_concat");
+//    _apopen->headerItem()->setText(11, tr("Running"));
+//  }
 
   connect(omfgThis, SIGNAL(paymentsUpdated(int, int, bool)), this, SLOT(sFillList()));
+
+  _ignoreUpdates = false;
 
   sFillList();
 }
@@ -427,10 +429,10 @@ void selectPayments::sFillList()
   if(_ignoreUpdates)
     return;
 
-  if (_vendorgroup->isSelectedVend())
-    _apopen->showColumn(9);
-  else
-    _apopen->hideColumn(9);
+//  if (_vendorgroup->isSelectedVend())
+//    _apopen->showColumn(9);
+//  else
+//    _apopen->hideColumn(9);
 
   if ( (_selectDate->currentIndex() == 1 && !_onOrBeforeDate->isValid())  ||
         (_selectDate->currentIndex() == 2 && (!_startDate->isValid() || !_endDate->isValid())) )
