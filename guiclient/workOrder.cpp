@@ -244,8 +244,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                       "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                       "       item_active, item_config, item_type, uom_name "
-                      "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
-                      "WHERE (item_type IN ('M', 'B')) ");
+                      "FROM item JOIN uom ON (item_inv_uom_id=uom_id) ");
       XSqlQuery wo;
       wo.prepare( "SELECT wo_itemsite_id, wo_priority,"
                   "       formatWoNumber(wo_id) AS f_wonumber,"
