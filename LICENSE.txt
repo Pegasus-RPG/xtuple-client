@@ -131,3 +131,4 @@ Attribution URL: www.xtuple.org (to be included in the "Community" menu of the a
 Graphic Image as provided in the Covered Code, if any. (online at www.xtuple.com/poweredby)
 
 Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
+
