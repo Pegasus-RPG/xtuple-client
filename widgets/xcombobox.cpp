@@ -147,7 +147,7 @@ void XComboBox::init()
   insertEditor(SoProjects,"projects","MaintainProjects");
   insertEditor(Subaccounts,"subaccounts","MaintainChartOfAccounts");
   insertEditor(TaxAuths,"taxAuthorities","MaintainTaxAuthorities");
-  insertEditor(TaxClasses,"taxclasses","MaintainTaxClasses");
+  insertEditor(TaxClasses,"taxClasses","MaintainTaxClasses");
   insertEditor(TaxCodes,"taxCodes","MaintainTaxCodes");
   insertEditor(TaxZones,"taxZones","MaintainTaxZones");
   insertEditor(TaxTypes,"taxTypes","MaintainTaxTypes");
