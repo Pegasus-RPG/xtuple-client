@@ -119,12 +119,7 @@ class menuSales : public QObject
     void sDspBriefSalesHistoryByCustomer();
     void sDspBriefSalesHistoryByCustomerType();
     void sDspBriefSalesHistoryBySalesRep();
-    void sDspBookingsByCustomer();
-    void sDspBookingsByCustomerGroup();
-    void sDspBookingsByShipTo();
-    void sDspBookingsByItem();
-    void sDspBookingsByProductCategory();
-    void sDspBookingsBySalesRep();
+    void sDspBookings();
     void sDspSummarizedSalesByCustomer();
     void sDspSummarizedSalesByCustomerType();
     void sDspSummarizedSalesByCustomerByItem();
@@ -132,9 +127,7 @@ class menuSales : public QObject
     void sDspSummarizedSalesByItem();
     void sDspSummarizedSalesBySalesRep();
     void sDspSummarizedSalesHistoryByShippingZone();
-    void sDspTimePhasedBookingsByItem();
-    void sDspTimePhasedBookingsByProductCategory();
-    void sDspTimePhasedBookingsByCustomer();
+    void sDspTimePhasedBookings();
     void sDspTimePhasedSalesByItem();
     void sDspTimePhasedSalesByProductCategory();
     void sDspTimePhasedSalesByCustomer();
@@ -186,11 +179,9 @@ class menuSales : public QObject
     QMenu *lookupSoMenu;
     QMenu *formsMenu;
     QMenu *analysisMenu;
-    QMenu *analysisBookMenu;
     QMenu *analysisSumHistMenu;
     QMenu *analysisHistMenu;
     QMenu *analysisBrfHistMenu;
-    QMenu *analysisTpBookMenu;
     QMenu *analysisTpHistMenu;
     QMenu *reportsMenu;
     QMenu *reportsCustomersMenu;

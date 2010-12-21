@@ -8,29 +8,22 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPBOOKINGSBYCUSTOMER_H
-#define DSPBOOKINGSBYCUSTOMER_H
+#ifndef DSPBOOKINGS_H
+#define DSPBOOKINGS_H
 
 #include "guiclient.h"
 #include "display.h"
 
-#include "ui_dspBookingsByCustomer.h"
-
-class dspBookingsByCustomer : public display, public Ui::dspBookingsByCustomer
+class dspBookings : public display
 {
     Q_OBJECT
 
 public:
-    dspBookingsByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-
-    virtual bool setParams(ParameterList &);
+    dspBookings(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
 
-protected slots:
-    virtual void languageChange();
-
 };
 
-#endif // DSPBOOKINGSBYCUSTOMER_H
+#endif // DSPBOOKINGS_H

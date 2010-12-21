@@ -10,12 +10,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspBacklogByItem.ui \
            displays/dspBacklogByParameterList.ui \
            displays/dspBacklogBySalesOrder.ui \
-           displays/dspBookingsByCustomer.ui \
-           displays/dspBookingsByCustomerGroup.ui \
-           displays/dspBookingsByItem.ui \
-           displays/dspBookingsByProductCategory.ui \
-           displays/dspBookingsBySalesRep.ui \
-           displays/dspBookingsByShipTo.ui \
            displays/dspBriefEarnedCommissions.ui \
            displays/dspBriefSalesHistoryByCustomer.ui \
            displays/dspBriefSalesHistoryByCustomerType.ui \
@@ -130,9 +124,7 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspSummarizedSalesBySalesRep.ui \
            displays/dspSummarizedSalesHistoryByShippingZone.ui \
            displays/dspTimePhasedAvailability.ui \
-           displays/dspTimePhasedBookingsByCustomer.ui \
-           displays/dspTimePhasedBookingsByItem.ui \
-           displays/dspTimePhasedBookingsByProductCategory.ui \
+           displays/dspTimePhasedBookings.ui \
            displays/dspTimePhasedOpenAPItems.ui \
            displays/dspTimePhasedOpenARItems.ui \
            displays/dspTimePhasedSalesByCustomer.ui \
@@ -170,12 +162,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspBacklogByItem.h \
            displays/dspBacklogByParameterList.h \
            displays/dspBacklogBySalesOrder.h \
-           displays/dspBookingsByCustomer.h \
-           displays/dspBookingsByCustomerGroup.h \
-           displays/dspBookingsByItem.h \
-           displays/dspBookingsByProductCategory.h \
-           displays/dspBookingsBySalesRep.h \
-           displays/dspBookingsByShipTo.h \
+           displays/dspBookings.h \
            displays/dspBriefEarnedCommissions.h \
            displays/dspBriefSalesHistoryByCustomer.h \
            displays/dspBriefSalesHistoryByCustomerType.h \
@@ -309,9 +296,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspSummarizedSalesBySalesRep.h \
            displays/dspSummarizedSalesHistoryByShippingZone.h \
            displays/dspTimePhasedAvailability.h \
-           displays/dspTimePhasedBookingsByCustomer.h \
-           displays/dspTimePhasedBookingsByItem.h \
-           displays/dspTimePhasedBookingsByProductCategory.h \
+           displays/dspTimePhasedBookings.h \
            displays/dspTimePhasedOpenAPItems.h \
            displays/dspTimePhasedOpenARItems.h \
            displays/dspTimePhasedSalesByCustomer.h \
@@ -354,12 +339,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspBacklogByItem.cpp \
            displays/dspBacklogByParameterList.cpp \
            displays/dspBacklogBySalesOrder.cpp \
-           displays/dspBookingsByCustomer.cpp \
-           displays/dspBookingsByCustomerGroup.cpp \
-           displays/dspBookingsByItem.cpp \
-           displays/dspBookingsByProductCategory.cpp \
-           displays/dspBookingsBySalesRep.cpp \
-           displays/dspBookingsByShipTo.cpp \
+           displays/dspBookings.cpp \
            displays/dspBriefEarnedCommissions.cpp \
            displays/dspBriefSalesHistoryByCustomer.cpp \
            displays/dspBriefSalesHistoryByCustomerType.cpp \
@@ -495,9 +475,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspSummarizedSalesBySalesRep.cpp \
            displays/dspSummarizedSalesHistoryByShippingZone.cpp \
            displays/dspTimePhasedAvailability.cpp \
-           displays/dspTimePhasedBookingsByCustomer.cpp \
-           displays/dspTimePhasedBookingsByItem.cpp \
-           displays/dspTimePhasedBookingsByProductCategory.cpp \
+           displays/dspTimePhasedBookings.cpp \
            displays/dspTimePhasedSalesByCustomer.cpp \
            displays/dspTimePhasedSalesByCustomerByItem.cpp \
            displays/dspTimePhasedSalesByCustomerGroup.cpp \

@@ -97,12 +97,7 @@
 #include "dspBriefSalesHistoryByCustomer.h"
 #include "dspBriefSalesHistoryByCustomerType.h"
 #include "dspBriefSalesHistoryBySalesRep.h"
-#include "dspBookingsByCustomer.h"
-#include "dspBookingsByCustomerGroup.h"
-#include "dspBookingsByShipTo.h"
-#include "dspBookingsByProductCategory.h"
-#include "dspBookingsByItem.h"
-#include "dspBookingsBySalesRep.h"
+#include "dspBookings.h"
 #include "dspSummarizedSalesByCustomer.h"
 #include "dspSummarizedSalesByCustomerType.h"
 #include "dspSummarizedSalesByCustomerByItem.h"
@@ -110,9 +105,7 @@
 #include "dspSummarizedSalesByItem.h"
 #include "dspSummarizedSalesBySalesRep.h"
 #include "dspSummarizedSalesHistoryByShippingZone.h"
-#include "dspTimePhasedBookingsByItem.h"
-#include "dspTimePhasedBookingsByProductCategory.h"
-#include "dspTimePhasedBookingsByCustomer.h"
+#include "dspTimePhasedBookings.h"
 #include "dspTimePhasedSalesByItem.h"
 #include "dspTimePhasedSalesByProductCategory.h"
 #include "dspTimePhasedSalesByCustomer.h"
@@ -169,11 +162,9 @@ menuSales::menuSales(GUIClient *pParent) :
   reportsInvAvailMenu = new QMenu(parent);
   reportsBacklogMenu = new QMenu(parent);
   analysisMenu = new QMenu(parent);
-  analysisBookMenu = new QMenu(parent);
   analysisSumHistMenu = new QMenu(parent);
   analysisHistMenu = new QMenu(parent);
   analysisBrfHistMenu = new QMenu(parent);
-  analysisTpBookMenu = new QMenu(parent);
   analysisTpHistMenu = new QMenu(parent);
   prospectMenu = new QMenu(parent);
   customerMenu = new QMenu(parent);
@@ -199,11 +190,9 @@ menuSales::menuSales(GUIClient *pParent) :
   reportsInvAvailMenu->setObjectName("menu.sales.reportsinvavail");
   reportsBacklogMenu->setObjectName("menu.sales.reportsbacklog");
   analysisMenu->setObjectName("menu.sales.analysis");
-  analysisBookMenu->setObjectName("menu.sales.analysisbook");
   analysisSumHistMenu->setObjectName("menu.sales.analysissumhist");
   analysisHistMenu->setObjectName("menu.sales.analysishist");
   analysisBrfHistMenu->setObjectName("menu.sales.analysisbrfhist");
-  analysisTpBookMenu->setObjectName("menu.sales.analysistpbook");
   analysisTpHistMenu->setObjectName("menu.sales.analysistphist");
   prospectMenu->setObjectName("menu.sales.prospect");
   customerMenu->setObjectName("menu.sales.customer");
@@ -336,23 +325,8 @@ menuSales::menuSales(GUIClient *pParent) :
     { "menu",	tr("&Analysis"),           (char*)analysisMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
 
     // Sales | Analysis | Bookings
-    { "menu",	tr("&Bookings"),           (char*)analysisBookMenu,	analysisMenu,	"true",	NULL, NULL, true, NULL },
-    { "sa.dspBookingsBySalesRep", tr("by &Sales Rep..."), SLOT(sDspBookingsBySalesRep()), analysisBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisBookMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspBookingsByCustomerGroup", tr("by Customer &Group..."), SLOT(sDspBookingsByCustomerGroup()), analysisBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "sa.dspBookingsByCustomer", tr("by &Customer..."), SLOT(sDspBookingsByCustomer()), analysisBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "sa.dspBookingsByShipTo", tr("by S&hip-To..."), SLOT(sDspBookingsByShipTo()), analysisBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisBookMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspBookingsByProductCategory", tr("by &Product Category..."), SLOT(sDspBookingsByProductCategory()), analysisBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "sa.dspBookingsByItem", tr("by &Item..."), SLOT(sDspBookingsByItem()), analysisBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-
-    // Sales | Analysis | Time Phased Bookings
-    { "menu",	tr("Time-Phased B&ookings"),           (char*)analysisTpBookMenu,	analysisMenu,	"true",	NULL, NULL, true, NULL },
-    { "sa.dspTimePhasedBookingsByCustomer", tr("by &Customer..."), SLOT(sDspTimePhasedBookingsByCustomer()), analysisTpBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisTpBookMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspTimePhasedBookingsByProductCategory", tr("by &Product Category..."), SLOT(sDspTimePhasedBookingsByProductCategory()), analysisTpBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    { "sa.dspTimePhasedBookingsByItem", tr("by &Item..."), SLOT(sDspTimePhasedBookingsByItem()), analysisTpBookMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
-    
+    { "sa.dspBookings", tr("&Bookings..."), SLOT(sDspBookings()), analysisMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
+    { "sa.dspTimePhasedBookings", tr("T&ime Phased Bookings..."), SLOT(sDspTimePhasedBookings()), analysisMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
     { "separator",	NULL,	NULL,	analysisMenu,	"true",		NULL, NULL, true, NULL },
     
     // Sales | Analysis | Sales History
@@ -956,34 +930,9 @@ void menuSales::sDspBriefSalesHistoryBySalesRep()
   omfgThis->handleNewWindow(new dspBriefSalesHistoryBySalesRep());
 }
 
-void menuSales::sDspBookingsByCustomer()
+void menuSales::sDspBookings()
 {
-  omfgThis->handleNewWindow(new dspBookingsByCustomer());
-}
-
-void menuSales::sDspBookingsByCustomerGroup()
-{
-  omfgThis->handleNewWindow(new dspBookingsByCustomerGroup());
-}
-
-void menuSales::sDspBookingsByShipTo()
-{
-  omfgThis->handleNewWindow(new dspBookingsByShipTo());
-}
-
-void menuSales::sDspBookingsByItem()
-{
-  omfgThis->handleNewWindow(new dspBookingsByItem());
-}
-
-void menuSales::sDspBookingsByProductCategory()
-{
-  omfgThis->handleNewWindow(new dspBookingsByProductCategory());
-}
-
-void menuSales::sDspBookingsBySalesRep()
-{
-  omfgThis->handleNewWindow(new dspBookingsBySalesRep());
+  omfgThis->handleNewWindow(new dspBookings());
 }
 
 void menuSales::sDspSummarizedSalesByCustomer()
@@ -1021,19 +970,9 @@ void menuSales::sDspSummarizedSalesHistoryByShippingZone()
   omfgThis->handleNewWindow(new dspSummarizedSalesHistoryByShippingZone());
 }
 
-void menuSales::sDspTimePhasedBookingsByItem()
+void menuSales::sDspTimePhasedBookings()
 {
-  omfgThis->handleNewWindow(new dspTimePhasedBookingsByItem());
-}
-
-void menuSales::sDspTimePhasedBookingsByProductCategory()
-{
-  omfgThis->handleNewWindow(new dspTimePhasedBookingsByProductCategory());
-}
-
-void menuSales::sDspTimePhasedBookingsByCustomer()
-{
-  omfgThis->handleNewWindow(new dspTimePhasedBookingsByCustomer());
+  omfgThis->handleNewWindow(new dspTimePhasedBookings());
 }
 
 void menuSales::sDspTimePhasedSalesByItem()

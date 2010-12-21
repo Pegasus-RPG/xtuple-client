@@ -36,6 +36,7 @@
 #include "vendorcluster.h"
 #include "itemcluster.h"
 #include "empcluster.h"
+#include "shiptocluster.h"
 
 #define DEBUG false
 
@@ -483,6 +484,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           if (custCluster != 0)
             custCluster->setId(tempFilterList[1].toInt());
           break;
+        case Shipto:
+          ShiptoCluster *shiptoCluster;
+          shiptoCluster = qobject_cast<ShiptoCluster*>(found);
+          if (shiptoCluster != 0)
+            shiptoCluster->setId(tempFilterList[1].toInt());
+          break;
         case Vendor:
           VendorCluster *vendCluster;
           vendCluster = qobject_cast<VendorCluster*>(found);
@@ -645,6 +652,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         if (custCluster != 0)
           custCluster->setId(pp->defaultValue.toInt());
         break;
+      case Shipto:
+        ShiptoCluster *shiptoCluster;
+        shiptoCluster = qobject_cast<ShiptoCluster*>(found);
+        if (shiptoCluster != 0)
+          shiptoCluster->setId(pp->defaultValue.toInt());
+        break;
       case Vendor:
         VendorCluster *vendCluster;
         vendCluster = qobject_cast<VendorCluster*>(found);
@@ -776,13 +789,16 @@ void ParameterWidget::changeFilterObject(int index)
   int siteid = -1;
 
   QWidget *widget = _filterGroup->findChild<QWidget *>("widget" + row);
+  QWidget *widget2 = _filterGroup->findChild<QWidget *>("widget2" + row);
   QWidget *button = _filterGroup->findChild<QToolButton *>("button" + row);
-  QHBoxLayout *layout = _filterGroup->findChild<QHBoxLayout *>("widgetLayout1" + row);;
-
-  QPair<QString, ParameterWidgetTypes> tempPair;
+  QHBoxLayout *layout = _filterGroup->findChild<QHBoxLayout *>("widgetLayout1" + row);
 
   if (widget && layout && button)
+  {
     delete widget;
+    if (widget2)
+      delete widget2;
+  }
   else
     return;
 
@@ -806,7 +822,6 @@ void ParameterWidget::changeFilterObject(int index)
       usernameCluster->setOrientation(Qt::Horizontal);
       usernameCluster->setLabel("");
 
-      connect(button, SIGNAL(clicked()), usernameCluster, SLOT( deleteLater() ) );
       connect(usernameCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -817,7 +832,6 @@ void ParameterWidget::changeFilterObject(int index)
       crmacctCluster->setOrientation(Qt::Horizontal);
       crmacctCluster->setLabel("");
 
-      connect(button, SIGNAL(clicked()), crmacctCluster, SLOT( deleteLater() ) );
       connect(crmacctCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -827,9 +841,37 @@ void ParameterWidget::changeFilterObject(int index)
       newWidget = custCluster;
       custCluster->setOrientation(Qt::Horizontal);
       custCluster->setLabel("");
+      custCluster->setDescriptionVisible(false);
+
+      connect(custCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case Shipto:
+    {
+      CustCluster *custCluster = new CustCluster(_filterGroup);
+      QWidget *custWidget = custCluster;
+      custCluster->setOrientation(Qt::Horizontal);
+      custCluster->setLabel("");
+      custCluster->setNameVisible(false);
+      custCluster->setDescriptionVisible(false);
 
       connect(button, SIGNAL(clicked()), custCluster, SLOT( deleteLater() ) );
-      connect(custCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+
+      ShiptoCluster *shiptoCluster = new ShiptoCluster(_filterGroup);
+      QWidget *newWidgetAlt = shiptoCluster;
+      shiptoCluster->setOrientation(Qt::Horizontal);
+      shiptoCluster->setLabel("");
+      shiptoCluster->setDescriptionVisible(false);
+
+      connect(custCluster, SIGNAL(newId(int)), shiptoCluster, SLOT(setCustid(int)));
+      connect(button, SIGNAL(clicked()), shiptoCluster, SLOT( deleteLater() ) );
+      connect(shiptoCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+
+      custCluster->setObjectName("widget" + row);
+      newWidgetAlt->setObjectName("widget2" + row);
+      layout->insertWidget(0,custWidget);
+      layout->insertWidget(1,newWidgetAlt);
+      layout->addStretch(1);
     }
     break;
   case Vendor:
@@ -839,7 +881,6 @@ void ParameterWidget::changeFilterObject(int index)
       vendCluster->setOrientation(Qt::Horizontal);
       vendCluster->setLabel("");
 
-      connect(button, SIGNAL(clicked()), vendCluster, SLOT( deleteLater() ) );
       connect(vendCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -850,7 +891,6 @@ void ParameterWidget::changeFilterObject(int index)
       contactCluster->setDescriptionVisible(false);
       contactCluster->setLabel("");
 
-      connect(button, SIGNAL(clicked()), contactCluster, SLOT( deleteLater() ) );
       connect(contactCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -860,7 +900,6 @@ void ParameterWidget::changeFilterObject(int index)
       newWidget = glCluster;
       glCluster->setLabel("");
 
-      connect(button, SIGNAL(clicked()), glCluster, SLOT( deleteLater() ) );
       connect(glCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -871,7 +910,6 @@ void ParameterWidget::changeFilterObject(int index)
       projectCluster->setOrientation(Qt::Horizontal);
       projectCluster->setLabel("");
 
-      connect(button, SIGNAL(clicked()), projectCluster, SLOT( deleteLater() ) );
       connect(projectCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -883,7 +921,6 @@ void ParameterWidget::changeFilterObject(int index)
       itemCluster->setLabel("");
       itemCluster->setNameVisible(false);
 
-      connect(button, SIGNAL(clicked()), itemCluster, SLOT( deleteLater() ) );
       connect(itemCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -894,7 +931,6 @@ void ParameterWidget::changeFilterObject(int index)
       employeeCluster->setOrientation(Qt::Horizontal);
       employeeCluster->setLabel("");
 
-      connect(button, SIGNAL(clicked()), employeeCluster, SLOT( deleteLater() ) );
       connect(employeeCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -904,7 +940,6 @@ void ParameterWidget::changeFilterObject(int index)
       siteid = wBox->id();
       newWidget = wBox;
 
-      connect(button, SIGNAL(clicked()), wBox, SLOT( deleteLater() ) );
       connect(wBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -924,7 +959,6 @@ void ParameterWidget::changeFilterObject(int index)
         xBox->populate(qry);
       }
       //xBox->setAllowNull(true);
-      connect(button, SIGNAL(clicked()), xBox, SLOT( deleteLater() ) );
       connect(xBox, SIGNAL(newID(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -975,8 +1009,6 @@ void ParameterWidget::changeFilterObject(int index)
       QLineEdit *lineEdit = new QLineEdit(_filterGroup);
       lineEdit->hide();
       newWidget = lineEdit;
-
-      connect(button, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
     }
     break;
   case CheckBox:
@@ -984,7 +1016,6 @@ void ParameterWidget::changeFilterObject(int index)
       QCheckBox *checkBox = new QCheckBox(_filterGroup);
       newWidget = checkBox;
 
-      connect(button, SIGNAL(clicked()), checkBox, SLOT( deleteLater() ) );
       connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
@@ -993,7 +1024,6 @@ void ParameterWidget::changeFilterObject(int index)
       QLineEdit *lineEdit = new QLineEdit(_filterGroup);
       newWidget = lineEdit;
 
-      connect(button, SIGNAL(clicked()), lineEdit, SLOT( deleteLater() ) );
       connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
     }
     break;
@@ -1124,8 +1154,6 @@ void ParameterWidget::removeParam(int pRow)
   QVariant filterVar(mybox->itemData(mybox->currentIndex()));
   QString filterType = filterVar.toString();
   QStringList split = filterType.split(":");
-
-  QPair<QString, QVariant> tempPair = _filterValues.value(split[0].toInt());
 
   _filterValues.remove(split[0].toInt());
 
@@ -1379,10 +1407,16 @@ int ParameterWidget::getFilterIndex(const QWidget *filterwidget)
       {
         QLayoutItem *childLI = rowgrid->itemAtPosition(0, 0);
         QHBoxLayout *filterlyt = qobject_cast<QHBoxLayout *>(childLI->layout()->itemAt(0)->layout());
-        if (filterlyt && filterlyt->itemAt(0)->widget() == filterwidget)
+        if (filterlyt)
         {
-          index = i;
-          break;
+          for (int n = 0; n < filterlyt->count(); n++)
+          {
+            if (filterlyt->itemAt(n)->widget() == filterwidget)
+            {
+              index = i;
+              break;
+            }
+          }
         }
       }
     }
@@ -1601,6 +1635,7 @@ void setupParameterWidget(QScriptEngine *engine)
 
   widget.setProperty("Crmacct", QScriptValue(engine, ParameterWidget::Crmacct), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Customer", QScriptValue(engine, ParameterWidget::Customer), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("Shipto", QScriptValue(engine, ParameterWidget::Shipto), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Vendor", QScriptValue(engine, ParameterWidget::Vendor), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("User", QScriptValue(engine, ParameterWidget::User), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Text", QScriptValue(engine, ParameterWidget::Text), QScriptValue::ReadOnly | QScriptValue::Undeletable);
