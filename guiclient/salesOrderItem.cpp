@@ -3408,7 +3408,10 @@ void salesOrderItem::sHandleScheduleDate()
   if ((_metrics->value("soPriceEffective") != "ScheduleDate") ||
       (!_scheduledDate->isValid() ||
       (_scheduledDate->date() == _dateCache)))
+  {
+    sDetermineAvailability();
     return;
+  }
 
   if (_createOrder->isChecked())
   {
