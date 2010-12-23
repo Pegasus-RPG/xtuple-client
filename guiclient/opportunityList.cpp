@@ -206,7 +206,7 @@ bool opportunityList::setParams(ParameterList &params)
   parameterWidget()->appendValue(params);
 
   if (!searchText().isEmpty())
-    params.append("searchpattern", searchText());
+    params.append("search_pattern", searchText());
 
   if (!findChild<QCheckBox*>("_showInactive")->isChecked())
     params.append("activeOnly");
