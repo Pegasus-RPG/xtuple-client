@@ -382,13 +382,13 @@ bool itemSite::sSave()
     {
       QMessageBox::critical( this, tr("Cannot Save Item Site"),
                              tr( "<p>You have indicated that this Item Site "
-				"should be multiply located but there are no "
-                                 "non-restrictive Locations in the selected "
-				 "Site nor restrictive Locations that "
-				 "will accept the selected Item."
+                                 "should be Multiple Location Controlled "
+                                 "but there are no non-restrictive Locations "
+                                 "in the selected Site nor restrictive Locations "
+                                 "that will accept the selected Item."
 				 "<p>You must first create at least one valid "
 				 "Location for this Item Site before it may be "
-				 "multiply located." ) );
+                                 "Multiple Location Controlled." ) );
       return false;
     }
   }
@@ -622,8 +622,10 @@ bool itemSite::sSave()
     {
       QMessageBox::critical( this, tr("Cannot Save Item Site"),
                              tr( "<p>You have indicated that this Item Site "
-				"should be mutiply located and there is existing quantity on hand."
-				 "<p>You must select a default location for the on hand balance to be relocated to." ) );
+                                 "should be Multiple Location Controlled and "
+                                 "there is existing quantity on hand."
+                                 "<p>You must select a default location "
+                                 "for the on hand balance to be relocated to." ) );
       return false;
     }
     
