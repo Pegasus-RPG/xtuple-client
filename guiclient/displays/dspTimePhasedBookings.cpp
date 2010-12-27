@@ -15,6 +15,8 @@
 #include <QMessageBox>
 #include <QVariant>
 
+#include <currcluster.h>
+
 #include "guiclient.h"
 #include "dspBookings.h"
 #include "parameterwidget.h"
@@ -30,14 +32,28 @@ dspTimePhasedBookings::dspTimePhasedBookings(QWidget* parent, const char*, Qt::W
   setParameterWidgetVisible(true);
 
   parameterWidget()->append(tr("Customer"),   "cust_id",   ParameterWidget::Customer);
-  parameterWidget()->appendComboBox(tr("Item"), "item_id", ParameterWidget::Item);
+  parameterWidget()->appendComboBox(tr("Customer Type"), "custtype_id", XComboBox::CustomerTypes);
+  parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   parameterWidget()->appendComboBox(tr("Product Category"), "prodcat_id", XComboBox::ProductCategories);
   parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
-  list()->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft,  true,  "cust_number" );
-  list()->addColumn(tr("Customer"), 180,          Qt::AlignLeft,  true,  "cust_name" );
+  parameterWidget()->applyDefaultFilterSet();
+
+  _groupBy->append(0,tr("Customer"));
+  _groupBy->append(1,tr("Product Category"));
+  _groupBy->append(2,tr("Item"));
+
+  _units->append(0, tr("Sales Dollars"));
+  _units->append(1, tr("Inventory"));
+  _units->append(2,tr("Capacity"));
+  _units->append(3, tr("Alt. Capacity"));
+
+  connect(_groupBy, SIGNAL(newID(int)), this, SLOT(sGroupByChanged()));
+
+  sGroupByChanged();
 }
 
 void dspTimePhasedBookings::sViewBookings()
@@ -68,14 +84,50 @@ void dspTimePhasedBookings::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
 
 bool dspTimePhasedBookings::setParamsTP(ParameterList & params)
 {
-  if (_customer->isChecked())
-    params.append("byCust");
-  if (_prodcat->isChecked())
-    params.append("byProdcat");
-  if (_item->isChecked())
-    params.append("byItem");
-
   parameterWidget()->appendValue(params);
 
-   return true;
+  int idx = _groupBy->id();
+  if (idx == 1)
+    params.append("byProdcat");
+  else if (idx == 2)
+    params.append("byItem");
+  else
+    params.append("byCust");
+
+  idx = _units->id();
+  if (idx == 1)
+    params.append("inventoryUnits");
+  else if (idx == 2)
+    params.append("capacityUnits");
+  else if (idx == 3)
+    params.append("altCapacityUnits");
+  else
+    params.append("salesDollars");
+
+  params.append("baseCurrAbbr", CurrDisplay::baseCurrAbbr());
+
+  return true;
+}
+
+void dspTimePhasedBookings::sGroupByChanged()
+{
+  int idx = _groupBy->id();
+
+  list()->clear();
+  list()->setColumnCount(0);
+
+  if (idx == 1)
+    list()->addColumn(tr("Prod. Cat."), _itemColumn, Qt::AlignLeft,   true,  "prodcat_code"   );
+  else if (idx == 2)
+    list()->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  else
+  {
+    list()->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft,  true,  "cust_number" );
+    list()->addColumn(tr("Customer"), 180,          Qt::AlignLeft,  true,  "cust_name" );
+  }
+
+  list()->addColumn(tr("Site"),       _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  list()->addColumn(tr("UOM"),        _uomColumn,  Qt::AlignLeft,   true,  "uom"   );
+
+  setBaseColumns(list()->columnCount());
 }

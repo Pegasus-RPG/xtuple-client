@@ -355,7 +355,6 @@ void ParameterWidget::appendComboBox(QString pName, QString pParam, QString pQue
 void ParameterWidget::applySaved(int pId, int filter_id)
 {
   QWidget *found = 0;
-  QDate tempdate;
   XSqlQuery qry;
   QString query;
   QString filterValue;
@@ -365,7 +364,6 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   init_filter_id = filter_id;
 
   QMapIterator<int, QPair<QString, QVariant> > j(_filterValues);
-  QPair<QString, ParameterWidgetTypes> tempPair;
 
   clearFilters();
 
@@ -951,7 +949,8 @@ void ParameterWidget::changeFilterObject(int index)
       xBox->setAllowNull(true);
 
       xBox->setType(_params[paramIndex(mybox->currentText())]->comboType);
-      if (_params[paramIndex(mybox->currentText())]->comboType == XComboBox::Adhoc)
+      if (_params[paramIndex(mybox->currentText())]->comboType == XComboBox::Adhoc &&
+          _params[paramIndex(mybox->currentText())]->query.length())
       {
         qry.prepare( _params[paramIndex(mybox->currentText())]->query );
 
@@ -1081,9 +1080,15 @@ void ParameterWidget::clearFilters()
     del.takeFirst();
   }
 
+  _filtersLayout = new QGridLayout();
+  _filtersLayout->setObjectName("_filtersLayout");
+  gridLayout_2->addLayout(_filtersLayout, 1, 0, 1, 1);
+
   _filterValues.clear();
   _usedTypes.clear();
   _addFilterRow->setDisabled(false);
+
+  emit cleared();
 }
 
 

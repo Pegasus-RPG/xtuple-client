@@ -35,6 +35,7 @@ public slots:
 protected:
     Q_INVOKABLE QWidget * optionsWidget();
     virtual bool setParamsTP(ParameterList &) = 0;
+    virtual void setBaseColumns(int);
 
     int _column;
     QList<DatePair> _columnDates;

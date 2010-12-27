@@ -67,6 +67,11 @@ bool displayTimePhased::setParams(ParameterList &params)
   return setParamsTP(params);
 }
 
+void displayTimePhased::setBaseColumns(int columns)
+{
+  _data->_baseColumns = columns;
+}
+
 void displayTimePhased::sFillList()
 {
   ParameterList params;
