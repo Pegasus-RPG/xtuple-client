@@ -240,13 +240,13 @@ void dspMRPDetail::sFillMRPDetail()
     _mrp->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
   }
 
-  XTreeWidgetItem *qoh;
-  XTreeWidgetItem *allocations;
-  XTreeWidgetItem *orders;
-  XTreeWidgetItem *availability;
-  XTreeWidgetItem *firmedAllocations;
-  XTreeWidgetItem *firmedOrders;
-  XTreeWidgetItem *firmedAvailability;
+  XTreeWidgetItem *qoh = 0;
+  XTreeWidgetItem *allocations = 0;
+  XTreeWidgetItem *orders = 0;
+  XTreeWidgetItem *availability = 0;
+  XTreeWidgetItem *firmedAllocations = 0;
+  XTreeWidgetItem *firmedOrders = 0;
+  XTreeWidgetItem *firmedAvailability = 0;
   double        runningAvailability = 0.0;
   double	runningFirmed = 0.0;
   int           counter = 0;

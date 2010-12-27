@@ -435,7 +435,7 @@ void maintainBudget::populate()
     q.bindValue(":budghead_id", _budgheadid);
     q.exec();
     while(q.next())
-      XTreeWidgetItem *item = new XTreeWidgetItem(_accounts,
+      /*XTreeWidgetItem *item =*/ new XTreeWidgetItem(_accounts,
                                                   q.value("budgitem_accnt_id").toInt(),
                                                   q.value("result"));
 
