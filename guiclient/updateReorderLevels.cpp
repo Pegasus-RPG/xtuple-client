@@ -152,6 +152,8 @@ void updateReorderLevels::sUpdate()
     else
       accept();
   }
+  else
+    QMessageBox::information(this, windowTitle(), tr("No Calendar Periods selected."));
 }
 
 void updateReorderLevels::sSubmit()
@@ -178,6 +180,8 @@ void updateReorderLevels::sSubmit()
     if (newdlg.exec() == XDialog::Accepted)
       accept();
   }
+  else
+    QMessageBox::information(this, windowTitle(), tr("No Calendar Periods selected."));
 }
 
 void updateReorderLevels::sHandleButtons()
