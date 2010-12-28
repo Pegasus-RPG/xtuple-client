@@ -32,14 +32,9 @@ exists(../openrpt) {
     error("Could not set the OPENRPT_DIR qmake variable.")
 }
 
-exists(../../../openrpt) {
-    OPENRPT_BLD = ../../../openrpt-build-desktop
-}
-exists(../../openrpt) {
-    OPENRPT_BLD = ../../openrpt-build-desktop
-}
-exists(../openrpt) {
-    OPENRPT_BLD = ../openrpt-build-desktop
+OPENRPT_BLD = $${OPENRPT_DIR}
+exists($${OPENRPT_DIR}-build-desktop) {
+    OPENRPT_BLD = $${OPENRPT_DIR}-build-desktop
 }
 
 exists(../../../csvimp) {
@@ -56,15 +51,26 @@ exists(../csvimp) {
     error("Could not set the CSVIMP_DIR qmake variable.")
 }
 
-INCLUDEPATH += ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/OpenRPT/renderer ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_DIR}/MetaSQL ../$${OPENRPT_DIR}/MetaSQL/tmp ../$${CSVIMP_DIR}/csvimpcommon
-exists($${OPENRPT_BLD}) {
-  INCLUDEPATH += ../$${OPENRPT_BLD}/common ../$${OPENRPT_BLD}/OpenRPT/renderer ../$${OPENRPT_BLD}/OpenRPT/wrtembed ../$${OPENRPT_BLD}/MetaSQL ../$${OPENRPT_BLD}/MetaSQL/tmp ../$${CSVIMP_BLD}/csvimpcommon
+CSVIMP_BLD = ${CSVIMP_DIR}
+exists($${CSVIMP_DIR}-build-desktop) {
+  CSVIMP_BLD = $${CSVIMP_DIR}-build-desktop
 }
-DEPENDPATH  += $${INCLUDEPATH}
 
-! exists($${OPENRPT_BLD}) {
-    OPENRPT_BLD = $${OPENRPT_DIR}
+INCLUDEPATH += ../$${OPENRPT_DIR}/common           ../$${OPENRPT_BLD}/common \
+	       ../$${OPENRPT_DIR}/OpenRPT/renderer ../$${OPENRPT_BLD}/OpenRPT/renderer \
+	       ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_BLD}/OpenRPT/wrtembed \
+	       ../$${OPENRPT_DIR}/MetaSQL          ../$${OPENRPT_BLD}/MetaSQL \
+	       ../$${OPENRPT_DIR}/MetaSQL/tmp      ../$${OPENRPT_BLD}/MetaSQL/tmp \
+	       ../$${CSVIMP_DIR}/csvimpcommon      ../$${CSVIMP_BLD}/csvimpcommon
+INCLUDEPATH =  $$unique(INCLUDEPATH)
+
+XTUPLE_DIR=../../xtuple
+XTUPLE_BLD=$${XTUPLE_DIR}
+exists(../xtuple-build-desktop) {
+  XTUPLE_BLD=../../xtuple-build-desktop
 }
+
+DEPENDPATH  += $${INCLUDEPATH}
 
 CONFIG += release thread
 #CONFIG += debug
