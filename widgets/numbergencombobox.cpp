@@ -102,7 +102,7 @@ void NumberGenComboBox::handleIndexChanged(const int /*index*/)
   emit newMethodCode(methodCode());
 }
 
-void NumberGenComboBox::setAllowedMethods(const NumberGenComboBox::GenMethods methods)
+void NumberGenComboBox::setAllowedMethods(const GenMethods methods)
 {
   if (DEBUG)
     qDebug("%s::setAllowedMethods(0x%x) entered",

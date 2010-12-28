@@ -46,19 +46,9 @@
 #include "xuiloader.h"
 #include "getscreen.h"
 
-/* TODO: according to
-      http://www.stack.nl/~dimitri/doxygen/commands.html#cmdexample
-   a line resembling
-     \example exampleFile.js
-   at the end of a doxygen comment is supposed to insert
-     Examples:
-       hyperlink-to-exampleFile.js
-   into the docs for the method. make it so.
-   i see the entire doxygen comment moved so it winds up documenting the
-   example, leaving nothing documenting the method itself.
- */
-
-/** \class ScriptToolbox
+/** \ingroup scriptapi
+  
+    \class ScriptToolbox
 
     \brief The ScriptToolbox provides a collection of miscellaneous utility
            methods used when writing xTuple ERP extension %scripts.
@@ -94,7 +84,6 @@
 
     \todo expose QFile and QDir to scripting, including static methods,
           then deprecate the methods here that wrap them.
-    \todo figure out how to link this class with the scriptapi group
  */
 
 QWidget *ScriptToolbox::_lastWindow = 0;
@@ -435,6 +424,7 @@ QObject * ScriptToolbox::createGridLayout()
   \param w The widget whose layout you want to find
 
   \return A pointer to the layout or 0 if no such layout could be found
+
 */
 QObject * ScriptToolbox::widgetGetLayout(QWidget * w)
 {
@@ -742,7 +732,6 @@ QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * paren
   XUiLoader ui;
   return ui.createWidget(className, parent, name);
 }
-/** \example addButton.js */
 
 /** \brief Create a new layout based on the name of the desired class.
 

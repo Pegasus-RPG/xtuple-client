@@ -198,7 +198,7 @@ void ShiptoCluster::setCustid(int pId)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-shipToList::shipToList(QWidget* pParent, Qt::WFlags pFlags) :
+shipToList::shipToList(QWidget* pParent, Qt::WindowFlags pFlags) :
     VirtualList(pParent, pFlags)
 {
   setMinimumWidth(600);

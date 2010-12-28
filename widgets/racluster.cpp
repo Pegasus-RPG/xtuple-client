@@ -117,7 +117,7 @@ void RaLineEdit::setId(const int pId)
 }
 
 
-void RaLineEdit::setAllowedStatuses(const RaLineEdit::RaStatuses p)
+void RaLineEdit::setAllowedStatuses(const RaStatuses p)
 {
   if (p & (Open | Closed) || p == 0)
     clearExtraClause();

@@ -603,7 +603,7 @@ QString OrderLineEdit::type()
   return _name;
 }
 
-void OrderLineEdit::setAllowedStatuses(const OrderLineEdit::OrderStatuses p)
+void OrderLineEdit::setAllowedStatuses(const OrderStatuses p)
 {
   if (p && (p != Unposted + Open + Closed))
   {

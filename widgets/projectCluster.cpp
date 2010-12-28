@@ -128,7 +128,7 @@ void ProjectLineEdit::setType(ProjectType ptype)
   buildExtraClause();
 }
 
-void ProjectLineEdit::setAllowedStatuses(const ProjectLineEdit::ProjectStatuses p)
+void ProjectLineEdit::setAllowedStatuses(const ProjectStatuses p)
 {
   _allowedStatuses = p;
   buildExtraClause();

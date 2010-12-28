@@ -59,7 +59,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void setEnabled(QString pName, bool pEnabled);
     void setSavedFilters(int defaultId = -1);
     void setSavedFiltersIndex(QString);
-    void setType(QString, QString, enum ParameterWidgetTypes = Text, QVariant pDefault = QVariant(), QVariant extraInfo =  QVariant());
+    void setType(QString, QString, ParameterWidgetTypes = Text, QVariant pDefault = QVariant(), QVariant extraInfo =  QVariant());
     void setXComboBoxType(QString, QString, enum XComboBox::XComboBoxTypes, QVariant pDefault = QVariant());
     void setXComboBoxType(QString, QString, QString, QVariant pDefault = QVariant());
     void sManageFilters();

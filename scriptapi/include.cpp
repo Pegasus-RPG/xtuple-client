@@ -125,5 +125,5 @@ QScriptValue includeScript(QScriptContext *context, QScriptEngine *engine)
 
  */
 #ifdef XTUPLEDOXYGEN
-include(first, second, ... ) {}
+include(String first, String second, ... ) {}
 #endif

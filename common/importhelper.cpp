@@ -116,7 +116,7 @@ CSVImpPluginInterface *ImportHelper::getCSVImpPlugin(QObject *parent)
                           be handled using the configuration for successful
                           imports or failed imports.
     \param[out] errmsg    Any error message generated during file handling.
-    \param[in]  savetoErrorFile If this is not an empty string, the string is
+    \param[in]  saveToErrorFile If this is not an empty string, the string is
                           saved to an error file using the configuration for
                           handling error files.
     \return true if the file was handled successfully, false if there was an

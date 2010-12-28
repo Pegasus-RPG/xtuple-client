@@ -879,7 +879,7 @@ void WomatlCluster::setDataWidgetMap(XDataWidgetMapper* m)
 
 /////////////////////////////////////////////
 
-woList::woList(QWidget* pParent, Qt::WFlags pFlags) :
+woList::woList(QWidget* pParent, Qt::WindowFlags pFlags) :
     VirtualList(pParent, pFlags)
 {
   setObjectName("woList");

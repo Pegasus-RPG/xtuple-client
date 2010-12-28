@@ -26,7 +26,7 @@
 
 QString exportData::exportFileDir = QString::null;
 
-exportData::exportData(QWidget *parent, const char *name, Qt::WFlags fl)
+exportData::exportData(QWidget *parent, const char *name, Qt::WindowFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
