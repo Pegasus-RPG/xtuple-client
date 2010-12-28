@@ -59,9 +59,9 @@ enum SetResponse dspBookings::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
+  /*
   bool     valid;
 
-  /*
   param = pParams.value("cust_id", &valid);
   if (valid)
     _cust->setId(param.toInt());
