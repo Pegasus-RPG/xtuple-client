@@ -129,7 +129,7 @@ void reports::sEdit()
     else
       QMessageBox::warning( this, tr("Error Loading Report"),
                             tr( "ERROR parsing content:\n"
-                                "\t%1 (Line %2 Column %3" )
+                                "\t%1 (Line %2 Column %3)" )
                             .arg(errorMessage)
                             .arg(errorLine)
                             .arg(errorColumn) );

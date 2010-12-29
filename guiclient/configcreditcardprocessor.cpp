@@ -12,7 +12,7 @@
 
 #include "configcreditcardprocessor.h"
 
-ConfigCreditCardProcessor::ConfigCreditCardProcessor(QWidget* parent, Qt::WFlags fl)
+ConfigCreditCardProcessor::ConfigCreditCardProcessor(QWidget* parent, Qt::WindowFlags fl)
     : XWidget(parent, fl)
 {
 }

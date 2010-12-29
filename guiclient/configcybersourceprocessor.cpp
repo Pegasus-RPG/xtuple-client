@@ -13,7 +13,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 
-ConfigCyberSourceProcessor::ConfigCyberSourceProcessor(QWidget* parent, Qt::WFlags fl)
+ConfigCyberSourceProcessor::ConfigCyberSourceProcessor(QWidget* parent, Qt::WindowFlags fl)
     : ConfigCreditCardProcessor(parent, fl)
 {
   setupUi(this);

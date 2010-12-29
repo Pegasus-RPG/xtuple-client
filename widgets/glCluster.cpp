@@ -311,7 +311,7 @@ void GLCluster::sHandleProjectId()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-accountList::accountList(QWidget* pParent, Qt::WFlags pFlags) :
+accountList::accountList(QWidget* pParent, Qt::WindowFlags pFlags) :
     VirtualList(pParent, pFlags)
 {
   setObjectName("accountList");
