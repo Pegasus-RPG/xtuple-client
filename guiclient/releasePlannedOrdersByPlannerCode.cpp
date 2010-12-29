@@ -73,7 +73,8 @@ void releasePlannedOrdersByPlannerCode::sRelease()
 
   q.prepare(sql);
   q.bindValue(":cutOffDate", _cutoffDate->date());
-  q.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
+//  q.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
+  q.bindValue(":appendTransferOrder",	true);
   _warehouse->bindValue(q);
   _plannerCode->bindValue(q);
   q.exec();
@@ -103,6 +104,8 @@ void releasePlannedOrdersByPlannerCode::sSubmit()
     params.append("firmedOnly", true);
 
   params.append("cutoff_offset", QDate::currentDate().daysTo(_cutoffDate->date()));
+//  q.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
+  q.bindValue(":appendTransferOrder",	true);
 
   submitAction newdlg(this, "", TRUE);
   newdlg.set(params);
