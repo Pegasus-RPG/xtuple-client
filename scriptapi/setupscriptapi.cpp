@@ -59,6 +59,7 @@
 #include "qformlayoutproto.h"
 #include "qgridlayoutproto.h"
 #include "qiconproto.h"
+#include "qiodeviceproto.h"
 #include "qitemdelegateproto.h"
 #include "qlayoutitemproto.h"
 #include "qlayoutproto.h"
@@ -68,6 +69,8 @@
 #include "qnetworkreplyproto.h"
 #include "qnetworkrequestproto.h"
 #include "qprinterproto.h"
+#include "qprocessproto.h"
+#include "qprocessenvironmentproto.h"
 #include "qpushbuttonproto.h"
 #include "qsizepolicyproto.h"
 #include "qspaceritemproto.h"
@@ -170,6 +173,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQFormLayoutProto(engine);
   setupQGridLayoutProto(engine);
   setupQIconProto(engine);
+  setupQIODeviceProto(engine);
   setupQItemDelegateProto(engine);
   setupQLayoutItemProto(engine);
   setupQLayoutProto(engine);
@@ -180,6 +184,8 @@ void setupScriptApi(QScriptEngine *engine)
   setupQNetworkReplyProto(engine);
   setupQNetworkRequestProto(engine);
   setupQPrinterProto(engine);
+  setupQProcessProto(engine);
+  setupQProcessEnvironmentProto(engine);
   setupQPushButtonProto(engine);
   setupQSizePolicy(engine);
   setupQSpacerItem(engine);

@@ -52,6 +52,7 @@ HEADERS += setupscriptapi.h \
     qformlayoutproto.h \
     qgridlayoutproto.h \
     qiconproto.h \
+    qiodeviceproto.h \
     qitemdelegateproto.h \
     qlayoutproto.h \
     qlayoutitemproto.h \
@@ -61,6 +62,8 @@ HEADERS += setupscriptapi.h \
     qnetworkreplyproto.h \
     qnetworkrequestproto.h \
     qprinterproto.h \
+    qprocessproto.h     \
+    qprocessenvironmentproto.h     \
     qpushbuttonproto.h \
     qsizepolicyproto.h \
     qspaceritemproto.h \
@@ -144,6 +147,7 @@ SOURCES += setupscriptapi.cpp \
     qformlayoutproto.cpp \
     qgridlayoutproto.cpp \
     qiconproto.cpp \
+    qiodeviceproto.cpp \
     qitemdelegateproto.cpp \
     qlayoutitemproto.cpp \
     qlayoutproto.cpp \
@@ -153,6 +157,8 @@ SOURCES += setupscriptapi.cpp \
     qnetworkreplyproto.cpp \
     qnetworkrequestproto.cpp \
     qprinterproto.cpp \
+    qprocessproto.cpp \
+    qprocessenvironmentproto.cpp \
     qpushbuttonproto.cpp \
     qsizepolicyproto.cpp \
     qspaceritemproto.cpp \
