@@ -95,7 +95,6 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   setToheadid(-1);
 
   _captive		= false;
-  _freighttaxid		= -1;
   _orderNumberGen	= 0;
   _saved		= false;
   _taxzoneidCache	= -1;
@@ -1258,8 +1257,6 @@ void transferOrder::populate()
 
       _freight->setId(to.value("tohead_freight_curr_id").toInt());
       _freight->setLocalValue(to.value("tohead_freight").toDouble());
-
-      if (to.value("tohead_freighttax_id").isNull())
 
       _shipComplete->setChecked(to.value("tohead_shipcomplete").toBool());
       _orderComments->setText(to.value("tohead_ordercomments").toString());
