@@ -207,7 +207,7 @@ to be bound by its terms.</comment>
             </item>
             <item>
              <property name="text">
-              <string>www\S?(\.(com|net|org)</string>
+              <string>(https?://)?(www.)?[^/    ]+\.(com|net|org|gov|mil|biz|info|[a-z][a-z])(/\S*)</string>
              </property>
             </item>
            </widget>
