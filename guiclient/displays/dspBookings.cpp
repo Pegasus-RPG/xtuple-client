@@ -43,6 +43,8 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
+  parameterWidget()->applyDefaultFilterSet();
+
   list()->addColumn(tr("Order #"),          _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );
   list()->addColumn(tr("Line #"),           _seqColumn,      Qt::AlignLeft,   true,  "f_linenumber"  );
   list()->addColumn(tr("Ord. Date"),        _dateColumn,     Qt::AlignCenter, true,  "cohead_orderdate");
