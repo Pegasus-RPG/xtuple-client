@@ -23,6 +23,11 @@ public:
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int pColumn);
+    virtual void sEditOrder();
+    virtual void sViewOrder();
+    virtual void sEditItem();
+    virtual void sViewItem();
 
 };
 

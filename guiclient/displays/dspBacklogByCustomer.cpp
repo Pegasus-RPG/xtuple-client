@@ -106,7 +106,7 @@ void dspBacklogByCustomer::sEditOrder()
 
 void dspBacklogByCustomer::sViewOrder()
 {
-  salesOrder::viewSalesOrder(list()->id());
+  salesOrder::viewSalesOrder(list()->id(), false);
 }
 
 void dspBacklogByCustomer::sEditItem()

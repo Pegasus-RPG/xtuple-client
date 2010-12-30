@@ -58,22 +58,27 @@ dspTimePhasedBookings::dspTimePhasedBookings(QWidget* parent, const char*, Qt::W
 
 void dspTimePhasedBookings::sViewBookings()
 {
-  if (_column > 1)
-  {
-    ParameterList params;
+  ParameterList params = parameterWidget()->parameters();
+  if (_groupBy->id() == 1)
+    params.append("prodcat_id", list()->id());
+  else if (_groupBy->id() == 2)
+    params.append("item_id", list()->id());
+  else
     params.append("cust_id", list()->id());
-    params.append("startDate", _columnDates[_column - 2].startDate);
-    params.append("endDate", _columnDates[_column - 2].endDate);
-    params.append("run");
+  params.append("startDate", _columnDates[_column - 4].startDate);
+  params.append("endDate", _columnDates[_column - 4].endDate);
+  params.append("run");
 
-    dspBookings *newdlg = new dspBookings();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
+  dspBookings *newdlg = new dspBookings();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspTimePhasedBookings::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
 {
+  if (pColumn < 4)
+    return;
+
   QAction *menuItem;
 
   _column = pColumn;
@@ -117,13 +122,19 @@ void dspTimePhasedBookings::sGroupByChanged()
   list()->setColumnCount(0);
 
   if (idx == 1)
+  {
     list()->addColumn(tr("Prod. Cat."), _itemColumn, Qt::AlignLeft,   true,  "prodcat_code"   );
+    list()->addColumn(tr("Description"), 180,        Qt::AlignLeft,   true,  "prodcat_descrip" );
+  }
   else if (idx == 2)
+  {
     list()->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+    list()->addColumn(tr("Description"), 180,         Qt::AlignLeft,   true,  "item_descrip1" );
+  }
   else
   {
     list()->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft,  true,  "cust_number" );
-    list()->addColumn(tr("Customer"), 180,          Qt::AlignLeft,  true,  "cust_name" );
+    list()->addColumn(tr("Name"), 180,              Qt::AlignLeft,  true,  "cust_name" );
   }
 
   list()->addColumn(tr("Site"),       _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );

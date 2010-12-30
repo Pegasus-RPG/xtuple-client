@@ -9,6 +9,8 @@
  */
 
 #include "dspBookings.h"
+#include "salesOrder.h"
+#include "salesOrderItem.h"
 
 #include <QMessageBox>
 #include <QVariant>
@@ -24,21 +26,22 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
   setReportName("Bookings");
   setMetaSQLOptions("bookings", "detail");
   setParameterWidgetVisible(true);
+  setUseAltId(true);
 
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true  );
   parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
   parameterWidget()->append(tr("Customer"),   "cust_id",   ParameterWidget::Customer);
+  parameterWidget()->append(tr("Customer Ship-to"),   "shipto_id",   ParameterWidget::Shipto);
   parameterWidget()->appendComboBox(tr("Customer Group"), "custgrp_id", XComboBox::CustomerGroups);
   parameterWidget()->append(tr("Customer Group Pattern"), "custgrp_pattern", ParameterWidget::Text);
-  parameterWidget()->append(tr("Customer Ship-to"),   "shipto_id",   ParameterWidget::Shipto);
+  parameterWidget()->appendComboBox(tr("Customer Type"), "custtype_id", XComboBox::CustomerTypes);
+  parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   parameterWidget()->appendComboBox(tr("Product Category"), "prodcat_id", XComboBox::ProductCategories);
   parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesReps);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
-
-  parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("Order #"),          _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );
   list()->addColumn(tr("Line #"),           _seqColumn,      Qt::AlignLeft,   true,  "f_linenumber"  );
@@ -59,40 +62,103 @@ enum SetResponse dspBookings::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
-  /*
   bool     valid;
 
   param = pParams.value("cust_id", &valid);
   if (valid)
-    _cust->setId(param.toInt());
+    parameterWidget()->setDefault(tr("Customer"), param.toInt());
+
+  param = pParams.value("custtype_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Customer Type"), param.toInt());
+
+  param = pParams.value("custtype_pattern", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Customer Type Pattern"), param.toString());
+
+  param = pParams.value("item_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Item"), param.toInt());
 
   param = pParams.value("prodcat_id", &valid);
   if (valid)
-    _productCategory->setId(param.toInt());
+    parameterWidget()->setDefault(tr("Product Category"), param.toInt());
 
   param = pParams.value("prodcat_pattern", &valid);
   if (valid)
-    _productCategory->setPattern(param.toString());
+    parameterWidget()->setDefault(tr("Product Category Pattern"), param.toString());
 
   param = pParams.value("warehous_id", &valid);
   if (valid)
-    _warehouse->setId(param.toInt());
+    parameterWidget()->setDefault(tr("Site"), param.toInt());
 
   param = pParams.value("startDate", &valid);
   if (valid)
-    _dates->setStartDate(param.toDate());
+    parameterWidget()->setDefault(tr("Start Date"), param.toDate());
 
   param = pParams.value("endDate", &valid);
   if (valid)
-    _dates->setEndDate(param.toDate());
+    parameterWidget()->setDefault(tr("End Date"), param.toDate());
+
+  parameterWidget()->applyDefaultFilterSet();
 
   if (pParams.inList("run"))
   {
     sFillList();
     return NoError_Run;
   }
-*/
+
   return NoError;
 }
+
+void dspBookings::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
+{
+  QAction* viewSoAct = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sViewOrder()));
+  viewSoAct->setEnabled(_privileges->check("ViewSalesOrders") || _privileges->check("MaintainSalesOrders"));
+
+  QAction* editSoAct = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEditOrder()));
+  editSoAct->setEnabled(_privileges->check("MaintainSalesOrders"));
+
+  pMenu->addSeparator();
+
+  QAction* viewItemAct = pMenu->addAction(tr("View Sales Order Item..."), this, SLOT(sViewItem()));
+  viewItemAct->setEnabled(_privileges->check("ViewSalesOrders") || _privileges->check("MaintainSalesOrders"));
+
+  QAction* editItemAct = pMenu->addAction(tr("Edit Sales Order Item..."), this, SLOT(sEditItem()));
+  editItemAct->setEnabled(_privileges->check("MaintainSalesOrders"));
+}
+
+void dspBookings::sEditOrder()
+{
+  salesOrder::editSalesOrder(list()->altId(), false);
+}
+
+void dspBookings::sViewOrder()
+{
+  salesOrder::viewSalesOrder(list()->altId(), false);
+}
+
+void dspBookings::sEditItem()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("soitem_id", list()->id());
+
+  salesOrderItem newdlg(this);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void dspBookings::sViewItem()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("soitem_id", list()->id());
+
+  salesOrderItem newdlg(this);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
 
 
