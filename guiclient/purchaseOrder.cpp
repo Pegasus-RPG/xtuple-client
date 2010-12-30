@@ -15,8 +15,11 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
+
 #include "comment.h"
 #include "itemSourceList.h"
+#include "mqlutil.h"
 #include "poitemTableModel.h"
 #include "printPurchaseOrder.h"
 #include "purchaseOrderItem.h"
@@ -74,21 +77,28 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _poCurrency->setLabel(_poCurrencyLit);
 
-  _poitem->addColumn(tr("#"),           _whsColumn,    Qt::AlignCenter,true, "poitem_linenumber");
-  _poitem->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter,true, "poitemstatus");
-  _poitem->addColumn(tr("Item"),        _itemColumn,   Qt::AlignLeft,  true, "item_number");
-  _poitem->addColumn(tr("Description"), -1,            Qt::AlignLeft,  true, "item_descrip");
-  _poitem->addColumn(tr("Orgl. Due Date"),_dateColumn, Qt::AlignRight, false, "orgl_duedate");            
-  _poitem->addColumn(tr("Due Date Now"), _dateColumn,  Qt::AlignRight, true, "poitem_duedate");
-  _poitem->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight, true, "poitem_qty_ordered");
-  _poitem->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignCenter,true, "poitem_vend_uom");
-  _poitem->addColumn(tr("Unit Price"),  _priceColumn,  Qt::AlignRight, true, "poitem_unitprice");
-  _poitem->addColumn(tr("Ext. Price"),  _moneyColumn,  Qt::AlignRight, true, "extprice");
-  _poitem->addColumn(tr("Vend. Item#"), _itemColumn,   Qt::AlignCenter,false, "poitem_vend_item_number");
-  _poitem->addColumn(tr("Manufacturer"),_itemColumn,   Qt::AlignRight, false, "poitem_manuf_name");
-  _poitem->addColumn(tr("Manuf. Item#"),_itemColumn,   Qt::AlignRight, false, "poitem_manuf_item_number");
-  _poitem->addColumn(tr("Demand Type"), _itemColumn,   Qt::AlignCenter,false, "demand_type");
-  _poitem->addColumn(tr("Order"),       _itemColumn,   Qt::AlignRight, false, "order_number");
+  _poitem->addColumn(tr("#"),              _whsColumn,    Qt::AlignCenter,true,  "poitem_linenumber");
+  _poitem->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter,true,  "poitemstatus");
+  _poitem->addColumn(tr("Item"),           _itemColumn,   Qt::AlignLeft,  true,  "item_number");
+  _poitem->addColumn(tr("Description"),    -1,            Qt::AlignLeft,  true,  "item_descrip");
+  _poitem->addColumn(tr("Orgl. Due Date"), _dateColumn,   Qt::AlignRight, false, "orgl_duedate");
+  _poitem->addColumn(tr("Due Date Now"),   _dateColumn,   Qt::AlignRight, true,  "poitem_duedate");
+  _poitem->addColumn(tr("Ordered"),        _qtyColumn,    Qt::AlignRight, true,  "poitem_qty_ordered");
+  _poitem->addColumn(tr("Received"),       _qtyColumn,    Qt::AlignRight, false, "poitem_qty_received");
+  _poitem->addColumn(tr("Returned"),       _qtyColumn,    Qt::AlignRight, false, "poitem_qty_returned");
+  _poitem->addColumn(tr("Vouchered"),      _qtyColumn,    Qt::AlignRight, false, "poitem_qty_vouchered");
+  _poitem->addColumn(tr("UOM"),            _uomColumn,    Qt::AlignCenter,true,  "poitem_vend_uom");
+  _poitem->addColumn(tr("Unit Price"),     _priceColumn,  Qt::AlignRight, true,  "poitem_unitprice");
+  _poitem->addColumn(tr("Ext. Price"),     _moneyColumn,  Qt::AlignRight, true,  "extprice");
+  _poitem->addColumn(tr("Freight"),        _moneyColumn,  Qt::AlignRight, false, "poitem_freight");
+  _poitem->addColumn(tr("Freight Recv."),  _moneyColumn,  Qt::AlignRight, false, "poitem_freight_received");
+  _poitem->addColumn(tr("Freight Vchr."),  _moneyColumn,  Qt::AlignRight, false, "poitem_freight_vouchered");
+  _poitem->addColumn(tr("Std. Cost"),      _moneyColumn,  Qt::AlignRight, false, "poitem_stdcost");
+  _poitem->addColumn(tr("Vend. Item#"),    _itemColumn,   Qt::AlignCenter,false, "poitem_vend_item_number");
+  _poitem->addColumn(tr("Manufacturer"),   _itemColumn,   Qt::AlignRight, false, "poitem_manuf_name");
+  _poitem->addColumn(tr("Manuf. Item#"),   _itemColumn,   Qt::AlignRight, false, "poitem_manuf_item_number");
+  _poitem->addColumn(tr("Demand Type"),    _itemColumn,   Qt::AlignCenter,false, "demand_type");
+  _poitem->addColumn(tr("Order"),          _itemColumn,   Qt::AlignRight, false, "order_number");
 
   _qeitem = new PoitemTableModel(this);
   _qeitemView->setModel(_qeitem);
@@ -1169,55 +1179,26 @@ void purchaseOrder::sHandleVendor(int pVendid)
 
 void purchaseOrder::sFillList()
 {
-  q.prepare( "SELECT poitem.*,"
-             "       CASE WHEN(poitem_status='C') THEN :closed"
-             "            WHEN(poitem_status='U') THEN :unposted"
-             "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN :partial"
-             "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered<=(poitem_qty_received-poitem_qty_returned))) THEN :received"
-             "            WHEN(poitem_status='O') THEN :open"
-             "            ELSE poitem_status"
-             "       END AS poitemstatus,"
-             "       CASE WHEN (COALESCE(pohead_cohead_id, -1) != -1) THEN :so"
-             "            WHEN (COALESCE(poitem_wohead_id, -1) != -1) THEN :wo"
-             "            ELSE ''"
-             "       END AS demand_type,"
-             "       CASE WHEN (COALESCE(pohead_cohead_id, -1) != -1) THEN"
-             "              cohead_number || '-' || coitem_linenumber"
-             "            WHEN (COALESCE(poitem_wohead_id, -1) != -1) THEN"
-             "              formatwonumber(poitem_wohead_id)"
-             "            ELSE ''"
-             "       END AS order_number,"
-             "       CASE WHEN (itemsite_id IS NULL) THEN poitem_vend_item_number"
-             "            ELSE item_number"
-             "       END AS item_number,"
-             "       CASE WHEN (itemsite_id IS NULL) THEN firstLine(poitem_vend_item_descrip)"
-             "            ELSE (item_descrip1 || ' ' || item_descrip2)"
-             "       END AS item_descrip,"
-             "       poitem_rlsd_duedate AS orgl_duedate, "
-             "       (poitem_unitprice * poitem_qty_ordered) AS extprice, "
-             "       'qty' AS poitem_qty_ordered_xtnumericrole,"
-             "       'purchprice' AS poitem_unitprice_xtnumericrole,"
-             "       'curr' AS extprice_xtnumericrole, "
-             "        poitem_vend_item_number, poitem_manuf_name, poitem_manuf_item_number "
-             "  FROM pohead JOIN poitem  ON (poitem_pohead_id=pohead_id)"
-             "  LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id)"
-             "  LEFT OUTER JOIN item     ON (itemsite_item_id=item_id)"
-             "  LEFT OUTER JOIN coitem   ON (poitem_soitem_id = coitem_id)"
-             "  LEFT OUTER JOIN cohead   ON (cohead_id = coitem_cohead_id)"
-             "WHERE (poitem_pohead_id=:pohead_id) "
-             "ORDER BY poitem_linenumber;" );
-  q.bindValue(":pohead_id", _poheadid);
-  q.bindValue(":closed", tr("Closed"));
-  q.bindValue(":unposted", tr("Unposted"));
-  q.bindValue(":partial", tr("Partial"));
-  q.bindValue(":received", tr("Received"));
-  q.bindValue(":open", tr("Open"));
-  q.bindValue(":so", tr("SO"));
-  q.bindValue(":wo", tr("WO"));
+  MetaSQLQuery mql = mqlLoad("poItems", "list");
 
-  q.exec();
+  ParameterList params;
+  params.append("pohead_id", _poheadid);
+  params.append("closed", tr("Closed"));
+  params.append("unposted", tr("Unposted"));
+  params.append("partial", tr("Partial"));
+  params.append("received", tr("Received"));
+  params.append("open", tr("Open"));
+  params.append("so", tr("SO"));
+  params.append("wo", tr("WO"));
+
+  q = mql.toQuery(params);
   _poitem->populate(q);
-  
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   sCalculateTax();
   sCalculateTotals();
 
