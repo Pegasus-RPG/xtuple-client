@@ -18,6 +18,7 @@
 #include "creditcardprocessor.h"
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
+#include "issueToShipping.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
 #include "salesOrder.h"
@@ -337,6 +338,9 @@ void openSalesOrders::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
   
   pMenu->addSeparator();
 
+  menuItem = pMenu->addAction(tr("Issue to Shipping..."), this, SLOT(sIssueToShipping()));
+  menuItem->setEnabled(_privileges->check("IssueStockToShipping"));
+
   pMenu->addAction(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()));
   pMenu->addAction(tr("Shipments..."), this, SLOT(sShipment()));
 }
@@ -374,6 +378,17 @@ bool openSalesOrders::checkSitePrivs()
     }
   }
   return true;
+}
+
+void openSalesOrders::sIssueToShipping()
+{
+  ParameterList params;
+  params.append("sohead_id", list()->id());
+  params.append("run");
+
+  issueToShipping *newdlg = new issueToShipping(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void openSalesOrders::sDspShipmentStatus()

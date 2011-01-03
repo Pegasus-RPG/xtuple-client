@@ -38,6 +38,7 @@ public slots:
     virtual void sAddToPackingListBatch();
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
     virtual void sPrintForms(); 
+    virtual void sIssueToShipping();
     virtual void sDspShipmentStatus();
     virtual void sShipment();
     virtual bool setParams(ParameterList &);
