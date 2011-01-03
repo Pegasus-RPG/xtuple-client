@@ -82,6 +82,7 @@
 #include "qsqlrecordproto.h"
 #include "qstackedwidgetproto.h"
 #include "qtabwidgetproto.h"
+#include "qtemporaryfileproto.h"
 #include "qtextdocumentproto.h"
 #include "qtexteditproto.h"
 #include "qtimerproto.h"
@@ -200,6 +201,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQSqlRecordProto(engine);
   setupQStackedWidgetProto(engine);
   setupQTabWidgetProto(engine);
+  setupQTemporaryFileProto(engine);
   setupQTextDocumentProto(engine);
   setupQTextEditProto(engine);
   setupQTimerProto(engine);
