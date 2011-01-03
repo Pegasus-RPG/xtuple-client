@@ -35,6 +35,7 @@ public slots:
     virtual void sClose();
     virtual void sPopulateCustInfo( int pCustid );
     virtual void reset();
+    virtual void sCalculateCommission();
     virtual void sPopulateDueDate();
     virtual void sPrintOnPost(int temp_id);
     virtual void sTaxDetail();
@@ -47,6 +48,7 @@ private:
     int _aropenid;
     int _last;
     double _cAmount;
+    double _commprcnt;
 
 };
 
