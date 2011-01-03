@@ -124,7 +124,7 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
                     AND   (arapply_target_aropen_id=t.aropen_id)
                     AND   (arapply_target_doctype='I')
                     AND   (arapply_target_docnumber=invchead_invcnumber)
-                    AND   (arapply_reftype='S' OR arapply_reftype IS NULL)
+                    AND   (arapply_reftype='S')
                     AND   (arapply_source_aropen_id=s.aropen_id)))
               ELSE
                  (SELECT SUM(COALESCE(CASE WHEN((aropen_amount - aropen_paid) >=
@@ -230,7 +230,7 @@ WHERE ( (s.aropen_id=arapply_source_aropen_id)
   AND   (arapply_target_docnumber=invchead_invcnumber)
   AND   (arapply_source_aropen_id=s.aropen_id)
   AND   (arapply_curr_id=curr_id)
-  AND   (arapply_reftype='S' OR arapply_reftype IS NULL)
+  AND   (arapply_reftype='S')
   AND   (cohead_number=invchead_ordernumber)
   AND   (invchead_posted)
   AND   (invchead_id=&lt;? value("invchead_id") ?>) )
