@@ -141,7 +141,7 @@ to be bound by its terms.</comment>
                   <item>
                    <widget class="QSpinBox" name="_numOfCopies">
                     <property name="enabled">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="minimum">
                      <number>1</number>
@@ -246,14 +246,6 @@ to be bound by its terms.</comment>
    <header>ordercluster.h</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>_po</tabstop>
-  <tabstop>_vendorCopy</tabstop>
-  <tabstop>_internalCopy</tabstop>
-  <tabstop>_numOfCopies</tabstop>
-  <tabstop>_print</tabstop>
-  <tabstop>_close</tabstop>
- </tabstops>
  <includes>
   <include location="global">parameter.h</include>
  </includes>
@@ -279,22 +271,6 @@ to be bound by its terms.</comment>
    <sender>_po</sender>
    <signal>valid(bool)</signal>
    <receiver>_print</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_internalCopy</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_numOfCopies</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">

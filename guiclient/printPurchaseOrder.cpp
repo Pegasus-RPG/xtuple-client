@@ -34,7 +34,7 @@ printPurchaseOrder::printPurchaseOrder(QWidget* parent, const char* name, bool m
   else
   {
     _internalCopy->setChecked(false);
-    _numOfCopies->setEnabled(false);
+//    _numOfCopies->setEnabled(false);
   }
 }
 
