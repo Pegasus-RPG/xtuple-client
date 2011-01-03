@@ -20,6 +20,7 @@ UI_DIR = tmp
 
 HEADERS += setupscriptapi.h \
     include.h \
+    scriptapi_internal.h \
     metasqlhighlighterproto.h \
     orreportproto.h \
     parameterlistsetup.h \
@@ -28,6 +29,7 @@ HEADERS += setupscriptapi.h \
     qbytearrayproto.h \
     qdialogbuttonboxproto.h \
     qdialogsetup.h \
+    qdirproto.h \
     qdockwidgetproto.h \
     qdomattrproto.h \
     qdomcdatasectionproto.h \
@@ -48,6 +50,8 @@ HEADERS += setupscriptapi.h \
     qdomtextproto.h \
     qdoublevalidatorproto.h \
     qeventproto.h \
+    qfileproto.h \
+    qfileinfoproto.h \
     qfontproto.h \
     qformlayoutproto.h \
     qgridlayoutproto.h \
@@ -123,6 +127,7 @@ SOURCES += setupscriptapi.cpp \
     qbytearrayproto.cpp \
     qdialogbuttonboxproto.cpp \
     qdialogsetup.cpp \
+    qdirproto.cpp \
     qdockwidgetproto.cpp \
     qdomattrproto.cpp \
     qdomcdatasectionproto.cpp \
@@ -143,6 +148,8 @@ SOURCES += setupscriptapi.cpp \
     qdomtextproto.cpp \
     qdoublevalidatorproto.cpp \
     qeventproto.cpp \
+    qfileproto.cpp \
+    qfileinfoproto.cpp \
     qfontproto.cpp \
     qformlayoutproto.cpp \
     qgridlayoutproto.cpp \

@@ -1,9 +1,57 @@
+var _error = mywindow.findChild("_error");
 var _input = mywindow.findChild("_input");
 var _output = mywindow.findChild("_output");
 var _proc;
 var _program = mywindow.findChild("_program");
 var _restart = mywindow.findChild("_restart");
 var _var = mywindow.findChild("_var");
+
+function sProcError(theError)
+{
+  QMessageBox.warning(mywindow, "warning", "Got an error: " + theError);
+  try {
+    if (theError == QProcess.FailedToStart)
+    {
+      var args = _program.text.split(/\s/);
+      var cmd = args.shift();
+      var fi = new QFileInfo(cmd);
+
+      if (fi.isRelative())
+      {
+        if (cmd.match(/^\./))
+        {
+          cmd = fi.fileName();
+          fi = new QFileInfo(cmd);
+        }
+
+        var dir = fi.absoluteDir();
+        var simplename = fi.fileName();
+        var fullpath = fi.canonicalFilePath();
+        while (! QFile.exists(fullpath) && ! dir.isRoot())
+        {
+          dir.cdUp();
+          fullpath = dir.absoluteFilePath(simplename);
+          print("looking at " + fullpath);
+        }
+        if (QFile.exists(fullpath))
+        {
+          _program.text = fullpath + " " + args.join(" ");
+          _proc.start(cmd, args);
+        }
+        else
+          QMessageBox.warning(mywindow, "Program Not Started", "Cannot start " + cmd);
+      }
+      else
+        QMessageBox.warning(mywindow, "Program Not Started", "Cannot start " + cmd);
+
+    }
+  }
+  catch (e)
+  {
+    QMessageBox.critical(mywindow, "Processing Error",
+                         "sProcError exception @ " + e.lineNumber + ": " + e.message);
+  }
+}
 
 function sRestart()
 {
@@ -27,7 +75,9 @@ function sRestart()
     _proc.start(cmd, args);
 
     _input.returnPressed.connect(sWriteToProc);
-    _proc.readyRead.connect(sReadFromProc);
+    _proc.readyReadStandardOutput.connect(sReadFromProc);
+    _proc.readyReadStandardError.connect(sReadFromProc);
+    _proc["error(QProcess::ProcessError)"].connect(sProcError);
   }
   catch (e)
   {
@@ -43,8 +93,7 @@ function sReadFromProc()
     var stdout  = String(_proc.readAllStandardOutput());
     var stderr  = String(_proc.readAllStandardError());
     _output.plainText += String(stdout);
-    if (stderr.length)
-      QMessageBox.warning(mywindow, "Error", stderr);
+    _error.plainText  += String(stderr);
   }
   catch (e)
   {
