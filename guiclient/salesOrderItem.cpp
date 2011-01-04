@@ -2613,37 +2613,8 @@ void salesOrderItem::populate()
   if (_mode == cNew || _mode == cNewQuote)
     return;
 
-  ParameterList qparams;
-
-  QString       sql("SELECT taxzone_id, "
-                    "<? if exists(\"isSalesOrder\") ?>"
-                      "       cohead_curr_id AS curr_id "
-                      "FROM cohead, coitem, taxzone "
-                      "WHERE ((cohead_taxzone_id=taxzone_id)"
-                      "  AND  (cohead_id=coitem_cohead_id)"
-                      "  AND  (coitem_id=<? value(\"id\") ?>))"
-                      "<? else ?>"
-                        "       quhead_curr_id AS curr_id "
-                        "FROM quhead, quitem, taxzone "
-                        "WHERE ((quhead_taxzone_id=taxzone_id)"
-                        "  AND  (quhead_id=quitem_quhead_id)"
-                        "  AND  (quitem_id=<? value(\"id\") ?>))"
-                        "<? endif ?>"
-                          ";");
-  qparams.append("id", _soitemid);
-  if (!ISQUOTE(_mode))
-    qparams.append("isSalesOrder");
-  MetaSQLQuery mql(sql);
-  q = mql.toQuery(qparams);
-  if (q.first())
-    _taxzoneid = q.value("taxzone_id").toInt();
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
   XSqlQuery item;
+  QString sql;
   sql = "<? if exists(\"isSalesOrder\") ?>"
           "SELECT itemsite_leadtime, warehous_id, warehous_code, "
           "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
@@ -2718,7 +2689,7 @@ void salesOrderItem::populate()
             "   AND   (locale_id = usr_locale_id));"
             "<? endif ?>";
 
-  qparams.clear();
+  ParameterList qparams;
   qparams.append("id", _soitemid);
   if (!ISQUOTE(_mode))
     qparams.append("isSalesOrder");

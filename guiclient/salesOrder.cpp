@@ -1889,6 +1889,7 @@ void salesOrder::sEdit()
   params.append("orderNumber", _orderNumber->text());
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
+  params.append("taxzone_id", _taxZone->id());
 
   if (_mode == cView)
     params.append("mode", "view");
@@ -3961,7 +3962,7 @@ void salesOrder::sCalculateTax()
 
 void salesOrder::sTaxZoneChanged()
 {
-  if (_saved && _taxZone->id() != _taxzoneidCache)
+  if (_taxZone->id() != _taxzoneidCache)
     save(true);
 
   sCalculateTax();
