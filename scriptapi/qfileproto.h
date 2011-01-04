@@ -51,9 +51,9 @@ class QFileProto : public QObject, public QScriptable
     Q_INVOKABLE bool                isWritable() const;
     Q_INVOKABLE bool                link(const QString &linkName);
     Q_INVOKABLE uchar              *map(qint64 offset, qint64 size, QFile::MemoryMapFlags flags = QFile::NoOptions);
-    Q_INVOKABLE bool                open(FILE *fh, QIODevice::OpenMode mode);
-    Q_INVOKABLE bool                open(int fd, QIODevice::OpenMode mode);
-    Q_INVOKABLE bool                open(QIODevice::OpenMode mode);
+    Q_INVOKABLE bool                open(FILE *fh, int mode);
+    Q_INVOKABLE bool                open(int fd, int mode);
+    Q_INVOKABLE bool                open(int mode);
     Q_INVOKABLE QIODevice::OpenMode openMode() const;
     Q_INVOKABLE qint64              peek(char *data, qint64 maxSize);
     Q_INVOKABLE QByteArray          peek(qint64 maxSize);

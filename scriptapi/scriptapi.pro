@@ -76,7 +76,6 @@ HEADERS += setupscriptapi.h \
     qsqlrecordproto.h \
     qstackedwidgetproto.h \
     qtabwidgetproto.h \
-    qtemporaryfileproto.h \
     qtextdocumentproto.h \
     qtexteditproto.h \
     qtimerproto.h \
@@ -175,7 +174,6 @@ SOURCES += setupscriptapi.cpp \
     qsqlrecordproto.cpp \
     qstackedwidgetproto.cpp \
     qtabwidgetproto.cpp \
-    qtemporaryfileproto.cpp \
     qtextdocumentproto.cpp \
     qtexteditproto.cpp \
     qtimerproto.cpp \

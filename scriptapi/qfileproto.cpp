@@ -434,27 +434,33 @@ uchar *QFileProto::map(qint64 offset, qint64 size, QFile::MemoryMapFlags flags)
   return 0;
 }
 
-bool QFileProto::open(FILE *fh, QIODevice::OpenMode mode)
+bool QFileProto::open(FILE *fh, int mode)
 {
+  QIODevice::OpenModeFlag p;
+  p = (enum QIODevice::OpenModeFlag)mode;
   QFile *item = qscriptvalue_cast<QFile*>(thisObject());
   if (item)
-    return item->open(fh, mode);
+    return item->open(fh, p);
   return false;
 }
 
-bool QFileProto::open(int fd, QIODevice::OpenMode mode)
+bool QFileProto::open(int fd, int mode)
 {
+  QIODevice::OpenModeFlag p;
+  p = (enum QIODevice::OpenModeFlag)mode;
   QFile *item = qscriptvalue_cast<QFile*>(thisObject());
   if (item)
-    return item->open(fd, mode);
+    return item->open(fd, p);
   return false;
 }
 
-bool QFileProto::open(QIODevice::OpenMode mode)
+bool QFileProto::open(int mode)
 {
+  QIODevice::OpenModeFlag p;
+  p = (enum QIODevice::OpenModeFlag)mode;
   QFile *item = qscriptvalue_cast<QFile*>(thisObject());
   if (item)
-    return item->open(mode);
+    return item->open(p);
   return false;
 }
 
