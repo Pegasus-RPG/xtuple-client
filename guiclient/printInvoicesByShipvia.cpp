@@ -34,7 +34,7 @@ printInvoicesByShipvia::printInvoicesByShipvia(QWidget* parent, const char* name
   _invoiceWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
   _invoiceWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
 
-  _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
+  _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt() + 1);
   if (_invoiceNumOfCopies->value())
   {
     for (int i = 0; i < _invoiceWatermarks->topLevelItemCount(); i++)

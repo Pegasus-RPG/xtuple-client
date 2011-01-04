@@ -35,7 +35,7 @@ printCreditMemos::printCreditMemos(QWidget* parent, const char* name, bool modal
   _creditMemoWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
   _creditMemoWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
   
-  _creditMemoNumOfCopies->setValue(_metrics->value("CreditMemoCopies").toInt());
+  _creditMemoNumOfCopies->setValue(_metrics->value("CreditMemoCopies").toInt() + 1);
   if (_creditMemoNumOfCopies->value())
   {
     for (int i = 0; i < _creditMemoWatermarks->topLevelItemCount(); i++)
