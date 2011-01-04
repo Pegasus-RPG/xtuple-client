@@ -42,7 +42,7 @@ reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, 
   _watermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
   _watermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
 
-  _numOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
+  _numOfCopies->setValue(_metrics->value("InvoiceCopies").toInt() + 1);
   if (_numOfCopies->value())
   {
     for (int i = 0; i < _watermarks->topLevelItemCount(); i++)
