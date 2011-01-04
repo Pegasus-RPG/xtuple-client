@@ -132,6 +132,14 @@ void reassignLotSerial::sReassign()
     return;
   }
 
+  if (_lotNumber->text().length() == 0)
+  {
+    QMessageBox::critical( this, tr("Enter New Lot Number to Reassign"),
+                           tr("You must enter a New Lot Number to reassign.") );
+    _qty->setFocus();
+    return;
+  }
+
   QDoubleValidator* qtyVal = (QDoubleValidator*)(_qty->validator());
   q.prepare("SELECT reassignLotSerial(:source, CAST (:qty AS NUMERIC(100,:decimals)), "
 	    "                         :lotNumber, :expirationDate, :warrantyDate) AS result;");
