@@ -1939,8 +1939,8 @@ void workOrder::populate()
     _startDate->setEnabled(true);
     _woNumber->setEnabled(false);
     _item->setReadOnly(true);
-    _bomRevision->setEnabled(wo.value("wo_status").toString() == "O");
-    _booRevision->setEnabled(wo.value("wo_status").toString() == "O");
+    _bomRevision->setEnabled(wo.value("wo_status").toString() == "O" && _privileges->boolean("UseInactiveRevisions"));
+    _booRevision->setEnabled(wo.value("wo_status").toString() == "O" && _privileges->boolean("UseInactiveRevisions"));
     if ((_mode == cNew || _mode == cRelease) &&
        (wo.value("wo_status").toString() == "I" ||
         wo.value("wo_status").toString() == "C"))
