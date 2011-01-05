@@ -64,6 +64,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   _custid = -1;
   _prospectid = -1;
   
+  _todoList->addColumn(tr("Active"),   _statusColumn, Qt::AlignRight, true, "todoitem_active");
   _todoList->addColumn(tr("Priority"),   _userColumn, Qt::AlignRight, true, "incdtpriority_name");
   _todoList->addColumn(tr("User"),       _userColumn, Qt::AlignLeft,  true, "todoitem_username" );
   _todoList->addColumn(tr("Name"),               100, Qt::AlignLeft,  true, "todoitem_name" );
@@ -474,7 +475,7 @@ void opportunity::sFillTodoList()
   q.prepare("SELECT todoitem_id, incdtpriority_name, incdtpriority_order, "
 	    "       todoitem_username, todoitem_name, "
 	    "       firstLine(todoitem_description) AS todoitem_description, "
-	    "       todoitem_status, todoitem_due_date, "
+            "       todoitem_status, todoitem_due_date, todoitem_active, "
             "       CASE "
             "         WHEN (todoitem_status != 'C' AND todoitem_due_date < current_date) THEN "
             "           'error' "
@@ -483,8 +484,7 @@ void opportunity::sFillTodoList()
             "       END AS qtforegroundrole "
 	    "  FROM todoitem "
             "       LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
-	    "WHERE ( (todoitem_ophead_id=:ophead_id) "
-	    "  AND   (todoitem_active) ) "
+            "WHERE ( (todoitem_ophead_id=:ophead_id) ) "
 	    "ORDER BY incdtpriority_order, todoitem_username;");
 
   q.bindValue(":ophead_id", _opheadid);
