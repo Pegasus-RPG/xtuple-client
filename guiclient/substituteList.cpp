@@ -10,6 +10,7 @@
 
 #include "substituteList.h"
 
+#include <QMessageBox>
 #include <QVariant>
 
 /*
@@ -87,13 +88,24 @@ enum SetResponse substituteList::set( ParameterList &pParams )
   if (valid)
   {
     q.prepare( "SELECT womatl_itemsite_id,"
-               "       bomitem_id, COALESCE(bomitem_subtype, 'I') AS subtype "
+               "       bomitem_id, COALESCE(bomitem_subtype, 'I') AS subtype,"
+               "       COALESCE(wo_id, 0) AS wo_id "
                "FROM womatl LEFT OUTER JOIN bomitem ON (bomitem_id=womatl_bomitem_id) "
+               "            LEFT OUTER JOIN wo ON ( (wo_ordtype='W') AND"
+               "                                    (wo_ordid=womatl_wo_id) AND"
+               "                                    (wo_itemsite_id=womatl_itemsite_id) ) "
                "WHERE (womatl_id=:womatl_id);" );
     q.bindValue(":womatl_id", param.toInt());
     q.exec();
     if (q.first())
     {
+      if (q.value("wo_id").toInt() > 0)
+      {
+        QMessageBox::warning(this, tr("Child Work Order"),
+            tr("A child Work Order exists for this Material \n"
+               "Requirement.  You should delete this \n"
+               "child Work Order before substituting.") );
+      }
       _item->setItemsiteid(q.value("womatl_itemsite_id").toInt());
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
