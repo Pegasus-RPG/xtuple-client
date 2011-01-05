@@ -105,6 +105,14 @@ enum SetResponse calendar::set(const ParameterList &pParams)
 
 void calendar::sSave()
 {
+  if(_name->text().length() == 0)
+  {
+    QMessageBox::critical(this, tr("Calendar Name Required"),
+      tr("You must enter a Calendar Name to continue.") );
+    _name->setFocus();
+    return;
+  }
+
   q.prepare("SELECT calhead_id"
             "  FROM calhead"
             " WHERE((calhead_id != :calhead_id)"
