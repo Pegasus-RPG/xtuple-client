@@ -107,6 +107,14 @@ void incidentSeverity::sCheck()
 
 void incidentSeverity::sSave()
 {
+  if(_name->text().length() == 0)
+  {
+    QMessageBox::critical(this, tr("Severity Name Required"),
+      tr("You must enter a Severity Name to continue.") );
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('incdtseverity_incdtseverity_id_seq') AS _incdtseverity_id");

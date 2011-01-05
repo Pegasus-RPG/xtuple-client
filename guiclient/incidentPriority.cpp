@@ -107,6 +107,14 @@ void incidentPriority::sCheck()
 
 void incidentPriority::sSave()
 {
+  if(_name->text().length() == 0)
+  {
+    QMessageBox::critical(this, tr("Priority Name Required"),
+      tr("You must enter a Priority Name to continue.") );
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('incdtpriority_incdtpriority_id_seq') AS _incdtpriority_id");

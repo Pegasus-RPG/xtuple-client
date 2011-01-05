@@ -117,6 +117,14 @@ void incidentCategory::sCheck()
 
 void incidentCategory::sSave()
 {
+  if(_name->text().length() == 0)
+  {
+    QMessageBox::critical(this, tr("Category Name Required"),
+      tr("You must enter a Category Name to continue.") );
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('incdtcat_incdtcat_id_seq') AS _incdtcat_id");

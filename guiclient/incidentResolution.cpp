@@ -107,6 +107,14 @@ void incidentResolution::sCheck()
 
 void incidentResolution::sSave()
 {
+  if(_name->text().length() == 0)
+  {
+    QMessageBox::critical(this, tr("Resolution Name Required"),
+      tr("You must enter a Resolution Name to continue.") );
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('incdtresolution_incdtresolution_id_seq') AS _incdtresolution_id");
