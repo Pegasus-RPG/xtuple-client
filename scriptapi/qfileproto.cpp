@@ -19,12 +19,6 @@
     \todo implement QFile::setEncodingFunction(EncoderFn)
   */
 
-QScriptValue QFiletoScriptValue(QScriptEngine *engine, QFile* const &item)
-{ return engine->newQObject(item); }
-
-void QFilefromScriptValue(const QScriptValue &obj, QFile* &item)
-{ item = qobject_cast<QFile*>(obj.toQObject()); }
-
 //static functions
 static QScriptValue qfile_copy(QScriptContext *context, QScriptEngine * /*engine*/ )
 {
@@ -69,7 +63,7 @@ static QScriptValue qfile_encodeName(QScriptContext *context, QScriptEngine *eng
   return engine->newVariant(result);
 }
 
-static QScriptValue qfile_exists(QScriptContext *context, QScriptEngine *engine)
+static QScriptValue qfile_exists(QScriptContext *context, QScriptEngine * /*engine*/)
 {
   bool result = false;
   
@@ -80,7 +74,7 @@ static QScriptValue qfile_exists(QScriptContext *context, QScriptEngine *engine)
     context->throwError(QScriptContext::UnknownError,
                         "Could not find an appropriate QFile::exists()");
 
-  return engine->newVariant(result);
+  return QScriptValue(result);
 }
 
 static QScriptValue qfile_link(QScriptContext *context, QScriptEngine * /*engine*/ )
@@ -191,8 +185,6 @@ static QScriptValue qfile_symLinkTarget(QScriptContext *context, QScriptEngine *
 
 void setupQFileProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QFiletoScriptValue, QFilefromScriptValue);
-
   QScriptValue proto = engine->newQObject(new QFileProto(engine));
   engine->setDefaultPrototype(qMetaTypeId<QFile*>(), proto);
 

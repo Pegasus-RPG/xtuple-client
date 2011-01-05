@@ -18,32 +18,6 @@
     \todo implement QDir::drives()
   */
 
-QScriptValue QDirPtrtoScriptValue(QScriptEngine *engine, QDir* const &item)
-{
-  QVariant v;
-  v.setValue(item);
-  
-  return engine->newVariant(v);
-}
-
-void QDirPtrfromScriptValue(const QScriptValue &obj, QDir* &item)
-{
-  item = obj.toVariant().value<QDir*>();
-}
-
-QScriptValue QDirtoScriptValue(QScriptEngine *engine, QDir const &item)
-{
-  QVariant v;
-  v.setValue(item);
-  
-  return engine->newVariant(v);
-}
-
-void QDirfromScriptValue(const QScriptValue &obj, QDir &item)
-{
-  item = obj.toVariant().value<QDir>();
-}
-
 static QScriptValue qdir_addSearchPath(QScriptContext *context,
                                        QScriptEngine * /*engine*/ )
 {
@@ -274,10 +248,8 @@ static QScriptValue qdir_toNativeSeparators(QScriptContext *context,
 
 void setupQDirProto(QScriptEngine *engine)
 {
-  qScriptRegisterMetaType(engine, QDirtoScriptValue,    QDirfromScriptValue);
-  qScriptRegisterMetaType(engine, QDirPtrtoScriptValue, QDirPtrfromScriptValue);
-
   QScriptValue proto = engine->newQObject(new QDirProto(engine));
+  engine->setDefaultPrototype(qMetaTypeId<QDir>(),  proto);
   engine->setDefaultPrototype(qMetaTypeId<QDir*>(), proto);
 
   QScriptValue constructor = engine->newFunction(constructQDir, proto);

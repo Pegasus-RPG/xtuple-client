@@ -1443,6 +1443,18 @@ void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowMod
 }
 
 /** \internal */
+QScriptValue WindowSystemtoScriptValue(QScriptEngine *engine, const enum GUIClient::WindowSystem &en)
+{
+  return QScriptValue(engine, (int)en);
+}
+
+/** \internal */
+void WindowSystemfromScriptValue(const QScriptValue &obj, enum GUIClient::WindowSystem &en)
+{
+  en = (enum GUIClient::WindowSystem)obj.toInt32();
+}
+
+/** \internal */
 QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum SaveFlags &en)
 {
   return QScriptValue(engine, (int)en);
