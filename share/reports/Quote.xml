@@ -3,6 +3,12 @@
  <title>Quote</title>
  <name>Quote</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -93,10 +99,10 @@ ORDER BY quitem_linenumber;</sql>
        formatExtPrice(quhead_misc) AS f_misc,
        formatExtPrice(subtotal + tax + quhead_freight + quhead_misc) AS f_total
   FROM quhead,
-       (SELECT SUM((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio)) AS subtotal
+       (SELECT SUM(ROUND((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio),2)) AS subtotal
           FROM quitem
          WHERE (quitem_quhead_id=&lt;? value("quhead_id") ?>) ) AS subtot,
-       (SELECT COALESCE(SUM(tax),0) AS tax 
+       (SELECT COALESCE(SUM(tax),0.0) AS tax 
         FROM (
           SELECT ROUND(SUM(taxdetail_tax),2) AS tax 
           FROM tax 
@@ -106,7 +112,6 @@ ORDER BY quitem_linenumber;</sql>
 
 
  WHERE (quhead_id=&lt;? value("quhead_id") ?>);
-
 </sql>
  </querysource>
  <querysource>
@@ -152,6 +157,19 @@ WHERE ( (cust_id = quhead_cust_id)
  </querysource>
  <rpthead>
   <height>427</height>
+  <image>
+   <rect>
+    <x>275</x>
+    <y>5</y>
+    <width>238</width>
+    <height>100</height>
+   </rect>
+   <mode>stretch</mode>
+   <data>
+    <query>logo</query>
+    <column>image_data</column>
+   </data>
+  </image>
   <text>
    <rect>
     <x>10</x>
@@ -650,19 +668,6 @@ WHERE ( (cust_id = quhead_cust_id)
    <vcenter/>
    <string>Ship To:</string>
   </label>
-  <image>
-   <rect>
-    <x>275</x>
-    <y>5</y>
-    <width>238</width>
-    <height>100</height>
-   </rect>
-   <mode>stretch</mode>
-   <data>
-    <query>logo</query>
-    <column>image_data</column>
-   </data>
-  </image>
   <field>
    <rect>
     <x>440</x>
