@@ -4179,6 +4179,7 @@ void salesOrder::sRecalculatePrice()
   {
     ParameterList params;
     QString       sql;
+    QString       sqlchk;
     if (ISORDER(_mode))
     {
       sql ="UPDATE coitem SET coitem_price=itemprice(item_id, "
@@ -4210,6 +4211,24 @@ void salesOrder::sRecalculatePrice()
                                  "AND (itemsite_item_id=item_id) "
                                  "AND (coitem_cohead_id=cohead_id) "
                                  "AND (cohead_id=<? value(\"cohead_id\") ?>) );";
+      sqlchk ="SELECT MIN(itemprice(item_id, cohead_cust_id, "
+              "                     <? value(\"shipto_id\") ?>, coitem_qtyord, "
+              "                     coitem_qty_uom_id, coitem_price_uom_id, "
+              "                     cohead_curr_id,cohead_orderdate, "
+              "                     <? if exists(\"UseSchedDate\") ?> coitem_scheddate "
+              "                     <? else ?> <? value(\"asOf\") ?>"
+              "                     <? endif ?>)) AS pricechk "
+              "FROM cohead, coitem, item, itemsite "
+              "WHERE ( (coitem_cohead_id=cohead_id) "
+              "  AND   (coitem_status NOT IN ('C','X')) "
+              "  AND   (NOT coitem_firm) "
+              "<? if exists(\"ignoreDiscounts\") ?>"
+              "  AND   (coitem_price = coitem_custprice) "
+              "<? endif ?>"
+              "  AND   (itemsite_id=coitem_itemsite_id) "
+              "  AND   (itemsite_item_id=item_id) "
+              "  AND   (coitem_cohead_id=cohead_id) "
+              "  AND   (cohead_id=<? value(\"cohead_id\") ?>) );";
     }
     else
     {
@@ -4240,6 +4259,22 @@ void salesOrder::sRecalculatePrice()
                                   "AND (itemsite_item_id=item_id) "
                                   "AND (quitem_quhead_id=quhead_id) "
                                   "AND (quhead_id=<? value(\"cohead_id\") ?>) );";
+      sqlchk ="SELECT MIN(itemprice(item_id, quhead_cust_id, "
+              "                     <? value(\"shipto_id\") ?>, quitem_qtyord, "
+              "                     quitem_qty_uom_id, quitem_price_uom_id, "
+              "                     quhead_curr_id,quhead_quotedate, "
+              "                     <? if exists(\"UseSchedDate\") ?> quitem_scheddate "
+              "                     <? else ?> <? value(\"asOf\") ?>"
+              "                     <? endif ?>)) AS pricechk "
+              "FROM quhead, quitem, item, itemsite "
+              "WHERE ( (quitem_quhead_id=quhead_id) "
+              "  AND   (itemsite_id=quitem_itemsite_id) "
+              "<? if exists(\"ignoreDiscounts\") ?>"
+              "  AND   (quitem_price = quitem_custprice) "
+              "<? endif ?>"
+              "  AND   (itemsite_item_id=item_id) "
+              "  AND   (quitem_quhead_id=quhead_id) "
+              "  AND   (quhead_id=<? value(\"cohead_id\") ?>) );";
     }
     params.append("cohead_id", _soheadid);
     params.append("shipto_id", _shipTo->id());
@@ -4248,6 +4283,7 @@ void salesOrder::sRecalculatePrice()
     if (_metrics->value("soPriceEffective") == "ScheduleDate")
       params.append("UseSchedDate", true);
     MetaSQLQuery mql(sql);
+    MetaSQLQuery mqlchk(sqlchk);
     if (_metrics->value("soPriceEffective") == "OrderDate")
     {
       if (!_orderDate->isValid())
@@ -4270,6 +4306,24 @@ void salesOrder::sRecalculatePrice()
     }
     else
       params.append("asOf", omfgThis->dbDate());
+
+    XSqlQuery itempricechk = mqlchk.toQuery(params);
+    if (itempricechk.first())
+    {
+      if (itempricechk.value("pricechk").toDouble() == -9999.0)
+      {
+        // User expected an update, so let them know and reset
+        QMessageBox::critical(this, tr("Customer Cannot Buy at Quantity"),
+                              tr("<p>One or more items are marked as exclusive and "
+                                   "no qualifying price schedule was found. " ) );
+        return;
+      }
+    }
+    else if (itempricechk.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, itempricechk.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
     XSqlQuery setitemprice = mql.toQuery(params);
     if (setitemprice.lastError().type() != QSqlError::NoError)
