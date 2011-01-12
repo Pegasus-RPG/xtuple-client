@@ -25,6 +25,7 @@
 #include "mqlutil.h"
 #include "printInvoice.h"
 #include "storedProcErrorLookup.h"
+#include "distributeInventory.h"
 
 unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -228,6 +229,9 @@ void unpostedInvoices::sPost()
   XSqlQuery sum;
   sum.prepare("SELECT invoicetotal(:invchead_id) AS subtotal;");
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
   XSqlQuery post;
   post.prepare("SELECT postInvoice(:invchead_id, :journal) AS result;");
 
@@ -302,6 +306,7 @@ void unpostedInvoices::sPost()
 	      }
         }
 
+        q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
         post.bindValue(":invchead_id", id);
         post.bindValue(":journal",     journal);
         post.exec();
@@ -309,22 +314,36 @@ void unpostedInvoices::sPost()
         {
 	      int result = post.value("result").toInt();
 	      if (result < 0)
-	        systemError(this, storedProcErrorLookup("postInvoice", result),
+              {
+                rollback.exec();
+                systemError(this, storedProcErrorLookup("postInvoice", result),
 		            __FILE__, __LINE__);
+              }
+              else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+              {
+                rollback.exec();
+                QMessageBox::information( this, tr("Post Invoices"), tr("Transaction Canceled") );
+                return;
+              }
+
+              q.exec("COMMIT;");
         }
         // contains() string is hard-coded in stored procedure
         else if (post.lastError().databaseText().contains("post to closed period"))
         {
-	    if (changeDate)
-	      triedToClosed = selected;
-	    else
-	      triedToClosed.append(selected[i]);
+            if (changeDate)
+              triedToClosed = selected;
+            else
+              triedToClosed.append(selected[i]);
       }
       else if (post.lastError().type() != QSqlError::NoError)
-	    systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
-	    	    .arg(selected[i]->text(0))
-	     		.arg(post.lastError().databaseText()),
-		        __FILE__, __LINE__);
+      {
+        rollback.exec();
+        systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
+                    .arg(selected[i]->text(0))
+                        .arg(post.lastError().databaseText()),
+                        __FILE__, __LINE__);
+      }
     }
 
     if (triedToClosed.size() > 0)

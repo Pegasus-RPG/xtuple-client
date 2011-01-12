@@ -40,7 +40,8 @@ public slots:
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
     virtual void sMiscSelected(bool);
-	
+    virtual void sHandleUpdateInv();
+
 protected slots:
     virtual void languageChange();
 
@@ -54,7 +55,8 @@ private:
     int	_invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
-	bool _saved;
+    bool _saved;
+    bool _isMisc;
 };
 
 #endif // INVOICEITEM_H

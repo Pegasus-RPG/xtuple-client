@@ -979,6 +979,9 @@ void dspAROpenItems::sPostInvoice()
   XSqlQuery sum;
   sum.prepare("SELECT invoicetotal(:invchead_id) AS subtotal;");
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
   XSqlQuery post;
   post.prepare("SELECT postInvoice(:invchead_id, :journal) AS result;");
 
@@ -1036,6 +1039,9 @@ void dspAROpenItems::sPostInvoice()
     return;
   }
 
+  XSqlQuery tx;
+  tx.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+
   post.bindValue(":invchead_id", list()->currentItem()->id("docnumber"));
   post.bindValue(":journal",     journal);
   post.exec();
@@ -1043,19 +1049,38 @@ void dspAROpenItems::sPostInvoice()
   {
     int result = post.value("result").toInt();
     if (result < 0)
+    {
+      rollback.exec();
       systemError(this, storedProcErrorLookup("postInvoice", result),
                   __FILE__, __LINE__);
+    }
+    else
+    {
+      if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Post Invoice"), tr("Transaction Canceled") );
+        return;
+      }
+
+      q.exec("COMMIT;");
+    }
   }
   // contains() string is hard-coded in stored procedure
   else if (post.lastError().databaseText().contains("post to closed period"))
+  {
+    rollback.exec();
     systemError(this, tr("Could not post Invoice #%1 into a closed period.")
                             .arg(list()->currentItem()->text("docnumber")));
-
+  }
   else if (post.lastError().type() != QSqlError::NoError)
-        systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
+  {
+    rollback.exec();
+    systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
                 .arg(list()->currentItem()->text("docnumber"))
                     .arg(post.lastError().databaseText()),
                     __FILE__, __LINE__);
+  }
 
   omfgThis->sInvoicesUpdated(-1, TRUE);
 }

@@ -39,7 +39,6 @@
 #include "unpostedInvoices.h"
 #include "reprintInvoices.h"
 #include "printInvoices.h"
-#include "printInvoicesByShipvia.h"
 #include "purgeInvoices.h"
 
 #include "creditMemo.h"
@@ -242,7 +241,6 @@ menuSales::menuSales(GUIClient *pParent) :
     // Sales | Billing | Forms
     { "menu",	tr("&Forms"), (char*)billingFormsMenu,	billingMenu,	"true",	NULL, NULL, true, NULL },
     { "so.printInvoices",		     tr("&Print Invoices..."),		SLOT(sPrintInvoices()), billingFormsMenu, "PrintInvoices",	NULL, NULL, true, NULL },
-    { "so.printInvoicesByShipvia",	     tr("Print Invoices by Ship &Via..."),	SLOT(sPrintInvoicesByShipvia()), billingFormsMenu, "PrintInvoices",	NULL, NULL, true, NULL },
     { "so.reprintInvoices",		     tr("&Re-Print Invoices..."),	SLOT(sReprintInvoices()), billingFormsMenu, "PrintInvoices",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingFormsMenu,	"true",		NULL, NULL, true , NULL },
     { "so.printCreditMemos",		     tr("Print &Credit Memos..."),	SLOT(sPrintCreditMemos()), billingFormsMenu, "PrintCreditMemos",	NULL, NULL, true, NULL },
@@ -574,11 +572,6 @@ void menuSales::sUnpostedInvoices()
 void menuSales::sPrintInvoices()
 {
   printInvoices(parent, "", TRUE).exec();
-}
-
-void menuSales::sPrintInvoicesByShipvia()
-{
-  printInvoicesByShipvia(parent, "", TRUE).exec();
 }
 
 void menuSales::sReprintInvoices()

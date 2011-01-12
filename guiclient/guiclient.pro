@@ -373,7 +373,6 @@ FORMS =   absoluteCalendarItem.ui               \
           printCreditMemos.ui                   \
           printInvoice.ui                       \
           printInvoices.ui                      \
-          printInvoicesByShipvia.ui             \
           printItemLabelsByClassCode.ui         \
           printJournal.ui                       \
           printLabelsByInvoice.ui               \
@@ -934,7 +933,6 @@ HEADERS = ../common/format.h                    \
           printCreditMemos.h            \
           printInvoice.h                \
           printInvoices.h               \
-          printInvoicesByShipvia.h      \
           printItemLabelsByClassCode.h  \
           printJournal.h                \
           printLabelsByInvoice.h        \
@@ -1516,7 +1514,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           printCreditMemos.cpp                  \
           printInvoice.cpp                      \
           printInvoices.cpp                     \
-          printInvoicesByShipvia.cpp            \
           printItemLabelsByClassCode.cpp        \
           printJournal.cpp                      \
           printLabelsByInvoice.cpp              \

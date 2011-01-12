@@ -19,6 +19,8 @@
 #include <openreports.h>
 
 #include "editICMWatermark.h"
+#include "storedProcErrorLookup.h"
+#include "distributeInventory.h"
 #include "submitAction.h"
 
 printInvoice::printInvoice(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -148,7 +150,6 @@ void printInvoice::sPrint()
       }
     }
 
-    // TODO: do we really want error checking & invoice posting INSIDE the loop?
     for (int i = 0; i < _invoiceWatermarks->topLevelItemCount(); i++ )
     {
       QTreeWidgetItem *cursor = _invoiceWatermarks->topLevelItem(i);
@@ -178,70 +179,103 @@ void printInvoice::sPrint()
 	    orReport::endMultiPrint(_printer);
           return;
         }
-
-        q.prepare( "UPDATE invchead "
-                   "SET invchead_printed=TRUE "
-                   "WHERE (invchead_id=:invchead_id);" );
-        q.bindValue(":invchead_id", _invcheadid);
-        q.exec();
-
-        if (_alert)
-          omfgThis->sInvoicesUpdated(_invcheadid, TRUE);
-
-        if (_post->isChecked())
-        {
-	  sum.bindValue(":invchead_id", _invcheadid);
-	  if (sum.exec() && sum.first() && sum.value("subtotal").toDouble() == 0)
-	  {
-	    if (QMessageBox::question(this, tr("Invoice Has Value 0"),
-				      tr("Invoice #%1 has a total value of 0.\n"
-					 "Would you like to post it anyway?")
-					.arg(invchead_invcnumber),
-				      QMessageBox::Yes,
-				      QMessageBox::No | QMessageBox::Default)
-		  == QMessageBox::No)
-	      continue;
-	  }
-	  else if (sum.lastError().type() != QSqlError::NoError)
-	  {
-	    systemError(this, sum.lastError().databaseText(), __FILE__, __LINE__);
-	    continue;
-	  }
-	  else if (sum.value("subtotal").toInt() != 0)
-	  {
-	    xrate.bindValue(":invchead_id", _invcheadid);
-	    xrate.exec();
-	    if (xrate.lastError().type() != QSqlError::NoError)
-	    {
-	      systemError(this, tr("System Error posting Invoice #%1\n%2")
-				  .arg(cursor->text(0))
-				  .arg(xrate.lastError().databaseText()),
-			  __FILE__, __LINE__);
-	      continue;
-	    }
-	    else if (!xrate.first() || xrate.value("curr_rate").isNull())
-	    {
-	      systemError(this, tr("Could not post Invoice #%1 because of a missing exchange rate.")
-				  .arg(cursor->text(0)));
-	      continue;
-	    }
-	  }
-
-          q.prepare("SELECT postInvoice(:invchead_id) AS result;");
-          q.bindValue(":invchead_id", _invcheadid);
-          q.exec();
-	  if (q.lastError().type() != QSqlError::NoError)
-	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        }
       }
     }
 
     emit finishedPrinting(_invcheadid);
 
+    if (!_captive)
+      orReport::endMultiPrint(_printer);
+
+    q.prepare( "UPDATE invchead "
+               "SET invchead_printed=TRUE "
+               "WHERE (invchead_id=:invchead_id);" );
+    q.bindValue(":invchead_id", _invcheadid);
+    q.exec();
+
+    if (_alert)
+      omfgThis->sInvoicesUpdated(_invcheadid, TRUE);
+
+    if (_post->isChecked())
+    {
+      sum.bindValue(":invchead_id", _invcheadid);
+      if (sum.exec() && sum.first() && sum.value("subtotal").toDouble() == 0)
+      {
+        if (QMessageBox::question(this, tr("Invoice Has Value 0"),
+                                        tr("Invoice #%1 has a total value of 0.\n"
+                                           "Would you like to post it anyway?")
+					.arg(invchead_invcnumber),
+				      QMessageBox::Yes,
+				      QMessageBox::No | QMessageBox::Default)
+		  == QMessageBox::No)
+            return;
+      }
+      else if (sum.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, sum.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+      else if (sum.value("subtotal").toInt() != 0)
+      {
+        xrate.bindValue(":invchead_id", _invcheadid);
+        xrate.exec();
+        if (xrate.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, tr("System Error posting Invoice #%1\n%2")
+                                  .arg(invchead_invcnumber)
+				  .arg(xrate.lastError().databaseText()),
+                          __FILE__, __LINE__);
+          return;
+        }
+        else if (!xrate.first() || xrate.value("curr_rate").isNull())
+        {
+          systemError(this, tr("Could not post Invoice #%1 because of a missing exchange rate.")
+                                  .arg(invchead_invcnumber));
+          return;
+        }
+      }
+
+      q.exec("BEGIN;");
+      //TO DO:  Replace this method with commit that doesn't require transaction
+      //block that can lead to locking issues
+      XSqlQuery rollback;
+      rollback.prepare("ROLLBACK;");
+
+      q.prepare("SELECT postInvoice(:invchead_id) AS result;");
+      q.bindValue(":invchead_id", _invcheadid);
+      q.exec();
+      if (q.first())
+      {
+        int result = q.value("result").toInt();
+        if (result < 0)
+        {
+          rollback.exec();
+          systemError( this, storedProcErrorLookup("postInvoice", result),
+                    __FILE__, __LINE__);
+          return;
+        }
+        else
+        {
+          if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+          {
+            rollback.exec();
+            QMessageBox::information( this, tr("Post Invoice"), tr("Transaction Canceled") );
+            return;
+          }
+        }
+      }
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        rollback.exec();
+        return;
+      }
+
+      q.exec("COMMIT;");
+    }
+
     if (_captive)
       accept();
-    else
-      orReport::endMultiPrint(_printer);
   }
   else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

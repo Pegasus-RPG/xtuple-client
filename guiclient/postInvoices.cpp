@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "distributeInventory.h"
 #include <openreports.h>
 
 #include "submitAction.h"
@@ -24,7 +25,9 @@ postInvoices::postInvoices(QWidget* parent, const char* name, bool modal, Qt::WF
   setupUi(this);
 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+// Disable and hide Submit button due to inventory distributions
+//  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  _submit->hide();
 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
@@ -111,6 +114,10 @@ void postInvoices::sPost()
     return;
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT postInvoices(:postUnprinted, :inclZero) AS result;");
   q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
   q.bindValue(":inclZero",      inclZero);
@@ -121,6 +128,7 @@ void postInvoices::sPost()
 
     if (result == -5)
     {
+      rollback.exec();
       QMessageBox::critical( this, tr("Cannot Post one or more Invoices"),
                              tr( "The G/L Account Assignments for one or more of the Invoices that you are trying to post are not\n"
                                  "configured correctly.  Because of this, G/L Transactions cannot be posted for these Invoices.\n"
@@ -130,12 +138,21 @@ void postInvoices::sPost()
     }
     else if (result < 0)
     {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
                          .arg(__FILE__)
                          .arg(__LINE__)
                          .arg(q.value("result").toInt()) );
       return;
     }
+    else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+    {
+      rollback.exec();
+      QMessageBox::information( this, tr("Post Invoices"), tr("Transaction Canceled") );
+      return;
+    }
+
+    q.exec("COMMIT;");
 
 
     omfgThis->sInvoicesUpdated(-1, TRUE);

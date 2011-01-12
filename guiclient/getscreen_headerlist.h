@@ -470,7 +470,6 @@
 #include "printCreditMemo.h"
 #include "printCreditMemos.h"
 #include "printInvoice.h"
-#include "printInvoicesByShipvia.h"
 #include "printInvoices.h"
 #include "printItemLabelsByClassCode.h"
 #include "printJournal.h"

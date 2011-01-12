@@ -54,7 +54,6 @@ class menuSales : public QObject
     void sCreateInvoices();
     void sUnpostedInvoices();
     void sPrintInvoices();
-    void sPrintInvoicesByShipvia();
     void sReprintInvoices();
     void sPostInvoices();
     void sPurgeInvoices();

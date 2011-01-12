@@ -249,13 +249,13 @@ void creditMemoItem::sSave()
 
     q.prepare( "INSERT INTO cmitem "
                "( cmitem_id, cmitem_cmhead_id, cmitem_linenumber, cmitem_itemsite_id,"
-               "  cmitem_qtyreturned, cmitem_qtycredit,"
+               "  cmitem_qtyreturned, cmitem_qtycredit, cmitem_updateinv,"
                "  cmitem_qty_uom_id, cmitem_qty_invuomratio,"
                "  cmitem_price_uom_id, cmitem_price_invuomratio,"
                "  cmitem_unitprice, cmitem_taxtype_id,"
                "  cmitem_comments, cmitem_rsncode_id ) "
                "SELECT :cmitem_id, :cmhead_id, :cmitem_linenumber, itemsite_id,"
-               "       :cmitem_qtyreturned, :cmitem_qtycredit,"
+               "       :cmitem_qtyreturned, :cmitem_qtycredit, :cmitem_updateinv,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       :price_uom_id, :price_invuomratio,"
                "       :cmitem_unitprice, :cmitem_taxtype_id,"
@@ -266,14 +266,16 @@ void creditMemoItem::sSave()
   }
   else
     q.prepare( "UPDATE cmitem "
-               "SET cmitem_qtyreturned=:cmitem_qtyreturned, cmitem_qtycredit=:cmitem_qtycredit,"
+               "SET cmitem_qtyreturned=:cmitem_qtyreturned,"
+               "    cmitem_qtycredit=:cmitem_qtycredit,"
+               "    cmitem_updateinv=:cmitem_updateinv,"
                "    cmitem_qty_uom_id=:qty_uom_id,"
                "    cmitem_qty_invuomratio=:qty_invuomratio,"
                "    cmitem_price_uom_id=:price_uom_id,"
                "    cmitem_price_invuomratio=:price_invuomratio,"
                "    cmitem_unitprice=:cmitem_unitprice,"
-	             "    cmitem_taxtype_id=:cmitem_taxtype_id,"
-	             "    cmitem_comments=:cmitem_comments,"
+               "    cmitem_taxtype_id=:cmitem_taxtype_id,"
+               "    cmitem_comments=:cmitem_comments,"
                "    cmitem_rsncode_id=:cmitem_rsncode_id "
                "WHERE (cmitem_id=:cmitem_id);" );
 
@@ -282,6 +284,7 @@ void creditMemoItem::sSave()
   q.bindValue(":cmitem_linenumber", _lineNumber->text().toInt());
   q.bindValue(":cmitem_qtyreturned", _qtyReturned->toDouble());
   q.bindValue(":cmitem_qtycredit", _qtyToCredit->toDouble());
+  q.bindValue(":cmitem_updateinv", QVariant(_updateInv->isChecked()));
   q.bindValue(":qty_uom_id", _qtyUOM->id());
   q.bindValue(":qty_invuomratio", _qtyinvuomratio);
   q.bindValue(":price_uom_id", _pricingUOM->id());
@@ -425,6 +428,16 @@ void creditMemoItem::populate()
     _netUnitPrice->setLocalValue(cmitem.value("cmitem_unitprice").toDouble());
     _qtyToCredit->setDouble(cmitem.value("cmitem_qtycredit").toDouble());
     _qtyReturned->setDouble(cmitem.value("cmitem_qtyreturned").toDouble());
+    if (cmitem.value("cmitem_raitem_id").toInt() > 0)
+    {
+      _updateInv->setChecked(false);
+      _updateInv->setEnabled(false);
+    }
+    else
+    {
+      _updateInv->setChecked(cmitem.value("cmitem_updateinv").toBool());
+      _updateInv->setEnabled(true);
+    }
     _qtyUOM->setId(cmitem.value("cmitem_qty_uom_id").toInt());
     _ratio=cmitem.value("cmitem_qty_invuomratio").toDouble();
     _pricingUOM->setId(cmitem.value("cmitem_price_uom_id").toInt());
