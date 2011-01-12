@@ -51,7 +51,7 @@ exists(../csvimp) {
     error("Could not set the CSVIMP_DIR qmake variable.")
 }
 
-CSVIMP_BLD = ${CSVIMP_DIR}
+CSVIMP_BLD = $${CSVIMP_DIR}
 exists($${CSVIMP_DIR}-build-desktop) {
   CSVIMP_BLD = $${CSVIMP_DIR}-build-desktop
 }
