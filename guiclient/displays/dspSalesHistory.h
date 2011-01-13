@@ -8,34 +8,25 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPSALESHISTORYBYCUSTOMER_H
-#define DSPSALESHISTORYBYCUSTOMER_H
+#ifndef DSPSALESHISTORY_H
+#define DSPSALESHISTORY_H
 
 #include "guiclient.h"
 #include "display.h"
 
-#include "ui_dspSalesHistoryByCustomer.h"
-
-class dspSalesHistoryByCustomer : public display, public Ui::dspSalesHistoryByCustomer
+class dspSalesHistory : public display
 {
     Q_OBJECT
 
 public:
-    dspSalesHistoryByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-
-    virtual bool setParams(ParameterList&);
+    dspSalesHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
-    virtual void sHandleParams();
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
     virtual void sEdit();
     virtual void sView();
-    virtual void sInvoiceInformation();
-
-protected slots:
-    virtual void languageChange();
 
 };
 
-#endif // DSPSALESHISTORYBYCUSTOMER_H
+#endif // dspSalesHistory_H

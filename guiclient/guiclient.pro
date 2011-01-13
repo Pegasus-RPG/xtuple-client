@@ -387,7 +387,6 @@ FORMS =   absoluteCalendarItem.ui               \
           printPurchaseOrdersByAgent.ui         \
           printQuote.ui                         \
           printRaForm.ui                        \
-          printSASpecialCalendarForm.ui         \
           printShippingForm.ui                  \
           printShippingForms.ui                 \
           printSoForm.ui                        \
@@ -947,7 +946,6 @@ HEADERS = ../common/format.h                    \
           printPurchaseOrdersByAgent.h  \
           printQuote.h                  \
           printRaForm.h                 \
-          printSASpecialCalendarForm.h  \
           printShippingForm.h           \
           printShippingForms.h          \
           printSoForm.h                 \
@@ -1528,7 +1526,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           printPurchaseOrdersByAgent.cpp        \
           printQuote.cpp                        \
           printRaForm.cpp                       \
-          printSASpecialCalendarForm.cpp        \
           printShippingForm.cpp                 \
           printShippingForms.cpp                \
           printSoForm.cpp                       \

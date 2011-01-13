@@ -8,30 +8,30 @@
  * to be bound by its terms.
  */
 
-#include "dspTimePhasedBookings.h"
+#include "dspTimePhasedSales.h"
 
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
 
-#include <currcluster.h>
-
-#include "guiclient.h"
-#include "dspBookings.h"
+#include "currdisplay.h"
+#include "dspSalesHistory.h"
 #include "parameterwidget.h"
+#include "guiclient.h"
 
-dspTimePhasedBookings::dspTimePhasedBookings(QWidget* parent, const char*, Qt::WFlags fl)
-  : displayTimePhased(parent, "dspTimePhasedBookings", fl)
+dspTimePhasedSales::dspTimePhasedSales(QWidget* parent, const char*, Qt::WFlags fl)
+  : displayTimePhased(parent, "dspTimePhasedSales", fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Time-Phased Bookings"));
-  setReportName("TimePhasedBookings");
-  setMetaSQLOptions("timePhasedBookings", "detail");
+  setWindowTitle(tr("Time-Phased Sales History"));
+  setReportName("TimePhasedSalesHistory");
+  setMetaSQLOptions("timePhasedSales", "detail");
   setUseAltId(true);
-  setParameterWidgetVisible(true);
 
   parameterWidget()->append(tr("Customer"),   "cust_id",   ParameterWidget::Customer);
+  parameterWidget()->appendComboBox(tr("Customer Group"), "custgrp_id", XComboBox::CustomerGroups);
+  parameterWidget()->append(tr("Customer Group Pattern"), "custgrp_pattern", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Customer Type"), "custtype_id", XComboBox::CustomerTypes);
   parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
@@ -56,38 +56,34 @@ dspTimePhasedBookings::dspTimePhasedBookings(QWidget* parent, const char*, Qt::W
   sGroupByChanged();
 }
 
-void dspTimePhasedBookings::sViewBookings()
+void dspTimePhasedSales::sViewHistory()
 {
-  ParameterList params = parameterWidget()->parameters();
-  if (_groupBy->id() == 1)
+  if (_column > 2)
+  {
+    ParameterList params;
     params.append("prodcat_id", list()->id());
-  else if (_groupBy->id() == 2)
-    params.append("item_id", list()->id());
-  else
-    params.append("cust_id", list()->id());
-  params.append("startDate", _columnDates[_column - 4].startDate);
-  params.append("endDate", _columnDates[_column - 4].endDate);
-  params.append("run");
+    params.append("warehous_id", list()->altId());
+    params.append("startDate", _columnDates[_column - 3].startDate);
+    params.append("endDate", _columnDates[_column - 3].endDate);
+    params.append("run");
 
-  dspBookings *newdlg = new dspBookings();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+    dspSalesHistory *newdlg = new dspSalesHistory();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 
-void dspTimePhasedBookings::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
+void dspTimePhasedSales::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
-  if (pColumn < 4)
-    return;
-
   QAction *menuItem;
 
   _column = pColumn;
 
-  if (((XTreeWidgetItem *)pSelected)->id() != -1)
-    menuItem = pMenu->addAction(tr("View Bookings..."), this, SLOT(sViewBookings()));
+  menuItem = menuThis->addAction(tr("View Sales Detail..."), this, SLOT(sViewHistory()));
+  menuItem->setEnabled(_privileges->check("ViewSalesHistory"));
 }
 
-bool dspTimePhasedBookings::setParamsTP(ParameterList & params)
+bool dspTimePhasedSales::setParamsTP(ParameterList & params)
 {
   parameterWidget()->appendValue(params);
 
@@ -114,7 +110,8 @@ bool dspTimePhasedBookings::setParamsTP(ParameterList & params)
   return true;
 }
 
-void dspTimePhasedBookings::sGroupByChanged()
+
+void dspTimePhasedSales::sGroupByChanged()
 {
   int idx = _groupBy->id();
 

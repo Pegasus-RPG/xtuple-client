@@ -87,29 +87,12 @@
 #include "dspBriefEarnedCommissions.h"
 #include "dspTaxHistory.h"
 
-#include "dspSalesHistoryByCustomer.h"
-#include "dspSalesHistoryByBilltoName.h"
-#include "dspSalesHistoryByShipTo.h"
-#include "dspSalesHistoryByParameterList.h"
-#include "dspSalesHistoryByItem.h"
-#include "dspSalesHistoryBySalesrep.h"
-#include "dspBriefSalesHistoryByCustomer.h"
-#include "dspBriefSalesHistoryByCustomerType.h"
-#include "dspBriefSalesHistoryBySalesRep.h"
+#include "dspSalesHistory.h"
+#include "dspBriefSalesHistory.h"
 #include "dspBookings.h"
-#include "dspSummarizedSalesByCustomer.h"
-#include "dspSummarizedSalesByCustomerType.h"
-#include "dspSummarizedSalesByCustomerByItem.h"
-#include "dspSummarizedSalesByCustomerTypeByItem.h"
-#include "dspSummarizedSalesByItem.h"
-#include "dspSummarizedSalesBySalesRep.h"
-#include "dspSummarizedSalesHistoryByShippingZone.h"
+#include "dspSummarizedSales.h"
 #include "dspTimePhasedBookings.h"
-#include "dspTimePhasedSalesByItem.h"
-#include "dspTimePhasedSalesByProductCategory.h"
-#include "dspTimePhasedSalesByCustomer.h"
-#include "dspTimePhasedSalesByCustomerGroup.h"
-#include "dspTimePhasedSalesByCustomerByItem.h"
+#include "dspTimePhasedSales.h"
 
 #include "printSoForm.h"
 #include "printRaForm.h"
@@ -125,7 +108,6 @@
 #include "reassignCustomerTypeByCustomerType.h"
 #include "characteristics.h"
 
-#include "printSASpecialCalendarForm.h"
 #include "archRestoreSalesHistory.h"
 #include "allocateReservations.h"
 
@@ -161,10 +143,6 @@ menuSales::menuSales(GUIClient *pParent) :
   reportsInvAvailMenu = new QMenu(parent);
   reportsBacklogMenu = new QMenu(parent);
   analysisMenu = new QMenu(parent);
-  analysisSumHistMenu = new QMenu(parent);
-  analysisHistMenu = new QMenu(parent);
-  analysisBrfHistMenu = new QMenu(parent);
-  analysisTpHistMenu = new QMenu(parent);
   prospectMenu = new QMenu(parent);
   customerMenu = new QMenu(parent);
   pricingReportsMenu = new QMenu(parent);
@@ -189,10 +167,6 @@ menuSales::menuSales(GUIClient *pParent) :
   reportsInvAvailMenu->setObjectName("menu.sales.reportsinvavail");
   reportsBacklogMenu->setObjectName("menu.sales.reportsbacklog");
   analysisMenu->setObjectName("menu.sales.analysis");
-  analysisSumHistMenu->setObjectName("menu.sales.analysissumhist");
-  analysisHistMenu->setObjectName("menu.sales.analysishist");
-  analysisBrfHistMenu->setObjectName("menu.sales.analysisbrfhist");
-  analysisTpHistMenu->setObjectName("menu.sales.analysistphist");
   prospectMenu->setObjectName("menu.sales.prospect");
   customerMenu->setObjectName("menu.sales.customer");
   pricingReportsMenu->setObjectName("menu.sales.pricingreports");
@@ -321,55 +295,13 @@ menuSales::menuSales(GUIClient *pParent) :
 
     // Sales | Analysis
     { "menu",	tr("&Analysis"),           (char*)analysisMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
-
-    // Sales | Analysis | Bookings
     { "sa.dspBookings", tr("&Bookings..."), SLOT(sDspBookings()), analysisMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
     { "sa.dspTimePhasedBookings", tr("T&ime Phased Bookings..."), SLOT(sDspTimePhasedBookings()), analysisMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
     { "separator",	NULL,	NULL,	analysisMenu,	"true",		NULL, NULL, true, NULL },
-    
-    // Sales | Analysis | Sales History
-    { "menu",	tr("Sales &History"),           (char*)analysisHistMenu,	analysisMenu,	"true",	NULL, NULL, true, NULL },
-    { "sa.dspSalesHistoryBySalesRep", tr("by &Sales Rep..."), SLOT(sDspSalesHistoryBySalesRep()), analysisHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisHistMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspSalesHistoryByCustomerType", tr("by Customer &Type..."), SLOT(sDspSalesHistoryByCustomerType()), analysisHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSalesHistoryByCustomerGroup", tr("by Customer &Group..."), SLOT(sDspSalesHistoryByCustomerGroup()), analysisHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSalesHistoryByCustomer", tr("by &Customer..."), SLOT(sDspSalesHistoryByCustomer()), analysisHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSalesHistoryByBillToName", tr("by &Bill-To Name..."), SLOT(sDspSalesHistoryByBilltoName()), analysisHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSalesHistoryByShipTo", tr("by S&hip-To..."), SLOT(sDspSalesHistoryByShipTo()), analysisHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisHistMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspSalesHistoryByProductCategory", tr("by &Product Category..."), SLOT(sDspSalesHistoryByProductCategory()), analysisHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSalesHistoryByItem", tr("by &Item..."), SLOT(sDspSalesHistoryByItem()), analysisHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-
-    // Sales | Analysis | Brief Sales History
-    { "menu",	tr("Brie&f Sales History"),           (char*)analysisBrfHistMenu,	analysisMenu,	"true",	NULL, NULL, true, NULL },
-    { "sa.dspBriefSalesHistoryBySalesRep", tr("by &Sales Rep..."), SLOT(sDspBriefSalesHistoryBySalesRep()), analysisBrfHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisBrfHistMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspBriefSalesHistoryByCustomerType", tr("by Customer &Type..."), SLOT(sDspBriefSalesHistoryByCustomerType()), analysisBrfHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspBriefSalesHistoryByCustomer", tr("by &Customer..."), SLOT(sDspBriefSalesHistoryByCustomer()), analysisBrfHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    
-    // Sales | Analysis | Summarized Sales History
-    { "menu",	tr("Summari&zed Sales History"),           (char*)analysisSumHistMenu,	analysisMenu,	"true",	NULL, NULL, true, NULL },
-    { "sa.dspSummarizedSalesHistoryBySalesRep", tr("by &Sales Rep..."), SLOT(sDspSummarizedSalesBySalesRep()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSummarizedSalesHistoryByShippingZoneByItem", tr("by Shipping &Zone by Item..."), SLOT(sDspSummarizedSalesHistoryByShippingZone()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisSumHistMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspSummarizedSalesHistoryByCustomerType", tr("by Customer &Type..."), SLOT(sDspSummarizedSalesByCustomerType()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSummarizedSalesHistoryByCustomer", tr("by &Customer..."), SLOT(sDspSummarizedSalesByCustomer()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSummarizedSalesHistoryByCustomerTypeByItem", tr("by Customer T&ype by Item..."), SLOT(sDspSummarizedSalesByCustomerTypeByItem()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "sa.dspSummarizedSalesHistoryByCustomerByItem", tr("by C&ustomer by Item..."), SLOT(sDspSummarizedSalesByCustomerByItem()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisSumHistMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspSummarizedSalesHistoryByItem", tr("by &Item..."), SLOT(sDspSummarizedSalesByItem()), analysisSumHistMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
-
-    // Sales | Analysis | Time-Phased Sales History
-    { "menu",	tr("Time &Phased Sales History"),           (char*)analysisTpHistMenu,	analysisMenu,	"true",	NULL, NULL, true, NULL },
-    { "sa.dspTimePhasedSalesHistoryByCustomerGroup", tr("by Customer &Group..."), SLOT(sDspTimePhasedSalesByCustomerGroup()), analysisTpHistMenu, "ViewSalesHistory+ViewCustomerPrices", NULL, NULL, true , NULL },
-    { "sa.dspTimePhasedSalesHistoryByCustomer", tr("by &Customer..."), SLOT(sDspTimePhasedSalesByCustomer()), analysisTpHistMenu, "ViewSalesHistory+ViewCustomerPrices", NULL, NULL, true , NULL },
-    { "sa.dspTimePhasedSalesHistoryByCustomerByItem", tr("by C&ustomer by Item..."), SLOT(sDspTimePhasedSalesByCustomerByItem()), analysisTpHistMenu, "ViewSalesHistory+ViewCustomerPrices", NULL, NULL, true , NULL },
-    { "separator",	NULL,	NULL,	analysisTpHistMenu,	"true",		NULL, NULL, true, NULL },
-    { "sa.dspTimePhasedSalesHistoryByProductCategory", tr("by &Product Category..."), SLOT(sDspTimePhasedSalesByProductCategory()), analysisTpHistMenu, "ViewSalesHistory+ViewCustomerPrices", NULL, NULL, true , NULL },
-    { "sa.dspTimePhasedSalesHistoryByItem", tr("by &Item..."), SLOT(sDspTimePhasedSalesByItem()), analysisTpHistMenu, "ViewSalesHistory+ViewCustomerPrices", NULL, NULL, true , NULL },
-
-    // Sales | Analysis
-    { "sa.rptPrintSASpecialCalendarForm", tr("Print S/A Special Calendar Form..."), SLOT(sPrintSASpecialCalendarForm()), analysisMenu, "ViewSalesHistory", NULL, NULL, true, NULL },
+    { "sa.dspSalesHistory", tr("Sales &History..."), SLOT(sDspSalesHistory()), analysisMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
+    { "sa.dspBriefSalesHistory", tr("Brie&f Sales History..."), SLOT(sDspBriefSalesHistory()), analysisMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
+    { "sa.dspSummarizedSalesHistory", tr("Summari&zed Sales History..."), SLOT(sDspSummarizedSales()), analysisMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
+    { "sa.dspTimePhasedSalesHistory", tr("Time &Phased Sales History..."), SLOT(sDspTimePhasedSales()), analysisMenu, "ViewSalesHistory", NULL, NULL, true , NULL },
 
     { "separator",	NULL,	NULL,	mainMenu,	"true",		NULL, NULL, true, NULL },
 
@@ -853,74 +785,14 @@ void menuSales::sDspTaxHistory()
 }
 
 
-void menuSales::sDspSalesHistoryByCustomer()
+void menuSales::sDspSalesHistory()
 {
-  omfgThis->handleNewWindow(new dspSalesHistoryByCustomer());
+  omfgThis->handleNewWindow(new dspSalesHistory());
 }
 
-void menuSales::sDspSalesHistoryByBilltoName()
+void menuSales::sDspBriefSalesHistory()
 {
-  omfgThis->handleNewWindow(new dspSalesHistoryByBilltoName());
-}
-
-void menuSales::sDspSalesHistoryByShipTo()
-{
-  omfgThis->handleNewWindow(new dspSalesHistoryByShipTo());
-}
-
-void menuSales::sDspSalesHistoryByItem()
-{
-  omfgThis->handleNewWindow(new dspSalesHistoryByItem());
-}
-
-void menuSales::sDspSalesHistoryBySalesRep()
-{
-  omfgThis->handleNewWindow(new dspSalesHistoryBySalesrep());
-}
-
-void menuSales::sDspSalesHistoryByProductCategory()
-{
-  ParameterList params;
-  params.append("prodcat");
-
-  dspSalesHistoryByParameterList *newdlg = new dspSalesHistoryByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuSales::sDspSalesHistoryByCustomerType()
-{
-  ParameterList params;
-  params.append("custtype");
-
-  dspSalesHistoryByParameterList *newdlg = new dspSalesHistoryByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuSales::sDspSalesHistoryByCustomerGroup()
-{
-  ParameterList params;
-  params.append("custgrp");
-
-  dspSalesHistoryByParameterList *newdlg = new dspSalesHistoryByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuSales::sDspBriefSalesHistoryByCustomer()
-{
-  omfgThis->handleNewWindow(new dspBriefSalesHistoryByCustomer());
-}
-
-void menuSales::sDspBriefSalesHistoryByCustomerType()
-{
-  omfgThis->handleNewWindow(new dspBriefSalesHistoryByCustomerType());
-}
-
-void menuSales::sDspBriefSalesHistoryBySalesRep()
-{
-  omfgThis->handleNewWindow(new dspBriefSalesHistoryBySalesRep());
+  omfgThis->handleNewWindow(new dspBriefSalesHistory());
 }
 
 void menuSales::sDspBookings()
@@ -928,39 +800,9 @@ void menuSales::sDspBookings()
   omfgThis->handleNewWindow(new dspBookings());
 }
 
-void menuSales::sDspSummarizedSalesByCustomer()
+void menuSales::sDspSummarizedSales()
 {
-  omfgThis->handleNewWindow(new dspSummarizedSalesByCustomer());
-}
-
-void menuSales::sDspSummarizedSalesByCustomerType()
-{
-  omfgThis->handleNewWindow(new dspSummarizedSalesByCustomerType());
-}
-
-void menuSales::sDspSummarizedSalesByCustomerByItem()
-{
-  omfgThis->handleNewWindow(new dspSummarizedSalesByCustomerByItem());
-}
-
-void menuSales::sDspSummarizedSalesByCustomerTypeByItem()
-{
-  omfgThis->handleNewWindow(new dspSummarizedSalesByCustomerTypeByItem());
-}
-
-void menuSales::sDspSummarizedSalesByItem()
-{
-  omfgThis->handleNewWindow(new dspSummarizedSalesByItem());
-}
-
-void menuSales::sDspSummarizedSalesBySalesRep()
-{
-  omfgThis->handleNewWindow(new dspSummarizedSalesBySalesRep());
-}
-
-void menuSales::sDspSummarizedSalesHistoryByShippingZone()
-{
-  omfgThis->handleNewWindow(new dspSummarizedSalesHistoryByShippingZone());
+  omfgThis->handleNewWindow(new dspSummarizedSales());
 }
 
 void menuSales::sDspTimePhasedBookings()
@@ -968,29 +810,9 @@ void menuSales::sDspTimePhasedBookings()
   omfgThis->handleNewWindow(new dspTimePhasedBookings());
 }
 
-void menuSales::sDspTimePhasedSalesByItem()
+void menuSales::sDspTimePhasedSales()
 {
-  omfgThis->handleNewWindow(new dspTimePhasedSalesByItem());
-}
-
-void menuSales::sDspTimePhasedSalesByProductCategory()
-{
-  omfgThis->handleNewWindow(new dspTimePhasedSalesByProductCategory());
-}
-
-void menuSales::sDspTimePhasedSalesByCustomer()
-{
-  omfgThis->handleNewWindow(new dspTimePhasedSalesByCustomer());
-}
-
-void menuSales::sDspTimePhasedSalesByCustomerGroup()
-{
-  omfgThis->handleNewWindow(new dspTimePhasedSalesByCustomerGroup());
-}
-
-void menuSales::sDspTimePhasedSalesByCustomerByItem()
-{
-  omfgThis->handleNewWindow(new dspTimePhasedSalesByCustomerByItem());
+  omfgThis->handleNewWindow(new dspTimePhasedSales());
 }
 
 void menuSales::sPrintSalesOrderForm()
@@ -1086,11 +908,6 @@ void menuSales::sRestoreSalesHistory()
   archRestoreSalesHistory newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void menuSales::sPrintSASpecialCalendarForm()
-{
-  printSASpecialCalendarForm(parent, "", TRUE).exec();
 }
 
 void menuSales::sAllocateReservations()

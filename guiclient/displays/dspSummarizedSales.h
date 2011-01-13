@@ -8,30 +8,26 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPBRIEFSALESHISTORYBYSALESREP_H
-#define DSPBRIEFSALESHISTORYBYSALESREP_H
+#ifndef DSPSUMMARIZEDSALES_H
+#define DSPSUMMARIZEDSALES_H
 
-#include "guiclient.h"
 #include "display.h"
 
-#include "ui_dspBriefSalesHistoryBySalesRep.h"
+#include "ui_dspSummarizedSales.h"
 
-class dspBriefSalesHistoryBySalesRep : public display, public Ui::dspBriefSalesHistoryBySalesRep
+class dspSummarizedSales : public display, public Ui::dspSummarizedSales
 {
     Q_OBJECT
 
 public:
-    dspBriefSalesHistoryBySalesRep(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspSummarizedSales(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sHandleParams();
+    virtual void sGroupByChanged();
 
-protected slots:
-    virtual void languageChange();
 
 };
 
-#endif // DSPBRIEFSALESHISTORYBYSALESREP_H
+#endif // DSPSUMMARIZEDSALES_H

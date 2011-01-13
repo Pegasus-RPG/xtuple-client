@@ -107,35 +107,15 @@ class menuSales : public QObject
     void sDspBriefEarnedCommissions();
     void sDspTaxHistory();
     
-    void sDspSalesHistoryByCustomer();
-    void sDspSalesHistoryByBilltoName();
-    void sDspSalesHistoryByShipTo();
-    void sDspSalesHistoryByItem();
-    void sDspSalesHistoryBySalesRep();
-    void sDspSalesHistoryByProductCategory();
-    void sDspSalesHistoryByCustomerType();
-    void sDspSalesHistoryByCustomerGroup();
-    void sDspBriefSalesHistoryByCustomer();
-    void sDspBriefSalesHistoryByCustomerType();
-    void sDspBriefSalesHistoryBySalesRep();
+    void sDspSalesHistory();
+    void sDspBriefSalesHistory();
     void sDspBookings();
-    void sDspSummarizedSalesByCustomer();
-    void sDspSummarizedSalesByCustomerType();
-    void sDspSummarizedSalesByCustomerByItem();
-    void sDspSummarizedSalesByCustomerTypeByItem();
-    void sDspSummarizedSalesByItem();
-    void sDspSummarizedSalesBySalesRep();
-    void sDspSummarizedSalesHistoryByShippingZone();
+    void sDspSummarizedSales();
     void sDspTimePhasedBookings();
-    void sDspTimePhasedSalesByItem();
-    void sDspTimePhasedSalesByProductCategory();
-    void sDspTimePhasedSalesByCustomer();
-    void sDspTimePhasedSalesByCustomerGroup();
-    void sDspTimePhasedSalesByCustomerByItem();
+    void sDspTimePhasedSales();
 
     void sPrintSalesOrderForm();
     void sPrintReturnAuthForm();
-    void sPrintSASpecialCalendarForm();
 
     void sNewCustomer();
     void sCustomers();
@@ -178,10 +158,6 @@ class menuSales : public QObject
     QMenu *lookupSoMenu;
     QMenu *formsMenu;
     QMenu *analysisMenu;
-    QMenu *analysisSumHistMenu;
-    QMenu *analysisHistMenu;
-    QMenu *analysisBrfHistMenu;
-    QMenu *analysisTpHistMenu;
     QMenu *reportsMenu;
     QMenu *reportsCustomersMenu;
     QMenu *reportsInvAvailMenu;

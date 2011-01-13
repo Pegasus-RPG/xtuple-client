@@ -8,25 +8,17 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPBRIEFSALESHISTORYBYCUSTOMER_H
-#define DSPBRIEFSALESHISTORYBYCUSTOMER_H
+#ifndef DSPBRIEFSALESHISTORY_H
+#define DSPBRIEFSALESHISTORY_H
 
 #include "display.h"
 
-#include "ui_dspBriefSalesHistoryByCustomer.h"
-
-class dspBriefSalesHistoryByCustomer : public display, public Ui::dspBriefSalesHistoryByCustomer
+class dspBriefSalesHistory : public display
 {
     Q_OBJECT
 
 public:
-    dspBriefSalesHistoryByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-
-    virtual bool setParams(ParameterList &);
-
-protected slots:
-    virtual void languageChange();
-
+    dspBriefSalesHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 };
 
-#endif // DSPBRIEFSALESHISTORYBYCUSTOMER_H
+#endif // DSPBRIEFSALESHISTORY_H

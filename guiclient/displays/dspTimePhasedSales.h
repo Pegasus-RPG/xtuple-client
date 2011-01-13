@@ -8,29 +8,27 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPTIMEPHASEDSALESBYITEM_H
-#define DSPTIMEPHASEDSALESBYITEM_H
+#ifndef DSPTIMEPHASEDSALES_H
+#define DSPTIMEPHASEDSALES_H
 
 #include "displayTimePhased.h"
 
-#include "ui_dspTimePhasedSalesByItem.h"
+#include "ui_dspTimePhasedBookings.h"
 
-class dspTimePhasedSalesByItem : public displayTimePhased, public Ui::dspTimePhasedSalesByItem
+class dspTimePhasedSales : public displayTimePhased, public Ui::dspTimePhasedBookings
 {
     Q_OBJECT
 
 public:
-    dspTimePhasedSalesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspTimePhasedSales(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParamsTP(ParameterList &);
 
 public slots:
-    virtual void sViewShipments();
+    virtual void sGroupByChanged();
+    virtual void sViewHistory();
     virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem *, int pColumn);
-
-protected slots:
-    virtual void languageChange();
 
 };
 
-#endif // DSPTIMEPHASEDSALESBYITEM_H
+#endif // DSPTIMEPHASEDSALES_H

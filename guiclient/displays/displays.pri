@@ -11,9 +11,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspBacklogByParameterList.ui \
            displays/dspBacklogBySalesOrder.ui \
            displays/dspBriefEarnedCommissions.ui \
-           displays/dspBriefSalesHistoryByCustomer.ui \
-           displays/dspBriefSalesHistoryByCustomerType.ui \
-           displays/dspBriefSalesHistoryBySalesRep.ui \
            displays/dspCapacityUOMsByParameter.ui \
            displays/dspCostedBOMBase.ui \
            displays/dspCostedSummarizedBOM.ui \
@@ -96,12 +93,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspReorderExceptionsByPlannerCode.ui \
            displays/dspReservations.ui \
            displays/dspRunningAvailability.ui \
-           displays/dspSalesHistoryByBilltoName.ui \
-           displays/dspSalesHistoryByCustomer.ui \
-           displays/dspSalesHistoryByItem.ui \
-           displays/dspSalesHistoryByParameterList.ui \
-           displays/dspSalesHistoryBySalesrep.ui \
-           displays/dspSalesHistoryByShipTo.ui \
            displays/dspSalesOrdersByCustomer.ui \
            displays/dspSalesOrdersByCustomerPO.ui \
            displays/dspSalesOrdersByItem.ui \
@@ -116,22 +107,11 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspSummarizedBacklogByWarehouse.ui \
            displays/dspSummarizedBankrecHistory.ui \
            displays/dspSummarizedGLTransactions.ui \
-           displays/dspSummarizedSalesByCustomer.ui \
-           displays/dspSummarizedSalesByCustomerByItem.ui \
-           displays/dspSummarizedSalesByCustomerType.ui \
-           displays/dspSummarizedSalesByCustomerTypeByItem.ui \
-           displays/dspSummarizedSalesByItem.ui \
-           displays/dspSummarizedSalesBySalesRep.ui \
-           displays/dspSummarizedSalesHistoryByShippingZone.ui \
+           displays/dspSummarizedSales.ui \
            displays/dspTimePhasedAvailability.ui \
            displays/dspTimePhasedBookings.ui \
            displays/dspTimePhasedOpenAPItems.ui \
            displays/dspTimePhasedOpenARItems.ui \
-           displays/dspTimePhasedSalesByCustomer.ui \
-           displays/dspTimePhasedSalesByCustomerByItem.ui \
-           displays/dspTimePhasedSalesByCustomerGroup.ui \
-           displays/dspTimePhasedSalesByItem.ui \
-           displays/dspTimePhasedSalesByProductCategory.ui \
            displays/dspTimePhasedUsageStatisticsByItem.ui \
            displays/dspTodoByUserAndIncident.ui \
            displays/dspUnbalancedQOHByClassCode.ui \
@@ -164,9 +144,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspBacklogBySalesOrder.h \
            displays/dspBookings.h \
            displays/dspBriefEarnedCommissions.h \
-           displays/dspBriefSalesHistoryByCustomer.h \
-           displays/dspBriefSalesHistoryByCustomerType.h \
-           displays/dspBriefSalesHistoryBySalesRep.h \
+           displays/dspBriefSalesHistory.h \
            displays/dspCapacityUOMsByClassCode.h \
            displays/dspCapacityUOMsByParameter.h \
            displays/dspCapacityUOMsByProductCategory.h \
@@ -264,12 +242,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspReorderExceptionsByPlannerCode.h \
            displays/dspReservations.h \
            displays/dspRunningAvailability.h \
-           displays/dspSalesHistoryByBilltoName.h \
-           displays/dspSalesHistoryByCustomer.h \
-           displays/dspSalesHistoryByItem.h \
-           displays/dspSalesHistoryByParameterList.h \
-           displays/dspSalesHistoryBySalesrep.h \
-           displays/dspSalesHistoryByShipTo.h \
+           displays/dspSalesHistory.h \
            displays/dspSalesOrdersByCustomer.h \
            displays/dspSalesOrdersByCustomerPO.h \
            displays/dspSalesOrdersByItem.h \
@@ -288,22 +261,12 @@ HEADERS += displays/dspAllocations.h \
            displays/dspSummarizedBankrecHistory.h \
            displays/dspSummarizedBOM.h \
            displays/dspSummarizedGLTransactions.h \
-           displays/dspSummarizedSalesByCustomer.h \
-           displays/dspSummarizedSalesByCustomerByItem.h \
-           displays/dspSummarizedSalesByCustomerType.h \
-           displays/dspSummarizedSalesByCustomerTypeByItem.h \
-           displays/dspSummarizedSalesByItem.h \
-           displays/dspSummarizedSalesBySalesRep.h \
-           displays/dspSummarizedSalesHistoryByShippingZone.h \
+           displays/dspSummarizedSales.h \
            displays/dspTimePhasedAvailability.h \
            displays/dspTimePhasedBookings.h \
            displays/dspTimePhasedOpenAPItems.h \
            displays/dspTimePhasedOpenARItems.h \
-           displays/dspTimePhasedSalesByCustomer.h \
-           displays/dspTimePhasedSalesByCustomerByItem.h \
-           displays/dspTimePhasedSalesByCustomerGroup.h \
-           displays/dspTimePhasedSalesByItem.h \
-           displays/dspTimePhasedSalesByProductCategory.h \
+           displays/dspTimePhasedSales.h \
            displays/dspTimePhasedUsageStatisticsByItem.h \
            displays/dspTodoByUserAndIncident.h \
            displays/dspTrialBalances.h \
@@ -341,9 +304,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspBacklogBySalesOrder.cpp \
            displays/dspBookings.cpp \
            displays/dspBriefEarnedCommissions.cpp \
-           displays/dspBriefSalesHistoryByCustomer.cpp \
-           displays/dspBriefSalesHistoryByCustomerType.cpp \
-           displays/dspBriefSalesHistoryBySalesRep.cpp \
+           displays/dspBriefSalesHistory.cpp \
            displays/dspCapacityUOMsByClassCode.cpp \
            displays/dspCapacityUOMsByParameter.cpp \
            displays/dspCapacityUOMsByProductCategory.cpp \
@@ -443,12 +404,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspReorderExceptionsByPlannerCode.cpp \
            displays/dspReservations.cpp \
            displays/dspRunningAvailability.cpp \
-           displays/dspSalesHistoryByBilltoName.cpp \
-           displays/dspSalesHistoryByCustomer.cpp \
-           displays/dspSalesHistoryByItem.cpp \
-           displays/dspSalesHistoryByParameterList.cpp \
-           displays/dspSalesHistoryBySalesrep.cpp \
-           displays/dspSalesHistoryByShipTo.cpp \
+           displays/dspSalesHistory.cpp \
            displays/dspSalesOrdersByCustomer.cpp \
            displays/dspSalesOrdersByCustomerPO.cpp \
            displays/dspSalesOrdersByItem.cpp \
@@ -467,20 +423,10 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspSummarizedBankrecHistory.cpp \
            displays/dspSummarizedBOM.cpp \
            displays/dspSummarizedGLTransactions.cpp \
-           displays/dspSummarizedSalesByCustomer.cpp \
-           displays/dspSummarizedSalesByCustomerByItem.cpp \
-           displays/dspSummarizedSalesByCustomerType.cpp \
-           displays/dspSummarizedSalesByCustomerTypeByItem.cpp \
-           displays/dspSummarizedSalesByItem.cpp \
-           displays/dspSummarizedSalesBySalesRep.cpp \
-           displays/dspSummarizedSalesHistoryByShippingZone.cpp \
+           displays/dspSummarizedSales.cpp \
            displays/dspTimePhasedAvailability.cpp \
            displays/dspTimePhasedBookings.cpp \
-           displays/dspTimePhasedSalesByCustomer.cpp \
-           displays/dspTimePhasedSalesByCustomerByItem.cpp \
-           displays/dspTimePhasedSalesByCustomerGroup.cpp \
-           displays/dspTimePhasedSalesByItem.cpp \
-           displays/dspTimePhasedSalesByProductCategory.cpp \
+           displays/dspTimePhasedSales.cpp \
            displays/dspTimePhasedUsageStatisticsByItem.cpp \
            displays/dspTodoByUserAndIncident.cpp \
            displays/dspTrialBalances.cpp \
