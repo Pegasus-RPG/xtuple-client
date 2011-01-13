@@ -173,6 +173,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("Price UOM"),   _uomColumn, Qt::AlignLeft,  false, "price_uom");
   _soitem->addColumn(tr("Price"),     _priceColumn, Qt::AlignRight, true, "coitem_price");
   _soitem->addColumn(tr("Extended"),  _priceColumn, Qt::AlignRight, true, "extprice");
+  _soitem->addColumn(tr("Cust. Price"),     _priceColumn, Qt::AlignRight, false, "coitem_custprice");
+  _soitem->addColumn(tr("Cust. Discount"),  _priceColumn, Qt::AlignRight, false, "discountfromcust");
   _soitem->addColumn(tr("Supply Type"), _itemColumn, Qt::AlignCenter, false, "spplytype");
   _soitem->addColumn(tr("Order Number"),_itemColumn, Qt::AlignCenter, false, "ordrnumbr");
 
