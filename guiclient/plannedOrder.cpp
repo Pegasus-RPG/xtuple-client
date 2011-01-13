@@ -26,6 +26,8 @@ plannedOrder::plannedOrder(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_leadTime, SIGNAL(valueChanged(int)), this, SLOT(sUpdateStartDate()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
 
+  _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured |
+                 ItemLineEdit::cActive);
   _qty->setValidator(omfgThis->qtyVal());
 
   //If not multi-warehouse hide whs control
