@@ -39,6 +39,7 @@ public slots:
     virtual void sEdit();
     virtual void sDelete();
     virtual void sFillList();
+    virtual void sCheckEnable();
 
 protected slots:
     virtual void languageChange();
