@@ -12,6 +12,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 #include <QVariant>
 
 #include "guiclient.h"
@@ -29,6 +30,8 @@ dspWoHistoryByClassCode::dspWoHistoryByClassCode(QWidget* parent, const char*, Q
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
 
   _classCode->setType(ParameterGroup::ClassCode);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
   list()->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft,   true,  "wonumber"   );
   list()->addColumn(tr("Item #"),      _itemColumn,   Qt::AlignLeft,   true,  "item_number"   );
@@ -90,10 +93,30 @@ void dspWoHistoryByClassCode::sHandleCosts(bool pShowCosts)
 
 bool dspWoHistoryByClassCode::setParams(ParameterList & params)
 {
+  if(isVisible())
+  {
+    if (! _dates->startDate().isValid())
+    {
+      QMessageBox::warning(this, tr("Invalid Start Date"),
+                           tr("Enter a valid Start Date."));
+      _dates->setFocus();
+      return false;
+    }
+
+    if (! _dates->endDate().isValid())
+    {
+      QMessageBox::warning(this, tr("Invalid End Date"),
+                           tr("Enter a valid End Date."));
+      _dates->setFocus();
+      return false;
+    }
+  }
+
   params.append("woHistoryByClassCode"); // metasql only?
 
   _classCode->appendValue(params);
   _warehouse->appendValue(params);
+  _dates->appendValue(params);
 
   if (_topLevel->isChecked())
     params.append("showOnlyTopLevel");
