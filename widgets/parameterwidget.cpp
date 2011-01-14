@@ -79,6 +79,7 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT( applySaved(int) ) );
   connect(_filterList, SIGNAL(currentIndexChanged(int)), this, SLOT( setFiltersDefault() ) );
   connect(this, SIGNAL(updated()), this, SLOT( toggleSave() ) );
+  connect(_filterButton, SIGNAL(toggled(bool)), this, SLOT(setFiltersVisible(bool)));
 
   _saveButton->setShortcut(QKeySequence::Save);
   _saveButton->setToolTip(_saveButton->text()
@@ -1278,6 +1279,13 @@ void ParameterWidget::setEnabled(QString pName, bool pEnabled)
   }
   else
     qWarning("Parameter %s not found.", qPrintable(pName));
+}
+
+void ParameterWidget::setFiltersVisible(bool visible)
+{
+  if (visible && _filtersLayout->rowCount() == 1)
+    addParam();
+  _filterGroup->setVisible(visible);
 }
 
 void ParameterWidget::setFiltersVisabiltyPreference()

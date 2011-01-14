@@ -134,22 +134,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>_filterButton</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_filterGroup</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>188</x>
-     <y>16</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>117</x>
-     <y>84</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

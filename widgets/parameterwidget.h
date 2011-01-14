@@ -57,6 +57,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     void save();
     void setDefault(QString pName, QVariant pDefault = QVariant(), bool pAutoApply = false);
     void setEnabled(QString pName, bool pEnabled);
+    void setFiltersVisible(bool visible);
     void setSavedFilters(int defaultId = -1);
     void setSavedFiltersIndex(QString);
     void setType(QString, QString, ParameterWidgetTypes = Text, QVariant pDefault = QVariant(), QVariant extraInfo =  QVariant());
