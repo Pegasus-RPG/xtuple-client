@@ -146,7 +146,8 @@ void dspSummarizedSales::sGroupByChanged()
   list()->addColumn(tr("Wt. Avg. Price"), _priceColumn,    Qt::AlignRight,  true,  "wtavgprice"  );
   list()->addColumn(tr("Total Units"),    _qtyColumn,      Qt::AlignRight,  true,  "totalunits"  );
   list()->addColumn(tr("Total Sales"),    _bigMoneyColumn, Qt::AlignRight,  true,  "totalsales"  );
-  list()->addColumn(tr("Currency"),       _currencyColumn,  Qt::AlignLeft,  _units->id(),  "currAbbr"  );
+  if (!omfgThis->singleCurrency())
+    list()->addColumn(tr("Currency"),       _currencyColumn,  Qt::AlignLeft,  true,  "currAbbr"  );
 
   xtsettingsSetValue("dspSummarizedSales/units", _units->id());
 }

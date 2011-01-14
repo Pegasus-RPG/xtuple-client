@@ -28,6 +28,7 @@ dspTimePhasedSales::dspTimePhasedSales(QWidget* parent, const char*, Qt::WFlags 
   setReportName("TimePhasedSalesHistory");
   setMetaSQLOptions("timePhasedSales", "detail");
   setUseAltId(true);
+  setParameterWidgetVisible(true);
 
   parameterWidget()->append(tr("Customer"),   "cust_id",   ParameterWidget::Customer);
   parameterWidget()->appendComboBox(tr("Customer Group"), "custgrp_id", XComboBox::CustomerGroups);
@@ -61,7 +62,12 @@ void dspTimePhasedSales::sViewHistory()
   if (_column > 2)
   {
     ParameterList params;
-    params.append("prodcat_id", list()->id());
+    if (_groupBy->id() == 1)
+      params.append("prodcat_id", list()->id());
+    else if (_groupBy->id() == 2)
+      params.append("item_id", list()->id());
+    else
+      params.append("cust_id", list()->id());
     params.append("warehous_id", list()->altId());
     params.append("startDate", _columnDates[_column - 3].startDate);
     params.append("endDate", _columnDates[_column - 3].endDate);
