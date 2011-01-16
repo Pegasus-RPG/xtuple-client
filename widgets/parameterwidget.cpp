@@ -15,6 +15,7 @@
 #include <QtScript>
 #include <QMessageBox>
 #include <QTableWidget>
+#include <QTableWidgetItem>
 
 #ifdef Q_WS_MAC
 #include <QFont>
@@ -364,8 +365,6 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   int xid, init_filter_id;
 
   init_filter_id = filter_id;
-
-  QMapIterator<int, QPair<QString, QVariant> > j(_filterValues);
 
   clearFilters();
 
@@ -1112,6 +1111,7 @@ void ParameterWidget::clearFilters()
   gridLayout_2->addLayout(_filtersLayout, 1, 0, 1, 1);
 
   _filterValues.clear();
+  _filterWidgets.clear();
   _usedTypes.clear();
   _addFilterRow->setDisabled(false);
 
@@ -1188,6 +1188,7 @@ void ParameterWidget::removeParam(int pRow)
   QStringList split = filterType.split(":");
 
   _filterValues.remove(split[0].toInt());
+  _filterWidgets.remove(split[0].toInt());
 
 
   test2 = _filtersLayout->itemAtPosition(pRow, 0)->layout()->takeAt(1);
@@ -1206,8 +1207,6 @@ void ParameterWidget::save()
 {
   QString filter = "";
   QString variantString;
-  QString username;
-  QString query;
   QVariant tempVar;
   QDate today = QDate::currentDate();
   int filter_id;
@@ -1557,6 +1556,7 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
     _filterValues[foundRow] = qMakePair(pp->param, QVariant(value));
     emit updated();
   }
+  _filterWidgets[foundRow] = (QWidget *)filter;
 
   if (!_usedTypes.isEmpty())
     _usedTypes.remove(foundRow);
@@ -1637,6 +1637,87 @@ bool ParameterWidget::containsUsedType(QString value)
   }
 
   return false;
+}
+
+QString ParameterWidget::filter()
+{
+  QStringList filters;
+  QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
+  while (i.hasNext())
+  {
+    i.next();
+    QPair<QString, QVariant> tempPair = i.value();
+
+    QMapIterator<int, ParamProps*> p(_params);
+    while (p.hasNext())
+    {
+      p.next();
+      ParamProps *pp = p.value();
+      if (pp->param == tempPair.first)
+      {
+        QString value = ": ";
+        QWidget *w = _filterWidgets.value(i.key());
+        if (w->inherits("UsernameCluster"))
+        {
+          UsernameCluster *usernameCluster = (UsernameCluster *)w;
+          value.append(usernameCluster->username());
+        }
+        else if (w->inherits("ContactCluster"))
+        {
+          ContactCluster *contactCluster = (ContactCluster *)w;
+          value.append(contactCluster->name());
+        }
+        else if (w->inherits("ItemCluster"))
+        {
+          ItemCluster *itemCluster = (ItemCluster *)w;
+          value.append(itemCluster->number() + " - " + itemCluster->description());
+        }
+        else if (w->inherits("VirtualCluster"))
+        {
+          VirtualCluster *virtualCluster = (VirtualCluster *)w;
+          value.append(virtualCluster->number() + " - " + virtualCluster->name());
+        }
+        else if (w->inherits("XComboBox"))
+        {
+          XComboBox *comboBox = (XComboBox *)w;
+          value.append(comboBox->currentText());
+        }
+        else if (w->inherits("DLineEdit"))
+        {
+          DLineEdit *dlineEdit = (DLineEdit *)w;
+          value.append(dlineEdit->date().toString());
+        }
+        else if (w->inherits("QLineEdit"))
+        {
+          QLineEdit *lineEdit = (QLineEdit *)w;
+          value.append(lineEdit->text());
+        }
+        else if (w->inherits("QTableWidget"))
+        {
+          QTableWidget *table = (QTableWidget *)w;
+          QList<QTableWidgetItem *> items = table->selectedItems();
+          QStringList rowvals;
+          for (int i = 0; i < items.count(); i++)
+            rowvals.append(items.at(i)->data(Qt::DisplayRole).toString());
+          value.append(rowvals.join(","));
+        }
+        else if (w->inherits("QCheckBox"))
+        {
+          QCheckBox *checkBox = (QCheckBox *)w;
+          if (checkBox->isChecked())
+            value.append(tr("True"));
+          else
+            value.append(tr("False"));
+        }
+        else
+          value = "";
+
+        filters.append(pp->name + value);
+        break;
+      }
+    }
+  }
+  return filters.join("\n");
 }
 
 // script exposure ///////////////////////////////////////////////////////////

@@ -72,6 +72,7 @@ class XTUPLEWIDGETS_EXPORT ContactCluster : public VirtualCluster
       Q_INVOKABLE void setEmailSubjectText(const QString text);
       Q_INVOKABLE void setEmailBodyText(const QString text);
 
+      Q_INVOKABLE QString name() const;
       Q_INVOKABLE QString honorific() const { return _fname->at(0); }
       Q_INVOKABLE QString first() const { return _fname->at(1); }
       Q_INVOKABLE QString middle() const { return _fname->at(2); }

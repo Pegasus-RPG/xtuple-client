@@ -44,6 +44,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     Q_INVOKABLE void applyDefaultFilterSet();
     Q_INVOKABLE int paramIndex(QString pName);
     Q_INVOKABLE ParameterList parameters();
+    Q_INVOKABLE QString filter();
     
  public slots:
     void addParam();
@@ -83,6 +84,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     QSignalMapper *_filterSignalMapper;
     QMap<int, QString > _usedTypes;
     QString _settingsName, _settingsName2;
+    QMap<int, QWidget*> _filterWidgets;
     QMap<int, QPair<QString, QVariant > > _filterValues;
     bool _initialized;
     bool _shared;

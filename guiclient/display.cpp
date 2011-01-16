@@ -427,6 +427,7 @@ bool display::setParams(ParameterList & params)
   parameterWidget()->appendValue(params);
   if (!_data->_search->isNull())
     params.append("search_pattern", _data->_search->text());
+  params.append("filter", parameterWidget()->filter());
 
   return true;
 }

@@ -90,6 +90,7 @@ void dspTimePhasedBookings::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
 bool dspTimePhasedBookings::setParamsTP(ParameterList & params)
 {
   parameterWidget()->appendValue(params);
+  params.append("filter", parameterWidget()->filter());
 
   int idx = _groupBy->id();
   if (idx == 1)

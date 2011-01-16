@@ -48,61 +48,7 @@
        &lt;? else ?>
          text('ERROR')
        &lt;? endif ?>
-       AS lbl_unittype,
-       &lt;? if exists("warehous_id") ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
-       &lt;? else ?>
-         text('All Sites')
-       &lt;? endif ?>
-       AS warehouse,
-       &lt;? if exists("cust_id") ?>
-         (select cust_name from custinfo where cust_id=&lt;? value("cust_id") ?>)
-       &lt;? else ?>
-         text('All Customers')
-       &lt;? endif ?>
-         AS cust_name,
-       &lt;? if exists("custtype_id") ?>
-         (select custtype_code from custtype where custtype_id=&lt;? value("custtype_id") ?>)
-       &lt;? else ?>
-         text('All Customer Types')
-       &lt;? endif ?>
-         AS custtype_code,
-       &lt;? if exists("custtype_pattern") ?>
-           text(&lt;? value("custtype_pattern") ?>)
-       &lt;? else ?>
-           text('Not Applicable')
-       &lt;? endif ?>
-         AS custtype_pattern,
-       &lt;? if exists("custgrp_id") ?>
-         (select custgrp_name from custgrp where custgrp_id=&lt;? value("custgrp_id") ?>)
-       &lt;? else ?>
-         text('All Customer Groups')
-       &lt;? endif ?>
-         AS custgrp_name,
-       &lt;? if exists("custgrp_pattern") ?>
-           text(&lt;? value("custgrp_pattern") ?>)
-       &lt;? else ?>
-           text('Not Applicable')
-       &lt;? endif ?>
-         AS custgrp_pattern,
-      &lt;? if exists("prodcat_id") ?>
-         (select prodcat_code from prodcat where prodcat_id=&lt;? value("prodcat_id") ?>)
-       &lt;? else ?>
-         text('All Product Categories')
-       &lt;? endif ?>
-         AS prodcat_code,
-       &lt;? if exists("prodcat_pattern") ?>
-           text(&lt;? value("prodcat_pattern") ?>)
-       &lt;? else ?>
-           text('Not Applicable')
-       &lt;? endif ?>
-         AS prodcat_pattern,
-       &lt;? if exists("item_id") ?>
-         (select item_number from item where item_id=&lt;? value("item_id") ?>)
-       &lt;? else ?>
-         text('All Item Numbers')
-       &lt;? endif ?>
-         AS item_number;     </sql>
+       AS lbl_unittype;     </sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -425,251 +371,6 @@ UNION
   </label>
   <field>
    <rect>
-    <x>190</x>
-    <y>63</y>
-    <width>160</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>custtype_code</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>63</y>
-    <width>190</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Product Category:</string>
-  </label>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>63</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>prodcat_code</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>103</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item:</string>
-  </label>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>123</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Site:</string>
-  </label>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>63</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Type:</string>
-  </label>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>43</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer:</string>
-  </label>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>83</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>prodcat_pattern</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>83</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Product Category Pattern:</string>
-  </label>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>103</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>43</y>
-    <width>165</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cust_name</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>83</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Type Pattern:</string>
-  </label>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>83</y>
-    <width>165</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>custtype_pattern</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>123</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>220</x>
     <y>200</y>
     <width>80</width>
@@ -706,76 +407,26 @@ UNION
     <column>groupbyDescrip</column>
    </data>
   </field>
-  <label>
+  <text>
    <rect>
-    <x>0</x>
-    <y>103</y>
-    <width>185</width>
-    <height>20</height>
+    <x>10</x>
+    <y>33</y>
+    <width>725</width>
+    <height>15</height>
    </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Group:</string>
-  </label>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>123</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Group Pattern:</string>
-  </label>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>103</y>
-    <width>160</width>
-    <height>20</height>
-   </rect>
+   <bottompad>12</bottompad>
    <font>
     <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
    <left/>
-   <vcenter/>
+   <top/>
    <data>
-    <query>head</query>
-    <column>custgrp_name</column>
+    <query>Parameter Query</query>
+    <column>filter</column>
    </data>
-  </field>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>123</y>
-    <width>165</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>custgrp_pattern</column>
-   </data>
-  </field>
+  </text>
  </rpthead>
  <pghead>
   <firstpage/>

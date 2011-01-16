@@ -27,8 +27,10 @@ dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("salesHistory", "detail");
   setParameterWidgetVisible(true);
 
-  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate());
-  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Invoice Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Invoice End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Ship Start Date"), "shipStartDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("Ship End Date"),   "shipEndDate",   ParameterWidget::Date);
   parameterWidget()->append(tr("Customer"),   "cust_id",   ParameterWidget::Customer);
   parameterWidget()->append(tr("Customer Ship-to"),   "shipto_id",   ParameterWidget::Shipto);
   parameterWidget()->appendComboBox(tr("Customer Group"), "custgrp_id", XComboBox::CustomerGroups);
@@ -40,7 +42,7 @@ dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Sales Order"), "cohead_id", ParameterWidget::SalesOrder);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesReps);
-  parameterWidget()->appendComboBox(tr("Shpping Zones"), "shipzone_id", XComboBox::ShippingZones);
+  parameterWidget()->appendComboBox(tr("Shipping Zones"), "shipzone_id", XComboBox::ShippingZones);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
@@ -75,9 +77,6 @@ enum SetResponse dspSalesHistory::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  parameterWidget()->setDefault(tr("Start Date"), QVariant());
-  parameterWidget()->setDefault(tr("End Date"), QVariant());
-
   param = pParams.value("cohead_id", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Sales Order"), param.toInt());
@@ -106,21 +105,41 @@ enum SetResponse dspSalesHistory::set(const ParameterList &pParams)
   if (valid)
     parameterWidget()->setDefault(tr("Product Category Pattern"), param.toString());
 
-  param = pParams.value("warehous_id", &valid);
+  param = pParams.value("salesrep_id", &valid);
   if (valid)
-    parameterWidget()->setDefault(tr("Site"), param.toInt());
+    parameterWidget()->setDefault(tr("Sales Rep."), param.toInt());
 
   param = pParams.value("startDate", &valid);
   if (valid)
-    parameterWidget()->setDefault(tr("Start Date"), param.toDate());
+    parameterWidget()->setDefault(tr("Invoice Start Date"), param.toDate());
+  else
+    parameterWidget()->setDefault(tr("Invoice Start Date"), QVariant());
 
   param = pParams.value("endDate", &valid);
   if (valid)
-    parameterWidget()->setDefault(tr("End Date"), param.toDate());
+    parameterWidget()->setDefault(tr("Invoice End Date"), param.toDate());
+  else
+    parameterWidget()->setDefault(tr("Invoice End Date"), QVariant());
+
+  param = pParams.value("shipStartDate", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Ship Start Date"), param.toDate());
+  else
+    parameterWidget()->setDefault(tr("Ship Start Date"), QVariant());
+
+  param = pParams.value("shipEndDate", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Ship End Date"), param.toDate());
+  else
+    parameterWidget()->setDefault(tr("Ship End Date"), QVariant());
 
   param = pParams.value("shipzone_id", &valid);
   if (valid)
-    parameterWidget()->setDefault(tr("Shipping Zone"), param.toInt());
+    parameterWidget()->setDefault(tr("Shipping Zones"), param.toInt());
+
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Site"), param.toInt());
 
   parameterWidget()->applyDefaultFilterSet();
 

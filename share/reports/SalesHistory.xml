@@ -16,86 +16,6 @@
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
  <querysource>
-  <name>head</name>
-  <sql>SELECT &lt;? if exists("startDate") ?>
-         formatDate(date(&lt;? value("startDate") ?>))
-       &lt;? else ?>
-         text('Earliest')
-       &lt;? endif ?> AS startDate,
-       &lt;? if exists("endDate") ?>
-         formatDate(date(&lt;? value("endDate") ?>))
-       &lt;? else ?>
-         text('Latest')
-       &lt;? endif ?> AS endDate,
-       &lt;? if exists("showPrices") ?>
-           text('Unit Price') AS lbl_unitprice,
-           text('Total') AS lbl_total,
-       &lt;? else ?>
-           text('') AS lbl_unitprice,
-           text('') AS lbl_total,
-       &lt;? endif ?>
-       &lt;? if exists("warehous_id") ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
-       &lt;? else ?>
-         text('All Sites')
-       &lt;? endif ?>
-       AS warehouse,
-       &lt;? if exists("cust_id") ?>
-         (select cust_name from custinfo where cust_id=&lt;? value("cust_id") ?>)
-       &lt;? else ?>
-         text('All Customers')
-       &lt;? endif ?>
-         AS cust_name,
-       &lt;? if exists("custtype_id") ?>
-         (select custtype_code from custtype where custtype_id=&lt;? value("custtype_id") ?>)
-       &lt;? else ?>
-         text('All Customer Types')
-       &lt;? endif ?>
-         AS custtype_code,
-       &lt;? if exists("custtype_pattern") ?>
-           text(&lt;? value("custtype_pattern") ?>)
-       &lt;? else ?>
-           text('Not Applicable')
-       &lt;? endif ?>
-         AS custtype_pattern,
-       &lt;? if exists("custgrp_id") ?>
-         (select custgrp_name from custgrp where custgrp_id=&lt;? value("custgrp_id") ?>)
-       &lt;? else ?>
-         text('All Customer Groups')
-       &lt;? endif ?>
-         AS custgrp_name,
-       &lt;? if exists("custgrp_pattern") ?>
-           text(&lt;? value("custgrp_pattern") ?>)
-       &lt;? else ?>
-           text('Not Applicable')
-       &lt;? endif ?>
-         AS custgrp_pattern,
-      &lt;? if exists("prodcat_id") ?>
-         (select prodcat_code from prodcat where prodcat_id=&lt;? value("prodcat_id") ?>)
-       &lt;? else ?>
-         text('All Product Categories')
-       &lt;? endif ?>
-         AS prodcat_code,
-       &lt;? if exists("prodcat_pattern") ?>
-           text(&lt;? value("prodcat_pattern") ?>)
-       &lt;? else ?>
-           text('Not Applicable')
-       &lt;? endif ?>
-         AS prodcat_pattern,
-       &lt;? if exists("item_id") ?>
-         (select item_number from item where item_id=&lt;? value("item_id") ?>)
-       &lt;? else ?>
-         text('All Item Numbers')
-       &lt;? endif ?>
-         AS item_number,
-       &lt;? if exists("cohead_id") ?>
-         (select cohead_number from cohead where cohead_id=&lt;? value("cohead_id") ?>)
-       &lt;? else ?>
-         text('All Orders')
-       &lt;? endif ?>
-         AS docnumber; </sql>
- </querysource>
- <querysource>
   <name>detail</name>
   <sql>SELECT cohist_ordernumber AS sonumber,
        cohist_invcnumber AS invnumber,
@@ -129,13 +49,22 @@
 &lt;? if exists("cohead_id") ?>
               JOIN cohead ON (cohead_number=cohist_ordernumber)
 &lt;? endif ?>
-WHERE ( (1=1)
+WHERE ( (true)
 &lt;? if exists("includeMisc") ?>
   AND  (COALESCE(cohist_misc_type, '') &lt;> 'F')
   AND  (COALESCE(cohist_misc_type, '') &lt;> 'T')
 &lt;? endif ?>
 &lt;? if exists("startDate") ?>
-  AND  (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+  AND  (cohist_invcdate >= &lt;? value("startDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("endDate") ?>
+  AND  (cohist_invcdate &lt;= &lt;? value("endDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("shipStartDate") ?>
+  AND  (cohist_shipdate >= &lt;? value("shipStartDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("shipEndDate") ?>
+  AND  (cohist_shipdate &lt;= &lt;? value("shipEndDate") ?>)
 &lt;? endif ?>
 &lt;? if exists("salesrep_id") ?>
   AND  (cohist_salesrep_id=&lt;? value("salesrep_id") ?>)
@@ -194,19 +123,17 @@ WHERE ( (1=1)
   AND (cohead_id=&lt;? value("cohead_id") ?>)
 &lt;? endif ?>
       )
-ORDER BY cohist_shipdate, item_number;
-      </sql>
+ORDER BY cohist_invcdate, item_number</sql>
  </querysource>
  <querysource>
-  <name>showPrices</name>
-  <sql>SELECT TRUE
- WHERE (TRUE =
-&lt;? if exists("showPrices") ?>
-    TRUE
-&lt;? else ?>
-    FALSE
-&lt;? endif ?>
- );</sql>
+  <name>head</name>
+  <sql>SELECT &lt;? if exists("showPrices") ?>
+           text('Unit Price') AS lbl_unitprice,
+           text('Total') AS lbl_total
+       &lt;? else ?>
+           text('') AS lbl_unitprice,
+           text('') AS lbl_total
+       &lt;? endif ?>;</sql>
  </querysource>
  <rpthead>
   <height>233</height>
@@ -343,9 +270,9 @@ ORDER BY cohist_shipdate, item_number;
   </label>
   <line>
    <xstart>5</xstart>
-   <ystart>228</ystart>
+   <ystart>230</ystart>
    <xend>745</xend>
-   <yend>228</yend>
+   <yend>230</yend>
    <weight>2</weight>
   </line>
   <field>
@@ -383,426 +310,26 @@ ORDER BY cohist_shipdate, item_number;
    <vcenter/>
    <string>Invc. Date</string>
   </label>
-  <field>
+  <text>
    <rect>
-    <x>540</x>
-    <y>153</y>
-    <width>150</width>
-    <height>20</height>
+    <x>15</x>
+    <y>48</y>
+    <width>725</width>
+    <height>15</height>
    </rect>
+   <bottompad>12</bottompad>
    <font>
     <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
    <left/>
-   <vcenter/>
+   <top/>
    <data>
-    <query>head</query>
-    <column>warehouse</column>
+    <query>Parameter Query</query>
+    <column>filter</column>
    </data>
-  </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>53</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer:</string>
-  </label>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>113</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Group:</string>
-  </label>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>153</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Site:</string>
-  </label>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>133</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>133</y>
-    <width>165</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>custgrp_pattern</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>133</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item:</string>
-  </label>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>93</y>
-    <width>165</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>custtype_pattern</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>73</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Type:</string>
-  </label>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>113</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Product Category Pattern:</string>
-  </label>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>113</y>
-    <width>160</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>custgrp_name</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>93</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Type Pattern:</string>
-  </label>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>113</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>prodcat_pattern</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>133</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Group Pattern:</string>
-  </label>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>93</y>
-    <width>190</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Product Category:</string>
-  </label>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>53</y>
-    <width>165</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cust_name</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>73</y>
-    <width>160</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>custtype_code</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>93</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>prodcat_code</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>430</x>
-    <y>73</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
-  </label>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>73</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>endDate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>430</x>
-    <y>53</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <field>
-   <rect>
-    <x>540</x>
-    <y>53</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startDate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>153</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Sales Order:</string>
-  </label>
-  <field>
-   <rect>
-    <x>190</x>
-    <y>153</y>
-    <width>165</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>docnumber</column>
-   </data>
-  </field>
+  </text>
  </rpthead>
  <pghead>
   <firstpage/>

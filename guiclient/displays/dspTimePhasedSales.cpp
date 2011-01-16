@@ -92,6 +92,7 @@ void dspTimePhasedSales::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int p
 bool dspTimePhasedSales::setParamsTP(ParameterList & params)
 {
   parameterWidget()->appendValue(params);
+  params.append("filter", parameterWidget()->filter());
 
   int idx = _groupBy->id();
   if (idx == 1)

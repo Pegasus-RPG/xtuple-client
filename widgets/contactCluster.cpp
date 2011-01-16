@@ -466,6 +466,11 @@ void ContactCluster::setEmailSubjectText(const QString text)
   _subjText = text;
 }
 
+QString ContactCluster::name() const
+{
+  return _number->text();
+}
+
 void ContactCluster::setEmailBodyText(const QString text)
 {
   _bodyText = text;

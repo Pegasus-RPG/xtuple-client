@@ -26,8 +26,8 @@ dspSummarizedSales::dspSummarizedSales(QWidget* parent, const char*, Qt::WFlags 
   setMetaSQLOptions("summarizedSalesHistory", "detail");
   setParameterWidgetVisible(true);
 
-  parameterWidget()->append(tr("Invoice Start Date"), "invoiceStartDate", ParameterWidget::Date, QDate::currentDate());
-  parameterWidget()->append(tr("Invoice End Date"),   "invoiceEndDate",   ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Invoice Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Invoice End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Ship Start Date"), "shipStartDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Ship End Date"),   "shipEndDate",   ParameterWidget::Date);
   parameterWidget()->appendComboBox(tr("Currency"), "curr_id", XComboBox::Currencies);
@@ -121,6 +121,8 @@ void dspSummarizedSales::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 void dspSummarizedSales::sViewHistory()
 {
   ParameterList params;
+  parameterWidget()->appendValue(params);
+
   if (_cust->isChecked())
       params.append("cust_id", list()->id("cust_number"));
   if (_custtype->isChecked())
