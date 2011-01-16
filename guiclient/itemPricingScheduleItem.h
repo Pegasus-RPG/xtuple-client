@@ -25,6 +25,8 @@ public:
     itemPricingScheduleItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~itemPricingScheduleItem();
 
+    QPushButton* _save;
+
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();

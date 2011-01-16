@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include "dspSalesHistory.h"
 #include "dspSummarizedSales.h"
 #include "parameterwidget.h"
 #include "xtreewidget.h"
@@ -107,6 +108,36 @@ bool dspSummarizedSales::setParams(ParameterList & params)
     params.append("byCurrency");
 
   return true;
+}
+
+void dspSummarizedSales::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
+{
+  QAction *menuItem;
+
+  menuItem = pMenu->addAction(tr("View History..."), this, SLOT(sViewHistory()));
+
+}
+
+void dspSummarizedSales::sViewHistory()
+{
+  ParameterList params;
+  if (_cust->isChecked())
+      params.append("cust_id", list()->id("cust_number"));
+  if (_custtype->isChecked())
+      params.append("custtype_id", list()->id("custtype_code"));
+  if (_salesrep->isChecked())
+      params.append("salesrep_id", list()->id("salesrep_number"));
+  if (_shipzone->isChecked())
+      params.append("shipzone_id", list()->id("shipzone_name"));
+  if (_item->isChecked())
+      params.append("item_id", list()->id("item_number"));
+  if (_site->isChecked())
+      params.append("warehous_id", list()->id("warehous_code"));
+  params.append("run");
+
+  dspSalesHistory *newdlg = new dspSalesHistory();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspSummarizedSales::sGroupByChanged()

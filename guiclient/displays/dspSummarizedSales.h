@@ -25,6 +25,8 @@ public:
     virtual bool setParams(ParameterList &);
 
 public slots:
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
+    virtual void sViewHistory();
     virtual void sGroupByChanged();
 
 

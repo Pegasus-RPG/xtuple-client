@@ -17,8 +17,12 @@ class dspBriefSalesHistory : public display
 {
     Q_OBJECT
 
-public:
+  public:
     dspBriefSalesHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+
+  public slots:
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
+    virtual void sViewHistory();
 };
 
 #endif // DSPBRIEFSALESHISTORY_H

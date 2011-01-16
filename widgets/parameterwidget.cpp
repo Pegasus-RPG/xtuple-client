@@ -37,6 +37,7 @@
 #include "itemcluster.h"
 #include "empcluster.h"
 #include "shiptocluster.h"
+#include "ordercluster.h"
 
 #define DEBUG false
 
@@ -525,6 +526,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           if (employeeCluster != 0)
             employeeCluster->setId(tempFilterList[1].toInt());
           break;
+        case SalesOrder:
+          OrderCluster *soCluster;
+          soCluster = qobject_cast<OrderCluster*>(found);
+          if (soCluster != 0)
+            soCluster->setId(tempFilterList[1].toInt());
+          break;
         case Site:
           WComboBox *wBox;
           wBox = qobject_cast<WComboBox*>(found);
@@ -692,6 +699,12 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         employeeCluster = qobject_cast<EmpCluster*>(found);
         if (employeeCluster != 0)
           employeeCluster->setId(pp->defaultValue.toInt());
+        break;
+      case SalesOrder:
+        OrderCluster *soCluster;
+        soCluster = qobject_cast<OrderCluster*>(found);
+        if (soCluster != 0)
+          soCluster->setId(pp->defaultValue.toInt());
         break;
       case Site:
         WComboBox *wBox;
@@ -931,6 +944,19 @@ void ParameterWidget::changeFilterObject(int index)
       employeeCluster->setLabel("");
 
       connect(employeeCluster, SIGNAL(newId(int)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case SalesOrder:
+    {
+      OrderCluster *soCluster = new OrderCluster(_filterGroup);
+      newWidget = soCluster;
+      soCluster->setDescriptionVisible(false);
+      soCluster->setOrientation(Qt::Horizontal);
+      soCluster->setAllowedTypes(OrderLineEdit::Sales);
+      soCluster->setAllowedStatuses(OrderLineEdit::AnyStatus);
+      soCluster->setLabel("");
+
+      connect(soCluster, SIGNAL(newId(int,QString)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
   case Site:
@@ -1663,6 +1689,7 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("Item", QScriptValue(engine, ParameterWidget::Item), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Employee", QScriptValue(engine, ParameterWidget::Employee), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Site", QScriptValue(engine, ParameterWidget::Site), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("SalesOrder", QScriptValue(engine, ParameterWidget::SalesOrder), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

@@ -15,6 +15,7 @@
 
 #include "parameterwidget.h"
 #include "xtreewidget.h"
+#include "dspSalesHistory.h"
 
 dspBriefSalesHistory::dspBriefSalesHistory(QWidget* parent, const char* name, Qt::WFlags fl)
   : display(parent, "dspBriefSalesHistory", fl)
@@ -49,5 +50,25 @@ dspBriefSalesHistory::dspBriefSalesHistory(QWidget* parent, const char* name, Qt
   list()->addColumn(tr("Ord. Date"),   _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
   list()->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
   list()->addColumn(tr("Total"),       _bigMoneyColumn, Qt::AlignRight,  true,  "extended"  );
+}
+
+void dspBriefSalesHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
+{
+  QAction *menuItem;
+
+  if (list()->id() > -1)
+    menuItem = pMenu->addAction(tr("View History..."), this, SLOT(sViewHistory()));
+
+}
+
+void dspBriefSalesHistory::sViewHistory()
+{
+  ParameterList params;
+  params.append("cohead_id", list()->id());
+  params.append("run");
+
+  dspSalesHistory *newdlg = new dspSalesHistory();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 

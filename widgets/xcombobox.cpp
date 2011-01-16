@@ -143,6 +143,7 @@ void XComboBox::init()
   insertEditor(ShipVias,"shipVias","MaintainShipVias");
   insertEditor(ShippingCharges,"shippingChargeTypes","MaintainShippingChargeTypes");
   insertEditor(ShippingForms,"shippingForms","MaintainShippingForms");
+  insertEditor(ShippingForms,"shippingZones","MaintainShippingZones");
   insertEditor(SiteTypes,"siteTypes","MaintainSiteTypes");
   insertEditor(SoProjects,"projects","MaintainProjects");
   insertEditor(Subaccounts,"subaccounts","MaintainChartOfAccounts");
@@ -361,7 +362,11 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM shipform "
                   "ORDER BY shipform_name;" );
       break;
-
+   case ShippingZones:
+      query.exec( "SELECT shipzone_id, shipzone_name, shipzone_name "
+                  "FROM shipzone "
+                  "ORDER BY shipzone_name;" );
+    break;
     case Terms:
       query.exec( "SELECT terms_id, (terms_code || '-' || terms_descrip), terms_code "
                   "FROM terms "
@@ -1666,6 +1671,7 @@ void setupXComboBox(QScriptEngine *engine)
   widget.setProperty("ShipVias",             QScriptValue(engine, XComboBox::ShipVias),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("ShippingCharges",      QScriptValue(engine, XComboBox::ShippingCharges),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("ShippingForms",        QScriptValue(engine, XComboBox::ShippingForms),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("ShippingZones",        QScriptValue(engine, XComboBox::ShippingZones),        QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("SiteTypes",            QScriptValue(engine, XComboBox::SiteTypes),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("SoProjects",           QScriptValue(engine, XComboBox::SoProjects),           QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("Subaccounts",          QScriptValue(engine, XComboBox::Subaccounts),          QScriptValue::ReadOnly | QScriptValue::Undeletable);

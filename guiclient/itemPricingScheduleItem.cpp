@@ -21,8 +21,10 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
 {
   setupUi(this);
 
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  _save = _buttonBox->button(QDialogButtonBox::Save);
+
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sUpdateCosts(int)));
   connect(_price, SIGNAL(idChanged(int)), _actCost, SLOT(setId(int)));
@@ -63,10 +65,7 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _actMargin->setPrecision(omfgThis->percentVal());
   _item->setType(ItemLineEdit::cSold);
   _prodcat->setType(XComboBox::ProductCategories);
-  _zoneFreight->populate( "SELECT shipzone_id, shipzone_name "
-                          "FROM shipzone "
-                          "ORDER BY shipzone_name;" );
-
+  _zoneFreight->setType(XComboBox::ShippingZones);
   _shipViaFreight->setType(XComboBox::ShipVias);
   _freightClass->setType(XComboBox::FreightClasses);
   
@@ -208,10 +207,7 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
       _freightClassGroup->setEnabled(FALSE);
       _dscitem->setReadOnly(TRUE);
       _discountBy->setEnabled(FALSE);
-      _close->setText(tr("&Close"));
-      _save->hide();
-
-      _close->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
 
@@ -224,7 +220,7 @@ void itemPricingScheduleItem::sCheckEnable()
   {
     _prodcatLit->hide();
     _prodcat->hide();
-    _dscitem->show();
+    _itemGroup->show();
     if (_dscitem->isValid())
       _save->setEnabled(true);
     else
@@ -232,7 +228,7 @@ void itemPricingScheduleItem::sCheckEnable()
   }
   if (_dscbyprodcat->isChecked())
   {
-    _dscitem->hide();
+    _itemGroup->hide();
     _prodcatLit->show();
     _prodcat->show();
     _save->setEnabled(true);
