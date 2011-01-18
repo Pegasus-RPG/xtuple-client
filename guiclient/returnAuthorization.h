@@ -74,7 +74,6 @@ public slots:
     virtual void sShipment();
     virtual void sShipmentStatus();
     virtual void sCheckNumber();
-    virtual void sRecalcFreight();
     virtual void sFreightChanged();
     virtual void sFreightDetail();
 
@@ -95,6 +94,7 @@ private:
     bool _ignoreSoSignals;
     bool _ignoreWhsSignals;
     bool _saved;
+    bool _calcfreight;
     double _subtotalCache;
     double _freightCache;
 };

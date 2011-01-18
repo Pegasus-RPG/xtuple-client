@@ -92,6 +92,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _ffShipto = TRUE;
   _custEmail = FALSE;
   _saved = FALSE;
+  _calcfreight = false;
   _freightCache = 0;
 
   _authNumber->setValidator(omfgThis->orderVal());
@@ -197,6 +198,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _cust->setFocus();      
       setNumber();
       _authDate->setDate(omfgThis->dbDate(), true);
+      _calcfreight = _metrics->boolean("CalculateFreight");
 
       q.prepare("INSERT INTO rahead ("
                 "    rahead_id, rahead_number, rahead_authdate"
@@ -490,7 +492,8 @@ bool returnAuthorization::sSave(bool partial)
              "       rahead_custponumber=:rahead_custponumber,rahead_notes=:rahead_notes, "
              "       rahead_misc_accnt_id=:rahead_misc_accnt_id,rahead_misc=:rahead_misc, "
              "       rahead_misc_descrip=:rahead_misc_descrip, rahead_curr_id=:rahead_curr_id,"
-             "       rahead_freight=:rahead_freight, rahead_printed=:rahead_printed,"
+             "       rahead_freight=:rahead_freight, rahead_calcfreight=:rahead_calcfreight,"
+             "       rahead_printed=:rahead_printed,"
              "       rahead_warehous_id=:rahead_warehous_id, rahead_cohead_warehous_id=:rahead_cohead_warehous_id "
              " WHERE(rahead_id=:rahead_id);" );
 
@@ -547,6 +550,7 @@ bool returnAuthorization::sSave(bool partial)
   q.bindValue(":rahead_misc_descrip", _miscChargeDescription->text());
   q.bindValue(":rahead_curr_id", _currency->id());
   q.bindValue(":rahead_freight", _freight->localValue());
+  q.bindValue(":rahead_calcfreight", _calcfreight);
   q.bindValue(":rahead_warehous_id", _warehouse->id());
   q.bindValue(":rahead_cohead_warehous_id", _shipWhs->id());
 
@@ -739,7 +743,6 @@ void returnAuthorization::sOrigSoChanged()
         return;
       }
     }
-    sRecalcFreight();
   }
 }
 
@@ -943,7 +946,6 @@ void returnAuthorization::sNew()
     if (newdlg.exec() != XDialog::Rejected)
     {
       populate();
-      sRecalcFreight();
     }
   }
 }
@@ -978,7 +980,6 @@ void returnAuthorization::sEdit()
     if (fill)
     {
       populate();
-      sRecalcFreight();
     }
   }
 }
@@ -1023,7 +1024,6 @@ void returnAuthorization::sDelete()
       }
     }
     populate();
-    sRecalcFreight();
   }
 }
 
@@ -1111,6 +1111,34 @@ void returnAuthorization::sFillList()
   }
   
   sCalculateSubtotal();
+
+  if (_creditBy->currentIndex() != 0 && _calcfreight)
+  {
+    q.prepare("SELECT SUM(freightdata_total) AS freight "
+              "FROM freightDetail('RA', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
+    q.bindValue(":head_id", _raheadid);
+    q.bindValue(":cust_id", _cust->id());
+    q.bindValue(":shipto_id", _shipTo->id());
+    q.bindValue(":orderdate", _authDate->date());
+    q.bindValue(":shipvia", "");
+    q.bindValue(":curr_id", _currency->id());
+    q.exec();
+    if (q.first())
+    {
+      _freightCache = q.value("freight").toDouble();
+      disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      _freight->setLocalValue(_freightCache);
+      connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else
+    _freight->setLocalValue(_freightCache);
+
   sCalculateNetDue();
   sCalculateTax();
 
@@ -1282,8 +1310,17 @@ void returnAuthorization::populate()
     _customerPO->setText(rahead.value("rahead_custponumber"));
 
     _currency->setId(rahead.value("rahead_curr_id").toInt());
-    _freightCache = rahead.value("rahead_freight").toDouble();
-    _freight->setLocalValue(rahead.value("rahead_freight").toDouble());
+
+    _calcfreight = rahead.value("rahead_calcfreight").toBool();
+    // Auto calculated _freight is populated in sFillItemList
+    if (!_calcfreight)
+    {
+      disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      _freightCache = rahead.value("rahead_freight").toDouble();
+      _freight->setLocalValue(_freightCache);
+      connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+    }
+
 
     _ignoreWhsSignals = TRUE;
     _warehouse->setId(rahead.value("rahead_warehous_id").toInt());
@@ -1480,7 +1517,6 @@ void returnAuthorization::sDispositionChanged()
 // Save the change so that disposition of raitems is changed
     sSave(true);
     sFillList();
-    sRecalcFreight();
   }
 }
 
@@ -1526,7 +1562,6 @@ void returnAuthorization::sAuthorizeLine()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    sRecalcFreight();
   }
 
   if (_newso->isValid())
@@ -1554,7 +1589,6 @@ void returnAuthorization::sClearAuthorization()
     omfgThis->sSalesOrdersUpdated(_newso->id());
 
   populate();
-  sRecalcFreight();
 }
 
 void returnAuthorization::sAuthorizeAll()
@@ -1575,7 +1609,6 @@ void returnAuthorization::sAuthorizeAll()
     omfgThis->sSalesOrdersUpdated(_newso->id());
 
   populate();
-  sRecalcFreight();
 }
 
 void returnAuthorization::sEnterReceipt()
@@ -1700,7 +1733,6 @@ void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)
   if ((pSoheadid == _origso->id()) || (pSoheadid == _newso->id()))
   {
     sFillList();
-    sRecalcFreight();
   }
 }
 
@@ -1967,44 +1999,63 @@ void returnAuthorization::sCheckNumber()
   }
 }
 
-void returnAuthorization::sRecalcFreight()
-{
-    q.prepare("SELECT SUM(freightdata_total) AS freight "
-              "FROM freightDetail('RA', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
-    q.bindValue(":head_id", _raheadid);
-    q.bindValue(":cust_id", _cust->id());
-    q.bindValue(":shipto_id", _shipTo->id());
-    q.bindValue(":orderdate", _authDate->date());
-    q.bindValue(":shipvia", "");
-    q.bindValue(":curr_id", _currency->id());
-    q.exec();
-    if (q.first())
-    {
-      _freight->setLocalValue(q.value("freight").toDouble());
-      _freight->setEnabled(FALSE);
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-}
-
 void returnAuthorization::sFreightChanged()
 {
-  if (_freight->localValue() != _freightCache)
+  if (_freight->localValue() == _freightCache)
+    return;
+
+  if (_freight->isEnabled())
   {
-    sSave(true);   
-    _freightCache = _freight->localValue();
-    sCalculateTax();
-    sCalculateTotal();
+    if (_calcfreight)
+    {
+      int answer;
+      answer = QMessageBox::question(this, tr("Manual Freight?"),
+                                     tr("<p>Manually editing the freight will disable "
+                                          "automatic Freight recalculations.  Are you "
+                                          "sure you want to do this?"),
+                                     QMessageBox::Yes,
+                                     QMessageBox::No | QMessageBox::Default);
+      if (answer == QMessageBox::Yes)
+        _calcfreight = false;
+      else
+      {
+        disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+        _freight->setLocalValue(_freightCache);
+        connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      }
+    }
+    else if ( (!_calcfreight) &&
+              (_freight->localValue() == 0) &&
+              (_metrics->boolean("CalculateFreight")))
+    {
+      int answer;
+      answer = QMessageBox::question(this, tr("Automatic Freight?"),
+                                     tr("<p>Manually clearing the freight will enable "
+                                          "automatic Freight recalculations.  Are you "
+                                          "sure you want to do this?"),
+                                     QMessageBox::Yes,
+                                     QMessageBox::No | QMessageBox::Default);
+      if (answer == QMessageBox::Yes)
+      {
+        _calcfreight = true;
+        disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+        _freight->setLocalValue(_freightCache);
+        connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      }
+    }
+    else
+      _freightCache = _freight->localValue();
   }
+
+  sSave(true);
+  sCalculateTax();
+  sCalculateTotal();
 }
 
 void returnAuthorization::sFreightDetail()
 {
   ParameterList params;
-  params.append("calcfreight", true);
+  params.append("calcfreight", _calcfreight);
   params.append("order_type", "RA");
   params.append("order_id", _raheadid);
   params.append("document_number", _authNumber->text());
