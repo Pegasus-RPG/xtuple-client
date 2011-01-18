@@ -291,6 +291,7 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
              "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
              "WHERE ( (itemsite_item_id=:item_id) "
              "  AND   (itemsite_warehous_id=:warehous_id) "
+             "  AND   (itemsite_active) "
              "  AND   (itemsite_controlmethod <> 'N') );" );
   q.bindValue(":item_id",     _target->id());
   q.bindValue(":warehous_id", _warehouse->id());
@@ -314,8 +315,8 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
   {
     QMessageBox::warning(this, tr("No Transform Targets"),
                          tr("This Target Item cannot be Transformed because "
-                            "either it has no Item Site or the Item Site "
-                            "has a Control Method of None."));
+                            "it has no Item Site or the Item Site is either "
+                            "Inactive or has a Control Method of None."));
     _targetIsValid = false;
     _target->setFocus();
     return;
