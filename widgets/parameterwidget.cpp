@@ -1639,6 +1639,11 @@ bool ParameterWidget::containsUsedType(QString value)
   return false;
 }
 
+/*!
+  Returns a text based list separated by line feeds of parameter names and selected values.
+  Can be useful when passed to printed reports as a header description of what filter has been
+  applied to the presented data.
+*/
 QString ParameterWidget::filter()
 {
   QStringList filters;

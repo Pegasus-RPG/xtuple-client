@@ -77,6 +77,8 @@ enum SetResponse dspSalesHistory::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  parameterWidget()->setSavedFilters();
+
   param = pParams.value("cohead_id", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Sales Order"), param.toInt());

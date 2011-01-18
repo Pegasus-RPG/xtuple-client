@@ -91,21 +91,61 @@ bool dspSummarizedSales::setParams(ParameterList & params)
   }
 
   parameterWidget()->appendValue(params);
+  params.append("filter", parameterWidget()->filter());
 
+  QList<QVariant> groupLitList;
+  QList<QVariant> groupList;
+  QList<QVariant> groupDescripList;
   if (_cust->isChecked())
+  {
+    groupLitList.append(tr("'Customer:'"));
+    groupList.append("cust_number");
+    groupDescripList.append("cust_name");
     params.append("byCustomer");
+  }
   if (_custtype->isChecked())
+  {
+    groupLitList.append(tr("'Cust. Type:'"));
+    groupList.append("custtype_code");
+    groupDescripList.append("custtype_descrip");
     params.append("byCustomerType");
+  }
   if (_salesrep->isChecked())
+  {
+    groupLitList.append(tr("'Sales Rep.:'"));
+    groupList.append("salesrep_number");
+    groupDescripList.append("salesrep_name");
     params.append("bySalesRep");
+  }
   if (_shipzone->isChecked())
+  {
+    groupLitList.append(tr("'Ship Zone:'"));
+    groupList.append("COALESCE(shipzone_name,'')");
+    groupDescripList.append("COALESCE(shipzone_descrip,'')");
     params.append("byShippingZone");
+  }
   if (_item->isChecked())
+  {
+    groupLitList.append(tr("'Item:'"));
+    groupList.append("item_number");
+    groupDescripList.append("itemdescription");
     params.append("byItem");
+  }
   if (_site->isChecked())
+  {
+    groupLitList.append(tr("'Site:'"));
+    groupList.append("warehous_code");
+    groupDescripList.append("warehous_descrip");
     params.append("bySite");
+  }
   if (_units->currentIndex())
+  {
     params.append("byCurrency");
+  }
+
+  params.append("groupLitList", groupLitList);
+  params.append("groupList", groupList);
+  params.append("groupDescripList", groupDescripList);
 
   return true;
 }
@@ -114,7 +154,7 @@ void dspSummarizedSales::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  menuItem = pMenu->addAction(tr("View History..."), this, SLOT(sViewHistory()));
+  menuItem = pMenu->addAction(tr("View Sales Detail..."), this, SLOT(sViewHistory()));
 
 }
 

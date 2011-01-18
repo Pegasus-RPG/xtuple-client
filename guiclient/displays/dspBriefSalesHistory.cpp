@@ -57,7 +57,7 @@ void dspBriefSalesHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
   QAction *menuItem;
 
   if (list()->id() > -1)
-    menuItem = pMenu->addAction(tr("View History..."), this, SLOT(sViewHistory()));
+    menuItem = pMenu->addAction(tr("View Sales Detail..."), this, SLOT(sViewHistory()));
 
 }
 

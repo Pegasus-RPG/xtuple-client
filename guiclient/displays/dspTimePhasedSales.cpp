@@ -59,28 +59,29 @@ dspTimePhasedSales::dspTimePhasedSales(QWidget* parent, const char*, Qt::WFlags 
 
 void dspTimePhasedSales::sViewHistory()
 {
-  if (_column > 2)
-  {
-    ParameterList params;
-    if (_groupBy->id() == 1)
-      params.append("prodcat_id", list()->id());
-    else if (_groupBy->id() == 2)
-      params.append("item_id", list()->id());
-    else
-      params.append("cust_id", list()->id());
-    params.append("warehous_id", list()->altId());
-    params.append("startDate", _columnDates[_column - 3].startDate);
-    params.append("endDate", _columnDates[_column - 3].endDate);
-    params.append("run");
+  ParameterList params;
+  if (_groupBy->id() == 1)
+    params.append("prodcat_id", list()->id());
+  else if (_groupBy->id() == 2)
+    params.append("item_id", list()->id());
+  else
+    params.append("cust_id", list()->id());
 
-    dspSalesHistory *newdlg = new dspSalesHistory();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
+  params.append("warehous_id", list()->altId());
+  params.append("startDate", _columnDates[_column - 4].startDate);
+  params.append("endDate", _columnDates[_column - 4].endDate);
+  params.append("run");
+
+  dspSalesHistory *newdlg = new dspSalesHistory();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspTimePhasedSales::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
+  if (pColumn < 4)
+    return;
+
   QAction *menuItem;
 
   _column = pColumn;
