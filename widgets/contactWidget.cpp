@@ -114,6 +114,8 @@ void ContactWidget::init()
     _buttonBox->addWidget(_crmAcct,	0, 1, Qt::AlignTop);
     _buttonBox->addWidget(_owner, 	0, 2, Qt::AlignTop);
 
+    QRegExp rx("^([0-9a-z]+[-._+&amp;])*[0-9a-z]+@([-0-9a-z]+[.])+[a-z]{2,6}$");
+    QValidator *validator = new QRegExpValidator(rx, this);
 
     _phoneLit		= new QLabel(tr("Voice:"), this);
     _phoneLit->setObjectName("_phoneLit");
@@ -127,6 +129,7 @@ void ContactWidget::init()
     _emailLit		= new QLabel(tr("E-Mail:"), this);
     _emailLit->setObjectName("_emailLit");
     _email		= new XLineEdit(this, "_email");
+    _email->setValidator(validator);
     _webaddrLit		= new QLabel(tr("Web:"), this);
     _webaddrLit->setObjectName("_webaddrLit");
     _webaddr		= new XLineEdit(this, "_webaddr");
