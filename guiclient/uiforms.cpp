@@ -20,6 +20,8 @@
 #include "guiclient.h"
 #include "xmainwindow.h"
 
+#define DEBUG false
+
 uiforms::uiforms(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -146,7 +148,8 @@ void uiforms::sTest()
 
   XUiLoader loader;
   QByteArray ba = q.value("uiform_source").toString().toUtf8();
-  qDebug("about to load a uiFile with %s", ba.constData());
+  if (DEBUG)
+    qDebug("about to load a uiFile with %s", ba.constData());
   QBuffer uiFile(&ba);
   if(!uiFile.open(QIODevice::ReadOnly))
   {
