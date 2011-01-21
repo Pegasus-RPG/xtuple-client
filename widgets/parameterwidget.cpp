@@ -55,6 +55,39 @@
            qtablewidget violates the one-unit-high rule
  */
 
+/** \ingroup widgets
+
+    \class ParameterWidget
+
+    \brief The ParameterWidget provides a consistent user and
+           programming interface for managing query criteria.
+
+    The ParameterWidget can be used to set filtering criteria to
+    apply to MetaSQL queries. The application developer defines
+    what criteria can be used (e.g. filter by a date range), what
+    the default values should be, if any, and which criteria are
+    mandatory.  The user then chooses which criteria to actually
+    use at runtime and supplies values (e.g. 'January 1, 2010'
+    through 'December 31, 2010').
+
+    It is the application developer's responsibility to ensure that
+    the user's selections are honored by the query.
+
+    Specific sets of filtering criteria can be saved, reused, and
+    shared between users. The details of the filter can be hidden
+    from view or made visible, allowing for efficient use of screen
+    real estate.
+
+    If application preferences are available, the most recently
+    selected filter will saved when the parent window closes and
+    will be reselected when the window is next opened.
+
+ */
+
+/** \brief Create a new Parameter Widget.
+    \param pParent The parent of this widget
+    \param pName   The object name to assign to this widget
+  */
 ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
     QWidget(pParent)
 {
@@ -118,6 +151,20 @@ void ParameterWidget::showEvent(QShowEvent * event)
 
 }
 
+/** \brief Add name/value pairs to the input ParameterList
+	   to reflect the current user selections.
+
+    The ParameterList passed in to this method is modified to reflect
+    the current selections. Parameters already in the list have
+    their associated values changed and parameters not in the list
+    are added. No name/value pairs are removed from the list.
+
+    This should be used carefully, as cached ParameterLists may have
+    name/value pairs that the caller does not expect.
+
+    \param[in,out] pParams The ParameterList to modify
+
+*/
 void ParameterWidget::appendValue(ParameterList &pParams)
 {
   QMapIterator<int, QPair<QString, QVariant> > i(_filterValues);
@@ -134,6 +181,15 @@ void ParameterWidget::appendValue(ParameterList &pParams)
   }
 }
 
+/** \brief Find the default filter set for the ParameterWidget with
+           the current parent and apply it.
+
+    This method searches for the default filter set based on the
+    QObject::objectName of the parent and the QObject::objectName
+    of this ParameterWidget instance. If it is found, then this
+    filter set is applied.
+
+*/
 
 void ParameterWidget::applyDefaultFilterSet()
 {
@@ -272,45 +328,62 @@ void ParameterWidget::addParam()
 
 }
 
-/*!
-  Appends a parameter selection \a pName using parameterWidgetTypes \a pType to the filter set list using
-  output parameter name \a pParam.  An optional default value can be set using \a pDefault. Use \a pRequired
-  to flag whether the parameter is required or not. Use \a extraInfo
-  to pass a query string for multi-select types.
+/** \brief Add a new filter to the set of available filters.
+
+  \param pName      The user-visible name for this filter to distinguish
+                    it from other filters in the same set
+  \param pParam     The name to use for the parameter in the ParameterList
+  \param pType      The type of widget for the user to enter a criterion in
+  \param pDefault   The default value to use for this parameter
+  \param pRequired  Required parameters cannot be removed from the filter set
+  \param pExtraInfo A query string to use if pType indicates a combo box or multiselect
 */
 void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes pType, QVariant pDefault, bool pRequired, QString pExtraInfo)
 {
+  if (DEBUG)
+    qDebug("%s::append(%s, %s, %d, %s, %d, %s) entered",
+           qPrintable(objectName()), qPrintable(pName), qPrintable(pParam),
+           pType, qPrintable(pDefault.toString()), pRequired,
+           qPrintable(pExtraInfo.left(50)));
   ParamProps *pp = _params.value(_params.count(), 0);
 
   if (! pp)
   {
+    if (DEBUG)
+      qDebug("%s::append() instantiating a new ParamProps",
+             qPrintable(objectName()));
     pp = new ParamProps();
     pp->name = pName;
     pp->param = pParam;
     pp->paramType = pType;
     pp->defaultValue = pDefault;
     pp->required = pRequired;
+    pp->comboType = XComboBox::Adhoc;
     pp->query = pExtraInfo;
     pp->enabled = true;
     _params.insert(_params.count(), pp);
   }
 
-  if (pType == Multiselect)
+  if (pType == Multiselect && !pExtraInfo.length())
   {
-    if (!pExtraInfo.length())
       qWarning("%s::setType(%s, %s, %d, %s, %s) called for Multiselect but "
                "was not given a query to use",
                qPrintable(objectName()), qPrintable(pName), qPrintable(pParam),
                pType, qPrintable(pDefault.toString()),
                qPrintable(pExtraInfo));
   }
+
 }
 
-/*!
-  Appends a parameter selection \a pName using an xcombobox to the filter set list using
-  output parameter name \a pParam.  The xcombobox type is specified by \a pType with an optional
-  default id that can be set using \a pDefault.  Use \a pRequired to flag whether the parameter is
-  required or not.
+/** \brief Add a new XComboBox-based filter to the set of available filters.
+
+  \param pName      The user-visible name for this filter to distinguish
+                    it from other filters in the same set
+  \param pParam     The name to use for the parameter in the ParameterList
+  \param pType      Set the XComboBox to use the corresponding
+                    XComboBox::XComboBoxTypes value
+  \param pDefault   The default internal id to select for this XComboBox
+  \param pRequired  Required parameters cannot be removed from the filter set
 */
 void ParameterWidget::appendComboBox(QString pName, QString pParam, int pType, QVariant pDefault, bool pRequired)
 {
@@ -330,11 +403,14 @@ void ParameterWidget::appendComboBox(QString pName, QString pParam, int pType, Q
   }
 }
 
-/*!
-  Appends a parameter selection \a pName using an xcombobox to the filter set list using
-  output parameter name \a pParam.  The xcombobox type is populated by query string \a pQry with
-  an optional default id that can be set using \a pDefault. Use \a pRequired to flag whether the parameter is
-  required or not.
+/** \brief Add a new XComboBox-based filter to the set of available filters.
+
+  \param pName      The user-visible name for this filter to distinguish
+                    it from other filters in the same set
+  \param pParam     The name to use for the parameter in the ParameterList
+  \param pQuery     Set the XComboBox to populate itself with this query
+  \param pDefault   The default internal id to select for this XComboBox
+  \param pRequired  Required parameters cannot be removed from the filter set
 */
 void ParameterWidget::appendComboBox(QString pName, QString pParam, QString pQuery, QVariant pDefault, bool pRequired)
 {
@@ -558,13 +634,13 @@ void ParameterWidget::applySaved(int pId, int filter_id)
             {
               QStringList   savedval = tempFilterList[1].split(",");
               bool oldblk = tab->blockSignals(true);
-              /* the obvious, loop calling tab->selectRow(), gives one selected row,
-							 so try this to get multiple selections:
-							   make only the desired values selectable,
-							   select everything, and
-							   connect to a slot that can clean up after us.
-							 yuck.
-						*/
+
+	      /* the obvious, loop calling tab->selectRow(), gives
+		 one selected row, so try this to get multiple
+		 selections: make only the desired values selectable,
+		 select everything, and connect to a slot that can
+		 clean up after us.  yuck.
+               */
               for (int j = 0; j < tab->rowCount(); j++)
               {
                 if (! savedval.contains(tab->item(j, 0)->data(Qt::UserRole).toString()))
@@ -1779,5 +1855,4 @@ void setupParameterWidget(QScriptEngine *engine)
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }
-
 
