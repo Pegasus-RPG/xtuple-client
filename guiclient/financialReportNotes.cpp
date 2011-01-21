@@ -74,7 +74,7 @@ void financialReportNotes::sSave()
   qry.bindValue(":flnotes_flhead_id", _flheadid);
   qry.bindValue(":flnotes_notes", _notes->toPlainText());
   qry.exec();
-  if (qry.lastError().isValid())
+  if (qry.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("A System Error occurred at %1::%2.")
                 .arg(__FILE__)

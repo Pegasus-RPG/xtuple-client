@@ -34,11 +34,13 @@ protected slots:
     virtual void languageChange();
     virtual void sHandleTest();
     virtual void sTest();
+    virtual void sCurrencyChanged();
 
 private:
     int _mode;
     int _companyid;
     QString _cachedNumber;
+    int _cachedCurrid;
 
 };
 

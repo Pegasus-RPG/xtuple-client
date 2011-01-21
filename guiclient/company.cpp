@@ -18,6 +18,7 @@
 #include <dbtools.h>
 
 #include "login2.h"
+#include "currcluster.h"
 
 #define DEBUG false
 
@@ -29,14 +30,19 @@ company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_extDB,     SIGNAL(editingFinished()), this, SLOT(sHandleTest()));
   connect(_extPort,   SIGNAL(editingFinished()), this, SLOT(sHandleTest()));
   connect(_extServer, SIGNAL(editingFinished()), this, SLOT(sHandleTest()));
-  connect(_extTest,           SIGNAL(clicked()), this, SLOT(sTest()));
-  connect(_save,              SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_extTest,   SIGNAL(clicked()), this, SLOT(sTest()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+  connect(_currency, SIGNAL(newID(int)), this, SLOT(sCurrencyChanged()));
 
   _number->setMaxLength(_metrics->value("GLCompanySize").toInt());
   _cachedNumber = "";
+  _cachedCurrid = -1;
 
   _external->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
   _authGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
+  _currency->setId(CurrCluster::baseId());
+  _gainloss->setType(GLCluster::cExpense);
 }
 
 company::~company()
@@ -71,7 +77,7 @@ enum SetResponse company::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       
-      _save->setFocus();
+      _buttonBox->button(QDialogButtonBox::Save)->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -81,9 +87,7 @@ enum SetResponse company::set(const ParameterList &pParams)
       _descrip->setEnabled(FALSE);
       _external->setEnabled(FALSE);
       _authGroup->setEnabled(FALSE);
-      _close->setText(tr("&Close"));
-      
-      _close->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
   return NoError;
@@ -95,6 +99,15 @@ void company::sSave()
   {
       QMessageBox::warning( this, tr("Cannot Save Company"),
                             tr("You must enter a valid Number.") );
+      return;
+  }
+
+  if (_external->isChecked() &&
+      _currency->id() != CurrCluster::baseId() &&
+      !_gainloss->isValid())
+  {
+      QMessageBox::warning( this, tr("Cannot Save Company"),
+                            tr("You must enter an Unrealized Gain/Loss account.") );
       return;
   }
   
@@ -157,11 +170,13 @@ void company::sSave()
     q.prepare( "INSERT INTO company "
                "( company_id, company_number, company_descrip,"
                "  company_external, company_server, company_port,"
-               "  company_database) "
+               "  company_database, company_curr_id, "
+               "  company_gainloss_accnt_id) "
                "VALUES "
                "( :company_id, :company_number, :company_descrip,"
                "  :company_external, :company_server, :company_port, "
-               "  :company_database);" );
+               "  :company_database, :company_curr_id, "
+               "  :company_gainloss_accnt_id);" );
   }
   else if (_mode == cEdit)
   {
@@ -201,7 +216,9 @@ void company::sSave()
                "    company_external=:company_external,"
                "    company_server=:company_server,"
                "    company_port=:company_port,"
-               "    company_database=:company_database "
+               "    company_database=:company_database, "
+               "    company_curr_id=:company_curr_id, "
+               "    company_gainloss_accnt_id=:company_gainloss_accnt_id "
                "WHERE (company_id=:company_id);" );
   }
   
@@ -212,6 +229,11 @@ void company::sSave()
   q.bindValue(":company_server",   _extServer->text());
   q.bindValue(":company_port",     _extPort->cleanText());
   q.bindValue(":company_database", _extDB->text());
+  if (_external->isChecked())
+  {
+    q.bindValue(":company_curr_id", _currency->id());
+    q.bindValue(":company_gainloss_accnt_id", _gainloss->id());
+  }
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -237,6 +259,12 @@ void company::populate()
     _extServer->setText(q.value("company_server").toString());
     _extPort->setValue(q.value("company_port").toInt());
     _extDB->setText(q.value("company_database").toString());
+    if (_external->isChecked())
+    {
+      _currency->setId(q.value("company_curr_id").toInt());
+      _gainloss->setId(q.value("company_gainloss_accnt_id").toInt());
+      _cachedCurrid = q.value("company_curr_id").toInt();
+    }
 
     _cachedNumber = q.value("company_number").toString();
 
@@ -332,18 +360,25 @@ void company::sTest()
     }
 
     rmq.exec("SELECT * FROM curr_symbol WHERE curr_base;");
-    q.exec("SELECT * FROM curr_symbol WHERE curr_base;");
+    if (_external->isChecked())
+    {
+      q.prepare("SELECT * FROM curr_symbol WHERE curr_id=:curr_id;");
+      q.bindValue(":curr_id", _currency->id());
+      q.exec();
+    }
+    else
+      q.exec("SELECT * FROM curr_symbol WHERE curr_base;");
+
     if (q.first() && rmq.first())
     {
-      if (rmq.value("curr_name").toString() != q.value("curr_name").toString() &&
-          rmq.value("curr_symbol").toString() != q.value("curr_symbol").toString() &&
+      if (rmq.value("curr_symbol").toString() != q.value("curr_symbol").toString() &&
           rmq.value("curr_abbr").toString() != q.value("curr_abbr").toString())
       {
         QMessageBox::warning(this, tr("Currencies Incompatible"),
                              tr("<p>The currency of the child database does "
-                                "not match the currency of the parent database "
-                                "(%1 %2 %3 vs. %4 %5 %6). The data cannot "
-                                "safely be synchronized.")
+                                "not appear to match the selected currency for "
+                                "the company (%1 %2 %3 vs. %4 %5 %6). The data may "
+                                "not synchronized properly.")
                              .arg(rmq.value("curr_name").toString())
                              .arg(rmq.value("curr_symbol").toString())
                              .arg(rmq.value("curr_abbr").toString())
@@ -402,4 +437,53 @@ void company::sTest()
       return;
     }
   }
+}
+
+void company::sCurrencyChanged()
+{
+  if (!_external->isChecked())
+    return;
+
+  if (_currency->id() != _cachedCurrid)
+  {
+    XSqlQuery qry;
+    qry.prepare("SELECT count(trialbal_id) "
+                "FROM trialbal "
+                " JOIN accnt ON (trialbal_accnt_id=accnt_id) "
+                "WHERE (accnt_company=:company_number);");
+    qry.bindValue(":company_number", _number->text());
+    qry.exec();
+    qry.first();
+    if (qry.value("count").toInt())
+    {
+      if (QMessageBox::question(this, tr("Delete Imported Trial Balances?"),
+                                tr("Trial balance history has already been imported "
+                                   "for this company. Changing the currency will delete "
+                                   "this data. This action is not reversible.  Are you "
+                                   "sure this is what you want to do?"),
+                                QMessageBox::Yes,
+                                QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+      {
+        qry.prepare("DELETE FROM trialbal"
+                    "WHERE (trialbal_accnt_id IN ("
+                    "  SELECT accnt_id "
+                    "  FROM accnt "
+                    "  WHERE (accnt_company=:company_number)));");
+        qry.bindValue(":company_number", _number->text());
+        qry.exec();
+        if (qry.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, tr("A System Error occurred at %1::%2.")
+                      .arg(__FILE__)
+                      .arg(__LINE__) );
+          return;
+        }
+        else
+          _currency->setId(_cachedCurrid);
+      }
+    }
+  }
+  qDebug("curr id %d", _currency->id());
+  qDebug("base id %", CurrCluster::baseId());
+  _gainloss->setEnabled(_currency->id() != CurrCluster::baseId());
 }
