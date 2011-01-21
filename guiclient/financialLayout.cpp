@@ -208,7 +208,8 @@ void financialLayout::sSave()
              "    flhead_usealtdiff=:flhead_usealtdiff,"
              "    flhead_altdiff=:flhead_altdiff,"
              "    flhead_usealttotal=:flhead_usealttotal,"
-             "    flhead_alttotal=:flhead_alttotal"
+             "    flhead_alttotal=:flhead_alttotal,"
+             "    flhead_notes=:flhead_notes"
              " WHERE (flhead_id=:flhead_id);" );
 
   q.bindValue(":flhead_name", _name->text());
@@ -250,6 +251,7 @@ void financialLayout::sSave()
   q.bindValue(":flhead_usealtdiff", QVariant(_altDiff->isChecked()));
   q.bindValue(":flhead_altdiff", _altDiffText->text());
   q.bindValue(":flhead_id", _flheadid);
+  q.bindValue(":flhead_notes", _notes->toPlainText());
   q.exec();
   
   done(_flheadid);
@@ -268,7 +270,8 @@ void financialLayout::populate()
              "       flhead_usealtcredits, flhead_altcredits,"
              "       flhead_usealtbudget, flhead_altbudget,"
              "       flhead_usealtdiff, flhead_altdiff,"
-             "       flhead_usealttotal, flhead_alttotal "
+             "       flhead_usealttotal, flhead_alttotal, "
+             "       flhead_notes "
              "FROM flhead "
              "WHERE (flhead_id=:flhead_id);" );
   q.bindValue(":flhead_id", _flheadid);
@@ -277,6 +280,7 @@ void financialLayout::populate()
   {
     _name->setText(q.value("flhead_name").toString());
     _descrip->setText(q.value("flhead_descrip").toString());
+    _notes->setPlainText(q.value("flhead_notes").toString());
     if(_showTotal->isChecked())
     {
       _showStart->setChecked(q.value("flhead_showstart").toBool());

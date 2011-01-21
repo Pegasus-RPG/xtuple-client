@@ -45,7 +45,9 @@ public slots:
     virtual void sEditPeriodLabel();
     virtual void sTogglePeriod();
     virtual void sToggleTrend();
+    virtual void sToggleNotes();
     virtual bool sCheck();
+    virtual void sNotes();
 
 protected slots:
     virtual void sCollapsed( QTreeWidgetItem * item );
@@ -59,6 +61,7 @@ protected:
 private:
     int _prjid;
     QMap<int, QString> _columnLabels;
+    QAction *_notesAct;
 };
 
 #endif // DSPFINANCIALREPORT_H

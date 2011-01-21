@@ -17,6 +17,8 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QToolBar>
+#include <QToolButton>
 #include <QVariant>
 
 #include <metasql.h>
@@ -25,6 +27,7 @@
 #include <previewdialog.h>
 #include <orprintrender.h>
 #include "dspFinancialReport.h"
+#include "financialReportNotes.h"
 #include "storedProcErrorLookup.h"
 
 #define cFlRoot  0
@@ -49,11 +52,18 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags 
 
   _prjid = -1;
 
+  QToolBar *toolbar = this->toolBar();
+  QToolButton *_notesBtn = new QToolButton();
+  _notesBtn->setText(tr("Notes"));
+  _notesAct = toolbar->insertWidget(filterSeparator(), _notesBtn);
+  _notesAct->setEnabled(false);
+
   // signals and slots connections
   connect(list(), SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(sCollapsed(QTreeWidgetItem*)));
   connect(list(), SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(sExpanded(QTreeWidgetItem*)));
   connect(_periods, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_periods, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sEditPeriodLabel()));
+  connect(_periods, SIGNAL(valid(bool)), this, SLOT(sToggleNotes()));
   connect(_flhead, SIGNAL(newID(int)), this, SLOT(sReportChanged(int)));
   connect(_trend, SIGNAL(toggled(bool)), this, SLOT(sToggleTrend()));
   connect(_trend, SIGNAL(toggled(bool)), this, SLOT(sTogglePeriod()));
@@ -61,6 +71,8 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags 
   connect(_month, SIGNAL(toggled(bool)), this, SLOT(sFillPeriods()));
   connect(_quarter, SIGNAL(toggled(bool)), this, SLOT(sFillPeriods()));
   connect(_year, SIGNAL(toggled(bool)), this, SLOT(sFillPeriods()));
+  connect(_notesBtn, SIGNAL(clicked()), _notesAct, SLOT(trigger()));
+  connect(_notesAct, SIGNAL(triggered()), this, SLOT(sNotes()));
 
   _flhead->setType(XComboBox::FinancialLayouts);
 
@@ -973,7 +985,13 @@ void dspFinancialReport::sToggleTrend()
   if (_type->text() == "Ad Hoc")
     _trend->setChecked(true);
   }
+  sToggleNotes();
+}
 
+void dspFinancialReport::sToggleNotes()
+{
+  _notesAct->setEnabled(_periods->selectedItems().count() &&
+                        !_trend->isChecked());
 }
 
 void dspFinancialReport::sTogglePeriod()
@@ -1102,4 +1120,15 @@ bool dspFinancialReport::setParams(ParameterList &params)
   }
 
   return true;
+}
+
+void dspFinancialReport::sNotes()
+{
+  ParameterList params;
+  params.append("period_id", _periods->id());
+  params.append("flhead_id", _flhead->id());
+
+  financialReportNotes newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
 }

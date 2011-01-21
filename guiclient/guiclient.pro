@@ -239,6 +239,7 @@ FORMS =   absoluteCalendarItem.ui               \
           financialLayoutItem.ui        \
           financialLayoutSpecial.ui     \
           financialLayouts.ui           \
+          financialReportNotes.ui       \
           firmPlannedOrder.ui           \
           firmPlannedOrdersByPlannerCode.ui     \
           fixACL.ui                     \
@@ -778,6 +779,7 @@ HEADERS = ../common/format.h                    \
           financialLayoutItem.h                 \
           financialLayoutSpecial.h              \
           financialLayouts.h                    \
+          financialReportNotes.h                \
           firmPlannedOrder.h                    \
           firmPlannedOrdersByPlannerCode.h      \
           fixACL.h                      \
@@ -1361,6 +1363,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           financialLayouts.cpp                  \
           firmPlannedOrder.cpp                  \
           firmPlannedOrdersByPlannerCode.cpp    \
+          financialReportNotes.cpp              \
           fixACL.cpp                    \
           fixSerial.cpp                 \
           form.cpp                      \

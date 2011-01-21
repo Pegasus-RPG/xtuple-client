@@ -91,8 +91,8 @@ void financialLayouts::sEdit()
   if (q.first())
   {
     QMessageBox::information(this, tr("System Report"), 
-            tr("This is a system report and will be opened in\n"
-               "view mode. Only status may be changed."));
+            tr("This is a system report and will be opened in "
+               "view mode. Only status and notes may be changed."));
     params.append("mode", "view");
   }
   else
