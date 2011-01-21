@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -300,14 +300,19 @@ int main(int argc, char *argv[])
 
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
-    metric.exec("SELECT COUNT(*) as _count"
-                "  FROM pg_stat_activity"
-                " WHERE(datid IN (SELECT datid"
-                "                   FROM pg_stat_activity"
-                "                  WHERE(procpid=pg_backend_pid())));");
+    metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
+                "  FROM pg_stat_activity, pg_locks"
+                " WHERE((database=datid)"
+                "   AND (classid=datid)"
+                "   AND (objsubid=2)"
+                "   AND (procpid = pg_backend_pid()));");
     int cnt = 50000;
+    int tot = 50000;
     if(metric.first())
-      cnt = metric.value("_count").toInt();
+    {
+      cnt = metric.value("registered").toInt();
+      tot = metric.value("total").toInt();
+    }
     metric.exec("SELECT metric_value"
                 "  FROM metric"
                 " WHERE(metric_name = 'RegistrationKey');");
@@ -324,7 +329,7 @@ int main(int argc, char *argv[])
         checkPass = false;
         checkPassReason = QObject::tr("Your license has expired.");
       }
-      else if(pkey.users() != 0 && (pkey.users()+1) < cnt)
+      else if(pkey.users() != 0 && (pkey.users() < cnt || pkey.users() * 2 < tot))
       {
         checkPass = false;
         checkPassReason = QObject::tr("You have exceeded the number of allowed concurrent users for your license.");
@@ -338,7 +343,8 @@ int main(int argc, char *argv[])
     if(!checkPass)
     {
       _splash->hide();
-      QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
+      if(QMessageBox::critical(0, QObject::tr("Registration Key"), QObject::tr("%1\n<p>Would you like to continue anyway?").arg(checkPassReason), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+        return 0;
 
       metric.exec("SELECT current_database() AS db,"
                   "       fetchMetricText('DatabaseName') AS dbname,"
