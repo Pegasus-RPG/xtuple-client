@@ -378,7 +378,7 @@ void company::sTest()
                              tr("<p>The currency of the child database does "
                                 "not appear to match the selected currency for "
                                 "the company (%1 %2 %3 vs. %4 %5 %6). The data may "
-                                "not synchronized properly.")
+                                "not synchronize properly.")
                              .arg(rmq.value("curr_name").toString())
                              .arg(rmq.value("curr_symbol").toString())
                              .arg(rmq.value("curr_abbr").toString())

@@ -18,6 +18,7 @@
 #include <dbtools.h>
 #include <metasql.h>
 #include <openreports.h>
+#include <currcluster.h>
 
 #include "login2.h"
 #include "storedProcErrorLookup.h"
@@ -64,6 +65,7 @@ syncCompanies::syncCompanies(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_sync,        SIGNAL(clicked()), this, SLOT(sSync()));
 
   _company->addColumn(tr("Number"),  _itemColumn, Qt::AlignCenter,true, "company_number" );
+  _company->addColumn(tr("Currency"),_itemColumn, Qt::AlignLeft, true, "company_curr");
   _company->addColumn(tr("Description"),      -1, Qt::AlignLeft,  true, "company_descrip");
   _company->addColumn(tr("Server"),  _itemColumn, Qt::AlignLeft, false, "company_server");
   _company->addColumn(tr("Port"),    _itemColumn, Qt::AlignRight,false, "company_port");
@@ -99,7 +101,9 @@ void syncCompanies::sFillList()
     return;
   }
 
-  q.prepare("SELECT * "
+  q.prepare("SELECT *, company_id AS company_number_xtidrole, "
+            " currconcat(company_curr_id) AS company_curr, "
+            " company_curr_id AS company_curr_xtidrole "
             "FROM company "
             "WHERE company_external "
             "ORDER BY company_number;" );
@@ -149,6 +153,7 @@ void syncCompanies::sSync()
     QString host = c->rawValue("company_server").toString();
     QString db   = c->rawValue("company_database").toString();
     QString port = c->rawValue("company_port").toString();
+    int currid = c->id("company_curr");
 
     buildDatabaseURL(dbURL, protocol, host, db, port);
     if (DEBUG)
@@ -245,44 +250,6 @@ void syncCompanies::sSync()
       else if (rmq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
-        continue;
-      }
-
-      rmq.exec("SELECT * FROM curr_symbol WHERE curr_base;");
-      if (rmq.first())
-      {
-        if (rmq.value("curr_name").toString() != lbaseq.value("curr_name").toString() &&
-            rmq.value("curr_symbol").toString() != lbaseq.value("curr_symbol").toString() &&
-            rmq.value("curr_abbr").toString() != lbaseq.value("curr_abbr").toString())
-        {
-          QMessageBox::warning(this, tr("Currencies Incompatible"),
-                               tr("<p>The base currencies of the child and "
-                                  "parent databases do not match "
-                                  "(%1, %2, %3, vs. %4, %5, %6,). The data "
-                                  "cannot safely be synchronized.")
-                               .arg(rmq.value("curr_name").toString())
-                               .arg(rmq.value("curr_symbol").toString())
-                               .arg(rmq.value("curr_abbr").toString())
-                               .arg(lbaseq.value("curr_name").toString())
-                               .arg(lbaseq.value("curr_symbol").toString())
-                               .arg(lbaseq.value("curr_abbr").toString()));
-          errorCount++;
-          continue;
-        }
-      }
-      else if (rmq.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
-        errorCount++;
-        continue;
-      }
-      else
-      {
-        QMessageBox::warning(this, tr("No Base Currency"),
-                             tr("<p>The child database does not appear to have "
-                                "a base currency defined. The data cannot "
-                                "safely be synchronized."));
-        errorCount++;
         continue;
       }
 
@@ -414,7 +381,98 @@ void syncCompanies::sSync()
         rperiod.bindValue(":end",   p->rawValue("period_end"));
         rperiod.exec();
         if (rperiod.first())
-          ; // keep going
+        {
+          if (currid != CurrCluster::baseId())
+          {
+            // Check for currency conversion rate
+            XSqlQuery conv;
+            conv.prepare("SELECT curr_rate "
+                         "FROM  curr_rate, period "
+                         "WHERE (curr_id=:curr_id) "
+                         "  AND (period_id=:period_id) "
+                         "  AND (period_end BETWEEN curr_effective AND curr_expires);");
+            conv.bindValue(":curr_id", currid);
+            conv.bindValue(":period_id", rperiod.value("period_id"));
+            conv.exec();
+            if (conv.first())
+            {
+              // Set the exchange rate used in this trial balance sync
+              bool updsync = true;
+              XSqlQuery tbsync;
+              tbsync.prepare("SELECT * FROM trialbalsync "
+                             "WHERE (trialbalsync_company_id=:company_id) "
+                             " AND (trialbalsync_period_id=:period_id);");
+              tbsync.bindValue(":company_id", c->id("company_number"));
+              tbsync.bindValue(":period_id", rperiod.value("period_id"));
+              tbsync.exec();
+              if (tbsync.first())
+              {
+                if (tbsync.value("trialbalsync_dirty").toBool())
+                {
+                  tbsync.prepare("UPDATE trialbalsync SET "
+                                 "  trialbalsync_curr_rate=:curr_rate "
+                                 "WHERE (trialbalsync_id=:trailbalsync_id);");
+                  tbsync.bindValue(":trialbalsync_id", tbsync.value("trialbalsync_id"));
+                }
+                else
+                  updsync = false;
+              }
+              else
+              {
+                tbsync.prepare("INSERT INTO trialbalsync ("
+                               " trialbalsync_company_id, "
+                               " trialbalsync_period_id, "
+                               " trialbalsync_curr_rate, "
+                               " trialbalsync_dirty) "
+                               "VALUES ("
+                               " :company_id, "
+                               " :period_id, "
+                               " :curr_rate, "
+                               " true);");
+                tbsync.bindValue(":company_id", c->id("company_number"));
+                tbsync.bindValue(":period_id", rperiod.value("period_id"));
+              }
+
+              if (updsync)
+              {
+                tbsync.bindValue(":curr_rate", conv.value("curr_rate"));
+                tbsync.exec();
+                if (tbsync.lastError().type() != QSqlError::NoError)
+                {
+                  rollback.exec();
+                  systemError(this, rperiod.lastError().databaseText(),
+                              __FILE__, __LINE__);
+                  errorCount++;
+                  break;
+                }
+              }
+            }
+            else if (conv.lastError().type() != QSqlError::NoError)
+            {
+              rollback.exec();
+              systemError(this, rperiod.lastError().databaseText(),
+                          __FILE__, __LINE__);
+              errorCount++;
+              break;
+            }
+            else
+            {
+              rollback.exec();
+              QMessageBox::warning(this, tr("No Conversion Rate"),
+                                   tr("The parent database for Company %1 (%2) "
+                                      "does not appear to have a conversion rate "
+                                      "for %3 on %4.")
+                                     .arg(c->rawValue("company_number").toString())
+                                     .arg(c->rawValue("company_database").toString())
+                                     .arg(c->text("currency"))
+                                     .arg(p->rawValue("period_end").toString())
+                                     );
+              errorCount++;
+              break;
+            }
+
+          }
+        }
         else if (rperiod.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
@@ -573,13 +631,15 @@ void syncCompanies::sSync()
             ltbups.prepare("UPDATE trialbal SET "
                            "    trialbal_period_id=:trialbal_period_id,"
                            "    trialbal_accnt_id=:trialbal_accnt_id,"
-                           "    trialbal_beginning=:trialbal_beginning,"
-                           "    trialbal_ending=:trialbal_ending,"
-                           "    trialbal_credits=:trialbal_credits,"
-                           "    trialbal_debits=:trialbal_debits,"
-                           "    trialbal_dirty=:trialbal_dirty,"
-                           "    trialbal_yearend=:trialbal_yearend "
-                           "WHERE (trialbal_id=:trialbal_id);");
+                           "    trialbal_beginning=currToBase(:curr_id,:trialbal_beginning,period_end), "
+                           "    trialbal_ending=currToBase(:curr_id,:trialbal_ending,period_end), "
+                           "    trialbal_credits=currToBase(:curr_id,:trialbal_credits,period_end), "
+                           "    trialbal_debits=currToBase(:curr_id,:trialbal_debits,period_end), "
+                           "    trialbal_dirty=:trialbal_dirty, "
+                           "    trialbal_yearend=currToBase(:curr_id,:trialbal_yearend,period_end) "
+                           "FROM period "
+                           "WHERE (trialbal_id=:trialbal_id)"
+                           " AND (trialbal_period_id=period_id);");
             ltbups.bindValue(":trialbal_id",	 ltb.value("trialbal_id"));
           }
           else if (ltb.lastError().type() != QSqlError::NoError)
@@ -597,11 +657,16 @@ void syncCompanies::sSync()
                            "    trialbal_beginning, trialbal_ending,"
                            "    trialbal_credits,   trialbal_debits,"
                            "    trialbal_dirty,     trialbal_yearend) "
-                           "VALUES (:trialbal_id, "
+                           "SELECT :trialbal_id, "
                            "   :trialbal_period_id,:trialbal_accnt_id,"
-                           "   :trialbal_beginning,:trialbal_ending,"
-                           "   :trialbal_credits,  :trialbal_debits, "
-                           "   :trialbal_dirty,    :trialbal_yearend);");
+                           "   currToBase(:curr_id,:trialbal_beginning,period_end), "
+                           "   currToBase(:curr_id,:trialbal_ending,period_end), "
+                           "   currToBase(:curr_id,:trialbal_credits,period_end),  "
+                           "   currToBase(:curr_id,:trialbal_debits,period_end), "
+                           "   :trialbal_dirty, "
+                           "   currToBase(:curr_id,:trialbal_yearend,period_end) "
+                           "FROM period "
+                           "WHERE (period_id=:trialbal_period_id)");
             q.prepare("SELECT NEXTVAL('trialbal_trialbal_id_seq') AS trialbal_id;");
             q.exec();
             if (q.first())
@@ -617,12 +682,13 @@ void syncCompanies::sSync()
           // ids have to match the local db, not the remote
           ltbups.bindValue(":trialbal_period_id",p->id());
           ltbups.bindValue(":trialbal_accnt_id", laccnt.value("accnt_id"));
-          ltbups.bindValue(":trialbal_beginning",rtb.value("trialbal_beginning"));
-          ltbups.bindValue(":trialbal_ending",	 rtb.value("trialbal_ending"));
-          ltbups.bindValue(":trialbal_credits",	 rtb.value("trialbal_credits"));
-          ltbups.bindValue(":trialbal_debits",	 rtb.value("trialbal_debits"));
-          ltbups.bindValue(":trialbal_dirty",	 rtb.value("trialbal_dirty"));
-          ltbups.bindValue(":trialbal_yearend",	 rtb.value("trialbal_yearend"));
+          ltbups.bindValue(":trialbal_beginning", rtb.value("trialbal_beginning"));
+          ltbups.bindValue(":trialbal_ending", rtb.value("trialbal_ending"));
+          ltbups.bindValue(":trialbal_credits", rtb.value("trialbal_credits"));
+          ltbups.bindValue(":trialbal_debits", rtb.value("trialbal_debits"));
+          ltbups.bindValue(":trialbal_dirty", rtb.value("trialbal_dirty"));
+          ltbups.bindValue(":trialbal_yearend", rtb.value("trialbal_yearend"));
+          ltbups.bindValue(":curr_id", currid);
 
           ltbups.exec();
           if (ltbups.lastError().type() != QSqlError::NoError)
