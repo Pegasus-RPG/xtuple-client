@@ -208,7 +208,9 @@ void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem, 
 
 bool dspGLTransactions::setParams(ParameterList &params)
 {
-  parameterWidget()->appendValue(params);
+  if (!display::setParams(params))
+    return false;
+
   bool valid;
   QVariant param;
 
