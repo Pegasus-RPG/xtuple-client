@@ -142,9 +142,8 @@ bool incidentWorkbench::setParams(ParameterList & params)
   params.append("startDate", omfgThis->startOfTime());
   params.append("endDate", omfgThis->endOfTime());
 
-  parameterWidget()->appendValue(params);
-
-  params.append("pattern", searchText());
+  if (!display::setParams(params))
+    return false;
 
   return true;
 }

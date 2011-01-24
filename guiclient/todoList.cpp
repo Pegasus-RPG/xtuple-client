@@ -400,7 +400,9 @@ bool todoList::setParams(ParameterList &params)
   params.append("resolved", tr("Resolved"));
   params.append("concept", tr("concept"));
   params.append("new", tr("New"));
-  parameterWidget()->appendValue(params);
+
+  if (!display::setParams(params))
+    return false;
 
   return true;
 }
