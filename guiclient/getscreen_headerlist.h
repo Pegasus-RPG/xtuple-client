@@ -78,6 +78,7 @@
 #include "confirmAchOK.h"
 #include "contact.h"
 #include "contacts.h"
+#include "contactMerge.h"
 #include "copyBOM.h"
 #include "copyBudget.h"
 #include "copyItem.h"

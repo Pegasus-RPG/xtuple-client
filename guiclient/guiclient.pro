@@ -143,6 +143,7 @@ FORMS =   absoluteCalendarItem.ui               \
           confirmAchOK.ui                       \
           contact.ui                            \
           contacts.ui                           \
+          contactMerge.ui                       \
           copyBOM.ui                            \
           copyBudget.ui                         \
           copyItem.ui                           \
@@ -677,6 +678,7 @@ HEADERS = ../common/format.h                    \
           confirmAchOK.h                \
           contact.h                     \
           contacts.h                    \
+          contactMerge.h                \
           copyBOM.h                     \
           copyBudget.h                  \
           copyItem.h                    \
@@ -1259,6 +1261,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           confirmAchOK.cpp                      \
           contact.cpp                           \
           contacts.cpp                          \
+          contactMerge.cpp                      \
           copyBOM.cpp                           \
           copyBudget.cpp                        \
           copyItem.cpp                          \
