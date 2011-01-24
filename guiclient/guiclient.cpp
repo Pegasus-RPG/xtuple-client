@@ -584,6 +584,7 @@ GUIClient::~GUIClient()
   //omfgThis = 0;
 
   // Close the database connection
+  XSqlQuery qlc("SELECT logout();");
   QSqlDatabase::database().close();  
 }
 
