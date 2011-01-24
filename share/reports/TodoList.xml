@@ -3,13 +3,19 @@
  <title>To-Do List</title>
  <name>TodoList</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource loadFromDb="true" >
+ <querysource loadFromDb="true">
   <name>detail</name>
   <mqlgroup>todolist</mqlgroup>
   <mqlname>detail</mqlname>
@@ -17,61 +23,23 @@
  <querysource>
   <name>queryParams</name>
   <sql>SELECT
-  &lt;? if exists("startStartDate") ?>
-  formatDate(&lt;? value("startStartDate") ?>) AS f_startStartDate,
-  formatDate(&lt;? value("startEndDate") ?>) AS f_startEndDate,
-  &lt;? else ?>
-  'All' AS f_startStartDate,
-  'All' AS f_startEndDate,
-  &lt;? endif ?> 
-  &lt;? if exists("dueStartDate") ?>
-  formatDate(&lt;? value("dueStartDate") ?>) AS f_dueStartDate,
-  formatDate(&lt;? value("dueEndDate") ?>) AS f_dueEndDate,
-  &lt;? else ?>
-  'All' AS f_dueStartDate,
-  'All' AS f_dueEndDate,
-  &lt;? endif ?> 
   &lt;? if exists("completed") ?> 'Yes' &lt;? else ?> 'No' &lt;? endif ?> AS showClosed,
   &lt;? if exists("projects") ?>    'Yes' &lt;? else ?> 'No' &lt;? endif ?> AS showTasks,
-  &lt;? if exists("incidents") ?> 'Yes' &lt;? else ?> 'No' &lt;? endif ?> AS showIncdts,
-  &lt;? if exists("username") ?>
-    &lt;? value("username") ?> AS usr_username
-  &lt;? elseif exists("usr_pattern") ?>
-    &lt;? value("usr_pattern") ?> AS usr_username
-  &lt;? else ?>
-    'All' AS usr_username
-  &lt;? endif ?>
-;</sql>
+  &lt;? if exists("incidents") ?> 'Yes' &lt;? else ?> 'No' &lt;? endif ?> AS showIncdts;</sql>
  </querysource>
  <rpthead>
   <height>141</height>
-  <label>
-   <rect>
-    <x>450</x>
-    <y>55</y>
-    <width>25</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>to</string>
-  </label>
   <field>
    <rect>
-    <x>120</x>
-    <y>69.8214</y>
+    <x>325</x>
+    <y>43</y>
     <width>100</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
    <left/>
    <vcenter/>
@@ -112,29 +80,10 @@
    <vcenter/>
    <string>Assigned To</string>
   </label>
-  <field>
-   <rect>
-    <x>475</x>
-    <y>55</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>queryParams</query>
-    <column>f_startEndDate</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>20</x>
-    <y>84.8214</y>
+    <y>43</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -146,41 +95,6 @@
    <right/>
    <vcenter/>
    <string>Show Incidents:</string>
-  </label>
-  <field>
-   <rect>
-    <x>380</x>
-    <y>55</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>queryParams</query>
-    <column>f_startStartDate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>20</x>
-    <y>55</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>User:</string>
   </label>
   <label>
    <rect>
@@ -200,15 +114,15 @@
   </label>
   <field>
    <rect>
-    <x>120</x>
-    <y>84.8214</y>
+    <x>110</x>
+    <y>43</y>
     <width>100</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
    <left/>
    <vcenter/>
@@ -242,8 +156,8 @@
   </label>
   <label>
    <rect>
-    <x>20</x>
-    <y>69.8214</y>
+    <x>235</x>
+    <y>43</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -306,22 +220,6 @@
   </label>
   <label>
    <rect>
-    <x>250</x>
-    <y>55</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>To-Do List Item Assign Date:</string>
-  </label>
-  <label>
-   <rect>
     <x>645</x>
     <y>120</y>
     <width>100</width>
@@ -336,29 +234,10 @@
    <vcenter/>
    <string>Parent#</string>
   </label>
-  <field>
-   <rect>
-    <x>120</x>
-    <y>55</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>queryParams</query>
-    <column>usr_username</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>4.10714</x>
-    <y>99.4</y>
+    <x>450</x>
+    <y>43</y>
     <width>100.893</width>
     <height>15</height>
    </rect>
@@ -373,15 +252,15 @@
   </label>
   <field>
    <rect>
-    <x>120</x>
-    <y>99.4</y>
+    <x>555</x>
+    <y>43</y>
     <width>100</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
    <left/>
    <vcenter/>
@@ -390,76 +269,26 @@
     <column>showTasks</column>
    </data>
   </field>
-  <label>
+  <text>
    <rect>
-    <x>450</x>
-    <y>70</y>
-    <width>25</width>
+    <x>10</x>
+    <y>63</y>
+    <width>725</width>
     <height>15</height>
    </rect>
+   <bottompad>12</bottompad>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>to</string>
-  </label>
-  <field>
-   <rect>
-    <x>380</x>
-    <y>70</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
    <left/>
-   <vcenter/>
+   <top/>
    <data>
-    <query>queryParams</query>
-    <column>f_dueStartDate</column>
+    <query>Parameter Query</query>
+    <column>filter</column>
    </data>
-  </field>
-  <label>
-   <rect>
-    <x>250</x>
-    <y>70</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>To-Do List Item Due Date:</string>
-  </label>
-  <field>
-   <rect>
-    <x>475</x>
-    <y>70</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>queryParams</query>
-    <column>f_dueEndDate</column>
-   </data>
-  </field>
+  </text>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -470,7 +299,7 @@
   <label>
    <rect>
     <x>435</x>
-    <y>0</y>
+    <y>-1</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -486,7 +315,7 @@
   <label>
    <rect>
     <x>100</x>
-    <y>0</y>
+    <y>-1</y>
     <width>35</width>
     <height>15</height>
    </rect>
@@ -502,7 +331,7 @@
   <label>
    <rect>
     <x>165</x>
-    <y>0</y>
+    <y>-1</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -541,7 +370,7 @@
   <label>
    <rect>
     <x>230</x>
-    <y>0</y>
+    <y>-1</y>
     <width>200</width>
     <height>15</height>
    </rect>
@@ -557,7 +386,7 @@
   <label>
    <rect>
     <x>10</x>
-    <y>0</y>
+    <y>-1</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -601,7 +430,7 @@
    <field>
     <rect>
      <x>645</x>
-     <y>2</y>
+     <y>0</y>
      <width>100</width>
      <height>15</height>
     </rect>
@@ -611,7 +440,7 @@
      <weight>bold</weight>
     </font>
     <left/>
-    <top/>
+    <vcenter/>
     <data>
      <query>detail</query>
      <column>number</column>
@@ -620,7 +449,7 @@
    <field>
     <rect>
      <x>10</x>
-     <y>2</y>
+     <y>0</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -630,7 +459,7 @@
      <weight>bold</weight>
     </font>
     <left/>
-    <top/>
+    <vcenter/>
     <data>
      <query>detail</query>
      <column>usr</column>
@@ -650,7 +479,7 @@
      <weight>bold</weight>
     </font>
     <left/>
-    <top/>
+    <vcenter/>
     <data>
      <query>detail</query>
      <column>descrip</column>
@@ -659,7 +488,7 @@
    <field>
     <rect>
      <x>435</x>
-     <y>2</y>
+     <y>0</y>
      <width>100</width>
      <height>15</height>
     </rect>
@@ -678,7 +507,7 @@
    <field>
     <rect>
      <x>100</x>
-     <y>2</y>
+     <y>0</y>
      <width>55</width>
      <height>15</height>
     </rect>
@@ -688,7 +517,7 @@
      <weight>bold</weight>
     </font>
     <left/>
-    <top/>
+    <vcenter/>
     <data>
      <query>detail</query>
      <column>type</column>
@@ -697,7 +526,7 @@
    <field>
     <rect>
      <x>165</x>
-     <y>2</y>
+     <y>0</y>
      <width>50</width>
      <height>15</height>
     </rect>
@@ -707,7 +536,7 @@
      <weight>bold</weight>
     </font>
     <left/>
-    <top/>
+    <vcenter/>
     <data>
      <query>detail</query>
      <column>priority</column>
@@ -716,7 +545,7 @@
    <field>
     <rect>
      <x>540</x>
-     <y>2</y>
+     <y>0</y>
      <width>100</width>
      <height>15</height>
     </rect>
@@ -734,8 +563,8 @@
    </field>
    <field>
     <rect>
-     <x>229</x>
-     <y>2</y>
+     <x>230</x>
+     <y>0</y>
      <width>200</width>
      <height>15</height>
     </rect>
@@ -745,7 +574,7 @@
      <weight>bold</weight>
     </font>
     <left/>
-    <top/>
+    <vcenter/>
     <data>
      <query>detail</query>
      <column>name</column>
@@ -774,7 +603,7 @@
   <label>
    <rect>
     <x>615</x>
-    <y>0</y>
+    <y>1</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -790,7 +619,7 @@
   <field>
    <rect>
     <x>90</x>
-    <y>0</y>
+    <y>1</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -809,7 +638,7 @@
   <field>
    <rect>
     <x>705</x>
-    <y>0</y>
+    <y>1</y>
     <width>40</width>
     <height>15</height>
    </rect>

@@ -69,7 +69,6 @@ SELECT -1 AS gltrans_id,
        &lt;? value("beginningBalance") ?> AS gltrans_amount,
        &lt;? value("beginningBalance") ?> AS running,
        NULL AS f_posted,
-       NULL AS f_deleted,
        NULL AS f_username,
        -1 AS gltrans_sequence
  FROM accnt
@@ -185,22 +184,6 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
   <height>205</height>
   <label>
    <rect>
-    <x>408</x>
-    <y>90</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
-  </label>
-  <label>
-   <rect>
     <x>240</x>
     <y>170</y>
     <width>105</width>
@@ -231,25 +214,6 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
    <vcenter/>
    <string>Running Total</string>
   </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>70</y>
-    <width>290</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>accnt</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>240</x>
@@ -300,22 +264,6 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>70</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Account:</string>
-  </label>
-  <label>
-   <rect>
     <x>180</x>
     <y>185</y>
     <width>50</width>
@@ -346,22 +294,6 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
    <vcenter/>
    <string>Source</string>
   </label>
-  <label>
-   <rect>
-    <x>408</x>
-    <y>70</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
   <line>
    <xstart>0</xstart>
    <ystart>200</ystart>
@@ -369,25 +301,6 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
    <yend>200</yend>
    <weight>2</weight>
   </line>
-  <field>
-   <rect>
-    <x>545</x>
-    <y>90</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>535</x>
@@ -404,44 +317,6 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
    <vcenter/>
    <string>G/L Transactions</string>
   </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>90</y>
-    <width>290</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>source</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>545</x>
-    <y>70</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>960</x>
@@ -457,22 +332,6 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
    <left/>
    <vcenter/>
    <string>Posted</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>90</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Source:</string>
   </label>
   <label>
    <rect>
@@ -541,6 +400,26 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
    <vcenter/>
    <string>Deleted</string>
   </label>
+  <text>
+   <rect>
+    <x>10</x>
+    <y>50</y>
+    <width>725</width>
+    <height>15</height>
+   </rect>
+   <bottompad>12</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>Parameter Query</query>
+    <column>filter</column>
+   </data>
+  </text>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -638,7 +517,7 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
   <label>
    <rect>
     <x>960</x>
-    <y>10</y>
+    <y>25</y>
     <width>40</width>
     <height>15</height>
    </rect>
@@ -733,22 +612,6 @@ ORDER BY gltrans_created &lt;? if not exists("beginningBalance") ?> DESC &lt;? e
    <left/>
    <vcenter/>
    <string>Reference</string>
-  </label>
-  <label>
-   <rect>
-    <x>960</x>
-    <y>25</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Deleted</string>
   </label>
  </pghead>
  <section>
