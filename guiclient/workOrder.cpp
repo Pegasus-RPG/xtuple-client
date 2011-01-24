@@ -20,7 +20,7 @@
 #include "correctProductionPosting.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspRunningAvailability.h"
-#include "dspInventoryAvailabilityByItem.h"
+#include "dspInventoryAvailability.h"
 #include "dspSubstituteAvailabilityByItem.h"
 #include "distributeInventory.h"
 #include "explodeWo.h"
@@ -1580,7 +1580,7 @@ void workOrder::sViewMatlAvailability()
     params.append("byDate", q.value("womatl_duedate"));
     params.append("run");
 
-    dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem(this);
+    dspInventoryAvailability *newdlg = new dspInventoryAvailability();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }

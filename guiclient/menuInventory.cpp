@@ -98,9 +98,7 @@
 #include "dspInventoryLocator.h"
 #include "dspSlowMovingInventoryByClassCode.h"
 #include "dspExpiredInventoryByClassCode.h"
-#include "dspInventoryAvailabilityByItem.h"
-#include "dspInventoryAvailabilityByParameterList.h"
-#include "dspInventoryAvailabilityBySourceVendor.h"
+#include "dspInventoryAvailability.h"
 #include "dspSubstituteAvailabilityByItem.h"
 #include "dspInventoryHistoryByItem.h"
 #include "dspInventoryHistoryByOrderNumber.h"
@@ -165,7 +163,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   reportsMenu              = new QMenu(parent);
   reportsItemsitesMenu     = new QMenu(parent);
   reportsQohMenu           = new QMenu(parent);
-  reportsInvAvailMenu      = new QMenu(parent);
   reportsInvHistMenu       = new QMenu(parent);
   reportsDtlInvHistMenu    = new QMenu(parent);
   reportsItemUsgMenu       = new QMenu(parent);
@@ -196,7 +193,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   reportsMenu->setObjectName("menu.im.reports");
   reportsItemsitesMenu->setObjectName("menu.im.reportsitemsites");
   reportsQohMenu->setObjectName("menu.im.reports.qoh");
-  reportsInvAvailMenu->setObjectName("menu.im.reportsinvavail");
   reportsInvHistMenu->setObjectName("menu.im.reportsinvhist");
   reportsDtlInvHistMenu->setObjectName("menu.im.reportdtlinvhist");
   reportsItemUsgMenu->setObjectName("menu.im.reportsitemusg");
@@ -372,12 +368,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     {  "separator",                   NULL,                                  NULL,                                      reportsMenu,    "true",         NULL, NULL, true, NULL },
 
     //  Inventory| Reports | Inventory Availability
-    { "menu",                           tr("Inventory &Availability"),                    (char*)reportsInvAvailMenu,                   reportsMenu,     "ViewInventoryAvailability",   NULL, NULL, true, NULL },
-    { "im.dspInventoryAvailabilityByPlannerCode",       tr("by &Planner Code..."), SLOT(sDspInventoryAvailabilityByPlannerCode()), reportsInvAvailMenu, "ViewInventoryAvailability", QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true, tr("Inventory Availability by Planner Code") },
-    { "im.dspInventoryAvailabilityByClassCode",         tr("by &Class Code..."),         SLOT(sDspInventoryAvailabilityByClassCode()), reportsInvAvailMenu, "ViewInventoryAvailability",        NULL, NULL, true, NULL },
-    { "im.dspInventoryAvailabilityBySourceVendor",      tr("by &Source Vendor..."),SLOT(sDspInventoryAvailabilityBySourceVendor()), reportsInvAvailMenu, "ViewInventoryAvailability",   NULL, NULL, true, NULL },
-    { "im.dspInventoryAvailabilityByItemGroup",         tr("by Item &Group..."),         SLOT(sDspInventoryAvailabilityByItemGroup()), reportsInvAvailMenu, "ViewInventoryAvailability",        NULL, NULL, true, NULL },
-    { "im.dspInventoryAvailabilityByItem",              tr("by &Item..."),       SLOT(sDspInventoryAvailabilityByItem()), reportsInvAvailMenu, "ViewInventoryAvailability",     NULL, NULL, true, NULL },
+    { "im.dspInventoryAvailability",       tr("Inventory &Availability..."), SLOT(sDspInventoryAvailability()), reportsMenu, "ViewInventoryAvailability", QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true, tr("Inventory Availability by Planner Code") },
     { "im.dspSubstituteAvailabilityByRootItem",         tr("&Substitute Availability..."),       SLOT(sDspSubstituteAvailabilityByRootItem()), reportsMenu, "ViewInventoryAvailability",        NULL, NULL, true, NULL },
 
     //  Inventory| Reports | Inventory History
@@ -1004,44 +995,9 @@ void menuInventory::sDspExpiredInventoryByClassCode()
   omfgThis->handleNewWindow(new dspExpiredInventoryByClassCode());
 }
 
-void menuInventory::sDspInventoryAvailabilityByItem()
+void menuInventory::sDspInventoryAvailability()
 {
-  omfgThis->handleNewWindow(new dspInventoryAvailabilityByItem());
-}
-
-void menuInventory::sDspInventoryAvailabilityByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  dspInventoryAvailabilityByParameterList *newdlg = new dspInventoryAvailabilityByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspInventoryAvailabilityByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  dspInventoryAvailabilityByParameterList *newdlg = new dspInventoryAvailabilityByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspInventoryAvailabilityByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  dspInventoryAvailabilityByParameterList *newdlg = new dspInventoryAvailabilityByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspInventoryAvailabilityBySourceVendor()
-{
-  omfgThis->handleNewWindow(new dspInventoryAvailabilityBySourceVendor());
+  omfgThis->handleNewWindow(new dspInventoryAvailability());
 }
 
 void menuInventory::sDspSubstituteAvailabilityByRootItem()

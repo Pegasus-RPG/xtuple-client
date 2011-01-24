@@ -21,7 +21,7 @@
 
 #include "changeWoQty.h"
 #include "createCountTagsByItem.h"
-#include "dspInventoryAvailabilityByItem.h"
+#include "dspInventoryAvailability.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspInventoryHistoryByItem.h"
 #include "mqlutil.h"
@@ -295,8 +295,9 @@ void eventManager::sViewInventoryAvailability()
 {
   ParameterList params;
   params.append("itemsite_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+  params.append("run");
   
-  dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem();
+  dspInventoryAvailability *newdlg = new dspInventoryAvailability();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

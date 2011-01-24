@@ -72,9 +72,9 @@
 #include "dspQuotesByItem.h"
 #include "dspCustomersByCustomerType.h"
 #include "dspCustomersByCharacteristic.h"
-#include "dspInventoryAvailabilityByItem.h"
-#include "dspInventoryAvailabilityBySalesOrder.h"
+#include "dspInventoryAvailability.h"
 #include "dspInventoryAvailabilityByCustomerType.h"
+#include "dspInventoryAvailabilityBySalesOrder.h"
 #include "dspReservations.h"
 #include "dspSalesOrderStatus.h"
 #include "dspBacklogByItem.h"
@@ -140,7 +140,6 @@ menuSales::menuSales(GUIClient *pParent) :
   formsMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
   reportsCustomersMenu = new QMenu(parent);
-  reportsInvAvailMenu = new QMenu(parent);
   reportsBacklogMenu = new QMenu(parent);
   analysisMenu = new QMenu(parent);
   prospectMenu = new QMenu(parent);
@@ -164,7 +163,6 @@ menuSales::menuSales(GUIClient *pParent) :
   formsMenu->setObjectName("menu.sales.forms");
   reportsMenu->setObjectName("menu.sales.reports");
   reportsCustomersMenu->setObjectName("menu.sales.reportscustomers");
-  reportsInvAvailMenu->setObjectName("menu.sales.reportsinvavail");
   reportsBacklogMenu->setObjectName("menu.sales.reportsbacklog");
   analysisMenu->setObjectName("menu.sales.analysis");
   prospectMenu->setObjectName("menu.sales.prospect");
@@ -276,10 +274,9 @@ menuSales::menuSales(GUIClient *pParent) :
     { "separator",	NULL,	NULL,	reportsMenu,	"true",		NULL, NULL, true, NULL },   
     
     // Sales | Reports | Inventory Availability
-    { "menu",	tr("&Inventory Availability"),           (char*)reportsInvAvailMenu,	reportsMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.dspInventoryAvailabilityBySalesOrder", tr("by Sales &Order..."),	SLOT(sDspInventoryAvailabilityBySalesOrder()), reportsInvAvailMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },
-    { "so.dspInventoryAvailabilityByItem", tr("by &Item..."),	SLOT(sDspInventoryAvailabilityByItem()), reportsInvAvailMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },    
-    { "so.dspInventoryAvailabilityByCustomerType", tr("by &Customer Type..."),	SLOT(sDspInventoryAvailabilityByCustomerType()), reportsInvAvailMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },    
+    { "so.dspInventoryAvailability", tr("Inventory &Availability..."),	SLOT(sDspInventoryAvailability()), reportsMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },
+    { "so.dspInventoryAvailabilityBySalesOrder", tr("Availability by &Sales Order..."),	SLOT(sDspInventoryAvailabilityBySalesOrder()), reportsMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },
+    { "so.dspInventoryAvailabilityByCustomerType", tr("Availability by &Customer Type..."),	SLOT(sDspInventoryAvailabilityByCustomerType()), reportsMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },
 
     { "separator",	NULL,	NULL,	reportsMenu,	"true",		NULL, NULL, true, NULL },
     { "so.dspEarnedCommissions", tr("&Earned Commissions..."),	SLOT(sDspEarnedCommissions()), reportsMenu, "ViewCommissions",	NULL, NULL, true, NULL },
@@ -659,15 +656,16 @@ void menuSales::sDspSalesOrderStatus()
   omfgThis->handleNewWindow(new dspSalesOrderStatus());
 }
 
-void menuSales::sDspInventoryAvailabilityByItem()
+void menuSales::sDspInventoryAvailability()
 {
-  omfgThis->handleNewWindow(new dspInventoryAvailabilityByItem());
+  omfgThis->handleNewWindow(new dspInventoryAvailability());
 }
 
 void menuSales::sDspInventoryAvailabilityBySalesOrder()
 {
   omfgThis->handleNewWindow(new dspInventoryAvailabilityBySalesOrder());
 }
+
 
 void menuSales::sDspInventoryAvailabilityByCustomerType()
 {

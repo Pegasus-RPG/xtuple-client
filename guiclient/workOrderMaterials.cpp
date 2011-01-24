@@ -16,7 +16,7 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include "dspInventoryAvailabilityByItem.h"
+#include "dspInventoryAvailability.h"
 #include "dspSubstituteAvailabilityByItem.h"
 #include "inputManager.h"
 #include "returnWoMaterialItem.h"
@@ -253,7 +253,7 @@ void workOrderMaterials::sViewAvailability()
     params.append("byDate", q.value("womatl_duedate"));
     params.append("run");
 
-    dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem();
+    dspInventoryAvailability *newdlg = new dspInventoryAvailability();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }

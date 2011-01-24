@@ -88,9 +88,9 @@ class menuSales : public QObject
     void sDspOrderLookupByCustomerPO();
     void sDspQuoteLookupByCustomer();
     void sDspQuoteLookupByItem();
-    void sDspInventoryAvailabilityByItem();
-    void sDspInventoryAvailabilityBySalesOrder();
+    void sDspInventoryAvailability();
     void sDspInventoryAvailabilityByCustomerType();
+    void sDspInventoryAvailabilityBySalesOrder();
     void sDspReservations();
     void sDspCustomersByCusttype();
     void sDspCustomersByCharacteristic();
@@ -147,7 +147,7 @@ class menuSales : public QObject
     QMenu *billingInvoicesMenu;
     QMenu *billingCreditMemosMenu;
     QMenu *billingFormsMenu;
-	QMenu *returnsMenu;
+    QMenu *returnsMenu;
     QMenu *pricingMenu;
     QMenu *pricingReportsMenu;
     QMenu *pricingUpdateMenu;
@@ -160,7 +160,6 @@ class menuSales : public QObject
     QMenu *analysisMenu;
     QMenu *reportsMenu;
     QMenu *reportsCustomersMenu;
-    QMenu *reportsInvAvailMenu;
     QMenu *reportsBacklogMenu;
     QMenu *utilitiesMenu;
     
