@@ -34,11 +34,9 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspIncidentsByCRMAccount.ui \
            displays/dspIndentedWhereUsed.ui \
            displays/dspInvalidBillsOfMaterials.ui \
+           displays/dspInventoryAvailability.ui \
            displays/dspInventoryAvailabilityByCustomerType.ui \
-           displays/dspInventoryAvailabilityByItem.ui \
-           displays/dspInventoryAvailabilityByParameterList.ui \
            displays/dspInventoryAvailabilityBySalesOrder.ui \
-           displays/dspInventoryAvailabilityBySourceVendor.ui \
            displays/dspInventoryAvailabilityByWorkOrder.ui \
            displays/dspInventoryHistoryBase.ui \
            displays/dspInventoryLocator.ui \
@@ -176,11 +174,9 @@ HEADERS += displays/dspAllocations.h \
            displays/dspIndentedBOM.h \
            displays/dspIndentedWhereUsed.h \
            displays/dspInvalidBillsOfMaterials.h \
+           displays/dspInventoryAvailability.h \
            displays/dspInventoryAvailabilityByCustomerType.h \
-           displays/dspInventoryAvailabilityByItem.h \
-           displays/dspInventoryAvailabilityByParameterList.h \
            displays/dspInventoryAvailabilityBySalesOrder.h \
-           displays/dspInventoryAvailabilityBySourceVendor.h \
            displays/dspInventoryAvailabilityByWorkOrder.h \
            displays/dspInventoryHistoryBase.h \
            displays/dspInventoryHistoryByItem.h \
@@ -336,11 +332,9 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspIndentedBOM.cpp \
            displays/dspIndentedWhereUsed.cpp \
            displays/dspInvalidBillsOfMaterials.cpp \
+           displays/dspInventoryAvailability.cpp \
            displays/dspInventoryAvailabilityByCustomerType.cpp \
-           displays/dspInventoryAvailabilityByItem.cpp \
-           displays/dspInventoryAvailabilityByParameterList.cpp \
            displays/dspInventoryAvailabilityBySalesOrder.cpp \
-           displays/dspInventoryAvailabilityBySourceVendor.cpp \
            displays/dspInventoryAvailabilityByWorkOrder.cpp \
            displays/dspInventoryHistoryBase.cpp \
            displays/dspInventoryHistoryByItem.cpp \

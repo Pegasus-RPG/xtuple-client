@@ -17,7 +17,7 @@
 
 #include "inputManager.h"
 #include "itemSite.h"
-#include "dspInventoryAvailabilityByItem.h"
+#include "dspInventoryAvailability.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryLocator.h"
 #include "guiclient.h"
@@ -111,7 +111,7 @@ void dspItemSitesByItem::sViewInventoryAvailability()
   params.append("byLeadTime");
   params.append("run");
 
-  dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem();
+  dspInventoryAvailability *newdlg = new dspInventoryAvailability();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

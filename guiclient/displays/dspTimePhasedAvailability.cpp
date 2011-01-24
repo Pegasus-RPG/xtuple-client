@@ -18,7 +18,7 @@
 #include <datecluster.h>
 
 #include "guiclient.h"
-#include "dspInventoryAvailabilityByItem.h"
+#include "dspInventoryAvailability.h"
 #include "dspAllocations.h"
 #include "dspOrders.h"
 #include "workOrder.h"
@@ -55,7 +55,7 @@ void dspTimePhasedAvailability::sViewAvailability()
   params.append("byDate", _columnDates[_column - 3].startDate);
   params.append("run");
 
-  dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem();
+  dspInventoryAvailability *newdlg = new dspInventoryAvailability();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

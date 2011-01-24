@@ -15,7 +15,7 @@
 #include <QSqlError>
 
 #include "createCountTagsByItem.h"
-#include "dspInventoryAvailabilityByItem.h"
+#include "dspInventoryAvailability.h"
 #include "itemSite.h"
 #include "storedProcErrorLookup.h"
 
@@ -98,7 +98,7 @@ void dspUnbalancedQOHByClassCode::sInventoryAvailability()
   params.append("byLeadTime");
   params.append("run");
 
-  dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem();
+  dspInventoryAvailability *newdlg = new dspInventoryAvailability();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

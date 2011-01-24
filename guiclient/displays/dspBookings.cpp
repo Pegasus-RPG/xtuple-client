@@ -90,6 +90,10 @@ enum SetResponse dspBookings::set(const ParameterList &pParams)
   if (valid)
     parameterWidget()->setDefault(tr("Product Category Pattern"), param.toString());
 
+  param = pParams.value("salesrep_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Sales Rep."), param.toString());
+
   param = pParams.value("warehous_id", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Site"), param.toInt());

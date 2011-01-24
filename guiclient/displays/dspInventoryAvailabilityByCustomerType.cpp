@@ -52,6 +52,7 @@ dspInventoryAvailabilityByCustomerType::dspInventoryAvailabilityByCustomerType(Q
   list()->addColumn(tr("Order/Start Date"),_dateColumn, Qt::AlignCenter,true, "orderdate");
   list()->addColumn(tr("Sched./Due Date"), _dateColumn, Qt::AlignCenter,true, "duedate");
   list()->setIndentation(10);
+  list()->setPopulateLinear(true);
 
   if(!_metrics->boolean("EnableSOReservations"))
   {

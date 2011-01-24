@@ -16,7 +16,7 @@
 #include <QMenu>
 
 #include "createCountTagsByItem.h"
-#include "dspInventoryAvailabilityByItem.h"
+#include "dspInventoryAvailability.h"
 #include "itemSite.h"
 
 dspItemSitesByParameterList::dspItemSitesByParameterList(QWidget* parent, const char*, Qt::WFlags fl)
@@ -190,11 +190,12 @@ void dspItemSitesByParameterList::sEdit()
 void dspItemSitesByParameterList::sInventoryAvailability()
 {
   ParameterList params;
-  params.append("itemsite_id", list()->id());
+  params.append("item_id", list()->id());
+  params.append("warehous_id", list()->id("warehous_code"));
   params.append("run");
   params.append("byLeadTime");
 
-  dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem();
+  dspInventoryAvailability *newdlg = new dspInventoryAvailability();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
