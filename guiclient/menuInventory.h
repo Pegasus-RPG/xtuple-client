@@ -116,9 +116,7 @@ class menuInventory : public QObject
     void sDspItemSitesByPlannerCode();
     void sDspItemSitesByCostCategory();
     void sDspValidLocationsByItem();
-    void sDspQOHByItem();
-    void sDspQOHByClassCode();
-    void sDspQOHByItemGroup();
+    void sDspQOH();
     void sDspQOHByLocation();
     void sDspLocationLotSerialDetail();
     void sDspSlowMovingInventoryByClassCode();
@@ -186,7 +184,6 @@ class menuInventory : public QObject
     QMenu *graphsMenu;
     QMenu *reportsMenu;
     QMenu *reportsItemsitesMenu;
-    QMenu *reportsQohMenu;
     QMenu *reportsInvHistMenu;
     QMenu *reportsDtlInvHistMenu;
     QMenu *reportsItemUsgMenu;

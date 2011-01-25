@@ -92,8 +92,7 @@
 #include "dspItemSitesByItem.h"
 #include "dspItemSitesByParameterList.h"
 #include "dspValidLocationsByItem.h"
-#include "dspQOHByItem.h"
-#include "dspQOHByParameterList.h"
+#include "dspQOH.h"
 #include "dspQOHByLocation.h"
 #include "dspInventoryLocator.h"
 #include "dspSlowMovingInventoryByClassCode.h"
@@ -162,7 +161,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   formsShipLabelsMenu      = new QMenu(parent);
   reportsMenu              = new QMenu(parent);
   reportsItemsitesMenu     = new QMenu(parent);
-  reportsQohMenu           = new QMenu(parent);
   reportsInvHistMenu       = new QMenu(parent);
   reportsDtlInvHistMenu    = new QMenu(parent);
   reportsItemUsgMenu       = new QMenu(parent);
@@ -192,7 +190,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   formsShipLabelsMenu->setObjectName("menu.im.formsshiplabels");
   reportsMenu->setObjectName("menu.im.reports");
   reportsItemsitesMenu->setObjectName("menu.im.reportsitemsites");
-  reportsQohMenu->setObjectName("menu.im.reports.qoh");
   reportsInvHistMenu->setObjectName("menu.im.reportsinvhist");
   reportsDtlInvHistMenu->setObjectName("menu.im.reportdtlinvhist");
   reportsItemUsgMenu->setObjectName("menu.im.reportsitemusg");
@@ -355,11 +352,8 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     {  "separator",                     NULL,                             NULL,                                 reportsMenu,          "true",           NULL, NULL, true, NULL },
 
     //  Inventory | Reports | Quantities On Hand
-    { "menu",                         tr("&Quantities On Hand"),             (char*)reportsQohMenu,                     reportsMenu,    "ViewQOH",      NULL, NULL, true, NULL },
-    { "im.dspQOHByClassCode",         tr("by &Class Code..."),               SLOT(sDspQOHByClassCode()),                reportsQohMenu, "ViewQOH",      NULL, NULL, true, NULL },
-    { "im.dspQOHByItemGroup",         tr("by Item &Group..."),               SLOT(sDspQOHByItemGroup()),                reportsQohMenu, "ViewQOH",      NULL, NULL, true, NULL },
-    { "im.dspQOHByLocation",          tr("by &Location..."),                 SLOT(sDspQOHByLocation()),                 reportsQohMenu, "ViewQOH",      NULL, NULL, true, NULL },
-    { "im.dspQOHByItem",              tr("by &Item..."),                     SLOT(sDspQOHByItem()),                     reportsQohMenu, "ViewQOH",      NULL, NULL, true, NULL },
+    { "im.dspQOH",                    tr("&Quantities On Hand..."),                             SLOT(sDspQOH()),                reportsMenu, "ViewQOH",      NULL, NULL, true, NULL },
+    { "im.dspQOHByLocation",          tr("Quantities On Hand By &Location..."),                 SLOT(sDspQOHByLocation()),      reportsMenu, "ViewQOH",      NULL, NULL, true, NULL },
 
     { "im.dspLocationLotSerialDetail",tr("&Location/Lot/Serial # Detail..."),SLOT(sDspLocationLotSerialDetail()),       reportsMenu,    "ViewQOH",      NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
     { "im.dspExpiredInventory",       tr("&Expired Inventory..."),           SLOT(sDspExpiredInventoryByClassCode()),   reportsMenu,    "ViewQOH",      NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
@@ -950,29 +944,9 @@ void menuInventory::sDspValidLocationsByItem()
   omfgThis->handleNewWindow(new dspValidLocationsByItem());
 }
 
-void menuInventory::sDspQOHByItem()
+void menuInventory::sDspQOH()
 {
-  omfgThis->handleNewWindow(new dspQOHByItem());
-}
-
-void menuInventory::sDspQOHByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  dspQOHByParameterList *newdlg = new dspQOHByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspQOHByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  dspQOHByParameterList *newdlg = new dspQOHByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(new dspQOH());
 }
 
 void menuInventory::sDspQOHByLocation()
