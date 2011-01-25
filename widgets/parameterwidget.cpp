@@ -107,7 +107,6 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
   _filterButton->setChecked(false);
 
   connect(_addFilterRow, SIGNAL(clicked()), this, SLOT( addParam() ) );
-  connect(_filterButton, SIGNAL(toggled(bool)), this, SLOT( setFiltersVisabiltyPreference() ) );
   connect(_filterSignalMapper, SIGNAL(mapped(int)), this, SLOT( removeParam(int) ));
   connect(_saveButton, SIGNAL(clicked()), this, SLOT( save() ) );
   connect(_manageButton, SIGNAL(clicked()), this, SLOT( sManageFilters() ) );
@@ -126,27 +125,16 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
 void ParameterWidget::showEvent(QShowEvent * event)
 {
 
-  if(_initialized)
-    return;
-
-  QString pname;
-  if(window())
-    pname = window()->objectName() + "/";
-  _settingsName = pname + objectName();
-  if(_x_preferences)
+  if(!_initialized)
   {
-    if (!_x_preferences->boolean(_settingsName + "/checked"))
-    {
-      _filterGroup->setVisible(false);
-      _filterButton->setChecked(false);
-    }
-    else
-    {
-      _filterGroup->setVisible(true);
-      _filterButton->setChecked(true);
-    }
+    QString pname;
+    if(window())
+      pname = window()->objectName() + "/";
+    _settingsName = pname + objectName();
+    if(_x_preferences)
+      setFiltersVisible(_x_preferences->boolean(_settingsName + "/checked"));
+    _initialized = true;
   }
-  _initialized = true;
   QWidget::showEvent(event);
 
 }
@@ -1384,9 +1372,16 @@ void ParameterWidget::setEnabled(QString pName, bool pEnabled)
 
 void ParameterWidget::setFiltersVisible(bool visible)
 {
+  if (_filterGroup->isVisible() == visible)
+    return;
+
   if (visible && _filtersLayout->rowCount() == 1)
     addParam();
+
   _filterGroup->setVisible(visible);
+  if (!_filterButton->isChecked() == visible)
+    _filterButton->setChecked(visible);
+  setFiltersVisabiltyPreference();
 }
 
 void ParameterWidget::setFiltersVisabiltyPreference()
