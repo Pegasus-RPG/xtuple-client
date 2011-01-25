@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspQOHByParameterList.h"
+#include "dspQOH.h"
 
 #include <QAction>
 #include <QMenu>
@@ -19,16 +19,17 @@
 #include "transferTrans.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryLocator.h"
+#include "parameterwidget.h"
 
-dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char*, Qt::WFlags fl)
-    : display(parent, "dspQOHByParameterList", fl)
+dspQOH::dspQOH(QWidget* parent, const char*, Qt::WFlags fl)
+    : display(parent, "dspQOH", fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Quantities on Hand by Parameter List"));
-  setListLabel(tr("Quantities on Hand"));
-  setReportName("QOHByParameterList");
+  setWindowTitle(tr("Quantities on Hand"));
+  setReportName("QOH");
   setMetaSQLOptions("qoh", "detail");
   setUseAltId(true);
+  setParameterWidgetVisible(true);
 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
@@ -40,14 +41,23 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char*, Qt::W
   _showGroupInt->addButton(_showPositive);
   _showGroupInt->addButton(_showNegative);
 
+  parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
+  parameterWidget()->append(tr("Class Code Pattern"), "classcode_pattern", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Cost Category"), "costcat_id", XComboBox::CostCategories);
+  parameterWidget()->append(tr("Cost Category Pattern"), "costcat_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
+  parameterWidget()->appendComboBox(tr("Item Group"), "itemgrp_id", XComboBox::ItemGroups);
+  parameterWidget()->append(tr("Item Group Pattern"), "itemgrp_pattern", ParameterWidget::Text);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
 
-  _asOf->setDate(omfgThis->dbDate(), true);
-
   list()->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
-  list()->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft,   true,  "classcode_code"   );
   list()->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
   list()->addColumn(tr("Description"),      -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  list()->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft,   true,  "classcode_code"   );
+  list()->addColumn(tr("Cost Category"),    _itemColumn, Qt::AlignLeft,   false, "costcat_code"   );
   list()->addColumn(tr("UOM"),              _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
   list()->addColumn(tr("Default Location"), _itemColumn, Qt::AlignLeft,   true,  "defaultlocation"   );
   list()->addColumn(tr("Reorder Lvl."),     _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
@@ -61,83 +71,55 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char*, Qt::W
   sHandleValue(_showValue->isChecked());
 
   _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
-
-  _asofGroup->hide(); // Issue #11793 - Not ready for this yet.
 }
 
-void dspQOHByParameterList::languageChange()
-{
-  display::languageChange();
-  retranslateUi(this);
-}
-
-SetResponse dspQOHByParameterList::set(const ParameterList &pParams)
+SetResponse dspQOH::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
 
-  param = pParams.value("classcode", &valid);
-  if(valid)
-    _parameter->setType(ParameterGroup::ClassCode);
-
   param = pParams.value("classcode_id", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ClassCode);
-    _parameter->setId(param.toInt());
-  }
+    parameterWidget()->setDefault(tr("Class Code"), param);
 
   param = pParams.value("classcode_pattern", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ClassCode);
-    _parameter->setPattern(param.toString());
-  }
+    parameterWidget()->setDefault(tr("Class Code Pattern"), param);
 
-  param = pParams.value("itemgrp", &valid);
-  if(valid)
-    _parameter->setType(ParameterGroup::ItemGroup);
+  param = pParams.value("costcat_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Cost Category"), param);
+
+  param = pParams.value("costcat_pattern", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Cost Category Pattern"), param);
+
+  param = pParams.value("item_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Item"), param);
 
   param = pParams.value("itemgrp_id", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ItemGroup);
-    _parameter->setId(param.toInt());
-  }
+    parameterWidget()->setDefault(tr("Item Group"), param);
 
   param = pParams.value("itemgrp_pattern", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ItemGroup);
-    _parameter->setPattern(param.toString());
-  }
+    parameterWidget()->setDefault(tr("Item Group Pattern"), param);
 
   param = pParams.value("warehous_id", &valid);
   if (valid)
-    _warehouse->setId(param.toInt());
+    parameterWidget()->setDefault(tr("Site"), param);
+
+  parameterWidget()->applyDefaultFilterSet();
 
   if (pParams.inList("run"))
     sFillList();
 
-  switch (_parameter->type())
-  {
-    case ParameterGroup::ClassCode:
-      setWindowTitle(tr("Quantities on Hand by Class Code"));
-      break;
-
-    case ParameterGroup::ItemGroup:
-      setWindowTitle(tr("Quantities on Hand by Item Group"));
-      break;
-
-    default:
-      break;
-  }
-
   return NoError;
 }
 
-void dspQOHByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
+void dspQOH::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
   {
@@ -156,11 +138,11 @@ void dspQOHByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
         menuItem->setEnabled(false);
     }
 
-    menuItem = pMenu->addAction(tr("Adjust this QOH..."), this, SLOT(sAdjust()));;
+    menuItem = pMenu->addAction(tr("Adjust this Quantity..."), this, SLOT(sAdjust()));;
     if (!_privileges->check("CreateAdjustmentTrans"))
       menuItem->setEnabled(false);
 
-    menuItem = pMenu->addAction(tr("Reset this QOH to 0..."), this, SLOT(sReset()));;
+    menuItem = pMenu->addAction(tr("Reset this Quanity to 0..."), this, SLOT(sReset()));;
     if (!_privileges->check("CreateAdjustmentTrans"))
       menuItem->setEnabled(false);
 
@@ -178,7 +160,7 @@ void dspQOHByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
   } 
 }
 
-void dspQOHByParameterList::sViewDetail()
+void dspQOH::sViewDetail()
 {
   ParameterList params;
   params.append("itemsite_id", list()->id());
@@ -189,7 +171,7 @@ void dspQOHByParameterList::sViewDetail()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspQOHByParameterList::sTransfer()
+void dspQOH::sTransfer()
 {
   ParameterList params;
   params.append("mode", "new");
@@ -200,7 +182,7 @@ void dspQOHByParameterList::sTransfer()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspQOHByParameterList::sAdjust()
+void dspQOH::sAdjust()
 {
   ParameterList params;
   params.append("mode", "new");
@@ -211,7 +193,7 @@ void dspQOHByParameterList::sAdjust()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspQOHByParameterList::sReset()
+void dspQOH::sReset()
 {
   ParameterList params;
   params.append("mode", "new");
@@ -223,7 +205,7 @@ void dspQOHByParameterList::sReset()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspQOHByParameterList::sMiscCount()
+void dspQOH::sMiscCount()
 {
   ParameterList params;
   params.append("itemsite_id", list()->id());
@@ -234,7 +216,7 @@ void dspQOHByParameterList::sMiscCount()
     sFillList();
 }
 
-void dspQOHByParameterList::sIssueCountTag()
+void dspQOH::sIssueCountTag()
 {
   ParameterList params;
   params.append("itemsite_id", list()->id());
@@ -244,7 +226,7 @@ void dspQOHByParameterList::sIssueCountTag()
   newdlg.exec();
 }
 
-void dspQOHByParameterList::sHandleValue(bool pShowValue)
+void dspQOH::sHandleValue(bool pShowValue)
 {
   list()->setColumnHidden(list()->column("cost"),         !pShowValue);
   list()->setColumnHidden(list()->column("value"),        !pShowValue);
@@ -252,7 +234,7 @@ void dspQOHByParameterList::sHandleValue(bool pShowValue)
   list()->setColumnHidden(list()->column("f_costmethod"), !pShowValue);
 }
 
-void dspQOHByParameterList::sFillList()
+void dspQOH::sFillList()
 {
   list()->clear();
   list()->setColumnVisible(list()->column("f_costmethod"),
@@ -261,10 +243,10 @@ void dspQOHByParameterList::sFillList()
   display::sFillList();
 }
 
-bool dspQOHByParameterList::setParams(ParameterList &params)
+bool dspQOH::setParams(ParameterList &params)
 {
-  params.append("byParameterList");
-  params.append("asOf", _asOf->date());
+  if (!display::setParams(params))
+    return false;
 
   params.append("none", tr("None"));
   params.append("na", tr("N/A"));
@@ -275,22 +257,6 @@ bool dspQOHByParameterList::setParams(ParameterList &params)
     params.append("useActualCosts");
   else if (_usePostedCosts->isChecked())
     params.append("usePostedCosts");
-
-  if (_parameter->isSelected())
-    params.append("byParameter");
-  else if (_parameter->isPattern())
-    params.append("byParameterPattern");
-  else if(_parameter->type() == ParameterGroup::ItemGroup)
-    params.append("byParameterType");
-
-  _parameter->appendValue(params);
-
-  if (_parameter->type() == ParameterGroup::ItemGroup)
-    params.append("itemgrp");
-  else if(_parameter->type() == ParameterGroup::ClassCode)
-    params.append("classcode");
-
-  _warehouse->appendValue(params);
 
   if (_showPositive->isChecked())
   {

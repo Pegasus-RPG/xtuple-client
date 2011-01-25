@@ -8,20 +8,20 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPQOHBYPARAMETERLIST_H
-#define DSPQOHBYPARAMETERLIST_H
+#ifndef DSPQOH_H
+#define DSPQOH_H
 
 #include "guiclient.h"
 #include "display.h"
 
-#include "ui_dspQOHByParameterList.h"
+#include "ui_dspQOH.h"
 
-class dspQOHByParameterList : public display, public Ui::dspQOHByParameterList
+class dspQOH : public display, public Ui::dspQOH
 {
     Q_OBJECT
 
 public:
-    dspQOHByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspQOH(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList &);
     virtual SetResponse set( const ParameterList & pParams );
@@ -37,12 +37,9 @@ public slots:
     virtual void sHandleValue( bool pShowValue );
     virtual void sFillList();
 
-protected slots:
-    virtual void languageChange();
-
 private:
     QButtonGroup* _costsGroupInt;
     QButtonGroup* _showGroupInt;
 };
 
-#endif // DSPQOHBYPARAMETERLIST_H
+#endif // dspQOH_H

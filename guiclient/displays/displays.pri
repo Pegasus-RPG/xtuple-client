@@ -83,9 +83,8 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspPricesByItem.ui \
            displays/dspPurchaseReqsByItem.ui \
            displays/dspPurchaseReqsByPlannerCode.ui \
-           displays/dspQOHByItem.ui \
+           displays/dspQOH.ui \
            displays/dspQOHByLocation.ui \
-           displays/dspQOHByParameterList.ui \
            displays/dspQuotesByCustomer.ui \
            displays/dspQuotesByItem.ui \
            displays/dspReorderExceptionsByPlannerCode.ui \
@@ -230,9 +229,8 @@ HEADERS += displays/dspAllocations.h \
            displays/dspPricesByItem.h \
            displays/dspPurchaseReqsByItem.h \
            displays/dspPurchaseReqsByPlannerCode.h \
-           displays/dspQOHByItem.h \
+           displays/dspQOH.h \
            displays/dspQOHByLocation.h \
-           displays/dspQOHByParameterList.h \
            displays/dspQuotesByCustomer.h \
            displays/dspQuotesByItem.h \
            displays/dspReorderExceptionsByPlannerCode.h \
@@ -390,9 +388,8 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspPricesByItem.cpp \
            displays/dspPurchaseReqsByItem.cpp \
            displays/dspPurchaseReqsByPlannerCode.cpp \
-           displays/dspQOHByItem.cpp \
+           displays/dspQOH.cpp \
            displays/dspQOHByLocation.cpp \
-           displays/dspQOHByParameterList.cpp \
            displays/dspQuotesByCustomer.cpp \
            displays/dspQuotesByItem.cpp \
            displays/dspReorderExceptionsByPlannerCode.cpp \
