@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,11 +13,14 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include <xtClassCode.h>
+#include <xtStorableQuery.h>
+
 classCode::classCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-
+  _data = new xtClassCode();
 
   // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
@@ -27,7 +30,8 @@ classCode::classCode(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 
 classCode::~classCode()
 {
-  // no need to delete child widgets, Qt does it all for us
+  if(_data)
+    delete _data;
 }
 
 void classCode::languageChange()
@@ -44,8 +48,15 @@ enum SetResponse classCode::set(const ParameterList &pParams)
   param = pParams.value("classcode_id", &valid);
   if (valid)
   {
-    _classcodeid = param.toInt();
-    populate();
+    try
+    {
+      _data->load(param.toInt());
+      populate();
+    }
+    catch (std::exception e)
+    {
+      QMessageBox::critical(this, tr("Error"), tr("Could not load classcode. %1").arg(e.what()));
+    }
   }
 
   param = pParams.value("mode", &valid);
@@ -88,35 +99,18 @@ void classCode::sSave()
     return;
   }
 
-  if (_mode == cEdit)
-    q.prepare( "UPDATE classcode "
-               "SET classcode_code=:classcode_code, classcode_descrip=:classcode_descrip "
-               "WHERE (classcode_id=:classcode_id);" );
-  else if (_mode == cNew)
+  try
   {
-    q.exec("SELECT NEXTVAL('classcode_classcode_id_seq') AS classcode_id");
-    if (q.first())
-      _classcodeid = q.value("classcode_id").toInt();
-    else
-    {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
-      return;
-    }
- 
-    q.prepare( "INSERT INTO classcode "
-               "( classcode_id, classcode_code, classcode_descrip ) "
-               "VALUES "
-               "( :classcode_id, :classcode_code, :classcode_descrip );" );
+    _data->setCode(_classCode->text().toStdString());
+    _data->setDescription(_description->text().toStdString());
+    _data->save();
+
+    done(_data->getId());
   }
-
-  q.bindValue(":classcode_id", _classcodeid);
-  q.bindValue(":classcode_code", _classCode->text());
-  q.bindValue(":classcode_descrip", _description->text());
-  q.exec();
-
-  done(_classcodeid);
+  catch (std::exception e)
+  {
+    QMessageBox::critical(this, tr("Error"), tr("Could not save classcode. %1").arg(e.what()));
+  }
 }
 
 void classCode::sCheck()
@@ -124,33 +118,34 @@ void classCode::sCheck()
   _classCode->setText(_classCode->text().trimmed());
   if ( (_mode == cNew) && (_classCode->text().length()) )
   {
-    q.prepare( "SELECT classcode_id "
-               "FROM classcode "
-               "WHERE (UPPER(classcode_code)=UPPER(:classcode_code));" );
-    q.bindValue(":classcode_code", _classCode->text());
-    q.exec();
-    if (q.first())
+    try
     {
-      _classcodeid = q.value("classcode_id").toInt();
-      _mode = cEdit;
-      populate();
-
-      _classCode->setEnabled(FALSE);
+      xtClassCode ex;
+      ex.setCode(_classCode->text().toStdString());
+      
+      xtStorableQuery<xtClassCode> sq(&ex);
+      sq.exec();
+      std::set<xtClassCode*> codes = sq.result();
+      if(!codes.empty())
+      {
+        std::set<xtClassCode*>::const_iterator ci = codes.begin();
+        _data->load((*ci)->getId());
+        populate();
+      }
+    }
+    catch (std::exception e)
+    {
+      QMessageBox::critical(this, tr("Error"), tr("Could not load classcode. %1").arg(e.what()));
     }
   }
 }
 
 void classCode::populate()
 {
-  q.prepare( "SELECT classcode_code, classcode_descrip "
-             "FROM classcode "
-             "WHERE (classcode_id=:classcode_id);" );
-  q.bindValue(":classcode_id", _classcodeid);
-  q.exec();
-  if (q.first())
+  if(_data)
   {
-    _classCode->setText(q.value("classcode_code"));
-    _description->setText(q.value("classcode_descrip"));
+    _classCode->setText(QString::fromStdString(xtAnyUtility::toString(_data->getCode())));
+    _description->setText(QString::fromStdString(xtAnyUtility::toString(_data->getDescription())));
   }
 }
 

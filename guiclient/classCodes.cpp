@@ -20,6 +20,44 @@
 #include "classCode.h"
 #include "storedProcErrorLookup.h"
 
+#include <xtClassCode.h>
+#include <xtStorableQuery.h>
+#include <interfaces/xiPropertyObserver.h>
+
+class ClassCodeWidgetItem : public XTreeWidgetItem, public xiPropertyObserver
+{
+  public:
+    ClassCodeWidgetItem(xtClassCode * pcode, XTreeWidget * parent)
+      : XTreeWidgetItem(parent, pcode->getId())
+    {
+      code = pcode;
+      if(code)
+      {
+        setId(code->getId());
+        setText(0, QString::fromStdString(xtAnyUtility::toString(code->getCode())));
+        setText(1, QString::fromStdString(xtAnyUtility::toString(code->getDescription())));
+        code->attachPropertyObserver(this);
+      }
+    }
+
+   virtual void propertyChanged(xtObject * pcode, const std::string & pname, int role)
+   {
+     if(pcode)
+     {
+       if(role == xtlib::ValueRole && pname == "code")
+       {
+         setText(0, QString::fromStdString(xtAnyUtility::toString(pcode->getProperty("code"))));
+       }
+       else if(role == xtlib::ValueRole && pname == "description")
+       {
+         setText(1, QString::fromStdString(xtAnyUtility::toString(pcode->getProperty("description"))));
+       }
+     }
+   }
+
+   xtClassCode * code;
+};
+
 classCodes::classCodes(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -54,7 +92,6 @@ classCodes::classCodes(QWidget* parent, const char* name, Qt::WFlags fl)
 
 classCodes::~classCodes()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 void classCodes::languageChange()
@@ -102,25 +139,21 @@ void classCodes::sView()
 
 void classCodes::sDelete()
 {
-  q.prepare("SELECT deleteClassCode(:classcode_id) AS result;");
-  q.bindValue(":classcode_id", _classcode->id());
-  q.exec();
-  if (q.first())
-  {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("deleteClassCode", result),
-                  __FILE__, __LINE__);
+  try {
+    XTreeWidgetItem *ci = _classcode->currentItem();
+    if(!ci)
       return;
-    }
+    ClassCodeWidgetItem * ccwi = (ClassCodeWidgetItem*)ci;
+    if(!ccwi)
+      return;
+    ccwi->code->setDeleted(true);
+    ccwi->code->save();
+    delete ci;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  catch (std::exception e)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    systemError(this, e.what(), __FILE__, __LINE__);
   }
-  sFillList(-1);
 }
 
 void classCodes::sPrint()
@@ -163,7 +196,23 @@ void classCodes::sDeleteUnused()
 
 void classCodes::sFillList(int pId)
 {
-  _classcode->populate( "SELECT classcode_id, classcode_code, classcode_descrip "
-                        "FROM classcode "
-                        "ORDER BY classcode_code;", pId  );
+  _classcode->clear();
+  try
+  {
+    xtClassCode ex;
+    xtStorableQuery<xtClassCode> sq(&ex);
+    sq.exec();
+    std::set<xtClassCode*> codes = sq.result();
+    if(!codes.empty())
+    {
+      for(std::set<xtClassCode*>::const_iterator ci = codes.begin(); ci != codes.end(); ci++)
+        new ClassCodeWidgetItem((*ci), _classcode);
+      if(pId != -1)
+        _classcode->setId(pId);
+    }
+  }
+  catch(std::exception &e)
+  {
+    QMessageBox::critical(this, "Error", QString("Error querying for Class Codes: %1").arg(e.what()));
+  }
 }

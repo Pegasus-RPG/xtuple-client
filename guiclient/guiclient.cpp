@@ -84,6 +84,8 @@
 #include "setup.h"
 #include "setupscriptapi.h"
 
+#include <xtSecurity.h>
+
 #define CHECK_REGISTERED 0
 
 #if defined(Q_OS_WIN32)
@@ -368,6 +370,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   _databaseURL = pDatabaseURL;
   _username = pUsername;
+  xtSecurity::setLogicalUser(pUsername.toStdString());
   __saveSizePositionEventFilter = new SaveSizePositionEventFilter(this);
   _useCloud = false;
 

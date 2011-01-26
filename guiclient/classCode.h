@@ -17,6 +17,8 @@
 
 #include "ui_classCode.h"
 
+class xtClassCode;
+
 class classCode : public XDialog, public Ui::classCode
 {
     Q_OBJECT
@@ -37,7 +39,7 @@ protected slots:
 
 
 private:
-    int _classcodeid;
+    xtClassCode * _data;
     int _mode;
 
 };

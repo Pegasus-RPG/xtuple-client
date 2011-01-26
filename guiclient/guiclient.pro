@@ -1,7 +1,7 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on assistant uitools designer
+CONFIG   += qt warn_on assistant uitools designer xtlib
 TEMPLATE = app
 
 INCLUDEPATH += ../scriptapi \
@@ -1767,3 +1767,16 @@ QT += webkit xmlpatterns
 RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
 
 #CONFIG += debug
+
+xtlib {
+  INCLUDEPATH += ../../xtlib/src /usr/local/pgsql/include
+  DEPENDPATH  += ../../xtlib/src
+  win32-msvc* {
+    PRE_TARGETDEPS += ../../xtlib/src/build/xtlib.lib
+  } else {
+    PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.so
+  }
+  LIBS += -L ../../xtlib/src/build -lxtlib
+  SOURCES += xtDatabase-qt.cpp
+}
+
