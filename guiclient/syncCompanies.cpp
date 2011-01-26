@@ -360,6 +360,7 @@ void syncCompanies::sSync()
       XSqlQuery rollback;
       rollback.prepare("ROLLBACK;");
 
+      XSqlQuery conv;
       XSqlQuery ltxn;
       ltxn.exec("BEGIN;");
 
@@ -368,9 +369,9 @@ void syncCompanies::sSync()
       {
         XTreeWidgetItem *p = (XTreeWidgetItem*)(period[j]);
         omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3")
-                                 .arg(c->rawValue("company_number").toString())
-                                 .arg(dbURL)
-                                 .arg(p->rawValue("period_name").toString()));
+                                           .arg(c->rawValue("company_number").toString())
+                                           .arg(dbURL)
+                                           .arg(p->rawValue("period_name").toString()));
 
         XSqlQuery rperiod(testDB);
         rperiod.prepare("SELECT * "
@@ -385,66 +386,71 @@ void syncCompanies::sSync()
           if (currid != CurrCluster::baseId())
           {
             // Check for currency conversion rate
-            XSqlQuery conv;
             conv.prepare("SELECT curr_rate "
                          "FROM  curr_rate, period "
                          "WHERE (curr_id=:curr_id) "
                          "  AND (period_id=:period_id) "
                          "  AND (period_end BETWEEN curr_effective AND curr_expires);");
             conv.bindValue(":curr_id", currid);
-            conv.bindValue(":period_id", rperiod.value("period_id"));
+            conv.bindValue(":period_id", p->id());
             conv.exec();
             if (conv.first())
             {
-              // Set the exchange rate used in this trial balance sync
-              bool updsync = true;
+              // Clear old data completely for multi-currency imports
               XSqlQuery tbsync;
-              tbsync.prepare("SELECT * FROM trialbalsync "
-                             "WHERE (trialbalsync_company_id=:company_id) "
-                             " AND (trialbalsync_period_id=:period_id);");
-              tbsync.bindValue(":company_id", c->id("company_number"));
-              tbsync.bindValue(":period_id", rperiod.value("period_id"));
+              tbsync.prepare("DELETE FROM trialbalrate "
+                             "WHERE ((trialbalrate_company_id IN ("
+                             " SELECT company_id "
+                             " FROM company "
+                             " WHERE company_number=:company_number)) "
+                             " AND (trialbalrate_period_id=:period_id));"
+                             "DELETE FROM trialbal "
+                             "WHERE (trialbal_period_id=:period_id)"
+                             " AND (trialbal_accnt_id IN ("
+                             "  SELECT accnt_id "
+                             "  FROM accnt "
+                             "  WHERE ((accnt_id=trialbal_accnt_id) "
+                             "   AND (accnt_company=:company_number))));"
+                             "DELETE FROM gltranssync "
+                             "WHERE ((gltranssync_period_id=:period_id)"
+                             " AND (gltranssync_accnt_id IN ("
+                             "  SELECT accnt_id "
+                             "  FROM accnt "
+                             "  WHERE ((accnt_id=gltranssync_accnt_id) "
+                             "   AND (accnt_company=:company_number)))));");
+              tbsync.bindValue(":company_number", c->rawValue("company_number"));
+              tbsync.bindValue(":period_id", p->id());
               tbsync.exec();
-              if (tbsync.first())
+              if (tbsync.lastError().type() != QSqlError::NoError)
               {
-                if (tbsync.value("trialbalsync_dirty").toBool())
-                {
-                  tbsync.prepare("UPDATE trialbalsync SET "
-                                 "  trialbalsync_curr_rate=:curr_rate "
-                                 "WHERE (trialbalsync_id=:trailbalsync_id);");
-                  tbsync.bindValue(":trialbalsync_id", tbsync.value("trialbalsync_id"));
-                }
-                else
-                  updsync = false;
-              }
-              else
-              {
-                tbsync.prepare("INSERT INTO trialbalsync ("
-                               " trialbalsync_company_id, "
-                               " trialbalsync_period_id, "
-                               " trialbalsync_curr_rate, "
-                               " trialbalsync_dirty) "
-                               "VALUES ("
-                               " :company_id, "
-                               " :period_id, "
-                               " :curr_rate, "
-                               " true);");
-                tbsync.bindValue(":company_id", c->id("company_number"));
-                tbsync.bindValue(":period_id", rperiod.value("period_id"));
+                rollback.exec();
+                systemError(this, rperiod.lastError().databaseText(),
+                            __FILE__, __LINE__);
+                errorCount++;
+                break;
               }
 
-              if (updsync)
+              tbsync.prepare("INSERT INTO trialbalrate ("
+                             " trialbalrate_company_id, "
+                             " trialbalrate_period_id, "
+                             " trialbalrate_curr_rate, "
+                             " trialbalrate_dirty) "
+                             "VALUES ("
+                             " :company_id, "
+                             " :period_id, "
+                             " :curr_rate, "
+                             " true);");
+              tbsync.bindValue(":company_id", c->id("company_number"));
+              tbsync.bindValue(":period_id", p->id());
+              tbsync.bindValue(":curr_rate", conv.value("curr_rate"));
+              tbsync.exec();
+              if (tbsync.lastError().type() != QSqlError::NoError)
               {
-                tbsync.bindValue(":curr_rate", conv.value("curr_rate"));
-                tbsync.exec();
-                if (tbsync.lastError().type() != QSqlError::NoError)
-                {
-                  rollback.exec();
-                  systemError(this, rperiod.lastError().databaseText(),
-                              __FILE__, __LINE__);
-                  errorCount++;
-                  break;
-                }
+                rollback.exec();
+                systemError(this, rperiod.lastError().databaseText(),
+                            __FILE__, __LINE__);
+                errorCount++;
+                break;
               }
             }
             else if (conv.lastError().type() != QSqlError::NoError)
@@ -462,11 +468,11 @@ void syncCompanies::sSync()
                                    tr("The parent database for Company %1 (%2) "
                                       "does not appear to have a conversion rate "
                                       "for %3 on %4.")
-                                     .arg(c->rawValue("company_number").toString())
-                                     .arg(c->rawValue("company_database").toString())
-                                     .arg(c->text("currency"))
-                                     .arg(p->rawValue("period_end").toString())
-                                     );
+                                   .arg(c->rawValue("company_number").toString())
+                                   .arg(c->rawValue("company_database").toString())
+                                   .arg(c->text("currency"))
+                                   .arg(p->rawValue("period_end").toString())
+                                   );
               errorCount++;
               break;
             }
@@ -590,6 +596,88 @@ void syncCompanies::sSync()
             break;
           }
 
+          // If foreign currency and asset or liability, then import trans detail
+          if (currid != CurrCluster::baseId() &&
+              (raccnt.value("accnt_type").toString() == "A" ||
+               raccnt.value("accnt_type").toString() == "L"))
+          {
+            XSqlQuery rgl;
+            XSqlQuery ins;
+            rgl.prepare("SELECT gltrans_date, "
+                        "  SUM(debits) AS debits, "
+                        "  SUM(credits) AS credits "
+                        "FROM ("
+                        "  SELECT gltrans_date, abs(gltrans_amount) as debits, 0 AS credits "
+                        "  FROM gltrans, period "
+                        "  WHERE ((period_id=:period_id) "
+                        "    AND (gltrans_accnt_id=:accnt_id) "
+                        "    AND (gltrans_amount < 0) "
+                        "    AND (gltrans_date "
+                        "         BETWEEN period_start AND period_end)) "
+                        "  UNION ALL"
+                        "  SELECT gltrans_date, 0 as debits, gltrans_amount AS credits "
+                        "  FROM gltrans, period "
+                        "  WHERE ((period_id=:period_id) "
+                        "    AND (gltrans_accnt_id=:accnt_id) "
+                        "    AND (gltrans_amount > 0) "
+                        "    AND (gltrans_date "
+                        "         BETWEEN period_start AND period_end))) data "
+                        "GROUP BY gltrans_date; ");
+            rgl.bindValue(":period_id", p->id());
+            rgl.bindValue(":accnt_id",  raccnt.value("accnt_id"));
+            rgl.exec();
+            while (rgl.next())
+            {
+              conv.prepare("SELECT currRate(:curr_id, :date) AS curr_rate; ");
+              conv.bindValue(":curr_id", currid);
+              conv.bindValue(":date", rgl.value("gltrans_date"));
+              conv.exec();
+              if (conv.first())
+              {
+                ins.prepare("INSERT INTO gltranssync ("
+                            "  gltranssync_accnt_id,"
+                            "  gltranssync_period_id, "
+                            "  gltranssync_date, "
+                            "  gltranssync_debits,"
+                            "  gltranssync_credits, "
+                            "  gltranssync_curr_id,"
+                            "  gltranssync_curr_rate) "
+                            "VALUES ("
+                            "  :accnt_id, "
+                            "  :period_id, "
+                            "  :date, "
+                            "  :debits, "
+                            "  :credits, "
+                            "  :curr_id, "
+                            "  :curr_rate);");
+                ins.bindValue(":accnt_id", laccnt.value("accnt_id"));
+                ins.bindValue(":period_id", p->id());
+                ins.bindValue(":date", rgl.value("gltrans_date"));
+                ins.bindValue(":debits", rgl.value("debits"));
+                ins.bindValue(":credits", rgl.value("credits"));
+                ins.bindValue(":curr_id", currid);
+                ins.bindValue(":curr_rate", conv.value("curr_rate"));
+                ins.exec();
+                if (ins.lastError().type() != QSqlError::NoError)
+                {
+                  rollback.exec();
+                  systemError(this, ins.lastError().databaseText(),
+                              __FILE__, __LINE__);
+                  errorCount++;
+                  break;
+                }
+              }
+              else if (conv.lastError().type() != QSqlError::NoError)
+              {
+                rollback.exec();
+                systemError(this, conv.lastError().databaseText(),
+                            __FILE__, __LINE__);
+                errorCount++;
+                break;
+              }
+            }
+          }
+
           // select trial balances from remote using remote ids
           XSqlQuery rtb(testDB);
           rtb.prepare("SELECT * "
@@ -600,7 +688,7 @@ void syncCompanies::sSync()
           rtb.bindValue(":accnt_id",  raccnt.value("accnt_id"));
           rtb.exec();
           if (rtb.first())
-            ; // keep going
+            ; // Keep going
           else if (rtb.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
@@ -652,21 +740,46 @@ void syncCompanies::sSync()
           }
           else
           {
-            ltbups.prepare("INSERT INTO trialbal (trialbal_id, "
-                           "    trialbal_period_id, trialbal_accnt_id,"
-                           "    trialbal_beginning, trialbal_ending,"
-                           "    trialbal_credits,   trialbal_debits,"
-                           "    trialbal_dirty,     trialbal_yearend) "
-                           "SELECT :trialbal_id, "
-                           "   :trialbal_period_id,:trialbal_accnt_id,"
-                           "   currToBase(:curr_id,:trialbal_beginning,period_end), "
-                           "   currToBase(:curr_id,:trialbal_ending,period_end), "
-                           "   currToBase(:curr_id,:trialbal_credits,period_end),  "
-                           "   currToBase(:curr_id,:trialbal_debits,period_end), "
-                           "   :trialbal_dirty, "
-                           "   currToBase(:curr_id,:trialbal_yearend,period_end) "
-                           "FROM period "
-                           "WHERE (period_id=:trialbal_period_id)");
+            if (currid != CurrCluster::baseId() &&
+                (raccnt.value("accnt_type").toString() == "A" ||
+                 raccnt.value("accnt_type").toString() == "L"))
+            {
+              // Most of these values need to be calculated based on imported data
+              // which will be done by forwardUpdateTrialBalanceExt function
+              ltbups.prepare("INSERT INTO trialbal (trialbal_id, "
+                             "    trialbal_period_id, trialbal_accnt_id,"
+                             "    trialbal_beginning, trialbal_ending,"
+                             "    trialbal_credits,   trialbal_debits,"
+                             "    trialbal_dirty,     trialbal_yearend, "
+                             "    trialbal_adj_ending ) "
+                             "SELECT :trialbal_id, "
+                             "   :trialbal_period_id,:trialbal_accnt_id,"
+                             "   0, "
+                             "   0, "
+                             "   0,  "
+                             "   0, "
+                             "   true, "
+                             "   currToBase(:curr_id,:trialbal_yearend,period_end), "
+                             "   currToBase(:curr_id,:trialbal_ending,period_end)"
+                             "FROM period "
+                             "WHERE (period_id=:trialbal_period_id)");
+            }
+            else
+              ltbups.prepare("INSERT INTO trialbal (trialbal_id, "
+                             "    trialbal_period_id, trialbal_accnt_id,"
+                             "    trialbal_beginning, trialbal_ending,"
+                             "    trialbal_credits,   trialbal_debits,"
+                             "    trialbal_dirty,     trialbal_yearend ) "
+                             "SELECT :trialbal_id, "
+                             "   :trialbal_period_id,:trialbal_accnt_id,"
+                             "   currToBase(:curr_id,:trialbal_beginning,period_end), "
+                             "   currToBase(:curr_id,:trialbal_ending,period_end), "
+                             "   currToBase(:curr_id,:trialbal_credits,period_end),  "
+                             "   currToBase(:curr_id,:trialbal_debits,period_end), "
+                             "   :trialbal_dirty, "
+                             "   currToBase(:curr_id,:trialbal_yearend,period_end) "
+                             "FROM period "
+                             "WHERE (period_id=:trialbal_period_id)");
             q.prepare("SELECT NEXTVAL('trialbal_trialbal_id_seq') AS trialbal_id;");
             q.exec();
             if (q.first())
@@ -709,6 +822,35 @@ void syncCompanies::sSync()
           break;
         }
       } // for each selected period
+
+      if (currid != CurrCluster::baseId())
+      {
+        // Forward update company accounts using special multi-currency logic
+        XSqlQuery fwdupd;
+        fwdupd.prepare("SELECT forwardUpdateTrialBalanceExt(trialbal_id) "
+                      "FROM ("
+                      "  SELECT DISTINCT ON (period_end, trialbal_id) "
+                      "    trialbal_id, "
+                      "    trialbal_accnt_id, "
+                      "    trialbal_period_id "
+                      "  FROM trialbal "
+                      "    JOIN accnt ON (accnt_id=trialbal_accnt_id) "
+                      "    JOIN period ON (period_id=trialbal_period_id) "
+                      "  WHERE ((trialbal_dirty) "
+                      "    AND (accnt_company=:company_number)"
+                      "    AND (accnt_type IN ('A','L'))) "
+                      "  ORDER BY period_end, trialbal_id) data; ");
+        fwdupd.bindValue(":company_number", c->rawValue("company_number"));
+        fwdupd.exec();
+        if (fwdupd.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          systemError(this, fwdupd.lastError().databaseText(),
+                      __FILE__, __LINE__);
+          errorCount++;
+          break;
+        }
+      }
 
       ltxn.exec("COMMIT;");
     }
