@@ -184,6 +184,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
       _newCharacteristic->setEnabled(FALSE);
       _editCharacteristic->setEnabled(FALSE);
       _deleteCharacteristic->setEnabled(FALSE);
+      _charass->setEnabled(FALSE);
 
       _close->setFocus();
     }
