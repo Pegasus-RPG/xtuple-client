@@ -92,5 +92,7 @@ bool dspPendingAvailability::setParams(ParameterList &params)
   if (_showShortages->isChecked())
     params.append("showShortages");
 
+  params.append("showIndented");
+
   return true;
 }

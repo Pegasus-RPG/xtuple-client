@@ -3,6 +3,12 @@
  <title>Pending W/O Material Availability</title>
  <name>PendingWOMaterialAvailability</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -125,8 +131,8 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
   </label>
   <label>
    <rect>
-    <x>10</x>
-    <y>200</y>
+    <x>60</x>
+    <y>203</y>
     <width>35</width>
     <height>15</height>
    </rect>
@@ -141,8 +147,8 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
   </label>
   <label>
    <rect>
-    <x>60</x>
-    <y>200</y>
+    <x>110</x>
+    <y>203</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -224,8 +230,8 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
   </field>
   <label>
    <rect>
-    <x>60</x>
-    <y>215</y>
+    <x>110</x>
+    <y>213</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -305,6 +311,22 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
    <vcenter/>
    <string>Description:</string>
   </label>
+  <label>
+   <rect>
+    <x>15</x>
+    <y>203</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Level</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -314,8 +336,8 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
   <height>36</height>
   <label>
    <rect>
-    <x>60</x>
-    <y>15</y>
+    <x>115</x>
+    <y>14</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -378,8 +400,8 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
   </label>
   <label>
    <rect>
-    <x>10</x>
-    <y>0</y>
+    <x>65</x>
+    <y>-1</y>
     <width>35</width>
     <height>15</height>
    </rect>
@@ -410,8 +432,8 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
   </label>
   <label>
    <rect>
-    <x>60</x>
-    <y>0</y>
+    <x>115</x>
+    <y>-1</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -447,6 +469,22 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
    <yend>30</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>15</x>
+    <y>-1</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Level</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -503,8 +541,8 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
    </line>
    <field>
     <rect>
-     <x>60</x>
-     <y>0</y>
+     <x>110</x>
+     <y>-1</y>
      <width>150</width>
      <height>15</height>
     </rect>
@@ -542,9 +580,9 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
    </field>
    <field>
     <rect>
-     <x>60</x>
+     <x>110</x>
      <y>15</y>
-     <width>665</width>
+     <width>615</width>
      <height>15</height>
     </rect>
     <font>
@@ -601,8 +639,8 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
    </field>
    <field>
     <rect>
-     <x>10</x>
-     <y>0</y>
+     <x>60</x>
+     <y>-1</y>
      <width>35</width>
      <height>15</height>
     </rect>
@@ -616,6 +654,25 @@ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
     <data>
      <query>detail</query>
      <column>bomitem_seqnumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>15</x>
+     <y>-1</y>
+     <width>35</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>bomdata_bomwork_level</column>
     </data>
    </field>
   </detail>
