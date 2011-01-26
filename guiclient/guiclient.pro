@@ -1773,7 +1773,11 @@ xtlib {
   DEPENDPATH  += ../../xtlib/src
   win32-msvc* {
     PRE_TARGETDEPS += ../../xtlib/src/build/xtlib.lib
-  } else {
+  }
+  macx {
+    PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.dylib
+  }
+  unix:!macx {  
     PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.so
   }
   LIBS += -L ../../xtlib/src/build -lxtlib
