@@ -759,13 +759,14 @@ void salesOrderItem::sSave()
   int   itemsrcid  = _itemsrc;
   bool  _createPO  = false;
   bool  _createPR  = false;
-  q.prepare("SELECT itemsrc_id, item_id, itemsrc_item_id, itemsite_createsopo, itemsite_createsopr "
-            "FROM itemsrc, item LEFT OUTER JOIN itemsite "
-            "  ON (item_id = itemsite_item_id) "
-            "WHERE ( (itemsrc_item_id = item_id) "
-            "  AND (item_id=:item_id) ) "
+  q.prepare("SELECT itemsrc_id, itemsite_createsopo, itemsite_createsopr "
+            "FROM itemsite "
+            "  LEFT OUTER JOIN itemsrc ON (itemsrc_item_id = itemsite_item_id) "
+            "WHERE ( (itemsite_item_id = :item_id) "
+            "  AND (itemsite_warehous_id=:warehous_id) ) "
             "LIMIT 1;");
   q.bindValue(":item_id", _item->id());
+  q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
   if (q.first())
   {
@@ -2750,8 +2751,11 @@ void salesOrderItem::populate()
 
     _customerPN->setText(item.value("coitem_custpn").toString());
 
-    if (!item.value("quitem_dropship").isNull())
-      _dropShip->setChecked(item.value("quitem_dropship").toBool());
+    if (ISQUOTE(_mode))
+    {
+      if (!item.value("quitem_dropship").isNull())
+        _dropShip->setChecked(item.value("quitem_dropship").toBool());
+    }
     _itemsrc = -1;
     _overridePoPrice->setLocalValue(item.value("coitem_prcost").toDouble());
 
