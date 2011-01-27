@@ -1775,7 +1775,7 @@ xtlib {
     PRE_TARGETDEPS += ../../xtlib/src/build/xtlib.lib
   }
   macx {
-    PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.dylib
+    PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.a
   }
   unix:!macx {  
     PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.a
