@@ -22,6 +22,7 @@
 
 #include <xtClassCode.h>
 #include <xtStorableQuery.h>
+#include <xtSecurity.h>
 #include <interfaces/xiPropertyObserver.h>
 
 class ClassCodeWidgetItem : public XTreeWidgetItem, public xiPropertyObserver
@@ -70,7 +71,7 @@ classCodes::classCodes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_deleteUnused, SIGNAL(clicked()), this, SLOT(sDeleteUnused()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  if (_privileges->check("MaintainClassCodes"))
+  if (xtSecurity::hasPriv("MaintainClassCodes"))
   {
     connect(_classcode, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_classcode, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

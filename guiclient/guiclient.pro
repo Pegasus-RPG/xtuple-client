@@ -1769,7 +1769,7 @@ RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
 #CONFIG += debug
 
 xtlib {
-  INCLUDEPATH += ../../xtlib/src /usr/local/pgsql/include
+  INCLUDEPATH += ../../xtlib/src #/usr/local/pgsql/include
   DEPENDPATH  += ../../xtlib/src
   win32-msvc* {
     PRE_TARGETDEPS += ../../xtlib/src/build/xtlib.lib

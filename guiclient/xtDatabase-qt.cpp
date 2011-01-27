@@ -13,8 +13,10 @@
 #include <QVariant>
 #include <QSqlRecord>
 #include <QDateTime>
+#include <QDebug>
+#include <QSqlField>
 
-#include <libpq-fe.h>
+//#include <libpq-fe.h>
 
 //
 // xtDatabasePrivate implementation
@@ -97,6 +99,7 @@ std::string xtDatabasePrivate::lastErrorString() const
 std::string xtDatabasePrivate::escapeString(const std::string & original) const
 {
   QSqlDatabase db = QSqlDatabase::database();
+/*
   QVariant v = db.driver()->handle();
   if (v.typeName() != QString("PGconn*"))
     return original;
@@ -108,6 +111,16 @@ std::string xtDatabasePrivate::escapeString(const std::string & original) const
   std::string newStr(to, toSize);
   delete [] to;
   return newStr;
+ */
+  // Alternate method that doesn't use libpq
+  QSqlDriver * drv = db.driver();
+  QSqlField fld("code", QVariant::String);
+  fld.setValue(QString::fromStdString(original));
+  QString fmt = drv->formatValue(fld);
+  // remove one leading/trailing '
+  fmt = fmt.remove(fmt.length() - 1, 1);
+  fmt = fmt.remove(0, 1);
+  return fmt.toStdString();
 }
 
 static xtDatabasePrivate privateSingleton;
