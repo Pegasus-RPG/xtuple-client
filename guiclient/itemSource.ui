@@ -149,9 +149,6 @@ to be bound by its terms.</comment>
         <property name="focusPolicy">
          <enum>Qt::StrongFocus</enum>
         </property>
-        <property name="label">
-         <string>Vendor #:</string>
-        </property>
        </widget>
       </item>
       <item>
@@ -299,8 +296,15 @@ to be bound by its terms.</comment>
       <item row="1" column="1">
        <layout class="QHBoxLayout">
         <property name="spacing">
-         <number>0</number>
+         <number>5</number>
         </property>
+        <item>
+         <widget class="XComboBox" name="_invVendorUOM">
+          <property name="allowNull">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="XLineEdit" name="_vendorUOM">
           <property name="sizePolicy">
@@ -789,6 +793,7 @@ to be bound by its terms.</comment>
   <tabstop>_vendor</tabstop>
   <tabstop>_vendorCurrency</tabstop>
   <tabstop>_vendorItemNumber</tabstop>
+  <tabstop>_invVendorUOM</tabstop>
   <tabstop>_vendorUOM</tabstop>
   <tabstop>_invVendorUOMRatio</tabstop>
   <tabstop>_upcCode</tabstop>

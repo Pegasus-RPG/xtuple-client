@@ -20,6 +20,9 @@
 #include "crmacctcluster.h"
 #include "itemSourcePrice.h"
 #include "xcombobox.h"
+#include <metasql.h>
+#include <parameter.h>
+#include "mqlutil.h"
 
 itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -35,6 +38,11 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_vendor,            SIGNAL(newId(int)), this, SLOT(sVendorChanged(int)));
   connect(_vendorCurrency,    SIGNAL(newID(int)), this, SLOT(sFillPriceList()));
   connect(this,               SIGNAL(rejected()), this, SLOT(sRejected()));
+
+  connect(_invVendorUOM, SIGNAL(activated(int)), this, SLOT(sSelectVendorUOM()));
+  connect(_vendorUOM, SIGNAL(textChanged(int)), this, SLOT(sClearVendorUOM()));
+  connect(_invVendorUOMRatio, SIGNAL(textChanged(QString)), this, SLOT(sClearVendorUOM()));
+
 
   _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cTooling);
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
@@ -103,6 +111,12 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
     _item->setEnabled(FALSE);
   }
 
+  param = pParams.value("item_inv_uom_id", &valid);
+  if (valid)
+  {
+    sFillUOMList(param.toInt());
+  }
+
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -162,6 +176,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       _delete->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
+      _invVendorUOM->setEnabled(FALSE);
 
       _close->setFocus();
     }
@@ -524,4 +539,45 @@ void itemSource::sVendorChanged( int pId )
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+}
+void itemSource::sFillUOMList(int pId)
+{
+    int pid1 = _invVendorUOM->id();
+
+    MetaSQLQuery mql = mqlLoad("itemSource","invVendorUOM");
+    ParameterList params ;
+    params.append("item_inv_uom_id", pId);
+    q = mql.toQuery(params);
+    q.exec();
+
+    _invVendorUOM->setAllowNull(true);;
+    _invVendorUOM->populate(q,pid1);
+
+
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+    }
+}
+
+void itemSource::sSelectVendorUOM()
+{
+
+    if (_invVendorUOM->id()<0)
+    {
+        _vendorUOM->clear();
+        _invVendorUOMRatio->clear();
+    }
+    else
+    {
+       _vendorUOM->setText(_invVendorUOM->currentText());
+       _invVendorUOMRatio->setDouble(_invVendorUOM->code().toDouble());
+       _upcCode->setFocus();
+    }
+}
+
+void itemSource::sClearVendorUOM()
+{
+ _invVendorUOM->setCurrentIndex(-1);
 }
