@@ -1780,7 +1780,7 @@ xtlib {
   unix:!macx {  
     PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.so
   }
-  LIBS += -L ../../xtlib/src/build -lxtlib
+  LIBS += -L../../xtlib/src/build -lxtlib
   SOURCES += xtDatabase-qt.cpp
 }
 
