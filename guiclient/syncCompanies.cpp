@@ -409,19 +409,28 @@ void syncCompanies::sSync()
         rperiod.exec();
         if (rperiod.first())
         {
+          omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3 - Clearing old data...")
+                                             .arg(c->rawValue("company_number").toString())
+                                             .arg(dbURL)
+                                             .arg(p->rawValue("period_name").toString()));
           // Clear old data
           XSqlQuery tbsync;
           tbsync.prepare("DELETE FROM trialbal "
-                         "WHERE (trialbal_period_id=:period_id)"
+                         "WHERE (trialbal_period_id IN ("
+                         "  SELECT period_id "
+                         "  FROM period "
+                         "  WHERE (period_start >= :startdate))) "
                          " AND (trialbal_accnt_id IN ("
                          "  SELECT accnt_id "
                          "  FROM accnt "
                          "  WHERE ((accnt_id=trialbal_accnt_id) "
                          "   AND (accnt_company=:company_number))));"
                          "DELETE FROM gltranssync "
-                         "WHERE ((gltranssync_period_id=:period_id)"
+                         "WHERE ((gltrans_date >= :startdate)"
                          " AND (gltranssync_company_id=:company_id));");
           tbsync.bindValue(":company_id", c->id("company_number"));
+          tbsync.bindValue(":startdate", p->rawValue("period_start").toDate());
+          tbsync.bindValue(":company_number", c->rawValue("company_number"));
           tbsync.bindValue(":period_id", p->id());
           tbsync.exec();
           if (tbsync.lastError().type() != QSqlError::NoError)
@@ -456,6 +465,11 @@ void syncCompanies::sSync()
           errorCount++;
           break;
         }
+
+        omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3 - Updating Chart of Accounts...")
+                                           .arg(c->rawValue("company_number").toString())
+                                           .arg(dbURL)
+                                           .arg(p->rawValue("period_name").toString()));
 
         XSqlQuery raccnt(testDB);
         raccnt.prepare("SELECT * "
@@ -553,8 +567,9 @@ void syncCompanies::sSync()
           // Import trans detail
           XSqlQuery rgl;
           XSqlQuery lgl;
-          rgl.prepare("SELECT * FROM ( "
-                      "SELECT gltrans_date, gltrans_source, "
+          rgl.prepare("SELECT *, formatGlAccount(gltrans_accnt_id) AS f_accnt "
+                      " FROM ( "
+                      "SELECT gltrans_accnt_id, gltrans_date, gltrans_source, "
                       "  SUM(gltrans_amount) AS amount "
                       "FROM gltrans, period "
                       "WHERE ((period_id=:period_id) "
@@ -564,9 +579,9 @@ void syncCompanies::sSync()
                       "  AND (NOT gltrans_deleted) "
                       "  AND (gltrans_date "
                       "       BETWEEN period_start AND period_end)) "
-                      "GROUP BY gltrans_source, gltrans_date "
+                      "GROUP BY gltrans_accnt_id, gltrans_source, gltrans_date "
                       "UNION ALL "
-                      "SELECT gltrans_date,  gltrans_source, "
+                      "SELECT gltrans_accnt_id, gltrans_date,  gltrans_source, "
                       "  SUM(gltrans_amount) AS amount "
                       "  FROM gltrans, period "
                       "WHERE ((period_id=:period_id) "
@@ -576,13 +591,20 @@ void syncCompanies::sSync()
                       "  AND (NOT gltrans_deleted) "
                       "  AND (gltrans_date "
                       "       BETWEEN period_start AND period_end)) "
-                      "GROUP BY gltrans_source, gltrans_date) data "
-                      "ORDER BY gltrans_date; ");
+                      "GROUP BY gltrans_accnt_id, gltrans_source, gltrans_date) data "
+                      "ORDER BY gltrans_date, f_accnt; ");
           rgl.bindValue(":period_id", p->id());
           rgl.bindValue(":accnt_id",  raccnt.value("accnt_id"));
           rgl.exec();
           while (rgl.next())
           {
+            omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3 - "
+                                                  "Importing %4 for account %5...")
+                                               .arg(c->rawValue("company_number").toString())
+                                               .arg(dbURL)
+                                               .arg(p->rawValue("period_name").toString())
+                                               .arg(rgl.value("gltrans_date").toDate().toString())
+                                               .arg(rgl.value("f_accnt").toString()));
             conv.prepare("SELECT currRate(:curr_id, :date) AS curr_rate; ");
             conv.bindValue(":curr_id", currid);
             conv.bindValue(":date", rgl.value("gltrans_date"));
@@ -658,11 +680,17 @@ void syncCompanies::sSync()
         }
       } // for each selected period
 
+      omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Updating trial balances...")
+                                         .arg(c->rawValue("company_number").toString())
+                                         .arg(dbURL));
       // Post into trial balance
       XSqlQuery post;
       post.prepare("SELECT postIntoTrialBalanceSync(:sequence); "
-                   "SELECT forwardUpdateTrialBalanceSync(trialbal_id) FROM trialbalsync WHERE (trialbal_dirty); ");
+                   "SELECT forwardUpdateTrialBalanceSync(trialbal_id) FROM trialbalsync WHERE (trialbal_dirty); "
+                   "SELECT postCurrAdjustSync(:company_id, :notes); ");
       post.bindValue(":sequence", sequence);
+      post.bindValue(":company_id", c->id("company_number"));
+      post.bindValue(":notes", tr("Unrealized Gain/Loss Adjustment"));
       post.exec();
       if (post.lastError().type() != QSqlError::NoError)
       {

@@ -37,12 +37,12 @@ company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _number->setMaxLength(_metrics->value("GLCompanySize").toInt());
   _cachedNumber = "";
-  _cachedCurrid = -1;
+  _cachedCurrid = CurrCluster::baseId();
 
   _external->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
   _authGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
   _currency->setId(CurrCluster::baseId());
-  _gainloss->setType(GLCluster::cExpense);
+  _gainloss->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
 
 company::~company()
@@ -261,9 +261,9 @@ void company::populate()
     _extDB->setText(q.value("company_database").toString());
     if (_external->isChecked())
     {
+      _cachedCurrid = q.value("company_curr_id").toInt();
       _currency->setId(q.value("company_curr_id").toInt());
       _gainloss->setId(q.value("company_gainloss_accnt_id").toInt());
-      _cachedCurrid = q.value("company_curr_id").toInt();
     }
 
     _cachedNumber = q.value("company_number").toString();
@@ -456,20 +456,23 @@ void company::sCurrencyChanged()
     qry.first();
     if (qry.value("count").toInt())
     {
-      if (QMessageBox::question(this, tr("Delete Imported Trial Balances?"),
-                                tr("Trial balance history has already been imported "
+      if (QMessageBox::question(this, tr("Delete Imported Data?"),
+                                tr("Financial history has already been imported "
                                    "for this company. Changing the currency will delete "
                                    "this data. This action is not reversible.  Are you "
                                    "sure this is what you want to do?"),
                                 QMessageBox::Yes,
                                 QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
       {
-        qry.prepare("DELETE FROM trialbal"
+        qry.prepare("DELETE FROM gltranssync "
+                    "WHERE (gltranssync_company_id=:company_id); "
+                    "DELETE FROM trialbal "
                     "WHERE (trialbal_accnt_id IN ("
                     "  SELECT accnt_id "
                     "  FROM accnt "
-                    "  WHERE (accnt_company=:company_number)));");
-        qry.bindValue(":company_number", _number->text());
+                    "    JOIN company ON (accnt_company=company_number) "
+                    "  WHERE (company_id=:company_id)));");
+        qry.bindValue(":company_id", _companyid);
         qry.exec();
         if (qry.lastError().type() != QSqlError::NoError)
         {
@@ -478,12 +481,10 @@ void company::sCurrencyChanged()
                       .arg(__LINE__) );
           return;
         }
-        else
-          _currency->setId(_cachedCurrid);
       }
+      else
+        _currency->setId(_cachedCurrid);
     }
   }
-  qDebug("curr id %d", _currency->id());
-  qDebug("base id %", CurrCluster::baseId());
   _gainloss->setEnabled(_currency->id() != CurrCluster::baseId());
 }
