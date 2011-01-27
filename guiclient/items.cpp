@@ -116,9 +116,9 @@ void items::sDelete()
     qry.prepare("SELECT deleteItem(:item_id) AS returnVal;");
     qry.bindValue(":item_id", list()->id());
     qry.exec();
-    if (q.first())
+    if (qry.first())
     {
-      int returnVal = q.value("returnVal").toInt();
+      int returnVal = qry.value("returnVal").toInt();
       if (returnVal < 0)
       {
         systemError(this, storedProcErrorLookup("deleteItem", returnVal), __FILE__, __LINE__);
