@@ -1778,9 +1778,9 @@ xtlib {
     PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.dylib
   }
   unix:!macx {  
-    PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.so
+    PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.a
   }
-  LIBS += -L../../xtlib/src/build -lxtlib
+  LIBS += -L../../xtlib/src/build -lxtlib -lboost_date_time -lboost_regex
   SOURCES += xtDatabase-qt.cpp
 }
 
