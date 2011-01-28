@@ -181,8 +181,11 @@ void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem, 
     return;
 
   menuThis->addAction(tr("View..."), this, SLOT(sViewTrans()));
-  QAction* viewSeriesAct = menuThis->addAction(tr("View Journal Series..."), this, SLOT(sViewSeries()));
-  viewSeriesAct->setDisabled(item->data(0, Xt::DeletedRole).toBool());
+  if (item->rawValue("journalnumber").toInt() > 0)
+  {
+    QAction* viewSeriesAct = menuThis->addAction(tr("View Journal Series..."), this, SLOT(sViewSeries()));
+    viewSeriesAct->setDisabled(item->data(0, Xt::DeletedRole).toBool());
+  }
 
   if(item->rawValue("gltrans_doctype").toString() == "VO")
     menuThis->addAction(tr("View Voucher..."), this, SLOT(sViewDocument()));
