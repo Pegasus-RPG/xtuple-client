@@ -746,13 +746,10 @@ void syncCompanies::sSync()
                                          .arg(dbURL));
       // Post into trial balance
       XSqlQuery post;
-      post.prepare("SELECT postIntoTrialBalanceSync(:sequence, :dscrp_notes); "
-                   "SELECT forwardUpdateTrialBalanceSync(trialbal_id) FROM trialbalsync WHERE (trialbal_dirty); "
-                   "SELECT postCurrAdjustSync(:company_id, :adj_notes); ");
+      post.prepare("SELECT postIntoTrialBalanceSync(:sequence, :notes); ");
       post.bindValue(":sequence", sequence);
       post.bindValue(":company_id", c->id("company_number"));
-      post.bindValue(":dscrp_notes", tr("Currency Rounding Discrepency Adjustment"));
-      post.bindValue(":adj_notes", tr("Unrealized Gain/Loss Adjustment"));
+      post.bindValue(":notes", tr("Currency Rounding Discrepency Adjustment"));
       post.exec();
       if (post.lastError().type() != QSqlError::NoError)
       {
@@ -761,6 +758,47 @@ void syncCompanies::sSync()
                     __FILE__, __LINE__);
         errorCount++;
         break;
+      }
+
+      post.prepare("SELECT forwardUpdateTrialBalanceSync(trialbal_id) FROM trialbalsync WHERE (trialbal_dirty); ");
+      post.exec();
+      if (post.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        systemError(this, post.lastError().databaseText(),
+                    __FILE__, __LINE__);
+        errorCount++;
+        break;
+      }
+
+      XSqlQuery tbs;
+      tbs.exec("SELECT trialbal_id "
+                  "FROM trialbalsync "
+                  " JOIN period ON (trialbal_period_id=period_id) "
+                  "WHERE (NOT trialbalsync_curr_posted)"
+                  "ORDER BY period_end;");
+      if (tbs.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        systemError(this, tbs.lastError().databaseText(),
+                    __FILE__, __LINE__);
+        errorCount++;
+        break;
+      }
+      while(tbs.next())
+      {
+        post.prepare("SELECT postCurrAdjustSync(:trialbal_id, :adj_notes); ");
+        post.bindValue(":trialbal_id", tbs.value("trialbal_id"));
+        post.bindValue(":adj_notes", tr("Unrealized Gain/Loss Adjustment"));
+        post.exec();
+        if (post.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          systemError(this, post.lastError().databaseText(),
+                      __FILE__, __LINE__);
+          errorCount++;
+          break;
+        }
       }
 
       ltxn.exec("COMMIT;");
