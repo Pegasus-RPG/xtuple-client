@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>400</height>
+    <height>412</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,7 +83,7 @@ to be bound by its terms.</comment>
    <item row="1" column="1">
     <widget class="XTextEdit" name="_descrip"/>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>0</number>
@@ -281,6 +281,16 @@ to be bound by its terms.</comment>
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="1">
+    <widget class="GLCluster" name="_yearend"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="_yearendLit">
+     <property name="text">
+      <string>Retained Earnings:</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

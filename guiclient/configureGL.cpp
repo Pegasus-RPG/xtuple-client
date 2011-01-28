@@ -25,7 +25,6 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   if (name)
     setObjectName(name);
 
-  _yearend->setType(GLCluster::cEquity);
   _gainLoss->setType(GLCluster::cExpense);
   _discrepancy->setType(GLCluster::cExpense);
 
@@ -165,8 +164,6 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _subaccountSize->setValue(_metrics->value("GLSubaccountSize").toInt());
     _ffSubaccounts->setChecked(_metrics->boolean("GLFFSubaccounts"));
   }
-
-  _yearend->setId(_metrics->value("YearEndEquityAccount").toInt());
 
   _gainLoss->setId(_metrics->value("CurrencyGainLossAccount").toInt());
   switch(_metrics->value("CurrencyExchangeSense").toInt())
@@ -404,7 +401,6 @@ bool configureGL::sSave()
   }
 
   _metrics->set("UseJournals", _journal->isChecked());
-  _metrics->set("YearEndEquityAccount", _yearend->id());
 
   //if (! omfgThis->singleCurrency())
   //{

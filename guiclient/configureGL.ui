@@ -303,26 +303,6 @@ to be bound by its terms.</comment>
           <item row="0" column="0">
            <layout class="QGridLayout">
             <item row="0" column="0">
-             <widget class="QLabel" name="_yearendLit">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="text">
-               <string>Retained Earnings:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="GLCluster" name="_yearend">
-              <property name="focusPolicy">
-               <enum>Qt::StrongFocus</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
              <widget class="QLabel" name="_gainLossLit">
               <property name="text">
                <string>Currency Gain/Loss:</string>
@@ -332,14 +312,14 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="0" column="1">
              <widget class="GLCluster" name="_gainLoss">
               <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="_discrepancyLit">
               <property name="text">
                <string>G/L Series Discrepancy :</string>
@@ -349,7 +329,7 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="1" column="1">
              <widget class="GLCluster" name="_discrepancy">
               <property name="focusPolicy">
                <enum>Qt::StrongFocus</enum>
@@ -1316,7 +1296,6 @@ to be bound by its terms.</comment>
   <tabstop>_journal</tabstop>
   <tabstop>_mandatoryNotes</tabstop>
   <tabstop>_manualFwdUpdate</tabstop>
-  <tabstop>_yearend</tabstop>
   <tabstop>_gainLoss</tabstop>
   <tabstop>_discrepancy</tabstop>
   <tabstop>_nextAPMemoNumber</tabstop>

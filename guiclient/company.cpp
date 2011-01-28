@@ -43,6 +43,9 @@ company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _authGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
   _currency->setId(CurrCluster::baseId());
   _gainloss->setType(GLCluster::cRevenue | GLCluster::cExpense);
+  _gainloss->setShowExternal(true);
+  _yearend->setType(GLCluster::cEquity);
+  _yearend->setShowExternal(true);
 }
 
 company::~company()
@@ -99,6 +102,13 @@ void company::sSave()
   {
       QMessageBox::warning( this, tr("Cannot Save Company"),
                             tr("You must enter a valid Number.") );
+      return;
+  }
+
+  if (!_yearend->isValid())
+  {
+      QMessageBox::warning( this, tr("Cannot Save Company"),
+                            tr("You must enter a Retained Earnings Account.") );
       return;
   }
 
@@ -170,12 +180,12 @@ void company::sSave()
     q.prepare( "INSERT INTO company "
                "( company_id, company_number, company_descrip,"
                "  company_external, company_server, company_port,"
-               "  company_database, company_curr_id, "
+               "  company_database, company_curr_id, company_yearend_accnt_id, "
                "  company_gainloss_accnt_id) "
                "VALUES "
                "( :company_id, :company_number, :company_descrip,"
                "  :company_external, :company_server, :company_port, "
-               "  :company_database, :company_curr_id, "
+               "  :company_database, :company_curr_id, :company_yearend_accnt_id, "
                "  :company_gainloss_accnt_id);" );
   }
   else if (_mode == cEdit)
@@ -218,6 +228,7 @@ void company::sSave()
                "    company_port=:company_port,"
                "    company_database=:company_database, "
                "    company_curr_id=:company_curr_id, "
+               "    company_yearend_accnt_id=:company_yearend_accnt_id, "
                "    company_gainloss_accnt_id=:company_gainloss_accnt_id "
                "WHERE (company_id=:company_id);" );
   }
@@ -229,6 +240,7 @@ void company::sSave()
   q.bindValue(":company_server",   _extServer->text());
   q.bindValue(":company_port",     _extPort->cleanText());
   q.bindValue(":company_database", _extDB->text());
+  q.bindValue(":company_yearend_accnt_id", _yearend->id());
   if (_external->isChecked())
   {
     q.bindValue(":company_curr_id", _currency->id());
@@ -259,6 +271,7 @@ void company::populate()
     _extServer->setText(q.value("company_server").toString());
     _extPort->setValue(q.value("company_port").toInt());
     _extDB->setText(q.value("company_database").toString());
+    _yearend->setId(q.value("company_yearend_accnt_id").toInt());
     if (_external->isChecked())
     {
       _cachedCurrid = q.value("company_curr_id").toInt();
