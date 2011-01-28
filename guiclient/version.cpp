@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -19,7 +19,7 @@ QString _dbVersion = "3.7.0Dev";
 #else
 #include "../altVersion.cpp"
 #endif
-QString _Copyright = "Copyright (c) 1999-2010, OpenMFG, LLC.";
+QString _Copyright = "Copyright (c) 1999-2011, OpenMFG, LLC.";
 
 /*: Please translate this Version string to the base version of the application
     you are translating. This is a hack to embed the application version number
