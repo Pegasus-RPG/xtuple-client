@@ -276,6 +276,28 @@ void syncCompanies::sSync()
         continue;
       }
 
+      XSqlQuery dscrp;
+      dscrp.exec("SELECT fetchMetricValue('GLSeriesDiscrepancyAccount') AS accnt_id;");
+      if (dscrp.first())
+      {
+        if (!dscrp.value("accnt_id").toInt())
+        {
+          QMessageBox::warning(this, tr("No Discrepency Account"),
+                               tr("The child database does not appear to have "
+                                  "a discrepency account forCompany %1 defined. "
+                                  "The data cannot safely be synchronized.")
+                               .arg(c->rawValue("company_number").toString()));
+          errorCount++;
+          continue;
+        }
+      }
+      else if (dscrp.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, dscrp.lastError().databaseText(), __FILE__, __LINE__);
+        errorCount++;
+        return;
+      }
+
       // make sure that we don't fail because of missing supporting data
       rmq.prepare("SELECT DISTINCT accnt_profit, prftcntr_descrip "
                   "FROM accnt JOIN prftcntr ON (accnt_profit=prftcntr_number) "
@@ -377,7 +399,14 @@ void syncCompanies::sSync()
         return;
       }
 
-      QList<XTreeWidgetItem*> period = _period->selectedItems();
+      // Loop and build manually to ensure proper order
+      QList<XTreeWidgetItem*> period;
+      for (int i = 0; i < _period->topLevelItemCount(); i++)
+      {
+        if (_period->topLevelItem(i)->isSelected())
+          period.append(_period->topLevelItem(i));
+      }
+
       for (int j = 0; j < period.size(); j++)
       {
         XTreeWidgetItem *p = (XTreeWidgetItem*)(period[j]);
@@ -471,6 +500,7 @@ void syncCompanies::sSync()
                                            .arg(dbURL)
                                            .arg(p->rawValue("period_name").toString()));
 
+        int accntid = -1;
         XSqlQuery raccnt(testDB);
         raccnt.prepare("SELECT * "
                        "FROM accnt "
@@ -506,6 +536,7 @@ void syncCompanies::sSync()
                               "    accnt_curr_id=:accnt_curr_id "
                               "WHERE (accnt_id=:accnt_id);");
             laccntups.bindValue(":accnt_id",	laccnt.value("accnt_id"));
+            accntid = laccnt.value("accnt_id").toInt();
           }
           else if (laccnt.lastError().type() != QSqlError::NoError)
           {
@@ -532,7 +563,10 @@ void syncCompanies::sSync()
             q.prepare("SELECT NEXTVAL('accnt_accnt_id_seq') AS accnt_id;");
             q.exec();
             if (q.first())
+            {
               laccntups.bindValue(":accnt_id",	q.value("accnt_id"));
+              accntid = q.value("accnt_id").toInt();
+            }
             else if (q.lastError().type() != QSqlError::NoError)
             {
               systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -564,7 +598,28 @@ void syncCompanies::sSync()
             break;
           }
 
+          // If this is the discrepency account map to account for company locally
+          if (dscrp.value("accnt_id").toInt() == raccnt.value("accnt_id").toInt())
+          {
+            XSqlQuery lco;
+            lco.prepare("UPDATE company SET "
+                        "  company_dscrp_accnt_id=:accnt_id "
+                        "WHERE (company_id=:company_id);");
+            lco.bindValue(":company_id", c->id("company_number"));
+            lco.bindValue(":accnt_id", accntid);
+            lco.exec();
+            if (lco.lastError().type() != QSqlError::NoError)
+            {
+              rollback.exec();
+              systemError(this, lco.lastError().databaseText(),
+                          __FILE__, __LINE__);
+              errorCount++;
+              break;
+            }
+          }
+
           // Import trans detail
+          QDate prevDate = omfgThis->startOfTime();
           XSqlQuery rgl;
           XSqlQuery lgl;
           rgl.prepare("SELECT *, formatGlAccount(gltrans_accnt_id) AS f_accnt "
@@ -592,79 +647,85 @@ void syncCompanies::sSync()
                       "  AND (gltrans_date "
                       "       BETWEEN period_start AND period_end)) "
                       "GROUP BY gltrans_accnt_id, gltrans_source, gltrans_date) data "
-                      "ORDER BY gltrans_date, f_accnt; ");
+                      "ORDER BY gltrans_date, gltrans_source, f_accnt; ");
           rgl.bindValue(":period_id", p->id());
           rgl.bindValue(":accnt_id",  raccnt.value("accnt_id"));
           rgl.exec();
           while (rgl.next())
           {
-            omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3 - "
-                                                  "Importing %4 for account %5...")
-                                               .arg(c->rawValue("company_number").toString())
-                                               .arg(dbURL)
-                                               .arg(p->rawValue("period_name").toString())
-                                               .arg(rgl.value("gltrans_date").toDate().toString())
-                                               .arg(rgl.value("f_accnt").toString()));
-            conv.prepare("SELECT currRate(:curr_id, :date) AS curr_rate; ");
-            conv.bindValue(":curr_id", currid);
-            conv.bindValue(":date", rgl.value("gltrans_date"));
-            conv.exec();
-            if (conv.first())
+            // Fetch conversion rate for the date
+            if (rgl.value("gltrans_date").toDate() != prevDate)
             {
-              lgl.prepare("INSERT INTO gltranssync ("
-                          "  gltrans_exported, gltrans_created, "
-                          "  gltrans_date, gltrans_sequence, "
-                          "  gltrans_accnt_id, gltrans_source, "
-                          "  gltrans_docnumber, gltrans_misc_id, "
-                          "  gltrans_amount, gltrans_notes, "
-                          "  gltrans_journalnumber, gltrans_posted, "
-                          "  gltrans_doctype, gltrans_rec, "
-                          "  gltrans_username, gltrans_deleted, "
-                          "  gltranssync_company_id, "
-                          "  gltranssync_period_id, gltranssync_curr_amount, "
-                          "  gltranssync_curr_id, gltranssync_curr_rate) "
-                          "VALUES ( "
-                          "  false, now(),:date, :sequence, "
-                          "  :accnt_id,:source, '', -1, "
-                          "  currToBase(:curr_id, :amount, :date), "
-                          "  :notes, null, false, "
-                          "  '', false, current_user, false, "
-                          "  :company_id, :period_id, "
-                          "  :amount, :curr_id, :curr_rate);");
-              lgl.bindValue(":sequence", sequence);
-              lgl.bindValue(":accnt_id", laccnt.value("accnt_id"));
-              lgl.bindValue(":company_id", c->id("company_number"));
-              lgl.bindValue(":period_id", p->id());
-              lgl.bindValue(":source", rgl.value("gltrans_source"));
-              lgl.bindValue(":notes", tr("Data imported from Company %1 (%2)")
-                            .arg(c->rawValue("company_number").toString())
-                            .arg(c->rawValue("company_database").toString()));
-              lgl.bindValue(":date", rgl.value("gltrans_date"));
-              lgl.bindValue(":amount", rgl.value("amount"));
-              lgl.bindValue(":curr_id", currid);
-              lgl.bindValue(":curr_rate", conv.value("curr_rate"));
-              lgl.exec();
-              if (lgl.lastError().type() != QSqlError::NoError)
+              omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3 - "
+                                                    "Importing %4 for account %5...")
+                                                 .arg(c->rawValue("company_number").toString())
+                                                 .arg(dbURL)
+                                                 .arg(p->rawValue("period_name").toString())
+                                                 .arg(rgl.value("gltrans_date").toDate().toString())
+                                                 .arg(rgl.value("f_accnt").toString()));
+              conv.prepare("SELECT currRate(:curr_id, :date) AS curr_rate; ");
+              conv.bindValue(":curr_id", currid);
+              conv.bindValue(":date", rgl.value("gltrans_date"));
+              conv.exec();
+              if (conv.first())
+                ; // Keep going
+              else if (conv.lastError().type() != QSqlError::NoError)
               {
                 rollback.exec();
-                systemError(this, lgl.lastError().databaseText(),
-                            __FILE__, __LINE__);
+                QMessageBox::warning(this, tr("No Conversion Rate"),
+                                     tr("The parent database for Company %1 (%2) "
+                                        "does not appear to have a conversion rate "
+                                        "for %3 on %4.")
+                                     .arg(c->rawValue("company_number").toString())
+                                     .arg(c->rawValue("company_database").toString())
+                                     .arg(c->text("currency"))
+                                     .arg(p->rawValue("period_end").toString())
+                                     );
                 errorCount++;
                 break;
               }
             }
-            else if (conv.lastError().type() != QSqlError::NoError)
+
+            prevDate = rgl.value("gltrans_date").toDate();
+
+            lgl.prepare("INSERT INTO gltranssync ("
+                        "  gltrans_exported, gltrans_created, "
+                        "  gltrans_date, gltrans_sequence, "
+                        "  gltrans_accnt_id, gltrans_source, "
+                        "  gltrans_docnumber, gltrans_misc_id, "
+                        "  gltrans_amount, gltrans_notes, "
+                        "  gltrans_journalnumber, gltrans_posted, "
+                        "  gltrans_doctype, gltrans_rec, "
+                        "  gltrans_username, gltrans_deleted, "
+                        "  gltranssync_company_id, "
+                        "  gltranssync_period_id, gltranssync_curr_amount, "
+                        "  gltranssync_curr_id, gltranssync_curr_rate) "
+                        "VALUES ( "
+                        "  false, now(),:date, :sequence, "
+                        "  :accnt_id,:source, '', -1, "
+                        "  currToBase(:curr_id, :amount, :date), "
+                        "  :notes, -1, false, "
+                        "  '', false, current_user, false, "
+                        "  :company_id, :period_id, "
+                        "  :amount, :curr_id, :curr_rate);");
+            lgl.bindValue(":sequence", sequence);
+            lgl.bindValue(":accnt_id", laccnt.value("accnt_id"));
+            lgl.bindValue(":company_id", c->id("company_number"));
+            lgl.bindValue(":period_id", p->id());
+            lgl.bindValue(":source", rgl.value("gltrans_source"));
+            lgl.bindValue(":notes", tr("Data imported from Company %1 (%2)")
+                          .arg(c->rawValue("company_number").toString())
+                          .arg(c->rawValue("company_database").toString()));
+            lgl.bindValue(":date", rgl.value("gltrans_date"));
+            lgl.bindValue(":amount", rgl.value("amount"));
+            lgl.bindValue(":curr_id", currid);
+            lgl.bindValue(":curr_rate", conv.value("curr_rate"));
+            lgl.exec();
+            if (lgl.lastError().type() != QSqlError::NoError)
             {
               rollback.exec();
-              QMessageBox::warning(this, tr("No Conversion Rate"),
-                                   tr("The parent database for Company %1 (%2) "
-                                      "does not appear to have a conversion rate "
-                                      "for %3 on %4.")
-                                   .arg(c->rawValue("company_number").toString())
-                                   .arg(c->rawValue("company_database").toString())
-                                   .arg(c->text("currency"))
-                                   .arg(p->rawValue("period_end").toString())
-                                   );
+              systemError(this, lgl.lastError().databaseText(),
+                          __FILE__, __LINE__);
               errorCount++;
               break;
             }
@@ -685,12 +746,13 @@ void syncCompanies::sSync()
                                          .arg(dbURL));
       // Post into trial balance
       XSqlQuery post;
-      post.prepare("SELECT postIntoTrialBalanceSync(:sequence); "
+      post.prepare("SELECT postIntoTrialBalanceSync(:sequence, :dscrp_notes); "
                    "SELECT forwardUpdateTrialBalanceSync(trialbal_id) FROM trialbalsync WHERE (trialbal_dirty); "
-                   "SELECT postCurrAdjustSync(:company_id, :notes); ");
+                   "SELECT postCurrAdjustSync(:company_id, :adj_notes); ");
       post.bindValue(":sequence", sequence);
       post.bindValue(":company_id", c->id("company_number"));
-      post.bindValue(":notes", tr("Unrealized Gain/Loss Adjustment"));
+      post.bindValue(":dscrp_notes", tr("Currency Rounding Discrepency Adjustment"));
+      post.bindValue(":adj_notes", tr("Unrealized Gain/Loss Adjustment"));
       post.exec();
       if (post.lastError().type() != QSqlError::NoError)
       {
