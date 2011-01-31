@@ -11,6 +11,8 @@
 #ifndef CREATEPLANNEDORDERSBYPLANNERCODE_H
 #define CREATEPLANNEDORDERSBYPLANNERCODE_H
 
+#include <QProgressDialog>
+
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
@@ -33,7 +35,7 @@ protected slots:
     virtual void languageChange();
 
     virtual void sCreate();
-
+    virtual void sCreate(ParameterList &params);
 };
 
 #endif // CREATEPLANNEDORDERSBYPLANNERCODE_H
