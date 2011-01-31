@@ -124,6 +124,7 @@ SELECT 2 AS seq, flnotes_notes AS notes
 FROM flnotes
   JOIN flcol ON (flcol_flhead_id=flnotes_flhead_id)
 WHERE ((flcol_id=&lt;? value("flcol_id") ?>)
+  AND (flnotes_period_id=&lt;? value("period_id") ?>)
   AND (length(flnotes_notes) > 0))) data
 ORDER BY seq;
 </sql>
@@ -150,10 +151,10 @@ ORDER BY seq;
    </data>
   </field>
   <line>
-   <xstart>4.21874</xstart>
-   <ystart>159.935</ystart>
-   <xend>747.294</xend>
-   <yend>159.935</yend>
+   <xstart>3.55207</xstart>
+   <ystart>162.602</ystart>
+   <xend>746.627</xend>
+   <yend>162.602</yend>
    <weight>2</weight>
   </line>
   <field>
@@ -334,6 +335,22 @@ ORDER BY seq;
     <column>project</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>130</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Name</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -421,22 +438,6 @@ ORDER BY seq;
     <column>flstmthead_month</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>1</x>
-    <y>167</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Name</string>
-  </label>
   <label>
    <rect>
     <x>673.526</x>
