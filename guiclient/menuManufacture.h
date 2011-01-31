@@ -63,11 +63,7 @@ class menuManufacture : public QObject
     void sPostMiscProduction();
     void sCorrectProductionPosting();
 
-    void sDspWoScheduleByItem();
-    void sDspWoScheduleByItemGroup();
-    void sDspWoScheduleByClassCode();
-    void sDspWoScheduleByPlannerCode();
-    void sDspWoScheduleByWorkOrder();
+    void sDspWoSchedule();
     void sDspWoHistoryByItem();
     void sDspWoHistoryByNumber();
     void sDspWoHistoryByClassCode();
@@ -100,7 +96,6 @@ class menuManufacture : public QObject
     QMenu  *materialsReturnMenu;
     QMenu  *transactionsMenu;
     QMenu  *reportsMenu;
-    QMenu  *reportsScheduleMenu;
     QMenu  *reportsHistoryMenu;
     QMenu  *reportsMatlReqMenu;
     QMenu  *reportsOperationsMenu;

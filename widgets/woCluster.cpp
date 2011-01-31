@@ -332,14 +332,14 @@ WoCluster::WoCluster(int pWoType, QWidget *pParent, const char *name) :
 
 void WoCluster::constructor()
 {
-  QVBoxLayout *_mainLayout      = new QVBoxLayout(this);
-  QHBoxLayout *_woLayout        = new QHBoxLayout(0);
-  QHBoxLayout *_warehouseLayout = new QHBoxLayout(0);
-  QHBoxLayout *_line1Layout     = new QHBoxLayout(0);
-  QHBoxLayout *_itemLayout      = new QHBoxLayout(0);
-  QHBoxLayout *_uomLayout       = new QHBoxLayout(0);
-  QHBoxLayout *_line2Layout     = new QHBoxLayout(0);
-  QHBoxLayout *_statusLayout    = new QHBoxLayout(0);
+  _mainLayout      = new QVBoxLayout(this);
+  _woLayout        = new QHBoxLayout(0);
+  _warehouseLayout = new QHBoxLayout(0);
+  _line1Layout     = new QHBoxLayout(0);
+  _itemLayout      = new QHBoxLayout(0);
+  _uomLayout       = new QHBoxLayout(0);
+  _line2Layout     = new QHBoxLayout(0);
+  _statusLayout    = new QHBoxLayout(0);
 
   _mainLayout->setContentsMargins(0, 0, 0, 0);
   _woLayout->setContentsMargins(0, 0, 0, 0);
@@ -359,11 +359,11 @@ void WoCluster::constructor()
   _line2Layout->setSpacing(7); 
   _statusLayout->setSpacing(5); 
 
-  QLabel *woNumberLit = new QLabel(tr("Work Order #:"), this);
-  woNumberLit->setObjectName("woNumberLit");
-  woNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  woNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  _woLayout->addWidget(woNumberLit);
+  _woNumberLit = new QLabel(tr("Work Order #:"), this);
+  _woNumberLit->setObjectName("woNumberLit");
+  _woNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  _woNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _woLayout->addWidget(_woNumberLit);
 
   _woNumber = new WoLineEdit(this);
   _woNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -385,11 +385,11 @@ void WoCluster::constructor()
   _line1Layout->addLayout(_warehouseLayout);
   _mainLayout->addLayout(_line1Layout);
 
-  QLabel *itemNumberLit = new QLabel(tr("Item Number:"), this);
-  itemNumberLit->setObjectName("itemNumberLit");
-  itemNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  itemNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  _itemLayout->addWidget(itemNumberLit);
+  _itemNumberLit = new QLabel(tr("Item Number:"), this);
+  _itemNumberLit->setObjectName("itemNumberLit");
+  _itemNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  _itemNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _itemLayout->addWidget(_itemNumberLit);
 
   _itemNumber = new QLabel(this);
   _itemNumber->setObjectName("_itemNumber");
@@ -398,11 +398,11 @@ void WoCluster::constructor()
   _itemLayout->addWidget(_itemNumber);
   _line2Layout->addLayout(_itemLayout);
 
-  QLabel *uomLit = new QLabel(tr("UOM:"), this);
-  uomLit->setObjectName("uomLit");
-  uomLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  uomLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  _uomLayout->addWidget(uomLit);
+  _uomLit = new QLabel(tr("UOM:"), this);
+  _uomLit->setObjectName("uomLit");
+  _uomLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  _uomLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _uomLayout->addWidget(_uomLit);
 
   _uom = new QLabel(this);
   _uom->setObjectName("_uom");
@@ -424,31 +424,33 @@ void WoCluster::constructor()
   _descrip2->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _mainLayout->addWidget(_descrip2);
 
-  QLabel *statusLit = new QLabel(tr("Status:"), this);
-  statusLit->setObjectName("statusLit");
-  statusLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  statusLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  _statusLayout->addWidget(statusLit);
+  _statusLit = new QLabel(tr("Status:"), this);
+  _statusLit->setObjectName("statusLit");
+  _statusLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  _statusLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _statusLayout->addWidget(_statusLit);
 
   _status = new QLabel(this);
   _status->setObjectName("_status");
   _status->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _status->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _statusLayout->addWidget(_status);
-  
-  QLabel *methodLit = new QLabel(tr("Method:"), this);
-  methodLit->setObjectName("methodLit");
-  methodLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  methodLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  _statusLayout->addWidget(methodLit);
+
+  _methodLit = new QLabel(tr("Method:"), this);
+  _methodLit->setObjectName("methodLit");
+  _methodLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  _methodLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _statusLayout->addWidget(_methodLit);
 
   _method = new QLabel(this);
   _method->setObjectName("_method");
   _method->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _method->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _statusLayout->addWidget(_method);
-  
+
   _mainLayout->addLayout(_statusLayout);
+  _orientation = Qt::Horizontal;
+  setOrientation(Qt::Vertical);
 
 //  Make some internal connections
   connect(_woNumber, SIGNAL(itemNumberChanged(const QString &)), _itemNumber, SLOT(setText(const QString &)));
@@ -504,6 +506,55 @@ QString WoCluster::woNumber() const
   return _woNumber->text();
 }
 
+Qt::Orientation WoCluster::orientation()
+{
+  return _orientation;
+}
+
+void WoCluster::setOrientation(Qt::Orientation orientation)
+{
+  if (orientation == _orientation)
+    return;
+
+  if (orientation == Qt::Vertical)
+  {
+    _line1Layout->removeItem(_itemLayout);
+    _line2Layout->addLayout(_itemLayout);
+    _descrip1->setVisible(true);
+    _descrip2->setVisible(true);
+    _statusLit->setVisible(true);
+    _status->setVisible(true);
+    _uom->setVisible(true);
+    _uomLit->setVisible(true);
+    _method->setVisible(true);
+    _methodLit->setVisible(true);
+  }
+  else
+  {
+    _line2Layout->removeItem(_itemLayout);
+    _line1Layout->addLayout(_itemLayout);
+    _descrip1->setVisible(false);
+    _descrip2->setVisible(false);
+    _statusLit->setVisible(false);
+    _status->setVisible(false);
+    _uom->setVisible(false);
+    _uomLit->setVisible(false);
+    _method->setVisible(false);
+    _methodLit->setVisible(false);
+  }
+
+  _orientation = orientation;
+}
+
+QString WoCluster::label()
+{
+  return _woNumberLit->text();
+}
+
+void WoCluster::setLabel(const QString& p)
+{
+  _woNumberLit->setText(p);
+}
 
 WomatlCluster::WomatlCluster(QWidget *parent, const char *name) : QWidget(parent)
 {

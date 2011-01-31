@@ -124,9 +124,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspWoHistoryByNumber.ui \
            displays/dspWoMaterialsByItem.ui \
            displays/dspWoMaterialsByWorkOrder.ui \
-           displays/dspWoScheduleByItem.ui \
-           displays/dspWoScheduleByParameterList.ui \
-           displays/dspWoScheduleByWorkOrder.ui \
            displays/dspWoSoStatus.ui \
            displays/dspWoSoStatusMismatch.ui
 
@@ -281,9 +278,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspWoHistoryByNumber.h \
            displays/dspWoMaterialsByItem.h \
            displays/dspWoMaterialsByWorkOrder.h \
-           displays/dspWoScheduleByItem.h \
-           displays/dspWoScheduleByParameterList.h \
-           displays/dspWoScheduleByWorkOrder.h \
+           displays/dspWoSchedule.h \
            displays/dspWoSoStatus.h \
            displays/dspWoSoStatusMismatch.h
 
@@ -438,9 +433,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspWoHistoryByNumber.cpp \
            displays/dspWoMaterialsByItem.cpp \
            displays/dspWoMaterialsByWorkOrder.cpp \
-           displays/dspWoScheduleByItem.cpp \
-           displays/dspWoScheduleByParameterList.cpp \
-           displays/dspWoScheduleByWorkOrder.cpp \
+           displays/dspWoSchedule.cpp \
            displays/dspWoSoStatus.cpp \
            displays/dspWoSoStatusMismatch.cpp
 

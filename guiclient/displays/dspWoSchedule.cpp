@@ -1,14 +1,14 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2010 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
 
-#include "dspWoScheduleByParameterList.h"
+#include "dspWoSchedule.h"
 
 #include <QMessageBox>
 #include <QSqlError>
@@ -31,24 +31,48 @@
 #include "salesOrderInformation.h"
 #include "storedProcErrorLookup.h"
 #include "workOrder.h"
+#include "parameterwidget.h"
 
-dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, const char*, Qt::WFlags fl)
-  : display(parent, "dspWoScheduleByParameterList", fl)
+dspWoSchedule::dspWoSchedule(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspWoSchedule", fl)
 {
-  setupUi(optionsWidget());
   setNewVisible(true);
   setWindowTitle(tr("Work Order Schedule"));
-  setListLabel(tr("Work Orders"));
-  setReportName("WOScheduleByParameterList");
-  setMetaSQLOptions("workOrderSchedule", "parameterlist");
+  setReportName("WOSchedule");
+  setMetaSQLOptions("workOrderSchedule", "detail");
   setUseAltId(true);
   setAutoUpdateEnabled(true);
+  setParameterWidgetVisible(true);
+  setQueryOnStartEnabled(true);
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
+  QString qryStatus = QString( "SELECT  'O', '%1' UNION "
+                               "SELECT  'E', '%2' UNION "
+                               "SELECT  'R', '%3' UNION "
+                               "SELECT  'I', '%4'")
+      .arg(tr("Open"))
+      .arg(tr("Exploded"))
+      .arg(tr("Released"))
+      .arg(tr("In-Process"));
+
+  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
+  parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
+  parameterWidget()->append(tr("Class Code Pattern"), "classcode_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
+  parameterWidget()->appendComboBox(tr("Planner Code"), "plancode_id", XComboBox::PlannerCodes);
+  parameterWidget()->append(tr("Planner Code Pattern"), "plancode_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Show Only Top Level"), "showOnlyTopLevel", ParameterWidget::Exists);
+  parameterWidget()->append(tr("Status"), "status_list",
+                           ParameterWidget::Multiselect, QVariant(), false,
+                           qryStatus);
+  parameterWidget()->append(tr("Work Order"), "wo_id", ParameterWidget::WorkOrder);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+
+  parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("parentType"),  0,             Qt::AlignCenter, true,  "wo_ordtype" );
-  list()->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft,   true,  "wonumber"   );
+  list()->addColumn(tr("Work Order #"),_orderColumn,  Qt::AlignLeft,   true,  "wonumber"   );
   list()->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter, true,  "wo_status" );
   list()->addColumn(tr("Pri."),        _statusColumn, Qt::AlignCenter, false,  "wo_priority" );
   list()->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
@@ -64,62 +88,48 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
-void dspWoScheduleByParameterList::languageChange()
-{
-  display::languageChange();
-  retranslateUi(this);
-}
-
-enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
+enum SetResponse dspWoSchedule::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
 
-  param = pParams.value("classcode", &valid);
-  if (valid)
-  {
-    _parameter->setType(ParameterGroup::ClassCode);
-    setWindowTitle(tr("Work Order Schedule by Class Code"));
-  }
-
-  param = pParams.value("plancode", &valid);
-  if (valid)
-  {
-    _parameter->setType(ParameterGroup::PlannerCode);
-    setWindowTitle(tr("Work Order Schedule by Planner Code"));
-  }
+  parameterWidget()->setSavedFilters();
 
   param = pParams.value("plancode_id", &valid);
   if (valid)
-    _parameter->setId(param.toInt());
-
-  param = pParams.value("itemgrp", &valid);
-  if (valid)
-  {
-    _parameter->setType(ParameterGroup::ItemGroup);
-    setWindowTitle(tr("Work Order Schedule by Item Group"));
-  }
+    parameterWidget()->setDefault(tr("Planner Code"), param);
 
   param = pParams.value("wrkcnt", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::WorkCenter);
-    setWindowTitle(tr("Work Order Schedule by Work Center"));
-  }
+    parameterWidget()->setDefault(tr("Work Center"), param);
 
   param = pParams.value("warehous_id", &valid);
   if (valid)
-    _warehouse->setId(param.toInt());
+    parameterWidget()->setDefault(tr("Site"), param);
+
+  param = pParams.value("wo_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Work Order"), param);
 
   param = pParams.value("startDate", &valid);
   if (valid)
-    _dates->setStartDate(param.toDate());
+    parameterWidget()->setDefault(tr("Start Date"), param);
   
   param = pParams.value("endDate", &valid);
   if (valid)
-    _dates->setEndDate(param.toDate()); 
-    
+    parameterWidget()->setDefault(tr("End Date"), param);
+
+  param = pParams.value("status", &valid);
+  if (valid)
+  {
+    QVariantList list;
+    list.append(param.toString());
+    parameterWidget()->setDefault(tr("Status"), list);
+  }
+
+  parameterWidget()->applyDefaultFilterSet();
+
   if (pParams.inList("run"))
   {
     sFillList();
@@ -129,32 +139,7 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   return NoError;
 }
 
-bool dspWoScheduleByParameterList::setParams(ParameterList &pParams)
-{
-  _warehouse->appendValue(pParams);
-  _parameter->appendValue(pParams);
-  _dates->appendValue(pParams);
-
-  QStringList statusList;
-  if (_open->isChecked())
-    statusList.append("O");
-  if (_exploded->isChecked())
-    statusList.append("E");
-  if (_released->isChecked())
-    statusList.append("R");
-  if (_inprocess->isChecked())
-    statusList.append("I");
-  if (!statusList.count())
-    return false;
-  pParams.append("status_list", statusList);
-
-  if (_showOnlyTopLevel->isChecked())
-    pParams.append("showOnlyTopLevel");
-
-  return true;
-}
-
-void dspWoScheduleByParameterList::sView()
+void dspWoSchedule::sView()
 {
   ParameterList params;
   params.append("mode", "view");
@@ -165,7 +150,7 @@ void dspWoScheduleByParameterList::sView()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByParameterList::sEdit()
+void dspWoSchedule::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
@@ -176,7 +161,7 @@ void dspWoScheduleByParameterList::sEdit()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByParameterList::sPostProduction()
+void dspWoSchedule::sPostProduction()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -186,7 +171,7 @@ void dspWoScheduleByParameterList::sPostProduction()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sCorrectProductionPosting()
+void dspWoSchedule::sCorrectProductionPosting()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -196,7 +181,7 @@ void dspWoScheduleByParameterList::sCorrectProductionPosting()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sReleaseWO()
+void dspWoSchedule::sReleaseWO()
 {
   q.prepare("SELECT releaseWo(:wo_id, false);");
   q.bindValue(":wo_id", list()->id());
@@ -205,7 +190,7 @@ void dspWoScheduleByParameterList::sReleaseWO()
   omfgThis->sWorkOrdersUpdated(list()->id(), true);
 }
 
-void dspWoScheduleByParameterList::sRecallWO()
+void dspWoSchedule::sRecallWO()
 {
   q.prepare("SELECT recallWo(:wo_id, false);");
   q.bindValue(":wo_id", list()->id());
@@ -214,7 +199,7 @@ void dspWoScheduleByParameterList::sRecallWO()
   omfgThis->sWorkOrdersUpdated(list()->id(), true);
 }
 
-void dspWoScheduleByParameterList::sExplodeWO()
+void dspWoSchedule::sExplodeWO()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -224,7 +209,7 @@ void dspWoScheduleByParameterList::sExplodeWO()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sImplodeWO()
+void dspWoSchedule::sImplodeWO()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -234,7 +219,7 @@ void dspWoScheduleByParameterList::sImplodeWO()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sDeleteWO()
+void dspWoSchedule::sDeleteWO()
 {
   q.prepare( "SELECT wo_ordtype "
              "FROM wo "
@@ -293,7 +278,7 @@ void dspWoScheduleByParameterList::sDeleteWO()
   }
 }
 
-void dspWoScheduleByParameterList::sCloseWO()
+void dspWoSchedule::sCloseWO()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -303,7 +288,7 @@ void dspWoScheduleByParameterList::sCloseWO()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sPrintTraveler()
+void dspWoSchedule::sPrintTraveler()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -313,7 +298,7 @@ void dspWoScheduleByParameterList::sPrintTraveler()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sViewWomatl()
+void dspWoSchedule::sViewWomatl()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -324,7 +309,7 @@ void dspWoScheduleByParameterList::sViewWomatl()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByParameterList::sInventoryAvailabilityByWorkOrder()
+void dspWoSchedule::sInventoryAvailabilityByWorkOrder()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -335,7 +320,7 @@ void dspWoScheduleByParameterList::sInventoryAvailabilityByWorkOrder()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByParameterList::sReprioritizeWo()
+void dspWoSchedule::sReprioritizeWo()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -345,7 +330,7 @@ void dspWoScheduleByParameterList::sReprioritizeWo()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sRescheduleWO()
+void dspWoSchedule::sRescheduleWO()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -355,7 +340,7 @@ void dspWoScheduleByParameterList::sRescheduleWO()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sChangeWOQty()
+void dspWoSchedule::sChangeWOQty()
 {
   ParameterList params;
   params.append("wo_id", list()->id());
@@ -365,7 +350,7 @@ void dspWoScheduleByParameterList::sChangeWOQty()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sViewParentSO()
+void dspWoSchedule::sViewParentSO()
 {
   ParameterList params;
   params.append("soitem_id", list()->altId());
@@ -375,7 +360,7 @@ void dspWoScheduleByParameterList::sViewParentSO()
   newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sViewParentWO()
+void dspWoSchedule::sViewParentWO()
 {
   ParameterList params;
   params.append("mode", "view");
@@ -386,74 +371,65 @@ void dspWoScheduleByParameterList::sViewParentWO()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected, int)
+void dspWoSchedule::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected, int)
 {
   QString  status(selected->text(2));
   QAction *menuItem;
 
-  menuItem = pMenu->addAction(tr("Edit W/O"), this, SLOT(sEdit()));
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
 
-  menuItem = pMenu->addAction(tr("View W/O"), this, SLOT(sView()));
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
 
   pMenu->addSeparator();
 
   if (status == "E")
   {
-    menuItem = pMenu->addAction(tr("Release W/O"), this, SLOT(sReleaseWO()));
+    menuItem = pMenu->addAction(tr("Release"), this, SLOT(sReleaseWO()));
     menuItem->setEnabled(_privileges->check("ReleaseWorkOrders"));
   }
   else if (status == "R")
   {
-    menuItem = pMenu->addAction(tr("Recall W/O"), this, SLOT(sRecallWO()));
+    menuItem = pMenu->addAction(tr("Recall"), this, SLOT(sRecallWO()));
     menuItem->setEnabled(_privileges->check("RecallWorkOrders"));
-  }
-
-  if ((status == "E") || (status == "R") || (status == "I"))
-  {
-    menuItem = pMenu->addAction(tr("Post Production..."), this, SLOT(sPostProduction()));
-    menuItem->setEnabled(_privileges->check("PostProduction"));
-
-    if (status != "E")
-    {
-      menuItem = pMenu->addAction(tr("Correct Production Posting..."), this, SLOT(sCorrectProductionPosting()));
-      menuItem->setEnabled(_privileges->check("PostProduction"));
-    }
-
-    pMenu->addSeparator();
   }
 
   if (status == "O")
   {
-    menuItem = pMenu->addAction(tr("Explode W/O..."), this, SLOT(sExplodeWO()));
+    menuItem = pMenu->addAction(tr("Explode..."), this, SLOT(sExplodeWO()));
     menuItem->setEnabled(_privileges->check("ExplodeWorkOrders"));
   }
   else if (status == "E")
   {
-    menuItem = pMenu->addAction(tr("Implode W/O..."), this, SLOT(sImplodeWO()));
+    menuItem = pMenu->addAction(tr("Implode..."), this, SLOT(sImplodeWO()));
     menuItem->setEnabled(_privileges->check("ImplodeWorkOrders"));
   }
 
   if ((status == "O") || (status == "E"))
   {
-    menuItem = pMenu->addAction(tr("Delete W/O..."), this, SLOT(sDeleteWO()));
+    menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDeleteWO()));
     menuItem->setEnabled(_privileges->check("DeleteWorkOrders"));
   }
   else
   {
-    menuItem = pMenu->addAction(tr("Close W/O..."), this, SLOT(sCloseWO()));
+    menuItem = pMenu->addAction(tr("Close..."), this, SLOT(sCloseWO()));
     menuItem->setEnabled(_privileges->check("CloseWorkOrders"));
   }
 
   pMenu->addSeparator();
 
+  menuItem = pMenu->addAction(tr("View Bill of Materials..."), this, SLOT(sViewBOM()));
+  menuItem->setEnabled(_privileges->check("ViewBOMs"));
+
   if ((status == "E") || (status == "R") || (status == "I"))
   {
-    menuItem = pMenu->addAction(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatl()));
+    menuItem = pMenu->addAction(tr("View Material Requirements..."), this, SLOT(sViewWomatl()));
     menuItem->setEnabled(_privileges->check("ViewWoMaterials"));
       
-    menuItem = pMenu->addAction(tr("Inventory Availability by Work Order..."), this, SLOT(sInventoryAvailabilityByWorkOrder()));
+    menuItem = pMenu->addAction(tr("Inventory Availability..."), this, SLOT(sInventoryAvailabilityByWorkOrder()));
     menuItem->setEnabled(_privileges->check("ViewInventoryAvailability"));
+
+    menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()));
 
     pMenu->addSeparator();
 
@@ -464,30 +440,31 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
 
     menuItem = pMenu->addAction(tr("Issue Material Item..."), this, SLOT(sIssueWoMaterialItem()));
     menuItem->setEnabled(_privileges->check("IssueWoMaterials"));
+
+
+    menuItem = pMenu->addAction(tr("Post Production..."), this, SLOT(sPostProduction()));
+    menuItem->setEnabled(_privileges->check("PostProduction"));
+
+    if (status != "E")
+    {
+      menuItem = pMenu->addAction(tr("Correct Production Posting..."), this, SLOT(sCorrectProductionPosting()));
+      menuItem->setEnabled(_privileges->check("PostProduction"));
+    }
   }
 
   if ((status == "O") || (status == "E"))
   {
     pMenu->addSeparator();
 
-    menuItem = pMenu->addAction(tr("Reprioritize W/O..."), this, SLOT(sReprioritizeWo()));
+    menuItem = pMenu->addAction(tr("Reprioritize..."), this, SLOT(sReprioritizeWo()));
     menuItem->setEnabled(_privileges->check("ReprioritizeWorkOrders"));
 
-    menuItem = pMenu->addAction(tr("Reschedule W/O..."), this, SLOT(sRescheduleWO()));
+    menuItem = pMenu->addAction(tr("Reschedule..."), this, SLOT(sRescheduleWO()));
     menuItem->setEnabled(_privileges->check("RescheduleWorkOrders"));
 
-    menuItem = pMenu->addAction(tr("Change W/O Quantity..."), this, SLOT(sChangeWOQty()));
+    menuItem = pMenu->addAction(tr("Change Quantity..."), this, SLOT(sChangeWOQty()));
     menuItem->setEnabled(_privileges->check("ChangeWorkOrderQty"));
   }
-
-  pMenu->addSeparator();
-  
-  menuItem = pMenu->addAction(tr("View Bill of Materials..."), this, SLOT(sViewBOM()));
-  menuItem->setEnabled(_privileges->check("ViewBOMs"));
-
-  pMenu->addSeparator();
-
-  menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()));
 
   if (list()->altId() != -1)
   {
@@ -499,12 +476,12 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
     else if (selected->text(0) == "W")
     {
       pMenu->addSeparator();
-      menuItem = pMenu->addAction(tr("View Parent Work Order Information..."), this, SLOT(sViewParentWO()));
+      menuItem = pMenu->addAction(tr("View Parent Work Order..."), this, SLOT(sViewParentWO()));
     }
   }
 }
 
-void dspWoScheduleByParameterList::sIssueWoMaterialItem()
+void dspWoSchedule::sIssueWoMaterialItem()
 {
   issueWoMaterialItem newdlg(this);
   ParameterList params;
@@ -513,7 +490,7 @@ void dspWoScheduleByParameterList::sIssueWoMaterialItem()
     newdlg.exec();
 }
 
-void dspWoScheduleByParameterList::sDspRunningAvailability()
+void dspWoSchedule::sDspRunningAvailability()
 {
   q.prepare("SELECT wo_itemsite_id FROM wo WHERE (wo_id=:id);");
   q.bindValue(":id", list()->id());
@@ -535,7 +512,7 @@ void dspWoScheduleByParameterList::sDspRunningAvailability()
   }
 }
 
-void dspWoScheduleByParameterList::sViewBOM()
+void dspWoSchedule::sViewBOM()
 {
   q.prepare("SELECT itemsite_item_id "
 	    "FROM wo, itemsite "
@@ -560,7 +537,7 @@ void dspWoScheduleByParameterList::sViewBOM()
   }
 }
 
-void dspWoScheduleByParameterList::sNew()
+void dspWoSchedule::sNew()
 {
     ParameterList params;
     params.append("mode", "new");

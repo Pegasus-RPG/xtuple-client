@@ -44,9 +44,7 @@
 #include "correctProductionPosting.h"
 #include "postMiscProduction.h"
 
-#include "dspWoScheduleByItem.h"
-#include "dspWoScheduleByParameterList.h"
-#include "dspWoScheduleByWorkOrder.h"
+#include "dspWoSchedule.h"
 #include "dspWoHistoryByItem.h"
 #include "dspWoHistoryByNumber.h"
 #include "dspWoHistoryByClassCode.h"
@@ -88,7 +86,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   materialsReturnMenu = new QMenu(parent);
   transactionsMenu = new QMenu(parent);
   reportsMenu	 = new QMenu(parent);
-  reportsScheduleMenu = new QMenu(parent);
   reportsHistoryMenu = new QMenu(parent);
   reportsMatlReqMenu = new QMenu(parent);
   reportsMatlUseVarMenu = new QMenu(parent);
@@ -103,7 +100,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   materialsReturnMenu->setObjectName("menu.manu.materialsreturn");
   transactionsMenu->setObjectName("menu.manu.transactions");
   reportsMenu->setObjectName("menu.manu.reports");
-  reportsScheduleMenu->setObjectName("menu.manu.reportsschedule");
   reportsHistoryMenu->setObjectName("menu.manu.reportshistory");
   reportsMatlReqMenu->setObjectName("menu.manu.reportsmatlreq");
   reportsMatlUseVarMenu->setObjectName("menu.manu.reportsmatlusevar");
@@ -164,12 +160,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "menu",                           tr("&Reports"), (char*)reportsMenu,     mainMenu,       "true", 0, 0,   true, NULL },
     
     //  Production | Reports | Schedule
-    { "menu",                           tr("Work Order &Schedule"),(char*)reportsScheduleMenu,         reportsMenu,         "true",                              0, 0, true, NULL },
-    { "wo.dspWoScheduleByPlannerCode",  tr("by &Planner Code..."), SLOT(sDspWoScheduleByPlannerCode()),reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, tr("Work Order Schedule by Planner Code") },
-    { "wo.dspWoScheduleByClassCode",    tr("by &Class Code..."),   SLOT(sDspWoScheduleByClassCode()),  reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoScheduleByItemGroup",    tr("by Item &Group..."),   SLOT(sDspWoScheduleByItemGroup()),  reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoScheduleByItem",         tr("by &Item..."),         SLOT(sDspWoScheduleByItem()),       reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
-    { "wo.dspWoScheduleByWorkOrder",    tr("by &Work Order..."),   SLOT(sDspWoScheduleByWorkOrder()),  reportsScheduleMenu, "MaintainWorkOrders ViewWorkOrders", 0, 0, true, NULL },
+    { "wo.dspWoSchedule",  tr("Work Order &Schedule"), SLOT(sDspWoSchedule()),reportsMenu, "MaintainWorkOrders ViewWorkOrders", QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, tr("Work Order Schedule by Planner Code") },
 
     //  Production | Reports | Material Requirements
     { "menu",                                       tr("&Material Requirements"),(char*)reportsMatlReqMenu,              reportsMenu,        "true",                              0, 0, true, NULL },
@@ -433,44 +424,9 @@ void menuManufacture::sDspPendingAvailability()
   omfgThis->handleNewWindow(new dspPendingAvailability());
 }
 
-void menuManufacture::sDspWoScheduleByItem()
+void menuManufacture::sDspWoSchedule()
 {
-  omfgThis->handleNewWindow(new dspWoScheduleByItem());
-}
-
-void menuManufacture::sDspWoScheduleByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  dspWoScheduleByParameterList *newdlg = new dspWoScheduleByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuManufacture::sDspWoScheduleByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  dspWoScheduleByParameterList *newdlg = new dspWoScheduleByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuManufacture::sDspWoScheduleByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  dspWoScheduleByParameterList *newdlg = new dspWoScheduleByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuManufacture::sDspWoScheduleByWorkOrder()
-{
-  omfgThis->handleNewWindow(new dspWoScheduleByWorkOrder());
+  omfgThis->handleNewWindow(new dspWoSchedule());
 }
 
 void menuManufacture::sDspJobCosting()

@@ -143,6 +143,7 @@ friend class WoCluster;
 class XTUPLEWIDGETS_EXPORT WoCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString label          READ label          WRITE setLabel)
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
   Q_PROPERTY(QString number         READ woNumber       WRITE setWoNumber       DESIGNABLE false)
   Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false)
@@ -154,7 +155,13 @@ class XTUPLEWIDGETS_EXPORT WoCluster : public QWidget
 
     QString  defaultNumber()    { return QString();          }
     QString  fieldName()        { return _fieldName;         }
-    Q_INVOKABLE QString woNumber() const;
+    QString  woNumber() const;
+
+    virtual Qt::Orientation orientation();
+    virtual void setOrientation(Qt::Orientation orientation);
+
+    virtual QString label();
+    virtual void setLabel(const QString& p);
 
     inline void setType(int pWoType)           { _woNumber->setType(pWoType);           }
     inline int  type() const                   { return _woNumber->_woType;              }
@@ -186,14 +193,28 @@ class XTUPLEWIDGETS_EXPORT WoCluster : public QWidget
     void constructor();
 
     WoLineEdit  *_woNumber;
+    QLabel      *_woNumberLit;
     QLabel      *_warehouse;
     QLabel      *_itemNumber;
+    QLabel      *_itemNumberLit;
     QLabel      *_uom;
+    QLabel      *_uomLit;
     QLabel      *_descrip1;
     QLabel      *_descrip2;
     QLabel      *_status;
+    QLabel      *_statusLit;
     QLabel      *_method;
+    QLabel      *_methodLit;
     QString      _fieldName;
+    QHBoxLayout *_line1Layout;
+    QHBoxLayout *_line2Layout;
+    QHBoxLayout *_itemLayout;
+    QVBoxLayout *_mainLayout;
+    QHBoxLayout *_statusLayout;
+    QHBoxLayout *_uomLayout;
+    QHBoxLayout *_warehouseLayout;
+    QHBoxLayout *_woLayout;
+    Qt::Orientation _orientation;
 
   signals:
     void newId(int);

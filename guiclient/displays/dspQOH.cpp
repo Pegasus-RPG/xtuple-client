@@ -79,6 +79,8 @@ SetResponse dspQOH::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  parameterWidget()->setSavedFilters();
+
   param = pParams.value("classcode_id", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Class Code"), param);

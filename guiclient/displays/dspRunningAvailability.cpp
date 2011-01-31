@@ -16,7 +16,7 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include "dspWoScheduleByWorkOrder.h"
+#include "dspWoSchedule.h"
 #include "firmPlannedOrder.h"
 #include "purchaseRequest.h"
 #include "salesOrder.h"
@@ -344,7 +344,7 @@ void dspRunningAvailability::sDspWoScheduleByWorkOrder()
   params.append("wo_id", list()->id());
   params.append("run");
 
-  dspWoScheduleByWorkOrder *newdlg = new dspWoScheduleByWorkOrder();
+  dspWoSchedule *newdlg = new dspWoSchedule();
   SetResponse setresp = newdlg->set(params);
   if (setresp == NoError || setresp == NoError_Run)
     omfgThis->handleNewWindow(newdlg);

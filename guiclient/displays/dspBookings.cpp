@@ -66,6 +66,8 @@ enum SetResponse dspBookings::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  parameterWidget()->setSavedFilters();
+
   param = pParams.value("cust_id", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Customer"), param.toInt());
