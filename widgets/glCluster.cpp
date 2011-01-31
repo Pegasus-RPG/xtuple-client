@@ -159,7 +159,7 @@ void GLClusterLineEdit::sParse()
     bool external = model()->data(model()->index(0,6)).toBool();
     QString type = model()->data(model()->index(0,5)).toString();
 
-    if (external)
+    if (external && !_showExternal)
     {
       QMessageBox::critical(this,tr("External Number"),
                             tr("You may not use an Account associated with an external Company."));
