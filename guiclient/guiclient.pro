@@ -1769,18 +1769,30 @@ RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
 #CONFIG += debug
 
 xtlib {
-  INCLUDEPATH += ../../xtlib/src #/usr/local/pgsql/include
-  DEPENDPATH  += ../../xtlib/src
+  XTLIB_DIR=../../xtlib/src
+  XTLIB_BLD=$${XTLIB_DIR}
+  exists($${XTLIB_DIR}/build) {
+    XTLIB_BLD=$${XTLIB_DIR}/build
+  }
+  exists($${XTLIB_DIR}/../build/src) {
+    XTLIB_BLD=$${XTLIB_DIR}/../build/src
+  }
+  ! exists($${XTLIB_DIR}) {
+    error("Could not set the XTLIB_DIR qmake variable.")
+  }
+
+  INCLUDEPATH += $${XTLIB_DIR} #/usr/local/pgsql/include
+  DEPENDPATH  += $${XTLIB_BLD}
   win32-msvc* {
-    PRE_TARGETDEPS += ../../xtlib/src/build/xtlib.lib
+    PRE_TARGETDEPS += $${XTLIB_BLD}/xtlib.lib
   }
   macx {
-    PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.a
+    PRE_TARGETDEPS += $${XTLIB_BLD}/libxtlib.a
   }
   unix:!macx {  
-    PRE_TARGETDEPS += ../../xtlib/src/build/libxtlib.a
+    PRE_TARGETDEPS += $${XTLIB_BLD}/libxtlib.a
   }
-  LIBS += -L../../xtlib/src/build -lxtlib -lboost_date_time -lboost_regex
+  LIBS += -L$${XTLIB_BLD} -lxtlib -lboost_date_time -lboost_regex
   SOURCES += xtDatabase-qt.cpp
 }
 
