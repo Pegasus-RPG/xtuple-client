@@ -11,6 +11,7 @@
 #include "syncCompanies.h"
 
 #include <QMessageBox>
+#include <QProgressDialog>
 #include <QSqlError>
 #include <QVariant>
 #include <QStatusBar>
@@ -123,6 +124,10 @@ void syncCompanies::sSync()
   if (DEBUG)
     qDebug("syncCompanies::sSync()");
 
+  QProgressDialog progress;
+  progress.setWindowModality(Qt::ApplicationModal);
+  progress.setAutoClose(false);
+
   XSqlQuery lbaseq;
   lbaseq.exec("SELECT * FROM curr_symbol WHERE curr_base;");
   if (lbaseq.first())
@@ -156,10 +161,14 @@ void syncCompanies::sSync()
     QString port = c->rawValue("company_port").toString();
     int currid = c->id("company_curr");
 
+    if (progress.wasCanceled())
+      break;
+
     buildDatabaseURL(dbURL, protocol, host, db, port);
     if (DEBUG)
       qDebug("syncCompanies::sSync() dbURL before login2 = %s", qPrintable(dbURL));
-    omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2)")
+
+    progress.setLabelText(tr("Synchronizing Company %1 (%2)")
                                        .arg(c->rawValue("company_number").toString())
                                        .arg(dbURL));
 
@@ -410,10 +419,18 @@ void syncCompanies::sSync()
       for (int j = 0; j < period.size(); j++)
       {
         XTreeWidgetItem *p = (XTreeWidgetItem*)(period[j]);
-        omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3")
-                                           .arg(c->rawValue("company_number").toString())
-                                           .arg(dbURL)
-                                           .arg(p->rawValue("period_name").toString()));
+
+        if (progress.wasCanceled())
+        {
+          rollback.exec();
+          break;
+        }
+
+        progress.setLabelText(tr("Synchronizing Company %1 (%2) \n"
+                                 "Period %3")
+                          .arg(c->rawValue("company_number").toString())
+                          .arg(dbURL)
+                          .arg(p->rawValue("period_name").toString()));
 
         if (p->rawValue("period_closed").toBool())
         {
@@ -438,10 +455,17 @@ void syncCompanies::sSync()
         rperiod.exec();
         if (rperiod.first())
         {
-          omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3 - Clearing old data...")
-                                             .arg(c->rawValue("company_number").toString())
-                                             .arg(dbURL)
-                                             .arg(p->rawValue("period_name").toString()));
+          if (progress.wasCanceled())
+          {
+            rollback.exec();
+            break;
+          }
+
+          progress.setLabelText(tr("Synchronizing Company %1 (%2) \n"
+                                   "Period %3: Clearing old data...")
+                            .arg(c->rawValue("company_number").toString())
+                            .arg(dbURL)
+                            .arg(p->rawValue("period_name").toString()));
           // Clear old data
           XSqlQuery tbsync;
           tbsync.prepare("DELETE FROM trialbal "
@@ -495,10 +519,18 @@ void syncCompanies::sSync()
           break;
         }
 
-        omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3 - Updating Chart of Accounts...")
-                                           .arg(c->rawValue("company_number").toString())
-                                           .arg(dbURL)
-                                           .arg(p->rawValue("period_name").toString()));
+        if (progress.wasCanceled())
+        {
+          rollback.exec();
+          break;
+        }
+
+        progress.setLabelText(tr("Synchronizing Company %1 (%2): \n"
+                                 "Period: %3 \n"
+                                 "Updating Chart of Accounts...")
+                          .arg(c->rawValue("company_number").toString())
+                          .arg(dbURL)
+                          .arg(p->rawValue("period_name").toString()));
 
         int accntid = -1;
         XSqlQuery raccnt(testDB);
@@ -507,6 +539,7 @@ void syncCompanies::sSync()
                        "WHERE (accnt_company=:accnt_company);");
         raccnt.bindValue(":accnt_company", c->rawValue("company_number"));
         raccnt.exec();
+        progress.setMaximum(raccnt.size());
         while (raccnt.next())
         {
           XSqlQuery laccnt;
@@ -622,7 +655,7 @@ void syncCompanies::sSync()
           QDate prevDate = omfgThis->startOfTime();
           XSqlQuery rgl;
           XSqlQuery lgl;
-          rgl.prepare("SELECT *, formatGlAccount(gltrans_accnt_id) AS f_accnt "
+          rgl.prepare("SELECT *, formatGlAccountLong(gltrans_accnt_id) AS f_accnt "
                       " FROM ( "
                       "SELECT gltrans_accnt_id, gltrans_date, gltrans_source, "
                       "  SUM(gltrans_amount) AS amount "
@@ -656,13 +689,19 @@ void syncCompanies::sSync()
             // Fetch conversion rate for the date
             if (rgl.value("gltrans_date").toDate() != prevDate)
             {
-              omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3 - "
-                                                    "Importing %4 for account %5...")
-                                                 .arg(c->rawValue("company_number").toString())
-                                                 .arg(dbURL)
-                                                 .arg(p->rawValue("period_name").toString())
-                                                 .arg(rgl.value("gltrans_date").toDate().toString())
-                                                 .arg(rgl.value("f_accnt").toString()));
+              if (progress.wasCanceled())
+              {
+                rollback.exec();
+                break;
+              }
+
+              progress.setLabelText(tr("Synchronizing Company %1 (%2) \n"
+                                       "Period: %3\n"
+                                       "Account: %4")
+                                .arg(c->rawValue("company_number").toString())
+                                .arg(dbURL)
+                                .arg(p->rawValue("period_name").toString())
+                                .arg(rgl.value("f_accnt").toString()));
               conv.prepare("SELECT currRate(:curr_id, :date) AS curr_rate; ");
               conv.bindValue(":curr_id", currid);
               conv.bindValue(":date", rgl.value("gltrans_date"));
@@ -730,6 +769,14 @@ void syncCompanies::sSync()
               break;
             }
           }
+
+          if (progress.wasCanceled())
+          {
+            rollback.exec();
+            break;
+          }
+
+          progress.setValue(progress.value()+1);
         } // for each remote g/l account
         if (raccnt.lastError().type() != QSqlError::NoError)
         {
@@ -741,9 +788,15 @@ void syncCompanies::sSync()
         }
       } // for each selected period
 
-      omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Updating trial balances...")
-                                         .arg(c->rawValue("company_number").toString())
-                                         .arg(dbURL));
+      if (progress.wasCanceled())
+      {
+        rollback.exec();
+        break;
+      }
+
+      progress.setLabelText(tr("Synchronizing Company %1 (%2): Posting into trial balances...")
+                            .arg(c->rawValue("company_number").toString())
+                            .arg(dbURL));
       // Post into trial balance
       XSqlQuery post;
       post.prepare("SELECT postIntoTrialBalanceSync(:sequence, :notes); ");
@@ -760,6 +813,45 @@ void syncCompanies::sSync()
         break;
       }
 
+      XSqlQuery tbs;
+      tbs.exec("SELECT trialbal_id FROM trialbalsync WHERE (trialbal_dirty); ");
+      if (tbs.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        systemError(this, tbs.lastError().databaseText(),
+                    __FILE__, __LINE__);
+        errorCount++;
+        break;
+      }
+
+      progress.setLabelText(tr("Synchronizing Company %1 (%2)\n"
+                               "Forward updating trial balances...")
+                                         .arg(c->rawValue("company_number").toString())
+                                         .arg(dbURL));
+      progress.setMaximum(tbs.size());
+      while(tbs.next())
+      {
+        post.prepare("SELECT forwardUpdateTrialBalanceSync(:trialbal_id); ");
+        post.bindValue(":trialbal_id", tbs.value("trialbal_id"));
+        post.exec();
+        if (post.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          systemError(this, post.lastError().databaseText(),
+                      __FILE__, __LINE__);
+          errorCount++;
+          break;
+        }
+
+        if (progress.wasCanceled())
+        {
+          rollback.exec();
+          break;
+        }
+
+        progress.setValue(progress.value()+1);
+      }
+
       post.prepare("SELECT forwardUpdateTrialBalanceSync(trialbal_id) FROM trialbalsync WHERE (trialbal_dirty); ");
       post.exec();
       if (post.lastError().type() != QSqlError::NoError)
@@ -771,12 +863,12 @@ void syncCompanies::sSync()
         break;
       }
 
-      XSqlQuery tbs;
       tbs.exec("SELECT trialbal_id "
-                  "FROM trialbalsync "
-                  " JOIN period ON (trialbal_period_id=period_id) "
-                  "WHERE (NOT trialbalsync_curr_posted)"
-                  "ORDER BY period_end;");
+               "FROM trialbalsync "
+               " JOIN period ON (trialbal_period_id=period_id) "
+               "WHERE ((NOT trialbalsync_curr_posted) "
+               " AND (trialbalsync_curr_id != baseCurrId()))"
+               "ORDER BY period_end;");
       if (tbs.lastError().type() != QSqlError::NoError)
       {
         rollback.exec();
@@ -785,6 +877,14 @@ void syncCompanies::sSync()
         errorCount++;
         break;
       }
+
+      progress.setLabelText(tr("Synchronizing Company %1 (%2)\n"
+                               "Posting currency revaluation adjustments...")
+                                         .arg(c->rawValue("company_number").toString())
+                                         .arg(dbURL));
+      progress.setMaximum(tbs.size());
+      progress.setAutoReset(false);
+
       while(tbs.next())
       {
         post.prepare("SELECT postCurrAdjustSync(:trialbal_id, :adj_notes); ");
@@ -799,6 +899,13 @@ void syncCompanies::sSync()
           errorCount++;
           break;
         }
+
+        if (progress.wasCanceled())
+        {
+          rollback.exec();
+          break;
+        }
+        progress.setValue(progress.value()+1);
       }
 
       ltxn.exec("COMMIT;");
@@ -813,9 +920,14 @@ void syncCompanies::sSync()
     }
   } // for each selected company
 
-  omfgThis->statusBar()->showMessage(tr("Synchronizing Complete: "
-                                        "%1 Companies attempted, %2 errors encountered")
-                                     .arg(company.size()).arg(errorCount));
+  progress.accept();
+  if (progress.wasCanceled())
+    QMessageBox::critical(this, tr("Synchronizing Canceled"),
+                          tr("Synchronization Canceled."));
+  else
+    QMessageBox::information(this, tr("Synchronizing Complete"),
+                             tr("%1 Companies attempted, %2 errors encountered")
+                             .arg(company.size()).arg(errorCount));
   sFillList();
 }
 
