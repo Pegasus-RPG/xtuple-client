@@ -2301,11 +2301,11 @@ QString XTreeWidget::toCsv() const
     {
       if (colcount)
         line = line + ",";
-      line = line + header->text(counter).replace("\"","\"\"").replace("\n"," ");
+      line = line + header->text(counter).replace("\"","\"\"").replace("\r\n"," ");
       colcount++;
     }
   }
-  opText = line + "\n";
+  opText = line + "\r\n";
 
   XTreeWidgetItem *item = topLevelItem(0);
   if (item)
@@ -2333,7 +2333,7 @@ QString XTreeWidget::toCsv() const
           }
         }
       }
-      opText = opText + line + "\n";
+      opText = opText + line + "\r\n";
       idx    = indexBelow(idx);
     }
   }
