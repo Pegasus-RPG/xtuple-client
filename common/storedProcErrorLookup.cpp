@@ -1171,6 +1171,9 @@ const struct {
   { "recallShipment",	-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled "
 			       "because it has already been received "
 			       "at its destination."),		0, "" },
+{ "recallShipment",	-4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
+                             "appears to have been invoiced and the invoice has been posted."),
+                                                              0, "" },
   { "recallShipment",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This shipment cannot be recalled because it "
 			       "contains one or more Line Items with Site/"
 			       "Product Category/Customer combinations that "

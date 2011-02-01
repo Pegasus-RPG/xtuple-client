@@ -26,6 +26,7 @@ recallOrders::recallOrders(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_recall,	   SIGNAL(clicked()),	  this, SLOT(sRecall()));
   connect(_showInvoiced, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillList()));
 
   _showInvoiced->setEnabled(_privileges->check("RecallInvoicedShipment"));
   
