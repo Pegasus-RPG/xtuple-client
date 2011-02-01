@@ -16,6 +16,7 @@
 #include <QVariant>
 #include <QVector>
 #include <QTimer>
+#include <QHeaderView> //#13251
 
 #include "widgets.h"
 #include "guiclientinterface.h"
@@ -242,6 +243,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE inline QTreeWidgetItem    *takeTopLevelItem(int index)                                      { return QTreeWidget::takeTopLevelItem(index); }
     Q_INVOKABLE inline int                topLevelItemCount() const { return QTreeWidget::topLevelItemCount(); }
     Q_INVOKABLE inline QRect              visualItemRect(const XTreeWidgetItem *item) const                 { return QTreeWidget::visualItemRect(item); }
+	Q_INVOKABLE inline void               moveColumn(int from, int to)                                      { header()->moveSection(from, to); } //#13251
     // end of scripting exposure
 
     static GuiClientInterface *_guiClientInterface;
