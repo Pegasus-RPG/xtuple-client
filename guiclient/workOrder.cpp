@@ -779,18 +779,25 @@ void workOrder::sClose()
 {
   if (_woid > 0)
   {
-	  if ( ( (_mode == cNew) || (_mode == cRelease)) &&
-		   ((_metrics->value("WONumberGeneration") == "A") || (_metrics->value("WONumberGeneration") == "O")) )
-	  {
-		q.prepare("SELECT deleteWo(:wo_id,true);"
-				  "SELECT releaseWoNumber(:wonumber);");
-                q.bindValue(":woNumber", _wonumber);
-		q.bindValue(":wo_id", _woid);
-		q.exec();
-	    
-		omfgThis->sWorkOrdersUpdated(_woid, TRUE);
-	  }
+    if ((_mode == cNew) || (_mode == cRelease))
+    {
+      q.prepare("SELECT deleteWo(:wo_id,true);");
+      q.bindValue(":wo_id", _woid);
+      q.exec();
+    }
   }
+  if (_wonumber > 0)
+  {
+    if ( ( (_mode == cNew) || (_mode == cRelease)) &&
+        ((_metrics->value("WONumberGeneration") == "A") || (_metrics->value("WONumberGeneration") == "O")) )
+    {
+      q.prepare("SELECT releaseWoNumber(:woNumber);");
+      q.bindValue(":woNumber", _wonumber);
+      q.exec();
+    }
+  }
+
+  omfgThis->sWorkOrdersUpdated(_woid, TRUE);
   close();
 }
 
