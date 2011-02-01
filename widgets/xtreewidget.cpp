@@ -48,7 +48,7 @@
 #define DEBUG false
 
 #define WORKERINTERVAL 0
-#define WORKERROWS     100
+#define WORKERROWS     500
 
 /* make sure the colroles are kept in sync with
    QStringList knownroles in populate() below,
@@ -123,6 +123,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _progress = 0;
   _subtotals = 0;
 
+  setUniformRowHeights(true); //#13439 speed improvement if all rows are known to be the same height
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
   header()->setStretchLastSection(false);
@@ -272,6 +273,8 @@ void XTreeWidget::populateWorker()
   int           pIndex     = args._workingIndex;
   bool          pUseAltId  = args._workingUseAlt;
   //PopulateStyle popstyle   = args._workingPopstyle;
+
+  QList<XTreeWidgetItem*> topLevelItems; //#13439
 
   if (_linear)
     qApp->setOverrideCursor(Qt::WaitCursor);
@@ -447,6 +450,7 @@ void XTreeWidget::populateWorker()
       ++cnt;
       if (!_linear && cnt % WORKERROWS == 0)
       {
+        this->addTopLevelItems(topLevelItems); //#13439 
         _progress->setValue(pQuery.at());
         return;
       }
@@ -516,7 +520,11 @@ void XTreeWidget::populateWorker()
           qWarning("XTreeWidget::populate() there is no role for column %d", col);
           continue;
         }
-        QVariant rawValue = pQuery.value(_colIdx->at(col));
+
+        QVariant rawValue;
+        if(_colIdx->at(col) >=0)  //#13439 optimization - only try to retrieve value if index is valid
+          rawValue = pQuery.value(_colIdx->at(col));
+
         _last->setData(col, Xt::RawRole, rawValue);
 
         // TODO: this isn't necessary for all columns so do less often?
@@ -724,11 +732,19 @@ void XTreeWidget::populateWorker()
       }
 
       if (qobject_cast<XTreeWidget*>(parentItem))
-        qobject_cast<XTreeWidget*>(parentItem)->addTopLevelItem(_last);
+      {
+        //#13439 optimization - do not add items to 'this' until the very end
+        if(parentItem == this)
+          topLevelItems.append(_last);
+        else
+          qobject_cast<XTreeWidget*>(parentItem)->addTopLevelItem(_last);
+      }
       else if (qobject_cast<XTreeWidgetItem*>(parentItem))
         qobject_cast<XTreeWidgetItem*>(parentItem)->addChild(_last);
 
     } while (pQuery.next());
+
+  this->addTopLevelItems(topLevelItems); //#13439 
 
   setId(pIndex);
   emit valid(currentItem() != 0);
