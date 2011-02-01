@@ -253,8 +253,8 @@ void dspSummarizedBacklogByWarehouse::sFillList()
   {
     display::sFillList();
 
-    if (list()->topLevelItemCount())
-    {
+//    if (list()->topLevelItemCount())
+//    {
       MetaSQLQuery totm = mqlLoad("summarizedBacklogByWarehouse", "totals");
       q = totm.toQuery(params);
       if (q.first())
@@ -284,13 +284,13 @@ void dspSummarizedBacklogByWarehouse::sFillList()
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
-    }
-    else
-    {
-      _totalSalesOrders->clear();
-      _totalLineItems->clear();
-      _totalQty->clear();
-    }
+//    }
+//    else
+//    {
+//      _totalSalesOrders->clear();
+//      _totalLineItems->clear();
+//      _totalQty->clear();
+//    }
   }
 }
 
