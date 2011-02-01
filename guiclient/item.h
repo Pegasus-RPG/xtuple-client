@@ -76,6 +76,7 @@ public slots:
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sNewClassCode();
     virtual void sHandleButtons();
+    virtual void sHandleRightButtons();
     virtual void sFillSourceList();
     virtual void sNewSource();
     virtual void sEditSource();
