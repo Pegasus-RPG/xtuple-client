@@ -130,9 +130,6 @@ to be bound by its terms.</comment>
            </property>
            <item row="0" column="0">
             <widget class="ContactWidget" name="_contact">
-             <property name="listVisible">
-              <bool>true</bool>
-             </property>
              <property name="accountVisible">
               <bool>true</bool>
              </property>
@@ -147,6 +144,9 @@ to be bound by its terms.</comment>
              </property>
              <property name="minimalLayout">
               <bool>false</bool>
+             </property>
+             <property name="listVisible" stdset="0">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -243,7 +243,11 @@ to be bound by its terms.</comment>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
-             <widget class="QTextEdit" name="_notes"/>
+             <widget class="XTextEdit" name="_notes">
+              <property name="spellEnable">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -431,6 +435,11 @@ to be bound by its terms.</comment>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

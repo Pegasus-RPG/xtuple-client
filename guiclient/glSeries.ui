@@ -331,8 +331,11 @@ to be bound by its terms.</comment>
     </widget>
    </item>
    <item row="5" column="0" colspan="2">
-    <widget class="QTextEdit" name="_notes">
+    <widget class="XTextEdit" name="_notes">
      <property name="tabChangesFocus">
+      <bool>true</bool>
+     </property>
+     <property name="spellEnable">
       <bool>true</bool>
      </property>
     </widget>
@@ -368,6 +371,11 @@ to be bound by its terms.</comment>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

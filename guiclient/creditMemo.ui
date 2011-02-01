@@ -940,7 +940,11 @@ to be bound by its terms.</comment>
         <number>5</number>
        </property>
        <item>
-        <widget class="QTextEdit" name="_comments"/>
+        <widget class="XTextEdit" name="_comments">
+         <property name="spellEnable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1018,6 +1022,11 @@ to be bound by its terms.</comment>
    <class>XURLLabel</class>
    <extends>QLabel</extends>
    <header>xurllabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

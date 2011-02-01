@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>583</height>
+    <width>661</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -971,7 +971,7 @@ to be bound by its terms.</comment>
             </layout>
            </item>
            <item row="2" column="1">
-            <widget class="QTextEdit" name="_vendDescription">
+            <widget class="XTextEdit" name="_vendDescription">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                <horstretch>0</horstretch>
@@ -979,6 +979,9 @@ to be bound by its terms.</comment>
               </sizepolicy>
              </property>
              <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="spellEnable">
               <bool>true</bool>
              </property>
             </widget>
@@ -1084,6 +1087,11 @@ to be bound by its terms.</comment>
    <class>XURLLabel</class>
    <extends>QLabel</extends>
    <header>xurllabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

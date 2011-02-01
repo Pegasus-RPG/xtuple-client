@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
-    <height>600</height>
+    <width>829</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -912,7 +912,11 @@ to be bound by its terms.</comment>
       </attribute>
       <layout class="QVBoxLayout">
        <item>
-        <widget class="QTextEdit" name="_notes"/>
+        <widget class="XTextEdit" name="_notes">
+         <property name="spellEnable">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1164,6 +1168,11 @@ to be bound by its terms.</comment>
    <class>XURLLabel</class>
    <extends>QLabel</extends>
    <header>xurllabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
   </customwidget>
   <customwidget>
    <class>PoitemTableView</class>
