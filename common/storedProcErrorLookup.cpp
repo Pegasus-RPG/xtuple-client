@@ -120,7 +120,10 @@ const struct {
                                         "the account in the required Period. Or you have "
                                         "not specified a Year End Equity Account in the "
                                         "accounting configuration."), 0, "" },
-
+  { "closeAccountingYearPeriod", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Fiscal Year cannot be closed "
+                                      "because there are periods within the year that are still open."), 0, "" },
+  { "closeAccountingYearPeriod", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Fiscal Year cannot be closed "
+                                    "because there are prior years that are still open."), 0, "" },
   { "closeToItem",	 -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The item cannot be Closed at this time "
 				"as there is inventory at shipping."),	0, "" },
 
@@ -903,6 +906,9 @@ const struct {
 				   "it is frozen."),			0, "" },
 
   { "openAccountingYearPeriod", -1, "", -1, "openAccountingPeriod" },
+
+  { "openAccountingYearPeriod", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot open this Accounting Year because "
+                                     "subsequent years are closed."),			0, "" },
 
   { "openRecurringItems", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot count open recurring items with an "
                                   "invalid type."),                     0, "" },
