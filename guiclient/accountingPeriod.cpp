@@ -60,7 +60,8 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
       _name->setFocus();
       q.exec("SELECT period_id "
              "FROM period "
-             "WHERE (period_closed); ");
+             "WHERE (period_closed) "
+             "LIMIT 1; ");
       if (q.first())
       {
         _startDate->setEnabled(false);
