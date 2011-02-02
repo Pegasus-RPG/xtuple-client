@@ -62,12 +62,16 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _orderGroup->hide();
     _orderGroupDaysLit->hide();
     _orderGroupFirst->hide();
+    _closeSave->hide();
   }
   else
     _planningType->append(1, "MRP", "M");
 
   if (!_metrics->boolean("MultiWhs"))
+  {
     _createPlannedTransfers->hide();
+    _closeSave->hide();
+  }
 
   if (_metrics->boolean("EnableDropShipments"))
 	_dropShip->setEnabled(FALSE);
@@ -793,8 +797,13 @@ bool itemSite::sSave()
     accept();
   else
   {
+    if (_closeSave->isChecked())
+        accept();
+    else
+    {
     _warehouse->setNull();
     clear();
+  }
   }
   return true;
 }

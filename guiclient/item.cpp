@@ -448,6 +448,18 @@ void item::sSave()
   QString sql;
   QString itemNumber = _itemNumber->text().trimmed().toUpper();
 
+  //Check To see if the item has active sites associated with it
+  int fActive = false;
+  q.prepare("SELECT itemsite_id "
+            "FROM itemsite "
+            "WHERE ((itemsite_item_id=:item_id)"
+            "  AND  (itemsite_active)) "
+            "LIMIT 1; ");
+  q.bindValue(":item_id", _itemid);
+  q.exec();
+  if (q.first()) fActive = true;
+
+
   if(!_active->isChecked())
   {
     q.prepare("SELECT bomitem_id "
@@ -468,14 +480,8 @@ void item::sSave()
       return;
     }
 
-    q.prepare("SELECT itemsite_id "
-              "FROM itemsite "
-              "WHERE ((itemsite_item_id=:item_id)"
-              "  AND  (itemsite_active)) "
-              "LIMIT 1; ");
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if (q.first())         
+
+    if (fActive)
     { 
       QMessageBox::warning( this, tr("Cannot Save Item"),
         tr("This Item is used in an active Item Site and must be marked as active. "
@@ -870,7 +876,8 @@ void item::sSave()
 
   omfgThis->sItemsUpdated(_itemid, TRUE);
 
-  if ( ( (_mode == cNew) || (_mode == cCopy) ) && 
+  if ((!fActive) &&
+     ( (_mode == cNew) || (_mode == cCopy) ) &&
      (_privileges->check("MaintainItemSites")) &&
      ( (*_itemTypes[_itemtype->currentIndex()] != 'B') ||
      (*_itemTypes[_itemtype->currentIndex()] != 'F') ||
