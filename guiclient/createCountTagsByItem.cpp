@@ -43,7 +43,8 @@ createCountTagsByItem::createCountTagsByItem(QWidget* parent, const char* name, 
                  | ItemLineEdit::cByProduct
                  | ItemLineEdit::cCosting
                  | ItemLineEdit::cTooling
-                 | ItemLineEdit::cOutsideProcess);
+                 | ItemLineEdit::cOutsideProcess
+                 | ItemLineEdit::cActive);
 
   _captive = FALSE;
   

@@ -12,6 +12,10 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+
+#include <metasql.h>
+#include "mqlutil.h"
 
 /*
  *  Constructs a createCountTagsByParameterList as a child of 'parent', with the
@@ -99,131 +103,24 @@ enum SetResponse createCountTagsByParameterList::set(const ParameterList & pPara
 
 void createCountTagsByParameterList::sCreate()
 {
-  QString sql;
-//---------------Class Code--------------------------------------  
-  if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isSelected())
-  {
-    sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
-           "FROM ( SELECT itemsite_id";
-    if(_byLocation->isChecked())
-          sql += "      FROM itemsite, item, itemloc";
-    else
-          sql += "       FROM itemsite, item";
-          sql +=  "       WHERE ( (itemsite_item_id=item_id)"
-                "        AND (itemsite_warehous_id=:warehous_id)"
-                "        AND (item_classcode_id=:classcode_id)";
-    if(_byLocation->isChecked())
-    {
-       sql += "      AND (itemloc_location_id=:location_id)"
-              "      AND (itemloc_itemsite_id = itemsite_id)"
-              "      AND (validLocation(:location_id, itemsite_id))";
-    }
-    if(_ignoreZeroBalance->isChecked())
-      sql += "      AND (itemsite_qtyonhand<>0.0)";
-      sql += " )"
-           "       ORDER BY item_number ) AS data;";
-  }
-//----------------Class Code Pattern-------------------------------  
-  else if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isPattern())
-  {
-    sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
-           "FROM ( SELECT itemsite_id";
-    if(_byLocation->isChecked())
-          sql += "      FROM itemsite, item, itemloc";
-    else
-          sql += "       FROM itemsite, item";
-          sql += "       WHERE ( (itemsite_item_id=item_id)"
-           "        AND (itemsite_warehous_id=:warehous_id)"
-           "        AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-    if(_byLocation->isChecked())
-    {
-       sql += "      AND (itemloc_location_id=:location_id)"
-              "      AND (itemloc_itemsite_id = itemsite_id)"
-              "      AND (validLocation(:location_id, itemsite_id))";
-    }
-    if(_ignoreZeroBalance->isChecked())
-      sql += "      AND (itemsite_qtyonhand<>0.0)";
-      sql += " )"
-           "       ORDER BY item_number ) AS data;";
-  }
-//-----------------Planner Code-------------------------------------
-  else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isSelected())
-  {
-    sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
-           "FROM ( SELECT itemsite_id";
-    if(_byLocation->isChecked())
-          sql += "      FROM itemsite, item, itemloc";
-    else
-          sql += "       FROM itemsite, item";
-    sql +=       "       WHERE ( (itemsite_item_id=item_id)"
-           "        AND (itemsite_warehous_id=:warehous_id)"           
-           "        AND (itemsite_plancode_id=:plancode_id)";
-    if(_byLocation->isChecked())
-    {
-       sql += "      AND (itemloc_location_id=:location_id)"
-              "      AND (itemloc_itemsite_id = itemsite_id)"
-              "      AND (validLocation(:location_id, itemsite_id))";
-    }
-    if(_ignoreZeroBalance->isChecked())
-      sql += "      AND (itemsite_qtyonhand<>0.0)";
-      sql += " )"
-           "       ORDER BY item_number ) AS data;";
-  }
-//----------------Planner Code Pattern-------------------------------
-  else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isPattern())
-  {
-    sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
-           "FROM ( SELECT itemsite_id";
-    if(_byLocation->isChecked())
-          sql += "      FROM itemsite, item, itemloc";
-    else
-          sql += "       FROM itemsite, item";
-          sql+=  "       WHERE ( (itemsite_item_id=item_id)"
-           "        AND (itemsite_warehous_id=:warehous_id)"   
-           "        AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
-    if(_byLocation->isChecked())
-    {
-       sql += "      AND (itemloc_location_id=:location_id)"
-              "      AND (itemloc_itemsite_id = itemsite_id)"
-              "      AND (validLocation(:location_id, itemsite_id))";
-    }
-    if(_ignoreZeroBalance->isChecked())
-      sql += "      AND (itemsite_qtyonhand<>0.0)";
-      sql += " )"
-           "       ORDER BY item_number ) AS data;";
-  }
-  else
-//----------------Warehouse ------------------------------------------
-  {
-    sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
-           "FROM ( SELECT itemsite_id";
-    if(_byLocation->isChecked())
-          sql += "      FROM itemsite, item, itemloc";
-    else
-          sql += "       FROM itemsite, item";
-          sql+=  "       WHERE ( (itemsite_item_id=item_id)"
-           "        AND (itemsite_warehous_id=:warehous_id))"; 
-    if(_byLocation->isChecked())
-    {
-       sql += "      AND (itemloc_location_id=:location_id)"
-              "      AND (itemloc_itemsite_id = itemsite_id)"
-              "      AND (validLocation(:location_id, itemsite_id))";
-    }
-    if(_ignoreZeroBalance->isChecked())
-      sql += "      AND (itemsite_qtyonhand<>0.0)";
-    sql += "       ORDER BY item_number ) AS data;";
-  }
-  q.prepare(sql);
-  q.bindValue(":comments", _comments->toPlainText());
-  q.bindValue(":priority", QVariant(_priority->isChecked()));
-  q.bindValue(":freeze",   QVariant(_freeze->isChecked()));
-  q.bindValue(":warehous_id", _warehouse->id());
+  ParameterList params;
+  _parameter->appendValue(params);
+  params.append("comments", _comments->toPlainText());
+  params.append("priority", QVariant(_priority->isChecked()));
+  params.append("freeze",   QVariant(_freeze->isChecked()));
+  params.append("warehous_id", _warehouse->id());
   if(_byLocation->isChecked())
-    q.bindValue(":location_id", _location->id());
-  _parameter->bindValue(q);
-  if (!q.exec())
-    systemError( this, tr("A System Error occurred at createCountTagsByParameterList::%1.")
-                       .arg(__LINE__) );
+    params.append("location_id", _location->id());
+  if(_ignoreZeroBalance->isChecked())
+    params.append("ignoreZeroBalance");
+
+  MetaSQLQuery mql = mqlLoad("countTags", "create");
+  q = mql.toQuery(params);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   else if (!q.first())
     QMessageBox::information( this, tr("No Count Tags Created"),
       tr("No Item Sites matched the criteria you specified.") );
