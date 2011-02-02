@@ -22,7 +22,8 @@ accountingPeriod::accountingPeriod(QWidget* parent, const char* name, bool modal
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   _year->setType(XComboBox::FiscalYears);
 }
@@ -101,9 +102,7 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
       _endDate->setEnabled(FALSE);
       _closed->setEnabled(FALSE);
       _frozen->setEnabled(FALSE);
-      _close->setText(tr("&Close"));
-      _save->hide();
-      _close->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
 

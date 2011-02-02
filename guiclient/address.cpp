@@ -34,7 +34,8 @@ address::address(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
     connect(_editAddrUse, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_viewAddrUse, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+    connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+    connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
     connect(_uses, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
     connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
@@ -108,14 +109,11 @@ enum SetResponse address::set(const ParameterList &pParams)
       _mode = cEdit;
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
 
-      _save->hide();
-      _close->setText(tr("&Close"));
       _editAddrUse->hide();
       disconnect(_uses, SIGNAL(itemSelected(int)), _editAddrUse, SLOT(animateClick()));
       connect(_uses, SIGNAL(itemSelected(int)), _viewAddrUse, SLOT(animateClick()));
@@ -128,8 +126,7 @@ enum SetResponse address::set(const ParameterList &pParams)
       _deleteCharacteristic->setEnabled(FALSE);
       _editAddrUse->setEnabled(FALSE);
       _charass->setEnabled(FALSE);
-
-      _close->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
 

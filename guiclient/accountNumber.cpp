@@ -22,7 +22,8 @@ accountNumber::accountNumber(QWidget* parent, const char* name, bool modal, Qt::
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_type, SIGNAL(activated(int)), this, SLOT(populateSubTypes()));
 
   _currency->setLabel(_currencyLit);
@@ -107,11 +108,7 @@ enum SetResponse accountNumber::set(const ParameterList &pParams)
       _postIntoClosed->setEnabled(FALSE);
       _forwardUpdate->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
-      _save->setEnabled(FALSE);
-      _close->setText(tr("&Cancel"));
-      _close->setDefault(TRUE);
-
-      _close->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
 

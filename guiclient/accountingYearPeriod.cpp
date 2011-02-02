@@ -21,7 +21,8 @@ accountingYearPeriod::accountingYearPeriod(QWidget* parent, const char* name, bo
 {
     setupUi(this);
 
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+    connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+    connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 accountingYearPeriod::~accountingYearPeriod()
@@ -66,9 +67,7 @@ enum SetResponse accountingYearPeriod::set(const ParameterList &pParams)
       _startDate->setEnabled(FALSE);
       _endDate->setEnabled(FALSE);
       _closed->setEnabled(FALSE);
-      _close->setText(tr("&Close"));
-      _save->hide();
-      _close->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
 
