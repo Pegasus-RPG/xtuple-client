@@ -22,7 +22,8 @@ changeWoQty::changeWoQty(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-  connect(_change, SIGNAL(clicked()), this, SLOT(sChangeQty()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sChangeQty()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_newQtyOrdered, SIGNAL(textChanged(const QString&)), this, SLOT(sQtyChanged(const QString&)));
 
   _captive = FALSE;
@@ -36,6 +37,7 @@ changeWoQty::changeWoQty(QWidget* parent, const char* name, bool modal, Qt::WFla
   _currentQtyBalance->setPrecision(omfgThis->qtyVal());
   _cmnttype->setType(XComboBox::AllCommentTypes);
   _commentGroup->setEnabled(_postComment->isChecked());
+  adjustSize();
 }
 
 changeWoQty::~changeWoQty()

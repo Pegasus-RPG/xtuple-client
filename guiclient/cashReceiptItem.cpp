@@ -29,11 +29,12 @@ cashReceiptItem::cashReceiptItem(QWidget* parent, const char* name, bool modal, 
 
 
   // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_discount, SIGNAL(clicked()),      this, SLOT(sDiscount()));
 
   _cust->setReadOnly(TRUE);
+  adjustSize();
 }
 
 /*
@@ -69,8 +70,6 @@ enum SetResponse cashReceiptItem::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _save->setFocus();
     }
   }
 
