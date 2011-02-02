@@ -21,14 +21,13 @@ applyDiscount::applyDiscount(QWidget* parent, const char* name, bool modal, Qt::
 {
   setupUi(this);
 
-  connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
-// TODO - cannot launch window from modal dialog???
-//  connect(_view, SIGNAL(clicked()), this, SLOT(sViewVoucher()));
-  _view->hide();
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sApply()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   _discprcnt->setPrecision(omfgThis->percentVal());
 
   _apopenid = -1;
+  adjustSize();
 }
 
 applyDiscount::~applyDiscount()

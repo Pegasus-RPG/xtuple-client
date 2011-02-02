@@ -21,9 +21,9 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 {
   setupUi(this);
 
-  connect(_close,          SIGNAL(clicked()),                      this, SLOT(sClose()));
   connect(_docDate,        SIGNAL(newDate(const QDate&)),          this, SLOT(sPopulateDueDate()));
-  connect(_save,           SIGNAL(clicked()),                      this, SLOT(sSave()));
+  connect(_buttonBox,      SIGNAL(accepted()),                     this, SLOT(sSave()));
+  connect(_buttonBox,      SIGNAL(rejected()),                     this, SLOT(reject()));
   connect(_terms,          SIGNAL(newID(int)),                     this, SLOT(sPopulateDueDate()));
   connect(_vend,           SIGNAL(newId(int)),                     this, SLOT(sPopulateVendInfo(int)));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
@@ -98,8 +98,8 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
 //  ToDo
 
       _paid->clear();
-      _save->setText(tr("Post"));
-	  populateStatus();
+      _buttonBox->button(QDialogButtonBox::Save)->setText(tr("Post"));
+      populateStatus();
     }
     else if (param.toString() == "edit")
     {
@@ -132,9 +132,8 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _terms->setType(XComboBox::Terms);
       _notes->setReadOnly(TRUE);
       _altPrepaid->setEnabled(FALSE);
-	  _status->setEnabled(FALSE);
-      _save->hide();
-      _close->setText(tr("&Close"));
+      _status->setEnabled(FALSE);
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
 

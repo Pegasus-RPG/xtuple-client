@@ -22,9 +22,11 @@ apCreditMemoApplication::apCreditMemoApplication(QWidget* parent, const char* na
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   _vend->setReadOnly(TRUE);
+  adjustSize();
 }
 
 apCreditMemoApplication::~apCreditMemoApplication()

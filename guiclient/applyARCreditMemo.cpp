@@ -30,9 +30,11 @@ applyARCreditMemo::applyARCreditMemo(QWidget* parent, const char* name, bool mod
   connect(_applyToBalance,   SIGNAL(clicked()),      this, SLOT(sApplyBalance()));
   connect(_available,        SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
   connect(_clear,            SIGNAL(clicked()),      this, SLOT(sClear()));
-  connect(_close,            SIGNAL(clicked()),      this, SLOT(sClose()));
-  connect(_post,             SIGNAL(clicked()),      this, SLOT(sPost()));
+  connect(_buttonBox,        SIGNAL(accepted()),     this, SLOT(sPost()));
+  connect(_buttonBox,        SIGNAL(rejected()),     this, SLOT(reject()));
   connect(_searchDocNum,     SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged(const QString&)));
+
+  _buttonBox->button(QDialogButtonBox::Save)->setText(tr("Post"));
 
   _captive = FALSE;
 

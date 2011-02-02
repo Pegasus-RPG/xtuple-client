@@ -21,8 +21,8 @@ archRestoreSalesHistory::archRestoreSalesHistory(QWidget* parent, const char* na
   setupUi(this);
 
   // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSelect()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   _customerType->setType(ParameterGroup::CustomerType);
   _productCategory->setType(ParameterGroup::ProductCategory);

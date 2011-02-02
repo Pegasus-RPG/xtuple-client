@@ -18,11 +18,13 @@ applyARDiscount::applyARDiscount(QWidget* parent, const char* name, bool modal, 
 {
   setupUi(this);
 
-  connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sApply()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   _discprcnt->setPrecision(omfgThis->percentVal());
 
   _aropenid = -1;
+  adjustSize();
 }
 
 applyARDiscount::~applyARDiscount()
