@@ -28,9 +28,12 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
 {
   setupUi(this);
 
+  _print = _buttonBox->addButton(tr("Print"), QDialogButtonBox::ActionRole);
+
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sAssign()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_options, SIGNAL(clicked()), this, SLOT(sPrintOptions()));
 
@@ -47,7 +50,6 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   _qtyToAssign->setPrecision(omfgThis->qtyVal());
   _qtyAssigned->setPrecision(omfgThis->qtyVal());
   _qtyBalance->setPrecision(omfgThis->qtyVal());
-  _assign->setFocus();
 }
 
 assignLotSerial::~assignLotSerial()

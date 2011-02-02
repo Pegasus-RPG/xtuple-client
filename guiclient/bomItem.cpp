@@ -28,8 +28,8 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _substituteGroupInt->addButton(_itemDefinedSubstitutes);
   _substituteGroupInt->addButton(_bomDefinedSubstitutes);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClick()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSaveClick()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sItemTypeChanged(const QString&)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sItemIdChanged()));
   connect(_newSubstitution, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
@@ -60,6 +60,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _item->setFocus();
   
   _saved=FALSE;
+  adjustSize();
 }
 
 bomItem::~bomItem()
@@ -170,8 +171,6 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _item->setReadOnly(TRUE);
-
-      _save->setFocus();
     }
     else if (param.toString() == "copy")
     {
@@ -188,7 +187,6 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       }
 
       _dates->setStartDate(omfgThis->dbDate());
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -205,12 +203,9 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _comments->setReadOnly(TRUE);
       _ecn->setEnabled(FALSE);
       _substituteGroup->setEnabled(FALSE);
-      _close->setText(tr("&Close"));
-      _save->hide();
+      _buttonBox->addButton(QDialogButtonBox::Close);
       _notes->setEnabled(FALSE);
       _ref->setEnabled(FALSE);
-
-      _close->setFocus();
     }
   }
 

@@ -19,9 +19,9 @@ assignItemToPlannerCode::assignItemToPlannerCode(QWidget* parent, const char* na
   setupUi(this);
 
     // signals and slots connections
-  connect(_item, SIGNAL(valid(bool)), _assign, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
+  connect(_item, SIGNAL(valid(bool)), _buttonBox->button(QDialogButtonBox::Ok), SLOT(setEnabled(bool)));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sAssign()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   _plannerCode->setAllowNull(TRUE);
   _plannerCode->setType(XComboBox::PlannerCodes);

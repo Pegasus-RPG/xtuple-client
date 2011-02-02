@@ -19,8 +19,8 @@ assignClassCodeToPlannerCode::assignClassCodeToPlannerCode(QWidget* parent, cons
   setupUi(this);
 
   // signals and slots connections
-  connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sAssign()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   _classCode->setType(ParameterGroup::ClassCode);
 

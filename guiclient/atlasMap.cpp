@@ -79,7 +79,8 @@ atlasMap::atlasMap(QWidget* parent, const char * name, Qt::WFlags fl)
   setupUi(this);
 
   connect(_atlas, SIGNAL(editingFinished()), this, SLOT(sHandleAtlas()));
-  connect(_save,  SIGNAL(clicked()),         this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   QString filter = tr("Atlas Files (*.xml)");
   _atlas->setFilter(filter);
@@ -142,10 +143,7 @@ enum SetResponse atlasMap::set(const ParameterList &pParams)
       _atlas->setEnabled(false);
       _map->setEnabled(false);
       _firstLine->setEnabled(false);
-
-      _save->hide();
-
-      _cancel->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
 

@@ -55,6 +55,7 @@ applyARCreditMemo::applyARCreditMemo(QWidget* parent, const char* name, bool mod
     _applyToBalance->hide();
 
   sPriceGroup();
+  adjustSize();
 }
 
 applyARCreditMemo::~applyARCreditMemo()

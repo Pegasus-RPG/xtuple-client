@@ -25,6 +25,8 @@ public:
     assignLotSerial(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~assignLotSerial();
 
+    QPushButton* _print;
+
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void closeEvent( QCloseEvent * pEvent );
