@@ -904,9 +904,10 @@ const struct {
 				   "it is already open."),		0, "" },
   { "openAccountingPeriod", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot open this Accounting Period because "
 				   "it is frozen."),			0, "" },
+  { "openAccountingPeriod", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot open this Accounting Period because "
+                                    "subsequent periods are closed."),			0, "" },
 
   { "openAccountingYearPeriod", -1, "", -1, "openAccountingPeriod" },
-
   { "openAccountingYearPeriod", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot open this Accounting Year because "
                                      "subsequent years are closed."),			0, "" },
 
