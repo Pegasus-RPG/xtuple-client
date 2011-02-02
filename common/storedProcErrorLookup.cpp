@@ -205,11 +205,13 @@ const struct {
 				      "selected Fiscal Year."),	0, "" },
   { "createAccountingPeriod",  -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Start Date must be prior "
 				      "to the End Date."),	0, "" },
-  { "createAccountingYearPeriod", -1, "", -1, "createAccountingPeriod" },
-  { "createAccountingYearPeriod", -2, "", -2, "createAccountingPeriod" },
-  { "createAccountingYearPeriod", -3, "", -3, "createAccountingPeriod" },
-  { "createAccountingYearPeriod", -4, "", -4, "createAccountingPeriod" },
-  { "createAccountingYearPeriod", -5, "", -5, "createAccountingPeriod" },
+
+  { "createAccountingYearPeriod",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Year is closed." ),	0, "" },
+  { "createAccountingYearPeriod",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Year dates may not overlap another year." ),	0, "" },
+  { "createAccountingYearPeriod",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Year dates may not overlap another year." ),	0, "" },
+  { "createAccountingYearPeriod",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Periods exist for this "
+                                                       "year outside the proposed dates." ),	0, "" },
+  { "createAccountingYearPeriod",  -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Start Date must be prior to the End Date" ),	0, "" },
 
   { "createAPCreditMemoApplication",
 			-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "You may not apply more than the balance due "
