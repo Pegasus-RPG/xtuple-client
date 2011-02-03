@@ -29,6 +29,7 @@ public slots:
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
     virtual void sPrint();
     virtual void sConvert();
+    virtual void sCopy();
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();

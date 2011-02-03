@@ -95,6 +95,11 @@ void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
   pMenu->addSeparator();
 
+  menuItem = pMenu->addAction(tr("Copy"), this, SLOT(sCopy()));
+  menuItem->setEnabled(_privileges->check("MaintainQuotes"));
+
+  pMenu->addSeparator();
+
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   menuItem->setEnabled(_privileges->check("MaintainQuotes"));
 
@@ -319,6 +324,33 @@ void quotes::sConvert()
       omfgThis->sQuotesUpdated(converted[i]);
     }
   } // if user wants to convert
+}
+
+void quotes::sCopy()
+{
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  int lastid = -1;
+  for (int i = 0; i < selected.size(); i++)
+  {
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    {
+      int qid = ((XTreeWidgetItem*)(selected[i]))->id();
+      XSqlQuery qq;
+      qq.prepare("SELECT copyQuote(:qid, null) AS result;");
+      qq.bindValue(":qid", qid);
+      if(qq.exec() && qq.first())
+      {
+        lastid = qq.value("result").toInt();
+      }
+      else if(qq.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, qq.lastError().text(), __FILE__, __LINE__);
+        return;
+      }
+    }
+  }
+  if(lastid != -1)
+    omfgThis->sQuotesUpdated(lastid);
 }
 
 void quotes::sNew()
