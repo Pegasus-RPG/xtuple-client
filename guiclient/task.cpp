@@ -29,10 +29,10 @@ task::task(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   
   _budgetHours->setValidator(omfgThis->qtyVal());
   _actualHours->setValidator(omfgThis->qtyVal());
-  _budgetExp->setValidator(omfgThis->qtyVal());
-  _actualExp->setValidator(omfgThis->qtyVal());
+  _budgetExp->setValidator(omfgThis->costVal());
+  _actualExp->setValidator(omfgThis->costVal());
   _balanceHours->setPrecision(omfgThis->qtyVal());
-  _balanceExp->setPrecision(omfgThis->qtyVal());
+  _balanceExp->setPrecision(omfgThis->costVal());
 
   _prjid = -1;
   _prjtaskid = -1;
