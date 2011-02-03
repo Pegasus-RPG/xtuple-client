@@ -375,10 +375,34 @@ void project::sViewTask()
 
 void project::sDeleteTask()
 {
-  q.prepare("DELETE FROM prjtask"
-            " WHERE (prjtask_id=:prjtask_id); ");
+  q.prepare("SELECT deleteProjectTask(:prjtask_id) AS result; ");
   q.bindValue(":prjtask_id", _prjtask->id());
   q.exec();
+  if(q.first())
+  {
+    int result = q.value("result").toInt();
+    if(result < 0)
+    {
+      QString errmsg;
+      switch(result)
+      {
+        case -1:
+          errmsg = tr("Project task not found.");
+          break;
+        case -2:
+          errmsg = tr("Actual hours have been posted to this project task.");
+          break;
+        case -3:
+          errmsg = tr("Actual expenses have been posted to this project task.");
+          break;
+        default:
+          errmsg = tr("Error #%1 encountered while trying to delete project task.").arg(result);
+      }
+      QMessageBox::critical( this, tr("Cannot Delete Project Task"),
+        tr("Could not delete the project task for one or more reasons.\n") + errmsg);
+      return;
+    }
+  }
   emit deletedTask();
   sFillTaskList();
 }
