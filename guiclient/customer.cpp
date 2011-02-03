@@ -1260,7 +1260,7 @@ void customer::populate()
     else
       _onCreditHold->setChecked(TRUE);
 
-    _comments->setId(_custid);
+    _comments->setId(_crmacctid);
     _documents->setId(_crmacctid);
     
     _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
@@ -1717,8 +1717,8 @@ void customer::sClear()
     _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
     _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
     
-   // _comments->setId(-1);
-    _documents->setId(-1);
+    _comments->setId(_crmacctid);
+    _documents->setId(_crmacctid);
     
     _print->setEnabled(false);
     
@@ -1728,8 +1728,6 @@ void customer::sClear()
       
     if (_number->editMode() || _mode == cNew)
       sPrepare();
-
-    _comments->setId(_custid);
 }
 
 void customer::sNumberEditable(bool p)

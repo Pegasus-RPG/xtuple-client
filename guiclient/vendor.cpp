@@ -171,7 +171,6 @@ SetResponse vendor::set(const ParameterList &pParams)
         }
       }
 
-      _comments->setId(_vendid);
       _defaultShipVia->setText(_metrics->value("DefaultPOShipVia"));
 
       if (_privileges->check("MaintainVendorAddresses"))
@@ -655,15 +654,16 @@ void vendor::populate()
     _notice = FALSE;
     _cachedNumber = q.value("vend_number").toString();
 
+    _crmacctid = q.value("crmacct_id").toInt();
     _number->setText(q.value("vend_number"));
     _accountNumber->setText(q.value("vend_accntnum"));
     _vendtype->setId(q.value("vend_vendtype_id").toInt());
     _active->setChecked(q.value("vend_active").toBool());
     _name->setText(q.value("vend_name"));
     _contact1->setId(q.value("vend_cntct1_id").toInt());
-    _contact1->setSearchAcct(q.value("crmacct_id").toInt());
+    _contact1->setSearchAcct(_crmacctid);
     _contact2->setId(q.value("vend_cntct2_id").toInt());
-    _contact2->setSearchAcct(q.value("crmacct_id").toInt());
+    _contact2->setSearchAcct(_crmacctid);
     _address->setId(q.value("vend_addr_id").toInt());
     _defaultTerms->setId(q.value("vend_terms_id").toInt());
     _defaultShipVia->setText(q.value("vend_shipvia").toString());
@@ -697,9 +697,8 @@ void vendor::populate()
 
     sFillAddressList();
     sFillTaxregList();
-    _comments->setId(_vendid);
 
-    _crmacctid = q.value("crmacct_id").toInt();
+    _comments->setId(_crmacctid);
     _address->setSearchAcct(_crmacctid);
 
     emit newId(_vendid);

@@ -912,7 +912,7 @@ to be bound by its terms.</comment>
             <enum>Qt::StrongFocus</enum>
            </property>
            <property name="type">
-            <enum>Comments::Vendor</enum>
+            <enum>Comments::CRMAccount</enum>
            </property>
           </widget>
          </item>
