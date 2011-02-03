@@ -1486,11 +1486,12 @@ void XTreeWidget::sShowMenu(const QPoint &pntThis)
     if (!disableExport)
     {
       _menu->addSeparator();
-      _menu->addAction(tr("Copy All"),  this, SLOT(sCopyVisibleToClipboard()));
-      _menu->addAction(tr("Copy Row"),  this, SLOT(sCopyRowToClipboard()));
-      _menu->addAction(tr("Copy Cell"),  this, SLOT(sCopyCellToClipboard()));
+      QMenu* copyMenu = _menu->addMenu(tr("Copy"));
+      copyMenu->addAction(tr("All"),  this, SLOT(sCopyVisibleToClipboard()));
+      copyMenu->addAction(tr("Row"),  this, SLOT(sCopyRowToClipboard()));
+      copyMenu->addAction(tr("Cell"),  this, SLOT(sCopyCellToClipboard()));
       _menu->addSeparator();
-      _menu->addAction(tr("Export Contents..."),  this, SLOT(sExport()));
+      _menu->addAction(tr("Export..."),  this, SLOT(sExport()));
     }
 
     if(! _menu->isEmpty())

@@ -72,7 +72,8 @@ void currencies::sNew()
   newdlg->exec();
   sFillList();
 
-  if(single && !omfgThis->singleCurrency())
+  if(single && !omfgThis->singleCurrency() &&
+     _metrics->value("GLCompanySize").toInt() == 0)
   {
     // Check for the gain/loss and discrep accounts
     q.prepare("SELECT COUNT(*) = 2 AS result"

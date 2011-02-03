@@ -42,10 +42,18 @@ company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _external->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
   _authGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
   _currency->setId(CurrCluster::baseId());
-  _gainloss->setType(GLCluster::cRevenue | GLCluster::cExpense);
-  _gainloss->setShowExternal(true);
-  _yearend->setType(GLCluster::cEquity);
+  _unrlzgainloss->setType(GLCluster::cRevenue | GLCluster::cExpense);
+  _unrlzgainloss->setShowExternal(true);
+  _unrlzgainloss->setIgnoreCompany(true);
   _yearend->setShowExternal(true);
+  _yearend->setType(GLCluster::cEquity);
+  _yearend->setIgnoreCompany(true);
+  _gainloss->setType(GLCluster::cExpense);
+  _gainloss->setShowExternal(true);
+  _gainloss->setIgnoreCompany(true);
+  _discrepancy->setType(GLCluster::cExpense);
+  _discrepancy->setShowExternal(true);
+  _discrepancy->setIgnoreCompany(true);
 }
 
 company::~company()
@@ -102,23 +110,21 @@ void company::sSave()
   {
       QMessageBox::warning( this, tr("Cannot Save Company"),
                             tr("You must enter a valid Number.") );
+      _number->setFocus();
       return;
   }
 
-  if (!_yearend->isValid())
-  {
-      QMessageBox::warning( this, tr("Cannot Save Company"),
-                            tr("You must enter a Retained Earnings Account.") );
-      return;
-  }
-
-  if (_external->isChecked() &&
+  if ((!_yearend->isValid()) ||
+     (!_gainloss->isValid()) ||
+     (!_discrepancy->isValid()) ||
+     (_external->isChecked() &&
       _currency->id() != CurrCluster::baseId() &&
-      !_gainloss->isValid())
+      !_unrlzgainloss->isValid()))
   {
-      QMessageBox::warning( this, tr("Cannot Save Company"),
-                            tr("You must enter an Unrealized Gain/Loss account.") );
-      return;
+      QMessageBox::warning( this, tr("Accounts Required"),
+                            tr("You will need to return to this window to set "
+                               "required Accounts before you can use Accounts "
+                               "for this company elsewhere.") );
   }
   
   struct {
@@ -181,12 +187,14 @@ void company::sSave()
                "( company_id, company_number, company_descrip,"
                "  company_external, company_server, company_port,"
                "  company_database, company_curr_id, company_yearend_accnt_id, "
-               "  company_gainloss_accnt_id) "
+               "  company_gainloss_accnt_id, company_dscrp_accnt_id, "
+               "  company_unrlzgainloss_accnt_id) "
                "VALUES "
                "( :company_id, :company_number, :company_descrip,"
                "  :company_external, :company_server, :company_port, "
                "  :company_database, :company_curr_id, :company_yearend_accnt_id, "
-               "  :company_gainloss_accnt_id);" );
+               "  :company_gainloss_accnt_id, :company_dscrp_accnt_id, "
+               "  :company_unrlzgainloss_accnt_id);" );
   }
   else if (_mode == cEdit)
   {
@@ -229,7 +237,9 @@ void company::sSave()
                "    company_database=:company_database, "
                "    company_curr_id=:company_curr_id, "
                "    company_yearend_accnt_id=:company_yearend_accnt_id, "
-               "    company_gainloss_accnt_id=:company_gainloss_accnt_id "
+               "    company_gainloss_accnt_id=:company_gainloss_accnt_id, "
+               "    company_dscrp_accnt_id=:company_dscrp_accnt_id, "
+               "    company_unrlzgainloss_accnt_id=:company_unrlzgainloss_accnt_id "
                "WHERE (company_id=:company_id);" );
   }
   
@@ -240,11 +250,17 @@ void company::sSave()
   q.bindValue(":company_server",   _extServer->text());
   q.bindValue(":company_port",     _extPort->cleanText());
   q.bindValue(":company_database", _extDB->text());
-  q.bindValue(":company_yearend_accnt_id", _yearend->id());
+  if (_gainloss->isValid())
+    q.bindValue(":company_gainloss_accnt_id", _gainloss->id());
+  if (_discrepancy->isValid())
+    q.bindValue(":company_dscrp_accnt_id", _discrepancy->id());
+  if (_yearend->isValid())
+    q.bindValue(":company_yearend_accnt_id", _yearend->id());
   if (_external->isChecked())
   {
     q.bindValue(":company_curr_id", _currency->id());
-    q.bindValue(":company_gainloss_accnt_id", _gainloss->id());
+    if (_unrlzgainloss->isValid())
+      q.bindValue(":company_unrlzgainloss_accnt_id", _unrlzgainloss->id());
   }
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -272,11 +288,13 @@ void company::populate()
     _extPort->setValue(q.value("company_port").toInt());
     _extDB->setText(q.value("company_database").toString());
     _yearend->setId(q.value("company_yearend_accnt_id").toInt());
+    _gainloss->setId(q.value("company_gainloss_accnt_id").toInt());
+    _discrepancy->setId(q.value("company_dscrp_accnt_id").toInt());
     if (_external->isChecked())
     {
       _cachedCurrid = q.value("company_curr_id").toInt();
       _currency->setId(q.value("company_curr_id").toInt());
-      _gainloss->setId(q.value("company_gainloss_accnt_id").toInt());
+      _unrlzgainloss->setId(q.value("company_unrlzgainloss_accnt_id").toInt());
     }
 
     _cachedNumber = q.value("company_number").toString();
@@ -499,5 +517,5 @@ void company::sCurrencyChanged()
         _currency->setId(_cachedCurrid);
     }
   }
-  _gainloss->setEnabled(_currency->id() != CurrCluster::baseId());
+  _unrlzgainloss->setEnabled(_currency->id() != CurrCluster::baseId());
 }

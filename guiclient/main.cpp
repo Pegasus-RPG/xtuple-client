@@ -642,7 +642,8 @@ int main(int argc, char *argv[])
     }
   }
 
-  if(!omfgThis->singleCurrency())
+  if(!omfgThis->singleCurrency() &&
+     _metrics->value("GLCompanySize").toInt() == 0)
   {
     // Check for the gain/loss and discrep accounts
     q.prepare("SELECT COALESCE((SELECT TRUE"

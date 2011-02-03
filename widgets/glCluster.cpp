@@ -22,11 +22,19 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
   setNewPriv("MaintainChartOfAccounts");
 
   _showExternal = false;
+  _ignoreCompany = false;
+  if (_x_metrics)
+  {
+    if (_x_metrics->value("GLCompanySize").toInt() == 0)
+      _ignoreCompany = true;
+  }
 
   _query = "SELECT accnt_id AS id, public.formatGLAccount(accnt_id) AS number, "
            "  accnt_descrip AS name, accnt_extref AS description, "
            "  accnt_active AS active, accnt_type, "
-           "  COALESCE(company_external,false) AS external "
+           "  COALESCE(company_yearend_accnt_id, -1) AS company_yearend_accnt_id, "
+           "  COALESCE(company_gainloss_accnt_id, -1) AS company_gainloss_accnt_id, "
+           "  COALESCE(company_dscrp_accnt_id, -1) AS company_dscrp_accnt_id "
            "FROM ONLY accnt "
            "  LEFT OUTER JOIN company ON (accnt_company=company_number) "
            "WHERE (true) ";
@@ -57,6 +65,11 @@ void GLClusterLineEdit::setShowExternal(bool p)
 {
   _showExternal = p;
   buildExtraClause();
+}
+
+void GLClusterLineEdit::setIgnoreCompany(bool p)
+{
+  _ignoreCompany = p;
 }
 
 void GLClusterLineEdit::buildExtraClause()
@@ -156,13 +169,19 @@ void GLClusterLineEdit::sParse()
   if (_id != oldid &&
       model()->rowCount())
   {
-    bool external = model()->data(model()->index(0,6)).toBool();
     QString type = model()->data(model()->index(0,5)).toString();
+    int yearendid = model()->data(model()->index(0,6)).toInt();
+    int gainlossid = model()->data(model()->index(0,7)).toInt();
+    int dscrpid = model()->data(model()->index(0,8)).toInt();
 
-    if (external && !_showExternal)
+    if (!_ignoreCompany &&
+        (yearendid == -1 ||
+         gainlossid == -1 ||
+         dscrpid == -1 ))
     {
-      QMessageBox::critical(this,tr("External Number"),
-                            tr("You may not use an Account associated with an external Company."));
+      QMessageBox::critical(this,tr("Company Incomplete"),
+                            tr("The Company associated with this Account has incomplete information. "
+                               "You must complete the Company record to use this Account."));
       setId(-1);
     }
     else if (_type && !_types.contains(type))

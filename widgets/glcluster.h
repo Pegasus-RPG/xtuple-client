@@ -65,10 +65,14 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
     public:
       GLClusterLineEdit(QWidget*, const char* = 0);
 
-      void setType(unsigned int pType);
       unsigned int type()  const       { return _type; }
+      void setType(unsigned int pType);
+
       bool showExternal()              { return _showExternal; }
       void setShowExternal(bool p);
+
+      bool ignoreCompany()              { return _ignoreCompany; }
+      void setIgnoreCompany(bool p);
 
     public slots:
       void sList();
@@ -87,6 +91,7 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
     private:
       unsigned int _type;
       bool _showExternal;
+      bool _ignoreCompany;
       QStringList  _types;
 };
 
@@ -108,10 +113,14 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
       cEquity     = 0x10
     };
 
-    Q_INVOKABLE void setType(unsigned int pType) { static_cast<GLClusterLineEdit*>(_number)->setType(pType); }
     Q_INVOKABLE unsigned int type()  const       { return static_cast<GLClusterLineEdit*>(_number)->type(); }
+    Q_INVOKABLE void setType(unsigned int pType) { static_cast<GLClusterLineEdit*>(_number)->setType(pType); }
+
     Q_INVOKABLE bool showExternal()              { return static_cast<GLClusterLineEdit*>(_number)->showExternal(); }
     Q_INVOKABLE void setShowExternal(bool p)     { static_cast<GLClusterLineEdit*>(_number)->setShowExternal(p); }
+
+    Q_INVOKABLE bool ignoreCompany()             { return static_cast<GLClusterLineEdit*>(_number)->ignoreCompany(); }
+    Q_INVOKABLE void setIgnoreCompany(bool p)    { static_cast<GLClusterLineEdit*>(_number)->setIgnoreCompany(p); }
 
     Q_INVOKABLE bool projectVisible();
     Q_INVOKABLE bool setProjectVisible(bool p);

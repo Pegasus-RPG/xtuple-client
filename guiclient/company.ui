@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>412</height>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -83,7 +83,7 @@ to be bound by its terms.</comment>
    <item row="1" column="1">
     <widget class="XTextEdit" name="_descrip"/>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="5" column="0" colspan="2">
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>0</number>
@@ -234,7 +234,7 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item row="5" column="1" colspan="3">
-         <widget class="GLCluster" name="_gainloss">
+         <widget class="GLCluster" name="_unrlzgainloss">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -290,6 +290,35 @@ to be bound by its terms.</comment>
      <property name="text">
       <string>Retained Earnings:</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="GLCluster" name="_gainloss"/>
+   </item>
+   <item row="4" column="1">
+    <widget class="GLCluster" name="_discrepancy"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="_gainlossLit_2">
+     <property name="text">
+      <string>Currency Gain/Loss:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="_discrepancyLit">
+     <property name="text">
+      <string>G/L Series Discrepancy :</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
    </item>
   </layout>
@@ -311,6 +340,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTextEdit</class>

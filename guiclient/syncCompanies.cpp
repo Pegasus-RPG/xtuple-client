@@ -154,6 +154,44 @@ void syncCompanies::sSync()
     if (DEBUG)
       qDebug("syncCompanies:sSync() i %d, c %p", i, c);
 
+    XSqlQuery co;
+    co.prepare("SELECT COALESCE(company_unrlzgainloss_accnt_id,-1) AS company_unrlzgainloss_accnt_id, "
+               "COALESCE(company_curr_id,-1) AS company_curr_id, "
+               "COALESCE(company_dscrp_accnt_id,-1) AS company_dscrp_accnt_id "
+               "FROM company WHERE (company_id=:company_id);");
+    co.bindValue(":company_id", c->id());
+    co.exec();
+    if (co.first())
+    {
+      if (co.value("company_dscrp_accnt_id").toInt() == -1)
+      {
+        QMessageBox::warning(this, tr("No Discrepency Account"),
+                             tr("Company %1 does not appear to have "
+                                "a Discrepancy Account defined. The "
+                                "data cannot safely be synchronized.")
+                             .arg(c->rawValue("company_number").toString()));
+        errorCount++;
+        continue;
+      }
+      else if (co.value("company_curr_id").toInt() != CurrCluster::baseId() &&
+          co.value("company_unrlzgainloss_accnt_id").toInt() == -1)
+      {
+        QMessageBox::warning(this, tr("No Gain/Loss Account"),
+                             tr("Company %1 does not appear to have "
+                                "an unrealized Gain/Loss Account defined. The "
+                                "data cannot safely be synchronized.")
+                             .arg(c->rawValue("company_number").toString()));
+        errorCount++;
+        continue;
+      }
+    }
+    else if (co.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, co.lastError().databaseText(), __FILE__, __LINE__);
+      errorCount++;
+      continue;
+    }
+
     QString dbURL;
     QString protocol;
     QString host = c->rawValue("company_server").toString();
@@ -283,28 +321,6 @@ void syncCompanies::sSync()
                              .arg(c->rawValue("company_number").toString()));
         errorCount++;
         continue;
-      }
-
-      XSqlQuery dscrp;
-      dscrp.exec("SELECT fetchMetricValue('GLSeriesDiscrepancyAccount') AS accnt_id;");
-      if (dscrp.first())
-      {
-        if (!dscrp.value("accnt_id").toInt())
-        {
-          QMessageBox::warning(this, tr("No Discrepency Account"),
-                               tr("The child database does not appear to have "
-                                  "a discrepency account forCompany %1 defined. "
-                                  "The data cannot safely be synchronized.")
-                               .arg(c->rawValue("company_number").toString()));
-          errorCount++;
-          continue;
-        }
-      }
-      else if (dscrp.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, dscrp.lastError().databaseText(), __FILE__, __LINE__);
-        errorCount++;
-        return;
       }
 
       // make sure that we don't fail because of missing supporting data
@@ -629,26 +645,6 @@ void syncCompanies::sSync()
                         __FILE__, __LINE__);
             errorCount++;
             break;
-          }
-
-          // If this is the discrepency account map to account for company locally
-          if (dscrp.value("accnt_id").toInt() == raccnt.value("accnt_id").toInt())
-          {
-            XSqlQuery lco;
-            lco.prepare("UPDATE company SET "
-                        "  company_dscrp_accnt_id=:accnt_id "
-                        "WHERE (company_id=:company_id);");
-            lco.bindValue(":company_id", c->id("company_number"));
-            lco.bindValue(":accnt_id", accntid);
-            lco.exec();
-            if (lco.lastError().type() != QSqlError::NoError)
-            {
-              rollback.exec();
-              systemError(this, lco.lastError().databaseText(),
-                          __FILE__, __LINE__);
-              errorCount++;
-              break;
-            }
           }
 
           // Import trans detail

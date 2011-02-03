@@ -25,6 +25,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   if (name)
     setObjectName(name);
 
+  _yearend->setType(GLCluster::cEquity);
   _gainLoss->setType(GLCluster::cExpense);
   _discrepancy->setType(GLCluster::cExpense);
 
@@ -145,6 +146,10 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
     _externalConsolidation->setChecked(_metrics->boolean("MultiCompanyFinancialConsolidation") &&
                                        extConsolAllowed);
+
+    _yearend->setId(_metrics->value("YearEndEquityAccount").toInt());
+    _gainLoss->setId(_metrics->value("CurrencyGainLossAccount").toInt());
+    _discrepancy->setId(_metrics->value("GLSeriesDiscrepancyAccount").toInt());
   }
 
   if (_metrics->value("GLProfitSize").toInt() == 0)
@@ -165,7 +170,6 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _ffSubaccounts->setChecked(_metrics->boolean("GLFFSubaccounts"));
   }
 
-  _gainLoss->setId(_metrics->value("CurrencyGainLossAccount").toInt());
   switch(_metrics->value("CurrencyExchangeSense").toInt())
   {
     case 1:
@@ -175,8 +179,6 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
     default:
       _baseToLocal->setChecked(TRUE);
   }
-
-  _discrepancy->setId(_metrics->value("GLSeriesDiscrepancyAccount").toInt());
 
   _mandatoryNotes->setChecked(_metrics->boolean("MandatoryGLEntryNotes"));
   _manualFwdUpdate->setChecked(_metrics->boolean("ManualForwardUpdate"));
@@ -360,6 +362,9 @@ bool configureGL::sSave()
   {
     _metrics->set("GLCompanySize", _companySegmentSize->value());
     _metrics->set("MultiCompanyFinancialConsolidation", _externalConsolidation->isChecked());
+    _metrics->set("YearEndEquityAccount", _yearend->id());
+    _metrics->set("CurrencyGainLossAccount", _gainLoss->id());
+    _metrics->set("GLSeriesDiscrepancyAccount", _discrepancy->id());
   }
   else
   {
@@ -402,16 +407,11 @@ bool configureGL::sSave()
 
   _metrics->set("UseJournals", _journal->isChecked());
 
-  //if (! omfgThis->singleCurrency())
-  //{
-      _metrics->set("CurrencyGainLossAccount", _gainLoss->id());
-      if(_localToBase->isChecked())
-        _metrics->set("CurrencyExchangeSense", 1);
-      else // if(_baseToLocal->isChecked())
-        _metrics->set("CurrencyExchangeSense", 0);
-  //}
+  if(_localToBase->isChecked())
+    _metrics->set("CurrencyExchangeSense", 1);
+  else // if(_baseToLocal->isChecked())
+    _metrics->set("CurrencyExchangeSense", 0);
 
-  _metrics->set("GLSeriesDiscrepancyAccount", _discrepancy->id());
   _metrics->set("MandatoryGLEntryNotes", _mandatoryNotes->isChecked());
   _metrics->set("ManualForwardUpdate", _manualFwdUpdate->isChecked());
   _metrics->set("DefaultTaxAuthority", _taxauth->id());
