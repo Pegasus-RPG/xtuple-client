@@ -15,6 +15,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <mqlutil.h>
 #include <openreports.h>
 
 #include "accountNumber.h"
@@ -33,6 +34,7 @@ accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_new,              SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_print,            SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_showExternal, SIGNAL(toggled(bool)), this, SLOT(sBuildList()));
+  connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   connect(omfgThis, SIGNAL(configureGLUpdated()), this, SLOT(sBuildList()));
 
@@ -110,6 +112,8 @@ bool accountNumbers::setParams(ParameterList &pParams)
   if (_metrics->boolean("MultiCompanyFinancialConsolidation") &&
       _showExternal->isChecked())
     pParams.append("showExternal");
+  if (_showInactive->isChecked())
+    pParams.append("showInactive");
 
   pParams.append("asset",     tr("Asset"));
   pParams.append("expense",   tr("Expense"));
@@ -135,26 +139,18 @@ void accountNumbers::sPrint()
 
 void accountNumbers::sFillList()
 {
-  QString sql = "SELECT accnt_id, *,"
-                "       CASE WHEN(accnt_type='A') THEN <? value(\"asset\") ?>"
-                "            WHEN(accnt_type='E') THEN <? value(\"expense\") ?>"
-                "            WHEN(accnt_type='L') THEN <? value(\"liability\") ?>"
-                "            WHEN(accnt_type='Q') THEN <? value(\"equity\") ?>"
-                "            WHEN(accnt_type='R') THEN <? value(\"revenue\") ?>"
-                "            ELSE accnt_type"
-                "       END AS accnt_type_qtdisplayrole "
-                "FROM (ONLY accnt LEFT OUTER JOIN"
-                "     company ON (accnt_company=company_number)) "
-                "     LEFT OUTER JOIN subaccnttype ON (accnt_type=subaccnttype_accnt_type AND accnt_subaccnttype_code=subaccnttype_code) "
-                "<? if not exists(\"showExternal\") ?>"
-                "WHERE (NOT COALESCE(company_external, false)) "
-                "<? endif ?>"
-                "ORDER BY accnt_number, accnt_sub, accnt_profit;" ;
   ParameterList params;
   if (! setParams(params))
     return;
 
-  MetaSQLQuery mql(sql);
+  bool ok = true;
+  QString errorString;
+  MetaSQLQuery mql = MQLUtil::mqlLoad("accountNumbers", "detail", errorString, &ok);
+  if(!ok)
+  {
+    systemError(this, errorString, __FILE__, __LINE__);
+    return;
+  }
   q = mql.toQuery(params);
 
   _account->populate(q);
@@ -201,6 +197,9 @@ void accountNumbers::sBuildList()
   _externalCol++;
 
   _account->addColumn(tr("Sub. Type"),      100, Qt::AlignLeft,  false, "subaccnttype_descrip");
+  _externalCol++;
+
+  _account->addColumn(tr("Active"),          75, Qt::AlignLeft,  false, "accnt_active");
   _externalCol++;
 
   if (_metrics->value("Application") != "PostBooks")

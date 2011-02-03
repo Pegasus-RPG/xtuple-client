@@ -13,7 +13,7 @@
 #include "glcluster.h"
 
 GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "accnt", "accnt_id", "formatGLAccount(accnt_id)", "accnt_descrip", "accnt_extref", 0, pName)
+    VirtualClusterLineEdit(pParent, "accnt", "accnt_id", "formatGLAccount(accnt_id)", "accnt_descrip", "accnt_extref", 0, pName, "accnt_active")
 {
   setTitles(tr("Account"), tr("Accounts"));
   setUiName("accountNumber");
@@ -25,7 +25,7 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
 
   _query = "SELECT accnt_id AS id, public.formatGLAccount(accnt_id) AS number, "
            "  accnt_descrip AS name, accnt_extref AS description, "
-           "  NULL AS active, accnt_type, "
+           "  accnt_active AS active, accnt_type, "
            "  COALESCE(company_external,false) AS external "
            "FROM ONLY accnt "
            "  LEFT OUTER JOIN company ON (accnt_company=company_number) "
@@ -405,6 +405,8 @@ void accountList::sFillList()
   if (! _showExternal)
     where << "(NOT COALESCE(company_external, false)) ";
 
+  where << "accnt_active ";
+
   if (!where.isEmpty())
     sql += " WHERE " + where.join(" AND ");
 
@@ -558,6 +560,8 @@ void accountSearch::sFillList()
 
   if (! _showExternal)
     where << "(NOT COALESCE(company_external, false))";
+
+  where << "accnt_active ";
 
   if (!where.isEmpty())
     sql += " WHERE " + where.join(" AND ");

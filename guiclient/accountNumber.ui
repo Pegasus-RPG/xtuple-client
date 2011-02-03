@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
+    <width>625</width>
     <height>364</height>
    </rect>
   </property>
@@ -337,7 +337,7 @@ to be bound by its terms.</comment>
      </property>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="_commentsLit">
      <property name="text">
       <string>Co&amp;mments:</string>
@@ -347,8 +347,18 @@ to be bound by its terms.</comment>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="3">
+   <item row="8" column="0" colspan="3">
     <widget class="QTextEdit" name="_comments"/>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QCheckBox" name="_active">
+     <property name="text">
+      <string>Active</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -379,7 +389,9 @@ to be bound by its terms.</comment>
   <tabstop>_currency</tabstop>
   <tabstop>_postIntoClosed</tabstop>
   <tabstop>_forwardUpdate</tabstop>
+  <tabstop>_active</tabstop>
   <tabstop>_comments</tabstop>
+  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

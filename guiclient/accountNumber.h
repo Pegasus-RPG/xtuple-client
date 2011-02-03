@@ -39,6 +39,7 @@ protected slots:
 private:
     int _mode;
     int _accntid;
+    bool _wasActive;
 
 };
 
