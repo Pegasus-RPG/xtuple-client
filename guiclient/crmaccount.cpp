@@ -152,7 +152,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   else
   {
     _customer->setEnabled(_privileges->check("MaintainCustomerMasters") && !_modal);
-    _prospect->setEnabled(_privileges->check("MaintainProspects") && !_modal);
+    _prospect->setEnabled(_privileges->check("MaintainProspectMasters") && !_modal);
     _taxauth->setEnabled(_privileges->check("MaintainTaxAuthorities") && !_modal);
     _vendor->setEnabled(_privileges->check("MaintainVendors") && !_modal);
     _partner->setEnabled(_privileges->check("MaintainPartners"));

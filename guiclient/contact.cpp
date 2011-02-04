@@ -234,11 +234,11 @@ void contact::sPopulateUsesMenu(QMenu* pMenu)
 
     case 7:
       menuItem = pMenu->addAction(editStr, this, SLOT(sEditProspect()));
-      menuItem->setEnabled(_privileges->check("MaintainProspects") && (cView != _mode));
+      menuItem->setEnabled(_privileges->check("MaintainProspectMasters") && (cView != _mode));
       menuItem = pMenu->addAction(viewStr, this, SLOT(sViewProspect()));
-      menuItem->setEnabled(_privileges->check("ViewProspects"));
+      menuItem->setEnabled(_privileges->check("ViewProspectMasters"));
       menuItem = pMenu->addAction(detachStr, this, SLOT(sDetachUse()));
-      menuItem->setEnabled(_privileges->check("MaintainProspects") && (cView != _mode));
+      menuItem->setEnabled(_privileges->check("MaintainProspectMasters") && (cView != _mode));
       break;
 
     case 8:
@@ -776,7 +776,7 @@ void contact::sHandleValidUse(bool valid)
 		  (_uses->altId() == 4 && _privileges->check("MaintainCustomerMasters")) ||
 		  (_uses->altId() == 5 && _privileges->check("MaintainVendors")) ||
 		  (_uses->altId() == 6 && _privileges->check("MaintainVendors")) ||
-		  (_uses->altId() == 7 && _privileges->check("MaintainProspects")) ||
+                  (_uses->altId() == 7 && _privileges->check("MaintainProspectMasters")) ||
 		  (_uses->altId() == 8 && _privileges->check("MaintainShiptos")) ||
 		  (_uses->altId() == 9 && _privileges->check("MaintainVendorAddresses")) ||
 		  (_uses->altId() ==10 && _privileges->check("MaintainWarehouses")) ||
@@ -789,7 +789,7 @@ void contact::sHandleValidUse(bool valid)
 		  (_uses->altId() == 4 && _privileges->check("ViewCustomerMasters")) ||
 		  (_uses->altId() == 5 && _privileges->check("ViewVendors")) ||
 		  (_uses->altId() == 6 && _privileges->check("ViewVendors")) ||
-		  (_uses->altId() == 7 && _privileges->check("ViewProspects")) ||
+                  (_uses->altId() == 7 && _privileges->check("ViewProspectMasters")) ||
 		  (_uses->altId() == 8 && _privileges->check("ViewShiptos")) ||
 		  (_uses->altId() == 9 && _privileges->check("ViewVendorAddresses")) ||
 		  (_uses->altId() ==10 && _privileges->check("ViewWarehouses"))  ||
