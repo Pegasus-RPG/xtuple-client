@@ -1086,7 +1086,6 @@ void itemSite::sCacheItemType(char pItemType)
   }
   else
   {
-    _planningType->setCurrentIndex(0);
     _planningType->setEnabled(TRUE);
   }
 
