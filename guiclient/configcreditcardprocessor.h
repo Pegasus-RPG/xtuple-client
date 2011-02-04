@@ -13,7 +13,9 @@
 
 #include "xwidget.h"
 
-/** \class ConfigCreditCardProcessor
+/** \ingroup creditcards
+  
+    \class ConfigCreditCardProcessor
   
     \brief An abstract class for showing and saving configuration information
            for a specific credit card processor.

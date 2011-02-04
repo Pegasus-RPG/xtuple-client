@@ -111,6 +111,7 @@ class CreditCardProcessor : public QObject
     int			_defaultLivePort;
     int			_defaultTestPort;
     static QString	_errorMsg;
+    bool                _ignoreSslErrors;
     static QHash<int, QString>	_msgHash;
     bool		_passedAvs;
     bool		_passedCvv;
@@ -120,6 +121,9 @@ class CreditCardProcessor : public QObject
     QString		_pserver;
     QHttp             * _http;
     QList<QPair<QString, QString> > _extraHeaders;
+
+    protected slots:
+      void sslErrors(const QList<QSslError> &errors);
 
 };
 

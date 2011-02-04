@@ -19,6 +19,10 @@
 
 #define DEBUG false
 
+/** \ingroup creditcards
+    \class   YourPayProcessor
+ */
+
 // convenience macro to add <ChildName>Content</ChildName> to the Parent node
 #define CREATECHILDTEXTNODE(Parent, ChildName, Content) \
 	{ \

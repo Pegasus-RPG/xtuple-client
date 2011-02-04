@@ -37,7 +37,14 @@
 
 #define DEBUG false
 
-/** \class CreditCardProcessor
+/** \defgroup creditcards Credit Card API
+    The xTuple Credit Card subsystem contains the internal code
+    for processing credit card transactions and the user interface
+    for configuring the credit card handling.
+  */
+/** \ingroup creditcards
+  
+    \class CreditCardProcessor
 
     \brief This is a generic class that defines the interface between
            xTuple ERP and credit card processing services.
@@ -267,8 +274,9 @@ CreditCardProcessor::CreditCardProcessor()
   _defaultLiveServer  = "live.creditcardprocessor.com";
   _defaultTestPort    = 0;
   _defaultTestServer  = "test.creditcardprocessor.com";
-  _errorMsg       = "";
-  _http = 0;
+  _errorMsg           = "";
+  _http               = 0;
+  _ignoreSslErrors    = _metrics->boolean("CCIgnoreSSLErrors");
 
   for (unsigned int i = 0; i < sizeof(messages) / sizeof(messages[0]); i++)
     _msgHash.insert(messages[i].code, tr(messages[i].text));
@@ -1766,6 +1774,8 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     if(ccurl.scheme().compare("https", Qt::CaseInsensitive) != 0)
       cmode = QHttp::ConnectionModeHttp;
     _http = new QHttp(ccurl.host(), cmode, _metrics->value("CCPort").toInt());
+    connect(_http, SIGNAL(sslErrors(const QList<QSslError> &)),
+            this,  SLOT(sslErrors(const QList<QSslError> &)));
 
     if(_metrics->boolean("CCUseProxyServer"))
     {
@@ -3023,4 +3033,29 @@ CreditCardProcessor::FraudCheckResult *CreditCardProcessor::cvvCodeLookup(QChar 
       return _cvvCodes.at(i);
 
   return 0;
+}
+
+void CreditCardProcessor::sslErrors(const QList<QSslError> &errors)
+{
+  if (DEBUG)
+    qDebug() << "CreditCardProcessor::sslErrors(" << errors << ")";
+
+  QHttp *httpobj = qobject_cast<QHttp*>(sender());
+  if (errors.size() > 0 && httpobj)
+  {
+    QString errlist;
+    for (int i = 0; i < errors.size(); i++)
+      errlist += QString("<li>%1</li>").arg(errors.at(i).errorString());
+    if (_ignoreSslErrors ||
+        QMessageBox::question(0,
+                              tr("Questionable Security"),
+                              tr("<p>The security of this transaction may be compromised."
+                                 " The following SSL errors have been reported:"
+                                 "<ul>%1</ul></p>"
+                                 "<p>Would you like to continue anyway?</p>")
+                              .arg(errlist),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+        httpobj->ignoreSslErrors();
+  }
 }

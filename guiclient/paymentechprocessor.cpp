@@ -17,6 +17,10 @@
 
 #define DEBUG false
 
+/** \ingroup creditcards
+    \class   PaymentechProcessor
+ */
+
 PaymentechProcessor::PaymentechProcessor() : CreditCardProcessor()
 {
   _defaultLivePort   = 443;

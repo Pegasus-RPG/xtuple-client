@@ -13,6 +13,11 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+/** \ingroup creditcards
+    \class ConfigCyberSourceProcessor
+    \brief Configuration UI for the CyberSource credit card processor
+ */
+
 ConfigCyberSourceProcessor::ConfigCyberSourceProcessor(QWidget* parent, Qt::WindowFlags fl)
     : ConfigCreditCardProcessor(parent, fl)
 {

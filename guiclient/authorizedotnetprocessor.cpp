@@ -12,6 +12,10 @@
    support Visa ECI, MasterCard UCAF for x_authentication_indicator?
    support Visa CAVV or MasterCard UCAF for x_cardholder_authentication_value?
 */
+/** \ingroup creditcards
+    \class   AuthorizeDotNetProcessor
+    \brief   The implementation of Authorize.Net-specific credit card handling
+ */
 
 #include <QSqlError>
 
@@ -55,6 +59,10 @@ AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
   _msgHash.insert(-209, tr("The Delimiting Character and the Encapsulating "
 			   "Character cannot be the same. Please change one or "
 			   "the other."));
+
+  _ignoreSslErrors = _metrics->boolean("CCIgnoreSSLErrors") ||
+                     _metrics->boolean("CCANIgnoreSSLErrors");
+
 }
 
 int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype)

@@ -17,6 +17,11 @@
 
 #define DEBUG false
 
+/** \ingroup creditcards
+    \class   VerisignProcessor
+    \todo    Finish implementing this
+ */
+
 VerisignProcessor::VerisignProcessor() : CreditCardProcessor()
 {
   _defaultLivePort   = 443;

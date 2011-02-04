@@ -22,6 +22,11 @@
 
 #define DEBUG false
 
+/** \ingroup creditcards
+    \class   CyberSourceProcessor
+    \brief   The implementation of CyberSource-specific credit card handling
+ */
+
 #define CPDATA_NS   "ns3"
 #define CPTP_NS     "ns1"
 #define SOAP_ENC_NS "SOAP-ENC"

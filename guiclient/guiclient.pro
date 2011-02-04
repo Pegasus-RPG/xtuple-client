@@ -128,6 +128,7 @@ FORMS =   absoluteCalendarItem.ui               \
           commentTypes.ui                       \
           companies.ui                          \
           company.ui                            \
+          configauthorizedotnetprocessor.ui     \
           configcybersourceprocessor.ui         \
           configureCC.ui                        \
           configureCRM.ui                       \
@@ -662,6 +663,7 @@ HEADERS = ../common/format.h                    \
           commentTypes.h                \
           companies.h                   \
           company.h                     \
+          configauthorizedotnetprocessor.h \
           configcreditcardprocessor.h   \
           configcybersourceprocessor.h  \
           configureCC.h                 \
@@ -1245,6 +1247,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           commentTypes.cpp                      \
           companies.cpp                         \
           company.cpp                           \
+          configauthorizedotnetprocessor.cpp    \
           configcreditcardprocessor.cpp         \
           configcybersourceprocessor.cpp        \
           configureCC.cpp                       \

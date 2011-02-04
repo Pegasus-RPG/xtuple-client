@@ -18,6 +18,11 @@
 
 #define DEBUG false
 
+/** \ingroup creditcards
+    \class   ExternalCCProcessor
+    \brief   A simple interface for entering credit card transaction
+             information manually.
+ */
 ExternalCCProcessor::ExternalCCProcessor() : CreditCardProcessor()
 {
   _defaultLivePort   = 0;

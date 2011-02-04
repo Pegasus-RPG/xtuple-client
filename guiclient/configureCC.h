@@ -29,7 +29,6 @@ public:
     ~configureCC();
 
 public slots:
-    virtual void sDuplicateWindow(int);
     virtual bool sSave();
 
 protected slots:
