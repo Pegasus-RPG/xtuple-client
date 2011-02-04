@@ -32,6 +32,7 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
   _query = "SELECT accnt_id AS id, public.formatGLAccount(accnt_id) AS number, "
            "  accnt_descrip AS name, accnt_extref AS description, "
            "  accnt_active AS active, accnt_type, "
+           "  COALESCE(company_id, -1) AS company_id, "
            "  COALESCE(company_yearend_accnt_id, -1) AS company_yearend_accnt_id, "
            "  COALESCE(company_gainloss_accnt_id, -1) AS company_gainloss_accnt_id, "
            "  COALESCE(company_dscrp_accnt_id, -1) AS company_dscrp_accnt_id "
@@ -70,6 +71,16 @@ void GLClusterLineEdit::setShowExternal(bool p)
 void GLClusterLineEdit::setIgnoreCompany(bool p)
 {
   _ignoreCompany = p;
+}
+
+int GLClusterLineEdit::companyId()
+{
+  if (model())
+  {
+    if (model()->rowCount())
+      return    model()->data(model()->index(0,6)).toInt();
+  }
+  return -1;
 }
 
 void GLClusterLineEdit::buildExtraClause()
@@ -170,9 +181,9 @@ void GLClusterLineEdit::sParse()
       model()->rowCount())
   {
     QString type = model()->data(model()->index(0,5)).toString();
-    int yearendid = model()->data(model()->index(0,6)).toInt();
-    int gainlossid = model()->data(model()->index(0,7)).toInt();
-    int dscrpid = model()->data(model()->index(0,8)).toInt();
+    int yearendid = model()->data(model()->index(0,7)).toInt();
+    int gainlossid = model()->data(model()->index(0,8)).toInt();
+    int dscrpid = model()->data(model()->index(0,9)).toInt();
 
     if (!_ignoreCompany &&
         (yearendid == -1 ||

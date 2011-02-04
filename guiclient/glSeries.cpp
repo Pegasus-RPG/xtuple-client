@@ -243,6 +243,7 @@ void glSeries::sEdit()
   ParameterList params;
   params.append("mode", "edit");
   params.append("glseries_id", _glseries->id());
+  params.append("glSequence", _glsequence);
   params.append("distDate", _date->date());
 
   if (_mode == cPostStandardJournal)

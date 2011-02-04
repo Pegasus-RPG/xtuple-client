@@ -22,6 +22,9 @@ glSeriesItem::glSeriesItem(QWidget* parent, const char* name, bool modal, Qt::WF
 {
     setupUi(this);
 
+    _glseriesid = -1;
+    _glsequence = -1;
+
     connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
 }
 
@@ -97,6 +100,31 @@ void glSeriesItem::sSave()
   {
 	_amount->setFocus();
 	return;
+  }
+
+  if (!_metrics->boolean("IgnoreCompany"))
+  {
+    XSqlQuery co;
+    co.prepare("SELECT company_id "
+               "FROM glseries "
+               " JOIN accnt ON (accnt_id=glseries_accnt_id) "
+               " JOIN company ON (accnt_company=company_number) "
+               "WHERE ((glseries_sequence=:glsequence) "
+               " AND (glseries_id != :glseries_id) "
+               " AND (company_id != :company_id));");
+    co.bindValue(":glsequence", _glsequence);
+    co.bindValue(":glseries_id", _glseriesid);
+    co.bindValue(":company_id", _account->companyId());
+    co.exec();
+    if (co.first())
+    {
+      QMessageBox::critical(this, tr("Can not Save Series Item"),
+                            tr("The Company of this Account does not match the "
+                               "Companies for other Accounts on this series.  This "
+                               "entry can not be saved."));
+      _account->setFocus();
+      return;
+    }
   }
 
   double amount = _amount->baseValue();

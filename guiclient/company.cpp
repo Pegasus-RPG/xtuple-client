@@ -113,19 +113,6 @@ void company::sSave()
       _number->setFocus();
       return;
   }
-
-  if ((!_yearend->isValid()) ||
-     (!_gainloss->isValid()) ||
-     (!_discrepancy->isValid()) ||
-     (_external->isChecked() &&
-      _currency->id() != CurrCluster::baseId() &&
-      !_unrlzgainloss->isValid()))
-  {
-      QMessageBox::warning( this, tr("Accounts Required"),
-                            tr("You will need to return to this window to set "
-                               "required Accounts before you can use Accounts "
-                               "for this company elsewhere.") );
-  }
   
   struct {
     bool	condition;
@@ -169,7 +156,47 @@ void company::sSave()
   {
     QMessageBox::critical(this, tr("Duplicate Company Number"),
       tr("A Company Number already exists for the one specified.") );
+    _number->setFocus();
     return;
+  }
+
+  if (_mode != cNew)
+  {
+    if (_yearend->isValid() &&
+        _companyid != _yearend->companyId())
+    {
+      QMessageBox::critical(this, tr("Company Account Mismatch"),
+                            tr("The Retained Earnings Account must belong to this Company.") );
+      _yearend->setFocus();
+      return;
+    }
+
+    if (_gainloss->isValid() &&
+        _companyid != _gainloss->companyId())
+    {
+      QMessageBox::critical(this, tr("Company Account Mismatch"),
+                            tr("The Currency Gain/Loss Account must belong to this Company.") );
+      _gainloss->setFocus();
+      return;
+    }
+
+    if (_discrepancy->isValid() &&
+        _companyid != _discrepancy->companyId())
+    {
+      QMessageBox::critical(this, tr("Company Account Mismatch"),
+                            tr("The G/L Discrepancy Account must belong to this Company.") );
+      _discrepancy->setFocus();
+      return;
+    }
+
+    if (_unrlzgainloss->isValid() &&
+        _companyid != _unrlzgainloss->companyId())
+    {
+      QMessageBox::critical(this, tr("Company Account Mismatch"),
+                            tr("The Unrealized Currency Gain/Loss Account must belong to this Company.") );
+      _unrlzgainloss->setFocus();
+      return;
+    }
   }
 
   if (_mode == cNew)
@@ -267,6 +294,19 @@ void company::sSave()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+
+  if ((!_yearend->isValid()) ||
+     (!_gainloss->isValid()) ||
+     (!_discrepancy->isValid()) ||
+     (_external->isChecked() &&
+      _currency->id() != CurrCluster::baseId() &&
+      !_unrlzgainloss->isValid()))
+  {
+    QMessageBox::warning( this, tr("Accounts Required"),
+                          tr("You will need to return to this window to set "
+                             "required Accounts before you can use Accounts "
+                             "for this company in the system.") );
   }
   
   done(_companyid);

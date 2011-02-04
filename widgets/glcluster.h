@@ -74,6 +74,8 @@ class XTUPLEWIDGETS_EXPORT GLClusterLineEdit : public VirtualClusterLineEdit
       bool ignoreCompany()              { return _ignoreCompany; }
       void setIgnoreCompany(bool p);
 
+      int companyId();
+
     public slots:
       void sList();
       void sSearch();
@@ -124,6 +126,8 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
 
     Q_INVOKABLE bool projectVisible();
     Q_INVOKABLE bool setProjectVisible(bool p);
+
+    Q_INVOKABLE int  companyId()                 { return static_cast<GLClusterLineEdit*>(_number)->companyId(); }
 
   public slots:
     void setId(const int p);

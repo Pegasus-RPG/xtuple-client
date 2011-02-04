@@ -98,6 +98,9 @@ void glTransaction::sPost()
 			    "Transaction before you may Post it." ), _debit },
     { ! _credit->isValid(), tr("<p>You must select a Credit Account for this G/L "
 			     "Transaction before you may Post it." ), _credit },
+    { !_metrics->boolean("IgnoreCompany") &&
+      _credit->companyId() != _debit->companyId(),
+      tr("The Accounts must belong to the same Company to Post this transaciton." ), _credit },
     { _metrics->boolean("MandatoryGLEntryNotes") &&
       _notes->toPlainText().trimmed().isEmpty(),
       tr("<p>You must enter some Notes to describe this transaction."), _notes},
