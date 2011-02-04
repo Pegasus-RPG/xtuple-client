@@ -6,10 +6,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspAPOpenItemsByVendor.ui \
            displays/dspARApplications.ui \
            displays/dspBOMBase.ui \
-           displays/dspBacklogByCustomer.ui \
-           displays/dspBacklogByItem.ui \
-           displays/dspBacklogByParameterList.ui \
-           displays/dspBacklogBySalesOrder.ui \
            displays/dspBriefEarnedCommissions.ui \
            displays/dspCapacityUOMsByParameter.ui \
            displays/dspCostedBOMBase.ui \
@@ -132,10 +128,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspAPOpenItemsByVendor.h \
            displays/dspARApplications.h \
            displays/dspBOMBase.h \
-           displays/dspBacklogByCustomer.h \
-           displays/dspBacklogByItem.h \
-           displays/dspBacklogByParameterList.h \
-           displays/dspBacklogBySalesOrder.h \
+           displays/dspBacklog.h \
            displays/dspBookings.h \
            displays/dspBriefEarnedCommissions.h \
            displays/dspBriefSalesHistory.h \
@@ -287,10 +280,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspAPOpenItemsByVendor.cpp \
            displays/dspARApplications.cpp \
            displays/dspBOMBase.cpp \
-           displays/dspBacklogByCustomer.cpp \
-           displays/dspBacklogByItem.cpp \
-           displays/dspBacklogByParameterList.cpp \
-           displays/dspBacklogBySalesOrder.cpp \
+           displays/dspBacklog.cpp \
            displays/dspBookings.cpp \
            displays/dspBriefEarnedCommissions.cpp \
            displays/dspBriefSalesHistory.cpp \

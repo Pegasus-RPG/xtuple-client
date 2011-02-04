@@ -95,12 +95,7 @@ class menuSales : public QObject
     void sDspCustomersByCusttype();
     void sDspCustomersByCharacteristic();
     void sDspSalesOrderStatus();
-    void sDspBacklogByItem();
-    void sDspBacklogBySalesOrder();
-    void sDspBacklogByCustomer();
-    void sDspBacklogByCustomerType();
-    void sDspBacklogByCustomerGroup();
-    void sDspBacklogByProductCategory();
+    void sDspBacklog();
     void sDspSummarizedBacklogByWarehouse();
     void sDspPartiallyShippedOrders();
     void sDspEarnedCommissions();

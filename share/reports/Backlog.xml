@@ -3,15 +3,21 @@
  <title>Backlog By Parameter List</title>
  <name>BacklogByParameterList</name>
  <description></description>
- <parameter default="01-01-2020" active="true" listtype="static" type="string" name="endDate" >
+ <parameter default="01-01-2020" active="true" listtype="static" type="string" name="endDate">
   <description></description>
  </parameter>
- <parameter default="t" active="true" listtype="static" type="string" name="showPrices" >
+ <parameter default="t" active="true" listtype="static" type="string" name="showPrices">
   <description></description>
  </parameter>
- <parameter default="01-01-1990" active="true" listtype="static" type="string" name="startDate" >
+ <parameter default="01-01-1990" active="true" listtype="static" type="string" name="startDate">
   <description></description>
  </parameter>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -20,65 +26,21 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists("custtype_id") ?>
-         ( SELECT (custtype_code || '-' || custtype_descrip)
-             FROM custtype
-            WHERE (custtype_id = &lt;? value("custtype_id") ?>) )
-       &lt;? elseif exists("custtype_pattern") ?>
-         text(&lt;? value("custtype_pattern") ?>)
-       &lt;? elseif exists("custgrp_id") ?>
-         ( SELECT (custgrp_name || '-' || custgrp_descrip)
-             FROM custgrp
-            WHERE (custgrp_id=&lt;? value("custgrp_id") ?>) )
-       &lt;? elseif exists("custgrp_pattern") ?>
-         text(&lt;? value("custgrp_pattern") ?>)
-       &lt;? elseif exists("prodcat_id") ?>
-         ( SELECT (prodcat_code || '-' || prodcat_descrip)
-             FROM prodcat
-            WHERE (prodcat_id=&lt;? value("prodcat_id") ?>) )
-       &lt;? elseif exists("prodcat_pattern") ?>
-         text(&lt;? value("prodcat_pattern") ?>)
-       &lt;? else ?>
-         text('')
-       &lt;? endif ?>
-       AS f_value,
-       &lt;? if exists("custtype_id") ?>
-         text('Customer Type:')
-       &lt;? elseif exists("custtype_pattern") ?>
-         text('Cust. Type Pattern:')
-       &lt;? elseif exists("custgrp_id") ?>
-         text('Customer Group')
-       &lt;? elseif exists("custgrp_pattern") ?>
-         text('Cust. Group Pattern')
-       &lt;? elseif exists("prodcat_id") ?>
-         text('Prod. Category:')
-       &lt;? elseif exists("prodcat_pattern") ?>
-         text('Prod. Cat. Pattern:')
-       &lt;? else ?>
-         text('')
-       &lt;? endif ?>
-       AS f_label,
-       formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
-       formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
-       &lt;? if exists("warehous_id") ?>
-         (SELECT warehous_code
-            FROM warehous
-           WHERE (warehous_id=&lt;? value("warehous_id") ?>))
-       &lt;? else ?>
-         text('All Sites')
-       &lt;? endif ?>
-       AS warehouse,
-       &lt;? if exists("showPrices") ?>
+  <sql>SELECT CASE WHEN (checkPrivilege('ViewCustomerPrices') 
+             AND isMultiCurr()) THEN
          text('Amount(base)')
-       &lt;? else ?>
+       WHEN (checkPrivilege('ViewCustomerPrices')) THEN
+         text('Amount')
+       ELSE
          text('')
-       &lt;? endif ?>
+       END
        AS lbl_baseamount,
- &lt;? if exists("showPrices") ?>
+       CASE WHEN (checkPrivilege('ViewCustomerPrices') 
+         AND isMultiCurr()) THEN
          text('Amount(foreign)')
-       &lt;? else ?>
+       ELSE
          text('')
-       &lt;? endif ?>
+       END
        AS lbl_foreignamount;</sql>
  </querysource>
  <querysource>
@@ -91,19 +53,19 @@
        formatQty(coitem_qtyord) AS f_qtyord,
        formatQty(coitem_qtyshipped) AS f_qtyship,
        formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance, 
-&lt;? if exists("showPrices") ?>
+       CASE WHEN (checkPrivilege('ViewCustomerPrices')) THEN
 formatMoney(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio)
                 * (currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio),2))
-       &lt;? else ?>
+       ELSE
          text('')
-       &lt;? endif ?>
+       END
        AS f_ammount,
- &lt;? if exists("showPrices") ?>
+       CASE WHEN (checkPrivilege('ViewCustomerPrices') AND isMultiCurr()) THEN
 formatMoney(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio)
                 * (coitem_price / coitem_price_invuomratio),2))
-       &lt;? else ?>
+       ELSE
          text('')
-       &lt;? endif ?>
+       END
        AS foreign_ammount,
 round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio)
     * (currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio),2) AS backlog 
@@ -113,26 +75,70 @@ round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qt
    AND (coitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
-   AND (coitem_status NOT IN ('C','X'))
-   AND (coitem_scheddate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? if exists("warehous_id") ?>
-   AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
-&lt;? endif ?>
-&lt;? if exists("custtype_id") ?>
-   AND (cust_custtype_id = &lt;? value("custtype_id") ?>)
-&lt;? elseif exists("custtype_pattern") ?>
-   AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
-&lt;? elseif exists("custgrp") ?>
-   AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id FROM custgrpitem))
-&lt;? elseif exists("custgrp_id") ?>
-   AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id FROM custgrp, custgrpitem WHERE ( (custgrpitem_custgrp_id=custgrp_id) AND (custgrp_id=&lt;? value("custgrp_id") ?>) )))
-&lt;? elseif exists("custgrp_pattern") ?>
-   AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id FROM custgrp, custgrpitem WHERE ( (custgrpitem_custgrp_id=custgrp_id) AND (custgrp_name ~ &lt;? value("custgrp_pattern") ?>) )))
-&lt;? elseif exists("prodcat_id") ?>
-   AND (item_prodcat_id=&lt;? value("prodcat_id") ?>)
-&lt;? elseif exists("prodcat_pattern") ?>
-   AND (item_prodcat_id IN (SELECT DISTINCT prodcat_id FROM prodcat WHERE (prodcat_code ~ &lt;? value("prodcat_pattern") ?>)))
-&lt;? endif ?>
+   AND (coitem_status='O')
+  &lt;? if exists("cohead_id") ?>
+    AND  (coitem_cohead_id=&lt;? value("cohead_id") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("startDate") ?>
+    AND  (cohead_orderdate >= &lt;? value("startDate") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("endDate") ?>
+    AND  (cohead_orderdate &lt;= &lt;? value("endDate") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("startDateSched") ?>
+    AND  (coitem_scheddate >= &lt;? value("startDateSched") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("endDateSched") ?>
+    AND  (coitem_scheddate >= &lt;? value("endDateSched") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("salesrep_id") ?>
+    AND  (cohead_salesrep_id=&lt;? value("salesrep_id") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("shipto_id") ?>
+    AND  (cohead_shipto_id=&lt;? value("shipto_id") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("cust_id") ?>
+    AND  (cohead_cust_id=&lt;? value("cust_id") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("custtype_id") ?>
+    AND  (cust_custtype_id=&lt;? value("custtype_id") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("custtype_pattern") ?>
+    AND  (cust_custtype_id IN (SELECT DISTINCT custtype_id
+                               FROM custtype
+                               WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
+  &lt;? endif ?>
+  &lt;? if exists("custgrp") ?>
+    AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id
+                     FROM custgrpitem))
+  &lt;? endif ?>
+  &lt;? if exists("custgrp_id") ?>
+    AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id
+                     FROM custgrpitem
+                     WHERE (custgrpitem_custgrp_id=&lt;? value("custgrp_id") ?>)))
+  &lt;? endif ?>
+  &lt;? if exists("custgrp_pattern") ?>
+    AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id
+                     FROM custgrp, custgrpitem
+                     WHERE ( (custgrpitem_custgrp_id=custgrp_id)
+                       AND   (custgrp_name ~ &lt;? value("custgrp_pattern") ?>) )) )
+  &lt;? endif ?>
+
+  &lt;? if exists("item_id") ?>
+    AND  (itemsite_item_id=&lt;? value("item_id") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("prodcat_id") ?>
+    AND (item_prodcat_id=&lt;? value("prodcat_id") ?>)
+  &lt;? endif ?>
+  &lt;? if exists("prodcat_pattern") ?>
+    AND (item_prodcat_id IN (SELECT DISTINCT prodcat_id
+                             FROM prodcat
+                             WHERE (prodcat_code ~ &lt;? value("prodcat_pattern") ?>)))
+  &lt;? endif ?>
+
+  &lt;? if exists("warehous_id") ?>
+    AND  (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
+  &lt;? endif ?>
 )
 ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
  </querysource>
@@ -140,11 +146,11 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
   <name>total</name>
   <sql>SELECT now()
  WHERE 't' =
-&lt;? if exists("showPrices") ?>
+CASE WHEN (checkPrivilege('ViewCustomerPrices') 
   't'
-&lt;? else ?>
+ELSE
   'f'
-&lt;? endif ?></sql>
+END</sql>
  </querysource>
  <rpthead>
   <height>226</height>
@@ -198,28 +204,9 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
   </label>
   <field>
    <rect>
-    <x>140</x>
-    <y>95</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>660</x>
     <y>185</y>
-    <width>75</width>
+    <width>85</width>
     <height>15</height>
    </rect>
    <font>
@@ -227,7 +214,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
    <data>
     <query>head</query>
@@ -253,7 +240,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
    <data>
     <query>head</query>
@@ -274,7 +261,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Backlog By Parameter List</string>
+   <string>Backlog</string>
   </label>
   <label>
    <rect>
@@ -324,44 +311,6 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
    <vcenter/>
    <string>#</string>
   </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>70</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_value</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>10</x>
-    <y>70</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_label</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>590</x>
@@ -377,73 +326,6 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
    <hcenter/>
    <vcenter/>
    <string>Balance</string>
-  </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>112</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>140</y>
-    <width>102</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Site:</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>95</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>112</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
   </label>
   <label>
    <rect>
@@ -477,25 +359,6 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
    <vcenter/>
    <string>Ordered</string>
   </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>140</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>225</x>
@@ -528,6 +391,26 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
    <vcenter/>
    <string>Qty. Ordered</string>
   </label>
+  <text>
+   <rect>
+    <x>5</x>
+    <y>28</y>
+    <width>725</width>
+    <height>15</height>
+   </rect>
+   <bottompad>12</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>Parameter Query</query>
+    <column>filter</column>
+   </data>
+  </text>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -699,7 +582,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
    <rect>
     <x>660</x>
     <y>0</y>
-    <width>75</width>
+    <width>85</width>
     <height>15</height>
    </rect>
    <font>
@@ -707,7 +590,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
    <data>
     <query>head</query>
@@ -717,7 +600,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
   <field>
    <rect>
     <x>660</x>
-    <y>10</y>
+    <y>15</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -726,7 +609,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
    <data>
     <query>head</query>
@@ -1060,7 +943,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
     </font>
     <right/>
     <vcenter/>
-    <string>All currency conversions as of exchange rates effective on Order Date       Total (base):</string>
+    <string>Total:</string>
    </label>
    <field>
     <rect>
@@ -1080,7 +963,8 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
      <query>detail</query>
      <column>backlog</column>
     </data>
-    <tracktotal builtin="true" >money</tracktotal>
+    <format builtin="true">money</format>
+    <tracktotal/>
    </field>
   </detail>
  </section>

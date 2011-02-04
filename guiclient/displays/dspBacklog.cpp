@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspBacklogByParameterList.h"
+#include "dspBacklog.h"
 
 #include <QAction>
 #include <QMenu>
@@ -17,22 +17,37 @@
 
 #include "salesOrder.h"
 #include "salesOrderItem.h"
+#include "parameterwidget.h"
 #include "printPackingList.h"
 
-dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char*, Qt::WFlags fl)
-  : display(parent, "dspBacklogByParameterList", fl)
+dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "dspBacklog", fl)
 {
-  setupUi(optionsWidget());
-  setWindowTitle(tr("Backlog by Parameter List"));
-  setListLabel(tr("Backlog"));
-  setReportName("BacklogByParameterList");
-  setMetaSQLOptions("salesOrderItems", "detail");
+  setWindowTitle(tr("Backlog"));
+  setReportName("Backlog");
+  setMetaSQLOptions("backlog", "detail");
   setUseAltId(true);
+  setParameterWidgetVisible(true);
 
-  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
+  parameterWidget()->append(tr("Start Order Date"), "startDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("End Order Date"),   "endDate",   ParameterWidget::Date);
+  parameterWidget()->append(tr("Start Schedule Date"), "startDateSched", ParameterWidget::Date);
+  parameterWidget()->append(tr("End Schedule Date"),   "endDateSched",   ParameterWidget::Date);
+  parameterWidget()->append(tr("Customer"), "cust_id", ParameterWidget::Customer);
+  parameterWidget()->appendComboBox(tr("Customer Group"), "custgrp_id", XComboBox::CustomerGroups);
+  parameterWidget()->append(tr("Customer Group Pattern"), "custgrp_pattern", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Customer Type"), "custtype_id", XComboBox::CustomerTypes);
+  parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Customer Ship-To"), "shipto_id", ParameterWidget::Shipto);
+  parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
+  parameterWidget()->appendComboBox(tr("Product Category"), "prodcat_id", XComboBox::ProductCategories);
+  parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Sales Order"), "cohead_id", ParameterWidget::SalesOrder);
+  parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
+  parameterWidget()->applyDefaultFilterSet();
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -47,19 +62,10 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
     list()->addColumn(tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight, true, "baseextpricebalance");
 
-  _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
-
-  if (! _showPrices->isChecked())
-    list()->hideColumn("baseextpricebalance");
+  list()->setPopulateLinear(true);
 }
 
-void dspBacklogByParameterList::languageChange()
-{
-  display::languageChange();
-  retranslateUi(this);
-}
-
-enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
+enum SetResponse dspBacklog::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
@@ -67,57 +73,35 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
 
   param = pParams.value("custtype_id", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::CustomerType);
-    _parameter->setId(param.toInt());
-  }
+    parameterWidget()->setDefault(tr("Customer Type"), param);
 
   param = pParams.value("custtype_pattern", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::CustomerType);
-    _parameter->setPattern(param.toString());
-  }
-
-  param = pParams.value("custtype", &valid);
-  if (valid)
-    _parameter->setType(ParameterGroup::CustomerType);
+    parameterWidget()->setDefault(tr("Customer Type Pattern"), param);
 
   param = pParams.value("custgrp_id", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::CustomerGroup);
-    _parameter->setId(param.toInt());
-  }
+    parameterWidget()->setDefault(tr("Customer Group"), param);
 
   param = pParams.value("custgrp_pattern", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::CustomerGroup);
-    _parameter->setPattern(param.toString());
-  }
-
-  param = pParams.value("custgrp", &valid);
-  if (valid)
-    _parameter->setType(ParameterGroup::CustomerGroup);
+    parameterWidget()->setDefault(tr("Customer Group Pattern"), param);
 
   param = pParams.value("prodcat_id", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ProductCategory);
-    _parameter->setId(param.toInt());
-  }
+    parameterWidget()->setDefault(tr("Product Category"), param);
 
   param = pParams.value("prodcat_pattern", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ProductCategory);
-    _parameter->setPattern(param.toString());
-  }
+    parameterWidget()->setDefault(tr("Product Category Pattern"), param);
 
-  param = pParams.value("prodcat", &valid);
+  param = pParams.value("item_id", &valid);
   if (valid)
-    _parameter->setType(ParameterGroup::ProductCategory);
+    parameterWidget()->setDefault(tr("Item"), param);
+
+  param = pParams.value("sohead_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Sales Order"), param);
 
   if (pParams.inList("run"))
   {
@@ -125,88 +109,20 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
     return NoError_Run;
   }
 
-  switch (_parameter->type())
-  {
-    case ParameterGroup::CustomerType:
-      setWindowTitle(tr("Backlog by Customer Type"));
-      break;
-
-    case ParameterGroup::CustomerGroup:
-      setWindowTitle(tr("Backlog by Customer Group"));
-      break;
-
-    case ParameterGroup::ProductCategory:
-      setWindowTitle(tr("Backlog by Product Category"));
-      break;
-
-    default:
-      break;
-  }
-
   return NoError;
 }
 
-void dspBacklogByParameterList::sHandlePrices(bool pShowPrices)
-{
-  if (pShowPrices)
-    list()->showColumn("baseextpricebalance");
-  else
-    list()->hideColumn("baseextpricebalance");
-}
-
-bool dspBacklogByParameterList::setParams(ParameterList &params)
-{
-  if (! _dates->allValid())
-  {
-    _dates->setFocus();
-    return false;
-  }
-
-  params.append("openOnly");
-  params.append("orderByScheddate");
-
-  _warehouse->appendValue(params);
-  _parameter->appendValue(params);
-  _dates->appendValue(params);
-
-  if (_showPrices->isChecked())
-    params.append("showPrices");
-
-  if (_parameter->isAll())
-  {
-    switch (_parameter->type())
-    {
-      case ParameterGroup::CustomerType:
-        params.append("custtype");
-        break;
-
-      case ParameterGroup::CustomerGroup:
-        params.append("custgrp");
-        break;
-
-      case ParameterGroup::ProductCategory:
-        params.append("prodcat");
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  return true;
-}
-
-void dspBacklogByParameterList::sEditOrder()
+void dspBacklog::sEditOrder()
 {
   salesOrder::editSalesOrder(list()->id(), false);
 }
 
-void dspBacklogByParameterList::sViewOrder()
+void dspBacklog::sViewOrder()
 {
   salesOrder::viewSalesOrder(list()->id());
 }
 
-void dspBacklogByParameterList::sEditItem()
+void dspBacklog::sEditItem()
 {
   ParameterList params;
   params.append("mode", "edit");
@@ -217,7 +133,7 @@ void dspBacklogByParameterList::sEditItem()
   newdlg.exec();
 }
 
-void dspBacklogByParameterList::sViewItem()
+void dspBacklog::sViewItem()
 {
   ParameterList params;
   params.append("mode", "view");
@@ -228,7 +144,7 @@ void dspBacklogByParameterList::sViewItem()
   newdlg.exec();
 }
 
-void dspBacklogByParameterList::sPrintPackingList()
+void dspBacklog::sPrintPackingList()
 {
   QList<XTreeWidgetItem*> selected = list()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
@@ -242,7 +158,7 @@ void dspBacklogByParameterList::sPrintPackingList()
   }
 }
 
-void dspBacklogByParameterList::sAddToPackingListBatch()
+void dspBacklog::sAddToPackingListBatch()
 {
   QList<XTreeWidgetItem*> selected = list()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
@@ -258,7 +174,7 @@ void dspBacklogByParameterList::sAddToPackingListBatch()
   }
 }
 
-void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
+void dspBacklog::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
   if (list()->id() <= 0)
     return;
@@ -303,5 +219,11 @@ void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, in
     if (!_privileges->check("MaintainPackingListBatch"))
       menuItem->setEnabled(false);
   }
+}
+
+void dspBacklog::sFillList()
+{
+  display::sFillList();
+  list()->expandAll();
 }
 

@@ -71,9 +71,6 @@
 #include "printLabelsByOrder.h"
 
 #include "dspShipmentsBySalesOrder.h"
-#include "dspBacklogByItem.h"
-#include "dspBacklogByCustomer.h"
-#include "dspBacklogByParameterList.h"
 #include "dspSummarizedBacklogByWarehouse.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "dspShipmentsByDate.h"
@@ -89,6 +86,7 @@
 
 #include "itemAvailabilityWorkbench.h"
 
+#include "dspBacklog.h"
 #include "dspItemSitesByItem.h"
 #include "dspItemSitesByParameterList.h"
 #include "dspValidLocationsByItem.h"
@@ -164,7 +162,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   reportsInvHistMenu       = new QMenu(parent);
   reportsDtlInvHistMenu    = new QMenu(parent);
   reportsItemUsgMenu       = new QMenu(parent);
-  reportsBacklogMenu       = new QMenu(parent);
   reportsShipmentsMenu     = new QMenu(parent);
   updateItemInfoMenu       = new QMenu(parent);
   updateItemInfoReorderMenu= new QMenu(parent);
@@ -193,7 +190,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   reportsInvHistMenu->setObjectName("menu.im.reportsinvhist");
   reportsDtlInvHistMenu->setObjectName("menu.im.reportdtlinvhist");
   reportsItemUsgMenu->setObjectName("menu.im.reportsitemusg");
-  reportsBacklogMenu->setObjectName("menu.im.reportsbacklog");
   reportsShipmentsMenu->setObjectName("menu.im.reportsshipments");
   updateItemInfoMenu->setObjectName("menu.im.updateiteminfo");
   updateItemInfoReorderMenu->setObjectName("menu.im.updateiteminforeorder");
@@ -304,11 +300,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "menu",                               tr("&Reports"),                (char*)shippingReportsMenu,               shippingMenu,        "true",            NULL, NULL, true, NULL },
 
     // Inventory | Shipping | Reports | Backlog
-    { "menu",                               tr("&Backlog"),                (char*)reportsBacklogMenu,                shippingReportsMenu, "true",            NULL, NULL, true, NULL },
-    { "sr.dspBacklogByItem",                tr("by &Item..."),             SLOT(sDspBacklogByItem()),                reportsBacklogMenu,  "ViewSalesOrders", NULL, NULL, true, NULL },
-    { "sr.dspBacklogByCustomer",            tr("by &Customer..."),         SLOT(sDspBacklogByCustomer()),            reportsBacklogMenu,  "ViewSalesOrders", NULL, NULL, true, NULL },
-    { "sr.dspBacklogByProductCategory",     tr("by &Product Category..."), SLOT(sDspBacklogByProductCategory()),     reportsBacklogMenu,  "ViewSalesOrders", NULL, NULL, true, NULL },
-    { "sr.dspSummarizedBacklogByWarehouse", tr("S&ummarized Backlog..."),  SLOT(sDspSummarizedBacklogByWarehouse()), shippingReportsMenu, "ViewSalesOrders", NULL, NULL, true, NULL },
+    { "sr.dspBacklog",                tr("&Backlog..."),             SLOT(sDspBacklog()),                shippingReportsMenu,  "ViewSalesOrders", NULL, NULL, true, NULL },
 
     { "separator", NULL, NULL, shippingReportsMenu, "true", NULL, NULL, true, NULL },
 
@@ -823,24 +815,9 @@ void menuInventory::sDspRatesByDestination()
 {
 }
 
-void menuInventory::sDspBacklogByItem()
+void menuInventory::sDspBacklog()
 {
-  omfgThis->handleNewWindow(new dspBacklogByItem());
-}
-
-void menuInventory::sDspBacklogByCustomer()
-{
-  omfgThis->handleNewWindow(new dspBacklogByCustomer());
-}
-
-void menuInventory::sDspBacklogByProductCategory()
-{
-  ParameterList params;
-  params.append("prodcat");
-
-  dspBacklogByParameterList *newdlg = new dspBacklogByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(new dspBacklog());
 }
 
 void menuInventory::sDspSummarizedBacklogByWarehouse()

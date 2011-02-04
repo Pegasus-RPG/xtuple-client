@@ -93,9 +93,7 @@ class menuInventory : public QObject
     void sAddRate();
     void sDspRatesByDestination();
 
-    void sDspBacklogByItem();
-    void sDspBacklogByCustomer();
-    void sDspBacklogByProductCategory();
+    void sDspBacklog();
     void sDspSummarizedBacklogByWarehouse();
     void sDspShipmentsBySalesOrder();
     void sDspShipmentsByDate();
@@ -187,7 +185,6 @@ class menuInventory : public QObject
     QMenu *reportsInvHistMenu;
     QMenu *reportsDtlInvHistMenu;
     QMenu *reportsItemUsgMenu;
-    QMenu *reportsBacklogMenu;
     QMenu *reportsShipmentsMenu;
     QMenu *utilitiesMenu;
     QMenu *updateItemInfoMenu;

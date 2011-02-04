@@ -77,10 +77,7 @@
 #include "dspInventoryAvailabilityBySalesOrder.h"
 #include "dspReservations.h"
 #include "dspSalesOrderStatus.h"
-#include "dspBacklogByItem.h"
-#include "dspBacklogBySalesOrder.h"
-#include "dspBacklogByCustomer.h"
-#include "dspBacklogByParameterList.h"
+#include "dspBacklog.h"
 #include "dspSummarizedBacklogByWarehouse.h"
 #include "dspPartiallyShippedOrders.h"
 #include "dspEarnedCommissions.h"
@@ -140,7 +137,6 @@ menuSales::menuSales(GUIClient *pParent) :
   formsMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
   reportsCustomersMenu = new QMenu(parent);
-  reportsBacklogMenu = new QMenu(parent);
   analysisMenu = new QMenu(parent);
   prospectMenu = new QMenu(parent);
   customerMenu = new QMenu(parent);
@@ -163,7 +159,6 @@ menuSales::menuSales(GUIClient *pParent) :
   formsMenu->setObjectName("menu.sales.forms");
   reportsMenu->setObjectName("menu.sales.reports");
   reportsCustomersMenu->setObjectName("menu.sales.reportscustomers");
-  reportsBacklogMenu->setObjectName("menu.sales.reportsbacklog");
   analysisMenu->setObjectName("menu.sales.analysis");
   prospectMenu->setObjectName("menu.sales.prospect");
   customerMenu->setObjectName("menu.sales.customer");
@@ -259,16 +254,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.dspSummarizedBacklogByWarehouse", tr("Su&mmarized Backlog..."),	SLOT(sDspSummarizedBacklogByWarehouse()), reportsMenu, "ViewSalesOrders",	QPixmap(":/images/dspSummarizedBacklogByWhse.png"), toolBar,  true, tr("Summarized Backlog") },
 
     // Sales | Reports | Backlog
-    { "menu",	tr("&Backlog"),           (char*)reportsBacklogMenu,	reportsMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.dspBacklogByCustomerType", tr("by Customer &Type..."),	SLOT(sDspBacklogByCustomerType()), reportsBacklogMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
-    { "so.dspBacklogByCustomerGroup", tr("by Customer &Group..."),	SLOT(sDspBacklogByCustomerGroup()), reportsBacklogMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
-    { "so.dspBacklogByCustomer", tr("by &Customer..."),	SLOT(sDspBacklogByCustomer()), reportsBacklogMenu, "ViewSalesOrders", NULL, NULL,	 true, NULL },
-    { "separator",	NULL,	NULL,	reportsBacklogMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.dspBacklogBySalesOrder", tr("by Sales &Order..."),	SLOT(sDspBacklogBySalesOrder()), reportsBacklogMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
-    { "separator",	NULL,	NULL,	reportsBacklogMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.dspBacklogByProductCategory", tr("by &Product Category..."),	SLOT(sDspBacklogByProductCategory()), reportsBacklogMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
-    { "so.dspBacklogByItem", tr("by &Item..."),	SLOT(sDspBacklogByItem()), reportsBacklogMenu, "ViewSalesOrders", NULL, NULL,	 true, NULL },
-    
+    { "so.dspBacklog", tr("&Backlog..."),	SLOT(sDspBacklog()), reportsMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
     { "so.dspPartiallyShippedOrders", tr("&Partially Shipped Orders..."),	SLOT(sDspPartiallyShippedOrders()), reportsMenu, "ViewSalesOrders",	NULL, NULL, true, NULL },
     { "so.dspReservations", tr("Reservations by Item..."),	SLOT(sDspReservations()), reportsMenu, "ViewInventoryAvailability",	NULL, NULL, true, NULL },    
     { "separator",	NULL,	NULL,	reportsMenu,	"true",		NULL, NULL, true, NULL },   
@@ -712,49 +698,9 @@ void menuSales::sDspQuoteLookupByItem()
   omfgThis->handleNewWindow(new dspQuotesByItem());
 }
 
-void menuSales::sDspBacklogByItem()
+void menuSales::sDspBacklog()
 {
-  omfgThis->handleNewWindow(new dspBacklogByItem());
-}
-
-void menuSales::sDspBacklogBySalesOrder()
-{
-  omfgThis->handleNewWindow(new dspBacklogBySalesOrder());
-}
-
-void menuSales::sDspBacklogByCustomer()
-{
-  omfgThis->handleNewWindow(new dspBacklogByCustomer());
-}
-
-void menuSales::sDspBacklogByCustomerType()
-{
-  ParameterList params;
-  params.append("custtype");
-
-  dspBacklogByParameterList *newdlg = new dspBacklogByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuSales::sDspBacklogByCustomerGroup()
-{
-  ParameterList params;
-  params.append("custgrp");
-
-  dspBacklogByParameterList *newdlg = new dspBacklogByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuSales::sDspBacklogByProductCategory()
-{
-  ParameterList params;
-  params.append("prodcat");
-
-  dspBacklogByParameterList *newdlg = new dspBacklogByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(new dspBacklog());
 }
 
 void menuSales::sDspSummarizedBacklogByWarehouse()
