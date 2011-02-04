@@ -157,17 +157,21 @@ void syncCompanies::sSync()
     XSqlQuery co;
     co.prepare("SELECT COALESCE(company_unrlzgainloss_accnt_id,-1) AS company_unrlzgainloss_accnt_id, "
                "COALESCE(company_curr_id,-1) AS company_curr_id, "
+               "COALESCE(company_yearend_accnt_id,-1) AS company_yearend_accnt_id, "
+               "COALESCE(company_gainloss_accnt_id,-1) AS company_gainloss_accnt_id, "
                "COALESCE(company_dscrp_accnt_id,-1) AS company_dscrp_accnt_id "
                "FROM company WHERE (company_id=:company_id);");
     co.bindValue(":company_id", c->id());
     co.exec();
     if (co.first())
     {
-      if (co.value("company_dscrp_accnt_id").toInt() == -1)
+      if (co.value("company_yearend_accnt_id").toInt() == -1 ||
+          co.value("company_gainloss_accnt_id").toInt() == -1 ||
+          co.value("company_dscrp_accnt_id").toInt() == -1)
       {
         QMessageBox::warning(this, tr("No Discrepency Account"),
                              tr("Company %1 does not appear to have "
-                                "a Discrepancy Account defined. The "
+                                "all required Accounts defined. The "
                                 "data cannot safely be synchronized.")
                              .arg(c->rawValue("company_number").toString()));
         errorCount++;
