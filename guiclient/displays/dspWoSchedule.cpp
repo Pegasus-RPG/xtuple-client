@@ -68,6 +68,8 @@ dspWoSchedule::dspWoSchedule(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Work Order"), "wo_id", ParameterWidget::WorkOrder);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+  parameterWidget()->append(tr("Has Parent Sales Order"), "woSoStatus", ParameterWidget::Exists);
+  parameterWidget()->append(tr("Has Closed Parent Sales Order"), "woSoStatusMismatch", ParameterWidget::Exists);
 
   parameterWidget()->applyDefaultFilterSet();
 

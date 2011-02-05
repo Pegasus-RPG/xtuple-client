@@ -77,8 +77,6 @@ class menuManufacture : public QObject
     void sDspMaterialUsageVarianceByComponentItem();
     void sDspMaterialUsageVarianceByWorkOrder();
     void sDspMaterialUsageVarianceByWarehouse();
-    void sDspWoSoStatus();
-    void sDspWoSoStatusMismatch();
 
     void sPrintWorkOrderForm();
 
@@ -101,7 +99,6 @@ class menuManufacture : public QObject
     QMenu  *reportsOperationsMenu;
     QMenu  *reportsWoTcMenu;
     QMenu  *reportsMatlUseVarMenu;
-    QMenu  *reportsOpenWoMenu;
     QMenu  *utilitiesMenu;
 
     void	addActionsToMenu(actionProperties [], unsigned int);

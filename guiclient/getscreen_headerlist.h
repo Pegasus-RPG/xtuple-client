@@ -279,8 +279,6 @@
 #include "dspWoMaterialsByItem.h"
 #include "dspWoMaterialsByWorkOrder.h"
 #include "dspWoSchedule.h"
-#include "dspWoSoStatus.h"
-#include "dspWoSoStatusMismatch.h"
 #include "duplicateAccountNumbers.h"
 #include "editICMWatermark.h"
 #include "editOwners.h"

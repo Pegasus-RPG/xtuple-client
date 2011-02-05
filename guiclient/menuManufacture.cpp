@@ -58,8 +58,6 @@
 #include "dspMaterialUsageVarianceByComponentItem.h"
 #include "dspMaterialUsageVarianceByWorkOrder.h"
 #include "dspMaterialUsageVarianceByWarehouse.h"
-#include "dspWoSoStatus.h"
-#include "dspWoSoStatusMismatch.h"
 
 #include "printWoForm.h"
 
@@ -89,7 +87,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   reportsHistoryMenu = new QMenu(parent);
   reportsMatlReqMenu = new QMenu(parent);
   reportsMatlUseVarMenu = new QMenu(parent);
-  reportsOpenWoMenu = new QMenu(parent);
   utilitiesMenu = new QMenu(parent);
 
   mainMenu->setObjectName("menu.manu");
@@ -103,7 +100,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   reportsHistoryMenu->setObjectName("menu.manu.reportshistory");
   reportsMatlReqMenu->setObjectName("menu.manu.reportsmatlreq");
   reportsMatlUseVarMenu->setObjectName("menu.manu.reportsmatlusevar");
-  reportsOpenWoMenu->setObjectName("menu.manu.reportsopenwo");
   utilitiesMenu->setObjectName("menu.manu.utilities");
 
   actionProperties acts[] = {
@@ -188,13 +184,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "wo.dspMaterialUsageVarianceByBOMItem",      tr("by &BOM Item..."),         SLOT(sDspMaterialUsageVarianceByBOMItem()),      reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
     { "wo.dspMaterialUsageVarianceByComponentItem",tr("by &Component Item..."),   SLOT(sDspMaterialUsageVarianceByComponentItem()),reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
     { "wo.dspMaterialUsageVarianceByWorkOrder",    tr("by &Work Order..."),       SLOT(sDspMaterialUsageVarianceByWorkOrder()),    reportsMatlUseVarMenu, "ViewMaterialVariances", 0, 0, true, NULL },
-
-    { "separator",                                      NULL,   NULL,   reportsMenu,    "true", 0, 0,   true, NULL },
-    
-    //  Production | Reports | Open Work Orders
-    { "menu",                                           tr("Ope&n Work Orders"),                  (char*)reportsOpenWoMenu,      reportsMenu,      "true",                             0, 0, true, NULL},
-    { "wo.dspOpenWorkOrdersWithClosedParentSalesOrders",tr("with &Closed Parent Sales Orders..."),SLOT(sDspWoSoStatusMismatch()),reportsOpenWoMenu,"MaintainWorkOrders ViewWorkOrders",0, 0, true, NULL},
-    { "wo.dspOpenWorkOrdersWithParentSalesOrders",      tr("with &Parent Sales Orders..."),       SLOT(sDspWoSoStatus()),        reportsOpenWoMenu,"MaintainWorkOrders ViewWorkOrders",0, 0, true, NULL},
 
     { "separator",              NULL,                               NULL,                           mainMenu,      "true",            0, 0, true, NULL },
     { "menu",                   tr("&Utilities"),                   (char*)utilitiesMenu,           mainMenu,      "true",            0, 0, true, NULL },
@@ -457,16 +446,6 @@ void menuManufacture::sDspMaterialUsageVarianceByWorkOrder()
 void menuManufacture::sDspMaterialUsageVarianceByWarehouse()
 {
   omfgThis->handleNewWindow(new dspMaterialUsageVarianceByWarehouse());
-}
-
-void menuManufacture::sDspWoSoStatusMismatch()
-{
-  omfgThis->handleNewWindow(new dspWoSoStatusMismatch());
-}
-
-void menuManufacture::sDspWoSoStatus()
-{
-  omfgThis->handleNewWindow(new dspWoSoStatus());
 }
 
 void menuManufacture::sPrintWorkOrderForm()
