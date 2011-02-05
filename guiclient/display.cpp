@@ -424,10 +424,14 @@ QString display::searchText()
 
 bool display::setParams(ParameterList & params)
 {
+  QString filter = parameterWidget()->filter();
   parameterWidget()->appendValue(params);
   if (!_data->_search->isNull())
+  {
     params.append("search_pattern", _data->_search->text());
-  params.append("filter", parameterWidget()->filter());
+    filter.prepend(tr("Search on: ") + _data->_search->text() + "\n");
+  }
+  params.append("filter", filter);
 
   return true;
 }

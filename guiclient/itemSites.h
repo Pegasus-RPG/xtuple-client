@@ -12,35 +12,27 @@
 #define ITEMSITES_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
+#include "display.h"
 
-#include "ui_itemSites.h"
-
-class itemSites : public XWidget, public Ui::itemSites
+class itemSites : public display
 {
     Q_OBJECT
 
 public:
     itemSites(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~itemSites();
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sNew();
-    virtual void sCopy();
-    virtual void sEdit();
     virtual void sView();
+    virtual void sEdit();
+    virtual void sCopy();
     virtual void sDelete();
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sFillList();
-    virtual void sSearch( const QString & pTarget );
-
-protected:
-    virtual void keyPressEvent( QKeyEvent * e );
-
-protected slots:
-    virtual void languageChange();
-
+    virtual void sInventoryAvailability();
+    virtual void sIssueCountTag();
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 };
 
 #endif // ITEMSITES_H

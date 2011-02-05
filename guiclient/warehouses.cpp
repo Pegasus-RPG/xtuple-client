@@ -18,7 +18,7 @@
 #include <metasql.h>
 
 #include <openreports.h>
-#include "dspItemSitesByParameterList.h"
+#include "itemSites.h"
 #include "warehouse.h"
 
 warehouses::warehouses(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -127,10 +127,9 @@ void warehouses::sListItemSites()
 {
   ParameterList params;
   params.append("run");
-  params.append("classcode");
   params.append("warehous_id", _warehouse->id());
 
-  dspItemSitesByParameterList *newdlg = new dspItemSitesByParameterList();
+  itemSites *newdlg = new itemSites();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

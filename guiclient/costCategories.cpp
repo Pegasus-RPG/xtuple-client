@@ -18,7 +18,7 @@
 
 #include <openreports.h>
 #include "costCategory.h"
-#include "dspItemSitesByParameterList.h"
+#include "itemSites.h"
 
 costCategories::costCategories(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -181,7 +181,7 @@ void costCategories::sListItemSites()
   params.append("run");
   params.append("costcat_id", _costcat->id());
 
-  dspItemSitesByParameterList *newdlg = new dspItemSitesByParameterList();
+  itemSites *newdlg = new itemSites();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

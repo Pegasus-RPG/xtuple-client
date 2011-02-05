@@ -42,8 +42,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspItemCostsByClassCode.ui \
            displays/dspItemsByCharacteristic.ui \
            displays/dspItemsByParameter.ui \
-           displays/dspItemSitesByItem.ui \
-           displays/dspItemSitesByParameterList.ui \
            displays/dspItemSourcesByItem.ui \
            displays/dspItemSourcesByVendor.ui \
            displays/dspJobCosting.ui \
@@ -177,8 +175,6 @@ HEADERS += displays/dspAllocations.h \
            displays/dspItemsByClassCode.h \
            displays/dspItemsByParameter.h \
            displays/dspItemsByProductCategory.h \
-           displays/dspItemSitesByItem.h \
-           displays/dspItemSitesByParameterList.h \
            displays/dspItemSourcesByItem.h \
            displays/dspItemSourcesByVendor.h \
            displays/dspItemsWithoutItemSources.h \
@@ -326,8 +322,6 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspItemsByClassCode.cpp \
            displays/dspItemsByParameter.cpp \
            displays/dspItemsByProductCategory.cpp \
-           displays/dspItemSitesByItem.cpp \
-           displays/dspItemSitesByParameterList.cpp \
            displays/dspItemSourcesByItem.cpp \
            displays/dspItemSourcesByVendor.cpp \
            displays/dspItemsWithoutItemSources.cpp \

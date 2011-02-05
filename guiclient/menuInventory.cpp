@@ -87,8 +87,6 @@
 #include "itemAvailabilityWorkbench.h"
 
 #include "dspBacklog.h"
-#include "dspItemSitesByItem.h"
-#include "dspItemSitesByParameterList.h"
 #include "dspValidLocationsByItem.h"
 #include "dspQOH.h"
 #include "dspQOHByLocation.h"
@@ -156,7 +154,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   formsMenu                = new QMenu(parent);
   formsShipLabelsMenu      = new QMenu(parent);
   reportsMenu              = new QMenu(parent);
-  reportsItemsitesMenu     = new QMenu(parent);
   reportsDtlInvHistMenu    = new QMenu(parent);
   reportsItemUsgMenu       = new QMenu(parent);
   reportsShipmentsMenu     = new QMenu(parent);
@@ -166,7 +163,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   utilitiesMenu            = new QMenu(parent);
 
   mainMenu->setObjectName("menu.im");
-  itemSitesMenu->setObjectName("menu.im.itemsites");
   warehouseMenu->setObjectName("menu.im.warehouse");
   transferOrderMenu->setObjectName("menu.im.transferorder");
   transactionsMenu->setObjectName("menu.im.transactions");
@@ -183,7 +179,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   formsMenu->setObjectName("menu.im.forms");
   formsShipLabelsMenu->setObjectName("menu.im.formsshiplabels");
   reportsMenu->setObjectName("menu.im.reports");
-  reportsItemsitesMenu->setObjectName("menu.im.reportsitemsites");
   reportsDtlInvHistMenu->setObjectName("menu.im.reportdtlinvhist");
   reportsItemUsgMenu->setObjectName("menu.im.reportsitemusg");
   reportsShipmentsMenu->setObjectName("menu.im.reportsshipments");
@@ -328,13 +323,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
     //  Inventory | Reports
     { "menu",                           tr("&Reports"),                   (char*)reportsMenu,                   mainMenu,       "true", NULL, NULL, true, NULL },
-
-    //  Inventory | Reports | Item Sites
-    { "menu",                           tr("&Item Sites"),                (char*)reportsItemsitesMenu,          reportsMenu,          "ViewItemSites",  NULL, NULL, true, NULL },
-    { "im.dspItemSitesByPlannerCode",   tr("by &Planner Code..."),        SLOT(sDspItemSitesByPlannerCode()),   reportsItemsitesMenu, "ViewItemSites",  NULL, NULL, true, NULL },
-    { "im.dspItemSitesByCostCategory",  tr("by C&ost Category..."),       SLOT(sDspItemSitesByCostCategory()),  reportsItemsitesMenu, "ViewItemSites",  NULL, NULL, true, NULL },
-    { "im.dspItemSitesByClassCode",     tr("by &Class Code..."),          SLOT(sDspItemSitesByClassCode()),     reportsItemsitesMenu, "ViewItemSites",  NULL, NULL, true, NULL },
-    { "im.dspItemSitesByItem",          tr("by &Item..."),                SLOT(sDspItemSitesByItem()),          reportsItemsitesMenu, "ViewItemSites",  NULL, NULL, true, NULL },
 
     { "im.dspValidLocationsByItem",     tr("&Valid Locations by Item..."),SLOT(sDspValidLocationsByItem()),     reportsMenu,          "ViewLocations",  NULL, NULL, true, NULL },
     {  "separator",                     NULL,                             NULL,                                 reportsMenu,          "true",           NULL, NULL, true, NULL },
@@ -869,41 +857,6 @@ void menuInventory::sDspCountTagsByClassCode()
 void menuInventory::sDspItemAvailabilityWorkbench()
 {
   omfgThis->handleNewWindow(new itemAvailabilityWorkbench());
-}
-
-void menuInventory::sDspItemSitesByItem()
-{
-  omfgThis->handleNewWindow(new dspItemSitesByItem());
-}
-
-void menuInventory::sDspItemSitesByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  dspItemSitesByParameterList *newdlg = new dspItemSitesByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspItemSitesByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  dspItemSitesByParameterList *newdlg = new dspItemSitesByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspItemSitesByCostCategory()
-{
-  ParameterList params;
-  params.append("costcat");
-
-  dspItemSitesByParameterList *newdlg = new dspItemSitesByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuInventory::sDspValidLocationsByItem()

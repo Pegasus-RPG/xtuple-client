@@ -58,10 +58,10 @@ class menuPurchase : public QObject
 
     void sNewItemSource();
     void sItemSources();
+    void sItemSites();
 
     void sDspPurchaseReqsByItem();
     void sDspPurchaseReqsByPlannerCode();
-    void sDspItemSitesByPlannerCode();
     void sDspPOsByDate();
     void sDspPOsByVendor();
     void sDspPoItemsByVendor();

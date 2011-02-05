@@ -191,8 +191,6 @@
 #include "dspItemsByCharacteristic.h"
 #include "dspItemsByClassCode.h"
 #include "dspItemsByProductCategory.h"
-#include "dspItemSitesByItem.h"
-#include "dspItemSitesByParameterList.h"
 #include "dspItemSourcesByItem.h"
 #include "dspItemSourcesByVendor.h"
 #include "dspItemsWithoutItemSources.h"

@@ -1,8 +1,14 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Item Sites by Item</title>
- <name>ItemSitesByItem</name>
+ <title>Item Sites by Parameter List</title>
+ <name>ItemSitesByParameterList</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -10,20 +16,15 @@
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
  <querysource>
-  <name>head</name>
-  <sql>SELECT item_number,
-       item_descrip1,
-       item_descrip2
-  FROM item
- WHERE (item_id=&lt;? value("item_id") ?>);
-</sql>
- </querysource>
- <querysource>
   <name>detail</name>
-  <sql>SELECT warehous_code, formatBoolYN(itemsite_active) AS active,
-       item_number, item_descrip1, item_descrip2,
+  <sql>SELECT warehous_code,
+       formatBoolYN(itemsite_active) AS active,
+       item_number,
+       item_descrip1,
+       item_descrip2,
        formatBoolYN(itemsite_wosupply) AS supplied,
-       formatBoolYN(itemsite_sold) AS sold, itemsite_soldranking,
+       formatBoolYN(itemsite_sold) AS sold,
+       itemsite_soldranking,
        formatBoolYN(itemsite_stocked) AS stocked,
        formatBoolYN(itemsite_createpr) AS createpr,
        CASE WHEN (itemsite_controlmethod='N') THEN 'None'
@@ -35,8 +36,8 @@
        formatBoolYN(itemsite_loccntrl) AS locationcontrol,
        CASE WHEN (itemsite_location_id=-1) THEN 'None'
             ELSE ( SELECT location_name
-                   FROM location
-                   WHERE (location_id=itemsite_location_id) )
+                     FROM location
+                    WHERE (location_id=itemsite_location_id) )
        END AS defaultlocation,
        formatBoolYN(itemsite_useparams) AS enforceparams,
        formatBoolYN(itemsite_useparamsmanual) AS onmanualorders,
@@ -44,26 +45,81 @@
        formatQty(itemsite_ordertoqty) AS orderupto,
        formatQty(itemsite_multordqty) AS ordermult,
        formatQty(itemsite_safetystock) AS safetystock,
-       itemsite_abcclass, itemsite_cyclecountfreq, itemsite_leadtime, itemsite_eventfence,
+       itemsite_abcclass,
+       itemsite_cyclecountfreq,
+       itemsite_leadtime,
+       itemsite_eventfence,
        formatQty(itemsite_qtyonhand) AS qoh,
        formatDate(itemsite_datelastused, 'Never') AS lastused,
        formatDate(itemsite_datelastcount, 'Never') AS lastcounted,
-       CASE WHEN (itemsite_plancode_id=-1) THEN 'Error'
-            ELSE (SELECT (plancode_code || '-' || plancode_name) FROM plancode WHERE plancode_id=itemsite_plancode_id)
+       CASE WHEN(itemsite_plancode_id=-1) THEN 'Error'
+            ELSE (SELECT (plancode_code || '-' || plancode_name)
+                    FROM plancode
+                   WHERE (plancode_id=itemsite_plancode_id) )
        END AS plannercode
-  FROM itemsite, warehous, item
- WHERE ((itemsite_item_id=item_id)
-   AND (itemsite_warehous_id=warehous_id)
-   AND (item_id=&lt;? value("item_id") ?>) )
-ORDER BY warehous_code;</sql>
+  FROM item, uom, itemsite, warehous 
+ WHERE ((itemsite_warehous_id=warehous_id)
+         AND (itemsite_item_id=item_id)
+         AND(item_inv_uom_id=uom_id)
+       &lt;? if exists("search_pattern") ?>
+         AND ((item_number ~* &lt;? value("search_pattern") ?>)
+           OR (item_descrip1 || ' ' || item_descrip2 ~* &lt;? value("search_pattern") ?>)
+           OR (warehous_code ~* &lt;? value("search_pattern") ?>))
+       &lt;? endif ?>
+       &lt;? if exists("item_id") ?>
+         AND (item_id=&lt;? value("item_id") ?>)
+       &lt;? endif ?>
+       &lt;? if exists("classcode_id") ?>
+         AND (item_classcode_id=&lt;? value("classcode_id") ?>)
+       &lt;? endif ?>
+       &lt;? if exists("itemgrp_id") ?>
+         AND (item_id IN (SELECT itemgrpitem_item_id 
+                          FROM itemgrpitem 
+                          WHERE (itemgrpitem_itemgrp_id=&lt;? value("itemgrp_id") ?>)))
+       &lt;? endif ?>
+       &lt;? if exists("plancode_id") ?>
+         AND (itemsite_plancode_id=&lt;? value("plancode_id") ?>)
+       &lt;? endif ?>
+       &lt;? if exists("costcat_id") ?>
+         AND (itemsite_costcat_id=&lt;? value("costcat_id") ?>)
+       &lt;? endif ?>
+       &lt;? if exists("classcode_pattern") ?>
+         AND (item_classcode_id IN (SELECT classcode_id 
+                                    FROM classcode 
+                                    WHERE (classcode_code ~ &lt;? value("classcode_pattern") ?>)))
+       &lt;? endif ?>
+       &lt;? if exists("itemgrp_pattern") ?>
+         AND (item_id IN (SELECT itemgrpitem_item_id 
+                          FROM itemgrpitem, itemgrp 
+                          WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) 
+                              AND (itemgrp_name ~ &lt;? value("itemgrp_pattern") ?>) ) ))
+       &lt;? endif ?>
+       &lt;? if exists("plancode_pattern") ?>
+         AND (itemsite_plancode_id IN (SELECT plancode_id 
+                                       FROM plancode 
+                                       WHERE (plancode_code ~ &lt;? value("plancode_pattern") ?>)))
+       &lt;? endif ?>
+       &lt;? if exists("costcat_pattern") ?>
+         AND (itemsite_costcat_id IN (SELECT costcat_id 
+                                      FROM costcat 
+                                      WHERE (costcat_code ~ &lt;? value("costcat_pattern") ?>)))
+       &lt;? endif ?>
+     &lt;? if exists("warehous_id") ?>
+       AND (warehous_id=&lt;? value("warehous_id") ?>)
+     &lt;? endif ?>
+   &lt;? if not exists("showInactive") ?>
+     AND (itemsite_active)
+   &lt;? endif ?>
+)
+ORDER BY item_number, warehous_code;</sql>
  </querysource>
  <rpthead>
   <height>281</height>
   <label>
    <rect>
-    <x>410</x>
-    <y>200</y>
-    <width>75</width>
+    <x>430</x>
+    <y>254</y>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -73,70 +129,12 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Control Method</string>
+   <string>Last Counted</string>
   </label>
-  <label>
-   <rect>
-    <x>330</x>
-    <y>215</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ranking</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>275</ystart>
-   <xend>745</xend>
-   <yend>275</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>280</x>
-    <y>230</y>
-    <width>45</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Stocked</string>
-  </label>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>120</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_descrip2</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>345</x>
-    <y>255</y>
+    <y>254</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -151,24 +149,8 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>670</x>
-    <y>245</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Event Fnc.</string>
-  </label>
-  <label>
-   <rect>
-    <x>410</x>
-    <y>215</y>
+    <x>330</x>
+    <y>200</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -179,12 +161,44 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Location Cntrl.</string>
+   <string>Create P/Rs</string>
+  </label>
+  <label>
+   <rect>
+    <x>280</x>
+    <y>229</y>
+    <width>45</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Stocked</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>215</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Active</string>
   </label>
   <label>
    <rect>
     <x>50</x>
-    <y>200</y>
+    <y>245</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -196,22 +210,6 @@ ORDER BY warehous_code;</sql>
    <left/>
    <vcenter/>
    <string>Planner Code</string>
-  </label>
-  <label>
-   <rect>
-    <x>15</x>
-    <y>80</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item:</string>
   </label>
   <label>
    <rect>
@@ -231,24 +229,8 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>490</x>
-    <y>200</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Enforce Params.</string>
-  </label>
-  <label>
-   <rect>
     <x>670</x>
-    <y>230</y>
+    <y>229</y>
     <width>55</width>
     <height>15</height>
    </rect>
@@ -263,9 +245,9 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>430</x>
-    <y>255</y>
-    <width>80</width>
+    <x>280</x>
+    <y>215</y>
+    <width>45</width>
     <height>15</height>
    </rect>
    <font>
@@ -275,7 +257,78 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Last Counted</string>
+   <string>Sold</string>
+  </label>
+  <label>
+   <rect>
+    <x>330</x>
+    <y>215</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ranking</string>
+  </label>
+  <label>
+   <rect>
+    <x>670</x>
+    <y>245</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Event Fnc.</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>275</ystart>
+   <xend>745</xend>
+   <yend>275</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>275</x>
+    <y>254</y>
+    <width>65</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH</string>
+  </label>
+  <label>
+   <rect>
+    <x>490</x>
+    <y>200</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Enforce Params.</string>
   </label>
   <label>
    <rect>
@@ -291,44 +344,12 @@ ORDER BY warehous_code;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Item Sites by Item</string>
-  </label>
-  <label>
-   <rect>
-    <x>330</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Create P/Rs</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>215</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Active</string>
+   <string>Item Sites</string>
   </label>
   <label>
    <rect>
     <x>580</x>
-    <y>230</y>
+    <y>200</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -339,7 +360,7 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Order Mult.</string>
+   <string>Reorder Lvl.</string>
   </label>
   <label>
    <rect>
@@ -359,38 +380,6 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>280</x>
-    <y>215</y>
-    <width>45</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Sold</string>
-  </label>
-  <label>
-   <rect>
-    <x>275</x>
-    <y>255</y>
-    <width>65</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>QOH</string>
-  </label>
-  <label>
-   <rect>
     <x>670</x>
     <y>215</y>
     <width>55</width>
@@ -404,57 +393,6 @@ ORDER BY warehous_code;</sql>
    <hcenter/>
    <vcenter/>
    <string>Cycle Cnt.</string>
-  </label>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>80</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>410</x>
-    <y>230</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Default Loc.</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Reorder Lvl.</string>
   </label>
   <label>
    <rect>
@@ -471,6 +409,22 @@ ORDER BY warehous_code;</sql>
    <hcenter/>
    <vcenter/>
    <string>ABC Class</string>
+  </label>
+  <label>
+   <rect>
+    <x>280</x>
+    <y>200</y>
+    <width>45</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Supplied</string>
   </label>
   <label>
    <rect>
@@ -490,66 +444,72 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>580</x>
-    <y>245</y>
-    <width>80</width>
+    <x>50</x>
+    <y>215</y>
+    <width>229</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
     <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Safety Stock</string>
-  </label>
-  <label>
-   <rect>
-    <x>280</x>
-    <y>200</y>
-    <width>45</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Supplied</string>
-  </label>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>100</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
    </font>
    <left/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_descrip1</column>
-   </data>
-  </field>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>81</height>
+   <string>Item Description</string>
+  </label>
   <label>
    <rect>
-    <x>410</x>
-    <y>30</y>
+    <x>50</x>
+    <y>200</y>
+    <width>229</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>409</x>
+    <y>215</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Location Cntrl.</string>
+  </label>
+  <label>
+   <rect>
+    <x>409</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Control Method</string>
+  </label>
+  <label>
+   <rect>
+    <x>409</x>
+    <y>229</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -564,24 +524,8 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>280</x>
-    <y>0</y>
-    <width>45</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Supplied</string>
-  </label>
-  <label>
-   <rect>
     <x>580</x>
-    <y>0</y>
+    <y>229</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -592,11 +536,54 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Reorder Lvl.</string>
+   <string>Order Mult.</string>
   </label>
   <label>
    <rect>
-    <x>410</x>
+    <x>580</x>
+    <y>245</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Safety Stock</string>
+  </label>
+  <text>
+   <rect>
+    <x>10</x>
+    <y>38</y>
+    <width>725</width>
+    <height>15</height>
+   </rect>
+   <bottompad>12</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>Parameter Query</query>
+    <column>filter</column>
+   </data>
+  </text>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>81</height>
+  <label>
+   <rect>
+    <x>409</x>
     <y>15</y>
     <width>75</width>
     <height>15</height>
@@ -612,25 +599,25 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>670</x>
-    <y>0</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>ABC Class</string>
-  </label>
-  <label>
-   <rect>
-    <x>670</x>
+    <x>50</x>
     <y>45</y>
-    <width>55</width>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Planner Code</string>
+  </label>
+  <label>
+   <rect>
+    <x>490</x>
+    <y>15</y>
+    <width>85</width>
     <height>15</height>
    </rect>
    <font>
@@ -640,11 +627,11 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Event Fnc.</string>
+   <string>on Manual Ords.</string>
   </label>
   <label>
    <rect>
-    <x>410</x>
+    <x>409</x>
     <y>0</y>
     <width>75</width>
     <height>15</height>
@@ -660,9 +647,9 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>345</x>
-    <y>55</y>
-    <width>80</width>
+    <x>10</x>
+    <y>0</y>
+    <width>35</width>
     <height>15</height>
    </rect>
    <font>
@@ -672,13 +659,13 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Last Used</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
-    <x>580</x>
-    <y>30</y>
-    <width>80</width>
+    <x>670</x>
+    <y>15</y>
+    <width>55</width>
     <height>15</height>
    </rect>
    <font>
@@ -688,13 +675,13 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Order Mult.</string>
+   <string>Cycle Cnt.</string>
   </label>
   <label>
    <rect>
-    <x>430</x>
-    <y>55</y>
-    <width>80</width>
+    <x>330</x>
+    <y>15</y>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -704,7 +691,23 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Last Counted</string>
+   <string>Ranking</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>15</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Active</string>
   </label>
   <label>
    <rect>
@@ -725,8 +728,8 @@ ORDER BY warehous_code;</sql>
   <label>
    <rect>
     <x>50</x>
-    <y>0</y>
-    <width>100</width>
+    <y>15</y>
+    <width>229</width>
     <height>15</height>
    </rect>
    <font>
@@ -736,13 +739,13 @@ ORDER BY warehous_code;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Planner Code</string>
+   <string>Item Description</string>
   </label>
   <label>
    <rect>
-    <x>10</x>
-    <y>15</y>
-    <width>35</width>
+    <x>409</x>
+    <y>30</y>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -752,7 +755,39 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Active</string>
+   <string>Default Loc.</string>
+  </label>
+  <label>
+   <rect>
+    <x>50</x>
+    <y>0</y>
+    <width>229</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>670</x>
+    <y>30</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Lead Time</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -761,6 +796,22 @@ ORDER BY warehous_code;</sql>
    <yend>75</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>490</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Enforce Params.</string>
+  </label>
   <label>
    <rect>
     <x>580</x>
@@ -795,24 +846,8 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>280</x>
-    <y>30</y>
-    <width>45</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Stocked</string>
-  </label>
-  <label>
-   <rect>
     <x>670</x>
-    <y>15</y>
+    <y>45</y>
     <width>55</width>
     <height>15</height>
    </rect>
@@ -823,13 +858,13 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Cycle Cnt.</string>
+   <string>Event Fnc.</string>
   </label>
   <label>
    <rect>
-    <x>670</x>
-    <y>30</y>
-    <width>55</width>
+    <x>580</x>
+    <y>45</y>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -839,55 +874,7 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Lead Time</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>0</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Site</string>
-  </label>
-  <label>
-   <rect>
-    <x>490</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Enforce Params.</string>
-  </label>
-  <label>
-   <rect>
-    <x>330</x>
-    <y>15</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ranking</string>
+   <string>Safety Stock</string>
   </label>
   <label>
    <rect>
@@ -907,24 +894,8 @@ ORDER BY warehous_code;</sql>
   </label>
   <label>
    <rect>
-    <x>490</x>
-    <y>15</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>on Manual Ords.</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>45</y>
+    <x>430</x>
+    <y>55</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -935,7 +906,103 @@ ORDER BY warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Safety Stock</string>
+   <string>Last Counted</string>
+  </label>
+  <label>
+   <rect>
+    <x>280</x>
+    <y>30</y>
+    <width>45</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Stocked</string>
+  </label>
+  <label>
+   <rect>
+    <x>670</x>
+    <y>0</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>ABC Class</string>
+  </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>30</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Order Mult.</string>
+  </label>
+  <label>
+   <rect>
+    <x>345</x>
+    <y>55</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Last Used</string>
+  </label>
+  <label>
+   <rect>
+    <x>280</x>
+    <y>0</y>
+    <width>45</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Supplied</string>
+  </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Reorder Lvl.</string>
   </label>
  </pghead>
  <section>
@@ -947,9 +1014,9 @@ ORDER BY warehous_code;</sql>
    <height>81</height>
    <field>
     <rect>
-     <x>670</x>
+     <x>580</x>
      <y>15</y>
-     <width>55</width>
+     <width>80</width>
      <height>15</height>
     </rect>
     <font>
@@ -957,68 +1024,11 @@ ORDER BY warehous_code;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>itemsite_cyclecountfreq</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>410</x>
-     <y>30</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>defaultlocation</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>410</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>controlmethod</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>410</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>locationcontrol</column>
+     <column>orderupto</column>
     </data>
    </field>
    <field>
@@ -1042,101 +1052,6 @@ ORDER BY warehous_code;</sql>
    </field>
    <field>
     <rect>
-     <x>345</x>
-     <y>60</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>lastused</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>10</x>
-     <y>15</y>
-     <width>35</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>active</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>670</x>
-     <y>30</y>
-     <width>55</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>itemsite_leadtime</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>580</x>
-     <y>45</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>safetystock</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>50</x>
-     <y>0</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>plannercode</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>10</x>
      <y>0</y>
      <width>35</width>
@@ -1152,165 +1067,6 @@ ORDER BY warehous_code;</sql>
     <data>
      <query>detail</query>
      <column>warehous_code</column>
-    </data>
-   </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>75</ystart>
-    <xend>745</xend>
-    <yend>75</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
-     <x>580</x>
-     <y>30</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>ordermult</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>330</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>createpr</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>670</x>
-     <y>45</y>
-     <width>55</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>itemsite_eventfence</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>280</x>
-     <y>0</y>
-     <width>45</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>supplied</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>430</x>
-     <y>60</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>lastcounted</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>670</x>
-     <y>0</y>
-     <width>55</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>itemsite_abcclass</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>330</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>itemsite_soldranking</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>580</x>
-     <y>15</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>orderupto</column>
     </data>
    </field>
    <field>
@@ -1334,6 +1090,44 @@ ORDER BY warehous_code;</sql>
    </field>
    <field>
     <rect>
+     <x>430</x>
+     <y>60</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>lastcounted</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>580</x>
+     <y>45</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>safetystock</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>580</x>
      <y>0</y>
      <width>80</width>
@@ -1349,6 +1143,82 @@ ORDER BY warehous_code;</sql>
     <data>
      <query>detail</query>
      <column>reorderlevel</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>409</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>controlmethod</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>50</x>
+     <y>0</y>
+     <width>229</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>280</x>
+     <y>0</y>
+     <width>45</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>supplied</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>330</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>createpr</column>
     </data>
    </field>
    <field>
@@ -1372,9 +1242,9 @@ ORDER BY warehous_code;</sql>
    </field>
    <field>
     <rect>
-     <x>490</x>
+     <x>330</x>
      <y>15</y>
-     <width>85</width>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -1386,7 +1256,90 @@ ORDER BY warehous_code;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>onmanualorders</column>
+     <column>itemsite_soldranking</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>409</x>
+     <y>30</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>defaultlocation</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>409</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>locationcontrol</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>10</x>
+     <y>15</y>
+     <width>35</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>active</column>
+    </data>
+   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>75</ystart>
+    <xend>745</xend>
+    <yend>75</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>670</x>
+     <y>15</y>
+     <width>55</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>itemsite_cyclecountfreq</column>
     </data>
    </field>
    <field>
@@ -1408,26 +1361,181 @@ ORDER BY warehous_code;</sql>
      <column>sold</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>50</x>
+     <y>30</y>
+     <width>229</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip2</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>670</x>
+     <y>0</y>
+     <width>55</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>itemsite_abcclass</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>50</x>
+     <y>15</y>
+     <width>229</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip1</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>490</x>
+     <y>15</y>
+     <width>85</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>onmanualorders</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>50</x>
+     <y>45</y>
+     <width>150</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>plannercode</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>345</x>
+     <y>60</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>lastused</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>670</x>
+     <y>45</y>
+     <width>55</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>itemsite_eventfence</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>580</x>
+     <y>30</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>ordermult</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>670</x>
+     <y>30</y>
+     <width>55</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>itemsite_leadtime</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
   <field>
    <rect>
     <x>90</x>
@@ -1449,7 +1557,7 @@ ORDER BY warehous_code;</sql>
   </field>
   <label>
    <rect>
-    <x>615</x>
+    <x>0</x>
     <y>0</y>
     <width>85</width>
     <height>15</height>
@@ -1461,7 +1569,7 @@ ORDER BY warehous_code;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Page:</string>
+   <string>Report Date:</string>
   </label>
   <field>
    <rect>
@@ -1482,5 +1590,21 @@ ORDER BY warehous_code;</sql>
     <column>page_number</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
  </pgfoot>
 </report>

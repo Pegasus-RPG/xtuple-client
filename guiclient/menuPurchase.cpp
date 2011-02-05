@@ -40,10 +40,10 @@
 
 #include "itemSource.h"
 #include "itemSources.h"
+#include  "itemSites.h"
 
 #include "dspPurchaseReqsByItem.h"
 #include "dspPurchaseReqsByPlannerCode.h"
-#include "dspItemSitesByParameterList.h"
 #include "dspPoItemsByVendor.h"
 #include "dspPoItemsByItem.h"
 #include "dspPoItemsByDate.h"
@@ -159,7 +159,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     //  Purchasing | Reports
     { "menu", tr("&Reports"), (char*)reportsMenu, mainMenu, "true", NULL, NULL, true , NULL },
     
-    { "po.dspItemSitesByPlannerCode", tr("Item &Sites..."), SLOT(sDspItemSitesByPlannerCode()), reportsMenu, "ViewItemSites", NULL, NULL, true , NULL },
+    { "po.itemSites", tr("Item &Sites..."), SLOT(sItemSites()), reportsMenu, "ViewItemSites", NULL, NULL, true , NULL },
     
     // Purchasing | Reports | Item Sources
     { "menu", tr("&Items Sources"), (char*)reportsItemSrcMenu, reportsMenu, "true", NULL, NULL, true , NULL },
@@ -423,12 +423,11 @@ void menuPurchase::sDspPurchaseReqsByPlannerCode()
   omfgThis->handleNewWindow(new dspPurchaseReqsByPlannerCode());
 }
 
-void menuPurchase::sDspItemSitesByPlannerCode()
+void menuPurchase::sItemSites()
 {
   ParameterList params;
-  params.append("plancode");
 
-  dspItemSitesByParameterList *newdlg = new dspItemSitesByParameterList();
+  itemSites *newdlg = new itemSites();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

@@ -109,10 +109,6 @@ class menuInventory : public QObject
     void sDspCountTagsByWarehouse();
     void sDspCountTagsByClassCode();
 
-    void sDspItemSitesByItem();
-    void sDspItemSitesByClassCode();
-    void sDspItemSitesByPlannerCode();
-    void sDspItemSitesByCostCategory();
     void sDspValidLocationsByItem();
     void sDspQOH();
     void sDspQOHByLocation();
@@ -177,7 +173,6 @@ class menuInventory : public QObject
     QMenu *formsShipLabelsMenu;
     QMenu *graphsMenu;
     QMenu *reportsMenu;
-    QMenu *reportsItemsitesMenu;
     QMenu *reportsDtlInvHistMenu;
     QMenu *reportsItemUsgMenu;
     QMenu *reportsShipmentsMenu;

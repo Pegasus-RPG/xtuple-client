@@ -1840,7 +1840,10 @@ QString ParameterWidget::filter()
         else if (w->inherits("QLineEdit"))
         {
           QLineEdit *lineEdit = (QLineEdit *)w;
-          value.append(lineEdit->text());
+          if (!w->isHidden())
+            value.append(lineEdit->text());
+          else
+            value.clear();
         }
         else if (w->inherits("QTableWidget"))
         {
@@ -1860,7 +1863,7 @@ QString ParameterWidget::filter()
             value.append(tr("False"));
         }
         else
-          value = "";
+          value.clear();
 
         filters.append(pp->name + value);
         break;
