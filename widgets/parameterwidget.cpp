@@ -596,6 +596,18 @@ void ParameterWidget::applySaved(int pId, int filter_id)
           if (soCluster != 0)
             soCluster->setId(tempFilterList[1].toInt());
           break;
+        case PurchaseOrder:
+          OrderCluster *poCluster;
+          poCluster = qobject_cast<OrderCluster*>(found);
+          if (poCluster != 0)
+            poCluster->setId(tempFilterList[1].toInt());
+          break;
+        case TransferOrder:
+          OrderCluster *toCluster;
+          toCluster = qobject_cast<OrderCluster*>(found);
+          if (toCluster != 0)
+            toCluster->setId(tempFilterList[1].toInt());
+          break;
         case WorkOrder:
           WoCluster *woCluster;
           woCluster = qobject_cast<WoCluster*>(found);
@@ -775,6 +787,18 @@ void ParameterWidget::applySaved(int pId, int filter_id)
         soCluster = qobject_cast<OrderCluster*>(found);
         if (soCluster != 0)
           soCluster->setId(pp->defaultValue.toInt());
+        break;
+      case TransferOrder:
+        OrderCluster *toCluster;
+        toCluster = qobject_cast<OrderCluster*>(found);
+        if (toCluster != 0)
+          toCluster->setId(pp->defaultValue.toInt());
+        break;
+      case PurchaseOrder:
+        OrderCluster *poCluster;
+        poCluster = qobject_cast<OrderCluster*>(found);
+        if (poCluster != 0)
+          poCluster->setId(pp->defaultValue.toInt());
         break;
       case WorkOrder:
         WoCluster *woCluster;
@@ -1034,6 +1058,32 @@ void ParameterWidget::changeFilterObject(int index)
       soCluster->setLabel("");
 
       connect(soCluster, SIGNAL(newId(int,QString)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case TransferOrder:
+    {
+      OrderCluster *toCluster = new OrderCluster(_filterGroup);
+      newWidget = toCluster;
+      toCluster->setDescriptionVisible(false);
+      toCluster->setOrientation(Qt::Horizontal);
+      toCluster->setAllowedTypes(OrderLineEdit::Transfer);
+      toCluster->setAllowedStatuses(OrderLineEdit::AnyStatus);
+      toCluster->setLabel("");
+
+      connect(toCluster, SIGNAL(newId(int,QString)), this, SLOT( storeFilterValue(int) ) );
+    }
+    break;
+  case PurchaseOrder:
+    {
+      OrderCluster *poCluster = new OrderCluster(_filterGroup);
+      newWidget = poCluster;
+      poCluster->setDescriptionVisible(false);
+      poCluster->setOrientation(Qt::Horizontal);
+      poCluster->setAllowedTypes(OrderLineEdit::Purchase);
+      poCluster->setAllowedStatuses(OrderLineEdit::AnyStatus);
+      poCluster->setLabel("");
+
+      connect(poCluster, SIGNAL(newId(int,QString)), this, SLOT( storeFilterValue(int) ) );
     }
     break;
   case WorkOrder:
@@ -1872,6 +1922,8 @@ void setupParameterWidget(QScriptEngine *engine)
   widget.setProperty("Site", QScriptValue(engine, ParameterWidget::Site), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("SalesOrder", QScriptValue(engine, ParameterWidget::SalesOrder), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("WorkOrder", QScriptValue(engine, ParameterWidget::WorkOrder), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("PurchaseOrder", QScriptValue(engine, ParameterWidget::PurchaseOrder), QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("TransferOrder", QScriptValue(engine, ParameterWidget::TransferOrder), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("ParameterWidget", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
 }

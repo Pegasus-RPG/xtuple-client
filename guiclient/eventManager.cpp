@@ -23,7 +23,7 @@
 #include "createCountTagsByItem.h"
 #include "dspInventoryAvailability.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
-#include "dspInventoryHistoryByItem.h"
+#include "dspInventoryHistory.h"
 #include "mqlutil.h"
 #include "printPackingList.h"
 #include "printWoTraveler.h"
@@ -286,7 +286,7 @@ void eventManager::sViewInventoryHistory()
   ParameterList params;
   params.append("itemsite_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
   
-  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+  dspInventoryHistory *newdlg = new dspInventoryHistory();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

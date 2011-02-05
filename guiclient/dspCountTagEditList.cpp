@@ -26,7 +26,7 @@
 
 #include "countSlip.h"
 #include "countTag.h"
-#include "dspInventoryHistoryByItem.h"
+#include "dspInventoryHistory.h"
 #include "dspCountSlipEditList.h"
 #include "storedProcErrorLookup.h"
 
@@ -235,7 +235,7 @@ void dspCountTagEditList::sViewInventoryHistory()
     params.append("endDate", omfgThis->dbDate());
     params.append("run");
 
-    dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+    dspInventoryHistory *newdlg = new dspInventoryHistory();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }

@@ -16,7 +16,7 @@
 #include <QVariant>
 
 #include "bom.h"
-#include "dspInventoryHistoryByItem.h"
+#include "dspInventoryHistory.h"
 #include "item.h"
 
 dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char*, Qt::WFlags fl)
@@ -135,7 +135,7 @@ void dspSingleLevelWhereUsed::sViewInventoryHistory()
   params.append("warehous_id", -1);
   params.append("run");
 
-  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+  dspInventoryHistory *newdlg = new dspInventoryHistory();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

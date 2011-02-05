@@ -8,35 +8,28 @@
  * to be bound by its terms.
  */
 
-#ifndef __DSPINVENTORYHISTORYBASE_H__
-#define __DSPINVENTORYHISTORYBASE_H__
+#ifndef __DSPINVENTORYHISTORY_H__
+#define __DSPINVENTORYHISTORY_H__
 
 #include "guiclient.h"
 #include "display.h"
 #include <parameter.h>
 
-#include "ui_dspInventoryHistoryBase.h"
-
-class dspInventoryHistoryBase : public display, public Ui::dspInventoryHistoryBase
+class dspInventoryHistory : public display
 {
     Q_OBJECT
 
 public:
-    dspInventoryHistoryBase(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    dspInventoryHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList & params);
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual void sEditTransInfo();
-    virtual void sOrderList();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pItem, int);
     virtual void sViewTransInfo();
     virtual void sViewWOInfo();
-
-protected slots:
-    virtual void languageChange();
-
 };
 
-#endif // __DSPINVENTORYHISTORYBASE_H__
+#endif // __DSPINVENTORYHISTORY_H__

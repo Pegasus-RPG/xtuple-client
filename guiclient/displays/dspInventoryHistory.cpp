@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspInventoryHistoryBase.h"
+#include "dspInventoryHistory.h"
 
 #include <QAction>
 #include <QMenu>
@@ -20,31 +20,66 @@
 #include "countTag.h"
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
-#include "ordercluster.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"
 #include "workOrder.h"
+#include "parameterwidget.h"
 
-// TODO: handle RA?
-// TODO: is there a way to handle RA and TO entirely in scripts?
-dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* name, Qt::WFlags fl)
+dspInventoryHistory::dspInventoryHistory(QWidget* parent, const char* name, Qt::WFlags fl)
   : display(parent, name, fl)
 {
-  setupUi(optionsWidget());
-  setListLabel(tr("Inventory History"));
+  this->setWindowTitle(tr("Inventory History"));
   setReportName("InventoryHistory");
   setMetaSQLOptions("inventoryHistory", "detail");
   setUseAltId(true);
+  setParameterWidgetVisible(true);
 
-  connect(_orderList,   SIGNAL(clicked()),          this, SLOT(sOrderList()));
-  connect(_orderNumber, SIGNAL(requestList()),      this, SLOT(sOrderList()));
-  connect(_orderType,   SIGNAL(valid(bool)),  _orderList, SLOT(setEnabled(bool)));
-  connect(_orderType,   SIGNAL(newID(int)), _orderNumber, SLOT(clear()));
+  QString qryType;
+  if (_metrics->boolean("MultiWhs"))
+    qryType = QString( "SELECT  1, '%1' UNION "
+                       "SELECT  2, '%2' UNION "
+                       "SELECT  4, '%3' UNION "
+                       "SELECT  8, '%4' UNION "
+                       "SELECT  16, '%5' UNION "
+                       "SELECT  32, '%6'")
+    .arg(tr("Receipts"))
+    .arg(tr("Issues"))
+    .arg(tr("Shipments"))
+    .arg(tr("Adjustments and Counts"))
+    .arg(tr("Transfers"))
+    .arg(tr("Scraps"));
+  else
+    qryType = QString( "SELECT  1, '%1' UNION "
+                       "SELECT  2, '%2' UNION "
+                       "SELECT  4, '%3' UNION "
+                       "SELECT  8, '%4' UNION "
+                       "SELECT  32, '%5'")
+        .arg(tr("Receipts"))
+        .arg(tr("Issues"))
+        .arg(tr("Shipments"))
+        .arg(tr("Adjustments and Counts"))
+        .arg(tr("Scraps"));
 
-#ifndef Q_WS_MAC
-  _orderList->setMaximumWidth(25);
-#endif
+  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
+  parameterWidget()->append(tr("Class Code Pattern"), "classcode_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
+  parameterWidget()->appendComboBox(tr("Item Group"), "itemgrp_id", XComboBox::ItemGroups);
+  parameterWidget()->append(tr("Item Group Pattern"), "itemgrp_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Order Number Pattern"), "orderNumber", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Planner Code"), "plancode_id", XComboBox::PlannerCodes);
+  parameterWidget()->append(tr("Planner Code Pattern"), "plancode_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Sales Order"), "cohead_id", ParameterWidget::SalesOrder);
+  parameterWidget()->appendComboBox(tr("Transaction Type"), "transType", qryType);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Transfer Order"), "tohead_id", ParameterWidget::TransferOrder);
+  parameterWidget()->append(tr("Work Order"), "wo_id", ParameterWidget::WorkOrder);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+
+  parameterWidget()->applyDefaultFilterSet();
 
   list()->setRootIsDecorated(true);
   list()->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft,  true, "invhist_transdate");
@@ -64,121 +99,80 @@ dspInventoryHistoryBase::dspInventoryHistoryBase(QWidget* parent, const char* na
   list()->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight, false, "invhist_value_before");
   list()->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight, false, "invhist_value_after");
   list()->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,false, "invhist_user");
-
-  _transType->append(cTransAll,       tr("All Transactions")       );
-  _transType->append(cTransReceipts,  tr("Receipts")               );
-  _transType->append(cTransIssues,    tr("Issues")                 );
-  _transType->append(cTransShipments, tr("Shipments")              );
-  _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
-  
-  _orderType->setAllowNull(true);
-  _orderType->setNullStr(tr("All Orders"));
-  _orderType->append(1, tr("Sales Orders"),      "SO" );
-  _orderType->append(2, tr("Purchase Orders"),   "PO" );
-  _orderType->append(3, tr("Work Orders"),       "WO");
-  
-  if (_metrics->boolean("MultiWhs"))
-  {
-    _transType->append(cTransTransfers, tr("Transfers") );
-    _orderType->append(4, tr("Transfer Orders"), "TO" );
-  }
-  
-  _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentIndex(0);
-  _orderType->setId(-1);
-
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);                                                     
-  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 }
 
-void dspInventoryHistoryBase::languageChange()
+enum SetResponse dspInventoryHistory::set(const ParameterList &pParams)
 {
-  display::languageChange();
-  retranslateUi(this);
-}
-
-enum SetResponse dspInventoryHistoryBase::set(const ParameterList &pParams)
-{
+  qDebug("test!");
   XWidget::set(pParams);
+
+  parameterWidget()->setSavedFilters();
+
   QVariant param;
   bool     valid;
 
   param = pParams.value("classcode_id", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ClassCode);
-    _parameter->setId(param.toInt());
-  }
+    parameterWidget()->setDefault(tr("Class Code"), param);
 
   param = pParams.value("classcode_pattern", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ClassCode);
-    _parameter->setPattern(param.toString());
-  }
-
-  param = pParams.value("classcode", &valid);
-  if (valid)
-    _parameter->setType(ParameterGroup::ClassCode);
+    parameterWidget()->setDefault(tr("Class Code Pattern"), param);
 
   param = pParams.value("plancode_id", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::PlannerCode);
-    _parameter->setId(param.toInt());
-  }
+    parameterWidget()->setDefault(tr("Planner Code"), param);
 
   param = pParams.value("plancode_pattern", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::PlannerCode);
-    _parameter->setPattern(param.toString());
-  }
-
-  param = pParams.value("plancode", &valid);
-  if (valid)
-    _parameter->setType(ParameterGroup::PlannerCode);
+    parameterWidget()->setDefault(tr("Planner Code Pattern"), param);
 
   param = pParams.value("itemgrp_id", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ItemGroup);
-    _parameter->setId(param.toInt());
-  }
+    parameterWidget()->setDefault(tr("Item Group"), param);
 
   param = pParams.value("itemgrp_pattern", &valid);
   if (valid)
-  {
-    _parameter->setType(ParameterGroup::ItemGroup);
-    _parameter->setPattern(param.toString());
-  }
-
-  param = pParams.value("itemgrp", &valid);
-  if (valid)
-    _parameter->setType(ParameterGroup::ItemGroup);
+    parameterWidget()->setDefault(tr("Item Group Pattern"), param);
 
   param = pParams.value("item_id", &valid);
   if (valid)
-    _item->setId(param.toInt());
+    parameterWidget()->setDefault(tr("Item"), param);
 
   param = pParams.value("warehous_id", &valid);
   if (valid)
-    _warehouse->setId(param.toInt());
+  {
+    if (param.toInt() > 0)
+      parameterWidget()->setDefault(tr("Site"), param);
+  }
 
   param = pParams.value("itemsite_id", &valid);
   if (valid)
   {
-    _item->setItemsiteid(param.toInt());
-    _dates->setFocus();
+    XSqlQuery qry;
+    qry.prepare("SELECT itemsite_item_id, itemsite_warehous_id "
+                "FROM itemsite "
+                "WHERE itemsite_id=:itemsite_id;");
+    qry.bindValue(":itemsite_id", param.toInt());
+    qry.exec();
+    if (qry.first())
+    {
+      parameterWidget()->setDefault(tr("Item"), qry.value("itemsite_item_id"));
+      parameterWidget()->setDefault(tr("Site"), qry.value("itemsite_warehous_id"));
+    }
   }
 
   param = pParams.value("startDate", &valid);
   if (valid)
-    _dates->setStartDate(param.toDate());
+    parameterWidget()->setDefault(tr("Start Date"), param);
+  else
+    parameterWidget()->setDefault(tr("Start Date"), omfgThis->startOfTime());
 
   param = pParams.value("endDate", &valid);
   if (valid)
-    _dates->setEndDate(param.toDate());
+    parameterWidget()->setDefault(tr("End Date"), param);
+  else
+    parameterWidget()->setDefault(tr("End Date"), omfgThis->endOfTime());
 
   param = pParams.value("transtype", &valid);
   if (valid)
@@ -186,110 +180,30 @@ enum SetResponse dspInventoryHistoryBase::set(const ParameterList &pParams)
     QString transtype = param.toString();
 
     if (transtype == "R")
-      _transType->setCurrentIndex(1);
+      parameterWidget()->setDefault(tr("TransactionType"), 1);
     else if (transtype == "I")
-      _transType->setCurrentIndex(2);
+      parameterWidget()->setDefault(tr("TransactionType"), 2);
     else if (transtype == "S")
-      _transType->setCurrentIndex(3);
+      parameterWidget()->setDefault(tr("TransactionType"), 3);
     else if (transtype == "A")
-      _transType->setCurrentIndex(4);
+      parameterWidget()->setDefault(tr("TransactionType"), 4);
     else if (transtype == "T")
-      _transType->setCurrentIndex(5);
+      parameterWidget()->setDefault(tr("TransactionType"), 5);
     else if (transtype == "SC")
-      _transType->setCurrentIndex(6);
+      parameterWidget()->setDefault(tr("TransactionType"), 6);
   }
 
-  param = pParams.value("ordertype", &valid);
-  if (valid)
-    _orderType->setCode(param.toString());
+  parameterWidget()->applyDefaultFilterSet();
 
   if (pParams.inList("run"))
     sFillList();
 
-  if(_parameter->isVisibleTo(this))
-  {
-    switch (_parameter->type())
-    {
-      case ParameterGroup::ClassCode:
-        setWindowTitle(tr("Inventory History by Class Code"));
-        break;
-  
-      case ParameterGroup::PlannerCode:
-        setWindowTitle(tr("Inventory History by Planner Code"));
-        break;
-  
-      case ParameterGroup::ItemGroup:
-        setWindowTitle(tr("Inventory History by Item Group"));
-        break;
-  
-      default:
-        break;
-    }
-  }
-
   return NoError;
 }
 
-bool dspInventoryHistoryBase::setParams(ParameterList & params)
+bool dspInventoryHistory::setParams(ParameterList & params)
 {
-  if(_itemGroup->isVisibleTo(this) && !_item->isValid())
-  {
-    QMessageBox::critical( this, tr("Item Number Required"),
-      tr("You must specify an Item Number."));
-    return false;
-  }
-
-  if (_orderNumber->isVisibleTo(this) && _orderNumber->text().trimmed().length() == 0)
-  {
-    QMessageBox::critical( this, tr("Enter Order Search Pattern"),
-                           tr("You must enter a Order # pattern to search for." ) );
-    _orderNumber->setFocus();
-    return false;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
-    return false;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return false;
-  }
-
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-  params.append("transType", _transType->id());
-
-  if(_itemGroup->isVisibleTo(this))
-  {
-    params.append("item_id", _item->id());
-    params.append("includeFormatted"); // ??? originally from dspInventoryHistoryByItem::sFillList()
-  }
-
-  if(_orderNumber->isVisibleTo(this))
-    params.append("orderNumber", _orderNumber->text());
-
-  if (_orderType->isVisibleTo(this) && _orderType->isValid())
-    params.append("orderType", _orderType->code());
-
-  if(_parameter->isVisibleTo(this))
-  {
-    _parameter->appendValue(params);
-
-    if (_parameter->type() == ParameterGroup::ItemGroup)
-      params.append("itemgrp");
-    else if(_parameter->type() == ParameterGroup::PlannerCode)
-      params.append("plancode");
-    else
-      params.append("classcode");
-  }
+  display::setParams(params);
 
   params.append("average", tr("Average"));
   params.append("standard", tr("Standard"));
@@ -300,7 +214,7 @@ bool dspInventoryHistoryBase::setParams(ParameterList & params)
   return true;
 }
 
-void dspInventoryHistoryBase::sViewTransInfo()
+void dspInventoryHistory::sViewTransInfo()
 {
   QString transType(((XTreeWidgetItem *)list()->currentItem())->text(list()->column("invhist_transtype")));
 
@@ -352,7 +266,7 @@ void dspInventoryHistoryBase::sViewTransInfo()
   }
 }
 
-void dspInventoryHistoryBase::sEditTransInfo()
+void dspInventoryHistory::sEditTransInfo()
 {
   ParameterList params;
   params.append("mode", "edit");
@@ -363,7 +277,7 @@ void dspInventoryHistoryBase::sEditTransInfo()
   newdlg.exec();
 }
 
-void dspInventoryHistoryBase::sViewWOInfo()
+void dspInventoryHistory::sViewWOInfo()
 {
   QString orderNumber = list()->currentItem()->text(list()->column("orderlocation"));
   int sep1            = orderNumber.indexOf('-');
@@ -391,7 +305,7 @@ void dspInventoryHistoryBase::sViewWOInfo()
   }
 }
 
-void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
+void dspInventoryHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
 {
   QAction *menuItem;
 
@@ -425,43 +339,3 @@ void dspInventoryHistoryBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem
   }
 }
 
-void dspInventoryHistoryBase::sOrderList()
-{
-  // TODO: simplify when the order line edit can handle wo.
-  OrderLineEdit tmpOrderLE(this, "tmpOrderLE");
-  ParameterList params;
-  if (_orderType->code() == "PO" ||
-      _orderType->code() == "SO" ||
-      _orderType->code() == "TO")
-  {
-    tmpOrderLE.setAllowedType(_orderType->code());
-    tmpOrderLE.setAllowedStatuses(OrderLineEdit::Open);
-    tmpOrderLE.sList();
-    if (tmpOrderLE.isValid())
-      _orderNumber->setText(tmpOrderLE.text());
-
-  }
-  else if (_orderType->code() == "WO")
-  {
-    params.append("woType", cWoOpen);
-
-    woList *newdlg = new woList(_orderNumber);
-    newdlg->set(params);
-
-    int id = newdlg->exec();
-    if(id != QDialog::Rejected)
-    {
-      XSqlQuery woq;
-      woq.prepare("SELECT formatWoNumber(:id) AS result;");
-      woq.bindValue(":id", id);
-      woq.exec();
-      if (woq.first())
-        _orderNumber->setText(woq.value("result").toString());
-      else if (woq.lastError().type() != QSqlError::NoError)
-      {
-        QMessageBox::critical(this, tr("Database Error"), woq.lastError().text());
-        return;
-      }
-    }
-  }
-}

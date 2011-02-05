@@ -18,7 +18,7 @@
 
 #include "createCountTagsByItem.h"
 #include "dspAllocations.h"
-#include "dspInventoryHistoryByItem.h"
+#include "dspInventoryHistory.h"
 #include "dspOrders.h"
 #include "dspRunningAvailability.h"
 #include "dspSubstituteAvailabilityByItem.h"
@@ -259,7 +259,7 @@ void dspInventoryAvailability::sViewHistory()
   ParameterList params;
   params.append("itemsite_id", list()->id());
 
-  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+  dspInventoryHistory *newdlg = new dspInventoryHistory();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

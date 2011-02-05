@@ -97,9 +97,7 @@
 #include "dspExpiredInventoryByClassCode.h"
 #include "dspInventoryAvailability.h"
 #include "dspSubstituteAvailabilityByItem.h"
-#include "dspInventoryHistoryByItem.h"
-#include "dspInventoryHistoryByOrderNumber.h"
-#include "dspInventoryHistoryByParameterList.h"
+#include "dspInventoryHistory.h"
 #include "dspDetailedInventoryHistoryByLotSerial.h"
 #include "dspDetailedInventoryHistoryByLocation.h"
 #include "dspUsageStatisticsByItem.h"
@@ -159,7 +157,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   formsShipLabelsMenu      = new QMenu(parent);
   reportsMenu              = new QMenu(parent);
   reportsItemsitesMenu     = new QMenu(parent);
-  reportsInvHistMenu       = new QMenu(parent);
   reportsDtlInvHistMenu    = new QMenu(parent);
   reportsItemUsgMenu       = new QMenu(parent);
   reportsShipmentsMenu     = new QMenu(parent);
@@ -187,7 +184,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   formsShipLabelsMenu->setObjectName("menu.im.formsshiplabels");
   reportsMenu->setObjectName("menu.im.reports");
   reportsItemsitesMenu->setObjectName("menu.im.reportsitemsites");
-  reportsInvHistMenu->setObjectName("menu.im.reportsinvhist");
   reportsDtlInvHistMenu->setObjectName("menu.im.reportdtlinvhist");
   reportsItemUsgMenu->setObjectName("menu.im.reportsitemusg");
   reportsShipmentsMenu->setObjectName("menu.im.reportsshipments");
@@ -358,13 +354,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.dspSubstituteAvailabilityByRootItem",         tr("&Substitute Availability..."),       SLOT(sDspSubstituteAvailabilityByRootItem()), reportsMenu, "ViewInventoryAvailability",        NULL, NULL, true, NULL },
 
     //  Inventory| Reports | Inventory History
-    { "menu",                           tr("Inventory &History"),                         (char*)reportsInvHistMenu,                    reportsMenu,    "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspInventoryHistoryByPlannerCode",                   tr("by &Planner Code..."), SLOT(sDspInventoryHistoryByPlannerCode()), reportsInvHistMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspInventoryHistoryByClassCode",                       tr("by &Class Code..."), SLOT(sDspInventoryHistoryByClassCode()), reportsInvHistMenu, "ViewInventoryHistory",   NULL, NULL, true, NULL },
-    { "im.dspInventoryHistoryByOrderNumber",                   tr("by &Order Number..."), SLOT(sDspInventoryHistoryByOrderNumber()), reportsInvHistMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspInventoryHistoryByItemGroup",                       tr("by Item &Group..."), SLOT(sDspInventoryHistoryByItemGroup()), reportsInvHistMenu, "ViewInventoryHistory",   NULL, NULL, true, NULL },
-    { "im.dspInventoryHistoryByItem",                                  tr("by &Item..."), SLOT(sDspInventoryHistoryByItem()), reportsInvHistMenu, "ViewInventoryHistory",        NULL, NULL, true, NULL },
-
+    { "im.dspInventoryHistory",                   tr("Inventory &History..."), SLOT(sDspInventoryHistory()), reportsMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
     //  Inventory | Reports | Detailed Inventory History
     { "menu",                                          tr("&Detailed Inventory History"), (char*)reportsDtlInvHistMenu,                    reportsMenu,          "ViewInventoryHistory", NULL, NULL, true, NULL },
     { "im.dspDetailedInventoryHistoryByLocation",                  tr("by Lo&cation..."), SLOT(sDspDetailedInventoryHistoryByLocation()), reportsDtlInvHistMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
@@ -956,44 +946,9 @@ void menuInventory::sDspSubstituteAvailabilityByRootItem()
   omfgThis->handleNewWindow(new dspSubstituteAvailabilityByItem());
 }
 
-void menuInventory::sDspInventoryHistoryByItem()
+void menuInventory::sDspInventoryHistory()
 {
-  omfgThis->handleNewWindow(new dspInventoryHistoryByItem());
-}
-
-void menuInventory::sDspInventoryHistoryByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  dspInventoryHistoryByParameterList *newdlg = new dspInventoryHistoryByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspInventoryHistoryByOrderNumber()
-{
-  omfgThis->handleNewWindow(new dspInventoryHistoryByOrderNumber());
-}
-
-void menuInventory::sDspInventoryHistoryByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  dspInventoryHistoryByParameterList *newdlg = new dspInventoryHistoryByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDspInventoryHistoryByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  dspInventoryHistoryByParameterList *newdlg = new dspInventoryHistoryByParameterList();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(new dspInventoryHistory());
 }
 
 void menuInventory::sDspDetailedInventoryHistoryByLotSerial()

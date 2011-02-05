@@ -121,11 +121,7 @@ class menuInventory : public QObject
     void sDspExpiredInventoryByClassCode();
     void sDspInventoryAvailability();
     void sDspSubstituteAvailabilityByRootItem();
-    void sDspInventoryHistoryByItem();
-    void sDspInventoryHistoryByItemGroup();
-    void sDspInventoryHistoryByOrderNumber();
-    void sDspInventoryHistoryByClassCode();
-    void sDspInventoryHistoryByPlannerCode();
+    void sDspInventoryHistory();
     void sDspDetailedInventoryHistoryByLotSerial();
     void sDspDetailedInventoryHistoryByLocation();
     void sDspItemUsageStatisticsByItem();
@@ -182,7 +178,6 @@ class menuInventory : public QObject
     QMenu *graphsMenu;
     QMenu *reportsMenu;
     QMenu *reportsItemsitesMenu;
-    QMenu *reportsInvHistMenu;
     QMenu *reportsDtlInvHistMenu;
     QMenu *reportsItemUsgMenu;
     QMenu *reportsShipmentsMenu;

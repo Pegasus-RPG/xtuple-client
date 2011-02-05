@@ -22,7 +22,7 @@
 #include "countTag.h"
 #include "createCountTagsByItem.h"
 #include "dspAllocations.h"
-#include "dspInventoryHistoryByItem.h"
+#include "dspInventoryHistory.h"
 #include "dspItemCostSummary.h"
 #include "dspOrders.h"
 #include "dspRunningAvailability.h"
@@ -1022,8 +1022,9 @@ void itemAvailabilityWorkbench::sViewHistory()
 {
   ParameterList params;
   params.append("itemsite_id", _invAvailability->id());
+  params.append("run");
 
-  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+  dspInventoryHistory *newdlg = new dspInventoryHistory();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -1406,7 +1407,7 @@ void itemAvailabilityWorkbench::sViewInventoryHistory()
   params.append("warehous_id", -1);
   params.append("run");
 
-  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+  dspInventoryHistory *newdlg = new dspInventoryHistory();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

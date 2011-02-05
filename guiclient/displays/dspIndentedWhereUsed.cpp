@@ -15,7 +15,7 @@
 #include <QMessageBox>
 #include <QVariant>
 
-#include "dspInventoryHistoryByItem.h"
+#include "dspInventoryHistory.h"
 
 dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspIndentedWhereUsed", fl)
@@ -104,7 +104,7 @@ void dspIndentedWhereUsed::sViewInventoryHistory()
   params.append("item_id", list()->altId());
   params.append("run");
 
-  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+  dspInventoryHistory *newdlg = new dspInventoryHistory();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

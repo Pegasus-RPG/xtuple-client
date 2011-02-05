@@ -37,7 +37,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
       Crmacct, User, Text, Date, XComBox, Contact,
       Multiselect, GLAccount, Exists, CheckBox, Project,
       Customer, Site, Vendor, Item, Employee, Shipto,
-      SalesOrder, WorkOrder
+      SalesOrder, WorkOrder, PurchaseOrder, TransferOrder
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);

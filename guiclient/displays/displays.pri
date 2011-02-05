@@ -34,7 +34,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspInventoryAvailabilityByCustomerType.ui \
            displays/dspInventoryAvailabilityBySalesOrder.ui \
            displays/dspInventoryAvailabilityByWorkOrder.ui \
-           displays/dspInventoryHistoryBase.ui \
            displays/dspInventoryLocator.ui \
            displays/dspInvoiceRegister.ui \
            displays/dspItemCostDetail.ui \
@@ -167,10 +166,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspInventoryAvailabilityByCustomerType.h \
            displays/dspInventoryAvailabilityBySalesOrder.h \
            displays/dspInventoryAvailabilityByWorkOrder.h \
-           displays/dspInventoryHistoryBase.h \
-           displays/dspInventoryHistoryByItem.h \
-           displays/dspInventoryHistoryByOrderNumber.h \
-           displays/dspInventoryHistoryByParameterList.h \
+           displays/dspInventoryHistory.h \
            displays/dspInventoryLocator.h \
            displays/dspInvoiceRegister.h \
            displays/dspItemCostDetail.h \
@@ -319,10 +315,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspInventoryAvailabilityByCustomerType.cpp \
            displays/dspInventoryAvailabilityBySalesOrder.cpp \
            displays/dspInventoryAvailabilityByWorkOrder.cpp \
-           displays/dspInventoryHistoryBase.cpp \
-           displays/dspInventoryHistoryByItem.cpp \
-           displays/dspInventoryHistoryByOrderNumber.cpp \
-           displays/dspInventoryHistoryByParameterList.cpp \
+           displays/dspInventoryHistory.cpp \
            displays/dspInventoryLocator.cpp \
            displays/dspInvoiceRegister.cpp \
            displays/dspItemCostDetail.cpp \

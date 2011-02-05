@@ -15,7 +15,7 @@
 #include <QMessageBox>
 #include <QVariant>
 
-#include "dspInventoryHistoryByItem.h"
+#include "dspInventoryHistory.h"
 #include "guiclient.h"
 
 dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* parent, const char*, Qt::WFlags fl)
@@ -59,7 +59,7 @@ void dspTimePhasedUsageStatisticsByItem::sViewTransactions()
     else if (type == "Adjustments")
       params.append("transtype", "A");
 
-    dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+    dspInventoryHistory *newdlg = new dspInventoryHistory();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }

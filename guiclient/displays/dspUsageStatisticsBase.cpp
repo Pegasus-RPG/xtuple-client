@@ -15,7 +15,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 
-#include "dspInventoryHistoryByItem.h"
+#include "dspInventoryHistory.h"
 
 dspUsageStatisticsBase::dspUsageStatisticsBase(QWidget* parent, const char* name, Qt::WFlags fl)
   : display(parent, name, fl)
@@ -165,7 +165,7 @@ void dspUsageStatisticsBase::viewTransactions(QString pType)
   if (!pType.isNull())
     params.append("transtype", pType);
 
-  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+  dspInventoryHistory *newdlg = new dspInventoryHistory();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
