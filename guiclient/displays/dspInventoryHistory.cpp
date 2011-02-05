@@ -61,8 +61,8 @@ dspInventoryHistory::dspInventoryHistory(QWidget* parent, const char* name, Qt::
         .arg(tr("Adjustments and Counts"))
         .arg(tr("Scraps"));
 
-  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate());
-  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate::currentDate(), true);
+  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
   parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
   parameterWidget()->append(tr("Class Code Pattern"), "classcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
