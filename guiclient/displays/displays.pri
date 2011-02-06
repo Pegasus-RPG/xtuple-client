@@ -13,8 +13,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspCountSlipsByWarehouse.ui \
            displays/dspCountTagsBase.ui \
            displays/dspCustomerARHistory.ui \
-           displays/dspCustomersByCharacteristic.ui \
-           displays/dspCustomersByCustomerType.ui \
            displays/dspDepositsRegister.ui \
            displays/dspDetailedInventoryHistoryByLocation.ui \
            displays/dspDetailedInventoryHistoryByLotSerial.ui \
@@ -139,8 +137,6 @@ HEADERS += displays/dspAllocations.h \
            displays/dspCountTagsByItem.h \
            displays/dspCountTagsByWarehouse.h \
            displays/dspCustomerARHistory.h \
-           displays/dspCustomersByCharacteristic.h \
-           displays/dspCustomersByCustomerType.h \
            displays/dspDepositsRegister.h \
            displays/dspDetailedInventoryHistoryByLocation.h \
            displays/dspDetailedInventoryHistoryByLotSerial.h \
@@ -283,8 +279,6 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspCountTagsByItem.cpp \
            displays/dspCountTagsByWarehouse.cpp \
            displays/dspCustomerARHistory.cpp \
-           displays/dspCustomersByCharacteristic.cpp \
-           displays/dspCustomersByCustomerType.cpp \
            displays/dspDepositsRegister.cpp \
            displays/dspDetailedInventoryHistoryByLocation.cpp \
            displays/dspDetailedInventoryHistoryByLotSerial.cpp \

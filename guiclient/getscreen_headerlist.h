@@ -159,8 +159,6 @@
 #include "dspCountTagsByItem.h"
 #include "dspCountTagsByWarehouse.h"
 #include "dspCustomerARHistory.h"
-#include "dspCustomersByCharacteristic.h"
-#include "dspCustomersByCustomerType.h"
 #include "dspDepositsRegister.h"
 #include "dspDetailedInventoryHistoryByLocation.h"
 #include "dspDetailedInventoryHistoryByLotSerial.h"

@@ -25,6 +25,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   setUseAltId(true);
   setWindowTitle(tr("Customers"));
   setMetaSQLOptions("customers", "detail");
+  setReportName("Customers");
   setParameterWidgetVisible(true);
   setNewVisible(true);
   setSearchVisible(true);
@@ -60,7 +61,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Bill Phone"),  100, Qt::AlignLeft  , true,  "bill_phone" );
   list()->addColumn(tr("Bill Fax"),    100, Qt::AlignLeft  , false, "bill_fax" );
   list()->addColumn(tr("Bill Email"),  100, Qt::AlignLeft  , true,  "bill_email" );
-  list()->addColumn(tr("Bill Addr. 1"), -1, Qt::AlignLeft  , false, "bill_line1" );
+  list()->addColumn(tr("Bill Addr. 1"), -1, Qt::AlignLeft  , true,  "bill_line1" );
   list()->addColumn(tr("Bill Addr. 2"), -1, Qt::AlignLeft  , false, "bill_line2" );
   list()->addColumn(tr("Bill Addr. 3"), -1, Qt::AlignLeft  , false, "bill_line3" );
   list()->addColumn(tr("Bill City"),    75, Qt::AlignLeft  , false, "bill_city" );
@@ -79,6 +80,24 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Corr. State"),  50, Qt::AlignLeft  , false, "corr_state" );
   list()->addColumn(tr("Corr. Postal"), 75, Qt::AlignLeft  , false, "corr_postalcode" );
   list()->addColumn(tr("Corr. Country"),100, Qt::AlignLeft , false, "corr_country" );
+
+  // Add columns and parameters for characteristics
+  QString column;
+  QString name;
+  QString param;
+  XSqlQuery chars;
+  chars.exec("SELECT char_id, char_name "
+                "FROM char "
+                "WHERE (char_customers) "
+                "ORDER BY char_name;");
+  while (chars.next())
+  {
+    _charids.append(chars.value("char_id").toInt());
+    column = QString("char%1").arg(chars.value("char_id").toString());
+    name = chars.value("char_name").toString();
+    parameterWidget()->append(name, column, ParameterWidget::Text);
+    list()->addColumn(name, -1, Qt::AlignLeft , false, column );
+  }
 
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList()));
 }
@@ -186,3 +205,25 @@ void customers::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
 }
 
+bool customers::setParams(ParameterList &params)
+{
+  display::setParams(params);
+  params.append("char_id_list", _charids);
+
+  // Handle characteristics
+  QVariant param;
+  bool valid;
+  QString column;
+  QStringList clauses;
+  for (int i = 0; i < _charids.count(); i++)
+  {
+    column = QString("char%1").arg(_charids.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+      clauses.append(QString("charass_alias%1.charass_value ~* '%2'").arg(_charids.at(i).toString()).arg(param.toString()));
+  }
+  if (clauses.count())
+    params.append("charClause", clauses.join(" AND ").prepend(" AND "));
+
+  return true;
+}

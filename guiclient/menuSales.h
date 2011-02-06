@@ -92,8 +92,6 @@ class menuSales : public QObject
     void sDspInventoryAvailabilityByCustomerType();
     void sDspInventoryAvailabilityBySalesOrder();
     void sDspReservations();
-    void sDspCustomersByCusttype();
-    void sDspCustomersByCharacteristic();
     void sDspSalesOrderStatus();
     void sDspBacklog();
     void sDspSummarizedBacklogByWarehouse();
@@ -153,7 +151,6 @@ class menuSales : public QObject
     QMenu *formsMenu;
     QMenu *analysisMenu;
     QMenu *reportsMenu;
-    QMenu *reportsCustomersMenu;
     QMenu *reportsBacklogMenu;
     QMenu *utilitiesMenu;
     

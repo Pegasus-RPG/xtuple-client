@@ -70,8 +70,6 @@
 #include "dspSalesOrdersByParameterList.h"
 #include "dspQuotesByCustomer.h"
 #include "dspQuotesByItem.h"
-#include "dspCustomersByCustomerType.h"
-#include "dspCustomersByCharacteristic.h"
 #include "dspInventoryAvailability.h"
 #include "dspInventoryAvailabilityByCustomerType.h"
 #include "dspInventoryAvailabilityBySalesOrder.h"
@@ -135,7 +133,6 @@ menuSales::menuSales(GUIClient *pParent) :
   lookupSoMenu = new QMenu(parent);
   formsMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
-  reportsCustomersMenu = new QMenu(parent);
   analysisMenu = new QMenu(parent);
   prospectMenu = new QMenu(parent);
   customerMenu = new QMenu(parent);
@@ -157,7 +154,6 @@ menuSales::menuSales(GUIClient *pParent) :
   lookupSoMenu->setObjectName("menu.sales.lookupso");
   formsMenu->setObjectName("menu.sales.forms");
   reportsMenu->setObjectName("menu.sales.reports");
-  reportsCustomersMenu->setObjectName("menu.sales.reportscustomers");
   analysisMenu->setObjectName("menu.sales.analysis");
   prospectMenu->setObjectName("menu.sales.prospect");
   customerMenu->setObjectName("menu.sales.customer");
@@ -270,11 +266,6 @@ menuSales::menuSales(GUIClient *pParent) :
 
     { "separator",	NULL,	NULL,	reportsMenu,	"true",		NULL, NULL, true, NULL },
     
-    // Sales | Reports | Customers
-    { "menu",	tr("&Customers"),           (char*)reportsCustomersMenu,	reportsMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.dspCustomersByCustomerType", tr("by Customer &Type..."),	SLOT(sDspCustomersByCusttype()), reportsCustomersMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL },
-    { "so.dspCustomersByCharacteristic", tr("by C&haracteristic..."),	SLOT(sDspCustomersByCharacteristic()), reportsCustomersMenu, "MaintainCustomerMasters ViewCustomerMasters",	NULL, NULL, true, NULL },
-
     // Sales | Analysis
     { "menu",	tr("&Analysis"),           (char*)analysisMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
     { "sa.dspBookings", tr("&Bookings..."), SLOT(sDspBookings()), analysisMenu, "ViewSalesOrders", NULL, NULL, true , NULL },
@@ -623,16 +614,6 @@ void menuSales::sDspFreightPricesByCustomer()
 void menuSales::sDspFreightPricesByCustomerType()
 {
   omfgThis->handleNewWindow(new dspFreightPricesByCustomerType());
-}
-
-void menuSales::sDspCustomersByCusttype()
-{
-  omfgThis->handleNewWindow(new dspCustomersByCustomerType());
-}
-
-void menuSales::sDspCustomersByCharacteristic()
-{
-  omfgThis->handleNewWindow(new dspCustomersByCharacteristic());
 }
 
 void menuSales::sDspSalesOrderStatus()

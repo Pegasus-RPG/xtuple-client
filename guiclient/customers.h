@@ -22,12 +22,16 @@ public:
     customers(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
 public slots:
+    virtual bool setParams(ParameterList &);
     virtual void sNew();
     virtual void sEdit();
     virtual void sReassignCustomerType();
     virtual void sView();
     virtual void sDelete();
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
+
+private:
+    QList<QVariant> _charids;
 };
 
 #endif // CUSTOMERS_H
