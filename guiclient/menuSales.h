@@ -120,7 +120,6 @@ class menuSales : public QObject
     void sNewProspect();
     void sProspects();
 
-    void sDspCustomerInformationExport();
     void sReassignCustomerTypeByCustomerType();
     
     void sArchiveSalesHistory();

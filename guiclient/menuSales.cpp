@@ -101,7 +101,6 @@
 #include "updateCreditStatusByCustomer.h"
 #include "customerGroups.h"
 
-#include "dspCustomerInformationExport.h"
 #include "reassignCustomerTypeByCustomerType.h"
 #include "characteristics.h"
 
@@ -325,7 +324,6 @@ menuSales::menuSales(GUIClient *pParent) :
     { "separator",	NULL,	NULL,	mainMenu,	"true",		NULL, NULL, true, NULL },
 
     { "menu",	tr("&Utilities"),         (char*)utilitiesMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.customerInformationExport", tr("&Customer Information Export..."),	SLOT(sDspCustomerInformationExport()), utilitiesMenu, "MaintainCustomerMasters",	NULL, NULL, true, NULL },
     { "so.reassignCustomerTypeByCustomerType", tr("&Reassign Customer Type by Customer Type..."),	SLOT(sReassignCustomerTypeByCustomerType()), utilitiesMenu, "MaintainCustomerMasters",	NULL, NULL, true, NULL },
     { "so.updateCreditStatusByCustomer", tr("&Update Credit Status by Customer..."),	SLOT(sUpdateCreditStatusByCustomer()), utilitiesMenu, "MaintainCustomerMasters UpdateCustomerCreditStatus",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	utilitiesMenu,	"true",		NULL, NULL, true, NULL },
@@ -822,11 +820,6 @@ void menuSales::sNewProspect()
 void menuSales::sProspects()
 {
   omfgThis->handleNewWindow(new prospects());
-}
-
-void menuSales::sDspCustomerInformationExport()
-{
-  omfgThis->handleNewWindow(new dspCustomerInformationExport());
 }
 
 void menuSales::sReassignCustomerTypeByCustomerType()

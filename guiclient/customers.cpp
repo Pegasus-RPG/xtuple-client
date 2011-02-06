@@ -51,19 +51,34 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
-  list()->addColumn(tr("Number"),  _orderColumn, Qt::AlignLeft, true, "cust_number");
-  list()->addColumn(tr("Active"),  _ynColumn,    Qt::AlignCenter, false, "cust_active");
-  list()->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "cust_name");
-  list()->addColumn(tr("Type"),    _itemColumn,  Qt::AlignLeft, true, "custtype_code");
-  list()->addColumn(tr("First"),   50, Qt::AlignLeft  , true, "cntct_first_name" );
-  list()->addColumn(tr("Last"),    -1, Qt::AlignLeft  , true, "cntct_last_name" );
-  list()->addColumn(tr("Phone"),   100, Qt::AlignLeft  , true, "cntct_phone" );
-  list()->addColumn(tr("Email"),   100, Qt::AlignLeft  , true, "cntct_email" );
-  list()->addColumn(tr("Address"), -1, Qt::AlignLeft  , false, "addr_line1" );
-  list()->addColumn(tr("City"),    75, Qt::AlignLeft  , false, "addr_city" );
-  list()->addColumn(tr("State"),   50, Qt::AlignLeft  , false, "addr_state" );
-  list()->addColumn(tr("Country"), 100, Qt::AlignLeft  , false, "addr_country" );
-  list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , false, "addr_postalcode" );
+  list()->addColumn(tr("Number"), _orderColumn,Qt::AlignLeft,true,  "cust_number");
+  list()->addColumn(tr("Active"),_ynColumn, Qt::AlignCenter, false, "cust_active");
+  list()->addColumn(tr("Name"),         -1, Qt::AlignLeft,   true,  "cust_name");
+  list()->addColumn(tr("Type"),_itemColumn, Qt::AlignLeft,   true,  "custtype_code");
+  list()->addColumn(tr("Bill First"),   50, Qt::AlignLeft  , true,  "bill_first_name" );
+  list()->addColumn(tr("Bill Last"),    -1, Qt::AlignLeft  , true,  "bill_last_name" );
+  list()->addColumn(tr("Bill Phone"),  100, Qt::AlignLeft  , true,  "bill_phone" );
+  list()->addColumn(tr("Bill Fax"),    100, Qt::AlignLeft  , false, "bill_fax" );
+  list()->addColumn(tr("Bill Email"),  100, Qt::AlignLeft  , true,  "bill_email" );
+  list()->addColumn(tr("Bill Addr. 1"), -1, Qt::AlignLeft  , false, "bill_line1" );
+  list()->addColumn(tr("Bill Addr. 2"), -1, Qt::AlignLeft  , false, "bill_line2" );
+  list()->addColumn(tr("Bill Addr. 3"), -1, Qt::AlignLeft  , false, "bill_line3" );
+  list()->addColumn(tr("Bill City"),    75, Qt::AlignLeft  , false, "bill_city" );
+  list()->addColumn(tr("Bill State"),   50, Qt::AlignLeft  , false, "bill_state" );
+  list()->addColumn(tr("Bill Country"),100, Qt::AlignLeft  , false, "bill_country" );
+  list()->addColumn(tr("Bill Postal"),  75, Qt::AlignLeft  , false, "bill_postalcode" );
+  list()->addColumn(tr("Corr. First"),  50, Qt::AlignLeft  , false, "corr_first_name" );
+  list()->addColumn(tr("Corr. Last"),   -1, Qt::AlignLeft  , false, "corr_last_name" );
+  list()->addColumn(tr("Corr. Phone"), 100, Qt::AlignLeft  , false, "corr_phone" );
+  list()->addColumn(tr("Corr. Fax"),   100, Qt::AlignLeft  , false, "corr_fax" );
+  list()->addColumn(tr("Corr. Email"), 100, Qt::AlignLeft  , false, "corr__email" );
+  list()->addColumn(tr("Corr. Addr. 1"),-1, Qt::AlignLeft  , false, "corr_line1" );
+  list()->addColumn(tr("Corr. Addr. 2"),-1, Qt::AlignLeft  , false, "corr_line2" );
+  list()->addColumn(tr("Corr. Addr. 3"),-1, Qt::AlignLeft  , false, "corr_line3" );
+  list()->addColumn(tr("Corr. City"),   75, Qt::AlignLeft  , false, "corr_city" );
+  list()->addColumn(tr("Corr. State"),  50, Qt::AlignLeft  , false, "corr_state" );
+  list()->addColumn(tr("Corr. Postal"), 75, Qt::AlignLeft  , false, "corr_postalcode" );
+  list()->addColumn(tr("Corr. Country"),100, Qt::AlignLeft , false, "corr_country" );
 
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList()));
 }
