@@ -101,8 +101,8 @@ void classCode::sSave()
 
   try
   {
-    _data->setCode(_classCode->text().toStdString());
-    _data->setDescription(_description->text().toStdString());
+    _data->setCode(_classCode->text());
+    _data->setDescription(_description->text());
     _data->save();
 
     done(_data->getId());
@@ -121,7 +121,7 @@ void classCode::sCheck()
     try
     {
       xtClassCode ex;
-      ex.setCode(_classCode->text().toStdString());
+      ex.setCode(_classCode->text());
       
       xtStorableQuery<xtClassCode> sq(&ex);
       sq.exec();
@@ -144,8 +144,8 @@ void classCode::populate()
 {
   if(_data)
   {
-    _classCode->setText(QString::fromStdString(xtAnyUtility::toString(_data->getCode())));
-    _description->setText(QString::fromStdString(xtAnyUtility::toString(_data->getDescription())));
+    _classCode->setText(_data->getCode().toString());
+    _description->setText(_data->getDescription().toString());
   }
 }
 

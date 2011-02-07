@@ -26,12 +26,13 @@ win32-msvc* {
                     ../$${OPENRPT_BLD}/lib/libMetaSQL.a  \
                     ../$${OPENRPT_BLD}/lib/librenderer.a \
                     ../$${OPENRPT_BLD}/lib/libwrtembed.a \
-                    ../$${OPENRPT_BLD}/lib/libcommon.a
+                    ../$${OPENRPT_BLD}/lib/libcommon.a \
+                    ../$${XTLIB_BLD}/lib/libxtlib.a
 }
 
-LIBS        += -L../lib -L../$${OPENRPT_BLD}/lib -lxtuplecommon \
-               -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
-               -lxtuplescriptapi -lMetaSQL
+LIBS        += -L../lib -L../$${OPENRPT_BLD}/lib -L../$${XTLIB_BLD}/lib \
+               -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
+               -lxtuplescriptapi -lMetaSQL -lxtlib
 
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {
@@ -1770,32 +1771,4 @@ QT += webkit xmlpatterns
 RESOURCES += guiclient.qrc ../$${OPENRPT_DIR}/OpenRPT/images/OpenRPTMetaSQL.qrc
 
 #CONFIG += debug
-
-xtlib {
-  XTLIB_DIR=../../xtlib/src
-  XTLIB_BLD=$${XTLIB_DIR}
-  exists($${XTLIB_DIR}/build) {
-    XTLIB_BLD=$${XTLIB_DIR}/build
-  }
-  exists($${XTLIB_DIR}/../build/src) {
-    XTLIB_BLD=$${XTLIB_DIR}/../build/src
-  }
-  ! exists($${XTLIB_DIR}) {
-    error("Could not set the XTLIB_DIR qmake variable.")
-  }
-
-  INCLUDEPATH += $${XTLIB_DIR} #/usr/local/pgsql/include
-  DEPENDPATH  += $${XTLIB_BLD}
-  win32-msvc* {
-    PRE_TARGETDEPS += $${XTLIB_BLD}/xtlib.lib
-  }
-  macx {
-    PRE_TARGETDEPS += $${XTLIB_BLD}/libxtlib.a
-  }
-  unix:!macx {  
-    PRE_TARGETDEPS += $${XTLIB_BLD}/libxtlib.a
-  }
-  LIBS += -L$${XTLIB_BLD} -lxtlib -lboost_date_time -lboost_regex
-  SOURCES += xtDatabase-qt.cpp
-}
 
