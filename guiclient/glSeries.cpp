@@ -428,8 +428,6 @@ void glSeries::reject()
     if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
-  else
-    return;
 
   omfgThis->sGlSeriesUpdated();
 
