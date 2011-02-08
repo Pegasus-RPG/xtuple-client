@@ -256,7 +256,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
     q.bindValue(":item_id", _item->id());
     q.bindValue(":qtybreak", _qtyBreak->toDouble());
     q.bindValue(":uom_id", _qtyUOM->id());
-    q.bindValue(":ipsite_price->localValue()m_id", _ipsitemid);
+    q.bindValue(":ipsitem_id", _ipsitemid);
     q.exec();
     if (q.first())
     {
