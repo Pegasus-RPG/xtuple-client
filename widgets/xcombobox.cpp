@@ -482,7 +482,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='ADDR')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case BBOMHeadCommentTypes:
@@ -490,7 +490,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='BBH')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case BBOMItemCommentTypes:
@@ -498,7 +498,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='BBI')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case BOMHeadCommentTypes:
@@ -506,7 +506,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='BMH')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case BOMItemCommentTypes:
@@ -514,7 +514,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='BMI')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case BOOHeadCommentTypes:
@@ -522,7 +522,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='BOH')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case BOOItemCommentTypes:
@@ -530,7 +530,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='BOI')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case CRMAccountCommentTypes:
@@ -538,7 +538,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='CRMA')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case ContactCommentTypes:
@@ -546,7 +546,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='T')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case CustomerCommentTypes:
@@ -554,7 +554,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='C')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case EmployeeCommentTypes:
@@ -562,7 +562,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='EMP')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case IncidentCommentTypes:
@@ -570,7 +570,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='INCDT')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case ItemCommentTypes:
@@ -578,7 +578,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='I')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case ItemSiteCommentTypes:
@@ -586,7 +586,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='IS')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case ItemSourceCommentTypes:
@@ -594,7 +594,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='IR')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case LocationCommentTypes:
@@ -602,7 +602,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='L')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case LotSerialCommentTypes:
@@ -610,7 +610,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='LS')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case OpportunityCommentTypes:
@@ -618,7 +618,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='OPP')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case ProjectCommentTypes:
@@ -626,7 +626,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='J')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case PurchaseOrderCommentTypes:
@@ -634,7 +634,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='P')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case PurchaseOrderItemCommentTypes:
@@ -642,7 +642,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='PI')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case ReturnAuthCommentTypes:
@@ -650,7 +650,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='RA')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case ReturnAuthItemCommentTypes:
@@ -658,7 +658,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='RI')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case QuoteCommentTypes:
@@ -666,7 +666,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='Q')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case QuoteItemCommentTypes:
@@ -674,7 +674,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='QI')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case SalesOrderCommentTypes:
@@ -682,7 +682,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='S')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case SalesOrderItemCommentTypes:
@@ -690,7 +690,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='SI')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case TaskCommentTypes:
@@ -698,7 +698,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='TA')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case TodoItemCommentTypes:
@@ -706,7 +706,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='TD')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case TransferOrderCommentTypes:
@@ -714,7 +714,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='TO')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case TransferOrderItemCommentTypes:
@@ -722,7 +722,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='TI')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case VendorCommentTypes:
@@ -730,7 +730,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='V')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case WarehouseCommentTypes:
@@ -738,7 +738,7 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='WH')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case WorkOrderCommentTypes:
@@ -746,13 +746,13 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM cmnttype JOIN cmnttypesource ON (cmnttypesource_cmnttype_id=cmnttype_id)"
                   "              JOIN source ON (source_id=cmnttypesource_source_id) "
                   "WHERE (source_name='W')"
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case AllCommentTypes:
       query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype "
-                  "ORDER BY cmnttype_name;" );
+                  "ORDER BY cmnttype_order, cmnttype_name;" );
       break;
 
     case AllProjects:

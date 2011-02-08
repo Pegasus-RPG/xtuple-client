@@ -96,6 +96,7 @@ enum SetResponse commentType::set(const ParameterList &pParams)
       _name->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _editable->setEnabled(FALSE);
+      _order->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
       _buttonBox->setFocus();
@@ -118,21 +119,23 @@ void commentType::sSave()
   if (_mode == cNew)
   {
     q.prepare( "INSERT INTO cmnttype "
-               "( cmnttype_id, cmnttype_name, cmnttype_descrip, cmnttype_editable ) "
+               "( cmnttype_id, cmnttype_name, cmnttype_descrip, cmnttype_editable, cmnttype_order ) "
                "VALUES "
-               "( :cmnttype_id, :cmnttype_name, :cmnttype_descrip, :cmnttype_editable );" );
+               "( :cmnttype_id, :cmnttype_name, :cmnttype_descrip, :cmnttype_editable, :cmnttype_order );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE cmnttype "
                "SET cmnttype_name=:cmnttype_name,"
                "    cmnttype_descrip=:cmnttype_descrip,"
-               "    cmnttype_editable=:cmnttype_editable "
+               "    cmnttype_editable=:cmnttype_editable,"
+               "    cmnttype_order=:cmnttype_order "
                "WHERE (cmnttype_id=:cmnttype_id);" );
 
   q.bindValue(":cmnttype_id", _cmnttypeid);
   q.bindValue(":cmnttype_name", _name->text());
   q.bindValue(":cmnttype_descrip", _description->text());
   q.bindValue(":cmnttype_editable", _editable->isChecked());
+  q.bindValue(":cmnttype_order", _order->value());
   q.exec();
 
   done(_cmnttypeid);
@@ -171,6 +174,7 @@ void commentType::populate()
     _name->setText(q.value("cmnttype_name"));
     _description->setText(q.value("cmnttype_descrip"));
     _editable->setChecked(q.value("cmnttype_editable").toBool());
+    _order->setValue(q.value("cmnttype_order").toInt());
     if(q.value("cmnttype_sys").toBool())
     {
       _name->setEnabled(false);

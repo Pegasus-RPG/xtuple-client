@@ -30,6 +30,7 @@ commentTypes::commentTypes(QWidget* parent, const char* name, Qt::WFlags fl)
   _cmnttype->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft,  true, "cmnttype_name");
   _cmnttype->addColumn(tr("Sys."),   _ynColumn, Qt::AlignCenter,true, "cmnttype_sys");
   _cmnttype->addColumn(tr("Description"),   -1, Qt::AlignLeft,  true, "cmnttype_descrip");
+  _cmnttype->addColumn(tr("Order"),  _ynColumn, Qt::AlignLeft, false, "cmnttype_order");
 
   sFillList();
 }
@@ -47,9 +48,9 @@ void commentTypes::languageChange()
 void commentTypes::sFillList()
 {
   q.prepare( "SELECT cmnttype_id, cmnttype_name,"
-             "       cmnttype_sys, cmnttype_descrip "
+             "       cmnttype_sys, cmnttype_descrip, cmnttype_order "
              "FROM cmnttype "
-             "ORDER BY cmnttype_name;" );
+             "ORDER BY cmnttype_order, cmnttype_name;" );
   q.exec();
   _cmnttype->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
