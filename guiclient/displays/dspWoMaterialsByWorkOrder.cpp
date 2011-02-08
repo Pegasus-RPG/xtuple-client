@@ -28,6 +28,7 @@ dspWoMaterialsByWorkOrder::dspWoMaterialsByWorkOrder(QWidget* parent, const char
   setMetaSQLOptions("workOrderMaterial", "detail");
 
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
+  _wo->setFocus();
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 

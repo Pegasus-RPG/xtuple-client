@@ -84,9 +84,6 @@ to be bound by its terms.</comment>
    <header>wocluster.h</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>_wo</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>
