@@ -190,6 +190,20 @@ to be bound by its terms.</comment>
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="_incidentsPublicShow">
+             <property name="text">
+              <string>Show Incident Public checkbox</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="_incidentsPublicDefault">
+             <property name="text">
+              <string>Incidents Public by Default</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <layout class="QHBoxLayout">
              <item>
               <widget class="QLabel" name="_incdtEmailProfileLit">
@@ -466,6 +480,8 @@ to be bound by its terms.</comment>
   <tabstop>_useProjects</tabstop>
   <tabstop>_autoCreate</tabstop>
   <tabstop>_opportunityChangeLog</tabstop>
+  <tabstop>_incidentsPublicShow</tabstop>
+  <tabstop>_incidentsPublicDefault</tabstop>
   <tabstop>_incdtEmailProfile</tabstop>
   <tabstop>_incdtCreated</tabstop>
   <tabstop>_incdtAssigned</tabstop>

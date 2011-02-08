@@ -65,6 +65,9 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool /*modal*/, Qt
     connect(_strictCountries, SIGNAL(toggled(bool)), this, SLOT(sStrictCountryChanged(bool)));
   }
 
+  _incidentsPublicShow->setChecked(_metrics->boolean("IncidentsPublicPrivate"));
+  _incidentsPublicDefault->setChecked(_metrics->boolean("IncidentPublicDefault"));
+
   if (_metrics->boolean("EnableBatchManager"))
   {
     _incdtEmailProfile->populate("SELECT ediprofile_id, ediprofile_name "
@@ -139,6 +142,9 @@ bool configureCRM::sSave()
 
   _metrics->set("StrictAddressCountry", _strictCountries->isChecked());
   
+  _metrics->set("IncidentsPublicPrivate", _incidentsPublicShow->isChecked());
+  _metrics->set("IncidentPublicDefault", _incidentsPublicDefault->isChecked());
+
   if (_metrics->boolean("EnableBatchManager"))
   {
     _metrics->set("CRMIncidentEmailProfile", _incdtEmailProfile->id());

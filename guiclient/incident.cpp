@@ -93,6 +93,10 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   else
     _lotserial->setVisible(false);
 
+  if(!_metrics->boolean("IncidentsPublicPrivate"))
+    _public->hide();
+  _public->setChecked(_metrics->boolean("IncidentPublicDefault"));
+
   // because this causes a pop-behind situation we are hiding for now.
   //_return->hide();
 }
@@ -346,6 +350,7 @@ bool incident::save(bool partial)
               "       incdt_incdtcat_id, incdt_incdtseverity_id,"
               "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
               "       incdt_ls_id, incdt_aropen_id, incdt_owner_username,"
+              "       incdt_prj_id, incdt_public,"
               "       incdt_recurring_incdt_id) "
               "VALUES(:incdt_id, :incdt_number, :incdt_crmacct_id, :incdt_cntct_id,"
               "       :incdt_description, :incdt_notes, :incdt_item_id,"
@@ -353,6 +358,7 @@ bool incident::save(bool partial)
               "       :incdt_incdtcat_id, :incdt_incdtseverity_id,"
               "       :incdt_incdtpriority_id, :incdt_incdtresolution_id,"
               "       :incdt_ls_id, :incdt_aropen_id, :incdt_owner_username,"
+              "       :incdt_prj_id, :incdt_public,"
               "       :incdt_recurring_incdt_id);" );
   else if (cEdit == _mode || _saved)
     q.prepare("UPDATE incdt"
@@ -369,6 +375,8 @@ bool incident::save(bool partial)
               "       incdt_incdtresolution_id=:incdt_incdtresolution_id,"
               "       incdt_ls_id=:incdt_ls_id,"
               "       incdt_owner_username=:incdt_owner_username,"
+              "       incdt_prj_id=:incdt_prj_id,"
+              "       incdt_public=:incdt_public,"
               "       incdt_recurring_incdt_id=:incdt_recurring_incdt_id"
               " WHERE (incdt_id=:incdt_id); ");
 
@@ -399,6 +407,9 @@ bool incident::save(bool partial)
     q.bindValue(":incdt_aropen_id", _aropenid);
   if (_recurring->isRecurring())
     q.bindValue(":incdt_recurring_incdt_id", _recurring->parentId());
+  if (_project->id() > 0)
+    q.bindValue(":incdt_prj_id", _project->id());
+  q.bindValue(":incdt_public", _public->isChecked());
 
   if(!q.exec() && q.lastError().type() != QSqlError::NoError)
   {
@@ -472,6 +483,8 @@ void incident::populate()
             "            WHEN (aropen_doctype='R') THEN :cashdeposit"
             "            ELSE ''"
             "       END AS docType, "
+            "       COALESCE(incdt_prj_id,-1) AS incdt_prj_id,"
+            "       COALESCE(incdt_public, false) AS incdt_public,"
             "       aropen_doctype "
             "FROM incdt LEFT OUTER JOIN cntct ON (incdt_cntct_id=cntct_id)"
             "           LEFT OUTER JOIN aropen ON (incdt_aropen_id=aropen_id) "
@@ -516,6 +529,9 @@ void incident::populate()
     _comments->setId(_incdtid);
     _documents->setId(_incdtid);
     _alarms->setId(_incdtid);
+
+    _project->setId(q.value("incdt_prj_id").toInt());
+    _public->setChecked(q.value("incdt_public").toBool());
         
     _docType->setText(q.value("docType").toString());
     _docNumber->setText(q.value("docNumber").toString());
