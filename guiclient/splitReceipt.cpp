@@ -72,7 +72,7 @@ void splitReceipt::populate()
   {
     _orderNumber->setText(q.value("order_number").toString());
     _lineNumber->setText(q.value("orderitem_linenumber").toString());
-    _received->setText(q.value("f_qtyreceived").toString());
+    _received->setText(formatQty(q.value("qtyreceived").toDouble()));
     _receiptDate->setDate(q.value("effective").toDate());
     _freight->setId(q.value("curr_id").toInt());
     _freight->setLocalValue(q.value("recv_freight").toDouble());
