@@ -103,7 +103,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspUndefinedManufacturedItems.ui \
            displays/dspUninvoicedReceivings.ui \
            displays/dspUnusedPurchasedItems.ui \
-           displays/dspUsageStatisticsBase.ui \
            displays/dspValidLocationsByItem.ui \
            displays/dspVendorAPHistory.ui \
            displays/dspVoucherRegister.ui \
@@ -236,11 +235,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspUndefinedManufacturedItems.h \
            displays/dspUninvoicedReceivings.h \
            displays/dspUnusedPurchasedItems.h \
-           displays/dspUsageStatisticsBase.h \
-           displays/dspUsageStatisticsByClassCode.h \
-           displays/dspUsageStatisticsByItem.h \
-           displays/dspUsageStatisticsByItemGroup.h \
-           displays/dspUsageStatisticsByWarehouse.h \
+           displays/dspUsageStatistics.h \
            displays/dspValidLocationsByItem.h \
            displays/dspVendorAPHistory.h \
            displays/dspVoucherRegister.h \
@@ -374,11 +369,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspUndefinedManufacturedItems.cpp \
            displays/dspUninvoicedReceivings.cpp \
            displays/dspUnusedPurchasedItems.cpp \
-           displays/dspUsageStatisticsBase.cpp \
-           displays/dspUsageStatisticsByClassCode.cpp \
-           displays/dspUsageStatisticsByItem.cpp \
-           displays/dspUsageStatisticsByItemGroup.cpp \
-           displays/dspUsageStatisticsByWarehouse.cpp \
+           displays/dspUsageStatistics.cpp \
            displays/dspValidLocationsByItem.cpp \
            displays/dspVendorAPHistory.cpp \
            displays/dspVoucherRegister.cpp \

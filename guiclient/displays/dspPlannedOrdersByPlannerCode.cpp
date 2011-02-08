@@ -17,7 +17,7 @@
 #include "guiclient.h"
 #include "deletePlannedOrder.h"
 #include "dspRunningAvailability.h"
-#include "dspUsageStatisticsByItem.h"
+#include "dspUsageStatistics.h"
 #include "plannedOrder.h"
 #include "firmPlannedOrder.h"
 #include "purchaseRequest.h"
@@ -224,7 +224,7 @@ void dspPlannedOrdersByPlannerCode::sDspUsageStatistics()
       params.append("warehous_id", _warehouse->id());
     params.append("run");
 
-    dspUsageStatisticsByItem *newdlg = new dspUsageStatisticsByItem();
+    dspUsageStatistics *newdlg = new dspUsageStatistics();
     SetResponse setresp = newdlg->set(params);
     if (setresp == NoError || setresp == NoError_Run)
       omfgThis->handleNewWindow(newdlg);

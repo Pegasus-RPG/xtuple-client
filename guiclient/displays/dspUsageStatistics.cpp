@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspUsageStatisticsBase.h"
+#include "dspUsageStatistics.h"
 
 #include <QAction>
 #include <QMenu>
@@ -16,15 +16,30 @@
 #include <QSqlError>
 
 #include "dspInventoryHistory.h"
+#include "parameterwidget.h"
+#include "xtreewidget.h"
 
-dspUsageStatisticsBase::dspUsageStatisticsBase(QWidget* parent, const char* name, Qt::WFlags fl)
+dspUsageStatistics::dspUsageStatistics(QWidget* parent, const char* name, Qt::WFlags fl)
   : display(parent, name, fl)
 {
-  setupUi(optionsWidget());
-  setListLabel(tr("Usage"));
+  setWindowTitle(tr("Item Usage Statistics"));
+  setReportName("UsageStatistics");
   setMetaSQLOptions("usageStatistics", "detail");
   setUseAltId(true);
+  setParameterWidgetVisible(true);
   _printing = false;
+
+  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date, QDate(QDate::currentDate().year(),1,1), true);
+  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date, QDate::currentDate(), true);
+  parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
+  parameterWidget()->append(tr("Class Code Pattern"), "classcode_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
+  parameterWidget()->appendComboBox(tr("Item Group"), "itemgrp_id", XComboBox::ItemGroups);
+  parameterWidget()->append(tr("Item Group Pattern"), "itemgrp_pattern", ParameterWidget::Text);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+
+  parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
   list()->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
@@ -36,31 +51,40 @@ dspUsageStatisticsBase::dspUsageStatisticsBase(QWidget* parent, const char* name
   list()->addColumn(tr("Adjustments"), _qtyColumn,  Qt::AlignRight,  true,  "adjust"  );
   if (_metrics->boolean("MultiWhs"))
     list()->addColumn(tr("Transfers"), _qtyColumn,  Qt::AlignRight,  true,  "transfer"  );
-
-  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
-  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
-
 }
 
-void dspUsageStatisticsBase::languageChange()
-{
-  display::languageChange();
-  retranslateUi(this);
-}
-
-enum SetResponse dspUsageStatisticsBase::set(const ParameterList &pParams)
+enum SetResponse dspUsageStatistics::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
 
+  parameterWidget()->setSavedFilters();
+
   param = pParams.value("item_id", &valid);
   if (valid)
-    _item->setId(param.toInt());
+    parameterWidget()->setDefault(tr("Item"), param);
 
   param = pParams.value("warehous_id", &valid);
   if (valid)
-    _warehouse->setId(param.toInt());
+  {
+    if (param.toInt() > 0)
+      parameterWidget()->setDefault(tr("Site"), param);
+  }
+
+  param = pParams.value("startDate", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Start Date"), param);
+  else
+    parameterWidget()->setDefault(tr("Start Date"), omfgThis->startOfTime());
+
+  param = pParams.value("endDate", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("End Date"), param);
+  else
+    parameterWidget()->setDefault(tr("End Date"), omfgThis->endOfTime());
+
+  parameterWidget()->applyDefaultFilterSet();
 
   if (pParams.inList("run"))
   {
@@ -71,34 +95,11 @@ enum SetResponse dspUsageStatisticsBase::set(const ParameterList &pParams)
   return NoError;
 }
 
-bool dspUsageStatisticsBase::setParams(ParameterList & params)
+bool dspUsageStatistics::setParams(ParameterList & params)
 {
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
-    return false;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return false;
-  }
-
+  display::setParams(params);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-
-  if(_parameter->isVisibleTo(this))
-    _parameter->appendValue(params);
-
-  if(_itemGroup->isVisibleTo(this))
-    params.append("item_id", _item->id());
 
   if(_printing)
     params.append("print");
@@ -106,59 +107,59 @@ bool dspUsageStatisticsBase::setParams(ParameterList & params)
   return true;
 }
 
-void dspUsageStatisticsBase::sPrint()
+void dspUsageStatistics::sPrint()
 {
   _printing = true;
   display::sPrint();
   _printing = false;
 }
 
-void dspUsageStatisticsBase::sPreview()
+void dspUsageStatistics::sPreview()
 {
   _printing = true;
   display::sPreview();
   _printing = false;
 }
 
-void dspUsageStatisticsBase::sViewAll()
+void dspUsageStatistics::sViewAll()
 {
   viewTransactions(QString::null);
 }
 
-void dspUsageStatisticsBase::sViewReceipt()
+void dspUsageStatistics::sViewReceipt()
 {
   viewTransactions("R");
 }
 
-void dspUsageStatisticsBase::sViewIssue()
+void dspUsageStatistics::sViewIssue()
 {
   viewTransactions("I");
 }
 
-void dspUsageStatisticsBase::sViewSold()
+void dspUsageStatistics::sViewSold()
 {
   viewTransactions("S");
 }
 
-void dspUsageStatisticsBase::sViewScrap()
+void dspUsageStatistics::sViewScrap()
 {
   viewTransactions("SC");
 }
 
-void dspUsageStatisticsBase::sViewAdjustment()
+void dspUsageStatistics::sViewAdjustment()
 {
   viewTransactions("A");
 }
 
-void dspUsageStatisticsBase::sViewTransfer()
+void dspUsageStatistics::sViewTransfer()
 {
   viewTransactions("T");
 }
 
-void dspUsageStatisticsBase::viewTransactions(QString pType)
+void dspUsageStatistics::viewTransactions(QString pType)
 {
   ParameterList params;
-  _dates->appendValue(params);
+  display::setParams(params);
   params.append("itemsite_id", list()->id());
   params.append("run");
 
@@ -170,7 +171,7 @@ void dspUsageStatisticsBase::viewTransactions(QString pType)
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspUsageStatisticsBase::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
+void dspUsageStatistics::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
 {
   QAction *menuItem;
 
