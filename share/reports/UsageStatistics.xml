@@ -1,23 +1,21 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Item Usage Statistics by Site</title>
- <name>UsageStatisticsByWarehouse</name>
+ <title>Item Usage Statistics</title>
+ <name>UsageStatistics</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
-  <name>head</name>
-  <sql>SELECT warehous_code AS warehouse,
-       formatDate(&lt;? value("startDate") ?>) AS startdate,
-       formatDate(&lt;? value("endDate") ?>) AS enddate
-  FROM warehous
- WHERE (warehous_id=&lt;? value("warehous_id") ?>);</sql>
- </querysource>
- <querysource loadFromDb="true" >
+ <querysource loadFromDb="true">
   <name>detail</name>
   <mqlgroup>usageStatistics</mqlgroup>
   <mqlname>detail</mqlname>
@@ -42,19 +40,83 @@
   </label>
   <label>
    <rect>
-    <x>390</x>
-    <y>114</y>
-    <width>105</width>
-    <height>20</height>
+    <x>425</x>
+    <y>188</y>
+    <width>75</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
     <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Sold</string>
+  </label>
+  <label>
+   <rect>
+    <x>260</x>
+    <y>10</y>
+    <width>465</width>
+    <height>38</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
    </font>
    <right/>
    <vcenter/>
-   <string>End Date:</string>
+   <string>Item Usage Statistics</string>
+  </label>
+  <label>
+   <rect>
+    <x>345</x>
+    <y>188</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issued</string>
+  </label>
+  <label>
+   <rect>
+    <x>65</x>
+    <y>200</y>
+    <width>106</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>188</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Scrap</string>
   </label>
   <label>
    <rect>
@@ -72,26 +134,10 @@
    <vcenter/>
    <string>Item Number</string>
   </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>95</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Site:</string>
-  </label>
   <line>
    <xstart>5</xstart>
    <ystart>215</ystart>
-   <xend>740</xend>
+   <xend>745</xend>
    <yend>215</yend>
    <weight>2</weight>
   </line>
@@ -111,30 +157,11 @@
    <vcenter/>
    <string>Adjustments</string>
   </label>
-  <field>
-   <rect>
-    <x>500</x>
-    <y>95</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>505</x>
-    <y>188</y>
-    <width>75</width>
+    <x>10</x>
+    <y>185</y>
+    <width>35</width>
     <height>15</height>
    </rect>
    <font>
@@ -144,129 +171,11 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Scrap</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
     <x>260</x>
-    <y>10</y>
-    <width>465</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item Usage Statistics By Site</string>
-  </label>
-  <label>
-   <rect>
-    <x>425</x>
-    <y>188</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Sold</string>
-  </label>
-  <field>
-   <rect>
-    <x>500</x>
-    <y>114</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>390</x>
-    <y>95</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>65</x>
-    <y>200</y>
-    <width>106</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>95</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>345</x>
-    <y>188</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Issued</string>
-  </label>
-  <label>
-   <rect>
-    <x>265</x>
     <y>188</y>
     <width>75</width>
     <height>15</height>
@@ -280,6 +189,26 @@
    <vcenter/>
    <string>Received</string>
   </label>
+  <text>
+   <rect>
+    <x>10</x>
+    <y>38</y>
+    <width>725</width>
+    <height>15</height>
+   </rect>
+   <bottompad>12</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>Parameter Query</query>
+    <column>filter</column>
+   </data>
+  </text>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -287,6 +216,22 @@
  </pghead>
  <pghead>
   <height>36</height>
+  <label>
+   <rect>
+    <x>425</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Sold</string>
+  </label>
   <label>
    <rect>
     <x>65</x>
@@ -302,45 +247,6 @@
    <left/>
    <vcenter/>
    <string>Description</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>740</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>4</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Transfers</string>
-  </label>
-  <label>
-   <rect>
-    <x>425</x>
-    <y>4</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Sold</string>
   </label>
   <label>
    <rect>
@@ -376,22 +282,6 @@
   </label>
   <label>
    <rect>
-    <x>345</x>
-    <y>4</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Issued</string>
-  </label>
-  <label>
-   <rect>
     <x>585</x>
     <y>4</y>
     <width>75</width>
@@ -408,7 +298,62 @@
   </label>
   <label>
    <rect>
-    <x>265</x>
+    <x>345</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issued</string>
+  </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>4</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Transfers</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>0</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Site</string>
+  </label>
+  <label>
+   <rect>
+    <x>270</x>
     <y>4</y>
     <width>75</width>
     <height>15</height>
@@ -429,11 +374,11 @@
    <key>
     <query>detail</query>
    </key>
-   <height>56</height>
+   <height>37</height>
    <field>
     <rect>
      <x>425</x>
-     <y>2</y>
+     <y>0</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -451,28 +396,9 @@
    </field>
    <field>
     <rect>
-     <x>505</x>
-     <y>2</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_scrap</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>65</x>
+     <x>10</x>
      <y>0</y>
-     <width>180</width>
+     <width>35</width>
      <height>15</height>
     </rect>
     <font>
@@ -480,43 +406,24 @@
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_number</column>
+     <column>warehous_code</column>
     </data>
    </field>
    <line>
-    <xstart>5</xstart>
-    <ystart>50</ystart>
-    <xend>740</xend>
-    <yend>50</yend>
+    <xstart>3</xstart>
+    <ystart>31</ystart>
+    <xend>743</xend>
+    <yend>31</yend>
     <weight>0</weight>
    </line>
    <field>
     <rect>
-     <x>65</x>
-     <y>30</y>
-     <width>250</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>665</x>
-     <y>2</y>
+     <y>0</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -534,8 +441,8 @@
    </field>
    <field>
     <rect>
-     <x>345</x>
-     <y>2</y>
+     <x>505</x>
+     <y>0</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -548,13 +455,13 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_issued</column>
+     <column>f_scrap</column>
     </data>
    </field>
    <field>
     <rect>
      <x>585</x>
-     <y>2</y>
+     <y>0</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -568,6 +475,25 @@
     <data>
      <query>detail</query>
      <column>f_adjust</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>345</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_issued</column>
     </data>
    </field>
    <field>
@@ -586,13 +512,32 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip1</column>
+     <column>itemdescrip</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>65</x>
+     <y>0</y>
+     <width>185</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
     </data>
    </field>
    <field>
     <rect>
      <x>260</x>
-     <y>2</y>
+     <y>0</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -612,22 +557,25 @@
  </section>
  <pgfoot>
   <height>16</height>
-  <label>
+  <field>
    <rect>
-    <x>5</x>
+    <x>90</x>
     <y>0</y>
-    <width>85</width>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
-   <string>Report Date:</string>
-  </label>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>705</x>
@@ -663,24 +611,21 @@
    <vcenter/>
    <string>Page:</string>
   </label>
-  <field>
+  <label>
    <rect>
-    <x>95</x>
+    <x>0</x>
     <y>0</y>
-    <width>100</width>
+    <width>85</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>bold</weight>
+    <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
+   <string>Report Date:</string>
+  </label>
  </pgfoot>
 </report>
