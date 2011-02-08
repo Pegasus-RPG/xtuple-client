@@ -132,7 +132,8 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
     q.exec();
     if (q.first())
     {
-      if(q.value("ipsitem_qtybreak") != 0 || q.value("ipsitem_discntprcnt") != 0 || q.value("ipsitem_fixedamtdiscount") != 0)
+      if(q.value("ipsitem_discntprcnt").toDouble() != 0.0 ||
+         q.value("ipsitem_fixedamtdiscount").toDouble() != 0.0)
       {
         _discountSelected->setChecked(true);
         _dscbyItem->setChecked(true);
