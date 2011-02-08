@@ -22,6 +22,7 @@
 #include "xsqlquery.h"
 
 #include "contactwidget.h"
+#include "contactemail.h"
 
 void ContactWidget::init()
 {
@@ -128,12 +129,17 @@ void ContactWidget::init()
     _fax		= new XLineEdit(this, "_fax");
     _emailLit		= new QLabel(tr("E-Mail:"), this);
     _emailLit->setObjectName("_emailLit");
-    _email		= new XLineEdit(this, "_email");
+    _email		= new XComboBox(this, "_email");
+    _email->setEditable(true);
     _email->setValidator(validator);
+    _email->lineEdit()->installEventFilter(this);
     _webaddrLit		= new QLabel(tr("Web:"), this);
     _webaddrLit->setObjectName("_webaddrLit");
     _webaddr		= new XLineEdit(this, "_webaddr");
     _address		= new AddressCluster(this, "_address");
+
+    //So we can manipulate just the line edit
+    QLineEdit* emailEdit = _email->lineEdit();
 
 #if defined Q_OS_MAC
     _honorific->setMinimumHeight(26);
@@ -147,12 +153,12 @@ void ContactWidget::init()
 
     QPalette p = _email->palette();
     p.setColor(QPalette::Text, Qt::blue);
-    _email->setPalette(p);
+    emailEdit->setPalette(p);
     _webaddr->setPalette(p);
     
     QFont newFont = _email->font();
     newFont.setUnderline(TRUE);
-    _email->setFont(newFont);
+    emailEdit->setFont(newFont);
     _webaddr->setFont(newFont);
 
     _numberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -203,11 +209,11 @@ void ContactWidget::init()
     connect(_phone,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_phone2,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_fax,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_email,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
+    connect(emailEdit,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_webaddr,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_address,	SIGNAL(changed()),   this, SLOT(sCheck()));
-    
-    connect(_email,     SIGNAL(doubleClicked()), this, SLOT(sLaunchEmail()));
+
+    connect(_email,     SIGNAL(currentIndexChanged(int)), this, SLOT(sEmailIndexChanged()));
     connect(_webaddr,   SIGNAL(doubleClicked()), this, SLOT(sLaunchWebaddr()));
     
     setListVisible(true);
@@ -225,6 +231,7 @@ void ContactWidget::init()
     silentSetId(-1);
     setOwnerVisible(false);
     _mode = Edit;
+    _emailidCache = -1;
 }
 
 ContactWidget::ContactWidget(QWidget* pParent, const char* pName) :
@@ -371,6 +378,8 @@ void ContactWidget::silentSetId(const int pId)
           _ignoreSignals = true;
 
           _id = pId;
+          fillEmail();
+
           _valid = true;
           _number->setText(idQ.value("cntct_number").toString());
           _honorific->setEditText(idQ.value("cntct_honorific").toString());
@@ -403,7 +412,7 @@ void ContactWidget::silentSetId(const int pId)
             _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone)),        _phone->text()); 	 
             _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone2)),       _phone2->text()); 	 
             _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_fax)),          _fax->text()); 	 
-            _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_email)),        _email->text()); 	 
+            _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_email)),        _email->currentText());
             _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_webaddr)),      _webaddr->text()); 	 
            }
 
@@ -592,7 +601,7 @@ int ContactWidget::save(AddressCluster::SaveFlags flag)
   datamodQ.bindValue(":phone",	   _phone->text());
   datamodQ.bindValue(":phone2",	   _phone2->text());
   datamodQ.bindValue(":fax",	   _fax->text());
-  datamodQ.bindValue(":email",	   _email->text());
+  datamodQ.bindValue(":email",	   _email->currentText());
   datamodQ.bindValue(":webaddr",   _webaddr->text());
   datamodQ.bindValue(":notes",	   _notes);
   datamodQ.bindValue(":owner",     _owner->username());
@@ -931,7 +940,7 @@ void ContactWidget::sCheck()
       (! _phone->isVisibleTo(this)   || _phone->text().simplified().isEmpty()) &&
       (! _phone2->isVisibleTo(this)  || _phone2->text().simplified().isEmpty()) &&
       (! _fax->isVisibleTo(this)     || _fax->text().simplified().isEmpty()) &&
-      (! _email->isVisibleTo(this)   || _email->text().simplified().isEmpty()) &&
+      (! _email->isVisibleTo(this)   || _email->currentText().simplified().isEmpty()) &&
       (! _webaddr->isVisibleTo(this) || _webaddr->text().simplified().isEmpty()) &&
       (! _address->isVisibleTo(this) || _address->id() <= 0))
     setId(-1);
@@ -1013,7 +1022,7 @@ void ContactWidget::setChange(QString p)
 
 void ContactWidget::sLaunchEmail()
 {
-  QString extUrl = QString(_email->text());
+  QString extUrl = QString(_email->currentText());
   if (!_subjText.isEmpty() ||
       !_bodyText.isEmpty())
     extUrl.append("?");
@@ -1403,4 +1412,60 @@ void ContactWidget::setEmailSubjectText(const QString text)
 void ContactWidget::setEmailBodyText(const QString text)
 {
   _bodyText = text;
+}
+
+void ContactWidget::fillEmail()
+{
+  _email->blockSignals(true);
+  XSqlQuery qry;
+  qry.prepare("SELECT cntcteml_id AS id, cntcteml_email AS email "
+              "FROM cntcteml "
+              "WHERE (cntcteml_cntct_id=:cntct_id) "
+              "ORDER BY email, id;");
+  qry.bindValue(":cntct_id", _id);
+  qry.exec();
+  _email->populate(qry);
+  _email->insertSeparator(_email->count());
+  _email->append(-3, tr("Edit List"));
+  _emailidCache=-1;
+  _email->setId(-1);
+  _email->blockSignals(false);
+}
+
+void ContactWidget::sEmailIndexChanged()
+{
+  if (_email->currentIndex() != _email->count() - 1)
+  {
+    _emailidCache = _email->id();
+    return;
+  }
+
+  // Edit Requested
+  ParameterList params;
+  params.append("cntct_id", _id);
+
+  contactEmail newdlg(this, "", TRUE);
+  newdlg.set(params);
+  int selected = newdlg.exec();
+  fillEmail();
+  if (selected)
+    _email->setId(selected);
+  else
+    _email->setId(_emailidCache);
+}
+
+bool ContactWidget::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj != _email->lineEdit())
+        return QObject::eventFilter(obj, event);
+
+    switch (event->type()) {
+    case QEvent::MouseButtonDblClick: {;
+        sLaunchEmail();
+        return true;
+    }
+    default:
+        break;
+    }
+    return QObject::eventFilter(obj, event);
 }

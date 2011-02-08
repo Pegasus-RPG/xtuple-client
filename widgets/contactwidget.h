@@ -167,7 +167,7 @@ public:
 
   Q_INVOKABLE virtual bool    active()		const { return _active->isChecked(); }
   Q_INVOKABLE virtual int     id()	        const { return _id; }
-  Q_INVOKABLE virtual QString emailAddress()	const { return _email->text(); }
+  Q_INVOKABLE virtual QString emailAddress()	const { return _email->currentText(); }
   Q_INVOKABLE virtual QString fax()		const { return _fax->text(); }
   Q_INVOKABLE virtual QString first()		const { return _first->text(); }
   Q_INVOKABLE virtual QString honorific()       const { return _honorific->currentText(); }
@@ -303,6 +303,7 @@ public slots:
 
 private slots:
   void sCheck();
+  void sEmailIndexChanged();
   void setChanged();
 
 signals:
@@ -338,7 +339,7 @@ protected:
   QLabel* _faxLit;
   XLineEdit* _fax;
   QLabel* _emailLit;
-  XLineEdit* _email;
+  XComboBox* _email;
   QLabel* _webaddrLit;
   XLineEdit* _webaddr;
   QCheckBox* _active;
@@ -357,21 +358,25 @@ protected:
   int _crmacctid;
   QString _crmacctname;
 
+  bool eventFilter(QObject *obj, QEvent* event);
+
 private:
-  virtual void	init();
-  virtual void	layout();
-  virtual void	silentSetId(const int);
+  virtual void  init();
+  virtual void  fillEmail();
+  virtual void  layout();
+  virtual void  silentSetId(const int);
   XDataWidgetMapper* _mapper;
 
   QPushButton* _list;
 
-  int	_id;
-  bool _layoutDone;
-  int	 _limits;
-  bool _minimalLayout;
-  QString	_notes;
-  bool _valid;
-  bool _changed;
+  int     _id;
+  bool    _layoutDone;
+  int     _limits;
+  bool    _minimalLayout;
+  QString _notes;
+  bool    _valid;
+  bool    _changed;
+  int     _emailidCache;
 
   //Data Mapping Values
   QString  _fieldNameChange;

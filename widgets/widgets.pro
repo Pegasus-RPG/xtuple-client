@@ -121,6 +121,7 @@ SOURCES += widgets.cpp \
     comment.cpp \
     comments.cpp \
     contactCluster.cpp \
+    contactemail.cpp \
     contactWidget.cpp \
     crmacctCluster.cpp \
     currCluster.cpp \
@@ -206,6 +207,7 @@ HEADERS += widgets.h \
     comment.h \
     comments.h \
     contactcluster.h \
+    contactemail.h \
     contactwidget.h \
     crmacctcluster.h \
     currcluster.h \
@@ -282,6 +284,7 @@ HEADERS += widgets.h \
 
 FORMS += alarmMaint.ui \
     alarms.ui \
+    contactemail.ui \
     customerselector.ui \
     docAttach.ui \
     documents.ui \

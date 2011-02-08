@@ -34,13 +34,16 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_close,		  SIGNAL(clicked()), this, SLOT(sClose()));
+  // For legacy compatibility
+  _save = _buttonBox->button(QDialogButtonBox::Save);
+  _save->setObjectName("_save");
+
   connect(_deleteCharacteristic,  SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
   connect(_detachUse,		  SIGNAL(clicked()), this, SLOT(sDetachUse()));
   connect(_editCharacteristic,    SIGNAL(clicked()), this, SLOT(sEditCharass()));
   connect(_editUse,  		  SIGNAL(clicked()), this, SLOT(sEditUse()));
   connect(_newCharacteristic,     SIGNAL(clicked()), this, SLOT(sNewCharass()));
-  connect(_save,	          SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_buttonBox,	          SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_uses, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateUsesMenu(QMenu*)));
   connect(_uses, SIGNAL(valid(bool)), this, SLOT(sHandleValidUse(bool)));
   connect(_viewUse,	          SIGNAL(clicked()), this, SLOT(sViewUse()));
@@ -167,15 +170,12 @@ enum SetResponse contact::set(const ParameterList &pParams)
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
 
-      _save->hide();
-      _close->setText(tr("&Close"));
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
 
       _contact->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
@@ -185,8 +185,6 @@ enum SetResponse contact::set(const ParameterList &pParams)
       _editCharacteristic->setEnabled(FALSE);
       _deleteCharacteristic->setEnabled(FALSE);
       _charass->setEnabled(FALSE);
-
-      _close->setFocus();
     }
   }
 
