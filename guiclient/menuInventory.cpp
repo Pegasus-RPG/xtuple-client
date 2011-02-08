@@ -98,10 +98,7 @@
 #include "dspInventoryHistory.h"
 #include "dspDetailedInventoryHistoryByLotSerial.h"
 #include "dspDetailedInventoryHistoryByLocation.h"
-#include "dspUsageStatisticsByItem.h"
-#include "dspUsageStatisticsByClassCode.h"
-#include "dspUsageStatisticsByItemGroup.h"
-#include "dspUsageStatisticsByWarehouse.h"
+#include "dspUsageStatistics.h"
 #include "dspTimePhasedUsageStatisticsByItem.h"
 
 #include "printItemLabelsByClassCode.h"
@@ -154,8 +151,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   formsMenu                = new QMenu(parent);
   formsShipLabelsMenu      = new QMenu(parent);
   reportsMenu              = new QMenu(parent);
-  reportsDtlInvHistMenu    = new QMenu(parent);
-  reportsItemUsgMenu       = new QMenu(parent);
   reportsShipmentsMenu     = new QMenu(parent);
   updateItemInfoMenu       = new QMenu(parent);
   updateItemInfoReorderMenu= new QMenu(parent);
@@ -179,8 +174,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   formsMenu->setObjectName("menu.im.forms");
   formsShipLabelsMenu->setObjectName("menu.im.formsshiplabels");
   reportsMenu->setObjectName("menu.im.reports");
-  reportsDtlInvHistMenu->setObjectName("menu.im.reportdtlinvhist");
-  reportsItemUsgMenu->setObjectName("menu.im.reportsitemusg");
   reportsShipmentsMenu->setObjectName("menu.im.reportsshipments");
   updateItemInfoMenu->setObjectName("menu.im.updateiteminfo");
   updateItemInfoReorderMenu->setObjectName("menu.im.updateiteminforeorder");
@@ -340,20 +333,13 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     //  Inventory| Reports | Inventory Availability
     { "im.dspInventoryAvailability",       tr("Inventory &Availability..."), SLOT(sDspInventoryAvailability()), reportsMenu, "ViewInventoryAvailability", QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true, tr("Inventory Availability by Planner Code") },
     { "im.dspSubstituteAvailabilityByRootItem",         tr("&Substitute Availability..."),       SLOT(sDspSubstituteAvailabilityByRootItem()), reportsMenu, "ViewInventoryAvailability",        NULL, NULL, true, NULL },
+    {  "separator",                   NULL,                                  NULL,                                      reportsMenu,    "true",         NULL, NULL, true, NULL },
 
     //  Inventory| Reports | Inventory History
-    { "im.dspInventoryHistory",                   tr("Inventory &History..."), SLOT(sDspInventoryHistory()), reportsMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
-    //  Inventory | Reports | Detailed Inventory History
-    { "menu",                                          tr("&Detailed Inventory History"), (char*)reportsDtlInvHistMenu,                    reportsMenu,          "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspDetailedInventoryHistoryByLocation",                  tr("by Lo&cation..."), SLOT(sDspDetailedInventoryHistoryByLocation()), reportsDtlInvHistMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspDetailedInventoryHistoryByLot/SerialNumber",      tr("by &Lot/Serial #..."), SLOT(sDspDetailedInventoryHistoryByLotSerial()),reportsDtlInvHistMenu, "ViewInventoryHistory", NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
-
-    //  Inventory | Reports | Usage Statistics
-    { "menu",                                                   tr("&Usage Statistics "), (char*)reportsItemUsgMenu,                  reportsMenu,        "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspItemUsageStatisticsByWarehouse",                          tr("by &Site..."), SLOT(sDspItemUsageStatisticsByWarehouse()), reportsItemUsgMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspItemUsageStatisticsByClassCode",                    tr("by &Class Code..."), SLOT(sDspItemUsageStatisticsByClassCode()), reportsItemUsgMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspItemUsageStatisticsByItemGroup",                    tr("by Item &Group..."), SLOT(sDspItemUsageStatisticsByItemGroup()), reportsItemUsgMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
-    { "im.dspItemUsageStatisticsByItem",                               tr("by &Item..."), SLOT(sDspItemUsageStatisticsByItem()),      reportsItemUsgMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
+    { "im.dspInventoryHistory",                   tr("&History..."), SLOT(sDspInventoryHistory()), reportsMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
+    { "im.dspDetailedInventoryHistoryByLocation",                  tr("History by Lo&cation..."), SLOT(sDspDetailedInventoryHistoryByLocation()), reportsMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
+    { "im.dspDetailedInventoryHistoryByLot/SerialNumber",      tr("History by &Lot/Serial #..."), SLOT(sDspDetailedInventoryHistoryByLotSerial()),reportsMenu, "ViewInventoryHistory", NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
+    { "im.dspItemUsageStatistics",                          tr("&Usage Statistics..."), SLOT(sDspItemUsageStatistics()), reportsMenu, "ViewInventoryHistory", NULL, NULL, true, NULL },
 
     { "im.dspTimePhasedItemUsageStatisticsByItem",tr("Time &Phased Usage Statistics..."), SLOT(sDspTimePhasedUsageStatisticsByItem()),reportsMenu, "ViewInventoryHistory",       NULL, NULL, true, NULL },
 
@@ -914,32 +900,15 @@ void menuInventory::sDspDetailedInventoryHistoryByLocation()
   omfgThis->handleNewWindow(new dspDetailedInventoryHistoryByLocation());
 }
 
-void menuInventory::sDspItemUsageStatisticsByItem()
+void menuInventory::sDspItemUsageStatistics()
 {
-  omfgThis->handleNewWindow(new dspUsageStatisticsByItem());
-}
-
-void menuInventory::sDspItemUsageStatisticsByClassCode()
-{
-  omfgThis->handleNewWindow(new dspUsageStatisticsByClassCode());
-}
-
-void menuInventory::sDspItemUsageStatisticsByItemGroup()
-{
-  omfgThis->handleNewWindow(new dspUsageStatisticsByItemGroup());
-}
-
-void menuInventory::sDspItemUsageStatisticsByWarehouse()
-{
-  omfgThis->handleNewWindow(new dspUsageStatisticsByWarehouse());
+  omfgThis->handleNewWindow(new dspUsageStatistics());
 }
 
 void menuInventory::sDspTimePhasedUsageStatisticsByItem()
 {
   omfgThis->handleNewWindow(new dspTimePhasedUsageStatisticsByItem());
 }
-
-
 
 void menuInventory::sPrintItemLabelsByClassCode()
 {
