@@ -25,30 +25,32 @@
 items::items(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "items", fl)
 {
-  setupUi(optionsWidget());
   setWindowTitle(tr("Items"));
+  setReportName("Items");
   setMetaSQLOptions("items", "detail");
   setNewVisible(true);
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
   setParameterWidgetVisible(true);
 
-  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
+  QString qryType = QString( "SELECT  1, '%1' UNION "
+                             "SELECT  2, '%2' UNION "
+                             "SELECT  3, '%3'")
+      .arg(tr("Buy Items"))
+      .arg(tr("Make Items"))
+      .arg(tr("Sold Items"));
+
+  parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
+  parameterWidget()->append(tr("Class Code Pattern"), "classcode_pattern", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Freight Class"), "freightclass_id", XComboBox::FreightClasses);
+  parameterWidget()->append(tr("Freight Class Pattern"), "freightclass_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Item Number Pattern"), "item_number_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Item Description"), "item_descrip_pattern", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Item Group"), "itemgrp_id", XComboBox::ItemGroups);
-  parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
-  parameterWidget()->append(tr("Class Code Pattern"), "classcode_pattern", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Item Types"), "item_types", qryType);
   parameterWidget()->appendComboBox(tr("Product Category"), "prodcat_id", XComboBox::ProductCategories);
   parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
-  parameterWidget()->appendComboBox(tr("Freight Class"), "freightclass_id", XComboBox::FreightClasses);
-  parameterWidget()->append(tr("Freight Class Pattern"), "freightclass_pattern", ParameterWidget::Text);
-
-  QButtonGroup* _statusGroupInt = new QButtonGroup(this);
-  _statusGroupInt->addButton(_showAll);
-  _statusGroupInt->addButton(_showPurchased);
-  _statusGroupInt->addButton(_showManufactured);
-  _statusGroupInt->addButton(_showSold);
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
 
   list()->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   , true, "item_number" );
   list()->addColumn(tr("Active"),      _ynColumn,   Qt::AlignCenter , true, "item_active" );
@@ -59,8 +61,6 @@ items::items(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Product Category"),  _itemColumn, Qt::AlignLeft , false, "prodcat_code");
   list()->addColumn(tr("Freight Class"),  _itemColumn, Qt::AlignLeft , false, "freightclass_code");
   
-  connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
-  
   if (_privileges->check("MaintainItemMasters"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
@@ -68,6 +68,25 @@ items::items(QWidget* parent, const char*, Qt::WFlags fl)
     newAction()->setEnabled(FALSE);
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
+
+  // Add columns and parameters for characteristics
+  QString column;
+  QString name;
+  XSqlQuery chars;
+  chars.exec("SELECT char_id, char_name "
+                "FROM char "
+                "WHERE (char_items) "
+                "ORDER BY char_name;");
+  while (chars.next())
+  {
+    _charids.append(chars.value("char_id").toInt());
+    column = QString("char%1").arg(chars.value("char_id").toString());
+    name = chars.value("char_name").toString();
+    parameterWidget()->append(name, column, ParameterWidget::Text);
+    list()->addColumn(name, -1, Qt::AlignLeft , false, column );
+  }
+
+  connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
 
@@ -137,12 +156,21 @@ void items::sDelete()
 bool items::setParams(ParameterList &params)
 {
   display::setParams(params);
-  if(_showPurchased->isChecked())
-    params.append("showPurchased");
-  else if(_showManufactured->isChecked())
-    params.append("showManufactured");
-  else if(_showSold->isChecked())
-    params.append("showSold");
+
+  bool valid;
+  QVariant param;
+
+  param = params.value("item_types", &valid);
+  if (valid)
+  {
+    int types = param.toInt();
+    if (types == 1)
+      params.append("showPurchased");
+    else if (types == 2)
+      params.append("showManufactured");
+    else if (types == 3)
+      params.append("showSold");
+  }
 
   if (_preferences->boolean("ListNumericItemNumbersFirst"))
     params.append("ListNumericItemNumbersFirst");
@@ -161,6 +189,21 @@ bool items::setParams(ParameterList &params)
   params.append("assortment", tr("Assortment"));
   params.append("kit", tr("Kit"));
   params.append("error", tr("Error"));
+
+  params.append("char_id_list", _charids);
+
+  // Handle characteristics
+  QString column;
+  QStringList clauses;
+  for (int i = 0; i < _charids.count(); i++)
+  {
+    column = QString("char%1").arg(_charids.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+      clauses.append(QString("charass_alias%1.charass_value ~* '%2'").arg(_charids.at(i).toString()).arg(param.toString()));
+  }
+  if (clauses.count())
+    params.append("charClause", clauses.join(" AND ").prepend(" AND "));
 
   return true;
 }

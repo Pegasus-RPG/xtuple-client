@@ -14,9 +14,7 @@
 #include "display.h"
 #include <parameter.h>
 
-#include "ui_items.h"
-
-class items : public display, public Ui::items
+class items : public display
 {
     Q_OBJECT
 
@@ -31,6 +29,9 @@ public slots:
     virtual void sDelete();
     virtual void sCopy();
     virtual bool setParams(ParameterList &);
+
+private:
+    QList<QVariant> _charids;
 };
 
 #endif // ITEMS_H

@@ -84,7 +84,6 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   // Add columns and parameters for characteristics
   QString column;
   QString name;
-  QString param;
   XSqlQuery chars;
   chars.exec("SELECT char_id, char_name "
                 "FROM char "

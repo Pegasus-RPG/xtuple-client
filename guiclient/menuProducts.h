@@ -67,9 +67,6 @@ class menuProducts : public QObject
 
     void sUserCostingElements();
 
-    void sDspItemsByClassCode();
-    void sDspItemsByProductCategory();
-    void sDspItemsByCharacteristic();
     void sDspSingleLevelBOM();
     void sDspIndentedBOM();
     void sDspSummarizedBOM();
@@ -105,7 +102,6 @@ class menuProducts : public QObject
     QMenu *costingReportsCostedMenu;
     QMenu *costingReportsItemCostsMenu;
     QMenu *reportsMenu;
-    QMenu *reportsItemsMenu;
     QMenu *reportsBomsMenu;
     QMenu *reportsWhereUsdMenu;
     QMenu *reportsCapUomMenu;

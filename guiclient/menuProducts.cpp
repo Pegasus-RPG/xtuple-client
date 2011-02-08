@@ -48,9 +48,6 @@
 
 #include "costingElements.h"
 
-#include "dspItemsByClassCode.h"
-#include "dspItemsByCharacteristic.h"
-#include "dspItemsByProductCategory.h"
 #include "dspSingleLevelBOM.h"
 #include "dspIndentedBOM.h"
 #include "dspSummarizedBOM.h"
@@ -97,7 +94,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   costingReportsCostedMenu = new QMenu(parent);
   costingReportsItemCostsMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
-  reportsItemsMenu = new QMenu(parent);
   reportsBomsMenu = new QMenu(parent);
   reportsWhereUsdMenu = new QMenu(parent);
   reportsCapUomMenu = new QMenu(parent);
@@ -114,7 +110,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   costingReportsCostedMenu->setObjectName("menu.prod.costingreportscosted");
   costingReportsItemCostsMenu->setObjectName("menu.prod.costingreportsitemcosts");
   reportsMenu->setObjectName("menu.prod.reports");
-  reportsItemsMenu->setObjectName("menu.prod.reportsitems");
   reportsBomsMenu->setObjectName("menu.prod.reportsboms");
   reportsWhereUsdMenu->setObjectName("menu.prod.reportswhereusd");
   reportsCapUomMenu->setObjectName("menu.prod.reportscapuom");
@@ -129,11 +124,6 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   // Product | Reports
   { "menu",	tr("&Reports"), (char*)reportsMenu,	mainMenu, "true", NULL, NULL, true , NULL },
   
-  // Product | Reports | Items
-  { "menu",	tr("&Items"), (char*)reportsItemsMenu,	reportsMenu, "true", NULL, NULL, true , NULL },
-  { "pd.dspItemsByProductCategory", tr("by &Product Category..."), SLOT(sDspItemsByProductCategory()), reportsItemsMenu, "MaintainItemMasters ViewItemMasters", NULL, NULL, true , NULL },
-  { "pd.dspItemsByClassCode", tr("by &Class Code..."), SLOT(sDspItemsByClassCode()), reportsItemsMenu, "MaintainItemMasters ViewItemMasters", NULL, NULL, true , NULL },
-  { "pd.dspItemsByCharacteristic", tr("by C&haracteristic..."), SLOT(sDspItemsByCharacteristic()),  reportsItemsMenu, "MaintainItemMasters ViewItemMasters", NULL, NULL, true , NULL },
   { "separator", NULL, NULL, reportsMenu,	"true", NULL, NULL, true , NULL },
   
   // Product | Reports | BOMs
@@ -456,21 +446,6 @@ void menuProducts::sLotSerial()
 }
 
 //  Displays
-void menuProducts::sDspItemsByClassCode()
-{
-  omfgThis->handleNewWindow(new dspItemsByClassCode());
-}
-
-void menuProducts::sDspItemsByProductCategory()
-{
-  omfgThis->handleNewWindow(new dspItemsByProductCategory());
-}
-
-void menuProducts::sDspItemsByCharacteristic()
-{
-  omfgThis->handleNewWindow(new dspItemsByCharacteristic());
-}
-
 void menuProducts::sDspSingleLevelBOM()
 {
   omfgThis->handleNewWindow(new dspSingleLevelBOM());
