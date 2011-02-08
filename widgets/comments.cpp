@@ -110,6 +110,7 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _comment->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   _comment->addColumn(tr("Date/Time"), _timeDateColumn, Qt::AlignCenter,true, "comment_date");
   _comment->addColumn(tr("Type"),    _itemColumn, Qt::AlignCenter,true, "type");
+  _comment->addColumn(tr("Source"),  _itemColumn, Qt::AlignCenter,true, "comment_source");
   _comment->addColumn(tr("User"),    _userColumn, Qt::AlignCenter,true, "comment_user");
   _comment->addColumn(tr("Comment"), -1,          Qt::AlignLeft,  true, "first");
   hbox->addWidget(_comment);
@@ -236,7 +237,8 @@ void Comments::refresh()
   XSqlQuery comment;
   if(_source != CRMAccount)
   {
-    comment.prepare( "SELECT comment_id, comment_date,"
+    _comment->hideColumn(2);
+    comment.prepare( "SELECT comment_id, comment_date, comment_source,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END AS type,"
@@ -253,7 +255,8 @@ void Comments::refresh()
   else
   {
     // If it's CRMAccount we want to do some extra joining in our SQL
-    comment.prepare( "SELECT comment_id, comment_date,"
+    _comment->showColumn(2);
+    comment.prepare( "SELECT comment_id, comment_date, comment_source,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END AS type,"
@@ -266,7 +269,7 @@ void Comments::refresh()
                      " WHERE((comment_source=:source)"
                      "   AND (comment_source_id=:sourceid) ) "
                      " UNION "
-                     "SELECT comment_id, comment_date,"
+                     "SELECT comment_id, comment_date, comment_source,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
@@ -279,7 +282,7 @@ void Comments::refresh()
                      "   AND (crmacct_id=:sourceid)"
                      "   AND (comment_source_id=crmacct_cust_id) ) "
                      " UNION "
-                     "SELECT comment_id, comment_date,"
+                     "SELECT comment_id, comment_date, comment_source,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
@@ -292,7 +295,7 @@ void Comments::refresh()
                      "   AND (crmacct_id=:sourceid)"
                      "   AND (comment_source_id=crmacct_vend_id) ) "
                      " UNION "
-                     "SELECT comment_id, comment_date,"
+                     "SELECT comment_id, comment_date, comment_source,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
