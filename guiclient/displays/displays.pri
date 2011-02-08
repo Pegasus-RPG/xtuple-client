@@ -37,8 +37,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspItemCostHistory.ui \
            displays/dspItemCostSummary.ui \
            displays/dspItemCostsByClassCode.ui \
-           displays/dspItemsByCharacteristic.ui \
-           displays/dspItemsByParameter.ui \
            displays/dspItemSourcesByItem.ui \
            displays/dspItemSourcesByVendor.ui \
            displays/dspJobCosting.ui \
@@ -163,10 +161,6 @@ HEADERS += displays/dspAllocations.h \
            displays/dspItemCostHistory.h \
            displays/dspItemCostSummary.h \
            displays/dspItemCostsByClassCode.h \
-           displays/dspItemsByCharacteristic.h \
-           displays/dspItemsByClassCode.h \
-           displays/dspItemsByParameter.h \
-           displays/dspItemsByProductCategory.h \
            displays/dspItemSourcesByItem.h \
            displays/dspItemSourcesByVendor.h \
            displays/dspItemsWithoutItemSources.h \
@@ -305,10 +299,6 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspItemCostHistory.cpp \
            displays/dspItemCostSummary.cpp \
            displays/dspItemCostsByClassCode.cpp \
-           displays/dspItemsByCharacteristic.cpp \
-           displays/dspItemsByClassCode.cpp \
-           displays/dspItemsByParameter.cpp \
-           displays/dspItemsByProductCategory.cpp \
            displays/dspItemSourcesByItem.cpp \
            displays/dspItemSourcesByVendor.cpp \
            displays/dspItemsWithoutItemSources.cpp \
