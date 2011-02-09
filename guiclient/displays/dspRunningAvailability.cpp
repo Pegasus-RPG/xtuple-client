@@ -36,6 +36,7 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char*, Qt:
 
   _ready = true;
 
+  connect(list(),       SIGNAL(populated()), this, SLOT(sHandleResort()));
   connect(list(),       SIGNAL(resorted()), this, SLOT(sHandleResort()));
 
   list()->addColumn(tr("Order Type"),    _itemColumn, Qt::AlignLeft,  true, "ordertype");
@@ -327,8 +328,6 @@ void dspRunningAvailability::sFillList()
       _orderToQty->setDouble(q.value("ordertoqty").toDouble());
 
       display::sFillList();
-
-      sHandleResort();
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
