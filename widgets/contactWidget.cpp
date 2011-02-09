@@ -231,7 +231,6 @@ void ContactWidget::init()
     silentSetId(-1);
     setOwnerVisible(false);
     _mode = Edit;
-    _emailidCache = -1;
 }
 
 ContactWidget::ContactWidget(QWidget* pParent, const char* pName) :
@@ -378,7 +377,6 @@ void ContactWidget::silentSetId(const int pId)
           _ignoreSignals = true;
 
           _id = pId;
-          fillEmail();
 
           _valid = true;
           _number->setText(idQ.value("cntct_number").toString());
@@ -393,12 +391,14 @@ void ContactWidget::silentSetId(const int pId)
           _phone->setText(idQ.value("cntct_phone").toString());
           _phone2->setText(idQ.value("cntct_phone2").toString());
           _fax->setText(idQ.value("cntct_fax").toString());
-          _email->setText(idQ.value("cntct_email").toString());
+          _emailCache=idQ.value("cntct_email").toString();
           _webaddr->setText(idQ.value("cntct_webaddr").toString());
           _address->setId(idQ.value("cntct_addr_id").toInt());
           _active->setChecked(idQ.value("cntct_active").toBool());
           _notes = idQ.value("cntct_notes").toString();
           _owner->setUsername(idQ.value("cntct_owner_username").toString());
+
+          fillEmail();
 
           if (_mapper->model())
           { 	 
@@ -1427,20 +1427,20 @@ void ContactWidget::fillEmail()
   _email->populate(qry);
   _email->insertSeparator(_email->count());
   _email->append(-3, tr("Edit List"));
-  _emailidCache=-1;
-  _email->setId(-1);
+  _email->setText(_emailCache);
   _email->blockSignals(false);
 }
 
 void ContactWidget::sEmailIndexChanged()
 {
+  // See if just selected another address
   if (_email->currentIndex() != _email->count() - 1)
   {
-    _emailidCache = _email->id();
+    _emailCache = _email->currentText();
     return;
   }
 
-  // Edit Requested
+  // Edit requested
   ParameterList params;
   params.append("cntct_id", _id);
 
@@ -1451,7 +1451,7 @@ void ContactWidget::sEmailIndexChanged()
   if (selected)
     _email->setId(selected);
   else
-    _email->setId(_emailidCache);
+    _email->setText(_emailCache);
 }
 
 bool ContactWidget::eventFilter(QObject *obj, QEvent *event)
