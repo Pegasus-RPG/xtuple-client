@@ -62,6 +62,7 @@ private:
     int _prjid;
     QMap<int, QString> _columnLabels;
     QAction *_notesAct;
+    QString _typeCode;
 };
 
 #endif // DSPFINANCIALREPORT_H

@@ -73,6 +73,8 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags 
   connect(_year, SIGNAL(toggled(bool)), this, SLOT(sFillPeriods()));
   connect(_notesBtn, SIGNAL(clicked()), _notesAct, SLOT(trigger()));
   connect(_notesAct, SIGNAL(triggered()), this, SLOT(sNotes()));
+  connect(_actuals, SIGNAL(toggled(bool)), this, SLOT(sToggleTrendOption()));
+  connect(_budgets, SIGNAL(toggled(bool)), this, SLOT(sToggleTrendOption()));
 
   _flhead->setType(XComboBox::FinancialLayouts);
 
@@ -80,13 +82,8 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags 
   _periods->addColumn(tr("Alternate Label"), -1, Qt::AlignLeft, true, "alt_name");
   sFillPeriods();
 
-  if (_preferences->boolean("XCheckBox/forgetful"))
-  {
-    _shownumbers->setChecked(true);
-    _showzeros->setChecked(true);
-  }
-
   _tab->setTabEnabled(_tab->indexOf(_showColumnsTab),false);
+  sReportChanged(_flhead->id());
 }
 
 enum SetResponse dspFinancialReport::set(const ParameterList &pParams)
@@ -163,7 +160,7 @@ void dspFinancialReport::sFillListStatement()
     {
       list()->clear();
       list()->setColumnCount(0);
-      list()->addColumn(tr("Group/Account Name"), -1, Qt::AlignLeft, true, "flstmtitem_name");
+      list()->addColumn(tr("Group\n  Account Name"), -1, Qt::AlignLeft, true, "flstmtitem_name");
 
       //Build report query
       qc = ("SELECT flstmtitem_type_id AS id, flstmtitem_order AS orderby,"
@@ -187,7 +184,7 @@ void dspFinancialReport::sFillListStatement()
           qwList << "(flstmtitem_monthdb <> 0) OR (flstmtitem_monthcr <> 0)";
         }
         list()->addColumn(tr("%1\n%2").arg(label.value("flstmthead_month").toString()).arg(label.value("flstmthead_typedescrip2").toString()),
-                           _bigMoneyColumn, Qt::AlignRight, true, "flstmtitem_month");
+                                   _bigMoneyColumn, Qt::AlignRight, true, "flstmtitem_month");
         qc += ",flstmtitem_month, 'curr' AS flstmtitem_month_xtnumericrole";
         qwList << "(flstmtitem_month <> 0)";
         if (q.value("flcol_prcnt").toBool())
@@ -415,23 +412,32 @@ void dspFinancialReport::sFillListStatement()
 
 void dspFinancialReport::sFillListTrend()
 {
-  if( (!_showBegBal->isChecked()) &&
-      (!_showBegBalPrcnt->isChecked()) &&
-      (!_showDebits->isChecked()) &&
-      (!_showDebitsPrcnt->isChecked()) &&
-      (!_showCredits->isChecked()) &&
-      (!_showCreditsPrcnt->isChecked()) &&
-      ((!_showEndBal->isChecked()) && (_type->text() != "Balance Sheet")) &&
-      (!_showEndBalPrcnt->isChecked()) &&
-      (!_showBudget->isChecked()) &&
-      (!_showBudgetPrcnt->isChecked()) &&
-      ((!_showDiff->isChecked()) && (_type->text() != "Income Statement") && (_type->text() != "Cash Flow Statement")) &&
-      (!_showDiffPrcnt->isChecked()) &&
-      (!_showCustom->isChecked()) &&
-      (!_showCustomPrcnt->isChecked()) )
+  if (_typeCode=="A")
+  {
+    if( (!_showBegBal->isChecked()) &&
+        (!_showBegBalPrcnt->isChecked()) &&
+        (!_showDebits->isChecked()) &&
+        (!_showDebitsPrcnt->isChecked()) &&
+        (!_showCredits->isChecked()) &&
+        (!_showCreditsPrcnt->isChecked()) &&
+        (!_showEndBal->isChecked()) &&
+        (!_showEndBalPrcnt->isChecked()) &&
+        (!_showBudget->isChecked()) &&
+        (!_showBudgetPrcnt->isChecked()) &&
+        (!_showDiff->isChecked()) &&
+        (!_showDiffPrcnt->isChecked()) &&
+        (!_showCustom->isChecked()) &&
+        (!_showCustomPrcnt->isChecked()) )
+    {
+      QMessageBox::critical(this, tr("Report Error"),
+                            tr("You must select at least one Column"));
+      return;
+    }
+  }
+  else if (!_actuals->isChecked() && !_budgets->isChecked())
   {
     QMessageBox::critical(this, tr("Report Error"),
-                          tr("You must select at least one Column"));
+                          tr("You must select actuals or budget to proceed."));
     return;
   }
 
@@ -475,7 +481,7 @@ void dspFinancialReport::sFillListTrend()
     return;
 
   list()->setColumnCount(0);
-  list()->addColumn( tr("Group/Account Name"), -1, Qt::AlignLeft, true, "name");
+  list()->addColumn( tr("Group\n  Account Name"), -1, Qt::AlignLeft, true, "name");
 
   q.prepare("SELECT financialReport(:flhead_id, :period_id, :interval, :prjid) AS result;");
 
@@ -519,58 +525,62 @@ void dspFinancialReport::sFillListTrend()
   for(c = 0; c < periodsRef.count(); c++)
   {
     sharedColumns = QString();
-    if(_showBegBal->isChecked())
+    if (_typeCode == "A")
     {
-      colname = "flrpt_beginning";
-      list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cBegining)),
-                         _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showstart) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
+      if(_showBegBal->isChecked())
+      {
+        colname = "flrpt_beginning";
+        list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cBegining)),
+                          _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showstart) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
+      }
+      if(_showBegBalPrcnt->isChecked())
+      {
+        colname = "flrpt_beginningprcnt";
+        list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cBegining)),
+                          _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showstartprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
+      }
+      if(_showDebits->isChecked())
+      {
+        colname = "flrpt_debits";
+        list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cDebits)),
+                          _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdelta) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
+      }
+      if(_showDebitsPrcnt->isChecked())
+      {
+        colname = "flrpt_debitsprcnt";
+        list()->addColumn( tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cDebits)),
+                           _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdeltaprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
+      }
+      if(_showCredits->isChecked())
+      {
+        colname = "flrpt_credits";
+        list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cCredits)),
+                          _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdelta) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
+      }
+      if(_showCreditsPrcnt->isChecked())
+      {
+        colname = "flrpt_creditsprcnt";
+        list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cCredits)),
+                          _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdeltaprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
+      }
     }
-    if(_showBegBalPrcnt->isChecked())
-    {
-      colname = "flrpt_beginningprcnt";
-      list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cBegining)),
-                         _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showstartprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
-    }
-    if(_showDebits->isChecked())
-    {
-      colname = "flrpt_debits";
-      list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cDebits)),
-                         _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdelta) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
-    }
-    if(_showDebitsPrcnt->isChecked())
-    {
-      colname = "flrpt_debitsprcnt";
-      list()->addColumn( tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cDebits)),
-                         _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdeltaprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
-    }
-    if(_showCredits->isChecked())
-    {
-      colname = "flrpt_credits";
-      list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cCredits)),
-                         _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdelta) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
-    }
-    if(_showCreditsPrcnt->isChecked())
-    {
-      colname = "flrpt_creditsprcnt";
-      list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cCredits)),
-                         _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdeltaprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
-    }
-    if ((_showEndBal->isChecked()) || (_type->text() == "Balance Sheet"))
+    if ((_showEndBal->isChecked()) ||
+        (_actuals->isChecked() && _typeCode == "B"))
     {
       colname = "flrpt_ending";
       list()->addColumn( tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cEnding)),
@@ -579,24 +589,24 @@ void dspFinancialReport::sFillListTrend()
       sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
       qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
     }
-    if(_showEndBalPrcnt->isChecked())
+    if(_showEndBalPrcnt->isChecked() && _typeCode=="A")
     {
       colname = "flrpt_endingprcnt";
       list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cEnding)),
-                         _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+                        _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
       q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showendprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
       sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
     }
-    if(_showBudget->isChecked())
+    if(_showBudget->isChecked() || _budgets->isChecked())
     {
       colname = "flrpt_budget";
       list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cBudget)),
-                         _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+                        _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
       q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showbudget) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
       sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
       qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
     }
-    if(_showBudgetPrcnt->isChecked())
+    if(_showBudgetPrcnt->isChecked() && _typeCode=="A")
     {
       colname = "flrpt_budgetprcnt";
       list()->addColumn( tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cBudget)),
@@ -604,11 +614,13 @@ void dspFinancialReport::sFillListTrend()
       q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showbudgetprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
       sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
     }
-    if ((_showDiff->isChecked()) || (_type->text() == "Income Statement") || (_type->text() == "Cash Flow Statement"))
+    if ((_showDiff->isChecked()) ||
+        (_actuals->isChecked() &&
+         ((_typeCode == "I") || (_typeCode == "C"))))
     {
       colname = "flrpt_diff";
       list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cDiff)),
-                         _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+                        _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
       q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdiff) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
       sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
 
@@ -616,32 +628,34 @@ void dspFinancialReport::sFillListTrend()
 
       qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
     }
-    if(_showDiffPrcnt->isChecked())
+    if (_typeCode=="A")
     {
-      colname = "flrpt_diffprcnt";
-      list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cDiff)),
-                         _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdiffprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",%1, 'percent' AS %2_xtnumericrole").arg(colname).arg(colname);
+      if(_showDiffPrcnt->isChecked())
+      {
+        colname = "flrpt_diffprcnt";
+        list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cDiff)),
+                          _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdiffprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",%1, 'percent' AS %2_xtnumericrole").arg(colname).arg(colname);
+      }
+      if(_showCustom->isChecked())
+      {
+        colname = "flrpt_custom";
+        list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(customlabel),
+                          _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showcustom) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
+      }
+      if(_showCustomPrcnt->isChecked())
+      {
+        colname = "flrpt_customprcnt";
+        list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(customlabel),
+                          _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
+        q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showcustomprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
+        sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
+      }
     }
-    if(_showCustom->isChecked())
-    {
-      colname = "flrpt_custom";
-      list()->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(customlabel),
-                         _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showcustom) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",r%1.%2 AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      qzList << QString("(r%1.%2 <> 0)").arg(c).arg(colname);
-    }
-    if(_showCustomPrcnt->isChecked())
-    {
-      colname = "flrpt_customprcnt";
-      list()->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(customlabel),
-                         _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
-      q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showcustomprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",r%1.%2, 'percent' AS r%3%4_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname);
-    }
-
     q2c += sharedColumns;
     q3c += sharedColumns;
     q4c += sharedColumns;
@@ -703,7 +717,7 @@ void dspFinancialReport::sFillListTrend()
   }
 
   //Grand Total for Trend Reports
-  if ((_trend->isChecked()) && ((_type->text() == "Income Statement") || (_type->text() == "Cash Flow Statement")))
+  if ((_trend->isChecked()) && ((_typeCode == "I") || (_typeCode == "C")))
   {
     list()->addColumn( tr("Grand\nTotal"), _bigMoneyColumn, Qt::AlignRight, true, "diffsum");
     q1c += ",CASE WHEN(flgrp_summarize AND flgrp_showdiff) THEN (" +
@@ -960,30 +974,37 @@ void dspFinancialReport::sReportChanged(int flheadid)
       _trend->setChecked(true);
       _periods->setSelectionMode(QAbstractItemView::ExtendedSelection);
       _flcol->setEnabled(false);
-      _type->setText("Ad Hoc");
+      _type->setText(tr("Ad Hoc"));
+      _typeCode = "A";
     }
     else
     {
-      if (q.value("flhead_type").toString()== "I")
-        _type->setText("Income Statement");
-      if (q.value("flhead_type").toString()== "B")
-        _type->setText("Balance Sheet");
-      if (q.value("flhead_type").toString()== "C")
-        _type->setText("Cash Flow Statement");
+      _typeCode = q.value("flhead_type").toString();
+      if (_typeCode== "I")
+        _type->setText(tr("Income Statement"));
+      if (_typeCode== "B")
+        _type->setText(tr("Balance Sheet"));
+      if (_typeCode== "C")
+        _type->setText(tr("Cash Flow Statement"));
       _tab->setTabEnabled(_tab->indexOf(_showColumnsTab),false);
       _trend->setChecked(false);
       sTogglePeriod();
     }
   }
+  sToggleTrend();
 }
 
 void dspFinancialReport::sToggleTrend()
 {
-
   if (!_trend->isChecked())
   {
-  if (_type->text() == "Ad Hoc")
-    _trend->setChecked(true);
+    if (_typeCode == "A")
+      _trend->setChecked(true);
+  }
+  else
+  {
+    _actuals->setDisabled(_typeCode == "A");
+    _budgets->setDisabled(_typeCode == "A");
   }
   sToggleNotes();
 }
@@ -1037,7 +1058,7 @@ QString dspFinancialReport::reportName() const
 {
   if (_trend->isChecked())
   {
-    if (_type->text() == "Ad Hoc")
+    if (_typeCode == "A")
       return "FinancialReport";
     else
       return "FinancialTrend";
@@ -1132,3 +1153,4 @@ void dspFinancialReport::sNotes()
   newdlg.set(params);
   newdlg.exec();
 }
+
