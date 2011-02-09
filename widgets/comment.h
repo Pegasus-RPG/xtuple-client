@@ -41,6 +41,7 @@ class XTUPLEWIDGETS_EXPORT comment : public QDialog
     QPushButton* _prev;
     QPushButton* _more;
     Comments* _comments;
+    QCheckBox* _public;
 
   public slots:
     virtual void set( ParameterList & pParams );

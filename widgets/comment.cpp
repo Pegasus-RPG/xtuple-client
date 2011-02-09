@@ -20,6 +20,7 @@
 #include <QVariant>
 #include <QWhatsThis>
 #include <QVector>
+#include <QCheckBox>
 
 #include <parameter.h>
 
@@ -80,6 +81,13 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
 
   QSpacerItem* spacer = new QSpacerItem( 66, 10, QSizePolicy::Expanding, QSizePolicy::Minimum );
   layout9->addItem( spacer );
+
+  _public = new QCheckBox(tr("Public"), this);
+  _public->setObjectName("_public");
+  if(!(_x_metrics && _x_metrics->boolean("CommentPublicPrivate")))
+    _public->hide();
+  _public->setChecked(_x_metrics && _x_metrics->boolean("CommentPublicDefault"));
+  layout9->addWidget(_public);
   layout11->addLayout( layout9 );
 
   _comment = new XTextEdit( this);
@@ -510,11 +518,12 @@ void comment::sSave()
   int result = -1;
   if(_mode == cNew)
   {
-    _query.prepare("SELECT postComment(:cmnttype_id, :source, :source_id, :text) AS result;");
+    _query.prepare("SELECT postComment(:cmnttype_id, :source, :source_id, :text, :public) AS result;");
     _query.bindValue(":cmnttype_id", _cmnttype->id());
     _query.bindValue(":source", Comments::_commentMap[_source].ident);
     _query.bindValue(":source_id", _targetId);
     _query.bindValue(":text", _comment->toPlainText().trimmed());
+    _query.bindValue(":public", _public->isChecked());
     _query.exec();
     if (_query.first())
     {
@@ -536,9 +545,10 @@ void comment::sSave()
   else if(_mode == cEdit)
   {
     result = _commentid;
-    _query.prepare("UPDATE comment SET comment_text=:text WHERE comment_id=:comment_id");
+    _query.prepare("UPDATE comment SET comment_text=:text, comment_public=:public WHERE comment_id=:comment_id");
     _query.bindValue(":text", _comment->toPlainText().trimmed());
     _query.bindValue(":comment_id", _commentid);
+    _query.bindValue(":public", _public->isChecked());
     _query.exec();
     if(_query.lastError().type() != QSqlError::NoError)
     {
@@ -556,7 +566,7 @@ void comment::sSave()
 
 void comment::populate()
 {
-  _query.prepare( "SELECT comment_cmnttype_id, comment_text "
+  _query.prepare( "SELECT comment_cmnttype_id, comment_text, comment_public "
                   "FROM comment "
                   "WHERE (comment_id=:comment_id);" );
   _query.bindValue(":comment_id", _commentid);
@@ -565,6 +575,7 @@ void comment::populate()
   {
     _cmnttype->setId(_query.value("comment_cmnttype_id").toInt());
     _comment->setText(_query.value("comment_text").toString());
+    _public->setChecked(_query.value("comment_public").toBool());
   }
   else if (_query.lastError().type() != QSqlError::NoError)
   {

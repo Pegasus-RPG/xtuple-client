@@ -113,6 +113,7 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _comment->addColumn(tr("Source"),  _itemColumn, Qt::AlignCenter,true, "comment_source");
   _comment->addColumn(tr("User"),    _userColumn, Qt::AlignCenter,true, "comment_user");
   _comment->addColumn(tr("Comment"), -1,          Qt::AlignLeft,  true, "first");
+  _comment->addColumn(tr("Public"),    _ynColumn, Qt::AlignLeft, false, "comment_public");
   hbox->addWidget(_comment);
 
   _browser = new QTextBrowser(this);
@@ -246,6 +247,7 @@ void Comments::refresh()
                      "       firstLine(detag(comment_text)) AS first,"
                      "       comment_text, "
                      "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_public, "
                      "       comment_user=CURRENT_USER AS self "
                      "FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      "WHERE ( (comment_source=:source)"
@@ -264,6 +266,7 @@ void Comments::refresh()
                      "       firstLine(detag(comment_text)) AS first,"
                      "       comment_text, "
                      "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_public, "
                      "       comment_user=CURRENT_USER AS self "
                      "  FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:source)"
@@ -276,6 +279,7 @@ void Comments::refresh()
                      "       comment_user, firstLine(detag(comment_text)),"
                      "       comment_text, "
                      "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_public, "
                      "       comment_user=CURRENT_USER AS self "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceCust)"
@@ -289,6 +293,7 @@ void Comments::refresh()
                      "       comment_user, firstLine(detag(comment_text)),"
                      "       comment_text, "
                      "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_public, "
                      "       comment_user=CURRENT_USER AS self "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceVend)"
@@ -302,6 +307,7 @@ void Comments::refresh()
                      "       comment_user, firstLine(detag(comment_text)),"
                      "       comment_text, "
                      "       COALESCE(cmnttype_editable,false) AS editable, "
+                     "       comment_public, "
                      "       comment_user=CURRENT_USER AS self "
                      "  FROM cntct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceContact)"
@@ -332,6 +338,15 @@ void Comments::refresh()
     lclHtml += comment.value("type").toString();
     lclHtml += " ";
     lclHtml += comment.value("comment_user").toString();
+    if(_x_metrics && _x_metrics->boolean("CommentPublicPrivate"))
+    {
+      lclHtml += " (";
+      if(comment.value("comment_public").toBool())
+        lclHtml += "Public";
+      else
+        lclHtml += "Private";
+      lclHtml += ")";
+    }
     if(userCanEdit(cid))
     {
       lclHtml += " <a href=\"edit?id=";
