@@ -881,11 +881,7 @@ void XTreeWidget::addColumn(const QString &pString, int pWidth, int pAlignment, 
   setColumnCount(column + 1);
 
   QTreeWidgetItem *hitem = headerItem();
-#ifdef Q_WS_MAC // bug 6117
-  hitem->setText(column, QString(pString).replace(QRegExp("\\s+"), " "));
-#else
   hitem->setText(column, pString);
-#endif
   hitem->setTextAlignment(column, pAlignment);
   hitem->setData(column, Xt::ScaleRole, scale);
 
