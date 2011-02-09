@@ -432,6 +432,10 @@ void contactMerge::sProcess()
     if (_mode->currentIndex() == 2 && !purgeConfirm()) // cMergePurge
       return;
     qry = "merge";
+    if  (_mode->currentIndex() == 2)
+      params.append("purge", true);
+    else
+      params.append("purge", false);
   }
   else if (_mode->currentIndex() == 1) // cPurge
   {
@@ -479,9 +483,9 @@ bool contactMerge::purgeConfirm()
   if (QMessageBox::question(this, tr("Purge Contact Merge?"), question,
                 QMessageBox::Yes,
                 QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-    return true;
+    return false;
 
-  return false;
+  return true;
 }
 
 void contactMerge::sRestore()

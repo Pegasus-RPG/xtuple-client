@@ -68,8 +68,6 @@ class menuPurchase : public QObject
     void sDspPoItemsByItem();
     void sDspPoItemsByDate();
     void sDspPoHistory();
-    void sDspItemSourcesByVendor();
-    void sDspItemSourcesByItem();
     void sDspBuyCard();
     void sDspReceiptsReturnsByVendor();
     void sDspReceiptsReturnsByItem();
@@ -107,7 +105,6 @@ class menuPurchase : public QObject
     QMenu *reportsMenu;
     QMenu *reportsPoMenu;
     QMenu *reportsPoItemsMenu;
-    QMenu *reportsItemSrcMenu;
     QMenu *reportsRcptRtrnMenu;
     QMenu *reportsPriceVarMenu;
     QMenu *reportsDelvVarMenu;

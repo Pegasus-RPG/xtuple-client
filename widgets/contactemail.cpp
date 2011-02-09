@@ -70,23 +70,7 @@ void contactEmail::languageChange()
 
 void contactEmail::accept()
 {
-  // Check for duplicates
-  QString email;
-  QStringList emails;
   XTreeWidgetItem* item;
-  for (int i = 0; i < _list->topLevelItemCount(); i++)
-  {
-    item = _list->topLevelItem(i);
-    sCloseEdit(item, item);  // Make sure editor is closed
-    email = item->data(0, Qt::DisplayRole).toString();
-    if (emails.contains(email))
-    {
-      QMessageBox::critical(this, tr("Error"), tr("Duplicate Addresses not Allowed"));
-      sOpenEdit(_list->topLevelItem(i));
-      return;
-    }
-    emails.append(email);
-  }
 
   // Update the database
   XSqlQuery ins;

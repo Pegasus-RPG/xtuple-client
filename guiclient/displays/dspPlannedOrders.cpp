@@ -33,6 +33,8 @@ dspPlannedOrders::dspPlannedOrders(QWidget* parent, const char* name, Qt::WFlags
   setMetaSQLOptions("schedule", "plannedorders");
   setUseAltId(true);
   setParameterWidgetVisible(true);
+  setSearchVisible(true);
+  setQueryOnStartEnabled(true);
 
   QString qryType = QString( "SELECT  'P', '%1' UNION "
                              "SELECT  'W', '%2'")
@@ -48,6 +50,7 @@ dspPlannedOrders::dspPlannedOrders(QWidget* parent, const char* name, Qt::WFlags
   parameterWidget()->append(tr("Order Types"), "type_list", ParameterWidget::Multiselect, QVariant(), false, qryType );
   parameterWidget()->appendComboBox(tr("Planner Code"), "plancode_id", XComboBox::PlannerCodes);
   parameterWidget()->append(tr("Planner Code Pattern"), "plancode_pattern", ParameterWidget::Text);
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 

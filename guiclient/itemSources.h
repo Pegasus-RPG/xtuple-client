@@ -11,33 +11,23 @@
 #ifndef ITEMSOURCES_H
 #define ITEMSOURCES_H
 
-#include "guiclient.h"
-#include "xwidget.h"
+#include "display.h"
 
-#include "ui_itemSources.h"
-
-class itemSources : public XWidget, public Ui::itemSources
+class itemSources : public display
 {
     Q_OBJECT
 
 public:
     itemSources(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~itemSources();
 
-protected slots:
-    virtual void languageChange();
-
-    virtual void sPrint();
+public slots:
+    virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();
     virtual void sCopy();
     virtual void sDelete();
-    virtual void sPopulateMenu( QMenu * menuThis );
-    virtual void sFillList();
-    virtual void sSearch( const QString & pTarget );
-
-
+    virtual void sBuyCard();
 };
 
 #endif // ITEMSOURCES_H

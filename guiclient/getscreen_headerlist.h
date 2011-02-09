@@ -185,8 +185,6 @@
 #include "dspItemCostHistory.h"
 #include "dspItemCostsByClassCode.h"
 #include "dspItemCostSummary.h"
-#include "dspItemSourcesByItem.h"
-#include "dspItemSourcesByVendor.h"
 #include "dspItemsWithoutItemSources.h"
 #include "dspJobCosting.h"
 #include "dspMaterialUsageVarianceByBOMItem.h"

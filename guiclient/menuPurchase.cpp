@@ -48,8 +48,6 @@
 #include "dspPoItemsByItem.h"
 #include "dspPoItemsByDate.h"
 #include "dspPoHistory.h"
-#include "dspItemSourcesByVendor.h"
-#include "dspItemSourcesByItem.h"
 #include "buyCard.h"
 #include "dspPoItemReceivingsByVendor.h"
 #include "dspPoItemReceivingsByItem.h"
@@ -98,7 +96,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   reportsMenu = new QMenu(parent);
   reportsPoMenu = new QMenu(parent);
   reportsPoItemsMenu = new QMenu(parent);
-  reportsItemSrcMenu = new QMenu(parent);
   reportsRcptRtrnMenu = new QMenu(parent);
   reportsPriceVarMenu = new QMenu(parent);
   reportsDelvVarMenu = new QMenu(parent);
@@ -114,7 +111,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   reportsMenu->setObjectName("menu.purch.reports");
   reportsPoMenu->setObjectName("menu.purch.reportspo");
   reportsPoItemsMenu->setObjectName("menu.purch.reportpoitems");
-  reportsItemSrcMenu->setObjectName("menu.purch.reportsitemsrc");
   reportsRcptRtrnMenu->setObjectName("menu.purch.reportsrcptrtrn");
   reportsPriceVarMenu->setObjectName("menu.purch.reportspricevar");
   reportsDelvVarMenu->setObjectName("menu.purch.reportsdelvvar");
@@ -162,9 +158,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.itemSites", tr("Item &Sites..."), SLOT(sItemSites()), reportsMenu, "ViewItemSites", NULL, NULL, true , NULL },
     
     // Purchasing | Reports | Item Sources
-    { "menu", tr("&Items Sources"), (char*)reportsItemSrcMenu, reportsMenu, "true", NULL, NULL, true , NULL },
-    { "po.dspItemSourcesByVendor", tr("by &Vendor..."), SLOT(sDspItemSourcesByVendor()), reportsItemSrcMenu, "ViewItemSources", NULL, NULL, true , NULL },
-    { "po.dspItemSourcesByItem", tr("by &Item..."), SLOT(sDspItemSourcesByItem()), reportsItemSrcMenu, "ViewItemSources", NULL, NULL, true , NULL },
     { "po.dspBuyCard", tr("&Buy Card..."), SLOT(sDspBuyCard()), reportsMenu, "ViewItemSources", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
  
@@ -460,16 +453,6 @@ void menuPurchase::sDspPoItemsByDate()
 void menuPurchase::sDspPoHistory()
 {
   omfgThis->handleNewWindow(new dspPoHistory());
-}
-
-void menuPurchase::sDspItemSourcesByVendor()
-{
-  omfgThis->handleNewWindow(new dspItemSourcesByVendor());
-}
-
-void menuPurchase::sDspItemSourcesByItem()
-{
-  omfgThis->handleNewWindow(new dspItemSourcesByItem());
 }
 
 void menuPurchase::sDspBuyCard()
