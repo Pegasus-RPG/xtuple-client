@@ -84,7 +84,7 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     { "menu",	tr("&Reports"), (char*)reportsMenu, mainMenu, "true", NULL, NULL, true , NULL },
   
     // Schedule | Report | Planned Orders
-    { "ms.dspPlannedOrdersByPlannerCode", tr("Planned &Orders..."), SLOT(sDspPlannedOrders()), reportsMenu, "ViewPlannedOrders", QPixmap(":/images/dspPlannedOrdersByPlannerCode.png"), toolBar, true , NULL },
+    { "ms.dspPlannedOrders", tr("Planned &Orders..."), SLOT(sDspPlannedOrders()), reportsMenu, "ViewPlannedOrders", QPixmap(":/images/dspPlannedOrdersByPlannerCode.png"), toolBar, true , tr("Planned Orders") },
 
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
     { "ms.dspRunningAvailability", tr("&Running Availability..."), SLOT(sDspRunningAvailability()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
