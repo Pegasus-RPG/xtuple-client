@@ -139,7 +139,8 @@
     \see YourPayProcessor
     \see configureCC
 
-    \todo figure out how to expose portions of this in the scriptapi doxygen module
+    \todo expose portions of this in the scriptapi doxygen module
+    \todo use qabstractmessagehandler instead of qmessagebox
 */
 
 QString			 CreditCardProcessor::_errorMsg = "";
@@ -1738,31 +1739,55 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 #endif
 
 #ifndef QT_NO_OPENSSL
-  if(!_metrics->boolean("CCUseCurl"))
+  /* TODO: specific references to YourPay should be replaced with
+     checking a config option indicating that a PEM file is required.
+     http://bugreports.qt.nokia.com/browse/QTBUG-13418
+     means we must use cURL to handle certificates in some Qt versions.
+   */
+  if(!_metrics->boolean("CCUseCurl") &&
+     (_metrics->value("CCCompany") != "YourPay"
+      || (_metrics->value("CCCompany") == "YourPay" && QT_VERSION > 0x040600)))
   {
-    // PEM files are currently only used for YourPay
-    // TODO: The specific reference to YourPay should go away, especially when something other than YourPay starts to use this
     if (!pemfile.isEmpty() && (_metrics->value("CCCompany") == "YourPay"))
     {
       QFile pemio(pemfile);
-      if (pemio.error() != QFile::NoError)
-        QMessageBox::warning(0, tr("Could not open PEM file"),
-                             tr("<p>Failed to open the PEM file %1: %2")
-                             .arg(pemfile, pemio.errorString()));
+      if (! pemio.exists())
+        QMessageBox::warning(0, tr("Could not find PEM file"),
+                             tr("<p>Failed to find the PEM file %1")
+                             .arg(pemfile));
       else
       {
-        QSslCertificate localcert(&pemio);
-        if(!localcert.isNull())
+        QList<QSslCertificate> certlist = QSslCertificate::fromPath(pemfile);
+        if (DEBUG) qDebug("%d certificates", certlist.size());
+        if (certlist.isEmpty())
+          QMessageBox::warning(0, tr("Failed to load Certificate"),
+                               tr("<p>There are no Certificates in %1. "
+                                  "This may cause communication problems.")
+                               .arg(pemfile));
+        else if (certlist.at(0).isNull())
+          QMessageBox::warning(0, tr("Failed to load Certificate"),
+                               tr("<p>Failed to load a Certificate from "
+                                  "the PEM file %1. "
+                                  "This may cause communication problems.")
+                               .arg(pemfile));
+        else if (certlist.at(0).isValid())
         {
+          if (DEBUG)
+            qDebug("Certificate details: valid from %s to %s, issued to %s @ %s in %s, %s",
+                   qPrintable(certlist.at(0).effectiveDate().toString("MMM-dd-yyyy")),
+                   qPrintable(certlist.at(0).expiryDate().toString("MMM-dd-yyyy")),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CommonName)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::Organization)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::LocalityName)),
+                   qPrintable(certlist.at(0).issuerInfo(QSslCertificate::CountryName)));
           QSslConfiguration sslconf = QSslConfiguration::defaultConfiguration();
-          sslconf.setLocalCertificate(localcert);
+          sslconf.setLocalCertificate(certlist.at(0));
           QSslConfiguration::setDefaultConfiguration(sslconf);
         }
         else
         {
-          QMessageBox::warning(0, tr("Failed to load Certificate"),
-                               tr("<p>Failed to load a Certificate from "
-                                  "the PEM file %1. "
+          QMessageBox::warning(0, tr("Invalid Certificate"),
+                               tr("<p>The Certificate in %1 appears to be invalid. "
                                   "This may cause communication problems.")
                                .arg(pemfile));
         }
@@ -2348,8 +2373,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
   if (! port.isEmpty() && ! (protocol == "https" && port == "443"))
     serverStr += ":" + port;
 
-  if (! remainder.isEmpty())
-    serverStr += "/" + remainder;
+  serverStr += "/" + remainder;
 
   if (DEBUG) qDebug("buildURL: returning %s", serverStr.toAscii().data());
   return serverStr;
