@@ -8,21 +8,17 @@
  * to be bound by its terms.
  */
 
-#ifndef DSPPLANNEDORDERSBYPLANNERCODE_H
-#define DSPPLANNEDORDERSBYPLANNERCODE_H
+#ifndef DSPPLANNEDORDERS_H
+#define DSPPLANNEDORDERS_H
 
 #include "display.h"
 
-#include "ui_dspPlannedOrdersByPlannerCode.h"
-
-class dspPlannedOrdersByPlannerCode : public display, public Ui::dspPlannedOrdersByPlannerCode
+class dspPlannedOrders : public display
 {
     Q_OBJECT
 
 public:
-    dspPlannedOrdersByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-
-    virtual bool setParams(ParameterList&);
+    dspPlannedOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
 public slots:
     virtual void sDeleteOrder();
@@ -33,10 +29,6 @@ public slots:
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int);
     virtual void sReleaseOrder();
     virtual void sSoftenOrder();
-
-protected slots:
-    virtual void languageChange();
-
 };
 
-#endif // DSPPLANNEDORDERSBYPLANNERCODE_H
+#endif // DSPPLANNEDORDERS_H

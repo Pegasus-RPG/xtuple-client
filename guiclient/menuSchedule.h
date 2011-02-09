@@ -46,8 +46,7 @@ class menuSchedule : public QObject
     void sFirmPlannedOrdersByPlannerCode();
     void sReleasePlannedOrdersByPlannerCode();
 
-    void sDspPlannedOrdersByItem();
-    void sDspPlannedOrdersByPlannerCode();
+    void sDspPlannedOrders();
     void sDspTimePhasedAvailability();
     void sDspRunningAvailability();
     void sDspMRPDetail();
@@ -66,7 +65,6 @@ class menuSchedule : public QObject
     QMenu *capacityPlanMenu;
     QMenu *capacityPlanTpPrdMenu;
     QMenu *reportsMenu;
-    QMenu *reportsPlannedMenu;
     
     void	addActionsToMenu(actionProperties [], unsigned int);
 };

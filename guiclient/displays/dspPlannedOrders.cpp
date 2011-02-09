@@ -8,7 +8,7 @@
  * to be bound by its terms.
  */
 
-#include "dspPlannedOrdersByPlannerCode.h"
+#include "dspPlannedOrders.h"
 
 #include <QAction>
 #include <QMenu>
@@ -23,18 +23,33 @@
 #include "purchaseRequest.h"
 #include "transferOrder.h"
 #include "workOrder.h"
+#include "parameterwidget.h"
 
-dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
-  : display(parent, "dspPlannedOrdersByPlannerCode", fl)
+dspPlannedOrders::dspPlannedOrders(QWidget* parent, const char* name, Qt::WFlags fl)
+  : display(parent, "dspPlannedOrders", fl)
 {
-  setupUi(optionsWidget());
-  setWindowTitle(tr("Planned Orders by Planner Code"));
-  setListLabel(tr("Planned Orders"));
-  setReportName("PlannedOrdersByPlannerCode");
+  setWindowTitle(tr("Planned Orders"));
+  setReportName("PlannedOrders");
   setMetaSQLOptions("schedule", "plannedorders");
   setUseAltId(true);
+  setParameterWidgetVisible(true);
 
-  _plannerCode->setType(ParameterGroup::PlannerCode);
+  QString qryType = QString( "SELECT  'P', '%1' UNION "
+                             "SELECT  'W', '%2'")
+      .arg(tr("Purchase"))
+      .arg(tr("Manufacture"));
+
+  if (_metrics->boolean("MultiWhs"))
+    qryType.append(QString( " UNION "
+                            "SELECT  'T', '%1'")
+                   .arg(tr("Transfers")));
+
+  parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
+  parameterWidget()->append(tr("Order Types"), "type_list", ParameterWidget::Multiselect, QVariant(), false, qryType );
+  parameterWidget()->appendComboBox(tr("Planner Code"), "plancode_id", XComboBox::PlannerCodes);
+  parameterWidget()->append(tr("Planner Code Pattern"), "plancode_pattern", ParameterWidget::Text);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
   list()->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,  true, "ordernum");
   list()->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "ordtype");
@@ -49,35 +64,9 @@ dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, co
   list()->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter,true, "planord_firm");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
-  if (!_metrics->boolean("MultiWhs"))
-    _transfer->hide();
 }
 
-void dspPlannedOrdersByPlannerCode::languageChange()
-{
-  display::languageChange();
-  retranslateUi(this);
-}
-
-bool dspPlannedOrdersByPlannerCode::setParams(ParameterList &pParams)
-{
-  QStringList typeList;
-  if (_purchase->isChecked())
-    typeList.append("P");
-  if (_manufacture->isChecked())
-    typeList.append("W");
-  if (_transfer->isChecked())
-    typeList.append("T");
-  if (!typeList.count())
-    return false;
-  pParams.append("type_list", typeList);
-  _warehouse->appendValue(pParams);
-  _plannerCode->appendValue(pParams);
-
-  return true;
-}
-
-void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
+void dspPlannedOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int)
 {
   QAction *menuItem;
 
@@ -113,7 +102,7 @@ void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem 
   menuItem->setEnabled(_privileges->check("DeletePlannedOrders"));
 }
 
-void dspPlannedOrdersByPlannerCode::sDspRunningAvailability()
+void dspPlannedOrders::sDspRunningAvailability()
 {
   ParameterList params;
   params.append("itemsite_id", list()->altId());
@@ -124,7 +113,7 @@ void dspPlannedOrdersByPlannerCode::sDspRunningAvailability()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspPlannedOrdersByPlannerCode::sEditOrder()
+void dspPlannedOrders::sEditOrder()
 {
   ParameterList params;
   params.append("mode", "edit");
@@ -136,7 +125,7 @@ void dspPlannedOrdersByPlannerCode::sEditOrder()
   sFillList();
 }
 
-void dspPlannedOrdersByPlannerCode::sFirmOrder()
+void dspPlannedOrders::sFirmOrder()
 {
   ParameterList params;
   params.append("planord_id", list()->id());
@@ -147,7 +136,7 @@ void dspPlannedOrdersByPlannerCode::sFirmOrder()
     sFillList();
 }
 
-void dspPlannedOrdersByPlannerCode::sSoftenOrder()
+void dspPlannedOrders::sSoftenOrder()
 {
   q.prepare( "UPDATE planord "
              "SET planord_firm=false "
@@ -158,7 +147,7 @@ void dspPlannedOrdersByPlannerCode::sSoftenOrder()
   sFillList();
 }
 
-void dspPlannedOrdersByPlannerCode::sReleaseOrder()
+void dspPlannedOrders::sReleaseOrder()
 {
   if (list()->currentItem()->text(1) == "W/O")
   {
@@ -197,7 +186,7 @@ void dspPlannedOrdersByPlannerCode::sReleaseOrder()
   sFillList();
 }
 
-void dspPlannedOrdersByPlannerCode::sDeleteOrder()
+void dspPlannedOrders::sDeleteOrder()
 {
   ParameterList params;
   params.append("planord_id", list()->id());
@@ -209,7 +198,7 @@ void dspPlannedOrdersByPlannerCode::sDeleteOrder()
     sFillList();
 }
 
-void dspPlannedOrdersByPlannerCode::sDspUsageStatistics()
+void dspPlannedOrders::sDspUsageStatistics()
 {
   q.prepare("SELECT itemsite_item_id "
 	    "FROM itemsite "
@@ -218,10 +207,8 @@ void dspPlannedOrdersByPlannerCode::sDspUsageStatistics()
   q.exec();
   if (q.first())
   {
-    ParameterList params;
+    ParameterList params = parameterWidget()->parameters();
     params.append("item_id", q.value("itemsite_item_id"));
-    if (_warehouse->isSelected())
-      params.append("warehous_id", _warehouse->id());
     params.append("run");
 
     dspUsageStatistics *newdlg = new dspUsageStatistics();

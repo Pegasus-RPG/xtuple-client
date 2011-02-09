@@ -50,8 +50,6 @@ FORMS   += displays/dspAllocations.ui \
            displays/dspPartiallyShippedOrders.ui \
            displays/dspPendingAvailability.ui \
            displays/dspPendingBOMChanges.ui \
-           displays/dspPlannedOrdersByItem.ui \
-           displays/dspPlannedOrdersByPlannerCode.ui \
            displays/dspPoDeliveryDateVariancesByItem.ui \
            displays/dspPoDeliveryDateVariancesByVendor.ui \
            displays/dspPoHistory.ui \
@@ -175,8 +173,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspPartiallyShippedOrders.h \
            displays/dspPendingAvailability.h \
            displays/dspPendingBOMChanges.h \
-           displays/dspPlannedOrdersByItem.h \
-           displays/dspPlannedOrdersByPlannerCode.h \
+           displays/dspPlannedOrders.h \
            displays/dspPoDeliveryDateVariancesByItem.h \
            displays/dspPoDeliveryDateVariancesByVendor.h \
            displays/dspPoHistory.h \
@@ -311,8 +308,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspPartiallyShippedOrders.cpp \
            displays/dspPendingAvailability.cpp \
            displays/dspPendingBOMChanges.cpp \
-           displays/dspPlannedOrdersByItem.cpp \
-           displays/dspPlannedOrdersByPlannerCode.cpp \
+           displays/dspPlannedOrders.cpp \
            displays/dspPoDeliveryDateVariancesByItem.cpp \
            displays/dspPoDeliveryDateVariancesByVendor.cpp \
            displays/dspPoHistory.cpp \

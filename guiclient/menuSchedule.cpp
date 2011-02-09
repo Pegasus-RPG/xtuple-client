@@ -28,8 +28,7 @@
 #include "firmPlannedOrdersByPlannerCode.h"
 #include "releasePlannedOrdersByPlannerCode.h"
 
-#include "dspPlannedOrdersByItem.h"
-#include "dspPlannedOrdersByPlannerCode.h"
+#include "dspPlannedOrders.h"
 #include "dspMRPDetail.h"
 #include "dspRunningAvailability.h"
 #include "dspTimePhasedAvailability.h"
@@ -55,13 +54,11 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
   plannedOrdersMenu = new QMenu(parent);
   plannedOrdersMrpMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
-  reportsPlannedMenu = new QMenu(parent);
 
   mainMenu->setObjectName("menu.sched");
   plannedOrdersMenu->setObjectName("menu.sched.plannedorders");
   plannedOrdersMrpMenu->setObjectName("menu.sched.plannedordersmrp");
   reportsMenu->setObjectName("menu.sched.reports");
-  reportsPlannedMenu->setObjectName("menu.sched.reportsplanned");
 
   actionProperties acts[] = {
   
@@ -87,10 +84,8 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     { "menu",	tr("&Reports"), (char*)reportsMenu, mainMenu, "true", NULL, NULL, true , NULL },
   
     // Schedule | Report | Planned Orders
-    { "menu",	tr("Planned &Orders"), (char*)reportsPlannedMenu, reportsMenu, "true", NULL, NULL, true , NULL },
-    { "ms.dspPlannedOrdersByPlannerCode", tr("by &Planner Code..."), SLOT(sDspPlannedOrdersByPlannerCode()), reportsPlannedMenu, "ViewPlannedOrders", QPixmap(":/images/dspPlannedOrdersByPlannerCode.png"), toolBar, true , tr("Planned Orders by Planner Code") },
-    { "ms.dspPlannedOrdersByItem", tr("by &Item..."), SLOT(sDspPlannedOrdersByItem()), reportsPlannedMenu, "ViewPlannedOrders", NULL, NULL, true , NULL },
-    
+    { "ms.dspPlannedOrdersByPlannerCode", tr("Planned &Orders..."), SLOT(sDspPlannedOrders()), reportsMenu, "ViewPlannedOrders", QPixmap(":/images/dspPlannedOrdersByPlannerCode.png"), toolBar, true , NULL },
+
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
     { "ms.dspRunningAvailability", tr("&Running Availability..."), SLOT(sDspRunningAvailability()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
     { "ms.dspTimePhasedAvailabiltiy", tr("&Time-Phased Availability..."), SLOT(sDspTimePhasedAvailability()), reportsMenu, "ViewInventoryAvailability", NULL, NULL, true , NULL },
@@ -209,14 +204,9 @@ void menuSchedule::sReleasePlannedOrdersByPlannerCode()
   releasePlannedOrdersByPlannerCode(parent, "", TRUE).exec();
 }
 
-void menuSchedule::sDspPlannedOrdersByItem()
+void menuSchedule::sDspPlannedOrders()
 {
-  omfgThis->handleNewWindow(new dspPlannedOrdersByItem());
-}
-
-void menuSchedule::sDspPlannedOrdersByPlannerCode()
-{
-  omfgThis->handleNewWindow(new dspPlannedOrdersByPlannerCode());
+  omfgThis->handleNewWindow(new dspPlannedOrders());
 }
 
 void menuSchedule::sDspTimePhasedAvailability()
