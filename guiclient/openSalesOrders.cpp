@@ -84,7 +84,9 @@ enum SetResponse openSalesOrders::set(const ParameterList& pParams)
 
 bool openSalesOrders::setParams(ParameterList &params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
+
   params.append("error", tr("Error"));
   if (_showClosed->isChecked() && _showClosed->isVisible())
     params.append("showClosed");

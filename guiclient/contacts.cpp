@@ -330,7 +330,9 @@ QAction* contacts::detachAction()
 
 bool contacts::setParams(ParameterList &params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
+
   if (_activeOnly->isChecked())
     params.append("activeOnly",true);
 

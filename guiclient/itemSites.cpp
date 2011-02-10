@@ -286,7 +286,8 @@ void itemSites::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 
 bool itemSites::setParams(ParameterList &params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
 
   params.append("regular", tr("Regular"));
   params.append("none", tr("None"));

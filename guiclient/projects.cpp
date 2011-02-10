@@ -138,7 +138,9 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
 bool projects::setParams(ParameterList &params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
+
   if (_showComplete->isChecked())
     params.append("showComplete",true);
 

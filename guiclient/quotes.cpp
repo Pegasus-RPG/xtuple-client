@@ -471,7 +471,9 @@ bool quotes::checkSitePrivs(int orderid)
 
 bool quotes::setParams(ParameterList &params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
+
   if(_showExpired->isChecked())
     params.append("showExpired");
   if(_convertedtoSo->isChecked())

@@ -155,7 +155,8 @@ void items::sDelete()
 
 bool items::setParams(ParameterList &params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
 
   bool valid;
   QVariant param;

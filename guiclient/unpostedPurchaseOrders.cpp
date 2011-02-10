@@ -273,7 +273,8 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem,
 
 bool unpostedPurchaseOrders::setParams(ParameterList &params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
 
   if (_showUnreleased->isChecked() && _showOpen->isChecked() )
     params.append("showBoth");

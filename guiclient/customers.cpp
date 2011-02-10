@@ -206,7 +206,9 @@ void customers::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
 bool customers::setParams(ParameterList &params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
+
   params.append("char_id_list", _charids);
 
   // Handle characteristics
