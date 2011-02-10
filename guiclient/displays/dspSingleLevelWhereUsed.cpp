@@ -157,5 +157,12 @@ bool dspSingleLevelWhereUsed::setParams(ParameterList &params)
   else
     params.append("effective", _effective->date());
 
+  params.append("Always", tr("Always"));
+  params.append("Never", tr("Never"));
+  params.append("Push", tr("Push"));
+  params.append("Pull", tr("Pull"));
+  params.append("Mixed", tr("Mixed"));
+  params.append("Special", tr("Special"));
+
   return true;
 }
