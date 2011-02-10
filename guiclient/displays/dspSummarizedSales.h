@@ -29,6 +29,8 @@ public slots:
     virtual void sViewHistory();
     virtual void sGroupByChanged();
 
+protected slots:
+    virtual void languageChange();
 
 };
 

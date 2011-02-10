@@ -203,7 +203,8 @@ enum SetResponse dspInventoryHistory::set(const ParameterList &pParams)
 
 bool dspInventoryHistory::setParams(ParameterList & params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
 
   params.append("average", tr("Average"));
   params.append("standard", tr("Standard"));

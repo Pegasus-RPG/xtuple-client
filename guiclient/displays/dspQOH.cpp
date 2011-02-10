@@ -73,6 +73,12 @@ dspQOH::dspQOH(QWidget* parent, const char*, Qt::WFlags fl)
   _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
 }
 
+void dspQOH::languageChange()
+{
+  display::languageChange();
+  retranslateUi(this);
+}
+
 SetResponse dspQOH::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);

@@ -56,6 +56,12 @@ dspTimePhasedBookings::dspTimePhasedBookings(QWidget* parent, const char*, Qt::W
   sGroupByChanged();
 }
 
+void dspTimePhasedBookings::languageChange()
+{
+  display::languageChange();
+  retranslateUi(this);
+}
+
 void dspTimePhasedBookings::sViewBookings()
 {
   ParameterList params = parameterWidget()->parameters();

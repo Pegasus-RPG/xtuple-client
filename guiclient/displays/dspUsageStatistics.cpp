@@ -97,7 +97,9 @@ enum SetResponse dspUsageStatistics::set(const ParameterList &pParams)
 
 bool dspUsageStatistics::setParams(ParameterList & params)
 {
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
+
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
 

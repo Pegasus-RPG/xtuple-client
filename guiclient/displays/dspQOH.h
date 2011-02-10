@@ -37,6 +37,9 @@ public slots:
     virtual void sHandleValue( bool pShowValue );
     virtual void sFillList();
 
+protected slots:
+    virtual void languageChange();
+
 private:
     QButtonGroup* _costsGroupInt;
     QButtonGroup* _showGroupInt;

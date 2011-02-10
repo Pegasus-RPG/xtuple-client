@@ -29,6 +29,8 @@ public slots:
     virtual void sViewHistory();
     virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem *, int pColumn);
 
+protected slots:
+    virtual void languageChange();
 };
 
 #endif // DSPTIMEPHASEDSALES_H

@@ -76,6 +76,12 @@ dspSummarizedSales::dspSummarizedSales(QWidget* parent, const char*, Qt::WFlags 
   sGroupByChanged();
 }
 
+void dspSummarizedSales::languageChange()
+{
+  display::languageChange();
+  retranslateUi(this);
+}
+
 bool dspSummarizedSales::setParams(ParameterList & params)
 {
   if (!_cust->isChecked() &&

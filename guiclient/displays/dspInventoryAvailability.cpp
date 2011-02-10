@@ -67,6 +67,12 @@ dspInventoryAvailability::dspInventoryAvailability(QWidget* parent, const char*,
   connect(_asof, SIGNAL(currentIndexChanged(int)), this, SLOT(sAsofChanged(int)));
 }
 
+void dspInventoryAvailability::languageChange()
+{
+  display::languageChange();
+  retranslateUi(this);
+}
+
 enum SetResponse dspInventoryAvailability::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
@@ -171,8 +177,8 @@ bool dspInventoryAvailability::setParams(ParameterList &params)
     return false;
   }
 
-
-  display::setParams(params);
+  if (!display::setParams(params))
+    return false;
 
   if (_asof->currentIndex() == ITEMSITELEADTIME)
     params.append("byLeadTime");

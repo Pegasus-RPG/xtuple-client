@@ -57,6 +57,12 @@ dspTimePhasedSales::dspTimePhasedSales(QWidget* parent, const char*, Qt::WFlags 
   sGroupByChanged();
 }
 
+void dspTimePhasedSales::languageChange()
+{
+  display::languageChange();
+  retranslateUi(this);
+}
+
 void dspTimePhasedSales::sViewHistory()
 {
   ParameterList params;

@@ -47,6 +47,9 @@ public slots:
     virtual void sByVendorChanged();
     virtual void sAsofChanged(int index);
 
+protected slots:
+    virtual void languageChange();
+
 private:
     bool _forgetful;
     QString _settingsName;

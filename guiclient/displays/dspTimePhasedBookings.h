@@ -29,6 +29,8 @@ public slots:
     virtual void sViewBookings();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int pColumn);
 
+protected slots:
+    virtual void languageChange();
 };
 
 #endif // DSPTIMEPHASEDBOOKINGS_H
