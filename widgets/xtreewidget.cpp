@@ -1546,15 +1546,25 @@ void XTreeWidget::sShowHeaderMenu(const QPoint &pntThis)
 void XTreeWidget::sExport()
 {
   QString   path = xtsettingsValue(_settingsName + "/exportPath").toString();
+  QString selectedFilter;
   QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Export Save Filename"), path,
-                                            tr("Text CSV (*.csv);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)")));
+                                            tr("Text CSV (*.csv);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)"), &selectedFilter));
+  QString defaultSuffix;
+  if(selectedFilter.contains("csv"))
+    defaultSuffix = ".csv";
+  else if(selectedFilter.contains("odt"))
+    defaultSuffix = ".odt";
+  else if(selectedFilter.contains("html"))
+    defaultSuffix = ".html";
+  else
+    defaultSuffix = ".txt";
 
   if (!fi.filePath().isEmpty())
   {
     QTextDocument       *doc = new QTextDocument();
     QTextDocumentWriter writer;
     if (fi.suffix().isEmpty())
-      fi.setFile(fi.filePath() += ".txt");
+      fi.setFile(fi.filePath() += defaultSuffix);
     xtsettingsSetValue(_settingsName + "/exportPath", fi.path());
     writer.setFileName(fi.filePath());
 
