@@ -1184,7 +1184,7 @@ void crmaccount::closeEvent(QCloseEvent *pEvent)
     query.exec();
     _NumberGen = -1;
   }
-  QWidget::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 void crmaccount::sHandleButtons() 	 
