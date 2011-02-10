@@ -69,6 +69,7 @@ SELECT -1 AS gltrans_id,
        &lt;? value("beginningBalance") ?> AS gltrans_amount,
        &lt;? value("beginningBalance") ?> AS running,
        NULL AS f_posted,
+       NULL AS f_deleted,
        NULL AS f_username,
        -1 AS gltrans_sequence
  FROM accnt
