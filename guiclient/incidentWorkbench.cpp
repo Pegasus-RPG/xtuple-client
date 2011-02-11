@@ -63,6 +63,9 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("End Date"), "endDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("Project"), "prj_id", ParameterWidget::Project);
+  if(_metrics->boolean("IncidentsPublicPrivate"))
+    parameterWidget()->append(tr("Public"), "public", ParameterWidget::CheckBox);
 
   parameterWidget()->applyDefaultFilterSet();
 
@@ -80,6 +83,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   list()->addColumn(tr("Severity"),    _userColumn, Qt::AlignLeft, false, "incdtseverity_name");
   list()->addColumn(tr("Priority"),    _userColumn, Qt::AlignLeft, false, "incdtpriority_name");
   list()->addColumn(tr("Contact"),     _userColumn, Qt::AlignLeft, false, "cntct_name");
+  list()->addColumn(tr("Project"),     _userColumn, Qt::AlignLeft, false, "prj_number");
+  list()->addColumn(tr("public"),     _userColumn, Qt::AlignLeft, false, "incdt_public");
 }
 
 enum SetResponse incidentWorkbench::set(const ParameterList &pParams)

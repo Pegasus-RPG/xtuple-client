@@ -16,6 +16,7 @@
 #include <QMessageBox>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QDebug>
 
 #ifdef Q_WS_MAC
 #include <QFont>
@@ -1699,6 +1700,12 @@ void ParameterWidget::storeFilterValue(int pId, QObject* filter)
     for (int i = 0; i < selected.size(); i++)
       value.append(selected.at(i)->data(Qt::UserRole));
     _filterValues[foundRow] = qMakePair(pp->param, QVariant(value));
+    emit updated();
+  }
+  else if (classname == "ProjectCluster")
+  {
+    ProjectCluster *projectCluster = (ProjectCluster *)filter;
+    _filterValues[foundRow] = qMakePair(pp->param, QVariant(projectCluster->id()));
     emit updated();
   }
   _filterWidgets[foundRow] = (QWidget *)filter;
