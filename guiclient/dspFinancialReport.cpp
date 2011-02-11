@@ -824,9 +824,9 @@ void dspFinancialReport::sExpanded( QTreeWidgetItem * item )
 
 void dspFinancialReport::sPreview()
 {
-  ParameterList params = getParams();
-  if (!params.count())
-    return ;
+  ParameterList params;
+  if(!setParams(params))
+    return;
 
   XSqlQuery qry;
   qry.prepare("SELECT report_source "
@@ -864,9 +864,9 @@ void dspFinancialReport::sPreview()
 
 void dspFinancialReport::sPrint()
 {
-  ParameterList params = getParams();
-  if (!params.count())
-    return ;
+  ParameterList params;
+  if(!setParams(params))
+    return;
 
   orReport report(reportName(), params);
   if (report.isValid())
