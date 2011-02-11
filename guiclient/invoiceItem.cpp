@@ -317,7 +317,7 @@ void invoiceItem::populate()
                     "            ELSE item_listprice"
                     "       END AS f_listprice,"
 					"		taxzone_id,"
-                    "       invchead_curr_id AS taxcurrid "
+                    "       invchead_curr_id AS taxcurr_id "
                     "FROM invcitem JOIN "
                     "     invchead LEFT OUTER JOIN taxzone ON "
 					"       (invchead_taxzone_id = taxzone_id) "
