@@ -35,7 +35,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sNumberChanged()));
   connect(_activity, SIGNAL(clicked()), this, SLOT(sActivity()));
 
-  _prjtask->addColumn( tr("Number"),			_itemColumn,	Qt::AlignRight, true, "prjtask_number" );
+  _prjtask->addColumn( tr("Number"),			_itemColumn,	Qt::AlignLeft, true, "prjtask_number" );
   _prjtask->addColumn( tr("Name"),				_itemColumn,	Qt::AlignLeft,  true, "prjtask_name"  );
   _prjtask->addColumn( tr("Description"),		-1,				Qt::AlignLeft,  true, "prjtask_descrip" ); 
   _prjtask->addColumn( tr("Hours Balance"),		_itemColumn,	Qt::AlignRight, true, "prjtaskhrbal" );
