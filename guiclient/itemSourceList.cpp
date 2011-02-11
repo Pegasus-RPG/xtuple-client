@@ -10,7 +10,9 @@
 
 #include "itemSourceList.h"
 
+#include <metasql.h>
 #include <qvariant.h>
+#include "mqlutil.h"
 
 /*
  *  Constructs a itemSourceList as a child of 'parent', with the
@@ -53,12 +55,12 @@ void itemSourceList::languageChange()
 
 void itemSourceList::init()
 {
-  _itemsrc->addColumn(tr("Ranking"),      _orderColumn, Qt::AlignRight, true, "itemsrc_ranking" );
-  _itemsrc->addColumn(tr("Vendor"),       -1,           Qt::AlignLeft,  true, "vend_name");
-  _itemsrc->addColumn(tr("Vend Item#"),   _itemColumn, Qt::AlignRight, true, "itemsrc_vend_item_number" );
-  _itemsrc->addColumn(tr("Manufacturer"), _itemColumn, Qt::AlignLeft,  true, "itemsrc_manuf_name");
-  _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn, Qt::AlignRight, true, "itemsrc_manuf_item_number" );
-  _itemsrc->addColumn(tr("Default"),      _itemColumn, Qt::AlignLeft, true, "default" );
+  _itemsrc->addColumn(tr("Ranking"),      _orderColumn, Qt::AlignRight,  true, "itemsrc_ranking" );
+  _itemsrc->addColumn(tr("Vendor"),       -1,           Qt::AlignLeft,   true, "vend_name");
+  _itemsrc->addColumn(tr("Vend Item#"),   _itemColumn,  Qt::AlignRight,  true, "itemsrc_vend_item_number" );
+  _itemsrc->addColumn(tr("Manufacturer"), _itemColumn,  Qt::AlignLeft,   true, "itemsrc_manuf_name");
+  _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn,  Qt::AlignRight,  true, "itemsrc_manuf_item_number" );
+  _itemsrc->addColumn(tr("Default"),      _itemColumn,  Qt::AlignLeft,   true, "itemsrc_default" );
 }
 
 enum SetResponse itemSourceList::set(ParameterList &pParams)
@@ -88,20 +90,12 @@ void itemSourceList::sSelect()
 
 void itemSourceList::sFillList()
 {
-  q.prepare( "SELECT itemsrc_id, itemsrc_ranking, vend_name, "
-             "  itemsrc_vend_item_number, itemsrc_manuf_name, "
-             "  itemsrc_manuf_item_number, "
-			 "  CASE WHEN itemsrc_default = 'TRUE' THEN 'Yes' "
-			 "    ELSE 'No' "
-			 "  END AS default "
-             "FROM itemsrc, vend "
-             "WHERE ( (itemsrc_vend_id=vend_id)"
-             " AND (itemsrc_item_id=:item_id) ) "
-             "ORDER BY itemsrc_ranking, vend_name, "
-             "  itemsrc_vend_item_number, itemsrc_manuf_name, "
-             "  itemsrc_manuf_item_number;" );
-  q.bindValue(":item_id", _item->id());
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("itemSources", "detail");
+
+  ParameterList params;
+  params.append("item_id", _item->id());
+  params.append("onlyShowActive", true);
+  q = mql.toQuery(params);
   _itemsrc->populate(q);
 }
 
