@@ -242,5 +242,8 @@ void cashReceiptItem::sDiscount()
   newdlg.set(params);
 
   if(newdlg.exec() != XDialog::Rejected)
+  {
     _discountAmount->setLocalValue(newdlg._amount->localValue());
+    _amountToApply->setLocalValue(_openAmount->localValue() - _discountAmount->localValue());
+  }
 }
