@@ -575,6 +575,7 @@ bool employee::sSave(const bool pClose)
     if (q.first())
     {
       _empid = q.value("emp_id").toInt();
+      _empcode = _code->text();
       _mode  = cEdit;
       _comments->setId(_empid);
       _comments->setReadOnly(_empid==-1);
