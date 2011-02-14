@@ -1507,7 +1507,7 @@ void salesOrder::sHandleOrderNumber()
     {
       query.prepare("SELECT deleteQuote(:quhead_id, :quhead_number) AS result;");
       query.bindValue(":quhead_id", _soheadid);
-      query.bindValue(":quhead_number", _orderNumber->text());
+      query.bindValue(":quhead_number", _orderNumberGen);
       query.exec();
       if (query.first())
       {
@@ -1549,7 +1549,7 @@ void salesOrder::sHandleOrderNumber()
             query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
           else
             query.prepare( "SELECT releaseQUNumber(:orderNumber);" );
-          query.bindValue(":orderNumber", _orderNumber->text());
+          query.bindValue(":orderNumber", _orderNumberGen);
           query.exec();
           _orderNumber->setText(orderNumber);
           _userEnteredOrderNumber = FALSE;
@@ -2851,7 +2851,7 @@ bool salesOrder::deleteForCancel()
   {
     query.prepare("SELECT deleteQuote(:head_id, :quhead_number) AS result;");
     query.bindValue(":head_id", _soheadid);
-    query.bindValue(":quhead_number", _orderNumber->text());
+    query.bindValue(":quhead_number", _orderNumberGen);
     query.exec();
     if (query.first())
     {
@@ -2871,7 +2871,7 @@ bool salesOrder::deleteForCancel()
         query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
       else
         query.prepare( "SELECT releaseQUNumber(:orderNumber);" );
-      query.bindValue(":orderNumber", _orderNumber->text());
+      query.bindValue(":orderNumber", _orderNumberGen);
       query.exec();
       if (query.lastError().type() != QSqlError::NoError)
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
