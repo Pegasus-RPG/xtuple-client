@@ -11,6 +11,8 @@
 #ifndef CHARACTERISTIC_H
 #define CHARACTERISTIC_H
 
+#include <QSqlTableModel>
+
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
@@ -25,9 +27,15 @@ public:
     characteristic(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~characteristic();
 
+    enum CharacteristicType { Text, List, Date };
+
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void populate();
+    virtual void sFillList();
+    virtual void sNew();
+    virtual void sDelete();
+    virtual void sCharoptClicked(QModelIndex idx);
 
 protected slots:
     virtual void languageChange();
@@ -39,6 +47,7 @@ protected slots:
 private:
     int _mode;
     int _charid;
+    QSqlTableModel *_charoptModel;
 };
 
 #endif // CHARACTERISTIC_H

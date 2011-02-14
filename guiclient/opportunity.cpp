@@ -1123,7 +1123,13 @@ void opportunity::sDeleteCharacteristic()
 
 void opportunity::sFillCharList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value, charass_default "
+  q.prepare( "SELECT charass_id, char_name, "
+             " CASE WHEN char_type < 2 THEN "
+             "   charass_value "
+             " ELSE "
+             "   formatDate(charass_value::date) "
+             "END AS charass_value, "
+             "charass_default "
              "FROM charass, char "
              "WHERE ( (charass_target_type='OPP')"
              " AND (charass_char_id=char_id)"

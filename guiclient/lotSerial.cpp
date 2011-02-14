@@ -214,7 +214,12 @@ void lotSerial::sDeleteReg()
 
 void lotSerial::sFillList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value "
+  q.prepare( "SELECT charass_id, char_name "
+             " CASE WHEN char_type < 2 THEN "
+             "   charass_value "
+             " ELSE "
+             "   formatDate(charass_value::date) "
+             "END AS charass_value "
              "FROM charass, char "
              "WHERE ((charass_target_type='LS')"
              " AND   (charass_char_id=char_id)"

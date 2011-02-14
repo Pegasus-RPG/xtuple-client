@@ -15,15 +15,16 @@
 #include <QVariant>
 #include <QRegExpValidator>
 
+#include "characteristic.h"
+
 characteristicAssignment::characteristicAssignment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()),    this, SLOT(sSave()));
-  connect(_char, SIGNAL(newID(int)),   this, SLOT(sHandleMask()));
-
-  _char->setAllowNull(TRUE);
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_char, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleChar()));
 
   _listpriceLit->hide();
   _listprice->hide();
@@ -156,7 +157,7 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _save->setFocus();
+      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -164,10 +165,7 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
 
       _char->setEnabled(FALSE);
       _value->setEnabled(FALSE);
-      _close->setText(tr("&Close"));
-      _save->hide();
-
-      _close->setFocus();
+      _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
   }
 
@@ -181,7 +179,12 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
   param = pParams.value("char_id", &valid);
   if (valid)
   {
-    _char->setId(param.toInt());
+    for (int i = 0; i < _char->model()->rowCount(); i++)
+    {
+      QModelIndex idx = _char->model()->index(i, 0);
+      if (_char->model()->data(idx) == param)
+        _char->setCurrentIndex(i);
+    }
   }
 
   return NoError;
@@ -189,7 +192,7 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
 
 void characteristicAssignment::sSave()
 {
-  if (_char->id() == -1)
+  if (_char->model()->data(_char->model()->index(_char->currentIndex(), 0)) == -1)
   {
     QMessageBox::information( this, tr("No Characteristic Selected"),
                               tr("You must select a Characteristic before saving this Item Characteristic.") );
@@ -218,8 +221,13 @@ void characteristicAssignment::sSave()
   q.bindValue(":charass_id", _charassid);
   q.bindValue(":charass_target_id", _targetId);
   q.bindValue(":charass_target_type", _targetType);
-  q.bindValue(":charass_char_id", _char->id());
-  q.bindValue(":charass_value", _value->text());
+  q.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
+  if (_stackedWidget->currentIndex() == characteristic::Text)
+    q.bindValue(":charass_value", _value->text());
+  else if (_stackedWidget->currentIndex() == characteristic::List)
+    q.bindValue(":charass_value", _listValue->currentText());
+  else if (_stackedWidget->currentIndex() == characteristic::Date)
+    q.bindValue(":charass_value", _dateValue->date());
   q.bindValue(":charass_price", _listprice->toDouble());
   q.bindValue(":charass_default", QVariant(_default->isChecked()));
   q.exec();
@@ -229,7 +237,7 @@ void characteristicAssignment::sSave()
 
 void characteristicAssignment::sCheck()
 {
-  if ((_mode == cNew) || (_char->id() == -1))
+  if ((_mode == cNew) || (_char->model()->data(_char->model()->index(_char->currentIndex(), 0)) == -1))
   {
     q.prepare( "SELECT charass_id "
                "FROM charass "
@@ -238,7 +246,7 @@ void characteristicAssignment::sCheck()
                " AND (charass_char_id=:char_id) );" );
     q.bindValue(":charass_target_type", _targetType);
     q.bindValue(":charass_target_id", _targetId);
-    q.bindValue(":char_id", _char->id());
+    q.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
     q.exec();
     if (q.first())
     {
@@ -251,9 +259,10 @@ void characteristicAssignment::sCheck()
 
 void characteristicAssignment::populate()
 {
-  q.prepare( "SELECT charass_target_id, charass_target_type, charass_char_id, charass_value, charass_default, charass_price "
-                   "FROM charass "
-                   "WHERE (charass_id=:charass_id);" );
+  q.prepare( "SELECT charass.*, char_type "
+             "FROM charass "
+             " JOIN char ON (charass_char_id=char_id) "
+             "WHERE (charass_id=:charass_id);" );
   q.bindValue(":charass_id", _charassid);
   q.exec();
   if (q.first())
@@ -262,15 +271,73 @@ void characteristicAssignment::populate()
     _targetType = q.value("charass_target_type").toString();
     handleTargetType();
 
-    _char->setId(q.value("charass_char_id").toInt());
-    _value->setText(q.value("charass_value").toString());
+    for (int i = 0; i < _char->model()->rowCount(); i++)
+    {
+      QModelIndex idx = _char->model()->index(i, 0);
+      if (_char->model()->data(idx) == q.value("charass_char_id").toInt())
+        _char->setCurrentIndex(i);
+    }
     _listprice->setDouble(q.value("charass_price").toDouble());
     _default->setChecked(q.value("charass_default").toBool());
+    int chartype = _char->model()->data(_char->model()->index(_char->currentIndex(),16)).toInt();
+    if (chartype == characteristic::Text)
+      _value->setText(q.value("charass_value").toString());
+    else if (chartype == characteristic::List)
+    {
+      int idx = _listValue->findText(q.value("charass_value").toString());
+      _listValue->setCurrentIndex(idx);
+    }
+    else if (chartype == characteristic::Date)
+      _dateValue->setDate(q.value("charass_value").toDate());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+}
+
+void characteristicAssignment::sHandleChar()
+{
+  QModelIndex midx = _char->model()->index(_char->currentIndex(), 16);
+  int sidx = _char->model()->data(midx).toInt();
+
+  _stackedWidget->setCurrentIndex(sidx);
+
+  if (sidx == characteristic::Text) // Handle input mask for text
+  {
+    XSqlQuery mask;
+    mask.prepare( "SELECT COALESCE(char_mask, '') AS char_mask,"
+                  "       COALESCE(char_validator, '.*') AS char_validator "
+                  "FROM char "
+                  "WHERE (char_id=:char_id);" );
+    mask.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)).toInt());
+    mask.exec();
+    if (mask.first())
+    {
+      _value->setInputMask(mask.value("char_mask").toString());
+      QRegExp rx(mask.value("char_validator").toString());
+      QValidator *validator = new QRegExpValidator(rx, this);
+      _value->setValidator(validator);
+    }
+    else if (mask.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, mask.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (sidx == characteristic::List) // Handle options for list
+  {
+    QSqlTableModel *model = new QSqlTableModel;
+    QString filter = QString("charopt_char_id=%1")
+                     .arg(_char->model()->data(_char->model()->index(_char->currentIndex(), 0)).toInt());
+    model->setTable("charopt");
+    model->setFilter(filter);
+    model->setSort(3, Qt::AscendingOrder);
+    model->select();
+    model->removeColumn(0);
+    model->removeColumn(0);
+    _listValue->setModel(model);
   }
 }
 
@@ -333,33 +400,14 @@ void characteristicAssignment::handleTargetType()
     setWindowTitle(tr("Incident Characteristic"));
     boolColumn = "char_incidents";
   }
-  _char->populate(QString("SELECT char_id, CASE WHEN (char_notes IS NULL) THEN char_name "
-                          "                     ELSE (char_name || ' - ' || firstLine(char_notes)) END "
-                          "FROM char "
-                          "WHERE (%1) "
-                          "ORDER BY char_name; ").arg(boolColumn));
+
+  QSqlTableModel *model = new QSqlTableModel;
+  model->setTable("char");
+  model->setFilter(boolColumn);
+  model->setSort(1, Qt::AscendingOrder);
+  model->select();
+  _char->setModel(model);
+  _char->setModelColumn(1);
+  sHandleChar();
 }
 
-void characteristicAssignment::sHandleMask()
-{
-  XSqlQuery mask;
-  mask.prepare( "SELECT COALESCE(char_mask, '') AS char_mask,"
-                "       COALESCE(char_validator, '.*') AS char_validator "
-                "FROM char "
-                "WHERE (char_id=:char_id);" );
-  mask.bindValue(":char_id", _char->id());
-  mask.exec();
-  if (mask.first())
-  {
-    _value->setInputMask(mask.value("char_mask").toString());
-    QRegExp rx(mask.value("char_validator").toString());
-    QValidator *validator = new QRegExpValidator(rx, this);
-    _value->setValidator(validator);
-  }
-  else if (mask.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, mask.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-}

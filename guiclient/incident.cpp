@@ -811,12 +811,17 @@ void incident::sDeleteCharacteristic()
 void incident::sFillCharacteristicsList()
 {
   XSqlQuery qry;
-  qry.prepare( "SELECT charass_id, * "
-             "FROM charass, char "
-             "WHERE ( (charass_target_type='INCDT')"
-             " AND (charass_char_id=char_id)"
-             " AND (charass_target_id=:incdt_id) ) "
-             "ORDER BY char_name;" );
+  qry.prepare( "SELECT charass_id, char_name, "
+               " CASE WHEN char_type < 2 THEN "
+               "   charass_value "
+               " ELSE "
+               "   formatDate(charass_value::date) "
+               "END AS charass_value "
+               "FROM charass, char "
+               "WHERE ( (charass_target_type='INCDT')"
+               " AND (charass_char_id=char_id)"
+               " AND (charass_target_id=:incdt_id) ) "
+               "ORDER BY char_name;" );
   qry.bindValue(":incdt_id", _incdtid);
   qry.exec();
   _charass->populate(qry);

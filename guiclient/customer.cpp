@@ -249,6 +249,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _lateBalance->setPrecision(omfgThis->moneyVal());
   _openBalance->setPrecision(omfgThis->moneyVal());
   _ytdSales->setPrecision(omfgThis->moneyVal());
+
+  _chartempl->setAlternatingRowColors(true);
 }
 
 customer::~customer()
@@ -1017,11 +1019,19 @@ void customer::sFillCharacteristicList()
   q.first();
   if (q.value("custtype_char").toBool())
   {
-      if (_charfilled)
-        return;
-      _widgetStack->setCurrentIndex(1);
-      _custchar->removeRows(0, _custchar->rowCount());
-      q.prepare( "SELECT DISTINCT char_id, char_name,"
+    if (_charfilled)
+      return;
+    _widgetStack->setCurrentIndex(1);
+    _custchar->removeRows(0, _custchar->rowCount());
+    q.prepare( "SELECT char_id, char_name, "
+               " CASE WHEN char_type < 2 THEN "
+               "   charass_value "
+               " ELSE "
+               "   formatDate(charass_value::date) "
+               " END AS f_charass_value, "
+               "charass_value "
+               "FROM ( "
+               "SELECT DISTINCT char_id, char_name, char_type, "
                "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='CT') AND (c.charass_target_id=:custtype_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
                "  FROM charass a, char "
                "    LEFT OUTER JOIN charass b"
@@ -1031,7 +1041,7 @@ void customer::sFillCharacteristicList()
                " WHERE ( (a.charass_char_id=char_id)"
                "   AND   (a.charass_target_type='CT')"
                "   AND   (a.charass_target_id=:custtype_id) ) "
-               " ORDER BY char_name;" );
+               " ORDER BY char_name) data;" );
     q.bindValue(":custtype_id", _custtype->id());
     q.bindValue(":cust_id", _custid);
     q.exec();
@@ -1045,8 +1055,9 @@ void customer::sFillCharacteristicList()
       _custchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
       _custchar->setData(idx, q.value("char_id"), Qt::UserRole);
       idx = _custchar->index(row, 1);
-      _custchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
-      _custchar->setData(idx, _custtype->id(), Qt::UserRole);
+      _custchar->setData(idx, q.value("f_charass_value"), Qt::DisplayRole);
+      _custchar->setData(idx, q.value("charass_value"), Qt::UserRole);
+      _custchar->setData(idx, _custtype->id(), Xt::IdRole);
       row++;
     }
     _charfilled=true;
@@ -1055,7 +1066,12 @@ void customer::sFillCharacteristicList()
   {
     _widgetStack->setCurrentIndex(0);
     XSqlQuery r;
-    r.prepare( "SELECT charass_id, char_name, charass_value "
+    r.prepare( "SELECT charass_id, char_name, "
+               " CASE WHEN char_type < 2 THEN "
+               "   charass_value "
+               " ELSE "
+               "   formatDate(charass_value::date) "
+               "END AS charass_value "
                "FROM charass, char "
                "WHERE ( (charass_target_type='C')"
                " AND (charass_char_id=char_id)"

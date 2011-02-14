@@ -2017,14 +2017,23 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     disconnect( _itemchar,  SIGNAL(itemChanged(QStandardItem *)), this, SLOT(sRecalcAvailability()));
 
     // Populate Characteristics
-    q.prepare("SELECT "
+    q.prepare("SELECT char_id, char_name, "
+              " CASE WHEN char_type < 2 THEN "
+              "   charass_value "
+              " ELSE "
+              "   formatDate(charass_value::date) "
+              "END AS charass_value "
+              "FROM ("
+              "SELECT "
               "  char_id, "
+              "  char_type, "
               "  char_name,"
               "  COALESCE(si.charass_value,i2.charass_value) AS charass_value,"
               "  COALESCE(si.charass_price,itemcharprice(:item_id,char_id,COALESCE(si.charass_value,i2.charass_value),:cust_id,:shipto_id,:qty,:curr_id,:effective),0)::numeric(16,4) AS charass_price "
               "FROM "
               "  (SELECT DISTINCT "
               "    char_id,"
+              "    char_type, "
               "    char_name "
               "   FROM charass, char"
               "   WHERE ((charass_char_id=char_id)"
@@ -2037,7 +2046,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
               "  LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id)"
               "                              AND ('I'=i2.charass_target_type)"
               "                              AND (i2.charass_char_id=char_id)"
-              "                              AND (i2.charass_default)) "
+              "                              AND (i2.charass_default))) data2 "
               "ORDER BY char_name; ");
     q.bindValue(":coitem_id", _soitemid);
     q.bindValue(":cust_id", _custid);

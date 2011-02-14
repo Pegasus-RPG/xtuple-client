@@ -11,7 +11,12 @@
 #include "characteristic.h"
 
 #include <QMessageBox>
+#include <QItemSelectionModel>
 #include <QSqlError>
+#include <QSqlField>
+#include <QSqlIndex>
+#include <QSqlRecord>
+#include <QSqlTableModel>
 #include <QVariant>
 
 characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -19,8 +24,17 @@ characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt
 {
   setupUi(this);
 
+  _charid = -1;
+
+  _charoptModel = new QSqlTableModel;
+  _charoptModel->setTable("charopt");
+  _charoptModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
+
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_charoptView, SIGNAL(clicked(QModelIndex)), this, SLOT(sCharoptClicked(QModelIndex)));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 }
 
 characteristic::~characteristic()
@@ -50,7 +64,15 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
   if (valid)
   {
     if (param.toString() == "new")
+    {
       _mode = cNew;
+
+      q.exec("SELECT NEXTVAL('char_char_id_seq') AS char_id;");
+      if (q.first())
+        _charid = q.value("char_id").toInt();
+
+      sFillList();
+    }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
@@ -61,7 +83,6 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-
       _name->setEnabled(FALSE);
       _useGroup->setEnabled(FALSE);
       _mask->setEnabled(FALSE);
@@ -109,31 +130,36 @@ void characteristic::sSave()
     return;
   }
 
-  if (_mode == cNew)
+  QStringList values;
+  for (int i = 0; i < _charoptModel->rowCount(); i++)
   {
-    q.exec("SELECT NEXTVAL('char_char_id_seq') AS char_id;");
-    if (q.first())
-      _charid = q.value("char_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    QString data = _charoptModel->data(_charoptModel->index(i,2), Qt::EditRole).toString();
+    if (values.contains(data))
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      QMessageBox::critical(this, tr("Error"), tr("Option list may not contain duplicates."));
       return;
     }
+    values.append(data);
+  }
 
+  if (_mode == cNew)
+  {
     q.prepare( "INSERT INTO char "
                "( char_id, char_name, char_items, char_customers, "
                "  char_contacts, char_crmaccounts, char_addresses, "
                "  char_options, char_opportunity,"
                "  char_attributes, char_lotserial, char_employees,"
                "  char_incidents, "
-               "  char_notes, char_mask, char_validator ) "
+               "  char_notes, char_mask, char_validator, char_type ) "
                "VALUES "
                "( :char_id, :char_name, :char_items, :char_customers, "
                "  :char_contacts, :char_crmaccounts, :char_addresses, "
                "  :char_options, :char_opportunity,"
                "  :char_attributes, :char_lotserial, :char_employees,"
                "  :char_incidents, "
-               "  :char_notes, :char_mask, :char_validator );" );
+               "  :char_notes, :char_mask, :char_validator, :char_type );" );
+
+    q.bindValue(":char_type", _type->currentIndex());
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE char "
@@ -178,6 +204,8 @@ void characteristic::sSave()
     return;
   }
 
+  _charoptModel->submitAll();
+
   done(_charid);
 }
 
@@ -204,6 +232,7 @@ void characteristic::sCheck()
 
 void characteristic::populate()
 {
+
   q.prepare( "SELECT * "
              "FROM char "
              "WHERE (char_id=:char_id);" );
@@ -224,11 +253,74 @@ void characteristic::populate()
     _description->setText(q.value("char_notes").toString());
     _mask->setText(q.value("char_mask").toString());
     _validator->setText(q.value("char_validator").toString());
+    _type->setCurrentIndex(q.value("char_type").toInt());
+    _type->setEnabled(false);
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
+  sFillList();
 }
+
+void characteristic::sFillList()
+{
+  QString filter = QString("charopt_char_id=%1").arg(_charid);
+  _charoptModel->setFilter(filter);
+  _charoptModel->setSort(0, Qt::AscendingOrder);
+  _charoptModel->select();
+
+  _charoptView->setModel(_charoptModel);
+  _charoptView->setColumnHidden(0, true);
+  _charoptView->setColumnHidden(1, true);
+  _charoptView->header()->setHidden(true);
+}
+
+void characteristic::sNew()
+{
+  int row = _charoptModel->rowCount();
+  _charoptModel->insertRows(row,1);
+  _charoptModel->setData(_charoptModel->index(row,1), QVariant(_charid));
+  QModelIndex idx = _charoptModel->index(row,0);
+  _charoptView->selectionModel()->select(QItemSelection(idx, idx),
+                                         QItemSelectionModel::ClearAndSelect |
+                                         QItemSelectionModel::Rows);
+}
+
+void characteristic::sDelete()
+{
+  int row = _charoptView->selectionModel()->currentIndex().row();
+  QVariant value = _charoptModel->data(_charoptModel->index(row,2));
+
+  // Validate
+  XSqlQuery qry;
+  qry.prepare("SELECT charass_id "
+              "FROM charass "
+              "WHERE ((charass_char_id=:char_id) "
+              " AND (charass_value=:value));");
+  qry.bindValue(":char_id", _charid);
+  qry.bindValue(":value", value);
+  qry.exec();
+  if (qry.first())
+  {
+    QMessageBox::critical(this, tr("Error"), tr("This value is in use and can not be deleted."));
+    return;
+  }
+  else if (qry.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  _charoptModel->removeRows(row, 1);
+  _charoptView->setRowHidden(row, QModelIndex(), true);
+}
+
+void characteristic::sCharoptClicked(QModelIndex idx)
+{
+  _delete->setEnabled(idx.isValid());
+}
+
 
