@@ -1,7 +1,7 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on assistant uitools designer xtlib
+CONFIG   += qt warn_on assistant uitools designer
 TEMPLATE = app
 
 INCLUDEPATH += ../scriptapi \
@@ -26,13 +26,12 @@ win32-msvc* {
                     ../$${OPENRPT_BLD}/lib/libMetaSQL.a  \
                     ../$${OPENRPT_BLD}/lib/librenderer.a \
                     ../$${OPENRPT_BLD}/lib/libwrtembed.a \
-                    ../$${OPENRPT_BLD}/lib/libcommon.a \
-                    ../$${XTLIB_BLD}/lib/libxtlib.a
+                    ../$${OPENRPT_BLD}/lib/libcommon.a
 }
 
-LIBS        += -L../lib -L../$${OPENRPT_BLD}/lib -L../$${XTLIB_BLD}/lib \
+LIBS        += -L../lib -L../$${OPENRPT_BLD}/lib \
                -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
-               -lxtuplescriptapi -lMetaSQL -lxtlib
+               -lxtuplescriptapi -lMetaSQL
 
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {

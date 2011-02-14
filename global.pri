@@ -18,29 +18,6 @@
 # This is the relative directory path to the openrpt project.
 #
 
-exists(../../../xtlib) {
-    XTLIB_DIR = ../../../xtlib
-}
-exists(../../xtlib) {
-    XTLIB_DIR = ../../xtlib
-}
-exists(../xtlib) {
-    XTLIB_DIR = ../xtlib
-}
-
-! exists($${XTLIB_DIR}) {
-    error("Could not set the XTLIB_DIR qmake variable.")
-}
-
-XTLIB_BLD = $${XTLIB_DIR}
-exists($${XTLIB_DIR}-build-desktop) {
-    XTLIB_BLD = $${OPENRPT_DIR}-build-desktop
-}
-
-#
-# This is the relative directory path to the openrpt project.
-#
-
 exists(../../../openrpt) {
     OPENRPT_DIR = ../../../openrpt
 }
@@ -84,7 +61,6 @@ INCLUDEPATH += ../$${OPENRPT_DIR}/common           ../$${OPENRPT_BLD}/common \
 	       ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_BLD}/OpenRPT/wrtembed \
 	       ../$${OPENRPT_DIR}/MetaSQL          ../$${OPENRPT_BLD}/MetaSQL \
 	       ../$${OPENRPT_DIR}/MetaSQL/tmp      ../$${OPENRPT_BLD}/MetaSQL/tmp \
-	       ../$${XTLIB_DIR}/src                ../$${XTLIB_BLD}/src \
 	       ../$${CSVIMP_DIR}/csvimpcommon      ../$${CSVIMP_BLD}/csvimpcommon
 INCLUDEPATH =  $$unique(INCLUDEPATH)
 
