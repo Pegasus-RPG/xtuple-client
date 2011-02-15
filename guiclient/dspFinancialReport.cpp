@@ -73,8 +73,6 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags 
   connect(_year, SIGNAL(toggled(bool)), this, SLOT(sFillPeriods()));
   connect(_notesBtn, SIGNAL(clicked()), _notesAct, SLOT(trigger()));
   connect(_notesAct, SIGNAL(triggered()), this, SLOT(sNotes()));
-  connect(_actuals, SIGNAL(toggled(bool)), this, SLOT(sToggleTrendOption()));
-  connect(_budgets, SIGNAL(toggled(bool)), this, SLOT(sToggleTrendOption()));
 
   _flhead->setType(XComboBox::FinancialLayouts);
 
@@ -84,6 +82,10 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags 
 
   _tab->setTabEnabled(_tab->indexOf(_showColumnsTab),false);
   sReportChanged(_flhead->id());
+
+  // Hide trend features until we can figure out how to make them print
+  _actuals->hide();
+  _budgets->hide();
 }
 
 enum SetResponse dspFinancialReport::set(const ParameterList &pParams)
@@ -101,7 +103,13 @@ enum SetResponse dspFinancialReport::set(const ParameterList &pParams)
 
 bool dspFinancialReport::sCheck()
 {
-  bool _result = true;
+  if (!_periods->selectedItems().count())
+  {
+    QMessageBox::warning( this, tr("No period selected"),
+                         tr("<p>You must select at least one period.") );
+    return false;
+  }
+
   //Make sure user has upgraded period settings
   q.exec("SELECT period_id FROM period WHERE period_quarter IS NULL;");
   if (q.first())
@@ -110,10 +118,10 @@ bool dspFinancialReport::sCheck()
                          tr("<p>Please make sure all accounting periods "
                             "are associated with a quarter and fiscal year "
                             "before using this application.") );
-    _result = false;
+    return false;
   }
 
-  return _result;
+  return true;
 }
 
 void dspFinancialReport::sFillList()
@@ -1090,7 +1098,6 @@ ParameterList dspFinancialReport::getParams()
 bool dspFinancialReport::setParams(ParameterList &params)
 {
   QString interval;
-  QString reportdef;
 
   if (_month->isChecked())
     interval = "M";
@@ -1103,6 +1110,14 @@ bool dspFinancialReport::setParams(ParameterList &params)
     params.append("shownumbers");
   if(_showzeros->isChecked())
     params.append("showzeros");
+
+  if (_trend->isChecked())
+  {
+    if (_actuals->isChecked())
+      params.append("showActuals");
+    if (_budgets->isChecked())
+      params.append("showBudgets");
+  }
 
   if (_prjid != -1)
   {
