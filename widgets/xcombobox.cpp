@@ -143,7 +143,7 @@ void XComboBox::init()
   insertEditor(ShipVias,"shipVias","MaintainShipVias");
   insertEditor(ShippingCharges,"shippingChargeTypes","MaintainShippingChargeTypes");
   insertEditor(ShippingForms,"shippingForms","MaintainShippingForms");
-  insertEditor(ShippingForms,"shippingZones","MaintainShippingZones");
+  insertEditor(ShippingZones,"shippingZones","MaintainShippingZones");
   insertEditor(SiteTypes,"siteTypes","MaintainSiteTypes");
   insertEditor(SoProjects,"projects","MaintainProjects");
   insertEditor(Subaccounts,"subaccounts","MaintainChartOfAccounts");
