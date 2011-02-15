@@ -38,7 +38,6 @@ public:
     _new->hide();
     _queryonstart->hide(); // hide until query on start enabled
     _autoupdate->hide(); // hide until auto update is enabled
-    _parameterWidget->hide(); // hide until user shows manually
     _search->hide();
     _searchLit->hide();
     _listLabelFrame->setVisible(false);
@@ -299,7 +298,6 @@ display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
 
   connect(_data->_newBtn, SIGNAL(clicked()), _data->_newAct, SLOT(trigger()));
   connect(_data->_closeBtn, SIGNAL(clicked()), _data->_closeAct, SLOT(trigger()));
-  connect(_data->_moreBtn, SIGNAL(clicked(bool)), _data->_parameterWidget, SLOT(setVisible(bool)));
   connect(_data->_moreBtn, SIGNAL(clicked(bool)), filterButton, SLOT(setChecked(bool)));
   connect(_data->_printBtn, SIGNAL(clicked()), _data->_printAct, SLOT(trigger()));
   connect(_data->_previewBtn, SIGNAL(clicked()), _data->_previewAct, SLOT(trigger()));
@@ -527,7 +525,7 @@ void display::setParameterWidgetVisible(bool show)
 
 bool display::parameterWidgetVisible() const
 {
-  return _data->_parameterWidget->isVisible();
+  return _data->_parameterWidget->_filterGroup->isVisible();
 }
 
 bool display::searchVisible() const
