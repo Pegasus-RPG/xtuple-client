@@ -15,40 +15,10 @@
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
+ <querysource loadFromDb="true">
   <name>Detail</name>
-  <sql>SELECT formatWoNumber(wo_id) AS wonumber,
-       wo_status, warehous_code,
-       item_number, item_descrip1, item_descrip2, uom_name,
-       formatQty(wo_qtyord) AS ordered,
-       formatQty(wo_qtyrcv) AS received,
-       formatDate(wo_startdate) AS startdate,
-       formatDate(wo_duedate) AS duedate,
-       &lt;? if exists("showCosts") ?>
-         formatCost(wo_postedvalue)
-       &lt;? else ?>
-         text('')
-       &lt;? endif ?>
-       AS value
-  FROM wo, itemsite, warehous, item, uom
- WHERE ((wo_itemsite_id=itemsite_id)
-   AND (itemsite_item_id=item_id)
-   AND (item_inv_uom_id=uom_id)
-   AND (itemsite_warehous_id=warehous_id)
-&lt;? if exists("classcode_id") ?>
-   AND (item_classcode_id=&lt;? value("classcode_id") ?>)
-&lt;? elseif exists("classcode_pattern") ?>
-   AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ &lt;? value("classcode_pattern") ?>)))
-&lt;? endif ?>
-&lt;? if exists("warehous_id") ?>
-   AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
-&lt;? endif ?>
-&lt;? if exists("showOnlyTopLevel") ?>
-   AND ((wo_ordtype&lt;>'W') OR (wo_ordtype IS NULL))
-&lt;? endif ?>
- )
-ORDER BY item_number;
-    </sql>
+  <mqlgroup>workOrderHistory</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <querysource>
   <name>head</name>
@@ -600,7 +570,7 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>duedate</column>
+     <column>f_wo_duedate</column>
     </data>
    </field>
    <field>
@@ -695,7 +665,7 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>value</column>
+     <column>f_wo_postedvalue</column>
     </data>
    </field>
    <field>
@@ -714,7 +684,7 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>ordered</column>
+     <column>f_wo_qtyord</column>
     </data>
    </field>
    <field>
@@ -752,7 +722,7 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>received</column>
+     <column>f_wo_qtyrcv</column>
     </data>
    </field>
    <line>
@@ -778,7 +748,7 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>startdate</column>
+     <column>f_wo_startdate</column>
     </data>
    </field>
   </detail>
