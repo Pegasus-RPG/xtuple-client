@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include "characteristic.h"
 #include "display.h"
 #include "xlineedit.h"
 #include "ui_display.h"
@@ -144,6 +145,8 @@ public:
     }
   }
 
+  bool setParams(ParameterList &);
+  void setupCharacteristics(unsigned int use);
   void print(ParameterList, bool);
 
   QString reportName;
@@ -177,6 +180,10 @@ public:
   QToolButton * _queryBtn;
   QToolButton * _previewBtn;
   QToolButton * _printBtn;
+
+  QList<QVariant> _charidstext;
+  QList<QVariant> _charidslist;
+  QList<QVariant> _charidsdate;
 
 private:
   ::display * _parent;
@@ -256,6 +263,131 @@ void displayPrivate::print(ParameterList pParams, bool showPreview)
     }
     delete doc;
   }
+}
+
+void displayPrivate::setupCharacteristics(unsigned int use)
+{
+  QStringList uses;
+  if (use & characteristic::Addresses)
+    uses << "char_addresses";
+  if (use & characteristic::Contacts)
+    uses << "char_contacts";
+  if (use & characteristic::CRMAccounts)
+    uses << "char_crmaccounts";
+  if (use & characteristic::Customers)
+    uses << "char_customers";
+  if (use & characteristic::Employees)
+    uses << "char_employees";
+  if (use & characteristic::Incidents)
+    uses << "char_incidents";
+  if (use & characteristic::Items)
+    uses << "char_items";
+  if (use & characteristic::LotSerial)
+    uses << "char_lotserial";
+  if (use & characteristic::Opportunities)
+    uses << "char_opportunity";
+
+  // Add columns and parameters for characteristics
+  QString column;
+  QString name;
+  QString sql = QString("SELECT char_id, char_name, char_type "
+                        "FROM char "
+                        "WHERE (%1) "
+                        "ORDER BY char_name;").arg(uses.join(" AND "));
+  XSqlQuery chars;
+  chars.exec(sql);
+  while (chars.next())
+  {
+    characteristic::Type chartype = (characteristic::Type)chars.value("char_type").toInt();
+    column = QString("char%1").arg(chars.value("char_id").toString());
+    name = chars.value("char_name").toString();
+    _list->addColumn(name, -1, Qt::AlignLeft , false, column );
+    if (chartype == characteristic::Text)
+    {
+      _charidstext.append(chars.value("char_id").toInt());
+      _parameterWidget->append(name, column, ParameterWidget::Text);
+    }
+    else if (chartype == characteristic::List)
+    {
+      _charidslist.append(chars.value("char_id").toInt());
+      QString sql =   QString("SELECT charopt_value, charopt_value "
+                              "FROM charopt "
+                              "WHERE (charopt_char_id=%1);")
+          .arg(chars.value("char_id").toInt());
+      _parameterWidget->append(name, column, ParameterWidget::Multiselect, QVariant(), false, sql);
+    }
+    else if (chartype == characteristic::Date)
+    {
+      _charidsdate.append(chars.value("char_id").toInt());
+      QString start = QApplication::translate("display", "Start Date", 0, QApplication::UnicodeUTF8);
+      QString end = QApplication::translate("display", "End Date", 0, QApplication::UnicodeUTF8);
+      _parameterWidget->append(name + " " + start, column + "startDate", ParameterWidget::Date);
+      _parameterWidget->append(name + " " + end, column + "endDate", ParameterWidget::Date);
+    }
+  }
+}
+
+bool displayPrivate::setParams(ParameterList &params)
+{
+  QString filter = _parameterWidget->filter();
+  _parameterWidget->appendValue(params);
+  if (!_search->isNull())
+  {
+    params.append("search_pattern", _search->text());
+    QString searchon =  QApplication::translate("display", "Search On:", 0, QApplication::UnicodeUTF8);
+    filter.prepend(searchon + " " + _search->text() + "\n");
+  }
+  params.append("filter", filter);
+
+  // Handle characteristics
+  QVariant param;
+  bool valid;
+  QString column;
+  QStringList clauses;
+
+  // Put together the list of text and date based charids used to build joins
+  params.append("char_id_text_list", _charidstext);
+  params.append("char_id_list_list", _charidslist);
+  params.append("char_id_date_list", _charidsdate);
+
+  // Handle text based sections of clause
+  for (int i = 0; i < _charidstext.count(); i++)
+  {
+    column = QString("char%1").arg(_charidstext.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+      clauses.append(QString("charass_alias%1.charass_value ~* '%2'").arg(_charidstext.at(i).toString()).arg(param.toString()));
+  }
+  // Handle text based sections of clause
+  for (int i = 0; i < _charidslist.count(); i++)
+  {
+    column = QString("char%1").arg(_charidslist.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+    {
+      QStringList list = param.toStringList();
+      clauses.append(QString("charass_alias%1.charass_value IN ('%2') ").arg(_charidslist.at(i).toString()).arg(list.join("','")));
+    }
+  }
+  // Handle date based sections of clause
+  for (int i = 0; i < _charidsdate.count(); i++)
+  {
+    // Look for start date
+    column = QString("char%1startDate").arg(_charidsdate.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+      clauses.append(QString("charass_alias%1.charass_value::date >= '%2'").arg(_charidsdate.at(i).toString()).arg(param.toString()));
+
+    // Look for end date
+    column = QString("char%1endDate").arg(_charidsdate.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+      clauses.append(QString("charass_alias%1.charass_value::date <= '%2'").arg(_charidsdate.at(i).toString()).arg(param.toString()));
+  }
+  if (clauses.count())
+    params.append("charClause", clauses.join(" AND ").prepend(" AND "));
+
+  return true;
 }
 
 display::display(QWidget* parent, const char* name, Qt::WindowFlags flags)
@@ -422,16 +554,12 @@ QString display::searchText()
 
 bool display::setParams(ParameterList & params)
 {
-  QString filter = parameterWidget()->filter();
-  parameterWidget()->appendValue(params);
-  if (!_data->_search->isNull())
-  {
-    params.append("search_pattern", _data->_search->text());
-    filter.prepend(tr("Search on: ") + _data->_search->text() + "\n");
-  }
-  params.append("filter", filter);
+  return _data->setParams(params);
+}
 
-  return true;
+void display::setupCharacteristics(unsigned int uses)
+{
+  _data->setupCharacteristics(uses);
 }
 
 void display::setReportName(const QString & reportName)

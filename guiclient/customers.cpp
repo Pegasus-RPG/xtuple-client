@@ -82,41 +82,8 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Corr. Postal"), 75, Qt::AlignLeft  , false, "corr_postalcode" );
   list()->addColumn(tr("Corr. Country"),100, Qt::AlignLeft , false, "corr_country" );
 
-  // Add columns and parameters for characteristics
-  QString column;
-  QString name;
-  XSqlQuery chars;
-  chars.exec("SELECT char_id, char_name, char_type "
-             "FROM char "
-             "WHERE (char_customers) "
-             "ORDER BY char_name;");
-  while (chars.next())
-  {
-    characteristic::CharacteristicType chartype = (characteristic::CharacteristicType)chars.value("char_type").toInt();
-    column = QString("char%1").arg(chars.value("char_id").toString());
-    name = chars.value("char_name").toString();
-    list()->addColumn(name, -1, Qt::AlignLeft , false, column );
-    if (chartype == characteristic::Text)
-    {
-      _charidstext.append(chars.value("char_id").toInt());
-      parameterWidget()->append(name, column, ParameterWidget::Text);
-    }
-    else if (chartype == characteristic::List)
-    {
-      _charidslist.append(chars.value("char_id").toInt());
-      QString sql =   QString("SELECT charopt_value, charopt_value "
-                              "FROM charopt "
-                              "WHERE (charopt_char_id=%1);")
-          .arg(chars.value("char_id").toInt());
-      parameterWidget()->append(name, column, ParameterWidget::Multiselect, QVariant(), false, sql);
-    }
-    else if (chartype == characteristic::Date)
-    {
-      _charidsdate.append(chars.value("char_id").toInt());
-      parameterWidget()->append(name + tr(" Start Date"), column + "startDate", ParameterWidget::Date);
-      parameterWidget()->append(name + tr(" End Date"), column + "endDate", ParameterWidget::Date);
-    }
-  }
+  setupCharacteristics(characteristic::Customers);
+  parameterWidget()->applyDefaultFilterSet();
 
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList()));
 }
@@ -222,63 +189,4 @@ void customers::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
   menuItem = pMenu->addAction("Reassign Customer Type", this, SLOT(sReassignCustomerType()));
   menuItem->setEnabled(_privileges->check("MaintainCustomerMasters"));
 
-}
-
-bool customers::setParams(ParameterList &params)
-{
-  if (!display::setParams(params))
-    return false;
-
-  // Handle characteristics
-  QVariant param;
-  bool valid;
-  QString column;
-  QStringList clauses;
-
-  // Put together the list of text and date based charids used to build joins
-  QList<QVariant> charids = _charidstext;
-  for (int i = 0; i < _charidslist.count(); i++)
-    charids.append(_charidslist.at(i));
-  for (int i = 0; i < _charidsdate.count(); i++)
-    charids.append(_charidsdate.at(i));
-  params.append("char_id_list", charids);
-
-  // Handle text based sections of clause
-  for (int i = 0; i < _charidstext.count(); i++)
-  {
-    column = QString("char%1").arg(_charidstext.at(i).toString());
-    param = params.value(column, &valid);
-    if (valid)
-      clauses.append(QString("charass_alias%1.charass_value ~* '%2'").arg(_charidstext.at(i).toString()).arg(param.toString()));
-  }
-  // Handle text based sections of clause
-  for (int i = 0; i < _charidslist.count(); i++)
-  {
-    column = QString("char%1").arg(_charidslist.at(i).toString());
-    param = params.value(column, &valid);
-    if (valid)
-    {
-      QStringList list = param.toStringList();
-      clauses.append(QString("charass_alias%1.charass_value IN ('%2') ").arg(_charidslist.at(i).toString()).arg(list.join("','")));
-    }
-  }
-  // Handle date based sections of clause
-  for (int i = 0; i < _charidsdate.count(); i++)
-  {
-    // Look for start date
-    column = QString("char%1startDate").arg(_charidsdate.at(i).toString());
-    param = params.value(column, &valid);
-    if (valid)
-      clauses.append(QString("charass_alias%1.charass_value::date >= '%2'").arg(_charidsdate.at(i).toString()).arg(param.toString()));
-
-    // Look for end date
-    column = QString("char%1endDate").arg(_charidsdate.at(i).toString());
-    param = params.value(column, &valid);
-    if (valid)
-      clauses.append(QString("charass_alias%1.charass_value::date <= '%2'").arg(_charidsdate.at(i).toString()).arg(param.toString()));
-  }
-  if (clauses.count())
-    params.append("charClause", clauses.join(" AND ").prepend(" AND "));
-
-  return true;
 }

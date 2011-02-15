@@ -27,7 +27,18 @@ public:
     characteristic(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~characteristic();
 
-    enum CharacteristicType { Text, List, Date };
+    enum Type { Text, List, Date };
+
+    enum Use { Addresses     = 0x00000001,
+               Contacts      = 0x00000002,
+               CRMAccounts   = 0x00000004,
+               Customers     = 0x00000008,
+               Employees     = 0x00000010,
+               Incidents     = 0x00000020,
+               Items         = 0x00000040,
+               LotSerial     = 0x00000080,
+               Opportunities = 0x00000100,
+             };
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );

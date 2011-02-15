@@ -12,6 +12,7 @@
 
 #include <QSqlError>
 
+#include "characteristic.h"
 #include "guiclient.h"
 #include "incident.h"
 #include "parameterwidget.h"
@@ -67,8 +68,6 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   if(_metrics->boolean("IncidentsPublicPrivate"))
     parameterWidget()->append(tr("Public"), "public", ParameterWidget::CheckBox);
 
-  parameterWidget()->applyDefaultFilterSet();
-
   connect(list(),       SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
 
   list()->addColumn(tr("Number"),      _orderColumn,Qt::AlignLeft, true, "incdt_number" );
@@ -85,6 +84,9 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   list()->addColumn(tr("Contact"),     _userColumn, Qt::AlignLeft, false, "cntct_name");
   list()->addColumn(tr("Project"),     _userColumn, Qt::AlignLeft, false, "prj_number");
   list()->addColumn(tr("public"),     _userColumn, Qt::AlignLeft, false, "incdt_public");
+
+  setupCharacteristics(characteristic::Incidents);
+  parameterWidget()->applyDefaultFilterSet();
 }
 
 enum SetResponse incidentWorkbench::set(const ParameterList &pParams)
@@ -155,8 +157,8 @@ bool incidentWorkbench::setParams(ParameterList & params)
 
 void incidentWorkbench::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
-  pMenu->addAction(tr("Edit"), this, SLOT(sEdit()));
-  pMenu->addAction(tr("View"), this, SLOT(sView()));
+  pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  pMenu->addAction(tr("View..."), this, SLOT(sView()));
 }
 
 

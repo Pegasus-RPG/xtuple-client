@@ -30,7 +30,7 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
     return 0;
 
   QModelIndex idx = index.sibling(index.row(), 0);
-  characteristic::CharacteristicType chartype = characteristic::Text;
+  characteristic::Type chartype = characteristic::Text;
 
   // Determine what type we have
   XSqlQuery qry;
@@ -40,7 +40,7 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
   qry.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
   qry.exec();
   if (qry.first())
-    chartype = (characteristic::CharacteristicType)qry.value("char_type").toInt();
+    chartype = (characteristic::Type)qry.value("char_type").toInt();
 
   if (chartype == characteristic::Text ||
       chartype == characteristic::List)

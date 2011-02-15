@@ -21,7 +21,7 @@
 
 #include "addresses.h"
 #include "address.h"
-
+#include "characteristic.h"
 #include "storedProcErrorLookup.h"
 
 addresses::addresses(QWidget* parent, const char*, Qt::WFlags fl)
@@ -32,8 +32,7 @@ addresses::addresses(QWidget* parent, const char*, Qt::WFlags fl)
   setWindowTitle(tr("Addresses"));
   setMetaSQLOptions("addresses", "detail");
   setNewVisible(true);
-  queryAction()->setVisible(false);
-  queryAction()->setEnabled(false);
+  setQueryOnStartEnabled(true);
 
   _activeOnly->setChecked(true);
 
@@ -45,6 +44,8 @@ addresses::addresses(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Country"),	 50, Qt::AlignLeft, true, "addr_country");
   list()->addColumn(tr("Postal Code"),50,Qt::AlignLeft, true, "addr_postalcode");
 
+  setupCharacteristics(characteristic::Addresses);
+
   connect(_activeOnly,	SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
 
   if (_privileges->check("MaintainAddresses"))
@@ -55,7 +56,6 @@ addresses::addresses(QWidget* parent, const char*, Qt::WFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
-  sFillList();
 }
 
 void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)

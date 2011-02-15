@@ -16,6 +16,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "characteristic.h"
 #include "crmaccount.h"
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
@@ -43,8 +44,6 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
 
-  parameterWidget()->applyDefaultFilterSet();
-
   connect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(prospectsUpdated()), this, SLOT(sFillList()));
@@ -68,6 +67,9 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Competitor"),  70, Qt::AlignCenter,false, "competitor");
   list()->addColumn(tr("Partner"),     70, Qt::AlignCenter,false, "partner");
   list()->addColumn(tr("Tax Auth."),   70, Qt::AlignCenter,false, "taxauth");
+
+  setupCharacteristics(characteristic::CRMAccounts);
+  parameterWidget()->applyDefaultFilterSet();
 
   if (_privileges->check("MaintainCRMAccounts"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));

@@ -18,6 +18,7 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include "characteristic.h"
 #include "contact.h"
 #include "parameterwidget.h"
 #include "storedProcErrorLookup.h"
@@ -48,8 +49,6 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
 
-  parameterWidget()->applyDefaultFilterSet();
-
   list()->addColumn(tr("First Name"), 80, Qt::AlignLeft, true, "cntct_first_name");
   list()->addColumn(tr("Last Name"), 100, Qt::AlignLeft, true, "cntct_last_name");
   list()->addColumn(tr("Account #"), 80, Qt::AlignLeft, true, "crmacct_number");
@@ -67,6 +66,9 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft, false, "addr_postalcode");
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  setupCharacteristics(characteristic::Contacts);
+  parameterWidget()->applyDefaultFilterSet();
 
   QToolButton * attachBtn = new QToolButton(this);
   attachBtn->setText(tr("Attach"));

@@ -63,11 +63,23 @@ FROM custinfo
   LEFT OUTER JOIN addr bill_addr ON (bill_cntct.cntct_addr_id=bill_addr.addr_id)
   LEFT OUTER JOIN cntct corr_cntct ON (cust_corrcntct_id=corr_cntct.cntct_id) 
   LEFT OUTER JOIN addr corr_addr ON (corr_cntct.cntct_addr_id=corr_addr.addr_id)  
-&lt;? foreach("char_id_list") ?>
-  LEFT OUTER JOIN charass charass_alias&lt;? literal("char_id_list") ?> ON ((charass_alias&lt;? literal("char_id_list") ?>.charass_target_type='C') 
-                                                                    AND  (charass_alias&lt;? literal("char_id_list") ?>.charass_target_id=cust_id)
-                                                                    AND  (charass_alias&lt;? literal("char_id_list") ?>.charass_char_id=&lt;? value("char_id_list") ?>))
-  LEFT OUTER JOIN char char_alias&lt;? literal("char_id_list") ?> ON (charass_alias&lt;? literal("char_id_list") ?>.charass_char_id=char_alias&lt;? literal("char_id_list") ?>.char_id)
+&lt;? foreach("char_id_text_list") ?>
+  LEFT OUTER JOIN charass charass_alias&lt;? literal("char_id_text_list") ?> ON ((charass_alias&lt;? literal("char_id_text_list") ?>.charass_target_type='C') 
+                                                                    AND  (charass_alias&lt;? literal("char_id_text_list") ?>.charass_target_id=cust_id)
+                                                                    AND  (charass_alias&lt;? literal("char_id_text_list") ?>.charass_char_id=&lt;? value("char_id_text_list") ?>))
+  LEFT OUTER JOIN char char_alias&lt;? literal("char_id_text_list") ?> ON (charass_alias&lt;? literal("char_id_text_list") ?>.charass_char_id=char_alias&lt;? literal("char_id_text_list") ?>.char_id)
+&lt;? endforeach ?>
+&lt;? foreach("char_id_list_list") ?>
+  LEFT OUTER JOIN charass charass_alias&lt;? literal("char_id_list_list") ?> ON ((charass_alias&lt;? literal("char_id_list_list") ?>.charass_target_type='C') 
+                                                                    AND  (charass_alias&lt;? literal("char_id_list_list") ?>.charass_target_id=cust_id)
+                                                                    AND  (charass_alias&lt;? literal("char_id_list_list") ?>.charass_char_id=&lt;? value("char_id_list_list") ?>))
+  LEFT OUTER JOIN char char_alias&lt;? literal("char_id_list_list") ?> ON (charass_alias&lt;? literal("char_id_list_list") ?>.charass_char_id=char_alias&lt;? literal("char_id_list_list") ?>.char_id)
+&lt;? endforeach ?>
+&lt;? foreach("char_id_date_list") ?>
+  LEFT OUTER JOIN charass charass_alias&lt;? literal("char_id_date_list") ?> ON ((charass_alias&lt;? literal("char_id_date_list") ?>.charass_target_type='C') 
+                                                                    AND  (charass_alias&lt;? literal("char_id_date_list") ?>.charass_target_id=cust_id)
+                                                                    AND  (charass_alias&lt;? literal("char_id_date_list") ?>.charass_char_id=&lt;? value("char_id_date_list") ?>))
+  LEFT OUTER JOIN char char_alias&lt;? literal("char_id_date_list") ?> ON (charass_alias&lt;? literal("char_id_date_list") ?>.charass_char_id=char_alias&lt;? literal("char_id_date_list") ?>.char_id)
 &lt;? endforeach ?>
 WHERE true
 &lt;? if not exists("showInactive") ?> 
