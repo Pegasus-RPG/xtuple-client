@@ -31,7 +31,9 @@ public slots:
     virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 
 private:
-    QList<QVariant> _charids;
+    QList<QVariant> _charidstext;
+    QList<QVariant> _charidslist;
+    QList<QVariant> _charidsdate;
 };
 
 #endif // CUSTOMERS_H

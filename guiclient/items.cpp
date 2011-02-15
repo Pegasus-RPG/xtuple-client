@@ -17,6 +17,7 @@
 #include <QVariant>
 #include <metasql.h>
 
+#include "characteristic.h"
 #include "copyItem.h"
 #include "item.h"
 #include "storedProcErrorLookup.h"
@@ -73,17 +74,36 @@ items::items(QWidget* parent, const char*, Qt::WFlags fl)
   QString column;
   QString name;
   XSqlQuery chars;
-  chars.exec("SELECT char_id, char_name "
-                "FROM char "
-                "WHERE (char_items) "
-                "ORDER BY char_name;");
+  chars.exec("SELECT char_id, char_name, char_type "
+             "FROM char "
+             "WHERE (char_items) "
+             "ORDER BY char_name;");
   while (chars.next())
   {
-    _charids.append(chars.value("char_id").toInt());
+    characteristic::CharacteristicType chartype = (characteristic::CharacteristicType)chars.value("char_type").toInt();
     column = QString("char%1").arg(chars.value("char_id").toString());
     name = chars.value("char_name").toString();
-    parameterWidget()->append(name, column, ParameterWidget::Text);
     list()->addColumn(name, -1, Qt::AlignLeft , false, column );
+    if (chartype == characteristic::Text)
+    {
+      _charidstext.append(chars.value("char_id").toInt());
+      parameterWidget()->append(name, column, ParameterWidget::Text);
+    }
+    else if (chartype == characteristic::List)
+    {
+      _charidslist.append(chars.value("char_id").toInt());
+      QString sql =   QString("SELECT charopt_value, charopt_value "
+                              "FROM charopt "
+                              "WHERE (charopt_char_id=%1);")
+          .arg(chars.value("char_id").toInt());
+      parameterWidget()->append(name, column, ParameterWidget::Multiselect, QVariant(), false, sql);
+    }
+    else if (chartype == characteristic::Date)
+    {
+      _charidsdate.append(chars.value("char_id").toInt());
+      parameterWidget()->append(name + tr(" Start Date"), column + "startDate", ParameterWidget::Date);
+      parameterWidget()->append(name + tr(" End Date"), column + "endDate", ParameterWidget::Date);
+    }
   }
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
@@ -158,50 +178,53 @@ bool items::setParams(ParameterList &params)
   if (!display::setParams(params))
     return false;
 
-  bool valid;
-  QVariant param;
-
-  param = params.value("item_types", &valid);
-  if (valid)
-  {
-    int types = param.toInt();
-    if (types == 1)
-      params.append("showPurchased");
-    else if (types == 2)
-      params.append("showManufactured");
-    else if (types == 3)
-      params.append("showSold");
-  }
-
-  if (_preferences->boolean("ListNumericItemNumbersFirst"))
-    params.append("ListNumericItemNumbersFirst");
-  
-  params.append("purchased", tr("Purchased"));
-  params.append("manufactured", tr("Manufactured"));
-  params.append("phantom", tr("Phantom"));
-  params.append("breeder", tr("Breeder"));
-  params.append("coProduct", tr("Co-Product"));
-  params.append("byProduct", tr("By-Product"));
-  params.append("reference", tr("Reference"));
-  params.append("costing", tr("Costing"));
-  params.append("tooling", tr("Tooling"));
-  params.append("outside", tr("Outside Process"));
-  params.append("planning", tr("Planning"));
-  params.append("assortment", tr("Assortment"));
-  params.append("kit", tr("Kit"));
-  params.append("error", tr("Error"));
-
-  params.append("char_id_list", _charids);
-
   // Handle characteristics
+  QVariant param;
+  bool valid;
   QString column;
   QStringList clauses;
-  for (int i = 0; i < _charids.count(); i++)
+
+  // Put together the list of text and date based charids used to build joins
+  QList<QVariant> charids = _charidstext;
+  for (int i = 0; i < _charidslist.count(); i++)
+    charids.append(_charidslist.at(i));
+  for (int i = 0; i < _charidsdate.count(); i++)
+    charids.append(_charidsdate.at(i));
+  params.append("char_id_list", charids);
+
+  // Handle text based sections of clause
+  for (int i = 0; i < _charidstext.count(); i++)
   {
-    column = QString("char%1").arg(_charids.at(i).toString());
+    column = QString("char%1").arg(_charidstext.at(i).toString());
     param = params.value(column, &valid);
     if (valid)
-      clauses.append(QString("charass_alias%1.charass_value ~* '%2'").arg(_charids.at(i).toString()).arg(param.toString()));
+      clauses.append(QString("charass_alias%1.charass_value ~* '%2'").arg(_charidstext.at(i).toString()).arg(param.toString()));
+  }
+  // Handle text based sections of clause
+  for (int i = 0; i < _charidslist.count(); i++)
+  {
+    column = QString("char%1").arg(_charidslist.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+    {
+      QStringList list = param.toStringList();
+      clauses.append(QString("charass_alias%1.charass_value IN ('%2') ").arg(_charidslist.at(i).toString()).arg(list.join("','")));
+    }
+  }
+  // Handle date based sections of clause
+  for (int i = 0; i < _charidsdate.count(); i++)
+  {
+    // Look for start date
+    column = QString("char%1startDate").arg(_charidsdate.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+      clauses.append(QString("charass_alias%1.charass_value::date >= '%2'").arg(_charidsdate.at(i).toString()).arg(param.toString()));
+
+    // Look for end date
+    column = QString("char%1endDate").arg(_charidsdate.at(i).toString());
+    param = params.value(column, &valid);
+    if (valid)
+      clauses.append(QString("charass_alias%1.charass_value::date <= '%2'").arg(_charidsdate.at(i).toString()).arg(param.toString()));
   }
   if (clauses.count())
     params.append("charClause", clauses.join(" AND ").prepend(" AND "));

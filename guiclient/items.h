@@ -31,7 +31,9 @@ public slots:
     virtual bool setParams(ParameterList &);
 
 private:
-    QList<QVariant> _charids;
+    QList<QVariant> _charidstext;
+    QList<QVariant> _charidslist;
+    QList<QVariant> _charidsdate;
 };
 
 #endif // ITEMS_H
