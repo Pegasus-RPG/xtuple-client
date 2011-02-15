@@ -36,6 +36,7 @@ protected slots:
     virtual void languageChange();
 
 private:
+    bool _template;
     int _mode;
     int _charassid;
     int _targetId;

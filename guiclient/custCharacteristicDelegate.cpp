@@ -42,7 +42,8 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
   if (qry.first())
     chartype = (characteristic::CharacteristicType)qry.value("char_type").toInt();
 
-  if (chartype == characteristic::Text)
+  if (chartype == characteristic::Text ||
+      chartype == characteristic::List)
   {
     q.prepare("SELECT charass_value"
               "  FROM charass, char"
@@ -55,7 +56,7 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
     q.exec();
 
     QComboBox *editor = new QComboBox(parent);
-    editor->setEditable(true);
+    editor->setEditable(chartype == characteristic::Text);
 
 
 #ifdef Q_WS_MAC
@@ -68,22 +69,6 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
       editor->addItem(q.value("charass_value").toString());
     editor->installEventFilter(const_cast<CustCharacteristicDelegate*>(this));
 
-    return editor;
-  }
-  else if (chartype == characteristic::List)
-  {
-    QComboBox *editor = new QComboBox(parent);
-
-    QSqlTableModel *model = new QSqlTableModel;
-    QString filter = QString("charopt_char_id=%1")
-                     .arg(qry.value("char_id").toInt());
-    model->setTable("charopt");
-    model->setFilter(filter);
-    model->setSort(3, Qt::AscendingOrder);
-    model->select();
-    model->removeColumn(0);
-    model->removeColumn(0);
-    editor->setModel(model);
     return editor;
   }
   else if (chartype == characteristic::Date)

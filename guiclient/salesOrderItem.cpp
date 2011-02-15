@@ -2022,7 +2022,8 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
               "   charass_value "
               " ELSE "
               "   formatDate(charass_value::date) "
-              "END AS charass_value "
+              "END AS f_charass_value, "
+              " charass_value "
               "FROM ("
               "SELECT "
               "  char_id, "
@@ -2070,8 +2071,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _itemchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
       _itemchar->setData(idx, q.value("char_id"), Qt::UserRole);
       idx = _itemchar->index(row, CHAR_VALUE);
-      _itemchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
-      _itemchar->setData(idx, _item->id(), Qt::UserRole);
+      _itemchar->setData(idx, q.value("f_charass_value"), Qt::DisplayRole);
+      _itemchar->setData(idx, _item->id(), Xt::IdRole);
+      _itemchar->setData(idx, q.value("f_charass_value"), Qt::UserRole);
       idx = _itemchar->index(row, CHAR_PRICE);
       _itemchar->setData(idx, q.value("charass_price"), Qt::DisplayRole);
       _itemchar->setData(idx, QVariant(_charVars), Qt::UserRole);

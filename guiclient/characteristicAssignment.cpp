@@ -29,6 +29,7 @@ characteristicAssignment::characteristicAssignment(QWidget* parent, const char* 
   _listpriceLit->hide();
   _listprice->hide();
   _listprice->setValidator(omfgThis->priceVal());
+  _template = false;
 
   adjustSize();
 }
@@ -199,6 +200,28 @@ void characteristicAssignment::sSave()
     _char->setFocus();
     return;
   }
+  if (_mode == cNew &&
+      _template &&
+      _stackedWidget->currentIndex() == characteristic::Date)
+  {
+    q.prepare("SELECT charass_id "
+              "FROM charass "
+              "WHERE ((charass_char_id=:charass_char_id) "
+              "  AND (charass_target_id=:charass_target_id) "
+              "  AND (charass_target_type=:charass_target_type));");
+    q.bindValue(":charass_target_id", _targetId);
+    q.bindValue(":charass_target_type", _targetType);
+    q.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::critical(this, tr("Error"), tr("You can not use the same characteristic "
+                                                  "for date type characteristics more than "
+                                                  "once in this context."));
+      return;
+    }
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('charass_charass_id_seq') AS charass_id;");
@@ -339,11 +362,22 @@ void characteristicAssignment::sHandleChar()
     model->removeColumn(0);
     _listValue->setModel(model);
   }
+
+  if (sidx != characteristic::Date && _template)
+    _default->setVisible(true);
+  else
+  {
+    _default->setVisible(false);
+    _default->setChecked(false);
+  }
+
 }
 
 void characteristicAssignment::handleTargetType()
 {
-  if((_targetType != "I") && (_targetType != "CT"))
+  if((_targetType == "I") || (_targetType == "CT"))
+    _template=true;
+  else
     _default->hide();
 
   if(_targetType != "I")

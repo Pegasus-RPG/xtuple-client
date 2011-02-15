@@ -905,7 +905,6 @@ void item::sSave()
 
 void item::sNew()
 {
-  QString itemType = QString(*(_itemTypes + _itemtype->currentIndex()));
   ParameterList params;
   params.append("mode", "new");
   params.append("item_id", _itemid);
