@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
  <title>Quantities on Hand by Parameter List</title>
- <name>QOHByParameterList</name>
+ <name>QOH</name>
  <description></description>
  <grid>
   <snap/>
