@@ -114,7 +114,8 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _journalNumber->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
       _notes->setReadOnly(FALSE);
-      _altPrepaid->setEnabled(FALSE);
+      _useAltPrepaid->setEnabled(FALSE);
+      _altAccntid->setEnabled(FALSE);
     }
     else if (param.toString() == "view")
     {
@@ -131,7 +132,8 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _terms->setEnabled(FALSE);
       _terms->setType(XComboBox::Terms);
       _notes->setReadOnly(TRUE);
-      _altPrepaid->setEnabled(FALSE);
+      _useAltPrepaid->setEnabled(FALSE);
+      _altAccntid->setEnabled(FALSE);
       _status->setEnabled(FALSE);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
     }
@@ -189,7 +191,7 @@ void apOpenItem::sSave()
       return;
     }
 
-    if (_altPrepaid->isChecked() && (!_altAccntid->isValid()))
+    if (_useAltPrepaid->isChecked() && (!_altAccntid->isValid()))
     {
       QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
                             tr("<p>You must choose a valid Alternate Prepaid "
@@ -263,7 +265,7 @@ void apOpenItem::sSave()
   else
 	temp = "H" ;
   q.bindValue(":apopen_status", temp);
-  if(_altPrepaid->isChecked())
+  if(_useAltPrepaid->isChecked())
     q.bindValue(":apopen_accnt_id", _altAccntid->id());
   else
     q.bindValue(":apopen_accnt_id", -1);
@@ -397,7 +399,7 @@ void apOpenItem::populate()
 
     if(!q.value("apopen_accnt_id").isNull() && q.value("apopen_accnt_id").toInt() != -1)
     {
-      _altPrepaid->setChecked(true);
+      _useAltPrepaid->setChecked(true);
       _altAccntid->setId(q.value("apopen_accnt_id").toInt());
     }
 

@@ -143,6 +143,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _orderNumber->setEnabled(FALSE);
       _journalNumber->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
+      _useAltPrepaid->setEnabled(FALSE);
       _altPrepaid->setEnabled(FALSE);
     }
     else if (param.toString() == "view")
@@ -163,6 +164,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _commissionDue->setEnabled(FALSE);
       _commissionPaid->setEnabled(FALSE);
       _rsnCode->setEnabled(FALSE);
+      _useAltPrepaid->setEnabled(FALSE);
       _altPrepaid->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _buttonBox->clear();
@@ -227,7 +229,7 @@ void arOpenItem::sSave()
       return;
     }
 
-    if (_altPrepaid->isChecked())
+    if (_useAltPrepaid->isChecked())
     {
       if(_altSalescatidSelected->isChecked() && !_altSalescatid->isValid())
       {
@@ -299,11 +301,11 @@ void arOpenItem::sSave()
   q.bindValue(":aropen_notes",          _notes->toPlainText());
   q.bindValue(":aropen_rsncode_id", _rsnCode->id());
   q.bindValue(":curr_id", _amount->id());
-  if(_altPrepaid->isChecked() && _altSalescatidSelected->isChecked())
+  if(_useAltPrepaid->isChecked() && _altSalescatidSelected->isChecked())
     q.bindValue(":aropen_salescat_id", _altSalescatid->id());
   else
     q.bindValue(":aropen_salescat_id", -1);
-  if(_altPrepaid->isChecked() && _altAccntidSelected->isChecked())
+  if(_useAltPrepaid->isChecked() && _altAccntidSelected->isChecked())
     q.bindValue(":aropen_accnt_id", _altAccntid->id());
   else
     q.bindValue(":aropen_accnt_id", -1);
@@ -476,14 +478,14 @@ void arOpenItem::populate()
 
     if(!q.value("aropen_accnt_id").isNull() && q.value("aropen_accnt_id").toInt() != -1)
     {
-      _altPrepaid->setChecked(TRUE);
+      _useAltPrepaid->setChecked(TRUE);
       _altAccntidSelected->setChecked(TRUE);
       _altAccntid->setId(q.value("aropen_accnt_id").toInt());
     }
 
     if(!q.value("aropen_salescat_id").isNull() && q.value("aropen_salescat_id").toInt() != -1)
     {
-      _altPrepaid->setChecked(TRUE);
+      _useAltPrepaid->setChecked(TRUE);
       _altSalescatidSelected->setChecked(TRUE);
       _altSalescatid->setId(q.value("aropen_salescat_id").toInt());
     }
@@ -599,7 +601,7 @@ void arOpenItem::reset()
   _paid->clear();
   _balance->clear();
   _rsnCode->setId(-1);
-  _altPrepaid->setChecked(false);
+  _useAltPrepaid->setChecked(false);
   _notes->clear();
   _arapply->clear();
 
