@@ -31,6 +31,7 @@
 #include "transactionInformation.h"
 #include "storedProcErrorLookup.h"
 #include "dspJournals.h"
+#include "creditMemo.h"
 
 dspGLTransactions::dspGLTransactions(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspGLTransactions", fl)
@@ -501,6 +502,22 @@ void dspGLTransactions::sViewDocument()
       arOpenItem newdlg(this, "", TRUE);
       newdlg.set(params);
       newdlg.exec();
+    }
+    else if(item->rawValue("gltrans_source").toString() == "S/O")
+    {
+      q.prepare("SELECT cmhead_id"
+                "  FROM cmhead"
+                " WHERE (cmhead_number=:docnumber);");
+      q.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      q.exec();
+      if(!q.first())
+        return;
+
+      params.append("mode", "view");
+      params.append("cmhead_id", q.value("cmhead_id").toInt());
+      creditMemo *newdlg = new creditMemo();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
     }
   }
   else if(item->rawValue("gltrans_doctype").toString() == "SO")

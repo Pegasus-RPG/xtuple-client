@@ -28,6 +28,7 @@
 #include "transactionInformation.h"
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
+#include "creditMemo.h"
 
 dspJournals::dspJournals(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspJournals", fl)
@@ -391,6 +392,22 @@ void dspJournals::sViewDocument()
       arOpenItem newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
+    }
+    else if(item->rawValue("sltrans_source").toString() == "S/O")
+    {
+      q.prepare("SELECT cmhead_id"
+                "  FROM cmhead"
+                " WHERE (cmhead_number=:docnumber);");
+      q.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      q.exec();
+      if(!q.first())
+        return;
+
+      params.append("mode", "view");
+      params.append("cmhead_id", q.value("cmhead_id").toInt());
+      creditMemo *newdlg = new creditMemo();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
     }
   }
   else if(item->rawValue("sltrans_doctype").toString() == "SO")
