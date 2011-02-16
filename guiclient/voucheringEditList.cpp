@@ -16,8 +16,10 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 
+#include "mqlutil.h"
 #include "voucher.h"
 #include "miscVoucher.h"
 
@@ -135,63 +137,18 @@ void voucheringEditList::sView()
 
 void voucheringEditList::sFillList()
 {
-  /* indent: order
-                line item
-                  credit account
-                line item
-                  credit account
-                debit account for entire order
-  */
-  q.prepare("SELECT orderid, seq,"
-            "       CASE WHEN seq = 0 THEN vouchernumber"
-            "            ELSE ''"
-            "       END AS vouchernumber, ponumber, itemnumber,"
-            "       vendnumber, description, itemtype, iteminvuom, f_qty, cost,"
-            "       'curr' AS cost_xtnumericrole,"
-            "       seq AS cost_xttotalrole,"
-            "       CASE WHEN seq = 3 THEN 1"
-            "            ELSE seq END AS xtindentrole,"
-            "       CASE WHEN findAPAccount(vendid) < 0 THEN 'error'"
-            "       END AS qtforegroundrole "
-            "FROM (SELECT orderid,"
-            "       CASE WHEN length(ponumber) > 0 THEN 0 ELSE 1 END AS seq,"
-            "       vouchernumber, ponumber,"
-            "       CASE WHEN (itemid = 1) THEN invoicenumber"
-            "            ELSE itemnumber END AS itemnumber,"
-            "       CASE WHEN (itemid = 1) THEN itemnumber"
-            "            ELSE ''         END AS vendnumber,"
-            "       vendid, description,"
-            "       itemtype, iteminvuom, f_qty, cost "
-            "FROM voucheringEditList "
-            "UNION "    // pull out the credits
-            "SELECT DISTINCT orderid, 2 AS seq, vouchernumber, '' AS ponumber,"
-            "       :credit AS itemnumber, '' AS vendnumber, vendid,"
-            "       account AS description,"
-            "       '' AS itemtype, '' AS iteminvuom, NULL as f_qty, cost "
-            "FROM voucheringEditList "
-            "WHERE itemid = 2 "
-            "UNION "    // calculate the debits
-            "SELECT orderid, 3 AS seq, vouchernumber, '' AS ponumber,"
-            "       :debit AS itemnumber, '' AS vendnumber, vendid,"
-            "       CASE WHEN findAPAccount(vendid) < 0 THEN :notassigned"
-            "            ELSE formatGLAccountLong(findAPAccount(vendid))"
-            "       END AS description,"
-            "       '' AS itemtype, '' AS iteminvuom, NULL as f_qty,"
-            "       SUM(cost) AS cost "
-            "FROM voucheringEditList "
-            "WHERE itemid = 2 "
-            "GROUP BY orderid, vouchernumber, vendid "
-            "ORDER BY vouchernumber, ponumber desc, seq) AS sub;");
-  q.bindValue(":credit",      tr("Credit"));
-  q.bindValue(":debit",       tr("Debit"));
-  q.bindValue(":notassigned", tr("Not Assigned"));
-  q.exec();
-  _vo->populate(q);
-  // TODO: implement indentation
+  MetaSQLQuery mql = mqlLoad("voucher", "editlist");
 
+  ParameterList params;
+  params.append("credit",      tr("Credit"));
+  params.append("debit",       tr("Debit"));
+  params.append("notassigned", tr("Not Assigned"));
+  q = mql.toQuery(params);
+  _vo->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  // TODO: implement indentation
 }
