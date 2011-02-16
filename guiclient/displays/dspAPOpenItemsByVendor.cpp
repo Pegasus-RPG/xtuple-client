@@ -185,7 +185,7 @@ void dspAPOpenItemsByVendor::sOpen()
 void dspAPOpenItemsByVendor::sOnHold()
 {
   XSqlQuery selectpayment;
-  selectpayment.prepare("SELECT * FROM apselect WHERE apselectlist()_id = :apopen_id;");
+  selectpayment.prepare("SELECT * FROM apselect WHERE apselect_apopen_id = :apopen_id;");
   selectpayment.bindValue(":apopen_id", list()->id());
   selectpayment.exec();
   if (selectpayment.first())
