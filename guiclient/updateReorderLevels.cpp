@@ -202,7 +202,7 @@ void updateReorderLevels::sPost()
   {
     params.clear();
     params.append("itemsite_id",           selected[i]->id());
-    params.append("itemsite_reorderlevel", selected[i]->text(7)); //TODO: should be selected[i]->rawValue("reordlvl_calc_level"));
+    params.append("itemsite_reorderlevel", selected[i]->data(7,Qt::EditRole).toDouble());
     q = mql.toQuery(params);
     if (q.lastError().type() != QSqlError::NoError)
     {
