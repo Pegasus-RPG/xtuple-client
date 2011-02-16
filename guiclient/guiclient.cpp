@@ -27,8 +27,6 @@
 #include <QApplication>
 #include <QCursor>
 #include <QDir>
-#include <QAssistantClient>
-#include <QProcess>
 #include <QSqlError>
 #include <QPixmap>
 #include <QFrame>
@@ -412,25 +410,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _runTimeVal     = new XDoubleValidator(0,              99999999.0, 2, this);
   _orderVal       = new QIntValidator(0, 9999999, this);
   _dayVal         = new QIntValidator(0, 9999, this);
-
-#ifdef Q_WS_MACX
-  _assClient = new QAssistantClient((qApp->applicationDirPath() + "/../Resources"), this);
-#else
-  _assClient = new QAssistantClient(qApp->applicationDirPath(), this);
-#endif
-
-  connect(_assClient, SIGNAL(error(const QString &)), this, SLOT(sReportError(const QString &)));
-
-  QStringList commands;
-  commands //<< "-hideSidebar"
-           << "-profile"
-#ifdef Q_WS_MACX
-           << qApp->applicationDirPath() + QString("/../Resources/helpXTupleGUIClient/XTupleGUIClient.adp");
-#else
-           << qApp->applicationDirPath() + QString("/helpXTupleGUIClient/XTupleGUIClient.adp");
-#endif
-
-  _assClient->setArguments(commands);
 
   _fixedFont = new QFont("courier", 8);
   _systemFont = new QFont(qApp->font());

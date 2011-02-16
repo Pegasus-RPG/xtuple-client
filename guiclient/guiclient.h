@@ -34,7 +34,6 @@ class QPushButton;
 class QIntValidator;
 class QDoubleValidator;
 class QCheckBox;
-class QAssistantClient;
 class QScriptEngine;
 
 class menuProducts;
@@ -234,7 +233,6 @@ class GUIClient : public QMainWindow
     int              __custListSerial;
     TimeoutHandler   *_timeoutHandler;
     ReportHandler    *_reportHandler;
-    QAssistantClient *_assClient;
 
     QMap<const QObject*,int> _customCommands;
 

@@ -1,7 +1,7 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on assistant uitools designer
+CONFIG   += qt warn_on assistant uitools designer help
 TEMPLATE = app
 
 INCLUDEPATH += ../scriptapi \
@@ -806,6 +806,8 @@ HEADERS = ../common/format.h                    \
           group.h                       \
           groups.h                      \
           guiclient.h                   \
+          helpView.h                    \
+          helpViewBrowser.h             \
           honorific.h                   \
           honorifics.h                  \
           hotkey.h                      \
@@ -1163,6 +1165,7 @@ HEADERS = ../common/format.h                    \
           woMaterialItem.h              \
           workOrder.h                   \
           workOrderMaterials.h          \
+          xtHelp.h                      \
           xTupleDesigner.h              \
           xTupleDesignerActions.h       \
           xabstractconfigure.h          \
@@ -1176,7 +1179,7 @@ HEADERS = ../common/format.h                    \
           xuiloader.h                   \
           xwidget.h                     \
           yourpayprocessor.h            \
-          zeroUncountedCountTagsByWarehouse.h
+          zeroUncountedCountTagsByWarehouse.h   \
 
 SOURCES = absoluteCalendarItem.cpp              \
           accountNumber.cpp                     \
@@ -1388,6 +1391,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           group.cpp                     \
           groups.cpp                    \
           guiclient.cpp                 \
+          helpView.cpp                  \
+          helpViewBrowser.cpp           \
           honorific.cpp                 \
           honorifics.cpp                \
           hotkey.cpp                    \
@@ -1756,10 +1761,11 @@ SOURCES = absoluteCalendarItem.cpp              \
           xmessagebox.cpp                       \
           xmessageboxmessagehandler.cpp         \
           xsltMap.cpp                           \
+          xtHelp.cpp                            \
           xuiloader.cpp                         \
           xwidget.cpp                           \
           yourpayprocessor.cpp                  \
-          zeroUncountedCountTagsByWarehouse.cpp
+          zeroUncountedCountTagsByWarehouse.cpp \
 
 include( displays/displays.pri )
 include( hunspell.pri )

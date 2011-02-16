@@ -10,7 +10,7 @@
 
 #include <QAction>
 #include <QApplication>
-#include <QAssistantClient>
+#include <QLibraryInfo>
 #include <QDir>
 #include <QMenu>
 #include <QMenuBar>
@@ -64,6 +64,7 @@
 #include "reports.h"
 #include "scripts.h"
 #include "states.h"
+#include "helpView.h"
 #include "uiforms.h"
 
 #include "fixACL.h"
@@ -549,7 +550,8 @@ void menuSystem::sAbout()
 
 void menuSystem::sTOC()
 {
-  parent->_assClient->openAssistant();
+  helpView *_help = helpView::getInstance(parent);
+  _help->show();
 }
 
 void menuSystem::sFixACL()
