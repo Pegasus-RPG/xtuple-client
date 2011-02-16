@@ -103,7 +103,9 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WFlags fl)
     list()->hideColumn("balance");
   }
 
-  newAction()->disconnect();
+  disconnect(newAction(), SIGNAL(triggered()), this, SLOT(sNew()));
+  connect(newAction(), SIGNAL(triggered()), this, SLOT(sCreateInvoice()));
+
   QToolButton * newBtn = (QToolButton*)toolBar()->widgetForAction(newAction());
   newBtn->setPopupMode(QToolButton::MenuButtonPopup);
   QAction *menuItem;

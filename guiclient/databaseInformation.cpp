@@ -53,7 +53,6 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _name->setText(database);
 
   _disableAutoComplete->setChecked(_metrics->boolean("DisableAutoComplete"));
-  _useToolbars->setChecked(_metrics->boolean("DisplaysUseToolbar"));
   
   q.exec( "SELECT numOfDatabaseUsers() AS databaseusers,"
           "       numOfServerUsers() AS serverusers;" );
@@ -88,7 +87,6 @@ bool databaseInformation::sSave()
   _metrics->set("DatabaseName", _description->text().trimmed());
   _metrics->set("DatabaseComments", _comments->toPlainText().trimmed());
   _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());
-  _metrics->set("DisplaysUseToolbar", _useToolbars->isChecked());
 
   _metrics->set("updateTickInterval", _interval->value());
 

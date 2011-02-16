@@ -67,7 +67,6 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Account Name"),      100,  Qt::AlignLeft,   true, "crmacct_name");
   list()->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"owner");
 
-  newAction()->disconnect();
   QToolButton * newBtn = (QToolButton*)toolBar()->widgetForAction(newAction());
   newBtn->setPopupMode(QToolButton::MenuButtonPopup);
   QAction *menuItem;
