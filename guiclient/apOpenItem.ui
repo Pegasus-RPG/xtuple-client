@@ -190,7 +190,7 @@ to be bound by its terms.</comment>
           </item>
           <item>
            <property name="text">
-            <string>Invoice</string>
+            <string>Voucher</string>
            </property>
           </item>
          </widget>
