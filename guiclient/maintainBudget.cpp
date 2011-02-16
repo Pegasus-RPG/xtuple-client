@@ -183,14 +183,21 @@ void maintainBudget::sSave()
       if (_table->item(r, c))
       {
         QString amount = _table->item(r, c)->text();
-        if(!amount.isEmpty())
-        {
-          q.bindValue(":budghead_id", _budgheadid);
-          q.bindValue(":period_id", _periodsRef.at(c));
-          q.bindValue(":accnt_id", accountid);
-          q.bindValue(":amount", amount.toDouble());
-          q.exec();
-        }
+        if(amount.isEmpty())
+          amount = "0.0";
+        q.bindValue(":budghead_id", _budgheadid);
+        q.bindValue(":period_id", _periodsRef.at(c));
+        q.bindValue(":accnt_id", accountid);
+        q.bindValue(":amount", amount.toDouble());
+        q.exec();
+      }
+      else
+      {
+        q.bindValue(":budghead_id", _budgheadid);
+        q.bindValue(":period_id", _periodsRef.at(c));
+        q.bindValue(":accnt_id", accountid);
+        q.bindValue(":amount", 0.0);
+        q.exec();
       }
     }
   }
