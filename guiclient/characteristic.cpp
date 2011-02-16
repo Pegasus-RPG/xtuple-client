@@ -150,14 +150,16 @@ void characteristic::sSave()
                "  char_options, char_opportunity,"
                "  char_attributes, char_lotserial, char_employees,"
                "  char_incidents, "
-               "  char_notes, char_mask, char_validator, char_type ) "
+               "  char_notes, char_mask, char_validator, char_type, "
+               "  char_order ) "
                "VALUES "
                "( :char_id, :char_name, :char_items, :char_customers, "
                "  :char_contacts, :char_crmaccounts, :char_addresses, "
                "  :char_options, :char_opportunity,"
                "  :char_attributes, :char_lotserial, :char_employees,"
                "  :char_incidents, "
-               "  :char_notes, :char_mask, :char_validator, :char_type );" );
+               "  :char_notes, :char_mask, :char_validator, :char_type "
+               "  :char_order );" );
 
     q.bindValue(":char_type", _type->currentIndex());
   }
@@ -176,7 +178,8 @@ void characteristic::sSave()
                "    char_incidents=:char_incidents,"
                "    char_notes=:char_notes,"
                "    char_mask=:char_mask,"
-               "    char_validator=:char_validator "
+               "    char_validator=:char_validator, "
+               "    char_order=:char_order "
                "WHERE (char_id=:char_id);" );
 
   q.bindValue(":char_id", _charid);
@@ -197,6 +200,7 @@ void characteristic::sSave()
     q.bindValue(":char_mask",        _mask->currentText());
   if (_validator->currentText().trimmed().size() > 0)
     q.bindValue(":char_validator",   _validator->currentText());
+  q.bindValue(":char_order", _order->value());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -255,6 +259,7 @@ void characteristic::populate()
     _validator->setText(q.value("char_validator").toString());
     _type->setCurrentIndex(q.value("char_type").toInt());
     _type->setEnabled(false);
+    _order->setValue(q.value("char_order").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -269,13 +274,14 @@ void characteristic::sFillList()
 {
   QString filter = QString("charopt_char_id=%1").arg(_charid);
   _charoptModel->setFilter(filter);
-  _charoptModel->setSort(0, Qt::AscendingOrder);
+  _charoptModel->setSort(3, Qt::AscendingOrder);
   _charoptModel->select();
+  _charoptModel->setHeaderData(2, Qt::Horizontal, QVariant(tr("Value")));
+  _charoptModel->setHeaderData(3, Qt::Horizontal, QVariant(tr("Order")));
 
   _charoptView->setModel(_charoptModel);
   _charoptView->setColumnHidden(0, true);
   _charoptView->setColumnHidden(1, true);
-  _charoptView->header()->setHidden(true);
 }
 
 void characteristic::sNew()
@@ -283,6 +289,7 @@ void characteristic::sNew()
   int row = _charoptModel->rowCount();
   _charoptModel->insertRows(row,1);
   _charoptModel->setData(_charoptModel->index(row,1), QVariant(_charid));
+  _charoptModel->setData(_charoptModel->index(row,3), 0);
   QModelIndex idx = _charoptModel->index(row,0);
   _charoptView->selectionModel()->select(QItemSelection(idx, idx),
                                          QItemSelectionModel::ClearAndSelect |

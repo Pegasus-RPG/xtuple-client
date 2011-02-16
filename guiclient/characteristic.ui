@@ -14,19 +14,19 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>505</width>
-    <height>415</height>
+    <height>452</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Characteristic</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
+  <layout class="QGridLayout" name="gridLayout_9">
    <property name="verticalSpacing">
     <number>12</number>
    </property>
    <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
+    <layout class="QGridLayout" name="gridLayout_7">
+     <item row="0" column="0">
       <widget class="QLabel" name="_nameLit">
        <property name="text">
         <string>Name:</string>
@@ -39,38 +39,68 @@ to be bound by its terms.</comment>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1">
       <widget class="XLineEdit" name="_name"/>
      </item>
-     <item>
+     <item row="1" column="0">
       <widget class="QLabel" name="_typeLit">
        <property name="text">
         <string>Type:</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
       </widget>
      </item>
-     <item>
-      <widget class="XComboBox" name="_type">
+     <item row="1" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <property name="text">
-         <string>Text</string>
-        </property>
+        <widget class="XComboBox" name="_type">
+         <item>
+          <property name="text">
+           <string>Text</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>List</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Date</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item>
-        <property name="text">
-         <string>List</string>
-        </property>
+        <widget class="QLabel" name="_orderLit">
+         <property name="text">
+          <string>Order:</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <property name="text">
-         <string>Date</string>
-        </property>
+        <widget class="QSpinBox" name="_order"/>
        </item>
-      </widget>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
-   <item row="0" column="1" rowspan="2">
+   <item row="0" column="1">
     <widget class="QDialogButtonBox" name="_buttonBox">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -165,7 +195,7 @@ to be bound by its terms.</comment>
        <item row="0" column="0">
         <widget class="QStackedWidget" name="_stackedWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="_textPage">
           <layout class="QGridLayout" name="gridLayout_3">
@@ -382,9 +412,24 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_name</tabstop>
+  <tabstop>_type</tabstop>
+  <tabstop>_order</tabstop>
   <tabstop>_addresses</tabstop>
+  <tabstop>_contacts</tabstop>
+  <tabstop>_customers</tabstop>
+  <tabstop>_crmaccounts</tabstop>
+  <tabstop>_employees</tabstop>
+  <tabstop>_incidents</tabstop>
+  <tabstop>_items</tabstop>
+  <tabstop>_lotSerial</tabstop>
+  <tabstop>_opportunity</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_mask</tabstop>
   <tabstop>_validator</tabstop>
+  <tabstop>_charoptView</tabstop>
+  <tabstop>_new</tabstop>
+  <tabstop>_delete</tabstop>
+  <tabstop>_description</tabstop>
   <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>

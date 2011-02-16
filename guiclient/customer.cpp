@@ -1031,7 +1031,7 @@ void customer::sFillCharacteristicList()
                " END AS f_charass_value, "
                "charass_value "
                "FROM ( "
-               "SELECT DISTINCT char_id, char_name, char_type, "
+               "SELECT DISTINCT char_id, char_name, char_type, char_order, "
                "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='CT') AND (c.charass_target_id=:custtype_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
                "  FROM charass a, char "
                "    LEFT OUTER JOIN charass b"
@@ -1041,7 +1041,7 @@ void customer::sFillCharacteristicList()
                " WHERE ( (a.charass_char_id=char_id)"
                "   AND   (a.charass_target_type='CT')"
                "   AND   (a.charass_target_id=:custtype_id) ) "
-               " ORDER BY char_name) data;" );
+               " ORDER BY char_order, char_name) data;" );
     q.bindValue(":custtype_id", _custtype->id());
     q.bindValue(":cust_id", _custid);
     q.exec();
@@ -1076,7 +1076,7 @@ void customer::sFillCharacteristicList()
                "WHERE ( (charass_target_type='C')"
                " AND (charass_char_id=char_id)"
                " AND (charass_target_id=:cust_id) ) "
-               "ORDER BY char_name;" );
+               "ORDER BY char_order, char_name;" );
     r.bindValue(":custtype_id", _custtype->id());
     r.bindValue(":cust_id", _custid);
     r.exec();

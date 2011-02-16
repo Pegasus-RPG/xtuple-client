@@ -351,16 +351,14 @@ void characteristicAssignment::sHandleChar()
   }
   else if (sidx == characteristic::List) // Handle options for list
   {
-    QSqlTableModel *model = new QSqlTableModel;
-    QString filter = QString("charopt_char_id=%1")
-                     .arg(_char->model()->data(_char->model()->index(_char->currentIndex(), 0)).toInt());
-    model->setTable("charopt");
-    model->setFilter(filter);
-    model->setSort(3, Qt::AscendingOrder);
-    model->select();
-    model->removeColumn(0);
-    model->removeColumn(0);
-    _listValue->setModel(model);
+    QSqlQuery qry;
+    qry.prepare("SELECT charopt_id, charopt_value "
+                 "FROM charopt "
+                 "WHERE (charopt_char_id=:char_id) "
+                 "ORDER BY charopt_order, charopt_value;");
+    qry.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)).toInt());
+    qry.exec();
+    _listValue->populate(qry);
   }
 
   if (sidx != characteristic::Date && _template)
@@ -439,6 +437,7 @@ void characteristicAssignment::handleTargetType()
   model->setTable("char");
   model->setFilter(boolColumn);
   model->setSort(1, Qt::AscendingOrder);
+  model->setSort(17, Qt::AscendingOrder);
   model->select();
   _char->setModel(model);
   _char->setModelColumn(1);

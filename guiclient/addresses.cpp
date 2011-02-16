@@ -23,18 +23,19 @@
 #include "address.h"
 #include "characteristic.h"
 #include "storedProcErrorLookup.h"
+#include "parameterwidget.h"
 
 addresses::addresses(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "addresses", fl)
 {
-  setupUi(optionsWidget());
   setReportName("AddressesMasterList");
   setWindowTitle(tr("Addresses"));
   setMetaSQLOptions("addresses", "detail");
   setNewVisible(true);
   setQueryOnStartEnabled(true);
+  setParameterWidgetVisible(true);
 
-  _activeOnly->setChecked(true);
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
 
   list()->addColumn(tr("Line 1"),	 -1, Qt::AlignLeft, true, "addr_line1");
   list()->addColumn(tr("Line 2"),	 75, Qt::AlignLeft, true, "addr_line2");
@@ -45,8 +46,7 @@ addresses::addresses(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Postal Code"),50,Qt::AlignLeft, true, "addr_postalcode");
 
   setupCharacteristics(characteristic::Addresses);
-
-  connect(_activeOnly,	SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
+  parameterWidget()->applyDefaultFilterSet();
 
   if (_privileges->check("MaintainAddresses"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
@@ -130,12 +130,4 @@ void addresses::sDelete()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-}
-
-bool addresses::setParams(ParameterList &params)
-{
-  if (_activeOnly->isChecked())
-    params.append("activeOnly");
-
-  return true;
 }

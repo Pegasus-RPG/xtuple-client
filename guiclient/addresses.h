@@ -14,9 +14,7 @@
 #include "display.h"
 #include <parameter.h>
 
-#include "ui_addresses.h"
-
-class addresses : public display, public Ui::addresses
+class addresses : public display
 {
     Q_OBJECT
 
@@ -29,7 +27,6 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
-    virtual bool setParams(ParameterList &);
 
 };
 

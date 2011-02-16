@@ -165,7 +165,7 @@ void customerType::sFillList()
              "WHERE ( (charass_target_type='CT')"
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:custtype_id) ) "
-             "ORDER BY char_name;" );
+             "ORDER BY char_order, char_name;" );
   q.bindValue(":custtype_id", _custtypeid);
   q.exec();
   _charass->populate(q);

@@ -2029,13 +2029,15 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
               "  char_id, "
               "  char_type, "
               "  char_name,"
+              "  char_order, "
               "  COALESCE(si.charass_value,i2.charass_value) AS charass_value,"
               "  COALESCE(si.charass_price,itemcharprice(:item_id,char_id,COALESCE(si.charass_value,i2.charass_value),:cust_id,:shipto_id,:qty,:curr_id,:effective),0)::numeric(16,4) AS charass_price "
               "FROM "
               "  (SELECT DISTINCT "
               "    char_id,"
               "    char_type, "
-              "    char_name "
+              "    char_name, "
+              "    char_order "
               "   FROM charass, char"
               "   WHERE ((charass_char_id=char_id)"
               "   AND (charass_target_type='I')"
@@ -2048,7 +2050,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
               "                              AND ('I'=i2.charass_target_type)"
               "                              AND (i2.charass_char_id=char_id)"
               "                              AND (i2.charass_default))) data2 "
-              "ORDER BY char_name; ");
+              "ORDER BY char_order, char_name; ");
     q.bindValue(":coitem_id", _soitemid);
     q.bindValue(":cust_id", _custid);
     q.bindValue(":shipto_id", _shiptoid);

@@ -46,7 +46,7 @@ to be bound by its terms.</comment>
      <item row="1" column="1">
       <widget class="QStackedWidget" name="_stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="_textPage">
         <layout class="QGridLayout" name="gridLayout_2">
@@ -57,8 +57,6 @@ to be bound by its terms.</comment>
           <widget class="XLineEdit" name="_value"/>
          </item>
         </layout>
-        <zorder>_value</zorder>
-        <zorder>_value</zorder>
        </widget>
        <widget class="QWidget" name="_listPage">
         <layout class="QGridLayout" name="gridLayout_3">
@@ -66,7 +64,7 @@ to be bound by its terms.</comment>
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="QComboBox" name="_listValue"/>
+          <widget class="XComboBox" name="_listValue"/>
          </item>
         </layout>
        </widget>
@@ -125,9 +123,15 @@ to be bound by its terms.</comment>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

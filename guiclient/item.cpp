@@ -958,7 +958,7 @@ void item::sFillList()
              "WHERE ( (charass_target_type='I')"
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:item_id) ) "
-             "ORDER BY char_name;" );
+             "ORDER BY char_order, char_name;" );
   q.bindValue(":item_id", _itemid);
   q.exec();
   _charass->populate(q);

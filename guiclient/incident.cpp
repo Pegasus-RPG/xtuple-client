@@ -821,7 +821,7 @@ void incident::sFillCharacteristicsList()
                "WHERE ( (charass_target_type='INCDT')"
                " AND (charass_char_id=char_id)"
                " AND (charass_target_id=:incdt_id) ) "
-               "ORDER BY char_name;" );
+               "ORDER BY char_order, char_name;" );
   qry.bindValue(":incdt_id", _incdtid);
   qry.exec();
   _charass->populate(qry);

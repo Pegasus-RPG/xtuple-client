@@ -762,7 +762,7 @@ void employee::sFillCharassList()
              "WHERE ((charass_target_type='EMP')"
              " AND   (charass_char_id=char_id)"
              " AND   (charass_target_id=:emp_id) ) "
-             "ORDER BY char_name;" );
+             "ORDER BY char_order, char_name;" );
   q.bindValue(":emp_id", _empid);
   q.exec();
   _charass->populate(q);

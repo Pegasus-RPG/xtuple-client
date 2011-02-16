@@ -695,7 +695,7 @@ void crmaccount::sGetCharacteristics()
              "WHERE ( (charass_target_type='CRMACCT')"
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:crmacct_id) ) "
-             "ORDER BY char_name;" );
+             "ORDER BY char_order, char_name;" );
   q.bindValue(":crmacct_id", _crmacctId);
   q.exec();
   _charass->populate(q);

@@ -485,7 +485,7 @@ void contact::sFillList()
              "WHERE ((charass_target_type='CNTCT')"
              " AND   (charass_char_id=char_id)"
              " AND   (charass_target_id=:cntct_id) ) "
-             "ORDER BY char_name;" );
+             "ORDER BY char_order, char_name;" );
   q.bindValue(":cntct_id", _contact->id());
   q.exec();
   _charass->populate(q);

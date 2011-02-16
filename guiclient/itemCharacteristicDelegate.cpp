@@ -30,7 +30,7 @@ QWidget *ItemCharacteristicDelegate::createEditor(QWidget *parent,
     return 0;
 
   QModelIndex idx = index.sibling(index.row(), CHAR);
-  characteristic::CharacteristicType chartype = characteristic::Text;
+  characteristic::Type chartype = characteristic::Text;
 
   // Determine what type we have
   XSqlQuery qry;
@@ -40,17 +40,20 @@ QWidget *ItemCharacteristicDelegate::createEditor(QWidget *parent,
   qry.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
   qry.exec();
   if (qry.first())
-    chartype = (characteristic::CharacteristicType)qry.value("char_type").toInt();
+    chartype = (characteristic::Type)qry.value("char_type").toInt();
 
   if (chartype == characteristic::Text ||
       chartype == characteristic::List)
   {
-    q.prepare("SELECT charass_value"
-              "  FROM charass, char"
-              " WHERE ((charass_char_id=char_id)"
-              "   AND  (charass_target_type='I')"
-              "   AND  (charass_target_id=:item_id)"
-              "   AND  (char_id=:char_id) );");
+    q.prepare("SELECT charass_value "
+              "FROM char, charass "
+              "  LEFT OUTER JOIN charopt ON ((charopt_char_id=charass_char_id) "
+              "                          AND (charopt_value=charass_value)) "
+              "WHERE ((charass_char_id=char_id)"
+              " AND  (charass_target_type='I')"
+              " AND  (charass_target_id=:item_id)"
+              " AND  (char_id=:char_id) ) "
+              "ORDER BY COALESCE(charopt_order,0), charass_value;");
     q.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
     q.bindValue(":item_id", index.model()->data(index, Xt::IdRole));
     q.exec();

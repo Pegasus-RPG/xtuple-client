@@ -1134,7 +1134,7 @@ void opportunity::sFillCharList()
              "WHERE ( (charass_target_type='OPP')"
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:ophead_id) ) "
-             "ORDER BY char_name;" );
+             "ORDER BY char_order, char_name;" );
   q.bindValue(":ophead_id", _opheadid);
   q.exec();
   _charass->populate(q);

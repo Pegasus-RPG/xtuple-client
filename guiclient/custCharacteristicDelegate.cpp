@@ -45,12 +45,15 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
   if (chartype == characteristic::Text ||
       chartype == characteristic::List)
   {
-    q.prepare("SELECT charass_value"
-              "  FROM charass, char"
-              " WHERE ((charass_char_id=char_id)"
-              "   AND  (charass_target_type='CT')"
-              "   AND  (charass_target_id=:custtype_id)"
-              "   AND  (char_id=:char_id) );");
+    q.prepare("SELECT charass_value "
+              "FROM char, charass "
+              "  LEFT OUTER JOIN charopt ON ((charopt_char_id=charass_char_id) "
+              "                          AND (charopt_value=charass_value)) "
+              "WHERE ((charass_char_id=char_id)"
+              "  AND  (charass_target_type='CT')"
+              "  AND  (charass_target_id=:custtype_id)"
+              "  AND  (char_id=:char_id) ) "
+              "ORDER BY COALESCE(charopt_order,0), charass_value;");
     q.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
     q.bindValue(":custtype_id", index.model()->data(index, Xt::IdRole));
     q.exec();

@@ -210,7 +210,7 @@ void address::sDeleteCharacteristic()
 
 void address::sGetCharacteristics()
 {
-  q.prepare( "SELECT charass_id, char_name "
+  q.prepare( "SELECT charass_id, char_name, "
              " CASE WHEN char_type < 2 THEN "
              "   charass_value "
              " ELSE "
@@ -220,7 +220,7 @@ void address::sGetCharacteristics()
              "WHERE ( (charass_target_type='ADDR')"
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:addr_id) ) "
-             "ORDER BY char_name;" );
+             "ORDER BY char_order, char_name;" );
   q.bindValue(":addr_id", _addr->id());
   q.exec();
   _charass->populate(q);
