@@ -13,9 +13,10 @@
 
 #include <QDockWidget>
 
-class QWidget;
-class QUrl;
 class QGridLayout;
+class QToolBar;
+class QUrl;
+class QWidget;
 
 class xtHelp;
 class helpViewBrowser;
@@ -34,6 +35,7 @@ class helpView : public QDockWidget
   protected:
     xtHelp              *_help;
     helpViewBrowser     *_helpBrowser;
+    QToolBar            *_helpBrowserToolbar;
     
     QString             _loc;
 
