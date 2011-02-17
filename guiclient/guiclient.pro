@@ -414,7 +414,6 @@ FORMS =   absoluteCalendarItem.ui               \
           purgeInvoices.ui                      \
           purgePostedCountSlips.ui              \
           purgePostedCounts.ui                  \
-          purgeShippingRecords.ui               \
           quotes.ui                             \
           reasonCode.ui                         \
           reasonCodes.ui                        \
@@ -979,7 +978,6 @@ HEADERS = ../common/format.h                    \
           purgeInvoices.h               \
           purgePostedCountSlips.h       \
           purgePostedCounts.h           \
-          purgeShippingRecords.h        \
           quotes.h                      \
           reasonCode.h                  \
           reasonCodes.h                 \
@@ -1565,7 +1563,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           purgeInvoices.cpp                     \
           purgePostedCountSlips.cpp             \
           purgePostedCounts.cpp                 \
-          purgeShippingRecords.cpp              \
           quotes.cpp                            \
           reasonCode.cpp                        \
           reasonCodes.cpp                       \

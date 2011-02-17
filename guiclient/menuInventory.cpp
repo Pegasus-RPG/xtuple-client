@@ -54,7 +54,6 @@
 #include "maintainShipping.h"
 #include "shipOrder.h"
 #include "recallOrders.h"
-#include "purgeShippingRecords.h"
 #include "externalShippingList.h"
 
 #include "enterPoReceipt.h"
@@ -393,7 +392,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.summarizeTransactionHistoryByClassCode",tr("Summarize &Transaction History..."),SLOT(sSummarizeInvTransByClassCode()),    utilitiesMenu, "SummarizeInventoryTransactions", NULL, NULL, true, NULL },
     { "im.createItemSitesByClassCode",            tr("&Create Item Sites..."),            SLOT(sCreateItemSitesByClassCode()),      utilitiesMenu, "MaintainItemSites",              NULL, NULL, true, NULL },
     { "separator",                                NULL,                                   NULL,                                     utilitiesMenu, "true",                           NULL, NULL, true, NULL },
-    { "sr.purgeShippingRecords",                  tr("&Purge Shipping Records..."),       SLOT(sPurgeShippingRecords()),            utilitiesMenu, "PurgeShippingRecords",     NULL, NULL, true, NULL },
     { "sr.externalShipping",          tr("Maintain E&xternal Shipping Records..."),       SLOT(sExternalShipping()),                utilitiesMenu, "MaintainExternalShipping", NULL, NULL, true, NULL },
     // Setup
     { "im.setup",	                          tr("&Setup..."),                        SLOT(sSetup()),                           mainMenu,	   "true",                     NULL, NULL, true, NULL}
@@ -735,11 +733,6 @@ void menuInventory::sShipOrders()
 void menuInventory::sRecallOrders()
 {
   omfgThis->handleNewWindow(new recallOrders());
-}
-
-void menuInventory::sPurgeShippingRecords()
-{
-  purgeShippingRecords(parent, "", TRUE).exec();
 }
 
 void menuInventory::sEnterReceipt()

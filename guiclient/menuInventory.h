@@ -73,7 +73,6 @@ class menuInventory : public QObject
     void sIssueStockToShipping();
     void sShipOrders();
     void sRecallOrders();
-    void sPurgeShippingRecords();
     void sExternalShipping();
     void sDspShippingContents();
 
