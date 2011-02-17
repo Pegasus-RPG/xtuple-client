@@ -25,9 +25,9 @@ dspPOsByDate::dspPOsByDate(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("purchaseOrders", "detail");
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
-  _dates->setStartCaption(tr("Starting Due Date:"));
+  _dates->setStartCaption(tr("Starting Order Date:"));
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
-  _dates->setEndCaption(tr("Ending Due Date:"));
+  _dates->setEndCaption(tr("Ending Order Date:"));
 
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
@@ -36,6 +36,7 @@ dspPOsByDate::dspPOsByDate(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehousecode");
   list()->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter,true, "poitem_status");
   list()->addColumn(tr("Vendor"),      _itemColumn,  Qt::AlignLeft,  true, "vend_name");
+  list()->addColumn(tr("Order Date"),  _dateColumn,  Qt::AlignCenter,true, "pohead_orderdate");
   list()->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "minDueDate");
 }
 
