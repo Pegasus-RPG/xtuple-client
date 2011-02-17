@@ -14,12 +14,9 @@
 #include <QHelpEngine>
 #include <QNetworkRequest>
 
-class QHelpContentWidget;
 class QByteArray;
 class QNetworkAccessManager;
 class QNetworkReply;
-
-class helpViewContentWidget;
 
 class xtHelp : public QHelpEngine
 {

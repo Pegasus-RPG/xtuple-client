@@ -16,8 +16,8 @@
 
 #include <QDebug>
 
+#include "guiclient.h"
 #include "xtHelp.h"
-#include "helpViewContentWidget.h"
 
 #ifdef Q_OS_MAC
 #define QHC_PATH "/../Resources/XTupleGUIClient.qhc"
@@ -25,7 +25,7 @@
 #define QHC_PATH "/XTupleGUIClient.qhc"
 #endif
 
-#define DEBUG TRUE
+#define DEBUG FALSE
 
 static xtHelp *xtHelpSingleton = 0;
 
@@ -38,6 +38,7 @@ xtHelp* xtHelp::getInstance(QWidget *parent)
 
 xtHelp::xtHelp(QWidget *parent)
   : QHelpEngine(QCoreApplication::instance()->applicationDirPath() + QString(QHC_PATH), parent),
+  //: QHelpEngine(loc, parent),
   _online(false),
   _nam(new QNetworkAccessManager),
   _rep(0)

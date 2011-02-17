@@ -16,7 +16,7 @@
 #include "helpViewBrowser.h"
 #include "xtHelp.h"
 
-#define DEBUG TRUE
+#define DEBUG FALSE
 
 helpViewBrowser::helpViewBrowser(QWidget *parent)
   : QTextBrowser(parent)
