@@ -46,6 +46,10 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
       .arg(tr("Resolved"))
       .arg(tr("Closed"));
 
+  QString qryPriority = "SELECT incdtpriority_id, incdtpriority_name "
+                        "FROM incdtpriority "
+                        "ORDER BY incdtpriority_order, incdtpriority_name ";
+
   parameterWidget()->append(tr("CRM Account"), "crmAccountId", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Contact"),"cntct_id", ParameterWidget::Contact);
   parameterWidget()->append(tr("Category"), "categorylist",
@@ -64,6 +68,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("End Date"), "endDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("Priority"), "incdtpriority_id_list", ParameterWidget::Multiselect, QVariant(), false, qryPriority);
   parameterWidget()->append(tr("Project"), "prj_id", ParameterWidget::Project);
   if(_metrics->boolean("IncidentsPublicPrivate"))
     parameterWidget()->append(tr("Public"), "public", ParameterWidget::CheckBox);
@@ -83,7 +88,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   list()->addColumn(tr("Priority"),    _userColumn, Qt::AlignLeft, false, "incdtpriority_name");
   list()->addColumn(tr("Contact"),     _userColumn, Qt::AlignLeft, false, "cntct_name");
   list()->addColumn(tr("Project"),     _userColumn, Qt::AlignLeft, false, "prj_number");
-  list()->addColumn(tr("public"),     _userColumn, Qt::AlignLeft, false, "incdt_public");
+  if(_metrics->boolean("IncidentsPublicPrivate"))
+    list()->addColumn(tr("Public"),     _userColumn, Qt::AlignLeft, false, "incdt_public");
 
   setupCharacteristics(characteristic::Incidents);
   parameterWidget()->applyDefaultFilterSet();
