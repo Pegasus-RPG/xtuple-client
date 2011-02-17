@@ -490,7 +490,8 @@ void ParameterWidget::applySaved(int pId, int filter_id)
       if (key.isEmpty())
       {
         //parametertype is no longer found, prompt user to delete filter
-        if (QMessageBox::question(this, tr("Invalid Filter Set"), tr("This filter set contains an obsolete filter and will be deleted. Do you want to do this?"),
+        if (!isVisible() ||
+            QMessageBox::question(this, tr("Invalid Filter Set"), tr("This filter set contains an obsolete filter and will be deleted. Do you want to do this?"),
                                   QMessageBox::No | QMessageBox::Default,
                                   QMessageBox::Yes) == QMessageBox::No)
           return;
