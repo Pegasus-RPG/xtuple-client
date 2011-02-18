@@ -173,11 +173,11 @@ bool dspVendorAPHistory::setParams(ParameterList &params)
     }
   }
 
-  params.append("creditMemo", "Credit Memo");
-  params.append("debitMemo", "Debit Memo");
-  params.append("check", "Check");
-  params.append("voucher", "Voucher");
-  params.append("other", "Other");
+  params.append("creditMemo", tr("Credit Memo"));
+  params.append("debitMemo", tr("Debit Memo"));
+  params.append("check", tr("Check"));
+  params.append("voucher", tr("Voucher"));
+  params.append("other", tr("Other"));
   params.append("vend_id", _vend->id());
   _dates->appendValue(params);
 
