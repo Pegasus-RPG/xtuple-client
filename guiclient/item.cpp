@@ -1603,7 +1603,7 @@ void item::sEditItemSite()
   {
     q.prepare("SELECT itemsite_id "
               "FROM itemsite "
-              "WHERE (itemsite_item_id=:item_id);");
+              "WHERE (itemsite_item_id=:item_id AND itemsite_active);");
     q.bindValue(":item_id",_itemid);
     q.exec();
     if (q.first())
