@@ -36,6 +36,7 @@ QVariant helpViewBrowser::loadResource(int type, const QUrl &name)
       url = source().resolved(url);
       if (DEBUG) qDebug() << "url was relative [" << url.toString() << "]";
     }
+#ifdef XTHELPONLINE
     if(xtHelp::getInstance()->isOnline())
     {
       if (DEBUG) qDebug() << "url for online request [" << url.toString() << "]";
@@ -43,6 +44,7 @@ QVariant helpViewBrowser::loadResource(int type, const QUrl &name)
       if (DEBUG) qDebug() << "data returned from online source with size [" << data.size() << "] for url [" << url.toString() << "]";
     }
     else
+#endif // XTHELPONLINE
     {
       data = xtHelp::getInstance()->fileData(url);
       if (DEBUG) qDebug() << "data returned from local source with size [" << data.size() << "]";
