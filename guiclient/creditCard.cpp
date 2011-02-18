@@ -140,38 +140,39 @@ int creditCard::saveCreditCard(QWidget *parent,
     }
   }
 
+  int cceditreturn = 0;
+
+  // editccnumber validates but does not modify db
+  q.prepare("SELECT editccnumber(text(:ccnum), text(:cctype)) AS cc_back;");
+  q.bindValue(":ccnum", ccNumber);
+  q.bindValue(":cctype", ccType);
+  q.exec();
+  if (q.first())
+    cceditreturn = q.value("cc_back").toInt();
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+    return -2;
+  }
+
+  if (cceditreturn == -10)
+  { // don't combine into (-10 && !CCtest): continue on -10 if not strict
+    if (!_metrics->boolean("CCTest"))
+    {
+     QMessageBox::warning( parent, tr("Invalid Credit Card Number"),
+      		   storedProcErrorLookup("editccnumber", cceditreturn));
+     return -1;
+    }
+  }
+  else if (cceditreturn < 0)
+  {
+    QMessageBox::warning(parent, tr("Invalid Credit Card Information"),
+      		   storedProcErrorLookup("editccnumber", cceditreturn));
+    return -1;
+  }
+
   if (mode == cNew)
   {
-    int cceditreturn = 0;
-
-    q.prepare("SELECT editccnumber(text(:ccnum), text(:cctype)) AS cc_back;");
-    q.bindValue(":ccnum", ccNumber);
-    q.bindValue(":cctype", ccType);
-    q.exec();
-    if (q.first())
-      cceditreturn = q.value("cc_back").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
-      return -2;
-    }
-
-    if (cceditreturn == -10)
-    { // don't combine into (-10 && !CCtest): continue on -10 if not strict
-      if (!_metrics->boolean("CCTest"))
-      {
-       QMessageBox::warning( parent, tr("Invalid Credit Card Number"),
-			   storedProcErrorLookup("editccnumber", cceditreturn));
-       return -1;
-      }
-    }
-    else if (cceditreturn < 0)
-    {
-      QMessageBox::warning(parent, tr("Invalid Credit Card Information"),
-			   storedProcErrorLookup("editccnumber", cceditreturn));
-      return -1;
-    }
-
     q.exec("SELECT NEXTVAL('ccard_ccard_id_seq') AS ccard_id;");
     if (q.first())
       ccId = q.value("ccard_id").toInt();
