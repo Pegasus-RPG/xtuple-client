@@ -204,7 +204,7 @@ to be bound by its terms.</comment>
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="_addressTab">
       <attribute name="title">
@@ -2074,6 +2074,9 @@ to be bound by its terms.</comment>
            <property name="checked">
             <bool>true</bool>
            </property>
+           <attribute name="buttonGroup">
+            <string>accountingButtonGroup</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -2081,6 +2084,9 @@ to be bound by its terms.</comment>
            <property name="text">
             <string>Cash Receipts</string>
            </property>
+           <attribute name="buttonGroup">
+            <string>accountingButtonGroup</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -2088,6 +2094,9 @@ to be bound by its terms.</comment>
            <property name="text">
             <string>Credit Cards</string>
            </property>
+           <attribute name="buttonGroup">
+            <string>accountingButtonGroup</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -2491,4 +2500,7 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="accountingButtonGroup"/>
+ </buttongroups>
 </ui>
