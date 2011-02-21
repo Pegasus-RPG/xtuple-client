@@ -75,7 +75,7 @@ enum SetResponse accountingYearPeriod::set(const ParameterList &pParams)
       if (check.first())
       {
         _startDate->setDate(check.value("start_date").toDate());
-        _endDate->setDate(check.value("start_date").toDate().addYears(1));
+        _endDate->setDate(check.value("start_date").toDate().addYears(1).addDays(-1));
       }
 
       _startDate->setFocus();
