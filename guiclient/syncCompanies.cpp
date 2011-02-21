@@ -21,6 +21,8 @@
 #include <openreports.h>
 #include <currcluster.h>
 
+#include <QDebug>
+
 #include "login2.h"
 #include "storedProcErrorLookup.h"
 
@@ -203,8 +205,24 @@ void syncCompanies::sSync()
     QString port = c->rawValue("company_port").toString();
     int currid = c->id("company_curr");
 
+    if(DEBUG)
+    {
+      qDebug() << "";
+      qDebug() << "syncCompanies: database information-------------------";
+      qDebug() << "syncCompanies: host          [ " << host << " ]";
+      qDebug() << "syncCompanies: db            [ " << db << " ]";
+      qDebug() << "syncCompanies: port          [ " << port << " ]";
+      qDebug() << "syncCompanies: id            [ " << currid << " ]";
+      qDebug() << "syncCompanies: protocol      [ " << protocol << " ]";
+      qDebug() << "syncCompanies: ---------------------------------------";
+      qDebug() << "";
+    }
+
     if (progress.wasCanceled())
       break;
+
+    if(protocol == "")
+      protocol = "psql";
 
     buildDatabaseURL(dbURL, protocol, host, db, port);
     if (DEBUG)
