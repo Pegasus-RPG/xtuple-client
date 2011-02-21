@@ -220,8 +220,7 @@ void plannedOrder::sCreate()
   if(cEdit == _mode)
   {
     q.prepare( "UPDATE planord "
-               "SET planord_firm=TRUE, "
-               "    planord_number=:planord_number, "
+               "SET planord_number=:planord_number, "
                "    planord_type=:planord_type, "
                "    planord_itemsite_id=:planord_itemsite_id, "
                "    planord_supply_itemsite_id=:planord_supply_itemsite_id, "

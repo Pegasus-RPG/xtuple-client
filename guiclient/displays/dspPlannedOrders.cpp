@@ -80,11 +80,11 @@ void dspPlannedOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, i
 
   pMenu->addSeparator();
 
-  menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
-  menuItem->setEnabled(_privileges->check("CreatePlannedOrders"));
-
   if (pSelected->text(10) == "No")
   {
+    menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
+    menuItem->setEnabled(_privileges->check("CreatePlannedOrders"));
+
     menuItem = pMenu->addAction(tr("Firm Order..."), this, SLOT(sFirmOrder()));
     menuItem->setEnabled(_privileges->check("FirmPlannedOrders"));
   }
