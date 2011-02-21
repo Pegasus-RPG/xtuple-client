@@ -16,6 +16,8 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <QDebug>
+
 #include "invoiceItem.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
@@ -199,6 +201,11 @@ enum SetResponse invoice::set(const ParameterList &pParams)
     }
     else if (param.toString() == "edit")
     {
+
+      param = pParams.value("invchead_id", &valid);
+      if(valid)
+        _invcheadid = param.toInt();
+
       setObjectName(QString("invoice edit %1").arg(_invcheadid));
       _mode = cEdit;
 
@@ -578,7 +585,12 @@ bool invoice::save()
   q.bindValue(":invchead_prj_id",	_project->id());
   q.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
   if(_recurring->isRecurring())
-    q.bindValue(":invchead_recurring_invchead_id", _recurring->parentId());
+  {
+    if(_recurring->parentId() != 0)
+      q.bindValue(":invchead_recurring_invchead_id", _recurring->parentId());
+    else
+      q.bindValue(":invchead_recurring_invchead_id", _invcheadid);
+  }
 
   if (_orderNumber->text().length())
     q.bindValue(":invchead_ordernumber", _orderNumber->text().toInt());
@@ -706,8 +718,11 @@ void invoice::populate()
     _freightCache=q.value("invchead_freight").toDouble();
     _freight->setLocalValue(q.value("invchead_freight").toDouble());
 
-    _recurring->setParent(q.value("invchead_recurring_invchead_id").toInt(),
+    if(q.value("invchead_recurring_invchead_id").toInt() != 0)
+      _recurring->setParent(q.value("invchead_recurring_invchead_id").toInt(),
                           "I");
+    else
+      _recurring->setParent(_invcheadid, "I");
 
     _salesrep->setId(q.value("invchead_salesrep_id").toInt());
     _commission->setDouble(q.value("invchead_commission").toDouble() * 100);
