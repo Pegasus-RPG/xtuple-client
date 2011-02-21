@@ -33,7 +33,9 @@ returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, 
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _wo->setType(cWoExploded | cWoReleased | cWoIssued);
+  // Change to Issued only
+  //_wo->setType(cWoExploded | cWoReleased | cWoIssued);
+  _wo->setType(cWoIssued);
   _wo->setFocus();
 }
 

@@ -37,7 +37,9 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
   _beforeQty->setPrecision(omfgThis->transQtyVal());
   _afterQty->setPrecision(omfgThis->transQtyVal());
 
-  _wo->setType(cWoExploded | cWoReleased | cWoIssued);
+  // Change to Issued only
+  //_wo->setType(cWoExploded | cWoReleased | cWoIssued);
+  _wo->setType(cWoIssued);
   _wo->setFocus();
 }
 
