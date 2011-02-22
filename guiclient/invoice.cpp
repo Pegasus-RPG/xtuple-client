@@ -102,6 +102,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _commission->setValidator(omfgThis->percentVal());
   _weight->setValidator(omfgThis->weightVal());
   
+  // some customers are creating scripts to show these widgets, probably shouldn't remove
   _paymentLit->hide();
   _payment->hide(); // Issue 9895:  if no objections over time, we should ultimately remove this. 
 

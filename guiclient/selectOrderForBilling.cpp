@@ -86,6 +86,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
     connect(_soitem, SIGNAL(valid(bool)), _cancel, SLOT(setEnabled(bool)));
   }
 
+  // some customers are creating scripts to show these widgets, probably shouldn't remove
   _paymentLit->hide();
   _payment->hide(); // Issue 10254:  if no objections over time, we should ultimately remove this.
 
