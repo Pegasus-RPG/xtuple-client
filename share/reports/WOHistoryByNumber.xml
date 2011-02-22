@@ -3,6 +3,12 @@
  <title>Work Order History by Number</title>
  <name>WOHistoryByNumber</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -20,18 +26,19 @@
        formatDate(wo_startdate) AS startdate,
        formatDate(wo_duedate) AS duedate,
        &lt;? if exists("showCosts") ?>
-         formatCost(wo_postedvalue)
+         text('W/O Cost') AS lbl_value,
+         formatCost(wo_postedvalue) AS value
        &lt;? else ?>
-         text('')
+         text('') AS lbl_value,
+         text('') AS value
        &lt;? endif ?>
-       AS value
   FROM wo, itemsite, warehous, item, uom
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (CAST(wo_number AS TEXT) ~ &lt;? value("woNumber") ?>)
-&lt;? if exists("showOnlyTopLeve") ?>
+&lt;? if exists("showOnlyTopLevel") ?>
    AND ((wo_ordtype&lt;>'W') OR (wo_ordtype IS NULL))
 &lt;? endif ?>
  )
@@ -87,22 +94,6 @@ ORDER BY wo_subnumber;
    <hcenter/>
    <vcenter/>
    <string>Start Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>670</x>
-    <y>150</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>W/O Cost</string>
   </label>
   <label>
    <rect>
@@ -258,6 +249,25 @@ ORDER BY wo_subnumber;
    <vcenter/>
    <string>UOM</string>
   </label>
+  <field>
+   <rect>
+    <x>670</x>
+    <y>151</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>Detail</query>
+    <column>lbl_value</column>
+   </data>
+  </field>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -280,22 +290,6 @@ ORDER BY wo_subnumber;
    <hcenter/>
    <vcenter/>
    <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>670</x>
-    <y>10</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>W/O Cost</string>
   </label>
   <label>
    <rect>
@@ -432,6 +426,25 @@ ORDER BY wo_subnumber;
    <vcenter/>
    <string>Ordered</string>
   </label>
+  <field>
+   <rect>
+    <x>665</x>
+    <y>13</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>Detail</query>
+    <column>lbl_value</column>
+   </data>
+  </field>
  </pghead>
  <section>
   <name>detail</name>
