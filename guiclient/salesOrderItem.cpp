@@ -1625,7 +1625,10 @@ void salesOrderItem::sDeterminePrice(bool force)
   if ( _mode == cView ||
        _mode == cViewQuote ||
        !_item->isValid() ||
-       !_qtyOrdered->text().length() || (
+       _qtyOrdered->text().isEmpty() ||
+       _qtyUOM->id() < 0 ||
+       _priceUOM->id() < 0 ||
+       (
          !force && _qtyOrdered->toDouble() == _orderQtyCache && (
            _metrics->value("soPriceEffective") != "ScheduleDate" || (
              !_scheduledDate->isValid() ||
@@ -3326,6 +3329,7 @@ void salesOrderItem::sQtyUOMChanged()
                          tr("This UOM for this Item does not allow fractional "
                             "quantities. Please fix the quantity."));
     _qtyOrdered->setFocus();
+    _qtyOrdered->setText("");
     return;
   }
 }
