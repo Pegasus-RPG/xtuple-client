@@ -199,7 +199,7 @@ void syncCompanies::sSync()
     }
 
     QString dbURL;
-    QString protocol;
+    QString protocol = "psql";
     QString host = c->rawValue("company_server").toString();
     QString db   = c->rawValue("company_database").toString();
     QString port = c->rawValue("company_port").toString();
@@ -220,9 +220,6 @@ void syncCompanies::sSync()
 
     if (progress.wasCanceled())
       break;
-
-    if(protocol == "")
-      protocol = "psql";
 
     buildDatabaseURL(dbURL, protocol, host, db, port);
     if (DEBUG)

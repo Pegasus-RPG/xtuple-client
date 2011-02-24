@@ -373,7 +373,7 @@ void company::sTest()
     qDebug("company::sTest()");
 
   QString dbURL;
-  QString protocol;
+  QString protocol = "psql";
   QString host = _extServer->text();
   QString db   = _extDB->text();
   QString port = _extPort->cleanText();
