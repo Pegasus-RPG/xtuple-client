@@ -106,7 +106,7 @@ void department::sSave()
   q.exec();
   if(q.first())
   {
-    QMessageBox::critical(this, tr("Cannpt Save Department"),
+    QMessageBox::critical(this, tr("Cannot Save Department"),
                           tr("The Number you entered already exists. Please choose a different Number."));
     return;
   }
