@@ -87,6 +87,14 @@ dspWoSchedule::dspWoSchedule(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight,  true,  "wo_duedate"  );
   list()->addColumn(tr("Condition"),   _dateColumn,   Qt::AlignLeft,   true,  "condition"   );
 
+  if (_privileges->check("MaintainWorkOrders"))
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+  else
+  {
+    newAction()->setEnabled(false);
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
+  }
+
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
