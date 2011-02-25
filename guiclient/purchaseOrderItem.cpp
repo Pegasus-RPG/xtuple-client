@@ -167,7 +167,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       {
         _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                                   "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-                                  "                uom_name, item_type, item_config, item_active "
+                                  "                uom_name, item_type, item_config, item_active, item_upccode "
                                   "FROM item, itemsite, itemsrc, uom  "
                                   "WHERE ( (itemsite_item_id=item_id)"
                                   " AND (itemsrc_item_id=item_id)"
@@ -180,7 +180,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
                          .arg(q.value("vend_id").toInt()) );
         _item->setValidationQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                                             "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-                                            "                uom_name, item_type, item_config, item_active "
+                                            "                uom_name, item_type, item_config, item_active, item_upccode "
                                             "FROM item, itemsite, itemsrc, uom  "
                                             "WHERE ( (itemsite_item_id=item_id)"
                                             " AND (itemsrc_item_id=item_id)"
