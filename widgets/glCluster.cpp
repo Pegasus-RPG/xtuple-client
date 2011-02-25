@@ -13,7 +13,7 @@
 #include "glcluster.h"
 
 GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "accnt", "accnt_id", "formatGLAccount(accnt_id)", "accnt_descrip", "accnt_extref", 0, pName, "accnt_active")
+    VirtualClusterLineEdit(pParent, "accnt", "accnt_id", "accnt_name", "accnt_descrip", "accnt_extref", 0, pName, "accnt_active")
 {
   setTitles(tr("Account"), tr("Accounts"));
   setUiName("accountNumber");
@@ -29,7 +29,7 @@ GLClusterLineEdit::GLClusterLineEdit(QWidget* pParent, const char* pName) :
       _ignoreCompany = true;
   }
 
-  _query = "SELECT accnt_id AS id, public.formatGLAccount(accnt_id) AS number, "
+  _query = "SELECT accnt_id AS id, accnt_name AS number, "
            "  accnt_descrip AS name, accnt_extref AS description, "
            "  accnt_active AS active, accnt_type, "
            "  COALESCE(company_id, -1) AS company_id, "
