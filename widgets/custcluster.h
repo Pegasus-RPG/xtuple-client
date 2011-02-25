@@ -73,7 +73,6 @@ class XTUPLEWIDGETS_EXPORT CLineEdit : public VirtualClusterLineEdit
     void            sUpdateMenu();
 
   protected:
-    QAction* _modeSep;
     QAction* _modeAct;
 
   signals:

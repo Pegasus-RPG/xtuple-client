@@ -8,15 +8,9 @@
  * to be bound by its terms.
  */
 
-//#include <QApplication>
-#include <QHBoxLayout>
-#include <QLabel>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QSqlError>
-#include <QVBoxLayout>
 
-#include <metasql.h>
 #include <parameter.h>
 #include <xsqlquery.h>
 
@@ -34,6 +28,8 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
   _subtype  = CRMAcctLineEdit::Cust;
   _canEdit = false;
   _editMode = false;
+  if (! pName)
+    setObjectName("CLineEdit");
 
   setTitles(tr("Customer"), tr("Customers"));
   setUiName("customer");
@@ -72,7 +68,6 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *pName) :
            "  ) cust "
            "WHERE (true) ";
 
-  _modeSep = 0;
   _modeAct = new QAction(tr("Edit Number"), this);
   _modeAct->setToolTip(tr("Sets number for editing"));
   _modeAct->setCheckable(true);
@@ -182,7 +177,6 @@ void CLineEdit::setId(int pId)
       setNewPriv("MaintainProspectMasters");
       _idColName="prospect_id";
     }
-    sUpdateMenu();
 
     _crmacctId = model()->data(model()->index(0,CRMACCT_ID)).toInt();
 
@@ -265,12 +259,13 @@ void CLineEdit::setCanEdit(bool p)
   if (p == _canEdit)
     return;
 
-  if (!p)
+  if (_x_metrics && _x_metrics->value("CRMAccountNumberGeneration") == "A")
+    _canEdit = false;
+  else
+    _canEdit = p;
+
+  if (! _canEdit) // need 'if' so we don't arbitrarily turn on edit mode
     setEditMode(false);
-
-  _canEdit=p;
-
-  sUpdateMenu();
 }
 
 bool CLineEdit::editMode()
@@ -289,22 +284,18 @@ bool CLineEdit::setEditMode(bool p)
   _editMode=p;
   _modeAct->setChecked(p);
 
-  if (_x_preferences)
+  if (_x_metrics)
   {
-    if (!_x_preferences->boolean("ClusterButtons"))
-    {
-      if (_editMode)
-        _menuLabel->setPixmap(QPixmap(":/widgets/images/edit.png"));
-      else
-        _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
-    }
+    if (_editMode)
+      _menuLabel->setPixmap(QPixmap(":/widgets/images/edit.png"));
+    else
+      _menuLabel->setPixmap(QPixmap(":/widgets/images/magnifier.png"));
 
     if (!_x_metrics->boolean("DisableAutoComplete") && _editMode)
       disconnect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
     else if (!_x_metrics->boolean("DisableAutoComplete"))
       connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
   }
-  sUpdateMenu();
 
   setDisabled(_editMode &&
               _x_metrics->value("CRMAccountNumberGeneration") == "A");
@@ -327,34 +318,22 @@ void CLineEdit::sParse()
 void CLineEdit::sUpdateMenu()
 {
   VirtualClusterLineEdit::sUpdateMenu();
-  if (_x_preferences)
-  {
-    if (_x_preferences->boolean("ClusterButtons"))
-      return;
-  }
-  else
-    return;
+  if (DEBUG)    // leaving in because sUpdateMenu is called an obscene # of times
+    qDebug("%s::sUpdateMenu() entered with _id %d, _infoAct %d, _canEdit %d",
+           qPrintable(objectName()), _id, _infoAct->isEnabled(), _canEdit);
 
   if (_canEdit)
   {
     if (!menu()->actions().contains(_modeAct))
-    {
-      _infoAct->setVisible(false);
       menu()->addAction(_modeAct);
-    }
 
     _listAct->setDisabled(_editMode);
     _searchAct->setDisabled(_editMode);
-    _listAct->setVisible(!_editMode);
-    _searchAct->setVisible(!_editMode);
   }
   else
   {
     if (menu()->actions().contains(_modeAct))
-    {
-      _infoAct->setVisible(true);
       menu()->removeAction(_modeAct);
-    }
   }
 
   // Handle New
