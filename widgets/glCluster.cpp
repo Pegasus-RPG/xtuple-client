@@ -586,7 +586,7 @@ void accountSearch::sFillList()
     where << "(accnt_type IN (" + types.join(",") + "))";
 
   if (!_search->text().isEmpty())
-    where << "((formatglaccount(accnt_id) ~* :descrip) OR (accnt_descrip ~* :descrip) OR (accnt_extref ~* :descrip))";
+    where << "((accnt_name ~* :descrip) OR (accnt_descrip ~* :descrip) OR (accnt_extref ~* :descrip))";
 
   if (! _showExternal)
     where << "(NOT COALESCE(company_external, false))";
