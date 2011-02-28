@@ -37,9 +37,6 @@ public slots:
     virtual void populate();
     virtual void sRejected();
     virtual void sVendorChanged( int pId );
-    virtual void sFillUOMList(int pId);
-    virtual void sSelectVendorUOM();
-    virtual void sClearVendorUOM();
 
 protected slots:
     virtual void languageChange();

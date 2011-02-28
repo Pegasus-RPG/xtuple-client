@@ -18,6 +18,7 @@
 
 #include "parameterwidget.h"
 #include "salesHistoryInformation.h"
+#include "characteristic.h"
 
 dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspSalesHistory", fl)
@@ -46,6 +47,7 @@ dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
+  setupCharacteristics(characteristic::Customers | characteristic::Items);
   parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("Customer"),            -1,              Qt::AlignLeft,   true,  "cust_name"   );

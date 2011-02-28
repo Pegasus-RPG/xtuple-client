@@ -146,11 +146,11 @@ to be bound by its terms.</comment>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
        <widget class="VendorCluster" name="_vendor">
-        <property name="label">
-         <string>Vendor #:</string>
-        </property>
         <property name="focusPolicy">
          <enum>Qt::StrongFocus</enum>
+        </property>
+        <property name="label">
+         <string>Vendor #:</string>
         </property>
        </widget>
       </item>
@@ -302,25 +302,12 @@ to be bound by its terms.</comment>
          <number>5</number>
         </property>
         <item>
-         <widget class="XComboBox" name="_invVendorUOM">
-          <property name="allowNull">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="XLineEdit" name="_vendorUOM">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>60</width>
-            <height>32767</height>
-           </size>
           </property>
          </widget>
         </item>
@@ -805,7 +792,6 @@ to be bound by its terms.</comment>
   <tabstop>_vendor</tabstop>
   <tabstop>_vendorCurrency</tabstop>
   <tabstop>_vendorItemNumber</tabstop>
-  <tabstop>_invVendorUOM</tabstop>
   <tabstop>_vendorUOM</tabstop>
   <tabstop>_invVendorUOMRatio</tabstop>
   <tabstop>_upcCode</tabstop>

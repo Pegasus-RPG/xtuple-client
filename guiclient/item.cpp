@@ -1128,21 +1128,6 @@ void item::clear()
 
 void item::sPopulateUOMs()
 {
-  if ((_inventoryUOM->id() != -1)&&(_inventoryUOM->hasFocus()==true))
-  {
-      q.prepare("SELECT COUNT(*) AS result "
-                "FROM itemsrc "
-                "WHERE (itemsrc_item_id = :item_id) AND ((itemsrc_invvendoruomratio > 1) OR (itemsrc_invvendoruomratio < 0));");
-      q.bindValue(":item_id", _itemid);
-      q.exec();
-      if(q.first() && (q.value("result")!=0))
-      {
-        QMessageBox::warning(this, tr("Verify Item Source UOM"),
-                             tr("<p>This product has an item source(s) with a non 1:1 Inventory/Vendor UOM ratio."
-                                "<p>You should verify that the Inventory/Vendor UOM ratio is correct for the selected inventory UOM."));
-     }
-  }
-
   if ((_inventoryUOM->id() != -1) && (_classcode->id()!=-1))
   {
     saveCore();
@@ -2059,7 +2044,6 @@ void item::sNewSource()
   ParameterList params;
   params.append("mode", "new");
   params.append("item_id", _itemid);
-  params.append("item_inv_uom_id", _inventoryUOM->id());
 
   itemSource newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -2073,8 +2057,6 @@ void item::sEditSource()
   ParameterList params;
   params.append("mode", "edit");
   params.append("itemsrc_id", _itemsrc->id());
-  params.append("item_id", _itemid);
-  params.append("item_inv_uom_id", _inventoryUOM->id());
 
   itemSource newdlg(this, "", TRUE);
   newdlg.set(params);
