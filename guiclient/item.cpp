@@ -1990,7 +1990,12 @@ void item::sHandleRightButtons()
     if(!_privileges->check("MaintainBOMs"))
       _bom->hide();
     else
-      if (itemtype == "M")
+      if (itemtype == "M" || // manufactured
+          itemtype == "B" || // breeder
+          itemtype == "F" || // phantom
+          itemtype == "K" || // kit
+          itemtype == "T" || // tooling
+          itemtype == "L")   // planning
         _bom->show();
       else
         _bom->hide();
@@ -2003,7 +2008,7 @@ void item::sHandleRightButtons()
       _cost->show();
 
     if((_privileges->check("MaintainItemSites")) &&
-       (_metrics->boolean("MultiWhs")))
+       (!_metrics->boolean("MultiWhs")))
       _site->show();
     else
       _site->hide();
