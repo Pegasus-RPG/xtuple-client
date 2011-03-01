@@ -28,11 +28,6 @@ public slots:
     virtual void sView();
     virtual void sDelete();
     virtual void sCopy();
-
-private:
-    QList<QVariant> _charidstext;
-    QList<QVariant> _charidslist;
-    QList<QVariant> _charidsdate;
 };
 
 #endif // ITEMS_H
