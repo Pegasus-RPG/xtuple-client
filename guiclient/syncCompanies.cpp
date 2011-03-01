@@ -668,7 +668,7 @@ void syncCompanies::sSync()
 
           // Import trans detail
           QDate prevDate = omfgThis->startOfTime();
-          XSqlQuery rgl;
+          XSqlQuery rgl(testDB);
           XSqlQuery lgl;
           rgl.prepare("SELECT *, formatGlAccountLong(gltrans_accnt_id) AS f_accnt "
                       " FROM ( "
@@ -696,7 +696,7 @@ void syncCompanies::sSync()
                       "       BETWEEN period_start AND period_end)) "
                       "GROUP BY gltrans_accnt_id, gltrans_source, gltrans_date) data "
                       "ORDER BY gltrans_date, gltrans_source, f_accnt; ");
-          rgl.bindValue(":period_id", p->id());
+          rgl.bindValue(":period_id", rperiod.value("period_id"));
           rgl.bindValue(":accnt_id",  raccnt.value("accnt_id"));
           rgl.exec();
           while (rgl.next())
@@ -763,7 +763,7 @@ void syncCompanies::sSync()
                         "  :company_id, :period_id, "
                         "  :amount, :curr_id, :curr_rate);");
             lgl.bindValue(":sequence", sequence);
-            lgl.bindValue(":accnt_id", laccnt.value("accnt_id"));
+            lgl.bindValue(":accnt_id", accntid);
             lgl.bindValue(":company_id", c->id("company_number"));
             lgl.bindValue(":period_id", p->id());
             lgl.bindValue(":source", rgl.value("gltrans_source"));
