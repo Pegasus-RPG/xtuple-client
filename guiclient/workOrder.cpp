@@ -1105,9 +1105,9 @@ void workOrder::sReprioritizeParent()
     }
     else
       _oldPriority=_priority->value();
+    populate();
+    omfgThis->sWorkOrdersUpdated(_woid, TRUE);
   }
-  populate();
-  omfgThis->sWorkOrdersUpdated(_woid, TRUE);
 }
 
 void workOrder::sRescheduleParent()
