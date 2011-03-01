@@ -184,8 +184,8 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
       _mode = cView;
 
       _new->setEnabled(false);
-      _edit->setEnabled(false);
-      _delete->setEnabled(false);
+      disconnect(_glseries, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+      disconnect(_glseries, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       _source->setEnabled(false);
       _doctype->setEnabled(false);
       _docnumber->setEnabled(false);
