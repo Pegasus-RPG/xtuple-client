@@ -338,15 +338,16 @@ void CLineEdit::sUpdateMenu()
 
   // Handle New
   bool canNew = false;
-
-  if (_subtype == CRMAcctLineEdit::Cust)
-    canNew = (_x_privileges->check("MaintainCustomerMasters"));
-  else if (_subtype == CRMAcctLineEdit::Prospect)
-    canNew = (_x_privileges->check("MaintainProspectMasters"));
-  else
-    canNew = (_x_privileges->check("MaintainCustomerMasters") ||
-              _x_privileges->check("MaintainProspectMasters"));
-
+  if (_x_privileges)
+  {
+    if (_subtype == CRMAcctLineEdit::Cust)
+      canNew = (_x_privileges->check("MaintainCustomerMasters"));
+    else if (_subtype == CRMAcctLineEdit::Prospect)
+      canNew = (_x_privileges->check("MaintainProspectMasters"));
+    else
+      canNew = (_x_privileges->check("MaintainCustomerMasters") ||
+                _x_privileges->check("MaintainProspectMasters"));
+  }
   _newAct->setEnabled(canNew && isEnabled());
 }
 
