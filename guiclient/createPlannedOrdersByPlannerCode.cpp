@@ -48,7 +48,7 @@ void createPlannedOrdersByPlannerCode::sCreate()
   sCreate(params);
 }
 
-void createPlannedOrdersByPlannerCode::sCreate(ParameterList &params)
+void createPlannedOrdersByPlannerCode::sCreate(ParameterList params)
 {
   QProgressDialog progress;
   progress.setWindowModality(Qt::ApplicationModal);

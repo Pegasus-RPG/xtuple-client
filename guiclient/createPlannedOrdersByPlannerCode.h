@@ -35,7 +35,7 @@ protected slots:
     virtual void languageChange();
 
     virtual void sCreate();
-    virtual void sCreate(ParameterList &params);
+    virtual void sCreate(ParameterList params);
 };
 
 #endif // CREATEPLANNEDORDERSBYPLANNERCODE_H
