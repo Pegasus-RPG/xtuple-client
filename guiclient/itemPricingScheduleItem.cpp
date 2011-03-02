@@ -123,7 +123,8 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
   if (valid)
   {
     _ipsitemid = param.toInt();
-    q.prepare("SELECT ipsitem_qtybreak, "
+    q.prepare("SELECT ipsitem_ipshead_id,"
+              "       ipsitem_qtybreak, "
               "       ipsitem_discntprcnt, "
               "       ipsitem_fixedamtdiscount "
               "FROM ipsiteminfo "
@@ -132,6 +133,7 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
     q.exec();
     if (q.first())
     {
+      _ipsheadid = q.value("ipsitem_ipshead_id").toInt();
       if(q.value("ipsitem_discntprcnt").toDouble() != 0.0 ||
          q.value("ipsitem_fixedamtdiscount").toDouble() != 0.0)
       {
@@ -478,6 +480,31 @@ void itemPricingScheduleItem::sSave( bool pClose)
       }
       else if(_dscbyItem->isChecked())
       {
+        q.prepare( "SELECT * "
+                   "FROM ipsitem "
+                   "WHERE ((ipsitem_ipshead_id = :ipshead_id)"
+                   "   AND (ipsitem_item_id = :item_id)"
+                   "   AND (ipsitem_qtybreak = :qtybreak)"
+                   "   AND (ipsitem_id <> :ipsitem_id));" );
+
+        q.bindValue(":ipshead_id", _ipsheadid);
+        q.bindValue(":item_id", _dscitem->id());
+        q.bindValue(":qtybreak", _qtyBreakCat->toDouble());
+        q.bindValue(":ipsitem_id", _ipsitemid);
+        q.exec();
+        if (q.first())
+        {
+          QMessageBox::critical( this, tr("Cannot Create Pricing Schedule Item"),
+                                 tr( "There is an existing Pricing Schedule Item for the selected Pricing Schedule, Item and Quantity Break defined.\n"
+                                     "You may not create duplicate Pricing Schedule Items." ) );
+          return;
+        }
+        else if (q.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                    __FILE__, __LINE__);
+          done(-1);
+        }
         q.prepare("UPDATE ipsiteminfo "
                   "SET ipsitem_qtybreak = :ipsitem_qtybreak, "
                   "    ipsitem_discntprcnt = :ipsitem_discntprcnt, "
