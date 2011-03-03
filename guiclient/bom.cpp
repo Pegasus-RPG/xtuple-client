@@ -125,6 +125,7 @@ enum SetResponse BOM::set(const ParameterList &pParams)
   {
     if ( (param.toString() == "new") || (param.toString() == "edit") )
     {
+      connect(_item,    SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
       connect(_bomitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_bomitem, SIGNAL(valid(bool)), _expire, SLOT(setEnabled(bool)));
       connect(_bomitem, SIGNAL(valid(bool)), _moveUp, SLOT(setEnabled(bool)));
@@ -136,8 +137,9 @@ enum SetResponse BOM::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _new->setEnabled(FALSE);
       _item->setFocus();
-	  _revision->setId(-1);
+      _revision->setId(-1);
     }
     else if (param.toString() == "edit")
     {
