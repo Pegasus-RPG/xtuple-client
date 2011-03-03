@@ -3,6 +3,12 @@
  <title>Pending Bill of Material Changes</title>
  <name>PendingBOMChanges</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -72,11 +78,10 @@ ORDER BY action, actiondate, bomitem_seqnumber;
  </querysource>
  <querysource>
   <name>bomhead</name>
-  <sql>SELECT bomhead_docnum, bomhead_revision,
-formatDate(bomhead_revisiondate) AS f_revisiondate
+  <sql>SELECT bomhead_docnum, bomhead_revision, formatDate(bomhead_revisiondate) AS f_revisiondate
 FROM bomhead
 WHERE ((bomhead_item_id=&lt;? value("item_id") ?>)
-AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
+  AND  (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
  </querysource>
  <rpthead>
   <height>234</height>
@@ -473,7 +478,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <vcenter/>
    <data>
     <query>bomhead</query>
-    <column>f_bomhead_docnum</column>
+    <column>bomhead_docnum</column>
    </data>
   </field>
   <label>
