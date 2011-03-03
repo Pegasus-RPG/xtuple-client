@@ -258,6 +258,14 @@ void bomItem::sSave()
     return;
   }
 
+  if (_dates->endDate() < _dates->startDate())
+  {
+    QMessageBox::critical( this, tr("Invalid Expiration Date"),
+                           tr("The expiration date cannot be earlier than the effective date.") );
+    _dates->setFocus();
+    return;
+  }
+
   // Check the component item type and if it is a Reference then issue a warning
   if (_itemtype == "R")
   {
