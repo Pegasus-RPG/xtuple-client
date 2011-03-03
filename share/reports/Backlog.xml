@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Backlog By Parameter List</title>
- <name>BacklogByParameterList</name>
+ <title>Backlog</title>
+ <name>Backlog</name>
  <description></description>
  <parameter default="01-01-2020" active="true" listtype="static" type="string" name="endDate">
   <description></description>
@@ -26,22 +26,13 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT CASE WHEN (checkPrivilege('ViewCustomerPrices') 
-             AND isMultiCurr()) THEN
-         text('Amount(base)')
-       WHEN (checkPrivilege('ViewCustomerPrices')) THEN
-         text('Amount')
-       ELSE
-         text('')
-       END
-       AS lbl_baseamount,
-       CASE WHEN (checkPrivilege('ViewCustomerPrices') 
-         AND isMultiCurr()) THEN
-         text('Amount(foreign)')
-       ELSE
-         text('')
-       END
-       AS lbl_foreignamount;</sql>
+  <sql>SELECT CASE WHEN (checkPrivilege('ViewCustomerPrices') AND isMultiCurr()) THEN text('Amount(base)')
+            WHEN (checkPrivilege('ViewCustomerPrices')) THEN text('Amount')
+            ELSE text('')
+       END AS lbl_baseamount,
+       CASE WHEN (checkPrivilege('ViewCustomerPrices') AND isMultiCurr()) THEN text('Amount(foreign)')
+            ELSE text('')
+       END AS lbl_foreignamount;</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -145,12 +136,10 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
  <querysource>
   <name>total</name>
   <sql>SELECT now()
- WHERE 't' =
-CASE WHEN (checkPrivilege('ViewCustomerPrices') 
-  't'
-ELSE
-  'f'
-END</sql>
+ WHERE 't' = CASE WHEN (checkPrivilege('ViewCustomerPrices')) THEN 't'
+                  ELSE 'f'
+             END
+;</sql>
  </querysource>
  <rpthead>
   <height>226</height>
