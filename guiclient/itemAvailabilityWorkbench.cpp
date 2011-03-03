@@ -724,7 +724,7 @@ void itemAvailabilityWorkbench::sPrintAvail()
   if(_showShortages->isChecked())
     params.append("showShortages");
 
-  orReport report("InventoryAvailabilityByItem", params);
+  orReport report("InventoryAvailability", params);
   if (report.isValid())
     report.print();
   else
