@@ -564,7 +564,7 @@ void ItemLineEdit::sList()
   if ((id = newdlg->exec())!= _id)
     setId(id);
 
-  disconnect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
 void ItemLineEdit::sSearch()
