@@ -59,18 +59,17 @@ void dspSalesOrdersByCustomer::sPopulatePo()
 
   if ((_cust->isValid()) && (_dates->allValid()))
   {
-    q.prepare( "SELECT DISTINCT -2, cohead_custponumber "
+    q.prepare( "SELECT MIN(cohead_id), cohead_custponumber "
                "FROM cohead "
                "WHERE ( (cohead_cust_id=:cust_id)"
                " AND (cohead_orderdate BETWEEN :startDate AND :endDate) ) "
+               "GROUP BY cohead_custponumber "
                "ORDER BY cohead_custponumber;" );
     _dates->bindValue(q);
     q.bindValue(":cust_id", _cust->id());
     q.exec();
     _poNumber->populate(q);
   }
-
-  sFillList();
 }
 
 void dspSalesOrdersByCustomer::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)

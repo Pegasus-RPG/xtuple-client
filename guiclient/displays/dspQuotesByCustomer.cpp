@@ -25,7 +25,6 @@ dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char*, Qt::WFlag
   setMetaSQLOptions("quotes", "detail");
 
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
-  connect(_selectedPO, SIGNAL(toggled(bool)), _poNumber, SLOT(setEnabled(bool)));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setStartCaption(tr("Starting Order Date"));
@@ -55,10 +54,11 @@ void dspQuotesByCustomer::sPopulatePo()
 
   if ((_cust->isValid()) && (_dates->allValid()))
   {
-    q.prepare( "SELECT DISTINCT -2, quhead_custponumber "
+    q.prepare( "SELECT MIN(quhead_id), quhead_custponumber "
                "FROM quhead "
                "WHERE ( (quhead_cust_id=:cust_id)"
                " AND (quhead_quotedate BETWEEN :startDate AND :endDate) ) "
+               "GROUP BY quhead_custponumber "
                "ORDER BY quhead_custponumber;" );
     _dates->bindValue(q);
     q.bindValue(":cust_id", _cust->id());
