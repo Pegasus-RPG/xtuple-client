@@ -141,7 +141,7 @@ to be bound by its terms.</comment>
                   <item>
                    <widget class="QSpinBox" name="_numOfCopies">
                     <property name="enabled">
-                     <bool>true</bool>
+                     <bool>false</bool>
                     </property>
                     <property name="minimum">
                      <number>1</number>
@@ -280,6 +280,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_internalCopy</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_numOfCopies</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>193</x>
+     <y>127</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>245</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
