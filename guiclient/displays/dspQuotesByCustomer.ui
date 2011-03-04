@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>539</width>
-    <height>145</height>
+    <width>541</width>
+    <height>165</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,9 +24,6 @@ to be bound by its terms.</comment>
    <item>
     <layout class="QVBoxLayout">
      <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="margin">
       <number>0</number>
      </property>
      <item>
@@ -54,9 +51,6 @@ to be bound by its terms.</comment>
     <layout class="QVBoxLayout">
      <property name="spacing">
       <number>5</number>
-     </property>
-     <property name="margin">
-      <number>0</number>
      </property>
      <item>
       <widget class="QGroupBox" name="ButtonGroup5">
@@ -91,9 +85,6 @@ to be bound by its terms.</comment>
           <property name="spacing">
            <number>5</number>
           </property>
-          <property name="margin">
-           <number>0</number>
-          </property>
           <item>
            <widget class="QRadioButton" name="_selectedPO">
             <property name="text">
@@ -120,11 +111,15 @@ to be bound by its terms.</comment>
       </widget>
      </item>
      <item>
+      <widget class="XCheckBox" name="_showConverted">
+       <property name="text">
+        <string>Show Converted</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QHBoxLayout">
        <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="margin">
         <number>0</number>
        </property>
        <item>
@@ -190,6 +185,11 @@ to be bound by its terms.</comment>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>

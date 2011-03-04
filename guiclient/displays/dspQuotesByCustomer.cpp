@@ -36,7 +36,8 @@ dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char*, Qt::WFlag
   list()->addColumn(tr("Quote Date"),  _dateColumn,  Qt::AlignRight,  true,  "quhead_quotedate"  );
   list()->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "quhead_shiptoname"   );
   list()->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "quhead_custponumber"   );
-  
+  list()->addColumn(tr("Status"),     _statusColumn,  Qt::AlignCenter, true,  "quhead_status" );
+
   _cust->setFocus();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
 }
@@ -124,6 +125,8 @@ bool dspQuotesByCustomer::setParams(ParameterList & params)
   params.append("customersOnly");
   if (_selectedPO->isChecked())
     params.append("poNumber", _poNumber->currentText());
+  if (_showConverted->isChecked())
+    params.append("showConverted", true);
 
   return true;
 }

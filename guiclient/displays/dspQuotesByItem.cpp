@@ -32,10 +32,11 @@ dspQuotesByItem::dspQuotesByItem(QWidget* parent, const char*, Qt::WFlags fl)
 
   _item->setType(ItemLineEdit::cSold);
 
-  list()->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignLeft,   true,  "quhead_number"   );
-  list()->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter, true,  "quhead_quotedate" );
-  list()->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name"   );
-  list()->addColumn(tr("Quoted"),     _qtyColumn,   Qt::AlignRight,  true,  "quitem_qtyord"  );
+  list()->addColumn(tr("Quote #"),    _orderColumn,   Qt::AlignLeft,   true,  "quhead_number"   );
+  list()->addColumn(tr("Quote Date"), _dateColumn,    Qt::AlignCenter, true,  "quhead_quotedate" );
+  list()->addColumn(tr("Customer"),   -1,             Qt::AlignLeft,   true,  "cust_name"   );
+  list()->addColumn(tr("Status"),     _statusColumn,  Qt::AlignCenter, true,  "quhead_status" );
+  list()->addColumn(tr("Quoted"),     _qtyColumn,     Qt::AlignRight,  true,  "quitem_qtyord"  );
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())); 
 }
@@ -119,6 +120,8 @@ bool dspQuotesByItem::setParams(ParameterList & params)
 
   _dates->appendValue(params);
   params.append("item_id", _item->id());
+  if (_showConverted->isChecked())
+    params.append("showConverted", true);
 
   return true;
 }
