@@ -231,8 +231,7 @@ void itemSites::sDelete()
 void itemSites::sInventoryAvailability()
 {
   ParameterList params;
-  params.append("item_id", list()->id());
-  params.append("warehous_id", list()->id("warehous_code"));
+  params.append("itemsite_id", list()->id());
   params.append("run");
   params.append("byLeadTime");
 
