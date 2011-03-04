@@ -1876,7 +1876,7 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 
     menuItem = pMenu->addAction(tr("Availability..."), this, SLOT(sViewMatlAvailability()));
 
-    menuItem = pMenu->addAction(tr("Subsitute Availability..."), this, SLOT(sViewMatlSubstituteAvailability()));
+    menuItem = pMenu->addAction(tr("Substitute Availability..."), this, SLOT(sViewMatlSubstituteAvailability()));
   }
 
 }
