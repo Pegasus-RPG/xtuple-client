@@ -167,11 +167,11 @@ GROUP BY dummy
 ;</sql>
  </querysource>
  <rpthead>
-  <height>221</height>
+  <height>163</height>
   <label>
    <rect>
     <x>605</x>
-    <y>200</y>
+    <y>143</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -187,7 +187,7 @@ GROUP BY dummy
   <label>
    <rect>
     <x>405</x>
-    <y>200</y>
+    <y>143</y>
     <width>60</width>
     <height>15</height>
    </rect>
@@ -203,7 +203,7 @@ GROUP BY dummy
   <label>
    <rect>
     <x>475</x>
-    <y>200</y>
+    <y>143</y>
     <width>60</width>
     <height>15</height>
    </rect>
@@ -217,10 +217,10 @@ GROUP BY dummy
    <string>Last Sale</string>
   </label>
   <line>
-   <xstart>5</xstart>
-   <ystart>215</ystart>
-   <xend>745</xend>
-   <yend>215</yend>
+   <xstart>3</xstart>
+   <ystart>159</ystart>
+   <xend>743</xend>
+   <yend>159</yend>
    <weight>2</weight>
   </line>
   <label>
@@ -242,7 +242,7 @@ GROUP BY dummy
   <label>
    <rect>
     <x>540</x>
-    <y>200</y>
+    <y>143</y>
     <width>60</width>
     <height>15</height>
    </rect>
@@ -258,7 +258,7 @@ GROUP BY dummy
   <label>
    <rect>
     <x>200</x>
-    <y>200</y>
+    <y>143</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -274,7 +274,7 @@ GROUP BY dummy
   <label>
    <rect>
     <x>10</x>
-    <y>200</y>
+    <y>143</y>
     <width>90</width>
     <height>15</height>
    </rect>
@@ -310,7 +310,7 @@ GROUP BY dummy
   <label>
    <rect>
     <x>100</x>
-    <y>200</y>
+    <y>143</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -326,7 +326,7 @@ GROUP BY dummy
   <label>
    <rect>
     <x>695</x>
-    <y>200</y>
+    <y>143</y>
     <width>50</width>
     <height>15</height>
    </rect>
@@ -337,7 +337,7 @@ GROUP BY dummy
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Total Sales</string>
+   <string>Currency</string>
   </label>
  </rpthead>
  <pghead>
@@ -447,7 +447,7 @@ GROUP BY dummy
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Total Sales</string>
+   <string>Currency</string>
   </label>
   <label>
    <rect>
