@@ -23,7 +23,7 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   connect(_docDate,        SIGNAL(newDate(const QDate&)),          this, SLOT(sPopulateDueDate()));
   connect(_buttonBox,      SIGNAL(accepted()),                     this, SLOT(sSave()));
-  connect(_buttonBox,      SIGNAL(rejected()),                     this, SLOT(reject()));
+  connect(_buttonBox,      SIGNAL(rejected()),                     this, SLOT(sClose()));
   connect(_terms,          SIGNAL(newID(int)),                     this, SLOT(sPopulateDueDate()));
   connect(_vend,           SIGNAL(newId(int)),                     this, SLOT(sPopulateVendInfo(int)));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
