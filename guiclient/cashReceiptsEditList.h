@@ -22,6 +22,7 @@ class cashReceiptsEditList : public XWidget, public Ui::cashReceiptsEditList
 public:
     cashReceiptsEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~cashReceiptsEditList();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPopulateMenu( QMenu * pMenu );

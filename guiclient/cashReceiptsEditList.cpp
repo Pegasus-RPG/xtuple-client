@@ -199,9 +199,29 @@ void cashReceiptsEditList::sPost()
   sFillList();
 }
 
+bool cashReceiptsEditList::setParams(ParameterList &pParams)
+{
+  pParams.append("check", tr("Check"));
+  pParams.append("certifiedCheck", tr("Certified Check"));
+  pParams.append("masterCard", tr("Master Card"));
+  pParams.append("visa", tr("Visa"));
+  pParams.append("americanExpress", tr("American Express"));
+  pParams.append("discoverCard", tr("Discover Card"));
+  pParams.append("otherCreditCard", tr("Other Credit Card"));
+  pParams.append("cash", tr("Cash"));
+  pParams.append("wireTransfer", tr("Wire Transfer"));
+  pParams.append("other", tr("Other"));
+
+  return true;
+}
+
 void cashReceiptsEditList::sPrint()
 {
-  orReport report("CashReceiptsEditList");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  orReport report("CashReceiptsEditList", params);
   if (report.isValid())
     report.print();
   else
@@ -210,18 +230,11 @@ void cashReceiptsEditList::sPrint()
 
 void cashReceiptsEditList::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad("unpostedCashReceipts", "detail");
   ParameterList params;
-  params.append("check", tr("Check"));
-  params.append("certifiedCheck", tr("Certified Check"));
-  params.append("masterCard", tr("Master Card"));
-  params.append("visa", tr("Visa"));
-  params.append("americanExpress", tr("American Express"));
-  params.append("discoverCard", tr("Discover Card"));
-  params.append("otherCreditCard", tr("Other Credit Card"));
-  params.append("cash", tr("Cash"));
-  params.append("wireTransfer", tr("Wire Transfer"));
-  params.append("other", tr("Other"));
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql = mqlLoad("unpostedCashReceipts", "detail");
   q = mql.toQuery(params);
   _cashrcpt->populate(q);
 }
