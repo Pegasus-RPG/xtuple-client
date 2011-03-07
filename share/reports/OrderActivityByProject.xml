@@ -3,6 +3,12 @@
  <title>Order Activity By Project</title>
  <name>OrderActivityByProject</name>
  <description>Order Activity Report</description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -31,10 +37,10 @@ FROM (
 ----- QUOTES -----
 SELECT quhead_id AS id, 
        15 AS type,
-       quhead_number AS subtype,
+       quhead_number::text AS subtype,
        1 AS section,
        &lt;? value("quotes") ?> AS section_qtdisplayrole,
-       quhead_number AS name,
+       quhead_number::text AS name,
        CASE WHEN (quhead_status = 'C') THEN 
          &lt;? value("converted") ?>
             WHEN (quhead_status = 'X') THEN
@@ -49,6 +55,7 @@ SELECT quhead_id AS id,
        NULL AS qty,
        NULL::text AS uom,
        NULL AS value,
+       0.0 AS ordertotal,
        1 AS xtindentrole
   FROM quhead
     JOIN quitem ON (quitem_quhead_id = quhead_id)
@@ -59,7 +66,7 @@ UNION ALL
 
 SELECT quitem_id AS id, 
        17 AS type,
-       quhead_number AS subtype,
+       quhead_number::text AS subtype,
        1 AS section,
        &lt;? value("quotes") ?> AS section_qtdisplayrole,
        quitem_linenumber::text AS name, 
@@ -77,6 +84,7 @@ SELECT quitem_id AS id,
        quitem_qtyord,
        uom_name AS uom,
        (quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio) AS value,
+       0.0 AS ordertotal,
        2 AS xtindentrole
   FROM quhead
     JOIN quitem ON (quitem_quhead_id = quhead_id)
@@ -89,7 +97,7 @@ UNION ALL
 
 SELECT quhead_id AS id, 
        18 AS type,
-       quhead_number AS subtype,
+       quhead_number::text AS subtype,
        1 AS section,
        &lt;? value("quotes") ?> AS section_qtdisplayrole,
        &lt;? value("total") ?> AS name,
@@ -99,6 +107,7 @@ SELECT quhead_id AS id,
        NULL AS qty,
        NULL::text AS uom,
        SUM((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio)) AS value,
+       SUM((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio)) AS ordertotal,
        1 AS xtindentrole
   FROM quhead
     JOIN quitem ON (quitem_quhead_id = quhead_id)
@@ -139,6 +148,7 @@ SELECT cohead_id AS id,
        NULL AS qty,
        NULL::text AS uom,
        NULL AS value,
+       0.0 AS ordertotal,
        1 AS xtindentrole
   FROM cohead
     JOIN coitem ON (coitem_cohead_id = cohead_id)
@@ -165,6 +175,7 @@ SELECT coitem_id AS id,
        coitem_qtyord,
        uom_name AS uom,
        (coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio) AS value,
+       0.0 AS ordertotal,
        2 AS xtindentrole
   FROM cohead
     JOIN coitem ON (coitem_cohead_id = cohead_id)
@@ -187,6 +198,7 @@ SELECT cohead_id AS id,
        NULL AS qty,
        NULL::text AS uom,
        SUM((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) AS value,
+       SUM((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) AS ordertotal,
        1 AS xtindentrole
   FROM cohead
     JOIN coitem ON (coitem_cohead_id = cohead_id)
@@ -211,6 +223,7 @@ SELECT invchead_id AS id,
        NULL AS qty,
        NULL::text AS uom,
        NULL AS value,
+       0.0 AS ordertotal,
        1 AS xtindentrole
   FROM invchead
     JOIN invcitem ON (invcitem_invchead_id = invchead_id)
@@ -234,6 +247,7 @@ SELECT invcitem_id AS id,
        invcitem_billed AS qty,
        uom_name AS uom,
        (invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS value,
+       0.0 AS ordertotal,
        2 AS xtindentrole
   FROM invchead
     JOIN invcitem ON (invcitem_invchead_id = invchead_id)
@@ -255,6 +269,7 @@ SELECT invchead_id AS id,
        NULL AS qty,
        NULL::text AS uom,
        SUM((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio)) AS value,
+       SUM((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio)) AS ordertotal,
        1 AS xtindentrole
   FROM invchead
     JOIN invcitem ON (invcitem_invchead_id = invchead_id)
@@ -295,6 +310,7 @@ SELECT wo_id AS id,
        wo_qtyord AS qty,
        uom_name AS uom,
        wo_postedvalue AS value,
+       wo_postedvalue AS ordertotal,
        1 AS xtindentrole
   FROM wo
     JOIN itemsite ON (itemsite_id=wo_itemsite_id)
@@ -325,6 +341,7 @@ SELECT pr_id AS id,
        pr_qtyreq AS qty,
        uom_name AS uom,
        stdcost(item_id) * pr_qtyreq AS value,
+       stdcost(item_id) * pr_qtyreq AS ordertotal,
        1 AS xtindentrole
   FROM pr
     JOIN itemsite ON (itemsite_id = pr_itemsite_id)
@@ -353,6 +370,7 @@ SELECT pohead_id AS id,
        NULL AS qty,
        NULL AS uom,
        NULL AS value,
+       0.0 AS ordertotal,
        1 AS xtindentrole
   FROM pohead
     JOIN poitem ON (poitem_pohead_id = pohead_id)
@@ -379,6 +397,7 @@ SELECT poitem_id AS id,
        poitem_qty_ordered,
        poitem_vend_uom AS uom,
        (poitem_qty_ordered * poitem_unitprice) AS value,
+       0.0 AS ordertotal,
        2 AS xtindentrole
   FROM pohead
     JOIN poitem ON (poitem_pohead_id = pohead_id)
@@ -400,6 +419,7 @@ SELECT pohead_id AS id,
        NULL AS qty,
        NULL::text AS uom,
        SUM(poitem_qty_ordered * poitem_unitprice) AS value,
+       SUM(poitem_qty_ordered * poitem_unitprice) AS ordertotal,
        1 AS xtindentrole
   FROM pohead
     JOIN poitem ON (poitem_pohead_id = pohead_id)
@@ -678,7 +698,7 @@ ORDER BY section, subtype, type, id;</sql>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>value</column>
+      <column>ordertotal</column>
      </data>
      <format builtin="true">money</format>
      <tracktotal subtotal="true"/>
