@@ -92,7 +92,10 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
   if (avgCostingMethod == "STD")
     _useStdCost->setChecked(TRUE);
   else if (avgCostingMethod == "ACT")
+  {
+    _useAvgCost->setChecked(TRUE);
     _useActCost->setChecked(TRUE);
+  }
   else if (avgCostingMethod == "AVG")
     _useAvgCost->setChecked(TRUE);
   else
