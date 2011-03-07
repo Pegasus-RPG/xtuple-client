@@ -432,28 +432,25 @@ bool returnAuthorizationItem::sSave()
                "WHERE (raitem_id=:raitem_id);" );
     
      if (_disposition->currentIndex() >= 2)
-     {     
-       if (_coitemitemsiteid == -1)
+     {
+       XSqlQuery coitemsite;
+       coitemsite.prepare("SELECT itemsite_id "
+                          "FROM itemsite "
+                          "WHERE ((itemsite_item_id=:item_id)"
+                          " AND (itemsite_warehous_id=:warehous_id) "
+                          " AND (itemsite_active) "
+                          " AND (itemsite_sold));");
+       coitemsite.bindValue(":item_id", _item->id());
+       coitemsite.bindValue(":warehous_id",_shipWhs->id());
+       coitemsite.exec();
+       if (coitemsite.first())
+         _coitemitemsiteid=coitemsite.value("itemsite_id").toInt();
+       else
        {
-         XSqlQuery coitemsite;
-         coitemsite.prepare("SELECT itemsite_id "
-                        "FROM itemsite "
-                        "WHERE ((itemsite_item_id=:item_id)"
-                        " AND (itemsite_warehous_id=:warehous_id) "
-                        " AND (itemsite_active) "
-                        " AND (itemsite_sold));");
-         coitemsite.bindValue(":item_id", _item->id());
-         coitemsite.bindValue(":warehous_id",_shipWhs->id());
-         coitemsite.exec();
-         if (coitemsite.first())
-           _coitemitemsiteid=coitemsite.value("itemsite_id").toInt();
-         else
-         {
-             QMessageBox::critical( this, tr("Item site not found"),
+         QMessageBox::critical( this, tr("Item site not found"),
              tr("<p>No valid item site record was found for the selected "
                 "item at the selected shipping site.") );
-             return false;
-         }
+         return false;
        }
        q.bindValue(":coitem_itemsite_id",_coitemitemsiteid);
      }
@@ -931,6 +928,8 @@ void returnAuthorizationItem::populate()
 
     _coitemid = raitem.value("ra_coitem_id").toInt();
     _coitemitemsiteid = raitem.value("raitem_coitem_itemsite_id").toInt();
+    if (_coitemitemsiteid == 0)
+      _coitemitemsiteid = -1;
     if (_coitemid != -1)
     {
       _origSoNumber->setText(raitem.value("orig_number").toString());
