@@ -585,6 +585,7 @@ FORMS =   absoluteCalendarItem.ui               \
           warehouse.ui                          \
           warehouseZone.ui                      \
           warehouses.ui                         \
+          welcomeStub.ui                        \
           woMaterialItem.ui                     \
           workOrder.ui                          \
           workOrderMaterials.ui                 \
@@ -1160,6 +1161,7 @@ HEADERS = ../common/format.h                    \
           warehouse.h                   \
           warehouseZone.h               \
           warehouses.h                  \
+          welcomeStub.h                 \
           woMaterialItem.h              \
           workOrder.h                   \
           workOrderMaterials.h          \
@@ -1745,6 +1747,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           warehouse.cpp                         \
           warehouseZone.cpp                     \
           warehouses.cpp                        \
+          welcomeStub.cpp                       \
           woMaterialItem.cpp                    \
           workOrder.cpp                         \
           workOrderMaterials.cpp                \

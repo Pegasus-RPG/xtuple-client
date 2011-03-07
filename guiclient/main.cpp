@@ -118,6 +118,8 @@
 #include "sysLocale.h"
 
 #include "splashconst.h"
+#include "xtsettings.h"
+#include "welcomeStub.h"
 
 #include <QtPlugin>
 Q_IMPORT_PLUGIN(xTuplePlugin)
@@ -161,10 +163,39 @@ int main(int argc, char *argv[])
   QApplication::setWindowIcon(QIcon(":/images/icon32x32.png"));
 #endif
 
+
+  bool forceWelcomeStub = app.arguments().contains("-forceWelcomeStub");
+  bool checkLanguage = !xtsettingsValue("LanguageCheckIgnore", false).toBool();
   // Try and load a default translation file and install it
   QTranslator defaultTranslator(&app);
   if (defaultTranslator.load("default.qm", app.applicationDirPath()))
+  {
     app.installTranslator(&defaultTranslator);
+    checkLanguage = forceWelcomeStub;
+  }
+  if(checkLanguage || forceWelcomeStub)
+  {
+    QLocale sysl = QLocale::system();
+    if(forceWelcomeStub || (sysl.language() != QLocale::C && sysl.language() != QLocale::English))
+    {
+      QString landc = sysl.name().toLower();
+      QString l = landc;
+      QStringList lcl = l.split('_', QString::SkipEmptyParts);
+      if(lcl.size() > 0)
+        l = lcl.at(0);
+      if (translationFile(landc, "xTuple").isNull() && translationFile(l, "xTuple").isNull())
+      {
+        QTranslator * translator = new QTranslator(&app);
+        if (translator->load(translationFile(l, "welcome/wmsg")))
+          app.installTranslator(translator);
+
+        welcomeStub wsdlg;
+        wsdlg.checkBox->setChecked(xtsettingsValue("LanguageCheckIgnore", false).toBool());
+        wsdlg.exec();
+        xtsettingsSetValue("LanguageCheckIgnore", wsdlg.checkBox->isChecked());
+      }
+    }
+  }
 
   app.processEvents();
 
@@ -456,9 +487,11 @@ int main(int argc, char *argv[])
     {
       langext = langq.value("lang_abbr2").toString();
     }
+qDebug() << langext;
 
     if(!langext.isEmpty())
     {
+      files << "qt";
       files << "xTuple";
       files << "openrpt";
       files << "reports";
