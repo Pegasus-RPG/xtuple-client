@@ -293,7 +293,7 @@ to be bound by its terms.</comment>
               <bool>true</bool>
              </property>
              <property name="type">
-              <enum>XComboBox::SalesCategories</enum>
+              <enum>XComboBox::SalesCategoriesActive</enum>
              </property>
             </widget>
            </item>

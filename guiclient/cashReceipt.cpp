@@ -90,7 +90,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
 
   _bankaccnt->setType(XComboBox::ARBankAccounts);
-  _salescat->setType(XComboBox::SalesCategories);
+  _salescat->setType(XComboBox::SalesCategoriesActive);
 
   _aropen->addColumn(tr("Doc. Type"), -1,              Qt::AlignCenter, true, "doctype");
   _aropen->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignCenter, true, "aropen_docnumber");

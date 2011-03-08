@@ -59,7 +59,7 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _terms->setType(XComboBox::ARTerms);
   _salesrep->setType(XComboBox::SalesReps);
 
-  _altSalescatid->setType(XComboBox::SalesCategories);
+  _altSalescatid->setType(XComboBox::SalesCategoriesActive);
 
   _rsnCode->setType(XComboBox::ReasonCodes);
 
