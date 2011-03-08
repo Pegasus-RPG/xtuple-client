@@ -19,11 +19,11 @@ welcomeStub::welcomeStub(QWidget* parent, Qt::WindowFlags f)
 {
   setupUi(this);
 
-  QString url = "<a href=\"http://www.xtuple.com/translation/\">www.xtuple.com/translation</a>";
+  QString url = "<a href=\"http://www.xtuple.org/translate\">http://www.xtuple.org/translate</a>";
 
   int iconSize = style()->pixelMetric(QStyle::PM_MessageBoxIconSize);
   iconLabel->setPixmap(style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(iconSize, iconSize));
-  label->setText(tr("Some text goes here with a Url here %1 and maybe some other words around it").arg(url));
+  label->setText(tr("<p>It appears you do not have an xTuple translation file installed on your system. Please use the following link to find a translation file for your language and learn more about how to install translation files in xTuple ERP:<p>%1<p>").arg(url));
 
   adjustSize();
 }
