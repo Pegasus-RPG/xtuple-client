@@ -1329,7 +1329,6 @@ QString translationFile(QString localestr, const QString component, QString &ver
   for (QStringList::Iterator pit = paths.begin(); pit != paths.end(); pit++)
   {
     QString filename = *pit + "/" + component + "." + localestr;
-qDebug() << filename;
     if (translator.load(filename))
     {
       if (! version.isNull())

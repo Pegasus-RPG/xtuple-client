@@ -148,6 +148,7 @@ int main(int argc, char *argv[])
   bool    havePasswd      = false;
   bool    cloudOption     = false;
   bool    haveCloud       = false;
+  bool    forceWelcomeStub= false;
 
   qInstallMsgHandler(xTupleMessageOutput);
   QApplication app(argc, argv);
@@ -162,40 +163,6 @@ int main(int argc, char *argv[])
 #ifndef Q_WS_MACX
   QApplication::setWindowIcon(QIcon(":/images/icon32x32.png"));
 #endif
-
-
-  bool forceWelcomeStub = app.arguments().contains("-forceWelcomeStub");
-  bool checkLanguage = !xtsettingsValue("LanguageCheckIgnore", false).toBool();
-  // Try and load a default translation file and install it
-  QTranslator defaultTranslator(&app);
-  if (defaultTranslator.load("default.qm", app.applicationDirPath()))
-  {
-    app.installTranslator(&defaultTranslator);
-    checkLanguage = forceWelcomeStub;
-  }
-  if(checkLanguage || forceWelcomeStub)
-  {
-    QLocale sysl = QLocale::system();
-    if(forceWelcomeStub || (sysl.language() != QLocale::C && sysl.language() != QLocale::English))
-    {
-      QString landc = sysl.name().toLower();
-      QString l = landc;
-      QStringList lcl = l.split('_', QString::SkipEmptyParts);
-      if(lcl.size() > 0)
-        l = lcl.at(0);
-      if (translationFile(landc, "xTuple").isNull() && translationFile(l, "xTuple").isNull())
-      {
-        QTranslator * translator = new QTranslator(&app);
-        if (translator->load(translationFile(l, "welcome/wmsg")))
-          app.installTranslator(translator);
-
-        welcomeStub wsdlg;
-        wsdlg.checkBox->setChecked(xtsettingsValue("LanguageCheckIgnore", false).toBool());
-        wsdlg.exec();
-        xtsettingsSetValue("LanguageCheckIgnore", wsdlg.checkBox->isChecked());
-      }
-    }
-  }
 
   app.processEvents();
 
@@ -246,11 +213,34 @@ int main(int argc, char *argv[])
         if(argument.contains("=no", Qt::CaseInsensitive) || argument.contains("=false", Qt::CaseInsensitive))
           cloudOption = false;
       }
+      else if (argument.contains("-forceWelcomeStub", Qt::CaseInsensitive))
+        forceWelcomeStub = true;
       else if (argument.contains("-company=", Qt::CaseInsensitive))
       {
         company = argument.right(argument.length() - 9);
       }
     }
+  }
+
+  // Try and load a default translation file and install it
+  // otherwise if we are non-english inform the user that translation are available
+  bool checkLanguage = false;
+  QLocale sysl = QLocale::system();
+  QTranslator defaultTranslator(&app);
+  if (defaultTranslator.load(translationFile(sysl.name().toLower(), "default")))
+    app.installTranslator(&defaultTranslator);
+  else if(!xtsettingsValue("LanguageCheckIgnore", false).toBool() && sysl.language() != QLocale::C && sysl.language() != QLocale::English)
+    checkLanguage = translationFile(sysl.name().toLower(), "xTuple").isNull();
+  if (forceWelcomeStub || checkLanguage)
+  {
+    QTranslator * translator = new QTranslator(&app);
+    if (translator->load(translationFile(sysl.name().toLower(), "welcome/wmsg")))
+      app.installTranslator(translator);
+
+    welcomeStub wsdlg;
+    wsdlg.checkBox->setChecked(xtsettingsValue("LanguageCheckIgnore", false).toBool());
+    wsdlg.exec();
+    xtsettingsSetValue("LanguageCheckIgnore", wsdlg.checkBox->isChecked());
   }
 
   _splash = new QSplashScreen();
@@ -487,7 +477,6 @@ int main(int argc, char *argv[])
     {
       langext = langq.value("lang_abbr2").toString();
     }
-qDebug() << langext;
 
     if(!langext.isEmpty())
     {
