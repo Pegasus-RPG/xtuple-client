@@ -25,7 +25,6 @@ public:
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sPrint();
     virtual void sEditAropen();
     virtual void sEditCashrcpt();
     virtual void sNew();

@@ -52,20 +52,6 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char*, Qt::WFlags fl)
   newAction()->setEnabled(_privileges->check("MaintainCashReceipts"));
 }
 
-void dspCashReceipts::sPrint()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  params.append("includeFormatted");
-
-  orReport report("CashReceipts", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
 bool dspCashReceipts::setParams(ParameterList &pParams)
 {
   if (!_dates->startDate().isValid())
@@ -111,6 +97,7 @@ bool dspCashReceipts::setParams(ParameterList &pParams)
   }
   else
     list()->showColumn("cashrcpt_number");
+  pParams.append("includeFormatted");
   return true;
 }
 
