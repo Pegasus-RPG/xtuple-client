@@ -18,7 +18,6 @@
 #include "xcombobox.h"
 #include "xtreewidget.h"
 #include "parameterwidget.h"
-#include "characteristic.h"
 
 dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspBookings", fl)
@@ -44,7 +43,6 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
-  setupCharacteristics(characteristic::Customers | characteristic::Items);
   parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("Order #"),          _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );

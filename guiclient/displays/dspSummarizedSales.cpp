@@ -8,7 +8,6 @@
  * to be bound by its terms.
  */
 
-#include "characteristic.h"
 #include "dspSalesHistory.h"
 #include "dspSummarizedSales.h"
 #include "parameterwidget.h"
@@ -46,7 +45,6 @@ dspSummarizedSales::dspSummarizedSales(QWidget* parent, const char*, Qt::WFlags 
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
-  setupCharacteristics(characteristic::Customers | characteristic::Items);
   parameterWidget()->applyDefaultFilterSet();
 
   _units->append(0,tr("Base"));

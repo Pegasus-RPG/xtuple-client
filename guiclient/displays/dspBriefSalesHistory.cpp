@@ -13,7 +13,6 @@
 #include <QVariant>
 #include <QMessageBox>
 
-#include "characteristic.h"
 #include "parameterwidget.h"
 #include "xtreewidget.h"
 #include "dspSalesHistory.h"
@@ -41,7 +40,6 @@ dspBriefSalesHistory::dspBriefSalesHistory(QWidget* parent, const char* name, Qt
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
-  setupCharacteristics(characteristic::Customers | characteristic::Items);
   parameterWidget()->applyDefaultFilterSet();
 
   list()->addColumn(tr("Cust. #"),     _itemColumn,     Qt::AlignLeft,   true,  "cust_number"   );
