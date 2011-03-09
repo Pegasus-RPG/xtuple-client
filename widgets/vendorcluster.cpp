@@ -20,6 +20,16 @@ VendorLineEdit::VendorLineEdit(QWidget *pParent, const char *pName) :
   setEditPriv("MaintainVendors");
   setViewPriv("ViewVendors");
   setNewPriv("MaintainVendors");
+
+  _query = "SELECT vend_id AS id, vend_number AS number, vend_name AS name, vendtype_code AS type,"
+           "       addr.*,"
+           "       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
+           "       cntct.*, vend_active as active "
+           "    FROM vendtype JOIN vendinfo"
+           "           ON (vend_vendtype_id=vendtype_id) LEFT OUTER JOIN"
+           "         cntct ON (vend_cntct1_id=cntct_id) LEFT OUTER JOIN"
+           "         addr ON (vend_addr_id=addr_id)"
+           " WHERE true ";
 }
 
 VirtualList *VendorLineEdit::listFactory()
