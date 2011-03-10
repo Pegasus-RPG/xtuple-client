@@ -830,6 +830,19 @@ bool salesOrder::save(bool partial)
                "    cohead_billto_cntct_email=:billto_cntct_email "
                "WHERE (cohead_id=:id);" );
   else if (_mode == cNew)
+  {
+    if (_metrics->boolean("AutoCreateProjectsForOrders"))
+    {
+      XSqlQuery prj;
+      prj.prepare("INSERT INTO prj (prj_number, prj_name, prj_descrip, prj_status, prj_so, prj_wo, prj_po) "
+                  " VALUES (:number, :number, :descrip, 'O', TRUE, TRUE, TRUE) "
+                  "RETURNING prj_id");
+      prj.bindValue(":number", _orderNumber->text());
+      prj.bindValue(":descrip", tr("Auto Generated Project from Sales Order."));
+      prj.exec();
+      if (prj.first())
+        _project->setId(prj.value("prj_id").toInt());
+    }
     q.prepare("INSERT INTO cohead "
               "(cohead_id, cohead_number, cohead_cust_id,"
               "    cohead_custponumber, cohead_shipto_id,"
@@ -915,6 +928,7 @@ bool salesOrder::save(bool partial)
               "    :billto_cntct_title,"
               "    :billto_cntct_fax,"
               "    :billto_cntct_email) ");
+  }
   else if ((_mode == cEditQuote) || ((_mode == cNewQuote) && _saved))
     q.prepare( "UPDATE quhead "
                "SET quhead_custponumber=:custponumber, quhead_shipto_id=:shipto_id,"
