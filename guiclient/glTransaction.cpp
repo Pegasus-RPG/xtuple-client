@@ -25,6 +25,17 @@ glTransaction::glTransaction(QWidget* parent, const char* name, bool modal, Qt::
     _buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Post"));
     connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sPost()));
 
+    // This should all be generated as part of the UI but it was the only
+    // way I could get the tab order to work exactly as it was supposed to.
+    QWidget::setTabOrder(_amount, _distDate);
+    QWidget::setTabOrder(_distDate, _docType);
+    QWidget::setTabOrder(_docType, _docNumber);
+    QWidget::setTabOrder(_docNumber, _debit);
+    QWidget::setTabOrder(_debit, _credit);
+    QWidget::setTabOrder(_credit, _notes);
+    QWidget::setTabOrder(_notes, _buttonBox->button(QDialogButtonBox::Ok));
+    QWidget::setTabOrder(_buttonBox->button(QDialogButtonBox::Ok), _buttonBox->button(QDialogButtonBox::Cancel));
+
     _amount->setFocus();
     _captive = FALSE;
 }

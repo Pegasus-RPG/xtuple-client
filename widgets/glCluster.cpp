@@ -247,6 +247,7 @@ GLCluster::GLCluster(QWidget *pParent, const char *pName) :
   _grid->addWidget(_project, 0, 3);
 
   setFocusProxy(_number);
+  setTabOrder(_number, _project);
   setOrientation(Qt::Horizontal);
 }
 

@@ -361,6 +361,7 @@ to be bound by its terms.</comment>
   <tabstop>_debit</tabstop>
   <tabstop>_credit</tabstop>
   <tabstop>_notes</tabstop>
+  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
