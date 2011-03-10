@@ -43,6 +43,24 @@ costCategory::costCategory(QWidget* parent, const char* name, bool modal, Qt::WF
   _toLiabilityClearingLit->setVisible(_metrics->boolean("MultiWhs"));
   _toLiabilityClearing->setVisible(_metrics->boolean("MultiWhs"));
 
+  // This should all be generated as part of the UI but it was the only
+  // way I could get the tab order to work exactly as it was supposed to.
+  QWidget::setTabOrder(_category, _description);
+  QWidget::setTabOrder(_description, _asset);
+  QWidget::setTabOrder(_asset, _expense);
+  QWidget::setTabOrder(_expense, _wip);
+  QWidget::setTabOrder(_wip, _inventoryCost);
+  QWidget::setTabOrder(_inventoryCost, _transformClearing);
+  QWidget::setTabOrder(_transformClearing, _purchasePrice);
+  QWidget::setTabOrder(_purchasePrice, _adjustment);
+  QWidget::setTabOrder(_adjustment, _invScrap);
+  QWidget::setTabOrder(_invScrap, _mfgScrap);
+  QWidget::setTabOrder(_mfgScrap, _liability);
+  QWidget::setTabOrder(_liability, _shippingAsset);
+  QWidget::setTabOrder(_shippingAsset, _freight);
+  QWidget::setTabOrder(_freight, _toLiabilityClearing);
+  QWidget::setTabOrder(_toLiabilityClearing, _buttonBox->button(QDialogButtonBox::Save));
+  QWidget::setTabOrder(_buttonBox->button(QDialogButtonBox::Save), _buttonBox->button(QDialogButtonBox::Cancel));
 }
 
 costCategory::~costCategory()
