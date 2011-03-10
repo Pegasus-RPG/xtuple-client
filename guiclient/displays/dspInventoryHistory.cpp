@@ -103,7 +103,6 @@ dspInventoryHistory::dspInventoryHistory(QWidget* parent, const char* name, Qt::
 
 enum SetResponse dspInventoryHistory::set(const ParameterList &pParams)
 {
-  qDebug("test!");
   XWidget::set(pParams);
 
   parameterWidget()->setSavedFilters();
@@ -180,17 +179,17 @@ enum SetResponse dspInventoryHistory::set(const ParameterList &pParams)
     QString transtype = param.toString();
 
     if (transtype == "R")
-      parameterWidget()->setDefault(tr("TransactionType"), 1);
+      parameterWidget()->setDefault(tr("Transaction Type"), 1);
     else if (transtype == "I")
-      parameterWidget()->setDefault(tr("TransactionType"), 2);
+      parameterWidget()->setDefault(tr("Transaction Type"), 2);
     else if (transtype == "S")
-      parameterWidget()->setDefault(tr("TransactionType"), 3);
+      parameterWidget()->setDefault(tr("Transaction Type"), 3);
     else if (transtype == "A")
-      parameterWidget()->setDefault(tr("TransactionType"), 4);
+      parameterWidget()->setDefault(tr("Transaction Type"), 4);
     else if (transtype == "T")
-      parameterWidget()->setDefault(tr("TransactionType"), 5);
+      parameterWidget()->setDefault(tr("Transaction Type"), 5);
     else if (transtype == "SC")
-      parameterWidget()->setDefault(tr("TransactionType"), 6);
+      parameterWidget()->setDefault(tr("Transaction Type"), 6);
   }
 
   parameterWidget()->applyDefaultFilterSet();
