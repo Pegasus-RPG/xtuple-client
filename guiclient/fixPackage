@@ -88,6 +88,7 @@ collectAndRenameLibs() {
 collectAndRenameLibs $APPROOT/Contents/MacOS/$EXECNAME              || exit 2
 
 for PLUGIN in sqldrivers/libqsqlpsql.dylib sqldrivers/libqsqlodbc.dylib \
+              sqldrivers/libqsqlite.dylib \
               imageformats/libqgif.dylib imageformats/libqjpeg.dylib    \
               imageformats/libqmng.dylib \
               designer/libxtuplewidgets.dylib \
@@ -114,18 +115,6 @@ for PDIR in sqldrivers imageformats ; do
   fi
 done
 cd $APPROOT
-
-cp -r $QTDIR/bin/Assistant_adp.app $APPROOT/Contents/Resources/Assistant_adp.app                || exit 3
-collectAndRenameLibs $APPROOT/Contents/Resources/Assistant_adp.app/Contents/MacOS/Assistant_adp || exit 3
-cd $APPROOT/Contents/Resources/Assistant_adp.app/Contents       || exit 3
-if [ ! -e Frameworks ] ; then
-  ln -s ../../../Frameworks .                                   || exit 3
-fi
-if [ ! -e imageformats ] ; then
-  ln -s ../../../plugins/imageformats        || exit 4
-fi
-echo "[Paths]" > qt.conf
-echo "Prefix = .." >> qt.conf
 
 while [ `otool -L $APPROOT/Contents/Frameworks/* | egrep "($QTDIR|$PGDIR)" | wc -l` -gt 0 ] ; do
   for LIB in $APPROOT/Contents/Frameworks/* ; do

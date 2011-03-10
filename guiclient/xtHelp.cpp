@@ -10,6 +10,8 @@
 
 #include <QCoreApplication>
 #include <QByteArray>
+#include <QDir>
+#include <QFile>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -20,12 +22,16 @@
 #include "xtHelp.h"
 
 #ifdef Q_OS_MAC
-#define QHC_PATH "/../Resources/XTupleGUIClient.qhc"
+#define QHC_PATH "../Resources/XTupleGUIClient.qhc"
 #else
-#define QHC_PATH "/XTupleGUIClient.qhc"
+#define QHC_PATH "XTupleGUIClient.qhc"
 #endif
 
-#define DEBUG FALSE
+// TODO: make this auto-configuring for version number
+#define WEBHOMEPAGE "http://www.xtuple.org/sites/default/files/refguide/RefGuide-3.6/index.html"
+#define QHCHOMEPAGE "qthelp://xtuple.org/postbooks/index.html"
+
+#define DEBUG false
 
 static xtHelp *xtHelpSingleton = 0;
 
@@ -37,39 +43,64 @@ xtHelp* xtHelp::getInstance(QWidget *parent)
 }
 
 xtHelp::xtHelp(QWidget *parent)
-  : QHelpEngine(QCoreApplication::instance()->applicationDirPath() + QString(QHC_PATH), parent),
-  //: QHelpEngine(loc, parent),
-  _online(false),
+  : QHelpEngine(QCoreApplication::instance()->applicationDirPath() +
+                QDir::separator() + QString(QHC_PATH), parent),
   _nam(new QNetworkAccessManager),
-  _rep(0)
+  _online(false)
 {
-  //connect the QNetworkAccessManager to the error slot
-  connect(_nam,         SIGNAL(finished(QNetworkReply *)),              this,           SLOT(sError(QNetworkReply *)));
+  connect(_nam, SIGNAL(finished(QNetworkReply *)), this, SLOT(sError(QNetworkReply *)));
 
-  //QHelpEngine will create the file if it is not there
-  //so we test to see if the contents is valid
   if(!setupData())
-    warning("Error setting up the help data");
-  _online = fileData(QUrl("qthelp://xtuple.org/postbooks/index.html")) == QByteArray("");
+    qWarning("Error setting up the help data");
+
+/* TODO: remove the #ifdef and the empty help file & its corresponding qhc
+         from xtuple/share once we fix the remote image loading bug in fileData
+*/
+#ifdef XTHELPONLINE
+  _online = fileData(QUrl(QHCHOMEPAGE)) == QByteArray("");
+#endif // XTHELPONLINE
+
+  if (DEBUG)
+    qDebug() << "xtHelp collection file" << collectionFile()
+             << "exists?"   << QFile::exists(collectionFile())
+             << "online?"   << _online;
 }
 
 xtHelp::~xtHelp()
 {
 } 
 
-bool xtHelp::isOnline()
+QUrl xtHelp::homePage() const
+{
+  if (_online)
+    return QUrl(WEBHOMEPAGE);
+  else
+    return QUrl(QHCHOMEPAGE);
+}
+
+bool xtHelp::isOnline() const
 {
   return _online;
 }
 
-QByteArray xtHelp::urlData(const QUrl &url)
+QByteArray xtHelp::fileData(const QUrl &url) const
 {
-  if (DEBUG) qDebug() << "urlData: request url [" << url.toString() << "]";
-  _req.setUrl(url);
-  _rep = _nam->get(_req);
-  while(!_rep->isFinished())
-    QCoreApplication::instance()->processEvents();
-  return _rep->readAll();
+  QByteArray returnVal;
+  if (isOnline() || url.scheme() == "http")
+  {
+    QNetworkRequest req(url);
+    QNetworkReply  *rep = _nam->get(req);
+    while(! rep->isFinished())
+      QCoreApplication::instance()->processEvents();
+    returnVal = rep->readAll();
+  }
+  else
+    returnVal = QHelpEngine::fileData(url);
+
+  if (DEBUG)
+    qDebug() << "xtHelp::fileData(" << url << " [ online?" << isOnline()
+             << "]) returning" << returnVal.size() << "bytes:" << returnVal;
+  return returnVal;
 }
 
 void xtHelp::sError(QNetworkReply *rep)

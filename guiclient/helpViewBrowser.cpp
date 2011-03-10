@@ -16,12 +16,12 @@
 #include "helpViewBrowser.h"
 #include "xtHelp.h"
 
-#define DEBUG FALSE
+#define DEBUG false
 
 helpViewBrowser::helpViewBrowser(QWidget *parent)
   : QTextBrowser(parent)
 {
-  setSource(QUrl("http://www.xtuple.org/sites/default/files/refguide/RefGuide-3.6/index.html"));
+  setSource(xtHelp::getInstance()->homePage());
 }
 
 QVariant helpViewBrowser::loadResource(int type, const QUrl &name)
@@ -34,21 +34,10 @@ QVariant helpViewBrowser::loadResource(int type, const QUrl &name)
     if(name.isRelative())
     {
       url = source().resolved(url);
-      if (DEBUG) qDebug() << "url was relative [" << url.toString() << "]";
+      if (DEBUG)
+        qDebug() << "url was relative [" << url << "]";
     }
-#ifdef XTHELPONLINE
-    if(xtHelp::getInstance()->isOnline())
-    {
-      if (DEBUG) qDebug() << "url for online request [" << url.toString() << "]";
-      data = xtHelp::getInstance()->urlData(url);
-      if (DEBUG) qDebug() << "data returned from online source with size [" << data.size() << "] for url [" << url.toString() << "]";
-    }
-    else
-#endif // XTHELPONLINE
-    {
-      data = xtHelp::getInstance()->fileData(url);
-      if (DEBUG) qDebug() << "data returned from local source with size [" << data.size() << "]";
-    }
+    data = xtHelp::getInstance()->fileData(url);
   }
   return data;
 }

@@ -22,20 +22,19 @@ class xtHelp : public QHelpEngine
 {
   Q_OBJECT
   public:
-    static xtHelp               *getInstance(QWidget *parent = 0);
-    QByteArray                  urlData(const QUrl&);
+    Q_INVOKABLE static xtHelp *getInstance(QWidget *parent = 0);
     ~xtHelp();
 
-    bool                        isOnline();              
+    Q_INVOKABLE QByteArray     fileData(const QUrl &url) const;
+    Q_INVOKABLE QUrl           homePage() const;
+    Q_INVOKABLE bool           isOnline() const;
 
   public slots:
     void                        sError(QNetworkReply *);
 
   protected:
+    QNetworkAccessManager      *_nam;
     bool                        _online;
-    QNetworkAccessManager       *_nam;
-    QNetworkReply               *_rep;
-    QNetworkRequest             _req;
 
   private:
     xtHelp(QWidget *parent = 0);
