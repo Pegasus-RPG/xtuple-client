@@ -1189,7 +1189,7 @@ void ParameterWidget::changeFilterObject(int index)
       QLineEdit *lineEdit = new QLineEdit(_filterGroup);
       newWidget = lineEdit;
 
-      connect(lineEdit, SIGNAL(editingFinished()), this, SLOT( storeFilterValue() ) );
+      connect(lineEdit, SIGNAL(textChanged(QString)), this, SLOT( storeFilterValue() ) );
     }
     break;
   }
