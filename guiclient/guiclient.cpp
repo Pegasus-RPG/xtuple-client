@@ -754,6 +754,17 @@ void GUIClient::initMenuBar()
 void GUIClient::saveToolbarPositions()
 {
   xtsettingsSetValue("MainWindowState", saveState(1));
+
+  // Set preferences base on visibility of toolbars
+  _preferences->set("ShowPDToolbar", findChild<QToolBar*>("Products Tools")->isVisible());
+  _preferences->set("ShowIMToolbar", findChild<QToolBar*>("Inventory Tools")->isVisible());
+  if(_metrics->value("Application") != "PostBooks")
+    _preferences->set("ShowMSToolbar", findChild<QToolBar*>("Schedule Tools")->isVisible());
+  _preferences->set("ShowPOToolbar", findChild<QToolBar*>("Purchase Tools")->isVisible());
+  _preferences->set("ShowWOToolbar", findChild<QToolBar*>("Manufacture Tools")->isVisible());
+  _preferences->set("ShowCRMToolbar", findChild<QToolBar*>("CRM Tools")->isVisible());
+  _preferences->set("ShowSOToolbar", findChild<QToolBar*>("Sales Tools")->isVisible());
+  _preferences->set("ShowGLToolbar", findChild<QToolBar*>("Accounting Tools")->isVisible());
 }
 
 void GUIClient::closeEvent(QCloseEvent *event)
