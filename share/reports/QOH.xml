@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
  <title>Quantities on Hand by Parameter List</title>
- <name>QOH</name>
+ <name>QOHByParameterList</name>
  <description></description>
  <grid>
   <snap/>
@@ -144,6 +144,9 @@ FROM ( SELECT itemsite_id, itemsite_costmethod,
           AND (itemsite_warehous_id=warehous_id)
           AND (itemsite_costcat_id=costcat_id)
           AND (itemsite_active)
+&lt;? if exists("item_id") ?>
+          AND (item_id=&lt;? value("item_id") ?>)
+&lt;? endif ?>
 &lt;? if exists("classcode_id") ?>
           AND (item_classcode_id=&lt;? value("classcode_id") ?>)
 &lt;? endif ?>
