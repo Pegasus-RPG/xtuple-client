@@ -276,7 +276,7 @@ void printPackingList::sPopulate()
 		    "<? elseif exists(\"tohead_id\") ?>"
 		    "SELECT tohead_number AS order_number,"
 		    "       tohead_orderdate AS orderdate,"
-		    "       <? value(\"to\") ?> AS alternate_number,"
+                    "       '' AS alternate_number,"
 		    "       tohead_destname AS name, tohead_destphone AS phone "
 		    "FROM tohead "
 		    "WHERE (tohead_id=<? value(\"tohead_id\") ?>);"
