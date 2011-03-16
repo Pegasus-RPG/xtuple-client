@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QDebug>
 
 #include <parameter.h>
 
@@ -440,26 +441,22 @@ void address::sViewShipto()
 
 void address::sEditVendor()
 {
-  /* comment out until vendor becomes a XDialog or address a XMainWindow
   ParameterList params;
-  vendor newdlg(this, "", TRUE);
-  params.append("mode", "view");
+  vendor * newdlg = new vendor(this);
+  params.append("mode", "edit");
   params.append("vend_id", _uses->id());
-  newdlg.set(params);
-  newdlg.exec();
-  */
+  newdlg->set(params);
+  newdlg->show();
 }
 
 void address::sViewVendor()
 {
-  /* comment out until vendor becomes a XDialog or address a XMainWindow
   ParameterList params;
-  vendor newdlg(this, "", TRUE);
+  vendor * newdlg = new vendor(this);
   params.append("mode", "view");
   params.append("vend_id", _uses->id());
-  newdlg.set(params);
-  newdlg.exec();
-  */
+  newdlg->set(params);
+  newdlg->show();
 }
 
 void address::sEditVendorAddress()
