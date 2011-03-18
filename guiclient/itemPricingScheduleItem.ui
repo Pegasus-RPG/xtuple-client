@@ -759,11 +759,11 @@ to be bound by its terms.</comment>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="_fixedAmtDiscountLit">
-            <property name="layoutDirection">
-             <enum>Qt::RightToLeft</enum>
-            </property>
             <property name="text">
              <string>Discount By Fixed Amount:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
