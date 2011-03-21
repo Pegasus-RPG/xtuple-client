@@ -71,7 +71,7 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
 
   if (_privileges->check("MaintainPayments"))
   {
-    _payables = new selectPayments(this, "selectPayments", Qt::Widget);
+    _payables = new selectPayments(this, "selectPayments", Qt::Widget, false);
     _payablesTab->layout()->addWidget(_payables);
     hideme = _payables->findChild<QWidget*>("_close");
     hideme->hide();
