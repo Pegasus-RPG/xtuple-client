@@ -437,6 +437,9 @@ void accountList::sFillList()
     where << "(NOT COALESCE(company_external, false)) ";
 
   where << "accnt_active ";
+  where << "(company_yearend_accnt_id <> -1)";
+  where << "(company_gainloss_accnt_id <> -1)";
+  where << "(company_dscrp_accnt_id <> -1)";
 
   if (!where.isEmpty())
     sql += " WHERE " + where.join(" AND ");
