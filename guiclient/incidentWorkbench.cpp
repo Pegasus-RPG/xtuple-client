@@ -25,7 +25,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   setReportName("IncidentWorkbenchList");
   setMetaSQLOptions("incidents", "detail");
   setParameterWidgetVisible(true);
-  setNewVisible(true);
+  setNewVisible(_privileges->check("MaintainIncidents"));
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
   setAutoUpdateEnabled(true);
@@ -73,7 +73,10 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   if(_metrics->boolean("IncidentsPublicPrivate"))
     parameterWidget()->append(tr("Public"), "public", ParameterWidget::CheckBox);
 
-  connect(list(),       SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+  if (_privileges->check("MaintainIncidents"))
+    connect(list(),       SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+  else
+    connect(list(),       SIGNAL(itemSelected(int)), this, SLOT(sView()));
 
   list()->addColumn(tr("Number"),      _orderColumn,Qt::AlignLeft, true, "incdt_number" );
   list()->addColumn(tr("Created"),     _dateColumn, Qt::AlignLeft, true, "incdt_timestamp" );
@@ -163,8 +166,11 @@ bool incidentWorkbench::setParams(ParameterList & params)
 
 void incidentWorkbench::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
-  pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
-  pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  QAction *menuItem;
+
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
 }
 
 
