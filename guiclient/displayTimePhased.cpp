@@ -12,6 +12,7 @@
 #include "ui_displayTimePhased.h"
 
 #include <QSqlError>
+#include <QMessageBox>
 
 #include <parameter.h>
 
@@ -61,6 +62,14 @@ QWidget * displayTimePhased::optionsWidget()
 
 bool displayTimePhased::setParams(ParameterList &params)
 {
+  if (_data->_calendar->id() == -1)
+  {
+    QMessageBox::critical(this, tr("Calendar Required"),
+                          tr("You must select a Calendar"));
+    _data->_calendar->setFocus();
+    return false;
+  }
+
   params.append("period_id_list", _data->_periods->periodList());
   params.append("calendar_id", _data->_calendar->id());
 
