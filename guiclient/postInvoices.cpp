@@ -17,20 +17,12 @@
 #include "distributeInventory.h"
 #include <openreports.h>
 
-#include "submitAction.h"
-
 postInvoices::postInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-// Disable and hide Submit button due to inventory distributions
-//  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-  _submit->hide();
-
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
@@ -178,18 +170,3 @@ void postInvoices::sPost()
 
   accept();
 }
-
-void postInvoices::sSubmit()
-{
-  ParameterList params;
-  params.append("action_name", "PostInvoices");
-  params.append("postUnprinted",     _postUnprinted->isChecked());
-  params.append("printSalesJournal", _printJournal->isChecked());
-
-  submitAction newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() == XDialog::Accepted)
-    accept();
-}
-
