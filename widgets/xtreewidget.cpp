@@ -72,8 +72,8 @@
 // make sure COLROLE_COUNT = last COLROLE + 1
 #define COLROLE_COUNT         15
 
-static QString  yesStr = QObject::tr("Yes");
-static QString  noStr  = QObject::tr("No");
+#define yesStr QObject::tr("Yes")
+#define noStr  QObject::tr("No")
 
 GuiClientInterface *XTreeWidget::_guiClientInterface = 0;
 
