@@ -842,6 +842,14 @@ void salesOrderItem::sSave()
     return;
   }
 
+  if ( (_sub->isChecked()) && (!_subItem->isValid()) )
+  {
+    QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
+                          tr("<p>You must enter a Substitute Item before saving this Sales Order Item.") );
+    _subItem->setFocus();
+    return;
+  }
+
   if (_metrics->boolean("AllowASAPShipSchedules") && !_scheduledDate->isValid())
     _scheduledDate->setDate(QDate::currentDate());
   if (!(_scheduledDate->isValid()))
