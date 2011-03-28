@@ -13,7 +13,7 @@
     </message>
     <message>
         <source>&lt;p&gt;It appears you do not have an xTuple translation file installed on your system. Please use the following link to find a translation file for your language and learn more about how to install translation files in xTuple ERP:&lt;p&gt;%1&lt;p&gt;</source>
-        <translation>&lt;p&gt;Sisteminizde yüklü bir xTuple çeviri dosyası yok görünüyor. Diliniz için bir çeviri dosyası bulmak ve xTuple ERP çeviri dosyalarını yükleme hakkında daha fazla bilgi edinmek lütfen aşağıdaki linki kullanın:&lt;p&gt;%1&lt;p&gt;</translation>
+        <translation>&lt;p&gt;Sisteminizde yüklü bir xTuple çeviri dosyası yok görünüyor. Diliniz için bir çeviri dosyası bulmak ve xTuple ERP çeviri dosyalarını yükleme hakkında daha fazla bilgi edinmek için lütfen aşağıdaki linki kullanın:&lt;p&gt;%1&lt;p&gt;</translation>
     </message>
 </context>
 <context>
