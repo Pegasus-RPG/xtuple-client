@@ -651,7 +651,7 @@ bool salesOrder::save(bool partial)
   if (_salesRep->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must select a Sales Rep. for this Sales Order before you may save it.") );
+                              tr("You must select a Sales Rep. for this order before you may save it.") );
     _salesRep->setFocus();
     return FALSE;
   }
@@ -659,7 +659,7 @@ bool salesOrder::save(bool partial)
   if (_terms->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must select the Terms for this Sales Order before you may save it.") );
+                              tr("You must select the Terms for this order before you may save it.") );
     _terms->setFocus();
     return FALSE;
   }
@@ -667,7 +667,7 @@ bool salesOrder::save(bool partial)
   if ( (_shipTo->id() == -1) && (!_shipToAddr->isEnabled()) )
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must select a Ship-To for this Sales Order before you may save it.") );
+                              tr("You must select a Ship-To for this order before you may save it.") );
     _shipTo->setFocus();
     return FALSE;
   }
@@ -758,7 +758,7 @@ bool salesOrder::save(bool partial)
   {
     QMessageBox::warning( this, tr("Create Line Items for this Order"),
                           tr("<p>You must create at least one Line Item for "
-                               "this Sales Order before you may save it."));
+                               "this order before you may save it."));
     _new->setFocus();
     return FALSE;
   }
@@ -766,8 +766,8 @@ bool salesOrder::save(bool partial)
   if (_orderNumber->text().toInt() == 0)
   {
     QMessageBox::warning( this, tr("Invalid S/O # Entered"),
-                          tr( "<p>You must enter a valid S/O # for this Sales"
-                                "Order before you may save it." ) );
+                          tr( "<p>You must enter a valid Number for this "
+                                "order before you may save it." ) );
     _orderNumber->setFocus();
   }
 
