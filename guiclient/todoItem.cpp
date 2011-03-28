@@ -251,6 +251,20 @@ void todoItem::sSave()
       return;
     }
   }
+  else
+  {
+    XSqlQuery recurq;
+    recurq.prepare("UPDATE todoitem"
+                   "   SET todoitem_recurring_todoitem_id=NULL"
+                   " WHERE todoitem_id=:id;");
+    recurq.bindValue(":id",        _todoitemid);
+    if (! recurq.exec())
+    {
+      rollbackq.exec();
+      systemError(this, recurq.lastError().text(), __FILE__, __LINE__);
+      return;
+    }
+  }
 
   QString errmsg;
   if (! _recurring->save(true, cp, &errmsg))
