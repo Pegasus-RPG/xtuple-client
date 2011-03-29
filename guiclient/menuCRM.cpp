@@ -291,7 +291,7 @@ void menuCRM::sIncident()
   params.append("mode", "new");
   incident* newdlg = new incident();
   newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  newdlg->exec();
 }
 
 void menuCRM::sTodoList()
