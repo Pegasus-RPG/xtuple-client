@@ -1028,6 +1028,27 @@ const struct {
   { "postCheck",  -13, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot post this Check because the G/L Account "
 			 "against which it is to be posted is not valid."),
 			 						0, "" },
+  { "postCountTag",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup",
+                           "Cannot post this Count Tag because The total Count "
+                           "Slip quantity is greater than the Count Tag "
+                           "quantity."),                                0, "" },
+  { "postCountTag",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup",
+                           "Cannot post this Count Tag because the total Count "
+                           "Slip quantity is less than the Count Tag quantity "
+                           "for a Lot/Serial-controlled Item Site."),   0, "" },
+  { "postCountTag",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup",
+                           "Cannot post this Count Tag because the total Count "
+                           "Slip quantity is less than the Count Tag quantity "
+                           "and there is no default location."),        0, "" },
+  { "postCountTag",  -4, QT_TRANSLATE_NOOP("storedProcErrorLookup",
+                           "Cannot post this Count Tag because the total Count "
+                           "Slip quantity is less than the Count Tag quantity "
+                           "and we don't post to default locations."),  0, "" },
+
+  { "postCountTagLocation", -1, "", -1, "postCountTag" },
+  { "postCountTagLocation", -2, "", -2, "postCountTag" },
+  { "postCountTagLocation", -3, "", -3, "postCountTag" },
+  { "postCountTagLocation", -4, "", -4, "postCountTag" },
 
   { "postCreditMemo",	-10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Credit Memo cannot be posted because it "
 			       "has already been posted."),	 0, "" },
