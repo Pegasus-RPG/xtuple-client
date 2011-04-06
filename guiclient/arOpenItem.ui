@@ -1035,5 +1035,21 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_useAltPrepaid</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_altSalescatid</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>70</x>
+     <y>486</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>78</x>
+     <y>513</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>
