@@ -92,6 +92,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     double  _availabilityQtyOrdered;
     bool    _invIsFractional;
     bool    _updateItemsite;
+    bool    _updatePrice;
     double  _orderQtyCache;
     double  _cachedPct;
     double  _cachedRate;

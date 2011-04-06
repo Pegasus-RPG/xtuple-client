@@ -89,6 +89,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _error                 = false;
   _originalQtyOrd        = 0.0;
   _updateItemsite        = false;
+  _updatePrice           = true;
   _qtyinvuomratio        = 1.0;
   _priceinvuomratio      = 1.0;
   _priceRatio            = 1.0;
@@ -1644,7 +1645,6 @@ void salesOrderItem::sDeterminePrice(bool force)
     return;
 
   double  charTotal  =0;
-  bool    update     =true;
   bool    qtyChanged =(_orderQtyCache != _qtyOrdered->toDouble());
   QDate   asOf;
 
@@ -1663,7 +1663,7 @@ void salesOrderItem::sDeterminePrice(bool force)
            _metrics->boolean("IgnoreCustDisc") || (
              _metrics->value("UpdatePriceLineEdit").toInt() == iDontUpdate &&
              !force) ) )
-      update = false;
+      _updatePrice = false;
     else if ( _metrics->value("UpdatePriceLineEdit").toInt() != iJustUpdate)
     {
       QString token(tr("Scheduled Date"));
@@ -1672,7 +1672,7 @@ void salesOrderItem::sDeterminePrice(bool force)
       if (QMessageBox::question(this, tr("Update Price?"),
                                 tr("<p>The %1 has changed. Do you want to update the Price?").arg(token),
                                 QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
-        update = false;
+        _updatePrice = false;
     }
   }
   // Go get the new price information
@@ -1742,7 +1742,7 @@ void salesOrderItem::sDeterminePrice(bool force)
   {
     if (itemprice.value("price").toDouble() == -9999.0)
     {
-      if (!update)
+      if (!_updatePrice)
         return;
 
       // User expected an update, so let them know and reset
@@ -1775,7 +1775,7 @@ void salesOrderItem::sDeterminePrice(bool force)
 
       _baseUnitPrice->setLocalValue(price);
       _customerPrice->setLocalValue(price + charTotal);
-      if (update) // Configuration or user said they also want net unit price updated
+      if (_updatePrice) // Configuration or user said they also want net unit price updated
         _netUnitPrice->setLocalValue(price + charTotal);
 
       sCalculateDiscountPrcnt();
@@ -2632,8 +2632,9 @@ void salesOrderItem::sCalculateFromDiscount()
     _discountFromCust->setText(tr("N/A"));
   else
   {
-    _netUnitPrice->setLocalValue(_customerPrice->localValue() -
-                                 (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
+    if (_updatePrice)
+      _netUnitPrice->setLocalValue(_customerPrice->localValue() -
+                                  (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
     sCalculateDiscountPrcnt();
   }
 }
