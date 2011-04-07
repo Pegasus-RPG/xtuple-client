@@ -238,13 +238,10 @@ ORDER BY aropen_docnumber;</sql>
  </querysource>
  <querysource>
   <name>currency</name>
-  <sql>SELECT&#xd;
-curr_symbol&#xd;
-FROM&#xd;
-   invchead,&#xd;
-   curr_symbol&#xd;
-WHERE (invchead_id = &lt;? value("invchead_id") ?>) AND&#xd;
-     invchead_curr_id = curr_id;</sql>
+  <sql>SELECT currConcat(curr_id) AS currConcat
+FROM invchead, curr_symbol
+WHERE (invchead_id = &lt;? value("invchead_id") ?>)
+ AND  (invchead_curr_id = curr_id);</sql>
  </querysource>
  <querysource>
   <name>logo</name>
@@ -1013,7 +1010,7 @@ order by cosmisc_shipdate;</sql>
     <rect>
      <x>490</x>
      <y>10</y>
-     <width>31</width>
+     <width>71</width>
      <height>20</height>
     </rect>
     <font>
@@ -1021,11 +1018,11 @@ order by cosmisc_shipdate;</sql>
      <size>10</size>
      <weight>normal</weight>
     </font>
-    <right/>
+    <left/>
     <vcenter/>
     <data>
      <query>currency</query>
-     <column>curr_symbol</column>
+     <column>currConcat</column>
     </data>
    </field>
    <line>
