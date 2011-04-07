@@ -442,7 +442,7 @@ void display::showEvent(QShowEvent * e)
 
   if (_data->_queryOnStartEnabled &&
       _data->_queryonstart->isChecked())
-    sFillList();
+    emit fillList();
 }
 
 QWidget * display::optionsWidget()
