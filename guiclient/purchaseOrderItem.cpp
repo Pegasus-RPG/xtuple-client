@@ -788,6 +788,10 @@ void purchaseOrderItem::sSave()
     q.bindValue(":parentso", _parentso);
     q.bindValue(":poitem_id", _poitemid);
     q.exec();
+    q.prepare("UPDATE coitem SET coitem_order_id=:poitem_id, coitem_order_type='P' WHERE (coitem_id=:parentso);");
+    q.bindValue(":parentso", _parentso);
+    q.bindValue(":poitem_id", _poitemid);
+    q.exec();
   }
 
   if ( _mode != cView )
