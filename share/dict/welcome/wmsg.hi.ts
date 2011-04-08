@@ -20,11 +20,11 @@
     <name>QDialogButtonBox</name>
     <message>
         <source>OK</source>
-        <translation>बराबर / ओके</translation>
+        <translation>बराबर</translation>
     </message>
     <message>
         <source>&amp;OK</source>
-        <translation>बराबर / ओके</translation>
+        <translation>बराबर</translation>
     </message>
 </context>
 </TS>
