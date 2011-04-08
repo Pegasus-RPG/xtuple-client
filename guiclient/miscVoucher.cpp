@@ -32,6 +32,7 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditMiscDistribution()));
   connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDistDate()));
   connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDueDate()));
+  connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNewMiscDistribution()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_voucherNumber, SIGNAL(lostFocus()), this, SLOT(sHandleVoucherNumber()));
@@ -555,7 +556,7 @@ void miscVoucher::sPopulateDistDate()
 
 void miscVoucher::sPopulateDueDate()
 {
-  if ( _invoiceDate->isValid() && (!_dueDate->isValid()) )
+  if ( _invoiceDate->isValid() && _terms->isValid() && (!_dueDate->isValid()) )
   {
     q.prepare("SELECT determineDueDate(:terms_id, :invoiceDate) AS duedate;");
     q.bindValue(":terms_id", _terms->id());
