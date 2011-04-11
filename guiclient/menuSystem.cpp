@@ -571,6 +571,18 @@ void menuSystem::sExportData()
 
 void menuSystem::sCSVAtlases()
 {
+
+#ifdef Q_WS_MAC
+  if (_preferences->value("InterfaceWindowOption") == "Workspace")
+  {
+    QMessageBox::critical( parent, tr("Interface Option is Invalid"),
+                          tr("<p>The Maintain CSV Atlases utility "
+                             "is only available when user preferences "
+                             "are set to show windows as free-floating.") );
+    return;
+  }
+#endif
+
   omfgThis->handleNewWindow(ImportHelper::getCSVImpPlugin(parent)->getCSVToolWindow(omfgThis, 0));
   omfgThis->handleNewWindow(ImportHelper::getCSVImpPlugin(parent)->getCSVAtlasWindow(omfgThis, 0));
 }
