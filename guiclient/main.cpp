@@ -348,12 +348,12 @@ int main(int argc, char *argv[])
       if(pkey.expiration() < QDate::currentDate())
       {
         checkPass = false;
-        checkPassReason = QObject::tr("Your license has expired.");
+        checkPassReason = QObject::tr("<p>Your license has expired.");
       }
       else if(pkey.users() != 0 && (pkey.users() < cnt || pkey.users() * 2 < tot))
       {
         checkPass = false;
-        checkPassReason = QObject::tr("You have exceeded the number of allowed concurrent users for your license.");
+        checkPassReason = QObject::tr("<p>You have exceeded the number of allowed concurrent users for your license.");
       }
     }
     else
