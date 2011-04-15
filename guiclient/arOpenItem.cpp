@@ -353,7 +353,7 @@ void arOpenItem::sSave()
 	return;
       }
       if(_printOnPost->isChecked())
-        sPrintOnPost(_aropenid); 
+        sPrintOnPost(_last);
       reset();
     }
   }
