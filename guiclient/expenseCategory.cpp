@@ -143,36 +143,39 @@ void expenseCategory::sSave()
     }
   }
 
-  if (!_expense->isValid())
+  if (_metrics->boolean("InterfaceToGL"))
   {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                          tr("You must select a Expense Account Number for this Expense Category before you may save it.") );
-    _expense->setFocus();
-    return;
-  }
+    if (!_expense->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Expense Category"),
+                            tr("You must select a Expense Account Number for this Expense Category before you may save it.") );
+      _expense->setFocus();
+      return;
+    }
 
-  if (!_purchasePrice->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                          tr("You must select a Purchase Price Variance Account Number for this Expense Category before you may save it.") );
-    _purchasePrice->setFocus();
-    return;
-  }
+    if (!_purchasePrice->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Expense Category"),
+                            tr("You must select a Purchase Price Variance Account Number for this Expense Category before you may save it.") );
+      _purchasePrice->setFocus();
+      return;
+    }
 
-  if (!_liability->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                          tr("You must select a P/O Liability Clearing Account Number for this Expense Category before you may save it.") );
-    _expense->setFocus();
-    return;
-  }
+    if (!_liability->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Expense Category"),
+                            tr("You must select a P/O Liability Clearing Account Number for this Expense Category before you may save it.") );
+      _expense->setFocus();
+      return;
+    }
 
-  if (!_freight->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                          tr("You must select a Freight Receiving Account Number for this Expense Category before you may save it.") );
-    _freight->setFocus();
-    return;
+    if (!_freight->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Expense Category"),
+                            tr("You must select a Freight Receiving Account Number for this Expense Category before you may save it.") );
+      _freight->setFocus();
+      return;
+    }
   }
 
   if ( (_mode == cNew) || (_mode == cCopy) )

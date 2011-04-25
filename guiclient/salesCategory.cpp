@@ -138,28 +138,31 @@ void salesCategory::sSave()
     return;
   }
 
-  if (!_sales->isValid())
+  if (_metrics->boolean("InterfaceToGL"))
   {
-    QMessageBox::warning( this, tr("Cannot Save Sales Category"),
-                          tr("You must select a Sales Account Number for this Sales Category before you may save it.") );
-    _sales->setFocus();
-    return;
-  }
+    if (!_sales->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Sales Category"),
+                            tr("You must select a Sales Account Number for this Sales Category before you may save it.") );
+      _sales->setFocus();
+      return;
+    }
 
-  if (!_prepaid->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Category"),
-                          tr("You must select a Prepaid Account Number for this Sales Category before you may save it.") );
-    _prepaid->setFocus();
-    return;
-  }
+    if (!_prepaid->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Sales Category"),
+                            tr("You must select a Prepaid Account Number for this Sales Category before you may save it.") );
+      _prepaid->setFocus();
+      return;
+    }
 
-  if (!_araccnt->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Category"),
-                          tr("You must select an A/R Account Number for this Sales Category before you may save it.") );
-    _araccnt->setFocus();
-    return;
+    if (!_araccnt->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save Sales Category"),
+                            tr("You must select an A/R Account Number for this Sales Category before you may save it.") );
+      _araccnt->setFocus();
+      return;
+    }
   }
 
   if ( (_mode == cNew) || (_mode == cCopy) )

@@ -87,28 +87,31 @@ enum SetResponse apAccountAssignment::set(const ParameterList &pParams)
 
 void apAccountAssignment::sSave()
 {
-  if (!_ap->isValid())
+  if (_metrics->boolean("InterfaceToGL"))
   {
-    QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
-                          tr("You must select an A/P Account before saving this A/P Account Assignment") );
-    _ap->setFocus();
-    return;
-  }
+    if (!_ap->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
+                            tr("You must select an A/P Account before saving this A/P Account Assignment") );
+      _ap->setFocus();
+      return;
+    }
 
-  if (!_prepaid->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
-                          tr("You must select a Prepaid Account before saving this A/P Account Assignment") );
-    _prepaid->setFocus();
-    return;
-  }
+    if (!_prepaid->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
+                            tr("You must select a Prepaid Account before saving this A/P Account Assignment") );
+      _prepaid->setFocus();
+      return;
+    }
 
-  if (!_discount->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
-                          tr("You must select a Discount Account before saving this A/P Account Assignment") );
-    _discount->setFocus();
-    return;
+    if (!_discount->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
+                            tr("You must select a Discount Account before saving this A/P Account Assignment") );
+      _discount->setFocus();
+      return;
+    }
   }
 
   if (_mode == cNew)

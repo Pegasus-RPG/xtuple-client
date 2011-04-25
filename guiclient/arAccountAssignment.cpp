@@ -98,44 +98,47 @@ enum SetResponse arAccountAssignment::set(const ParameterList &pParams)
 
 void arAccountAssignment::sSave()
 {
-  if (!_ar->isValid())
+  if (_metrics->boolean("InterfaceToGL"))
   {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a A/R Account before saving this A/R Account Assignment") );
-    _ar->setFocus();
-    return;
-  }
+    if (!_ar->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
+                            tr("You must select a A/R Account before saving this A/R Account Assignment") );
+      _ar->setFocus();
+      return;
+    }
 
-  if (!_prepaid->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a Prepaid Receivables Account before saving this A/R Account Assignment") );
-    _ar->setFocus();
-    return;
-  }
+    if (!_prepaid->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
+                            tr("You must select a Prepaid Receivables Account before saving this A/R Account Assignment") );
+      _ar->setFocus();
+      return;
+    }
 
-  if (!_freight->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a Freight Account before saving this A/R Account Assignment") );
-    _freight->setFocus();
-    return;
-  }
+    if (!_freight->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
+                            tr("You must select a Freight Account before saving this A/R Account Assignment") );
+      _freight->setFocus();
+      return;
+    }
 
-  if(_metrics->boolean("EnableCustomerDeposits") && !_deferred->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a Deferred Revenue Account before saving this A/R Account Assignment") );
-    _deferred->setFocus();
-    return;
-  }
+    if(_metrics->boolean("EnableCustomerDeposits") && !_deferred->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
+                            tr("You must select a Deferred Revenue Account before saving this A/R Account Assignment") );
+      _deferred->setFocus();
+      return;
+    }
 
-  if (!_discount->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a Discount Account before saving this A/R Account Assignment") );
-    _discount->setFocus();
-    return;
+    if (!_discount->isValid())
+    {
+      QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
+                            tr("You must select a Discount Account before saving this A/R Account Assignment") );
+      _discount->setFocus();
+      return;
+    }
   }
 
   q.prepare("SELECT araccnt_id"
