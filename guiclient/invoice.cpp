@@ -77,6 +77,8 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _freightCache = 0;
   _posted = false;
 
+  _cust->setType(CLineEdit::ActiveCustomers);
+
   _shipTo->setNameVisible(false);
   _shipTo->setDescriptionVisible(false);
 
