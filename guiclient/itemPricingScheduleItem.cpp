@@ -10,6 +10,7 @@
 
 #include "itemPricingScheduleItem.h"
 #include "characteristicPrice.h"
+#include "xdoublevalidator.h"
 
 #include <QMessageBox>
 #include <QSqlError>
@@ -59,7 +60,8 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _qtyBreak->setValidator(omfgThis->qtyVal());
   _qtyBreakCat->setValidator(omfgThis->qtyVal());
   _qtyBreakFreight->setValidator(omfgThis->qtyVal());
-  _discount->setValidator(omfgThis->percentVal());
+  _discount->setValidator(new XDoubleValidator(-999, 999, decimalPlaces("percent"), this));
+  _fixedAmtDiscount->setValidator(omfgThis->negMoneyVal());
   _pricingRatio->setPrecision(omfgThis->percentVal());
   _stdMargin->setPrecision(omfgThis->percentVal());
   _actMargin->setPrecision(omfgThis->percentVal());
@@ -536,7 +538,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
     q.bindValue(":ipsitem_item_id", _dscitem->id());
     q.bindValue(":ipsitem_qtybreak", _qtyBreakCat->toDouble());
     q.bindValue(":ipsitem_discntprcnt", (_discount->toDouble() / 100.0));
-    q.bindValue(":ipsitem_fixedamtdiscount", (_fixedAmtDiscount->localValue()));
+    q.bindValue(":ipsitem_fixedamtdiscount", (_fixedAmtDiscount->toDouble()));
     q.bindValue(":ipsitem_price", 0.00);
   }
 
@@ -544,7 +546,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
   q.bindValue(":ipsprodcat_qtybreak", _qtyBreakCat->toDouble());
   q.bindValue(":ipsfreight_qtybreak", _qtyBreakFreight->toDouble());
   q.bindValue(":ipsprodcat_discntprcnt", (_discount->toDouble() / 100.0));
-  q.bindValue(":ipsprodcat_fixedamtdiscount", (_fixedAmtDiscount->localValue()));
+  q.bindValue(":ipsprodcat_fixedamtdiscount", (_fixedAmtDiscount->toDouble()));
   q.bindValue(":ipsfreight_price", _priceFreight->localValue());
   q.bindValue(":qty_uom_id", _qtyUOM->id());
   q.bindValue(":price_uom_id", _priceUOM->id());
@@ -666,7 +668,7 @@ void itemPricingScheduleItem::populate()
 
       _qtyBreakCat->setDouble(q.value("qty_brk").toDouble());
       _discount->setDouble(q.value("discntprcnt").toDouble());
-      _fixedAmtDiscount->setLocalValue(q.value("fxd_amnt").toDouble());
+      _fixedAmtDiscount->setDouble(q.value("fxd_amnt").toDouble());
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
