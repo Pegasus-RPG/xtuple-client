@@ -89,7 +89,7 @@ to be bound by its terms.</comment>
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="_nominalPage">
       <layout class="QGridLayout">
@@ -1005,7 +1005,11 @@ to be bound by its terms.</comment>
                 <item row="1" column="1">
                  <layout class="QHBoxLayout">
                   <item>
-                   <widget class="XComboBox" name="_zoneFreight"/>
+                   <widget class="XComboBox" name="_zoneFreight">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
                   </item>
                   <item>
                    <spacer>
@@ -1051,7 +1055,11 @@ to be bound by its terms.</comment>
                 <item row="1" column="1">
                  <layout class="QHBoxLayout">
                   <item>
-                   <widget class="XComboBox" name="_shipViaFreight"/>
+                   <widget class="XComboBox" name="_shipViaFreight">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
                   </item>
                   <item>
                    <spacer>
@@ -1097,7 +1105,11 @@ to be bound by its terms.</comment>
                 <item row="1" column="1">
                  <layout class="QHBoxLayout">
                   <item>
-                   <widget class="XComboBox" name="_freightClass"/>
+                   <widget class="XComboBox" name="_freightClass">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
                   </item>
                   <item>
                    <spacer>
@@ -1360,6 +1372,54 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>267</x>
      <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selectedFreightClass</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_freightClass</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>386</x>
+     <y>357</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selectedShipViaFreight</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_shipViaFreight</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>357</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>176</x>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selectedZoneFreight</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_zoneFreight</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>386</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>256</y>
     </hint>
    </hints>
   </connection>
