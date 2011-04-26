@@ -1735,14 +1735,7 @@ to be bound by its terms.</comment>
          <item>
           <widget class="QRadioButton" name="_todoListButton">
            <property name="text">
-            <string>To-Do List</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="_opportunitiesButton">
-           <property name="text">
-            <string>Opportunities</string>
+            <string>Activities</string>
            </property>
           </widget>
          </item>
@@ -1774,9 +1767,6 @@ to be bound by its terms.</comment>
          </widget>
          <widget class="QWidget" name="_todoListPage">
           <layout class="QGridLayout" name="gridLayout_9"/>
-         </widget>
-         <widget class="QWidget" name="_opportunitiesPage">
-          <layout class="QGridLayout" name="gridLayout_11"/>
          </widget>
         </widget>
        </item>
@@ -2357,7 +2347,6 @@ to be bound by its terms.</comment>
   <tabstop>_commentsButton</tabstop>
   <tabstop>_contactsButton</tabstop>
   <tabstop>_todoListButton</tabstop>
-  <tabstop>_opportunitiesButton</tabstop>
   <tabstop>_summaryButton</tabstop>
   <tabstop>_quotesButton</tabstop>
   <tabstop>_ordersButton</tabstop>

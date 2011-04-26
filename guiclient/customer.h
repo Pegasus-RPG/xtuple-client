@@ -16,7 +16,6 @@
 
 #include "contacts.h"
 #include "todoList.h"
-#include "opportunityList.h"
 #include "quotes.h"
 #include "openSalesOrders.h"
 #include "returnAuthorizationWorkbench.h"
@@ -98,7 +97,6 @@ protected:
     virtual void setValid(bool valid);
     todoList *_todoList;
     contacts *_contacts;
-    opportunityList *_oplist;
     quotes *_quotes;
     openSalesOrders *_orders;
     returnAuthorizationWorkbench *_returns;

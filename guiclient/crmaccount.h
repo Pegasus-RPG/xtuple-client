@@ -15,7 +15,6 @@
 #include "xwidget.h"
 #include "contacts.h"
 #include "todoList.h"
-#include "opportunityList.h"
 
 #include <QStandardItemModel>
 #include "ui_crmaccount.h"
@@ -67,7 +66,6 @@ protected:
     
     todoList *_todoList;
     contacts *_contacts;
-    opportunityList *_oplist;
 
 signals:
     void saved(int);

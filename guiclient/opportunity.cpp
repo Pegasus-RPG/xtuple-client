@@ -57,6 +57,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
   connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
   connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
+  connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sHandleAssigned()));
 
   _probability->setValidator(0);
   
@@ -83,6 +84,8 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _owner->setUsername(omfgThis->username());
   _owner->setType(UsernameLineEdit::UsersActive);
+
+  _assignedTo->setType(UsernameLineEdit::UsersActive);
 
   _saved = false;
 }
@@ -133,6 +136,19 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       param = pParams.value("crmacct_id", &valid);
       if (valid)
         _crmacct->setId(param.toInt());
+
+      _startDate->setDate(omfgThis->dbDate());
+
+      q.exec("SELECT NEXTVAL('ophead_ophead_id_seq') AS result;");
+      if (q.first())
+      {
+        _opheadid = q.value("result").toInt();
+        _number->setText(QString().number(_opheadid));
+      }
+      else if(q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -253,20 +269,24 @@ bool opportunity::save(bool partial)
 
   if (cNew == _mode && !_saved)
     q.prepare("INSERT INTO ophead"
-              "      (ophead_name, ophead_crmacct_id,"
+              "      (ophead_id, ophead_name, ophead_crmacct_id,"
               "       ophead_owner_username,"
               "       ophead_opstage_id, ophead_opsource_id,"
               "       ophead_optype_id, ophead_probability_prcnt,"
               "       ophead_amount, ophead_curr_id, ophead_target_date,"
               "       ophead_actual_date,"
-              "       ophead_notes, ophead_active, ophead_cntct_id) "
-              "VALUES(:ophead_name, :ophead_crmacct_id,"
+              "       ophead_notes, ophead_active, ophead_cntct_id, "
+              "       ophead_username, ophead_start_date, ophead_assigned_date, "
+              "       ophead_priority_id, ophead_number) "
+              "VALUES(:ophead_id, :ophead_name, :ophead_crmacct_id,"
               "       :ophead_owner_username,"
               "       :ophead_opstage_id, :ophead_opsource_id,"
               "       :ophead_optype_id, :ophead_probability_prcnt,"
               "       :ophead_amount, :ophead_curr_id, :ophead_target_date,"
               "       :ophead_actual_date,"
-              "       :ophead_notes, :ophead_active, :ophead_cntct_id);" );
+              "       :ophead_notes, :ophead_active, :ophead_cntct_id, "
+              "       :ophead_username, :ophead_start_date, :ophead_assigned_date, "
+              "       :ophead_priority_id, :ophead_number); " );
   else if (cEdit == _mode || _saved)
     q.prepare("UPDATE ophead"
               "   SET ophead_name=:ophead_name,"
@@ -282,7 +302,11 @@ bool opportunity::save(bool partial)
               "       ophead_actual_date=:ophead_actual_date,"
               "       ophead_notes=:ophead_notes,"
               "       ophead_active=:ophead_active, "
-              "       ophead_cntct_id=:ophead_cntct_id "
+              "       ophead_cntct_id=:ophead_cntct_id, "
+              "       ophead_username=:ophead_username, "
+              "       ophead_start_date=:ophead_start_date, "
+              "       ophead_assigned_date=:ophead_assigned_date, "
+              "       ophead_priority_id=:ophead_priority_id "
               " WHERE (ophead_id=:ophead_id); ");
 
   q.bindValue(":ophead_id", _opheadid);
@@ -291,6 +315,7 @@ bool opportunity::save(bool partial)
   if (_crmacct->id() > 0)
     q.bindValue(":ophead_crmacct_id", _crmacct->id());
   q.bindValue(":ophead_owner_username", _owner->username());
+  q.bindValue(":ophead_username", _assignedTo->username());
   if(_oppstage->isValid())
     q.bindValue(":ophead_opstage_id", _oppstage->id());
   if(_oppsource->isValid())
@@ -304,6 +329,10 @@ bool opportunity::save(bool partial)
     q.bindValue(":ophead_amount", _amount->localValue());
     q.bindValue(":ophead_curr_id", _amount->id());
   }
+  if(_startDate->isValid())
+    q.bindValue(":ophead_start_date", _startDate->date());
+  if(_assignDate->isValid())
+    q.bindValue(":ophead_assigned_date", _assignDate->date());
   if(_targetDate->isValid())
     q.bindValue(":ophead_target_date", _targetDate->date());
   if(_actualDate->isValid())
@@ -311,6 +340,9 @@ bool opportunity::save(bool partial)
   q.bindValue(":ophead_notes", _notes->toPlainText());
   if (_cntct->isValid())
     q.bindValue(":ophead_cntct_id", _cntct->id());
+  if (_priority->isValid())
+    q.bindValue(":ophead_priority_id", _priority->id());
+  q.bindValue(":ophead_number", _number->text());
 
   if(!q.exec() && q.lastError().type() != QSqlError::NoError)
   {
@@ -327,18 +359,6 @@ bool opportunity::save(bool partial)
     return false;
   }
 
-  if (cNew == _mode && ! _saved)
-  {
-    q.exec("SELECT CURRVAL('ophead_ophead_id_seq') AS result;");
-    if (q.first())
-      _opheadid = q.value("result").toInt();
-    else if(q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return false;
-    }
-  }
-
   _saved = true;
   return true;
 }
@@ -353,21 +373,29 @@ void opportunity::populate()
             "       ophead_probability_prcnt, ophead_amount,"
             "       COALESCE(ophead_curr_id, basecurrid()) AS curr_id,"
             "       ophead_target_date, ophead_actual_date,"
-            "       ophead_notes, ophead_active, ophead_cntct_id"
+            "       ophead_notes, ophead_active, ophead_cntct_id, "
+            "       ophead_username, ophead_start_date, ophead_assigned_date, "
+            "       ophead_number, ophead_priority_id "
             "  FROM ophead"
             " WHERE(ophead_id=:ophead_id); ");
   q.bindValue(":ophead_id", _opheadid);
   q.exec();
   if(q.first())
   {
+    _number->setText(q.value("ophead_number").toString());
     _name->setText(q.value("ophead_name").toString());
     _active->setChecked(q.value("ophead_active").toBool());
     _crmacct->setId(q.value("ophead_crmacct_id").toInt());
     _owner->setUsername(q.value("ophead_owner_username").toString());
+    _assignedTo->setUsername(q.value("ophead_username").toString());
 
     _oppstage->setNull();
     if(!q.value("ophead_opstage_id").toString().isEmpty())
       _oppstage->setId(q.value("ophead_opstage_id").toInt());
+
+    _priority->setNull();
+    if(!q.value("ophead_priority_id").toString().isEmpty())
+      _priority->setId(q.value("ophead_priority_id").toInt());
 
     _oppsource->setNull();
     if(!q.value("ophead_opsource_id").toString().isEmpty())
@@ -385,6 +413,14 @@ void opportunity::populate()
     _amount->setId(q.value("curr_id").toInt());
     if(!q.value("ophead_amount").toString().isEmpty())
       _amount->setLocalValue(q.value("ophead_amount").toDouble());
+
+    _startDate->clear();
+    if(!q.value("ophead_start_date").toString().isEmpty())
+      _startDate->setDate(q.value("ophead_start_date").toDate());
+
+    _assignDate->clear();
+    if(!q.value("ophead_assigned_date").toString().isEmpty())
+      _assignDate->setDate(q.value("ophead_assigned_date").toDate());
 
     _targetDate->clear();
     if(!q.value("ophead_target_date").toString().isEmpty())
@@ -1160,5 +1196,11 @@ void opportunity::sHandleCrmacct(int pCrmacctid)
     _salesTab->setEnabled(true);
 
   sHandleSalesPrivs();
+}
+
+void opportunity::sHandleAssigned()
+{
+  if (_assignedTo->isValid() && !_assignDate->isValid())
+    _assignDate->setDate(omfgThis->dbDate());
 }
 

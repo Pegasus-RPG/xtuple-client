@@ -52,14 +52,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _contacts->setParameterWidgetVisible(false);
   _contacts->setQueryOnStartEnabled(false);
 
-  _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
-  _opportunitiesPage->layout()->addWidget(_oplist);
-  _oplist->setCloseVisible(false);
-  _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
-  _oplist->list()->hideColumn("crmacct_number");
-  _oplist->setParameterWidgetVisible(false);
-  _oplist->setQueryOnStartEnabled(false);
-
   _quotes = new quotes(this, "quotes", Qt::Widget);
   _quotesPage->layout()->addWidget(_quotes);
   _quotes->setCloseVisible(false);
@@ -161,7 +153,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_contactsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_todoListButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_opportunitiesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_notesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_commentsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_summaryButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
@@ -439,18 +430,8 @@ void customer::setValid(bool valid)
   {
     _todoListButton->setEnabled(false);
     if (_todoListButton->isChecked())
-    {
-      _opportunitiesButton->setChecked(true);
-      sHandleButtons();
-    }
+      _tab->setTabEnabled(_tab->indexOf(_crmTab),false);
   }
-  if (!_privileges->check("MaintainOpportunities") && !_privileges->check("ViewOpportunities"))
-  {
-    if (_opportunitiesButton->isChecked()){
-      _tab->setTabEnabled(_tab->indexOf(_crmTab),false);}
-    else
-      _opportunitiesButton->setEnabled(false);
-  }  
     
   if (!_privileges->check("EditAROpenItems") && !_privileges->check("ViewAROpenItems"))
   {
@@ -470,7 +451,6 @@ void customer::setValid(bool valid)
     _documents->setId(-1);
     _todoList->list()->clear();
     _contacts->list()->clear();
-    _oplist->list()->clear();
     _quotes->list()->clear();
     _orders->list()->clear();
     _returns->findChild<XTreeWidget*>("_ra")->clear();
@@ -1304,7 +1284,6 @@ void customer::populate()
     
     _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
     _contacts->setCrmacctid(_crmacctid);
-    _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
     
     _quotes->parameterWidget()->setDefault(tr("Customer"), _custid, true);
     _orders->setCustId(_custid);
@@ -1495,8 +1474,6 @@ void customer::sFillList()
       _contacts->sFillList();
     else if (_todoListButton->isChecked())
       _todoList->sFillList();
-    else if (_opportunitiesButton->isChecked())
-      _oplist->sFillList();
   }
   else if (_tab->currentIndex() == _tab->indexOf(_salesTab))
   {
@@ -1747,7 +1724,6 @@ void customer::sClear()
     
     _todoList->parameterWidget()->setDefault(tr("CRM Account"), -1, true);
     _contacts->setCrmacctid(_crmacctid);
-    _oplist->parameterWidget()->setDefault(tr("CRM Account"), -1, true);
     
     _quotes->parameterWidget()->setDefault(tr("Customer"), -1, true);
     _orders->setCustId(-1);

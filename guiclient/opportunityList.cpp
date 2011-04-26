@@ -37,22 +37,25 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
+  list()->addColumn(tr("Number"),      _orderColumn,    Qt::AlignLeft,   false, "ophead_number" );
   list()->addColumn(tr("Active"),      _orderColumn,    Qt::AlignLeft,   false, "ophead_active" );
   list()->addColumn(tr("Name"),        -1,              Qt::AlignLeft,   true, "ophead_name"  );
   list()->addColumn(tr("CRM Acct."),   _userColumn,     Qt::AlignLeft,   true, "crmacct_number" );
   list()->addColumn(tr("Owner"),       _userColumn,     Qt::AlignLeft,   true, "ophead_owner_username" );
+  list()->addColumn(tr("Assigned"),    _userColumn,     Qt::AlignLeft,   false, "ophead_username" );
   list()->addColumn(tr("Stage"),       _orderColumn,    Qt::AlignLeft,   true, "opstage_name" );
-  list()->addColumn(tr("Source"),      _orderColumn,    Qt::AlignLeft,   false, "opsource_name" );
-  list()->addColumn(tr("Type"),        _orderColumn,    Qt::AlignLeft,   false, "optype_name" );
-  list()->addColumn(tr("Prob.%"),      _prcntColumn,    Qt::AlignCenter, false, "ophead_probability_prcnt" );
-  list()->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  false, "ophead_amount" );
+  list()->addColumn(tr("Priority"),    _orderColumn,    Qt::AlignLeft,   true, "incdtpriority_name" );
+  list()->addColumn(tr("Source"),      _orderColumn,    Qt::AlignLeft,   true, "opsource_name" );
+  list()->addColumn(tr("Type"),        _orderColumn,    Qt::AlignLeft,   true, "optype_name" );
+  list()->addColumn(tr("Prob.%"),      _prcntColumn,    Qt::AlignCenter, true, "ophead_probability_prcnt" );
+  list()->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  true, "ophead_amount" );
   list()->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   false, "f_currency" );
-  list()->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_target_date" );
+  list()->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft,   true, "ophead_target_date" );
   list()->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_actual_date" );
 
   connect(list(),       SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
 
-  bool canEditUsers = _privileges->check("MaintainOtherTodoLists");
+  bool canEditUsers = _privileges->check("MaintainOtherTodoLists") || _privileges->check("ViewOtherTodoLists");
   parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
   if (canEditUsers)
     parameterWidget()->append(tr("User Pattern"), "usr_pattern",    ParameterWidget::Text);

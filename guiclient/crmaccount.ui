@@ -703,15 +703,9 @@ to be bound by its terms.</comment>
        </widget>
        <widget class="QWidget" name="_todoListTab">
         <attribute name="title">
-         <string>To-Do List</string>
+         <string>Activities</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_9"/>
-       </widget>
-       <widget class="QWidget" name="_oplistTab">
-        <attribute name="title">
-         <string>Opportunities</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout"/>
        </widget>
        <widget class="QWidget" name="_registrationsTab">
         <attribute name="title">
@@ -914,22 +908,6 @@ to be bound by its terms.</comment>
    </hints>
   </connection>
   <connection>
-   <sender>_charass</sender>
-   <signal>itemSelected(int)</signal>
-   <receiver>_editCharacteristic</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>387</x>
-     <y>489</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1123</x>
-     <y>488</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_customer</sender>
    <signal>toggled(bool)</signal>
    <receiver>_customerButton</receiver>
@@ -958,6 +936,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>766</x>
      <y>106</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_charass</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_editCharacteristic</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>387</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1123</x>
+     <y>488</y>
     </hint>
    </hints>
   </connection>

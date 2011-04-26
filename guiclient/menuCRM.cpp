@@ -30,6 +30,7 @@
 #include "dspTodoByUserAndIncident.h"
 #include "incidentWorkbench.h"
 #include "incident.h"
+#include "opportunityList.h"
 #include "todoList.h"
 #include "todoListCalendar.h"
 #include "todoItem.h"

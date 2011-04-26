@@ -52,14 +52,6 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _contacts->list()->hideColumn("crmacct_name");
   _contacts->setParameterWidgetVisible(false);
   _contacts->setQueryOnStartEnabled(false);
-  
-  _oplist = new opportunityList(this, "opportunityList", Qt::Widget);
-  _oplistTab->layout()->addWidget(_oplist);
-  _oplist->setCloseVisible(false);
-  _oplist->list()->hideColumn("crmacct_number");
-  _oplist->parameterWidget()->setDefault(tr("User"), QVariant(), true);
-  _oplist->setParameterWidgetVisible(false);
-  _oplist->setQueryOnStartEnabled(false);
     
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
@@ -178,7 +170,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
         _crmacctId = q.value("result").toInt();
         _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
         _contacts->setCrmacctid(_crmacctId);
-        _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
         if (_crmacctId < 0)
         {
           QMessageBox::critical(this, tr("Error creating Initial Account"),
@@ -186,7 +177,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
           _crmacctId = -1;
           _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
           _contacts->setCrmacctid(_crmacctId);
-          _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
           return UndefinedError;
         }
         _comments->setId(_crmacctId);
@@ -259,7 +249,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     _crmacctId = param.toInt();
     _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
     _contacts->setCrmacctid(_crmacctId);
-    _oplist->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
     sPopulate();
   }
 
@@ -782,7 +771,6 @@ void crmaccount::sPopulate()
   sPopulateRegistrations();
   _contacts->sFillList();
   _todoList->sFillList();
-  _oplist->sFillList();
 }
 
 void crmaccount::sCompetitor()
