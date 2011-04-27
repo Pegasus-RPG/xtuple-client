@@ -88,6 +88,12 @@ void dspUndefinedManufacturedItems::sEditItem()
 
 bool dspUndefinedManufacturedItems::setParams(ParameterList &params)
 {
+  if (!_bom->isChecked())
+  {
+    list()->clear();
+    return false;
+  }
+
   params.append("noBom", tr("No BOM"));
   if (!_showInactive->isChecked())
     params.append("notshowInactive");
