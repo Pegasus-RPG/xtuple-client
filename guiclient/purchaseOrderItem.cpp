@@ -237,6 +237,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _save->setEnabled(false);
 
       q.exec("SELECT NEXTVAL('poitem_poitem_id_seq') AS poitem_id;");
       if (q.first())
@@ -1068,6 +1069,7 @@ void purchaseOrderItem::sDeterminePrice()
   if (_ordered->toDouble() != 0.0)
     _orderQtyCache = _ordered->toDouble();
   sPopulateExtPrice();
+  _save->setEnabled(true);
 }
 
 void purchaseOrderItem::sInventoryItemToggled( bool yes )
