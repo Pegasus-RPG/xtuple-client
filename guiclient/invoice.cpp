@@ -707,6 +707,7 @@ void invoice::populate()
     _custCurrency->setId(q.value("invchead_curr_id").toInt());
 
     _invoiceNumber->setText(q.value("invchead_invcnumber").toString());
+    _invoiceNumber->setEnabled(false);
     _orderNumber->setText(q.value("invchead_ordernumber").toString());
     if (! _orderNumber->text().isEmpty() && _orderNumber->text().toInt() != 0)
 	_custCurrency->setEnabled(FALSE);
