@@ -34,9 +34,10 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
+  // Legacy compatibility removed
   // For legacy compatibility
-  _save = _buttonBox->button(QDialogButtonBox::Save);
-  _save->setObjectName("_save");
+  //_save = _buttonBox->button(QDialogButtonBox::Save);
+  //_save->setObjectName("_save");
 
   connect(_deleteCharacteristic,  SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
   connect(_detachUse,		  SIGNAL(clicked()), this, SLOT(sDetachUse()));
