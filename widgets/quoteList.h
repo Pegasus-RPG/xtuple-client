@@ -43,6 +43,7 @@ private:
     int _quheadid;
     int _type;
     int _custid;
+    bool _openOnly;
 };
 
 #endif

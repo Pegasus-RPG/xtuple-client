@@ -793,6 +793,7 @@ void opportunity::sAttachQuote()
 {
   ParameterList params;
   params.append("cust_id", _custid);
+  params.append("openOnly", true);
   
   quoteList newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -1002,17 +1003,18 @@ void opportunity::sFillSalesList()
 			"       0 AS sale_extprice_xttotalrole "
             "FROM ( "
             "SELECT quhead_id AS id, 0 AS alt_id, :quote AS sale_type, "
-                        "       quhead_number AS sale_number, quhead_quotedate AS sale_date, "
+            "       quhead_number AS sale_number, quhead_quotedate AS sale_date, "
             "       calcQuoteAmt(quhead_id) AS sale_extprice "
             "FROM quhead "
-            "WHERE (quhead_ophead_id=:ophead_id) "
-			"UNION "
-			"SELECT cohead_id AS id, 1 AS alt_id, :salesorder AS sale_type, "
-			"       cohead_number AS sale_number, cohead_orderdate AS sale_date,  "
+            "WHERE ((quhead_ophead_id=:ophead_id) "
+            "  AND  (quhead_status='O'))"
+            "UNION "
+            "SELECT cohead_id AS id, 1 AS alt_id, :salesorder AS sale_type, "
+            "       cohead_number AS sale_number, cohead_orderdate AS sale_date,  "
             "       calcSalesOrderAmt(cohead_id) AS sale_extprice "
             "FROM cohead "
             "WHERE (cohead_ophead_id=:ophead_id) "
-			"     ) AS data "
+            "     ) AS data "
             "ORDER BY sale_date;");
   q.bindValue(":ophead_id", _opheadid);
   q.bindValue(":quote", tr("Quote"));
