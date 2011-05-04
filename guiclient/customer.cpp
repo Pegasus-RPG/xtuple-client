@@ -1311,7 +1311,8 @@ void customer::sPopulateSummary()
   query.prepare( "SELECT MIN(cohist_invcdate) AS firstdate,"
                  "       MAX(cohist_invcdate) AS lastdate "
                  "FROM cohist "
-                 "WHERE (cohist_cust_id=:cust_id);" );
+                 "WHERE (cohist_cust_id=:cust_id)
+                 "AND (cohist_doctype='I');" );
   query.bindValue(":cust_id", _custid);
   query.exec();
   if (query.first())
