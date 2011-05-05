@@ -46,6 +46,7 @@ public slots:
     virtual void sView();
     virtual void sViewCreditMemo();
     virtual void sViewInvoice();
+    virtual void sVoidInvoiceDetails();
     virtual void sEditInvoiceDetails();
     virtual void sViewInvoiceDetails();
     virtual void sViewSalesOrder();

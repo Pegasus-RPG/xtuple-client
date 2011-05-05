@@ -219,6 +219,9 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
   {
     if(((XTreeWidgetItem *)pItem)->rawValue("posted") != 0)
     {
+      menuItem = pMenu->addAction(tr("Void Posted Invoice..."), this, SLOT(sVoidInvoiceDetails()));
+      menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
+
       menuItem = pMenu->addAction(tr("Edit Posted Invoice..."), this, SLOT(sEditInvoiceDetails()));
       menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
     }
@@ -670,6 +673,57 @@ void dspAROpenItems::sEditInvoiceDetails()
   invoice* newdlg = new invoice(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void dspAROpenItems::sVoidInvoiceDetails()
+{
+  XTreeWidgetItem *pItem = list()->currentItem();
+  if(pItem->rawValue("posted") != 0 &&
+      QMessageBox::question(this, tr("Void Posted Invoice?"),
+                            tr("<p>This Invoice has already been posted. "
+                               "Are you sure you want to void it?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+  {
+    return;
+  }
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  XSqlQuery post;
+  post.prepare("SELECT voidInvoice(:invchead_id) AS result;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  post.bindValue(":invchead_id", list()->currentItem()->id("docnumber"));
+  post.exec();
+  if (post.first())
+  {
+    int result = post.value("result").toInt();
+    if (result < 0)
+    {
+      rollback.exec();
+      systemError(this, storedProcErrorLookup("voidInvoice", result),
+                      __FILE__, __LINE__);
+      return;
+    }
+    else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+    {
+      rollback.exec();
+      QMessageBox::information( this, tr("Void Invoice"), tr("Transaction Canceled") );
+      return;
+    }
+
+    q.exec("COMMIT;");
+    sFillList();
+  }
+  else if (post.lastError().type() != QSqlError::NoError)
+  {
+    rollback.exec();
+    systemError(this, tr("A System Error occurred voiding Invoice.\n%1")
+                .arg(post.lastError().databaseText()),
+                __FILE__, __LINE__);
+  }
 }
 
 void dspAROpenItems::sViewInvoiceDetails()

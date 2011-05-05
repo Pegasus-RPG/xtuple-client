@@ -1401,6 +1401,16 @@ const struct {
 			"posted, try Void Posted Check with the Check Register "
 			"window."),					0, "" },
 
+  { "voidInvoice",  -1, "", -1, "insertIntoGLSeries" },
+  { "voidInvoice",  -4, "", -4, "insertIntoGLSeries" },
+  { "voidInvoice",  -5, "", -5, "postGLSeries" },
+  { "voidInvoice", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Invoice because it has "
+                         "not been posted."),		 0, "" },
+  { "voidInvoice", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Invoice because the Sales "
+                         "Account was not found."),		 0, "" },
+  { "voidInvoice", -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Invoice because there "
+                         "A/R Applications posted against this Invoice."), 0, "" },
+
   { "voidPostedCheck", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this check because it has already "
 			       "been voided."),				0, "" },
   { "voidPostedCheck", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot void this check because the recipient "
