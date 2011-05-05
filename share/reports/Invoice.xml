@@ -73,10 +73,10 @@ ORDER BY ordernumber;</sql>
       CASE WHEN (invcitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip2
            ELSE item_descrip2
       END AS descrip2,
-      CASE WHEN (<? value("showcosts") ?>=FALSE) THEN '---'
+      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN '---'
            ELSE formatPrice(invcitem_qty_invuomratio * invcitem_price / COALESCE(invcitem_price_invuomratio,1))
       END AS f_unitprice,
-      CASE WHEN (<? value("showcosts") ?>=FALSE) THEN '---'
+      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN '---'
            ELSE formatMoney(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2)) 
       END AS f_extprice,
       invcitem_notes,
@@ -85,7 +85,7 @@ ORDER BY ordernumber;</sql>
       characteristicsToString('SI',invcitem_coitem_id, '=', ', ') 
       AS coitem_characteristics
 FROM invcitem LEFT OUTER JOIN (item JOIN uom ON (item_inv_uom_id=uom_id)) ON (invcitem_item_id=item_id) LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id AND itemalias_number=invcitem_custpn)
-WHERE (invcitem_invchead_id=<? value("invchead_id") ?>)
+WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>)
 ORDER BY invcitem_linenumber;</sql>
  </querysource>
  <querysource>
