@@ -430,6 +430,12 @@ void Documents::sDetachDoc()
   if (_doc->id() < 0)
     return;
 
+  if(QMessageBox::question( this, tr("Confirm Detach"),
+       tr("<p>You have requested to detach the selected document."
+          " In some cases this may permanently remove the document from the system.</p>"
+          "<p>Are you sure you want to continue?</p>"), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+    return; // user doesn't want to continue so get out of here
+
   if ( _doc->currentItem()->rawValue("target_type") == "IMG" )
   {
     detach.prepare( "DELETE FROM imageass "
