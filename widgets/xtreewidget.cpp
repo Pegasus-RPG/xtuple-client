@@ -2283,9 +2283,9 @@ QString XTreeWidget::toTxt() const
   for (counter = 0; counter < header->columnCount(); counter++)
   {
     if (!QTreeWidget::isColumnHidden(counter))
-      line = line + header->text(counter).replace("\n"," ") + "\t";
+      line = line + header->text(counter).replace("\r\n"," ") + "\t";
   }
-  opText = line + "\n";
+  opText = line + "\r\n";
 
   XTreeWidgetItem *item = topLevelItem(0);
   if (item)
@@ -2303,7 +2303,7 @@ QString XTreeWidget::toTxt() const
             line = line + item->text(counter) + "\t";
         }
       }
-      opText = opText + line + "\n";
+      opText = opText + line + "\r\n";
       idx    = indexBelow(idx);
     }
   }
