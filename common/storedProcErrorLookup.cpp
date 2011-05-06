@@ -1401,6 +1401,16 @@ const struct {
 			"posted, try Void Posted Check with the Check Register "
 			"window."),					0, "" },
 
+  { "voidCreditMemo",  -1, "", -1, "insertIntoGLSeries" },
+  { "voidCreditMemo",  -4, "", -4, "insertIntoGLSeries" },
+  { "voidCreditMemo",  -5, "", -5, "postGLSeries" },
+  { "voidCreditMemo", -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because it has "
+                         "not been posted."),		 0, "" },
+  { "voidCreditMemo", -11, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because the Sales "
+                         "Account was not found."),		 0, "" },
+  { "voidCreditMemo", -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Unable to void this Credit Memo because there "
+                         "A/R Applications posted against this Credit Memo."), 0, "" },
+
   { "voidInvoice",  -1, "", -1, "insertIntoGLSeries" },
   { "voidInvoice",  -4, "", -4, "insertIntoGLSeries" },
   { "voidInvoice",  -5, "", -5, "postGLSeries" },
