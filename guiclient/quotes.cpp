@@ -479,5 +479,9 @@ bool quotes::setParams(ParameterList &params)
   if(_convertedtoSo->isChecked())
     params.append("showConverted");
 
+  params.append("open", tr("Open"));
+  params.append("converted", tr("Converted"));
+  params.append("undefined", tr("Undefined"));
+
   return true;
 }
