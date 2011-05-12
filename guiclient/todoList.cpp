@@ -391,8 +391,6 @@ bool todoList::setParams(ParameterList &params)
     params.append("incidents");
   if (_projects->isChecked())
     params.append("projects");
-  if (_opportunities->isChecked())
-    params.append("opportunities");
 
   params.append("todo", tr("To-do"));
   params.append("incident", tr("Incident"));
