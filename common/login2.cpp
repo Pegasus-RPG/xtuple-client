@@ -52,6 +52,8 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sLogin()));
   connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
   connect(_cloudLink, SIGNAL(linkActivated(QString)), this, SLOT(cloudLink(QString)));
+  connect(_otherOption, SIGNAL(toggled(bool)), _options, SLOT(setEnabled(bool)));
+  connect(_otherOption, SIGNAL(toggled(bool)), _recent, SLOT(setEnabled(bool)));
 
   _splash = 0;
 
