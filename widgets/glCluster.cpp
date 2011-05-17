@@ -521,7 +521,7 @@ void accountSearch::showEvent(QShowEvent* e)
   VirtualSearch::showEvent(e);
 }
 
-void accountSearch::set(ParameterList &pParams)
+void accountSearch::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

@@ -17,7 +17,7 @@
 #include "qtextedit.h"
 #include "qpushbutton.h"
 #include "qstringlist.h"
-#include <qhash.h>
+#include <QHash>
 
 class XErrorMessage: public QDialog
 {

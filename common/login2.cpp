@@ -87,9 +87,9 @@ void login2::languageChange()
   retranslateUi(this);
 }
 
-int login2::set(ParameterList &pParams) { return set(pParams, 0); }
+int login2::set(const ParameterList &pParams) { return set(pParams, 0); }
 
-int login2::set(ParameterList &pParams, QSplashScreen *pSplash)
+int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
 {
   _splash = pSplash;
   

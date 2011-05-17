@@ -30,7 +30,7 @@ filterSave::filterSave(QWidget* parent, const char* name)
   shortcuts::setStandardKeys(this);
 }
 
-void filterSave::set(ParameterList &pParams)
+void filterSave::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

@@ -153,7 +153,7 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WindowFlags
   shortcuts::setStandardKeys(this);
 }
 
-void comment::set(ParameterList &pParams)
+void comment::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

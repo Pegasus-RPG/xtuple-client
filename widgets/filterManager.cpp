@@ -40,7 +40,7 @@ filterManager::filterManager(QWidget* parent, const char* name)
   shortcuts::setStandardKeys(this);
 }
 
-void filterManager::set(ParameterList &pParams)
+void filterManager::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

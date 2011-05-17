@@ -107,7 +107,7 @@ quoteList::quoteList( QWidget* parent, const char* name, bool modal, Qt::WFlags 
   _warehouse->setFocus();
 }
 
-void quoteList::set(ParameterList &pParams)
+void quoteList::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

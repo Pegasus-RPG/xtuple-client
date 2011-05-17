@@ -1075,7 +1075,7 @@ ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
     setWindowTitle(tr("Contact List"));
 }
 
-void ContactList::set(ParameterList &pParams)
+void ContactList::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -1255,7 +1255,7 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
              "FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id) ";
   }
 
-void ContactSearch::set(ParameterList &pParams)
+void ContactSearch::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
