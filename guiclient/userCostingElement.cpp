@@ -27,6 +27,7 @@ userCostingElement::userCostingElement(QWidget* parent, const char* name, bool m
   connect(_acceptPO, SIGNAL(toggled(bool)), _expense, SLOT(setDisabled(bool)));
 
   _item->setType(ItemLineEdit::cCosting);
+  _expense->setType(GLCluster::cExpense);
 }
 
 userCostingElement::~userCostingElement()
