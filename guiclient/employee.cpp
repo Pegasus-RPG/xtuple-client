@@ -133,6 +133,10 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
   if (_privileges->check("MaintainUsers"))
     connect(_user, SIGNAL(toggled(bool)), _userButton, SLOT(setEnabled(bool)));
 
+  _wagetype->setAllowNull(false);
+  _wagetype->append(0, tr("Hourly"),      "Hourly");
+  _wagetype->append(1, tr("Salaried"),    "Salaried");
+
   _per->setAllowNull(false);
   _per->append(0, tr("Hour"),      "Hour");
   _per->append(1, tr("Day"),       "Day");

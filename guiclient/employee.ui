@@ -159,7 +159,7 @@ to be bound by its terms.</comment>
         </sizepolicy>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="_contactTab">
         <attribute name="title">
@@ -736,16 +736,6 @@ to be bound by its terms.</comment>
                  <property name="fieldName">
                   <string notr="true">wage_type</string>
                  </property>
-                 <item>
-                  <property name="text">
-                   <string>Hourly</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Salaried</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
                <item>
