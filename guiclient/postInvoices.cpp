@@ -106,13 +106,25 @@ void postInvoices::sPost()
     return;
   }
 
+  q.exec("SELECT fetchJournalNumber('AR-IN') AS journal;");
+  if (!q.first())
+  {
+    systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
+                       .arg(__FILE__)
+                       .arg(__LINE__)
+                       .arg(q.value("journal").toInt()) );
+    return;
+  }
+  int journalNumber = q.value("journal").toInt();
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
   q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  q.prepare("SELECT postInvoices(:postUnprinted, :inclZero) AS result;");
+  q.prepare("SELECT postInvoices(:postUnprinted, :inclZero, :journalNumber) AS result;");
   q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
   q.bindValue(":inclZero",      inclZero);
+  q.bindValue(":journalNumber", journalNumber);
   q.exec();
   if (q.first())
   {
@@ -146,14 +158,10 @@ void postInvoices::sPost()
 
     q.exec("COMMIT;");
 
-
-    omfgThis->sInvoicesUpdated(-1, TRUE);
-    omfgThis->sSalesOrdersUpdated(-1);
-
     if (_printJournal->isChecked())
     {
       ParameterList params;
-      params.append("journalNumber", result);
+      params.append("journalNumber", journalNumber);
 
       orReport report("SalesJournal", params);
       if (report.isValid())
@@ -161,6 +169,10 @@ void postInvoices::sPost()
       else
         report.reportError(this);
     }
+
+    omfgThis->sInvoicesUpdated(-1, TRUE);
+    omfgThis->sSalesOrdersUpdated(-1);
+
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
