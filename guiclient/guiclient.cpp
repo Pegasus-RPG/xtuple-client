@@ -2125,6 +2125,14 @@ void GUIClient::hunspell_initialize()
     QString fullPathWithoutExt = appPath + "/" + langName;
     QFile affFile(fullPathWithoutExt + tr(".aff"));
     QFile dicFile(fullPathWithoutExt + tr(".dic"));
+    // If we don't have files for the first name lets try a more common naming convention
+    if(!(affFile.exists() && dicFile.exists()))
+    {
+      langName = QLocale().name().toLower(); // retruns lang_cntry format en_us for example
+      fullPathWithoutExt = appPath + "/" + langName;
+      affFile.setFileName(fullPathWithoutExt + tr(".aff"));
+      dicFile.setFileName(fullPathWithoutExt + tr(".dic"));
+    }
     if(affFile.exists() && dicFile.exists())
     {
       _spellReady = true;      
