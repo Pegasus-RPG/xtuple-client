@@ -26,8 +26,6 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
 
   QWidget *hideme = 0;
 
-  _vendorgroup->setVendId(-1);
-
   _vouchers = new openVouchers(this, "openVouchers", Qt::Widget);
   _vouchersTab->layout()->addWidget(_vouchers);
   hideme = _vouchers->findChild<QWidget*>("_close");
