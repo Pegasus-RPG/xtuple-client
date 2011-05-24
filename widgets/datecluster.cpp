@@ -81,10 +81,10 @@ void DCalendarPopup::dateSelected(const QDate &pDate)
   bool isMfg;
   int siteId = ((XDateEdit*)parent())->calendarSiteId();
 
-  if (_x_metrics->value("Application") == "Standard")
+  if (_x_metrics && _x_metrics->value("Application") == "Standard")
   {
     XSqlQuery xtmfg;
-    xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
+    xtmfg.exec("SELECT packageIsEnabled('xtmfg')");
     if (xtmfg.first())
       isMfg = true;
     else
@@ -145,10 +145,10 @@ void XDateEdit::parseDate()
            qPrintable(dateString),
            qPrintable(_currentDate.toString()), _allowNull);
 
-  if (_x_metrics->value("Application") == "Standard")
+  if (_x_metrics && _x_metrics->value("Application") == "Standard")
   {
     XSqlQuery xtmfg;
-    xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
+    xtmfg.exec("SELECT packageIsEnabled('xtmfg')");
     if (xtmfg.first())
       isMfg = true;
     else
