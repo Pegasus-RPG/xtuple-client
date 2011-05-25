@@ -490,24 +490,21 @@ void purchaseOrderItem::populate()
     _itemsrcid = q.value("poitem_itemsrc_id").toInt();
     _vendorItemNumber->setText(q.value("poitem_vend_item_number").toString());
     _vendorDescrip->setText(q.value("poitem_vend_item_descrip").toString());
-    
-    if (_itemsrcid == -1)
+    _vendorUOM->setText(q.value("poitem_vend_uom").toString());
+    _uom->setText(q.value("poitem_vend_uom").toString());
+    _invVendorUOMRatio->setDouble(q.value("poitem_invvenduomratio").toDouble());
+    _invVendUOMRatio = q.value("poitem_invvenduomratio").toDouble();
+    _manufName->setText(q.value("poitem_manuf_name").toString());
+    if (_manufName->id() < 0)
     {
-      _vendorUOM->setText(q.value("poitem_vend_uom").toString());
-      _uom->setText(q.value("poitem_vend_uom").toString());
-      _invVendorUOMRatio->setDouble(q.value("poitem_invvenduomratio").toDouble());
-      _invVendUOMRatio = q.value("poitem_invvenduomratio").toDouble();
+      _manufName->append(_manufName->count(),
+                         q.value("poitem_manuf_name").toString());
       _manufName->setText(q.value("poitem_manuf_name").toString());
-      if (_manufName->id() < 0)
-      {
-        _manufName->append(_manufName->count(),
-                           q.value("poitem_manuf_name").toString());
-        _manufName->setText(q.value("poitem_manuf_name").toString());
-      }
-      _manufItemNumber->setText(q.value("poitem_manuf_item_number").toString());
-      _manufItemDescrip->setText(q.value("poitem_manuf_item_descrip").toString());
     }
-    else
+    _manufItemNumber->setText(q.value("poitem_manuf_item_number").toString());
+    _manufItemDescrip->setText(q.value("poitem_manuf_item_descrip").toString());
+
+    if (!_itemsrcid == -1)
     {
       q.prepare( "SELECT itemsrc_id, itemsrc_vend_item_number,"
                  "       itemsrc_vend_item_descrip, itemsrc_vend_uom,"
@@ -535,13 +532,13 @@ void purchaseOrderItem::populate()
           _vendorItemNumber->setText(q.value("itemsrc_vend_item_number").toString());
         if(_vendorDescrip->toPlainText().isEmpty())
           _vendorDescrip->setText(q.value("itemsrc_vend_item_descrip").toString());
-        _vendorUOM->setText(q.value("itemsrc_vend_uom").toString());
-        _uom->setText(q.value("itemsrc_vend_uom").toString());
+//        _vendorUOM->setText(q.value("itemsrc_vend_uom").toString());
+//        _uom->setText(q.value("itemsrc_vend_uom").toString());
         _minOrderQty->setDouble(q.value("itemsrc_minordqty").toDouble());
         _orderQtyMult->setDouble(q.value("itemsrc_multordqty").toDouble());
-        _invVendorUOMRatio->setDouble(q.value("itemsrc_invvendoruomratio").toDouble());
+//        _invVendorUOMRatio->setDouble(q.value("itemsrc_invvendoruomratio").toDouble());
 
-        _invVendUOMRatio = q.value("itemsrc_invvendoruomratio").toDouble();
+//        _invVendUOMRatio = q.value("itemsrc_invvendoruomratio").toDouble();
         _minimumOrder = q.value("itemsrc_minordqty").toDouble();
         _orderMultiple = q.value("itemsrc_multordqty").toDouble();
         
