@@ -100,7 +100,7 @@ void DCalendarPopup::dateSelected(const QDate &pDate)
     if (isMfg && (siteId != -1))
       ((XDateEdit*)parent())->checkDate(pDate);
     else
-      ((XDateEdit*)parent())->setDate(pDate);
+      ((XDateEdit*)parent())->setDate(pDate, true);
   }
 
   emit newDate(pDate);
@@ -458,6 +458,17 @@ void XDateEdit::setDate(const QDate &pDate, bool pAnnounce)
     setNull();
   else
   {
+    if(!pAnnounce)
+    {
+      if (_x_metrics && _x_metrics->value("Application") == "Standard" && (_siteId != -1))
+      {
+        XSqlQuery xtmfg;
+        xtmfg.exec("SELECT packageIsEnabled('xtmfg')");
+        if (xtmfg.first())
+          return checkDate(pDate);
+      }
+    }
+
     _currentDate = pDate;
     _valid = _currentDate.isValid();
     _parsed = _valid;
