@@ -150,7 +150,7 @@ void userCostingElement::sSave()
   q.bindValue(":costelem_type", _name->text().trimmed());
   q.bindValue(":costelem_active", QVariant(_active->isChecked()));
   q.bindValue(":costelem_po", QVariant(_acceptPO->isChecked()));
-  if (_expense->isEnabled())
+  if (_expense->isEnabled() && _expense->isValid())
     q.bindValue(":costelem_exp_accnt_id",_expense->id());
 
   if (_useCostItem->isChecked())
