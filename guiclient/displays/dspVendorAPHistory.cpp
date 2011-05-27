@@ -46,6 +46,7 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char*, Qt::WFlags 
   list()->addColumn(tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
   list()->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
   list()->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
+  list()->setPopulateLinear();
 
   _vend->setFocus();
 }
