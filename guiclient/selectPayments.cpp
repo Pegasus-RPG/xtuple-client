@@ -468,7 +468,6 @@ void selectPayments::sFillList()
 
   MetaSQLQuery mql = mqlLoad("apOpenItems", "selectpayments");
   q = mql.toQuery(params);
-  q.exec();
   _apopen->populate(q,true);
   if (q.lastError().type() != QSqlError::NoError)
   {
