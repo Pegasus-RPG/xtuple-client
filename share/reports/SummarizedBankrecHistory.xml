@@ -3,6 +3,12 @@
  <title>Summarized Bank Reconciliation History</title>
  <name>SummarizedBankrecHistory</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -21,7 +27,7 @@
        formatMoney(bankrec_openbal) AS f_openbal,
        formatMoney(bankrec_endbal) AS f_endbal
   FROM bankrec
- WHERE (bankrec_bankaccnt_id=&lt;? value("bankaccnt_id") ?>)
+ WHERE (bankrec_bankaccnt_id=&lt;? value("bankaccntid") ?>)
  ORDER BY bankrec_created;</sql>
  </querysource>
  <querysource>
