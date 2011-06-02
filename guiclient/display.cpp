@@ -270,6 +270,7 @@ void displayPrivate::setupCharacteristics(unsigned int use)
   QString sql = QString("SELECT char_id, char_name, char_type "
                         "FROM char "
                         "WHERE (%1) "
+                        " AND (char_search) "
                         "ORDER BY char_name;").arg(uses.join(" AND "));
   XSqlQuery chars;
   chars.exec(sql);
