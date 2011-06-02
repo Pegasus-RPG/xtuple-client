@@ -218,6 +218,14 @@ void reconcileBankaccount::sReconcile()
     return;
   }
 
+  if (_endDate->date() < _startDate->date())
+  {
+    QMessageBox::warning( this, tr("Invalid End Date"),
+                           tr("The end date cannot be earlier than the start date.") );
+    _endDate->setFocus();
+    return;
+  }
+
   double begBal = _openBal->localValue();
   double endBal = _endBal->localValue();
 
