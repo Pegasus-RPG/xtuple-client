@@ -47,6 +47,11 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));  // new slot added for price //
   connect(_taxtype, SIGNAL(newID(int)), this, SLOT(sCalculateTax()));            // new slot added for taxtype //
 
+  _bomRevision->setMode(RevisionLineEdit::Use);
+  _bomRevision->setType("BOM");
+  _booRevision->setMode(RevisionLineEdit::Use);
+  _booRevision->setType("BOO");
+
   _parentwo = -1;
   _parentso = -1;
   _itemsrcid = -1;
@@ -287,6 +292,8 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       else if (!haveDate)
         _dueDate->setFocus();
 
+      _bomRevision->setEnabled(_privileges->boolean("UseInactiveRevisions"));
+      _booRevision->setEnabled(_privileges->boolean("UseInactiveRevisions"));
       _comments->setEnabled(FALSE);
       _tab->setTabEnabled(_tab->indexOf(_demandTab), FALSE);
     }
@@ -316,6 +323,8 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       _project->setEnabled(FALSE);
       _taxtype->setEnabled(FALSE);
       _taxRecoverable->setEnabled(FALSE);
+      _bomRevision->setEnabled(FALSE);
+      _booRevision->setEnabled(FALSE);
 
       _close->setText(tr("&Close"));
       _save->hide();
@@ -404,6 +413,7 @@ void purchaseOrderItem::populate()
              "              CAST(wo_subnumber AS text) "
              "            ELSE '' "
              "       END AS orderline_number, "
+             "       poitem_status,"
              "       poitem_duedate,"
              "       poitem_qty_ordered,"
              "       poitem_qty_received,"
@@ -484,6 +494,8 @@ void purchaseOrderItem::populate()
       {
         _bomRevision->setId(q.value("poitem_bom_rev_id").toInt());
         _booRevision->setId(q.value("poitem_boo_rev_id").toInt());
+        _bomRevision->setEnabled(q.value("poitem_status").toString() == "U" && _privileges->boolean("UseInactiveRevisions"));
+        _booRevision->setEnabled(q.value("poitem_status").toString() == "U" && _privileges->boolean("UseInactiveRevisions"));
       }
     }
 
