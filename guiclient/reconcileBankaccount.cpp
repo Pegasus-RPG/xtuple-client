@@ -183,17 +183,6 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
 
 void reconcileBankaccount::sReconcile()
 {
-  if(!_datesAreOK)
-  {
-    QMessageBox::critical( this, tr("Dates already reconciled"),
-	        tr("The date range you have entered already has "
-	           "reconciled dates in it. Please choose a different "
-	           "date range.") );
-    _startDate->setFocus();
-    _datesAreOK = false;
-    return;
-  }
-	
   if(_bankrecid == -1)
   {
     QMessageBox::critical( this, tr("Cannot Reconcile Account"),
@@ -223,6 +212,17 @@ void reconcileBankaccount::sReconcile()
     QMessageBox::warning( this, tr("Invalid End Date"),
                            tr("The end date cannot be earlier than the start date.") );
     _endDate->setFocus();
+    return;
+  }
+
+  if(!_datesAreOK)
+  {
+    QMessageBox::critical( this, tr("Dates already reconciled"),
+                tr("The date range you have entered already has "
+                   "reconciled dates in it. Please choose a different "
+                   "date range.") );
+    _startDate->setFocus();
+    _datesAreOK = false;
     return;
   }
 
