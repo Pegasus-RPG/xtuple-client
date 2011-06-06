@@ -12,6 +12,9 @@
 #include "characteristicPrice.h"
 #include "xdoublevalidator.h"
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
@@ -336,23 +339,22 @@ void itemPricingScheduleItem::sSave( bool pClose)
   }
   else if(_freightSelected->isChecked())
   {
-    q.prepare( "SELECT ipsfreight_id "
-               "FROM ipsfreight "
-               "WHERE ( (ipsfreight_ipshead_id=:ipshead_id)"
-               " AND (ipsfreight_warehous_id=:warehous_id)"
-               " AND (ipsfreight_shipzone_id=:shipzone_id)"
-               " AND (ipsfreight_freightclass_id=:freightclass_id)"
-               " AND (ipsfreight_shipvia=:shipvia)"
-               " AND (ipsfreight_qtybreak=:qtybreak)"
-               " AND (ipsfreight_id <> :ipsfreight_id) );" );
-    q.bindValue(":ipshead_id", _ipsheadid);
-    q.bindValue(":warehous_id", _siteFreight->id());
-    q.bindValue(":shipzone_id", _zoneFreight->id());
-    q.bindValue(":freightclass_id", _freightClass->id());
-    q.bindValue(":shipvia", _shipViaFreight->currentText());
-    q.bindValue(":qtybreak", _qtyBreakFreight->toDouble());
-    q.bindValue(":ipsfreight_id", _ipsfreightid);
-    q.exec();
+    MetaSQLQuery mql = mqlLoad("pricingFreight", "detail");
+
+    ParameterList params;
+    params.append("checkDup", true);
+    params.append("ipshead_id", _ipsheadid);
+    if (_siteFreight->isSelected())
+      params.append("warehous_id", _siteFreight->id());
+    if (_selectedZoneFreight->isChecked())
+      params.append("shipzone_id", _zoneFreight->id());
+    if (_selectedFreightClass->isChecked())
+      params.append("freightclass_id", _freightClass->id());
+    if (_selectedShipViaFreight->isChecked())
+      params.append("shipvia", _shipViaFreight->currentText());
+    params.append("qtybreak", _qtyBreakFreight->toDouble());
+    params.append("ipsfreight_id", _ipsfreightid);
+    q = mql.toQuery(params);
     if (q.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Pricing Schedule Item"),
@@ -679,13 +681,14 @@ void itemPricingScheduleItem::populate()
   }
   else if(_freightSelected->isChecked())
   {
-    q.prepare( "SELECT ipsfreight.* "
-               "FROM ipsfreight "
-               "WHERE (ipsfreight_id=:ipsfreight_id);" );
-    q.bindValue(":ipsfreight_id", _ipsfreightid);
-    q.exec();
+    MetaSQLQuery mql = mqlLoad("pricingFreight", "detail");
+
+    ParameterList params;
+    params.append("ipsfreight_id", _ipsfreightid);
+    q = mql.toQuery(params);
     if (q.first())
     {
+      _ipsheadid=q.value("ipsfreight_ipshead_id").toInt();
       _qtyBreakFreight->setDouble(q.value("ipsfreight_qtybreak").toDouble());
       _priceFreight->setLocalValue(q.value("ipsfreight_price").toDouble());
       if (q.value("ipsfreight_type").toString() == "F")
