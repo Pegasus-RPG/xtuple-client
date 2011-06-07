@@ -1113,7 +1113,7 @@ void workOrder::sRescheduleParent()
   if(_startDate->date() != _oldStartDate || _dueDate->date() != _oldDueDate)
   {
     if ( QMessageBox::warning( this, tr("Change Date"),
-                               tr( "Changing the start or end date will update all work order requirements.  "
+                               tr( "Changing the start or due date will update all work order requirements.  "
                                    "Are you sure you want to reschedule all dates?" ),
                                tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 1 )
     {
@@ -1141,6 +1141,9 @@ void workOrder::sRescheduleParent()
   }
   populate();
   omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+  QMessageBox::warning( this, tr("Change Date"),
+                        tr( "Changing the due date may change the Bill of Material components that are effective.\n"
+                            "You may want to consider imploding and exploding the Work Order.\n" ) );
 }
 
 void workOrder::sChangeParentQty()
