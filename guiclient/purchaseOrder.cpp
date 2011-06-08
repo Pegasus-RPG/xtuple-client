@@ -355,6 +355,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
           ParameterList newItemParams;
           newItemParams.append("mode", "new");
           newItemParams.append("pohead_id", _poheadid);
+          newItemParams.append("itemsite_id", itemsiteid);
           newItemParams.append("itemsrc_id", itemsrcid);
 
           if (qty > 0.0)
