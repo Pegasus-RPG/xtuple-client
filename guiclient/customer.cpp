@@ -296,10 +296,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      if(!_privileges->check("MaintainCustomerMastersCustomerType")
-         && (_custtype->id() != -1))
-        _custtype->setEnabled(false);
-
       connect(_shipto, SIGNAL(valid(bool)), _editShipto, SLOT(setEnabled(bool)));
       connect(_shipto, SIGNAL(valid(bool)), _deleteShipto, SLOT(setEnabled(bool)));
       connect(_shipto, SIGNAL(itemSelected(int)), _editShipto, SLOT(animateClick()));
@@ -1249,6 +1245,9 @@ void customer::populate()
     _notes->setText(cust.value("cust_comments").toString());
 
     _custtype->setId(cust.value("cust_custtype_id").toInt());
+    if((!_privileges->check("MaintainCustomerMastersCustomerType")) && (_custtype->id() != -1))
+      _custtype->setEnabled(false);
+
     _salesrep->setId(cust.value("cust_salesrep_id").toInt());
     _defaultCommissionPrcnt->setDouble(cust.value("cust_commprcnt").toDouble() * 100);
     _terms->setId(cust.value("cust_terms_id").toInt());
