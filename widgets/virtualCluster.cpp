@@ -316,6 +316,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         _completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
         connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
         connect(_completer, SIGNAL(highlighted(QString)), this, SLOT(setText(QString)));
+        connect(_completer, SIGNAL(activated(QString)), this, SLOT(setNumber(QString)));
       }
     }
 
