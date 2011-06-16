@@ -13,6 +13,7 @@
 #include <QVariant>
 
 #include <dbtools.h>
+#include "xtupleproductkey.h"
 
 databaseInformation::databaseInformation(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
@@ -25,6 +26,20 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   QString server;
   QString database;
   QString port;
+
+  if(_metrics->value("Application") != "PostBooks")
+  {
+    XTupleProductKey pk(_metrics->value("RegistrationKey"));
+    if(pk.valid())
+    {
+      if(pk.users() == 0)
+        _numOfServerLicencesLit->setText(tr("Open"));
+      else
+        _numOfServerLicencesLit->setText(QString("%1").arg(pk.users()));
+    }
+    else
+      _numOfServerLicencesLit->setText(tr("Unknown"));
+  }
 
   _description->setFocus();
 
