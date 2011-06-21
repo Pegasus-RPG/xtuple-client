@@ -27,6 +27,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void  prepare();
     virtual void  clear();
     virtual void  setItemExtraClause();
+    Q_INVOKABLE virtual int id() { return _soitemid; }
 
   public slots:
     virtual SetResponse set( const ParameterList &pParams );
