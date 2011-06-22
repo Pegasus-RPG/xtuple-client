@@ -19,6 +19,7 @@
 #include <QPrintDialog>
 #include <QShortcut>
 #include <QToolButton>
+#include <QDebug>
 
 #include <metasql.h>
 #include <mqlutil.h>
@@ -27,6 +28,8 @@
 #include <renderobjects.h>
 #include <parameter.h>
 #include <previewdialog.h>
+
+#include "../scriptapi/parameterlistsetup.h"
 
 class displayPrivate : public Ui::display
 {
@@ -520,7 +523,16 @@ QString display::searchText()
 
 bool display::setParams(ParameterList & params)
 {
-  return _data->setParams(params);
+  bool ret = _data->setParams(params);
+  if(engine() && engine()->globalObject().property("setParams").isFunction())
+  {
+    QScriptValue paramArg = ParameterListtoScriptValue(engine(), params);
+    QScriptValue tmp = engine()->globalObject().property("setParams").call(QScriptValue(), QScriptValueList() << paramArg);
+    ret = ret && tmp.toBool();
+    params.clear();
+    ParameterListfromScriptValue(paramArg, params);
+  }
+  return ret;
 }
 
 void display::setupCharacteristics(unsigned int uses)
@@ -709,6 +721,7 @@ void display::sFillList()
 
 void display::sFillList(ParameterList pParams, bool forceSetParams)
 {
+  emit fillListBefore();
   if (forceSetParams || !pParams.count())
   {
     if (!setParams(pParams))
@@ -730,6 +743,7 @@ void display::sFillList(ParameterList pParams, bool forceSetParams)
     systemError(this, xq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  emit fillListAfter();
 }
 
 void display::sPopulateMenu(QMenu *, QTreeWidgetItem *, int)
