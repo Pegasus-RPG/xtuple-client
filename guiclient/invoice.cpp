@@ -330,9 +330,12 @@ void invoice::sPopulateCustomerInfo(int pCustid)
         _shipChrgs->setId(cust.value("cust_shipchrg_id").toInt());
 
 	bool ffBillTo = cust.value("cust_ffbillto").toBool();
-	_billToName->setEnabled(ffBillTo);
-	_billToAddr->setEnabled(ffBillTo);
-	_billToPhone->setEnabled(ffBillTo);
+        if (_mode != cView)
+        {
+          _billToName->setEnabled(ffBillTo);
+          _billToAddr->setEnabled(ffBillTo);
+          _billToPhone->setEnabled(ffBillTo);
+        }
 
 	setFreeFormShipto(cust.value("cust_ffshipto").toBool());
 	if (cust.value("shiptoid").toInt() != -1)
@@ -736,9 +739,12 @@ void invoice::populate()
     _project->setId(q.value("invchead_prj_id").toInt());
 
     bool ffBillTo = q.value("cust_ffbillto").toBool();
-    _billToName->setEnabled(ffBillTo);
-    _billToAddr->setEnabled(ffBillTo);
-    _billToPhone->setEnabled(ffBillTo);
+    if (_mode != cView)
+    {
+      _billToName->setEnabled(ffBillTo);
+      _billToAddr->setEnabled(ffBillTo);
+      _billToPhone->setEnabled(ffBillTo);
+    }
 
     _billToName->setText(q.value("invchead_billto_name").toString());
     _billToAddr->setLine1(q.value("invchead_billto_address1").toString());
@@ -935,12 +941,13 @@ void invoice::setFreeFormShipto(bool pFreeForm)
 {
   _ffShipto = pFreeForm;
 
-  _shipToName->setEnabled(_ffShipto);
-  _shipToAddr->setEnabled(_ffShipto);
-  _shipToPhone->setEnabled(_ffShipto);
-
   if (_mode != cView)
+  {
     _copyToShipto->setEnabled(_ffShipto);
+    _shipToName->setEnabled(_ffShipto);
+    _shipToAddr->setEnabled(_ffShipto);
+    _shipToPhone->setEnabled(_ffShipto);
+  }
   else
     _copyToShipto->setEnabled(false);
 }
