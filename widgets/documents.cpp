@@ -78,6 +78,7 @@ Documents::Documents(QWidget *pParent) :
   
   _source = Uninitialized;
   _sourceid = -1;
+  _readOnly = false;
 
   _doc->addColumn(tr("Type"),  _itemColumn,  Qt::AlignLeft, true, "target_type" );
   _doc->addColumn(tr("Number"), _itemColumn, Qt::AlignLeft, true, "target_number" );
@@ -89,9 +90,8 @@ Documents::Documents(QWidget *pParent) :
   connect(_editDoc, SIGNAL(clicked()), this, SLOT(sEditDoc()));
   connect(_viewDoc, SIGNAL(clicked()), this, SLOT(sViewDoc()));
   connect(_detachDoc, SIGNAL(clicked()), this, SLOT(sDetachDoc()));
-  connect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
-  connect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
   connect(_doc, SIGNAL(valid(bool)), this, SLOT(handleSelection()));
+  connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(handleItemSelected()));
   handleSelection();
 
   if (_x_privileges)
@@ -141,21 +141,14 @@ void Documents::setId(int pSourceid)
 
 void Documents::setReadOnly(bool pReadOnly)
 {
+  _readOnly = pReadOnly;
+
   _newDoc->setEnabled(!pReadOnly);
   _attachDoc->setEnabled(!pReadOnly);
   _editDoc->setEnabled(!pReadOnly);
   _detachDoc->setEnabled(!pReadOnly);
 
-  disconnect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
-//  disconnect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
-  disconnect(_doc, SIGNAL(valid(bool)), this, SLOT(handleSelection()));
-  if(!pReadOnly)
-  {
-    connect(_doc, SIGNAL(valid(bool)), _editDoc, SLOT(setEnabled(bool)));
-//    connect(_doc, SIGNAL(valid(bool)), _viewDoc, SLOT(setEnabled(bool)));
-    connect(_doc, SIGNAL(valid(bool)), this, SLOT(handleSelection()));
-  }
-  handleSelection(pReadOnly);
+  handleSelection();
 }
 
 void Documents::sNewDoc(QString type, QString ui)
@@ -243,7 +236,7 @@ void Documents::sOpenDoc(QString mode)
     newdlg.set(params);
 
     if (newdlg.exec() != QDialog::Rejected)
-    refresh();
+      refresh();
     return;
   }
   //url -- In the future this needs to be changed to use docass instead of url
@@ -302,7 +295,7 @@ void Documents::sOpenDoc(QString mode)
       QDesktopServices::openUrl(urldb);
 
       // Add a watch to the file that will save any changes made to the file back to the database.
-      if (_guiClientInterface)
+      if (_guiClientInterface && !_readOnly) // TODO: only if NOT read-only
         _guiClientInterface->addDocumentWatch(tfile.fileName(),qfile.value("url_id").toInt());
       return;
     }
@@ -539,24 +532,34 @@ void Documents::refresh()
   _doc->populate(query,TRUE);
 }
 
-void Documents::handleSelection(bool pReadOnly)
+void Documents::handleSelection(bool /*pReadOnly*/)
 {
-//  disconnect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sViewDoc()));
-  disconnect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
-  if (pReadOnly)
-    return;
-
   if (_doc->selectedItems().count() &&
       (_doc->currentItem()->rawValue("target_type").toString() == "URL" ||
        _doc->currentItem()->rawValue("target_type").toString() == "FILE" ))
   {
-//    connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sViewDoc()));
     _viewDoc->setText(tr("Open"));
   }
   else
   {
-    connect(_doc, SIGNAL(itemSelected(int)), this, SLOT(sEditDoc()));
     _viewDoc->setText(tr("View"));
   }
+
+  bool valid = (_doc->selectedItems().count() > 0);
+  _editDoc->setEnabled(valid && !_readOnly);
+  _viewDoc->setEnabled(valid);
 }
 
+void Documents::handleItemSelected()
+{
+  if(_readOnly ||
+     (_doc->currentItem()->rawValue("target_type").toString() == "URL" ||
+      _doc->currentItem()->rawValue("target_type").toString() == "FILE" ))
+  {
+    _viewDoc->animateClick();
+  }
+  else
+  {
+    _editDoc->animateClick();
+  }
+}
