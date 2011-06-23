@@ -31,6 +31,18 @@
 
 #define DEBUG false
 
+static bool determineIfMfg()
+{
+  if (_x_metrics && _x_metrics->value("Application") == "Standard")
+  {
+    XSqlQuery xtmfg;
+    xtmfg.exec("SELECT packageIsEnabled('xtmfg')");
+    if (xtmfg.first())
+      return true;
+  }
+  return false;
+}
+
 DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
   : QWidget(parent, Qt::Popup)
 {
@@ -79,29 +91,11 @@ DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
 
 void DCalendarPopup::dateSelected(const QDate &pDate)
 {
-  bool isMfg;
-  int siteId = ((XDateEdit*)parent())->calendarSiteId();
-
-  if (_x_metrics && _x_metrics->value("Application") == "Standard")
-  {
-    XSqlQuery xtmfg;
-    xtmfg.exec("SELECT packageIsEnabled('xtmfg')");
-    if (xtmfg.first())
-      isMfg = true;
-    else
-      isMfg = false;
-  }
-  else
-    isMfg = false;
-
   if (DEBUG)
     qDebug("DCalendarPopup::dateSelected(%s)", qPrintable(pDate.toString()));
   if (parent())
   {
-    if (isMfg && (siteId != -1))
-      ((XDateEdit*)parent())->checkDate(pDate);
-    else
-      ((XDateEdit*)parent())->setDate(pDate, true);
+    ((XDateEdit*)parent())->checkDate(pDate);
   }
 
   emit newDate(pDate);
@@ -138,25 +132,12 @@ void XDateEdit::parseDate()
 {
   QString dateString = text().trimmed();
   bool    isNumeric;
-  bool    isMfg;
 
   if (DEBUG)
     qDebug("%s::parseDate() with dateString %s, _currentDate %s, _allowNull %d",
            qPrintable(parent() ? parent()->objectName() : objectName()),
            qPrintable(dateString),
            qPrintable(_currentDate.toString()), _allowNull);
-
-  if (_x_metrics && _x_metrics->value("Application") == "Standard")
-  {
-    XSqlQuery xtmfg;
-    xtmfg.exec("SELECT packageIsEnabled('xtmfg')");
-    if (xtmfg.first())
-      isMfg = true;
-    else
-      isMfg = false;
-  }
-  else
-    isMfg = false;
 
 #ifdef GUIClient_h
   QDate today = ofmgThis->dbDate();
@@ -178,35 +159,20 @@ void XDateEdit::parseDate()
     setNull();
 
   else if (dateString == "0")                           // today
-  {
-    if (isMfg && (_siteId != -1))
-      checkDate(today);
-    else
-      setDate(today, TRUE);
-  }
+    checkDate(today);
 
   else if (dateString.contains(QRegExp("^[+-][0-9]+"))) // offset from today
   {
     int offset = dateString.toInt(&isNumeric);
     if (isNumeric)
-    {
-      if (isMfg && (_siteId != -1))
-        checkDate(today.addDays(offset));
-      else
-        setDate(today.addDays(offset), true);
-    }
+      checkDate(today.addDays(offset));
   }
 
   else if (dateString[0] == '#')                        // julian day
   {
     int offset = dateString.right(dateString.length() - 1).toInt(&isNumeric);
     if (isNumeric)
-    {
-      if (isMfg && (_siteId != -1))
-        checkDate(QDate(today.year(), 1, 1).addDays(offset - 1));
-      else
-        setDate(QDate(today.year(), 1, 1).addDays(offset - 1), TRUE);
-    }
+      checkDate(QDate(today.year(), 1, 1).addDays(offset - 1));
   }
 
   else if (dateString.contains(QRegExp("^[0-9][0-9]?$"))) // date in month
@@ -217,10 +183,7 @@ void XDateEdit::parseDate()
       if (offset > today.daysInMonth())
         offset = today.daysInMonth();
  
-      if (isMfg && (_siteId != -1))
-        checkDate(QDate(today.year(), today.month(), 1).addDays(offset - 1));
-      else
-        setDate(QDate(today.year(), today.month(), 1).addDays(offset - 1), TRUE);
+      checkDate(QDate(today.year(), today.month(), 1).addDays(offset - 1));
     }
   }
 
@@ -406,10 +369,7 @@ void XDateEdit::parseDate()
       }
     }
 
-    if (isMfg && (_siteId != -1))
-      checkDate(QDate(tmp.year(), tmp.month(), tmp.day()));
-    else
-      setDate(QDate(tmp.year(), tmp.month(), tmp.day()), true );
+    checkDate(QDate(tmp.year(), tmp.month(), tmp.day()));
   }
 
   if (!_valid)
@@ -461,16 +421,10 @@ void XDateEdit::setDate(const QDate &pDate, bool pAnnounce)
   {
     if(!pAnnounce)
     {
-      if (_x_metrics && _x_metrics->value("Application") == "Standard" && (_siteId != -1))
-      {
-        XSqlQuery xtmfg;
-        xtmfg.exec("SELECT packageIsEnabled('xtmfg')");
-        if (xtmfg.first())
-          return checkDate(pDate);
-      }
+      if(determineIfMfg() && (_siteId != -1))
+        return checkDate(pDate);
     }
-
-    if(pAnnounce)
+    else
     {
       pAnnounce = (pDate != _currentDate);
     }
@@ -502,23 +456,27 @@ void XDateEdit::setDate(const QDate &pDate, bool pAnnounce)
 
 void XDateEdit::checkDate(const QDate &pDate)
 {
-  QDate nextWorkDate;
-  XSqlQuery workday;
+  QDate nextWorkDate = pDate;
 
-  workday.prepare("SELECT xtmfg.calculatenextworkingdate(:whsid, :date, :desired) AS result;");
-  workday.bindValue(":whsid", _siteId);
-  workday.bindValue(":date", pDate);
-  workday.bindValue(":desired", 0);
-  workday.exec();
-  if (workday.first())
-    nextWorkDate = workday.value("result").toDate();
-  else if (workday.lastError().type() != QSqlError::NoError)
+  if(determineIfMfg() && (_siteId != -1))
   {
-    QMessageBox::warning(this, tr("No work week calendar found"),
-                          tr("<p>The selected site has no work week defined. "
-                             "Please go to Schedule Setup and define "
-                             "the working days for this site."));
-    return;
+    XSqlQuery workday;
+
+    workday.prepare("SELECT xtmfg.calculatenextworkingdate(:whsid, :date, :desired) AS result;");
+    workday.bindValue(":whsid", _siteId);
+    workday.bindValue(":date", pDate);
+    workday.bindValue(":desired", 0);
+    workday.exec();
+    if (workday.first())
+      nextWorkDate = workday.value("result").toDate();
+    else if (workday.lastError().type() != QSqlError::NoError)
+    {
+      QMessageBox::warning(this, tr("No work week calendar found"),
+                            tr("<p>The selected site has no work week defined. "
+                               "Please go to Schedule Setup and define "
+                               "the working days for this site."));
+      return;
+    }
   }
 
   if (nextWorkDate == pDate)
