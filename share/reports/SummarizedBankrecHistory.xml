@@ -34,7 +34,7 @@
   <name>head</name>
   <sql>SELECT (bankaccnt_name || '-' || bankaccnt_descrip) AS f_bankaccnt
   FROM bankaccnt
- WHERE (bankaccnt_id=&lt;? value("bankaccnt_id") ?>);</sql>
+ WHERE (bankaccnt_id=&lt;? value("bankaccntid") ?>);</sql>
  </querysource>
  <rpthead>
   <height>121</height>
