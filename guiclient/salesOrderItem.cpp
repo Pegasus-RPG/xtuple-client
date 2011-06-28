@@ -814,6 +814,30 @@ void salesOrderItem::sSave()
     return;
   }
 
+  // Make sure Qty Ordered/Qty UOM does not result in an invalid fractional Inv Qty
+  if (!_invIsFractional)
+  {
+    if (qAbs((_qtyOrdered->toDouble() * _qtyinvuomratio) - (double)qRound(_qtyOrdered->toDouble() * _qtyinvuomratio)) > 0.01)
+    {
+      if (QMessageBox::question(this, tr("Change Qty Ordered?"),
+                                tr("This Qty Ordered/Qty UOM will result "
+                                   "in a fractional Inventory Qty for "
+                                   "this Item.  This Item does not allow "
+                                   "fractional quantities.\n"
+                                   "Do you want to change the Qty Ordered?"),
+                                QMessageBox::Yes | QMessageBox::Default,
+                                QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+      {
+        if (_qtyOrdered->validator()->inherits("QIntValidator"))
+          _qtyOrdered->setDouble((double)qRound(_qtyOrdered->toDouble() * _qtyinvuomratio + 0.5) / _qtyinvuomratio, 0);
+        else
+          _qtyOrdered->setDouble((double)qRound(_qtyOrdered->toDouble() * _qtyinvuomratio + 0.5) / _qtyinvuomratio, 2);
+        _qtyOrdered->setFocus();
+        return;
+      }
+    }
+  }
+
   if (_netUnitPrice->isEmpty())
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
