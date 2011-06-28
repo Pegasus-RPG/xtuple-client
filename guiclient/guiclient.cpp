@@ -1325,6 +1325,8 @@ QString translationFile(QString localestr, const QString component)
 QString translationFile(QString localestr, const QString component, QString &version)
 {
   QStringList paths;
+//qDebug() << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+  paths << QDesktopServices::storageLocation(QDesktopServices::DataLocation);
   paths << "dict";
   paths << "";
   paths << "../dict";

@@ -152,6 +152,10 @@ int main(int argc, char *argv[])
 
   qInstallMsgHandler(xTupleMessageOutput);
   QApplication app(argc, argv);
+  app.setOrganizationDomain("xTuple.com");
+  app.setOrganizationName("xTuple");
+  app.setApplicationName("xTuple");
+  app.setApplicationVersion(_Version);
 
 #if QT_VERSION >= 0x040400
   // This is the correct place for this call but on versions less
@@ -526,7 +530,9 @@ int main(int argc, char *argv[])
           translator = new QTranslator(&app);
         }
         else
+        {
           notfound << *fit;
+        }
       }
 
       if (! notfound.isEmpty() &&

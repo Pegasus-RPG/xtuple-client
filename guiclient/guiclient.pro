@@ -536,6 +536,7 @@ FORMS =   absoluteCalendarItem.ui               \
           transferOrders.ui                     \
           transferTrans.ui                      \
           transformTrans.ui                     \
+          translations.ui                       \
           uiform.ui                             \
           uiforms.ui                            \
           unappliedAPCreditMemos.ui             \
@@ -1109,6 +1110,7 @@ HEADERS = ../common/format.h                    \
           transferOrders.h              \
           transferTrans.h               \
           transformTrans.h              \
+          translations.h                \
           uiform.h                      \
           uiforms.h                     \
           unappliedAPCreditMemos.h      \
@@ -1695,6 +1697,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           transferOrders.cpp                    \
           transferTrans.cpp                     \
           transformTrans.cpp                    \
+          translations.cpp                      \
           uiform.cpp                            \
           uiforms.cpp                           \
           unappliedAPCreditMemos.cpp            \
