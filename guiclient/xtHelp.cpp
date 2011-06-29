@@ -42,6 +42,10 @@ xtHelp* xtHelp::getInstance(QWidget *parent)
   return xtHelpSingleton;
 }
 
+void xtHelp::reload()
+{
+}
+
 xtHelp::xtHelp(QWidget *parent)
   : QHelpEngine(QCoreApplication::instance()->applicationDirPath() +
                 QDir::separator() + QString(QHC_PATH), parent),

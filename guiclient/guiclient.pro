@@ -260,6 +260,7 @@ FORMS =   absoluteCalendarItem.ui               \
           glTransactionDetail.ui        \
           group.ui                      \
           groups.ui                     \
+          helpDownload.ui               \
           honorific.ui                  \
           honorifics.ui                 \
           hotkey.ui                     \
@@ -807,6 +808,7 @@ HEADERS = ../common/format.h                    \
           group.h                       \
           groups.h                      \
           guiclient.h                   \
+          helpDownload.h                \
           helpView.h                    \
           helpViewBrowser.h             \
           honorific.h                   \
@@ -1393,6 +1395,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           group.cpp                     \
           groups.cpp                    \
           guiclient.cpp                 \
+          helpDownload.cpp              \
           helpView.cpp                  \
           helpViewBrowser.cpp           \
           honorific.cpp                 \

@@ -22,6 +22,7 @@
 
 #include "xtsettings.h"
 #include "guiclient.h"
+#include "helpDownload.h"
 
 #include <parameter.h>
 #include <openreports.h>
@@ -232,7 +233,8 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 #ifndef Q_WS_MACX
     { "separator",		NULL,				NULL,		helpMenu, "true", NULL, NULL, true	},
 #endif
-    { "help.tableOfContents",	tr("Table of &Contents..."),	SLOT(sTOC()),	helpMenu, "true", NULL, NULL, true	}
+    { "help.tableOfContents",	tr("Table of &Contents..."),	SLOT(sTOC()),	helpMenu, "true", NULL, NULL, true	},
+    { "help.download",          tr("Download..."),           SLOT(sDownload()), helpMenu, "true", NULL, NULL, true      }
   };
   addActionsToMenu(help, sizeof(help) / sizeof(help[0]));
 
@@ -552,6 +554,11 @@ void menuSystem::sTOC()
 {
   helpView *_help = helpView::getInstance(parent);
   _help->show();
+}
+
+void menuSystem::sDownload()
+{
+  omfgThis->handleNewWindow(new helpDownload());
 }
 
 void menuSystem::sFixACL()
