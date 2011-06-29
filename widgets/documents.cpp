@@ -219,7 +219,12 @@ void Documents::sOpenDoc(QString mode)
   QString docType = _doc->currentItem()->rawValue("target_type").toString();
   int targetid = _doc->currentItem()->id("target_number");
   ParameterList params;
-  params.append("mode", mode);
+  if (docType == "Q" && mode == "view")
+    params.append("mode", "viewQuote");
+  else if (docType == "Q" && mode == "edit")
+    params.append("mode", "editQuote");
+  else
+    params.append("mode", mode);
 
   //image -- In the future this needs to be changed to use docass instead of imageass
   if (docType == "IMG")
@@ -348,6 +353,11 @@ void Documents::sOpenDoc(QString mode)
   {
     params.append("item_id", targetid);
     ui = "item";
+  }
+  else if (docType == "Q")
+  {
+    params.append("quhead_id", targetid);
+    ui = "salesOrder";
   }
   else if (docType == "S")
   {
@@ -487,6 +497,7 @@ void Documents::refresh()
               " WHEN (target_type='J') THEN :project "
               " WHEN (target_type='P') THEN :po "
               " WHEN (target_type='S') THEN :so "
+              " WHEN (target_type='Q') THEN :quote "
               " WHEN (target_type='V') THEN :vendor "
               " WHEN (target_type='W') THEN :wo "
               " WHEN (target_type='TODO') THEN :todo "
@@ -510,6 +521,7 @@ void Documents::refresh()
 
   query.bindValue(":po", tr("Purchase Order"));
   query.bindValue(":so", tr("Sales Order"));
+  query.bindValue(":quote", tr("Quote"));
   query.bindValue(":wo", tr("Work Order"));
   query.bindValue(":image", tr("Image"));
   query.bindValue(":incident", tr("Incident"));
