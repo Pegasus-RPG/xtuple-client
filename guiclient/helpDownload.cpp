@@ -57,6 +57,7 @@ void helpDownload::finished(QNetworkReply * nwrep)
   {
     if(nwrep->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 301)
     {
+      qDebug() << "301 Not found";
       _progress->setRange(0, 100);
       _progress->setValue(100);
       _label->setText("No documentation is currently available.");
@@ -79,8 +80,23 @@ void helpDownload::finished(QNetworkReply * nwrep)
       {
         if(ba[0] == '<')
         {
-          // TODO: try and parse this to get the download URL
-          _label->setText(tr("Received unknown response from server."));
+          QRegExp re("<a href=\"([^\"]+)\" class=\"direct-download\">");
+          QString html(ba);
+          re.indexIn(html);
+          QStringList list = re.capturedTexts();
+          if(list.size() > 1)
+          {
+            QString url = list.at(1);
+            url = url.replace("&amp;", "&");
+            qDebug() << "Redirecting to " << url;
+            QNetworkReply * newrep = nwam->get(QNetworkRequest(QUrl(url)));
+            connect(newrep, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(downloadProgress(qint64, qint64)));
+            _nwrep = newrep;
+          }
+          else
+          {
+            _label->setText(tr("Received unknown response from server."));
+          }
         }
         else
         {
@@ -149,6 +165,7 @@ void helpDownload::finished(QNetworkReply * nwrep)
     }
     else
     {
+      qDebug() << "Error: " << nwrep->error();
       _label->setText(tr("Could not retrieve documentation at this time."));
     }
     _progress->setRange(0, 100);

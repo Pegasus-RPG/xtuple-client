@@ -28,6 +28,8 @@ class helpView : public QDockWidget
     static helpView     *getInstance(QWidget *parent = 0);
     ~helpView();
     
+    static void reset();
+
   public slots:
     void sIndexChanged(const QUrl&);
     void sLocationChanged(Qt::DockWidgetArea);

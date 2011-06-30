@@ -47,6 +47,11 @@ helpView* helpView::getInstance(QWidget *parent)
   return helpViewSingleton;
 }
 
+void helpView::reset()
+{
+  helpViewSingleton = 0;
+}
+
 helpView::helpView(QWidget *parent)
   : QDockWidget(tr("xTuple Help Documentation"), parent)
 {
