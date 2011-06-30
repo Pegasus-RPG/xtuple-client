@@ -55,6 +55,7 @@ macx {
   #PRECOMPILED_HEADER = stable.h
   OBJECTS_DIR = osx_obj
   QMAKE_INFO_PLIST = Info.plist
+  LIBS += -lz
 }
 
 DESTDIR     = ../bin

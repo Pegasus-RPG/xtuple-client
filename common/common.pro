@@ -6,7 +6,6 @@ CONFIG      += qt warn_on staticlib
 DEFINES     += MAKELIB
 
 INCLUDEPATH += $(QTDIR)/src/3rdparty/zlib
-DEPENDPATH  += $(QTDIR)/src/3rdparty/zlib
 
 DESTDIR = ../lib
 OBJECTS_DIR = tmp
