@@ -96,6 +96,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     bool    _updatePrice;
     bool    _createPO;
     bool    _createPR;
+    int     _priceUOMCache;
     double  _orderQtyCache;
     double  _cachedPct;
     double  _cachedRate;

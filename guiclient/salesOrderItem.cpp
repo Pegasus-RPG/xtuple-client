@@ -747,6 +747,7 @@ void salesOrderItem::clear()
   _overridePoPrice->clear();
   _originalQtyOrd  = 0.0;
   _orderQtyCache   = 0.0;
+  _priceUOMCache   = -1;
   _modified        = false;
   _updateItemsite  = false;
   _baseUnitPrice->clear();
@@ -759,7 +760,7 @@ void salesOrderItem::sSave()
   _save->setFocus();
 
   int   itemsrcid  = _itemsrc;
-  if (_createPO && _createOrder->isChecked() && (_item->itemType() == "P"))
+  if ((_mode == cNew) && _createPO && _createOrder->isChecked() && (_item->itemType() == "P"))
   {
     if ( _dropShip->isChecked() && _shiptoid < 1)
     {
@@ -1652,6 +1653,7 @@ void salesOrderItem::sDeterminePrice(bool force)
 
   double  charTotal  =0;
   bool    qtyChanged =(_orderQtyCache != _qtyOrdered->toDouble());
+  bool    priceUOMChanged =(_priceUOMCache != _priceUOM->id());
   QDate   asOf;
 
   if (_metrics->value("soPriceEffective") == "ScheduleDate")
@@ -1675,6 +1677,8 @@ void salesOrderItem::sDeterminePrice(bool force)
       QString token(tr("Scheduled Date"));
       if ( qtyChanged)
         token=tr("Item quantity");
+      if ( priceUOMChanged)
+        token=tr("Price UOM");
       if (QMessageBox::question(this, tr("Update Price?"),
                                 tr("<p>The %1 has changed. Do you want to update the Price?").arg(token),
                                 QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
@@ -1786,6 +1790,7 @@ void salesOrderItem::sDeterminePrice(bool force)
 
       sCalculateDiscountPrcnt();
       _orderQtyCache = _qtyOrdered->toDouble();
+      _priceUOMCache = _priceUOM->id();
       _dateCache     = _scheduledDate->date();
     }
   }
@@ -2745,6 +2750,7 @@ void salesOrderItem::populate()
     _invuomid = item.value("item_inv_uom_id").toInt();
     _qtyUOM->setId(item.value("qty_uom_id").toInt());
     _priceUOM->setId(item.value("price_uom_id").toInt());
+    _priceUOMCache = _priceUOM->id();
     _qtyinvuomratio    = item.value("qty_invuomratio").toDouble();
     _priceinvuomratio  = item.value("price_invuomratio").toDouble();
     _unitCost->setBaseValue(item.value("stdcost").toDouble());
