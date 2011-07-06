@@ -11,6 +11,7 @@
 #include "addresses.h"
 #include "address.h"
 #include "adjustmentTrans.h"
+#include "adjustInvValue.h"
 #include "allocateReservations.h"
 #include "apAccountAssignment.h"
 #include "apAccountAssignments.h"

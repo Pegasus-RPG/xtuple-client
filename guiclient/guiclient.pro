@@ -73,6 +73,7 @@ FORMS =   absoluteCalendarItem.ui               \
           address.ui                            \
           addresses.ui                          \
           adjustmentTrans.ui                    \
+          adjustInvValue.ui                     \
           allocateReservations.ui               \
           apAccountAssignment.ui                \
           apAccountAssignments.ui               \
@@ -609,6 +610,7 @@ HEADERS = ../common/format.h                    \
           address.h                             \
           addresses.h                           \
           adjustmentTrans.h                     \
+          adjustInvValue.h                      \
           allocateReservations.h                \
           apAccountAssignment.h                 \
           apAccountAssignments.h                \
@@ -1197,6 +1199,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           address.cpp                           \
           addresses.cpp                         \
           adjustmentTrans.cpp                   \
+          adjustInvValue.cpp                    \
           allocateReservations.cpp              \
           apAccountAssignment.cpp               \
           apAccountAssignments.cpp              \
