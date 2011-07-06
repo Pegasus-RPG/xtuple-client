@@ -4000,7 +4000,7 @@ void salesOrder::sCalculateTax()
 
 void salesOrder::sTaxZoneChanged()
 {
-  if (_taxZone->id() != _taxzoneidCache)
+  if (_taxZone->id() != _taxzoneidCache && _saved)
     save(true);
 
   sCalculateTax();
