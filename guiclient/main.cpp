@@ -403,6 +403,7 @@ int main(int argc, char *argv[])
       url.addQueryItem("dbname", QUrl::toPercentEncoding(dbname));
       url.addQueryItem("db", QUrl::toPercentEncoding(db));
       url.addQueryItem("cnt", QString::number(cnt));
+      url.addQueryItem("tot", QString::number(tot));
       url.addQueryItem("ver", _Version);
 
       http->setHost("www.xtuple.org");
