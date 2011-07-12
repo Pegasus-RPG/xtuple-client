@@ -8,18 +8,18 @@
  * to be bound by its terms.
  */
 
-#ifndef HELPDOWNLOAD_H
-#define HELPDOWNLOAD_H
+#ifndef DICTIONARIES_H
+#define DICTIONARIES_H
 
 #include "guiclient.h"
 #include "xwidget.h"
 
-#include "ui_helpDownload.h"
+#include "ui_dictionaries.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
 
-class helpDownload : public XWidget, public Ui::helpDownload
+class dictionaries : public XWidget, public Ui::dictionaries
 {
     Q_OBJECT
 
@@ -28,8 +28,8 @@ class helpDownload : public XWidget, public Ui::helpDownload
       Busy
     };
 public:
-    helpDownload(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~helpDownload();
+    dictionaries(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    ~dictionaries();
 
 public slots:
     virtual void sAction();
@@ -40,10 +40,10 @@ protected slots:
     virtual void downloadProgress(qint64, qint64);
 
 private:
-    QString ver;
+    QString langext;
     State _state;
     QNetworkAccessManager * nwam;
     QNetworkReply * _nwrep;
 };
 
-#endif // HELPDOWNLOAD_H
+#endif // DICTIONARIES_H

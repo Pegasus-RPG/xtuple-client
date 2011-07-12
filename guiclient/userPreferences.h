@@ -43,6 +43,7 @@ public slots:
     virtual void sWarehouseToggled( QTreeWidgetItem * selected );
     virtual void sFillWarehouseList();
     virtual void sTranslations();
+    virtual void sDictionaries();
 
 protected slots:
     virtual void languageChange();
