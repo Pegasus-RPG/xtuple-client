@@ -14,6 +14,9 @@
 #include <QDockWidget>
 
 class QGridLayout;
+class QHelpSearchEngine;
+class QTabWidget;
+class QSplitter;
 class QToolBar;
 class QUrl;
 class QWidget;
@@ -31,14 +34,20 @@ class helpView : public QDockWidget
     static void reset();
 
   public slots:
+    void queriesToEngine();
     void sIndexChanged(const QUrl&);
     void sLocationChanged(Qt::DockWidgetArea);
 
   protected:
     xtHelp              *_help;
     helpViewBrowser     *_helpBrowser;
+    QTabWidget          *_searchTabs;
     QToolBar            *_helpBrowserToolbar;
-    
+    QSplitter           *_searchSplitter;
+    QSplitter           *_mainSplitter;
+    QHelpSearchEngine   *_searchEngine;
+
+
     QString             _loc;
 
   private:
