@@ -35,6 +35,7 @@
 #include "printPackingList.h"
 #include "printSoForm.h"
 #include "prospect.h"
+#include "allocateARCreditMemo.h"
 #include "reserveSalesOrderItem.h"
 #include "dspReservations.h"
 #include "purchaseRequest.h"
@@ -106,6 +107,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_subtotal,            SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
   connect(_miscCharge,          SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
   connect(_freight,             SIGNAL(valueChanged()),                         this,         SLOT(sFreightChanged()));
+  if (_privileges->check("ApplyARMemos"))
+    connect(_allocatedCMLit,    SIGNAL(leftClickedURL(const QString &)),        this,         SLOT(sCreditAllocate()));
   connect(_allocatedCM,         SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
   connect(_outstandingCM,       SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
   connect(_authCC,              SIGNAL(valueChanged()),                         this,         SLOT(sCalculateTotal()));
@@ -3375,12 +3378,13 @@ void salesOrder::populateCMInfo()
     return;
 
   // Allocated C/M's
-  q.prepare("SELECT COALESCE(SUM(currToCurr(aropenco_curr_id, :curr_id,"
-            "                               aropenco_amount, :effective)),0) AS amount"
-            "  FROM aropenco, aropen"
-            " WHERE ( (aropenco_cohead_id=:cohead_id)"
-            "  AND    (aropenco_aropen_id=aropen_id) ); ");
-  q.bindValue(":cohead_id", _soheadid);
+  q.prepare("SELECT COALESCE(SUM(currToCurr(aropenalloc_curr_id, :curr_id,"
+            "                               aropenalloc_amount, :effective)),0) AS amount"
+            "  FROM aropenalloc, aropen"
+            " WHERE ( (aropenalloc_doctype='S')"
+            "  AND    (aropenalloc_doc_id=:doc_id)"
+            "  AND    (aropenalloc_aropen_id=aropen_id) ); ");
+  q.bindValue(":doc_id",    _soheadid);
   q.bindValue(":curr_id",   _allocatedCM->id());
   q.bindValue(":effective", _allocatedCM->effective());
   q.exec();
@@ -3393,9 +3397,9 @@ void salesOrder::populateCMInfo()
   q.prepare("SELECT SUM(amount) AS f_amount"
             " FROM (SELECT aropen_id,"
             "        currToCurr(aropen_curr_id, :curr_id,"
-            "               noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenco_amount,0))),"
+            "               noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenalloc_amount,0))),"
             "               :effective) AS amount "
-            "       FROM cohead, aropen LEFT OUTER JOIN aropenco ON (aropenco_aropen_id=aropen_id)"
+            "       FROM cohead, aropen LEFT OUTER JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id)"
             "       WHERE ( (aropen_cust_id=cohead_cust_id)"
             "         AND   (aropen_doctype IN ('C', 'R'))"
             "         AND   (aropen_open)"
@@ -4096,6 +4100,24 @@ void salesOrder::sShowReservations()
   }
 }
 
+void salesOrder::sCreditAllocate()
+{
+  ParameterList params;
+  params.append("doctype", "S");
+  params.append("cohead_id", _soheadid);
+  params.append("cust_id", _cust->id());
+  params.append("total",  _total->localValue());
+  params.append("balance",  _balance->localValue());
+  params.append("curr_id",   _balance->id());
+  params.append("effective", _balance->effective());
+
+  allocateARCreditMemo newdlg(this, "", TRUE);
+  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
+  {
+    populateCMInfo();
+  }
+}
+
 void salesOrder::sAllocateCreditMemos()
 {
   // Determine the balance I need to select
@@ -4107,16 +4129,16 @@ void salesOrder::sAllocateCreditMemos()
   {
     // Get the list of Unallocated CM's with amount
     q.prepare("SELECT aropen_id,"
-              "       noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenco_amount,0))) AS amount,"
+              "       noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenalloc_amount,0))) AS amount,"
               "       currToCurr(aropen_curr_id, :curr_id,"
-              "                  noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenco_amount,0))), :effective) AS amount_cocurr"
-              "  FROM cohead, aropen LEFT OUTER JOIN aropenco ON (aropenco_aropen_id=aropen_id)"
+              "                  noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenalloc_amount,0))), :effective) AS amount_cocurr"
+              "  FROM cohead, aropen LEFT OUTER JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id)"
               " WHERE ( (aropen_cust_id=cohead_cust_id)"
               "   AND   (aropen_doctype IN ('C', 'R'))"
               "   AND   (aropen_open)"
               "   AND   (cohead_id=:cohead_id) )"
               " GROUP BY aropen_id, aropen_duedate, aropen_amount, aropen_paid, aropen_curr_id "
-              "HAVING (noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenco_amount,0))) > 0)"
+              "HAVING (noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenalloc_amount,0))) > 0)"
               " ORDER BY aropen_duedate; ");
     q.bindValue(":cohead_id", _soheadid);
     q.bindValue(":curr_id",   _balance->id());
@@ -4131,10 +4153,10 @@ void salesOrder::sAllocateCreditMemos()
     double    amount     = 0.0;
     double    initAmount = 0.0;
     XSqlQuery allocCM;
-    allocCM.prepare("INSERT INTO aropenco"
-                    "      (aropenco_aropen_id, aropenco_cohead_id, "
-                    "       aropenco_amount, aropenco_curr_id)"
-                    "VALUES(:aropen_id, :cohead_id, :amount, :curr_id);");
+    allocCM.prepare("INSERT INTO aropenalloc"
+                    "      (aropenalloc_aropen_id, aropenalloc_doctype, aropenalloc_doc_id, "
+                    "       aropenalloc_amount, aropenalloc_curr_id)"
+                    "VALUES(:aropen_id, 'S', :doc_id, :amount, :curr_id);");
 
     while (balance > 0.0 && q.next())
     {
@@ -4147,7 +4169,7 @@ void salesOrder::sAllocateCreditMemos()
       if (amount > balance) // make sure we don't apply more to a credit memo than we have left.
         amount = balance;
       // apply credit memo's to this sales order until the balance is 0.
-      allocCM.bindValue(":cohead_id", _soheadid);
+      allocCM.bindValue(":doc_id", _soheadid);
       allocCM.bindValue(":aropen_id", q.value("aropen_id").toInt());
       allocCM.bindValue(":amount", amount);
       allocCM.bindValue(":curr_id", _balance->id());

@@ -12,6 +12,7 @@
 #include "address.h"
 #include "adjustmentTrans.h"
 #include "adjustInvValue.h"
+#include "allocateARCreditMemo.h"
 #include "allocateReservations.h"
 #include "apAccountAssignment.h"
 #include "apAccountAssignments.h"

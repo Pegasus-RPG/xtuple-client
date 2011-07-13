@@ -21,6 +21,7 @@
 #include "invoiceItem.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
+#include "allocateARCreditMemo.h"
 
 #define cViewQuote (0x20 | cView)
 
@@ -57,6 +58,8 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_allocatedCM, SIGNAL(idChanged(int)), this, SLOT(populateCMInfo()));
   connect(_outstandingCM, SIGNAL(idChanged(int)), this, SLOT(populateCMInfo()));
   connect(_authCC, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(populateCCInfo()));
+  if (_privileges->check("ApplyARMemos"))
+    connect(_allocatedCMLit,    SIGNAL(leftClickedURL(const QString &)),        this,         SLOT(sCreditAllocate()));
   connect(_allocatedCM, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(populateCMInfo()));
   connect(_outstandingCM, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(populateCMInfo()));
   connect(_invcitem, SIGNAL(valid(bool)),       _edit, SLOT(setEnabled(bool)));
@@ -1069,32 +1072,37 @@ void invoice::viewInvoice( int pId, QWidget *parent  )
   omfgThis->handleNewWindow(newdlg);
 }
 
+void invoice::sCreditAllocate()
+{
+  ParameterList params;
+  params.append("doctype", "I");
+  params.append("invchead_id", _invcheadid);
+  params.append("cust_id", _cust->id());
+  params.append("total",  _total->localValue());
+  params.append("balance",  (_total->localValue() - _allocatedCM->localValue()));
+  params.append("curr_id",   _total->id());
+  params.append("effective", _total->effective());
+
+  allocateARCreditMemo newdlg(this, "", TRUE);
+  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
+  {
+    populateCMInfo();
+  }
+}
+
 void invoice::populateCMInfo()
 {
   XSqlQuery cm;
 
   // Allocated C/M's
-  if (_mode == cNew)
-  {
-    cm.prepare("SELECT COALESCE(SUM(currToCurr(aropen_curr_id, :curr_id,"
-	      "                               aropenco_amount, :effective)),0) AS amount"
-	      "  FROM aropenco, cohead, aropen"
-	      " WHERE ( (aropenco_cohead_id=cohead_id)"
-	      "   AND   (aropenco_aropen_id=aropen_id)"
-	      "   AND   (cohead_number=:cohead_number) );");
-    cm.bindValue(":cohead_number", _orderNumber->text());
-  }
-  else
-  {
-    cm.prepare("SELECT COALESCE(SUM(currToCurr(aropen_curr_id, :curr_id,"
-	      "                               aropenco_amount, :effective)),0) AS amount"
-	      "  FROM aropenco, cohead, invchead, aropen"
-	      " WHERE ( (aropenco_cohead_id=cohead_id)"
-	      "   AND   (aropenco_aropen_id=aropen_id)"
-	      "   AND   (invchead_ordernumber=cohead_number)"
-	      "   AND   (invchead_id=:invchead_id) ); ");
-    cm.bindValue(":invchead_id", _invcheadid);
-  }
+  cm.prepare("SELECT COALESCE(SUM(currToCurr(aropenalloc_curr_id, :curr_id,"
+            "                               aropenalloc_amount, :effective)),0) AS amount"
+            "  FROM cohead"
+            "  JOIN aropenalloc ON ((aropenalloc_doctype='S' AND aropenalloc_doc_id=cohead_id) OR"
+            "                       (aropenalloc_doctype='I' AND aropenalloc_doc_id=:invchead_id))"
+            " WHERE (cohead_number=:cohead_number); ");
+  cm.bindValue(":invchead_id", _invcheadid);
+  cm.bindValue(":cohead_number", _orderNumber->text());
   cm.bindValue(":curr_id",     _allocatedCM->id());
   cm.bindValue(":effective",   _allocatedCM->effective());
   cm.exec();
@@ -1112,9 +1120,9 @@ void invoice::populateCMInfo()
   cm.prepare("SELECT SUM(amount) AS amount"
             "  FROM ( SELECT aropen_id, "
 	    "                currToCurr(aropen_curr_id, :curr_id,"
-	    "                           noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenco_amount,0))),"
+            "                           noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenalloc_amount,0))),"
 	    "                           :effective) AS amount"
-            "           FROM aropen LEFT OUTER JOIN aropenco ON (aropenco_aropen_id=aropen_id)"
+            "           FROM aropen LEFT OUTER JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id)"
             "          WHERE ( (aropen_cust_id=:cust_id)"
             "            AND   (aropen_doctype IN ('C', 'R'))"
             "            AND   (aropen_open))"
