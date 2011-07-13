@@ -651,7 +651,7 @@ bool salesOrder::save(bool partial)
     return FALSE;
   }
 
-  if (_salesRep->currentIndex() == -1)
+  if (!_salesRep->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
                               tr("You must select a Sales Rep. for this order before you may save it.") );
@@ -659,7 +659,7 @@ bool salesOrder::save(bool partial)
     return FALSE;
   }
 
-  if (_terms->currentIndex() == -1)
+  if (!_terms->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
                               tr("You must select the Terms for this order before you may save it.") );
