@@ -90,7 +90,10 @@ void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
   pMenu->addSeparator();
 
-  menuItem = pMenu->addAction(tr("Convert..."), this, SLOT(sConvert()));
+  menuItem = pMenu->addAction(tr("Convert to S/O..."), this, SLOT(sConvert()));
+  menuItem->setEnabled(_privileges->check("ConvertQuotes"));
+
+  menuItem = pMenu->addAction(tr("Convert to Invoice..."), this, SLOT(sConvertInvoice()));
   menuItem->setEnabled(_privileges->check("ConvertQuotes"));
 
   pMenu->addSeparator();
@@ -324,6 +327,39 @@ void quotes::sConvert()
       omfgThis->sQuotesUpdated(converted[i]);
     }
   } // if user wants to convert
+}
+
+void quotes::sConvertInvoice()
+{
+  if (QMessageBox::question(this, tr("Convert Selected Quote(s)"),
+			    tr("<p>Are you sure that you want to convert "
+			       "the selected Quote(s) to Invoice(s)?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    QList<XTreeWidgetItem*> selected = list()->selectedItems();
+    int lastid = -1;
+    for (int i = 0; i < selected.size(); i++)
+    {
+      int qid = ((XTreeWidgetItem*)(selected[i]))->id();
+      XSqlQuery qq;
+      qq.prepare("SELECT convertquotetoinvoice(:qid) AS result;");
+      qq.bindValue(":qid", qid);
+      if(qq.exec() && qq.first())
+      {
+        lastid = qq.value("result").toInt();
+      }
+      else if(qq.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, qq.lastError().text(), __FILE__, __LINE__);
+        return;
+      }
+    }
+    if(lastid != -1)
+    {
+      omfgThis->sQuotesUpdated(lastid);
+    }
+  }
 }
 
 void quotes::sCopy()
