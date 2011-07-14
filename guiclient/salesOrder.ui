@@ -1615,7 +1615,7 @@ to be bound by its terms.</comment>
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0">
-        <widget class="QTextEdit" name="_orderComments">
+        <widget class="XTextEdit" name="_orderComments">
          <property name="focusPolicy">
           <enum>Qt::StrongFocus</enum>
          </property>
@@ -1643,7 +1643,7 @@ to be bound by its terms.</comment>
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0">
-        <widget class="QTextEdit" name="_shippingComments">
+        <widget class="XTextEdit" name="_shippingComments">
          <property name="focusPolicy">
           <enum>Qt::StrongFocus</enum>
          </property>
@@ -1960,6 +1960,11 @@ to be bound by its terms.</comment>
    <class>XURLLabel</class>
    <extends>QLabel</extends>
    <header>xurllabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
