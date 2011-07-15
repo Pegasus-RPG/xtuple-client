@@ -22,10 +22,10 @@ allocateARCreditMemo::allocateARCreditMemo(QWidget* parent, const char* name, bo
   setupUi(this);
   
   _aropen->setRootIsDecorated(true);
-  _aropen->addColumn(tr("Doc. Type"),                   -1, Qt::AlignLeft,   true,  "aropen_doctype");
-  _aropen->addColumn(tr("Doc. #"),            _orderColumn, Qt::AlignLeft,   true,  "aropen_docnumber");
-  _aropen->addColumn(tr("Doc. Date"),          _dateColumn, Qt::AlignCenter, true,  "aropen_docdate");
-  _aropen->addColumn(tr("Due Date"),           _dateColumn, Qt::AlignCenter, true,  "aropen_duedate");
+  _aropen->addColumn(tr("Doc. Type"),                   -1, Qt::AlignLeft,   true,  "doctype");
+  _aropen->addColumn(tr("Doc. #"),            _orderColumn, Qt::AlignLeft,   true,  "docnumber");
+  _aropen->addColumn(tr("Doc. Date"),          _dateColumn, Qt::AlignCenter, true,  "docdate");
+  _aropen->addColumn(tr("Due Date"),           _dateColumn, Qt::AlignCenter, true,  "duedate");
   _aropen->addColumn(tr("Amount"),            _moneyColumn, Qt::AlignRight,  true,  "amount");
   _aropen->addColumn(tr("Paid"),              _moneyColumn, Qt::AlignRight,  true,  "paid");
   _aropen->addColumn(tr("Balance"),           _moneyColumn, Qt::AlignRight,  true,  "balance");
@@ -133,7 +133,18 @@ void allocateARCreditMemo::sPopulate()
   }
   // Get the list of Unallocated CM's with amount
   q.prepare("SELECT aropen_id, "
-            "       aropen_docnumber, aropen_doctype, aropen_docdate, aropen_duedate,"
+            "       docnumber, doctype, docdate, duedate,"
+            "       amount, paid, balance, allocated, totalallocated, "
+            "       CASE WHEN (doctype='C') THEN :creditmemo"
+            "            WHEN (doctype='R') THEN :cashdeposit"
+            "            WHEN (doctype='S') THEN :salesorder"
+            "            WHEN (doctype='I') THEN :invoice"
+            "       END AS doctype_qtdisplayrole, "
+            "       indent AS xtindentrole "
+            "  FROM ( "
+            "SELECT aropen_id, 0 AS indent, "
+            "       aropen_docnumber AS docnumber, aropen_doctype AS doctype, "
+            "       aropen_docdate AS docdate, aropen_duedate AS duedate,"
             "       currToCurr(aropen_curr_id, :curr_id, aropen_amount, :effective) AS amount,"
             "       currToCurr(aropen_curr_id, :curr_id, aropen_paid, :effective) AS paid,"
             "       currToCurr(aropen_curr_id, :curr_id, noNeg(aropen_amount - aropen_paid), :effective) AS balance,"
@@ -141,24 +152,52 @@ void allocateARCreditMemo::sPopulate()
             "                               (aropenalloc_doctype='I' AND aropenalloc_doc_id=:invchead_id)) THEN "
             "                         currToCurr(aropenalloc_curr_id, :curr_id, aropenalloc_amount, :effective)"
             "                         ELSE 0.00 END), 0.0) AS allocated,"
-            "       COALESCE(SUM(currToCurr(aropenalloc_curr_id, :curr_id, aropenalloc_amount, :effective)), 0.0) AS totalallocated,"
-            "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
-            "            WHEN (aropen_doctype='R') THEN :cashdeposit"
-            "       END AS aropen_doctype_qtdisplayrole"
+            "       COALESCE(SUM(currToCurr(aropenalloc_curr_id, :curr_id, aropenalloc_amount, :effective)), 0.0) AS totalallocated "
             "  FROM aropen LEFT OUTER JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id)"
             " WHERE ( (aropen_cust_id=:cust_id)"
             "   AND   (aropen_doctype IN ('C', 'R'))"
             "   AND   (aropen_open) )"
             " GROUP BY aropen_id, aropen_docnumber, aropen_doctype, aropen_docdate, aropen_duedate,"
-            "          aropen_curr_id, aropen_amount, aropen_paid"
-            " ORDER BY aropen_duedate; ");
+            "          aropen_curr_id, aropen_amount, aropen_paid "
+            "UNION "
+            "SELECT aropen_id, 1 AS indent, "
+            "       cohead_number AS docnumber, 'S' AS doctype, "
+            "       cohead_orderdate AS docdate, NULL AS duedate,"
+            "       NULL AS amount,"
+            "       NULL AS paid,"
+            "       NULL AS balance,"
+            "       NULL AS allocated,"
+            "       COALESCE(currToCurr(aropenalloc_curr_id, :curr_id, aropenalloc_amount, :effective), 0.0) AS totalallocated "
+            "  FROM aropen JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id AND aropenalloc_doctype='S')"
+            "              JOIN cohead ON (cohead_id=aropenalloc_doc_id) "
+            " WHERE ( (aropen_cust_id=:cust_id)"
+            "   AND   (aropen_doctype IN ('C', 'R'))"
+            "   AND   (aropen_open) ) "
+            "UNION "
+            "SELECT aropen_id, 1 AS indent, "
+            "       invchead_invcnumber AS docnumber, 'I' AS doctype, "
+            "       invchead_invcdate AS docdate, NULL AS duedate,"
+            "       NULL AS amount,"
+            "       NULL AS paid,"
+            "       NULL AS balance,"
+            "       NULL AS allocated,"
+            "       COALESCE(currToCurr(aropenalloc_curr_id, :curr_id, aropenalloc_amount, :effective), 0.0) AS totalallocated "
+            "  FROM aropen JOIN aropenalloc ON (aropenalloc_aropen_id=aropen_id AND aropenalloc_doctype='I')"
+            "              JOIN invchead ON (invchead_id=aropenalloc_doc_id) "
+            " WHERE ( (aropen_cust_id=:cust_id)"
+            "   AND   (aropen_doctype IN ('C', 'R'))"
+            "   AND   (aropen_open) )"
+            " ) AS data "
+            " ORDER BY aropen_id, indent, duedate;");
   q.bindValue(":cohead_id", _coheadid);
   q.bindValue(":invchead_id", _invcheadid);
   q.bindValue(":cust_id", _custid);
   q.bindValue(":curr_id",   _total->id());
   q.bindValue(":effective", _total->effective());
-  q.bindValue(":creditMemo", tr("Credit Memo"));
+  q.bindValue(":creditmemo", tr("Credit Memo"));
   q.bindValue(":cashdeposit", tr("Customer Deposit"));
+  q.bindValue(":salesorder", tr("Sales Order"));
+  q.bindValue(":invoice", tr("Invoice"));
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
