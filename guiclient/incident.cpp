@@ -774,6 +774,9 @@ void incident::sAssigned()
 
 void incident::sNewCharacteristic()
 {
+  if (! save(true))
+    return;
+
   ParameterList params;
   params.append("mode", "new");
   params.append("incdt_id", _incdtid);
