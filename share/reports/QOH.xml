@@ -109,20 +109,33 @@ FROM ( SELECT itemsite_id, itemsite_costmethod,
               warehous_code,
               uom_name,
               CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,
-              itemsite_qtyonhand AS qoh,
               CASE WHEN ((itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S'))) THEN 1
                    ELSE 0
               END AS detail,
+  &lt;? if exists("asOf") ?>
+              COALESCE(invbal_qoh_ending,0) AS qoh,
+              COALESCE(invbal_nn_ending) AS nonnetable,
+  &lt;? else ?>
+              itemsite_qtyonhand AS qoh,
               itemsite_nnqoh AS nonnetable,
+  &lt;? endif ?>
               &lt;? if exists("useActualCosts") ?>
                 actcost(itemsite_item_id)
               &lt;? elseif exists("useStandardCosts") ?>
                 stdcost(itemsite_item_id)
               &lt;? else ?>
+  &lt;? if exists("asOf") ?>
+                (COALESCE(invbal_value_ending,0) / CASE WHEN(COALESCE(invbal_qoh_ending,0)=0) THEN 1 ELSE itemsite_qtyonhand END)
+  &lt;? else ?>
                 (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END)
+  &lt;? endif ?>
               &lt;? endif ?>
               AS standardcost
-         FROM itemsite, item, uom, warehous, costcat
+         FROM item, uom, warehous, costcat, itemsite
+&lt;? if exists("asOf") ?>
+         LEFT OUTER JOIN invbal ON (itemsite_id=invbal_itemsite_id) AND (invbal_period_id=&lt;? value("asOf") ?>)
+&lt;? endif ?>
+
         WHERE ((itemsite_item_id=item_id)
           AND (item_inv_uom_id=uom_id)
           AND (itemsite_warehous_id=warehous_id)
