@@ -206,7 +206,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 	  _transType = cEdit;
-      _tab->removeTab(_tab->indexOf(_creditCardTab));
+      //_tab->removeTab(_tab->indexOf(_creditCardTab));
 
       _cust->setReadOnly(TRUE);
 
