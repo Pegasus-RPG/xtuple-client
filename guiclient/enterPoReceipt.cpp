@@ -456,6 +456,37 @@ void enterPoReceipt::sFillList()
 {
   _orderitem->clear();
 
+  if (_order->isRA())
+  {
+    q.prepare( "SELECT (rahead_expiredate < CURRENT_DATE) AS expired "
+               "FROM rahead "
+               "WHERE (rahead_id=:rahead_id);" );
+    q.bindValue(":rahead_id", _order->id());
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("expired").toBool())
+      {
+        QMessageBox::warning(this, tr("RMA Expired"),
+                             tr("<p>The selected Return Authorization "
+                                "is expired and cannot be received."));
+        _order->setId(-1);
+        _order->setFocus();
+      }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+    {
+      _order->setId(-1);
+      _order->setFocus();
+      return;
+    }
+  }
+
   XSqlQuery dropship;
   dropship.prepare("SELECT pohead_dropship FROM pohead WHERE (pohead_id = :pohead_id);"); 
   dropship.bindValue(":pohead_id", _order->id());
