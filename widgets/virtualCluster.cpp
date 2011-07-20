@@ -285,6 +285,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     _strict = true;
     _completer = 0;
     _showInactive = false;
+    _useCompleterId = true; // base classes can set this to false to always use the old style
 
     setTableAndColumnNames(pTabName, pIdColumn, pNumberColumn, pNameColumn, pDescripColumn, pActiveColumn);
 
@@ -316,7 +317,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         _completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
         connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
         connect(_completer, SIGNAL(highlighted(QString)), this, SLOT(setText(QString)));
-        connect(_completer, SIGNAL(activated(QString)), this, SLOT(setNumber(QString)));
+        connect(_completer, SIGNAL(activated(const QModelIndex &)), this, SLOT(completerActivated(const QModelIndex &)));
       }
     }
 
@@ -545,6 +546,17 @@ void VirtualClusterLineEdit::sHandleCompleter()
   rect.setBottomLeft(QPoint(0, height() - 2));
   _completer->complete(rect);
   _parsed = false;
+}
+
+void VirtualClusterLineEdit::completerActivated(const QModelIndex & index)
+{
+  int cid = _completer->completionModel()->data(index.sibling(index.row(), 0)).toInt();
+  if(_useCompleterId && cid != 0)
+  {
+    setId(cid);
+  }
+  else
+    setNumber(_completer->completionModel()->data(index).toString());
 }
 
 void VirtualClusterLineEdit::sHandleNullStr()
