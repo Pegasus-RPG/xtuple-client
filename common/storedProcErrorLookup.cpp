@@ -337,6 +337,10 @@ const struct {
 				     "Transactions posted against it and, thus, "
 				     "cannot be deleted."), 0, "" },
 
+  { "deleteAccountingPeriod", -5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Accounting Period is not "
+				     "the last accounting period and "
+				     "cannot be deleted."), 0, "" },
+
   { "deleteAccountingYearPeriod", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Fiscal Year cannot be "
 					 "deleted because it is closed."),
 									0, "" },
