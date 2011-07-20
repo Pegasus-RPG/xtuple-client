@@ -241,6 +241,16 @@ void reconcileBankaccount::sReconcile()
             "            AND (NOT gltrans_rec)"
             "            AND (bankaccnt_id=:bankaccntid) ) "
             "          UNION ALL"
+            "         SELECT currToLocal(bankaccnt_curr_id, sltrans_amount * -1, sltrans_date) AS amount"
+            "           FROM bankaccnt, sltrans, bankrecitem"
+            "          WHERE ((sltrans_accnt_id=bankaccnt_accnt_id)"
+            "            AND (bankrecitem_source='SL')"
+            "            AND (bankrecitem_source_id=sltrans_id)"
+            "            AND (bankrecitem_bankrec_id=:bankrecid)"
+            "            AND (bankrecitem_cleared)"
+            "            AND (NOT sltrans_rec)"
+            "            AND (bankaccnt_id=:bankaccntid) ) "
+            "          UNION ALL"
             "         SELECT CASE WHEN(bankadjtype_iscredit=true) THEN (bankadj_amount * -1) ELSE bankadj_amount END AS amount"
             "           FROM bankadj, bankadjtype, bankrecitem"
             "          WHERE ( (bankrecitem_source='AD')"
@@ -300,7 +310,8 @@ void reconcileBankaccount::sReconcile()
 
 /* 
    Note that the SELECTs here are UNIONs of the gltrans table (in the base
-   currency) and the bankadj table (in the bank account's currency).
+   currency), sltrans table (in the base currency) and the bankadj table
+   (in the bank account's currency).
 */
 void reconcileBankaccount::populate()
 {
@@ -334,7 +345,26 @@ void reconcileBankaccount::populate()
             "   AND (gltrans_amount < 0)"
             "   AND (bankaccnt_id=:bankaccntid) ) "
             " UNION ALL "
-            "SELECT bankadj_id AS id, 2 AS altid,"
+            "SELECT sltrans_id AS id, 2 AS altid,"
+            "       jrnluse_use AS use, sltrans_journalnumber AS jrnlnum,"
+            "       COALESCE(date(jrnluse_date), sltrans_date) AS f_jrnldate,"
+            "       COALESCE(bankrecitem_cleared, FALSE) AS cleared,"
+            "       sltrans_date AS f_date,"
+            "       sltrans_docnumber AS docnumber,"
+            "       sltrans_notes AS notes,"
+            "       currToLocal(bankaccnt_curr_id, sltrans_amount, sltrans_date) * -1 AS amount,"
+            "       COALESCE(date(jrnluse_date), sltrans_date) AS jrnldate,"
+            "       sltrans_date AS sortdate "
+            "  FROM (bankaccnt CROSS JOIN sltrans) LEFT OUTER JOIN bankrecitem "
+            "    ON ((bankrecitem_source='SL') AND (bankrecitem_source_id=sltrans_id)"
+            "        AND (bankrecitem_bankrec_id=:bankrecid)) "
+            "       LEFT OUTER JOIN jrnluse ON (jrnluse_number=sltrans_journalnumber AND jrnluse_use='C/R')"
+            " WHERE ((sltrans_accnt_id=bankaccnt_accnt_id)"
+            "   AND (NOT sltrans_rec)"
+            "   AND (sltrans_amount < 0)"
+            "   AND (bankaccnt_id=:bankaccntid) ) "
+            " UNION ALL "
+            "SELECT bankadj_id AS id, 3 AS altid,"
             "       '' AS use, NULL AS jrnlnum, bankadj_date AS f_jrnldate,"
             "       COALESCE(bankrecitem_cleared, FALSE) AS cleared,"
             "       bankadj_date AS f_date,"
@@ -381,7 +411,7 @@ void reconcileBankaccount::populate()
         }
         jrnlnum = q.value("jrnlnum").toInt();
         last = new XTreeWidgetItem( _receipts, last,
-          jrnlnum, 3, "", formatDate(q.value("f_jrnldate").toDate()), q.value("jrnlnum"));
+          jrnlnum, 9, "", formatDate(q.value("f_jrnldate").toDate()), q.value("jrnlnum"));
         parent = last;
         cleared = true;
         amount = 0.0;
@@ -444,6 +474,17 @@ void reconcileBankaccount::populate()
             "            AND (gltrans_amount < 0)"
             "            AND (bankaccnt_id=:bankaccntid) ) "
             "          UNION ALL"
+            "         SELECT currToLocal(bankaccnt_curr_id, sltrans_amount * -1, sltrans_date) AS amount"
+            "           FROM bankaccnt, sltrans, bankrecitem"
+            "          WHERE ((sltrans_accnt_id=bankaccnt_accnt_id)"
+            "            AND (bankrecitem_source='SL')"
+            "            AND (bankrecitem_source_id=sltrans_id)"
+            "            AND (bankrecitem_bankrec_id=:bankrecid)"
+            "            AND (bankrecitem_cleared)"
+            "            AND (NOT sltrans_rec)"
+            "            AND (sltrans_amount < 0)"
+            "            AND (bankaccnt_id=:bankaccntid) ) "
+            "          UNION ALL"
             "         SELECT CASE WHEN(bankadjtype_iscredit=true) THEN (bankadj_amount * -1) ELSE bankadj_amount END AS amount"
             "           FROM bankrecitem, bankadj, bankadjtype "
             "          WHERE ( (bankrecitem_source='AD')"
@@ -485,7 +526,23 @@ void reconcileBankaccount::populate()
             "   AND (gltrans_amount > 0)"
             "   AND (bankaccnt_id=:bankaccntid) ) "
             " UNION ALL "
-            "SELECT bankadj_id AS id, 2 AS altid,"
+            "SELECT sltrans_id AS id, 2 AS altid,"
+            "       COALESCE(bankrecitem_cleared, FALSE) AS cleared,"
+            "       sltrans_date AS transdate,"
+            "       sltrans_docnumber AS docnumber,"
+            "       sltrans_notes AS notes,"
+            "       currToLocal(bankaccnt_curr_id, sltrans_amount, sltrans_date) AS amount,"
+            "       sltrans_date AS sortdate, "
+            "       'curr' AS amount_xtnumericrole "
+            "  FROM (bankaccnt CROSS JOIN sltrans) LEFT OUTER JOIN bankrecitem "
+            "    ON ((bankrecitem_source='SL') AND (bankrecitem_source_id=sltrans_id)"
+            "        AND (bankrecitem_bankrec_id=:bankrecid)) "
+            " WHERE ((sltrans_accnt_id=bankaccnt_accnt_id)"
+            "   AND (NOT sltrans_rec)"
+            "   AND (sltrans_amount > 0)"
+            "   AND (bankaccnt_id=:bankaccntid) ) "
+            " UNION ALL "
+            "SELECT bankadj_id AS id, 3 AS altid,"
             "       COALESCE(bankrecitem_cleared, FALSE) AS cleared,"
             "       bankadj_date AS transdate,"
             "       bankadj_docnumber AS docnumber,"
@@ -531,6 +588,17 @@ void reconcileBankaccount::populate()
             "            AND (gltrans_amount > 0)"
             "            AND (bankaccnt_id=:bankaccntid) ) "
             "          UNION ALL"
+            "         SELECT currToLocal(bankaccnt_curr_id, sltrans_amount, sltrans_date) AS amount"
+            "           FROM bankaccnt, sltrans, bankrecitem"
+            "          WHERE ((sltrans_accnt_id=bankaccnt_accnt_id)"
+            "            AND (bankrecitem_source='SL')"
+            "            AND (bankrecitem_source_id=sltrans_id)"
+            "            AND (bankrecitem_bankrec_id=:bankrecid)"
+            "            AND (bankrecitem_cleared)"
+            "            AND (NOT sltrans_rec)"
+            "            AND (sltrans_amount > 0)"
+            "            AND (bankaccnt_id=:bankaccntid) ) "
+            "          UNION ALL"
             "         SELECT CASE WHEN(bankadjtype_iscredit=false) THEN (bankadj_amount * -1) ELSE bankadj_amount END AS amount"
             "           FROM bankadj, bankadjtype, bankrecitem"
             "          WHERE ( (bankrecitem_source='AD')"
@@ -565,6 +633,16 @@ void reconcileBankaccount::populate()
             "            AND (bankrecitem_bankrec_id=:bankrecid)"
             "            AND (bankrecitem_cleared)"
             "            AND (NOT gltrans_rec)"
+            "            AND (bankaccnt_id=:bankaccntid) ) "
+            "          UNION ALL"
+            "         SELECT currToLocal(bankaccnt_curr_id, sltrans_amount * -1, sltrans_date) AS amount"
+            "           FROM bankaccnt, sltrans, bankrecitem"
+            "          WHERE ((sltrans_accnt_id=bankaccnt_accnt_id)"
+            "            AND (bankrecitem_source='SL')"
+            "            AND (bankrecitem_source_id=sltrans_id)"
+            "            AND (bankrecitem_bankrec_id=:bankrecid)"
+            "            AND (bankrecitem_cleared)"
+            "            AND (NOT sltrans_rec)"
             "            AND (bankaccnt_id=:bankaccntid) ) "
             "          UNION ALL"
             "         SELECT CASE WHEN(bankadjtype_iscredit=true) THEN (bankadj_amount * -1) ELSE bankadj_amount END AS amount"
@@ -635,7 +713,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
     return;
 
   _receipts->scrollToItem(item);
-  if(item->altId() == 3)
+  if(item->altId() == 9)
   {
     setto = item->text(0) == tr("No");
     for (int i = 0; i < item->childCount(); i++)
@@ -649,6 +727,8 @@ void reconcileBankaccount::sReceiptsToggleCleared()
         if(child->altId()==1)
           q.bindValue(":source", "GL");
         else if(child->altId()==2)
+          q.bindValue(":source", "SL");
+        else if(child->altId()==3)
           q.bindValue(":source", "AD");
         q.exec();
         if(q.first())
@@ -670,6 +750,8 @@ void reconcileBankaccount::sReceiptsToggleCleared()
     if(item->altId()==1)
       q.bindValue(":source", "GL");
     else if(item->altId()==2)
+      q.bindValue(":source", "SL");
+    else if(item->altId()==3)
       q.bindValue(":source", "AD");
     q.exec();
     if(q.first())
@@ -677,7 +759,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
       item->setText(0, (q.value("cleared").toBool() ? tr("Yes") : tr("No") ));
 
       item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
-      if(item != 0 && item->altId() == 3)
+      if(item != 0 && item->altId() == 9)
       {
         setto = true;
 	for (int i = 0; i < item->childCount(); i++)
@@ -714,6 +796,8 @@ void reconcileBankaccount::sChecksToggleCleared()
   if(item->altId()==1)
     q.bindValue(":source", "GL");
   else if(item->altId()==2)
+    q.bindValue(":source", "SL");
+  else if(item->altId()==3)
     q.bindValue(":source", "AD");
   q.exec();
   if(q.first())
