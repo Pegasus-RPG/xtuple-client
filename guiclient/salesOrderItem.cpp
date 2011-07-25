@@ -1041,6 +1041,7 @@ void salesOrderItem::sSave()
       {
         if (checkPO.value("poitem_status").toString()== "C")
         {
+          rollback.exec();
           QMessageBox::critical(this, tr("Quantity Can Not be Updated"),
                                 tr(" The Purchase Order Item this Sales "
                                    " Order Item is linked to is closed.  "
@@ -1050,6 +1051,7 @@ void salesOrderItem::sSave()
       }
       else if (checkPO.lastError().type() != QSqlError::NoError)
       {
+        rollback.exec();
         systemError(this, checkPO.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }

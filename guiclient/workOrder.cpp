@@ -1309,6 +1309,7 @@ void workOrder::sReturnMatlBatch()
                              .arg(__LINE__)
                              .arg(_woIndentedList->id())
                              .arg(q.value("result").toInt()) );
+          return;
         }
         else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
         {

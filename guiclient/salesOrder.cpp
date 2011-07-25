@@ -3715,7 +3715,6 @@ void salesOrder::sReturnStock()
         return;
       }
 
-      q.exec("COMMIT;");
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {
@@ -3725,6 +3724,8 @@ void salesOrder::sReturnStock()
       return;
     }
   }
+
+  q.exec("COMMIT;");
 
     sFillItemList();
 }
