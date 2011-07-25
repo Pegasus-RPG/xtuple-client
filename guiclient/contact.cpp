@@ -74,6 +74,7 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _contact->setOwnerVisible(false);
   _contact->setListVisible(false);
 
+  _owner->setType(UsernameLineEdit::UsersActive);
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 }
 
