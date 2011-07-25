@@ -490,6 +490,12 @@ void workOrder::sCreate()
       q.bindValue(":ordid", -1);
     }
     q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
     if (!q.first())
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
