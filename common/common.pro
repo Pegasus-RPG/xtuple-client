@@ -14,6 +14,7 @@ UI_DIR      = tmp
 
 SOURCES = calendarcontrol.cpp \
           calendargraphicsitem.cpp \
+          errorReporter.cpp        \
           exporthelper.cpp \
           importhelper.cpp \
           format.cpp \
@@ -33,6 +34,7 @@ SOURCES = calendarcontrol.cpp \
           xtsettings.cpp
 HEADERS = calendarcontrol.h \
           calendargraphicsitem.h \
+          errorReporter.h        \
           exporthelper.h \
           importhelper.h \
           format.h \
@@ -52,6 +54,6 @@ HEADERS = calendarcontrol.h \
           xtsettings.h
 FORMS = login2.ui login2Options.ui
 
-QT +=  script sql xml
+QT +=  script sql xml xmlpatterns
 
 RESOURCES += xTupleCommon.qrc

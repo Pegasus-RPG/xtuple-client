@@ -53,6 +53,7 @@
 #include "xmainwindow.h"
 #include "xdialog.h"
 #include "errorLog.h"
+#include "errorReporter.h"
 
 #include "systemMessage.h"
 #include "menuProducts.h"
@@ -70,11 +71,8 @@
 #include "inputManager.h"
 #include "xdoublevalidator.h"
 
-#include "custcluster.h"
-#include "crmacctcluster.h"
-#include "crmaccount.h"
-#include "customer.h"
 #include "distributeInventory.h"
+#include "documents.h"
 #include "splashconst.h"
 #include "scripttoolbox.h"
 #include "menubutton.h"
@@ -1036,6 +1034,11 @@ void GUIClient::sCustomersUpdated(int pCustid, bool pLocal)
   emit customersUpdated(pCustid, pLocal);
 }
 
+void GUIClient::sEmployeeUpdated(int id)
+{
+  emit employeeUpdated(id);
+}
+
 void GUIClient::sGlSeriesUpdated()
 {
   emit glSeriesUpdated();
@@ -1064,6 +1067,11 @@ void GUIClient::sStandardPeriodsUpdated()
 void GUIClient::sSalesOrdersUpdated(int pSoheadid)
 {
   emit salesOrdersUpdated(pSoheadid, TRUE);
+}
+
+void GUIClient::sSalesRepUpdated(int id)
+{
+  emit salesRepUpdated(id);
 }
 
 void GUIClient::sCreditMemosUpdated()
@@ -1217,6 +1225,11 @@ void GUIClient::sTransferOrdersUpdated(int id)
   emit transferOrdersUpdated(id);
 }
 
+void GUIClient::sUserUpdated(QString username)
+{
+  emit userUpdated(username);
+}
+
 void GUIClient::sIdleTimeout()
 {
  // so we don't accidentally get called again waiting
@@ -1234,19 +1247,18 @@ void GUIClient::sIdleTimeout()
 
 int systemError(QWidget *pParent, const QString &pMessage)
 {
-  int result = QMessageBox::critical( pParent, QObject::tr("System Message"),
-                                      pMessage + QObject::tr("\nReport this to your Systems Administrator.") );
-  return result;
+  ErrorReporter::error(QtCriticalMsg, pParent, QObject::tr("System Message"),
+                       pMessage);
+  return QMessageBox::Ok;
 }
 
 int systemError(QWidget *pParent, const QString &pMessage, const QString &pFileName, const int lineNumber)
 {
-  int result = QMessageBox::critical( pParent,
-                                      QObject::tr("System Message (%1 at %2)")
-                                      .arg(pFileName)
-                                      .arg(lineNumber),
-                                      pMessage + QObject::tr("\nReport this to your Systems Administrator.") );
-  return result;
+  ErrorReporter::error(QtCriticalMsg, pParent,
+                       QObject::tr("System Message (%1 at %2)")
+                                   .arg(pFileName).arg(lineNumber),
+                       pMessage, pFileName, lineNumber);
+  return QMessageBox::Ok;
 }
 
 void message(const QString &pMessage, int pTimeout)

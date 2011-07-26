@@ -28,7 +28,7 @@ public:
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sCheck();
-    virtual void populate();
+    virtual bool sPopulate();
     virtual void populateSite();
     virtual void done(int);
 
@@ -50,9 +50,10 @@ protected slots:
 
 private:
     QString _cUsername;
-    int _mode;
     bool _authCache;
+    int  _crmacctid;
     bool _inTransaction;
+    int  _mode;
 
 };
 

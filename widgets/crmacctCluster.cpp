@@ -17,6 +17,115 @@
 #include "custcluster.h"
 #include "xcombobox.h"
 
+/* _listAndSearchQueryString is, as you may have guessed, shared by the
+   CRMAcctList and CRMAcctSearch classes. It's a big 'un and has a couple
+   of tricky parts:
+   - there's potential for a UNION of customers and prospects
+   - the vendor case has an extra column
+   - CRMAcctList can only control activeOnly in the WHERE clause but
+     CRMAcctSearch can control lots of OR'ed search criteria + activeOnly
+ */
+static QString _listAndSearchQueryString(
+      "SELECT *, addr.*, formataddr(addr_id) AS street, cntct.*"
+      "  FROM ("
+      "<? if exists('crmaccount') ?>"
+      "    SELECT crmacct_id AS id,         crmacct_number AS number,"
+      "           crmacct_name AS name,     crmacct_cntct_id_1 AS cntct_id,"
+      "           crmacct_active AS active, cntct_addr_id AS addr_id"
+      "      FROM crmacct"
+      "      LEFT OUTER JOIN cntct ON (crmacct_cntct_id_1=cntct_id)"
+      "<? elseif exists('customer') ?>"
+      "    SELECT cust_id AS id,         cust_number AS number,"
+      "           cust_name AS name,     cust_cntct_id AS cntct_id,"
+      "           cust_active AS active, cntct_addr_id AS addr_id"
+      "      FROM custinfo"
+      "      LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
+      "<? elseif exists('employee') ?>"
+      "    SELECT emp_id AS id,         emp_code AS number,"
+      "           emp_number AS name,   emp_cntct_id AS cntct_id,"
+      "           emp_active AS active, cntct_addr_id AS addr_id"
+      "      FROM emp"
+      "      LEFT OUTER JOIN cntct ON (emp_cntct_id=cntct_id)"
+      "<? elseif exists('salesrep') ?>"
+      "    SELECT salesrep_id AS id,         salesrep_number AS number,"
+      "           salesrep_name AS name,     NULL AS cntct_id,"
+      "           salesrep_active AS active, NULL AS addr_id"
+      "      FROM salesrep"
+      "<? elseif exists('taxauth') ?>"
+      "    SELECT taxauth_id AS id,     taxauth_code AS number,"
+      "           taxauth_name AS name, NULL AS cntct_id,"
+      "           TRUE AS active,       taxauth_addr_id AS addr_id"
+      "      FROM taxauth"
+      "<? elseif exists('user') ?>"
+      "    SELECT usr_id AS id,           usr_username AS number,"
+      "           usr_propername AS name, NULL AS cntct_id,"
+      "           usr_active AS active,   NULL AS addr_id"
+      "      FROM usr"
+      "<? elseif exists('vendor') ?>"
+      "    SELECT vend_id AS id,         vend_number AS number,"
+      "           vend_name AS name,     vend_cntct1_id AS cntct_id,"
+      "           vend_active AS active, cntct_addr_id AS addr_id,"
+      "           vendtype_code AS type"
+      "      FROM vendinfo"
+      "      JOIN vendtype ON (vend_vendtype_id=vendtype_id)"
+      "      LEFT OUTER JOIN cntct ON (vend_cntct1_id=cntct_id)"
+      "<? endif ?>"
+      "<? if exists('prospect') ?>"
+      "    <? if exists('customer') ?>UNION<? endif ?>"
+      "    SELECT prospect_id AS id,         prospect_number AS number,"
+      "           prospect_name AS name,     prospect_cntct_id AS cntct_id,"
+      "           prospect_active AS active, cntct_addr_id AS addr_id"
+      "      FROM prospect"
+      "      LEFT OUTER JOIN cntct ON (prospect_cntct_id=cntct_id)"
+      "<? endif ?>"
+      "  ) AS primary"
+      "  LEFT OUTER JOIN cntct ON (primary.cntct_id=cntct.cntct_id)"
+      "  LEFT OUTER JOIN addr  ON (primary.addr_id=addr.addr_id)"
+      "<? if exists('searchString') ?>"
+      "   WHERE "
+      "    <? if exists('activeOnly') ?> active AND <? endif ?>"
+      "      (false "
+      "    <? if exists('searchNumber') ?>"
+      "       OR (UPPER(cust_number) ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchName') ?>"
+      "       OR (UPPER(cust_name) ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchContactName') ?>"
+      "       OR (UPPER(cntct_first_name || ' ' || cntct_last_name) "
+      "                 ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchPhone') ?>"
+      "       OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
+      "                 cntct_fax) ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchEmail') ?>"
+      "       OR (cntct_email ~* <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchStreetAddr') ?>"
+      "       OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
+      "                 addr_line3) ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchCity') ?>"
+      "       OR (UPPER(addr_city) ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchState') ?>"
+      "       OR (UPPER(addr_state) ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchPostalCode') ?>"
+      "       OR (UPPER(addr_postalcode) ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "    <? if exists('searchCountry') ?>"
+      "       OR (UPPER(addr_country) ~ <? value('searchString') ?>)"
+      "    <? endif ?>"
+      "<? else ?>"
+      "  <? if exists('activeOnly') ?>"
+      "   WHERE active"
+      "  <? endif ?>"
+      "<? endif ?>"
+      " ORDER BY number;"
+);
+
 CRMAcctCluster::CRMAcctCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {
@@ -50,16 +159,7 @@ CRMAcctLineEdit::CRMAcctLineEdit(QWidget* pParent, const char* pName) :
   setViewPriv("ViewCRMAccounts");
   setNewPriv("MaintainCRMAccounts");
 
-    setSubtype(Crmacct);
-
-    _query = "SELECT crmacct_id AS id, crmacct_number AS number, crmacct_name AS name,"
-           "       crmacct_active AS active, addr.*,"
-           "       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-           "       cntct.* "
-           "    FROM crmacct LEFT OUTER JOIN"
-           "         cntct ON (crmacct_cntct_id_1=cntct_id) LEFT OUTER JOIN"
-           "         addr ON (cntct_addr_id=addr_id)"
-           "    WHERE (true ) ";
+  setSubtype(Crmacct);
 }
 
 VirtualList* CRMAcctLineEdit::listFactory()
@@ -91,6 +191,7 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
   VirtualList(pParent, pFlags)
 {
   _parent = pParent;
+  _queryParams = 0;
 
   if (!pName)
     setObjectName("CRMAcctList");
@@ -111,7 +212,7 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
 
   _showInactive = false;	// must be before inherits() checks
 
-  if (_parent->inherits("CRMAcctCluster")) // handles Crmacct, Competitor, Partner, Prospect, Taxauth
+  if (_parent->inherits("CRMAcctCluster")) // handles Crmacct, Competitor, Employee, Partner, Prospect, SalesRep, Taxauth
     setSubtype((qobject_cast<CRMAcctCluster*>(_parent))->subtype());
   else if (_parent->inherits("CRMAcctLineEdit"))
     setSubtype((qobject_cast<CRMAcctLineEdit*>(_parent))->subtype());
@@ -163,6 +264,8 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
   }
   else if (_parent->inherits("VendorLineEdit") || _parent->inherits("VendorCluster"))
     setSubtype(CRMAcctLineEdit::Vend);
+  else if (_parent->inherits("UsernameCluster"))
+    setSubtype(CRMAcctLineEdit::User);
   else
     setSubtype(CRMAcctLineEdit::Crmacct);
 
@@ -187,105 +290,62 @@ void CRMAcctList::setShowInactive(const bool show)
 void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 {
   _subtype = subtype;
+  if (_queryParams)
+  {
+    delete _queryParams;
+    _queryParams = new ParameterList();
+  }
+
+  bool hasContact = true;
+  bool hasAddress = true;
 
   switch (subtype)
   {
   case CRMAcctLineEdit::Cust:
     setWindowTitle(tr("Search For Customer"));
-    _query =
-	"SELECT cust_id AS id, cust_number AS number, cust_name AS name,"
-        "       addr.*, "
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM custinfo LEFT OUTER JOIN"
-	"         cntct ON (cust_cntct_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id)"
-	"<? if exists(\"activeOnly\") ?>"
-	"WHERE cust_active "
-	"<? endif ?>"
-	"ORDER BY number;"  ;
+    _queryParams->append("customer");
+    break;
+
+  case CRMAcctLineEdit::Employee:
+    setWindowTitle(tr("Search For Employee"));
+    _queryParams->append("employee");
     break;
 
   case CRMAcctLineEdit::Prospect:
     setWindowTitle(tr("Search For Prospect"));
-    _query =
-	"SELECT prospect_id AS id, prospect_number AS number, prospect_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM prospect LEFT OUTER JOIN"
-	"         cntct ON (prospect_cntct_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id)"
-	"<? if exists(\"activeOnly\") ?>"
-	"WHERE prospect_active "
-	"<? endif ?>"
-	"ORDER BY number;"  ;
+    _queryParams->append("prospect");
+    break;
+
+  case CRMAcctLineEdit::SalesRep:
+    setWindowTitle(tr("Search For Sales Rep"));
+    _queryParams->append("salesrep");
+    hasContact = false;
+    hasAddress = false;
     break;
 
   case CRMAcctLineEdit::Taxauth:
     setWindowTitle(tr("Search For Tax Authority"));
-    _listTab->hideColumn(2);
-    _listTab->hideColumn(3);
-    _listTab->hideColumn(4);
-    _query =
-	"SELECT taxauth_id AS id, taxauth_code AS number, taxauth_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       '' AS cntct_first_name, '' AS cntct_last_name, "
-	"       '' AS cntct_phone "
-	"    FROM taxauth LEFT OUTER JOIN"
-	"         addr ON (taxauth_addr_id=addr_id)"
-	/*
-	"<? if exists(\"activeOnly\") ?>"
-	"WHERE taxauth_active "
-	"<? endif ?>"
-	*/
-	"ORDER BY number;"  ;
+    _queryParams->append("taxauth");
+    hasContact = false;
+    break;
+
+  case CRMAcctLineEdit::User:
+    setWindowTitle(tr("Search For User"));
+    _queryParams->append("user");
+    hasContact = false;
+    hasAddress = false;
     break;
 
   case CRMAcctLineEdit::Vend:
-    _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
     setWindowTitle(tr("Search For Vendor"));
-    _query =
-	"SELECT vend_id AS id, vend_number AS number, vend_name AS name, vendtype_code AS type,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM vendtype JOIN vendinfo"
-        "           ON (vend_vendtype_id=vendtype_id) LEFT OUTER JOIN"
-	"         cntct ON (vend_cntct1_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (vend_addr_id=addr_id)"
-	"<? if exists(\"activeOnly\") ?>"
-	"WHERE vend_active "
-	"<? endif ?>"
-	"ORDER BY number;"  ;
+    _queryParams->append("vendor");
+    _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
     break;
 
   case CRMAcctLineEdit::CustAndProspect:
     setWindowTitle(tr("Search For Customer or Prospect"));
-    _query =
-	"SELECT cust_id AS id, cust_number AS number, cust_name AS name,"
-        "       addr.*, "
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM custinfo LEFT OUTER JOIN"
-	"         cntct ON (cust_cntct_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id)"
-	"<? if exists(\"activeOnly\") ?>"
-	"WHERE cust_active "
-	"<? endif ?>"
-	"UNION "
-	"SELECT prospect_id AS id, prospect_number AS number, prospect_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM prospect LEFT OUTER JOIN"
-	"         cntct ON (prospect_cntct_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id)"
-	"<? if exists(\"activeOnly\") ?>"
-	"WHERE prospect_active "
-	"<? endif ?>"
-	"ORDER BY number;"  ;
+    _queryParams->append("customer");
+    _queryParams->append("prospect");
     break;
 
   case CRMAcctLineEdit::Crmacct:
@@ -293,28 +353,26 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   case CRMAcctLineEdit::Partner:
   default:
     setWindowTitle(tr("Search For CRM Account"));
-    _query =
-	"SELECT crmacct_id AS id, crmacct_number AS number, crmacct_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM crmacct LEFT OUTER JOIN"
-	"         cntct ON (crmacct_cntct_id_1=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id)"
-	"<? if exists(\"activeOnly\") ?>"
-	"WHERE crmacct_active "
-	"<? endif ?>"
-	"ORDER BY number;"  ;
+    _queryParams->append("crmaccount");
     break;
   }
+
+  _listTab->setColumnHidden(_listTab->column("cntct_first_name"), ! hasContact);
+  _listTab->setColumnHidden(_listTab->column("cntct_last_name"),  ! hasContact);
+  _listTab->setColumnHidden(_listTab->column("cntct_phone"),      ! hasContact);
+  _listTab->setColumnHidden(_listTab->column("street"),           ! hasAddress);
+  _listTab->setColumnHidden(_listTab->column("addr_city"),        ! hasAddress);
+  _listTab->setColumnHidden(_listTab->column("addr_state"),       ! hasAddress);
+  _listTab->setColumnHidden(_listTab->column("addr_country"),     ! hasAddress);
+  _listTab->setColumnHidden(_listTab->column("addr_postalcode"),  ! hasAddress);
 
   sFillList();
 }
 
 void CRMAcctList::sFillList()
 {
-  MetaSQLQuery mql(_query);
-  ParameterList params;
+  MetaSQLQuery mql(_listAndSearchQueryString);
+  ParameterList params(*_queryParams);
   if (! _showInactive)
     params.append("activeOnly");
 
@@ -339,6 +397,8 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   disconnect(_searchDescrip,	SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   selectorsLyt->removeWidget(_searchDescrip);
   delete _searchDescrip;
+
+  _queryParams = 0;
 
   _listTab->setColumnCount(0);
 
@@ -503,6 +563,11 @@ void CRMAcctSearch::setShowInactive(const bool show)
 void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 {
   _subtype = subtype;
+  if (_queryParams)
+  {
+    delete _queryParams;
+    _queryParams = new ParameterList();
+  }
 
   if(subtype != CRMAcctLineEdit::Vend)
   {
@@ -510,11 +575,15 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _comboCombo->hide();
   }
  
+  bool hasContact = true;
+  bool hasAddress = true;
 
   switch (subtype)
   {
   case CRMAcctLineEdit::Cust:
     setWindowTitle(tr("Search For Customer"));
+    _queryParams->append("customer");
+
     _searchNumber->setText(tr("Customer Number"));
     _searchName->setText(tr("Customer Name"));
     _searchContact->setText(tr("Billing Contact Name"));
@@ -523,28 +592,64 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _addressLit->setText(tr("Billing Contact Address:"));
     break;
 
+  case CRMAcctLineEdit::Employee:
+    setWindowTitle(tr("Search For Employee"));
+    _queryParams->append("employee");
+
+    _searchNumber->setText(tr("Employee Code"));
+    _searchName->setText(tr("Employee Number"));
+    _searchContact->setText(tr("Contact Name"));
+    _searchPhone->setText(tr("Contact Phone #"));
+    _searchEmail->setText(tr("Contact Email"));
+    _addressLit->setText(tr("Contact Address:"));
+    break;
+
   case CRMAcctLineEdit::Prospect:
     setWindowTitle(tr("Search For Prospect"));
+    _queryParams->append("prospect");
+
     _searchNumber->setText(tr("Prospect Number"));
     _searchName->setText(tr("Prospect Name"));
     break;
 
+  case CRMAcctLineEdit::SalesRep:
+    setWindowTitle(tr("Search For Sales Rep"));
+    _queryParams->append("salesrep");
+
+    _searchNumber->setText(tr("Sales Rep Number"));
+    _searchName->setText(tr("Sales Rep Name"));
+
+    hasContact = false;
+    hasAddress = false;
+    break;
+
   case CRMAcctLineEdit::Taxauth:
     setWindowTitle(tr("Search For Tax Authority"));
+    _queryParams->append("taxauth");
+
     _searchNumber->setText(tr("Tax Authority Code"));
     _searchName->setText(tr("Tax Authority Name"));
-    _searchContact->setVisible(false);
-    _searchPhone->setVisible(false);
-    _searchEmail->setVisible(false);
+
+    hasContact = false;
     _addressLit->setText(tr("Tax Authority Address:"));
-    _listTab->hideColumn(2);
-    _listTab->hideColumn(3);
-    _listTab->hideColumn(4);
     _showInactive->setVisible(false);
+    break;
+
+  case CRMAcctLineEdit::User:
+    setWindowTitle(tr("Search For User"));
+    _queryParams->append("user");
+
+    _searchNumber->setText(tr("Username"));
+    _searchName->setText(tr("User Proper Name"));
+
+    hasContact = false;
+    hasAddress = false;
     break;
 
   case CRMAcctLineEdit::Vend:
     setWindowTitle(tr("Search For Vendor"));
+    _queryParams->append("vendor");
+
     _searchCombo->setText(tr("Vendor Type:"));
     _comboCombo->setType(XComboBox::VendorTypes);
     _searchNumber->setText(tr("Vendor Number"));
@@ -555,6 +660,9 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 
   case CRMAcctLineEdit::CustAndProspect:
     setWindowTitle(tr("Search For Customer or Prospect"));
+    _queryParams->append("customer");
+    _queryParams->append("prospect");
+
     _searchNumber->setText(tr("Number"));
     _searchName->setText(tr("Name"));
     _searchContact->setText(tr("Billing or Primary Contact Name"));
@@ -568,6 +676,8 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   case CRMAcctLineEdit::Partner:
   default:
     setWindowTitle(tr("Search For CRM Account"));
+    _queryParams->append("crmaccount");
+
     _searchNumber->setText(tr("CRM Account Number"));
     _searchName->setText(tr("CRM Account Name"));
     _searchContact->setText(tr("Primary Contact Name"));
@@ -577,6 +687,20 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
   }
 
+  _searchContact->setVisible(hasContact);
+  _searchPhone->setVisible(hasContact);
+  _searchEmail->setVisible(hasContact);
+  _addressLit->setVisible(hasAddress);
+
+  _listTab->setColumnHidden(_listTab->column("cntct_first_name"), ! hasContact);
+  _listTab->setColumnHidden(_listTab->column("cntct_last_name"),  ! hasContact);
+  _listTab->setColumnHidden(_listTab->column("cntct_phone"),      ! hasContact);
+  _listTab->setColumnHidden(_listTab->column("street"),           ! hasAddress);
+  _listTab->setColumnHidden(_listTab->column("addr_city"),        ! hasAddress);
+  _listTab->setColumnHidden(_listTab->column("addr_state"),       ! hasAddress);
+  _listTab->setColumnHidden(_listTab->column("addr_country"),     ! hasAddress);
+  _listTab->setColumnHidden(_listTab->column("addr_postalcode"),  ! hasAddress);
+
   sFillList();
 }
 
@@ -585,251 +709,9 @@ void CRMAcctSearch::sFillList()
   if (_search->text().trimmed().length() == 0)
     return;
 
-  QString sql;
-
-  sql = "<? if exists(\"custAndProspect\") ?>"
-	"SELECT cust_id AS id, cust_number AS number, cust_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM custinfo LEFT OUTER JOIN"
-	"         cntct ON (cust_cntct_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id) "
-	"    WHERE "
-	"    <? if exists(\"activeOnly\") ?> cust_active AND <? endif ?>"
-	"      (false "
-	"    <? if exists(\"searchNumber\") ?>"
-	"       OR (UPPER(cust_number) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchName\") ?>"
-	"       OR (UPPER(cust_name) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchContactName\") ?>"
-	"       OR (UPPER(cntct_first_name || ' ' || cntct_last_name) "
-	"                 ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchPhone\") ?>"
-	"       OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
-	"                 cntct_fax) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchEmail\") ?>"
-	"       OR (cntct_email ~* <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchStreetAddr\") ?>"
-	"       OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
-	"                 addr_line3) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchCity\") ?>"
-	"       OR (UPPER(addr_city) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchState\") ?>"
-	"       OR (UPPER(addr_state) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchPostalCode\") ?>"
-	"       OR (UPPER(addr_postalcode) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchCountry\") ?>"
-	"       OR (UPPER(addr_country) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	") "
-	"UNION "
-	"SELECT prospect_id AS id, prospect_number AS number, prospect_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM prospect LEFT OUTER JOIN"
-	"         cntct ON (prospect_cntct_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id) "
-	"    WHERE "
-	"    <? if exists(\"activeOnly\") ?> prospect_active AND <? endif ?>"
-	"      (false "
-	"    <? if exists(\"searchNumber\") ?>"
-	"       OR (UPPER(prospect_number) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchName\") ?>"
-	"       OR (UPPER(prospect_name) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchContactName\") ?>"
-	"       OR (UPPER(cntct_first_name || ' ' || cntct_last_name) "
-	"                 ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchPhone\") ?>"
-	"       OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
-	"                 cntct_fax) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchEmail\") ?>"
-	"       OR (cntct_email ~* <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchStreetAddr\") ?>"
-	"       OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
-	"                 addr_line3) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchCity\") ?>"
-	"       OR (UPPER(addr_city) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchState\") ?>"
-	"       OR (UPPER(addr_state) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchPostalCode\") ?>"
-	"       OR (UPPER(addr_postalcode) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchCountry\") ?>"
-	"       OR (UPPER(addr_country) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"<? elseif exists(\"crmacct\") ?>"
-	"SELECT crmacct_id AS id, crmacct_number AS number, crmacct_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM crmacct LEFT OUTER JOIN"
-	"         cntct ON (crmacct_cntct_id_1=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id) "
-	"    WHERE "
-	"    <? if exists(\"activeOnly\") ?> crmacct_active AND <? endif ?>"
-	"      (false "
-	"    <? if exists(\"searchNumber\") ?>"
-	"       OR (UPPER(crmacct_number) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchName\") ?>"
-	"       OR (UPPER(crmacct_name) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"<? elseif exists(\"cust\") ?>"
-	"SELECT cust_id AS id, cust_number AS number, cust_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM custinfo LEFT OUTER JOIN"
-	"         cntct ON (cust_cntct_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id) "
-	"    WHERE "
-	"    <? if exists(\"activeOnly\") ?> cust_active AND <? endif ?>"
-	"      (false "
-	"    <? if exists(\"searchNumber\") ?>"
-	"       OR (UPPER(cust_number) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchName\") ?>"
-	"       OR (UPPER(cust_name) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"<? elseif exists(\"prospect\") ?>"
-	"SELECT prospect_id AS id, prospect_number AS number, prospect_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM prospect LEFT OUTER JOIN"
-	"         cntct ON (prospect_cntct_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (cntct_addr_id=addr_id) "
-	"    WHERE "
-	"    <? if exists(\"activeOnly\") ?> prospect_active AND <? endif ?>"
-	"      (false "
-	"    <? if exists(\"searchNumber\") ?>"
-	"       OR (UPPER(prospect_number) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchName\") ?>"
-	"       OR (UPPER(prospect_name) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"<? elseif exists(\"taxauth\") ?>"
-	"SELECT taxauth_id AS id, taxauth_code AS number, taxauth_name AS name,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       '' AS cntct_first_name, '' AS cntct_last_name, "
-	"       '' AS cntct_phone "
-	"    FROM taxauth LEFT OUTER JOIN"
-	"         addr ON (taxauth_addr_id=addr_id) "
-	"    WHERE "
-	"      (false "
-	"    <? if exists(\"searchNumber\") ?>"
-	"       OR (UPPER(taxauth_code) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchName\") ?>"
-	"       OR (UPPER(taxauth_name) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"<? elseif exists(\"vend\") ?>"
-	"SELECT vend_id AS id, vend_number AS number, vend_name AS name, vendtype_code AS type,"
-        "       addr.*,"
-	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
-	"       cntct.* "
-	"    FROM vendtype, vendinfo LEFT OUTER JOIN"
-	"         cntct ON (vend_cntct1_id=cntct_id) LEFT OUTER JOIN"
-	"         addr ON (vend_addr_id=addr_id) "
-	"    WHERE "
-	"    <? if exists(\"activeOnly\") ?> vend_active AND <? endif ?>"
-	"      (vend_vendtype_id=vendtype_id) "
-        "    <? if exists(\"combo_id\") ?>"
-        "      AND (vendtype_id=<? value(\"combo_id\") ?>)"
-        "    <? endif ?>"
-        "      AND (false "
-	"    <? if exists(\"searchNumber\") ?>"
-	"       OR (UPPER(vend_number) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"    <? if exists(\"searchName\") ?>"
-	"       OR (UPPER(vend_name) ~ <? value(\"searchString\") ?>)"
-	"    <? endif ?>"
-	"<? endif ?>"
-	"<? if exists(\"searchContactName\") ?>"
-	"   OR (UPPER(cntct_first_name || ' ' || cntct_last_name) "
-	"             ~ <? value(\"searchString\") ?>)"
-	"<? endif ?>"
-	"<? if exists(\"searchPhone\") ?>"
-	"   OR (UPPER(cntct_phone || ' ' || cntct_phone2 || ' ' || "
-	"             cntct_fax) ~ <? value(\"searchString\") ?>)"
-	"<? endif ?>"
-	"<? if exists(\"searchEmail\") ?>"
-	"   OR (cntct_email ~* <? value(\"searchString\") ?>)"
-	"<? endif ?>"
-	"<? if exists(\"searchStreetAddr\") ?>"
-	"   OR (UPPER(addr_line1 || ' ' || addr_line2 || ' ' || "
-	"             addr_line3) ~ <? value(\"searchString\") ?>)"
-	"<? endif ?>"
-	"<? if exists(\"searchCity\") ?>"
-	"   OR (UPPER(addr_city) ~ <? value(\"searchString\") ?>)"
-	"<? endif ?>"
-	"<? if exists(\"searchState\") ?>"
-	"   OR (UPPER(addr_state) ~ <? value(\"searchString\") ?>)"
-	"<? endif ?>"
-	"<? if exists(\"searchPostalCode\") ?>"
-	"   OR (UPPER(addr_postalcode) ~ <? value(\"searchString\") ?>)"
-	"<? endif ?>"
-	"<? if exists(\"searchCountry\") ?>"
-	"   OR (UPPER(addr_country) ~ <? value(\"searchString\") ?>)"
-	"<? endif ?>"
-	"  )"
-	"ORDER BY number;"  ;
-
-  MetaSQLQuery mql(sql);
-  ParameterList params;
+  MetaSQLQuery mql(_listAndSearchQueryString);
+  ParameterList params(*_queryParams);
   params.append("searchString", _search->text().trimmed().toUpper());
-
-  switch (_subtype)
-  {
-    case CRMAcctLineEdit::Crmacct:
-      params.append("crmacct");
-      break;
-
-    case CRMAcctLineEdit::Cust:
-      params.append("cust");
-      break;
-
-    case CRMAcctLineEdit::Prospect:
-      params.append("prospect");
-      break;
-
-    case CRMAcctLineEdit::Taxauth:
-      params.append("taxauth");
-      break;
-
-    case CRMAcctLineEdit::Vend:
-      params.append("vend");
-      break;
-
-    case CRMAcctLineEdit::CustAndProspect:
-      params.append("custAndProspect");
-      break;
-
-    case CRMAcctLineEdit::Competitor:
-    case CRMAcctLineEdit::Partner:
-    default:
-      return;
-  }
 
   if (! _showInactive->isChecked())
     params.append("activeOnly");
@@ -840,7 +722,10 @@ void CRMAcctSearch::sFillList()
   if (_searchName->isChecked())
     params.append("searchName");
 
-  if (_subtype != CRMAcctLineEdit::Taxauth)	// taxauth doesn't have contacts (yet?)
+  // some crmacct types don't have contacts (yet)
+  if (_subtype != CRMAcctLineEdit::SalesRep &&
+      _subtype != CRMAcctLineEdit::Taxauth  &&
+      _subtype != CRMAcctLineEdit::User)
   {
     if (_searchContact->isChecked())
       params.append("searchContactName");
@@ -852,20 +737,25 @@ void CRMAcctSearch::sFillList()
       params.append("searchEmail");
   }
 
-  if (_searchStreet->isChecked())
-    params.append("searchStreetAddr");
+  // some crmacct types don't have addresses (yet)
+  if (_subtype != CRMAcctLineEdit::SalesRep &&
+      _subtype != CRMAcctLineEdit::User)
+  {
+    if (_searchStreet->isChecked())
+      params.append("searchStreetAddr");
 
-  if (_searchCity->isChecked())
-    params.append("searchCity");
+    if (_searchCity->isChecked())
+      params.append("searchCity");
 
-  if (_searchState->isChecked())
-    params.append("searchState");
+    if (_searchState->isChecked())
+      params.append("searchState");
 
-  if (_searchPostalCode->isChecked())
-    params.append("searchPostalCode");
+    if (_searchPostalCode->isChecked())
+      params.append("searchPostalCode");
 
-  if (_searchCountry->isChecked())
-    params.append("searchCountry");
+    if (_searchCountry->isChecked())
+      params.append("searchCountry");
+  }
 
   if (_searchCombo->isChecked())
     params.append("combo_id", _comboCombo->id());

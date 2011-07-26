@@ -814,6 +814,7 @@ HEADERS = ../common/format.h                    \
           glTransactionDetail.h         \
           group.h                       \
           groups.h                      \
+          guiErrorCheck.h               \
           guiclient.h                   \
           helpDownload.h                \
           helpView.h                    \
@@ -1404,6 +1405,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           glTransactionDetail.cpp       \
           group.cpp                     \
           groups.cpp                    \
+          guiErrorCheck.cpp             \
           guiclient.cpp                 \
           helpDownload.cpp              \
           helpView.cpp                  \

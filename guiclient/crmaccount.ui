@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>884</width>
     <height>600</height>
    </rect>
   </property>
@@ -246,7 +246,7 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <layout class="QHBoxLayout">
        <item>
         <spacer>
@@ -280,160 +280,7 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </item>
-     <item row="1" column="1">
-      <widget class="QGroupBox" name="_relationshipsGroup">
-       <property name="title">
-        <string>Relationships</string>
-       </property>
-       <layout class="QGridLayout">
-        <item row="0" column="0">
-         <layout class="QVBoxLayout">
-          <item>
-           <layout class="QGridLayout">
-            <property name="verticalSpacing">
-             <number>0</number>
-            </property>
-            <item row="0" column="0">
-             <widget class="QCheckBox" name="_prospect">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QPushButton" name="_prospectButton">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Prospect...</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QCheckBox" name="_customer">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="_customerButton">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Customer...</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QCheckBox" name="_vendor">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QPushButton" name="_vendorButton">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Vendor...</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QCheckBox" name="_taxauth">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QPushButton" name="_taxauthButton">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Tax Authority...</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QCheckBox" name="_competitor">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLabel" name="_competitorLit">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>23</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Competitor</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QCheckBox" name="_partner">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QLabel" name="_partnerLit">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>23</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Partner</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>0</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="0" colspan="2">
+     <item row="2" column="0" colspan="3">
       <widget class="QTabWidget" name="_tab">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -787,6 +634,244 @@ to be bound by its terms.</comment>
        </widget>
       </widget>
      </item>
+     <item row="0" column="1">
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1" colspan="2">
+      <widget class="QGroupBox" name="_relationshipsGroup">
+       <property name="title">
+        <string>Relationships</string>
+       </property>
+       <layout class="QGridLayout">
+        <property name="verticalSpacing">
+         <number>5</number>
+        </property>
+        <item row="6" column="1">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="_prospect">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="_prospectButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Prospect...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="_customer">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="_customerButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Customer...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="_vendor">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="_vendorButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Vendor...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="_taxauth">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QPushButton" name="_taxauthButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Tax Authority...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="_competitor">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="_competitorLit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>23</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Competitor</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="_partner">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLabel" name="_partnerLit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>23</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Partner</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QCheckBox" name="_salesrep">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QPushButton" name="_salesrepButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Sales Rep...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QCheckBox" name="_employee">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QPushButton" name="_employeeButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Employee...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QCheckBox" name="_user">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="4">
+         <widget class="QPushButton" name="_userButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>User...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="5">
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="2">
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -848,18 +933,17 @@ to be bound by its terms.</comment>
   <tabstop>_primaryButton</tabstop>
   <tabstop>_secondaryButton</tabstop>
   <tabstop>_allButton</tabstop>
-  <tabstop>_secondary</tabstop>
   <tabstop>_primary</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_charass</tabstop>
+  <tabstop>_newCharacteristic</tabstop>
+  <tabstop>_editCharacteristic</tabstop>
+  <tabstop>_deleteCharacteristic</tabstop>
   <tabstop>_reg</tabstop>
   <tabstop>_newReg</tabstop>
   <tabstop>_editReg</tabstop>
   <tabstop>_deleteReg</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_deleteCharacteristic</tabstop>
   <tabstop>_prospect</tabstop>
   <tabstop>_prospectButton</tabstop>
   <tabstop>_customer</tabstop>
@@ -870,8 +954,15 @@ to be bound by its terms.</comment>
   <tabstop>_taxauthButton</tabstop>
   <tabstop>_competitor</tabstop>
   <tabstop>_partner</tabstop>
-  <tabstop>_editCharacteristic</tabstop>
-  <tabstop>_newCharacteristic</tabstop>
+  <tabstop>_salesrep</tabstop>
+  <tabstop>_salesrepButton</tabstop>
+  <tabstop>_employee</tabstop>
+  <tabstop>_employeeButton</tabstop>
+  <tabstop>_user</tabstop>
+  <tabstop>_userButton</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_secondary</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -882,12 +973,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>676</x>
-     <y>148</y>
+     <x>530</x>
+     <y>158</y>
     </hint>
     <hint type="destinationlabel">
-     <x>766</x>
-     <y>152</y>
+     <x>573</x>
+     <y>151</y>
     </hint>
    </hints>
   </connection>
@@ -898,12 +989,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>676</x>
-     <y>171</y>
+     <x>530</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel">
-     <x>766</x>
-     <y>175</y>
+     <x>573</x>
+     <y>174</y>
     </hint>
    </hints>
   </connection>
@@ -914,12 +1005,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>676</x>
-     <y>125</y>
+     <x>530</x>
+     <y>133</y>
     </hint>
     <hint type="destinationlabel">
-     <x>766</x>
-     <y>129</y>
+     <x>573</x>
+     <y>128</y>
     </hint>
    </hints>
   </connection>
@@ -930,12 +1021,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>676</x>
-     <y>102</y>
+     <x>530</x>
+     <y>108</y>
     </hint>
     <hint type="destinationlabel">
-     <x>766</x>
-     <y>106</y>
+     <x>573</x>
+     <y>105</y>
     </hint>
    </hints>
   </connection>
@@ -946,12 +1037,12 @@ to be bound by its terms.</comment>
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>387</x>
-     <y>489</y>
+     <x>71</x>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1123</x>
-     <y>488</y>
+     <x>181</x>
+     <y>351</y>
     </hint>
    </hints>
   </connection>
@@ -962,12 +1053,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>458</x>
-     <y>552</y>
+     <x>71</x>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1035</x>
-     <y>372</y>
+     <x>181</x>
+     <y>351</y>
     </hint>
    </hints>
   </connection>
@@ -978,12 +1069,12 @@ to be bound by its terms.</comment>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>447</x>
-     <y>570</y>
+     <x>71</x>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1035</x>
-     <y>372</y>
+     <x>181</x>
+     <y>351</y>
     </hint>
    </hints>
   </connection>
@@ -994,12 +1085,60 @@ to be bound by its terms.</comment>
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>506</x>
-     <y>505</y>
+     <x>71</x>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1035</x>
-     <y>372</y>
+     <x>181</x>
+     <y>351</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_employee</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_employeeButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>723</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>836</x>
+     <y>142</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_user</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_userButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>723</x>
+     <y>158</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>836</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_salesrep</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_salesrepButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>707</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>742</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>

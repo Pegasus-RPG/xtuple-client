@@ -75,7 +75,6 @@ public slots:
     virtual void sViewCreditCard();
     virtual void sViewShipto();
     virtual void sViewTaxreg();
-    virtual void sLoadProspect(int);
     virtual void sLoadCrmAcct(int);
     virtual void sHandleButtons();
     virtual void sClear();

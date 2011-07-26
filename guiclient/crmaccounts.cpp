@@ -18,6 +18,7 @@
 
 #include "characteristic.h"
 #include "crmaccount.h"
+#include "errorReporter.h"
 #include "storedProcErrorLookup.h"
 #include "parameterwidget.h"
 
@@ -44,11 +45,14 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
 
-  connect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(crmAccountsUpdated(int)),     this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sFillList()));
-  connect(omfgThis, SIGNAL(prospectsUpdated()), this, SLOT(sFillList()));
-  connect(omfgThis, SIGNAL(taxAuthsUpdated(int)), this, SLOT(sFillList()));
-  connect(omfgThis, SIGNAL(vendorsUpdated()), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(employeeUpdated(int)),        this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(prospectsUpdated()),          this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(salesRepUpdated(int)),        this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(taxAuthsUpdated(int)),        this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(userUpdated(QString)),        this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(vendorsUpdated()),            this, SLOT(sFillList()));
 
   list()->addColumn(tr("Number"),      80, Qt::AlignLeft,  true, "crmacct_number");
   list()->addColumn(tr("Name"),        -1, Qt::AlignLeft,  true, "crmacct_name");
@@ -67,6 +71,9 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Competitor"),  70, Qt::AlignCenter,false, "competitor");
   list()->addColumn(tr("Partner"),     70, Qt::AlignCenter,false, "partner");
   list()->addColumn(tr("Tax Auth."),   70, Qt::AlignCenter,false, "taxauth");
+  list()->addColumn(tr("User"),        70, Qt::AlignCenter,false, "usr");
+  list()->addColumn(tr("Employee"),    70, Qt::AlignCenter,false, "emp");
+  list()->addColumn(tr("Sales Rep"),   70, Qt::AlignCenter,false, "salesrep");
 
   setupCharacteristics(characteristic::CRMAccounts);
   parameterWidget()->applyDefaultFilterSet();
@@ -103,24 +110,19 @@ void crmaccounts::sView()
 
 void crmaccounts::sDelete()
 {
-  q.prepare("SELECT deleteCRMAccount(:crmacct_id) AS returnVal;");
-  q.bindValue(":crmacct_id", list()->id());
-  q.exec();
-  if (q.first())
-  {
-    int returnVal = q.value("returnVal").toInt();
-    if (returnVal < 0)
-    {
-      systemError(this, storedProcErrorLookup("deleteCRMAccount", returnVal),
-		  __FILE__, __LINE__);
-      return;
-    }
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  if (QMessageBox::question(this, tr("Delete?"),
+                            tr("Are you sure you want to delete this CRM Account?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
-  }
+
+  XSqlQuery delq;
+  delq.prepare("DELETE FROM crmacct WHERE crmacct_id = :crmacct_id;");
+  delq.bindValue(":crmacct_id", list()->id());
+  delq.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting CRM Account"),
+                           delq, __FILE__, __LINE__))
+    return;
   sFillList();
 }
 
@@ -147,5 +149,3 @@ void crmaccounts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
   menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
 }
-
-

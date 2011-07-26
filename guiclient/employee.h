@@ -28,7 +28,7 @@ class employee : public XDialog, public Ui::employee
 
   public slots:
     virtual enum SetResponse set(const ParameterList &);
-    virtual void sPopulate();
+    virtual bool sPopulate();
     virtual bool sSave(const bool = true);
     virtual void reject();
 
@@ -44,17 +44,20 @@ class employee : public XDialog, public Ui::employee
     virtual void sHandleButtons();
     virtual void sNewCharass();
     virtual void sSalesrep();
-	virtual void sVendor();
+    virtual void sVendor();
     virtual void sUser();
     virtual void sViewGroup();
 
   private:
-    QString _currabbr;  // TODO: replace with currdisplay::currAbbrShort()
-    QString _empcode;
-    int     _empid;
     bool    _createUsers;
+    int     _crmacctid;
+    int     _empid;
     int     _mode;
+    int     _NumberGen;
     int     _origmode;
+    int     _salesrepid;
+    QString _username;
+    int     _vendid;
 
 signals:
     void saved();

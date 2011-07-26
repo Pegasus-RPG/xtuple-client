@@ -457,6 +457,12 @@ const struct {
 								 0, "" },
   { "deleteCRMAccount",	-5, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
 			       "it is a Tax Authority."),	 0, "" },
+  { "deleteCRMAccount",	-6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+			       "it is a Sales Rep."),	        0, "" },
+  { "deleteCRMAccount",	-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+			       "it is a Employee."),	        0, "" },
+  { "deleteCRMAccount",	-8, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected CRM Account cannot be deleted as "
+			       "it is a User."),	        0, "" },
 
   { "deleteCustomer",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Customer cannot be deleted as there "
 			       "are still Ship-Tos assigned to it. You must "

@@ -39,7 +39,7 @@ public slots:
     virtual void	sViewQuote();
     virtual void	sFillQuotesList();
     virtual void	sPopulateQuotesMenu(QMenu * menuThis);
-    virtual void	populate();
+    virtual bool	sPopulate();
 
 signals:
             void newId(int);

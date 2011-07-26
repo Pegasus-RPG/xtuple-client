@@ -31,7 +31,7 @@ public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual void sSave();
     virtual void sCheck();
-    virtual void populate();
+    virtual bool sPopulate();
     virtual void sPrintAddresses();
     virtual void sNewAddress();
     virtual void sEditAddress();
@@ -44,7 +44,6 @@ public slots:
     virtual void sViewTaxreg();
     virtual void sDeleteTaxreg();
     virtual void sHandleButtons();
-    virtual void sLoadCrmAcct(int);
     virtual void sNumberEdited();
 
     virtual void sNext();

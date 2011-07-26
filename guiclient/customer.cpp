@@ -23,6 +23,8 @@
 #include "characteristicAssignment.h"
 #include "creditCard.h"
 #include "custCharacteristicDelegate.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "mqlutil.h"
 #include "shipTo.h"
 #include "storedProcErrorLookup.h"
@@ -34,7 +36,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-  
+
   _todoList = new todoList(this, "todoList", Qt::Widget);
   _todoListPage->layout()->addWidget(_todoList);
   _todoList->setCloseVisible(false);
@@ -43,7 +45,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->parameterWidget()->setDefault(tr("Assigned"), QVariant(), true);
   _todoList->list()->hideColumn("crmacct_number");
   _todoList->list()->hideColumn("crmacct_name");
-  
+
   _contacts = new contacts(this, "contacts", Qt::Widget);
   _contactsPage->layout()->addWidget(_contacts);
   _contacts->setCloseVisible(false);
@@ -65,7 +67,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _quotes->findChild<XCheckBox*>("_convertedtoSo")->setChecked(false);
   }
   _quotes->list()->hideColumn("quhead_billtoname");
-  
+
   _orders = new openSalesOrders(this, "openSalesOrders", Qt::Widget);
   _ordersPage->layout()->addWidget(_orders);
   _orders->setCloseVisible(false);
@@ -75,14 +77,14 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _orders->optionsWidget()->show();
   _orders->list()->hideColumn("cust_number");
   _orders->list()->hideColumn("cohead_billtoname");
-  
+
   _returns = new returnAuthorizationWorkbench(this, "returnAuthorizationWorkbench", Qt::Widget);
   _returnsPage->layout()->addWidget(_returns);
   _returns->findChild<QWidget*>("_close")->hide();
   _returns->findChild<QWidget*>("_customerSelector")->hide();
   _returns->findChild<XTreeWidget*>("_ra")->hideColumn("cust_name");
   _returns->findChild<XTreeWidget*>("_radue")->hideColumn("cust_name");
-  
+
   _aritems = new dspAROpenItems(this, "dspAROpenItems", Qt::Widget);
   _aritems->setObjectName("dspAROpenItems");
   _aritemsPage->layout()->addWidget(_aritems);
@@ -93,7 +95,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _aritems->findChild<XCheckBox*>("_closed")->show();
   _aritems->list()->hideColumn("cust_number");
   _aritems->list()->hideColumn("cust_name");
-  
+
   _cashreceipts = new dspCashReceipts(this, "dspCashReceipts", Qt::Widget);
   _cashreceiptsPage->layout()->addWidget(_cashreceipts);
   _cashreceipts->setCloseVisible(false);
@@ -101,7 +103,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _cashreceipts->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-90));
   _cashreceipts->list()->hideColumn("cust_number");
   _cashreceipts->list()->hideColumn("cust_name");
-  
+
   _cctrans = new dspCreditCardTransactions(this, "dspCreditCardTransactions", Qt::Widget);
   _cctransPage->layout()->addWidget(_cctrans);
   _cctrans->findChild<QWidget*>("_close")->hide();
@@ -138,12 +140,12 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_billingButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_correspButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_shiptoButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  
+
   connect(_generalButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_termsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_taxButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_creditcardsButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  
+
   connect(_number,  SIGNAL(editingFinished()), this, SLOT(sCheckRequired()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheckRequired()));
   connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
@@ -163,7 +165,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_cctransButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_cashreceiptsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_tab, SIGNAL(currentChanged(int)), this, SLOT(currentTabChanged(int)));
-  
+
   _custid = -1;
   _crmacctid = -1;
   _NumberGen = -1;
@@ -175,7 +177,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _sellingWarehouse->setId(-1);
 
   _currency->setLabel(_currencyLit);
-  
+
   _balanceMethod->append(0, tr("Balance Forward"), "B");
   _balanceMethod->append(1, tr("Open Items"),      "O");
 
@@ -192,7 +194,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
   _cc->addColumn(tr("Number"),          150, Qt::AlignRight,true, "f_number");
   _cc->addColumn(tr("Active"),           -1, Qt::AlignLeft, true, "ccard_active");
-  
+
   _charass->addColumn(tr("Characteristic"), _itemColumn*2, Qt::AlignLeft, true, "char_name");
   _charass->addColumn(tr("Value"),          -1,            Qt::AlignLeft, true, "charass_value");
 
@@ -212,7 +214,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _creditcardsButton->hide();
     _cctransButton->hide();
   }
-  
+
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -224,18 +226,18 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _warnLate->hide();
   else
     _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
-  
+
   if (!_privileges->check("MaintainQuotes") && !_privileges->check("ViewQuotes"))
     _quotesButton->setEnabled(false);
   if (!_privileges->check("MaintainSalesOrders") && !_privileges->check("ViewSalesOrders"))
     _ordersButton->setEnabled(false);
   if (!_privileges->check("MaintainReturns") && !_privileges->check("ViewReturns"))
-    _returnsButton->setEnabled(false);  
+    _returnsButton->setEnabled(false);
   if (!_metrics->boolean("EnableReturnAuth"))
-    _returnsButton->hide(); 
-  
+    _returnsButton->hide();
+
   setValid(false);
-      
+
   _backlog->setPrecision(omfgThis->moneyVal());
   _lastYearSales->setPrecision(omfgThis->moneyVal());
   _lateBalance->setPrecision(omfgThis->moneyVal());
@@ -255,6 +257,11 @@ void customer::languageChange()
   retranslateUi(this);
 }
 
+/* because the customer window is a workbench, which allows switching
+   between customers and changing customer numbers and all that stuff,
+   we can't handle crmaccount creation via set() and populate() the
+   way we do with other crmaccount types.
+ */
 enum SetResponse customer::set(const ParameterList &pParams)
 {
   XWidget::set(pParams);
@@ -373,19 +380,13 @@ enum SetResponse customer::set(const ParameterList &pParams)
       emit newMode(_mode);
     }
   }
-  
+
   param = pParams.value("crmacct_id", &valid);
   if (valid)
   {
     _number->setEditMode(true);
     sLoadCrmAcct(param.toInt());
-  }
-
-  param = pParams.value("prospect_id", &valid);
-  if (valid)
-  {
-    _number->setEditMode(true);
-    sLoadProspect(param.toInt());
+    _captive=true;
   }
 
   return NoError;
@@ -415,7 +416,7 @@ void customer::setValid(bool valid)
   _tab->setTabEnabled(_tab->indexOf(_crmTab),valid);
   _tab->setTabEnabled(_tab->indexOf(_salesTab),valid);
   _tab->setTabEnabled(_tab->indexOf(_accountingTab),valid);
-    
+
   if (!_privileges->check("MaintainContacts") && !_privileges->check("ViewContacts"))
   {
     _contactsButton->setEnabled(false);
@@ -428,7 +429,7 @@ void customer::setValid(bool valid)
     if (_todoListButton->isChecked())
       _tab->setTabEnabled(_tab->indexOf(_crmTab),false);
   }
-    
+
   if (!_privileges->check("EditAROpenItems") && !_privileges->check("ViewAROpenItems"))
   {
     if (_cctransButton->isHidden())
@@ -441,7 +442,7 @@ void customer::setValid(bool valid)
       sHandleButtons();
     }
   }
-   
+
   if (!valid)
   {
     _documents->setId(-1);
@@ -459,77 +460,49 @@ void customer::setValid(bool valid)
 
 bool customer::sSave()
 {
-  if (_number->number().trimmed().length() == 0)
-  {
-    QMessageBox::critical( this, tr("Enter Customer Number"),
-                             tr("You must enter a number for this Customer before continuing") );
-    _number->setFocus();
-    return false;
-  }
-  
-  if (_name->text().trimmed().length() == 0)
-  {
-    QMessageBox::critical( this, tr("Enter Customer Name"),
-                             tr("You must enter a name for this Customer before continuing") );
-    _number->setFocus();
-    return false;
-  }
 
-  if (_custtype->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Select Customer Type"),
-                             tr("You must select a Customer Type code for this Customer before continuing.") );
-    _terms->setFocus();
-    return false;
-  }
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_number->number().trimmed().isEmpty(), _number,
+                          tr("You must enter a number for this Customer "
+                             "before continuing"))
+         << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("You must enter a name for this Customer "
+                             "before continuing"))
+         << GuiErrorCheck(_custtype->id() == -1, _custtype,
+                          tr("You must select a Customer Type code for this "
+                             "Customer before continuing."))
+         << GuiErrorCheck(_terms->id() == -1, _terms,
+                          tr("You must select a Terms code for this "
+                             "Customer before continuing."))
+         << GuiErrorCheck(_salesrep->id() == -1, _salesrep,
+                          tr("You must select a Sales Rep. for this "
+                             "Customer before continuing."))
+         << GuiErrorCheck(_shipform->id() == -1, _shipform,
+                          tr("You must select a default Shipping Form for this "
+                             "Customer before continuing."))
+     ;
 
-  if (_terms->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Select Terms"),
-                           tr("You must select a Terms code for this Customer before continuing.") );
-    _terms->setFocus();
-    return false;
-  }
-
-  if (_salesrep->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Select Sales Rep."),
-                           tr("You must select a Sales Rep. for this Customer before continuing.") );
-    _salesrep->setFocus();
-    return false;
-  }
-
-  if (_shipform->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Select Default Shipping Form"),
-                           tr("You must select a default Shipping Form for this Customer before continuing.") );
-    _shipform->setFocus();
-    return false;
-  }
-
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-  
   if (_number->number().trimmed() != _cachedNumber)
   {
-    q.prepare( "SELECT cust_name "
-               "FROM custinfo "
-               "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
-               "  AND (cust_id<>:cust_id);" );
-    q.bindValue(":cust_name", _number->number().trimmed());
-    q.bindValue(":cust_id", _custid);
-    q.exec();
-    if (q.first())
-    {
-      QMessageBox::critical( this, tr("Customer Number Used"),
-                             tr( "The newly entered Customer Number cannot be used as it is currently\n"
-                                 "in use by the Customer '%1'.  Please correct or enter a new Customer Number." )
-                                .arg(q.value("cust_name").toString()) );
-      _number->setFocus();
-      return false;
-    }
+    XSqlQuery dupq;
+    dupq.prepare("SELECT cust_name "
+                 "FROM custinfo "
+                 "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
+                 "  AND (cust_id<>:cust_id);" );
+    dupq.bindValue(":cust_name", _number->number().trimmed());
+    dupq.bindValue(":cust_id", _custid);
+    dupq.exec();
+    if (dupq.first())
+      errors << GuiErrorCheck(true, _number,
+                              tr("<p>The newly entered Customer Number cannot "
+                                 "be used as it is currently in use by the "
+                                 "Customer '%1'.  Please correct or enter a "
+                                 "new Customer Number." )
+                                .arg(dupq.value("cust_name").toString()) );
   }
- 
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Customer"), errors))
+    return false;
+
   if (_mode == cEdit)
   {
     q.prepare( "UPDATE custinfo SET "
@@ -643,24 +616,22 @@ bool customer::sSave()
     q.bindValue(":cust_gracedays", _graceDays->value());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving"),
+                           q, __FILE__, __LINE__))
     return false;
-  }
-  
+
   if (_mode == cNew)
   {
     _mode = cEdit;
     emit newMode(_mode);
     emit newId(_custid); // custcluster listeners couldn't handle set()'s emit
   }
-  
+
   //Save characteristics
   if (_widgetStack->currentIndex() == 1)
   {
     q.prepare("SELECT updateCharAssignment('C', :target_id, :char_id, :char_value);");
-  
+
     QModelIndex idx1, idx2;
     for(int i = 0; i < _custchar->rowCount(); i++)
     {
@@ -670,79 +641,26 @@ bool customer::sSave()
       q.bindValue(":char_id", _custchar->data(idx1, Qt::UserRole));
       q.bindValue(":char_value", _custchar->data(idx2, Qt::DisplayRole));
       q.exec();
+      ErrorReporter::error(QtCriticalMsg, this, tr("Saving Characteristic"),
+                           q, __FILE__, __LINE__);
     }
   }
-  
+
   setValid(true);
   populate();
   omfgThis->sCustomersUpdated(_custid, TRUE);
   _autoSaved = true;
-  
+
   return true;
 }
-   
+
 void customer::sSaveClicked()
-{           
+{
   _save->setFocus();
-                 
-  if (! q.exec("BEGIN"))
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  
+
   if (!sSave())
-  {
-    q.exec("ROLLBACK;");
     return;
-  }
-  
-  //Check to see if this is a prospect with quotes
-  bool convertQuotes = false;
-  
-  q.prepare("SELECT * FROM prospect, quhead "
-            " WHERE ((prospect_id=quhead_cust_id) "
-            " AND (prospect_id=:prospect_id)); ");
-  q.bindValue(":prospect_id", _custid);
-  q.exec();
-  if (q.first())
-    if (_privileges->check("ConvertQuotes") &&
-        QMessageBox::question(this, tr("Convert"),
-                              tr("<p>Do you want to convert all of the Quotes "
-                                 "for the Prospect to Sales Orders?"),
-                              QMessageBox::Yes | QMessageBox::Default,
-                              QMessageBox::No) == QMessageBox::Yes)
-      convertQuotes = true;
 
-
-
-  if (convertQuotes)
-  {
-    q.prepare("SELECT MIN(convertQuote(quhead_id)) AS result "
-              "FROM quhead "
-              "WHERE (quhead_cust_id=:id);");
-    q.bindValue(":id", _custid);
-    q.exec();
-    if (q.first())
-    {
-      int result = q.value("result").toInt();
-      if (result < 0)
-      {
-        systemError(this, storedProcErrorLookup("convertQuote", result),
-                    __FILE__, __LINE__);
-        // not fatal
-      }
-      omfgThis->sQuotesUpdated(-1);
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      q.exec("ROLLBACK;");
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      // not fatal
-    }
-  }
-
-  q.exec("COMMIT;");
   _autoSaved=false;
   _NumberGen = -1;
   omfgThis->sCustomersUpdated(_custid, TRUE);
@@ -756,10 +674,10 @@ void customer::sSaveClicked()
 void customer::sCheck()
 {
   _number->setNumber(_number->number().trimmed().toUpper());
-  
+
   if (_cachedNumber == _number->number())
     return;
-    
+
   if(cNew == _mode && -1 != _NumberGen && _number->number().toInt() != _NumberGen)
   {
     XSqlQuery query;
@@ -788,10 +706,8 @@ void customer::sCheck()
     if ((q.value("type").toInt() == 1) && (_notice))
     {
       if (QMessageBox::question(this, tr("Customer Exists"),
-              tr("<p>This number is currently "
-                   "used by an existing Customer. "
-                   "Do you want to edit "
-                   "that Customer?"),
+              tr("<p>This number is currently used by an existing Customer. "
+                   "Do you want to edit that Customer?"),
               QMessageBox::Yes,
               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
@@ -799,22 +715,20 @@ void customer::sCheck()
         _number->setFocus();
         return;
       }
-      else
-      {
-        _number->setId(q.value("cust_id").toInt());
-        _mode = cEdit;
-        _name->setFocus();
-        emit newMode(_mode);
-      }
+
+      _number->setId(q.value("cust_id").toInt());
+      _mode = cEdit;
+      _name->setFocus();
+      emit newMode(_mode);
     }
-    else if ( (_mode == cEdit) && 
+    else if ( (_mode == cEdit) &&
               ((q.value("type").toInt() == 2) ||
-              (q.value("type").toInt() == 3)) && 
+              (q.value("type").toInt() == 3)) &&
               (_notice))
     {
       if (QMessageBox::critical(this, tr("Invalid Number"),
-              tr("<p>This number is currently "
-                   "assigned to another CRM account.")))
+                                tr("<p>This number is currently "
+                                   "assigned to another CRM account.")))
       {
         _number->setNumber(_cachedNumber);
         _number->setFocus();
@@ -824,11 +738,24 @@ void customer::sCheck()
     }
     else if ((q.value("type").toInt() == 2) && (_notice))
     {
+      int quotecount = 0;
+      if (_privileges->check("ConvertQuotes"))
+      {
+        XSqlQuery quoteq;
+        quoteq.prepare("SELECT COUNT(*) AS quotecount"
+                       "  FROM quhead"
+                       " WHERE (quhead_cust_id=:id);");
+        quoteq.bindValue(":id", q.value("cust_id"));
+        quoteq.exec();
+        if (quoteq.first())
+          quotecount = quoteq.value("quotecount").toInt();
+        // ignore errors
+      }
+
       if (QMessageBox::question(this, tr("Convert"),
-              tr("<p>This number is currently "
-                   "assigned to a Prospect. "
-                   "Do you want to convert the "
-                   "Prospect to a Customer?"),
+                                tr("<p>This number is currently assigned to "
+                                   "a Prospect. Do you want to convert the "
+                                   "Prospect to a Customer?"),
               QMessageBox::Yes,
               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
@@ -836,16 +763,35 @@ void customer::sCheck()
         _number->setFocus();
         return;
       }
-      else
-        sLoadProspect(q.value("cust_id").toInt());
-    }
+
+      bool convertquotes = quotecount != 0 &&
+                           (QMessageBox::question(this, tr("Convert"),
+                                    tr("<p>Do you want to convert all of the "
+                                       "Quotes for the Prospect to "
+                                       "Sales Orders?"),
+                                    QMessageBox::Yes | QMessageBox::Default,
+                                    QMessageBox::No) == QMessageBox::Yes);
+
+      XSqlQuery convertq;
+      convertq.prepare("SELECT convertProspectToCustomer(:id, :convertquotes) AS result;");
+      convertq.bindValue(":id", q.value("cust_id"));
+      convertq.bindValue(":convertquotes", convertquotes);
+      convertq.exec();
+      if (convertq.first())
+      {
+        int result = convertq.value("result").toInt();
+        _name->setFocus();
+        setId(result);
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Convert Error"),
+                                    convertq, __FILE__, __LINE__))
+        return;
+    } // number in use by prospect
     else if ((q.value("type").toInt() == 3) && (_notice))
     {
       if (QMessageBox::question(this, tr("Convert"),
-              tr("<p>This number is currently "
-                     "assigned to CRM Account. "
-                 "Do you want to convert the "
-                   "CRM Account to a Customer?"),
+                  tr("<p>This number is currently assigned to CRM Account. "
+                     "Do you want to convert the CRM Account to a Customer?"),
               QMessageBox::Yes,
               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
@@ -853,10 +799,12 @@ void customer::sCheck()
         _number->setFocus();
         return;
       }
-      else
-        sLoadCrmAcct(q.value("cust_id").toInt());
+      sLoadCrmAcct(q.value("cust_id").toInt());
     }
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Number"),
+                                q, __FILE__, __LINE__))
+    return;
 }
 
 bool customer::sCheckRequired()
@@ -868,7 +816,7 @@ bool customer::sCheckRequired()
          (_salesrep->id() == -1) ||
          (_shipform->id() == -1) ||
          (_custid == -1) )
-    { 
+    {
       setValid(false);
       return false;
     }
@@ -895,7 +843,7 @@ void customer::sNewShipto()
     if (!sSave())
       return;
   }
-  
+
   ParameterList params;
   params.append("mode", "new");
   params.append("cust_id", _custid);
@@ -933,19 +881,19 @@ void customer::sViewShipto()
 
 void customer::sDeleteShipto()
 {
-  QString question = tr("Are you sure that you want to delete this Ship To?");
   if (QMessageBox::question(this, tr("Delete Ship To?"),
-                              question,
+                            tr("Are you sure that you want to delete this Ship To?"),
                               QMessageBox::Yes,
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  q.prepare("SELECT deleteShipTo(:shipto_id) AS result;");
-  q.bindValue(":shipto_id", _shipto->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery delq;
+  delq.prepare("SELECT deleteShipTo(:shipto_id) AS result;");
+  delq.bindValue(":shipto_id", _shipto->id());
+  delq.exec();
+  if (delq.first())
   {
-    int result = q.value("result").toInt();
+    int result = delq.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteShipTo", result),
@@ -953,11 +901,9 @@ void customer::sDeleteShipto()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Ship To"),
+                                delq, __FILE__, __LINE__))
     return;
-  }
 
   sFillShiptoList();
 }
@@ -969,7 +915,7 @@ void customer::sNewCharacteristic()
     if (!sSave())
       return;
   }
-  
+
   ParameterList params;
   params.append("mode", "new");
   params.append("cust_id", _custid);
@@ -996,10 +942,13 @@ void customer::sEditCharacteristic()
 
 void customer::sDeleteCharacteristic()
 {
-  q.prepare( "DELETE FROM charass "
-             "WHERE (charass_id=:charass_id);" );
-  q.bindValue(":charass_id", _charass->id());
-  q.exec();
+  XSqlQuery delq;
+  delq.prepare( "DELETE FROM charass WHERE (charass_id=:charass_id);" );
+  delq.bindValue(":charass_id", _charass->id());
+  delq.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Characteristic"),
+                           delq, __FILE__, __LINE__))
+    return;
 
   sFillCharacteristicList();
 }
@@ -1041,7 +990,7 @@ void customer::sFillCharacteristicList()
     q.bindValue(":custtype_id", _custtype->id());
     q.bindValue(":cust_id", _custid);
     q.exec();
-    
+
     int row = 0;
     QModelIndex idx;
     while(q.next())
@@ -1077,6 +1026,9 @@ void customer::sFillCharacteristicList()
     r.bindValue(":cust_id", _custid);
     r.exec();
     _charass->populate(r);
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Characteristics"),
+                             r, __FILE__, __LINE__))
+      return;
     _charfilled=false;
   }
 }
@@ -1092,14 +1044,17 @@ void customer::sFillShiptoList()
 {
   XSqlQuery r;
   r.prepare( "SELECT shipto_id, shipto_default,"
-             "       shipto_num, shipto_name, shipto_address1,"
-             "       (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode) AS shipto_csz "
-             "FROM shipto "
-             "WHERE (shipto_cust_id=:cust_id) "
+             "       shipto_num, shipto_name, addr_line1,"
+             "       (addr_city || ', ' || addr_state || '  ' || addr_postalcode) AS shipto_csz "
+             "  FROM shiptoinfo LEFT OUTER JOIN addr ON shipto_addr_id=addr_id"
+             " WHERE (shipto_cust_id=:cust_id) "
              "ORDER BY shipto_num;" );
   r.bindValue(":cust_id", _custid);
   r.exec();
   _shipto->populate(r);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Ship Tos"),
+                           r, __FILE__, __LINE__))
+    return;
 }
 
 void customer::sNewTaxreg()
@@ -1109,7 +1064,7 @@ void customer::sNewTaxreg()
     if (!sSave())
       return;
   }
-  
+
   ParameterList params;
   params.append("mode", "new");
   params.append("taxreg_rel_id", _custid);
@@ -1146,15 +1101,13 @@ void customer::sViewTaxreg()
 
 void customer::sDeleteTaxreg()
 {
-  q.prepare("DELETE FROM taxreg "
-            "WHERE (taxreg_id=:taxreg_id);");
-  q.bindValue(":taxreg_id", _taxreg->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  XSqlQuery delq;
+  delq.prepare("DELETE FROM taxreg WHERE (taxreg_id=:taxreg_id);");
+  delq.bindValue(":taxreg_id", _taxreg->id());
+  delq.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Tax Registrations"),
+                           delq, __FILE__, __LINE__))
     return;
-  }
   sFillTaxregList();
 }
 
@@ -1170,24 +1123,26 @@ void customer::sFillTaxregList()
   taxreg.bindValue(":cust_id", _custid);
   taxreg.exec();
   _taxreg->populate(taxreg, true);
-  if (taxreg.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, taxreg.lastError().databaseText(), __FILE__, __LINE__);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Tax Registrations"),
+                           taxreg, __FILE__, __LINE__))
     return;
-  }
 }
 
 void customer::sPopulateCommission()
 {
   if (_mode != cView)
   {
-    q.prepare( "SELECT salesrep_commission "
+    XSqlQuery s;
+    s.prepare( "SELECT salesrep_commission "
                "FROM salesrep "
                "WHERE (salesrep_id=:salesrep_id);" );
-    q.bindValue(":salesrep_id", _salesrep->id());
-    q.exec();
-    if (q.first())
-      _defaultCommissionPrcnt->setDouble(q.value("salesrep_commission").toDouble() * 100);
+    s.bindValue(":salesrep_id", _salesrep->id());
+    s.exec();
+    if (s.first())
+      _defaultCommissionPrcnt->setDouble(s.value("salesrep_commission").toDouble() * 100);
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Commission"),
+                                  s, __FILE__, __LINE__))
+    return;
   }
 }
 
@@ -1212,7 +1167,7 @@ void customer::populate()
       emit newMode(_mode);
     }
     setValid(true);
-    
+
     _crmacctid = cust.value("crmacct_id").toInt();
 
     _number->setNumber(cust.value("cust_number").toString());
@@ -1280,28 +1235,29 @@ void customer::populate()
 
     _comments->setId(_crmacctid);
     _documents->setId(_crmacctid);
-    
+
     _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctid, true);
     _contacts->setCrmacctid(_crmacctid);
-    
+
     _quotes->parameterWidget()->setDefault(tr("Customer"), _custid, true);
     _orders->setCustId(_custid);
     _returns->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
     _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(_custid);
-    
+
     sFillList();
 
     emit populated();
     _autoSaved=false;
     return;
   }
-  else if (cust.lastError().type() != QSqlError::NoError)
-    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
-  
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Customer"),
+                                cust, __FILE__, __LINE__))
+    return;
+
   sClear();
-  
+
 }
 
 void customer::sPopulateSummary()
@@ -1394,7 +1350,7 @@ void customer::sNewCreditCard()
     if (!sSave())
       return;
   }
-  
+
   ParameterList params;
   params.append("mode", "new");
   params.append("cust_id", _custid);
@@ -1434,22 +1390,22 @@ void customer::sViewCreditCard()
 
 void customer::sMoveUp()
 {
-  q.prepare("SELECT moveCcardUp(:ccard_id) AS result;");
-  q.bindValue(":ccard_id", _cc->id());
-  q.exec();
-  
-  sFillCcardList();
+  XSqlQuery m;
+  m.prepare("SELECT moveCcardUp(:ccard_id) AS result;");
+  m.bindValue(":ccard_id", _cc->id());
+  m.exec();
 
+  sFillCcardList();
 }
 
 void customer::sMoveDown()
 {
-  q.prepare("SELECT moveCcardDown(:ccard_id) AS result;");
-  q.bindValue(":ccard_id", _cc->id());
-  q.exec();
-  
-  sFillCcardList();
+  XSqlQuery m;
+  m.prepare("SELECT moveCcardDown(:ccard_id) AS result;");
+  m.bindValue(":ccard_id", _cc->id());
+  m.exec();
 
+  sFillCcardList();
 }
 
 void customer::sFillList()
@@ -1464,7 +1420,7 @@ void customer::sFillList()
     if (_taxButton->isChecked())
       sFillTaxregList();
     else if (_creditcardsButton->isChecked())
-      sFillCcardList();  
+      sFillCcardList();
   }
   else if (_tab->currentIndex() == _tab->indexOf(_characteristicsTab))
      sFillCharacteristicList();
@@ -1494,18 +1450,22 @@ void customer::sFillList()
       _cashreceipts->sFillList();
     else if (_cctransButton->isChecked())
       _cctrans->sFillList();
-  }  
+  }
 }
 
 void customer::sFillCcardList()
 {
   key = omfgThis->_key;
-  
-  q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key));");
-  q.bindValue(":cust_id", _custid);
-  q.bindValue(":key", key);
-  q.exec(); 
-  
+
+  XSqlQuery r;
+  r.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key));");
+  r.bindValue(":cust_id", _custid);
+  r.bindValue(":key", key);
+  r.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Expiring Credit Card"),
+                           r, __FILE__, __LINE__))
+    return;
+
   MetaSQLQuery mql = mqlLoad("creditCards", "detail");
   ParameterList params;
   params.append("cust_id",         _custid);
@@ -1515,50 +1475,35 @@ void customer::sFillCcardList()
   params.append("discover",        tr("Discover"));
   params.append("other",           tr("Other"));
   params.append("key",             key);
-  XSqlQuery r = mql.toQuery(params);
+  r = mql.toQuery(params);
   _cc->populate(r);
-  if (r.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Credit Cards"),
+                           r, __FILE__, __LINE__))
     return;
-  }
 }
 
-void customer::sLoadProspect(int prospectId)
-{
-  _notice = FALSE;
-  _custid = prospectId;
-  q.prepare("SELECT * FROM prospect WHERE (prospect_id=:prospect_id);");
-  q.bindValue(":prospect_id", prospectId);
-  q.exec();
-  if (q.first())
-  {
-    _number->setNumber(q.value("prospect_number").toString());
-    _name->setText(q.value("prospect_name").toString());
-    _active->setChecked(q.value("prospect_active").toBool());
-    _taxzone->setId(q.value("prospect_taxzone_id").toInt());
-    _notes->setText(q.value("prospect_comments").toString());
-    _billCntct->setId(q.value("prospect_cntct_id").toInt());
-  }
-  _name->setFocus();
-  emit newId(_custid);
-}
-
-void customer::sLoadCrmAcct(int crmacctId )
+void customer::sLoadCrmAcct(int crmacctId)
 {
   _notice = FALSE;
   _crmacctid = crmacctId;
   _billCntct->setSearchAcct(_crmacctid);
   _corrCntct->setSearchAcct(_crmacctid);
-  q.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);");
-  q.bindValue(":crmacct_id", crmacctId);
-  q.exec();
-  if (q.first())
+
+  XSqlQuery getq;
+  getq.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);");
+  getq.bindValue(":crmacct_id", crmacctId);
+  getq.exec();
+  if (getq.first())
   {
-    _number->setNumber(q.value("crmacct_number").toString());
-    _name->setText(q.value("crmacct_name").toString());
-    _active->setChecked(q.value("crmacct_active").toBool());
+    _number->setNumber(getq.value("crmacct_number").toString());
+    _name->setText(getq.value("crmacct_name").toString());
+    _active->setChecked(getq.value("crmacct_active").toBool());
+    _billCntct->setId(getq.value("crmacct_cntct_id_1").toInt());
+    _corrCntct->setId(getq.value("crmacct_cntct_id_1").toInt());
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Account"),
+                           getq, __FILE__, __LINE__))
+    return;
   _name->setFocus();
 }
 
@@ -1605,7 +1550,7 @@ void customer::sHandleButtons()
     _remarksStack->setCurrentIndex(0);
   else
     _remarksStack->setCurrentIndex(1);
-    
+
   if (_generalButton->isChecked())
     _settingsStack->setCurrentIndex(0);
   else if (_termsButton->isChecked())
@@ -1614,14 +1559,14 @@ void customer::sHandleButtons()
     _settingsStack->setCurrentIndex(2);
   else if (_creditcardsButton->isVisible())
     _settingsStack->setCurrentIndex(3);
-    
+
   if (_contactsButton->isChecked())
     _crmStack->setCurrentIndex(0);
   else if (_todoListButton->isChecked())
     _crmStack->setCurrentIndex(1);
   else
     _crmStack->setCurrentIndex(2);
-  
+
   if (_summaryButton->isChecked())
     _salesStack->setCurrentIndex(0);
   else if (_quotesButton->isChecked())
@@ -1630,14 +1575,14 @@ void customer::sHandleButtons()
     _salesStack->setCurrentIndex(2);
   else
     _salesStack->setCurrentIndex(3);
-    
+
   if (_aritemsButton->isChecked())
     _receivablesStack->setCurrentIndex(0);
   else if (_cashreceiptsButton->isChecked())
     _receivablesStack->setCurrentIndex(1);
   else if (_cctransButton->isVisible())
     _receivablesStack->setCurrentIndex(2);
-    
+
   sFillList();
 }
 
@@ -1666,17 +1611,17 @@ void customer::sClear()
 {
     _custid = -1;
     _crmacctid = -1;
-    
+
     disconnect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
     _number->clear();
     connect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
-  
+
     _cachedNumber="";
     _name->clear();
     _corrCntct->setId(-1);
     _billCntct->setId(-1);
     _creditLimit->clear();
-    _creditRating->clear();    
+    _creditRating->clear();
     _autoUpdateStatus->setChecked(false);
     _autoHoldOrders->setChecked(false);
     _defaultDiscountPrcnt->clear();
@@ -1684,7 +1629,7 @@ void customer::sClear()
     _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
 
     _notes->clear();
-    
+
     _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
     _terms->setId(_metrics->value("DefaultTerms").toInt());
     _taxzone->setCurrentIndex(-1);
@@ -1721,26 +1666,26 @@ void customer::sClear()
     _custchar->removeRows(0, _custchar->rowCount());
     _charass->clear();
     _widgetStack->setCurrentIndex(0);
-    
+
     _todoList->parameterWidget()->setDefault(tr("CRM Account"), -1, true);
     _contacts->setCrmacctid(_crmacctid);
-    
+
     _quotes->parameterWidget()->setDefault(tr("Customer"), -1, true);
     _orders->setCustId(-1);
     _returns->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
     _aritems->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
     _cashreceipts->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
     _cctrans->findChild<CustomerSelector*>("_customerSelector")->setCustId(-1);
-    
+
     _comments->setId(_crmacctid);
     _documents->setId(_crmacctid);
-    
+
     _print->setEnabled(false);
-    
+
     sFillList();
     _charfilled = false;
     setValid(false);
-      
+
     if (_number->editMode() || _mode == cNew)
       sPrepare();
 }
@@ -1760,20 +1705,16 @@ void customer::sPrepare()
     emit newMode(_mode);
   }
 
-  q.exec("SELECT NEXTVAL('cust_cust_id_seq') AS cust_id");
-  if (q.first())
+  XSqlQuery idq;
+  idq.exec("SELECT NEXTVAL('cust_cust_id_seq') AS cust_id");
+  if (idq.first())
   {
-    _custid = q.value("cust_id").toInt();
+    _custid = idq.value("cust_id").toInt();
     emit newId(_custid);
   }
-  else
-  {
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                  .arg(__FILE__)
-                  .arg(__LINE__) );
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting new id"),
+                                idq, __FILE__, __LINE__))
     return;
-  }
-
 
   disconnect(_number, SIGNAL(editable(bool)), this, SLOT(sNumberEditable(bool)));
   _number->clear();
