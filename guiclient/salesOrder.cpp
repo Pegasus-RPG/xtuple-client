@@ -1556,7 +1556,7 @@ void salesOrder::sHandleOrderNumber()
       if (query.first())
       {
         QMessageBox::warning( this, tr("Quote Order Number Already exists."),
-                              tr( "<p>The Quote Order Number you have entered"
+                              tr( "<p>The Quote Order Number you have entered "
                                     "already exists. Please enter a new one." ) );
           clear();
         _orderNumber->setFocus();
