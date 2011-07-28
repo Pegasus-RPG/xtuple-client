@@ -8,13 +8,11 @@
  * to be bound by its terms.
  */
 
-#include <QMessageBox>
-#include <QSqlError>
-
 #include <metasql.h>
 
 #include "crmacctcluster.h"
 #include "custcluster.h"
+#include "errorReporter.h"
 #include "xcombobox.h"
 
 /* _listAndSearchQueryString is, as you may have guessed, shared by the
@@ -26,7 +24,7 @@
      CRMAcctSearch can control lots of OR'ed search criteria + activeOnly
  */
 static QString _listAndSearchQueryString(
-      "SELECT *, addr.*, formataddr(addr_id) AS street, cntct.*"
+      "SELECT *, formataddr(addr.addr_id) AS street"
       "  FROM ("
       "<? if exists('crmaccount') ?>"
       "    SELECT crmacct_id AS id,         crmacct_number AS number,"
@@ -78,9 +76,9 @@ static QString _listAndSearchQueryString(
       "      FROM prospect"
       "      LEFT OUTER JOIN cntct ON (prospect_cntct_id=cntct_id)"
       "<? endif ?>"
-      "  ) AS primary"
-      "  LEFT OUTER JOIN cntct ON (primary.cntct_id=cntct.cntct_id)"
-      "  LEFT OUTER JOIN addr  ON (primary.addr_id=addr.addr_id)"
+      "  ) AS crminfo"
+      "  LEFT OUTER JOIN cntct ON (crminfo.cntct_id=cntct.cntct_id)"
+      "  LEFT OUTER JOIN addr  ON (crminfo.addr_id=addr.addr_id)"
       "<? if exists('searchString') ?>"
       "   WHERE "
       "    <? if exists('activeOnly') ?> active AND <? endif ?>"
@@ -198,7 +196,7 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
 
   _listTab->setColumnCount(0);
 
-  _listTab->addColumn(tr("Number"),      80, Qt::AlignCenter,true, "number");
+  _listTab->addColumn(tr("Number"),      80, Qt::AlignLeft,  true, "number");
   _listTab->addColumn(tr("Name"),        75, Qt::AlignLeft,  true, "name"  );
   _listTab->addColumn(tr("First"),      100, Qt::AlignLeft,  true, "cntct_first_name");
   _listTab->addColumn(tr("Last"),       100, Qt::AlignLeft,  true, "cntct_last_name");
@@ -291,10 +289,8 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 {
   _subtype = subtype;
   if (_queryParams)
-  {
     delete _queryParams;
-    _queryParams = new ParameterList();
-  }
+  _queryParams = new ParameterList();
 
   bool hasContact = true;
   bool hasAddress = true;
@@ -379,13 +375,9 @@ void CRMAcctList::sFillList()
   XSqlQuery fillq = mql.toQuery(params);
 
   _listTab->populate(fillq);
-  if (fillq.lastError().type() != QSqlError::NoError)
-  {
-    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2")
-				.arg(__FILE__).arg(__LINE__),
-			  fillq.lastError().databaseText());
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
+                           fillq, __FILE__, __LINE__))
     return;
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -447,7 +439,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   selectorsLyt->addWidget(_searchCountry,	5, 2);
   selectorsLyt->addWidget(_showInactive,	5, 3);
 
-  _listTab->addColumn(tr("Number"),      80, Qt::AlignCenter,true, "number");
+  _listTab->addColumn(tr("Number"),      80, Qt::AlignLeft,  true, "number");
   _listTab->addColumn(tr("Name"),        75, Qt::AlignLeft,  true, "name"  );
   _listTab->addColumn(tr("First"),      100, Qt::AlignLeft,  true, "cntct_first_name");
   _listTab->addColumn(tr("Last"),       100, Qt::AlignLeft,  true, "cntct_last_name");
@@ -564,10 +556,8 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 {
   _subtype = subtype;
   if (_queryParams)
-  {
     delete _queryParams;
-    _queryParams = new ParameterList();
-  }
+  _queryParams = new ParameterList();
 
   if(subtype != CRMAcctLineEdit::Vend)
   {
@@ -763,11 +753,7 @@ void CRMAcctSearch::sFillList()
   XSqlQuery fillq = mql.toQuery(params);
 
   _listTab->populate(fillq);
-  if (fillq.lastError().type() != QSqlError::NoError)
-  {
-    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2")
-				.arg(__FILE__).arg(__LINE__),
-			  fillq.lastError().databaseText());
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
+                           fillq, __FILE__, __LINE__))
     return;
-  }
 }
