@@ -140,12 +140,12 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
                                                            aropen_amount - aropen_paid,
                                                            aropen_docdate)
                                       END, 0))
-                   FROM aropenalloc, aropen, cohead
+                   FROM aropenalloc, aropen
+                        LEFT OUTER JOIN cohead ON (cohead_number=invchead_ordernumber)
                   WHERE ( (aropenalloc_aropen_id=aropen_id)
                     AND   ((aropenalloc_doctype='S' AND aropenalloc_doc_id=cohead_id) OR
                            (aropenalloc_doctype='I' AND aropenalloc_doc_id=invchead_id))
-                    AND   ((aropen_amount - aropen_paid) > 0)
-                    AND   (cohead_number=invchead_ordernumber)))
+                    AND   ((aropen_amount - aropen_paid) > 0)))
               END, 0) AS total_allocated
        FROM invchead
             LEFT OUTER JOIN invcitem ON (invcitem_invchead_id=invchead_id)
@@ -199,15 +199,14 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
                                        aropen_docdate))
       END AS f_allocated_invccurr,
       curr_symbol AS aropen_currsymbol
- FROM aropenalloc, aropen, cohead, invchead, curr_symbol
-WHERE ( (aropenalloc_aropen_id=aropen_id)
-  AND   ((aropenalloc_doctype='S' AND aropenalloc_doc_id=cohead_id) OR
-         (aropenalloc_doctype='I' AND aropenalloc_doc_id=invchead_id))
-  AND   ((aropen_amount - aropen_paid) > 0)
-  AND   (aropen_curr_id=curr_id)
-  AND   (cohead_number=invchead_ordernumber)
+ FROM invchead LEFT OUTER JOIN cohead ON (cohead_number=invchead_ordernumber)
+               JOIN aropenalloc ON ((aropenalloc_doctype='S' AND aropenalloc_doc_id=cohead_id) OR
+                                    (aropenalloc_doctype='I' AND aropenalloc_doc_id=invchead_id))
+               JOIN aropen ON (aropenalloc_aropen_id=aropen_id)
+               JOIN curr_symbol ON (aropen_curr_id=curr_id)
+WHERE  ((aropen_amount - aropen_paid) > 0)
   AND   (NOT invchead_posted)
-  AND   (invchead_id=&lt;? value("invchead_id") ?>) )
+  AND   (invchead_id=&lt;? value("invchead_id") ?>)
 UNION
 SELECT cohead_id,
       arapply_source_docnumber AS aropen_docnumber,

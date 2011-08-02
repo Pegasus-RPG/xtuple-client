@@ -1097,10 +1097,15 @@ void invoice::populateCMInfo()
   // Allocated C/M's
   cm.prepare("SELECT COALESCE(SUM(currToCurr(aropenalloc_curr_id, :curr_id,"
             "                               aropenalloc_amount, :effective)),0) AS amount"
-            "  FROM cohead"
-            "  JOIN aropenalloc ON ((aropenalloc_doctype='S' AND aropenalloc_doc_id=cohead_id) OR"
-            "                       (aropenalloc_doctype='I' AND aropenalloc_doc_id=:invchead_id))"
-            " WHERE (cohead_number=:cohead_number); ");
+            "  FROM ( "
+            "  SELECT aropenalloc_curr_id, aropenalloc_amount"
+            "    FROM cohead JOIN aropenalloc ON (aropenalloc_doctype='S' AND aropenalloc_doc_id=cohead_id)"
+            "   WHERE (cohead_number=:cohead_number) "
+            "  UNION ALL"
+            "  SELECT aropenalloc_curr_id, aropenalloc_amount"
+            "    FROM aropenalloc"
+            "   WHERE (aropenalloc_doctype='I' AND aropenalloc_doc_id=:invchead_id)"
+            "       ) AS data;");
   cm.bindValue(":invchead_id", _invcheadid);
   cm.bindValue(":cohead_number", _orderNumber->text());
   cm.bindValue(":curr_id",     _allocatedCM->id());
