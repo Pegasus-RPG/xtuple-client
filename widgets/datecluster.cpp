@@ -31,14 +31,11 @@
 
 #define DEBUG false
 
-static bool determineIfMfg()
+static bool determineIfStd()
 {
   if (_x_metrics && _x_metrics->value("Application") == "Standard")
   {
-    XSqlQuery xtmfg;
-    xtmfg.exec("SELECT packageIsEnabled('xtmfg')");
-    if (xtmfg.first())
-      return true;
+    return true;
   }
   return false;
 }
@@ -421,7 +418,7 @@ void XDateEdit::setDate(const QDate &pDate, bool pAnnounce)
   {
     if(!pAnnounce)
     {
-      if(determineIfMfg() && (_siteId != -1))
+      if(determineIfStd() && (_siteId != -1))
         return checkDate(pDate);
     }
     else
@@ -458,11 +455,11 @@ void XDateEdit::checkDate(const QDate &pDate)
 {
   QDate nextWorkDate = pDate;
 
-  if(determineIfMfg() && (_siteId != -1))
+  if(determineIfStd() && (_siteId != -1))
   {
     XSqlQuery workday;
 
-    workday.prepare("SELECT xtmfg.calculatenextworkingdate(:whsid, :date, :desired) AS result;");
+    workday.prepare("SELECT calculatenextworkingdate(:whsid, :date, :desired) AS result;");
     workday.bindValue(":whsid", _siteId);
     workday.bindValue(":date", pDate);
     workday.bindValue(":desired", 0);
