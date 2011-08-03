@@ -351,22 +351,43 @@ int main(int argc, char *argv[])
                 "  FROM metric"
                 " WHERE(metric_name = 'RegistrationKey');");
     bool checkPass = true;
+    bool checkLock = false;
     QString checkPassReason;
     QString rkey = "";
     if(metric.first())
       rkey = metric.value("metric_value").toString();
     XTupleProductKey pkey(rkey);
-    if(pkey.valid() && pkey.version() == 1)
+    if(pkey.valid() && (pkey.version() == 1 || pkey.version() == 2))
     {
       if(pkey.expiration() < QDate::currentDate())
       {
         checkPass = false;
         checkPassReason = QObject::tr("<p>Your license has expired.");
+        if(!pkey.perpetual())
+        {
+          int daysTo = pkey.expiration().daysTo(QDate::currentDate());
+          if(daysTo > 30)
+          {
+            checkLock = true;
+            checkPassReason = QObject::tr("<p>Your xTuple license expired over 30 days ago, and this software will no longer function. Please contact xTuple immediately to reinstate your software.");
+          }
+          else
+            checkPassReason = QObject::tr("<p>Attention:  Your xTuple license has expired, and in %1 days this software will cease to function.  Please make arrangements for immediate payment").arg(30 - daysTo);
+        }
       }
       else if(pkey.users() != 0 && (pkey.users() < cnt || pkey.users() * 2 < tot))
       {
         checkPass = false;
         checkPassReason = QObject::tr("<p>You have exceeded the number of allowed concurrent users for your license.");
+      }
+      else
+      {
+        int daysTo = QDate::currentDate().daysTo(pkey.expiration());
+        if(!pkey.perpetual() && daysTo <= 15)
+        {
+          checkPass = false;
+          checkPassReason = QObject::tr("<p>Please note: your xTuple license will expire in %1 days.  You should already have received your renewal invoice; please contact xTuple at your earliest convenience.").arg(daysTo);
+        }
       }
     }
     else
@@ -377,8 +398,16 @@ int main(int argc, char *argv[])
     if(!checkPass)
     {
       _splash->hide();
-      if(QMessageBox::critical(0, QObject::tr("Registration Key"), QObject::tr("%1\n<p>Would you like to continue anyway?").arg(checkPassReason), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+      if(checkLock)
+      {
+        QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
         return 0;
+      }
+      else
+      {
+        if(QMessageBox::critical(0, QObject::tr("Registration Key"), QObject::tr("%1\n<p>Would you like to continue anyway?").arg(checkPassReason), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+          return 0;
+      }
 
       metric.exec("SELECT current_database() AS db,"
                   "       fetchMetricText('DatabaseName') AS dbname,"
