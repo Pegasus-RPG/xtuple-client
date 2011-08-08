@@ -102,6 +102,9 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled") && omfgThis->_key.isEmpty())
     _checksButton->setEnabled(false);
 
+  _account->setType(GLCluster::cRevenue | GLCluster::cExpense |
+                    GLCluster::cAsset | GLCluster::cLiability);
+
   _vendid      = -1;
   _crmacctid   = -1;
   _ignoreClose = false;
@@ -231,6 +234,7 @@ SetResponse vendor::set(const ParameterList &pParams)
       _individualId->setEnabled(false);
       _individualName->setEnabled(false);
       _accountType->setEnabled(false);
+      _distribGroup->setEnabled(false);
 
       _save->hide();
       _close->setText(tr("&Close"));
@@ -272,6 +276,18 @@ void vendor::sSave()
                           tr("You must select a Terms code for this Vendor."))
          << GuiErrorCheck(_vendtype->id() == -1, _vendtype,
                           tr("You must select a Vendor Type for this Vendor."))
+//         << GuiErrorCheck(_accountSelected->isChecked() &&
+//                          !_account->isValid(),
+//                          _account
+//                          tr("You must select a Default Distribution Account for this Vendor."))
+//         << GuiErrorCheck(_expcatSelected->isChecked() &&
+//                          !_expcat->isValid(),
+//                          _expcat
+//                          tr("You must select a Default Distribution Expense Category for this Vendor."))
+//         << GuiErrorCheck(_taxSelected->isChecked() &&
+//                          !_taxCode->isValid(),
+//                          _taxCode
+//                          tr("You must select a Default Distribution Tax Code for this Vendor."))
          << GuiErrorCheck(_achGroup->isChecked() &&
                           ! _routingNumber->hasAcceptableInput() &&
                           !omfgThis->_key.isEmpty(),
@@ -382,7 +398,10 @@ void vendor::sSave()
           "    vend_ach_use_vendinfo=<? value(\"vend_ach_use_vendinfo\") ?>,"
           "    vend_ach_accnttype=<? value(\"vend_ach_accnttype\") ?>,"
           "    vend_ach_indiv_number=<? value(\"vend_ach_indiv_number\") ?>,"
-          "    vend_ach_indiv_name=<? value(\"vend_ach_indiv_name\") ?> "
+          "    vend_ach_indiv_name=<? value(\"vend_ach_indiv_name\") ?>,"
+          "    vend_accnt_id=<? value(\"vend_accnt_id\") ?>,"
+          "    vend_expcat_id=<? value(\"vend_expcat_id\") ?>,"
+          "    vend_tax_id=<? value(\"vend_tax_id\") ?> "
           "WHERE (vend_id=<? value(\"vend_id\") ?>);" ;
   }
   else if (_mode == cNew)
@@ -399,7 +418,8 @@ void vendor::sSave()
           "  vend_ach_routingnumber, vend_ach_accntnumber,"
           "  vend_ach_use_vendinfo,"
           "  vend_ach_accnttype, vend_ach_indiv_number,"
-          "  vend_ach_indiv_name ) "
+          "  vend_ach_indiv_name,"
+          "  vend_accnt_id, vend_expcat_id, vend_tax_id) "
           "VALUES "
           "( <? value(\"vend_id\") ?>,"
           "  <? value(\"vend_number\") ?>,"
@@ -436,7 +456,10 @@ void vendor::sSave()
           "  <? value(\"vend_ach_use_vendinfo\") ?>,"
           "  <? value(\"vend_ach_accnttype\") ?>,"
           "  <? value(\"vend_ach_indiv_number\") ?>,"
-          "  <? value(\"vend_ach_indiv_name\") ?>"
+          "  <? value(\"vend_ach_indiv_name\") ?>,"
+          "  <? value(\"vend_accnt_id\") ?>,"
+          "  <? value(\"vend_expcat_id\") ?>,"
+          "  <? value(\"vend_tax_id\") ?> "
           "   );"  ;
 
   ParameterList params;
@@ -490,6 +513,31 @@ void vendor::sSave()
   {
     params.append("vend_fobsource", "V");
     params.append("vend_fob", _vendorFOB->text().trimmed());
+  }
+
+  if(_accountSelected->isChecked() && _account->isValid())
+  {
+    params.append("vend_accnt_id", _account->id());
+    params.append("vend_expcat_id", -1);
+    params.append("vend_tax_id", -1);
+  }
+  else if (_expcatSelected->isChecked() && _expcat->isValid())
+  {
+    params.append("vend_accnt_id", -1);
+    params.append("vend_expcat_id", _expcat->id());
+    params.append("vend_tax_id", -1);
+  }
+  else if (_taxSelected->isChecked() && _taxCode->isValid())
+  {
+    params.append("vend_accnt_id", -1);
+    params.append("vend_expcat_id", -1);
+    params.append("vend_tax_id", _taxCode->id());
+  }
+  else
+  {
+    params.append("vend_accnt_id", -1);
+    params.append("vend_expcat_id", -1);
+    params.append("vend_tax_id", -1);
   }
 
   MetaSQLQuery mql(sql);
@@ -702,6 +750,18 @@ bool vendor::sPopulate()
     _individualName->setText(getq.value("vend_ach_indiv_name").toString());
 
     _accountType->setCode(getq.value("vend_ach_accnttype").toString());
+
+    _account->setId(getq.value("vend_accnt_id").toInt());
+    if(getq.value("vend_expcat_id").toInt() != -1)
+    {
+      _expcatSelected->setChecked(TRUE);
+      _expcat->setId(getq.value("vend_expcat_id").toInt());
+    }
+    if(getq.value("vend_tax_id").toInt() != -1)
+    {
+      _taxSelected->setChecked(TRUE);
+      _taxCode->setId(getq.value("vend_tax_id").toInt());
+    }
 
     sFillAddressList();
     sFillTaxregList();

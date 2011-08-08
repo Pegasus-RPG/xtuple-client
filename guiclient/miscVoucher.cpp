@@ -368,6 +368,7 @@ void miscVoucher::sNewMiscDistribution()
   ParameterList params;
   params.append("mode", "new");
   params.append("vohead_id", _voheadid);
+  params.append("vend_id", _vendor->id());
   params.append("voucher_type");
   params.append("curr_id", _amountToDistribute->id());
   params.append("curr_effective", _amountToDistribute->effective());
