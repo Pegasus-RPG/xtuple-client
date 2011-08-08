@@ -550,8 +550,8 @@ void miscVoucher::populate()
     _flagFor1099->setChecked(vohead.value("vohead_1099").toBool());
     _notes->setText(vohead.value("vohead_notes").toString());
 
-    if(q.value("vohead_recurring_vohead_id").toInt() != 0)
-      _recurring->setParent(q.value("vohead_recurring_vohead_id").toInt(), "V");
+    if(vohead.value("vohead_recurring_vohead_id").toInt() != 0)
+      _recurring->setParent(vohead.value("vohead_recurring_vohead_id").toInt(), "V");
     else
       _recurring->setParent(_voheadid, "V");
 
