@@ -41,6 +41,8 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _vendor->setShowInactive(false);
 
+  _recurring->setParent(-1, "V");
+
   _miscDistrib->addColumn(tr("Account"), -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),  _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" );
 }
@@ -74,7 +76,10 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
 
       q.exec("SELECT NEXTVAL('vohead_vohead_id_seq') AS vohead_id");
       if (q.first())
+      {
         _voheadid = q.value("vohead_id").toInt();
+        _recurring->setParent(_voheadid, "V");
+      }
       else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().text(), __FILE__, __LINE__);
@@ -235,6 +240,15 @@ void miscVoucher::sSave()
     }
   }
 
+  RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
+  if (cp == RecurrenceWidget::NoPolicy)
+    return;
+
+  XSqlQuery rollbackq;
+  rollbackq.prepare("ROLLBACK;");
+
+  XSqlQuery begin("BEGIN;");
+
   q.prepare( "UPDATE vohead "
              "SET vohead_number=:vohead_number,"
              "    vohead_vend_id=:vohead_vend_id,"
@@ -248,6 +262,7 @@ void miscVoucher::sSave()
              "    vohead_amount=:vohead_amount,"
              "    vohead_1099=:vohead_1099,"
              "    vohead_curr_id=:vohead_curr_id,"
+             "    vohead_recurring_vohead_id=:vohead_recurring_vohead_id,"
              "    vohead_notes=:vohead_notes"
              " WHERE (vohead_id=:vohead_id);" );
 
@@ -265,6 +280,13 @@ void miscVoucher::sSave()
   q.bindValue(":vohead_amount", _amountToDistribute->localValue());
   q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   q.bindValue(":vohead_curr_id", _amountToDistribute->id());
+  if(_recurring->isRecurring())
+  {
+    if(_recurring->parentId() != 0)
+      q.bindValue(":vohead_recurring_vohead_id", _recurring->parentId());
+    else
+      q.bindValue(":vohead_recurring_vohead_id", _voheadid);
+  }
   q.bindValue(":vohead_notes",   _notes->toPlainText());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -272,6 +294,16 @@ void miscVoucher::sSave()
     systemError(this, q.lastError().text(), __FILE__, __LINE__);
     return;
   }
+
+  QString errmsg;
+  if (! _recurring->save(true, cp, &errmsg))
+  {
+    rollbackq.exec();
+    systemError(this, errmsg, __FILE__, __LINE__);
+    return;
+  }
+
+  XSqlQuery commitq("COMMIT;");
 
   omfgThis->sVouchersUpdated();
 
@@ -495,10 +527,7 @@ void miscVoucher::populateNumber()
 void miscVoucher::populate()
 {
   XSqlQuery vohead;
-  vohead.prepare( "SELECT vohead_number, vohead_vend_id, vohead_taxzone_id, vohead_terms_id,"
-                  "       vohead_distdate, vohead_docdate, vohead_duedate,"
-                  "       vohead_invcnumber, vohead_reference,"
-                  "       vohead_1099, vohead_amount, vohead_curr_id, vohead_notes "
+  vohead.prepare( "SELECT vohead.* "
                   "FROM vohead "
                   "WHERE (vohead_id=:vohead_id);" );
   vohead.bindValue(":vohead_id", _voheadid);
@@ -520,6 +549,12 @@ void miscVoucher::populate()
     _reference->setText(vohead.value("vohead_reference").toString());
     _flagFor1099->setChecked(vohead.value("vohead_1099").toBool());
     _notes->setText(vohead.value("vohead_notes").toString());
+
+    if(q.value("vohead_recurring_vohead_id").toInt() != 0)
+      _recurring->setParent(q.value("vohead_recurring_vohead_id").toInt(), "V");
+    else
+      _recurring->setParent(_voheadid, "V");
+
 
     sFillMiscList();
     sPopulateDistributed();
