@@ -351,7 +351,10 @@ void ContactCluster::populate()
       _email->setText(dataQ.value("cntct_email").toString());
       _webaddr->setText(dataQ.value("cntct_webaddr").toString());
       _email->setURL("mailto:" + dataQ.value("cntct_email").toString());
-      _webaddr->setURL("http://" + dataQ.value("cntct_webaddr").toString());
+      QUrl url(dataQ.value("cntct_webaddr").toString());
+      if(url.scheme().isEmpty())
+        url.setScheme("http");
+      _webaddr->setURL(url.toString());
       _addr->setText(dataQ.value("address").toString());
       _crmAcctId=-1;
     }
