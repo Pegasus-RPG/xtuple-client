@@ -82,6 +82,7 @@ helpView::helpView(QWidget *parent)
 
   connect(_searchEngine->queryWidget(),SIGNAL(search()), this, SLOT(queriesToEngine()));
 
+  connect(_help->contentWidget(), SIGNAL(clicked(QModelIndex)), this, SLOT(showLink(QModelIndex)));
   connect(_help->contentWidget(),       SIGNAL(linkActivated(const QUrl&)),                     this,   SLOT(sIndexChanged(const QUrl&)));
   connect(_searchEngine->resultWidget(), SIGNAL(requestShowLink(const QUrl&)), this, SLOT(sIndexChanged(const QUrl&)));
   connect(_help->indexWidget(), SIGNAL(linkActivated(const QUrl&,QString)), this, SLOT(sIndexChanged(const QUrl&)));
@@ -159,3 +160,16 @@ void helpView::sLocationChanged(Qt::DockWidgetArea area)
   }
 }
 
+void helpView::showLink(const QModelIndex &index)
+{
+    QHelpContentModel *contentModel = _help->contentModel();
+    if (!contentModel)
+        return;
+
+    QHelpContentItem *item = contentModel->contentItemAt(index);
+    if (!item)
+        return;
+    QUrl url = item->url();
+    if (url.isValid())
+        sIndexChanged(url);
+}

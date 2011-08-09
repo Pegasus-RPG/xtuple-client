@@ -12,6 +12,7 @@
 #define __HELPVIEW_H__
 
 #include <QDockWidget>
+#include <QModelIndex>
 
 class QGridLayout;
 class QHelpSearchEngine;
@@ -37,6 +38,7 @@ class helpView : public QDockWidget
     void queriesToEngine();
     void sIndexChanged(const QUrl&);
     void sLocationChanged(Qt::DockWidgetArea);
+    void showLink(const QModelIndex &index);
 
   protected:
     xtHelp              *_help;
