@@ -657,7 +657,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _searchName->setText(tr("Name"));
     _searchContact->setText(tr("Billing or Primary Contact Name"));
     _searchPhone->setText(tr("Billing or Primary Contact Phone #"));
-    _searchPhone->setText(tr("Billing or Primary Contact Email"));
+    _searchEmail->setText(tr("Billing or Primary Contact Email"));
     _addressLit->setText(tr("Billing or Primary Contact Address:"));
     break;
 
@@ -672,7 +672,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     _searchName->setText(tr("CRM Account Name"));
     _searchContact->setText(tr("Primary Contact Name"));
     _searchPhone->setText(tr("Primary Contact Phone #"));
-    _searchPhone->setText(tr("Primary Contact Emai"));
+    _searchEmail->setText(tr("Primary Contact Email"));
     _addressLit->setText(tr("Primary Contact Address:"));
     break;
   }
