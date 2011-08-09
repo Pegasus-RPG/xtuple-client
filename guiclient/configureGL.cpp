@@ -93,7 +93,8 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   }
   _reqInvoiceReg->setChecked(_metrics->boolean("ReqInvRegVoucher"));
   _reqInvoiceMisc->setChecked(_metrics->boolean("ReqInvMiscVoucher"));
-    
+  _recurringVoucherBuffer->setValue(_metrics->value("RecurringVoucherBuffer").toInt());
+
   // AR
   _nextARMemoNumber->setValidator(omfgThis->orderVal());
   _nextCashRcptNumber->setValidator(omfgThis->orderVal());
@@ -128,7 +129,8 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
   _incdtCategory->setId(_metrics->value("DefaultARIncidentStatus").toInt());
   _closeARIncdt->setChecked(_metrics->boolean("AutoCloseARIncident"));
-  
+  _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
+
   // GL
   _mainSize->setValue(_metrics->value("GLMainSize").toInt());
 
@@ -187,8 +189,6 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   _int2gl->setChecked(_metrics->boolean("InterfaceToGL"));
   _cacheint2gl = _int2gl->isChecked();
-
-  _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
 
   if (_metrics->boolean("UseJournals"))
   {
@@ -498,7 +498,8 @@ bool configureGL::sSave()
   }
   _metrics->set("ReqInvRegVoucher", _reqInvoiceReg->isChecked());
   _metrics->set("ReqInvMiscVoucher", _reqInvoiceMisc->isChecked());
-  
+  _metrics->set("RecurringVoucherBuffer", _recurringVoucherBuffer->value());
+
   // AR
   q.prepare("SELECT setNextARMemoNumber(:armemo_number) AS result;");
   q.bindValue(":armemo_number", _nextARMemoNumber->text().toInt());
