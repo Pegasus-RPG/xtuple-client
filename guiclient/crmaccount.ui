@@ -948,6 +948,7 @@ to be bound by its terms.</comment>
   <tabstop>_name</tabstop>
   <tabstop>_organization</tabstop>
   <tabstop>_individual</tabstop>
+  <tabstop>_parentCrmacct</tabstop>
   <tabstop>_owner</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_primaryButton</tabstop>
