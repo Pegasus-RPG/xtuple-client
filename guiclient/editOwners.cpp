@@ -36,6 +36,8 @@ editOwners::editOwners(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _modify->setEnabled(false);
   _modifyAll->setEnabled(false);
 
+  _newOwner->setType(UsernameLineEdit::UsersActive);
+
   _first = true;
 
   q.prepare("SELECT usr_id "
