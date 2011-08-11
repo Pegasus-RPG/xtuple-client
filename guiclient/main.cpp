@@ -347,6 +347,10 @@ int main(int argc, char *argv[])
       cnt = metric.value("registered").toInt();
       tot = metric.value("total").toInt();
     }
+    metric.exec("SELECT packageIsEnabled('drupaluserinfo') AS result;");
+    bool xtweb = false;
+    if(metric.first())
+      xtweb = metric.value("result").toBool();
     metric.exec("SELECT metric_value"
                 "  FROM metric"
                 " WHERE(metric_name = 'RegistrationKey');");
@@ -375,7 +379,7 @@ int main(int argc, char *argv[])
             checkPassReason = QObject::tr("<p>Attention:  Your xTuple license has expired, and in %1 days this software will cease to function.  Please make arrangements for immediate payment").arg(30 - daysTo);
         }
       }
-      else if(pkey.users() != 0 && (pkey.users() < cnt || pkey.users() * 2 < tot))
+      else if(pkey.users() != 0 && (pkey.users() < cnt || (!xtweb && (pkey.users() * 2 < tot))))
       {
         checkPass = false;
         checkPassReason = QObject::tr("<p>You have exceeded the number of allowed concurrent users for your license.");
