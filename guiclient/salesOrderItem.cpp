@@ -3076,12 +3076,15 @@ void salesOrderItem::sNext()
     ParameterList params;
     if (_custid != -1)
       params.append("cust_id", _custid);
+    if (_scheduledDate->isValid())
+      params.append("shipDate", _scheduledDate->date());
     params.append("sohead_id", _soheadid);
     if (ISQUOTE(_mode))
       params.append("mode", "newQuote");
     else
       params.append("mode", "new");
     set(params);
+    setItemExtraClause();
   }
 }
 
