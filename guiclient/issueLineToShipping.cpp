@@ -11,13 +11,13 @@
 #include "issueLineToShipping.h"
 
 #include <QApplication>
+#include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
 #include <QValidator>
 
 #include <metasql.h>
 
-#include "xmessagebox.h"
 #include "distributeInventory.h"
 #include "storedProcErrorLookup.h"
 
@@ -120,10 +120,9 @@ void issueLineToShipping::sIssue()
 {
   if (_qtyToIssue->toDouble() <= 0)
   {
-    XMessageBox::message( (isVisible() ? this : parentWidget()), QMessageBox::Warning, tr("Invalid Quantity to Issue to Shipping"),
-                          tr(  "<p>Please enter a non-negative, non-zero value to indicate the amount "
-                               "of Stock you wish to Issue to Shipping for this Order Line." ),
-                          QString::null, QString::null, _snooze );
+    QMessageBox::information( this, tr("Issue to Shipping"),
+                              tr(  "<p>Please enter a non-negative, non-zero value to indicate the amount "
+                                   "of Stock you wish to Issue to Shipping for this Order Line." ) );
     _qtyToIssue->setFocus();
     return;
   }
@@ -214,9 +213,10 @@ void issueLineToShipping::sIssue()
   q = mql.toQuery(params);
   if (q.next() && q.value("overship").toBool())
   {
-    if(XMessageBox::message( (isVisible() ? this : parentWidget()) , QMessageBox::Question, tr("Inventory Overshipped"),
-        tr("<p>You have selected to ship more inventory than required. Do you want to continue?"),
-        tr("Yes"), tr("No"), _snooze, 0, 1) == 1)
+    if (QMessageBox::question(this, tr("Inventory Overshipped"),
+                              tr("<p>You have selected to ship more inventory than required. Do you want to continue?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::No)
       return;
   }
   if (q.lastError().type() != QSqlError::NoError)
