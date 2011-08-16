@@ -40,6 +40,8 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
     else
       _numOfServerLicencesLit->setText(tr("Unknown"));
   }
+  else
+    _forceLicense->hide(); // doesn't apply to postbooks
 
   _description->setFocus();
 
@@ -48,6 +50,7 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _version->setText(_metrics->value("ServerVersion"));
   _patch->setText(_metrics->value("ServerPatchVersion"));
   _disallowMismatchClient->setChecked(_metrics->boolean("DisallowMismatchClientVersion"));
+  _forceLicense->setChecked(_metrics->boolean("ForceLicenseLimit"));
 
   QString access = _metrics->value("AllowedUserLogins");
   if("AdminOnly" == access)
@@ -102,6 +105,7 @@ bool databaseInformation::sSave()
   _metrics->set("DatabaseName", _description->text().trimmed());
   _metrics->set("DatabaseComments", _comments->toPlainText().trimmed());
   _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());
+  _metrics->set("ForceLicenseLimit", _forceLicense->isChecked());
 
   _metrics->set("updateTickInterval", _interval->value());
 

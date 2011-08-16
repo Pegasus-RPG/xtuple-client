@@ -353,6 +353,13 @@ int main(int argc, char *argv[])
       xtweb = metric.value("result").toBool();
     metric.exec("SELECT metric_value"
                 "  FROM metric"
+                " WHERE(metric_name = 'ForceLicenseLimit');");
+    bool forceLimit = false;
+    bool forced = false;
+    if(metric.first())
+      forceLimit = metric.value("metric_value").toBool();
+    metric.exec("SELECT metric_value"
+                "  FROM metric"
                 " WHERE(metric_name = 'RegistrationKey');");
     bool checkPass = true;
     bool checkLock = false;
@@ -383,6 +390,7 @@ int main(int argc, char *argv[])
       {
         checkPass = false;
         checkPassReason = QObject::tr("<p>You have exceeded the number of allowed concurrent users for your license.");
+        checkLock = forced = forceLimit;
       }
       else
       {
@@ -405,13 +413,17 @@ int main(int argc, char *argv[])
       if(checkLock)
       {
         QMessageBox::critical(0, QObject::tr("Registration Key"), checkPassReason);
-        return 0;
+        if(!forced)
+          return 0;
       }
       else
       {
         if(QMessageBox::critical(0, QObject::tr("Registration Key"), QObject::tr("%1\n<p>Would you like to continue anyway?").arg(checkPassReason), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
           return 0;
       }
+
+      if(forced)
+        checkPassReason.append(" FORCED!");
 
       metric.exec("SELECT current_database() AS db,"
                   "       fetchMetricText('DatabaseName') AS dbname,"
@@ -441,6 +453,10 @@ int main(int argc, char *argv[])
 
       http->setHost("www.xtuple.org");
       http->get(url.toString());
+
+      if(forced)
+        return 0;
+
       _splash->show();
     }
   }
