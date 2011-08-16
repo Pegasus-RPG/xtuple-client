@@ -48,6 +48,7 @@ win32 {
 
 unix {
   OBJECTS_DIR = unx_obj
+  LIBS += -lz
 }
 
 macx {
