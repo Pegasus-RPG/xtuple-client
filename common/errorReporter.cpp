@@ -1244,7 +1244,7 @@ bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
   }
 
   StatementType stmttype = Unknown;
-  QString querystr = qry.executedQuery();
+  QString querystr = qry.lastQuery();
   if (querystr.startsWith("SELECT", Qt::CaseInsensitive))
     stmttype = Select;
   else if (querystr.startsWith("DELETE", Qt::CaseInsensitive))
