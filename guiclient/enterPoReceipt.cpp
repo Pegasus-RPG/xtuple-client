@@ -349,6 +349,13 @@ void enterPoReceipt::sPost()
         issue.exec();
         if (issue.first())
         {
+          if (issue.value("result").toInt() < 0)
+          {
+            rollback.exec();
+            systemError( this, storedProcErrorLookup("issueToShipping", result),
+                        __FILE__, __LINE__);
+            return;
+          }
           if (issue.value("cohead_holdtype").toString() != "N")
           {
             QString msg = tr("This Purchase Order is being drop shipped against "
