@@ -138,13 +138,15 @@ void editOwners::sFillList()
 
   if(_queryString == "")
     _list->clear();
+  else
+  {
+    q.prepare(_queryString);
+    q.bindValue(":owner", _owner->username());
+    q.exec();
+    _list->populate(q);
+  }
 
-  q.prepare(_queryString);
-  q.bindValue(":owner", _owner->username());
-  q.exec();
-  _list->populate(q);
   _modifyAll->setEnabled(_list->topLevelItemCount() > 0);
-
   _first = true;
   _queryString = "";
 }
