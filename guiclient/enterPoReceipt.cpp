@@ -352,7 +352,7 @@ void enterPoReceipt::sPost()
           if (issue.value("result").toInt() < 0)
           {
             rollback.exec();
-            systemError( this, storedProcErrorLookup("issueToShipping", result),
+            systemError( this, storedProcErrorLookup("issueToShipping", issue.value("result").toInt()),
                         __FILE__, __LINE__);
             return;
           }
