@@ -1042,7 +1042,10 @@ void ContactWidget::sLaunchEmail()
 
 void ContactWidget::sLaunchWebaddr()
 {
-  QDesktopServices::openUrl(QUrl("http://" + _webaddr->text()));
+    QUrl url(_webaddr->text());
+    if(url.scheme().isEmpty())
+      url.setScheme("http");
+  QDesktopServices::openUrl(url);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
