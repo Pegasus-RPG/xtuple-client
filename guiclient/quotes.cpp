@@ -210,9 +210,9 @@ void quotes::sConvert(int pType)
           if (check.first())
           {
             QMessageBox::critical(this, tr("Can not Convert"),
-                                tr("<p>One or more of the Selected Quotes have already "
-                                   " been converted.  "
-                                   "You can not convert back to a Quote."));
+                                tr("<p>One or more of the selected Quotes have"
+                                   " been converted.  You cannot convert an already"
+                                   " converted Quote."));
             return;
           }
           else
