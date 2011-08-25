@@ -106,7 +106,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   q.exec("SELECT usr_id "
          "FROM usr "
-         "WHERE (usr_username=CURRENT_USER);");
+         "WHERE (usr_username=getEffectiveXtUser());");
   if(q.first())
     _agent->setId(q.value("usr_id").toInt());
 

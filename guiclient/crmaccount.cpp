@@ -644,7 +644,7 @@ void crmaccount::sGetCharacteristics()
 void crmaccount::sPopulate()
 {
   XSqlQuery getq;
-  getq.prepare( "SELECT *, userCanCreateUsers(CURRENT_USER) AS cancreateusers "
+  getq.prepare( "SELECT *, userCanCreateUsers(getEffectiveXtUser()) AS cancreateusers "
              "FROM crmacct "
              "WHERE (crmacct_id=:crmacct_id);" );
   getq.bindValue(":crmacct_id", _crmacctId);

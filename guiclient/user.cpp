@@ -564,7 +564,7 @@ bool user::sPopulate()
   if (! _cUsername.isEmpty())
   {
     usrq.prepare("SELECT *, userCanCreateUsers(usr_username) AS createusers,"
-                 "       userCanCreateUsers(CURRENT_USER) AS enablecreateusers,"
+                 "       userCanCreateUsers(getEffectiveXtUser()) AS enablecreateusers,"
                  "       crmacct_id, crmacct_emp_id"
                  "  FROM usr"
                  "  LEFT OUTER JOIN crmacct ON (usr_username=crmacct_usr_username) "
@@ -582,7 +582,7 @@ bool user::sPopulate()
                  "       FALSE AS usr_agent,   crmacct_active AS usr_active,"
                  "       NULL  AS usr_window,  cntct_email AS usr_email,"
                  "       FALSE AS createusers,"
-                 "       userCanCreateUsers(CURRENT_USER) AS enablecreateusers,"
+                 "       userCanCreateUsers(getEffectiveXtUser()) AS enablecreateusers,"
                  "       crmacct_id, crmacct_emp_id"
                  "  FROM crmacct"
                  "  LEFT OUTER JOIN cntct ON (crmacct_cntct_id_1=cntct_id)"

@@ -35,12 +35,13 @@ users::users(QWidget* parent, const char* name, Qt::WFlags fl)
   _usr->addColumn(tr("Proper Name"), -1, Qt::AlignLeft,   true, "usr_propername");
   _usr->addColumn(tr("Status"),      50, Qt::AlignCenter, true, "status");
 
-  XSqlQuery uq;
-  uq.exec("SELECT userCanCreateUsers(CURRENT_USER) AS cancreate;");
-  if (uq.first())
-    _new->setEnabled(uq.value("cancreate").toBool());
-  ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
-                       uq, __FILE__, __LINE__);
+  q.exec("SELECT userCanCreateUsers(getEffectiveXtUser()) AS cancreate;");
+  if (q.first())
+    _new->setEnabled(q.value("cancreate").toBool());
+  else
+    systemError(this, tr("A System Error occurred at %1::%2.")
+                      .arg(__FILE__)
+                      .arg(__LINE__) );
      
   sFillList();
 }

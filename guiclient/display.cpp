@@ -651,7 +651,7 @@ void display::setQueryOnStartEnabled(bool on)
     XSqlQuery qry;
     qry.prepare("SELECT usrpref_id "
                 "FROM usrpref "
-                "WHERE ((usrpref_username=current_user) "
+                "WHERE ((usrpref_username=getEffectiveXtUser()) "
                 " AND (usrpref_name=:prefname));");
     qry.bindValue(":prefname", prefname);
     qry.exec();

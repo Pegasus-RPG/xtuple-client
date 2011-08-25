@@ -531,7 +531,7 @@ int main(int argc, char *argv[])
                   "FROM usr, locale LEFT OUTER JOIN"
                   "     lang ON (locale_lang_id=lang_id) LEFT OUTER JOIN"
                   "     country ON (locale_country_id=country_id) "
-                  "WHERE ( (usr_username=CURRENT_USER)"
+                  "WHERE ( (usr_username=getEffectiveXtUser())"
                   " AND (usr_locale_id=locale_id) );" );
   if (langq.first())
   {

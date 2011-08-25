@@ -265,7 +265,7 @@ void enterPoReceipt::sPost()
                   "   AND (orderitem_orderhead_id=<? value(\"orderid\") ?>)"
                   "   AND (orderitem_orderhead_type=<? value (\"ordertype\") ?>)"
                   "   AND (NOT recv_posted)"
-                  "   AND (recv_trans_usr_name=CURRENT_USER)"
+                  "   AND (recv_trans_usr_name=getEffectiveXtUser())"
                   "   AND (recv_order_type=<? value (\"ordertype\") ?>))";
   MetaSQLQuery itemsm(items);
   XSqlQuery qi = itemsm.toQuery(params);

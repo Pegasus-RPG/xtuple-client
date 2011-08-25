@@ -42,7 +42,7 @@ editOwners::editOwners(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   q.prepare("SELECT usr_id "
 	    "FROM usr "
-	    "WHERE (usr_username=CURRENT_USER);");
+	    "WHERE (usr_username=getEffectiveXtUser());");
   q.exec();
   if (q.first())
   {

@@ -336,7 +336,7 @@ void login2::sLogin()
   if(!_nonxTupleDB)
   {
     XSqlQuery login( "SELECT login() AS result,"
-                     "       CURRENT_USER AS user;" );
+                     "       getEffectiveXtUser() AS user;" );
     setCursor(QCursor(Qt::ArrowCursor));
     if (login.first())
     {

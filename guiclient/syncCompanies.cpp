@@ -775,7 +775,7 @@ void syncCompanies::sSync()
                         "  :accnt_id,:source, '', -1, "
                         "  currToBase(:curr_id, :amount, :date), "
                         "  :notes, -1, false, "
-                        "  '', false, current_user, false, "
+                        "  '', false, getEffectiveXtUser(), false, "
                         "  :company_id, :period_id, "
                         "  :amount, :curr_id, :curr_rate);");
             lgl.bindValue(":sequence", sequence);

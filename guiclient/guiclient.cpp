@@ -126,7 +126,7 @@ static bool __privCheck(const QString & privname)
   if(privname == "#superuser")
   {
     XSqlQuery su;
-    su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=CURRENT_USER);");
+    su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=getEffectiveXtUser());");
     if (su.first())
       return su.value("rolsuper").toBool();
     else
@@ -444,7 +444,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   XSqlQuery window;
   window.prepare("SELECT usr_window "
                  "  FROM usr "
-                 " WHERE (usr_username=CURRENT_USER);");
+                 " WHERE (usr_username=getEffectiveXtUser());");
   window.exec();
   // keep synchronized with user.ui.h
   _singleWindow = "";
@@ -604,7 +604,7 @@ void GUIClient::setWindowTitle()
   _splash->showMessage(tr("Loading Database Information"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
 
-  _q.exec( "SELECT metric_value, CURRENT_USER AS username "
+  _q.exec( "SELECT metric_value, getEffectiveXtUser() AS username "
            "FROM metric "
            "WHERE (metric_name='DatabaseName')" );
   if (_q.first())
@@ -894,7 +894,7 @@ void GUIClient::sTick()
         XSqlQuery msg;
         msg.exec( "SELECT msguser_id "
                   "FROM msg, msguser "
-                  "WHERE ( (msguser_username=CURRENT_USER)"
+                  "WHERE ( (msguser_username=getEffectiveXtUser())"
                   " AND (msguser_msg_id=msg_id)"
                   " AND (CURRENT_TIMESTAMP BETWEEN msg_scheduled AND msg_expires)"
                   " AND (msguser_viewed IS NULL) );" );
