@@ -48,11 +48,13 @@ signals:
 
 protected slots:
     virtual void languageChange();
+    virtual void sCrmAccount();
 
 protected:
     virtual void closeEvent(QCloseEvent*);
 
 private:
+    int _crmacctid;
     int _mode;
     int _prospectid;
     int _NumberGen;

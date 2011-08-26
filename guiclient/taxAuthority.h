@@ -27,6 +27,7 @@ public:
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sCheck();
+    virtual void sCrmAccount();
     virtual bool sSave();
     virtual bool sPopulate();
     virtual void done(int);
@@ -38,6 +39,7 @@ protected:
     virtual void closeEvent(QCloseEvent*);
 
 private:
+    int _crmacctid;
     int _mode;
     int _taxauthid;
     int _NumberGen;

@@ -35,7 +35,6 @@ protected slots:
 
     virtual bool save();
     virtual void sCrmaccount();
-    virtual void sEmployee();
 
 private:
     int _crmacctid;

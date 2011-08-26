@@ -35,6 +35,7 @@ class employee : public XDialog, public Ui::employee
   protected slots:
     virtual void languageChange();
     virtual void sAttachGroup();
+    virtual void sCrmAccount();
     virtual void sDeleteCharass();
     virtual void sDetachGroup();
     virtual void sEditCharass();
@@ -43,21 +44,14 @@ class employee : public XDialog, public Ui::employee
     virtual void sFillGroupsList();
     virtual void sHandleButtons();
     virtual void sNewCharass();
-    virtual void sSalesrep();
-    virtual void sVendor();
-    virtual void sUser();
     virtual void sViewGroup();
 
   private:
-    bool    _createUsers;
-    int     _crmacctid;
-    int     _empid;
-    int     _mode;
-    int     _NumberGen;
-    int     _origmode;
-    int     _salesrepid;
-    QString _username;
-    int     _vendid;
+    int _crmacctid;
+    int _empid;
+    int _mode;
+    int _NumberGen;
+    int _origmode;
 
 signals:
     void saved();

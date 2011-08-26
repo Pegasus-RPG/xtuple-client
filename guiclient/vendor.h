@@ -59,6 +59,7 @@ signals:
 protected slots:
     virtual void languageChange();
     virtual bool sCheckSave();
+    virtual void sCrmAccount();
 
 protected:
     virtual void closeEvent(QCloseEvent*);

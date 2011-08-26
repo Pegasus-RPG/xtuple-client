@@ -83,6 +83,7 @@ public slots:
 
 protected slots:
     virtual void languageChange();
+    virtual void sCrmAccount();
     virtual void sNumberEdited();
 
 signals:

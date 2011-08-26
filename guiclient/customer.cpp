@@ -22,6 +22,7 @@
 #include "addresscluster.h"
 #include "characteristicAssignment.h"
 #include "creditCard.h"
+#include "crmaccount.h"
 #include "custCharacteristicDelegate.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
@@ -113,6 +114,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _cctrans->findChild<XTreeWidget*>("_preauth")->hideColumn("cust_name");
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sCancel()));
+  connect(_crmacct, SIGNAL(clicked()), this, SLOT(sCrmAccount()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClicked()));
   connect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
   connect(_number, SIGNAL(editingFinished()), this, SLOT(sNumberEdited()));
@@ -825,6 +827,27 @@ bool customer::sCheckRequired()
     return true;
 }
 
+void customer::sCrmAccount()
+{
+  ParameterList params;
+  params.append("crmacct_id", _crmacctid);
+  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
+                              ! _privileges->check("MaintainCRMAccounts")))
+    params.append("mode", "view");
+  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+    params.append("mode", "edit");
+  else
+  {
+    qWarning("tried to open CRM Account window without privilege");
+    return;
+  }
+
+  crmaccount *newdlg = new crmaccount();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
 void customer::sPrintShipto()
 {
   ParameterList params;
@@ -1170,6 +1193,9 @@ void customer::populate()
     setValid(true);
 
     _crmacctid = cust.value("crmacct_id").toInt();
+    _crmacct->setEnabled(_crmacctid > 0 &&
+                         (_privileges->check("MaintainCRMAccounts") ||
+                          _privileges->check("ViewCRMAccounts")));
 
     _number->setNumber(cust.value("cust_number").toString());
     _cachedNumber = cust.value("cust_number").toString();
@@ -1487,6 +1513,10 @@ void customer::sLoadCrmAcct(int crmacctId)
 {
   _notice = FALSE;
   _crmacctid = crmacctId;
+  _crmacct->setEnabled(_crmacctid > 0 &&
+                       (_privileges->check("MaintainCRMAccounts") ||
+                        _privileges->check("ViewCRMAccounts")));
+
   _billCntct->setSearchAcct(_crmacctid);
   _corrCntct->setSearchAcct(_crmacctid);
 
@@ -1612,6 +1642,7 @@ void customer::sClear()
 {
     _custid = -1;
     _crmacctid = -1;
+    _crmacct->setEnabled(false);
 
     disconnect(_number, SIGNAL(newId(int)), this, SLOT(setId(int)));
     _number->clear();

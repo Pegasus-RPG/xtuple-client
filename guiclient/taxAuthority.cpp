@@ -17,6 +17,7 @@
 
 #include "storedProcErrorLookup.h"
 
+#include "crmaccount.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 
@@ -26,10 +27,10 @@ taxAuthority::taxAuthority(QWidget* parent, const char* name, bool modal, Qt::WF
   setupUi(this);
 
   connect(_code,    SIGNAL(lostFocus()), this,     SLOT(sCheck()));
-  connect(_crmacct, SIGNAL(newId(int)),  _address, SLOT(setSearchAcct(int)));
+  connect(_crmacct, SIGNAL(clicked()),   this,     SLOT(sCrmAccount()));
   connect(_save,    SIGNAL(clicked()),   this,     SLOT(sSave()));
 
-  _crmacct->setId(-1);
+  _crmacctid = -1;
   _mode      = cView;
   _taxauthid = -1;
   _NumberGen = -1;
@@ -53,13 +54,13 @@ enum SetResponse taxAuthority::set(const ParameterList &pParams)
 
   param = pParams.value("crmacct_id", &valid);
   if (valid)
-    _crmacct->setId(param.toInt());
+    _crmacctid = param.toInt();
 
   param = pParams.value("taxauth_id", &valid);
   if (valid)
     _taxauthid = param.toInt();
   
-  if (_taxauthid > 0 || _crmacct->id() > 0)
+  if (_taxauthid > 0 || _crmacctid > 0)
     if (! sPopulate())
       return UndefinedError;
 
@@ -102,13 +103,13 @@ enum SetResponse taxAuthority::set(const ParameterList &pParams)
   }
 
   bool canEdit = (cNew == _mode || cEdit == _mode);
-    _code->setEnabled(FALSE);
+  _code->setEnabled(FALSE);
 
   _code->setEnabled(canEdit &&
                     _metrics->value("CRMAccountNumberGeneration") != "A");
   _address->setEnabled(canEdit);
   _county->setEnabled(canEdit);
-  _crmacct->setReadOnly(! canEdit);
+  // _crmacct is handled in sPopulate()
   _currency->setEnabled(canEdit);
   _extref->setEnabled(canEdit);
   _glaccnt->setReadOnly(! canEdit);
@@ -282,7 +283,7 @@ bool taxAuthority::sPopulate()
                  " WHERE (taxauth_id=:id);");
     getq.bindValue(":id", _taxauthid);
   }
-  else if (_crmacct->id() > 0)
+  else if (_crmacctid > 0)
   {
     getq.prepare("SELECT crmacct_number AS taxauth_code,"
                  "       crmacct_name   AS taxauth_name,"
@@ -291,7 +292,7 @@ bool taxAuthority::sPopulate()
                  "       NULL AS taxauth_extref, crmacct_id"
                  "  FROM crmacct"
                  " WHERE (crmacct_id=:id);");
-    getq.bindValue(":id", _crmacct->id());
+    getq.bindValue(":id", _crmacctid);
   }
 
   getq.exec();
@@ -302,7 +303,7 @@ bool taxAuthority::sPopulate()
     _extref->setText(getq.value("taxauth_extref").toString());
     _currency->setId(getq.value("curr_id").toInt());
     _address->setId(getq.value("addr_id").toInt());
-    _crmacct->setId(getq.value("crmacct_id").toInt());
+    _crmacctid = getq.value("crmacct_id").toInt();
     _county->setText(getq.value("taxauth_county").toString());
     _glaccnt->setId(getq.value("taxauth_accnt_id").toInt());
   }
@@ -310,6 +311,12 @@ bool taxAuthority::sPopulate()
                                 getq, __FILE__, __LINE__))
     return false;
   
+  _address->setSearchAcct(_crmacctid);
+
+  _crmacct->setEnabled(_crmacctid > 0 &&
+                       (_privileges->check("MaintainCRMAccounts") ||
+                        _privileges->check("ViewCRMAccounts")));
+
   return true;
 }
 
@@ -330,4 +337,25 @@ void taxAuthority::closeEvent(QCloseEvent *pEvent)
     _NumberGen = -1;
   }
   XDialog::closeEvent(pEvent);
+}
+
+void taxAuthority::sCrmAccount()
+{
+  ParameterList params;
+  params.append("crmacct_id", _crmacctid);
+  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
+                              ! _privileges->check("MaintainCRMAccounts")))
+    params.append("mode", "view");
+  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+    params.append("mode", "edit");
+  else
+  {
+    qWarning("tried to open CRM Account window without privilege");
+    return;
+  }
+
+  crmaccount *newdlg = new crmaccount();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
 }

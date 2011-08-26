@@ -26,7 +26,6 @@ salesRep::salesRep(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_buttonBox,       SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_crmaccountButton, SIGNAL(clicked()), this, SLOT(sCrmaccount()));
-  connect(_employeeButton,   SIGNAL(clicked()), this, SLOT(sEmployee()));
   connect(_number,         SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
   _commPrcnt->setValidator(omfgThis->percentVal());
@@ -108,7 +107,6 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
   _name->setEnabled(canEdit);
   _active->setEnabled(canEdit);
   _commPrcnt->setEnabled(canEdit);
-  _employee->setEnabled(canEdit);
 
   return NoError;
 }
@@ -243,30 +241,6 @@ void salesRep::sCrmaccount()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void salesRep::sEmployee()
-{
-  if (cNew == _mode || cEdit == _mode)
-    if (! save())
-      return;
-
-  ParameterList params;
-  if (_empid <= 0)
-  {
-    params.append("crmacct_id", _crmacctid);
-    params.append("mode",       "new");
-  }
-  else
-  {
-    params.append("emp_id", _empid);
-    params.append("mode",   _privileges->check("MaintainEmployees") ?
-                              "edit" : "view");
-  }
-
-  employee *newdlg = new employee(this);
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
 bool salesRep::sPopulate()
 {
   XSqlQuery getq;
@@ -311,11 +285,5 @@ bool salesRep::sPopulate()
   _crmaccountButton->setEnabled(_crmacctid > 0 &&
                                 (_privileges->check("MaintainCRMAccounts") ||
                                  _privileges->check("ViewCRMAccounts")));
-  _employee->setChecked(_empid > 0);
-  _employee->setEnabled(_privileges->check("MaintainEmployees") ||
-                               _privileges->check("ViewEmployees"));
-  _employeeButton->setEnabled(_empid > 0 &&
-                              (_privileges->check("MaintainEmployees") ||
-                               _privileges->check("ViewEmployees")));
   return true;
 }

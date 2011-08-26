@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>756</width>
-    <height>780</height>
+    <height>818</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,6 +71,29 @@ to be bound by its terms.</comment>
              </property>
              <property name="type">
               <enum>XComboBox::VendorTypes</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_crmacct">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>CRM Account...</string>
              </property>
             </widget>
            </item>
@@ -161,59 +184,36 @@ to be bound by its terms.</comment>
      </item>
      <item row="0" column="1">
       <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
        <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
+        <widget class="QPushButton" name="_close">
+         <property name="text">
+          <string>&amp;Cancel</string>
          </property>
-         <item>
-          <widget class="QPushButton" name="_close">
-           <property name="text">
-            <string>&amp;Cancel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_save">
-           <property name="text">
-            <string>&amp;Save</string>
-           </property>
-           <property name="default">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_next">
-           <property name="text">
-            <string>Next</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_previous">
-           <property name="text">
-            <string>Previous</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_save">
+         <property name="text">
+          <string>&amp;Save</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_next">
+         <property name="text">
+          <string>Next</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_previous">
+         <property name="text">
+          <string>Previous</string>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer>
@@ -1381,11 +1381,7 @@ to be bound by its terms.</comment>
   <tabstop>_achAccountNumber</tabstop>
   <tabstop>_individualId</tabstop>
   <tabstop>_individualName</tabstop>
-  <tabstop>_previous</tabstop>
   <tabstop>_mainButton</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_next</tabstop>
-  <tabstop>_save</tabstop>
   <tabstop>_altButton</tabstop>
  </tabstops>
  <resources/>

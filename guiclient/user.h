@@ -36,6 +36,7 @@ protected slots:
     virtual void languageChange();
 
     virtual void sClose();
+    virtual void sCrmAccount();
     virtual void sSave();
     virtual void sModuleSelected( const QString & pModule );
     virtual void sAdd();

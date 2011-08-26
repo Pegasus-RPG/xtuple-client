@@ -16,6 +16,7 @@
 #include <qmd5.h>
 #include <metasql.h>
 
+#include "crmaccount.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
@@ -32,6 +33,7 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _mode          = cView;
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_crmacct, SIGNAL(clicked()),   this,     SLOT(sCrmAccount()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
   connect(_addAll, SIGNAL(clicked()), this, SLOT(sAddAll()));
@@ -672,6 +674,11 @@ bool user::sPopulate()
   if (_metrics->boolean("MultiWhs"))
     populateSite();
 
+  _crmacct->setEnabled(_crmacctid > 0 &&
+                       (_privileges->check("MaintainCRMAccounts") ||
+                        _privileges->check("ViewCRMAccounts")));
+
+
   return true;
 }
 
@@ -790,3 +797,23 @@ void user::done(int result)
   XDialog::done(result);
 }
 
+void user::sCrmAccount()
+{
+  ParameterList params;
+  params.append("crmacct_id", _crmacctid);
+  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
+                              ! _privileges->check("MaintainCRMAccounts")))
+    params.append("mode", "view");
+  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+    params.append("mode", "edit");
+  else
+  {
+    qWarning("tried to open CRM Account window without privilege");
+    return;
+  }
+
+  crmaccount *newdlg = new crmaccount();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
+}

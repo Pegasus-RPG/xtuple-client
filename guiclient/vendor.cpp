@@ -20,6 +20,7 @@
 
 #include "addresscluster.h"
 #include "comment.h"
+#include "crmaccount.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
@@ -27,13 +28,14 @@
 #include "vendorAddress.h"
 #include "xcombobox.h"
 
-#define DEBUG true
+#define DEBUG false
 
 vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
+  connect(_crmacct, SIGNAL(clicked()), this, SLOT(sCrmAccount()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_printAddresses, SIGNAL(clicked()), this, SLOT(sPrintAddresses()));
   connect(_newAddress, SIGNAL(clicked()), this, SLOT(sNewAddress()));
@@ -783,6 +785,10 @@ bool vendor::sPopulate()
     return false;
   }
 
+  _crmacct->setEnabled(_crmacctid > 0 &&
+                       (_privileges->check("MaintainCRMAccounts") ||
+                        _privileges->check("ViewCRMAccounts")));
+
   emit populated();
   return true;
 }
@@ -1092,3 +1098,23 @@ void vendor::sNumberEdited()
   _number->setText(_number->text().toUpper());
 }
 
+void vendor::sCrmAccount()
+{
+  ParameterList params;
+  params.append("crmacct_id", _crmacctid);
+  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
+                              ! _privileges->check("MaintainCRMAccounts")))
+    params.append("mode", "view");
+  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+    params.append("mode", "edit");
+  else
+  {
+    qWarning("tried to open CRM Account window without privilege");
+    return;
+  }
+
+  crmaccount *newdlg = new crmaccount();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}

@@ -19,6 +19,7 @@
 
 #include <openreports.h>
 
+#include "crmaccount.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "printQuote.h"
@@ -30,11 +31,12 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_deleteQuote,SIGNAL(clicked()),	this,	SLOT(sDeleteQuote()));
+  connect(_crmacct,     SIGNAL(clicked()),      this,   SLOT(sCrmAccount()));
+  connect(_deleteQuote, SIGNAL(clicked()),	this,	SLOT(sDeleteQuote()));
   connect(_editQuote,	SIGNAL(clicked()),	this,	SLOT(sEditQuote()));
   connect(_newQuote,	SIGNAL(clicked()),	this,	SLOT(sNewQuote()));
   connect(_number,	SIGNAL(lostFocus()),	this,	SLOT(sCheckNumber()));
-  connect(_printQuote,SIGNAL(clicked()),	this,	SLOT(sPrintQuote()));
+  connect(_printQuote,  SIGNAL(clicked()),	this,	SLOT(sPrintQuote()));
   connect(_quotes,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),	this,	SLOT(sPopulateQuotesMenu(QMenu*)));
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
   connect(_viewQuote,	SIGNAL(clicked()),	this,	SLOT(sViewQuote()));
@@ -46,7 +48,6 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_quotes, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));
 
   _prospectid = -1;
-  _crmacct->setId(-1);
 
   _taxzone->setAllowNull(true);
   _taxzone->setType(XComboBox::TaxZones);
@@ -75,13 +76,13 @@ enum SetResponse prospect::set(const ParameterList &pParams)
 
   param = pParams.value("crmacct_id", &valid);
   if (valid)
-    _crmacct->setId(param.toInt());
+    _crmacctid = param.toInt();
 
   param = pParams.value("prospect_id", &valid);
   if (valid)
     _prospectid = param.toInt();
 
-  if (_crmacct->id() >= 0 || _prospectid >= 0)
+  if (_crmacctid >= 0 || _prospectid >= 0)
     if (! sPopulate())
       return UndefinedError;
 
@@ -227,7 +228,7 @@ void prospect::sSave()
   emit saved(_prospectid);
   if (_mode == cNew)
   {
-    omfgThis->sCrmAccountsUpdated(_crmacct->id());
+    omfgThis->sCrmAccountsUpdated(_crmacctid);
     emit newId(_prospectid);   // cluster listeners couldn't handle set()'s emit
   }
 
@@ -374,7 +375,7 @@ bool prospect::sPopulate()
                  "   AND  (prospect_id=crmacct_prospect_id));" );
     getq.bindValue(":prospect_id", _prospectid);
   }
-  else if (_crmacct->id() >= 0)
+  else if (_crmacctid >= 0)
   {
     getq.prepare("SELECT crmacct_active AS prospect_active,"
                  "       crmacct_name   AS prospect_name,"
@@ -385,13 +386,13 @@ bool prospect::sPopulate()
                  "      crmacct_id"
                  "  FROM crmacct"
                  " WHERE (crmacct_id=:id);");
-    getq.bindValue(":id", _crmacct->id());
+    getq.bindValue(":id", _crmacctid);
   }
 
   getq.exec();
   if (getq.first())
   {
-    _crmacct->setId(getq.value("crmacct_id").toInt());
+    _crmacctid = getq.value("crmacct_id").toInt();
 
     _number->setText(getq.value("prospect_number").toString());
     _cachedNumber = getq.value("prospect_number").toString();
@@ -406,6 +407,10 @@ bool prospect::sPopulate()
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Prospect"),
                                 getq, __FILE__, __LINE__))
     return false;
+
+  _crmacct->setEnabled(_crmacctid > 0 &&
+                       (_privileges->check("MaintainCRMAccounts") ||
+                        _privileges->check("ViewCRMAccounts")));
 
   sFillQuotesList();
   emit populated();
@@ -428,3 +433,23 @@ void prospect::closeEvent(QCloseEvent *pEvent)
   XWidget::closeEvent(pEvent);
 }
 
+void prospect::sCrmAccount()
+{
+  ParameterList params;
+  params.append("crmacct_id", _crmacctid);
+  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
+                              ! _privileges->check("MaintainCRMAccounts")))
+    params.append("mode", "view");
+  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+    params.append("mode", "edit");
+  else
+  {
+    qWarning("tried to open CRM Account window without privilege");
+    return;
+  }
+
+  crmaccount *newdlg = new crmaccount();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}

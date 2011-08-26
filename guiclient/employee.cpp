@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include "employee.h"
+
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
@@ -15,15 +17,12 @@
 #include <parameter.h>
 
 #include "characteristicAssignment.h"
-#include "employee.h"
+#include "crmaccount.h"
 #include "empGroup.h"
 #include "empgroupcluster.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
-#include "salesRep.h"
-#include "vendor.h"
 #include "storedProcErrorLookup.h"
-#include "user.h"
 
 #define DEBUG   false
 
@@ -79,15 +78,13 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
 
   connect(_attachGroup,   SIGNAL(clicked()), this, SLOT(sAttachGroup()));
   connect(_code,  SIGNAL(editingFinished()), this, SLOT(sHandleButtons()));
+  connect(_crmacct,       SIGNAL(clicked()), this, SLOT(sCrmAccount()));
   connect(_deleteCharass, SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
   connect(_detachGroup,   SIGNAL(clicked()), this, SLOT(sDetachGroup()));
   connect(_editCharass,   SIGNAL(clicked()), this, SLOT(sEditCharass()));
   connect(_editGroup,     SIGNAL(clicked()), this, SLOT(sEditGroup()));
   connect(_newCharass,    SIGNAL(clicked()), this, SLOT(sNewCharass()));
-  connect(_salesrepButton,SIGNAL(clicked()), this, SLOT(sSalesrep()));
-  connect(_vendorButton,  SIGNAL(clicked()), this, SLOT(sVendor()));
   connect(_save,          SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_userButton,    SIGNAL(clicked()), this, SLOT(sUser()));
   connect(_viewGroup,     SIGNAL(clicked()), this, SLOT(sViewGroup()));
 
   XSqlQuery xtmfg;
@@ -108,15 +105,6 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
 
   _groups->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "empgrp_name");
   _groups->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "empgrp_descrip");
-
-  if (_privileges->check("MaintainSalesReps") ||
-      _privileges->check("ViewSalesReps"))
-    connect(_salesrep, SIGNAL(toggled(bool)), _salesrepButton, SLOT(setEnabled(bool)));
-  if (_privileges->check("MaintainVendors") ||
-      _privileges->check("ViewVendors"))
-    connect(_vendor, SIGNAL(toggled(bool)), _vendorButton, SLOT(setEnabled(bool)));
-  if (_privileges->check("MaintainUsers"))
-    connect(_user, SIGNAL(toggled(bool)), _userButton, SLOT(setEnabled(bool)));
 
   _wagetype->setAllowNull(false);
   _wagetype->append(0, tr("Hourly"),      "H");
@@ -141,12 +129,8 @@ employee::employee(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _comments->setId(-1);
   _comments->setReadOnly(true);
 
-  _createUsers= false;
   _crmacctid  = -1;
   _empid      = -1;
-  _salesrepid = -1;
-  _username   = "";
-  _vendid     = -1;
   _NumberGen  = -1;
   _mode     = cView;
   _origmode = cView;
@@ -178,7 +162,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
 
   if (_empid > 0 || _crmacctid > 0)
     if (! sPopulate())
-      return UndefinedError;;
+      return UndefinedError;
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -201,9 +185,6 @@ enum SetResponse employee::set(const ParameterList &pParams)
       }
       else
         _code->setFocus();
-
-      _salesrep->setEnabled(_privileges->check("MaintainSalesReps"));
-      _vendor->setEnabled(_privileges->check("MaintainVendors"));
     }
     else if (param.toString() == "edit")
     {
@@ -436,9 +417,7 @@ bool employee::sPopulate()
                  "       NULL AS emp_extrate,        NULL AS emp_wage_period,"
                  "       NULL AS emp_extrate_period, NULL AS emp_dept_id,"
                  "       NULL AS emp_shift_id,       NULL AS emp_notes,"
-                 "       NULL AS emp_image_id,       crmacct_id,"
-                 "       crmacct_salesrep_id,        crmacct_usr_username,"
-                 "       crmacct_vend_id"
+                 "       NULL AS emp_image_id,       crmacct_id"
                  "  FROM crmacct"
                  " WHERE (crmacct_id=:id);");
     getq.bindValue(":id", _crmacctid);
@@ -470,28 +449,6 @@ bool employee::sPopulate()
     _image->setId(getq.value("emp_image_id").toInt());
 
     _crmacctid  = getq.value("crmacct_id").toInt();
-    _salesrepid = getq.value("crmacct_salesrep_id").toInt();
-    _username   = getq.value("crmacct_usr_username").toString();
-    _vendid     = getq.value("crmacct_vend_id").toInt();
-
-    _salesrep->setChecked(_salesrepid > 0);
-    _salesrep->setEnabled(_privileges->check("MaintainSalesReps") &&
-                          ! _salesrep->isChecked());
-    _salesrepButton->setEnabled((_privileges->check("MaintainSalesReps") ||
-                                 _privileges->check("ViewSalesReps")) &&
-                                _salesrep->isChecked());
-    _user->setChecked(! _username.isEmpty());
-    _user->setEnabled(_privileges->check("Maintainusers") &&
-                          ! _user->isChecked());
-    _userButton->setEnabled((_privileges->check("MaintainUsers") ||
-                             _privileges->check("ViewUsers")) &&
-                            _user->isChecked());
-    _vendor->setChecked(_vendid > 0);
-    _vendor->setEnabled(_privileges->check("MaintainVendors") &&
-                        ! _vendor->isChecked());
-    _vendorButton->setEnabled((_privileges->check("MaintainVendors") ||
-                               _privileges->check("ViewVendors")) &&
-                              _vendor->isChecked());
 
     if (DEBUG)
       qDebug("image %s and %s",
@@ -598,143 +555,6 @@ void employee::sFillGroupsList()
     return;
 }
 
-void employee::sSalesrep()
-{
-  if (cEdit == _mode || cNew == _mode)
-    if (!sSave(false))
-      return;
-
-  ParameterList params;
-
-  if (_salesrepid < 0)
-  {
-    if (cView == _mode && _privileges->check("ViewSalesReps"))
-    {
-      QMessageBox::information(this, tr("No Sales Rep"),
-                               tr("<p>There does not appear to be a Sales "
-                                  "Rep associated with this Employee."));
-      return;
-    }
-    if (_privileges->check("MaintainSalesReps") &&
-        QMessageBox::question(this, tr("Create Sales Rep?"),
-                              tr("<p>There does not appear to be a Sales "
-                                 "Rep associated with this Employee. "
-                                 "Would you like to create a new Sales Rep?"),
-                              QMessageBox::Yes | QMessageBox::Default,
-                              QMessageBox::No) == QMessageBox::No)
-      return;
-
-    params.append("crmacct_id", _crmacctid);
-    params.append("new");
-  }
-  else if (_privileges->check("MaintainSalesReps"))
-  {
-    params.append("salesrep_id", _salesrepid);
-    params.append("mode", "edit");
-  }
-  else if (_privileges->check("ViewSalesReps"))
-  {
-    params.append("salesrep_id", _salesrepid);
-    params.append("mode", "view");
-  }
-
-  salesRep newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() == QDialog::Accepted)
-    sPopulate();
-}
-
-void employee::sVendor()
-{
-  if (cEdit == _mode || cNew == _mode)
-    if (!sSave(false))
-      return;
-
-  ParameterList params;
-
-  if (_vendid < 0)
-  {
-    if (cView == _mode && _privileges->check("ViewVendors"))
-    {
-      QMessageBox::information(this, tr("No Vendor"),
-                               tr("<p>There does not appear to be a Vendor "
-                                  "associated with this Employee."));
-      return;
-    }
-    if (_privileges->check("MaintainVendors") &&
-        QMessageBox::question(this, tr("Create Vendor?"),
-                              tr("<p>There does not appear to be a Vendor "
-                                 "associated with this Employee. "
-                                 "Would you like to create a new Vendor?"),
-                              QMessageBox::Yes | QMessageBox::Default,
-                              QMessageBox::No) == QMessageBox::No)
-      return;
-
-    params.append("crmacct_id", _crmacctid);
-    params.append("mode",     "new");
-  }
-  else if (_privileges->check("MaintainVendors"))
-  {
-    params.append("vend_id", _vendid);
-    params.append("mode", "edit");
-  }
-  else if (_privileges->check("ViewVendors"))
-  {
-    params.append("vend_id", _vendid);
-    params.append("mode", "view");
-  }
-
-  vendor *newdlg = new vendor(this);
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void employee::sUser()
-{
-  if (cEdit == _mode || cNew == _mode)
-    if (!sSave(false))
-      return;
-
-  ParameterList params;
-
-  if (_username.isEmpty())
-  {
-    if (cView == _mode && _privileges->check("ViewUsers"))
-    {
-      QMessageBox::information(this, tr("No User"),
-                               tr("<p>There does not appear to be a User "
-                                  "associated with this Employee."));
-      return;
-    }
-    if (_privileges->check("MaintainUsers") &&
-        QMessageBox::question(this, tr("Create User?"),
-                              tr("<p>There does not appear to be a User "
-                                 "associated with this Employee. "
-                                 "Would you like to create a new User?"),
-                              QMessageBox::Yes | QMessageBox::Default,
-                              QMessageBox::No) == QMessageBox::No)
-      return;
-
-    params.append("crmacct_id", _crmacctid);
-    params.append("mode",     "new");
-  }
-  else if (_privileges->check("MaintainUsers"))
-  {
-    params.append("username", _username);
-    params.append("mode",     "edit");
-  }
-  else if (_privileges->check("ViewUsers"))
-  {
-    params.append("username", _username);
-    params.append("mode", "view");
-  }
-
-  user *newdlg = new user(this);
-  newdlg->set(params);
-  if (newdlg->exec() == QDialog::Accepted)
-    sPopulate();
-}
-
 void employee::sAttachGroup()
 {
   if (!sSave(false))
@@ -768,6 +588,27 @@ void employee::sAttachGroup()
       return;
     sFillGroupsList();
   }
+}
+
+void employee::sCrmAccount()
+{
+  ParameterList params;
+  params.append("crmacct_id", _crmacctid);
+  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
+                              ! _privileges->check("MaintainCRMAccounts")))
+    params.append("mode", "view");
+  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+    params.append("mode", "edit");
+  else
+  {
+    qWarning("tried to open CRM Account window without privilege");
+    return;
+  }
+
+  crmaccount *newdlg = new crmaccount();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
 }
 
 void employee::sDetachGroup()
@@ -811,18 +652,7 @@ void employee::sViewGroup()
 
 void employee::sHandleButtons()
 {
-  _salesrep->setChecked(_salesrepid > 0);
-  _salesrepButton->setEnabled(_salesrepid > 0 &&
-                              (_privileges->check("MaintainSalesReps") ||
-                               _privileges->check("ViewSalesReps")));
-
-  _user->setChecked(! _username.isEmpty());
-  _userButton->setEnabled(! _username.isEmpty() &&
-                          (_privileges->check("MaintainUsers") ||
-                           _privileges->check("ViewUsers")));
-
-  _vendor->setChecked(_vendid > 0);
-  _vendorButton->setEnabled(_vendid > 0 &&
-                            (_privileges->check("MaintainVendors") ||
-                             _privileges->check("ViewVendors")));
+  _crmacct->setEnabled(_crmacctid > 0 &&
+                       (_privileges->check("MaintainCRMAccounts") ||
+                        _privileges->check("ViewCRMAccounts")));
 }
