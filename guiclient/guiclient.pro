@@ -179,6 +179,12 @@ FORMS =   absoluteCalendarItem.ui               \
           creditMemoEditList.ui                 \
           creditMemoItem.ui                     \
           crmaccount.ui                         \
+          crmaccountMerge.ui                    \
+          crmaccountMergePickAccountsPage.ui    \
+          crmaccountMergePickDataPage.ui        \
+          crmaccountMergePickTaskPage.ui        \
+          crmaccountMergePurgePage.ui           \
+          crmaccountMergeResultPage.ui          \
           currencies.ui                         \
           currency.ui                           \
           currencyConversion.ui                 \
@@ -721,6 +727,12 @@ HEADERS = ../common/format.h                    \
           creditMemoItem.h                      \
           creditcardprocessor.h                 \
           crmaccount.h                          \
+          crmaccountMerge.h                     \
+          crmaccountMergePickAccountsPage.h     \
+          crmaccountMergePickDataPage.h         \
+          crmaccountMergePickTaskPage.h         \
+          crmaccountMergePurgePage.h            \
+          crmaccountMergeResultPage.h           \
           crmaccounts.h                         \
           currencies.h                          \
           currency.h                            \
@@ -1314,6 +1326,12 @@ SOURCES = absoluteCalendarItem.cpp              \
           creditMemoItem.cpp                    \
           creditcardprocessor.cpp               \
           crmaccount.cpp                        \
+          crmaccountMerge.cpp                   \
+          crmaccountMergePickAccountsPage.cpp   \
+          crmaccountMergePickDataPage.cpp       \
+          crmaccountMergePickTaskPage.cpp       \
+          crmaccountMergePurgePage.cpp          \
+          crmaccountMergeResultPage.cpp         \
           crmaccounts.cpp                       \
           currencies.cpp                        \
           currency.cpp                          \
