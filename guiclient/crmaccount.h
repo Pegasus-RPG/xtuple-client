@@ -11,10 +11,10 @@
 #ifndef CRMACCOUNT_H
 #define CRMACCOUNT_H
 
-#include "guiclient.h"
-#include "xwidget.h"
 #include "contacts.h"
+#include "guiclient.h"
 #include "todoList.h"
+#include "xwidget.h"
 
 #include <QSqlError>
 #include "ui_crmaccount.h"
@@ -26,13 +26,17 @@ class crmaccount : public XWidget, public Ui::crmaccount
 public:
     crmaccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~crmaccount();
-    static void doDialog(QWidget *, const ParameterList &);
-    int getIncidentId();
+    static      void doDialog(QWidget *, const ParameterList &);
+    Q_INVOKABLE int  id();
 
 public slots:
     virtual enum SetResponse set(const ParameterList&);
     virtual void sPopulate();
     virtual void sPopulateRegistrations();
+    virtual void setId(int id);
+
+signals:
+    int newId(int id);
 
 protected slots:
     virtual void languageChange();

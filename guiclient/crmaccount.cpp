@@ -109,8 +109,8 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     _active->setChecked(true);
 
   _NumberGen    = -1;
-  _mode         = cNew;
-  _crmacctId    = -1;
+  _mode         = cView;
+  _crmacctId    = -1;   // TODO: setId(-1)?
   _competitorId = -1;
   _custId       = -1;
   _empId        = -1;
@@ -122,7 +122,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _vendId       = -1;
   _comments->setId(-1);
   _documents->setId(-1);
-  _modal          = false;
+  _modal          = (windowModality() == Qt::NonModal);
   _canCreateUsers = false;
 
   if (!_metrics->boolean("LotSerialControl"))
@@ -163,13 +163,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       insq.bindValue(":crmacct_id", _crmacctId);
       insq.exec();
       if (insq.first())
-      {
-        _crmacctId = insq.value("result").toInt();
-        _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
-        _contacts->setCrmacctid(_crmacctId);
-        _comments->setId(_crmacctId);
-        _documents->setId(_crmacctId);
-      }
+        setId(insq.value("result").toInt());
       else if (ErrorReporter::error(QtCriticalMsg, this,
                              tr("Error creating Initial Account"), insq,
                              __FILE__, __LINE__))
@@ -220,12 +214,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 
   param = pParams.value("crmacct_id", &valid);
   if (valid)
-  {
-    _crmacctId = param.toInt();
-    _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
-    _contacts->setCrmacctid(_crmacctId);
-    sPopulate();
-  }
+    setId(param.toInt());
 
   /* TODO: "scripted" was added for issue 6804 but
            a) no xtuple scripts seem to use it and
@@ -639,6 +628,24 @@ void crmaccount::sGetCharacteristics()
                            tr("Error getting Characteristic Assignments"),
                            getcaq, __FILE__, __LINE__))
     return;
+}
+
+int crmaccount::id()
+{
+  return _crmacctId;
+}
+
+void crmaccount::setId(int id)
+{
+  _crmacctId = id;
+  _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
+  _contacts->setCrmacctid(_crmacctId);
+  sPopulate();
+
+  if (cView != _mode)
+    _mode = cEdit;
+
+  emit newId(_crmacctId);
 }
 
 void crmaccount::sPopulate()
@@ -1101,10 +1108,7 @@ void crmaccount::sCheckNumber()
                                query, __FILE__, __LINE__))
         return;
 
-      _crmacctId = newq.value("crmacct_id").toInt();
-      _todoList->parameterWidget()->setDefault(tr("CRM Account"), _crmacctId, true);
-      _contacts->setCrmacctid(_crmacctId);
-      _mode = cEdit;
+      setId(newq.value("crmacct_id").toInt());
       sPopulate();
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
