@@ -3,9 +3,12 @@
  <title>Invoice</title>
  <name>Invoice</name>
  <description>With Logo - With Invoice Currency</description>
- <parameter default="97" active="true" listtype="dynamic" type="string" name="invchead_id">
+ <parameter default="127" active="true" listtype="dynamic" type="integer" name="invchead_id">
   <description></description>
   <query>SELECT invchead_id, invchead_invcnumber FROM invchead ORDER BY invchead_invcnumber;</query>
+ </parameter>
+ <parameter default="TRUE" active="true" listtype="static" type="string" name="showcosts">
+  <description></description>
  </parameter>
  <watermark>
   <data>
@@ -73,10 +76,10 @@ ORDER BY ordernumber;</sql>
       CASE WHEN (invcitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip2
            ELSE item_descrip2
       END AS descrip2,
-      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN '---'
+      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN 'N/A'
            ELSE formatPrice(invcitem_qty_invuomratio * invcitem_price / COALESCE(invcitem_price_invuomratio,1))
       END AS f_unitprice,
-      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN '---'
+      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN 'N/A'
            ELSE formatMoney(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2)) 
       END AS f_extprice,
       invcitem_notes,
@@ -90,22 +93,39 @@ ORDER BY invcitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>foot</name>
-  <sql>SELECT formatMoney(SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2))) AS f_extprice&#xd;
-FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id)&#xd;
+  <sql>SELECT 
+CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
+ELSE formatMoney(SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2))) 
+END AS f_extprice
+FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id)
 WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>GroupExtended</name>
   <sql>SELECT *,
-       formatMoney(invchead_misc_amount) AS f_misc,
-       formatMoney(tax)                  AS f_tax,
-       formatMoney(invchead_freight)     AS f_freight,
-       formatMoney(invchead_payment)     AS f_payment,
-       formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
-                         itemtotal - total_allocated)) AS f_totaldue,
-       formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
-                         itemtotal - total_allocated)) AS f_netdue,
-       formatMoney(total_allocated) AS f_allocated
+       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
+       	ELSE formatMoney(invchead_misc_amount) 
+	END AS f_misc,
+       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
+       	ELSE formatMoney(tax)                  
+	END AS f_tax,
+       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
+       	ELSE formatMoney(invchead_freight)
+	END AS f_freight,
+       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
+       	ELSE formatMoney(invchead_payment)
+	END AS f_payment,
+       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
+       	ELSE formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
+                         itemtotal - total_allocated))
+	END AS f_totaldue,
+       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
+       	ELSE formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
+                         itemtotal - total_allocated))
+	END AS f_netdue,
+       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
+       	ELSE formatMoney(total_allocated)
+	END AS f_allocated
  FROM (SELECT invchead_misc_amount, invchead_freight,
               invchead_payment, invchead_notes, invchead_misc_descrip,
               (SELECT COALESCE(SUM(tax),0) 
