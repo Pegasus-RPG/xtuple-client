@@ -48,9 +48,9 @@ ProjectLineEdit::ProjectLineEdit(QWidget* pParent, const char* pName) :
 {
   setTitles(tr("Project"), tr("Projects"));
   setUiName("project");
-  setEditPriv("MaintainProjects");
-  setNewPriv("MaintainProjects");
-  setViewPriv("ViewProjects");
+  setEditPriv("MaintainAllProjects");
+  setNewPriv("MaintainAllProjects");
+  setViewPriv("ViewAllProjects");
 
   _type = Undefined;
 }
@@ -60,8 +60,8 @@ ProjectLineEdit::ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, co
 {
   setTitles(tr("Project"), tr("Projects"));
   setUiName("project");
-  setEditPriv("MaintainProjects");
-  setViewPriv("ViewProjects");
+  setEditPriv("MaintainAllProjects");
+  setViewPriv("ViewAllProjects");
 
   _type = pPrjType;
   _allowedStatuses = 0x00;

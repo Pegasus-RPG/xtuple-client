@@ -31,6 +31,12 @@ prospects::prospects(QWidget* parent, const char*, Qt::WFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
+  bool canEditUsers = _privileges->check("MaintainAllProspects") || _privileges->check("ViewAllProspects");
+  parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+  if (canEditUsers)
+    parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern",    ParameterWidget::Text);
+  else
+    parameterWidget()->setEnabled(tr("Owner"), false);
   parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
   parameterWidget()->append(tr("Prospect Number Pattern"), "prospect_number_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Prospect Name Pattern"), "prospect_name_pattern", ParameterWidget::Text);
@@ -42,8 +48,9 @@ prospects::prospects(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("State Pattern"), "addr_state_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
+  parameterWidget()->applyDefaultFilterSet();
 
-  if (_privileges->check("MaintainProspectMasters"))
+  if (_privileges->check("MaintainAllProspects") || _privileges->check("MaintainPersonalProspects"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
@@ -51,17 +58,18 @@ prospects::prospects(QWidget* parent, const char*, Qt::WFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
-  list()->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter, true, "prospect_number" );
-  list()->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "prospect_name"   );
-  list()->addColumn(tr("First"),   50, Qt::AlignLeft  , true, "cntct_first_name" );
-  list()->addColumn(tr("Last"),    -1, Qt::AlignLeft  , true, "cntct_last_name" );
-  list()->addColumn(tr("Phone"),   100, Qt::AlignLeft  , true, "cntct_phone" );
-  list()->addColumn(tr("Email"),   100, Qt::AlignLeft  , true, "cntct_email" );
-  list()->addColumn(tr("Address"), -1, Qt::AlignLeft  , false, "addr_line1" );
-  list()->addColumn(tr("City"),    75, Qt::AlignLeft  , false, "addr_city" );
-  list()->addColumn(tr("State"),   50, Qt::AlignLeft  , false, "addr_state" );
-  list()->addColumn(tr("Country"), 100, Qt::AlignLeft  , false, "addr_country" );
-  list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , false, "addr_postalcode" );
+  list()->addColumn(tr("Number"),_orderColumn, Qt::AlignCenter,  true, "prospect_number" );
+  list()->addColumn(tr("Name"),            -1, Qt::AlignLeft,    true, "prospect_name"   );
+  list()->addColumn(tr("Owner"),  _userColumn, Qt::AlignLeft,   false, "prospect_owner_username");
+  list()->addColumn(tr("First"),           50, Qt::AlignLeft  ,  true, "cntct_first_name" );
+  list()->addColumn(tr("Last"),            -1, Qt::AlignLeft  ,  true, "cntct_last_name" );
+  list()->addColumn(tr("Phone"),          100, Qt::AlignLeft  ,  true, "cntct_phone" );
+  list()->addColumn(tr("Email"),          100, Qt::AlignLeft  ,  true, "cntct_email" );
+  list()->addColumn(tr("Address"),         -1, Qt::AlignLeft  , false, "addr_line1" );
+  list()->addColumn(tr("City"),            75, Qt::AlignLeft  , false, "addr_city" );
+  list()->addColumn(tr("State"),           50, Qt::AlignLeft  , false, "addr_state" );
+  list()->addColumn(tr("Country"),        100, Qt::AlignLeft  , false, "addr_country" );
+  list()->addColumn(tr("Postal Code"),     75, Qt::AlignLeft  , false, "addr_postalcode" );
 
   connect(omfgThis, SIGNAL(prospectsUpdated()), SLOT(sFillList()));
 }
@@ -120,11 +128,20 @@ void prospects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 
+  bool editPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("prospect_owner_username") && _privileges->check("MaintainPersonalProspects")) ||
+      (omfgThis->username() != list()->currentItem()->rawValue("prospect_owner_username") && _privileges->check("MaintainAllProspects"));
+
+  bool viewPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("prospect_owner_username") && _privileges->check("ViewPersonalProspects")) ||
+      (omfgThis->username() != list()->currentItem()->rawValue("prospect_owner_username") && _privileges->check("ViewAllProspects"));
+
   menuItem = pMenu->addAction("View...", this, SLOT(sView()));
+  menuItem->setEnabled(viewPriv);
 
   menuItem = pMenu->addAction("Edit...", this, SLOT(sEdit()));
-  menuItem->setEnabled(_privileges->check("MaintainProspectMasters"));
+  menuItem->setEnabled(editPriv);
 
   menuItem = pMenu->addAction("Delete", this, SLOT(sDelete()));
-  menuItem->setEnabled(_privileges->check("MaintainProspectMasters"));
+  menuItem->setEnabled(editPriv);
 }

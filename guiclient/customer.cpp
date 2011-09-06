@@ -230,7 +230,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   else
     _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
 
-  if (!_privileges->check("MaintainQuotes") && !_privileges->check("ViewQuotes"))
+  if (!_privileges->check("MaintainAllQuotes") && !_privileges->check("ViewAllQuotes") &&
+      !_privileges->check("MaintainPersonalQuotes") && !_privileges->check("ViewPersonalQuotes"))
     _quotesButton->setEnabled(false);
   if (!_privileges->check("MaintainSalesOrders") && !_privileges->check("ViewSalesOrders"))
     _ordersButton->setEnabled(false);
@@ -420,13 +421,15 @@ void customer::setValid(bool valid)
   _tab->setTabEnabled(_tab->indexOf(_salesTab),valid);
   _tab->setTabEnabled(_tab->indexOf(_accountingTab),valid);
 
-  if (!_privileges->check("MaintainContacts") && !_privileges->check("ViewContacts"))
+  if (!_privileges->check("MaintainAllContacts") && !_privileges->check("ViewAllContacts") &&
+      !_privileges->check("MaintainPersonalContacts") && !_privileges->check("ViewPersonalContacts"))
   {
     _contactsButton->setEnabled(false);
     _todoListButton->setChecked(true);
     sHandleButtons();
   }
-  if (!_privileges->check("MaintainOtherTodoLists") && !_privileges->check("ViewOtherTodoLists"))
+  if (!_privileges->check("MaintainAllToDoItems") && !_privileges->check("ViewAllToDoItems") &&
+      !_privileges->check("MaintainPersonalToDoItems") && !_privileges->check("ViewPersonalToDoItems"))
   {
     _todoListButton->setEnabled(false);
     if (_todoListButton->isChecked())
@@ -831,11 +834,22 @@ void customer::sCrmAccount()
 {
   ParameterList params;
   params.append("crmacct_id", _crmacctid);
-  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
-      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
-                              ! _privileges->check("MaintainCRMAccounts")))
+  if ((cView == _mode && _privileges->check("ViewAllCRMAccounts")) ||
+      (cView == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner) ||
+      (cEdit == _mode && _privileges->check("ViewAllCRMAccounts")
+                      && ! _privileges->check("MaintainAllCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && ! _privileges->check("MaintainPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner))
     params.append("mode", "view");
-  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+  else if ((cEdit == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cEdit == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                           && omfgThis->username() == _crmowner))
+    params.append("mode", "edit");
+  else if ((cNew == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cNew == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                          && omfgThis->username() == _crmowner))
     params.append("mode", "edit");
   else
   {
@@ -1177,7 +1191,7 @@ void customer::populate()
   cust.prepare( "SELECT custinfo.*, "
                 "       cust_commprcnt, cust_discntprcnt,"
                 "       (cust_gracedays IS NOT NULL) AS hasGraceDays,"
-                "       crmacct_id "
+                "       crmacct_id, crmacct_owner_username "
                 "FROM custinfo LEFT OUTER JOIN "
                 "     crmacct ON (cust_id=crmacct_cust_id) "
                 "WHERE (cust_id=:cust_id);" );
@@ -1193,9 +1207,12 @@ void customer::populate()
     setValid(true);
 
     _crmacctid = cust.value("crmacct_id").toInt();
+    _crmowner = cust.value("crmacct_owner_username").toString();
     _crmacct->setEnabled(_crmacctid > 0 &&
-                         (_privileges->check("MaintainCRMAccounts") ||
-                          _privileges->check("ViewCRMAccounts")));
+                         (_privileges->check("MaintainAllCRMAccounts") ||
+                          _privileges->check("ViewAllCRMAccounts") ||
+                          (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
+                          (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
 
     _number->setNumber(cust.value("cust_number").toString());
     _cachedNumber = cust.value("cust_number").toString();
@@ -1513,10 +1530,6 @@ void customer::sLoadCrmAcct(int crmacctId)
 {
   _notice = FALSE;
   _crmacctid = crmacctId;
-  _crmacct->setEnabled(_crmacctid > 0 &&
-                       (_privileges->check("MaintainCRMAccounts") ||
-                        _privileges->check("ViewCRMAccounts")));
-
   _billCntct->setSearchAcct(_crmacctid);
   _corrCntct->setSearchAcct(_crmacctid);
 
@@ -1526,6 +1539,7 @@ void customer::sLoadCrmAcct(int crmacctId)
   getq.exec();
   if (getq.first())
   {
+    _crmowner = getq.value("crmacct_owner_username").toString();
     _number->setNumber(getq.value("crmacct_number").toString());
     _name->setText(getq.value("crmacct_name").toString());
     _active->setChecked(getq.value("crmacct_active").toBool());
@@ -1535,6 +1549,13 @@ void customer::sLoadCrmAcct(int crmacctId)
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Account"),
                            getq, __FILE__, __LINE__))
     return;
+
+  _crmacct->setEnabled(_crmacctid > 0 &&
+                       (_privileges->check("MaintainAllCRMAccounts") ||
+                        _privileges->check("ViewAllCRMAccounts") ||
+                        (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
+                        (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
+
   _name->setFocus();
 }
 

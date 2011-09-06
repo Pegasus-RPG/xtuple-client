@@ -74,6 +74,7 @@ private:
     QString _cachedNumber;
     bool _ignoreClose;
     bool _notice;
+    QString _crmowner;
 
 };
 

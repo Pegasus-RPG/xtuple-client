@@ -33,6 +33,12 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
+  bool canEditUsers = _privileges->check("MaintainAllCRMAccounts") || _privileges->check("ViewAllCRMAccounts");
+  parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+  if (canEditUsers)
+    parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern",    ParameterWidget::Text);
+  else
+    parameterWidget()->setEnabled(tr("Owner"), false);
   parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
   parameterWidget()->append(tr("Account Number Pattern"), "crmacct_number_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Account Name Pattern"), "crmacct_name_pattern", ParameterWidget::Text);
@@ -44,6 +50,7 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("State Pattern"), "addr_state_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
+  parameterWidget()->applyDefaultFilterSet();
 
   connect(omfgThis, SIGNAL(crmAccountsUpdated(int)),     this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sFillList()));
@@ -54,31 +61,32 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(userUpdated(QString)),        this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(vendorsUpdated()),            this, SLOT(sFillList()));
 
-  list()->addColumn(tr("Number"),      80, Qt::AlignLeft,  true, "crmacct_number");
-  list()->addColumn(tr("Name"),        -1, Qt::AlignLeft,  true, "crmacct_name");
-  list()->addColumn(tr("First"),       50, Qt::AlignLeft  , true, "cntct_first_name" );
-  list()->addColumn(tr("Last"),        -1, Qt::AlignLeft  , true, "cntct_last_name" );
-  list()->addColumn(tr("Phone"),      100, Qt::AlignLeft  , true, "cntct_phone" );
-  list()->addColumn(tr("Email"),      100, Qt::AlignLeft  , true, "cntct_email" );
-  list()->addColumn(tr("Address"),     -1, Qt::AlignLeft  , false, "addr_line1" );
-  list()->addColumn(tr("City"),        75, Qt::AlignLeft  , false, "addr_city" );
-  list()->addColumn(tr("State"),       50, Qt::AlignLeft  , false, "addr_state" );
-  list()->addColumn(tr("Country"),    100, Qt::AlignLeft  , false, "addr_country" );
-  list()->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , false, "addr_postalcode" );
-  list()->addColumn(tr("Customer"),    70, Qt::AlignCenter,true, "cust");
-  list()->addColumn(tr("Prospect"),    70, Qt::AlignCenter,true, "prospect");
-  list()->addColumn(tr("Vendor"),      70, Qt::AlignCenter,true, "vend");
-  list()->addColumn(tr("Competitor"),  70, Qt::AlignCenter,false, "competitor");
-  list()->addColumn(tr("Partner"),     70, Qt::AlignCenter,false, "partner");
-  list()->addColumn(tr("Tax Auth."),   70, Qt::AlignCenter,false, "taxauth");
-  list()->addColumn(tr("User"),        70, Qt::AlignCenter,false, "usr");
-  list()->addColumn(tr("Employee"),    70, Qt::AlignCenter,false, "emp");
-  list()->addColumn(tr("Sales Rep"),   70, Qt::AlignCenter,false, "salesrep");
+  list()->addColumn(tr("Number"),         80, Qt::AlignLeft,    true, "crmacct_number");
+  list()->addColumn(tr("Name"),           -1, Qt::AlignLeft,    true, "crmacct_name");
+  list()->addColumn(tr("Owner"), _userColumn, Qt::AlignLeft,   false, "crmacct_owner_username");
+  list()->addColumn(tr("First"),          50, Qt::AlignLeft  ,  true, "cntct_first_name" );
+  list()->addColumn(tr("Last"),           -1, Qt::AlignLeft  ,  true, "cntct_last_name" );
+  list()->addColumn(tr("Phone"),         100, Qt::AlignLeft  ,  true, "cntct_phone" );
+  list()->addColumn(tr("Email"),         100, Qt::AlignLeft  ,  true, "cntct_email" );
+  list()->addColumn(tr("Address"),        -1, Qt::AlignLeft  , false, "addr_line1" );
+  list()->addColumn(tr("City"),           75, Qt::AlignLeft  , false, "addr_city" );
+  list()->addColumn(tr("State"),          50, Qt::AlignLeft  , false, "addr_state" );
+  list()->addColumn(tr("Country"),       100, Qt::AlignLeft  , false, "addr_country" );
+  list()->addColumn(tr("Postal Code"),    75, Qt::AlignLeft  , false, "addr_postalcode" );
+  list()->addColumn(tr("Customer"),       70, Qt::AlignCenter,  true, "cust");
+  list()->addColumn(tr("Prospect"),       70, Qt::AlignCenter,  true, "prospect");
+  list()->addColumn(tr("Vendor"),         70, Qt::AlignCenter,  true, "vend");
+  list()->addColumn(tr("Competitor"),     70, Qt::AlignCenter, false, "competitor");
+  list()->addColumn(tr("Partner"),        70, Qt::AlignCenter, false, "partner");
+  list()->addColumn(tr("Tax Auth."),      70, Qt::AlignCenter, false, "taxauth");
+  list()->addColumn(tr("User"),           70, Qt::AlignCenter, false, "usr");
+  list()->addColumn(tr("Employee"),       70, Qt::AlignCenter, false, "emp");
+  list()->addColumn(tr("Sales Rep"),      70, Qt::AlignCenter, false, "salesrep");
 
   setupCharacteristics(characteristic::CRMAccounts);
   parameterWidget()->applyDefaultFilterSet();
 
-  if (_privileges->check("MaintainCRMAccounts"))
+  if (_privileges->check("MaintainAllCRMAccounts") || _privileges->check("MaintainPersonalCRMAccounts"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
@@ -141,11 +149,20 @@ void crmaccounts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 
+  bool editPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("MaintainPersonalCRMAccounts")) ||
+      (omfgThis->username() != list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("MaintainAllCRMAccounts"));
+
+  bool viewPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("ViewPersonalCRMAccounts")) ||
+      (omfgThis->username() != list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("ViewAllCRMAccounts"));
+
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
-  menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
+  menuItem->setEnabled(editPriv);
 
   pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(viewPriv);
 
   menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
-  menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
+  menuItem->setEnabled(editPriv);
 }

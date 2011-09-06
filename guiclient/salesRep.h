@@ -42,6 +42,7 @@ private:
     int _mode;
     int _NumberGen;
     int _salesrepid;
+    QString _crmowner;
 
 };
 

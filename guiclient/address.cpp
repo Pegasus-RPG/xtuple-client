@@ -283,10 +283,10 @@ void address::sPopulateMenu(QMenu *pMenu)
   switch (_uses->altId())
   {
     case 1:
-      if (_privileges->check("MaintainContacts") &&
+      if (_privileges->check("MaintainAllContacts") &&
 	  (cNew == _mode || cEdit == _mode))
 	menuItem = pMenu->addAction(editStr, this, SLOT(sEditContact()));
-      else if (_privileges->check("ViewContacts"))
+      else if (_privileges->check("ViewAllContacts"))
 	menuItem = pMenu->addAction(viewStr, this, SLOT(sViewContact()));
 
       break;

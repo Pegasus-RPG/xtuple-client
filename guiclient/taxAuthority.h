@@ -43,6 +43,7 @@ private:
     int _mode;
     int _taxauthid;
     int _NumberGen;
+    QString _crmowner;
 
 };
 

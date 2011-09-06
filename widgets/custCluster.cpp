@@ -98,7 +98,7 @@ void CLineEdit::sNew()
     uiName="prospect";
   }
   if (_subtype == CRMAcctLineEdit::CustAndProspect &&
-       !_x_privileges->check("MaintainProspectMasters"))
+       !_x_privileges->check("MaintainAllProspects"))
     params.append("mode", "new");
   else
   {
@@ -177,9 +177,9 @@ void CLineEdit::setId(int pId)
     else
     {
       setUiName("prospect");
-      setEditPriv("MaintainProspectMasters");
-      setViewPriv("ViewProspectMasters");
-      setNewPriv("MaintainProspectMasters");
+      setEditPriv("MaintainAllProspects");
+      setViewPriv("ViewAllProspects");
+      setNewPriv("MaintainAllProspects");
       _idColName="prospect_id";
     }
     sUpdateMenu();
@@ -270,10 +270,10 @@ void CLineEdit::setCanEdit(bool p)
     if (_x_privileges && _subtype == CRMAcctLineEdit::Cust)
       _canEdit = _x_privileges->check("MaintainCustomerMasters");
     else if (_x_privileges && _subtype == CRMAcctLineEdit::Prospect)
-      _canEdit = _x_privileges->check("MaintainProspectMasters");
+      _canEdit = _x_privileges->check("MaintainAllProspects");
     else if (_x_privileges)
       _canEdit = _x_privileges->check("MaintainCustomerMasters") ||
-                 _x_privileges->check("MaintainProspectMasters");
+                 _x_privileges->check("MaintainAllProspects");
   }
   else
     _canEdit=p;
@@ -374,10 +374,10 @@ void CLineEdit::sUpdateMenu()
   if (_subtype == CRMAcctLineEdit::Cust)
     canNew = (_x_privileges->check("MaintainCustomerMasters"));
   else if (_subtype == CRMAcctLineEdit::Prospect)
-    canNew = (_x_privileges->check("MaintainProspectMasters"));
+    canNew = (_x_privileges->check("MaintainAllProspects"));
   else
     canNew = (_x_privileges->check("MaintainCustomerMasters") ||
-              _x_privileges->check("MaintainProspectMasters"));
+              _x_privileges->check("MaintainAllProspects"));
 
   _newAct->setEnabled(canNew && isEnabled());
 }

@@ -229,11 +229,28 @@ void salesRep::sCrmaccount()
 
   ParameterList params;
   params.append("crmacct_id", _crmacctid);
-  if ((_mode == cNew || _mode == cEdit) &&
-      _privileges->check("MaintainCRMAccounts"))
+  if ((cView == _mode && _privileges->check("ViewAllCRMAccounts")) ||
+      (cView == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner) ||
+      (cEdit == _mode && _privileges->check("ViewAllCRMAccounts")
+                      && ! _privileges->check("MaintainAllCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && ! _privileges->check("MaintainPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner))
+    params.append("mode", "view");
+  else if ((cEdit == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cEdit == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                           && omfgThis->username() == _crmowner))
+    params.append("mode", "edit");
+  else if ((cNew == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cNew == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                          && omfgThis->username() == _crmowner))
     params.append("mode", "edit");
   else
-    params.append("mode", "view");
+  {
+    qWarning("tried to open CRM Account window without privilege");
+    return;
+  }
   params.append("modal");
 
   crmaccount *newdlg = new crmaccount(this);
@@ -248,7 +265,8 @@ bool salesRep::sPopulate()
   {
     getq.prepare("SELECT salesrep_number AS number, salesrep_active AS active,"
                  "       salesrep_name   AS name,   salesrep_commission AS comm,"
-                 "       crmacct_id,                crmacct_emp_id"
+                 "       crmacct_id,                crmacct_emp_id,"
+                 "       crmacct_owner_username"
                  "  FROM salesrep"
                  "  JOIN crmacct ON (salesrep_id=crmacct_salesrep_id)"
                  " WHERE (salesrep_id=:id);" );
@@ -258,7 +276,8 @@ bool salesRep::sPopulate()
   {
     getq.prepare("SELECT crmacct_number AS number, crmacct_active AS active,"
                  "       crmacct_name   AS name,   NULL AS comm,"
-                 "       crmacct_id,               crmacct_emp_id"
+                 "       crmacct_id,               crmacct_emp_id,"
+                 "       crmacct_owner_username"
                  "  FROM crmacct"
                  " WHERE (crmacct_id=:id);" );
     getq.bindValue(":id", _crmacctid);
@@ -275,6 +294,7 @@ bool salesRep::sPopulate()
       _commPrcnt->setDouble(commission.toDouble() * 100);
     _crmacctid = getq.value("crmacct_id").toInt();
     _empid     = getq.value("crmacct_emp_id").toInt();
+    _crmowner  = getq.value("crmacct_owner_username").toString();
 
     _number->setEnabled(FALSE);
   }
@@ -283,7 +303,9 @@ bool salesRep::sPopulate()
     return false;
 
   _crmaccountButton->setEnabled(_crmacctid > 0 &&
-                                (_privileges->check("MaintainCRMAccounts") ||
-                                 _privileges->check("ViewCRMAccounts")));
+                                (_privileges->check("MaintainAllCRMAccounts") ||
+                                 _privileges->check("ViewAllCRMAccounts") ||
+                                (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
+                                (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
   return true;
 }

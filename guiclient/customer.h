@@ -108,6 +108,7 @@ private:
     int _mode;
     int _custid;
     int	_crmacctid;
+    QString _crmowner;
     int _NumberGen;
     QString _cachedNumber;
     QString key;

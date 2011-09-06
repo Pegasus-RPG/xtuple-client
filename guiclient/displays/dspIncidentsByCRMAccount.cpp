@@ -87,26 +87,36 @@ void dspIncidentsByCRMAccount::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int
   if (list()->altId() == 1)
   {
     menuItem = pMenu->addAction(tr("Edit CRM Account..."), this, SLOT(sEditCRMAccount()));
-    menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
+    menuItem->setEnabled(_privileges->check("MaintainAllCRMAccounts") ||
+                         _privileges->check("MaintainPersonalCRMAccounts"));
     menuItem = pMenu->addAction(tr("View CRM Account..."), this, SLOT(sViewCRMAccount()));
-    menuItem->setEnabled( _privileges->check("ViewCRMAccounts") ||
-				    _privileges->check("MaintainCRMAccounts"));
+    menuItem->setEnabled(_privileges->check("ViewAllCRMAccounts") ||
+                         _privileges->check("MaintainAllCRMAccounts") ||
+                         _privileges->check("ViewPersonalCRMAccounts") ||
+                         _privileges->check("MaintainPersonalCRMAccounts"));
   }
   else if (list()->altId() == 2)
   {
     menuItem = pMenu->addAction(tr("Edit Incident..."), this, SLOT(sEditIncident()));
-    menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(_privileges->check("MaintainAllIncidents") ||
+                         _privileges->check("MaintainPersonalIncidents"));
     menuItem = pMenu->addAction(tr("View Incident..."), this, SLOT(sViewIncident()));
-    menuItem->setEnabled( _privileges->check("ViewIncidents") ||
-				    _privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(_privileges->check("ViewAllIncidents") ||
+                         _privileges->check("MaintainAllIncidents") ||
+                         _privileges->check("ViewPersonalIncidents") ||
+                         _privileges->check("MaintainPersonalIncidents"));
   }
   else if (list()->altId() == 3)
   {
     menuItem = pMenu->addAction(tr("Edit To-Do Item..."), this, SLOT(sEditTodoItem()));
-    menuItem->setEnabled(_privileges->check("MaintainOtherTodoLists"));
+    menuItem->setEnabled(_privileges->check("MaintainAllToDoItems") ||
+                         _privileges->check("MaintainPersonalToDoItems"));
 
     menuItem = pMenu->addAction(tr("View To-Do Item..."), this, SLOT(sViewTodoItem()));
-    menuItem->setEnabled(_privileges->check("ViewOtherTodoLists"));
+    menuItem->setEnabled(_privileges->check("ViewAllToDoItems") ||
+                         _privileges->check("MaintainAllToDoItems") ||
+                         _privileges->check("ViewPersonalToDoItems") ||
+                         _privileges->check("MaintainPersonalToDoItems"));
   }
 }
 
@@ -210,6 +220,9 @@ bool dspIncidentsByCRMAccount::setParams(ParameterList &params)
 
   if (_showAcctsWOIncdts->isChecked())
     params.append("showAcctsWOIncdts");
+
+  if (! _privileges->check("ViewAllCRMAccounts") && ! _privileges->check("MaintainAllCRMAccounts"))
+    params.append("owner_username", omfgThis->username());
 
   _createdDate->appendValue(params);
 

@@ -59,6 +59,7 @@ private:
     int _prospectid;
     int _NumberGen;
     QString _cachedNumber;
+    QString _crmowner;
 };
 
 #endif // PROSPECT_H

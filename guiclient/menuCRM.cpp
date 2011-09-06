@@ -81,45 +81,45 @@ menuCRM::menuCRM(GUIClient *Pparent) :
   actionProperties acts[] = {
     // CRM | Incident
     { "menu",			tr("&Incident"),	(char*)incidentMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
-    { "crm.incident",		tr("&New..."),		SLOT(sIncident()),		incidentMenu,	"AddIncidents MaintainIncidents", NULL, NULL, true , NULL },
-    { "crm.incidentList",	tr("&List..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	"ViewIncidents MaintainIncidents", QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident List") },
+    { "crm.incident",		tr("&New..."),		SLOT(sIncident()),		incidentMenu,	"MaintainPersonalIncidents", NULL, NULL, true , NULL },
+    { "crm.incidentList",	tr("&List..."),	SLOT(sIncidentWorkbench()),	incidentMenu,	"ViewPersonalIncidents MaintainPersonalIncidents", QPixmap(":/images/incidents.png"), toolBar, true , tr("Incident List") },
 
     // CRM / To Do
     { "menu",			tr("&To-Do"),	(char*)todoMenu,	crmMenu,	"true", NULL, NULL, true	, NULL },
-    { "crm.todoItem",		tr("&New..."),	SLOT(sTodoItem()),	todoMenu,	"MaintainPersonalTodoList", NULL, NULL, true	, NULL },
-    { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	"MaintainPersonalTodoList ViewPersonalTodoList", QPixmap(":/images/toDoList.png"), toolBar, true	, tr("To-Do List") },
-    { "crm.todoListCalendar",		tr("&Calendar List..."),		SLOT(sTodoListCalendar()),	todoMenu,	"MaintainPersonalTodoList ViewPersonalTodoList", NULL, NULL, true, NULL},
+    { "crm.todoItem",		tr("&New..."),	SLOT(sTodoItem()),	todoMenu,	"MaintainPersonalToDoItems", NULL, NULL, true	, NULL },
+    { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	"MaintainPersonalToDoItems ViewPersonalToDoItems", QPixmap(":/images/toDoList.png"), toolBar, true	, tr("To-Do List") },
+    { "crm.todoListCalendar",		tr("&Calendar List..."),		SLOT(sTodoListCalendar()),	todoMenu,	"MaintainPersonalToDoItems ViewPersonalToDoItems", NULL, NULL, true, NULL},
 
     //  Project
     { "menu", tr("Pro&ject"), (char*)projectsMenu, crmMenu, "true", NULL, NULL, true	, NULL },
-    { "pm.newProject", tr("&New..."), SLOT(sNewProject()), projectsMenu, "MaintainProjects", NULL, NULL, true , NULL },
-    { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, "ViewProjects", QPixmap(":/images/projects.png"), toolBar, true , tr("List Projects") },
+    { "pm.newProject", tr("&New..."), SLOT(sNewProject()), projectsMenu, "MaintainPersonalProjects", NULL, NULL, true , NULL },
+    { "pm.projects", tr("&List..."), SLOT(sProjects()), projectsMenu, "ViewPersonalProjects MaintainPersonalProjects", QPixmap(":/images/projects.png"), toolBar, true , tr("List Projects") },
     
     // Opportunity
     { "menu",		tr("&Opportunity"),	(char*)opportunityMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
-    { "crm.newOpportunity", tr("&New..."), SLOT(sNewOpportunity()), opportunityMenu, "MaintainOpportunities", NULL, NULL, true , NULL },
-    { "crm.listOpportunity", tr("&List..."), SLOT(sOpportunities()), opportunityMenu, "MaintainOpportunities ViewOpportunities", NULL, NULL, true , NULL },
+    { "crm.newOpportunity", tr("&New..."), SLOT(sNewOpportunity()), opportunityMenu, "MaintainPersonalOpportunities", NULL, NULL, true , NULL },
+    { "crm.listOpportunity", tr("&List..."), SLOT(sOpportunities()), opportunityMenu, "MaintainPersonalOpportunities ViewPersonalOpportunities", NULL, NULL, true , NULL },
 
     { "separator",		NULL,				NULL,			crmMenu,	"true", NULL, NULL, true	, NULL },
 
     // Reports
     { "menu",				tr("&Reports"),		(char*)reportsMenu,			crmMenu,	"true", NULL, NULL, true	, NULL },
 
-    { "pm.dspOrderActivityByProject", tr("Order &Activity by Project..."), SLOT(sDspOrderActivityByProject()), reportsMenu, "ViewProjects", NULL, NULL, true , NULL },
+    { "pm.dspOrderActivityByProject", tr("Order &Activity by Project..."), SLOT(sDspOrderActivityByProject()), reportsMenu, "ViewAllProjects ViewPersonalProjects", NULL, NULL, true , NULL },
     { "separator",		NULL,				NULL,			reportsMenu,	"true", NULL, NULL, true	, NULL },
-    { "crm.dspIncidentsByCRMAccount",		tr("&Incidents by CRM Account..."),		SLOT(sDspIncidentsByCRMAccount()),		reportsMenu,	"ViewCRMAccounts+ViewIncidents+ViewOtherTodoLists", NULL, NULL, true	, NULL },
-    { "crm.dspTodoByUserAndIncident",		tr("&To-Do List Items by User and Incident..."),		SLOT(sDspTodoByUserAndIncident()),		reportsMenu,	"MaintainOtherTodoLists ViewOtherTodoLists", NULL, NULL, true	, NULL },
+    { "crm.dspIncidentsByCRMAccount",		tr("&Incidents by CRM Account..."),		SLOT(sDspIncidentsByCRMAccount()),		reportsMenu,	"ViewAllCRMAccounts+ViewAllIncidents+ViewAllToDoItems ViewPersonalCRMAccounts+ViewPersonalIncidents+ViewPersonalToDoItems", NULL, NULL, true	, NULL },
+    { "crm.dspTodoByUserAndIncident",		tr("&To-Do List Items by User and Incident..."),		SLOT(sDspTodoByUserAndIncident()),		reportsMenu,	"MaintainAllToDoItems ViewAllToDoItems MaintainPersonalToDoItems ViewPersonalToDoItems", NULL, NULL, true	, NULL },
     { "separator",		NULL,				NULL,			crmMenu,	"true", NULL, NULL, true	, NULL },
     
     // CRM | Account
     { "menu",		tr("&Account"),		(char*)accountsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
-    { "crm.crmaccount",		tr("&New..."),	SLOT(sCRMAccount()),	accountsMenu,	"MaintainCRMAccounts", NULL, NULL, true , NULL },
-    { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	"MaintainCRMAccounts ViewCRMAccounts", QPixmap(":/images/accounts.png"), toolBar, true , tr("List Accounts") },
+    { "crm.crmaccount",		tr("&New..."),	SLOT(sCRMAccount()),	accountsMenu,	"MaintainPersonalCRMAccounts", NULL, NULL, true , NULL },
+    { "crm.crmaccounts",	tr("&List..."),	SLOT(sCRMAccounts()),	accountsMenu,	"MaintainPersonalCRMAccounts ViewPersonalCRMAccounts", QPixmap(":/images/accounts.png"), toolBar, true , tr("List Accounts") },
       
     // CRM | Contact
     { "menu",		tr("&Contact"),		(char*)contactsMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
-    { "crm.contact",	tr("&New..."),		SLOT(sContact()),	contactsMenu,	"MaintainContacts", NULL, NULL, true	, NULL },
-    { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	"MaintainContacts ViewContacts", QPixmap(":/images/contacts.png"), toolBar, true , tr("List Contacts") },
+    { "crm.contact",	tr("&New..."),		SLOT(sContact()),	contactsMenu,	"MaintainPersonalContacts", NULL, NULL, true	, NULL },
+    { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	"MaintainPersonalContacts ViewPersonalContacts", QPixmap(":/images/contacts.png"), toolBar, true , tr("List Contacts") },
     
     // CRM | Address
     { "menu",		tr("A&ddress"),		(char*)addressMenu,	crmMenu,		"true", NULL, NULL, true	, NULL },
@@ -131,7 +131,7 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     //Utilities
     { "menu",			tr("&Utilities"),		(char*)utilitiesMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
     { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	"EditOwner", NULL, NULL, true, NULL },
-    { "crm.createRecurringItems",tr("Create &Recurring Items..."), SLOT(sCreateRecurringItems()),utilitiesMenu, "MaintainIncidents MaintainProjects MaintainPersonalTodoList MaintainOthertodoLists", NULL, NULL, true, NULL },
+    { "crm.createRecurringItems",tr("Create &Recurring Items..."), SLOT(sCreateRecurringItems()),utilitiesMenu, "MaintainAllIncidents MaintainAllProjects MaintainPersonalToDoItems MaintainAllToDoItems", NULL, NULL, true, NULL },
     { "crm.contactMerge",       tr("&Merge Contacts..."), SLOT(sContactMerge()),utilitiesMenu, "MergeContacts", NULL, NULL, true, NULL },
 
     { "crm.setup",	tr("&Setup..."),	SLOT(sSetup()),	crmMenu,	NULL,	NULL,	NULL,	true, NULL}

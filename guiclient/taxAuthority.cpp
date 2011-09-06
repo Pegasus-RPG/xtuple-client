@@ -277,7 +277,7 @@ bool taxAuthority::sPopulate()
                  "       COALESCE(taxauth_curr_id,-1) AS curr_id,"
                  "       COALESCE(taxauth_addr_id,-1) AS addr_id,"
                  "       taxauth_county, taxauth_accnt_id,"
-                 "       taxauth_extref, crmacct_id"
+                 "       taxauth_extref, crmacct_id, crmacct_owner_username"
                  "  FROM taxauth"
                  "  JOIN crmacct ON (crmacct_taxauth_id=taxauth_id)"
                  " WHERE (taxauth_id=:id);");
@@ -289,7 +289,7 @@ bool taxAuthority::sPopulate()
                  "       crmacct_name   AS taxauth_name,"
                  "       -1 AS curr_id, -1 AS addr_id,"
                  "       NULL AS taxauth_county, NULL AS taxauth_accnt_id,"
-                 "       NULL AS taxauth_extref, crmacct_id"
+                 "       NULL AS taxauth_extref, crmacct_id, crmacct_owner_username"
                  "  FROM crmacct"
                  " WHERE (crmacct_id=:id);");
     getq.bindValue(":id", _crmacctid);
@@ -304,6 +304,7 @@ bool taxAuthority::sPopulate()
     _currency->setId(getq.value("curr_id").toInt());
     _address->setId(getq.value("addr_id").toInt());
     _crmacctid = getq.value("crmacct_id").toInt();
+    _crmowner = getq.value("crmacct_owner_username").toString();
     _county->setText(getq.value("taxauth_county").toString());
     _glaccnt->setId(getq.value("taxauth_accnt_id").toInt());
   }
@@ -314,8 +315,10 @@ bool taxAuthority::sPopulate()
   _address->setSearchAcct(_crmacctid);
 
   _crmacct->setEnabled(_crmacctid > 0 &&
-                       (_privileges->check("MaintainCRMAccounts") ||
-                        _privileges->check("ViewCRMAccounts")));
+                       (_privileges->check("MaintainAllCRMAccounts") ||
+                        _privileges->check("ViewAllCRMAccounts") ||
+                        (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
+                        (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
 
   return true;
 }
@@ -343,11 +346,22 @@ void taxAuthority::sCrmAccount()
 {
   ParameterList params;
   params.append("crmacct_id", _crmacctid);
-  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
-      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
-                              ! _privileges->check("MaintainCRMAccounts")))
+  if ((cView == _mode && _privileges->check("ViewAllCRMAccounts")) ||
+      (cView == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner) ||
+      (cEdit == _mode && _privileges->check("ViewAllCRMAccounts")
+                      && ! _privileges->check("MaintainAllCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && ! _privileges->check("MaintainPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner))
     params.append("mode", "view");
-  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+  else if ((cEdit == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cEdit == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                           && omfgThis->username() == _crmowner))
+    params.append("mode", "edit");
+  else if ((cNew == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cNew == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                          && omfgThis->username() == _crmowner))
     params.append("mode", "edit");
   else
   {

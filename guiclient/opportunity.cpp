@@ -67,7 +67,8 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   
   _todoList->addColumn(tr("Active"),   _statusColumn, Qt::AlignRight, true, "todoitem_active");
   _todoList->addColumn(tr("Priority"),   _userColumn, Qt::AlignRight, true, "incdtpriority_name");
-  _todoList->addColumn(tr("User"),       _userColumn, Qt::AlignLeft,  true, "todoitem_username" );
+  _todoList->addColumn(tr("Owner"),      _userColumn, Qt::AlignLeft, false, "todoitem_owner_username");
+  _todoList->addColumn(tr("Assigned"),   _userColumn, Qt::AlignLeft,  true, "todoitem_username" );
   _todoList->addColumn(tr("Name"),               100, Qt::AlignLeft,  true, "todoitem_name" );
   _todoList->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "todoitem_description" );
   _todoList->addColumn(tr("Status"),   _statusColumn, Qt::AlignLeft,  true, "todoitem_status" );
@@ -509,7 +510,7 @@ void opportunity::sDeleteTodoItem()
 void opportunity::sFillTodoList()
 {
   q.prepare("SELECT todoitem_id, incdtpriority_name, incdtpriority_order, "
-	    "       todoitem_username, todoitem_name, "
+            "       todoitem_owner_username, todoitem_username, todoitem_name, "
 	    "       firstLine(todoitem_description) AS todoitem_description, "
             "       todoitem_status, todoitem_due_date, todoitem_active, "
             "       CASE "
@@ -538,16 +539,20 @@ void opportunity::sPopulateTodoMenu(QMenu *pMenu)
   QAction *menuItem;
 
   bool newPriv = (cNew == _mode || cEdit == _mode) &&
-      (_privileges->check("MaintainPersonalTodoList") ||
-       _privileges->check("MaintainOtherTodoLists") );
+      (_privileges->check("MaintainPersonalToDoItems") ||
+       _privileges->check("MaintainAllToDoItems") );
 
   bool editPriv = (cNew == _mode || cEdit == _mode) && (
-      (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
-      (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainOtherTodoLists")) );
+      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
+      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
+      (_privileges->check("MaintainAllToDoItems")) );
 
   bool viewPriv =
-      (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
-      (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
+      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("ViewPersonalToDoItems")) ||
+      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("ViewPersonalToDoItems")) ||
+      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
+      (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
+      (_privileges->check("ViewAllToDoItems")) || (_privileges->check("MaintainAllToDoItems"));
 
   menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNewTodoItem()));
   menuItem->setEnabled(newPriv);
@@ -565,8 +570,8 @@ void opportunity::sPopulateTodoMenu(QMenu *pMenu)
 void opportunity::sHandleTodoPrivs()
 {
   bool newPriv = (cNew == _mode || cEdit == _mode) &&
-      (_privileges->check("MaintainPersonalTodoList") ||
-       _privileges->check("MaintainOtherTodoLists") );
+      (_privileges->check("MaintainPersonalToDoItems") ||
+       _privileges->check("MaintainAllToDoItems") );
 
   bool editPriv = false;
   bool viewPriv = false;
@@ -574,12 +579,16 @@ void opportunity::sHandleTodoPrivs()
   if(_todoList->currentItem())
   {
     editPriv = (cNew == _mode || cEdit == _mode) && (
-      (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
-      (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("MaintainOtherTodoLists")) );
+        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (_privileges->check("MaintainAllToDoItems")) );
 
     viewPriv =
-      (omfgThis->username() == _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
-      (omfgThis->username() != _todoList->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
+        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_username") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() == _todoList->currentItem()->rawValue("todoitem_owner_username") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (_privileges->check("ViewAllToDoItems")) || (_privileges->check("MaintainAllToDoItems"));
   }
 
   _newTodoItem->setEnabled(newPriv);
@@ -1037,11 +1046,11 @@ void opportunity::sPopulateSalesMenu(QMenu *pMenu)
   if(_salesList->currentItem())
   {
     editPriv = (cNew == _mode || cEdit == _mode) && (
-      (0 == _salesList->currentItem()->altId() && _privileges->check("MaintainQuotes")) ||
+      (0 == _salesList->currentItem()->altId() && _privileges->check("MaintainAllQuotes")) ||
       (1 == _salesList->currentItem()->altId() && _privileges->check("MaintainSalesOrders")) );
 
     viewPriv = (cNew == _mode || cEdit == _mode) && (
-      (0 == _salesList->currentItem()->altId() && _privileges->check("ViewQuotes")) ||
+      (0 == _salesList->currentItem()->altId() && _privileges->check("ViewAllQuotes")) ||
       (1 == _salesList->currentItem()->altId() && _privileges->check("ViewSalesOrders")) );
 
     convertPriv = (cNew == _mode || cEdit == _mode) &&
@@ -1066,7 +1075,7 @@ void opportunity::sHandleSalesPrivs()
 {
   bool isCustomer = (_custid > -1);
   
-  bool newQuotePriv = ((cNew == _mode || cEdit == _mode) && _privileges->check("MaintainQuotes"));
+  bool newQuotePriv = ((cNew == _mode || cEdit == _mode) && _privileges->check("MaintainAllQuotes"));
   bool newSalesOrderPriv = ((cNew == _mode || cEdit == _mode) && isCustomer && _privileges->check("MaintainSalesOrders"));
 
   bool editPriv = false;
@@ -1091,11 +1100,11 @@ void opportunity::sHandleSalesPrivs()
   if(_salesList->currentItem())
   {
     editPriv = (cNew == _mode || cEdit == _mode) && (
-      (0 == _salesList->currentItem()->altId() && _privileges->check("MaintainQuotes")) ||
+      (0 == _salesList->currentItem()->altId() && _privileges->check("MaintainAllQuotes")) ||
       (1 == _salesList->currentItem()->altId() && _privileges->check("MaintainSalesOrders")) );
 
     viewPriv = (cNew == _mode || cEdit == _mode) && (
-      (0 == _salesList->currentItem()->altId() && _privileges->check("ViewQuotes")) ||
+      (0 == _salesList->currentItem()->altId() && _privileges->check("ViewAllQuotes")) ||
       (1 == _salesList->currentItem()->altId() && _privileges->check("ViewSalesOrders")) );
 
     convertPriv = (cNew == _mode || cEdit == _mode) &&

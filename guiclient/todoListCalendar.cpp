@@ -40,7 +40,7 @@ todoListCalendar::todoListCalendar(QWidget* parent, const char * name, Qt::Windo
   _gview->setScene(scene);
   _gview->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
 
-  _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
+  _usr->setEnabled(_privileges->check("MaintainAllToDoItems") || _privileges->check("MaintainPersonalToDoItems"));
   _usr->setType(ParameterGroup::User);
   q.prepare("SELECT getUsrId(NULL) AS usr_id;");
   q.exec();
@@ -66,7 +66,8 @@ todoListCalendar::todoListCalendar(QWidget* parent, const char * name, Qt::Windo
   _list->addColumn(tr("Type"),    _statusColumn,  Qt::AlignCenter, true, "type");
   _list->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  true, "seq");
   _list->addColumn(tr("Priority"),  _userColumn,  Qt::AlignLeft,   true, "priority");
-  _list->addColumn(tr("User"),      _userColumn,  Qt::AlignLeft,   true, "todoitem_username");
+  _list->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,  false, "owner");
+  _list->addColumn(tr("Assigned"),  _userColumn,  Qt::AlignLeft,   true, "assigned");
   _list->addColumn(tr("Name"),              100,  Qt::AlignLeft,   true, "name");
   _list->addColumn(tr("Description"),        -1,  Qt::AlignLeft,   true, "descrip");
   _list->addColumn(tr("Status"),  _statusColumn,  Qt::AlignLeft,   true, "status");
@@ -116,12 +117,16 @@ void todoListCalendar::handlePrivs()
   else if (_list->currentItem()->text(0) == "T")
   {
     editTodoPriv =
-      (omfgThis->username() == _list->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
-      (_privileges->check("MaintainOtherTodoLists"));
+        (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() != _list->currentItem()->rawValue("owner") && _privileges->check("MaintainAllToDoItems")) ||
+        (omfgThis->username() == _list->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() != _list->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllToDoItems"));
 
     viewTodoPriv =
-      (omfgThis->username() == _list->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
-      (_privileges->check("ViewOtherTodoLists"));
+        (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() != _list->currentItem()->rawValue("owner") && _privileges->check("ViewAllToDoItems")) ||
+        (omfgThis->username() == _list->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() != _list->currentItem()->rawValue("assigned") && _privileges->check("ViewAllToDoItems"));
   }
   else if (_list->currentItem()->text(0) == "I")
   {
@@ -129,8 +134,8 @@ void todoListCalendar::handlePrivs()
     viewTodoPriv = false;
   }
 
-  _usr->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
-                   _privileges->check("ViewOtherTodoLists"));
+  _usr->setEnabled(_privileges->check("MaintainAllToDoItems") ||
+                   _privileges->check("ViewAllToDoItems"));
 
   if (editTodoPriv)
   {
@@ -153,12 +158,16 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
   if (_list->currentItem()->text(0) == "T")
   {
     bool editPriv =
-        (omfgThis->username() == _list->currentItem()->text("todoitem_username") && _privileges->check("MaintainPersonalTodoList")) ||
-        (omfgThis->username() != _list->currentItem()->text("todoitem_username") && _privileges->check("MaintainOtherTodoLists"));
+        (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() != _list->currentItem()->rawValue("owner") && _privileges->check("MaintainAllToDoItems")) ||
+        (omfgThis->username() == _list->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() != _list->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllToDoItems"));
 
     bool viewPriv =
-        (omfgThis->username() == _list->currentItem()->text("todoitem_username") && _privileges->check("ViewPersonalTodoList")) ||
-        (omfgThis->username() != _list->currentItem()->text("todoitem_username") && _privileges->check("ViewOtherTodoLists"));
+        (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() != _list->currentItem()->rawValue("owner") && _privileges->check("ViewAllToDoItems")) ||
+        (omfgThis->username() == _list->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() != _list->currentItem()->rawValue("assigned") && _privileges->check("ViewAllToDoItems"));
 
     menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNew()));
     menuItem->setEnabled(editPriv);
@@ -177,10 +186,10 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
   if (! _list->currentItem()->text(8).isEmpty())
   {
     menuItem = pMenu->addAction(tr("Edit Incident"), this, SLOT(sEditIncident()));
-    menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(_privileges->check("MaintainAllIncidents"));
     menuItem = pMenu->addAction(tr("View Incident"), this, SLOT(sViewIncident()));
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
-                                    _privileges->check("MaintainIncidents"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewAllIncidents") ||
+                                    _privileges->check("MaintainAllIncidents"));
   }
 */
 
@@ -322,7 +331,8 @@ void todoListCalendar::sFillList(const QDate & date)
                 "       todoitem_name AS name, "
                 "       firstLine(todoitem_description) AS descrip, "
                 "       todoitem_status AS status, todoitem_due_date AS due, "
-                "       todoitem_username, incdt_number AS incdt, cust_number AS cust, "
+                "       todoitem_username AS assigned, todoitem_owner_username AS owner, "
+                "       incdt_number AS incdt, cust_number AS cust, "
                 "       CASE WHEN (todoitem_status != 'C'AND "
                 "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
                 "            WHEN (todoitem_status != 'C'AND "

@@ -713,7 +713,7 @@ void crmaccount::sCompetitor()
 void crmaccount::sCustomer()
 {
   if ((cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainCRMAccounts"))
+      _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
@@ -723,7 +723,7 @@ void crmaccount::sCustomer()
 
   ParameterList params;
   if (_prospectId > 0 && (cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainProspectMasters") &&
+      _privileges->check("MaintainAllProspects") &&
       _privileges->check("MaintainCustomerMasters"))
   {
     int quotecount = 0;
@@ -803,7 +803,7 @@ void crmaccount::sPartner()
 void crmaccount::sProspect()
 {
   if ((cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainCRMAccounts"))
+      _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
@@ -813,7 +813,7 @@ void crmaccount::sProspect()
 
   ParameterList params;
   if (_custId > 0 && (cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainProspectMasters") &&
+      _privileges->check("MaintainAllProspects") &&
       _privileges->check("MaintainCustomerMasters"))
   {
     if (QMessageBox::question(this, tr("Convert"),
@@ -844,7 +844,7 @@ void crmaccount::sProspect()
     params.append("mode",       "edit");
   }
   else if (_prospectId <= 0 && (cNew == _mode || cEdit == _mode) &&
-           _privileges->check("MaintainProspectMasters"))
+           _privileges->check("MaintainAllProspects"))
   {
     params.append("crmacct_id", _crmacctId);
     params.append("mode",       "new");
@@ -852,7 +852,7 @@ void crmaccount::sProspect()
   else if (_prospectId > 0)
   {
     params.append("prospect_id", _prospectId);
-    params.append("mode",        (_privileges->check("MaintainProspectMasters") &&
+    params.append("mode",        (_privileges->check("MaintainAllProspects") &&
                                   (cNew == _mode || cEdit == _mode)) ?
                                   "edit" : "view");
   }
@@ -865,7 +865,7 @@ void crmaccount::sProspect()
 void crmaccount::sTaxAuth()
 {
   if ((cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainCRMAccounts"))
+      _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
@@ -896,7 +896,7 @@ void crmaccount::sTaxAuth()
 void crmaccount::sEditVendor()
 {
   if ((cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainCRMAccounts"))
+      _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
@@ -927,7 +927,7 @@ void crmaccount::sEditVendor()
 void crmaccount::sViewVendor()
 {
   if ((cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainCRMAccounts"))
+      _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
@@ -1181,10 +1181,10 @@ void crmaccount::sHandleChildButtons()
 
   _prospect->setChecked(_prospectId > 0);
   _prospect->setEnabled(canEdit && !_modal &&
-                        _privileges->check("MaintainProspectMasters"));
+                        _privileges->check("MaintainAllProspects"));
   _prospectButton->setEnabled(_prospectId > 0 &&
-                              (_privileges->check("MaintainProspectMasters") ||
-                               _privileges->check("ViewProspectMasters")));
+                              (_privileges->check("MaintainAllProspects") ||
+                               _privileges->check("ViewAllProspects")));
 
   _salesrep->setChecked(_salesrepId > 0);
   _salesrep->setEnabled(canEdit && !_modal &&
@@ -1244,7 +1244,7 @@ void crmaccount::sHandleCntctDetach(int cntctId)
 void crmaccount::sEmployee()
 {
   if ((cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainCRMAccounts"))
+      _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
@@ -1275,7 +1275,7 @@ void crmaccount::sEmployee()
 void crmaccount::sSalesRep()
 {
   if ((cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainCRMAccounts"))
+      _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),
@@ -1306,7 +1306,7 @@ void crmaccount::sSalesRep()
 void crmaccount::sUser()
 {
   if ((cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainCRMAccounts"))
+      _privileges->check("MaintainAllCRMAccounts"))
   {
     QSqlError err = saveNoErrorCheck();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving CRM Account"),

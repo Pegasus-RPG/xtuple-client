@@ -53,6 +53,7 @@ private:
     QString _cUsername;
     bool _authCache;
     int  _crmacctid;
+    QString _crmowner;
     bool _inTransaction;
     int  _mode;
 

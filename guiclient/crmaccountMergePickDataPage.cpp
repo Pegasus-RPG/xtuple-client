@@ -321,14 +321,14 @@ void CrmaccountMergePickDataPage::sPopulateMenu(QMenu *pMenu, XTreeWidgetItem *p
 
   QAction *menuItem;
   menuItem = pMenu->addAction(tr("Edit CRM Account"), this, SLOT(sEdit()));
-  menuItem->setEnabled(_privileges->check("MaintainCRMAccounts"));
+  menuItem->setEnabled(_privileges->check("MaintainAllCRMAccounts"));
 
   menuItem = pMenu->addAction(tr("View CRM Account"), this, SLOT(sView()));
-  menuItem->setEnabled(_privileges->check("ViewCRMAccounts"));
+  menuItem->setEnabled(_privileges->check("ViewAllCRMAccounts"));
 
   menuItem = pMenu->addAction(tr("Delete CRM Account"), this, SLOT(sDelete()));
   menuItem->setEnabled(pItem->id() != _data->_destid &&
-                       _privileges->check("MaintainCRMAccounts"));
+                       _privileges->check("MaintainAllCRMAccounts"));
   qDebug("_sources->id(): %d, _data->_destid: %d",
          _sources->id(), _data->_destid);
 }

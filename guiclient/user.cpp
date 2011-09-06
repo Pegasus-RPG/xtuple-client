@@ -567,7 +567,7 @@ bool user::sPopulate()
   {
     usrq.prepare("SELECT *, userCanCreateUsers(usr_username) AS createusers,"
                  "       userCanCreateUsers(getEffectiveXtUser()) AS enablecreateusers,"
-                 "       crmacct_id, crmacct_emp_id"
+                 "       crmacct_id, crmacct_emp_id, crmacct_owner_username"
                  "  FROM usr"
                  "  LEFT OUTER JOIN crmacct ON (usr_username=crmacct_usr_username) "
                  "WHERE (usr_username=:usr_username);" );
@@ -585,7 +585,7 @@ bool user::sPopulate()
                  "       NULL  AS usr_window,  cntct_email AS usr_email,"
                  "       FALSE AS createusers,"
                  "       userCanCreateUsers(getEffectiveXtUser()) AS enablecreateusers,"
-                 "       crmacct_id, crmacct_emp_id"
+                 "       crmacct_id, crmacct_emp_id, crmacct_owner_username"
                  "  FROM crmacct"
                  "  LEFT OUTER JOIN cntct ON (crmacct_cntct_id_1=cntct_id)"
                  " WHERE (crmacct_id=:id);");
@@ -609,6 +609,7 @@ bool user::sPopulate()
     _createUsers->setEnabled(usrq.value("enablecreateusers").toBool());
     _employee->setId(usrq.value("crmacct_emp_id").toInt());
     _crmacctid = usrq.value("crmacct_id").toInt();
+    _crmowner = usrq.value("crmacct_owner_username").toString();
 
     _passwd->setText("        ");
     _verify->setText("        ");
@@ -675,8 +676,10 @@ bool user::sPopulate()
     populateSite();
 
   _crmacct->setEnabled(_crmacctid > 0 &&
-                       (_privileges->check("MaintainCRMAccounts") ||
-                        _privileges->check("ViewCRMAccounts")));
+                       (_privileges->check("MaintainAllCRMAccounts") ||
+                        _privileges->check("ViewAllCRMAccounts") ||
+                        (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
+                        (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
 
 
   return true;
@@ -801,11 +804,22 @@ void user::sCrmAccount()
 {
   ParameterList params;
   params.append("crmacct_id", _crmacctid);
-  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
-      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
-                              ! _privileges->check("MaintainCRMAccounts")))
+  if ((cView == _mode && _privileges->check("ViewAllCRMAccounts")) ||
+      (cView == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner) ||
+      (cEdit == _mode && _privileges->check("ViewAllCRMAccounts")
+                      && ! _privileges->check("MaintainAllCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && ! _privileges->check("MaintainPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner))
     params.append("mode", "view");
-  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+  else if ((cEdit == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cEdit == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                           && omfgThis->username() == _crmowner))
+    params.append("mode", "edit");
+  else if ((cNew == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cNew == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                          && omfgThis->username() == _crmowner))
     params.append("mode", "edit");
   else
   {

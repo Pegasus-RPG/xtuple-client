@@ -26,6 +26,11 @@ dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char*,
   setMetaSQLOptions("todoByUserAndIncident", "detail");
 
   _usr->setType(ParameterGroup::User);
+  if (! _privileges->check("ViewAllToDoItems") && ! _privileges->check("MaintainAllToDoItems"))
+  {
+    _usr->setSelected(omfgThis->username());
+    _usr->setEnabled(false);
+  }
 
   _dueDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dueDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
@@ -55,20 +60,27 @@ void dspTodoByUserAndIncident::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int
   QAction *menuItem;
 
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEditTodoItem()));
-  menuItem->setEnabled(_privileges->check("MaintainOtherTodoLists"));
+  menuItem->setEnabled(_privileges->check("MaintainAllToDoItems") ||
+                       _privileges->check("MaintainPersonalToDoItems"));
 
   menuItem = pMenu->addAction(tr("View..."), this, SLOT(sViewTodoItem()));
-  menuItem->setEnabled(_privileges->check("ViewOtherTodoLists"));
+  menuItem->setEnabled(_privileges->check("ViewAllToDoItems") ||
+                       _privileges->check("MaintainAllToDoItems") ||
+                       _privileges->check("ViewPersonalToDoItems") ||
+                       _privileges->check("MaintainPersonalToDoItems"));
 
   if (list()->altId() > 0)
   {
     pMenu->addSeparator();
     menuItem = pMenu->addAction(tr("Edit Incident"), this, SLOT(sEditIncident()));
-    menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(_privileges->check("MaintainAllIncidents") ||
+                         _privileges->check("MaintainPersonalIncidents"));
 
     menuItem = pMenu->addAction(tr("View Incident"), this, SLOT(sViewIncident()));
-    menuItem->setEnabled(_privileges->check("ViewIncidents") ||
-                         _privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(_privileges->check("ViewAllIncidents") ||
+                         _privileges->check("MaintainAllIncidents") ||
+                         _privileges->check("ViewPersonalIncidents") ||
+                         _privileges->check("MaintainPersonalIncidents"));
   }
 }
 
@@ -83,6 +95,8 @@ bool dspTodoByUserAndIncident::setParams(ParameterList& params)
     return false;
   }
 
+  if (! _privileges->check("ViewAllToDoItems") && ! _privileges->check("MaintainAllToDoItems"))
+    params.append("owner_username", omfgThis->username());
   _usr->appendValue(params);
   if (_selectedIncident->isChecked())
     params.append("incdt_id", _incident->id());

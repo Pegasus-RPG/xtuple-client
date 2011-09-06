@@ -73,8 +73,8 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       }
 
       _name->setFocus();
-      _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") &&
-			  _privileges->check("ReassignTodoListItem"));
+      _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems") &&
+                          _privileges->check("ReassignToDoItems"));
     }
     else if (param.toString() == "edit")
     {
@@ -85,8 +85,8 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _ophead->setEnabled(FALSE);
       _assigned->setEnabled(FALSE);
       _due->setEnabled(FALSE);
-      _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") &&
-			    _privileges->check("ReassignTodoListItem"));
+      _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems") &&
+                            _privileges->check("ReassignToDoItems"));
       _description->setEnabled(FALSE);
 
       _name->setFocus();
@@ -315,7 +315,7 @@ void todoItem::sPopulate()
 
     if (cEdit == _mode && 
 	(omfgThis->username()==q.value("todoitem_creator_username").toString() ||
-	 _privileges->check("OverrideTodoListItemData")))
+         _privileges->check("MaintainAllToDoItems")))
     {
       _name->setEnabled(true);
       _incident->setEnabled(true);

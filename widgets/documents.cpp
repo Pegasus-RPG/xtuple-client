@@ -104,23 +104,26 @@ Documents::Documents(QWidget *pParent) :
     newDocMenu->addAction(imgAct);
 
     QAction* incdtAct = new QAction(tr("Incident"), this);
-    incdtAct->setEnabled(_x_privileges->check("AddIncidents"));
+    incdtAct->setEnabled(_x_privileges->check("MaintainPersonalIncidents") ||
+                         _x_privileges->check("MaintainAllIncidents"));
     connect(incdtAct, SIGNAL(triggered()), this, SLOT(sNewIncdt()));
     newDocMenu->addAction(incdtAct);
 
     QAction* todoAct = new QAction(tr("To Do"), this);
-    todoAct->setEnabled(_x_privileges->check("MaintainPersonalTodoList") ||
-                        _x_privileges->check("MaintainOtherTodoLists"));
+    todoAct->setEnabled(_x_privileges->check("MaintainPersonalToDoItems") ||
+                        _x_privileges->check("MaintainAllToDoItems"));
     connect(todoAct, SIGNAL(triggered()), this, SLOT(sNewToDo()));
     newDocMenu->addAction(todoAct);
 
     QAction* oppAct = new QAction(tr("Opportunity"), this);
-    oppAct->setEnabled(_x_privileges->check("MaintainOpportunities"));
+    oppAct->setEnabled(_x_privileges->check("MaintainPersonalOpportunities") ||
+                       _x_privileges->check("MaintainAllOpportunities"));
     connect(oppAct, SIGNAL(triggered()), this, SLOT(sNewOpp()));
     newDocMenu->addAction(oppAct);
 
     QAction* projAct = new QAction(tr("Project"), this);
-    projAct->setEnabled(_x_privileges->check("MaintainProjects"));
+    projAct->setEnabled(_x_privileges->check("MaintainPersonalProjects") ||
+                        _x_privileges->check("MaintainAllProjects"));
     connect(projAct, SIGNAL(triggered()), this, SLOT(sNewProj()));
     newDocMenu->addAction(projAct);
 

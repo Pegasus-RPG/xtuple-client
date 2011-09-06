@@ -35,12 +35,19 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   setNewVisible(true);
   setQueryOnStartEnabled(true);
 
-  bool canEditUsers = _privileges->check("MaintainOtherTodoLists") || _privileges->check("ViewOtherTodoLists");
-  parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+  bool canEditUsers = _privileges->check("MaintainAllToDoItems") || _privileges->check("ViewAllToDoItems");
   if (canEditUsers)
-    parameterWidget()->append(tr("User Pattern"), "usr_pattern",    ParameterWidget::Text);
+  {
+    parameterWidget()->append(tr("Assigned User"), "assigned_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+    parameterWidget()->append(tr("Assigned Pattern"), "assigned_usr_pattern",    ParameterWidget::Text);
+    parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+    parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern",    ParameterWidget::Text);
+  }
   else
+  {
+    parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
     parameterWidget()->setEnabled(tr("User"), false);
+  }
   parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Start Date on or Before"), "startStartDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Start Date on or After"), "startEndDate", ParameterWidget::Date);
@@ -54,7 +61,10 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   connect(_todolist, SIGNAL(toggled(bool)), this,   SLOT(sFillList()));
   connect(_incidents, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_projects, SIGNAL(toggled(bool)), this,	SLOT(sFillList()));
-  connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+  if (_privileges->check("MaintainAllToDoItems") || _privileges->check("MaintainPersonalToDoItems"))
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+  else
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
 
   list()->addColumn(tr("Type"),      _userColumn,  Qt::AlignCenter, true, "type");
   list()->addColumn(tr("Priority"),  _userColumn,  Qt::AlignLeft,   true, "priority");
@@ -76,14 +86,17 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   QMenu * todoMenu = new QMenu;
   menuItem = todoMenu->addAction(tr("To-Do Item"),   this, SLOT(sNew()));
   menuItem->setShortcut(QKeySequence::New);
-  menuItem->setEnabled(_privileges->check("MaintainPersonalTodoList") ||
-                       _privileges->check("MaintainOtherTodoLists"));
+  menuItem->setEnabled(_privileges->check("MaintainPersonalToDoItems") ||
+                       _privileges->check("MaintainAllToDoItems"));
   menuItem = todoMenu->addAction(tr("Opportunity"), this, SLOT(sNewOpportunity()));
-  menuItem->setEnabled(_privileges->check("MaintainOpportunities"));
+  menuItem->setEnabled(_privileges->check("MaintainPersonalOpportunities") ||
+                       _privileges->check("MaintainAllOpportunities"));
   menuItem = todoMenu->addAction(tr("Incident"), this, SLOT(sNewIncdt()));
-  menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+  menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
+                       _privileges->check("MaintainAllIncidents"));
   menuItem = todoMenu->addAction(tr("Project"), this, SLOT(sNewProject()));
-  menuItem->setEnabled(_privileges->check("MaintainProjects"));
+  menuItem->setEnabled(_privileges->check("MaintainPersonalProjects") ||
+                       _privileges->check("MaintainAllProjects"));
   newBtn->setMenu(todoMenu);
 }
 
@@ -91,17 +104,23 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 
-  bool editPriv =
-      (omfgThis->username() == list()->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
-      (omfgThis->username() != list()->currentItem()->text(3) && _privileges->check("MaintainOtherTodoLists"));
-
-  bool viewPriv =
-      (omfgThis->username() == list()->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
-      (omfgThis->username() != list()->currentItem()->text(3) && _privileges->check("ViewOtherTodoLists"));
-
+  bool editPriv = false;
+  bool viewPriv = false;
 
   if (list()->currentItem()->altId() == 1)
   {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllToDoItems")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllToDoItems"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllToDoItems")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllToDoItems"));
+
     menuItem = pMenu->addAction(tr("Edit To-Do..."), this, SLOT(sEdit()));
     menuItem->setEnabled(editPriv);
 
@@ -118,42 +137,86 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
       (list()->currentItem()->altId() == 1 &&
        list()->currentItem()->rawValue("parent") == "INCDT"))
   {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalIncidents")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllIncidents")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalIncidents")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllIncidents"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalIncidents")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllIncidents")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalIncidents")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllIncidents"));
+
     menuItem = pMenu->addAction(tr("Edit Incident"), this, SLOT(sEditIncident()));
-    menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(editPriv);
     menuItem = pMenu->addAction(tr("View Incident"), this, SLOT(sViewIncident()));
-    menuItem->setEnabled(_privileges->check("ViewIncidents") ||
-                         _privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(viewPriv);
   }
   pMenu->addSeparator();
 
   if (list()->altId() == 3)
   {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllProjects"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllProjects"));
+
     menuItem = pMenu->addAction(tr("Edit Task"), this, SLOT(sEditTask()));
-    menuItem->setEnabled(_privileges->check("MaintainProjects"));
+    menuItem->setEnabled(editPriv);
     menuItem = pMenu->addAction(tr("View Task"), this, SLOT(sViewTask()));
-    menuItem->setEnabled(_privileges->check("ViewProjects") ||
-                         _privileges->check("MaintainProjects"));
+    menuItem->setEnabled(viewPriv);
     pMenu->addSeparator();
   }
 
   if (list()->altId() == 3 || list()->altId() == 4)
   {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllProjects"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllProjects"));
+
     menuItem = pMenu->addAction(tr("Edit Project"), this, SLOT(sEditProject()));
-    menuItem->setEnabled(_privileges->check("MaintainProjects"));
+    menuItem->setEnabled(editPriv);
     menuItem = pMenu->addAction(tr("View Project"), this, SLOT(sViewProject()));
-    menuItem->setEnabled(_privileges->check("ViewProjects") ||
-                         _privileges->check("MaintainProjects"));
+    menuItem->setEnabled(viewPriv);
   }
 
   if (list()->altId() == 5  ||
       (list()->currentItem()->altId() == 1 &&
        list()->currentItem()->rawValue("parent") == "OPP"))
   {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalOpportunities")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllOpportunities")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalOpportunities")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllOpportunities"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalOpportunities")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllOpportunities")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalOpportunities")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllOpportunities"));
+
     menuItem = pMenu->addAction(tr("Edit Opportunity"), this, SLOT(sEditOpportunity()));
-    menuItem->setEnabled(_privileges->check("MaintainOpportunities"));
+    menuItem->setEnabled(editPriv);
     menuItem = pMenu->addAction(tr("View Opportunity"), this, SLOT(sViewOpportunity()));
-    menuItem->setEnabled(_privileges->check("ViewOpportunities") ||
-                         _privileges->check("MaintainOpportunities"));
+    menuItem->setEnabled(viewPriv);
   }
 
   if (list()->currentItem()->rawValue("cust").toInt() > 0)

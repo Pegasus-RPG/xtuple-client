@@ -17,6 +17,7 @@
 
 #include <parameter.h>
 
+#include "parameterwidget.h"
 #include "project.h"
 
 projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
@@ -25,11 +26,12 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   setupUi(optionsWidget());
   setWindowTitle(tr("Projects"));
   setMetaSQLOptions("projects", "detail");
+  setParameterWidgetVisible(true);
   setNewVisible(true);
-  queryAction()->setVisible(false);
-  queryAction()->setEnabled(false);
+  setSearchVisible(true);
+  setQueryOnStartEnabled(true);
 
-  if (_privileges->check("MaintainProjects"))
+  if (_privileges->check("MaintainAllProjects") || _privileges->check("MaintainPersonalProjects"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
@@ -37,12 +39,32 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 
-  list()->addColumn(tr("Number"), _orderColumn, Qt::AlignLeft, true, "prj_number" );
-  list()->addColumn(tr("Name"), -1, Qt::AlignLeft, true, "prj_name"   );
-  list()->addColumn(tr("Status"), _itemColumn,  Qt::AlignCenter, true, "prj_status" );
+  list()->addColumn(tr("Number"),    _orderColumn, Qt::AlignLeft,   true, "prj_number" );
+  list()->addColumn(tr("Name"),      -1,           Qt::AlignLeft,   true, "prj_name"   );
+  list()->addColumn(tr("Status"),    _itemColumn,  Qt::AlignCenter, true, "prj_status" );
+  list()->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"prj_owner_username");
+  list()->addColumn(tr("Assigned"),  _userColumn,  Qt::AlignLeft,   true, "prj_username");
+  list()->addColumn(tr("Budget Hrs."),        -1,  Qt::AlignRight,  true, "budget_hrs");
+  list()->addColumn(tr("Actual Hrs."),        -1,  Qt::AlignRight,  true, "actual_hrs");
+  list()->addColumn(tr("Balance Hrs."),       -1,  Qt::AlignRight,  true, "balance_hrs");
 
   connect(omfgThis, SIGNAL(projectsUpdated(int)), this, SLOT(sFillList()));
   connect(_showComplete, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+
+  bool canEditUsers = _privileges->check("MaintainAllProjects") || _privileges->check("ViewAllProjects");
+  if (canEditUsers)
+  {
+    parameterWidget()->append(tr("Assigned User"), "assigned_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+    parameterWidget()->append(tr("Assigned Pattern"), "assigned_usr_pattern",    ParameterWidget::Text);
+    parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+    parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern",    ParameterWidget::Text);
+  }
+  else
+  {
+    parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+    parameterWidget()->setEnabled(tr("User"), false);
+  }
+  parameterWidget()->applyDefaultFilterSet();
 
   sFillList();
 }
@@ -127,13 +149,26 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 
-  pMenu->addAction("View...", this, SLOT(sView()));
+  bool editPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("MaintainPersonalProjects")) ||
+      (omfgThis->username() != list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("MaintainAllProjects")) ||
+      (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("MaintainPersonalProjects")) ||
+      (omfgThis->username() != list()->currentItem()->rawValue("prj_username") && _privileges->check("MaintainAllProjects"));
+
+  bool viewPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("ViewPersonalProjects")) ||
+      (omfgThis->username() != list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("ViewAllProjects")) ||
+      (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("ViewPersonalProjects")) ||
+      (omfgThis->username() != list()->currentItem()->rawValue("prj_username") && _privileges->check("ViewAllProjects"));
+
+  menuItem = pMenu->addAction("View...", this, SLOT(sView()));
+  menuItem->setEnabled(viewPriv);
 
   menuItem = pMenu->addAction("Edit...", this, SLOT(sEdit()));
-  menuItem->setEnabled(_privileges->check("MaintainProjects"));
+  menuItem->setEnabled(editPriv);
 
   menuItem = pMenu->addAction("Delete...", this, SLOT(sDelete()));
-  menuItem->setEnabled(_privileges->check("MaintainProjects"));
+  menuItem->setEnabled(editPriv);
 }
 
 bool projects::setParams(ParameterList &params)

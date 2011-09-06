@@ -42,7 +42,11 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewQuote,	SIGNAL(clicked()),	this,	SLOT(sViewQuote()));
   connect(omfgThis,	SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillQuotesList()));
 
-  if (_privileges->check("MaintainProspectMasters"))
+  if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
+  _owner->setUsername(omfgThis->username());
+  _owner->setType(UsernameLineEdit::UsersActive);
+
+  if (_privileges->check("MaintainAllQuotes") || _privileges->check("MaintainPersonalQuotes"))
     connect(_quotes, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
   else
     connect(_quotes, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));
@@ -140,6 +144,7 @@ enum SetResponse prospect::set(const ParameterList &pParams)
   _salesrep->setEnabled(canEdit);
   _site->setEnabled(canEdit);
   _taxzone->setEnabled(canEdit);
+  _owner->setEnabled(canEdit);
 
   return NoError;
 }
@@ -187,7 +192,8 @@ void prospect::sSave()
                "       prospect_taxzone_id=:prospect_taxzone_id,"
                "       prospect_salesrep_id=:prospect_salesrep_id,"
                "       prospect_warehous_id=:prospect_warehous_id,"
-               "       prospect_active=:prospect_active "
+               "       prospect_active=:prospect_active,"
+               "       prospect_owner_username=:prospect_owner "
                " WHERE (prospect_id=:prospect_id)"
                " RETURNING prospect_id;" );
     upsq.bindValue(":prospect_id",	_prospectid);
@@ -196,17 +202,20 @@ void prospect::sSave()
     upsq.prepare("INSERT INTO prospect "
                "( prospect_id,	      prospect_number,	    prospect_name,"
                "  prospect_cntct_id,  prospect_taxzone_id,  prospect_comments,"
-               "  prospect_salesrep_id, prospect_warehous_id, prospect_active) "
+               "  prospect_salesrep_id, prospect_warehous_id, prospect_active,"
+               "  prospect_owner_username )"
                " VALUES "
                "( DEFAULT,     	      :prospect_number,	    :prospect_name,"
                "  :prospect_cntct_id, :prospect_taxzone_id, :prospect_comments,"
-               "  :prospect_salesrep_id, :prospect_warehous_id, :prospect_active)"
+               "  :prospect_salesrep_id, :prospect_warehous_id, :prospect_active,"
+               "  :prospect_owner )"
                " RETURNING prospect_id;");
 
   upsq.bindValue(":prospect_number",	_number->text().trimmed());
   upsq.bindValue(":prospect_name",	_name->text().trimmed());
   upsq.bindValue(":prospect_comments",	_notes->toPlainText());
   upsq.bindValue(":prospect_active",	QVariant(_active->isChecked()));
+  upsq.bindValue(":prospect_owner",     _owner->username());
   if (_contact->isValid())
     upsq.bindValue(":prospect_cntct_id",    _contact->id());
   if (_taxzone->isValid())
@@ -369,7 +378,7 @@ bool prospect::sPopulate()
   XSqlQuery getq;
   if (_prospectid >= 0)
   {
-    getq.prepare("SELECT prospect.*, crmacct_id"
+    getq.prepare("SELECT prospect.*, crmacct_id, crmacct_owner_username"
                  "  FROM prospect, crmacct"
                  " WHERE ((prospect_id=:prospect_id)"
                  "   AND  (prospect_id=crmacct_prospect_id));" );
@@ -381,9 +390,10 @@ bool prospect::sPopulate()
                  "       crmacct_name   AS prospect_name,"
                  "       crmacct_number AS prospect_number,"
                  "       crmacct_cntct_id_1 AS prospect_cntct_id,"
+                 "       crmacct_owner_username AS prospect_owner_username,"
                  "       NULL AS prospect_comments, -1 AS prospect_taxzone_id,"
                  "      -1 AS prospect_salesrep_id, -1 AS prospect_warehous_id,"
-                 "      crmacct_id"
+                 "      crmacct_id, crmacct_owner_username"
                  "  FROM crmacct"
                  " WHERE (crmacct_id=:id);");
     getq.bindValue(":id", _crmacctid);
@@ -403,14 +413,18 @@ bool prospect::sPopulate()
     _site->setId(getq.value("prospect_warehous_id").toInt());
     _notes->setText(getq.value("prospect_comments").toString());
     _active->setChecked(getq.value("prospect_active").toBool());
+    _owner->setUsername(getq.value("prospect_owner_username").toString());
+    _crmowner = getq.value("crmacct_owner_username").toString();
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Prospect"),
                                 getq, __FILE__, __LINE__))
     return false;
 
   _crmacct->setEnabled(_crmacctid > 0 &&
-                       (_privileges->check("MaintainCRMAccounts") ||
-                        _privileges->check("ViewCRMAccounts")));
+                       (_privileges->check("MaintainAllCRMAccounts") ||
+                        _privileges->check("ViewAllCRMAccounts") ||
+                        (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
+                        (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
 
   sFillQuotesList();
   emit populated();
@@ -437,11 +451,22 @@ void prospect::sCrmAccount()
 {
   ParameterList params;
   params.append("crmacct_id", _crmacctid);
-  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
-      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
-                              ! _privileges->check("MaintainCRMAccounts")))
+  if ((cView == _mode && _privileges->check("ViewAllCRMAccounts")) ||
+      (cView == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner) ||
+      (cEdit == _mode && _privileges->check("ViewAllCRMAccounts")
+                      && ! _privileges->check("MaintainAllCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && ! _privileges->check("MaintainPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner))
     params.append("mode", "view");
-  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+  else if ((cEdit == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cEdit == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                           && omfgThis->username() == _crmowner))
+    params.append("mode", "edit");
+  else if ((cNew == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cNew == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                          && omfgThis->username() == _crmowner))
     params.append("mode", "edit");
   else
   {

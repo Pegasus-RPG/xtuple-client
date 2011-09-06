@@ -48,6 +48,7 @@ class employee : public XDialog, public Ui::employee
 
   private:
     int _crmacctid;
+    QString _crmowner;
     int _empid;
     int _mode;
     int _NumberGen;

@@ -658,7 +658,7 @@ bool vendor::sPopulate()
 
   MetaSQLQuery mql(
             "<? if exists('vend_id') ?>"
-            "SELECT vendinfo.*, crmacct_id, "
+            "SELECT vendinfo.*, crmacct_id, crmacct_owner_username, "
             "<? if exists('key') ?>"
             "       CASE WHEN LENGTH(vend_ach_routingnumber) > 0 THEN"
             "       formatbytea(decrypt(setbytea(vend_ach_routingnumber),"
@@ -694,7 +694,7 @@ bool vendor::sPopulate()
             "       NULL AS accntnum,         NULL AS vend_ach_use_vendinfo,"
             "       NULL AS vend_ach_indiv_number, NULL AS vend_ach_indiv_name,"
             "       NULL AS vend_ach_accnttype,"
-            "       crmacct_id"
+            "       crmacct_id, crmacct_owner_username"
             "  FROM crmacct"
             " WHERE crmacct_id=<? value('crmacct_id') ?>;"
             "<? endif ?>");
@@ -713,6 +713,7 @@ bool vendor::sPopulate()
     _cachedNumber = getq.value("vend_number").toString();
 
     _crmacctid = getq.value("crmacct_id").toInt();
+    _crmowner = getq.value("crmacct_owner_username").toString();
     _number->setText(getq.value("vend_number"));
     _accountNumber->setText(getq.value("vend_accntnum"));
     _vendtype->setId(getq.value("vend_vendtype_id").toInt());
@@ -786,8 +787,10 @@ bool vendor::sPopulate()
   }
 
   _crmacct->setEnabled(_crmacctid > 0 &&
-                       (_privileges->check("MaintainCRMAccounts") ||
-                        _privileges->check("ViewCRMAccounts")));
+                       (_privileges->check("MaintainAllCRMAccounts") ||
+                        _privileges->check("ViewAllCRMAccounts") ||
+                        (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
+                        (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
 
   emit populated();
   return true;
@@ -1102,11 +1105,22 @@ void vendor::sCrmAccount()
 {
   ParameterList params;
   params.append("crmacct_id", _crmacctid);
-  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
-      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
-                              ! _privileges->check("MaintainCRMAccounts")))
+  if ((cView == _mode && _privileges->check("ViewAllCRMAccounts")) ||
+      (cView == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner) ||
+      (cEdit == _mode && _privileges->check("ViewAllCRMAccounts")
+                      && ! _privileges->check("MaintainAllCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && ! _privileges->check("MaintainPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner))
     params.append("mode", "view");
-  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+  else if ((cEdit == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cEdit == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                           && omfgThis->username() == _crmowner))
+    params.append("mode", "edit");
+  else if ((cNew == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cNew == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                          && omfgThis->username() == _crmowner))
     params.append("mode", "edit");
   else
   {

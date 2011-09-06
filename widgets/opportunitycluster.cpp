@@ -21,7 +21,7 @@ OpportunityClusterLineEdit::OpportunityClusterLineEdit(QWidget* pParent, const c
 {
     setTitles(tr("Opportunity"), tr("Opportunities"));
     setUiName("opportunity");
-    setEditPriv("MaintainOpportunities");
-    setNewPriv("MaintainOpportunities");
-    setViewPriv("ViewOpportunities");
+    setEditPriv("MaintainAllOpportunities");
+    setNewPriv("MaintainAllOpportunities");
+    setViewPriv("ViewAllOpportunities");
 }

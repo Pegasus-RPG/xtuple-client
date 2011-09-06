@@ -399,8 +399,8 @@ bool employee::sPopulate()
   XSqlQuery getq;
   if (_empid > 0)
   {
-    getq.prepare("SELECT emp.*, crmacct_id, crmacct_salesrep_id,"
-                 "       crmacct_usr_username, crmacct_vend_id"
+    getq.prepare("SELECT emp.*, crmacct_id, crmacct_owner_username,"
+                 "       crmacct_salesrep_id, crmacct_usr_username, crmacct_vend_id"
                  "  FROM emp JOIN crmacct ON (emp_id=crmacct_emp_id)"
                  " WHERE (emp_id=:id);");
     getq.bindValue(":id", _empid);
@@ -417,7 +417,8 @@ bool employee::sPopulate()
                  "       NULL AS emp_extrate,        NULL AS emp_wage_period,"
                  "       NULL AS emp_extrate_period, NULL AS emp_dept_id,"
                  "       NULL AS emp_shift_id,       NULL AS emp_notes,"
-                 "       NULL AS emp_image_id,       crmacct_id"
+                 "       NULL AS emp_image_id,"
+                 "crmacct_id, crmacct_owner_username"
                  "  FROM crmacct"
                  " WHERE (crmacct_id=:id);");
     getq.bindValue(":id", _crmacctid);
@@ -449,6 +450,7 @@ bool employee::sPopulate()
     _image->setId(getq.value("emp_image_id").toInt());
 
     _crmacctid  = getq.value("crmacct_id").toInt();
+    _crmowner   = getq.value("crmacct_owner_username").toString();
 
     if (DEBUG)
       qDebug("image %s and %s",
@@ -594,11 +596,22 @@ void employee::sCrmAccount()
 {
   ParameterList params;
   params.append("crmacct_id", _crmacctid);
-  if ((cView == _mode && _privileges->check("ViewCRMAccounts")) ||
-      (cEdit == _mode && _privileges->check("ViewCRMAccounts") &&
-                              ! _privileges->check("MaintainCRMAccounts")))
+  if ((cView == _mode && _privileges->check("ViewAllCRMAccounts")) ||
+      (cView == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner) ||
+      (cEdit == _mode && _privileges->check("ViewAllCRMAccounts")
+                      && ! _privileges->check("MaintainAllCRMAccounts")) ||
+      (cEdit == _mode && _privileges->check("ViewPersonalCRMAccounts")
+                      && ! _privileges->check("MaintainPersonalCRMAccounts")
+                      && omfgThis->username() == _crmowner))
     params.append("mode", "view");
-  else if (cEdit == _mode && _privileges->check("MaintainCRMAccounts"))
+  else if ((cEdit == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cEdit == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                           && omfgThis->username() == _crmowner))
+    params.append("mode", "edit");
+  else if ((cNew == _mode && _privileges->check("MaintainAllCRMAccounts")) ||
+           (cNew == _mode && _privileges->check("MaintainPersonalCRMAccounts")
+                          && omfgThis->username() == _crmowner))
     params.append("mode", "edit");
   else
   {
@@ -653,6 +666,8 @@ void employee::sViewGroup()
 void employee::sHandleButtons()
 {
   _crmacct->setEnabled(_crmacctid > 0 &&
-                       (_privileges->check("MaintainCRMAccounts") ||
-                        _privileges->check("ViewCRMAccounts")));
+                       (_privileges->check("MaintainAllCRMAccounts") ||
+                        _privileges->check("ViewAllCRMAccounts") ||
+                        (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
+                        (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
 }

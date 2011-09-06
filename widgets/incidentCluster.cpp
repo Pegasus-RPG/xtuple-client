@@ -21,7 +21,7 @@ IncidentClusterLineEdit::IncidentClusterLineEdit(QWidget* pParent, const char* p
 {
   setTitles(tr("Incident"), tr("Incidents"));
   setUiName("incident");
-  setEditPriv("MaintainIncidents");
-  setNewPriv("AddIncidents");
-  setViewPriv("ViewIncidents");
+  setEditPriv("MaintainAllIncidents");
+  setNewPriv("MaintainAllIncidents");
+  setViewPriv("ViewAllIncidents");
 }

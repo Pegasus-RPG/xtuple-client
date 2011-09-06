@@ -204,7 +204,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
   // Incident
   {
     menuItem = pMenu->addAction(tr("Edit Incident..."), this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(_privileges->check("MaintainAllIncidents"));
   }
 
   if (((XTreeWidgetItem *)pItem)->id() > 0)
@@ -249,7 +249,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
   // Incident
   {
     menuItem = pMenu->addAction(tr("View Incident..."), this, SLOT(sViewIncident()));
-    menuItem->setEnabled(_privileges->check("ViewIncidents") || _privileges->check("MaintainIncidents"));
+    menuItem->setEnabled(_privileges->check("ViewAllIncidents") || _privileges->check("MaintainAllIncidents"));
   }
   
   if (((XTreeWidgetItem *)pItem)->altId() < 2 &&
@@ -320,7 +320,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
   {
     pMenu->addSeparator();
     menuItem = pMenu->addAction(tr("New Incident..."), this, SLOT(sIncident()));
-    if (!_privileges->check("AddIncidents"))
+    if (!_privileges->check("MaintainAllIncidents"))
       menuItem->setEnabled(false);
   }
 
