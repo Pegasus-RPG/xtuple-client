@@ -115,10 +115,9 @@ WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
        CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
        	ELSE formatMoney(invchead_payment)
 	END AS f_payment,
-       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
-       	ELSE formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
+    formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
                          itemtotal - total_allocated))
-	END AS f_totaldue,
+	AS f_totaldue,
        CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
        	ELSE formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
                          itemtotal - total_allocated))
