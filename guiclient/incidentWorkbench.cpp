@@ -63,18 +63,9 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
                            qryStatus);
   parameterWidget()->appendComboBox(tr("Severity"), "severity_id", XComboBox::IncidentSeverity);
   bool canEditUsers = _privileges->check("MaintainAllIncidents") || _privileges->check("ViewAllIncidents");
-  if (canEditUsers)
-  {
-    parameterWidget()->append(tr("Assigned User"), "assigned_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
-    parameterWidget()->append(tr("Assigned Pattern"), "assigned_usr_pattern",    ParameterWidget::Text);
-    parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
-    parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern",    ParameterWidget::Text);
-  }
-  else
-  {
-    parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+  parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
+  if (!canEditUsers)
     parameterWidget()->setEnabled(tr("User"), false);
-  }
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("End Date"), "endDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Priority"), "incdtpriority_id_list", ParameterWidget::Multiselect, QVariant(), false, qryPriority);
