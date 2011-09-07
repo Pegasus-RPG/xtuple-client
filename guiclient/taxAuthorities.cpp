@@ -67,12 +67,13 @@ void taxAuthorities::sDelete()
     return;
 
   XSqlQuery delq;
-  delq.prepare("DELETE FROM taxauth WHERE (taxauth=:taxauth_id);");
+  delq.prepare("DELETE FROM taxauth WHERE (taxauth_id=:taxauth_id);");
   delq.bindValue(":taxauth_id", list()->id());
   delq.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting"),
                            delq, __FILE__, __LINE__))
     return;
+  sFillList();
 }
 
 void taxAuthorities::sNew()
