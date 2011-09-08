@@ -592,6 +592,10 @@ bool transferOrder::save(bool partial)
   _dstAddr->save(AddressCluster::CHANGEONE);
   _ignoreSignals = FALSE;
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");
   q.prepare("UPDATE tohead "
 	    "SET tohead_number=:number,"
 	    "    tohead_status=:status,"
@@ -699,6 +703,7 @@ bool transferOrder::save(bool partial)
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
@@ -717,6 +722,7 @@ bool transferOrder::save(bool partial)
       _locked = q.value("locked").toBool();
     else if (q.lastError().type() != QSqlError::NoError)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
@@ -730,6 +736,7 @@ bool transferOrder::save(bool partial)
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
@@ -741,6 +748,7 @@ bool transferOrder::save(bool partial)
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
@@ -752,11 +760,13 @@ bool transferOrder::save(bool partial)
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
 
+  q.exec("COMMIT;");
   _saved = true;
   omfgThis->sTransferOrdersUpdated(_toheadid);
 
