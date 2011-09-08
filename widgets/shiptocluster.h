@@ -64,7 +64,7 @@ class XTUPLEWIDGETS_EXPORT ShiptoEdit : public VirtualClusterLineEdit
     void disableList(bool);
 
   public slots:
-    void setId(int);
+    void setId(const int);
     void setCustid(int);
     void sNew();
     void sList();

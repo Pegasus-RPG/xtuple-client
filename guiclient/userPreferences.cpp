@@ -568,7 +568,7 @@ void userPreferences::sDelete()
 
 void userPreferences::sAllWarehousesToggled(int pEvnttypeid)
 {
-  if(!_warehouses->topLevelItemCount() > 0)
+  if(!(_warehouses->topLevelItemCount() > 0))
     return;
 
   if (_warehouses->topLevelItem(0)->text(0) == tr("Yes"))

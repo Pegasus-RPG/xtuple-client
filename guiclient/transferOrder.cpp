@@ -443,7 +443,7 @@ bool transferOrder::insertPlaceholder()
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return UndefinedError;
+    return false;
   }
 
   _ignoreSignals = TRUE;
