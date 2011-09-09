@@ -170,7 +170,7 @@ enum SetResponse user::set(const ParameterList &pParams)
   _add->setEnabled(canEdit);
   _addAll->setEnabled(canEdit);
   _addGroup->setEnabled(canEdit);
-  _addSite->setEnabled(canEdit);
+//  _addSite->setEnabled(canEdit);
   _agent->setEnabled(canEdit);
   _allSites->setEnabled(canEdit);
   _email->setEnabled(canEdit);
@@ -184,7 +184,7 @@ enum SetResponse user::set(const ParameterList &pParams)
   _revoke->setEnabled(canEdit);
   _revokeAll->setEnabled(canEdit);
   _revokeGroup->setEnabled(canEdit);
-  _revokeSite->setEnabled(canEdit);
+//  _revokeSite->setEnabled(canEdit);
   _save->setEnabled(canEdit);
   _selectedSites->setEnabled(canEdit);
   _verify->setEnabled(canEdit);
