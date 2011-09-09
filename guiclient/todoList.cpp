@@ -430,6 +430,7 @@ void todoList::sDelete()
 bool todoList::setParams(ParameterList &params)
 {
   if (!_todolist->isChecked() &&
+      !_opportunities->isChecked() &&
       !_incidents->isChecked() &&
       !_projects->isChecked())
   {
