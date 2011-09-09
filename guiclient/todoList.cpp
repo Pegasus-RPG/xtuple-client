@@ -580,7 +580,7 @@ void todoList::sEditCustomer()
 void todoList::sViewCustomer()
 {
   ParameterList params;
-  params.append("cust_id", list()->id("cust"));
+  params.append("cust_id", list()->rawValue("cust").toInt());
   params.append("mode","view");
 
   customer *newdlg = new customer(this);
