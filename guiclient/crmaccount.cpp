@@ -374,6 +374,9 @@ void crmaccount::sSave()
         << GuiErrorCheck(_name->text().isEmpty(), _name,
                          tr("You must enter a name for this CRM Account before "
                             "saving it."))
+        << GuiErrorCheck(_parentCrmacct->id() == _crmacctId, _parentCrmacct,
+                         tr("This CRM Account cannot be a parent "
+                            "to itself."))
         << GuiErrorCheck(_customer->isChecked() && _prospectId > 0, _customerButton,
                          tr("This CRM Account is a Prospect but it is marked "
                             "as a Customer. Either mark it as a Prospect or "
