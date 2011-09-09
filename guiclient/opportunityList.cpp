@@ -59,13 +59,13 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
   if (!canEditUsers)
     parameterWidget()->setEnabled(tr("User"), false);
-  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
-  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
+  parameterWidget()->append(tr("Target Date on or After"), "startDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("Target Date on or Before"),   "endDate",   ParameterWidget::Date);
   parameterWidget()->append(tr("CRM Account"), "crmacct_id",  ParameterWidget::Crmacct);
   parameterWidget()->appendComboBox(tr("Type"), "optype_id", XComboBox::OpportunityTypes);
   parameterWidget()->append(tr("Type Pattern"), "optype_pattern",    ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Source"), "opsource_id", XComboBox::OpportunitySources);
-  parameterWidget()->append(tr("Source Pattern"), "source_pattern",    ParameterWidget::Text);
+  parameterWidget()->append(tr("Source Pattern"), "opsource_pattern",    ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Stage"), "opstage_id", XComboBox::OpportunityStages);
   parameterWidget()->append(tr("Stage Pattern"), "opstage_pattern",    ParameterWidget::Text);
 
