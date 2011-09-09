@@ -621,6 +621,7 @@ const struct {
 //{ "metasql_metasql_group_name_grade_key",     Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "mrghist_mrghist_cntct_id_fkey",            Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "mrghist_mrghist_cntct_id_fkey",            Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
+  { "mrgundo_mrgundo_schema_key",               Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "There is a merge in progress that overlaps with this one. Either complete all merges in progress, delete merge history, or both.") },
 //{ "ophead_ophead_cntct_id_fkey",              Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "ophead_ophead_cntct_id_fkey",              Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "ophead_ophead_crmacct_id_fkey",            Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
@@ -1147,11 +1148,16 @@ ErrorReporterPrivate::~ErrorReporterPrivate()
 {
 }
 
-/* look for [xtuple: majorkey, minorkey] with optional spaces
+/* look for [xtuple: majorkey, minorkey [, context [, ...] ] ]
    in first pass, majorkey is the stored proc name and
                   minorkey is the old negative return code indicating an error
+                  one or more context values that can be inserted in the message
+                      once the messages are expanded appropriately
  */
-QRegExp ErrorReporterPrivate::_xtupleError("\\[\\s*xtuple\\s*:\\s*([^, ]+)\\s*,?\\s*([^\\] ]+)\\s*\\]");
+QRegExp ErrorReporterPrivate::_xtupleError(
+//        "\\[\\s*xtuple\\s*:\\s*([^, ]+)\\s*,\\s*([^, \\]])\\s*(\\[^\\]]*)\\]"
+          "\\[\\s*xtuple:\\s*([^, ]+),\\s*([^, \\]]+)(.*)\\]"
+);
 
 QString ErrorReporterPrivate::text(QSqlError err, StatementType type)
 {
@@ -1161,12 +1167,14 @@ QString ErrorReporterPrivate::text(QSqlError err, StatementType type)
 // TODO: find a better way to handle the lookups - binary search or hash table
 QString ErrorReporterPrivate::text(QString msg, StatementType type)
 {
-  int pos = _xtupleError.indexIn(msg);
-
-  if (pos >= 0)
+  if (_xtupleError.indexIn(msg) >= 0)
+  {
+    if (_xtupleError.cap(3).length() > 0)
+      qWarning("ErrorReporterPrivate::text() found %d captures for error: %s",
+               _xtupleError.captureCount(), qPrintable(_xtupleError.cap(3)));
     return storedProcErrorLookup(_xtupleError.cap(1),
                                  _xtupleError.cap(2).toInt());
-
+  }
   else
   {
     for (unsigned int i = 0; i < sizeof(dberrs) / sizeof(dberrs[0]); i++)
