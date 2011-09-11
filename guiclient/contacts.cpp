@@ -39,12 +39,11 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   _attachAct = 0;
   _detachAct = 0;
 
-  bool canEditUsers = _privileges->check("MaintainAllContacts") || _privileges->check("ViewAllContacts");
-  parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
-  if (canEditUsers)
-    parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern",    ParameterWidget::Text);
-  else
-    parameterWidget()->setEnabled(tr("Owner"), false);
+  if (_privileges->check("MaintainAllContacts") || _privileges->check("ViewAllContacts"))
+  {
+    parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
+    parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern", ParameterWidget::Text);
+  }
   parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Name Pattern"), "cntct_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Phone Pattern"), "cntct_phone_pattern", ParameterWidget::Text);

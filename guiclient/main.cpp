@@ -686,7 +686,7 @@ int main(int argc, char *argv[])
 	_metricsenc = new Metricsenc(key);
   }
   
-  initializePlugin(_preferences, _metrics, _privileges, omfgThis->workspace());
+  initializePlugin(_preferences, _metrics, _privileges, omfgThis->username(), omfgThis->workspace());
 
 // START code for updating the locale settings if they haven't been already
   XSqlQuery lc;
