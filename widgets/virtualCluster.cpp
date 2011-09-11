@@ -1050,7 +1050,6 @@ VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags ) :
     }
 
     shortcuts::setStandardKeys(this);
-    sFillList();
 }
 
 void VirtualList::sClose()

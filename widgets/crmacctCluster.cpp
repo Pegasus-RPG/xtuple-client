@@ -30,7 +30,7 @@ static QString _listAndSearchQueryString(
       "    SELECT crmacct_id AS id,         crmacct_number AS number,"
       "           crmacct_name AS name,     crmacct_cntct_id_1 AS cntct_id,"
       "           crmacct_active AS active, cntct_addr_id AS addr_id"
-      "      FROM crmacct"
+      "      FROM crmacct()"
       "      LEFT OUTER JOIN cntct ON (crmacct_cntct_id_1=cntct_id)"
       "<? elseif exists('customer') ?>"
       "    SELECT cust_id AS id,         cust_number AS number,"
@@ -73,7 +73,7 @@ static QString _listAndSearchQueryString(
       "    SELECT prospect_id AS id,         prospect_number AS number,"
       "           prospect_name AS name,     prospect_cntct_id AS cntct_id,"
       "           prospect_active AS active, cntct_addr_id AS addr_id"
-      "      FROM prospect"
+      "      FROM prospect()"
       "      LEFT OUTER JOIN cntct ON (prospect_cntct_id=cntct_id)"
       "<? endif ?>"
       "  ) AS crminfo"
@@ -150,13 +150,15 @@ CRMAcctLineEdit::CRMAcctSubtype CRMAcctCluster::subtype() const
 }
 
 CRMAcctLineEdit::CRMAcctLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "crmacct", "crmacct_id", "crmacct_number", "crmacct_name", 0, 0, pName, "crmacct_active")
+    CrmClusterLineEdit(pParent, "crmacct()", "crmacct_id", "crmacct_number", "crmacct_name", 0, "crmacct_owner_username", 0, 0, pName, "crmacct_active")
 {
   setTitles(tr("CRM Account"), tr("CRM Accounts"));
   setUiName("crmaccount");
   setEditPriv("MaintainAllCRMAccounts");
   setViewPriv("ViewAllCRMAccounts");
   setNewPriv("MaintainAllCRMAccounts");
+  setEditOwnPriv("MaintainPersonalCRMAccounts");
+  setViewOwnPriv("ViewPersonalCRMAccounts");
 
   setSubtype(Crmacct);
 }
@@ -526,7 +528,6 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     setSubtype(CRMAcctLineEdit::Crmacct);
 
   // do this late so the constructor can set defaults without triggering queries
-  connect(_search,	 SIGNAL(lostFocus()),	this, SLOT(sFillList()));
   connect(_searchStreet, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchCity,   SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
   connect(_searchState,  SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
@@ -692,7 +693,6 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   _listTab->setColumnHidden(_listTab->column("addr_country"),     ! hasAddress);
   _listTab->setColumnHidden(_listTab->column("addr_postalcode"),  ! hasAddress);
 
-  sFillList();
 }
 
 void CRMAcctSearch::sFillList()

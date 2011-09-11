@@ -273,12 +273,12 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
         virtual void silentSetId(const int);
 
+        QSqlQueryModel* _model;
+
     private:
         void positionMenuLabel();
 
         QString _cText;
-
-        QSqlQueryModel* _model;
 };
 
 /*

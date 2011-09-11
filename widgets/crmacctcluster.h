@@ -11,7 +11,7 @@
 #ifndef _crmaccttCluster_h
 #define _crmaccttCluster_h
 
-#include "virtualCluster.h"
+#include "crmCluster.h"
 #include "xcheckbox.h"
 
 class XComboBox;
@@ -23,7 +23,7 @@ class XTUPLEWIDGETS_EXPORT CRMAcctInfoAction
     virtual void crmacctInformation(QWidget* parent, int pCustid) = 0;
 };
 
-class XTUPLEWIDGETS_EXPORT CRMAcctLineEdit : public VirtualClusterLineEdit
+class XTUPLEWIDGETS_EXPORT CRMAcctLineEdit : public CrmClusterLineEdit
 {
     Q_OBJECT
 

@@ -31,7 +31,7 @@ void ContactWidget::init()
     _titleSingular = tr("Contact");
     _titlePlural = tr("Contacts");
     _query = "SELECT cntct.*, crmacct_name "
-	     "FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id) ";
+             "FROM cntct() LEFT OUTER JOIN crmacct ON (cntct_crmacct_id = crmacct_id) ";
 
     _layoutDone = false;
     _minimalLayout = false;
@@ -369,7 +369,9 @@ void ContactWidget::silentSetId(const int pId)
   else
   {   
       XSqlQuery idQ;
+      _query.replace("cntct()","cntct"); // Switch to non-restrictive table
       idQ.prepare(_query + " WHERE cntct_id = :id;");
+      _query.replace("FROM cntct", "FROM cntct()"); // Switch back to restrictive table function
       idQ.bindValue(":id", pId);
       idQ.exec();
       if (idQ.first())
