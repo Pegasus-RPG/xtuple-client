@@ -45,6 +45,7 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Due Date on or Before"), "dueStartDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Due Date on or After"), "dueEndDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Show Completed"), "completed", ParameterWidget::Exists);
+  parameterWidget()->append(tr("Show Completed Only"), "completedonly", ParameterWidget::Exists);
 
   parameterWidget()->applyDefaultFilterSet();
 
