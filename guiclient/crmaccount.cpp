@@ -726,7 +726,7 @@ void crmaccount::sCustomer()
 
   ParameterList params;
   if (_prospectId > 0 && (cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainAllProspects") &&
+      _privileges->check("MaintainProspectMasters") &&
       _privileges->check("MaintainCustomerMasters"))
   {
     int quotecount = 0;
@@ -816,7 +816,7 @@ void crmaccount::sProspect()
 
   ParameterList params;
   if (_custId > 0 && (cNew == _mode || cEdit == _mode) &&
-      _privileges->check("MaintainAllProspects") &&
+      _privileges->check("MaintainProspectMasters") &&
       _privileges->check("MaintainCustomerMasters"))
   {
     if (QMessageBox::question(this, tr("Convert"),
@@ -847,7 +847,7 @@ void crmaccount::sProspect()
     params.append("mode",       "edit");
   }
   else if (_prospectId <= 0 && (cNew == _mode || cEdit == _mode) &&
-           _privileges->check("MaintainAllProspects"))
+           _privileges->check("MaintainProspectMasters"))
   {
     params.append("crmacct_id", _crmacctId);
     params.append("mode",       "new");
@@ -855,7 +855,7 @@ void crmaccount::sProspect()
   else if (_prospectId > 0)
   {
     params.append("prospect_id", _prospectId);
-    params.append("mode",        (_privileges->check("MaintainAllProspects") &&
+    params.append("mode",        (_privileges->check("MaintainProspectMasters") &&
                                   (cNew == _mode || cEdit == _mode)) ?
                                   "edit" : "view");
   }
@@ -1184,10 +1184,10 @@ void crmaccount::sHandleChildButtons()
 
   _prospect->setChecked(_prospectId > 0);
   _prospect->setEnabled(canEdit && !_modal &&
-                        _privileges->check("MaintainAllProspects"));
+                        _privileges->check("MaintainProspectMasters"));
   _prospectButton->setEnabled(_prospectId > 0 &&
-                              (_privileges->check("MaintainAllProspects") ||
-                               _privileges->check("ViewAllProspects")));
+                              (_privileges->check("MaintainProspectMasters") ||
+                               _privileges->check("ViewProspectMasters")));
 
   _salesrep->setChecked(_salesrepId > 0);
   _salesrep->setEnabled(canEdit && !_modal &&

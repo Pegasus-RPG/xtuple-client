@@ -42,10 +42,6 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewQuote,	SIGNAL(clicked()),	this,	SLOT(sViewQuote()));
   connect(omfgThis,	SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillQuotesList()));
 
-  if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
-  _owner->setUsername(omfgThis->username());
-  _owner->setType(UsernameLineEdit::UsersActive);
-
   if (_privileges->check("MaintainAllQuotes") || _privileges->check("MaintainPersonalQuotes"))
     connect(_quotes, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
   else
@@ -144,7 +140,6 @@ enum SetResponse prospect::set(const ParameterList &pParams)
   _salesrep->setEnabled(canEdit);
   _site->setEnabled(canEdit);
   _taxzone->setEnabled(canEdit);
-  _owner->setEnabled(canEdit);
 
   return NoError;
 }
@@ -192,8 +187,7 @@ void prospect::sSave()
                "       prospect_taxzone_id=:prospect_taxzone_id,"
                "       prospect_salesrep_id=:prospect_salesrep_id,"
                "       prospect_warehous_id=:prospect_warehous_id,"
-               "       prospect_active=:prospect_active,"
-               "       prospect_owner_username=:prospect_owner "
+               "       prospect_active=:prospect_active"
                " WHERE (prospect_id=:prospect_id)"
                " RETURNING prospect_id;" );
     upsq.bindValue(":prospect_id",	_prospectid);
@@ -202,20 +196,17 @@ void prospect::sSave()
     upsq.prepare("INSERT INTO prospect "
                "( prospect_id,	      prospect_number,	    prospect_name,"
                "  prospect_cntct_id,  prospect_taxzone_id,  prospect_comments,"
-               "  prospect_salesrep_id, prospect_warehous_id, prospect_active,"
-               "  prospect_owner_username )"
+               "  prospect_salesrep_id, prospect_warehous_id, prospect_active )"
                " VALUES "
                "( DEFAULT,     	      :prospect_number,	    :prospect_name,"
                "  :prospect_cntct_id, :prospect_taxzone_id, :prospect_comments,"
-               "  :prospect_salesrep_id, :prospect_warehous_id, :prospect_active,"
-               "  :prospect_owner )"
+               "  :prospect_salesrep_id, :prospect_warehous_id, :prospect_active )"
                " RETURNING prospect_id;");
 
   upsq.bindValue(":prospect_number",	_number->text().trimmed());
   upsq.bindValue(":prospect_name",	_name->text().trimmed());
   upsq.bindValue(":prospect_comments",	_notes->toPlainText());
   upsq.bindValue(":prospect_active",	QVariant(_active->isChecked()));
-  upsq.bindValue(":prospect_owner",     _owner->username());
   if (_contact->isValid())
     upsq.bindValue(":prospect_cntct_id",    _contact->id());
   if (_taxzone->isValid())
@@ -413,7 +404,6 @@ bool prospect::sPopulate()
     _site->setId(getq.value("prospect_warehous_id").toInt());
     _notes->setText(getq.value("prospect_comments").toString());
     _active->setChecked(getq.value("prospect_active").toBool());
-    _owner->setUsername(getq.value("prospect_owner_username").toString());
     _crmowner = getq.value("crmacct_owner_username").toString();
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Prospect"),

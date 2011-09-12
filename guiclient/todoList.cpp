@@ -35,10 +35,9 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   setNewVisible(true);
   setQueryOnStartEnabled(true);
 
-  bool canEditUsers = _privileges->check("MaintainAllToDoItems") || _privileges->check("ViewAllToDoItems");
-  parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
-  if (!canEditUsers)
-    parameterWidget()->setEnabled(tr("User"), false);
+  parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username());
+  parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
+  parameterWidget()->append(tr("Assigned To"), "assigned_username", ParameterWidget::User);
   parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Start Date on or Before"), "startStartDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Start Date on or After"), "startEndDate", ParameterWidget::Date);

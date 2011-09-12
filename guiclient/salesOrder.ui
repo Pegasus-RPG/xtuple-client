@@ -1492,7 +1492,7 @@ to be bound by its terms.</comment>
              <property name="bottomMargin">
               <number>5</number>
              </property>
-             <item row="1" column="0">
+             <item row="0" column="0">
               <layout class="QVBoxLayout">
                <property name="topMargin">
                 <number>5</number>
@@ -1525,7 +1525,7 @@ to be bound by its terms.</comment>
                </item>
               </layout>
              </item>
-             <item row="1" column="1">
+             <item row="0" column="1">
               <widget class="ProjectCluster" name="_project">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -1541,7 +1541,7 @@ to be bound by its terms.</comment>
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
+             <item row="2" column="0">
               <widget class="QLabel" name="_fromQuoteLit">
                <property name="text">
                 <string>From Quote:</string>
@@ -1551,47 +1551,27 @@ to be bound by its terms.</comment>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="2" column="1">
               <widget class="QLabel" name="_fromQuote">
                <property name="text">
                 <string>No</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="1" column="1">
               <widget class="OpportunityCluster" name="_opportunity">
                <property name="focusPolicy">
                 <enum>Qt::StrongFocus</enum>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="1" column="0">
               <widget class="QLabel" name="_opportunityLit">
                <property name="text">
                 <string>Opportunity:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="UsernameCluster" name="_owner">
-               <property name="focusPolicy">
-                <enum>Qt::StrongFocus</enum>
-               </property>
-               <property name="label">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="_ownerLit">
-               <property name="text">
-                <string>Owner:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
                </property>
               </widget>
              </item>
@@ -1955,11 +1935,6 @@ to be bound by its terms.</comment>
    <header>shiptocluster.h</header>
   </customwidget>
   <customwidget>
-   <class>UsernameCluster</class>
-   <extends>QWidget</extends>
-   <header>usernamecluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
@@ -2035,7 +2010,6 @@ to be bound by its terms.</comment>
   <tabstop>_freight</tabstop>
   <tabstop>_total</tabstop>
   <tabstop>_balance</tabstop>
-  <tabstop>_owner</tabstop>
   <tabstop>_project</tabstop>
   <tabstop>_opportunity</tabstop>
   <tabstop>_orderComments</tabstop>

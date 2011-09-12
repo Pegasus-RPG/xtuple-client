@@ -51,11 +51,8 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(projectsUpdated(int)), this, SLOT(sFillList()));
   connect(_showComplete, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-  bool canEditUsers = _privileges->check("MaintainAllProjects") || _privileges->check("ViewAllProjects");
-  parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
-  if (!canEditUsers)
-    parameterWidget()->setEnabled(tr("User"), false);
-  parameterWidget()->applyDefaultFilterSet();
+  parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
+  parameterWidget()->append(tr("AssignedTo"), "assigned_username", ParameterWidget::User);
 
   sFillList();
 }

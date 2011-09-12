@@ -126,10 +126,6 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 
   _saved = false;
 
-  if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
-  _owner->setUsername(omfgThis->username());
-  _owner->setType(UsernameLineEdit::UsersActive);
-
   setFreeFormShipto(false);
 
   _soheadid          = -1;
@@ -377,7 +373,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _documents->setReadOnly(true);
       _copyToShipto->setEnabled(FALSE);
       _orderCurrency->setEnabled(FALSE);
-      _owner->setEnabled(FALSE);
       _save->hide();
       _clear->hide();
       _action->hide();
@@ -422,8 +417,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       populateCMInfo();
       populateCCInfo();
       sFillCcardList();
-      _owner->setVisible(false);
-      _ownerLit->setVisible(false);
     }
 
     _captive = FALSE;
@@ -958,8 +951,8 @@ bool salesOrder::save(bool partial)
                "    quhead_freight=:freight, quhead_calcfreight=:calcfreight,"
                "    quhead_misc=:misc, quhead_misc_accnt_id=:misc_accnt_id, quhead_misc_descrip=:misc_descrip,"
                "    quhead_ordercomments=:ordercomments, quhead_shipcomments=:shipcomments,"
-               "    quhead_owner_username=:owner, quhead_prj_id=:prj_id, quhead_ophead_id=:ophead_id,"
-               "    quhead_warehous_id=:warehous_id, quhead_curr_id = :curr_id, quhead_expire=:expire,"
+               "    quhead_prj_id=:prj_id, quhead_ophead_id=:ophead_id, quhead_warehous_id=:warehous_id,"
+               "    quhead_curr_id = :curr_id, quhead_expire=:expire,"
                "    quhead_shipto_cntct_id=:shipto_cntct_id,"
                "    quhead_shipto_cntct_honorific=:shipto_cntct_honorific,"
                "    quhead_shipto_cntct_first_name=:shipto_cntct_first_name,"
@@ -1000,8 +993,8 @@ bool salesOrder::save(bool partial)
                "    quhead_freight, quhead_calcfreight,"
                "    quhead_misc, quhead_misc_accnt_id, quhead_misc_descrip,"
                "    quhead_ordercomments, quhead_shipcomments,"
-               "    quhead_owner_username, quhead_prj_id, quhead_ophead_id,"
-               "    quhead_warehous_id, quhead_curr_id, quhead_expire,"
+               "    quhead_prj_id, quhead_ophead_id, quhead_warehous_id,"
+               "    quhead_curr_id, quhead_expire,"
                "    quhead_shipto_cntct_id,"
                "    quhead_shipto_cntct_honorific,"
                "    quhead_shipto_cntct_first_name,"
@@ -1041,8 +1034,8 @@ bool salesOrder::save(bool partial)
                "    :freight, :calcfreight,"
                "    :misc, :misc_accnt_id, :misc_descrip,"
                "    :ordercomments, :shipcomments,"
-               "    :owner, :prj_id, :ophead_id,"
-               "    :warehous_id, :curr_id, :expire,"
+               "    :prj_id, :ophead_id, :warehous_id,"
+               "    :curr_id, :expire,"
                "    :shipto_cntct_id,"
                "    :shipto_cntct_honorific,"
                "    :shipto_cntct_first_name,"
@@ -1143,7 +1136,6 @@ bool salesOrder::save(bool partial)
   q.bindValue(":misc_descrip", _miscChargeDescription->text().trimmed());
   q.bindValue(":curr_id", _orderCurrency->id());
   q.bindValue(":cohead_shipcomplete", QVariant(_shipComplete->isChecked()));
-  q.bindValue(":owner", _owner->username());
   if (_project->isValid())
     q.bindValue(":prj_id", _project->id());
   if (_opportunity->isValid())
@@ -2510,7 +2502,6 @@ void salesOrder::populate()
       _taxZone->setId(qu.value("quhead_taxzone_id").toInt());
       _terms->setId(qu.value("quhead_terms_id").toInt());
       _orderCurrency->setId(qu.value("quhead_curr_id").toInt());
-      _owner->setUsername(qu.value("quhead_owner_username").toString());
       _project->setId(qu.value("quhead_prj_id").toInt());
       _opportunity->setId(qu.value("quhead_ophead_id").toInt());
 

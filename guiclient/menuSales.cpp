@@ -165,8 +165,8 @@ menuSales::menuSales(GUIClient *pParent) :
   actionProperties acts[] = {
     // Sales | Quotes
     { "menu",	tr("&Quote"),	(char*)quotesMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.newQuote", tr("&New..."),	SLOT(sNewQuote()), quotesMenu, "MaintainPersonalQuotes MaintainAllQuotes",	NULL, NULL, true, NULL },
-    { "so.listQuotes", tr("&List..."),	SLOT(sQuotes()), quotesMenu, "MaintainPersonalQuotes ViewPersonalQuotes MaintainAllQuotes ViewAllQuotes",	NULL, NULL, true, NULL },
+    { "so.newQuote", tr("&New..."),	SLOT(sNewQuote()), quotesMenu, "MaintainQuotes",	NULL, NULL, true, NULL },
+    { "so.listQuotes", tr("&List..."),	SLOT(sQuotes()), quotesMenu, "MaintainQuotes ViewQuotes",	NULL, NULL, true, NULL },
     
     // Sales | Sales Order
     { "menu",	tr("&Sales Order"),	(char*)ordersMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
@@ -222,8 +222,8 @@ menuSales::menuSales(GUIClient *pParent) :
     
     // Sales | Lookup | Quote Lookup
     { "menu",	tr("&Quote"),           (char*)lookupQuoteMenu,	lookupMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.dspQuoteLookupByCustomer", tr("by &Customer..."),	SLOT(sDspQuoteLookupByCustomer()), lookupQuoteMenu, "ViewAllQuotes ViewPersonalQuotes",	NULL, NULL, true, NULL },
-    { "so.dspQuoteOrderLookupByItem", tr("by &Item..."),	SLOT(sDspQuoteLookupByItem()), lookupQuoteMenu, "ViewAllQuotes ViewPersonalQuotes",	NULL, NULL, true, NULL },
+    { "so.dspQuoteLookupByCustomer", tr("by &Customer..."),	SLOT(sDspQuoteLookupByCustomer()), lookupQuoteMenu, "ViewQuotes",	NULL, NULL, true, NULL },
+    { "so.dspQuoteOrderLookupByItem", tr("by &Item..."),	SLOT(sDspQuoteLookupByItem()), lookupQuoteMenu, "ViewQuotes",	NULL, NULL, true, NULL },
     
     // Sales | Lookup | Sales Order Lookup
     { "menu",	tr("&Sales Order"),           (char*)lookupSoMenu,	lookupMenu,	"true",	NULL, NULL, true, NULL },
@@ -280,8 +280,8 @@ menuSales::menuSales(GUIClient *pParent) :
 
     // Sales | Prospect
     { "menu",	tr("&Prospect"),       (char*)prospectMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
-    { "so.enterNewProspect", tr("&New..."),	SLOT(sNewProspect()), prospectMenu, "MaintainPersonalProspects MaintainAllProspects",	NULL, NULL, true, NULL },
-    { "so.prospects", tr("&List..."),	SLOT(sProspects()), prospectMenu, "MaintainPersonalProspects ViewPersonalProspects MaintainAllProspects ViewAllProspects",	NULL, NULL, true, NULL },
+    { "so.enterNewProspect", tr("&New..."),	SLOT(sNewProspect()), prospectMenu, "MaintainProspectMasters",	NULL, NULL, true, NULL },
+    { "so.prospects", tr("&List..."),	SLOT(sProspects()), prospectMenu, "MaintainProspectMasters ViewProspectMasters",	NULL, NULL, true, NULL },
 
     // Sales | Customer
     { "menu",	tr("&Customer"),       (char*)customerMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },

@@ -247,12 +247,10 @@ void contact::sPopulateUsesMenu(QMenu* pMenu)
 
     case 7:
       editPriv =
-          (omfgThis->username() == _uses->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProspects")) ||
-          (omfgThis->username() != _uses->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProspects"));
+          (omfgThis->username() != _uses->currentItem()->rawValue("owner") && _privileges->check("MaintainProspectMasters"));
 
       viewPriv =
-          (omfgThis->username() == _uses->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProspects")) ||
-          (omfgThis->username() != _uses->currentItem()->rawValue("owner") && _privileges->check("ViewAllProspects"));
+          (omfgThis->username() != _uses->currentItem()->rawValue("owner") && _privileges->check("ViewProspectMasters"));
 
       menuItem = pMenu->addAction(editStr, this, SLOT(sEditProspect()));
       menuItem->setEnabled(editPriv && (cView != _mode));
@@ -817,9 +815,7 @@ void contact::sHandleValidUse(bool valid)
 		  (_uses->altId() == 4 && _privileges->check("MaintainCustomerMasters")) ||
 		  (_uses->altId() == 5 && _privileges->check("MaintainVendors")) ||
 		  (_uses->altId() == 6 && _privileges->check("MaintainVendors")) ||
-                  (_uses->altId() == 7 && _privileges->check("MaintainAllProspects")) ||
-                  (_uses->altId() == 7 && _privileges->check("MaintainPersonalProspects")
-                                       && _uses->currentItem()->rawValue("owner") == omfgThis->username()) ||
+                  (_uses->altId() == 7 && _privileges->check("MaintainProspectMasters")) ||
                   (_uses->altId() == 8 && _privileges->check("MaintainShiptos")) ||
 		  (_uses->altId() == 9 && _privileges->check("MaintainVendorAddresses")) ||
 		  (_uses->altId() ==10 && _privileges->check("MaintainWarehouses")) ||
@@ -836,9 +832,7 @@ void contact::sHandleValidUse(bool valid)
 		  (_uses->altId() == 4 && _privileges->check("ViewCustomerMasters")) ||
 		  (_uses->altId() == 5 && _privileges->check("ViewVendors")) ||
 		  (_uses->altId() == 6 && _privileges->check("ViewVendors")) ||
-                  (_uses->altId() == 7 && _privileges->check("ViewAllProspects")) ||
-                  (_uses->altId() == 7 && _privileges->check("ViewPersonalProspects")
-                                       && _uses->currentItem()->rawValue("owner") == omfgThis->username()) ||
+                  (_uses->altId() == 7 && _privileges->check("ViewProspectMasters")) ||
                   (_uses->altId() == 8 && _privileges->check("ViewShiptos")) ||
 		  (_uses->altId() == 9 && _privileges->check("ViewVendorAddresses")) ||
 		  (_uses->altId() ==10 && _privileges->check("ViewWarehouses"))  ||

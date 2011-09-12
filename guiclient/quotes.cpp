@@ -33,17 +33,10 @@ quotes::quotes(QWidget* parent, const char*, Qt::WFlags fl)
   setMetaSQLOptions("quotes", "detail");
   setParameterWidgetVisible(true);
   setNewVisible(true);
-  setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
   _convertedtoSo->setVisible(false);
 
-  bool canEditUsers = _privileges->check("MaintainAllQuotes") || _privileges->check("ViewAllQuotes");
-  parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
-  if (canEditUsers)
-    parameterWidget()->append(tr("Owner Pattern"), "owner_usr_pattern",    ParameterWidget::Text);
-  else
-    parameterWidget()->setEnabled(tr("Owner"), false);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
   parameterWidget()->append(tr("Exclude Prospects"), "customersOnly", ParameterWidget::Exists);
@@ -54,19 +47,17 @@ quotes::quotes(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
-  parameterWidget()->applyDefaultFilterSet();
 
-  list()->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight,  true,  "quhead_number");
-  list()->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "quhead_billtoname");
-  list()->addColumn(tr("P/O Number"), -1,           Qt::AlignLeft,   true,  "quhead_custponumber");
-  list()->addColumn(tr("Status"),     _dateColumn,  Qt::AlignCenter, true,  "quhead_status");
-  list()->addColumn(tr("Owner"),      _userColumn,  Qt::AlignLeft,   false, "quhead_owner_username");
-  list()->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter, true,  "quhead_quotedate");
-  list()->addColumn(tr("Expire Date"), _dateColumn, Qt::AlignCenter, false, "quhead_expire");
-  list()->addColumn(tr("Notes"),      -1,           Qt::AlignCenter, true,  "notes");
+  list()->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight, true, "quhead_number");
+  list()->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,  true, "quhead_billtoname");
+  list()->addColumn(tr("P/O Number"), -1,           Qt::AlignLeft,  true, "quhead_custponumber");
+  list()->addColumn(tr("Status"),    _dateColumn,   Qt::AlignCenter,true, "quhead_status");
+  list()->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter,true, "quhead_quotedate");
+  list()->addColumn(tr("Expire Date"), _dateColumn,  Qt::AlignCenter,false, "quhead_expire");
+  list()->addColumn(tr("Notes"),      -1,           Qt::AlignCenter,true, "notes");
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  if (_privileges->check("MaintainAllQuotes") || _privileges->check("MaintainPersonalQuotes"))
+  if (_privileges->check("MaintainQuotes"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   else
   {
@@ -94,14 +85,6 @@ void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 
-  bool editPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("quhead_owner_username") && _privileges->check("MaintainPersonalQuotes")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("quhead_owner_username") && _privileges->check("MaintainAllQuotes"));
-
-  bool viewPriv =
-      (omfgThis->username() == list()->currentItem()->rawValue("quhead_owner_username") && _privileges->check("ViewPersonalQuotes")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("quhead_owner_username") && _privileges->check("ViewAllQuotes"));
-
   menuItem = pMenu->addAction(tr("Print..."), this, SLOT(sPrint()));
   menuItem->setEnabled(_privileges->check("PrintQuotes"));
 
@@ -116,18 +99,17 @@ void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
   pMenu->addSeparator();
 
   menuItem = pMenu->addAction(tr("Copy"), this, SLOT(sCopy()));
-  menuItem->setEnabled(editPriv);
+  menuItem->setEnabled(_privileges->check("MaintainQuotes"));
 
   pMenu->addSeparator();
 
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
-  menuItem->setEnabled(editPriv);
+  menuItem->setEnabled(_privileges->check("MaintainQuotes"));
 
   menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
-  menuItem->setEnabled(viewPriv);
 
   menuItem = pMenu->addAction(tr("Delete..."), this, SLOT(sDelete()));
-  menuItem->setEnabled(editPriv);
+  menuItem->setEnabled(_privileges->check("MaintainQuotes"));
 }
 
 void quotes::sPrint()

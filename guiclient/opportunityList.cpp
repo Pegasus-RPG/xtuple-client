@@ -55,10 +55,9 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
 
   connect(list(),       SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
 
-  bool canEditUsers = _privileges->check("MaintainAllOpportunities") || _privileges->check("ViewAllOpportunities");
-  parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username(), !canEditUsers);
-  if (!canEditUsers)
-    parameterWidget()->setEnabled(tr("User"), false);
+  parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username());
+  parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
+  parameterWidget()->append(tr("Assigned To"), "assigned_username", ParameterWidget::User);
   parameterWidget()->append(tr("Target Date on or After"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("Target Date on or Before"),   "endDate",   ParameterWidget::Date);
   parameterWidget()->append(tr("CRM Account"), "crmacct_id",  ParameterWidget::Crmacct);

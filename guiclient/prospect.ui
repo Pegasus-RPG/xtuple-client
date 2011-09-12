@@ -224,7 +224,7 @@ to be bound by its terms.</comment>
         </item>
        </layout>
       </item>
-      <item row="0" column="2">
+      <item row="0" column="1">
        <spacer>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -236,16 +236,6 @@ to be bound by its terms.</comment>
          </size>
         </property>
        </spacer>
-      </item>
-      <item row="0" column="1">
-       <widget class="UsernameCluster" name="_owner">
-        <property name="focusPolicy">
-         <enum>Qt::StrongFocus</enum>
-        </property>
-        <property name="label">
-         <string>Owner:</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </widget>
@@ -421,11 +411,6 @@ to be bound by its terms.</comment>
    <class>ContactCluster</class>
    <extends>QWidget</extends>
    <header>contactcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>UsernameCluster</class>
-   <extends>QWidget</extends>
-   <header>usernamecluster.h</header>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
