@@ -533,6 +533,7 @@ bool configureGL::sSave()
   _metrics->set("remitto_zipcode",	_address->postalCode().trimmed());
   _metrics->set("remitto_country",	_address->country().trimmed());
   _metrics->set("remitto_phone",	_phone->text().trimmed());
+  _address->save(AddressCluster::CHANGEONE);
   
   _metrics->set("AutoCreditWarnLateCustomers", _warnLate->isChecked());
   if(_warnLate->isChecked())
