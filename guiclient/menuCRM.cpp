@@ -26,8 +26,6 @@
 #include "addresses.h"
 #include "crmaccount.h"
 #include "crmaccounts.h"
-#include "dspIncidentsByCRMAccount.h"
-#include "dspTodoByUserAndIncident.h"
 #include "incidentWorkbench.h"
 #include "incident.h"
 #include "opportunityList.h"
@@ -106,9 +104,6 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "menu",				tr("&Reports"),		(char*)reportsMenu,			crmMenu,	"true", NULL, NULL, true	, NULL },
 
     { "pm.dspOrderActivityByProject", tr("Order &Activity by Project..."), SLOT(sDspOrderActivityByProject()), reportsMenu, "ViewAllProjects ViewPersonalProjects", NULL, NULL, true , NULL },
-    { "separator",		NULL,				NULL,			reportsMenu,	"true", NULL, NULL, true	, NULL },
-    { "crm.dspIncidentsByCRMAccount",		tr("&Incidents by CRM Account..."),		SLOT(sDspIncidentsByCRMAccount()),		reportsMenu,	"ViewAllCRMAccounts+ViewAllIncidents+ViewAllToDoItems ViewPersonalCRMAccounts+ViewPersonalIncidents+ViewPersonalToDoItems", NULL, NULL, true	, NULL },
-    { "crm.dspTodoByUserAndIncident",		tr("&To-Do List Items by User and Incident..."),		SLOT(sDspTodoByUserAndIncident()),		reportsMenu,	"MaintainAllToDoItems ViewAllToDoItems MaintainPersonalToDoItems ViewPersonalToDoItems", NULL, NULL, true	, NULL },
     { "separator",		NULL,				NULL,			crmMenu,	"true", NULL, NULL, true	, NULL },
     
     // CRM | Account
@@ -316,16 +311,6 @@ void menuCRM::sTodoItem()
   todoItem* newdlg = new todoItem();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-}
-
-void menuCRM::sDspIncidentsByCRMAccount()
-{
-  omfgThis->handleNewWindow(new dspIncidentsByCRMAccount());
-}
-
-void menuCRM::sDspTodoByUserAndIncident()
-{
-  omfgThis->handleNewWindow(new dspTodoByUserAndIncident());
 }
 
 void menuCRM::sNewOpportunity()
