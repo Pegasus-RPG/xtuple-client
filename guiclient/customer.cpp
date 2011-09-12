@@ -44,7 +44,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->setCloseVisible(false);
   _todoList->setParameterWidgetVisible(false);
   _todoList->setQueryOnStartEnabled(false);
-  _todoList->parameterWidget()->setDefault(tr("Assigned"), QVariant(), true);
+  _todoList->parameterWidget()->setDefault(tr("User"), QVariant(), true);
+  _todoList->parameterWidget()->append("", "hasContext", ParameterWidget::Exists, true);
   _todoList->list()->hideColumn("crmacct_number");
   _todoList->list()->hideColumn("crmacct_name");
 

@@ -52,10 +52,7 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   connect(_todolist, SIGNAL(toggled(bool)), this,   SLOT(sFillList()));
   connect(_incidents, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_projects, SIGNAL(toggled(bool)), this,	SLOT(sFillList()));
-  if (_privileges->check("MaintainAllToDoItems") || _privileges->check("MaintainPersonalToDoItems"))
-    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
-  else
-    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
+  connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
 
   list()->addColumn(tr("Type"),      _userColumn,  Qt::AlignCenter, true, "type");
   list()->addColumn(tr("Priority"),  _userColumn,  Qt::AlignLeft,   true, "priority");
@@ -624,6 +621,101 @@ void todoList::sViewOpportunity()
   newdlg.set(params);
 
   newdlg.exec();
+}
+
+void todoList::sOpen()
+{
+  bool editPriv = false;
+  bool viewPriv = false;
+
+  if (list()->currentItem()->altId() == 1)
+  {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllToDoItems")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalToDoItems")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllToDoItems"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllToDoItems")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalToDoItems")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllToDoItems"));
+
+  }
+
+  if (list()->altId() == 2 ||
+      (list()->currentItem()->altId() == 1 &&
+       list()->currentItem()->rawValue("parent") == "INCDT"))
+  {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalIncidents")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllIncidents")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalIncidents")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllIncidents"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalIncidents")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllIncidents")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalIncidents")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllIncidents"));
+
+  }
+
+  if (list()->altId() == 3)
+  {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllProjects"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllProjects"));
+
+  }
+
+  if (list()->altId() == 3 || list()->altId() == 4)
+  {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllProjects"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllProjects")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalProjects")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllProjects"));
+
+  }
+
+  if (list()->altId() == 5  ||
+      (list()->currentItem()->altId() == 1 &&
+       list()->currentItem()->rawValue("parent") == "OPP"))
+  {
+    editPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalOpportunities")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllOpportunities")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalOpportunities")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllOpportunities"));
+
+    viewPriv =
+        (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalOpportunities")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllOpportunities")) ||
+        (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalOpportunities")) ||
+        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllOpportunities"));
+
+  }
+
+  if(editPriv)
+    sEdit();
+  else if(viewPriv)
+    sView();
 }
 
 

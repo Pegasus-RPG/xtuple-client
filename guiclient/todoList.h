@@ -43,6 +43,7 @@ class todoList : public display, public Ui::todoList
     virtual void sViewTask();
     virtual void sViewProject();
     virtual void sViewOpportunity();
+    virtual void sOpen();
     virtual bool setParams(ParameterList &);
 
   private:
