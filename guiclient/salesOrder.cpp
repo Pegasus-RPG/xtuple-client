@@ -265,6 +265,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _mode = cNew;
 
       _cust->setType(CLineEdit::ActiveCustomers);
+      _salesRep->setType(XComboBox::SalesRepsActive);
       _comments->setType(Comments::SalesOrder);
       _documents->setType(Documents::SalesOrder);
       _calcfreight = _metrics->boolean("CalculateFreight");
@@ -276,6 +277,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _mode = cNewQuote;
 
       _cust->setType(CLineEdit::ActiveCustomersAndProspects);
+      _salesRep->setType(XComboBox::SalesRepsActive);
       _calcfreight = _metrics->boolean("CalculateFreight");
       _action->hide();
 
@@ -336,7 +338,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     {
       setViewMode();
       _cust->setType(CLineEdit::AllCustomers);
-      _salesRep->setType(XComboBox::SalesReps);
 
       _issueStock->hide();
       _issueLineBalance->hide();
