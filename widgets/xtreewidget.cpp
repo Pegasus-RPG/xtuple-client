@@ -2508,7 +2508,7 @@ XTreeWidgetItem *XTreeWidget::invisibleRootItem() const
 void XTreeWidget::sCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
   if (dynamic_cast<XTreeWidgetItem *>(current) &&
-      dynamic_cast<XTreeWidgetItem *>(previous))
+      (dynamic_cast<XTreeWidgetItem *>(previous) || previous == 0))
 
     emit currentItemChanged(dynamic_cast<XTreeWidgetItem *>(current),
                             dynamic_cast<XTreeWidgetItem *>(previous));
