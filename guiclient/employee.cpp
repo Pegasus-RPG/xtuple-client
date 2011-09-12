@@ -278,6 +278,8 @@ bool employee::sSave(const bool pClose)
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(_code->text().isEmpty(), _code,
                           tr("You must enter a valid Employee Code."))
+         << GuiErrorCheck(_number->text().isEmpty(), _number,
+                          tr("You must enter an Employee Number."))
          << GuiErrorCheck(dupCode, _code,
                           tr("An Employee already exists for the Code specified."))
          << GuiErrorCheck(_code->text() == _mgr->number(), _number,

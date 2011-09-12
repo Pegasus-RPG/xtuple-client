@@ -389,7 +389,7 @@ const struct {
 //{ "emp_emp_image_id_fkey",                    Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "emp_emp_mgr_emp_id_fkey",                  Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "emp_emp_mgr_emp_id_fkey",                  Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
-//{ "emp_emp_number_key",                       Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
+  { "emp_emp_number_key",                       Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "An Employee already exists with this Employee Number.") },
 //{ "emp_emp_shift_id_fkey",                    Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "emp_emp_shift_id_fkey",                    Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "emp_emp_wage_curr_id_fkey",                Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
