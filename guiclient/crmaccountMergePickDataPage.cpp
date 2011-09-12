@@ -20,6 +20,7 @@
 #include "errorReporter.h"
 #include "format.h"
 
+// funky struct[] here so we can be consistent in addColumn, select, & deselect
 static struct {
   QString  title;      // user-visible column header in xtreewidget
   int      width;      // column width in xtreewidget
@@ -27,7 +28,7 @@ static struct {
   QString  querycol;   // column in the query that populates the xtreewidget
   QString  mergecol;   // column in the merge-selection table (e.g. crmacctsel_mrg_crmacct_active)
   bool     multiple;   // merge can combine data from multiple records for this column
-} mergeUiDescription[] = {
+} mergeUiDesc[] = {
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Number"),  _orderColumn, Qt::AlignLeft,   "crmacct_number", "",                                      false },
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Name"),              -1, Qt::AlignLeft,   "crmacct_name",   "crmacctsel_mrg_crmacct_name",           false },
   { QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage", "Active"),     _ynColumn, Qt::AlignCenter, "crmacct_active", "crmacctsel_mrg_crmacct_active",         false },
@@ -55,6 +56,15 @@ class CrmaccountMergePickDataPagePrivate {
         _itemForMenu(0),
         _parent(parent)
     {
+      QString errmsg;
+      bool ok = false;
+      _mqlstr = MQLUtil::mqlLoad("crmaccountmerge", "pickdatasources",
+                                 errmsg, &ok);
+      if (!ok)
+        ErrorReporter::error(QtCriticalMsg, _parent,
+                             QT_TRANSLATE_NOOP("CrmaccountMergePickDataPage",
+                                               "Getting CRM Accounts"),
+                             errmsg, __FILE__, __LINE__);
     }
 
     static bool isSelected(XTreeWidgetItem *item, int col)
@@ -63,7 +73,9 @@ class CrmaccountMergePickDataPagePrivate {
     }
 
     int              _destid;
+    QString          _destnumber;
     XTreeWidgetItem *_itemForMenu;
+    QString          _mqlstr;
     QWidget         *_parent;
 };
 
@@ -75,13 +87,18 @@ CrmaccountMergePickDataPage::CrmaccountMergePickDataPage(QWidget *parent)
 
   _data = new CrmaccountMergePickDataPagePrivate(this);
 
-  for (unsigned int i = 0; i < sizeof(mergeUiDescription) / sizeof(mergeUiDescription[0]); i++)
-    _sources->addColumn(mergeUiDescription[i].title, mergeUiDescription[i].width,
-                        mergeUiDescription[i].align,  true, mergeUiDescription[i].querycol);
+  for (unsigned int i = 0; i < sizeof(mergeUiDesc) / sizeof(mergeUiDesc[0]); i++)
+    _sources->addColumn(mergeUiDesc[i].title, mergeUiDesc[i].width,
+                        mergeUiDesc[i].align,  true, mergeUiDesc[i].querycol);
 
-  connect(_deselect, SIGNAL(clicked()), this, SLOT(sDeselect()));
-  connect(_select,   SIGNAL(clicked()), this, SLOT(sSelect()));
-  connect(_sources, SIGNAL(populateMenu(QMenu *, XTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu *, XTreeWidgetItem *)));
+  connect(_deselect,             SIGNAL(clicked()), this, SLOT(sDeselect()));
+  connect(_select,               SIGNAL(clicked()), this, SLOT(sSelect()));
+  connect(_sources, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
+  connect(_sources, SIGNAL(populateMenu(QMenu *, XTreeWidgetItem *)),
+                          this, SLOT(sPopulateMenu(QMenu *, XTreeWidgetItem *)));
+
+  _selectedColorIndicator->setStyleSheet(QString("* { color: %1; }")
+                                         .arg(namedColor("emphasis").name()));
 
   setCommitPage(true);
 }
@@ -104,7 +121,10 @@ void CrmaccountMergePickDataPage::initializePage()
   getq.bindValue(":number", field("_existingMerge").toString());
   getq.exec();
   if (getq.first())
-    _data->_destid = getq.value("crmacct_id").toInt();
+  {
+    _data->_destid     = getq.value("crmacct_id").toInt();
+    _data->_destnumber = field("_existingMerge").toString();
+  }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Account"),
                                 getq, __FILE__, __LINE__))
     return;
@@ -131,16 +151,17 @@ bool CrmaccountMergePickDataPage::isComplete() const
 bool CrmaccountMergePickDataPage::validatePage()
 {
   if (QMessageBox::question(this, tr("Perform this merge?"),
-                                tr("Are you sure you want to merge the "
-                                   "CRM Accounts as described here?"),
+                                tr("<p>Are you sure you want to merge the "
+                                   "CRM Accounts as described here?</p>"
+                                   "<p>If you click YES then the merge will "
+                                   "be run immediately. You will have a chance "
+                                   "to undo it later.</p>"),
                                 QMessageBox::No | QMessageBox::Default,
                                 QMessageBox::Yes) == QMessageBox::No)
     return false;
 
   XSqlQuery mrgq;
-  mrgq.prepare("SELECT mergecrmaccts(crmacctsel_dest_crmacct_id, FALSE)"
-               "  FROM crmacctsel"
-               " WHERE (crmacctsel_dest_crmacct_id=:destid);");
+  mrgq.prepare("SELECT mergecrmaccts(:destid, FALSE) AS result;");
   mrgq.bindValue(":destid", _data->_destid);
   mrgq.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Merging"),
@@ -148,6 +169,9 @@ bool CrmaccountMergePickDataPage::validatePage()
     return false;
 
   disconnect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
+  omfgThis->sCrmAccountsUpdated(_data->_destid);
+  setField("_completedMerge", _data->_destnumber);
+
   return true;
 }
 
@@ -161,7 +185,7 @@ void CrmaccountMergePickDataPage::sDeselect()
   foreach(QModelIndex cell, _sources->selectionModel()->selectedIndexes())
   {
     ParameterList params;
-    params.append("colname", mergeUiDescription[cell.column()].mergecol);
+    params.append("colname", mergeUiDesc[cell.column()].mergecol);
     params.append("value",   QVariant(false));
     params.append("srcid",   _sources->topLevelItem(cell.row())->id());
     XSqlQuery srcq = srcm.toQuery(params);
@@ -227,91 +251,25 @@ void CrmaccountMergePickDataPage::sEdit()
 
 void CrmaccountMergePickDataPage::sFillList()
 {
-  QString errmsg;
-  bool    ok = false;
-  MetaSQLQuery mql = MQLUtil::mqlLoad("crmaccountmerge", "pickdatasources", errmsg, &ok);
-  if (!ok &&
-      ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Accounts"),
-                           errmsg, __FILE__, __LINE__))
-    return;
-
   ParameterList params;
   params.append("destid",       _data->_destid);
-  params.append("individual",   _individual->text());
-  params.append("organization", _organization->text());
-  params.append("unknown",      tr("[Unknown]"));
+  params.append("individual",   tr("Individual"));
+  params.append("organization", tr("Organization"));
+  params.append("na",           tr("[N/A]"));
 
+  MetaSQLQuery mql(_data->_mqlstr);
   XSqlQuery getq;
   getq = mql.toQuery(params);
   _sources->populate(getq, true);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting CRM Account"),
                            getq, __FILE__, __LINE__))
     return;
-
-  sHandlePreview();
 }
 
-void CrmaccountMergePickDataPage::sHandlePreview()
+void CrmaccountMergePickDataPage::sHandleButtons()
 {
-  _notes->clear();
-  for (int row = _sources->topLevelItemCount() - 1; row >= 0; row--)
-  {
-    XTreeWidgetItem *item = _sources->topLevelItem(row);
-
-    // TODO: how can we loop over mergeUiDescription here?
-    if (_data->isSelected(item, _sources->column("crmacct_number")))
-      _number->setText(item->data(_sources->column("crmacct_number"), Qt::DisplayRole));
-
-    if (_data->isSelected(item, _sources->column("crmacct_name")))
-      _name->setText(item->data(_sources->column("crmacct_name"), Qt::DisplayRole));
-
-    if (_data->isSelected(item, _sources->column("crmacct_active")))
-      _active->setChecked(item->rawValue("crmacct_active").toBool());
-
-    if (_data->isSelected(item, _sources->column("primary")))
-      _primary->setId(item->data(_sources->column("primary"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("secondary")))
-      _secondary->setId(item->data(_sources->column("secondary"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("parent")))
-      _parent->setId(item->data(_sources->column("parent"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("owner")))
-      _owner->setUsername(item->data(_sources->column("owner"),
-                                     Qt::DisplayRole).toString());
-    if (_data->isSelected(item, _sources->column("cust")))
-      _cust->setId(item->data(_sources->column("cust"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("prospect")))
-      _prospect->setId(item->data(_sources->column("prospect"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("vend")))
-      _vendor->setId(item->data(_sources->column("vend"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("taxauth")))
-      _taxauth->setId(item->data(_sources->column("taxauth"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("usr")))
-      _user->setUsername(item->data(_sources->column("usr"), Xt::IdRole).toString());
-    if (_data->isSelected(item, _sources->column("emp")))
-      _emp->setId(item->data(_sources->column("emp"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("salesrep")))
-      _salesrep->setId(item->data(_sources->column("salesrep"), Xt::IdRole).toInt());
-    if (_data->isSelected(item, _sources->column("competitor")))
-      _competitor->setChecked(item->rawValue("competitor").toBool());
-    if (_data->isSelected(item, _sources->column("partner")))
-      _partner->setChecked(item->rawValue("partner").toBool());
-
-    if (_data->isSelected(item, _sources->column("crmacct_type")))
-    {
-      if (item->rawValue("crmacct_type").toString() == "I")
-        _individual->setChecked(true);
-      else if (item->rawValue("crmacct_type").toString() == "O")
-        _organization->setChecked(true);
-    }
-
-    if (_data->isSelected(item, _sources->column("notes")))
-      _notes->setPlainText(_notes->toPlainText()
-                           + (_notes->toPlainText().trimmed().isEmpty() ? "" : "\n")
-                           + item->data(_sources->column("notes"),
-                                        Qt::ToolTipRole).toString());
-  }
-
-  emit completeChanged();
+  _deselect->setEnabled(_sources->selectionModel()->selectedIndexes().size());
+  _select->setEnabled(_sources->selectionModel()->selectedIndexes().size());
 }
 
 void CrmaccountMergePickDataPage::sPopulateMenu(QMenu *pMenu, XTreeWidgetItem *pItem)
@@ -329,8 +287,6 @@ void CrmaccountMergePickDataPage::sPopulateMenu(QMenu *pMenu, XTreeWidgetItem *p
   menuItem = pMenu->addAction(tr("Delete CRM Account"), this, SLOT(sDelete()));
   menuItem->setEnabled(pItem->id() != _data->_destid &&
                        _privileges->check("MaintainAllCRMAccounts"));
-  qDebug("_sources->id(): %d, _data->_destid: %d",
-         _sources->id(), _data->_destid);
 }
 
 void CrmaccountMergePickDataPage::sSelect()
@@ -346,11 +302,11 @@ void CrmaccountMergePickDataPage::sSelect()
 
   foreach(QModelIndex cell, _sources->selectionModel()->selectedIndexes())
   {
-    if (mergeUiDescription[cell.column()].mergecol.isEmpty())
+    if (mergeUiDesc[cell.column()].mergecol.isEmpty())
       continue;
 
     ParameterList params;
-    params.append("colname", mergeUiDescription[cell.column()].mergecol);
+    params.append("colname", mergeUiDesc[cell.column()].mergecol);
     params.append("srcval",  QVariant(true));
     params.append("srcid",   _sources->topLevelItem(cell.row())->id());
     params.append("destval", QVariant(false));
@@ -360,7 +316,7 @@ void CrmaccountMergePickDataPage::sSelect()
     ErrorReporter::error(QtCriticalMsg, this, tr("Updating Merge Sources"),
                          srcq, __FILE__, __LINE__);
 
-    if (! mergeUiDescription[cell.column()].multiple)
+    if (! mergeUiDesc[cell.column()].multiple)
     {
       XSqlQuery destq = destm.toQuery(params);
       ErrorReporter::error(QtCriticalMsg, this, tr("Updating Merge Destination"),

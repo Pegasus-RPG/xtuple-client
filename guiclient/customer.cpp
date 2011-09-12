@@ -1540,7 +1540,11 @@ void customer::sLoadCrmAcct(int crmacctId)
   if (getq.first())
   {
     _crmowner = getq.value("crmacct_owner_username").toString();
+    _number->setCanEdit(true);
+    _number->setEditMode(true);
     _number->setNumber(getq.value("crmacct_number").toString());
+    _number->setEditMode(false);
+    _number->setCanEdit(false);
     _name->setText(getq.value("crmacct_name").toString());
     _active->setChecked(getq.value("crmacct_active").toBool());
     _billCntct->setId(getq.value("crmacct_cntct_id_1").toInt());

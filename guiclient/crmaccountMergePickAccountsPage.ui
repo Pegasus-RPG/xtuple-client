@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>300</height>
+    <width>421</width>
+    <height>239</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,11 +16,14 @@
   <property name="title">
    <string>Select the CRM Accounts to Merge</string>
   </property>
+  <property name="subTitle">
+   <string>Select the CRM Accounts you want to merge together from the list below. Then, at the bottom of the screen, choose which of those Accounts they should be merged into.</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" rowspan="2" colspan="2">
+   <item row="0" column="0" rowspan="3" colspan="2">
     <widget class="ParameterWidget" name="_filter"/>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="XLabel" name="_sourcesLit">
      <property name="text">
       <string>Accounts to Merge:</string>
@@ -30,7 +33,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="5">
+   <item row="5" column="0" colspan="5">
     <widget class="XTreeWidget" name="_sources">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -39,11 +42,11 @@
       </sizepolicy>
      </property>
      <property name="selectionMode">
-      <enum>QAbstractItemView::MultiSelection</enum>
+      <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="6" column="0">
     <widget class="XLabel" name="_targetLit">
      <property name="enabled">
       <bool>false</bool>
@@ -53,14 +56,34 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1" colspan="3">
+   <item row="6" column="1" colspan="3">
     <widget class="XComboBox" name="_target">
      <property name="enabled">
       <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
+   <item row="0" column="4">
+    <widget class="QPushButton" name="_query">
+     <property name="text">
+      <string>Query</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="4">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="3">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -72,30 +95,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="0" column="4" rowspan="2">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="_query">
-       <property name="text">
-        <string>Query</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
    </item>
   </layout>
  </widget>

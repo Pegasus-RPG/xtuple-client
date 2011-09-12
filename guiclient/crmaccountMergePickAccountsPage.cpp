@@ -26,12 +26,20 @@ class CrmaccountMergePickAccountsPagePrivate
       : _parent(parent),
         _targetid_cache(-1)
     {
+      QString errmsg;
+      bool ok = false;
+      _mqlstr = MQLUtil::mqlLoad("crmaccounts", "detail", errmsg, &ok);
+      if (!ok)
+        ErrorReporter::error(QtCriticalMsg, _parent,
+                             QT_TRANSLATE_NOOP("CrmaccountMergePickAccountsPage",
+                                               "Error Getting CRM Accounts"),
+                             errmsg, __FILE__, __LINE__);
     }
 
-    QList<int> _ids;
-    QList<int> _ids_cache;
+    QList<int>  _ids_cache;
     QWidget    *_parent;
-    int        _targetid_cache;
+    QString     _mqlstr;
+    int         _targetid_cache;
 };
 
 CrmaccountMergePickAccountsPage::CrmaccountMergePickAccountsPage(QWidget *parent)
@@ -66,7 +74,8 @@ CrmaccountMergePickAccountsPage::CrmaccountMergePickAccountsPage(QWidget *parent
   _sources->addColumn(tr("Employee"),  _ynColumn, Qt::AlignCenter,false, "emp");
   _sources->addColumn(tr("Sales Rep"), _ynColumn, Qt::AlignCenter,false, "salesrep");
 
-  _filter->append(tr("Show Inactive"),          "showInactive",           ParameterWidget::Exists);
+  _filter->append(tr("Hide Merges in Progress"),"excludeMergeWIP",        ParameterWidget::Exists, true);
+  _filter->append(tr("Show Inactive"),          "showInactive",           ParameterWidget::Exists, true);
   _filter->append(tr("Account Number Pattern"), "crmacct_number_pattern", ParameterWidget::Text);
   _filter->append(tr("Account Name Pattern"),   "crmacct_name_pattern",   ParameterWidget::Text);
   _filter->append(tr("Contact Name Pattern"),   "cntct_name_pattern",     ParameterWidget::Text);
@@ -91,13 +100,18 @@ CrmaccountMergePickAccountsPage::~CrmaccountMergePickAccountsPage()
 void CrmaccountMergePickAccountsPage::cleanupPage()
 {
   _data->_targetid_cache = _target->id();
-  _data->_ids_cache      = _data->_ids;
+  _data->_ids_cache.clear();
+  for (int i = 0; i < _target->count(); i++)
+    _data->_ids_cache[i] = _target->id(i);
 }
 
 void CrmaccountMergePickAccountsPage::initializePage()
 {
-  qDebug("CrmaccountMergePickAccountsPage::initializePage() entered");
   _data->_targetid_cache = _target->id();
+  for (int i = 0; i < _data->_ids_cache.size(); i++)
+    _target->append(_data->_ids_cache[i],       // sFillList will set real codes
+                    QString::number(_data->_ids_cache[i]));
+  sFillList();
 }
 
 bool CrmaccountMergePickAccountsPage::isComplete() const
@@ -112,24 +126,24 @@ bool CrmaccountMergePickAccountsPage::validatePage()
 
   rollback.prepare("ROLLBACK;");
 
-  QStringList deleteme;
+  XSqlQuery delq;
+  delq.prepare("DELETE FROM crmacctsel"
+               " WHERE crmacctsel_dest_crmacct_id=:destid"
+               "   AND crmacctsel_src_crmacct_id=:srcid;");
   for (int n = 0; n < _data->_ids_cache.size(); n++)
-    if (! _data->_ids.contains(_data->_ids_cache[n]))
-      deleteme << QString::number(_data->_ids_cache[n]);
-  if (deleteme.size() > 0)
   {
-    XSqlQuery delq;
-    delq.prepare(QString("DELETE FROM crmacctsel "
-                         "WHERE crmacctsel_dest_crmacct_id=%1"
-                         "  AND crmacctsel_src_crmacct_id IN (%2);")
-                 .arg(_data->_targetid_cache).arg(deleteme.join(", ")));
-    delq.exec();
-    if (delq.lastError().type() != QSqlError::NoError)
+    if (_target->id(_data->_ids_cache[n]) == -1) // source id
     {
-      rollback.exec();
-      ErrorReporter::error(QtCriticalMsg, this, tr("Clearing Old Selections"),
-                           delq, __FILE__, __LINE__);
-      return false;
+      delq.bindValue(":destid", _data->_targetid_cache);
+      delq.bindValue(":srcid", _data->_ids_cache[n]);
+      delq.exec();
+      if (delq.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        ErrorReporter::error(QtCriticalMsg, this, tr("Clearing Old Selections"),
+                             delq, __FILE__, __LINE__);
+        return false;
+      }
     }
   }
 
@@ -168,9 +182,9 @@ bool CrmaccountMergePickAccountsPage::validatePage()
   }
 
   QStringList addme;
-  for (int n = 0; n < _data->_ids.size(); n++)
-    if (! _data->_ids_cache.contains(_data->_ids[n]))
-      addme << QString::number(_data->_ids[n]);
+  for (int n = 0; n < _target->count(); n++)
+    if (! _data->_ids_cache.contains(_target->id(n)))
+      addme << QString::number(_target->id(n));
   if (addme.size() > 0)
   {
     MetaSQLQuery mql("INSERT INTO crmacctsel VALUES ("
@@ -217,7 +231,9 @@ bool CrmaccountMergePickAccountsPage::validatePage()
   XSqlQuery commit("COMMIT;");
 
   _data->_targetid_cache = _target->id();
-  _data->_ids_cache      = _data->_ids;
+  _data->_ids_cache.clear();
+  for (int i = 0; i < _target->count(); i++)
+    _data->_ids_cache[i] = _target->id(i);
 
   wizard()->page(crmaccountMerge::Page_PickTask)->initializePage();
   setField("_existingMerge", field("_target"));
@@ -227,21 +243,15 @@ bool CrmaccountMergePickAccountsPage::validatePage()
 
 void CrmaccountMergePickAccountsPage::sFillList()
 {
-  QString errmsg;
-  bool ok = true;
-  MetaSQLQuery mql = MQLUtil::mqlLoad("crmaccounts", "detail", errmsg, &ok);
-  if (!ok &&
-      ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting CRM Accounts"),
-                           errmsg, __FILE__, __LINE__))
-    return;
-
   // save the current target and selection
   int prevtarget = _target->id();
-  QList<XTreeWidgetItem*> items = _sources->selectedItems();
-  QList<int> ids = _data->_ids;
+  QList<int> ids;
+  for (int i = 0; i < _target->count(); i++)
+    ids[i] = _target->id(i);
 
   // repopulate
   _target->clear();
+  MetaSQLQuery mql(_data->_mqlstr);
   XSqlQuery qry = mql.toQuery(_filter->parameters());
   _sources->populate(qry);
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting CRM Account"),
@@ -249,25 +259,25 @@ void CrmaccountMergePickAccountsPage::sFillList()
     return;
 
   // restore the selection
-  if (ids.size())
+  disconnect(_sources,SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
+  for (int j = 0; j < ids.size(); j++)
   {
-    for (int i = _sources->topLevelItemCount() - 1; i >= 0; i--)
+    for (int i = 0; i < _sources->topLevelItemCount(); i++)
     {
       XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(_sources->topLevelItem(i));
-      if (item)
+      if (item && item->id() == ids[j])
       {
-        for (int j = ids.size() - 1; j >= 0; j--)
-        {
-          if (item->id() == ids[j])
-            _sources->setCurrentItem(item, 0,
-                                     QItemSelectionModel::Select |
-                                     QItemSelectionModel::Rows);
-            _target->append(item->id(), item->text("crmacct_number"));
-        }
+        _sources->setCurrentItem(item, 0,
+                                 QItemSelectionModel::Select |
+                                 QItemSelectionModel::Rows);
+        _target->append(item->id(), item->text("crmacct_number"));
       }
     }
-    _target->setId(prevtarget);
   }
+  connect(_sources,SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
+  sHandleButtons();
+
+  _target->setId(prevtarget);
 }
 
 void CrmaccountMergePickAccountsPage::sHandleButtons()
@@ -278,12 +288,9 @@ void CrmaccountMergePickAccountsPage::sHandleButtons()
   int targetid = _target->id();
 
   _target->clear();
-  _data->_ids.clear();
   for (int i = 0; i < items.size(); i++)
-  {
     _target->append(items[i]->id(), items[i]->text("crmacct_number"));
-    _data->_ids << items[i]->id();
-  }
+
   _target->setId(targetid);
 
   emit completeChanged();

@@ -20,10 +20,11 @@ CrmaccountMergePickTaskPage::CrmaccountMergePickTaskPage(QWidget *parent)
 {
   setupUi(this);
 
-  connect(_continueExisting,SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_existingMerge,     SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
-  connect(_revertExisting,  SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_startPurge,      SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_continue,         SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_existingMerge,      SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+  connect(_revert,           SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_startPurge,       SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(omfgThis,SIGNAL(crmAccountsUpdated(int)), this, SLOT(sUpdateComboBoxes()));
 
   registerField("_completedMerge", _completedMerge, "text", "currentIndexChanged(QString)");
   registerField("_existingMerge",  _existingMerge,  "text", "currentIndexChanged(QString)");
@@ -31,20 +32,12 @@ CrmaccountMergePickTaskPage::CrmaccountMergePickTaskPage(QWidget *parent)
 
 void CrmaccountMergePickTaskPage::initializePage()
 {
-  qDebug("CrmaccountMergePickTaskPage::initializePage() entered");
-  XSqlQuery taskq("SELECT crmacctsel_dest_crmacct_id, crmacct_number"
-                  "  FROM crmacctsel"
-                  "  JOIN crmacct ON (crmacctsel_dest_crmacct_id=crmacct_id)"
-                  " WHERE (crmacctsel_src_crmacct_id=crmacctsel_dest_crmacct_id)"
-                  " ORDER BY crmacct_name;");
-  _existingMerge->populate(taskq);
-  ErrorReporter::error(QtCriticalMsg, this, tr("Looking for Merges"),
-                       taskq, __FILE__, __LINE__);
+  sUpdateComboBoxes();
 }
 
 bool CrmaccountMergePickTaskPage::isComplete() const
 {
-  if (_continueExisting->isChecked() || _revertExisting->isChecked())
+  if (_continue->isChecked() || _revert->isChecked())
     return _existingMerge->isValid();
 
   return true;
@@ -52,8 +45,8 @@ bool CrmaccountMergePickTaskPage::isComplete() const
 
 int CrmaccountMergePickTaskPage::nextId() const
 {
-  if (_continueExisting->isChecked())    return crmaccountMerge::Page_PickData;
-  else if (_revertExisting->isChecked()) return crmaccountMerge::Page_Result;
+  if (_continue->isChecked())    return crmaccountMerge::Page_PickData;
+  else if (_revert->isChecked()) return crmaccountMerge::Page_Result;
   else if (_startPurge->isChecked())     return crmaccountMerge::Page_Purge;
 
   return crmaccountMerge::Page_PickAccounts;
@@ -61,12 +54,37 @@ int CrmaccountMergePickTaskPage::nextId() const
 
 void CrmaccountMergePickTaskPage::sHandleButtons()
 {
-  _continueExisting->setEnabled(_existingMerge->count());
-  _revertExisting->setEnabled(_existingMerge->count());
-  _startPurge->setEnabled(_existingMerge->count());
+  _continue->setEnabled(_existingMerge->count());
+  _revert->setEnabled(_completedMerge->count());
+  _startPurge->setEnabled(_completedMerge->count());
 
-  _existingMerge->setEnabled(_continueExisting->isChecked() ||
-                             _revertExisting->isChecked());
+  _completedMerge->setEnabled(_revert->isEnabled());
+  _existingMerge->setEnabled(_continue->isEnabled());
 
   emit completeChanged();
+}
+
+void CrmaccountMergePickTaskPage::sUpdateComboBoxes()
+{
+  XSqlQuery contq("SELECT crmacct_id, crmacct_number"
+                  "  FROM crmacct"
+                  " WHERE crmacct_id IN (SELECT crmacctsel_dest_crmacct_id"
+                  "                        FROM crmacctsel)"
+                  " ORDER BY crmacct_number;");
+  _existingMerge->populate(contq);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Looking for Merges"),
+                       contq, __FILE__, __LINE__);
+
+  XSqlQuery undoq("SELECT crmacct_id, crmacct_number"
+                  "  FROM crmacct"
+                  " WHERE crmacct_id IN (SELECT mrgundo_base_id"
+                  "                        FROM mrgundo"
+                  "                      WHERE mrgundo_base_schema='public'"
+                  "                        AND mrgundo_base_table='crmacct')"
+                  " ORDER BY crmacct_number;");
+  _completedMerge->populate(undoq);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Looking for Merges"),
+                       undoq, __FILE__, __LINE__);
+
+  sHandleButtons();
 }

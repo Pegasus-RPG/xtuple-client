@@ -50,6 +50,7 @@ class menuCRM : public QObject
     void sContact();
     void sContacts();
     void sContactMerge();
+    void sCrmaccountMerge();
     void sCreateRecurringItems();
     void sIncident();
     void sIncidentWorkbench();

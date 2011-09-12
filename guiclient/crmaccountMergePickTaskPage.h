@@ -28,6 +28,7 @@ class CrmaccountMergePickTaskPage : public QWizardPage, public Ui::crmaccountMer
 
   protected slots:
     virtual void sHandleButtons();
+    virtual void sUpdateComboBoxes();
 };
 
 #endif

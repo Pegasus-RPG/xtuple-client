@@ -13,16 +13,11 @@
 #include <QMessageBox>
 #include <QPixmap>
 
-#include <metasql.h>
-#include <mqlutil.h>
-
-#include "crmaccount.h"
 #include "crmaccountMergePickAccountsPage.h"
 #include "crmaccountMergePickDataPage.h"
 #include "crmaccountMergePickTaskPage.h"
 #include "crmaccountMergePurgePage.h"
 #include "crmaccountMergeResultPage.h"
-#include "errorReporter.h"
 
 class crmaccountMergePrivate {
   public:
@@ -63,6 +58,8 @@ crmaccountMerge::crmaccountMerge(QWidget* parent, const char* name, Qt::WFlags f
   setPage(Page_PickData,        new CrmaccountMergePickDataPage);
   setPage(Page_Result,          new CrmaccountMergeResultPage);
   setPage(Page_Purge,           new CrmaccountMergePurgePage);
+
+  setButtonText(CancelButton, tr("Close"));
 
   setDefaultProperty("XComboBox", "text", SIGNAL(currentIndexChanged(QString)));
 }

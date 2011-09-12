@@ -11,8 +11,6 @@
 #ifndef CRMACCOUNTMERGEPICKDATAPAGE_H
 #define CRMACCOUNTMERGEPICKDATAPAGE_H
 
-#include <QWizardPage>
-
 #include "ui_crmaccountMergePickDataPage.h"
 
 class CrmaccountMergePickDataPagePrivate;
@@ -35,7 +33,7 @@ class CrmaccountMergePickDataPage : public QWizardPage, public Ui::crmaccountMer
     virtual bool sDelete();
     virtual void sEdit();
     virtual void sFillList();
-    virtual void sHandlePreview();
+    virtual void sHandleButtons();
     virtual void sPopulateMenu(QMenu *pMenu, XTreeWidgetItem *);
     virtual void sSelect();
     virtual void sView();

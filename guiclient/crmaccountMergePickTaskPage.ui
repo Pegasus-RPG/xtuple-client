@@ -17,7 +17,7 @@
    <string>Pick a Task</string>
   </property>
   <property name="subTitle">
-   <string/>
+   <string>This Wizard guides you through the steps of merging CRM Accounts. You can close at any time. The work in progress will be saved for you to come back to later.</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -31,7 +31,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QRadioButton" name="_continueExisting">
+    <widget class="QRadioButton" name="_continue">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -41,7 +41,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QRadioButton" name="_revertExisting">
+    <widget class="QRadioButton" name="_revert">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -109,6 +109,14 @@
    <header>xcombobox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_startNew</tabstop>
+  <tabstop>_continue</tabstop>
+  <tabstop>_existingMerge</tabstop>
+  <tabstop>_revert</tabstop>
+  <tabstop>_completedMerge</tabstop>
+  <tabstop>_startPurge</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

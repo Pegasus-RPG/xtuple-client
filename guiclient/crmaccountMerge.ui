@@ -14,7 +14,7 @@
    <string>Merge CRM Accounts</string>
   </property>
   <property name="options">
-   <set>QWizard::NoDefaultButton</set>
+   <set>QWizard::NoBackButtonOnStartPage|QWizard::NoDefaultButton</set>
   </property>
  </widget>
  <resources/>

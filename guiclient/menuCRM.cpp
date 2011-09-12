@@ -22,6 +22,7 @@
 #include "contact.h"
 #include "contacts.h"
 #include "contactMerge.h"
+#include "crmaccountMerge.h"
 #include "address.h"
 #include "addresses.h"
 #include "crmaccount.h"
@@ -127,7 +128,8 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "menu",			tr("&Utilities"),		(char*)utilitiesMenu,		crmMenu,	"true", NULL, NULL, true	, NULL },
     { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	"EditOwner", NULL, NULL, true, NULL },
     { "crm.createRecurringItems",tr("Create &Recurring Items..."), SLOT(sCreateRecurringItems()),utilitiesMenu, "MaintainPersonalIncidents MaintainPersonalIncidents MaintainAllIncidents MaintainAllProjects MaintainPersonalToDoItems MaintainAllToDoItems", NULL, NULL, true, NULL },
-    { "crm.contactMerge",       tr("&Merge Contacts..."), SLOT(sContactMerge()),utilitiesMenu, "MergeContacts", NULL, NULL, true, NULL },
+    { "crm.contactMerge",                tr("&Merge Contacts..."), SLOT(sContactMerge()),        utilitiesMenu, "MergeContacts",          NULL, NULL, true, NULL },
+    { "crm.crmaccountMerge",         tr("Merge &CRM Accounts..."), SLOT(sCrmaccountMerge()),     utilitiesMenu, "MaintainAllCRMAccounts", NULL, NULL, true, NULL },
 
     { "crm.setup",	tr("&Setup..."),	SLOT(sSetup()),	crmMenu,	NULL,	NULL,	NULL,	true, NULL}
 
@@ -260,6 +262,11 @@ void menuCRM::sContacts()
 void menuCRM::sContactMerge()
 {
   omfgThis->handleNewWindow(new contactMerge());
+}
+
+void menuCRM::sCrmaccountMerge()
+{
+  omfgThis->handleNewWindow(new crmaccountMerge(omfgThis, "crmaccountMerge", Qt::Dialog));
 }
 
 void menuCRM::sAddress()

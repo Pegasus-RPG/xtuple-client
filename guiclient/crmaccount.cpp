@@ -34,7 +34,7 @@
 #include "vendor.h"
 #include "vendorWorkBench.h"
 
-#define DEBUG false
+#define DEBUG true
 
 crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -122,7 +122,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _vendId       = -1;
   _comments->setId(-1);
   _documents->setId(-1);
-  _modal          = (windowModality() == Qt::NonModal);
+  _modal          = (windowModality() != Qt::NonModal);
   _canCreateUsers = false;
 
   if (!_metrics->boolean("LotSerialControl"))
@@ -949,6 +949,9 @@ void crmaccount::sViewVendor()
 
 void crmaccount::sUpdateRelationships()
 {
+  if (DEBUG)
+    qDebug("crmaccount::sUpdateRelationships() entered");
+
   XSqlQuery getq;
   getq.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);" );
   getq.bindValue(":crmacct_id", _crmacctId);

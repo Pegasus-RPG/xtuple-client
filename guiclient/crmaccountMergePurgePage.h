@@ -11,15 +11,27 @@
 #ifndef CRMACCOUNTMERGEPICKPURGEPAGE_H
 #define CRMACCOUNTMERGEPICKPURGEPAGE_H
 
-#include <QWizardPage>
-
 #include "ui_crmaccountMergePurgePage.h"
+
+class CrmaccountMergePurgePagePrivate;
 
 class CrmaccountMergePurgePage : public QWizardPage, public Ui::crmaccountMergePurgePage
 {
   Q_OBJECT
   public:
     CrmaccountMergePurgePage(QWidget *parent = 0);
+    ~CrmaccountMergePurgePage();
+
+    virtual void initializePage();
+
+  protected slots:
+    virtual void sDelete();
+    virtual void sDeleteAll();
+    virtual void sFillList();
+    virtual void sHandleButtons();
+
+  protected:
+    CrmaccountMergePurgePagePrivate *_data;
 };
 
 #endif
