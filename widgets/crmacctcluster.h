@@ -11,7 +11,7 @@
 #ifndef _crmaccttCluster_h
 #define _crmaccttCluster_h
 
-#include "crmCluster.h"
+#include "crmcluster.h"
 #include "xcheckbox.h"
 
 class XComboBox;
