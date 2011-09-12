@@ -34,7 +34,7 @@
 #include "vendor.h"
 #include "vendorWorkBench.h"
 
-#define DEBUG true
+#define DEBUG false
 
 crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -122,7 +122,15 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _vendId       = -1;
   _comments->setId(-1);
   _documents->setId(-1);
-  _modal          = (windowModality() != Qt::NonModal);
+  _modal        = parent && (parent->inherits("customer") ||
+                             parent->inherits("employee") ||
+                             parent->inherits("prospect") ||
+                             parent->inherits("salesRep") ||
+                             parent->inherits("taxAuthority") ||
+                             parent->inherits("user") ||
+                             parent->inherits("vendor"));
+  if (_modal)
+    setWindowModality(Qt::WindowModal);
   _canCreateUsers = false;
 
   if (!_metrics->boolean("LotSerialControl"))
@@ -1155,14 +1163,15 @@ void crmaccount::sHandleButtons()
 
 void crmaccount::sHandleChildButtons()
 {
+  bool canEdit = (_mode == cNew || _mode == cEdit);
+
   if (DEBUG)
     qDebug("sHandleChildButtons() entered with competitor %d, customer %d, "
            "employee %d, partner %d, prospect %d, salesrep %d, taxauth %d, "
-           "user %s, vendor %d",
+           "user %s, vendor %d\tcanEdit %d and _modal %d",
            _competitorId, _custId, _empId, _partnerId, _prospectId,
-           _salesrepId, _taxauthId, qPrintable(_username), _vendId);
-
-  bool canEdit = (_mode == cNew || _mode == cEdit);
+           _salesrepId, _taxauthId, qPrintable(_username), _vendId,
+           canEdit, _modal);
 
   _competitor->setChecked(_competitorId > 0);
   _competitor->setEnabled(canEdit &&
@@ -1172,6 +1181,7 @@ void crmaccount::sHandleChildButtons()
   _customer->setEnabled(canEdit && !_modal &&
                         _privileges->check("MaintainCustomerMasters"));
   _customerButton->setEnabled(_custId > 0 &&
+                              ! (parent() && parent()->inherits("customer")) &&
                               (_privileges->check("MaintainCustomerMasters") ||
                                _privileges->check("ViewCustomerMasters") ));
 
@@ -1179,6 +1189,7 @@ void crmaccount::sHandleChildButtons()
   _employee->setEnabled(canEdit && !_modal &&
                         _privileges->check("MaintainEmployees"));
   _employeeButton->setEnabled(_empId > 0 &&
+                              ! (parent() && parent()->inherits("employee")) &&
                               (_privileges->check("MaintainEmployees") ||
                                _privileges->check("ViewEmployees")));
 
@@ -1189,6 +1200,7 @@ void crmaccount::sHandleChildButtons()
   _prospect->setEnabled(canEdit && !_modal &&
                         _privileges->check("MaintainProspectMasters"));
   _prospectButton->setEnabled(_prospectId > 0 &&
+                              ! (parent() && parent()->inherits("prospect")) &&
                               (_privileges->check("MaintainProspectMasters") ||
                                _privileges->check("ViewProspectMasters")));
 
@@ -1196,6 +1208,7 @@ void crmaccount::sHandleChildButtons()
   _salesrep->setEnabled(canEdit && !_modal &&
                         _privileges->check("MaintainSalesReps"));
   _salesrepButton->setEnabled(_salesrepId > 0 &&
+                              ! (parent() && parent()->inherits("salesRep")) &&
                               (_privileges->check("MaintainSalesReps") ||
                                _privileges->check("ViewSalesReps")));
 
@@ -1203,6 +1216,7 @@ void crmaccount::sHandleChildButtons()
   _taxauth->setEnabled(canEdit && !_modal &&
                        _privileges->check("MaintainTaxAuthorities"));
   _taxauthButton->setEnabled(_taxauthId > 0 &&
+                             ! (parent() && parent()->inherits("taxAuthority")) &&
                              (_privileges->check("MaintainTaxAuthorities") ||
                               _privileges->check("ViewTaxAuthorities")));
 
@@ -1211,10 +1225,12 @@ void crmaccount::sHandleChildButtons()
   _user->setEnabled(canEdit && !_modal && _privileges->check("MaintainUsers") &&
                     _canCreateUsers    && _username.isEmpty());
   _userButton->setEnabled(! _username.isEmpty() &&
+                          ! (parent() && parent()->inherits("user")) &&
                           _privileges->check("MaintainUsers"));
 
   _vendor->setChecked(_vendId > 0);
   _vendor->setEnabled(canEdit && !_modal &&
+                      ! (parent() && parent()->inherits("vendor")) &&
                       _privileges->check("MaintainVendors"));
   if (_vendId > 0 &&
       (_privileges->check("MaintainVendors") ||
