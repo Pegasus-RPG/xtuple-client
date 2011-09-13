@@ -85,13 +85,10 @@ crmaccounts::crmaccounts(QWidget* parent, const char*, Qt::WFlags fl)
   setupCharacteristics(characteristic::CRMAccounts);
   parameterWidget()->applyDefaultFilterSet();
 
-  if (_privileges->check("MaintainAllCRMAccounts") || _privileges->check("MaintainPersonalCRMAccounts"))
-    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
-  else
-  {
+  connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
+
+  if (!_privileges->check("MaintainAllCRMAccounts") && !_privileges->check("MaintainPersonalCRMAccounts"))
     newAction()->setEnabled(FALSE);
-    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
-  }
 }
 
 void crmaccounts::sNew()
@@ -150,11 +147,11 @@ void crmaccounts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 
   bool editPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("MaintainPersonalCRMAccounts")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("MaintainAllCRMAccounts"));
+      (_privileges->check("MaintainAllCRMAccounts"));
 
   bool viewPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("ViewPersonalCRMAccounts")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("ViewAllCRMAccounts"));
+      (_privileges->check("ViewAllCRMAccounts"));
 
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   menuItem->setEnabled(editPriv);
@@ -164,4 +161,20 @@ void crmaccounts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 
   menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
   menuItem->setEnabled(editPriv);
+}
+
+void crmaccounts::sOpen()
+{
+  bool editPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("MaintainPersonalCRMAccounts")) ||
+      (_privileges->check("MaintainAllCRMAccounts"));
+
+  bool viewPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("crmacct_owner_username") && _privileges->check("ViewPersonalCRMAccounts")) ||
+      (_privileges->check("ViewAllCRMAccounts"));
+
+  if (editPriv)
+    sEdit();
+  else if (viewPriv)
+    sView();
 }

@@ -191,7 +191,7 @@ to be bound by its terms.</comment>
        <item row="0" column="1" rowspan="2">
         <widget class="QGroupBox" name="_relationshipsGroup">
          <property name="title">
-          <string>Relationships</string>
+          <string>Roles</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">

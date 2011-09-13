@@ -92,16 +92,16 @@ contacts::contacts(QWidget* parent, const char*, Qt::WFlags fl)
   connect(attachBtn, SIGNAL(clicked()),      this, SLOT(sAttach()));
   connect(detachBtn, SIGNAL(clicked()),      this, SLOT(sDetach()));
 
+  connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
+
   if (_privileges->check("MaintainAllContacts") || _privileges->check("MaintainPersonalContacts"))
   {
     _attachAct->setEnabled(true);
     connect(list(), SIGNAL(valid(bool)), _detachAct, SLOT(setEnabled(bool)));
-    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
   }
   else
   {
     newAction()->setEnabled(false);
-    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
 }
 
@@ -134,11 +134,11 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 
   bool editPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainPersonalContacts")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainAllContacts"));
+      (_privileges->check("MaintainAllContacts"));
 
   bool viewPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("ViewPersonalContacts")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("ViewAllContacts"));
+      (_privileges->check("ViewAllContacts"));
 
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
   menuItem->setEnabled(editPriv);
@@ -355,4 +355,23 @@ bool contacts::setParams(ParameterList &params)
     params.append("activeOnly",true);
 
   return true;
+}
+
+void contacts::sOpen()
+{
+  bool editPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("MaintainPersonalContacts")) ||
+      (_privileges->check("MaintainAllContacts"));
+
+  bool viewPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("cntct_owner_username") && _privileges->check("ViewPersonalContacts")) ||
+      (_privileges->check("ViewAllContacts"));
+
+  if (editPriv)
+    sEdit();
+  else if (viewPriv)
+    sView();
+  else
+    QMessageBox::information(this, tr("Restricted Access"), tr("You have not been granted privileges to open this Contact."));
+
 }

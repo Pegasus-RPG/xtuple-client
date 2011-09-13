@@ -99,15 +99,13 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllToDoItems")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllToDoItems"));
+        (_privileges->check("MaintainAllToDoItems"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllToDoItems")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllToDoItems"));
+        (_privileges->check("ViewAllToDoItems"));
 
     menuItem = pMenu->addAction(tr("Edit To-Do..."), this, SLOT(sEdit()));
     menuItem->setEnabled(editPriv);
@@ -127,15 +125,13 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalIncidents")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllIncidents")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalIncidents")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllIncidents"));
+        (_privileges->check("MaintainAllIncidents"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalIncidents")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllIncidents")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalIncidents")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllIncidents"));
+        (_privileges->check("ViewAllIncidents"));
 
     menuItem = pMenu->addAction(tr("Edit Incident"), this, SLOT(sEditIncident()));
     menuItem->setEnabled(editPriv);
@@ -148,15 +144,13 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProjects")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllProjects"));
+        (_privileges->check("MaintainAllProjects"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllProjects")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllProjects"));
+        (_privileges->check("ViewAllProjects"));
 
     menuItem = pMenu->addAction(tr("Edit Task"), this, SLOT(sEditTask()));
     menuItem->setEnabled(editPriv);
@@ -169,15 +163,13 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProjects")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllProjects"));
+        (_privileges->check("MaintainAllProjects"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllProjects")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllProjects"));
+        (_privileges->check("ViewAllProjects"));
 
     menuItem = pMenu->addAction(tr("Edit Project"), this, SLOT(sEditProject()));
     menuItem->setEnabled(editPriv);
@@ -191,15 +183,13 @@ void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalOpportunities")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllOpportunities")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalOpportunities")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllOpportunities"));
+        (_privileges->check("MaintainAllOpportunities"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalOpportunities")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllOpportunities")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalOpportunities")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllOpportunities"));
+        (_privileges->check("ViewAllOpportunities"));
 
     menuItem = pMenu->addAction(tr("Edit Opportunity"), this, SLOT(sEditOpportunity()));
     menuItem->setEnabled(editPriv);
@@ -632,15 +622,13 @@ void todoList::sOpen()
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllToDoItems")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllToDoItems"));
+        (_privileges->check("MaintainAllToDoItems"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllToDoItems")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllToDoItems"));
+        (_privileges->check("ViewAllToDoItems"));
 
   }
 
@@ -650,15 +638,13 @@ void todoList::sOpen()
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalIncidents")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllIncidents")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalIncidents")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllIncidents"));
+        (_privileges->check("MaintainAllIncidents"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalIncidents")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllIncidents")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalIncidents")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllIncidents"));
+        (_privileges->check("ViewAllIncidents"));
 
   }
 
@@ -666,15 +652,13 @@ void todoList::sOpen()
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProjects")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllProjects"));
+        (_privileges->check("MaintainAllProjects"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllProjects")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllProjects"));
+        (_privileges->check("ViewAllProjects"));
 
   }
 
@@ -682,15 +666,13 @@ void todoList::sOpen()
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllProjects")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllProjects"));
+        (_privileges->check("MaintainAllProjects"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllProjects")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalProjects")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllProjects"));
+        (_privileges->check("ViewAllProjects"));
 
   }
 
@@ -700,15 +682,13 @@ void todoList::sOpen()
   {
     editPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalOpportunities")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("MaintainAllOpportunities")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalOpportunities")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllOpportunities"));
+        (_privileges->check("MaintainAllOpportunities"));
 
     viewPriv =
         (omfgThis->username() == list()->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalOpportunities")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("owner") && _privileges->check("ViewAllOpportunities")) ||
         (omfgThis->username() == list()->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalOpportunities")) ||
-        (omfgThis->username() != list()->currentItem()->rawValue("assigned") && _privileges->check("ViewAllOpportunities"));
+        (_privileges->check("ViewAllOpportunities"));
 
   }
 
@@ -716,6 +696,8 @@ void todoList::sOpen()
     sEdit();
   else if(viewPriv)
     sView();
+  else
+    QMessageBox::information(this, tr("Restricted Access"), tr("You have not been granted privileges to open this item."));
 }
 
 

@@ -31,13 +31,10 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   setSearchVisible(true);
   setQueryOnStartEnabled(true);
 
-  if (_privileges->check("MaintainAllProjects") || _privileges->check("MaintainPersonalProjects"))
-    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
-  else
-  {
+  connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
+
+  if (!_privileges->check("MaintainAllProjects") && !_privileges->check("MaintainPersonalProjects"))
     newAction()->setEnabled(FALSE);
-    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
-  }
 
   list()->addColumn(tr("Number"),    _orderColumn, Qt::AlignLeft,   true, "prj_number" );
   list()->addColumn(tr("Name"),      -1,           Qt::AlignLeft,   true, "prj_name"   );
@@ -139,15 +136,13 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
   bool editPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("MaintainPersonalProjects")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("MaintainAllProjects")) ||
       (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("MaintainPersonalProjects")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("prj_username") && _privileges->check("MaintainAllProjects"));
+      (_privileges->check("MaintainAllProjects"));
 
   bool viewPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("ViewPersonalProjects")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("ViewAllProjects")) ||
       (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("ViewPersonalProjects")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("prj_username") && _privileges->check("ViewAllProjects"));
+      (_privileges->check("ViewAllProjects"));
 
   menuItem = pMenu->addAction("View...", this, SLOT(sView()));
   menuItem->setEnabled(viewPriv);
@@ -173,5 +168,24 @@ bool projects::setParams(ParameterList &params)
   params.append("undefined", tr("Undefined"));
 
   return true;
+}
+
+void projects::sOpen()
+{
+  bool editPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("MaintainPersonalProjects")) ||
+      (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("MaintainPersonalProjects")) ||
+      (_privileges->check("MaintainAllProjects"));
+
+  bool viewPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("prj_owner_username") && _privileges->check("ViewPersonalProjects")) ||
+      (omfgThis->username() == list()->currentItem()->rawValue("prj_username") && _privileges->check("ViewPersonalProjects")) ||
+      (_privileges->check("ViewAllProjects"));
+
+  if (editPriv)
+    sEdit();
+  else if (viewPriv)
+    sView();
+
 }
 

@@ -562,7 +562,7 @@ void contact::sFillList()
 	    "       prospect_number AS number,"
 	    "       prospect_name AS name, '' AS role,"
             "       (prospect_active) AS active,"
-            "       prospect_owner_username AS owner"
+            "       '' AS owner"
 	    "  FROM prospect WHERE (prospect_cntct_id=:id)"
 	    "UNION "
 	    "SELECT shipto_id AS id, 8 AS altId, :shipto AS type,"

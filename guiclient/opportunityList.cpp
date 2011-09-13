@@ -53,7 +53,10 @@ opportunityList::opportunityList(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft,   true, "ophead_target_date" );
   list()->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_actual_date" );
 
-  connect(list(),       SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+  connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
+
+  if (!_privileges->check("MaintainAllOpportunities") && !_privileges->check("MaintainPersonalOpportunities"))
+    newAction()->setEnabled(FALSE);
 
   parameterWidget()->append(tr("User"), "username", ParameterWidget::User, omfgThis->username());
   parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
@@ -78,15 +81,13 @@ void opportunityList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 
   bool editPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("MaintainPersonalOpportunities")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("MaintainAllOpportunities")) ||
       (omfgThis->username() == list()->currentItem()->rawValue("ophead_username") && _privileges->check("MaintainPersonalOpportunities")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("ophead_username") && _privileges->check("MaintainAllOpportunities"));
+      (_privileges->check("MaintainAllOpportunities"));
 
   bool viewPriv =
       (omfgThis->username() == list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("ViewPersonalOpportunities")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("ViewAllOpportunities")) ||
       (omfgThis->username() == list()->currentItem()->rawValue("ophead_username") && _privileges->check("ViewPersonalOpportunities")) ||
-      (omfgThis->username() != list()->currentItem()->rawValue("ophead_username") && _privileges->check("ViewAllOpportunities"));
+      (_privileges->check("ViewAllOpportunities"));
 
   menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNew()));
   menuItem->setEnabled(editPriv);
@@ -221,6 +222,24 @@ bool opportunityList::setParams(ParameterList &params)
     params.append("activeOnly");
 
   return true;
+}
+
+void opportunityList::sOpen()
+{
+  bool editPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("MaintainPersonalOpportunities")) ||
+      (omfgThis->username() == list()->currentItem()->rawValue("ophead_username") && _privileges->check("MaintainPersonalOpportunities")) ||
+      (_privileges->check("MaintainAllOpportunities"));
+
+  bool viewPriv =
+      (omfgThis->username() == list()->currentItem()->rawValue("ophead_owner_username") && _privileges->check("ViewPersonalOpportunities")) ||
+      (omfgThis->username() == list()->currentItem()->rawValue("ophead_username") && _privileges->check("ViewPersonalOpportunities")) ||
+      (_privileges->check("ViewAllOpportunities"));
+
+  if (editPriv)
+    sEdit();
+  else if (viewPriv)
+    sView();
 }
 
 

@@ -79,9 +79,12 @@ todoListCalendar::todoListCalendar(QWidget* parent, const char * name, Qt::Windo
   if (_preferences->boolean("XCheckBox/forgetful"))
     _active->setChecked(true);
 
-  handlePrivs();
+  _usr->setEnabled(_privileges->check("MaintainAllToDoItems") ||
+                   _privileges->check("ViewAllToDoItems"));
+
   sFillList(QDate::currentDate());
 
+  connect(_list, SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
   connect(cc, SIGNAL(selectedDayChanged(QDate)), this, SLOT(sFillList(QDate)));
 }
 
@@ -100,55 +103,27 @@ enum SetResponse todoListCalendar::set(const ParameterList& pParams)
   if (valid)
   {
     _usr->setId(param.toInt());
-    handlePrivs();
     sFillList();
   }
   return NoError;
 }
 
-void todoListCalendar::handlePrivs()
+void todoListCalendar::sOpen()
 {
-  bool editTodoPriv = false;
-  bool viewTodoPriv = false;
-
-  if (! _list->currentItem())
-  {
-  }
-  else if (_list->currentItem()->text(0) == "T")
-  {
-    editTodoPriv =
+  bool editPriv =
         (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() != _list->currentItem()->rawValue("owner") && _privileges->check("MaintainAllToDoItems")) ||
         (omfgThis->username() == _list->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() != _list->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllToDoItems"));
+        (_privileges->check("MaintainAllToDoItems"));
 
-    viewTodoPriv =
+  bool viewPriv =
         (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() != _list->currentItem()->rawValue("owner") && _privileges->check("ViewAllToDoItems")) ||
         (omfgThis->username() == _list->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() != _list->currentItem()->rawValue("assigned") && _privileges->check("ViewAllToDoItems"));
-  }
-  else if (_list->currentItem()->text(0) == "I")
-  {
-    editTodoPriv = false;
-    viewTodoPriv = false;
-  }
+        (_privileges->check("ViewAllToDoItems"));
 
-  _usr->setEnabled(_privileges->check("MaintainAllToDoItems") ||
-                   _privileges->check("ViewAllToDoItems"));
-
-  if (editTodoPriv)
-  {
-    disconnect(_list,SIGNAL(itemSelected(int)), this, SLOT(sView()));
-    disconnect(_list,SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
-    connect(_list,   SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
-  }
-  else if (viewTodoPriv)
-  {
-    disconnect(_list,SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
-    disconnect(_list,SIGNAL(itemSelected(int)), this, SLOT(sView()));
-    connect(_list,   SIGNAL(itemSelected(int)), this, SLOT(sView()));
-  }
+  if (editPriv)
+    sEdit();
+  else if (viewPriv)
+    sView();
 }
 
 void todoListCalendar::sPopulateMenu(QMenu *pMenu)
@@ -159,15 +134,13 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
   {
     bool editPriv =
         (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() != _list->currentItem()->rawValue("owner") && _privileges->check("MaintainAllToDoItems")) ||
         (omfgThis->username() == _list->currentItem()->rawValue("assigned") && _privileges->check("MaintainPersonalToDoItems")) ||
-        (omfgThis->username() != _list->currentItem()->rawValue("assigned") && _privileges->check("MaintainAllToDoItems"));
+        (_privileges->check("MaintainAllToDoItems"));
 
     bool viewPriv =
         (omfgThis->username() == _list->currentItem()->rawValue("owner") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() != _list->currentItem()->rawValue("owner") && _privileges->check("ViewAllToDoItems")) ||
         (omfgThis->username() == _list->currentItem()->rawValue("assigned") && _privileges->check("ViewPersonalToDoItems")) ||
-        (omfgThis->username() != _list->currentItem()->rawValue("assigned") && _privileges->check("ViewAllToDoItems"));
+        (_privileges->check("ViewAllToDoItems"));
 
     menuItem = pMenu->addAction(tr("New..."), this, SLOT(sNew()));
     menuItem->setEnabled(editPriv);
@@ -181,17 +154,6 @@ void todoListCalendar::sPopulateMenu(QMenu *pMenu)
     menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
     menuItem->setEnabled(editPriv);
   }
-
-/*
-  if (! _list->currentItem()->text(8).isEmpty())
-  {
-    menuItem = pMenu->addAction(tr("Edit Incident"), this, SLOT(sEditIncident()));
-    menuItem->setEnabled(_privileges->check("MaintainAllIncidents"));
-    menuItem = pMenu->addAction(tr("View Incident"), this, SLOT(sViewIncident()));
-    pMenu->setItemEnabled(menuItem, _privileges->check("ViewAllIncidents") ||
-                                    _privileges->check("MaintainAllIncidents"));
-  }
-*/
 
   if (! _list->currentItem()->text(9).isEmpty())
   {
@@ -338,10 +300,10 @@ void todoListCalendar::sFillList(const QDate & date)
                 "            WHEN (todoitem_status != 'C'AND "
                 "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
                 "       END AS due_qtforegroundrole "
-                "  FROM todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
-                "                LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
-                "                LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
-                "                LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
+                "  FROM todoitem() LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
+                "                  LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
+                "                  LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+                "                  LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
                 " WHERE( (todoitem_due_date = <? value(\"date\") ?>)"
                 "  <? if not exists(\"completed\") ?>"
                 "  AND   (todoitem_status != 'C')"
