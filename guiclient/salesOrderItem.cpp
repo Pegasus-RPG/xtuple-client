@@ -1432,13 +1432,6 @@ void salesOrderItem::sSave()
       q.bindValue(":parent_id", _soitemid);
       q.exec();
     }
-    else if ((_item->itemType() == "P") && _createPR)
-    {
-      q.prepare("SELECT createPr(:orderNumber, 'S', :soitem_id) AS result;");
-      q.bindValue(":orderNumber", _orderNumber->text().toInt());
-      q.bindValue(":soitem_id", _soitemid);
-      q.exec();
-    }
     else if ((_item->itemType() == "P") && _createPO)
     {
       if (_overridePoPrice->localValue() == 0.00)
@@ -1451,6 +1444,13 @@ void salesOrderItem::sSave()
       q.bindValue(":soitem_id", _soitemid);
       q.bindValue(":itemsrc_id", itemsrcid);
       q.bindValue(":drop_ship", _dropShip->isChecked());
+      q.exec();
+    }
+    else if (_item->itemType() == "P")
+    {
+      q.prepare("SELECT createPr(:orderNumber, 'S', :soitem_id) AS result;");
+      q.bindValue(":orderNumber", _orderNumber->text().toInt());
+      q.bindValue(":soitem_id", _soitemid);
       q.exec();
     }
 
@@ -1508,7 +1508,7 @@ void salesOrderItem::sSave()
           return;
         }
       }
-      else if ((_item->itemType() == "P") && _createPR)
+      else if ((_item->itemType() == "P") && !_createPO)
       {
         //  Update the newly created coitem with the newly pr_id
         q.prepare( "UPDATE coitem "
