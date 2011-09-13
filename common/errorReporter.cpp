@@ -381,7 +381,7 @@ const struct {
 //{ "docass_docass_purpose_check",              Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
   { "emp_check",                                Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "The Employee Type is invalid.") },
   { "emp_emp_cntct_id_fkey",                    Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "This Contact cannot be deleted as s/he is the Contact for an Employee.") },
-//{ "emp_emp_cntct_id_fkey",                    Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
+  { "emp_emp_cntct_id_fkey",                    Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "This Employee cannot be connected to what seems to be a non-existent Contact.") },
 //{ "emp_emp_code_key",                         Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "emp_emp_dept_id_fkey",                     Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "emp_emp_dept_id_fkey",                     Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
@@ -840,7 +840,7 @@ const struct {
 //{ "rev_check",                                Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "rev_rev_number_key",                       Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "rjctcode_rjctcode_code_key",               Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
-//{ "salesrep_salesrep_emp_id_fkey",            Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
+  { "salesrep_salesrep_emp_id_fkey",            Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot delete this Sales Rep as it is associated with an Employee.") },
 //{ "salesrep_salesrep_emp_id_fkey",            Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
   { "salesrep_salesrep_number_key",             Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot save this Sales Rep as there is another Sales Rep with this number.") },
 //{ "scprp_scprp_screc_id_fkey",                Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
@@ -1179,7 +1179,7 @@ QString ErrorReporterPrivate::text(QString msg, StatementType type)
   {
     for (unsigned int i = 0; i < sizeof(dberrs) / sizeof(dberrs[0]); i++)
     {
-      if (dberrs[i].type | type && msg.contains(dberrs[i].constraint))
+      if (dberrs[i].type & type && msg.contains(dberrs[i].constraint))
       {
         if (dberrs[i].lookup)
           return storedProcErrorLookup(dberrs[i].msg, dberrs[i].lookup);
