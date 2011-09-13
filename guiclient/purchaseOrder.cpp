@@ -962,8 +962,8 @@ void purchaseOrder::sDelete()
   if (_deleteMode == cDelete)
   {
     if (QMessageBox::question(this, tr("Delete Purchase Order Item?"),
-                                              tr("<p>Are you sure you want to delete this "
-                                                     "Purchase Order Line Item?"),
+                                    tr("<p>Are you sure you want to delete this "
+                                       "Purchase Order Line Item?"),
            QMessageBox::Yes,
             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
@@ -980,6 +980,13 @@ void purchaseOrder::sDelete()
   }
   else
   {
+    if (QMessageBox::question(this, tr("Close Purchase Order Item?"),
+                                    tr("<p>Are you sure you want to close this "
+                                       "Purchase Order Line Item?"),
+           QMessageBox::Yes,
+            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
+
     q.prepare( "UPDATE poitem SET poitem_status='C' "
                "WHERE (poitem_id=:poitem_id);" );
     q.bindValue(":poitem_id", _poitem->id());
