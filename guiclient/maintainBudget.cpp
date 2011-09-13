@@ -449,7 +449,8 @@ void maintainBudget::populate()
 
     q.prepare("SELECT DISTINCT budgitem_period_id"
               "  FROM budgitem"
-              " WHERE(budgitem_budghead_id=:budghead_id);");
+              " WHERE(budgitem_budghead_id=:budghead_id)"
+              " ORDER BY budgitem_period_id;");
     q.bindValue(":budghead_id", _budgheadid);
     q.exec();
     while(q.next())
