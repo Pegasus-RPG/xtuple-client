@@ -292,6 +292,19 @@ bool employee::sSave(const bool pClose)
 
   _contact->check();
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  XSqlQuery begin("BEGIN;");
+  int cntctResult = _contact->save();
+  if (cntctResult < 0)
+  {
+    rollback.exec();
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Contact"),
+                         storedProcErrorLookup("saveContact", cntctResult));
+    return false;
+  }
+
   XSqlQuery upsq;
   if (_mode == cNew)
     upsq.prepare("INSERT INTO emp ("
@@ -363,9 +376,15 @@ bool employee::sSave(const bool pClose)
   upsq.exec();
   if (upsq.first())
     _empid = upsq.value("emp_id").toInt();
-  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Employee"),
-                                upsq, __FILE__, __LINE__))
+  else if (upsq.lastError().type() != QSqlError::NoError)
+  {
+    rollback.exec();
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error saving Employee"),
+                         upsq, __FILE__, __LINE__);
     return false;
+  }
+
+  XSqlQuery commit("COMMIT;");
 
   emit saved();
   omfgThis->sEmployeeUpdated(_empid);
