@@ -147,6 +147,9 @@ enum SetResponse project::set(const ParameterList &pParams)
       _due->setEnabled(FALSE);
       _completed->setEnabled(FALSE);
       _recurring->setEnabled(FALSE);
+      _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Save));
+      _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
+      _buttonBox->addButton(QDialogButtonBox::Close);
     }
   }
     
