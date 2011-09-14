@@ -1274,7 +1274,7 @@ to be bound by its terms.</comment>
               <item>
                <widget class="QCheckBox" name="_int2gl">
                 <property name="text">
-                 <string>Interface to General Ledger</string>
+                 <string>Interface Inventory to General Ledger</string>
                 </property>
                </widget>
               </item>

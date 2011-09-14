@@ -105,58 +105,55 @@ enum SetResponse salesAccount::set(const ParameterList &pParams)
 
 void salesAccount::sSave()
 {
-  if (_metrics->boolean("InterfaceToGL"))
+  if (!_sales->isValid())
   {
-    if (!_sales->isValid())
+    QMessageBox::warning( this, tr("Select Sales Account"),
+                          tr("You must select a Sales Account for this Assignment.") );
+    _sales->setFocus();
+    return;
+  }
+
+  if (!_credit->isValid())
+  {
+    QMessageBox::warning( this, tr("Select Credit Memo Account"),
+                          tr("You must select a Credit Memo Account for this Assignment.") );
+    _credit->setFocus();
+    return;
+  }
+
+  if (!_cos->isValid())
+  {
+    QMessageBox::warning( this, tr("Select Cost of Sales Account"),
+                          tr("You must select a Cost of Sales Account for this Assignment.") );
+    _cos->setFocus();
+    return;
+  }
+
+  if (_metrics->boolean("EnableReturnAuth"))
+  {
+
+    if (!_returns->isValid())
     {
-      QMessageBox::warning( this, tr("Select Sales Account"),
-                            tr("You must select a Sales Account for this Assignment.") );
-      _sales->setFocus();
+      QMessageBox::warning( this, tr("Select Returns Account"),
+                            tr("You must select a Returns Account for this Assignment.") );
+      _returns->setFocus();
       return;
     }
 
-    if (!_credit->isValid())
+    if (!_cor->isValid())
     {
-      QMessageBox::warning( this, tr("Select Credit Memo Account"),
-                            tr("You must select a Credit Memo Account for this Assignment.") );
-      _credit->setFocus();
+      QMessageBox::warning( this, tr("Select Cost of Returns Account"),
+                            tr("You must select a Cost of Returns Account for this Assignment.") );
+      _cor->setFocus();
       return;
     }
 
-    if (!_cos->isValid())
+    if (!_cow->isValid())
     {
-      QMessageBox::warning( this, tr("Select Cost of Sales Account"),
-                            tr("You must select a Cost of Sales Account for this Assignment.") );
-      _cos->setFocus();
+      QMessageBox::warning( this, tr("Select Cost of Warranty Account"),
+                            tr("You must select a Cost of Warranty Account for this Assignment.") );
+      _cow->setFocus();
       return;
-    }
-
-    if (_metrics->boolean("EnableReturnAuth"))
-    {
-
-      if (!_returns->isValid())
-      {
-        QMessageBox::warning( this, tr("Select Returns Account"),
-                              tr("You must select a Returns Account for this Assignment.") );
-        _returns->setFocus();
-        return;
-      }
-
-      if (!_cor->isValid())
-      {
-        QMessageBox::warning( this, tr("Select Cost of Returns Account"),
-                              tr("You must select a Cost of Returns Account for this Assignment.") );
-        _cor->setFocus();
-        return;
-      }
-
-      if (!_cow->isValid())
-      {
-        QMessageBox::warning( this, tr("Select Cost of Warranty Account"),
-                              tr("You must select a Cost of Warranty Account for this Assignment.") );
-        _cow->setFocus();
-        return;
-      }
     }
   }
 
