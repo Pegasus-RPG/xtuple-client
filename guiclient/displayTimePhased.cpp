@@ -70,6 +70,14 @@ bool displayTimePhased::setParams(ParameterList &params)
     return false;
   }
 
+  if (_data->_periods->selectedItems().length() == 0)
+  {
+    QMessageBox::critical(this, tr("Periods Required"),
+                          tr("You must select at least one Calendar Period"));
+    _data->_calendar->setFocus();
+    return false;
+  }
+
   params.append("period_id_list", _data->_periods->periodList());
   params.append("calendar_id", _data->_calendar->id());
 
