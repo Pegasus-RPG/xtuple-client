@@ -21,6 +21,7 @@
 #include <parameter.h>
 #include <openreports.h>
 
+#include "errorReporter.h"
 #include "failedPostList.h"
 #include "getGLDistDate.h"
 #include "miscVoucher.h"
@@ -181,7 +182,8 @@ void openVouchers::sDelete()
 			       "selected Vouchers?"),
 			    QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare("SELECT deleteVoucher(:vohead_id) AS result;");
+    XSqlQuery delq;
+    delq.prepare("DELETE FROM vohead WHERE vohead_id=:vohead_id;");
 
     QList<XTreeWidgetItem*>selected = _vohead->selectedItems();
     for (int i = 0; i < selected.size(); i++)
@@ -189,21 +191,10 @@ void openVouchers::sDelete()
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
        int id = ((XTreeWidgetItem*)(selected[i]))->id();
-       q.bindValue(":vohead_id", id);
-        q.exec();
-        if (q.first())
-        {
-	      int result = q.value("result").toInt();
-	      if (result < 0)
-	      {
-	        systemError(this, storedProcErrorLookup("deleteVoucher", result),
-		            __FILE__, __LINE__);
-	      }
-        }
-        else if (q.lastError().type() != QSqlError::NoError)
-        {
-	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        }
+       delq.bindValue(":vohead_id", id);
+       delq.exec();
+       ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Voucher"),
+                            delq, __FILE__, __LINE__);
       }
     }
 
@@ -247,10 +238,8 @@ void openVouchers::sPost()
         setDate.bindValue(":distdate",  newDate);
         setDate.bindValue(":vohead_id", id);
         setDate.exec();
-        if (setDate.lastError().type() != QSqlError::NoError)
-        {
-	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
-        }
+        ErrorReporter::error(QtCriticalMsg, this, tr("Changing Dist. Date"),
+                             setDate, __FILE__, __LINE__);
       }
     }
   }
@@ -261,11 +250,9 @@ void openVouchers::sPost()
   int journalNumber = 0;
   if(post.first())
     journalNumber = post.value("result").toInt();
-  else
-  {
-    systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Journal Number"),
+                                post, __FILE__, __LINE__))
     return;
-  }
 
   post.prepare("SELECT postVoucher(:vohead_id, :journalNumber, FALSE) AS result;");
 
@@ -282,26 +269,26 @@ void openVouchers::sPost()
         post.exec();
         if (post.first())
         {
-	      int result = post.value("result").toInt();
-	      if (result < 0)
-	        systemError(this, storedProcErrorLookup("postVoucher", result),
-		            __FILE__, __LINE__);
+          int result = post.value("result").toInt();
+          if (result < 0)
+            ErrorReporter::error(QtCriticalMsg, this, tr("Posting Voucher"),
+                                 storedProcErrorLookup("postVoucher", result),
+                                 __FILE__, __LINE__);
         }
       // contains() string is hard-coded in stored procedure
         else if (post.lastError().databaseText().contains("post to closed period"))
         {
-	      if (changeDate)
-	      {
-	        triedToClosed = selected;
-	        break;
-	      }
-	      else
-	        triedToClosed.append(selected[i]);
+          if (changeDate)
+          {
+            triedToClosed = selected;
+            break;
+          }
+          else
+            triedToClosed.append(selected[i]);
         }
-        else if (post.lastError().type() != QSqlError::NoError)
-        {
-	      systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
-        }
+        else
+          ErrorReporter::error(QtCriticalMsg, this, tr("Posting Voucher"),
+                               post, __FILE__, __LINE__);
       }
     }
 
@@ -348,7 +335,6 @@ void openVouchers::sPopulateMenu(QMenu *pMenu)
   menuItem->setEnabled(_privileges->check("PostVouchers"));
 }
 
-
 void openVouchers::sFillList()
 {
   ParameterList params;
@@ -360,18 +346,17 @@ void openVouchers::sFillList()
   MetaSQLQuery mql = MQLUtil::mqlLoad("openVouchers", "populate", errorString, &ok);
   if(!ok)
   {
-	systemError(this, errorString, __FILE__, __LINE__);
-	return;
+    ErrorReporter::error(QtCriticalMsg, this, tr("Getting Open Vouchers"),
+                         errorString, __FILE__, __LINE__);
+    return;
   }
 	
   XSqlQuery r = mql.toQuery(params);
   _vohead->clear();
   _vohead->populate(r, TRUE);
-  if (r.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Open Vouchers"),
+                           r, __FILE__, __LINE__))
     return;
-  }
 }
 
 bool openVouchers::checkSitePrivs(int orderid)
@@ -384,14 +369,18 @@ bool openVouchers::checkSitePrivs(int orderid)
     check.exec();
     if (check.first())
     {
-    if (!check.value("result").toBool())
+      if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-                                       tr("You may not view or edit this Voucher as it references "
-                                       "a Site for which you have not been granted privileges.")) ;
+                              tr("<p>You may not view or edit this Voucher as "
+                                 "it references a Site for which you have not "
+                                 "been granted privileges.")) ;
         return false;
       }
     }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Privileges"),
+                                  check, __FILE__, __LINE__))
+      return false;
   }
   return true;
 }
