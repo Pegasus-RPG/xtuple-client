@@ -1776,6 +1776,7 @@ void customer::sPrepare()
 
   disconnect(_number, SIGNAL(editable(bool)), this, SLOT(sNumberEditable(bool)));
   _number->clear();
+  _number->setCanEdit(true);
   _number->setEditMode(true);
   connect(_number, SIGNAL(editable(bool)), this, SLOT(sNumberEditable(bool)));
 
