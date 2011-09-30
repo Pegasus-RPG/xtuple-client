@@ -2720,7 +2720,7 @@ void salesOrderItem::populate()
             "       quitem_promdate AS promdate,"
             "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
             "       0 AS coship_qty,"
-            "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship,"
+            "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship, quitem_itemsrc_id"
             "       locale_qty_scale, quhead_number AS ordnumber "
             "  FROM item, uom, quhead, locale "
             "    LEFT OUTER JOIN usr ON (usr_username = getEffectiveXtUser()), quitem "
@@ -2795,6 +2795,10 @@ void salesOrderItem::populate()
     {
       if (!item.value("quitem_dropship").isNull())
         _dropShip->setChecked(item.value("quitem_dropship").toBool());
+      if (!item.value("quitem_itemsrc_id").isNull())
+        _itemsrc = item.value("quitem_itemsrc_id").toInt();
+      else
+        _itemsrc = -1;
     }
 
     _warranty->setChecked(item.value("coitem_warranty").toBool());
