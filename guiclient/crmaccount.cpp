@@ -173,7 +173,11 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       insq.bindValue(":crmacct_id", _crmacctId);
       insq.exec();
       if (insq.first())
+      {
         setId(insq.value("result").toInt());
+        _primary->setSearchAcct(-1);
+        _secondary->setSearchAcct(-1);
+      }
       else if (ErrorReporter::error(QtCriticalMsg, this,
                              tr("Error creating Initial Account"), insq,
                              __FILE__, __LINE__))
