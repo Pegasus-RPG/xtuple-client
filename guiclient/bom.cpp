@@ -130,6 +130,7 @@ enum SetResponse BOM::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
+      _new->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _documentNum->setEnabled(FALSE);
       _revision->setEnabled(FALSE);
@@ -454,23 +455,26 @@ void BOM::sFillList(int pItemid, bool)
     }
     else
     {
-      _save->setEnabled(TRUE);
-      _documentNum->setEnabled(TRUE);
-      _revisionDate->setEnabled(TRUE);
-      _batchSize->setEnabled(TRUE);
-      _new->setEnabled(TRUE);
-      _edit->setEnabled(FALSE);
-      _expire->setEnabled(FALSE);
-      _moveUp->setEnabled(FALSE);
-      _moveDown->setEnabled(FALSE);
-      connect(_bomitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-      connect(_bomitem, SIGNAL(valid(bool)), _expire, SLOT(setEnabled(bool)));
-      connect(_bomitem, SIGNAL(valid(bool)), _moveUp, SLOT(setEnabled(bool)));
-      connect(_bomitem, SIGNAL(valid(bool)), _moveDown, SLOT(setEnabled(bool)));
-      connect(_bomitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-      _documentNum->clear();
-      _revisionDate->clear();
-      _batchSize->clear();
+      if (!_mode == cView)
+      {
+        _save->setEnabled(TRUE);
+        _documentNum->setEnabled(TRUE);
+        _revisionDate->setEnabled(TRUE);
+        _batchSize->setEnabled(TRUE);
+        _new->setEnabled(TRUE);
+        _edit->setEnabled(FALSE);
+        _expire->setEnabled(FALSE);
+        _moveUp->setEnabled(FALSE);
+        _moveDown->setEnabled(FALSE);
+        connect(_bomitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+        connect(_bomitem, SIGNAL(valid(bool)), _expire, SLOT(setEnabled(bool)));
+        connect(_bomitem, SIGNAL(valid(bool)), _moveUp, SLOT(setEnabled(bool)));
+        connect(_bomitem, SIGNAL(valid(bool)), _moveDown, SLOT(setEnabled(bool)));
+        connect(_bomitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+        _documentNum->clear();
+        _revisionDate->clear();
+        _batchSize->clear();
+      }
     }
     
     ParameterList params;
