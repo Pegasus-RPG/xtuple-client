@@ -178,7 +178,7 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
   APPENDFIELD(prequest, "x_type",       pordertype);
 
   if (pcvv > 0)
-    APPENDFIELD(prequest, "x_card_code", pcvv);
+    APPENDFIELD(prequest, "x_card_code", QString::number(pcvv));
 
   if (DEBUG)
     qDebug("AN:buildCommon built %s\n", prequest.toAscii().data());
