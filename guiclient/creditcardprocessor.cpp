@@ -166,7 +166,7 @@ static struct {
   { -10, QT_TRANSLATE_NOOP("CreditCardProcessor", "Credit Card %1 is not active. Make it active or select "
 	    "another Credit Card.")					},
   { -11, QT_TRANSLATE_NOOP("CreditCardProcessor", "Credit Card %1 has expired.")				},
-  { -12, QT_TRANSLATE_NOOP("CreditCardProcessor", "The Credit Card Processing Company reported an error:\n%1")		},
+  { -12, QT_TRANSLATE_NOOP("CreditCardProcessor", "%2 reported an error:\n%1")		},
   { -13, QT_TRANSLATE_NOOP("CreditCardProcessor", "The Credit Card configuration is inconsistent and the application "
 	    "cannot determine whether to run in Test or Live mode.")	},
   { -14, QT_TRANSLATE_NOOP("CreditCardProcessor", "Could not figure out which Credit Card Processing Company "
@@ -223,7 +223,7 @@ static struct {
   { -94, QT_TRANSLATE_NOOP("CreditCardProcessor", "The Bank Account is not set for Credit Card type %1. Either this "
             "card type is not accepted or the Credit Card configuration is not "
             "complete.")                                                },
-  { -95, QT_TRANSLATE_NOOP("CreditCardProcessor", "The Credit Card Processor returned an error: %1")		},
+  { -95, QT_TRANSLATE_NOOP("CreditCardProcessor", "%2 returned an error: %1")		},
   { -96, QT_TRANSLATE_NOOP("CreditCardProcessor", "This transaction failed the CVV check.")			},
   { -97, QT_TRANSLATE_NOOP("CreditCardProcessor", "This transaction failed the Address Verification check.")	},
   { -98, QT_TRANSLATE_NOOP("CreditCardProcessor", "You may not process this transaction without a CVV code. "
@@ -269,15 +269,17 @@ CreditCardProcessor::FraudCheckResult::FraudCheckResult(QChar pcode, int /*TODO:
 
  */
 CreditCardProcessor::CreditCardProcessor()
+  : _company(tr("The Credit Card Processing Company")),
+    _defaultLiveServer("live.creditcardprocessor.com"),
+    _defaultTestServer("test.creditcardprocessor.com"),
+    _defaultLivePort(0),
+    _defaultTestPort(0),
+    _http(0)
 {
   if (DEBUG)
     qDebug("CCP:CreditCardProcessor()");
-  _defaultLivePort    = 0;
-  _defaultLiveServer  = "live.creditcardprocessor.com";
-  _defaultTestPort    = 0;
-  _defaultTestServer  = "test.creditcardprocessor.com";
-  _errorMsg           = "";
-  _http               = 0;
+
+  _errorMsg = "";
   _ignoreSslErrors    = _metrics->boolean("CCIgnoreSSLErrors");
 
   for (unsigned int i = 0; i < sizeof(messages) / sizeof(messages[0]); i++)
@@ -2044,7 +2046,7 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
     }
     else	// no rows found and YP reported an error
     {
-      _errorMsg = errorMsg(-12).arg(r_error);
+      _errorMsg = errorMsg(-12).arg(r_error).arg(_company);
       return -12;
     }
 

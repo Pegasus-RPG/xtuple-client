@@ -25,6 +25,7 @@
  */
 ExternalCCProcessor::ExternalCCProcessor() : CreditCardProcessor()
 {
+  _company           = "ExternalCCProcessor";
   _defaultLivePort   = 0;
   _defaultLiveServer = "";
   _defaultTestPort   = 0;
@@ -232,7 +233,7 @@ int ExternalCCProcessor::handleTrans(const int pccardid, const QString &ptype, c
     {
       if (param.toString() == "ERROR")
       {
-        _errorMsg = errorMsg(-12).arg(tr("User reported that an error occurred."));
+        _errorMsg = errorMsg(-12).arg(tr("User reported that an error occurred.")).arg(_company);
         returnValue = -12;
       }
       else if (param.toString() == "DECLINED")

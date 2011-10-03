@@ -24,6 +24,7 @@
 
 VerisignProcessor::VerisignProcessor() : CreditCardProcessor()
 {
+  _company           = "Verisign";
   _defaultLivePort   = 443;
   _defaultLiveServer = "payflow.verisign.com";
   _defaultTestPort   = 443;

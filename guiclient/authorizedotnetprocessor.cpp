@@ -37,6 +37,7 @@
 
 AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
 {
+  _company = "Authorize.Net";
   _defaultLivePort   = 443;
   _defaultLiveServer = "https://secure.authorize.net/gateway/transact.dll";
   _defaultTestPort   = 443;
@@ -585,14 +586,14 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
   else if (r_approved == "ERROR")
   {
     r_error = r_message;
-    _errorMsg = errorMsg(-12).arg(r_error);
+    _errorMsg = errorMsg(-12).arg(r_error).arg(_company);
     returnValue = -12;
     status = "X";
   }
 
   else if (r_approved.isEmpty() && ! r_message.isEmpty())
   {
-    _errorMsg = errorMsg(-95).arg(r_message);
+    _errorMsg = errorMsg(-95).arg(r_message).arg(_company);
     returnValue = -95;
     status = "X";
   }

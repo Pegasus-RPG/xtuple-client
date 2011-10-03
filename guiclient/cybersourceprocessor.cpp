@@ -81,6 +81,7 @@ static QString get_r_ref(int pccpayid)
 
 CyberSourceProcessor::CyberSourceProcessor() : CreditCardProcessor()
 {
+  _company = "CyberSource";
   _extraHeaders.append(qMakePair(QString("Content-Type"), QString("text/xml; charset=uft-8; action=\"runTransaction\"")));
   _extraHeaders.append(qMakePair(QString("SOAPAction"),   QString("runTransaction")));
 
@@ -979,7 +980,8 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
     default:
              returnValue = (r_approved == "REJECT") ?
                              -303 : (r_approved == "ERROR") ? -308 : -95; 
-             _errorMsg = r_message = errorMsg(returnValue).arg(reasonCode);
+             _errorMsg = r_message = errorMsg(returnValue).arg(reasonCode)
+                                                          .arg(_company);
              break;
   }
 
@@ -1003,7 +1005,7 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
   else if (r_approved == "ERROR")
   {
     r_error   = r_message;
-    _errorMsg = errorMsg(-12).arg(r_message);
+    _errorMsg = errorMsg(-12).arg(r_message).arg(_company);
     returnValue = -12;
     status = "X";
   }
@@ -1076,7 +1078,7 @@ int CyberSourceProcessor::handleResponse(const QString &presponse, const int pcc
 
   if (r_approved.isEmpty() && ! r_message.isEmpty())
   {
-    _errorMsg = errorMsg(-95).arg(r_message);
+    _errorMsg = errorMsg(-95).arg(r_message).arg(_company);
     returnValue = -95;
     status = "X";
   }

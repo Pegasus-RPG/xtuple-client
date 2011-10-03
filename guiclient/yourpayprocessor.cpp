@@ -56,6 +56,7 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
     _ypcurrid = CurrDisplay::baseId();
   }
 
+  _company           = "YourPay";
   _defaultLivePort   = 1129;
   _defaultLiveServer = "https://secure.linkpt.net";
   _defaultTestPort   = 1129;
@@ -692,7 +693,7 @@ int YourPayProcessor::handleResponse(const QString &presponse, const int pccardi
 
   if (! r_error.isEmpty())
   {
-    _errorMsg = errorMsg(-12).arg(r_error);
+    _errorMsg = errorMsg(-12).arg(r_error).arg(_company);
     returnValue = -12;
   }
 

@@ -106,6 +106,7 @@ class CreditCardProcessor : public QObject
 
     QList<FraudCheckResult*> _avsCodes;
     QList<FraudCheckResult*> _cvvCodes;
+    QString             _company;
     QString		_defaultLiveServer;
     QString		_defaultTestServer;
     int			_defaultLivePort;
