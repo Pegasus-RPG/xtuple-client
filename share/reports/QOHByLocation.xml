@@ -3,6 +3,12 @@
  <title>Quantities on Hand by Location</title>
  <name>QOHByLocation</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -321,6 +327,22 @@
    <vcenter/>
    <string>As of:</string>
   </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>213</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Reserved</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -496,7 +518,7 @@
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
@@ -558,6 +580,26 @@
     <data>
      <query>detail</query>
      <column>qoh</column>
+    </data>
+    <format builtin="true">qty</format>
+   </field>
+   <field>
+    <rect>
+     <x>665</x>
+     <y>14</y>
+     <width>80</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>reservedqty</column>
     </data>
     <format builtin="true">qty</format>
    </field>
