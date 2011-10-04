@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include <QDebug>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QKeySequence>
@@ -305,7 +306,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
       {
         QSqlQueryModel* hints = new QSqlQueryModel(this);
         _completer = new QCompleter(hints,this);
-        _completer->setWidget(this);
+        setCompleter(_completer);
         QTreeView* view = new QTreeView(this);
         view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -551,6 +552,10 @@ void VirtualClusterLineEdit::sHandleCompleter()
 void VirtualClusterLineEdit::completerActivated(const QModelIndex & index)
 {
   int cid = _completer->completionModel()->data(index.sibling(index.row(), 0)).toInt();
+  if (DEBUG)
+    qDebug() << objectName() << "::completerActivated(" << index << ")"
+             << "entered with _useCompleterId" << _useCompleterId
+             << "and cid" << cid;
   if(_useCompleterId && cid != 0)
   {
     setId(cid);

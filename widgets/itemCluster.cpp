@@ -19,6 +19,8 @@
 #include "itemAliasList.h"
 #include "xsqltablemodel.h"
 
+#define DEBUG false
+
 QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int);
 QString buildItemLineEditTitle(const unsigned int, const QString);
 
@@ -209,9 +211,14 @@ void ItemLineEditDelegate::setModelData(QWidget *editor,
       model->setData(index, widget->itemNumber(), Qt::EditRole);
   }
 }
+
 ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "item", "item_id", "item_number", "(item_descrip1 || ' ' || item_descrip2) ", 0, 0, pName)
 {
+  if (DEBUG)
+    qDebug("ItemLineEdit::ItemLineEdit(%p, %s) entered", pParent, pName);
+  setObjectName(pName ? pName : "ItemLineEdit");
+
   setTitles(tr("Item"), tr("Items"));
   setUiName("item");
   setEditPriv("MaintainItemMasters");
@@ -243,6 +250,9 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
 
 void ItemLineEdit::setItemNumber(const QString& pNumber)
 {
+  if (DEBUG)
+    qDebug("%s::setItemNumber(%s) entered",
+           qPrintable(objectName()), qPrintable(pNumber));
   XSqlQuery item;
   bool      found = FALSE;
 
@@ -340,6 +350,10 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
 
 void ItemLineEdit::silentSetId(const int pId)
 {
+  if (DEBUG)
+    qDebug("%s::silentSetId(%d) entered",
+           qPrintable(objectName()), pId);
+
   XSqlQuery item;
   bool      found = FALSE;
 
@@ -430,6 +444,7 @@ void ItemLineEdit::silentSetId(const int pId)
 
 void ItemLineEdit::setId(int pId)
 {
+  if (DEBUG) qDebug("%s::setId(%d) entered", qPrintable(objectName()), pId);
   bool changed = (pId != _id);
   silentSetId(pId);
   if (changed)
@@ -441,6 +456,9 @@ void ItemLineEdit::setId(int pId)
 
 void ItemLineEdit::setItemsiteid(int pItemsiteid)
 {
+  if (DEBUG)
+    qDebug("%s::setItemsiteId(%d) entered",
+           qPrintable(objectName()), pItemsiteid);
   XSqlQuery itemsite;
   itemsite.prepare( "SELECT itemsite_item_id, itemsite_warehous_id "
                     "FROM itemsite "
@@ -469,6 +487,7 @@ void ItemLineEdit::sInfo()
 
 void ItemLineEdit::sHandleCompleter()
 {
+  if (DEBUG) qDebug("%s::sHandleCompleter() entered", qPrintable(objectName()));
   if (!hasFocus())
     return;
 
@@ -484,9 +503,12 @@ void ItemLineEdit::sHandleCompleter()
 
   if (_useQuery)
   {
-    numQ.prepare(QString("SELECT * FROM (%1) data WHERE (item_number ~* :number) LIMIT 10")
+    numQ.prepare(QString("SELECT *"
+                         "  FROM (%1) data"
+                         " WHERE (POSITION(:number IN item_number)=1)"
+                         " LIMIT 10")
                  .arg(QString(_sql)).remove(";"));
-    numQ.bindValue(":number", "^" + stripped);
+    numQ.bindValue(":number", stripped);
   }
   else
   {
@@ -496,9 +518,11 @@ void ItemLineEdit::sHandleCompleter()
 
     QStringList clauses;
     clauses = _extraClauses;
-    clauses << "(item_number ~* :searchString OR item_upccode ~* :searchString)";
-    numQ.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type).replace(";"," ORDER BY item_number LIMIT 10;"));
-    numQ.bindValue(":searchString", QString(text().trimmed().toUpper()).prepend("^"));
+    clauses << "((POSITION(:searchString IN item_number) = 1)"
+            " OR (POSITION(:searchString IN item_upccode) = 1))";
+    numQ.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type)
+                              .replace(";"," ORDER BY item_number LIMIT 10;"));
+    numQ.bindValue(":searchString", QString(text().trimmed().toUpper()));
   }
 
   numQ.exec();
@@ -683,6 +707,11 @@ bool ItemLineEdit::isConfigured()
 
 void ItemLineEdit::sParse()
 {
+  if (DEBUG)
+    qDebug("%s::sParse() entered with parsed %d, text [%s], "
+           "_useValidationQuery %d, _useQuery %d",
+           qPrintable(objectName()), _parsed, qPrintable(text()),
+           _useValidationQuery, _useQuery);
   if (!_parsed)
   {
     _parsed = TRUE;
@@ -695,16 +724,27 @@ void ItemLineEdit::sParse()
     else if (_useValidationQuery)
     {
       XSqlQuery item;
-      item.prepare("SELECT item_id FROM item WHERE (item_number = :searchString OR item_upccode = :searchString);");
+      if (completer())
+        item.prepare("SELECT item_id"
+                     "  FROM item"
+                     " WHERE ((POSITION(:searchString IN item_number) = 1)"
+                     "     OR (POSITION(:searchString IN item_upccode) = 1));");
+      else
+        item.prepare("SELECT item_id"
+                     "  FROM item"
+                     " WHERE (item_number = :searchString"
+                     "     OR item_upccode = :searchString);");
+
       item.bindValue(":searchString", text().trimmed().toUpper());
       item.exec();
-      if (item.first())
+      while (item.next())
       {
         int itemid = item.value("item_id").toInt();
-        item.prepare(_validationSql);
-        item.bindValue(":item_id", itemid);
-        item.exec();
-        if (item.size() > 1)
+        XSqlQuery oneq;
+        oneq.prepare(_validationSql);
+        oneq.bindValue(":item_id", itemid);
+        oneq.exec();
+        if (oneq.size() > 1)
         {
           ParameterList params;
           params.append("search", text().trimmed().toUpper());
@@ -713,7 +753,7 @@ void ItemLineEdit::sParse()
           sSearch(params);
           return;
         }
-        else if (item.first())
+        else if (oneq.first())
         {
           setId(itemid);
           return;
@@ -749,9 +789,11 @@ void ItemLineEdit::sParse()
 
       QStringList clauses;
       clauses = _extraClauses;
-      clauses << "(item_number ~* :searchString OR item_upccode ~* :searchString)";
-      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type).replace(";"," ORDER BY item_number LIMIT 1;"));
-      item.bindValue(":searchString", QString(text().trimmed().toUpper()).prepend("^"));
+      clauses << "((POSITION(:searchString IN item_number) = 1)"
+              " OR (POSITION(:searchString IN item_upccode) = 1))";
+      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type)
+                               .replace(";"," ORDER BY item_number LIMIT 1;"));
+      item.bindValue(":searchString", QString(text().trimmed().toUpper()));
       item.exec();
       if (item.first())
       {
