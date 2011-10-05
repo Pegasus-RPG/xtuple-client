@@ -163,7 +163,7 @@ int YourPayProcessor::buildCommon(const int pccardid, const int pcvv, const doub
 
   elem = prequest.createElement("payment");
   order.appendChild(elem);
-  CREATECHILDTEXTNODE(elem, "chargetotal", QString::number(pamount));
+  CREATECHILDTEXTNODE(elem, "chargetotal", QString::number(pamount, 'f', 2));
 
   // TODO: if check and not credit card transaction do something else
   elem = prequest.createElement("creditcard");
@@ -262,7 +262,7 @@ int YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, double &pa
   */
 
   CREATECHILDTEXTNODE(request.elementsByTagName("payment").at(0),
-		      "tax", QString::number(ptax));
+		      "tax", QString::number(ptax, 'f', 2));
 
   QString response;
   returnValue = sendViaHTTP(request.toString(), response);
@@ -336,7 +336,7 @@ int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double
   */
 
   CREATECHILDTEXTNODE(request.elementsByTagName("payment").at(0),
-		      "tax", QString::number(ptax));
+		      "tax", QString::number(ptax, 'f', 2));
 
   QString response;
   returnValue = sendViaHTTP(request.toString(), response);
@@ -409,7 +409,7 @@ int YourPayProcessor::doCredit(const int pccardid, const int pcvv, const double 
   CREATECHILDTEXTNODE(elem, "taxexempt",        ptaxexempt ? "Y" : "N");
 
   CREATECHILDTEXTNODE(request.elementsByTagName("payment").at(0),
-		      "tax", QString::number(ptax));
+		      "tax", QString::number(ptax, 'f', 2));
 
   QString response;
   returnValue = sendViaHTTP(request.toString(), response);

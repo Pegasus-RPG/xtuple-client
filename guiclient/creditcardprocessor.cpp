@@ -461,7 +461,7 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 		       "a charge to credit card %1 in the amount of %2 %3?")
 		       .arg(ccard_x)
 		       .arg(CurrDisplay::currSymbol(pcurrid))
-		       .arg(pamount),
+		       .arg(QString::number(pamount, 'f', 2)),
 		    QMessageBox::Yes | QMessageBox::Default,
 		    QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
   {
@@ -634,7 +634,7 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
 		 "in the amount of %2 %3?")
 		 .arg(ccard_x)
 		 .arg(CurrDisplay::currSymbol(pcurrid))
-		 .arg(pamount),
+                 .arg(QString::number(pamount, 'f', 2)),
 	      QMessageBox::Yes | QMessageBox::Default,
 	      QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
   {
@@ -847,7 +847,7 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
                  "transaction to credit card %1 in the amount of %2 %3?")
 		 .arg(ccard_x)
 		 .arg(CurrDisplay::currSymbol(pcurrid))
-                 .arg(pamount),
+                 .arg(QString::number(pamount, 'f', 2)),
               QMessageBox::Yes | QMessageBox::Default,
               QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
   {
@@ -1095,7 +1095,7 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
               tr("Are you sure that you want to refund %2 %3 to credit card %1?")
 		 .arg(ccard_x)
                  .arg(CurrDisplay::currSymbol(pcurrid))
-                 .arg(pamount),
+                 .arg(QString::number(pamount, 'f', 2)),
               QMessageBox::Yes | QMessageBox::Default,
               QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
   {

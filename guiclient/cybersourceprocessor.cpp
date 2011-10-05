@@ -315,7 +315,7 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
     }
 
     createChildTextNode(purchasetotals, CPDATA_NS ":grandTotalAmount",
-                        QString::number(pamount));
+                        QString::number(pamount, 'f', 2));
   }
 
   if (ptranstype == Authorize || ptranstype == Charge || ptranstype == Credit)

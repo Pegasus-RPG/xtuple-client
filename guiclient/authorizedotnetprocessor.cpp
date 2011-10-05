@@ -122,7 +122,7 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
 
   APPENDFIELD(prequest, "x_login",    _metricsenc->value("CCLogin"));
   APPENDFIELD(prequest, "x_tran_key", _metricsenc->value("CCPassword"));
-  APPENDFIELD(prequest, "x_amount",   QString::number(pamount));
+  APPENDFIELD(prequest, "x_amount",   QString::number(pamount, 'f', 2));
   // TODO: if check and not credit card transaction do something else
   APPENDFIELD(prequest, "x_card_num", anq.value("ccard_number").toString());
   APPENDFIELD(prequest, "x_test_request", isLive() ? "FALSE" : "TRUE");
@@ -221,10 +221,10 @@ int  AuthorizeDotNetProcessor::doAuthorize(const int pccardid, const int pcvv, d
   if (returnValue != 0)
     return returnValue;
 
-  APPENDFIELD(request, "x_tax",        QString::number(tax));
+  APPENDFIELD(request, "x_tax",        QString::number(tax, 'f', 2));
   APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
-  APPENDFIELD(request, "x_freight",    QString::number(freight));
-  APPENDFIELD(request, "x_duty",       QString::number(duty));
+  APPENDFIELD(request, "x_freight",    QString::number(freight, 'f', 2));
+  APPENDFIELD(request, "x_duty",       QString::number(duty,    'f', 2));
 
   if (! preforder.isEmpty())
     APPENDFIELD(request, "x_po_num", preforder.left(20));
@@ -278,10 +278,10 @@ int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const int pcvv, cons
   if (returnValue !=  0)
     return returnValue;
 
-  APPENDFIELD(request, "x_tax",        QString::number(tax));
+  APPENDFIELD(request, "x_tax",        QString::number(tax, 'f', 2));
   APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
-  APPENDFIELD(request, "x_freight",    QString::number(freight));
-  APPENDFIELD(request, "x_duty",       QString::number(duty));
+  APPENDFIELD(request, "x_freight",    QString::number(freight, 'f', 2));
+  APPENDFIELD(request, "x_duty",       QString::number(duty,    'f', 2));
 
   if (! preforder.isEmpty())
     APPENDFIELD(request, "x_po_num",   preforder);
@@ -375,10 +375,10 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const int pcvv, const
     return returnValue;
 
   APPENDFIELD(request, "x_trans_id",   preforder);
-  APPENDFIELD(request, "x_tax",        QString::number(tax));
+  APPENDFIELD(request, "x_tax",        QString::number(tax, 'f', 2));
   APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
-  APPENDFIELD(request, "x_freight",    QString::number(freight));
-  APPENDFIELD(request, "x_duty",       QString::number(duty));
+  APPENDFIELD(request, "x_freight",    QString::number(freight, 'f', 2));
+  APPENDFIELD(request, "x_duty",       QString::number(duty,    'f', 2));
 
   QString response;
   returnValue = sendViaHTTP(request, response);
