@@ -61,6 +61,7 @@ dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Balance"),      _qtyColumn, Qt::AlignRight, true, "qtybalance");
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
     list()->addColumn(tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight, true, "baseextpricebalance");
+  list()->addColumn(tr("Firm"),         _ynColumn,  Qt::AlignCenter,false, "coitem_firm");
 
   list()->setPopulateLinear(true);
 }
@@ -198,7 +199,7 @@ void dspBacklog::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
       pMenu->addSeparator();
 
       menuItem = pMenu->addAction(tr("Edit Item..."), this, SLOT(sEditItem()));
-      if (!_privileges->check("MaintainSalesOrders"))
+      if (!_privileges->check("MaintainSalesOrders") || list()->rawValue("coitem_firm").toBool())
         menuItem->setEnabled(false);
 
       menuItem = pMenu->addAction(tr("View Item..."), this, SLOT(sViewItem()));
