@@ -1044,10 +1044,36 @@ void ContactWidget::sLaunchEmail()
 
 void ContactWidget::sLaunchWebaddr()
 {
-    QUrl url(_webaddr->text());
-    if(url.scheme().isEmpty())
-      url.setScheme("http");
-  QDesktopServices::openUrl(url);
+  QUrl tmpurl(_webaddr->text());
+
+  if (QDesktopServices::openUrl(tmpurl))
+    return;
+
+  if(tmpurl.scheme().isEmpty())
+  {
+    tmpurl.setScheme("http");
+    if (QDesktopServices::openUrl(tmpurl))
+      return;
+  }
+
+  if (tmpurl.scheme() == "http" &&
+      tmpurl.host().isEmpty() && ! tmpurl.path().isEmpty())
+  {
+    tmpurl.setHost(tmpurl.path());
+    tmpurl.setPath("");
+    if (QDesktopServices::openUrl(tmpurl))
+      return;
+  }
+
+  if (tmpurl.scheme() == "http" && ! tmpurl.host().startsWith("www."))
+  {
+    tmpurl.setHost("www." + tmpurl.host());
+    if (QDesktopServices::openUrl(tmpurl))
+      return;
+  }
+
+  qWarning("%s::sLaunchWebaddr() could not open %s",
+           qPrintable(objectName()), qPrintable(tmpurl.toString()));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

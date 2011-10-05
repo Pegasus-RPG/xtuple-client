@@ -378,7 +378,37 @@ void ContactCluster::launchEmail(QString url)
 
 void ContactCluster::openUrl(QString url)
 {
-  QDesktopServices::openUrl(QUrl(url));
+  QUrl tmpurl(url);
+
+  if (QDesktopServices::openUrl(tmpurl))
+    return;
+
+  if(tmpurl.scheme().isEmpty())
+  {
+    tmpurl.setScheme("http");
+    if (QDesktopServices::openUrl(tmpurl))
+      return;
+  }
+
+  if (tmpurl.scheme() == "http" &&
+      tmpurl.host().isEmpty() && ! tmpurl.path().isEmpty())
+  {
+    tmpurl.setHost(tmpurl.path());
+    tmpurl.setPath("");
+    if (QDesktopServices::openUrl(tmpurl))
+      return;
+  }
+
+  if (tmpurl.scheme() == "http" && ! tmpurl.host().startsWith("www."))
+  {
+    tmpurl.setHost("www." + tmpurl.host());
+    if (QDesktopServices::openUrl(tmpurl))
+      return;
+  }
+
+  qWarning("%s::openUrl(%s) could not open %s",
+           qPrintable(objectName()), qPrintable(url),
+           qPrintable(tmpurl.toString()));
 }
 
 void ContactCluster::addNumberWidget(ContactClusterLineEdit* pNumberWidget)
