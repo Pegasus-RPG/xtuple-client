@@ -1125,6 +1125,9 @@ void workOrder::sRescheduleParent()
     {
       _startDate->setDate(_oldStartDate);
       _dueDate->setDate(_oldDueDate);
+      QMessageBox::warning( this, tr("Change Date"),
+                            tr( "Changing the due date may change the Bill of Material components that are effective.\n"
+                                "You may want to consider imploding and exploding the Work Order.\n" ) );
       return;
     }
   
@@ -1147,9 +1150,6 @@ void workOrder::sRescheduleParent()
   }
   populate();
   omfgThis->sWorkOrdersUpdated(_woid, TRUE);
-  QMessageBox::warning( this, tr("Change Date"),
-                        tr( "Changing the due date may change the Bill of Material components that are effective.\n"
-                            "You may want to consider imploding and exploding the Work Order.\n" ) );
 }
 
 void workOrder::sChangeParentQty()
@@ -1210,7 +1210,7 @@ void workOrder::sChangeParentQty()
         return;
       }
       else
-        _oldQty=_qty->text().toDouble();
+        _oldQty=(_qty->text().toDouble() * _sense);
     }
     populate();
     omfgThis->sWorkOrdersUpdated(_woid, TRUE);
@@ -1910,7 +1910,6 @@ void workOrder::populate()
     _oldPriority = wo.value("wo_priority").toInt();
     _oldStartDate = wo.value("wo_startdate").toDate();
     _oldDueDate = wo.value("wo_duedate").toDate();
-    _oldQty = wo.value("wo_qtyord").toDouble();
 
     _woNumber->setText(wo.value("f_wonumber").toString());
     _item->setItemsiteid(wo.value("wo_itemsite_id").toInt());
@@ -1920,6 +1919,7 @@ void workOrder::populate()
     _wipValue->setText(wo.value("wo_wipvalue").toDouble());
     if (wo.value("wo_qtyord").toDouble() < 0)
       _disassembly->setChecked(true);
+    _oldQty = (wo.value("wo_qtyord").toDouble() * _sense);
     _qty->setText(wo.value("wo_qtyord").toDouble() * _sense);
     _qtyReceived->setText(wo.value("wo_qtyrcv").toDouble());
     _startDate->setDate(_oldStartDate);
