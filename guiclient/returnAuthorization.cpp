@@ -1021,7 +1021,7 @@ void returnAuthorization::sDelete()
         return;
       }
     }
-    populate();
+    sFillList();
   }
 }
 
@@ -1565,7 +1565,7 @@ void returnAuthorization::sAuthorizeLine()
   if (_newso->isValid())
     omfgThis->sSalesOrdersUpdated(_newso->id());
     
-  populate();
+  sFillList();
 }
 
 void returnAuthorization::sClearAuthorization()
@@ -1586,7 +1586,7 @@ void returnAuthorization::sClearAuthorization()
   if (_newso->isValid())
     omfgThis->sSalesOrdersUpdated(_newso->id());
 
-  populate();
+  sFillList();
 }
 
 void returnAuthorization::sAuthorizeAll()
@@ -1606,7 +1606,7 @@ void returnAuthorization::sAuthorizeAll()
   if (_newso->isValid())
     omfgThis->sSalesOrdersUpdated(_newso->id());
 
-  populate();
+  sFillList();
 }
 
 void returnAuthorization::sEnterReceipt()
