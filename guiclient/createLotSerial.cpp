@@ -120,7 +120,10 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         fetchlsnum.bindValue(":lsseq_id", q.value("itemsite_lsseq_id").toInt());
         fetchlsnum.exec();
         if (fetchlsnum.first())
+        {
+          _lotSerial->setAllowNull(true);
           _lotSerial->setText(fetchlsnum.value("lotserial").toString());
+        }
         else if (fetchlsnum.lastError().type() != QSqlError::NoError)
         {
           systemError(this, fetchlsnum.lastError().databaseText(), __FILE__, __LINE__);
