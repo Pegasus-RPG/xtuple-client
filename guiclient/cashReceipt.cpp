@@ -1049,7 +1049,9 @@ void cashReceipt::sDateChanged()
   if(_applDate->date() < _mindate)
     _applDate->setDate(_mindate);
 
-  if(_distDate->date() < _applDate->date())
+  if(_distDate->date() > _applDate->date())
+    _distDate->setDate(_applDate->date());
+  else if(_distDate->date() < _applDate->date())
     _applyBalLit->setText(tr("Record Receipt as:"));
   else
     _applyBalLit->setText(tr("Apply Balance As:"));
