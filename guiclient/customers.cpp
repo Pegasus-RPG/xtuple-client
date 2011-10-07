@@ -74,7 +74,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Corr. Last"),   -1, Qt::AlignLeft  , false, "corr_last_name" );
   list()->addColumn(tr("Corr. Phone"), 100, Qt::AlignLeft  , false, "corr_phone" );
   list()->addColumn(tr("Corr. Fax"),   100, Qt::AlignLeft  , false, "corr_fax" );
-  list()->addColumn(tr("Corr. Email"), 100, Qt::AlignLeft  , false, "corr__email" );
+  list()->addColumn(tr("Corr. Email"), 100, Qt::AlignLeft  , false, "corr_email" );
   list()->addColumn(tr("Corr. Addr. 1"),-1, Qt::AlignLeft  , false, "corr_line1" );
   list()->addColumn(tr("Corr. Addr. 2"),-1, Qt::AlignLeft  , false, "corr_line2" );
   list()->addColumn(tr("Corr. Addr. 3"),-1, Qt::AlignLeft  , false, "corr_line3" );
