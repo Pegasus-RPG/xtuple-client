@@ -226,7 +226,6 @@ to be bound by its terms.</comment>
   <zorder>_stackedWidget</zorder>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>

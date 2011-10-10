@@ -265,7 +265,7 @@ void Action::init( QWidget *, const char *pName, const QString &/*pDisplayName*/
       setShortcut(hotkey);
   }
 
-  connect(this, SIGNAL(activated()), pTarget, pActivateSlot);
+  connect(this, SIGNAL(triggered()), pTarget, pActivateSlot);
   //setEnabled(pEnabled);
   pAddTo->addAction(this);
 

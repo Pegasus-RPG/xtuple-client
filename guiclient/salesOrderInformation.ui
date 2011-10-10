@@ -644,7 +644,6 @@ to be bound by its terms.</comment>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <includes/>
  <resources/>
  <connections>

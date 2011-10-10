@@ -138,7 +138,6 @@ to be bound by its terms.</comment>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5" />
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
   <tabstop>_update</tabstop>
   <tabstop>_submit</tabstop>
