@@ -1530,7 +1530,7 @@ void returnAuthorization::sCreditByChanged()
   }
   else if (_creditBy->currentIndex() == 0  || _total->localValue() == 0)
   {
-    _currency->setEnabled(false);
+    _currency->setEnabled(true);
     _miscChargeDescription->setEnabled(false);
     _miscChargeAccount->setEnabled(false);
     _miscCharge->setEnabled(false);
@@ -1538,7 +1538,7 @@ void returnAuthorization::sCreditByChanged()
   }
   else
   {
-    _currency->setEnabled(true);
+    _currency->setEnabled(false);
     _miscChargeDescription->setEnabled(true);
     _miscChargeAccount->setEnabled(true);
     _miscCharge->setEnabled(true);
