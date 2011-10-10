@@ -22,7 +22,7 @@ location::location(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_location, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_location, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sHandleWarehouse(int)));

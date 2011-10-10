@@ -42,7 +42,7 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_module, SIGNAL(activated(const QString&)), this, SLOT(sModuleSelected(const QString&)));
   connect(_granted, SIGNAL(itemSelected(int)), this, SLOT(sRevoke()));
   connect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
-  connect(_username, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_username, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_enhancedAuth, SIGNAL(toggled(bool)), this, SLOT(sEnhancedAuthUpdate()));
   connect(_grantedGroup, SIGNAL(itemSelected(int)), this, SLOT(sRevokeGroup()));
   connect(_availableGroup, SIGNAL(itemSelected(int)), this, SLOT(sAddGroup()));

@@ -32,7 +32,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_editTask, SIGNAL(clicked()), this, SLOT(sEditTask()));
   connect(_viewTask, SIGNAL(clicked()), this, SLOT(sViewTask()));
   connect(_deleteTask, SIGNAL(clicked()), this, SLOT(sDeleteTask()));
-  connect(_number, SIGNAL(lostFocus()), this, SLOT(sNumberChanged()));
+  connect(_number, SIGNAL(editingFinished()), this, SLOT(sNumberChanged()));
   connect(_activity, SIGNAL(clicked()), this, SLOT(sActivity()));
 
   _prjtask->addColumn( tr("Number"),			_itemColumn,	Qt::AlignLeft, true, "prjtask_number" );

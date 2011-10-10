@@ -260,7 +260,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _save->setFocus();
       _cancel->setText("&Close");
       
-      connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
+      connect(_authNumber, SIGNAL(editingFinished()), this, SLOT(sCheckAuthorizationNumber()));
     }
     else if (param.toString() == "view")
     {
@@ -566,7 +566,7 @@ bool returnAuthorization::sSave(bool partial)
   _saved = TRUE;
   _comments->setId(_raheadid);
   
-  connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
+  connect(_authNumber, SIGNAL(editingFinished()), this, SLOT(sCheckAuthorizationNumber()));
   
   emit saved(_raheadid);
 

@@ -52,7 +52,7 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_altButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_checksButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
-  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_number, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 
   connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _contact2, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));

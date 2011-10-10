@@ -45,9 +45,9 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_listPrices,        SIGNAL(clicked()),                    this, SLOT(sListPrices()));
   connect(_netUnitPrice,      SIGNAL(idChanged(int)),               this, SLOT(sPriceGroup()));
   connect(_netUnitPrice,      SIGNAL(valueChanged()),               this, SLOT(sCalculateExtendedPrice()));
-  connect(_qtyOrdered,        SIGNAL(lostFocus()),                  this, SLOT(sPopulateOrderInfo()));
-  connect(_qtyOrdered,        SIGNAL(lostFocus()),                  this, SLOT(sDetermineAvailability()));
-  connect(_qtyOrdered,        SIGNAL(lostFocus()),                  this, SLOT(sDeterminePrice()));
+  connect(_qtyOrdered,        SIGNAL(editingFinished()),                  this, SLOT(sPopulateOrderInfo()));
+  connect(_qtyOrdered,        SIGNAL(editingFinished()),                  this, SLOT(sDetermineAvailability()));
+  connect(_qtyOrdered,        SIGNAL(editingFinished()),                  this, SLOT(sDeterminePrice()));
   connect(_qtyOrdered,        SIGNAL(textChanged(const QString &)), this, SLOT(sCalcWoUnitCost()));
   connect(_save,              SIGNAL(clicked()),                    this, SLOT(sSave()));
   connect(_scheduledDate,     SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleScheduleDate()));
@@ -330,8 +330,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
       prepare();
 
-      connect(_netUnitPrice,      SIGNAL(lostFocus()),    this,         SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(lostFocus()),    this,         SLOT(sCalculateFromDiscount()));
+      connect(_netUnitPrice,      SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
       connect(_item,              SIGNAL(valid(bool)),    _listPrices,  SLOT(setEnabled(bool)));
       connect(_createOrder,       SIGNAL(toggled(bool)),  this,         SLOT(sHandleWo(bool)));
 
@@ -384,8 +384,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
       prepare();
 
-      connect(_netUnitPrice,      SIGNAL(lostFocus()),  this,         SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(lostFocus()),  this,         SLOT(sCalculateFromDiscount()));
+      connect(_netUnitPrice,      SIGNAL(editingFinished()),  this,         SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromCust,  SIGNAL(editingFinished()),  this,         SLOT(sCalculateFromDiscount()));
       connect(_item,              SIGNAL(valid(bool)),  _listPrices,  SLOT(setEnabled(bool)));
 
       q.prepare("SELECT count(*) AS cnt"
@@ -410,9 +410,9 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _comments->setType(Comments::SalesOrderItem);
       _qtyOrdered->setFocus();
 
-      connect(_qtyOrdered,        SIGNAL(lostFocus()),    this, SLOT(sCalculateExtendedPrice()));
-      connect(_netUnitPrice,      SIGNAL(lostFocus()),    this, SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(lostFocus()),    this, SLOT(sCalculateFromDiscount()));
+      connect(_qtyOrdered,        SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()));
+      connect(_netUnitPrice,      SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromCust,  SIGNAL(editingFinished()),    this, SLOT(sCalculateFromDiscount()));
       connect(_createOrder,       SIGNAL(toggled(bool)),  this, SLOT(sHandleWo(bool)));
 
       _save->setFocus();
@@ -443,9 +443,9 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _warranty->hide();
       _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
 
-      connect(_qtyOrdered,        SIGNAL(lostFocus()),  this, SLOT(sCalculateExtendedPrice()));
-      connect(_netUnitPrice,      SIGNAL(lostFocus()),  this, SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(lostFocus()),  this, SLOT(sCalculateFromDiscount()));
+      connect(_qtyOrdered,        SIGNAL(editingFinished()),  this, SLOT(sCalculateExtendedPrice()));
+      connect(_netUnitPrice,      SIGNAL(editingFinished()),  this, SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromCust,  SIGNAL(editingFinished()),  this, SLOT(sCalculateFromDiscount()));
     }
     else if (param.toString() == "view")
     {

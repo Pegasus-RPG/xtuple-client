@@ -26,7 +26,7 @@ salesRep::salesRep(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_buttonBox,       SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_crmaccountButton, SIGNAL(clicked()), this, SLOT(sCrmaccount()));
-  connect(_number,         SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_number,         SIGNAL(editingFinished()), this, SLOT(sCheck()));
 
   _commPrcnt->setValidator(omfgThis->percentVal());
 

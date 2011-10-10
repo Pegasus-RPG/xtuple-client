@@ -20,7 +20,7 @@ InvoiceLineEdit::InvoiceLineEdit(QWidget *pParent, const char *name) :
   _invoiceNumber = "";
   _id = -1;
 
-  connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
 void InvoiceLineEdit::sParse()

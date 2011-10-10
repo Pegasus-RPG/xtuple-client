@@ -29,7 +29,7 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
   setupUi(this);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sReceive()));
-  connect(_toReceive, SIGNAL(lostFocus()), this, SLOT(sDetermineToReceiveInv()));
+  connect(_toReceive, SIGNAL(editingFinished()), this, SLOT(sDetermineToReceiveInv()));
 
   _invVendorUOMRatio->setPrecision(omfgThis->ratioVal());
   _ordered->setPrecision(omfgThis->qtyVal());

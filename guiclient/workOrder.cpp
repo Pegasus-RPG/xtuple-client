@@ -219,9 +219,9 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
 
       populateWoNumber();
       
-      connect(_woNumber, SIGNAL(lostFocus()), this, SLOT(sCreate()));
+      connect(_woNumber, SIGNAL(editingFinished()), this, SLOT(sCreate()));
       connect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sCreate()));
-      connect(_qty, SIGNAL(lostFocus()), this, SLOT(sCreate()));
+      connect(_qty, SIGNAL(editingFinished()), this, SLOT(sCreate()));
       connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
     }
     else if (param.toString() == "edit")
@@ -232,7 +232,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                          ItemLineEdit::cActive);
                          
       connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
-      connect(_qty, SIGNAL(lostFocus()), this, SLOT(sChangeParentQty()));
+      connect(_qty, SIGNAL(editingFinished()), this, SLOT(sChangeParentQty()));
       connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
       connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
       populate();
@@ -541,13 +541,13 @@ void workOrder::sCreate()
 	{
 		if (_mode == cNew)
 		{
-		  disconnect(_woNumber, SIGNAL(lostFocus()), this, SLOT(sCreate()));
+		  disconnect(_woNumber, SIGNAL(editingFinished()), this, SLOT(sCreate()));
 		  disconnect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sCreate()));
-		  disconnect(_qty, SIGNAL(lostFocus()), this, SLOT(sCreate()));
+		  disconnect(_qty, SIGNAL(editingFinished()), this, SLOT(sCreate()));
 		  disconnect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
 	      
 		  connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
-		  connect(_qty, SIGNAL(lostFocus()), this, SLOT(sChangeParentQty()));
+		  connect(_qty, SIGNAL(editingFinished()), this, SLOT(sChangeParentQty()));
 		  connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
 		  connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
 		}

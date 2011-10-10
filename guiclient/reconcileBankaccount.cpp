@@ -32,8 +32,8 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     connect(_bankaccnt, SIGNAL(newID(int)),     this, SLOT(sBankaccntChanged()));
     connect(_cancel,	SIGNAL(clicked()),      this, SLOT(sCancel()));
     connect(_checks,    SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(sChecksToggleCleared()));
-    connect(_endBal,	SIGNAL(lostFocus()),    this, SLOT(populate()));
-    connect(_openBal,	SIGNAL(lostFocus()),    this, SLOT(populate()));
+    connect(_endBal,	SIGNAL(editingFinished()),    this, SLOT(populate()));
+    connect(_openBal,	SIGNAL(editingFinished()),    this, SLOT(populate()));
     connect(_receipts,	SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(sReceiptsToggleCleared()));
     connect(_reconcile,	SIGNAL(clicked()),      this, SLOT(sReconcile()));
     connect(_save,	    SIGNAL(clicked()),      this, SLOT(sSave()));

@@ -26,7 +26,7 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_memoNumber, SIGNAL(lostFocus()), this, SLOT(sCheckCreditMemoNumber()));
+  connect(_memoNumber, SIGNAL(editingFinished()), this, SLOT(sCheckCreditMemoNumber()));
   connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));

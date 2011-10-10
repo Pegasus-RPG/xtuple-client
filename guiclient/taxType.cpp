@@ -21,7 +21,7 @@ taxType::taxType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
 taxType::~taxType()

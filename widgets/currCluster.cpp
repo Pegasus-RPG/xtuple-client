@@ -185,7 +185,7 @@ CurrCluster::CurrCluster(QWidget * parent, const char* name)
  //   setTabOrder(_valueLocalWidget, 0);
 
     connect(_currency, SIGNAL(newID(int)), this, SLOT(sId(int)));
-    connect(_valueLocalWidget, SIGNAL(lostFocus()), this, SLOT(sLostFocus()));
+    connect(_valueLocalWidget, SIGNAL(editingFinished()), this, SLOT(sLostFocus()));
     connect(_valueLocalWidget, SIGNAL(textChanged(const QString&)), this, SLOT(sValueLocalChanged()));
 
     _valueBaseLit->setText(_baseAbbr);
@@ -260,7 +260,7 @@ void CurrCluster::sLostFocus()
 {
   _valueLocal = _valueLocalWidget->toDouble();
   sReformat();
-  emit(lostFocus());
+  emit(editingFinished());
 }
 
 void CurrCluster::sReformat() const

@@ -63,7 +63,7 @@ ParameterGroup::ParameterGroup(QWidget *pParent, const char *pName) :
   connect(_usePattern, SIGNAL(toggled(bool)), _pattern, SLOT(setEnabled(bool)));
   connect(_buttonGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(updated()));
   connect(_items, SIGNAL(newID(int)), this, SIGNAL(updated()));
-  connect(_pattern, SIGNAL(lostFocus()), this, SIGNAL(updated()));
+  connect(_pattern, SIGNAL(editingFinished()), this, SIGNAL(updated()));
 
   setFocusProxy(_all);
 }

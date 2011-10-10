@@ -108,7 +108,7 @@ itemAliasList::itemAliasList(QWidget* parent, const char* name, bool modal, Qt::
 
   connect( _item, SIGNAL( itemSelected(int) ), this, SLOT( sSelect() ) );
   connect( _select, SIGNAL( clicked() ), this, SLOT( sSelect() ) );
-  connect( _alias, SIGNAL( lostFocus() ), this, SLOT( sFillList() ) );
+  connect( _alias, SIGNAL( editingFinished() ), this, SLOT( sFillList() ) );
   connect( _item, SIGNAL( valid(bool) ), _select, SLOT( setEnabled(bool) ) );
   connect( _close, SIGNAL( clicked() ), this, SLOT( reject() ) );
 

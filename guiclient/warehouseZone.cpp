@@ -20,7 +20,7 @@ warehouseZone::warehouseZone(QWidget* parent, const char* name, bool modal, Qt::
   setupUi(this);
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
 warehouseZone::~warehouseZone()

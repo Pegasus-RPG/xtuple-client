@@ -152,7 +152,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_creditcardsButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
 
   connect(_number,  SIGNAL(editingFinished()), this, SLOT(sCheckRequired()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheckRequired()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheckRequired()));
   connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
   connect(_terms, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
   connect(_shipform, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));

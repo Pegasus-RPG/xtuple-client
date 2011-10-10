@@ -1194,7 +1194,7 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     connect(_buttonBox,	    SIGNAL(rejected()),		this, SLOT(sClose()));
     connect(_searchNumber,  SIGNAL(clicked()),	        this, SLOT(sFillList()));
     connect(_searchDescrip, SIGNAL(clicked()),  	this, SLOT(sFillList()));
-    connect(_search,	    SIGNAL(lostFocus()),	this, SLOT(sFillList()));
+    connect(_search,	    SIGNAL(editingFinished()),	this, SLOT(sFillList()));
     connect(_listTab,	    SIGNAL(valid(bool)),	_select, SLOT(setEnabled(bool)));
 
     _listTab->addColumn(tr("Number"), -1, Qt::AlignLeft, true, "number");

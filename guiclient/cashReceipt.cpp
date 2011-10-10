@@ -51,7 +51,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
-  connect(_received, SIGNAL(lostFocus()), this, SLOT(sUpdateBalance()));
+  connect(_received, SIGNAL(editingFinished()), this, SLOT(sUpdateBalance()));
   connect(_applyToBalance, SIGNAL(clicked()), this, SLOT(sApplyToBalance()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
   connect(_applyLineBalance, SIGNAL(clicked()), this, SLOT(sApplyLineBalance()));

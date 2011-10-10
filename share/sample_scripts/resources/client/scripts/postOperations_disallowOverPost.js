@@ -15,4 +15,4 @@ function checkQty()
 }
 
 var qty = mywindow.findChild("_qty");
-qty.lostFocus.connect(checkQty);
+qty.editingFinished.connect(checkQty);

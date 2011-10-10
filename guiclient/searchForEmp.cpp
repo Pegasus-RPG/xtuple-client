@@ -70,7 +70,7 @@ searchForEmp::searchForEmp(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_searchNumber, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchName, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchShift,  SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_search,       SIGNAL(lostFocus()),   this, SLOT(sFillList()));
+  connect(_search,       SIGNAL(editingFinished()),   this, SLOT(sFillList()));
   connect(_showInactive, SIGNAL(clicked()),     this, SLOT(sFillList()));
   connect(_view,         SIGNAL(clicked()),     this, SLOT(sView()));
   connect(_warehouse,    SIGNAL(updated()),     this, SLOT(sFillList()));

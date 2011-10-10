@@ -28,7 +28,7 @@ opportunitySource::opportunitySource(QWidget* parent, const char* name, bool mod
   // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
 /*

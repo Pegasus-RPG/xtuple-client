@@ -21,7 +21,7 @@ classCode::classCode(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 
   // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_classCode, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_classCode, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 

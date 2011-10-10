@@ -35,7 +35,7 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_deleteQuote, SIGNAL(clicked()),	this,	SLOT(sDeleteQuote()));
   connect(_editQuote,	SIGNAL(clicked()),	this,	SLOT(sEditQuote()));
   connect(_newQuote,	SIGNAL(clicked()),	this,	SLOT(sNewQuote()));
-  connect(_number,	SIGNAL(lostFocus()),	this,	SLOT(sCheckNumber()));
+  connect(_number,	SIGNAL(editingFinished()),	this,	SLOT(sCheckNumber()));
   connect(_printQuote,  SIGNAL(clicked()),	this,	SLOT(sPrintQuote()));
   connect(_quotes,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),	this,	SLOT(sPopulateQuotesMenu(QMenu*)));
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));

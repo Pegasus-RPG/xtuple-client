@@ -23,7 +23,7 @@ salesCategory::salesCategory(QWidget* parent, const char* name, bool modal, Qt::
   // signals and slots connections
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_category, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 
   _sales->setType(GLCluster::cRevenue);
   _prepaid->setType(GLCluster::cRevenue);

@@ -72,7 +72,7 @@ empGroup::empGroup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_close,  SIGNAL(clicked()), this, SLOT(reject()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_save,   SIGNAL(clicked()), this, SLOT(sSave()));
 

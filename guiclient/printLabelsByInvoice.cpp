@@ -24,7 +24,7 @@ printLabelsByInvoice::printLabelsByInvoice(QWidget* parent, const char* name, bo
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_invoiceNumber, SIGNAL(lostFocus()), this, SLOT(sParseInvoiceNumber()));
+  connect(_invoiceNumber, SIGNAL(editingFinished()), this, SLOT(sParseInvoiceNumber()));
   connect(_from, SIGNAL(valueChanged(int)), this, SLOT(sSetToMin(int)));
 
   _invcheadid = -1;

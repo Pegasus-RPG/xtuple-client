@@ -26,7 +26,7 @@ standardJournalGroup::standardJournalGroup(QWidget* parent, const char* name, bo
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));

@@ -20,7 +20,7 @@ warehouse::warehouse(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 {
   setupUi(this);
 
-  connect(_code,       SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_code,       SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_delete,	 SIGNAL(clicked()), this, SLOT(sDeleteZone()));
   connect(_edit,	 SIGNAL(clicked()), this, SLOT(sEditZone()));
   connect(_new,		 SIGNAL(clicked()), this, SLOT(sNewZone()));

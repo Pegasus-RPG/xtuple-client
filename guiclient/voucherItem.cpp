@@ -31,7 +31,7 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_uninvoiced, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
   connect(_uninvoiced, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-  connect(_freightToVoucher, SIGNAL(lostFocus()), this, SLOT(sFillList()));
+  connect(_freightToVoucher, SIGNAL(editingFinished()), this, SLOT(sFillList()));
   connect(_vodist, SIGNAL(populated()), this, SLOT(sCalculateTax()));
   connect(_taxtype,	  SIGNAL(newID(int)), this, SLOT(sCalculateTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));

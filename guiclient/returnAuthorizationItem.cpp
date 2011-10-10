@@ -55,8 +55,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _costmethod = ""; 
   _coitemitemsiteid = -1;
 
-  connect(_discountFromSale,     SIGNAL(lostFocus()),                    this, SLOT(sCalculateFromDiscount()));
-  connect(_saleDiscountFromSale, SIGNAL(lostFocus()),                    this, SLOT(sCalculateSaleFromDiscount()));
+  connect(_discountFromSale,     SIGNAL(editingFinished()),                    this, SLOT(sCalculateFromDiscount()));
+  connect(_saleDiscountFromSale, SIGNAL(editingFinished()),                    this, SLOT(sCalculateSaleFromDiscount()));
   connect(_extendedPrice,        SIGNAL(valueChanged()),                 this, SLOT(sCalculateTax()));
   connect(_item,                 SIGNAL(newId(int)),                     this, SLOT(sPopulateItemInfo()));
   connect(_item,                 SIGNAL(warehouseIdChanged(int)),        this, SLOT(sPopulateItemsiteInfo()));
@@ -81,7 +81,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_disposition,          SIGNAL(currentIndexChanged(int)),       this, SLOT(sDispositionChanged()));
   connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sDetermineAvailability()));
   connect(_scheduledDate,        SIGNAL(newDate(const QDate&)),          this, SLOT(sDetermineAvailability()));
-  connect(_qtyAuth,              SIGNAL(lostFocus()),                    this, SLOT(sDetermineAvailability()));
+  connect(_qtyAuth,              SIGNAL(editingFinished()),                    this, SLOT(sDetermineAvailability()));
   connect(_createOrder,          SIGNAL(toggled(bool)),                  this, SLOT(sHandleWo(bool)));
   connect(_showAvailability,     SIGNAL(toggled(bool)),                  this, SLOT(sDetermineAvailability()));
   connect(this,                  SIGNAL(rejected()),                     this, SLOT(rejectEvent()));
@@ -212,8 +212,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
       
-      connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
-      connect(_saleDiscountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateSaleFromDiscount()));
+      connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
+      connect(_saleDiscountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateSaleFromDiscount()));
 
       q.prepare( "SELECT (COALESCE(MAX(raitem_linenumber), 0) + 1) AS n_linenumber "
                  "FROM raitem "
@@ -283,8 +283,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _comments->setType(Comments::ReturnAuthItem);
       _comments->setEnabled(true);
 
-      connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
-      connect(_saleDiscountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateSaleFromDiscount()));
+      connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
+      connect(_saleDiscountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateSaleFromDiscount()));
  
       _save->setFocus();
     }

@@ -56,7 +56,7 @@ currencyConversion::currencyConversion(QWidget* parent, const char* name, bool m
 
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(_sClose()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(_sSave()));
-  connect(_rate, SIGNAL(lostFocus()), this, SLOT(sFixRate()));
+  connect(_rate, SIGNAL(editingFinished()), this, SLOT(sFixRate()));
 
   _currency->setType(XComboBox::CurrenciesNotBase);
   _rate->setValidator(new RateValidator (_rate) );

@@ -203,7 +203,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 
       connect(_cust,	    SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
       connect(_cust,        SIGNAL(valid(bool)), this, SLOT(populateCMInfo()));
-      connect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(populateCCInfo()));
+      connect(_orderNumber, SIGNAL(editingFinished()), this, SLOT(populateCCInfo()));
     }
     else if (param.toString() == "edit")
     {

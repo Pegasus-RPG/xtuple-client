@@ -25,7 +25,7 @@ shipTo::shipTo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sPopulateNumber()));
+  connect(_shipToNumber, SIGNAL(editingFinished()), this, SLOT(sPopulateNumber()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_salesRep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission(int)));
   connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),

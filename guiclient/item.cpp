@@ -52,7 +52,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_itemNumber, SIGNAL(lostFocus()), this, SLOT(sFormatItemNumber()));
+  connect(_itemNumber, SIGNAL(editingFinished()), this, SLOT(sFormatItemNumber()));
   connect(_inventoryUOM, SIGNAL(newID(int)), this, SLOT(sPopulateUOMs()));
   connect(_classcode, SIGNAL(newID(int)), this, SLOT(sPopulateUOMs()));
   connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNew()));

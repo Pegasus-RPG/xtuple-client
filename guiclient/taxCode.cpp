@@ -27,7 +27,7 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   setupUi(this);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck())); 
+  connect(_code, SIGNAL(editingFinished()), this, SLOT(sCheck())); 
   connect(_taxClass, SIGNAL(newID(int)), this, SLOT(populateBasis()));
   connect(_taxitems, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew())); 

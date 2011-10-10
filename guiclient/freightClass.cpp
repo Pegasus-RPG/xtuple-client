@@ -23,7 +23,7 @@ freightClass::freightClass(QWidget* parent, const char* name, bool modal, Qt::WF
 
   // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_freightClass, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_freightClass, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 

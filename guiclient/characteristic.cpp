@@ -31,7 +31,7 @@ characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt
   _charoptModel->setEditStrategy(QSqlTableModel::OnManualSubmit);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_charoptView, SIGNAL(clicked(QModelIndex)), this, SLOT(sCharoptClicked(QModelIndex)));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));

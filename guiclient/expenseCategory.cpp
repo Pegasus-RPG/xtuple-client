@@ -23,7 +23,7 @@ expenseCategory::expenseCategory(QWidget* parent, const char* name, bool modal, 
   // signals and slots connections
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_category, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 
   _expense->setType(GLCluster::cExpense | GLCluster::cAsset | GLCluster::cLiability);
   _purchasePrice->setType(GLCluster::cAsset | GLCluster::cExpense);

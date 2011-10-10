@@ -26,7 +26,7 @@ taxAuthority::taxAuthority(QWidget* parent, const char* name, bool modal, Qt::WF
 {
   setupUi(this);
 
-  connect(_code,    SIGNAL(lostFocus()), this,     SLOT(sCheck()));
+  connect(_code,    SIGNAL(editingFinished()), this,     SLOT(sCheck()));
   connect(_crmacct, SIGNAL(clicked()),   this,     SLOT(sCrmAccount()));
   connect(_save,    SIGNAL(clicked()),   this,     SLOT(sSave()));
 

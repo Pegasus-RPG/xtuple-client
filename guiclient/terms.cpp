@@ -23,7 +23,7 @@ terms::terms(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_days, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_code, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   
   _discountPercent->setValidator(omfgThis->percentVal());
 }

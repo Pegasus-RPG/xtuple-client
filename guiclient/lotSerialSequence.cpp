@@ -21,7 +21,7 @@ lotSerialSequence::lotSerialSequence(QWidget* parent, const char* name, bool mod
   // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_number, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_prefix, SIGNAL(editingFinished()), this, SLOT(sHandleExample()));
   connect(_nextValue, SIGNAL(editingFinished()), this, SLOT(sHandleExample()));
   connect(_length, SIGNAL(editingFinished()), this, SLOT(sHandleExample()));

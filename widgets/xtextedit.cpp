@@ -31,7 +31,7 @@ XTextEdit::~XTextEdit()
 
 void XTextEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  disconnect(this, SIGNAL(lostFocus()), this, SLOT(updateMapperData()));
+  disconnect(this, SIGNAL(editingFinished()), this, SLOT(updateMapperData()));
   if (acceptRichText())
     m->addMapping(this, _fieldName, "html", "defaultText");
   else

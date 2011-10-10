@@ -23,7 +23,7 @@ siteType::siteType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_code, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
 siteType::~siteType()

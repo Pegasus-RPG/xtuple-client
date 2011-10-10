@@ -21,7 +21,7 @@ vendorAddress::vendorAddress(QWidget* parent, const char* name, bool modal, Qt::
   setupUi(this);
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_number, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
 vendorAddress::~vendorAddress()

@@ -33,7 +33,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   connect(_notes,	SIGNAL(textChanged()),  this, SLOT(sChanged()));
   connect(_prev,	SIGNAL(clicked()), this, SLOT(sPrev()));
   connect(_promisedDate,SIGNAL(newDate(const QDate&)), this, SLOT(sChanged()));
-  connect(_qtyOrdered,  SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
+  connect(_qtyOrdered,  SIGNAL(editingFinished()), this, SLOT(sDetermineAvailability()));
   connect(_qtyOrdered,  SIGNAL(textChanged(const QString&)), this, SLOT(sChanged()));
   connect(_save,	SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sChanged()));

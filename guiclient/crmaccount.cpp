@@ -90,7 +90,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(userUpdated(QString)), this, SLOT(sUpdateRelationships()));
   connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
-  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheckNumber()));
+  connect(_number, SIGNAL(editingFinished()), this, SLOT(sCheckNumber()));
   connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));         
   connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));       
   connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));

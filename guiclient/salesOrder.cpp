@@ -82,7 +82,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_new,                 SIGNAL(clicked()),                              this,         SLOT(sNew()));
   connect(_newCC,               SIGNAL(clicked()),                              this,         SLOT(sNewCreditCard()));
   //connect(_newCust,             SIGNAL(clicked()),                              this,         SLOT(sNewCust()));
-  connect(_orderNumber,         SIGNAL(lostFocus()),                            this,         SLOT(sHandleOrderNumber()));
+  connect(_orderNumber,         SIGNAL(editingFinished()),                            this,         SLOT(sHandleOrderNumber()));
   connect(_orderNumber,         SIGNAL(textChanged(const QString &)),           this,         SLOT(sSetUserEnteredOrderNumber()));
   connect(_save,                SIGNAL(clicked()),                              this,         SLOT(sSave()));
   connect(_saveAndAdd,          SIGNAL(clicked()),                              this,         SLOT(sSaveAndAdd()));
@@ -3083,7 +3083,7 @@ void salesOrder::closeEvent(QCloseEvent *pEvent)
     return;
   }
 
-  disconnect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
+  disconnect(_orderNumber, SIGNAL(editingFinished()), this, SLOT(sHandleOrderNumber()));
 
   if (cNew == _mode && _saved)
     omfgThis->sSalesOrdersUpdated(-1);

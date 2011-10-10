@@ -27,7 +27,7 @@ customerType::customerType(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_code, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft,  true, "char_name");
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft,  true, "charass_value");

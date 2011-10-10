@@ -199,18 +199,18 @@ void ContactWidget::init()
     connect(this,       SIGNAL(changed()),                   this, SLOT(setChanged()));
 
     connect(_honorific,	SIGNAL(newID(int)),  this, SLOT(sCheck()));
-    connect(_first,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_middle,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_last,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_suffix,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_initials,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
+    connect(_first,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(_middle,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(_last,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(_suffix,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(_initials,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
     connect(_crmAcct,	SIGNAL(newId(int)),  this, SLOT(sCheck()));
-    connect(_title,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_phone,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_phone2,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_fax,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(emailEdit,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_webaddr,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
+    connect(_title,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(_phone,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(_phone2,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(_fax,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(emailEdit,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
+    connect(_webaddr,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
     connect(_address,	SIGNAL(changed()),   this, SLOT(sCheck()));
 
     connect(_email,     SIGNAL(currentIndexChanged(int)), this, SLOT(sEmailIndexChanged()));
@@ -218,8 +218,8 @@ void ContactWidget::init()
     
     setListVisible(true);
     
-    connect(_first, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
-    connect(_last, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
+    connect(_first, SIGNAL(editingFinished()), this, SLOT(findDuplicates()));
+    connect(_last, SIGNAL(editingFinished()), this, SLOT(findDuplicates()));
 
     connect(_crmAcct, SIGNAL(newId(int)), this, SLOT(setSearchAcct(int)));
 
@@ -354,14 +354,14 @@ void ContactWidget::setId(const int pId)
 
 void ContactWidget::silentSetId(const int pId)
 {
-  disconnect(_first, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
-  disconnect(_last, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
+  disconnect(_first, SIGNAL(editingFinished()), this, SLOT(findDuplicates()));
+  disconnect(_last, SIGNAL(editingFinished()), this, SLOT(findDuplicates()));
   if (pId == -1 || pId == 0)
   {
     _id = -1;
     _valid = false;
-    connect(_first, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
-    connect(_last, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
+    connect(_first, SIGNAL(editingFinished()), this, SLOT(findDuplicates()));
+    connect(_last, SIGNAL(editingFinished()), this, SLOT(findDuplicates()));
     clear();
   }
   else if (pId == _id)

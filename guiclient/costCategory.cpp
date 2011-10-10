@@ -22,7 +22,7 @@ costCategory::costCategory(QWidget* parent, const char* name, bool modal, Qt::WF
   _costcatid = -1;
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_category, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_category, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 
   _asset->setType(GLCluster::cAsset);
   _expense->setType(GLCluster::cExpense);

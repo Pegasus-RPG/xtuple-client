@@ -28,7 +28,7 @@ standardJournal::standardJournal(QWidget* parent, const char* name, bool modal, 
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_stdjrnlitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(this, SIGNAL(rejected()), this, SLOT(sReject()));
 

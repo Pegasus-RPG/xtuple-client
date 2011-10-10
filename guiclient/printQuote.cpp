@@ -23,7 +23,7 @@ printQuote::printQuote(QWidget* parent, const char* name, bool modal, Qt::Window
 {
   setupUi(this);
 
-  connect(_number, SIGNAL(lostFocus()), this, SLOT(sHandleButtons()));
+  connect(_number, SIGNAL(editingFinished()), this, SLOT(sHandleButtons()));
   connect(_print,    SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_report,  SIGNAL(newID(int)), this, SLOT(sHandleButtons()));
 

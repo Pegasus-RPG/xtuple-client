@@ -23,7 +23,7 @@ itemListPrice::itemListPrice(QWidget* parent, const char* name, bool modal, Qt::
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulate()));
-  connect(_listPrice, SIGNAL(lostFocus()), this, SLOT(sUpdateMargins()));
+  connect(_listPrice, SIGNAL(editingFinished()), this, SLOT(sUpdateMargins()));
 
   _item->setType(ItemLineEdit::cSold);
   _listPrice->setValidator(omfgThis->priceVal());

@@ -37,4 +37,4 @@ function calculateDiscount()
   mywindow.sCalculateFromDiscount();
 }
 
-mywindow.findChild("_qtyOrdered").lostFocus.connect(calculateDiscount);
+mywindow.findChild("_qtyOrdered").editingFinished.connect(calculateDiscount);

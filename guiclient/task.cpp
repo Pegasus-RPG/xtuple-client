@@ -22,10 +22,10 @@ task::task(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   setupUi(this);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_actualExp, SIGNAL(lostFocus()), this, SLOT(sExpensesAdjusted()));
-  connect(_budgetExp, SIGNAL(lostFocus()), this, SLOT(sExpensesAdjusted()));
-  connect(_actualHours, SIGNAL(lostFocus()), this, SLOT(sHoursAdjusted()));
-  connect(_budgetHours, SIGNAL(lostFocus()), this, SLOT(sHoursAdjusted()));
+  connect(_actualExp, SIGNAL(editingFinished()), this, SLOT(sExpensesAdjusted()));
+  connect(_budgetExp, SIGNAL(editingFinished()), this, SLOT(sExpensesAdjusted()));
+  connect(_actualHours, SIGNAL(editingFinished()), this, SLOT(sHoursAdjusted()));
+  connect(_budgetHours, SIGNAL(editingFinished()), this, SLOT(sHoursAdjusted()));
   
   _budgetHours->setValidator(omfgThis->qtyVal());
   _actualHours->setValidator(omfgThis->qtyVal());

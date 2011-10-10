@@ -23,7 +23,7 @@ changePoitemQty::changePoitemQty(QWidget* parent, const char* name, bool modal, 
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sChangeQty()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect(_newQty, SIGNAL(lostFocus()), this, SLOT(sQtyChanged()));
+  connect(_newQty, SIGNAL(editingFinished()), this, SLOT(sQtyChanged()));
   connect(_po, SIGNAL(newId(int, QString)), this, SLOT(sPopulatePoitem(int)));
   connect(_poitem, SIGNAL(newID(int)), this, SLOT(sPopulate(int)));
 

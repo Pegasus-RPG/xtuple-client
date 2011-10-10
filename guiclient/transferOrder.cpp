@@ -55,7 +55,7 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_issueStock,	     SIGNAL(clicked()), this, SLOT(sIssueStock()));
   connect(_new,		     SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_orderDate,	SIGNAL(newDate(QDate)), _qeitem, SLOT(setTransDate(QDate)));
-  connect(_orderNumber,    SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
+  connect(_orderNumber,    SIGNAL(editingFinished()), this, SLOT(sHandleOrderNumber()));
   connect(_orderNumber,	SIGNAL(textChanged(const QString&)), this, SLOT(sSetUserEnteredOrderNumber()));
   connect(_packDate,	SIGNAL(newDate(QDate)), _qeitem, SLOT(setShipDate(QDate)));
   connect(_qecurrency,	   SIGNAL(newID(int)), this, SLOT(sCurrencyChanged()));
@@ -1585,7 +1585,7 @@ void transferOrder::closeEvent(QCloseEvent *pEvent)
     return;
   }
 
-  disconnect(_orderNumber,    SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
+  disconnect(_orderNumber,    SIGNAL(editingFinished()), this, SLOT(sHandleOrderNumber()));
 
   sReleaseTohead();
   

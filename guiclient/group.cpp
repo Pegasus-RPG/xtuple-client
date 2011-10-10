@@ -30,7 +30,7 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   setupUi(this);
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
   connect(_addAll, SIGNAL(clicked()), this, SLOT(sAddAll()));
   connect(_revoke, SIGNAL(clicked()), this, SLOT(sRevoke()));

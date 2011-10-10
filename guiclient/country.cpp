@@ -21,8 +21,8 @@ country::country(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_abbr,	SIGNAL(lostFocus()),	this,	SLOT(sToUpper()));
-  connect(_currAbbr,	SIGNAL(lostFocus()),	this,	SLOT(sToUpper()));
+  connect(_abbr,	SIGNAL(editingFinished()),	this,	SLOT(sToUpper()));
+  connect(_currAbbr,	SIGNAL(editingFinished()),	this,	SLOT(sToUpper()));
   connect(_buttonBox,	SIGNAL(accepted()),	this,	SLOT(sSave()));
 
   _currNumber->setValidator(new QRegExpValidator(QRegExp("[0-9][0-9][0-9]"), this));

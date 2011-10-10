@@ -28,7 +28,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _listPrices->setMaximumWidth(25);
 #endif
 
-  connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
+  connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sCalculateTax()));
   connect(_item,	  SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo()));
   connect(_warehouse,	  SIGNAL(newID(int)),     this, SLOT(sPopulateItemsiteInfo()));
@@ -153,7 +153,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 	      return UndefinedError;
       }
 
-      connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
+      connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
 
       _item->setFocus();
@@ -166,7 +166,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       _warehouse->setEnabled(FALSE);
       _qtyReturned->setFocus();
 
-      connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
+      connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
 
       _save->setFocus();

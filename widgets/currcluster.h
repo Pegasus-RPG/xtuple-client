@@ -206,7 +206,7 @@ class XTUPLEWIDGETS_EXPORT CurrCluster : public CurrDisplay
         void setFieldNameCurr(QString p) { _fieldNameCurr = p; };
 
     signals:
-	void lostFocus();
+	void editingFinished();
 
     protected:
 	bool	     _baseVisible;

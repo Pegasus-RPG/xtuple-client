@@ -29,7 +29,7 @@ countTag::countTag(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   // signals and slots connections
   connect(_countTagList, SIGNAL(clicked()), this, SLOT(sCountTagList()));
   connect(_enter, SIGNAL(clicked()), this, SLOT(sEnter()));
-  connect(_countTagNumber, SIGNAL(lostFocus()), this, SLOT(sParseCountTagNumber()));
+  connect(_countTagNumber, SIGNAL(editingFinished()), this, SLOT(sParseCountTagNumber()));
 
   _item->setReadOnly(TRUE);
 

@@ -31,7 +31,7 @@ taxClass::taxClass(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_taxClass, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_taxClass, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
 /*

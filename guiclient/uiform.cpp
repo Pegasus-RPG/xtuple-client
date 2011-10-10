@@ -39,7 +39,7 @@ uiform::uiform(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit,         SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_export,       SIGNAL(clicked()), this, SLOT(sExport()));
   connect(_import,       SIGNAL(clicked()), this, SLOT(sImport()));
-  connect(_name,       SIGNAL(lostFocus()), this, SLOT(sFillList()));
+  connect(_name,       SIGNAL(editingFinished()), this, SLOT(sFillList()));
   connect(_save,         SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_scriptDelete, SIGNAL(clicked()), this, SLOT(sScriptDelete()));
   connect(_scriptEdit,   SIGNAL(clicked()), this, SLOT(sScriptEdit()));

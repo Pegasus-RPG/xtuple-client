@@ -48,7 +48,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTotals()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_orderDate,   SIGNAL(newDate(QDate)), this, SLOT(sHandleOrderDate()));
-  connect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
+  connect(_orderNumber, SIGNAL(editingFinished()), this, SLOT(sHandleOrderNumber()));
   connect(_orderNumber, SIGNAL(textChanged(const QString&)), this, SLOT(sSetUserOrderNumber()));
   connect(_poCurrency,  SIGNAL(newID(int)),     this, SLOT(sCurrencyChanged()));
   connect(_poitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleDeleteButton()));

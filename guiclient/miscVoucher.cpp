@@ -37,7 +37,7 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNewMiscDistribution()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_voucherNumber, SIGNAL(lostFocus()), this, SLOT(sHandleVoucherNumber()));
+  connect(_voucherNumber, SIGNAL(editingFinished()), this, SLOT(sHandleVoucherNumber()));
 
   _terms->setType(XComboBox::APTerms);
 

@@ -26,7 +26,7 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
 {
   setupUi(this);
 
-  connect(_billed,  SIGNAL(lostFocus()),    this, SLOT(sCalculateExtendedPrice()));
+  connect(_billed,  SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()));
   connect(_item,    SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo(int)));
   connect(_item,    SIGNAL(newId(int)),     this, SLOT(sHandleUpdateInv()));
   connect(_extended,SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
@@ -141,18 +141,18 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
 	    return UndefinedError;
       }
 
-      connect(_billed, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
-      connect(_billed, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
-      connect(_price, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
+      connect(_billed, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
+      connect(_billed, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
+      connect(_price, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
       _salescat->setType(XComboBox::SalesCategoriesActive);
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
 
-      connect(_billed, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
-      connect(_billed, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
-      connect(_price, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
+      connect(_billed, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
+      connect(_billed, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
+      connect(_price, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
 
       _save->setFocus();
     }

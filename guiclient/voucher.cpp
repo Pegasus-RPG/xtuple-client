@@ -39,7 +39,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_distributeline, SIGNAL(clicked()), this, SLOT(sDistributeLine()));
   connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
   connect(_distributeall, SIGNAL(clicked()), this, SLOT(sDistributeAll()));
-  connect(_voucherNumber, SIGNAL(lostFocus()), this, SLOT(sHandleVoucherNumber()));
+  connect(_voucherNumber, SIGNAL(editingFinished()), this, SLOT(sHandleVoucherNumber()));
   connect(_poNumber, SIGNAL(newId(int, const QString&)), this, SLOT(sFillList()));
   connect(_poNumber, SIGNAL(newId(int, const QString&)), this, SLOT(sPopulatePoInfo()));
   connect(_amountToDistribute, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));

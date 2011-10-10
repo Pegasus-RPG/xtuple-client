@@ -26,7 +26,7 @@ customerGroup::customerGroup(QWidget* parent, const char* name, bool modal, Qt::
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 
   _custgrpitem->addColumn(tr("Number"), _itemColumn, Qt::AlignLeft, true, "cust_number");
   _custgrpitem->addColumn(tr("Name"),   -1,          Qt::AlignLeft, true, "cust_name");
