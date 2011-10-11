@@ -698,7 +698,7 @@ FROM ( SELECT itemsite_id, itemsite_costmethod,
     <left/>
     <vcenter/>
     <data>
-     <query>total</query>
+     <query>detail</query>
      <column>warehous_code</column>
     </data>
    </field>
