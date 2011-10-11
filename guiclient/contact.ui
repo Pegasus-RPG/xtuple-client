@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>794</width>
+    <height>551</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,9 +23,6 @@ to be bound by its terms.</comment>
   <layout class="QGridLayout" name="gridLayout_8">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_6">
-     <property name="verticalSpacing">
-      <number>12</number>
-     </property>
      <item row="0" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
@@ -162,33 +159,29 @@ to be bound by its terms.</comment>
            <property name="title">
             <string/>
            </property>
-           <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="0">
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <item>
-               <widget class="UsernameCluster" name="_owner">
-                <property name="focusPolicy">
-                 <enum>Qt::StrongFocus</enum>
-                </property>
-                <property name="label">
-                 <string>Owner:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="UsernameCluster" name="_owner">
+              <property name="focusPolicy">
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="label">
+               <string>Owner:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -248,9 +241,6 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>0</number>
-           </property>
            <item>
             <widget class="QPushButton" name="_newCharacteristic">
              <property name="text">
@@ -305,9 +295,6 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>0</number>
-           </property>
            <item>
             <widget class="QPushButton" name="_editUse">
              <property name="text">
@@ -342,6 +329,13 @@ to be bound by its terms.</comment>
              </property>
             </spacer>
            </item>
+           <item>
+            <widget class="XCheckBox" name="_showOrders">
+             <property name="text">
+              <string>Show Orders</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -362,7 +356,7 @@ to be bound by its terms.</comment>
        </widget>
       </widget>
      </item>
-     <item row="0" column="1" rowspan="2">
+     <item row="0" column="1" rowspan="2" colspan="2">
       <widget class="QDialogButtonBox" name="_buttonBox">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -402,6 +396,11 @@ to be bound by its terms.</comment>
    <class>UsernameCluster</class>
    <extends>QWidget</extends>
    <header>usernamecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

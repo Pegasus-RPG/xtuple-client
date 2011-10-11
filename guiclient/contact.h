@@ -20,6 +20,8 @@
 #include "addresscluster.h"
 #include "contactcluster.h"
 
+class contactPrivate;
+
 class contact : public XDialog, public Ui::contact
 {
     Q_OBJECT
@@ -39,15 +41,23 @@ protected slots:
     virtual void sClose();
     virtual void sDeleteCharass();
     virtual void sDetachUse();
-    virtual void sEditCharass();
     virtual void sEditCRMAccount();
+    virtual void sEditCharass();
     virtual void sEditCustomer();
     virtual void sEditEmployee();
+    virtual void sEditIncident();
+    virtual void sEditLSRegistration();
+    virtual void sEditOpportunity();
     virtual void sEditProspect();
+    virtual void sEditPurchaseOrder();
+    virtual void sEditQuote();
+    virtual void sEditSalesOrder();
     virtual void sEditShipto();
+    virtual void sEditTodoItem();
+    virtual void sEditTransferOrder();
     virtual void sEditUse();
-    virtual void sEditVendorAddress();
     virtual void sEditVendor();
+    virtual void sEditVendorAddress();
     virtual void sEditWarehouse();
     virtual void sFillList();
     virtual void sHandleValidUse(bool);
@@ -58,18 +68,23 @@ protected slots:
     virtual void sViewCRMAccount();
     virtual void sViewCustomer();
     virtual void sViewEmployee();
+    virtual void sViewIncident();
+    virtual void sViewLSRegistration();
+    virtual void sViewOpportunity();
     virtual void sViewProspect();
+    virtual void sViewPurchaseOrder();
+    virtual void sViewQuote();
+    virtual void sViewSalesOrder();
     virtual void sViewShipto();
+    virtual void sViewTodoItem();
+    virtual void sViewTransferOrder();
     virtual void sViewUse();
-    virtual void sViewVendorAddress();
     virtual void sViewVendor();
+    virtual void sViewVendorAddress();
     virtual void sViewWarehouse();
 
-private:
-    bool _activeCache;
-    int  _addrid;
-    bool _captive;
-    int  _mode;
+protected:
+    contactPrivate *_data;
 
 };
 

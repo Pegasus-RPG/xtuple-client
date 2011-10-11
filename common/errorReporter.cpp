@@ -1040,7 +1040,6 @@ const struct {
 //{ "vend_to_curr_symbol",                      Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "vendaddrinfo_vendaddr_addr_id_fkey",       Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "vendaddrinfo_vendaddr_addr_id_fkey",       Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
-//{ "vendaddrinfo_vendaddr_cntct_id_fkey",      Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
   { "vendaddrinfo_vendaddr_cntct_id_fkey",      Delete, -5, "deleteContact" },
 //{ "vendaddrinfo_vendaddr_cntct_id_fkey",      Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "") },
 //{ "vendaddrinfo_vendaddr_taxzone_id_fkey",    Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "") },

@@ -225,7 +225,9 @@ public slots:
          virtual void findDuplicates();
   inline virtual void setExtraClause(const QString&)    { }
   inline virtual void setAddress(const int p)           { _address->setId(p); }
+  inline virtual void setActive(const bool p)           { _active->setChecked(p); }
          virtual void setChange(QString p);
+  inline virtual void setCrmAcctId(const int p)         { _crmAcct->setId(p); }
   inline virtual void setDescription(const QString&)    { }
   inline virtual void setEmailAddress(const QString& p) { _email->setText(p); }
   inline virtual void setFax(const QString& p)	        { _fax->setText(p); }

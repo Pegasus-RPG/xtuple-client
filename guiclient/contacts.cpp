@@ -12,7 +12,6 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QSqlError>
 #include <QToolBar>
 #include <QToolButton>
 #include <QVariant>
@@ -20,6 +19,7 @@
 
 #include "characteristic.h"
 #include "contact.h"
+#include "errorReporter.h"
 #include "parameterwidget.h"
 #include "storedProcErrorLookup.h"
 
@@ -147,17 +147,16 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
   menuItem->setEnabled(viewPriv);
 
   XSqlQuery chk;
-  chk.prepare("SELECT cntctused(:cntct_id) AS inUse");
+  chk.prepare("SELECT cntctused(:cntct_id) AS inUse;");
   chk.bindValue(":cntct_id", list()->id());
   chk.exec();
-  if (chk.lastError().type() != QSqlError::NoError) {
-    systemError(this, chk.lastError().databaseText(), __FILE__, __LINE__);
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Usage"),
+                           chk, __FILE__, __LINE__))
     return;
-  }
-  if (chk.first() && !chk.value("inUse").toBool()) {
-    menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
-    menuItem->setEnabled(editPriv);
-  }
+
+  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
+  menuItem->setEnabled(editPriv &&
+                       chk.first() && ! chk.value("inUse").toBool());
 }
 
 void contacts::sNew()
@@ -213,28 +212,16 @@ void contacts::sDelete()
 			    QMessageBox::Yes,
 			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare("SELECT deleteContact(:cntct_id) AS result;");
+    XSqlQuery delq;
+    delq.prepare("DELETE FROM cntct WHERE (cntct_id=:cntct_id);");
 
-    QList<XTreeWidgetItem*> selected = list()->selectedItems();
-    for (int i = 0; i < selected.size(); i++)
+    foreach (XTreeWidgetItem *selected, list()->selectedItems())
     {
-      q.bindValue(":cntct_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      q.exec();
-
-      if (q.first())
-      {
-        int result = q.value("result").toInt();
-        if (result < 0)
-        {
-          systemError(this, storedProcErrorLookup("deleteContact", result), __FILE__, __LINE__);
-          return;
-        }
-      }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      delq.bindValue(":cntct_id", selected->id());
+      delq.exec();
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Contact"),
+                               delq, __FILE__, __LINE__))
         return;
-      }
     }
   }
   sFillList();
@@ -256,13 +243,14 @@ void contacts::sAttach()
 			    QMessageBox::Yes, QMessageBox::No | QMessageBox::Default);
     if (answer == QMessageBox::Yes)
     {
-      q.prepare("SELECT attachContact(:cntct_id, :crmacct_id) AS returnVal;");
-      q.bindValue(":cntct_id", attached.id());
-      q.bindValue(":crmacct_id", _crmacctid);
-      q.exec();
-      if (q.first())
+      XSqlQuery attq;
+      attq.prepare("SELECT attachContact(:cntct_id, :crmacct_id) AS returnVal;");
+      attq.bindValue(":cntct_id", attached.id());
+      attq.bindValue(":crmacct_id", _crmacctid);
+      attq.exec();
+      if (attq.first())
       {
-	int returnVal = q.value("returnVal").toInt();
+	int returnVal = attq.value("returnVal").toInt();
 	if (returnVal < 0)
 	{
 	  systemError(this, storedProcErrorLookup("attachContact", returnVal),
@@ -270,11 +258,9 @@ void contacts::sAttach()
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Attaching Contact"),
+                                    attq, __FILE__, __LINE__))
 	return;
-      }
     }
     sFillList();
   }
@@ -289,13 +275,14 @@ void contacts::sDetach()
   if (answer == QMessageBox::Yes)
   {
     int cntctId = list()->id();
-    q.prepare("SELECT detachContact(:cntct_id, :crmacct_id) AS returnVal;");
-    q.bindValue(":cntct_id", cntctId);
-    q.bindValue(":crmacct_id", _crmacctid);
-    q.exec();
-    if (q.first())
+    XSqlQuery detq;
+    detq.prepare("SELECT detachContact(:cntct_id, :crmacct_id) AS returnVal;");
+    detq.bindValue(":cntct_id", cntctId);
+    detq.bindValue(":crmacct_id", _crmacctid);
+    detq.exec();
+    if (detq.first())
     {
-      int returnVal = q.value("returnVal").toInt();
+      int returnVal = detq.value("returnVal").toInt();
       if (returnVal < 0)
       {
 	systemError(this, tr("Error detaching Contact from CRM Account (%1).")
@@ -304,11 +291,9 @@ void contacts::sDetach()
       }
       emit cntctDetached(cntctId);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Detaching Contact"),
+                                  detq, __FILE__, __LINE__))
       return;
-    }
 
     sFillList();
   }

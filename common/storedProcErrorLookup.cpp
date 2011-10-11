@@ -841,6 +841,11 @@ const struct {
   { "explodeWo",  -9, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Work Order %1 cannot be Exploded because the quantity"
 			 "ordered is not valid."),			0, "" },
 
+  { "fkeycheck",  -1, QT_TRANSLATE_NOOP("storedProcErrorLookup",
+                                        "Cannot check dependencies when the "
+                                        "contact is one of multiple foreign "
+                                        "key columns."),                0, "" },
+
   { "freezeAccountingPeriod", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot freeze this Accounting Period "
 				     "because it is still open."),     0, "" },
   { "freezeAccountingPeriod", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot freeze this Accounting Period "
