@@ -487,10 +487,10 @@ bool issueToShipping::sIssueLineBalance(int id, int altId)
 	
     issue.exec("COMMIT;");
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (issue.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   return true;
