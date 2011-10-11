@@ -325,6 +325,7 @@ void contactMerge::sPopulateCntctMenu(QMenu *pMenu)
 
 void contactMerge::sPopulateSrcMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int pCol)
 {
+  Q_UNUSED(pItem);
   QAction *menuItem;
   QString col = "";
   QString menuStr;
