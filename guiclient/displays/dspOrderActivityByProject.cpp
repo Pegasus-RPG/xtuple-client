@@ -354,7 +354,10 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
   if (!_showWo->isChecked() &&
       !_showPo->isChecked() &&
       !_showSo->isChecked())
+  {
+    list()->clear();
     return false;
+  }
 
   params.append("prj_id", _project->id());
   
