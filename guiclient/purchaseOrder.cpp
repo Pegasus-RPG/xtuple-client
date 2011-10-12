@@ -1383,8 +1383,8 @@ bool purchaseOrder::sQESave()
   _qesave->setFocus();
   if (! _qeitem->submitAll())
   {
-    if (! _qeitem->lastError().databaseText().isEmpty())
-      systemError(this, _qeitem->lastError().databaseText(), __FILE__, __LINE__);
+    // no need to report an error here as it will have already been reported
+    // by the poitemTableModel (where it originated)
     return false;
   }
   sFillList();

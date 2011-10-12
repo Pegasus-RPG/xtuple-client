@@ -208,6 +208,7 @@ bool PoitemTableModel::submitAll()
   {
     XSqlQuery rollback("ROLLBACK;");
     systemError(0, lastError().databaseText(), __FILE__, __LINE__);
+    return returnVal;
   }
 
   select();
