@@ -1365,11 +1365,14 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
   // TODO: if sQeSave == false then find a way to return control to the user
   if (_qeitem->isDirty())
   {
-    if (QMessageBox::question(this, tr("Save Quick Entry Data?"),
-                    tr("Do you want to save your Quick Entry changes?"),
-                    QMessageBox::Yes | QMessageBox::Default,
-                    QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
-      sQESave();
+    // it shouldn't even ask to save these if the screen is canceled for new PO
+    if(_mode == cEdit) {
+      if (QMessageBox::question(this, tr("Save Quick Entry Data?"),
+                      tr("Do you want to save your Quick Entry changes?"),
+                      QMessageBox::Yes | QMessageBox::Default,
+                      QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
+        sQESave();
+    }
   }
 
   XWidget::closeEvent(pEvent);
