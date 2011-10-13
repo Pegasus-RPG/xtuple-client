@@ -67,24 +67,25 @@ void printCreditMemos::languageChange()
 
 void printCreditMemos::sPrint()
 {
-  XSqlQuery cmhead( "SELECT cmhead_id, cmhead_number,"
+  XSqlQuery cmhead( "SELECT cmhead_id, cmhead_number, cmhead_posted,"
                     "       findCustomerForm(cmhead_cust_id, 'C') AS _reportname "
-                    "FROM ( SELECT cmhead_id, cmhead_number, cmhead_cust_id "
+                    "FROM ( SELECT cmhead_id, cmhead_number, cmhead_cust_id, cmhead_posted "
                     "       FROM cmhead "
                     "       WHERE ( (NOT cmhead_hold)"
                     "         AND   (NOT COALESCE(cmhead_printed,false)) ) ) AS data "
                     "WHERE (checkCreditMemoSitePrivs(cmhead_id));" );
   if (cmhead.first())
   {
-    QPrinter printer(QPrinter::HighResolution);
-    bool     setupPrinter  = TRUE;
-    bool userCanceled = false;
+    QPrinter  printer(QPrinter::HighResolution);
+    bool      setupPrinter  = TRUE;
+    bool      userCanceled = false;
     if (orReport::beginMultiPrint(&printer, userCanceled) == false)
     {
       if(!userCanceled)
         systemError(this, tr("Could not initialize printing system for multiple reports."));
       return;
     }
+
 
     do
     {
@@ -120,43 +121,47 @@ void printCreditMemos::sPrint()
           }
         }
 
-        if ( (_post->isChecked()) && (i == 0) )
+      
+      }
+      
+      // if post after print was checked attempt to post it
+      // if it hasn't already been posted
+      if (_post->isChecked() && !cmhead.value("cmhead_posted").toInt())
+      {
+        
+        q.exec("BEGIN;");
+        //TO DO:  Replace this method with commit that doesn't require transaction
+        //block that can lead to locking issues
+        XSqlQuery rollback;
+        rollback.prepare("ROLLBACK;");
+      
+        q.prepare("SELECT postCreditMemo(:cmhead_id, 0) AS result;");
+        q.bindValue(":cmhead_id", cmhead.value("cmhead_id").toInt());
+        q.exec();
+        q.first();
+        int result = q.value("result").toInt();
+        if (result < 0)
         {
-          q.exec("BEGIN;");
-          //TO DO:  Replace this method with commit that doesn't require transaction
-          //block that can lead to locking issues
-          XSqlQuery rollback;
-          rollback.prepare("ROLLBACK;");
-
-          q.prepare("SELECT postCreditMemo(:cmhead_id, 0) AS result;");
-          q.bindValue(":cmhead_id", cmhead.value("cmhead_id").toInt());
-          q.exec();
-          q.first();
-          int result = q.value("result").toInt();
-          if (result < 0)
+          rollback.exec();
+          systemError( this, storedProcErrorLookup("postCreditMemo", result),
+                __FILE__, __LINE__);
+        }
+        else if (q.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          rollback.exec();
+        }
+        else
+        {
+          if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
           {
             rollback.exec();
-            systemError( this, storedProcErrorLookup("postCreditMemo", result),
-                  __FILE__, __LINE__);
+            QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
           }
-          else if (q.lastError().type() != QSqlError::NoError)
-          {
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-            rollback.exec();
-          }
-          else
-          {
-            if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
-            {
-              rollback.exec();
-              QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
-            }
-
-            q.exec("COMMIT;");
-          }
+      
+          q.exec("COMMIT;");
         }
       }
-
       emit finishedPrinting(cmhead.value("cmhead_id").toInt());
     }
     while (cmhead.next());
