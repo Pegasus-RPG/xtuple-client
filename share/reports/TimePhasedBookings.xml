@@ -138,6 +138,9 @@ WHERE ((cohead_orderdate BETWEEN
 &lt;? endforeach ?>
 )
     AND (coitem_status != 'X')
+&lt;? if exists("item_id") ?> 
+    AND (item_id=&lt;? value("item_id") ?>)
+&lt;? endif ?>
 &lt;? if exists("cust_id") ?> 
     AND (cust_id=&lt;? value("cust_id") ?>)
 &lt;? endif ?>
@@ -211,6 +214,9 @@ LEFT OUTER JOIN
 &lt;? endif ?>
   WHERE ((cohead_orderdate BETWEEN findPeriodStart(&lt;? value("period_id_list") ?>) AND findPeriodEnd(&lt;? value("period_id_list") ?>))
     AND (coitem_status != 'X')
+&lt;? if exists("item_id") ?> 
+    AND (item_id=&lt;? value("item_id") ?>)
+&lt;? endif ?>
 &lt;? if exists("cust_id") ?> 
     AND (cust_id=&lt;? value("cust_id") ?>)
 &lt;? endif ?>
