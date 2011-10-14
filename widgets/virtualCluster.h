@@ -228,7 +228,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         void setStrict(bool);
         bool isStrict() const { return _strict; }
 
-        virtual void completerActivated(const QModelIndex &);
+        virtual void completerHighlighted(const QModelIndex &);
 
     signals:
         void newId(int);
@@ -269,7 +269,7 @@ class XTUPLEWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         bool _hasActive;
         bool _strict;
         bool _showInactive;
-        bool _useCompleterId;
+        int _completerId;
 
         virtual void silentSetId(const int);
 

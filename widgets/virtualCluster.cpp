@@ -286,7 +286,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     _strict = true;
     _completer = 0;
     _showInactive = false;
-    _useCompleterId = true; // base classes can set this to false to always use the old style
+    _completerId = 0;
 
     setTableAndColumnNames(pTabName, pIdColumn, pNumberColumn, pNameColumn, pDescripColumn, pActiveColumn);
 
@@ -306,7 +306,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
       {
         QSqlQueryModel* hints = new QSqlQueryModel(this);
         _completer = new QCompleter(hints,this);
-        setCompleter(_completer);
+        _completer->setWidget(this);
         QTreeView* view = new QTreeView(this);
         view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -318,7 +318,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
         _completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
         connect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
         connect(_completer, SIGNAL(highlighted(QString)), this, SLOT(setText(QString)));
-        connect(_completer, SIGNAL(activated(const QModelIndex &)), this, SLOT(completerActivated(const QModelIndex &)));
+        connect(_completer, SIGNAL(highlighted(const QModelIndex &)), this, SLOT(completerHighlighted(const QModelIndex &)));
       }
     }
 
@@ -549,19 +549,12 @@ void VirtualClusterLineEdit::sHandleCompleter()
   _parsed = false;
 }
 
-void VirtualClusterLineEdit::completerActivated(const QModelIndex & index)
+void VirtualClusterLineEdit::completerHighlighted(const QModelIndex & index)
 {
-  int cid = _completer->completionModel()->data(index.sibling(index.row(), 0)).toInt();
+  _completerId = _completer->completionModel()->data(index.sibling(index.row(), 0)).toInt();
   if (DEBUG)
-    qDebug() << objectName() << "::completerActivated(" << index << ")"
-             << "entered with _useCompleterId" << _useCompleterId
-             << "and cid" << cid;
-  if(_useCompleterId && cid != 0)
-  {
-    setId(cid);
-  }
-  else
-    setNumber(_completer->completionModel()->data(index).toString());
+    qDebug() << objectName() << "::completerHighlighted(" << index << ")"
+             << "enterd with completerId" << _completerId;
 }
 
 void VirtualClusterLineEdit::sHandleNullStr()
@@ -765,7 +758,12 @@ void VirtualClusterLineEdit::sParse()
     qDebug("VCLE %s::sParse() entered with _parsed %d and text() %s",
            qPrintable(objectName()), _parsed, qPrintable(text()));
 
-    if (! _parsed)
+    if (_completerId)
+    {
+      setId(_completerId);
+      _completerId = 0;
+    }
+    else if (! _parsed)
     {
       QString stripped = text().trimmed().toUpper();
       if (stripped.length() == 0)
