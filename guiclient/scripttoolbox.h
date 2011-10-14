@@ -160,7 +160,7 @@ class ScriptToolbox : public QObject
     void loadQWebView(QWidget * webView, const QString & url);
 
     bool printReport(const QString & name, const ParameterList & params, const QString & pdfFilename = QString::null);
-    bool printReport(const QString & name, const ParameterList & params, const bool preview);
+    bool printReport(const QString & name, const ParameterList & params, const bool preview, QWidget *parent = 0);
     bool printReportCopies(const QString & name, const ParameterList & params, int copies);
 
     bool coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method);

@@ -218,11 +218,11 @@ bool orReportProto::isValid()
   return false;
 }
 
-bool orReportProto::print(QPrinter *prtThis, bool boolSetupPrinter, bool showPreview)
+bool orReportProto::print(QPrinter *prtThis, bool boolSetupPrinter, bool showPreview, QWidget *parent)
 {
   orReport *item = qscriptvalue_cast<orReport*>(thisObject());
   if (item)
-    return item->print(prtThis, boolSetupPrinter, showPreview);
+    return item->print(prtThis, boolSetupPrinter, showPreview, parent);
   return false;
 }
 

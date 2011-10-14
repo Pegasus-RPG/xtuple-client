@@ -851,14 +851,15 @@ bool ScriptToolbox::printReport(const QString & name, const ParameterList & para
     \param params  The MetaSQL parameters used to control the report output
     \param preview If \c preview is true, open a report preview window;
                    otherwise print using the standard print methodology
+    \param parent  The parent widget to set for the preview window (optional)
 
     \return True if the report printed successfully; false if there was an apparent error printing or previewing
  */
-bool ScriptToolbox::printReport(const QString & name, const ParameterList & params, const bool preview)
+bool ScriptToolbox::printReport(const QString & name, const ParameterList & params, const bool preview, QWidget *parent)
 {
   orReport report(name, params);
   if (report.isValid())
-    report.print(0, true, preview);
+    report.print(0, true, preview, parent);
   else
   {
     report.reportError(NULL);

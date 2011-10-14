@@ -10,9 +10,14 @@
 
 #include "printStatementByCustomer.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
+
+#include "errorReporter.h"
+#include "../scriptapi/parameterlistsetup.h"
 
 printStatementByCustomer::printStatementByCustomer(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -20,9 +25,9 @@ printStatementByCustomer::printStatementByCustomer(QWidget* parent, const char* 
   setupUi(this);
 
   _asOf->setDate(omfgThis->dbDate(), true);
-  // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+
+  connect(_print,  SIGNAL(clicked()), this,   SLOT(sPrint()));
+  connect(_close,  SIGNAL(clicked()), this,   SLOT(reject()));
   connect(_cust, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
   _captive = FALSE;
@@ -61,38 +66,58 @@ enum SetResponse printStatementByCustomer::set(const ParameterList &pParams)
   return NoError;
 }
 
-void printStatementByCustomer::sPrint()
+bool printStatementByCustomer::setParams(ParameterList &params)
 {
   if (!_cust->isValid())
   {
-    QMessageBox::warning( this, tr("Enter a Valid Customer Number"),
-                          tr("You must enter a valid Customer Number for this Statement.") );
+    QMessageBox::warning(this, tr("Enter a Valid Customer Number"),
+                         tr("<p>You must enter a valid Customer Number for "
+                            "this Statement.") );
     _cust->setFocus();
-    return;
+    return false;
   }
-  q.prepare("SELECT * FROM araging (:asofDate, true) "
-            "WHERE (araging_cust_id = :cust_id);"); 
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":asofDate", _asOf->date());
-  q.exec();
-  if(q.first())
-  {
-    q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
-    q.bindValue(":cust_id", _cust->id());
-    q.exec();
-    if (q.first())
-    {
-      ParameterList params;
-      params.append("invoice", tr("Invoice"));
-      params.append("debit", tr("Debit Memo"));
-      params.append("credit", tr("Credit Memo"));
-      params.append("deposit", tr("Deposit"));
-      params.append("cust_id", _cust->id());
-      params.append("asofdate", _asOf->date());
 
-      orReport report(q.value("_reportname").toString(), params);
+  params.append("invoice",  tr("Invoice"));
+  params.append("debit",    tr("Debit Memo"));
+  params.append("credit",   tr("Credit Memo"));
+  params.append("deposit",  tr("Deposit"));
+  params.append("cust_id",  _cust->id());
+  params.append("asofdate", _asOf->date());
+
+  return true;
+}
+
+ParameterList printStatementByCustomer::getParams()
+{
+  ParameterList params;
+  bool ret = setParams(params);
+  params.append("checkParamsReturn", ret);
+
+  return params;
+}
+
+void printStatementByCustomer::sPrint()
+{
+  ParameterList params;
+  if(! setParams(params))
+    return;
+
+  MetaSQLQuery agem("SELECT * FROM araging (<? value('asofDate') ?>, true)"
+                    " WHERE (araging_cust_id = <? value('cust_id') ?>);"); 
+  XSqlQuery ageq = agem.toQuery(params);
+  if(ageq.first())
+  {
+    MetaSQLQuery formm("SELECT findCustomerForm(<? value('cust_id') ?>, 'S')"
+                       "    AS _reportname;");
+    XSqlQuery formq = formm.toQuery(params);
+    if (formq.first())
+    {
+      orReport report(formq.value("_reportname").toString(), params);
       if (report.isValid())
-        report.print();
+      {
+        if (report.print())
+          emit finishedPrinting(_cust->id());
+      }
       else
       {
         report.reportError(this);
@@ -108,11 +133,13 @@ void printStatementByCustomer::sPrint()
         _cust->setFocus();
       }
     }
-    else
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Form"),
+                                  formq, __FILE__, __LINE__))
+      return;
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
+                                ageq, __FILE__, __LINE__))
+    return;
   else
     QMessageBox::warning( this, tr("No Statement to Print"),
                           tr("No statement is available for the specified "   
