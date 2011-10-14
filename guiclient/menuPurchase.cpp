@@ -35,7 +35,6 @@
 #include "voucher.h"
 #include "miscVoucher.h"
 #include "openVouchers.h"
-#include "voucheringEditList.h"
 #include "postVouchers.h"
 
 #include "itemSource.h"
@@ -379,11 +378,6 @@ void menuPurchase::sEnterMiscVoucher()
 void menuPurchase::sUnpostedVouchers()
 {
   omfgThis->handleNewWindow(new openVouchers());
-}
-
-void menuPurchase::sVoucheringEditList()
-{
-  omfgThis->handleNewWindow(new voucheringEditList());
 }
 
 void menuPurchase::sPostVouchers()

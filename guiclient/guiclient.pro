@@ -594,7 +594,6 @@ FORMS =   absoluteCalendarItem.ui               \
           voucherItem.ui                        \
           voucherItemDistrib.ui                 \
           voucherMiscDistrib.ui                 \
-          voucheringEditList.ui                 \
           warehouse.ui                          \
           warehouseZone.ui                      \
           warehouses.ui                         \
@@ -1182,7 +1181,6 @@ HEADERS = ../common/format.h                    \
           voucherItem.h                 \
           voucherItemDistrib.h          \
           voucherMiscDistrib.h          \
-          voucheringEditList.h          \
           warehouse.h                   \
           warehouseZone.h               \
           warehouses.h                  \
@@ -1780,7 +1778,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           voucherItem.cpp                       \
           voucherItemDistrib.cpp                \
           voucherMiscDistrib.cpp                \
-          voucheringEditList.cpp                \
           warehouse.cpp                         \
           warehouseZone.cpp                     \
           warehouses.cpp                        \

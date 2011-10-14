@@ -18,7 +18,7 @@ to be bound by its terms.</comment>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>List Open Vouchers</string>
+   <string>List Unposted Vouchers</string>
   </property>
   <layout class="QVBoxLayout">
    <item>

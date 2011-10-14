@@ -48,7 +48,6 @@ class menuAccounting : public QObject
     void sEnterVoucher();
     void sEnterMiscVoucher();
     void sUnpostedVouchers();
-    void sVoucheringEditList();
     void sPostVouchers();
 
     void sSelectPayments();

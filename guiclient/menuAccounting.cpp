@@ -27,7 +27,6 @@
 #include "voucher.h"
 #include "miscVoucher.h"
 #include "openVouchers.h"
-#include "voucheringEditList.h"
 #include "postVouchers.h"
 
 #include "selectPayments.h"
@@ -267,7 +266,6 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Accaunts Payable |  Reports
     { "menu", tr("&Reports"), (char*)apReportsMenu, apMenu, "true", NULL, NULL, true, NULL },
     { "ap.uninvoicedReceipts", tr("&Uninvoiced Receipts and Returns..."), SLOT(sDspUninvoicedReceipts()), apReportsMenu, "ViewUninvoicedReceipts MaintainUninvoicedReceipts", NULL, NULL, true , NULL },
-    { "ap.voucheringEditList", tr("Vouchering &Edit List..."), SLOT(sVoucheringEditList()), apReportsMenu, "MaintainVouchers ViewVouchers", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, "true", NULL, NULL, true, NULL },
     { "ap.dspOpenAPItemsByVendor", tr("Open &Payables..."), SLOT(sDspAPOpenItemsByVendor()), apReportsMenu, "ViewAPOpenItems", NULL, NULL, true , NULL },
     { "ap.dspAPAging", tr("&Aging..."), SLOT(sDspTimePhasedOpenAPItems()), apReportsMenu, "ViewAPOpenItems", QPixmap(":/images/apAging.png"), toolBar, true , tr("Payables Aging") },
@@ -571,11 +569,6 @@ void menuAccounting::sEnterMiscVoucher()
 void menuAccounting::sUnpostedVouchers()
 {
   omfgThis->handleNewWindow(new openVouchers());
-}
-
-void menuAccounting::sVoucheringEditList()
-{
-  omfgThis->handleNewWindow(new voucheringEditList());
 }
 
 void menuAccounting::sPostVouchers()

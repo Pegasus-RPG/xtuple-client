@@ -53,7 +53,6 @@ class menuPurchase : public QObject
     void sEnterVoucher();
     void sEnterMiscVoucher();
     void sUnpostedVouchers();
-    void sVoucheringEditList();
     void sPostVouchers();
 
     void sNewItemSource();

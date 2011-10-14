@@ -100,7 +100,7 @@ void openVouchers::sPrint()
   if (! setParams(params))
     return;
 
-  orReport report("VoucheringEditList", params);
+  orReport report("UnpostedVouchers", params);
   if (report.isValid())
     report.print();
   else
