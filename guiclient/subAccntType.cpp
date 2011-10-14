@@ -60,7 +60,7 @@ enum SetResponse subAccntType::set( const ParameterList & pParams )
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _code->setEnabled(FALSE);
+//      _code->setEnabled(FALSE);
       _save->setFocus();
     }
     else if (param.toString() == "view")
@@ -174,7 +174,8 @@ void subAccntType::sSave()
 void subAccntType::sCheck()
 {
   _code->setText(_code->text().trimmed());
-  if ( (_mode == cNew) && (_code->text().length()) )
+//  if ( (_mode == cNew) && (_code->text().length()) )
+  if (_code->text().length())
   {
     q.prepare( "SELECT subaccnttype_id "
                "FROM subaccnttype "
@@ -187,7 +188,7 @@ void subAccntType::sCheck()
       _mode = cEdit;
       populate();
 
-      _code->setEnabled(FALSE);
+//      _code->setEnabled(FALSE);
     }
   }
 }
