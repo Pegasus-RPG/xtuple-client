@@ -200,8 +200,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.dspDeliveryDateVariancesByItem", tr("by &Item..."), SLOT(sDspPoDeliveryDateVariancesByItem()), reportsDelvVarMenu, "ViewVendorPerformance", NULL, NULL, true , NULL },
     
     { "po.dspRejectedMaterialByVendor", tr("Rejected &Material..."), SLOT(sDspRejectedMaterialByVendor()), reportsMenu, "ViewVendorPerformance", NULL, NULL, true , NULL },
-    { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
-    { "po.voucheringEditList", tr("U&nposted Vouchers..."), SLOT(sVoucheringEditList()), reportsMenu, "MaintainVouchers ViewVouchers", NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, mainMenu, "true", NULL, NULL, true , NULL },
 
