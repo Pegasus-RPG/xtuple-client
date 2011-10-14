@@ -249,6 +249,10 @@ void XComboBox::setType(XComboBoxTypes pType)
   }
   _type = pType;
 
+  // set the query to be run if this is a currencies related xcombobox
+  if(_type == Currencies || _type == CurrenciesNotBase)
+    _currCounter.prepare("SELECT COUNT(*) AS count FROM curr_symbol");
+
   if (_x_metrics == 0)
     return;
 
@@ -984,7 +988,7 @@ void XComboBox::setType(XComboBoxTypes pType)
       break;
 
     case Currencies:
-      if (count() <= 1)
+      if (numberOfCurrencies() <= 1)
       {
         hide();
         if (_label)
@@ -993,7 +997,7 @@ void XComboBox::setType(XComboBoxTypes pType)
       break;
 
     case CurrenciesNotBase:
-      if (count() < 1)
+      if (numberOfCurrencies() < 1)
       {
         hide();
         if (_label)
@@ -1025,7 +1029,7 @@ void XComboBox::setLabel(QLabel* pLab)
   switch (_type)
   {
     case Currencies:
-      if (count() <= 1)
+      if (numberOfCurrencies() <= 1)
       {
         hide();
         if (_label)
@@ -1034,7 +1038,7 @@ void XComboBox::setLabel(QLabel* pLab)
       break;
 
     case CurrenciesNotBase:
-      if (count() < 1)
+      if (numberOfCurrencies() < 1)
       {
         hide();
         if (_label)
@@ -1696,4 +1700,13 @@ void XComboBox::insertEditor(int type, const QString &uiName, const QString &pri
   data.second = privilege;
 
   _editorMap.insert(type, data);
+}
+
+int XComboBox::numberOfCurrencies()
+{
+  _currCounter.exec();
+  if(_currCounter.first())
+    return _currCounter.value("count").toInt();
+  else
+    return 0;
 }

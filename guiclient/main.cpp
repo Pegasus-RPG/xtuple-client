@@ -107,7 +107,7 @@
 #include "xtupleproductkey.h"
 
 #include "login2.h"
-
+#include "currenciesDialog.h"
 #include "guiclient.h"
 #include "version.h"
 #include "metrics.h"
@@ -737,6 +737,38 @@ int main(int argc, char *argv[])
       qDebug("Failed to initialize woTimeClock window.");
       return -2;
     }
+  }
+
+  // Check for the existance of a base currency, if none, one needs to
+  // be selected or created
+  XSqlQuery baseCurrency;
+  baseCurrency.prepare("SELECT COUNT(*) AS count FROM curr_symbol WHERE curr_base=TRUE;");
+  baseCurrency.exec();
+  if(baseCurrency.first())
+  {
+    if(baseCurrency.value("count").toInt() != 1)
+    {
+      currenciesDialog newdlg(0, "", TRUE);
+      newdlg.exec();
+      baseCurrency.exec();
+      if(baseCurrency.first())
+      {
+        if(baseCurrency.value("count").toInt() != 1)
+          return -1;
+      }
+      else
+      {
+        systemError(0, baseCurrency.lastError().databaseText(), __FILE__, __LINE__);
+        // need to figure out appropriate return code for this...unusual error
+        return -1;
+      }
+    }
+  }
+  else
+  {
+    systemError(0, baseCurrency.lastError().databaseText(), __FILE__, __LINE__);
+    // need to figure out appropriate return code for this...unusual error
+    return -1;
   }
 
   if(!omfgThis->singleCurrency() &&

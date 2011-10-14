@@ -177,6 +177,8 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
   private:
     void init();
 
+    int  numberOfCurrencies();
+
     enum Defaults       _default;
     QString             _fieldName;
     QString             _listDisplayFieldName;
@@ -185,6 +187,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     QString             _listTableName;
     XDataWidgetMapper   *_mapper;
     QMap<int, QPair<QString, QString > > _editorMap;
+    XSqlQuery           _currCounter;
 };
 
 // TODO: is this necessary for script exposure?

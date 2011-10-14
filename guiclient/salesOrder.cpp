@@ -87,7 +87,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_save,                SIGNAL(clicked()),                              this,         SLOT(sSave()));
   connect(_saveAndAdd,          SIGNAL(clicked()),                              this,         SLOT(sSaveAndAdd()));
   connect(_shippingCharges,     SIGNAL(newID(int)),                             this,         SLOT(sHandleShipchrg(int)));
-  connect(_shipVia,             SIGNAL(textChanged(const QString &)),           this,         SLOT(sFillItemList()));
+  connect(_shipVia,             SIGNAL(editTextChanged(const QString &)),           this,         SLOT(sFillItemList()));
   connect(_shipToAddr,          SIGNAL(changed()),                              this,         SLOT(sConvertShipTo()));
   connect(_shipToName,          SIGNAL(textChanged(const QString &)),           this,         SLOT(sConvertShipTo()));
   connect(_shipTo,              SIGNAL(newId(int)),                             this,         SLOT(sParseShipToNumber()));

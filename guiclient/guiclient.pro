@@ -734,6 +734,7 @@ HEADERS = ../common/format.h                    \
           crmaccountMergeResultPage.h           \
           crmaccounts.h                         \
           currencies.h                          \
+		  currenciesDialog.h					\
           currency.h                            \
           currencyConversion.h                  \
           currencyConversions.h                 \
@@ -1332,6 +1333,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           crmaccountMergeResultPage.cpp         \
           crmaccounts.cpp                       \
           currencies.cpp                        \
+		  currenciesDialog.cpp					\
           currency.cpp                          \
           currencyConversion.cpp                \
           currencyConversions.cpp               \
