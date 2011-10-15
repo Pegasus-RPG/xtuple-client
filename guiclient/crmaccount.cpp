@@ -50,6 +50,9 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->parameterWidget()->append("", "hasContext", ParameterWidget::Exists, true);
   _todoList->setParameterWidgetVisible(false);
   _todoList->setQueryOnStartEnabled(false);
+  _todoList->_projects->setForgetful(true);
+  _todoList->_projects->setVisible(false);
+  _todoList->_projects->setChecked(false);
 
   _contacts = new contacts(this, "contacts", Qt::Widget);
   _allPage->layout()->addWidget(_contacts);

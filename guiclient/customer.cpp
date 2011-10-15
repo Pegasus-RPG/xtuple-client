@@ -48,6 +48,9 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->parameterWidget()->append("", "hasContext", ParameterWidget::Exists, true);
   _todoList->list()->hideColumn("crmacct_number");
   _todoList->list()->hideColumn("crmacct_name");
+  _todoList->_projects->setForgetful(true);
+  _todoList->_projects->setVisible(false);
+  _todoList->_projects->setChecked(false);
 
   _contacts = new contacts(this, "contacts", Qt::Widget);
   _contactsPage->layout()->addWidget(_contacts);

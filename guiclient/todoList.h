@@ -45,10 +45,15 @@ class todoList : public display, public Ui::todoList
     virtual void sViewOpportunity();
     virtual void sOpen();
     virtual bool setParams(ParameterList &);
+    virtual void sFillList();
 
   private:
+    void showEvent(QShowEvent * event);
+
     int		    _mode;
     int		    getId(int pType);
+    int       _shown;
+    int       _run;
 };
 
 #endif // TODOLIST_H

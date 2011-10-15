@@ -26,6 +26,9 @@
 todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "todoList", fl)
 {
+  _shown = false;
+  _run = false;
+
   setupUi(optionsWidget());
   setWindowTitle(tr("To-Do Items"));
   setReportName("TodoList");
@@ -86,6 +89,18 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   menuItem->setEnabled(_privileges->check("MaintainPersonalProjects") ||
                        _privileges->check("MaintainAllProjects"));
   newBtn->setMenu(todoMenu);
+}
+
+void todoList::showEvent(QShowEvent * event)
+{
+  display::showEvent(event);
+
+  if(!_shown)
+  {
+    _shown = true;
+    if(_run)
+      sFillList();
+  }
 }
 
 void todoList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
@@ -699,5 +714,14 @@ void todoList::sOpen()
   else
     QMessageBox::information(this, tr("Restricted Access"), tr("You have not been granted privileges to open this item."));
 }
+
+void todoList::sFillList()
+{
+  if(_shown)
+    display::sFillList();
+  else
+    _run = true;
+}
+
 
 
