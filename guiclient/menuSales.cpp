@@ -33,7 +33,6 @@
 #include "uninvoicedShipments.h"
 #include "selectShippedOrders.h"
 #include "selectOrderForBilling.h"
-#include "billingEditList.h"
 #include "dspBillingSelections.h"
 #include "createInvoices.h"
 #include "unpostedInvoices.h"
@@ -179,11 +178,9 @@ menuSales::menuSales(GUIClient *pParent) :
     // Sales | Billing | Invoice
     { "menu",	tr("&Invoice"),   (char*)billingInvoicesMenu,	billingMenu,	"true",	NULL, NULL, true, NULL },
     { "so.uninvoicedShipments",		     tr("&Uninvoiced Shipments..."),			SLOT(sUninvoicedShipments()), 		billingInvoicesMenu, "SelectBilling",	 QPixmap(":/images/uninvoicedShipments"), toolBar, true, tr("Uninvoiced Shipments") },
-    { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
     { "so.selectAllShippedOrdersForBilling", tr("Select &All Shipped Orders for Billing..."),	SLOT(sSelectShippedOrdersForBilling()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "so.selectOrderForBilling",	     tr("Select &Order for Billing..."),			SLOT(sSelectOrderForBilling()),		billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
-    { "so.billingEditList",		     tr("&Billing Edit List..."),	SLOT(sBillingEditList()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "so.dspBillingSelections",	     tr("Billing &Selections..."),	SLOT(sDspBillingSelections()), billingInvoicesMenu, "SelectBilling", QPixmap(":/images/billingSelections"), toolBar, true, tr("Billing Selections") },
     { "so.createInvoices",	     tr("&Create Invoices..."),	SLOT(sCreateInvoices()), billingInvoicesMenu, "SelectBilling",	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	billingInvoicesMenu,	"true",		NULL, NULL, true, NULL },
@@ -451,11 +448,6 @@ void menuSales::sSelectOrderForBilling()
   selectOrderForBilling *newdlg = new selectOrderForBilling();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-}
-
-void menuSales::sBillingEditList()
-{
-  omfgThis->handleNewWindow(new billingEditList());
 }
 
 void menuSales::sDspBillingSelections()

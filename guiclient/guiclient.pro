@@ -102,7 +102,6 @@ FORMS =   absoluteCalendarItem.ui               \
           bankAdjustmentEditList.ui             \
           bankAdjustmentType.ui                 \
           bankAdjustmentTypes.ui                \
-          billingEditList.ui                    \
           bom.ui                                \
           bomItem.ui                            \
           bomList.ui                            \
@@ -647,7 +646,6 @@ HEADERS = ../common/format.h                    \
           bankAdjustmentEditList.h              \
           bankAdjustmentType.h                  \
           bankAdjustmentTypes.h                 \
-          billingEditList.h                     \
           bom.h                         \
           bomItem.h                     \
           bomList.h                     \
@@ -1245,7 +1243,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           bankAdjustmentEditList.cpp            \
           bankAdjustmentType.cpp                \
           bankAdjustmentTypes.cpp               \
-          billingEditList.cpp                   \
           bom.cpp                               \
           bomItem.cpp                           \
           bomList.cpp                           \
