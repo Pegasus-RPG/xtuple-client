@@ -100,10 +100,6 @@ class menuAccounting : public QObject
     void sDspTimePhasedOpenItems();
     void sDspInvoiceRegister();
     void sDspDepositsRegister();
-    void sRptSalesJournal();
-    void sRptCreditMemoJournal();
-    void sRptPayablesJournal();
-    void sRptCheckJournal();
 
     // GL
     void sSimpleEntry();

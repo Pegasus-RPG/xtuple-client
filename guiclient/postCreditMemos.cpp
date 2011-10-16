@@ -131,9 +131,23 @@ void postCreditMemos::sPost()
     if (_printJournal->isChecked())
     {
       ParameterList params;
-      params.append("journalNumber", journalNumber);
+      params.append("source", tr("A/R"));
+      params.append("startJrnlnum", journalNumber);
+      params.append("endJrnlnum", journalNumber);
 
-      orReport report("CreditMemoJournal", params);
+      if (_metrics->boolean("UseJournals"))
+      {
+        params.append("title",tr("Journal Series"));
+        params.append("table", "sltrans");
+      }
+      else
+      {
+        params.append("title",tr("General Ledger Series"));
+        params.append("gltrans", true);
+        params.append("table", "gltrans");
+      }
+
+      orReport report("GLSeries", params);
       if (report.isValid())
         report.print();
       else

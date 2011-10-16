@@ -79,9 +79,23 @@ void postVouchers::sPost()
     if (_printJournal->isChecked())
     {
       ParameterList params;
-      params.append("journalNumber", result);
+      params.append("source", tr("A/P"));
+      params.append("startJrnlnum", result);
+      params.append("endJrnlnum", result);
 
-      orReport report("PayablesJournal", params);
+      if (_metrics->boolean("UseJournals"))
+      {
+        params.append("title",tr("Journal Series"));
+        params.append("table", "sltrans");
+      }
+      else
+      {
+        params.append("title",tr("General Ledger Series"));
+        params.append("gltrans", true);
+        params.append("table", "gltrans");
+      }
+
+      orReport report("GLSeries", params);
       if (report.isValid())
         report.print();
       else

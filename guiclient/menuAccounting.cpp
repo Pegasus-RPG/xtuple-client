@@ -77,7 +77,6 @@
 #include "dspTimePhasedOpenARItems.h"
 #include "dspInvoiceRegister.h"
 #include "dspDepositsRegister.h"
-#include "printJournal.h"
 #include "printStatementByCustomer.h"
 #include "printStatementsByCustomerType.h"
 
@@ -276,10 +275,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ap.dspAPApplications", tr("&Applications..."), SLOT(sDspAPApplications()), apReportsMenu, "ViewAPOpenItems", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, "true", NULL, NULL, true, NULL },
     { "ap.dspVendorHistory", tr("Vendor &History..."), SLOT(sDspVendorHistory()), apReportsMenu, "ViewAPOpenItems", NULL, NULL, true , NULL },
-    { "separator", NULL, NULL, apReportsMenu, "true", NULL, NULL, true, NULL },
-    { "ap.rptPayablesJournal", tr("Pa&yables Journal..."), SLOT(sRptPayablesJournal()), apReportsMenu, "PrintAPJournals", NULL, NULL, true , NULL },
-    { "ap.rptCheckJournal", tr("Check &Journal..."), SLOT(sRptCheckJournal()), apReportsMenu, "PrintAPJournals", NULL, NULL, true , NULL },
-    
+
     { "separator", NULL, NULL, apMenu, "true", NULL, NULL, true, NULL },
     { "ap.vendors", tr("Ve&ndors..."), SLOT(sVendors()), apMenu, "MaintainVendors ViewVendors", NULL, NULL, true , NULL },
     
@@ -332,9 +328,6 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ar.dspDepositsRegister", tr("&Deposits Register..."), SLOT(sDspDepositsRegister()), arReportsMenu, "ViewDepositsRegister", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, arReportsMenu, "true", NULL, NULL, true, NULL },
     { "ar.dspCustomerHistory", tr("Customer &History..."), SLOT(sDspCustomerHistory()), arReportsMenu, "ViewAROpenItems", NULL, NULL, true , NULL },
-    { "separator", NULL, NULL, arReportsMenu, "true", NULL, NULL, true, NULL },
-    { "ar.rptSalesJournal", tr("Sales &Journal..."), SLOT(sRptSalesJournal()), arReportsMenu, "PrintARJournals", NULL, NULL, true , NULL },
-    { "ar.rptCreditMemoJournal", tr("Credit &Memo Journal..."), SLOT(sRptCreditMemoJournal()), arReportsMenu, "PrintARJournals", NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, arMenu, "true", NULL, NULL, true, NULL },
     { "ar.customers", tr("&Customers..."), SLOT(sCustomers()), arMenu, "MaintainCustomerMasters ViewCustomerMasters", NULL, NULL, true , NULL },
@@ -822,46 +815,6 @@ void menuAccounting::sDspInvoiceRegister()
 void menuAccounting::sDspDepositsRegister()
 {
   omfgThis->handleNewWindow(new dspDepositsRegister());
-}
-
-void menuAccounting::sRptSalesJournal()
-{
-  ParameterList params;
-  params.append("type", SalesJournal);
-
-  printJournal newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void menuAccounting::sRptCreditMemoJournal()
-{
-  ParameterList params;
-  params.append("type", CreditMemoJournal);
-
-  printJournal newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void menuAccounting::sRptPayablesJournal()
-{
-  ParameterList params;
-  params.append("type", PayablesJournal);
-
-  printJournal newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void menuAccounting::sRptCheckJournal()
-{
-  ParameterList params;
-  params.append("type", CheckJournal);
-
-  printJournal newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
 }
 
 void menuAccounting::sDspAROpenItems()

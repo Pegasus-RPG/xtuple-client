@@ -2016,16 +2016,6 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
                         QScriptValue::ReadOnly | QScriptValue::Undeletable);
   mainwindowval.setProperty("cTransScraps", QScriptValue(engine, cTransScraps),
                         QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("SalesJournal", QScriptValue(engine, SalesJournal),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("CreditMemoJournal", QScriptValue(engine, CreditMemoJournal),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("CashReceiptsJournal", QScriptValue(engine, CashReceiptsJournal),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("PayablesJournal", QScriptValue(engine, PayablesJournal),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
-  mainwindowval.setProperty("CheckJournal", QScriptValue(engine, CheckJournal),
-                        QScriptValue::ReadOnly | QScriptValue::Undeletable);
   mainwindowval.setProperty("cNoReportDefinition", QScriptValue(engine, cNoReportDefinition),
                         QScriptValue::ReadOnly | QScriptValue::Undeletable);
 

@@ -388,7 +388,6 @@ FORMS =   absoluteCalendarItem.ui               \
           printInvoice.ui                       \
           printInvoices.ui                      \
           printItemLabelsByClassCode.ui         \
-          printJournal.ui                       \
           printLabelsByInvoice.ui               \
           printLabelsByOrder.ui                 \
           printLabelsBySo.ui                    \
@@ -963,7 +962,6 @@ HEADERS = ../common/format.h                    \
           printInvoice.h                \
           printInvoices.h               \
           printItemLabelsByClassCode.h  \
-          printJournal.h                \
           printLabelsByInvoice.h        \
           printLabelsByOrder.h          \
           printLabelsBySo.h             \
@@ -1560,7 +1558,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           printInvoice.cpp                      \
           printInvoices.cpp                     \
           printItemLabelsByClassCode.cpp        \
-          printJournal.cpp                      \
           printLabelsByInvoice.cpp              \
           printLabelsByOrder.cpp                \
           printLabelsBySo.cpp                   \

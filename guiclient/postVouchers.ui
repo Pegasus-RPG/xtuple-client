@@ -38,7 +38,7 @@ to be bound by its terms.</comment>
      <item>
       <widget class="XCheckBox" name="_printJournal" >
        <property name="text" >
-        <string>P&amp;rint Payables Journal</string>
+        <string>P&amp;rint Journal</string>
        </property>
       </widget>
      </item>

@@ -81,13 +81,6 @@ class XWidget;
 #define cTransTransfers       0x10
 #define cTransScraps          0x20
 
-//  Possible Journal Types
-#define SalesJournal          0x01
-#define CreditMemoJournal     0x02
-#define CashReceiptsJournal   0x03
-#define PayablesJournal       0x04
-#define CheckJournal          0x05
-
 // Possible return values from submitReport
 #define cNoReportDefinition   -2
 

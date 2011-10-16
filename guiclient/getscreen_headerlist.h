@@ -427,7 +427,6 @@
 #include "printInvoice.h"
 #include "printInvoices.h"
 #include "printItemLabelsByClassCode.h"
-#include "printJournal.h"
 #include "printLabelsByInvoice.h"
 #include "printLabelsByOrder.h"
 #include "printLabelsBySo.h"

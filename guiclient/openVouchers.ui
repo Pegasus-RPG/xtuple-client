@@ -196,7 +196,7 @@ to be bound by its terms.</comment>
      <item>
       <widget class="XCheckBox" name="_printJournal">
        <property name="text">
-        <string>Print Journal after Post</string>
+        <string>Print Journal</string>
        </property>
       </widget>
      </item>
