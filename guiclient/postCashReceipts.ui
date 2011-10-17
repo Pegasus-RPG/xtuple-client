@@ -39,7 +39,7 @@ to be bound by its terms.</comment>
           <item>
             <widget class="QCheckBox" name="_printJournal" >
               <property name="text" >
-                <string>P&amp;rint Cash Receipts Journal</string>
+                <string>P&amp;rint Journal</string>
               </property>
               <property name="checked" >
                 <bool>true</bool>

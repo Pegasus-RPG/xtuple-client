@@ -3,6 +3,12 @@
  <title>G/L Series</title>
  <name>GLSeries</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -55,7 +61,9 @@ SELECT gltrans_id,
   FROM gltrans, accnt
  WHERE ((gltrans_accnt_id=accnt_id)
    AND (NOT gltrans_deleted)
+&lt;? if exists("startDate") ?>
    AND (gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? endif ?>
 &lt;? if exists("source") ?>
    AND (gltrans_source=&lt;? value("source") ?>)
 &lt;? endif ?>
@@ -83,7 +91,9 @@ SELECT sltrans_id AS gltrans_id,
        formatBoolYN(sltrans_posted) AS f_posted
   FROM sltrans, accnt
  WHERE ((sltrans_accnt_id=accnt_id)
+&lt;? if exists("startDate") ?>
    AND (sltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? endif ?>
 &lt;? if exists("source") ?>
    AND (sltrans_source=&lt;? value("source") ?>)
 &lt;? endif ?>
