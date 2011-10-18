@@ -202,6 +202,28 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   }
   else
     _generalLedger->setChecked(true);
+
+  XSqlQuery check;
+  check.exec("SELECT accnt_id FROM accnt WHERE LENGTH(accnt_company) > 0 LIMIT 1;");
+  if (check.first())
+  {
+    _useCompanySegment->setChecked(true);
+    _useCompanySegment->setEnabled(false);
+  }
+
+  check.exec("SELECT accnt_id FROM accnt WHERE LENGTH(accnt_profit) > 0 LIMIT 1;");
+  if (check.first())
+  {
+    _useProfitCenters->setChecked(true);
+    _useProfitCenters->setEnabled(false);
+  }
+
+  check.exec("SELECT accnt_id FROM accnt WHERE LENGTH(accnt_sub) > 0 LIMIT 1;");
+  if (check.first())
+  {
+    _useSubaccounts->setChecked(true);
+    _useSubaccounts->setEnabled(false);
+  }
   
   adjustSize();
 }
