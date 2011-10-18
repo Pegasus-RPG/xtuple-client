@@ -794,7 +794,7 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
                      " JOIN cohead ON ((cohist_doctype='I') "
                      "             AND (cohist_ordernumber=cohead_number)) "
                      "WHERE ((cohead_id=:cohead_id) "
-                     "  AND (cohead_itemsite_id=:itemsite_id); ");
+                     "  AND (cohist_itemsite_id=:itemsite_id); ");
           uc.bindValue(":cohead_id", _origsoid);
           uc.bindValue(":itemsite_id", itemsite.value("itemsite_id").toInt());
           uc.exec();
