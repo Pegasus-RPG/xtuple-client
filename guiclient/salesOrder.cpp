@@ -4267,6 +4267,7 @@ void salesOrder::sRecalculatePrice()
                              ") "
                              "FROM cohead, item, itemsite "
                              "WHERE ( (coitem_status NOT IN ('C','X')) "
+                             "AND (coitem_subnumber=0) "
                              "AND (NOT coitem_firm) "
                              "<? if exists(\"ignoreDiscounts\") ?>"
                                "AND (coitem_price = coitem_custprice) "
@@ -4285,6 +4286,7 @@ void salesOrder::sRecalculatePrice()
               "FROM cohead, coitem, item, itemsite "
               "WHERE ( (coitem_cohead_id=cohead_id) "
               "  AND   (coitem_status NOT IN ('C','X')) "
+              "  AND   (coitem_subnumber=0) "
               "  AND   (NOT coitem_firm) "
               "<? if exists(\"ignoreDiscounts\") ?>"
               "  AND   (coitem_price = coitem_custprice) "
@@ -4454,7 +4456,8 @@ void salesOrder::sShipDateChanged()
             "   JOIN coitem ON (cohead_id=coitem_cohead_id) "
             "   JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
             "   WHERE ( (cohead_id=<? value(\"cohead_id\") ?>) "
-            "   AND (coitem_status NOT IN ('C','X')) )"
+            "   AND (coitem_status NOT IN ('C','X')) "
+            "   AND (coitem_subnumber = 0))"
             ") data "
             "ORDER BY valid; ";
     }
