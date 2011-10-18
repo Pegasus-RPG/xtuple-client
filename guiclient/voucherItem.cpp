@@ -626,6 +626,7 @@ void voucherItem::sFillList()
              "       0 AS qty_xttotalrole "
              "FROM porecv "
              "WHERE ( (NOT porecv_invoiced)"
+             " AND (porecv_posted)"
              " AND ((porecv_vohead_id IS NULL) OR (porecv_vohead_id=:vohead_id))"
              " AND (porecv_poitem_id=:poitem_id) ) "
 
