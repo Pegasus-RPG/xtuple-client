@@ -13,7 +13,6 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QValidator>
 #include <QVariant>
 
 #include <metasql.h>
@@ -21,6 +20,7 @@
 #include "creditcardprocessor.h"
 #include "enterPoitemReceipt.h"
 #include "enterPoReceipt.h"
+#include "errorReporter.h"
 #include "mqlutil.h"
 #include "returnAuthorizationItem.h"
 #include "storedProcErrorLookup.h"
@@ -1740,28 +1740,23 @@ void returnAuthorization::sRefund()
   if (! sSave(true))
     return;
 
-  q.exec("BEGIN;");
+  XSqlQuery begin("BEGIN;");
 
   bool _post = _disposition->currentIndex() == 0 &&
                _timing->currentIndex() == 0 &&
                _creditBy->currentIndex() == 3;
 
-  q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
-  q.bindValue(":rahead_id", _raheadid);
-  q.bindValue(":post",      QVariant(_post));
-  q.exec();
-  if (q.first())
+  XSqlQuery cmq;
+  cmq.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
+  cmq.bindValue(":rahead_id", _raheadid);
+  cmq.bindValue(":post",      QVariant(_post));
+  cmq.exec();
+  if (cmq.first())
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("createRaCreditMemo", result), __FILE__, __LINE__);
-      q.exec("ROLLBACK;");
-      return;
-    }
+    int cmheadid = cmq.value("result").toInt();
 
     ParameterList ccp;
-    ccp.append("cmhead_id", result);
+    ccp.append("cmhead_id", cmheadid);
     MetaSQLQuery ccm = mqlLoad("creditMemoCreditCards", "detail");
     XSqlQuery ccq = ccm.toQuery(ccp);
     if (ccq.first())
@@ -1773,28 +1768,38 @@ void returnAuthorization::sRefund()
                                    .arg(ccq.value("cmhead_number").toString()));
       CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
       if (! cardproc)
-        QMessageBox::critical(this, tr("Credit Card Processing Error"),
-                              CreditCardProcessor::errorMsg());
+        ErrorReporter::error(QtCriticalMsg, this,
+                             tr("Credit Card Processing Error"),
+                             CreditCardProcessor::errorMsg(), __FILE__, __LINE__);
       else
       {
         QString docnum = ccq.value("cmhead_number").toString();
         QString refnum = ccq.value("cohead_number").toString();
         QString reftype;
-        int refid = -1; // TODO: set this to some appropriate value
+        int refid = -1;
         if(_post)
         {
           reftype = "aropen";
-          q.prepare("SELECT aropen_id FROM aropen WHERE aropen_doctype='C' AND aropen_docnumber=:cmhead_number;");
-          q.bindValue(":cmhead_number", docnum);
-          q.exec();
-          if(q.first())
-            refid = q.value("aropen_id").toInt();
-          else
+          XSqlQuery arq;
+          arq.prepare("SELECT aropen_id FROM aropen"
+                    " WHERE aropen_doctype='C'"
+                    "   AND aropen_docnumber=:cmhead_number;");
+          arq.bindValue(":cmhead_number", docnum);
+          arq.exec();
+          if (arq.first())
+            refid = arq.value("aropen_id").toInt();
+          else if (arq.lastError().type() != QSqlError::NoError)
           {
-            systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
-            q.exec("ROLLBACK;");
+            XSqlQuery rollback("ROLLBACK;");
+            ErrorReporter::error(QtCriticalMsg, this, tr("Getting A/R Open"),
+                                 ccq, __FILE__, __LINE__);
             return;
           }
+        }
+        else
+        {
+          refid   = cmheadid;
+          reftype = "cmhead";
         }
         int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
                                        (_CCCVV->text().isEmpty()) ? -1 :
@@ -1810,7 +1815,7 @@ void returnAuthorization::sRefund()
         {
           QMessageBox::critical(this, tr("Credit Card Processing Error"),
                                 cardproc->errorMsg());
-          q.exec("ROLLBACK;");
+          XSqlQuery rollback("ROLLBACK;");
           return;
         }
         else if (returnValue > 0)
@@ -1824,7 +1829,7 @@ void returnAuthorization::sRefund()
     else if (ccq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
-      q.exec("ROLLBACK;");
+      XSqlQuery rollback("ROLLBACK;");
       return;
     }
     else
@@ -1832,17 +1837,18 @@ void returnAuthorization::sRefund()
       QMessageBox::critical(this, tr("Credit Card Processing Error"),
                             tr("Could not find a Credit Card to use for "
                                "this Credit transaction."));
-      q.exec("ROLLBACK;");
+      XSqlQuery rollback("ROLLBACK;");
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (cmq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    q.exec("ROLLBACK;");
+    XSqlQuery rollback("ROLLBACK;");
+    ErrorReporter::error(QtCriticalMsg, this, tr("Creating R/A Credit Memo"),
+                         cmq, __FILE__, __LINE__);
     return;
   }
-  q.exec("COMMIT;");
+  XSqlQuery commit("COMMIT;");
 }
 
 void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *selected)
