@@ -575,8 +575,9 @@ bool returnAuthorization::sSave(bool partial)
 
 void returnAuthorization::sPostReceipts()
 {
+   sSave(true);
    enterPoReceipt::post("RA", _raheadid);
-   sFillList();
+   populate();
    _mode = cEdit;
    _cancel->setText("&Close");
 }
