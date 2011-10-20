@@ -71,6 +71,9 @@ void dspDetailedInventoryHistoryByLocation::languageChange()
 
 void dspDetailedInventoryHistoryByLocation::sPopulateLocations()
 {
+  _location->clear();
+  _location->setId(-1);
+
   if (_warehouse->isAll())
     _location->populate( "SELECT location_id,"
                          "       CASE WHEN (LENGTH(location_descrip) > 0) THEN (warehous_code || '-' || formatLocationName(location_id) || '-' || location_descrip)"
@@ -193,7 +196,15 @@ bool dspDetailedInventoryHistoryByLocation::setParams(ParameterList &params)
   else
     _dates->appendValue(params);
 
-  params.append("location_id", _location->id());
+  if (_location->id() == -1)
+  {
+    QMessageBox::critical( this, tr("Enter Location"),
+                           tr("Please enter a valid Location.") );
+    _location->setFocus();
+    return false;
+  }
+  else
+    params.append("location_id", _location->id());
 
   params.append("transType", _transType->id());
 
