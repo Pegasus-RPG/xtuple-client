@@ -1,4 +1,4 @@
-/*
+  /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
  * Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
@@ -108,9 +108,6 @@ enum SetResponse project::set(const ParameterList &pParams)
       _comments->setId(_prjid);
       _documents->setId(_prjid);
       _recurring->setParent(_prjid, "J");
-
-      _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems") ||
-                              _privileges->check("ReassignToDoItems"));
     }
     else if (param.toString() == "edit")
     {
@@ -121,9 +118,6 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
-
-      _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems") ||
-                              _privileges->check("ReassignToDoItems"));
     }
     else if (param.toString() == "view")
     {

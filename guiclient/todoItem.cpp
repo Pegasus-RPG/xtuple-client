@@ -73,8 +73,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       }
 
       _name->setFocus();
-      _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems") &&
-                          _privileges->check("ReassignToDoItems"));
+      _assignedTo->setEnabled(_privileges->check("ReassignToDoItems"));
     }
     else if (param.toString() == "edit")
     {
@@ -85,8 +84,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _ophead->setEnabled(FALSE);
       _assigned->setEnabled(FALSE);
       _due->setEnabled(FALSE);
-      _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems") &&
-                            _privileges->check("ReassignToDoItems"));
+      _assignedTo->setEnabled(_privileges->check("ReassignToDoItems"));
       _description->setEnabled(FALSE);
 
       _name->setFocus();
