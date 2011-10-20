@@ -1246,6 +1246,10 @@ void returnAuthorization::populate()
     _authDate->setDate(rahead.value("rahead_authdate").toDate(), true);
     _expireDate->setDate(rahead.value("rahead_expiredate").toDate());
 
+    _cust->setId(rahead.value("rahead_cust_id").toInt());
+    _custType->setText(rahead.value("custtype_code").toString());
+    _shipTo->setId(rahead.value("rahead_shipto_id").toInt());
+
     _salesRep->setId(rahead.value("rahead_salesrep_id").toInt());
     _commission->setDouble(rahead.value("rahead_commission").toDouble() * 100);
     // do taxzone first so we can overwrite the result of the signal cascade
@@ -1267,8 +1271,6 @@ void returnAuthorization::populate()
     else if (rahead.value("rahead_creditmethod").toString() == "C")
       _creditBy->setCurrentIndex(3);
 
-    _cust->setId(rahead.value("rahead_cust_id").toInt());
-    _custType->setText(rahead.value("custtype_code").toString());
     _ignoreSoSignals = TRUE;
     _origso->setId(rahead.value("rahead_orig_cohead_id").toInt());
     _newso->setId(rahead.value("rahead_new_cohead_id").toInt(),"SO");
@@ -1295,7 +1297,6 @@ void returnAuthorization::populate()
     _copyToShipto->setEnabled(_ffShipto);
 
     _ignoreShiptoSignals = true;
-    _shipTo->setId(rahead.value("rahead_shipto_id").toInt());
     _shipToName->setText(rahead.value("rahead_shipto_name"));
     _shipToAddr->setLine1(rahead.value("rahead_shipto_address1").toString());
     _shipToAddr->setLine2(rahead.value("rahead_shipto_address2").toString());
