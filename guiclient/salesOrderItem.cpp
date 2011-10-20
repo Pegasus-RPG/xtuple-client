@@ -2681,9 +2681,11 @@ void salesOrderItem::populate()
           "       coitem_price_invuomratio AS price_invuomratio,"
           "       coitem_promdate AS promdate,"
           "       coitem_substitute_item_id, coitem_prcost,"
+          // Sum coship_qty for this coitem and all of it's associated sub-lines
           "       (SELECT COALESCE(SUM(coship_qty), 0)"
-          "          FROM coship"
-          "         WHERE (coship_coitem_id=coitem_id)) AS coship_qty,"
+          "        FROM coitem soitem JOIN coship ON (coship_coitem_id=soitem.coitem_id)"
+          "        WHERE (soitem.coitem_cohead_id=coitem.coitem_cohead_id)"
+          "          AND (soitem.coitem_linenumber=coitem.coitem_linenumber)) AS coship_qty,"
           "       coitem_taxtype_id,"
           "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved, locale_qty_scale, "
           "       cohead_number AS ordnumber "
