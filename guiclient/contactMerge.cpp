@@ -298,10 +298,14 @@ void contactMerge::sPopulateCntctMenu(QMenu *pMenu)
   pMenu->addSeparator();
 
   menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sCntctEdit()));
-  menuItem->setEnabled(_privileges->check("MaintainAllContacts"));
+  menuItem->setEnabled(_privileges->check("MaintainAllContacts") ||
+                      (_cntct->currentItem()->rawValue("cntct_owner_username") == omfgThis->username() && _privileges->check("MaintainPersonalContacts")));
 
   menuItem = pMenu->addAction(tr("View..."), this, SLOT(sCntctView()));
-  menuItem->setEnabled(_privileges->check("MaintainAllContacts") || _privileges->check("ViewAllContacts"));
+  menuItem->setEnabled(_privileges->check("MaintainAllContacts") ||
+                       (_cntct->currentItem()->rawValue("cntct_owner_username") == omfgThis->username() && _privileges->check("MaintainPersonalContacts")) ||
+                       _privileges->check("ViewAllContacts") ||
+                       (_cntct->currentItem()->rawValue("cntct_owner_username") == omfgThis->username() && _privileges->check("ViewPersonalContacts")));
 
   if (_cntct->altId() != 3) // cMerged
   {
