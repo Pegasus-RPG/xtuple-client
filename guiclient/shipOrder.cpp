@@ -254,7 +254,7 @@ void shipOrder::sShip()
       }
       else if (_create->isChecked())
       {
-	shipq.prepare("SELECT postBillingSelection(:cobmisc_id) AS result;");
+        shipq.prepare("SELECT createInvoice(:cobmisc_id) AS result;");
 	shipq.bindValue(":cobmisc_id", cobmiscid);
 	shipq.exec();
 	if (shipq.first())
