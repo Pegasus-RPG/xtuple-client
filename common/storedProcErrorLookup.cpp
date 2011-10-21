@@ -273,6 +273,9 @@ const struct {
 			       "the Task Name is blank."),	0, "" },
   { "createTodoItem",	-3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The To-Do List Item cannot be created as "
 			       "there is no Due Date."),	0, "" },
+
+  { "createWo",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Work Order can not be created because Site "
+			       "not allowed to Manufacture this Item."),	0, "" }, 
   { "createWo",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Work Order can not be exploded because items on "
 			       "the BOM exist without itemsites."),	0, "" }, 
 
