@@ -990,7 +990,7 @@ void vendor::sPrevious()
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Vendor"),
                                 nextq, __FILE__, __LINE__))
     return;
-  int newid = q.value("vend_id").toInt();
+  int newid = nextq.value("vend_id").toInt();
 
   if(!sCheckSave())
     return;
