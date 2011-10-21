@@ -336,32 +336,6 @@ enum SetResponse item::set(const ParameterList &pParams)
       _newUOM->setEnabled(false);
       _upcCode->setEnabled(false);
 
-      if (_privileges->check("MaintainItemSites"))
-      {
-        connect(_itemSite, SIGNAL(valid(bool)), _editItemSite, SLOT(setEnabled(bool)));
-        connect(_itemSite, SIGNAL(itemSelected(int)), _editItemSite, SLOT(animateClick()));
-      }
-      else if (_privileges->check("ViewItemSites"))
-      {
-        connect(_itemSite, SIGNAL(valid(bool)), _viewItemSite, SLOT(setEnabled(bool)));
-        connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
-      }
-
-      if (_privileges->check("DeleteItemSites"))
-        connect(_itemSite, SIGNAL(valid(bool)), _deleteItemSite, SLOT(setEnabled(bool)));
-
-      disconnect(_itemsrc, SIGNAL(valid(bool)), _editSrc, SLOT(setEnabled(bool)));
-      disconnect(_itemsrc, SIGNAL(valid(bool)), _viewSrc, SLOT(setEnabled(bool)));
-      disconnect(_itemsrc, SIGNAL(valid(bool)), _copySrc, SLOT(setEnabled(bool)));
-      disconnect(_itemsrc, SIGNAL(valid(bool)), _deleteSrc, SLOT(setEnabled(bool)));
-      disconnect(_itemsrc, SIGNAL(itemSelected(int)), _editSrc, SLOT(animateClick()));
-  
-      if (_privileges->check("ViewItemSources"))
-      {
-        connect(_itemsrc, SIGNAL(valid(bool)), _viewSrc, SLOT(setEnabled(bool)));
-        connect(_itemsrc, SIGNAL(itemSelected(int)), _viewSrc, SLOT(animateClick()));
-      }
-
       disconnect(_itemalias, SIGNAL(valid(bool)), _editAlias, SLOT(setEnabled(bool)));
       disconnect(_itemalias, SIGNAL(valid(bool)), _deleteAlias, SLOT(setEnabled(bool)));
       disconnect(_itemsub, SIGNAL(valid(bool)), _editSubstitute, SLOT(setEnabled(bool)));
