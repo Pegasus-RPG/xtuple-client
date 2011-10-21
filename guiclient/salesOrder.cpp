@@ -4519,23 +4519,39 @@ void salesOrder::sShipDateChanged()
             "  AND (cohead_id=<? value(\"cohead_id\") ?>) "
             "  AND (coitem_cohead_id=cohead_id) "
             "  AND (customerCanPurchase(itemsite_item_id, cohead_cust_id, cohead_shipto_id, <? value(\"newDate\") ?>) ) );";
-      if (QMessageBox::question(this, tr("Reschedule Work Order?"),
-                                tr("<p>Should any associated W/O's "
+
+      // Ask about work orders if applicable
+      XSqlQuery wo;
+      wo.prepare("SELECT wo_id "
+                 "FROM wo "
+                 "  JOIN coitem ON (coitem_order_id=wo_id) AND (coitem_order_type='W') "
+                 "  JOIN cohead ON (cohead_id=coitem_cohead_id) "
+                 "WHERE ((cohead_id=:cohead_id) "
+                 "  AND (coitem_status NOT IN ('C','X')) "
+                 "  AND (NOT coitem_firm)"
+                 "  AND (wo_status<>'C'))");
+      wo.bindValue(":cohead_id", _soheadid);
+      wo.exec();
+      if(wo.first())
+      {
+        if (QMessageBox::question(this, tr("Reschedule Work Order?"),
+                                tr("<p>Should any associated work orders "
                                    "be rescheduled to reflect this change?"),
                                 QMessageBox::Yes | QMessageBox::Default,
                                 QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
-      {
-        sql = sql +
-              "SELECT changeWoDates(wo_id, "
-              "                     wo_startdate + (<? value(\"newDate\") ?> - wo_duedate),"
-              "                     <? value(\"newDate\") ?>, TRUE) AS result "
-              "FROM cohead JOIN coitem ON (coitem_cohead_id=cohead_id AND coitem_order_type='W') "
-              "            JOIN wo ON (wo_id=coitem_order_id) "
-              "            JOIN itemsite ON (itemsite_id=coitem_itemsite_id) "
-              "WHERE ( (coitem_status NOT IN ('C','X'))"
-              "  AND (NOT coitem_firm)"
-              "  AND (cohead_id=<? value(\"cohead_id\") ?>) "
-              "  AND (customerCanPurchase(itemsite_item_id, cohead_cust_id, cohead_shipto_id, <? value(\"newDate\") ?>) ) );";
+        {
+          sql = sql +
+                "SELECT changeWoDates(wo_id, "
+                "                     wo_startdate + (<? value(\"newDate\") ?> - wo_duedate),"
+                "                     <? value(\"newDate\") ?>, TRUE) AS result "
+                "FROM cohead JOIN coitem ON (coitem_cohead_id=cohead_id AND coitem_order_type='W') "
+                "            JOIN wo ON (wo_id=coitem_order_id) "
+                "            JOIN itemsite ON (itemsite_id=coitem_itemsite_id) "
+                "WHERE ( (coitem_status NOT IN ('C','X'))"
+                "  AND (NOT coitem_firm)"
+                "  AND (wo_status <> 'C') "
+                "  AND (cohead_id=<? value(\"cohead_id\") ?>)) );";
+        }
       }
     }
     else
