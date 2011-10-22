@@ -361,7 +361,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
       _contact->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
       _comments->setReadOnly(true);
-      _documents->setEnabled(FALSE);
+      _documents->setReadOnly(true);
       _newCharacteristic->setEnabled(FALSE);
       _editCharacteristic->setEnabled(FALSE);
       _deleteCharacteristic->setEnabled(FALSE);
