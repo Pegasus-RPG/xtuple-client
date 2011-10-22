@@ -121,7 +121,7 @@ enum SetResponse address::set(const ParameterList &pParams)
 
       _addr->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
-      _comments->setEnabled(FALSE);
+      _comments->setReadOnly(true);
       _newCharacteristic->setEnabled(FALSE);
       _editCharacteristic->setEnabled(FALSE);
       _deleteCharacteristic->setEnabled(FALSE);

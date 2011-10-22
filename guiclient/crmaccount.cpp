@@ -244,7 +244,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   bool canEdit = (_mode == cNew || _mode == cEdit);
 
   _active->setEnabled(canEdit);
-  _comments->setEnabled(canEdit);
+  _comments->setReadOnly(! canEdit);
   _documents->setReadOnly(! canEdit);
   _name->setEnabled(canEdit);
   _newCharacteristic->setEnabled(canEdit);
