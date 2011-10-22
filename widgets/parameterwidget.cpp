@@ -1804,7 +1804,7 @@ QString ParameterWidget::filter()
     {
       p.next();
       ParamProps *pp = p.value();
-      if (pp->param == tempPair.first)
+      if (pp->param == tempPair.first && !pp->name.isEmpty())
       {
         QString value = ": ";
         QWidget *w = _filterWidgets.value(i.key());
