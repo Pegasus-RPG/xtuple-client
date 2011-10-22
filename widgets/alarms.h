@@ -95,6 +95,7 @@ class XTUPLEWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
     int               _cntctId3;
     QDate             _dueDate;
     QTime             _dueTime;
+    bool              _readOnly;
 
 };
 

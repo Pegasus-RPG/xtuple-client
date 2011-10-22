@@ -71,6 +71,7 @@ Alarms::Alarms(QWidget *pParent) :
   _cntctId1 = -1;
   _cntctId2 = -1;
   _cntctId3 = -1;
+  _readOnly = false;
   XSqlQuery tickle;
   if(_x_metrics)
   {
@@ -166,6 +167,22 @@ void Alarms::setDate(QDate pDate)
 
 void Alarms::setReadOnly(bool pReadOnly)
 {
+  if (_readOnly == pReadOnly)
+    return;
+
+  if(pReadOnly){
+    disconnect(_alarms, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    disconnect(_alarms, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    disconnect(_alarms, SIGNAL(doubleClicked(QModelIndex)), _edit, SLOT(animateClick()));
+    connect(_alarms, SIGNAL(doubleClicked(QModelIndex)), _view, SLOT(animateClick()));
+  }
+  else
+  {
+    connect(_alarms, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_alarms, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_alarms, SIGNAL(doubleClicked(QModelIndex)), _edit, SLOT(animateClick()));
+    disconnect(_alarms, SIGNAL(doubleClicked(QModelIndex)), _view, SLOT(animateClick()));
+  }
   _new->setEnabled(!pReadOnly);
   _edit->setEnabled(!pReadOnly);
   _delete->setEnabled(!pReadOnly);
