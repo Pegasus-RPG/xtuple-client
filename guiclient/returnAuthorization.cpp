@@ -318,7 +318,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _miscChargeAccount->setReadOnly(TRUE);
       _freight->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
-      _comments->setEnabled(FALSE);
+      _comments->setReadOnly(true);
       _copyToShipto->setEnabled(FALSE);
       _shipTo->setEnabled(FALSE);
       _shipToName->setEnabled(FALSE);
