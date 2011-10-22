@@ -4522,16 +4522,18 @@ void salesOrder::sShipDateChanged()
 
       // Ask about work orders if applicable
       XSqlQuery wo;
-      wo.prepare("SELECT wo_id "
+      QString woSql("SELECT wo_id "
                  "FROM wo "
                  "  JOIN coitem ON (coitem_order_id=wo_id) AND (coitem_order_type='W') "
                  "  JOIN cohead ON (cohead_id=coitem_cohead_id) "
-                 "WHERE ((cohead_id=:cohead_id) "
+                 "  JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
+                 "WHERE ((cohead_id=<? value(\"cohead_id\") ?>) "
                  "  AND (coitem_status NOT IN ('C','X')) "
                  "  AND (NOT coitem_firm)"
-                 "  AND (wo_status<>'C'))");
-      wo.bindValue(":cohead_id", _soheadid);
-      wo.exec();
+                 "  AND (wo_status<>'C')"
+                 "  AND (customerCanPurchase(itemsite_item_id, cohead_cust_id, cohead_shipto_id, <? value(\"newDate\") ?>) ) );");
+      MetaSQLQuery woMql(woSql);
+      wo = woMql.toQuery(params);
       if(wo.first())
       {
         if (QMessageBox::question(this, tr("Reschedule Work Order?"),
@@ -4550,7 +4552,8 @@ void salesOrder::sShipDateChanged()
                 "WHERE ( (coitem_status NOT IN ('C','X'))"
                 "  AND (NOT coitem_firm)"
                 "  AND (wo_status <> 'C') "
-                "  AND (cohead_id=<? value(\"cohead_id\") ?>)) );";
+                "  AND (cohead_id=<? value(\"cohead_id\") ?>)"
+                "  AND (customerCanPurchase(itemsite_item_id, cohead_cust_id, cohead_shipto_id, <? value(\"newDate\") ?>) ) )";
         }
       }
     }
