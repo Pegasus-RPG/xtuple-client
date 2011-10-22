@@ -80,7 +80,7 @@ class XTUPLEWIDGETS_EXPORT Comments : public QWidget
     void setId(int);
     void setReadOnly(bool);
     void setVerboseCommentList(bool);
-    void setEditable(bool p) {_editable = p;};
+    void setEditable(bool p) {_editable = p;}
 
     void sNew();
     void sView();

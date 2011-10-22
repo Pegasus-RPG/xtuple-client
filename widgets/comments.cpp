@@ -169,10 +169,8 @@ void Comments::setId(int pSourceid)
 
 void Comments::setReadOnly(bool pReadOnly)
 {
-  if (pReadOnly)
-    _newComment->setEnabled(FALSE);
-  else
-    _newComment->setEnabled(TRUE);
+  _newComment->setDisabled(pReadOnly);
+  _editable = !pReadOnly;
 }
 
 void Comments::sNew()
@@ -404,7 +402,7 @@ void Comments::sCheckButtonPriv(bool pValid)
   _viewComment->setEnabled(pValid);
   if(pValid)
   {
-    _editComment->setEnabled(userCanEdit(_comment->id()));
+    _editComment->setEnabled(userCanEdit(_comment->id()) && _editable);
   }
   else
     _editComment->setEnabled(false);
