@@ -17,6 +17,8 @@
 #include <QVariant>
 
 #include "addresscluster.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 #define DEBUG false
 
@@ -160,13 +162,13 @@ int shipTo::id() const
 
 void shipTo::sSave()
 {
-  if (_name->text().length() == 0)
-  {
-      QMessageBox::warning( this, tr("Cannot Save Ship To"),
-                            tr("You must enter a valid Name.") );
-      return;
-  }
-  
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().length() == 0, _name,
+                          tr("You must enter a valid Name."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Ship To"), errors))
+    return;
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -202,45 +204,48 @@ void shipTo::sSave()
     return;
   }
 
-  q.prepare( "UPDATE shiptoinfo "
-             "SET shipto_active=:shipto_active, shipto_default=:shipto_default,"
-             "    shipto_name=:shipto_name, shipto_cntct_id=:shipto_cntct_id,"
-             "    shipto_commission=:shipto_commission,"
-             "    shipto_comments=:shipto_comments, shipto_shipcomments=:shipto_shipcomments,"
-             "    shipto_taxzone_id=:shipto_taxzone_id, shipto_salesrep_id=:shipto_salesrep_id, shipto_shipzone_id=:shipto_shipzone_id,"
-             "    shipto_shipvia=:shipto_shipvia, shipto_shipform_id=:shipto_shipform_id, shipto_shipchrg_id=:shipto_shipchrg_id,"
-             "    shipto_addr_id=:shipto_addr_id "
-             "WHERE (shipto_id=:shipto_id);" );
+  XSqlQuery saveq;
+  saveq.prepare( "UPDATE shiptoinfo "
+                 "SET shipto_active=:shipto_active, shipto_default=:shipto_default,"
+                 "    shipto_name=:shipto_name, shipto_cntct_id=:shipto_cntct_id,"
+                 "    shipto_commission=:shipto_commission,"
+                 "    shipto_comments=:shipto_comments, shipto_shipcomments=:shipto_shipcomments,"
+                 "    shipto_taxzone_id=:shipto_taxzone_id, shipto_salesrep_id=:shipto_salesrep_id,"
+                 "    shipto_shipzone_id=:shipto_shipzone_id,"
+                 "    shipto_shipvia=:shipto_shipvia, shipto_shipform_id=:shipto_shipform_id,"
+                 "    shipto_shipchrg_id=:shipto_shipchrg_id,"
+                 "    shipto_addr_id=:shipto_addr_id "
+                 "WHERE (shipto_id=:shipto_id);" );
 
-  q.bindValue(":shipto_id", _shiptoid);
-  q.bindValue(":shipto_active", QVariant(_active->isChecked()));
-  q.bindValue(":shipto_default", QVariant(_default->isChecked()));
-  q.bindValue(":shipto_cust_id", _custid);
-  q.bindValue(":shipto_num", _shipToNumber->text().trimmed());
-  q.bindValue(":shipto_name", _name->text());
+  saveq.bindValue(":shipto_id", _shiptoid);
+  saveq.bindValue(":shipto_active", QVariant(_active->isChecked()));
+  saveq.bindValue(":shipto_default", QVariant(_default->isChecked()));
+  saveq.bindValue(":shipto_cust_id", _custid);
+  saveq.bindValue(":shipto_num", _shipToNumber->text().trimmed());
+  saveq.bindValue(":shipto_name", _name->text());
   if (_contact->id() > 0)
-    q.bindValue(":shipto_cntct_id", _contact->id());
+    saveq.bindValue(":shipto_cntct_id", _contact->id());
   if (_address->id() > 0)
-    q.bindValue(":shipto_addr_id", _address->id());
-  q.bindValue(":shipto_commission", (_commission->toDouble() / 100));
-  q.bindValue(":shipto_comments", _comments->toPlainText());
-  q.bindValue(":shipto_shipcomments", _shippingComments->toPlainText());
-  q.bindValue(":shipto_shipvia", _shipVia->currentText());
+    saveq.bindValue(":shipto_addr_id", _address->id());
+  saveq.bindValue(":shipto_commission", (_commission->toDouble() / 100));
+  saveq.bindValue(":shipto_comments", _comments->toPlainText());
+  saveq.bindValue(":shipto_shipcomments", _shippingComments->toPlainText());
+  saveq.bindValue(":shipto_shipvia", _shipVia->currentText());
   if (_taxzone->isValid())
-    q.bindValue(":shipto_taxzone_id",  _taxzone->id());
+    saveq.bindValue(":shipto_taxzone_id",  _taxzone->id());
   if (_salesRep->id() != -1)
-    q.bindValue(":shipto_salesrep_id", _salesRep->id());
+    saveq.bindValue(":shipto_salesrep_id", _salesRep->id());
   if (_shipZone->isValid())
-    q.bindValue(":shipto_shipzone_id", _shipZone->id());
+    saveq.bindValue(":shipto_shipzone_id", _shipZone->id());
   if (_shipform->id() != -1)
-    q.bindValue(":shipto_shipform_id", _shipform->id());
+    saveq.bindValue(":shipto_shipform_id", _shipform->id());
   if (_shipchrg->id() != -1)
-  q.bindValue(":shipto_shipchrg_id", _shipchrg->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    saveq.bindValue(":shipto_shipchrg_id", _shipchrg->id());
+  saveq.exec();
+  if (saveq.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, saveq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -255,45 +260,48 @@ void shipTo::sSave()
 
 void shipTo::populate()
 {
-  q.prepare( "SELECT cust_number, cust_name, shipto_active, shipto_default,"
-             "       shipto_cust_id,"
-             "       shipto_num, shipto_name, shipto_cntct_id,"
-             "       shipto_shipvia, shipto_commission,"
-             "       shipto_comments, shipto_shipcomments,"
-             "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id, shipto_taxzone_id, COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
-             "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id, shipto_shipchrg_id,"
-	     "       shipto_addr_id,"
-             "       crmacct_id "
-             "FROM shiptoinfo "
-             "  LEFT OUTER JOIN cust ON (shipto_cust_id=cust_id) "
-             "  LEFT OUTER JOIN crmacct ON (cust_id=crmacct_cust_id) "
-             "WHERE (shipto_id=:shipto_id);" );
-  q.bindValue(":shipto_id", _shiptoid);
-  q.exec();
-  if (q.first())
+  XSqlQuery popq;
+  popq.prepare( "SELECT cust_number, cust_name, shipto_active, shipto_default,"
+                "       shipto_cust_id,"
+                "       shipto_num, shipto_name, shipto_cntct_id,"
+                "       shipto_shipvia, shipto_commission,"
+                "       shipto_comments, shipto_shipcomments,"
+                "       shipto_taxzone_id, shipto_shipchrg_id,"
+                "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id,"
+                "       COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
+                "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id,"
+                "       shipto_addr_id,"
+                "       crmacct_id "
+                "FROM shiptoinfo "
+                "  LEFT OUTER JOIN cust ON (shipto_cust_id=cust_id) "
+                "  LEFT OUTER JOIN crmacct ON (cust_id=crmacct_cust_id) "
+                "WHERE (shipto_id=:shipto_id);" );
+  popq.bindValue(":shipto_id", _shiptoid);
+  popq.exec();
+  if (popq.first())
   {
-    double commission = q.value("shipto_commission").toDouble();
-    _custid = q.value("shipto_cust_id").toInt();
-    _custNum->setText(q.value("cust_number").toString());
-    _custName->setText(q.value("cust_name").toString());
-    _active->setChecked(q.value("shipto_active").toBool());
-    _default->setChecked(q.value("shipto_default").toBool());
-    _shipToNumber->setText(q.value("shipto_num"));
-    _name->setText(q.value("shipto_name"));
-    _contact->setId(q.value("shipto_cntct_id").toInt());
-    _contact->setSearchAcct(q.value("crmacct_id").toInt());
-    _address->setSearchAcct(q.value("crmacct_id").toInt());
-    _comments->setText(q.value("shipto_comments").toString());
-    _shippingComments->setText(q.value("shipto_shipcomments").toString());
-    _taxzone->setId(q.value("shipto_taxzone_id").toInt());
-    _shipZone->setId(q.value("shipto_shipzone_id").toInt());
-    _shipform->setId(q.value("shipto_shipform_id").toInt());
-    _shipchrg->setId(q.value("shipto_shipchrg_id").toInt());
-    _address->setId(q.value("shipto_addr_id").toInt());
+    double commission = popq.value("shipto_commission").toDouble();
+    _custid = popq.value("shipto_cust_id").toInt();
+    _custNum->setText(popq.value("cust_number").toString());
+    _custName->setText(popq.value("cust_name").toString());
+    _active->setChecked(popq.value("shipto_active").toBool());
+    _default->setChecked(popq.value("shipto_default").toBool());
+    _shipToNumber->setText(popq.value("shipto_num"));
+    _name->setText(popq.value("shipto_name"));
+    _contact->setId(popq.value("shipto_cntct_id").toInt());
+    _contact->setSearchAcct(popq.value("crmacct_id").toInt());
+    _address->setSearchAcct(popq.value("crmacct_id").toInt());
+    _comments->setText(popq.value("shipto_comments").toString());
+    _shippingComments->setText(popq.value("shipto_shipcomments").toString());
+    _taxzone->setId(popq.value("shipto_taxzone_id").toInt());
+    _shipZone->setId(popq.value("shipto_shipzone_id").toInt());
+    _shipform->setId(popq.value("shipto_shipform_id").toInt());
+    _shipchrg->setId(popq.value("shipto_shipchrg_id").toInt());
+    _address->setId(popq.value("shipto_addr_id").toInt());
 
     //  Handle the free-form Ship Via
     _shipVia->setCurrentIndex(-1);
-    QString shipvia = q.value("shipto_shipvia").toString();
+    QString shipvia = popq.value("shipto_shipvia").toString();
     if (shipvia.trimmed().length() != 0)
     {
       for (int counter = 0; counter < _shipVia->count(); counter++)
@@ -307,15 +315,15 @@ void shipTo::populate()
       }
     }
 
-    _salesRep->setId(q.value("shipto_salesrep_id").toInt());
+    _salesRep->setId(popq.value("shipto_salesrep_id").toInt());
     _commission->setDouble(commission * 100);
 
     emit newId(_shiptoid);
     emit populated();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (popq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -324,70 +332,76 @@ void shipTo::sPopulateNumber()
 {
   if (_shipToNumber->text().length() == 0)
   {
-    q.prepare( "SELECT (COALESCE(MAX(CAST(shipto_num AS INTEGER)), 0) + 1) AS n_shipto_num "
-               "  FROM shipto "
-               " WHERE ((shipto_cust_id=:cust_id)"
-               "   AND  (shipto_num~'^[0-9]*$') )" );
-    q.bindValue(":cust_id", _custid);
-    q.exec();
-    if (q.first())
-      _shipToNumber->setText(q.value("n_shipto_num"));
-    else if (q.lastError().type() != QSqlError::NoError)
+    XSqlQuery nextnumq;
+    nextnumq.prepare( "SELECT (COALESCE(MAX(CAST(shipto_num AS INTEGER)), 0) + 1) AS n_shipto_num "
+                      "  FROM shipto "
+                      " WHERE ((shipto_cust_id=:cust_id)"
+                      "   AND  (shipto_num~'^[0-9]*$') )" );
+    nextnumq.bindValue(":cust_id", _custid);
+    nextnumq.exec();
+    if (nextnumq.first())
+      _shipToNumber->setText(nextnumq.value("n_shipto_num"));
+    else if (nextnumq.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, nextnumq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
   else
   {
-    q.prepare( "SELECT shipto_id "
-               "FROM shipto "
-               "WHERE ( (shipto_cust_id=:cust_id)"
-               " AND (UPPER(shipto_num)=UPPER(:shipto_num)) );" );
-    q.bindValue(":cust_id", _custid);
-    q.bindValue(":shipto_num", _shipToNumber->text());
-    q.exec();
-    if (q.first())
+    XSqlQuery dupnumq;
+    dupnumq.prepare( "SELECT shipto_id "
+                     "FROM shipto "
+                     "WHERE ( (shipto_cust_id=:cust_id)"
+                     " AND (UPPER(shipto_num)=UPPER(:shipto_num))"
+                     " AND (shipto_id != :shipto_id));" );
+    dupnumq.bindValue(":cust_id", _custid);
+    dupnumq.bindValue(":shipto_num", _shipToNumber->text());
+    dupnumq.bindValue(":shipto_id", _shiptoid);
+    dupnumq.exec();
+    if (dupnumq.first())
     {
+      if (_mode == cNew && _shiptoid != -1)
+      {
+        XSqlQuery delnumq;
+        delnumq.prepare( "DELETE FROM shiptoinfo "
+                         "WHERE (shipto_id=:shipto_id);" );
+        delnumq.bindValue(":shipto_id", _shiptoid);
+        delnumq.exec();
+      }
       _mode = cEdit;
-      _shiptoid = q.value("shipto_id").toInt();
+      _shiptoid = dupnumq.value("shipto_id").toInt();
       populate();
 
       _shipToNumber->setEnabled(FALSE);
       _name->setFocus();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (dupnumq.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dupnumq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
 
-  if (_mode == cNew)
+  if (_mode == cNew && _shiptoid == -1)
   {
-    q.exec("SELECT NEXTVAL('shipto_shipto_id_seq') AS shipto_id;");
-    if (q.first())
-      _shiptoid = q.value("shipto_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    XSqlQuery newnumq;
+    newnumq.prepare( "INSERT INTO shiptoinfo "
+                     "( shipto_cust_id, shipto_active, shipto_num, shipto_commission ) "
+                     "VALUES "
+                     "( :shipto_cust_id, :shipto_active, :shipto_num, :shipto_commission ) "
+                     "RETURNING shipto_id;");
 
-    q.prepare( "INSERT INTO shiptoinfo "
-               "( shipto_id, shipto_cust_id, shipto_active, shipto_num, shipto_commission ) "
-               "VALUES "
-               "( :shipto_id, :shipto_cust_id, :shipto_active, :shipto_num, :shipto_commission );" );
-
-    q.bindValue(":shipto_id", _shiptoid);
-    q.bindValue(":shipto_active", QVariant(_active->isChecked()));
-    q.bindValue(":shipto_cust_id", _custid);
-    q.bindValue(":shipto_num", _shipToNumber->text().trimmed());
-    q.bindValue(":shipto_commission", (_commission->toDouble() / 100));
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    newnumq.bindValue(":shipto_active", QVariant(_active->isChecked()));
+    newnumq.bindValue(":shipto_cust_id", _custid);
+    newnumq.bindValue(":shipto_num", _shipToNumber->text().trimmed());
+    newnumq.bindValue(":shipto_commission", (_commission->toDouble() / 100));
+    newnumq.exec();
+    if (newnumq.first())
+      _shiptoid = newnumq.value("shipto_id").toInt();
+    else if (newnumq.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, newnumq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -398,16 +412,17 @@ void shipTo::sPopulateCommission(int pSalesrepid)
 {
   if (_mode != cView)
   {
-    q.prepare( "SELECT salesrep_commission "
-               "FROM salesrep "
-               "WHERE (salesrep_id=:salesrep_id);" );
-    q.bindValue(":salesrep_id", pSalesrepid);
-    q.exec();
-    if (q.first())
-      _commission->setDouble(q.value("salesrep_commission").toDouble() * 100);
-    else if (q.lastError().type() != QSqlError::NoError)
+    XSqlQuery commq;
+    commq.prepare( "SELECT salesrep_commission "
+                   "FROM salesrep "
+                   "WHERE (salesrep_id=:salesrep_id);" );
+    commq.bindValue(":salesrep_id", pSalesrepid);
+    commq.exec();
+    if (commq.first())
+      _commission->setDouble(commq.value("salesrep_commission").toDouble() * 100);
+    else if (commq.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, commq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -419,10 +434,11 @@ void shipTo::closeEvent(QCloseEvent * /*pEvent*/)
     qDebug("%s::closeEvent() _mode = %d", qPrintable(objectName()), _mode);
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM shiptoinfo "
-               "WHERE (shipto_id=:shipto_id);" );
-    q.bindValue(":shipto_id", _shiptoid);
-    q.exec();
+    XSqlQuery delnumq;
+    delnumq.prepare( "DELETE FROM shiptoinfo "
+                     "WHERE (shipto_id=:shipto_id);" );
+    delnumq.bindValue(":shipto_id", _shiptoid);
+    delnumq.exec();
   }
 }
 
