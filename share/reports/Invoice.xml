@@ -3,12 +3,9 @@
  <title>Invoice</title>
  <name>Invoice</name>
  <description>With Logo - With Invoice Currency</description>
- <parameter default="127" active="true" listtype="dynamic" type="integer" name="invchead_id">
+ <parameter default="97" active="true" listtype="dynamic" type="string" name="invchead_id">
   <description></description>
   <query>SELECT invchead_id, invchead_invcnumber FROM invchead ORDER BY invchead_invcnumber;</query>
- </parameter>
- <parameter default="TRUE" active="true" listtype="static" type="string" name="showcosts">
-  <description></description>
  </parameter>
  <watermark>
   <data>
@@ -76,10 +73,10 @@ ORDER BY ordernumber;</sql>
       CASE WHEN (invcitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip2
            ELSE item_descrip2
       END AS descrip2,
-      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN 'N/A'
+      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN '---'
            ELSE formatPrice(invcitem_qty_invuomratio * invcitem_price / COALESCE(invcitem_price_invuomratio,1))
       END AS f_unitprice,
-      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN 'N/A'
+      CASE WHEN (&lt;? value("showcosts") ?>=FALSE) THEN '---'
            ELSE formatMoney(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2)) 
       END AS f_extprice,
       invcitem_notes,
@@ -93,38 +90,22 @@ ORDER BY invcitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>foot</name>
-  <sql>SELECT 
-CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
-ELSE formatMoney(SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2))) 
-END AS f_extprice
-FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id)
+  <sql>SELECT formatMoney(SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2))) AS f_extprice&#xd;
+FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id)&#xd;
 WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>GroupExtended</name>
   <sql>SELECT *,
-       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
-       	ELSE formatMoney(invchead_misc_amount) 
-	END AS f_misc,
-       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
-       	ELSE formatMoney(tax)                  
-	END AS f_tax,
-       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
-       	ELSE formatMoney(invchead_freight)
-	END AS f_freight,
-       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
-       	ELSE formatMoney(invchead_payment)
-	END AS f_payment,
-    formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
-                         itemtotal - total_allocated))
-	AS f_totaldue,
-       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
-       	ELSE formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
-                         itemtotal - total_allocated))
-	END AS f_netdue,
-       CASE WHEN (&lt;? value("showcosts") ?> = 'FALSE') THEN 'N/A'
-       	ELSE formatMoney(total_allocated)
-	END AS f_allocated
+       formatMoney(invchead_misc_amount) AS f_misc,
+       formatMoney(tax)                  AS f_tax,
+       formatMoney(invchead_freight)     AS f_freight,
+       formatMoney(invchead_payment)     AS f_payment,
+       formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
+                         itemtotal - total_allocated)) AS f_totaldue,
+       formatMoney(noNeg(invchead_freight + invchead_misc_amount + tax +
+                         itemtotal - total_allocated)) AS f_netdue,
+       formatMoney(total_allocated) AS f_allocated
  FROM (SELECT invchead_misc_amount, invchead_freight,
               invchead_payment, invchead_notes, invchead_misc_descrip,
               (SELECT COALESCE(SUM(tax),0) 
@@ -262,7 +243,7 @@ ORDER BY aropen_docnumber;</sql>
  </querysource>
  <querysource>
   <name>currency</name>
-  <sql>SELECT currConcat(curr_id) AS currConcat
+  <sql>SELECT currConcat(curr_id) AS currConcat, curr_symbol
 FROM invchead, curr_symbol
 WHERE (invchead_id = &lt;? value("invchead_id") ?>)
  AND  (invchead_curr_id = curr_id);</sql>
@@ -1338,7 +1319,7 @@ order by cosmisc_shipdate;</sql>
     <rect>
      <x>260</x>
      <y>5</y>
-     <width>300</width>
+     <width>220</width>
      <height>20</height>
     </rect>
     <font>
@@ -2066,41 +2047,6 @@ order by cosmisc_shipdate;</sql>
   </field>
   <label>
    <rect>
-    <x>345</x>
-    <y>145</y>
-    <width>25</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>of</string>
-  </label>
-  <field>
-   <rect>
-    <x>360</x>
-    <y>145</y>
-    <width>20</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Sans Serif</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <top/>
-   <data>
-    <query>Context Query</query>
-    <column>page_count</column>
-   </data>
-  </field>
-  <label>
-   <rect>
     <x>500</x>
     <y>65</y>
     <width>100</width>
@@ -2181,25 +2127,6 @@ order by cosmisc_shipdate;</sql>
   <height>27</height>
   <field>
    <rect>
-    <x>365</x>
-    <y>0</y>
-    <width>20</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Sans Serif</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <top/>
-   <data>
-    <query>Context Query</query>
-    <column>page_count</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>330</x>
     <y>0</y>
     <width>20</width>
@@ -2232,22 +2159,6 @@ order by cosmisc_shipdate;</sql>
    <left/>
    <vcenter/>
    <string>Page:</string>
-  </label>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>0</y>
-    <width>25</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>of</string>
   </label>
  </pgfoot>
 </report>
