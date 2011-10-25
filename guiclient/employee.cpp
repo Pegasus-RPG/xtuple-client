@@ -233,7 +233,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
   _shift->setEnabled(editing);
   _notes->setEnabled(editing);
   _image->setEnabled(editing);
-  _comments->setEnabled(editing);
+  _comments->setReadOnly(!editing);
   _save->setEnabled(editing);
   _newCharass->setEnabled(editing);
 

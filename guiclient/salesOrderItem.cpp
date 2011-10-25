@@ -317,7 +317,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _save->setEnabled(false);
       _next->setText(tr("New"));
       _comments->setType(Comments::SalesOrderItem);
-      _comments->setEnabled(true);
+      _comments->setReadOnly(false);
       _orderStatusLit->hide();
       _orderStatus->hide();
       _item->setReadOnly(false);
@@ -360,7 +360,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _save->setEnabled(FALSE);
       _next->setText(tr("New"));
       _comments->setType(Comments::QuoteItem);
-      _comments->setEnabled(FALSE);
+      _comments->setReadOnly(true);
       _orderStatusLit->hide();
       _orderStatus->hide();
       // _createOrder->hide();

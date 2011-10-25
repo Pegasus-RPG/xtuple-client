@@ -270,7 +270,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _salePriceLit->hide();
       _item->setFocus();
       _comments->setType(Comments::ReturnAuthItem);
-      _comments->setEnabled(false);
+      _comments->setReadOnly(true);
     }
     else if (param.toString() == "edit")
     {
@@ -281,7 +281,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _shipWhs->setEnabled(FALSE);
       _qtyAuth->setFocus();
       _comments->setType(Comments::ReturnAuthItem);
-      _comments->setEnabled(true);
+      _comments->setReadOnly(false);
 
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_saleDiscountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateSaleFromDiscount()));

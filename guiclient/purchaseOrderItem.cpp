@@ -297,7 +297,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
       _bomRevision->setEnabled(_privileges->boolean("UseInactiveRevisions"));
       _booRevision->setEnabled(_privileges->boolean("UseInactiveRevisions"));
-      _comments->setEnabled(FALSE);
+      _comments->setId(_poitemid);
       _tab->setTabEnabled(_tab->indexOf(_demandTab), FALSE);
     }
     else if (param.toString() == "edit")
