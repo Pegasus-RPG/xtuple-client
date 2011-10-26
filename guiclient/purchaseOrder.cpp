@@ -311,8 +311,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
           q.exec();
           if (q.first())
           {
-            if(QMessageBox::question( this, tr("An Open Purchase Order Exists"),
-                tr("An Open Purchase Order already exists for this Vendor.\n"
+            if(QMessageBox::question( this, tr("Purchase Order Exists"),
+                tr("An Unreleased Purchase Order already exists for this Vendor.\n"
                    "Would you like to use this Purchase Order?\n"
                    "Click Yes to use the existing Purchase Order otherwise a new one will be created."),
                 QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
