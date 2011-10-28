@@ -1098,7 +1098,7 @@ to be bound by its terms.</comment>
          <item row="4" column="0">
           <widget class="QLabel" name="_outstandingCMLit">
            <property name="text">
-            <string>Outstanding C/M's:</string>
+            <string>Outstanding Credit:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1240,7 +1240,7 @@ to be bound by its terms.</comment>
          <item row="3" column="0">
           <widget class="XURLLabel" name="_allocatedCMLit">
            <property name="text">
-            <string>Allocated C/M's:</string>
+            <string>Allocated Credit:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
