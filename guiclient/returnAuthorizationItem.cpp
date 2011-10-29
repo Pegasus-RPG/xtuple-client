@@ -394,7 +394,7 @@ bool returnAuthorizationItem::sSave()
                "  raitem_unitprice, raitem_taxtype_id, "
                "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id, "
                "  raitem_scheddate, raitem_warranty, raitem_coitem_itemsite_id, "
-               "  raitem_saleprice, raitem_unitcost ) "
+               "  raitem_saleprice, raitem_unitcost, raitem_custpn ) "
                "SELECT :raitem_id, :rahead_id, :raitem_linenumber, rcv.itemsite_id,"
                "       :raitem_disposition, :raitem_qtyauthorized,"
                "       :qty_uom_id, :qty_invuomratio,"
@@ -402,7 +402,7 @@ bool returnAuthorizationItem::sSave()
                "       :raitem_unitprice, :raitem_taxtype_id, "
                "       :raitem_notes, :raitem_rsncode_id, :raitem_cos_accnt_id, "
                "       :raitem_scheddate, :raitem_warranty, shp.itemsite_id, "
-               "       :raitem_saleprice, :raitem_unitcost "
+               "       :raitem_saleprice, :raitem_unitcost, :raitem_custpn "
                "FROM itemsite rcv "
                "  LEFT OUTER JOIN itemsite shp ON "
                "        (shp.itemsite_item_id=rcv.itemsite_item_id) "
@@ -428,7 +428,8 @@ bool returnAuthorizationItem::sSave()
                "    raitem_warranty=:raitem_warranty, "
                "    raitem_saleprice=:raitem_saleprice, "
                "    raitem_coitem_itemsite_id=:coitem_itemsite_id, "
-               "    raitem_unitcost=:raitem_unitcost "
+               "    raitem_unitcost=:raitem_unitcost, "
+               "    raitem_custpn=:raitem_custpn "
                "WHERE (raitem_id=:raitem_id);" );
     
      if (_disposition->currentIndex() >= 2)
@@ -483,6 +484,7 @@ bool returnAuthorizationItem::sSave()
   q.bindValue(":raitem_saleprice", _saleNetUnitPrice->localValue());
   if (_costmethod=="A")
     q.bindValue(":raitem_unitcost", _unitCost->localValue());
+  q.bindValue(":raitem_custpn", _customerPN->text());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -921,6 +923,7 @@ void returnAuthorizationItem::populate()
     _warranty->setChecked(raitem.value("raitem_warranty").toBool());
     _status = raitem.value("raitem_status").toString();
     _qtycredited = raitem.value("raitem_qtycredited").toDouble();
+    _customerPN->setText(raitem.value("raitem_custpn").toString());
 
     _cQtyOrdered = _qtyAuth->toDouble();
     _cScheduledDate = _scheduledDate->date();

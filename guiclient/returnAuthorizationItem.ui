@@ -16,8 +16,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>812</width>
+    <height>852</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -439,6 +439,36 @@ to be bound by its terms.</comment>
                </size>
               </property>
              </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLabel" name="_customerPNLit">
+              <property name="text">
+               <string>Customer P/N:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="_customerPN">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -2227,6 +2257,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>83</x>
      <y>499</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>aliasChanged(QString)</signal>
+   <receiver>_customerPN</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>208</x>
+     <y>190</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>409</x>
+     <y>244</y>
     </hint>
    </hints>
   </connection>
