@@ -469,7 +469,7 @@ void XDateEdit::checkDate(const QDate &pDate)
     else if (workday.lastError().type() != QSqlError::NoError)
     {
       QMessageBox::warning(this, tr("No work week calendar found"),
-                            tr("<p>The selected site has no work week defined. "
+                            tr("<p>The selected Site has no work week defined. "
                                "Please go to Schedule Setup and define "
                                "the working days for this site."));
       return;
@@ -481,14 +481,14 @@ void XDateEdit::checkDate(const QDate &pDate)
   else
   {
     if (QMessageBox::question(this, tr("Non-Working Day Entered"),
-                             tr("<p>The selected Date is not a Working "
-                                "Day for the site selected. Do you want to "
-                                "automatically select a next working day?"),
+                             tr("<p>The selected date is not a working "
+                                "day for the Site selected. Do you want to "
+                                "automatically select the next working day?"),
                              QMessageBox::Yes | QMessageBox::Default,
                              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
       setDate(nextWorkDate, TRUE);
     else
-      clear();
+      setDate(pDate, TRUE);
   }
 }
 
