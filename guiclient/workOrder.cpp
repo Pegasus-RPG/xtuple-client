@@ -461,7 +461,8 @@ void workOrder::sCreate()
     }
   
     q.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty * :sense,"
-               "                 date(:dueDate) - :leadTime, :dueDate, :productionNotes, :ordtype, :ordid, :prj_id,"
+               "                 COALESCE(:startDate, date(:dueDate) - :leadTime), :dueDate, "
+               "                 :productionNotes, :ordtype, :ordid, :prj_id,"
                "                 :bom_rev_id, :boo_rev_id, :wo_cosmethod) AS result;" );
     q.bindValue(":woNumber", _woNumber->text().toInt());
     q.bindValue(":itemsite_id", itemsiteid);
@@ -470,6 +471,8 @@ void workOrder::sCreate()
     q.bindValue(":sense", _sense);
     q.bindValue(":leadTime", _leadTime->value());
     q.bindValue(":dueDate", _dueDate->date());
+    if (_startDate->isValid())
+      q.bindValue(":startDate", _startDate->date());
     q.bindValue(":productionNotes", _productionNotes->toPlainText());
     q.bindValue(":prj_id", _project->id());
     q.bindValue(":bom_rev_id", _bomRevision->id());
@@ -658,10 +661,23 @@ void workOrder::sSave()
 
 void workOrder::sUpdateStartDate()
 {
+  if (!_warehouse->isValid() || !_dueDate->isValid())
+    return;
+
+  if (_leadTime == 0)
+  {
+    _startDate->setDate(_dueDate->date());
+    return;
+  }
+
   XSqlQuery startDate;
-  startDate.prepare("SELECT (DATE(:dueDate) - :leadTime) AS startdate;");
+  if (_metrics->boolean("UseSiteCalforWO"))
+    startDate.prepare("SELECT calculateNextWorkingDate(:warehous_id, :dueDate, (:leadTime * -1)) AS startdate;");
+  else
+    startDate.prepare("SELECT (DATE(:dueDate) - :leadTime) AS startdate;");
   startDate.bindValue(":dueDate", _dueDate->date());
   startDate.bindValue(":leadTime", _leadTime->value());
+  startDate.bindValue(":warehous_id", _warehouse->id());
   startDate.exec();
   if (startDate.first())
     _startDate->setDate(startDate.value("startdate").toDate());
