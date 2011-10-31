@@ -251,77 +251,77 @@ What would you like to do?</source>
 <context>
     <name>Alarms</name>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="86"/>
+        <location filename="../../widgets/alarms.cpp" line="87"/>
         <source>Qualifier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="87"/>
+        <location filename="../../widgets/alarms.cpp" line="88"/>
         <source>Due</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="88"/>
+        <location filename="../../widgets/alarms.cpp" line="89"/>
         <source>Event Recipient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="89"/>
+        <location filename="../../widgets/alarms.cpp" line="90"/>
         <source>SysMsg Recipient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="93"/>
+        <location filename="../../widgets/alarms.cpp" line="94"/>
         <source>Email Recipient</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="262"/>
+        <location filename="../../widgets/alarms.cpp" line="279"/>
         <source>Email</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="263"/>
+        <location filename="../../widgets/alarms.cpp" line="280"/>
         <source>Event</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="264"/>
+        <location filename="../../widgets/alarms.cpp" line="281"/>
         <source>System Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="265"/>
+        <location filename="../../widgets/alarms.cpp" line="282"/>
         <source>Other</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="266"/>
+        <location filename="../../widgets/alarms.cpp" line="283"/>
         <source>minutes before</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="267"/>
+        <location filename="../../widgets/alarms.cpp" line="284"/>
         <source>hours before</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="268"/>
+        <location filename="../../widgets/alarms.cpp" line="285"/>
         <source>days before</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="269"/>
+        <location filename="../../widgets/alarms.cpp" line="286"/>
         <source>mintues after</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="270"/>
+        <location filename="../../widgets/alarms.cpp" line="287"/>
         <source>hours after</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/alarms.cpp" line="271"/>
+        <location filename="../../widgets/alarms.cpp" line="288"/>
         <source>days after</source>
         <translation type="unfinished"></translation>
     </message>
@@ -394,53 +394,53 @@ What would you like to do?</source>
 <context>
     <name>AuthorizeDotNetProcessor</name>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="45"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="46"/>
         <source>A Login is required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="46"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="47"/>
         <source>The Login must be 20 characters or less.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="47"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="48"/>
         <source>The Transaction Key must be 16 characters or less.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="48"/>
         <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="49"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="50"/>
         <source>The Delimiting Character must be exactly 1 character.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="50"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="51"/>
         <source>The response from the Gateway appears to be incorrectly formatted (could not find field %1 as there are only %2 fields present).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="53"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="54"/>
         <source>The response from the Gateway failed the MD5 security check.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="55"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="56"/>
         <source>The response from the Gateway has failed the MD5 security check but will be processed anyway.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="57"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="58"/>
         <source>The Gateway returned the following error: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="58"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="59"/>
         <source>&amp; (ampersand) is not a valid Delimiting Character.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="59"/>
+        <location filename="../../guiclient/authorizedotnetprocessor.cpp" line="60"/>
         <source>The Delimiting Character and the Encapsulating Character cannot be the same. Please change one or the other.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -618,158 +618,158 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="164"/>
+        <location filename="../../guiclient/bom.cpp" line="165"/>
         <source>Item Number Required</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="165"/>
+        <location filename="../../guiclient/bom.cpp" line="166"/>
         <source>You must specify a valid item number to continue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="173"/>
+        <location filename="../../guiclient/bom.cpp" line="174"/>
         <source>Batch Size Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="174"/>
+        <location filename="../../guiclient/bom.cpp" line="175"/>
         <source>&lt;p&gt;The Batch Size quantity must be greater than zero.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="247"/>
+        <location filename="../../guiclient/bom.cpp" line="248"/>
         <source>Purchased</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="248"/>
+        <location filename="../../guiclient/bom.cpp" line="249"/>
         <source>Manufactured</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="249"/>
+        <location filename="../../guiclient/bom.cpp" line="250"/>
         <source>Job</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="250"/>
+        <location filename="../../guiclient/bom.cpp" line="251"/>
         <source>Phantom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="251"/>
+        <location filename="../../guiclient/bom.cpp" line="252"/>
         <source>Breeder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="252"/>
+        <location filename="../../guiclient/bom.cpp" line="253"/>
         <source>Co-Product</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="253"/>
+        <location filename="../../guiclient/bom.cpp" line="254"/>
         <source>By-Product</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="255"/>
+        <location filename="../../guiclient/bom.cpp" line="256"/>
         <source>Costing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="256"/>
+        <location filename="../../guiclient/bom.cpp" line="257"/>
         <source>Tooling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="257"/>
+        <location filename="../../guiclient/bom.cpp" line="258"/>
         <source>Outside Process</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="258"/>
+        <location filename="../../guiclient/bom.cpp" line="259"/>
         <source>Planning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="259"/>
+        <location filename="../../guiclient/bom.cpp" line="260"/>
         <source>Assortment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="260"/>
+        <location filename="../../guiclient/bom.cpp" line="261"/>
         <source>Kit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="279"/>
+        <location filename="../../guiclient/bom.cpp" line="280"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="283"/>
+        <location filename="../../guiclient/bom.cpp" line="284"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="284"/>
+        <location filename="../../guiclient/bom.cpp" line="285"/>
         <source>Expire</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="285"/>
+        <location filename="../../guiclient/bom.cpp" line="286"/>
         <source>Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="291"/>
+        <location filename="../../guiclient/bom.cpp" line="292"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="296"/>
+        <location filename="../../guiclient/bom.cpp" line="297"/>
         <source>Move Up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="297"/>
+        <location filename="../../guiclient/bom.cpp" line="298"/>
         <source>Move Down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="228"/>
+        <location filename="../../guiclient/bom.cpp" line="229"/>
         <source>Push</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="229"/>
+        <location filename="../../guiclient/bom.cpp" line="230"/>
         <source>Pull</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="230"/>
+        <location filename="../../guiclient/bom.cpp" line="231"/>
         <source>Mixed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="231"/>
-        <location filename="../../guiclient/bom.cpp" line="261"/>
+        <location filename="../../guiclient/bom.cpp" line="232"/>
+        <location filename="../../guiclient/bom.cpp" line="262"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="348"/>
+        <location filename="../../guiclient/bom.cpp" line="349"/>
         <source>Delete Item?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="349"/>
+        <location filename="../../guiclient/bom.cpp" line="350"/>
         <source>&lt;p&gt;This action can not be undone. Are you sure you want to delete this Item?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="617"/>
+        <location filename="../../guiclient/bom.cpp" line="621"/>
         <source>Total Qty. Per Required</source>
         <translation type="unfinished"></translation>
     </message>
@@ -789,7 +789,7 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="618"/>
+        <location filename="../../guiclient/bom.cpp" line="622"/>
         <source>&lt;p&gt;A required total Qty. Per was specified but not met. Please correct the problem before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -800,17 +800,17 @@ What would you like to do?</source>
     </message>
     <message>
         <location filename="../../guiclient/bom.cpp" line="78"/>
-        <location filename="../../guiclient/bom.cpp" line="254"/>
+        <location filename="../../guiclient/bom.cpp" line="255"/>
         <source>Reference</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="232"/>
+        <location filename="../../guiclient/bom.cpp" line="233"/>
         <source>&apos;Always&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/bom.cpp" line="233"/>
+        <location filename="../../guiclient/bom.cpp" line="234"/>
         <source>&apos;Never&apos;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1363,7 +1363,7 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/comments.cpp" line="321"/>
+        <location filename="../../widgets/comments.cpp" line="319"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1561,33 +1561,33 @@ What would you like to do?</source>
 <context>
     <name>ContactList</name>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1075"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1101"/>
         <source>First Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1076"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1102"/>
         <source>Last Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1077"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1103"/>
         <source>CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1134"/>
-        <location filename="../../widgets/contactWidget.cpp" line="1148"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1160"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1174"/>
         <source>A System Error Occurred at %1::%2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1106"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1132"/>
         <source>Only contacts for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1080"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1106"/>
         <source>Contact List</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1595,97 +1595,97 @@ What would you like to do?</source>
 <context>
     <name>ContactSearch</name>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1207"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1233"/>
         <source>Search First Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1208"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1234"/>
         <source>Search Last Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1209"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1235"/>
         <source>Search CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1211"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1237"/>
         <source>Search Phone Numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1212"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1238"/>
         <source>Search Email Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1213"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1239"/>
         <source>Search Web Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1214"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1240"/>
         <source>Show Inactive Contacts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1246"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1272"/>
         <source>First Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1247"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1273"/>
         <source>Last Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1248"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1274"/>
         <source>CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1250"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1276"/>
         <source>Phone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1251"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1277"/>
         <source>Alt. Phone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1252"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1278"/>
         <source>Fax</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1253"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1279"/>
         <source>Email Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1254"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1280"/>
         <source>Web Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1389"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1415"/>
         <source>A System Error Occurred at %1::%2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1210"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1236"/>
         <source>Search Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1249"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1275"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1291"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1317"/>
         <source>Only contacts for %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1896,7 +1896,7 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/contactWidget.cpp" line="1434"/>
+        <location filename="../../widgets/contactWidget.cpp" line="1460"/>
         <source>Edit List</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1904,17 +1904,17 @@ What would you like to do?</source>
 <context>
     <name>CreditCardProcessor</name>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="843"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="845"/>
         <source>Confirm Post-authorization of Credit Card Purchase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1092"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1094"/>
         <source>Confirm Credit Card Credit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="457"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="459"/>
         <source>Confirm Preauthorization of Credit Card Purchase</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1978,12 +1978,6 @@ What would you like to do?</source>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="168"/>
         <source>Credit Card %1 has expired.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="169"/>
-        <source>The Credit Card Processing Company reported an error:
-%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2149,11 +2143,6 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="226"/>
-        <source>The Credit Card Processor returned an error: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="227"/>
         <source>This transaction failed the CVV check.</source>
         <translation type="unfinished"></translation>
@@ -2228,252 +2217,268 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="286"/>
-        <source>Street Address matches but not Postal Code</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="287"/>
-        <source>Address not provided for AVS check</source>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="272"/>
+        <source>The Credit Card Processing Company</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="288"/>
-        <source>Address Verification error</source>
+        <source>Street Address matches but not Postal Code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="289"/>
-        <source>Card issuing bank is not a U.S. bank</source>
+        <source>Address not provided for AVS check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="290"/>
-        <source>No match on Street Address or Postal Code</source>
+        <source>Address Verification error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="291"/>
-        <source>Address Verification does not apply to this transaction</source>
+        <source>Card issuing bank is not a U.S. bank</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="292"/>
-        <source>Retry - system unavailable or timed out</source>
+        <source>No match on Street Address or Postal Code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="293"/>
-        <source>Address Verification service not supported</source>
+        <source>Address Verification does not apply to this transaction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="294"/>
-        <source>Address information not available</source>
+        <source>Retry - system unavailable or timed out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="295"/>
-        <source>9-Digit Postal Code matches but not Street Address</source>
+        <source>Address Verification service not supported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="296"/>
-        <source>Street Address and 9-digit Postal Code match</source>
+        <source>Address information not available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="297"/>
-        <source>Street Address and 5-digit Postal Code match</source>
+        <source>9-Digit Postal Code matches but not Street Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="298"/>
-        <source>5-Digit Postal Code matches but not Street Address</source>
+        <source>Street Address and 9-digit Postal Code match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="299"/>
+        <source>Street Address and 5-digit Postal Code match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="300"/>
-        <source>CVV matches</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="301"/>
-        <source>CVV does not match</source>
+        <source>5-Digit Postal Code matches but not Street Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="302"/>
-        <source>CVV was not processed</source>
+        <source>CVV matches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="303"/>
-        <source>CVV should be on the card but was not supplied</source>
+        <source>CVV does not match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="304"/>
-        <source>Card issuing bank was not certified for CVV</source>
+        <source>CVV was not processed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="305"/>
+        <source>CVV should be on the card but was not supplied</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="306"/>
+        <source>Card issuing bank was not certified for CVV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="307"/>
         <source>Card Verification is not supported for this processor or card type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="458"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="460"/>
         <source>&lt;p&gt;Are you sure that you want to preauthorize a charge to credit card %1 in the amount of %2 %3?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="630"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="632"/>
         <source>Confirm Charge of Credit Card Purchase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="631"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="633"/>
         <source>Are you sure that you want to charge credit card %1 in the amount of %2 %3?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="844"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="846"/>
         <source>Are you sure that you want to charge a pre-authorized transaction to credit card %1 in the amount of %2 %3?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1011"/>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1020"/>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1029"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1013"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1022"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1031"/>
         <source>Live</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1011"/>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1020"/>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1029"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1013"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1022"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1031"/>
         <source>Test</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1093"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1095"/>
         <source>Are you sure that you want to refund %2 %3 to credit card %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1351"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1353"/>
         <source>Credit Card Pre-Authorization %1 reversed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1352"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1354"/>
         <source>fully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1352"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1354"/>
         <source>partially</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1597"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1599"/>
         <source>Confirm No CVV Code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1598"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1600"/>
         <source>&lt;p&gt;You must confirm that you wish to proceed without a CVV code. Would you like to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1756"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1758"/>
         <source>Could not find PEM file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1757"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1759"/>
         <source>&lt;p&gt;Failed to find the PEM file %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="3076"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="3078"/>
         <source>Questionable Security</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="3077"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="3079"/>
         <source>&lt;p&gt;The security of this transaction may be compromised. The following SSL errors have been reported:&lt;ul&gt;%1&lt;/ul&gt;&lt;/p&gt;&lt;p&gt;Would you like to continue anyway?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1764"/>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1769"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1766"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1771"/>
         <source>Failed to load Certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1765"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="169"/>
+        <source>%2 reported an error:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="226"/>
+        <source>%2 returned an error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1767"/>
         <source>&lt;p&gt;There are no Certificates in %1. This may cause communication problems.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1770"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1772"/>
         <source>&lt;p&gt;Failed to load a Certificate from the PEM file %1. This may cause communication problems.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1790"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1792"/>
         <source>Invalid Certificate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="1791"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="1793"/>
         <source>&lt;p&gt;The Certificate in %1 appears to be invalid. This may cause communication problems.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2223"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2225"/>
         <source>Preauthorization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2224"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2226"/>
         <source>Charge</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2225"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2227"/>
         <source>Refund</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2226"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2228"/>
         <source>Authorized</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2227"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2229"/>
         <source>Approved</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2228"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2230"/>
         <source>Declined</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2229"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2231"/>
         <source>Reversed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2230"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2232"/>
         <source>Voided</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="2231"/>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="2233"/>
         <source>No Approval Code</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2481,7 +2486,7 @@ What would you like to do?</source>
 <context>
     <name>CrmClusterLineEdit</name>
     <message>
-        <location filename="../../widgets/crmCluster.cpp" line="134"/>
+        <location filename="../../widgets/crmCluster.cpp" line="131"/>
         <source>A System Error Occurred at %1::%2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2659,17 +2664,17 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccountMergePickAccountsPage.cpp" line="178"/>
+        <location filename="../../guiclient/crmaccountMergePickAccountsPage.cpp" line="176"/>
         <source>Updating Selections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccountMergePickAccountsPage.cpp" line="224"/>
+        <location filename="../../guiclient/crmaccountMergePickAccountsPage.cpp" line="232"/>
         <source>Inserting New Selections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccountMergePickAccountsPage.cpp" line="257"/>
+        <location filename="../../guiclient/crmaccountMergePickAccountsPage.cpp" line="261"/>
         <source>Error Getting CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2857,8 +2862,8 @@ What would you like to do?</source>
 <context>
     <name>CrmaccountMergePickTaskPage</name>
     <message>
-        <location filename="../../guiclient/crmaccountMergePickTaskPage.cpp" line="75"/>
-        <location filename="../../guiclient/crmaccountMergePickTaskPage.cpp" line="86"/>
+        <location filename="../../guiclient/crmaccountMergePickTaskPage.cpp" line="74"/>
+        <location filename="../../guiclient/crmaccountMergePickTaskPage.cpp" line="85"/>
         <source>Looking for Merges</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2867,7 +2872,7 @@ What would you like to do?</source>
     <name>CrmaccountMergePurgePage</name>
     <message>
         <location filename="../../guiclient/crmaccountMergePurgePage.cpp" line="33"/>
-        <location filename="../../guiclient/crmaccountMergePurgePage.cpp" line="138"/>
+        <location filename="../../guiclient/crmaccountMergePurgePage.cpp" line="139"/>
         <source>Getting List of Merges</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2910,11 +2915,16 @@ What would you like to do?</source>
     </message>
     <message>
         <location filename="../../guiclient/crmaccountMergePurgePage.cpp" line="130"/>
+        <source>Obsolete - will be deleted by purge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/crmaccountMergePurgePage.cpp" line="131"/>
         <source>Merge complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccountMergePurgePage.cpp" line="132"/>
+        <location filename="../../guiclient/crmaccountMergePurgePage.cpp" line="133"/>
         <source>Data selection in progress</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3047,194 +3057,194 @@ What would you like to do?</source>
 <context>
     <name>CyberSourceProcessor</name>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="92"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="93"/>
         <source>The Merchant ID is required</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="93"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="94"/>
         <source>The message sent to CyberSource was incomplete: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="94"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="95"/>
         <source>The message sent to CyberSource had invalid data in the following field: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="95"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="96"/>
         <source>CyberSource rejected this request (code %1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="96"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="97"/>
         <source>CyberSource reports a general system failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="97"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="98"/>
         <source>The Merchant ID %1 is too long</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="98"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="99"/>
         <source>SOAP error (probably an xTuple ERP bug): %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="99"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="100"/>
         <source>Error reading response XML: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="100"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="101"/>
         <source>CyberSource returned an error for this request (code %1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="101"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="102"/>
         <source>The amount authorized was 0.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="102"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="103"/>
         <source>Only a portion of the total amount requested was authorized</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="107"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="108"/>
         <source>Street Address matches but Postal Code is not verified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="109"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="110"/>
         <source>Street Address and Postal Code do not match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="110"/>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="120"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="111"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="121"/>
         <source>Street Address and Postal Code match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="113"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="114"/>
         <source>AVS data are invalid or AVS not allowed for this card type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="115"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="116"/>
         <source>Card holder&apos;s name does not match but Postal Code matches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="116"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="117"/>
         <source>Card holder&apos;s name does not match but Street Address and Postal Code match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="117"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="118"/>
         <source>Address not verified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="118"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="119"/>
         <source>Card holder&apos;s name matches but Billing Street Address and Postal Code do not match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="119"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="120"/>
         <source>Card holder&apos;s name and Billing Postal Code match but Street Address does not match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="121"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="122"/>
         <source>Card holder&apos;s name and Billing Street Address match but Postal Code does not match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="126"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="127"/>
         <source>Postal Code matches but Street Address was not verified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="129"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="130"/>
         <source>Card holder&apos;s name does not match but Street Address matches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="130"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="131"/>
         <source>Address information unavailable; either the US bank does not support non-US AVS or the AVS at a US bank is not functioning properly</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="131"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="132"/>
         <source>Card holder&apos;s name, Street Address, and Postal Code match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="132"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="133"/>
         <source>AVS is not supported for this processor or card type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="133"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="134"/>
         <source>The processor returned an unrecognized AVS response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="135"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="136"/>
         <source>The bank thinks this transaction is suspicious</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="136"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="137"/>
         <source>The CVV failed the processor&apos;s data validation check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="137"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="138"/>
         <source>CVV is not supported by the card association</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="138"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="139"/>
         <source>The processor returned an unrecognized CVV response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="139"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="140"/>
         <source>The processor did not return a CVV result</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="675"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="676"/>
         <source>Could not convert &apos;%1&apos; to %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="677"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="678"/>
         <source>CyberSource XML response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="714"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="715"/>
         <source>CyberSource XML Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="715"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="716"/>
         <source>&lt;p&gt;There was an error processing the response from CyberSource, line %1 column %2: %3&lt;br&gt;(%4)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="936"/>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="949"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="937"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="950"/>
         <source>, </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cybersourceprocessor.cpp" line="947"/>
+        <location filename="../../guiclient/cybersourceprocessor.cpp" line="948"/>
         <source>[no invalid fields listed]</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3630,19 +3640,19 @@ What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/errorReporter.cpp" line="1222"/>
+        <location filename="../../common/errorReporter.cpp" line="1221"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/errorReporter.cpp" line="1271"/>
-        <location filename="../../common/errorReporter.cpp" line="1313"/>
+        <location filename="../../common/errorReporter.cpp" line="1270"/>
+        <location filename="../../common/errorReporter.cpp" line="1312"/>
         <source>File %1, line %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/errorReporter.cpp" line="1273"/>
-        <location filename="../../common/errorReporter.cpp" line="1315"/>
+        <location filename="../../common/errorReporter.cpp" line="1272"/>
+        <location filename="../../common/errorReporter.cpp" line="1314"/>
         <source>File %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3746,12 +3756,12 @@ returned %2
 <context>
     <name>ExternalCCProcessor</name>
     <message>
-        <location filename="../../guiclient/externalccprocessor.cpp" line="235"/>
+        <location filename="../../guiclient/externalccprocessor.cpp" line="236"/>
         <source>User reported that an error occurred.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/externalccprocessor.cpp" line="245"/>
+        <location filename="../../guiclient/externalccprocessor.cpp" line="246"/>
         <source>The &apos;approved&apos; parameter is empty; this should never happen.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4044,34 +4054,34 @@ point to the browser executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/guiclient.cpp" line="2140"/>
-        <location filename="../../guiclient/guiclient.cpp" line="2147"/>
-        <location filename="../../guiclient/guiclient.cpp" line="2154"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2130"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2137"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2144"/>
         <source>.aff</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/guiclient.cpp" line="2141"/>
-        <location filename="../../guiclient/guiclient.cpp" line="2148"/>
-        <location filename="../../guiclient/guiclient.cpp" line="2155"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2131"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2138"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2145"/>
         <source>.dic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/guiclient.cpp" line="2163"/>
-        <location filename="../../guiclient/guiclient.cpp" line="2164"/>
-        <location filename="../../guiclient/guiclient.cpp" line="2167"/>
-        <location filename="../../guiclient/guiclient.cpp" line="2176"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2153"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2154"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2157"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2166"/>
         <source>/xTuple/user.dic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/guiclient.cpp" line="2183"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2173"/>
         <source>/xTuple</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/guiclient.cpp" line="2185"/>
+        <location filename="../../guiclient/guiclient.cpp" line="2175"/>
         <source>xTuple</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4419,12 +4429,12 @@ point to the browser executable.</source>
 <context>
     <name>ItemCluster</name>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="776"/>
+        <location filename="../../widgets/itemCluster.cpp" line="818"/>
         <source>Item Number:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="779"/>
+        <location filename="../../widgets/itemCluster.cpp" line="821"/>
         <source>UOM:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4432,72 +4442,72 @@ point to the browser executable.</source>
 <context>
     <name>ItemLineEdit</name>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="127"/>
+        <location filename="../../widgets/itemCluster.cpp" line="129"/>
         <source>Sold </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="130"/>
+        <location filename="../../widgets/itemCluster.cpp" line="132"/>
         <source>Active </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="133"/>
+        <location filename="../../widgets/itemCluster.cpp" line="135"/>
         <source>Multiply Located </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="135"/>
+        <location filename="../../widgets/itemCluster.cpp" line="137"/>
         <source>Lot/Serial # Controlled </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="138"/>
+        <location filename="../../widgets/itemCluster.cpp" line="140"/>
         <source>Purchased and Manufactured </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="140"/>
+        <location filename="../../widgets/itemCluster.cpp" line="142"/>
         <source>Purchased </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="142"/>
+        <location filename="../../widgets/itemCluster.cpp" line="144"/>
         <source>Manufactured </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="144"/>
+        <location filename="../../widgets/itemCluster.cpp" line="146"/>
         <source>Breeder </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="146"/>
+        <location filename="../../widgets/itemCluster.cpp" line="148"/>
         <source>Co-Product and By-Product </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="148"/>
+        <location filename="../../widgets/itemCluster.cpp" line="150"/>
         <source>Costing </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="150"/>
+        <location filename="../../widgets/itemCluster.cpp" line="152"/>
         <source>Component </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="152"/>
+        <location filename="../../widgets/itemCluster.cpp" line="154"/>
         <source>Kit Components </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="215"/>
+        <location filename="../../widgets/itemCluster.cpp" line="222"/>
         <source>Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="215"/>
+        <location filename="../../widgets/itemCluster.cpp" line="222"/>
         <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4805,37 +4815,37 @@ point to the browser executable.</source>
 <context>
     <name>ParameterWidget</name>
     <message>
-        <location filename="../../widgets/parameterwidget.cpp" line="264"/>
+        <location filename="../../widgets/parameterwidget.cpp" line="263"/>
         <source>-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/parameterwidget.cpp" line="494"/>
+        <location filename="../../widgets/parameterwidget.cpp" line="493"/>
         <source>Invalid Filter Set</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/parameterwidget.cpp" line="494"/>
+        <location filename="../../widgets/parameterwidget.cpp" line="493"/>
         <source>This filter set contains an obsolete filter and will be deleted. Do you want to do this?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/parameterwidget.cpp" line="1114"/>
+        <location filename="../../widgets/parameterwidget.cpp" line="1113"/>
         <source>--- Please Select ---</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/parameterwidget.cpp" line="1524"/>
+        <location filename="../../widgets/parameterwidget.cpp" line="1519"/>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/parameterwidget.cpp" line="1871"/>
+        <location filename="../../widgets/parameterwidget.cpp" line="1862"/>
         <source>True</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/parameterwidget.cpp" line="1873"/>
+        <location filename="../../widgets/parameterwidget.cpp" line="1864"/>
         <source>False</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4868,42 +4878,42 @@ point to the browser executable.</source>
 <context>
     <name>PaymentechProcessor</name>
     <message>
-        <location filename="../../guiclient/paymentechprocessor.cpp" line="31"/>
+        <location filename="../../guiclient/paymentechprocessor.cpp" line="32"/>
         <source>A Login is required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/paymentechprocessor.cpp" line="32"/>
+        <location filename="../../guiclient/paymentechprocessor.cpp" line="33"/>
         <source>A Password is required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/paymentechprocessor.cpp" line="33"/>
+        <location filename="../../guiclient/paymentechprocessor.cpp" line="34"/>
         <source>A Division Number must be no more than 10 characters long.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/paymentechprocessor.cpp" line="34"/>
+        <location filename="../../guiclient/paymentechprocessor.cpp" line="35"/>
         <source>The response from the Gateway appears to be incorrectly formatted (could not find field %1 as there are only %2 fields present).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/paymentechprocessor.cpp" line="37"/>
+        <location filename="../../guiclient/paymentechprocessor.cpp" line="38"/>
         <source>The response from the Gateway failed the MD5 security check.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/paymentechprocessor.cpp" line="39"/>
+        <location filename="../../guiclient/paymentechprocessor.cpp" line="40"/>
         <source>The response from the Gateway has failed the MD5 security check but will be processed anyway.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/paymentechprocessor.cpp" line="41"/>
+        <location filename="../../guiclient/paymentechprocessor.cpp" line="42"/>
         <source>The Gateway returned the following error: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/paymentechprocessor.cpp" line="42"/>
+        <location filename="../../guiclient/paymentechprocessor.cpp" line="43"/>
         <source>The selected credit card is not a know type for Paymentech.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5023,52 +5033,52 @@ point to the browser executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="253"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="254"/>
         <source>&lt;p&gt;You must specify an Expense Category for this non-Inventory Item before you may save it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="258"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="259"/>
         <source>&lt;p&gt;You must select an Item Number before you may save.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="265"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="266"/>
         <source>&lt;p&gt;You must enter a quantity before you may save this Purchase Order Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="270"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="271"/>
         <source>&lt;p&gt;The quantity that you are ordering is below the Minimum Order Quantity for this Item Source.  You may continue but this Vendor may not honor pricing or delivery quotations. </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="277"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="278"/>
         <source>&lt;p&gt;The quantity that you are ordering does not fall within the Order Multiple for this Item Source.  You may continue but this Vendor may not honor pricing or delivery quotations.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="283"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="284"/>
         <source>&lt;p&gt;You must enter a due date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="287"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="288"/>
         <source>&lt;p&gt;The Due Date that you are requesting does not fall within the Lead Time Days for this Item Source.  You may continue but this Vendor may not honor pricing or delivery quotations or may not be able to deliver by the requested Due Date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="295"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="296"/>
         <source>&lt;p&gt;There is no Purchase Order header yet. Try entering a Vendor if you are using the Purchase Order window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="413"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="414"/>
         <source>Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="414"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="415"/>
         <source>&lt;p&gt;Do you wish to Save this Order?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5083,12 +5093,12 @@ point to the browser executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="262"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="263"/>
         <source>&lt;p&gt;You must select a Supplying Site before you may save.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/poitemTableModel.cpp" line="321"/>
+        <location filename="../../guiclient/poitemTableModel.cpp" line="322"/>
         <source>&lt;p&gt;There is no Item Site for this Site (%1) and Item Number (%2).</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5210,7 +5220,7 @@ point to the browser executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/main.cpp" line="756"/>
+        <location filename="../../guiclient/main.cpp" line="788"/>
         <source>Additional Configuration Required</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5377,7 +5387,7 @@ point to the browser executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/main.cpp" line="757"/>
+        <location filename="../../guiclient/main.cpp" line="789"/>
         <source>&lt;p&gt;Your system is configured to use multiple Currencies, but the Currency Gain/Loss Account and/or the G/L Series Discrepancy Account does not appear to be configured correctly. You should define these Accounts in &apos;System | Configure Modules | Configure G/L...&apos; before posting any transactions in the system.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5963,28 +5973,28 @@ point to the browser executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripttoolbox.cpp" line="894"/>
+        <location filename="../../guiclient/scripttoolbox.cpp" line="895"/>
         <source>Could not initialize printing system for multiple reports.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripttoolbox.cpp" line="1017"/>
+        <location filename="../../guiclient/scripttoolbox.cpp" line="1018"/>
         <source>Any Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripttoolbox.cpp" line="1300"/>
-        <location filename="../../guiclient/scripttoolbox.cpp" line="1308"/>
+        <location filename="../../guiclient/scripttoolbox.cpp" line="1301"/>
+        <location filename="../../guiclient/scripttoolbox.cpp" line="1309"/>
         <source>Could not load UI</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripttoolbox.cpp" line="1301"/>
+        <location filename="../../guiclient/scripttoolbox.cpp" line="1302"/>
         <source>&lt;p&gt;There was an error loading the UI Form from the database.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripttoolbox.cpp" line="1309"/>
+        <location filename="../../guiclient/scripttoolbox.cpp" line="1310"/>
         <source>&lt;p&gt;There was an error creating a window from the UI Form. It may be empty or invalid.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6269,81 +6279,81 @@ point to the browser executable.</source>
 <context>
     <name>VirtualClusterLineEdit</name>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="298"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="299"/>
         <source>Object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="299"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="300"/>
         <source>Objects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="328"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="329"/>
         <source>Info...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="331"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="332"/>
         <source>View record information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="336"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="337"/>
         <source>Open...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="339"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="340"/>
         <source>Open record detail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="344"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="345"/>
         <source>New...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="347"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="348"/>
         <source>Create new record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="739"/>
-        <location filename="../../widgets/virtualCluster.cpp" line="793"/>
-        <location filename="../../widgets/virtualCluster.cpp" line="817"/>
-        <location filename="../../widgets/virtualCluster.cpp" line="850"/>
-        <location filename="../../widgets/virtualCluster.cpp" line="869"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="737"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="796"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="820"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="853"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="872"/>
         <source>A System Error Occurred at %1::%2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="820"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="823"/>
         <source>%1::sList() not yet defined</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="853"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="856"/>
         <source>%1::sSearch() not yet defined</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="872"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="875"/>
         <source>%1::sInfo() not yet defined</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="329"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="330"/>
         <source>Ctrl+Shift+I</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="337"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="338"/>
         <source>Ctrl+Shift+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="345"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="346"/>
         <source>Ctrl+Shift+N</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6351,27 +6361,27 @@ point to the browser executable.</source>
 <context>
     <name>VirtualInfo</name>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1301"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1304"/>
         <source>Number:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1305"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1308"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1309"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1312"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1318"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1321"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1381"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1384"/>
         <source>A System Error Occurred at %1::%2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6379,27 +6389,27 @@ point to the browser executable.</source>
 <context>
     <name>VirtualList</name>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="947"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="950"/>
         <source>S&amp;earch for:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1025"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1028"/>
         <source>Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1033"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1036"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1039"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1042"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1023"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1026"/>
         <source>Category</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6407,37 +6417,37 @@ point to the browser executable.</source>
 <context>
     <name>VirtualSearch</name>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1112"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1115"/>
         <source>S&amp;earch for:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1116"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1119"/>
         <source>Search through Numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1118"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1121"/>
         <source>Search through Names</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1120"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1123"/>
         <source>Search through Descriptions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1195"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1198"/>
         <source>Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1203"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1206"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/virtualCluster.cpp" line="1209"/>
+        <location filename="../../widgets/virtualCluster.cpp" line="1212"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6612,7 +6622,7 @@ point to the browser executable.</source>
 <context>
     <name>XComboBox</name>
     <message>
-        <location filename="../../widgets/xcombobox.cpp" line="1016"/>
+        <location filename="../../widgets/xcombobox.cpp" line="1020"/>
         <source>Edit List</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6626,17 +6636,17 @@ point to the browser executable.</source>
     </message>
     <message>
         <location filename="../../widgets/datecluster.cpp" line="472"/>
-        <source>&lt;p&gt;The selected site has no work week defined. Please go to Schedule Setup and define the working days for this site.</source>
+        <source>&lt;p&gt;The selected Site has no work week defined. Please go to Schedule Setup and define the working days for this site.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/datecluster.cpp" line="484"/>
+        <source>&lt;p&gt;The selected date is not a working day for the Site selected. Do you want to automatically select the next working day?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../widgets/datecluster.cpp" line="483"/>
         <source>Non-Working Day Entered</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../widgets/datecluster.cpp" line="484"/>
-        <source>&lt;p&gt;The selected Date is not a Working Day for the site selected. Do you want to automatically select a next working day?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6963,7 +6973,7 @@ point to the browser executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/yourpayprocessor.cpp" line="64"/>
+        <location filename="../../guiclient/yourpayprocessor.cpp" line="65"/>
         <source>No Approval Code
 %1
 %2
@@ -6971,22 +6981,22 @@ point to the browser executable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/yourpayprocessor.cpp" line="68"/>
+        <location filename="../../guiclient/yourpayprocessor.cpp" line="69"/>
         <source>The YourPay Store Number is not set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/yourpayprocessor.cpp" line="75"/>
+        <location filename="../../guiclient/yourpayprocessor.cpp" line="76"/>
         <source>Received unexpected approval code %1. This transaction has been treated as approved by YourPay.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/yourpayprocessor.cpp" line="65"/>
+        <location filename="../../guiclient/yourpayprocessor.cpp" line="66"/>
         <source>If LinkShield is enabled then the cutoff score should be set between 1 and 100 but it is currently set to %1. Higher Numbers indicate higher risk.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/yourpayprocessor.cpp" line="69"/>
+        <location filename="../../guiclient/yourpayprocessor.cpp" line="70"/>
         <source>Transaction failed LinkShield check. Either the score was greater than the maximum configured allowed score or the score was empty (this may happen if the application is configured to check the LinkShield score but you have not subscribed to this service).</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7528,6 +7538,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../../widgets/glCluster.cpp" line="466"/>
+        <location filename="../../widgets/tmp/dll/ui_accountSearch.h" line="220"/>
+        <location filename="../../widgets/tmp/lib/ui_accountSearch.h" line="220"/>
         <source>Type:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7544,6 +7556,42 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/glCluster.cpp" line="506"/>
         <source>Sub. Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_accountSearch.h" line="219"/>
+        <location filename="../../widgets/tmp/lib/ui_accountSearch.h" line="219"/>
+        <source>Chart of Accounts Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_accountSearch.h" line="221"/>
+        <location filename="../../widgets/tmp/lib/ui_accountSearch.h" line="221"/>
+        <source>Description contains:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_accountSearch.h" line="223"/>
+        <location filename="../../widgets/tmp/lib/ui_accountSearch.h" line="223"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_accountSearch.h" line="224"/>
+        <location filename="../../widgets/tmp/lib/ui_accountSearch.h" line="224"/>
+        <source>&amp;Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_accountSearch.h" line="225"/>
+        <location filename="../../widgets/tmp/lib/ui_accountSearch.h" line="225"/>
+        <source>C&amp;lear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_accountSearch.h" line="226"/>
+        <location filename="../../widgets/tmp/lib/ui_accountSearch.h" line="226"/>
+        <source>G/L Accounts:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9496,6 +9544,16 @@ Check the database server log for errors.</source>
         <source>Discount Amount:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../guiclient/applyARDiscount.cpp" line="91"/>
+        <source>Invoice</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/applyARDiscount.cpp" line="92"/>
+        <source>Credit Memo</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>applyDiscount</name>
@@ -9557,6 +9615,16 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../../guiclient/applyDiscount.ui" line="181"/>
         <source>Total Discountable Owed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/applyDiscount.cpp" line="99"/>
+        <source>Voucher</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/applyDiscount.cpp" line="100"/>
+        <source>Debit Memo</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11343,100 +11411,166 @@ Are you sure that you want to save this change?</source>
     </message>
 </context>
 <context>
-    <name>billingEditList</name>
+    <name>batchItem</name>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="34"/>
-        <source>Document #</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="299"/>
+        <source>Scheduled Job</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="35"/>
-        <source>Order #</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="300"/>
+        <source>Submitted by:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="36"/>
-        <source>Cust./Item #</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="301"/>
+        <source>who</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="37"/>
-        <source>Name/Description</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="302"/>
+        <source>Submitted on:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="38"/>
-        <source>UOM</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="303"/>
+        <source>Response Email:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="39"/>
-        <source>Qty. to Bill</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="304"/>
+        <source>Action:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="40"/>
-        <source>Price</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="305"/>
+        <source>what</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="41"/>
-        <source>Ext. Price</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="306"/>
+        <source>Parameter:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="78"/>
-        <source>Cancel Billing</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="307"/>
+        <source>details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="79"/>
-        <source>Are you sure that you want to cancel billing for the selected order?</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="308"/>
+        <source>Scheduled:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="80"/>
-        <source>&amp;Yes</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="309"/>
+        <source>Started:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="80"/>
-        <source>&amp;No</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="310"/>
+        <source>Completed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.ui" line="22"/>
-        <source>Billing Edit List</source>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="311"/>
+        <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.ui" line="60"/>
+        <location filename="../../guiclient/ui/ui_batchItem.h" line="312"/>
+        <source>&amp;Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>batchManager</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="317"/>
+        <source>xTuple Connect Console</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="318"/>
+        <source>Submitted By:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="319"/>
+        <source>Current &amp;User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="320"/>
+        <source>All Users</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="321"/>
+        <source>&amp;Selected User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="322"/>
+        <source>Show Completed Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="323"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.ui" line="67"/>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="324"/>
+        <source>Jobs:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="325"/>
+        <source>&amp;Reschedule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="326"/>
+        <source>Retry ASAP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="327"/>
+        <source>View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="328"/>
+        <source>Ca&amp;ncel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_batchManager.h" line="329"/>
+        <source>Automatically Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>billingEditList</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_billingEditList.h" line="123"/>
+        <source>Billing Edit List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_billingEditList.h" line="124"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_billingEditList.h" line="125"/>
         <source>&amp;Print</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/billingEditList.ui" line="86"/>
+        <location filename="../../guiclient/ui/ui_billingEditList.h" line="126"/>
         <source>Billing List:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="42"/>
-        <source>Currency</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="222"/>
-        <source>Access Denied</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/billingEditList.cpp" line="223"/>
-        <source>You may not view or edit this Billing as it references a Site for which you have not been granted privileges.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12343,7 +12477,7 @@ Are you sure that you want to save this change?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/cashReceipt.cpp" line="1053"/>
+        <location filename="../../guiclient/cashReceipt.cpp" line="1055"/>
         <source>Record Receipt as:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12514,7 +12648,7 @@ Are you sure that you want to save this change?</source>
     </message>
     <message>
         <location filename="../../guiclient/cashReceipt.ui" line="257"/>
-        <location filename="../../guiclient/cashReceipt.cpp" line="1055"/>
+        <location filename="../../guiclient/cashReceipt.cpp" line="1057"/>
         <source>Apply Balance As:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15053,306 +15187,311 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>configureGL</name>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="166"/>
+        <location filename="../../guiclient/configureGL.ui" line="240"/>
         <source>Main Segment Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="43"/>
+        <location filename="../../guiclient/configureGL.ui" line="60"/>
         <source>Use Company Segment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="55"/>
+        <location filename="../../guiclient/configureGL.ui" line="87"/>
         <source>Company Segment Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="102"/>
+        <location filename="../../guiclient/configureGL.ui" line="159"/>
         <source>Use Profit Centers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="114"/>
+        <location filename="../../guiclient/configureGL.ui" line="186"/>
         <source>Profit Center Segment Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="137"/>
+        <location filename="../../guiclient/configureGL.ui" line="209"/>
         <source>Allow Free-Form Profit Centers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="147"/>
+        <location filename="../../guiclient/configureGL.ui" line="221"/>
         <source>Main</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="212"/>
+        <location filename="../../guiclient/configureGL.ui" line="309"/>
         <source>Use Subaccounts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="224"/>
+        <location filename="../../guiclient/configureGL.ui" line="353"/>
         <source>Subaccount Segment Size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="244"/>
+        <location filename="../../guiclient/configureGL.ui" line="346"/>
         <source>Allow Free-Form Subaccounts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1196"/>
+        <location filename="../../guiclient/configureGL.ui" line="1317"/>
         <source>Meaning of Currency Exchange Rates:</source>
         <translation type="unfinished"></translation>
     </message>
     <message utf8="true">
-        <location filename="../../guiclient/configureGL.ui" line="1202"/>
+        <location filename="../../guiclient/configureGL.ui" line="1323"/>
         <source>Base × Exchange Rate = Foreign</source>
         <translation type="unfinished"></translation>
     </message>
     <message utf8="true">
-        <location filename="../../guiclient/configureGL.ui" line="1209"/>
+        <location filename="../../guiclient/configureGL.ui" line="1330"/>
         <source>Foreign × Exchange Rate = Base</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1227"/>
+        <location filename="../../guiclient/configureGL.ui" line="1348"/>
         <source>Default Tax Authority:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1240"/>
+        <location filename="../../guiclient/configureGL.ui" line="1361"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="283"/>
+        <location filename="../../guiclient/configureGL.ui" line="397"/>
         <source>Manual Forward Update Trial Balances</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="254"/>
+        <location filename="../../guiclient/configureGL.ui" line="368"/>
         <source>Transactions Post to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="260"/>
+        <location filename="../../guiclient/configureGL.ui" line="374"/>
         <source>Journal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="290"/>
+        <location filename="../../guiclient/configureGL.ui" line="404"/>
         <source>Mandatory notes for Manual Journal Entries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="300"/>
+        <location filename="../../guiclient/configureGL.ui" line="414"/>
         <source>Assignments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="311"/>
+        <location filename="../../guiclient/configureGL.ui" line="425"/>
         <source>Retained Earnings:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="328"/>
+        <location filename="../../guiclient/configureGL.ui" line="442"/>
         <source>Currency Gain/Loss:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="345"/>
+        <location filename="../../guiclient/configureGL.ui" line="459"/>
         <source>G/L Series Discrepancy :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="368"/>
+        <location filename="../../guiclient/configureGL.ui" line="482"/>
         <source>Accounts Payable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="419"/>
+        <location filename="../../guiclient/configureGL.ui" line="533"/>
         <source>Enable EFT Check Printing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="531"/>
+        <location filename="../../guiclient/configureGL.ui" line="645"/>
         <source>Select an EFT Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="537"/>
+        <location filename="../../guiclient/configureGL.ui" line="651"/>
         <source>ACH</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="547"/>
+        <location filename="../../guiclient/configureGL.ui" line="661"/>
         <source>ABA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="554"/>
+        <location filename="../../guiclient/configureGL.ui" line="668"/>
         <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="568"/>
-        <location filename="../../guiclient/configureGL.ui" line="589"/>
+        <location filename="../../guiclient/configureGL.ui" line="682"/>
+        <location filename="../../guiclient/configureGL.ui" line="703"/>
         <source>.aba</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="575"/>
+        <location filename="../../guiclient/configureGL.ui" line="689"/>
         <source>Default Suffix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="615"/>
-        <location filename="../../guiclient/configureGL.ui" line="695"/>
+        <location filename="../../guiclient/configureGL.ui" line="729"/>
+        <location filename="../../guiclient/configureGL.ui" line="809"/>
         <source>^\d+$</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="622"/>
+        <location filename="../../guiclient/configureGL.ui" line="736"/>
         <source>^(\d{3}-\d{3})|(\d{6}000)$</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="629"/>
+        <location filename="../../guiclient/configureGL.ui" line="743"/>
         <source>^\d{9}$</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="636"/>
+        <location filename="../../guiclient/configureGL.ui" line="750"/>
         <source>Routing # Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="643"/>
+        <location filename="../../guiclient/configureGL.ui" line="757"/>
         <source>Formatting Procedure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="650"/>
+        <location filename="../../guiclient/configureGL.ui" line="764"/>
         <source>formatAchChecks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="657"/>
+        <location filename="../../guiclient/configureGL.ui" line="771"/>
         <source>formatAbaChecks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="667"/>
+        <location filename="../../guiclient/configureGL.ui" line="781"/>
         <source>stored procedure name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="674"/>
+        <location filename="../../guiclient/configureGL.ui" line="788"/>
         <source>Account # Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="681"/>
+        <location filename="../../guiclient/configureGL.ui" line="795"/>
         <source>^\d{4,17}$</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="688"/>
+        <location filename="../../guiclient/configureGL.ui" line="802"/>
         <source>^\d{1,9}$</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="727"/>
+        <location filename="../../guiclient/configureGL.ui" line="841"/>
         <source>Require Vendor Invoice # on:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="734"/>
+        <location filename="../../guiclient/configureGL.ui" line="848"/>
         <source>Regular Vouchers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="741"/>
+        <location filename="../../guiclient/configureGL.ui" line="855"/>
         <source>Miscellaneous Vouchers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="767"/>
+        <location filename="../../guiclient/configureGL.ui" line="881"/>
         <source>Recurring Voucher Buffer:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="820"/>
+        <location filename="../../guiclient/configureGL.ui" line="934"/>
         <source>Accounts Receivable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1186"/>
+        <location filename="../../guiclient/configureGL.ui" line="1264"/>
+        <source>Credit Taxes for Early Payment Discounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/configureGL.ui" line="1307"/>
         <source>Global</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1271"/>
+        <location filename="../../guiclient/configureGL.ui" line="1392"/>
         <source>Interface Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1277"/>
+        <location filename="../../guiclient/configureGL.ui" line="1398"/>
         <source>Interface Inventory to General Ledger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="922"/>
+        <location filename="../../guiclient/configureGL.ui" line="1036"/>
         <source>Hide &apos;Apply to Balance&apos; button</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="929"/>
+        <location filename="../../guiclient/configureGL.ui" line="1043"/>
         <source>Enable Customer Deposits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="936"/>
+        <location filename="../../guiclient/configureGL.ui" line="1050"/>
         <source>Remit-To Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="953"/>
+        <location filename="../../guiclient/configureGL.ui" line="1067"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="980"/>
+        <location filename="../../guiclient/configureGL.ui" line="1094"/>
         <source>Phone:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/configureGL.ui" line="31"/>
-        <location filename="../../guiclient/configureGL.ui" line="267"/>
+        <location filename="../../guiclient/configureGL.ui" line="381"/>
         <source>General Ledger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1021"/>
+        <location filename="../../guiclient/configureGL.ui" line="1135"/>
         <source>Credit Warn Customers when Late</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1036"/>
+        <location filename="../../guiclient/configureGL.ui" line="1150"/>
         <source>Default Grace Period Days:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1074"/>
+        <location filename="../../guiclient/configureGL.ui" line="1188"/>
         <source>Recurring Invoice Buffer:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="790"/>
-        <location filename="../../guiclient/configureGL.ui" line="1097"/>
+        <location filename="../../guiclient/configureGL.ui" line="904"/>
+        <location filename="../../guiclient/configureGL.ui" line="1211"/>
         <source>days</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15362,145 +15501,145 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="92"/>
+        <location filename="../../guiclient/configureGL.ui" line="124"/>
         <source>Enable External Company Consolidation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.cpp" line="419"/>
+        <location filename="../../guiclient/configureGL.cpp" line="442"/>
         <source>Please enter a default Company Id if you are going to create ACH files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.cpp" line="425"/>
+        <location filename="../../guiclient/configureGL.cpp" line="448"/>
         <source>EIN, TIN, and DUNS numbers are all 9 digit numbers. Other characters (except dashes for readability) are not allowed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.cpp" line="430"/>
+        <location filename="../../guiclient/configureGL.cpp" line="453"/>
         <source>Company Ids must be 10 characters or shorter (not counting dashes in EIN&apos;s, TIN&apos;s, and DUNS numbers).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.cpp" line="436"/>
+        <location filename="../../guiclient/configureGL.cpp" line="459"/>
         <source>Please mark whether the Company Id is an EIN, TIN, DUNS number, or Other.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.cpp" line="251"/>
-        <location filename="../../guiclient/configureGL.cpp" line="264"/>
-        <location filename="../../guiclient/configureGL.cpp" line="278"/>
-        <location filename="../../guiclient/configureGL.cpp" line="292"/>
-        <location filename="../../guiclient/configureGL.cpp" line="310"/>
-        <location filename="../../guiclient/configureGL.cpp" line="325"/>
-        <location filename="../../guiclient/configureGL.cpp" line="342"/>
-        <location filename="../../guiclient/configureGL.cpp" line="355"/>
-        <location filename="../../guiclient/configureGL.cpp" line="375"/>
-        <location filename="../../guiclient/configureGL.cpp" line="388"/>
-        <location filename="../../guiclient/configureGL.cpp" line="404"/>
-        <location filename="../../guiclient/configureGL.cpp" line="443"/>
+        <location filename="../../guiclient/configureGL.cpp" line="274"/>
+        <location filename="../../guiclient/configureGL.cpp" line="287"/>
+        <location filename="../../guiclient/configureGL.cpp" line="301"/>
+        <location filename="../../guiclient/configureGL.cpp" line="315"/>
+        <location filename="../../guiclient/configureGL.cpp" line="333"/>
+        <location filename="../../guiclient/configureGL.cpp" line="348"/>
+        <location filename="../../guiclient/configureGL.cpp" line="365"/>
+        <location filename="../../guiclient/configureGL.cpp" line="378"/>
+        <location filename="../../guiclient/configureGL.cpp" line="398"/>
+        <location filename="../../guiclient/configureGL.cpp" line="411"/>
+        <location filename="../../guiclient/configureGL.cpp" line="427"/>
+        <location filename="../../guiclient/configureGL.cpp" line="466"/>
         <source>Cannot Save Accounting Configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.cpp" line="620"/>
-        <location filename="../../guiclient/configureGL.cpp" line="631"/>
+        <location filename="../../guiclient/configureGL.cpp" line="644"/>
+        <location filename="../../guiclient/configureGL.cpp" line="655"/>
         <source>Set Encryption?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.cpp" line="621"/>
+        <location filename="../../guiclient/configureGL.cpp" line="645"/>
         <source>Your encryption key is not set. You will not be able to configure electronic checking information for Vendors until you configure encryption. Would you like to do this now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.cpp" line="632"/>
+        <location filename="../../guiclient/configureGL.cpp" line="656"/>
         <source>Your encryption key is not set. You will not be able to configure electronic checking information for Vendors until the system is configured to perform encryption.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="378"/>
+        <location filename="../../guiclient/configureGL.ui" line="492"/>
         <source>Next Accounts Payable Memo #:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="431"/>
+        <location filename="../../guiclient/configureGL.ui" line="545"/>
         <source>Next Batch #:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="450"/>
+        <location filename="../../guiclient/configureGL.ui" line="564"/>
         <source>1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="457"/>
+        <location filename="../../guiclient/configureGL.ui" line="571"/>
         <source>Company ID:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="470"/>
+        <location filename="../../guiclient/configureGL.ui" line="584"/>
         <source>Company Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="561"/>
-        <location filename="../../guiclient/configureGL.ui" line="594"/>
+        <location filename="../../guiclient/configureGL.ui" line="675"/>
+        <location filename="../../guiclient/configureGL.ui" line="708"/>
         <source>.ach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="599"/>
+        <location filename="../../guiclient/configureGL.ui" line="713"/>
         <source>.dat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="604"/>
+        <location filename="../../guiclient/configureGL.ui" line="718"/>
         <source>.txt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="503"/>
+        <location filename="../../guiclient/configureGL.ui" line="617"/>
         <source>is a(n):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="277"/>
+        <location filename="../../guiclient/configureGL.ui" line="391"/>
         <source>Options:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="510"/>
+        <location filename="../../guiclient/configureGL.ui" line="624"/>
         <source>EIN/TIN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="517"/>
+        <location filename="../../guiclient/configureGL.ui" line="631"/>
         <source>DUNS Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="524"/>
+        <location filename="../../guiclient/configureGL.ui" line="638"/>
         <source>Other</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="834"/>
+        <location filename="../../guiclient/configureGL.ui" line="948"/>
         <source>Next Receivables Memo #:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="877"/>
+        <location filename="../../guiclient/configureGL.ui" line="991"/>
         <source>Next Cash Receipt #:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1108"/>
+        <location filename="../../guiclient/configureGL.ui" line="1222"/>
         <source>Default Incident Category:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/configureGL.ui" line="1128"/>
+        <location filename="../../guiclient/configureGL.ui" line="1242"/>
         <source>Auto Close Incidents when Invoice Paid</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16991,309 +17130,461 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="391"/>
+        <location filename="../../guiclient/contact.cpp" line="550"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="34"/>
+        <location filename="../../guiclient/contact.ui" line="31"/>
         <source>Number:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="138"/>
+        <location filename="../../guiclient/contact.ui" line="135"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="153"/>
+        <location filename="../../guiclient/contact.ui" line="150"/>
         <source>Account #:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="174"/>
+        <location filename="../../guiclient/contact.ui" line="169"/>
         <source>Owner:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="205"/>
+        <location filename="../../guiclient/contact.ui" line="198"/>
         <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="222"/>
+        <location filename="../../guiclient/contact.ui" line="215"/>
         <source>Comments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="239"/>
+        <location filename="../../guiclient/contact.ui" line="232"/>
         <source>Characteristics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="257"/>
+        <location filename="../../guiclient/contact.ui" line="247"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="267"/>
-        <location filename="../../guiclient/contact.ui" line="314"/>
+        <location filename="../../guiclient/contact.ui" line="257"/>
+        <location filename="../../guiclient/contact.ui" line="301"/>
         <source>Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="277"/>
+        <location filename="../../guiclient/contact.ui" line="267"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="351"/>
+        <location filename="../../guiclient/contact.ui" line="335"/>
+        <source>Show Orders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.ui" line="345"/>
         <source>Documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="59"/>
+        <location filename="../../guiclient/contact.cpp" line="237"/>
         <source>Characteristic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="60"/>
+        <location filename="../../guiclient/contact.cpp" line="238"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="67"/>
+        <location filename="../../guiclient/contact.cpp" line="245"/>
         <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="158"/>
-        <source>There was an error creating a new contact (%).
-Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/contact.cpp" line="335"/>
+        <location filename="../../guiclient/contact.cpp" line="503"/>
         <source>&lt;p&gt;You must fill in a contact first or last name as a minimum before saving.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="386"/>
+        <location filename="../../guiclient/contact.cpp" line="545"/>
         <source>Question Saving Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="387"/>
-        <source>There are multiple Contacts sharing this Address.
-What would you like to do?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/contact.cpp" line="389"/>
+        <location filename="../../guiclient/contact.cpp" line="548"/>
         <source>Change This One</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="390"/>
+        <location filename="../../guiclient/contact.cpp" line="549"/>
         <source>Change Address for All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="403"/>
-        <source>There was an error saving this Address (%1).
-Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/contact.cpp" line="416"/>
-        <source>There was an error saving this Contact (%1).
-Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/contact.cpp" line="62"/>
+        <location filename="../../guiclient/contact.cpp" line="240"/>
         <source>Used by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="63"/>
+        <location filename="../../guiclient/contact.cpp" line="241"/>
         <source>Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="64"/>
+        <location filename="../../guiclient/contact.cpp" line="242"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="65"/>
+        <location filename="../../guiclient/contact.cpp" line="243"/>
         <source>Role</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="54"/>
-        <location filename="../../guiclient/contact.cpp" line="66"/>
+        <location filename="../../guiclient/contact.ui" line="51"/>
+        <location filename="../../guiclient/contact.cpp" line="244"/>
         <source>Active</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="202"/>
+        <location filename="../../guiclient/contact.cpp" line="379"/>
         <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="203"/>
+        <location filename="../../guiclient/contact.cpp" line="380"/>
         <source>View...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="328"/>
-        <location filename="../../guiclient/contact.cpp" line="204"/>
+        <location filename="../../guiclient/contact.ui" line="315"/>
+        <location filename="../../guiclient/contact.cpp" line="478"/>
         <source>Detach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="334"/>
+        <location filename="../../guiclient/contact.cpp" line="502"/>
         <source>Contact Blank</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="364"/>
+        <location filename="../../guiclient/contact.cpp" line="525"/>
         <source>Cannot make Contact inactive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="365"/>
+        <location filename="../../guiclient/contact.cpp" line="526"/>
         <source>&lt;p&gt;You may not mark this Contact as not Active when this person is a Contact for an active CRM Account, Customer, Vendor, or Prospect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="595"/>
+        <location filename="../../guiclient/contact.cpp" line="680"/>
         <source>Primary Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="596"/>
+        <location filename="../../guiclient/contact.cpp" line="683"/>
         <source>Secondary Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="597"/>
+        <location filename="../../guiclient/contact.cpp" line="672"/>
         <source>Billing Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="598"/>
+        <location filename="../../guiclient/contact.cpp" line="674"/>
         <source>Correspondence Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="599"/>
+        <location filename="../../guiclient/contact.cpp" line="675"/>
         <source>CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="600"/>
+        <location filename="../../guiclient/contact.cpp" line="676"/>
         <source>Customer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="601"/>
+        <location filename="../../guiclient/contact.cpp" line="686"/>
         <source>Vendor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="602"/>
+        <location filename="../../guiclient/contact.cpp" line="681"/>
         <source>Prospect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="603"/>
-        <source>Ship-To Address</source>
+        <location filename="../../guiclient/contact.cpp" line="325"/>
+        <source>Getting Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="604"/>
-        <source>Vendor Address</source>
+        <location filename="../../guiclient/contact.cpp" line="334"/>
+        <source>Saving Placeholder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="623"/>
-        <source>Are you sure that you want to remove this Contact as the Primary Contact for this CRM Account?</source>
+        <location filename="../../guiclient/contact.cpp" line="335"/>
+        <source>&lt;p&gt;There was an error creating a new contact (%). Check the database server log for errors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="629"/>
-        <source>Are you sure that you want to remove this Contact as the Secondary Contact for this CRM Account?</source>
+        <location filename="../../guiclient/contact.cpp" line="490"/>
+        <source>Cleaning up Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="636"/>
-        <source>Are you sure that you want to remove this Contact as the Billing Contact for this Customer?</source>
+        <location filename="../../guiclient/contact.cpp" line="515"/>
+        <location filename="../../guiclient/contact.cpp" line="532"/>
+        <source>In Use</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="642"/>
-        <source>Are you sure that you want to remove this Contact as the Correspondence Contact for this Customer?</source>
+        <location filename="../../guiclient/contact.cpp" line="546"/>
+        <source>&lt;p&gt;There are multiple Contacts sharing this Address. What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="649"/>
-        <source>Are you sure that you want to remove this Contact as the Primary Contact for this Vendor?</source>
+        <location filename="../../guiclient/contact.cpp" line="562"/>
+        <source>Saving Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="656"/>
-        <source>Are you sure that you want to remove this Contact as the Secondary Contact for this Vendor?</source>
+        <location filename="../../guiclient/contact.cpp" line="563"/>
+        <source>&lt;p&gt;There was an error saving this Address (%1). Check the database server log for errors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="663"/>
-        <source>Are you sure that you want to remove this Contact as the Contact for this Prospect?</source>
+        <location filename="../../guiclient/contact.cpp" line="578"/>
+        <source>Saving Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="670"/>
-        <source>Are you sure that you want to remove this Contact as the Contact for this Ship-To Address?</source>
+        <location filename="../../guiclient/contact.cpp" line="579"/>
+        <source>&lt;p&gt;There was an error saving this Contact (%1). Check the database server log for errors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="677"/>
-        <source>Are you sure that you want to remove this Contact as the Contact for this Vendor Address?</source>
+        <location filename="../../guiclient/contact.cpp" line="631"/>
+        <source>Deleting Characteristic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="702"/>
-        <source>Detach Contact?</source>
+        <location filename="../../guiclient/contact.cpp" line="655"/>
+        <source>Getting Characteristics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="300"/>
-        <source>Uses of the Contact</source>
+        <location filename="../../guiclient/contact.cpp" line="664"/>
+        <location filename="../../guiclient/contact.cpp" line="705"/>
+        <source>Getting Contact Uses</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.ui" line="321"/>
-        <source>View</source>
+        <location filename="../../guiclient/contact.cpp" line="673"/>
+        <source>Sales Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="606"/>
-        <source>Employee</source>
+        <location filename="../../guiclient/contact.cpp" line="678"/>
+        <source>Opportunity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="691"/>
-        <source>Are you sure that you want to remove this Contact as the Contact for this Employee?</source>
+        <location filename="../../guiclient/contact.cpp" line="679"/>
+        <source>Purchase Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contact.cpp" line="605"/>
-        <source>Site</source>
+        <location filename="../../guiclient/contact.cpp" line="682"/>
+        <source>Quote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/contact.cpp" line="684"/>
+        <source>Ship-To Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="685"/>
+        <source>To-Do Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="687"/>
+        <source>Vendor Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="688"/>
+        <source>Vendor Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="690"/>
+        <source>Incident</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="693"/>
+        <source>Lot/Serial Registration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="696"/>
+        <source>Transfer Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="697"/>
+        <source>Source Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="698"/>
+        <source>Destination Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="717"/>
+        <source>Are you sure that you want to remove this Contact as the Primary Contact for this CRM Account?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="723"/>
+        <source>Are you sure that you want to remove this Contact as the Secondary Contact for this CRM Account?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="730"/>
+        <source>Are you sure that you want to remove this Contact as the Billing Contact for this Customer?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="736"/>
+        <source>Are you sure that you want to remove this Contact as the Correspondence Contact for this Customer?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="743"/>
+        <source>Are you sure that you want to remove this Contact as the Primary Contact for this Vendor?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="750"/>
+        <source>Are you sure that you want to remove this Contact as the Secondary Contact for this Vendor?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="757"/>
+        <source>Are you sure that you want to remove this Contact as the Contact for this Prospect?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="764"/>
+        <source>Are you sure that you want to remove this Contact as the Contact for this Ship-To Address?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="771"/>
+        <source>Are you sure that you want to remove this Contact as the Contact for this Vendor Address?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="792"/>
+        <location filename="../../guiclient/contact.cpp" line="800"/>
+        <source>Are you sure that you want to remove the link between this Contact and this Sales Order? The name and address will still be kept in the order for future reference.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="808"/>
+        <source>Are you sure you want to remove this Contact as the Contact for this Incident?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="815"/>
+        <source>Are you sure you want to remove this Contact as the Contact for this Lot/Serial Registration?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="822"/>
+        <source>Are you sure you want to remove this Contact as the Contact for this Opportunity?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="829"/>
+        <location filename="../../guiclient/contact.cpp" line="837"/>
+        <source>Are you sure you want to remove the link between this Contact and this Purchase Order? The name and address will still be kept in the order for future reference.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="845"/>
+        <location filename="../../guiclient/contact.cpp" line="853"/>
+        <source>Are you sure you want to remove the link between this Contact and this Quote? The name and address will still be kept in the quote for future reference.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="861"/>
+        <source>Are you sure you want to remove this Contact as the Contact for this To-Do Item?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="868"/>
+        <location filename="../../guiclient/contact.cpp" line="876"/>
+        <source>Are you sure you want to remove the link between this Contact and this Transfer Order? The name and address will still be kept in the order for future reference.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="888"/>
+        <source>Detach Contact?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="895"/>
+        <source>Detaching</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.ui" line="290"/>
+        <source>Uses of the Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.ui" line="308"/>
+        <source>View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="677"/>
+        <source>Employee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="785"/>
+        <source>Are you sure that you want to remove this Contact as the Contact for this Employee?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="689"/>
+        <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contact.cpp" line="778"/>
         <source>Are you sure that you want to remove this Contact as the Contact for this Site?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17413,7 +17704,7 @@ Check the database server log for errors.</source>
         <location filename="../../guiclient/contactMerge.ui" line="337"/>
         <location filename="../../guiclient/contactMerge.cpp" line="48"/>
         <location filename="../../guiclient/contactMerge.cpp" line="74"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="353"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="358"/>
         <source>Email</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17429,7 +17720,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <location filename="../../guiclient/contactMerge.ui" line="268"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="335"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="340"/>
         <source>Honorific</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17458,7 +17749,7 @@ Check the database server log for errors.</source>
         <location filename="../../guiclient/contactMerge.ui" line="317"/>
         <location filename="../../guiclient/contactMerge.cpp" line="43"/>
         <location filename="../../guiclient/contactMerge.cpp" line="69"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="343"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="348"/>
         <source>Suffix</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17480,7 +17771,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <location filename="../../guiclient/contactMerge.ui" line="444"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="399"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="404"/>
         <source>Target Contact</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17517,28 +17808,28 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../../guiclient/contactMerge.cpp" line="44"/>
         <location filename="../../guiclient/contactMerge.cpp" line="70"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="345"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="350"/>
         <source>Initials</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/contactMerge.cpp" line="45"/>
         <location filename="../../guiclient/contactMerge.cpp" line="71"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="347"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="352"/>
         <source>Phone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/contactMerge.cpp" line="46"/>
         <location filename="../../guiclient/contactMerge.cpp" line="72"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="349"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="354"/>
         <source>Alt. Phone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/contactMerge.cpp" line="47"/>
         <location filename="../../guiclient/contactMerge.cpp" line="73"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="351"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="356"/>
         <source>Fax</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17551,21 +17842,21 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../../guiclient/contactMerge.cpp" line="50"/>
         <location filename="../../guiclient/contactMerge.cpp" line="76"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="357"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="362"/>
         <source>Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/contactMerge.cpp" line="51"/>
         <location filename="../../guiclient/contactMerge.cpp" line="77"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="359"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="364"/>
         <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/contactMerge.cpp" line="52"/>
         <location filename="../../guiclient/contactMerge.cpp" line="78"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="361"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="366"/>
         <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17648,73 +17939,73 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <location filename="../../guiclient/contactMerge.cpp" line="300"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="375"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="380"/>
         <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="303"/>
-        <location filename="../../guiclient/contactMerge.cpp" line="378"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="304"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="383"/>
         <source>View...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="320"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="324"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="333"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="338"/>
         <source>CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="337"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="342"/>
         <source>First Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="339"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="344"/>
         <source>Middle Initial</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="341"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="346"/>
         <source>Last Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="355"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="360"/>
         <source>Web Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="363"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="368"/>
         <source>Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="365"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="370"/>
         <source>Merge </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="365"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="370"/>
         <source> to target</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="368"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="373"/>
         <source>Deselect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="481"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="486"/>
         <source>The purge action cannot be undone. Are you sure you want to proceed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contactMerge.cpp" line="483"/>
+        <location filename="../../guiclient/contactMerge.cpp" line="488"/>
         <source>Purge Contact Merge?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17749,8 +18040,8 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <location filename="../../guiclient/contacts.cpp" line="47"/>
-        <location filename="../../guiclient/contacts.cpp" line="322"/>
-        <location filename="../../guiclient/contacts.cpp" line="328"/>
+        <location filename="../../guiclient/contacts.cpp" line="307"/>
+        <location filename="../../guiclient/contacts.cpp" line="313"/>
         <source>CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17890,48 +18181,68 @@ Check the database server log for errors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="158"/>
+        <location filename="../../guiclient/contacts.cpp" line="153"/>
+        <source>Checking Usage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contacts.cpp" line="157"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="210"/>
+        <location filename="../../guiclient/contacts.cpp" line="209"/>
         <source>Delete Contact?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="211"/>
+        <location filename="../../guiclient/contacts.cpp" line="210"/>
         <source>&lt;p&gt;Are you sure that you want to completely delete the selected contact?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="252"/>
-        <location filename="../../guiclient/contacts.cpp" line="285"/>
+        <location filename="../../guiclient/contacts.cpp" line="222"/>
+        <source>Deleting Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contacts.cpp" line="239"/>
+        <location filename="../../guiclient/contacts.cpp" line="271"/>
         <source>Detach Contact?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="253"/>
+        <location filename="../../guiclient/contacts.cpp" line="240"/>
         <source>&lt;p&gt;This Contact is currently attached to a different CRM Account. Are you sure you want to change the CRM Account for this person?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="286"/>
+        <location filename="../../guiclient/contacts.cpp" line="261"/>
+        <source>Attaching Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contacts.cpp" line="272"/>
         <source>&lt;p&gt;Are you sure you want to detach this Contact from this CRM Account?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="301"/>
+        <location filename="../../guiclient/contacts.cpp" line="288"/>
         <source>Error detaching Contact from CRM Account (%1).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="375"/>
+        <location filename="../../guiclient/contacts.cpp" line="294"/>
+        <source>Detaching Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/contacts.cpp" line="360"/>
         <source>Restricted Access</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/contacts.cpp" line="375"/>
+        <location filename="../../guiclient/contacts.cpp" line="360"/>
         <source>You have not been granted privileges to open this Contact.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -19873,17 +20184,17 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
 <context>
     <name>createLotSerial</name>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="199"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="202"/>
         <source>Enter Quantity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="208"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="211"/>
         <source>Enter Expiration Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="228"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="231"/>
         <source>Item is Non-Fractional</source>
         <translation type="unfinished"></translation>
     </message>
@@ -19913,87 +20224,87 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="181"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="184"/>
         <source>Enter Lot/Serial Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="182"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="185"/>
         <source>&lt;p&gt;You must enter a Lot/Serial number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="187"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="190"/>
         <source>Lot/Serial Number Contains Spaces</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="188"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="191"/>
         <source>&lt;p&gt;The Lot/Serial Number contains spaces. Do you want to save it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="200"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="203"/>
         <source>&lt;p&gt;You must enter a positive value to assign to this Lot/Serial number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="209"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="212"/>
         <source>&lt;p&gt;You must enter an expiration date to this Perishable Lot/Serial number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="229"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="232"/>
         <source>&lt;p&gt;The Item in question is not stored in fractional quantities. You must enter a whole value to assign to this Lot/Serial number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="257"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="260"/>
         <source>Invalid Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="258"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="261"/>
         <source>&lt;p&gt;The number entered is not valid.  Please select from the list of valid numbers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="291"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="294"/>
         <source>Duplicate Serial Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="292"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="295"/>
         <source>This Serial Number has already been used and cannot be reused.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="217"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="220"/>
         <source>Enter Warranty Expire Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="218"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="221"/>
         <source>&lt;p&gt;You must enter a warranty expiration date for this Lot/Serial number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="249"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="252"/>
         <source>Invalid Qty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="250"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="253"/>
         <source>&lt;p&gt;The quantity being assigned is greater than the  quantity preassigned to the order being received.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="317"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="320"/>
         <source>Use Existing?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/createLotSerial.cpp" line="318"/>
+        <location filename="../../guiclient/createLotSerial.cpp" line="321"/>
         <source>&lt;p&gt;A record with for lot number %1 for this item already exists.  Reference existing lot?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -21069,258 +21380,258 @@ creating Planned Orders.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="99"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="102"/>
         <source>Characteristic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="100"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="103"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="287"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="294"/>
         <source>Error detaching Contact from CRM Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="297"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="304"/>
         <source>Error detaching Contact from CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="329"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="336"/>
         <source>Error deleting a child record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="342"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="349"/>
         <source>Error deleting the initial CRM Account record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="369"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="376"/>
         <source>Error looking for duplicate CRM Account Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="373"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="380"/>
         <source>The %1 relationship is selected but no appropriate data have been created. Either click the %2 button  to enter the data or unselect the check box.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="378"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="385"/>
         <source>This CRM Account Number is already in use by an existing CRM Account. Please choose a different number and save again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="382"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="389"/>
         <source>You must enter a number for this CRM Account before saving it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="385"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="392"/>
         <source>You must enter a name for this CRM Account before saving it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="388"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="395"/>
         <source>This CRM Account cannot be a parent to itself.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="391"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="398"/>
         <source>This CRM Account is a Prospect but it is marked as a Customer. Either mark it as a Prospect or click %1 to convert it before saving.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="396"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="433"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="403"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="440"/>
         <source>Customer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="399"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="431"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="406"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="438"/>
         <source>Employee</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="402"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="409"/>
         <source>This CRM Account is a Customer but it is marked as a Prospect. Either mark it as a Customer or click %1 to convert it before saving.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="408"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="434"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="415"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="441"/>
         <source>Prospect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="412"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="432"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="419"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="439"/>
         <source>Sales Rep</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="416"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="423"/>
         <source>Tax Authority</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="421"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="435"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="1241"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="428"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="442"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1248"/>
         <source>Vendor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="423"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="430"/>
         <source>Cannot Save CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="436"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="443"/>
         <source>Tax Auth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="443"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="450"/>
         <source>Delete %1?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="444"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="451"/>
         <source>&lt;p&gt;Are you sure you want to delete %1 as a %2?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="458"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="497"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="1135"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="1149"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="465"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="504"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1142"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1156"/>
         <source>Database Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="476"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="483"/>
         <source>Error deleting %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="488"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="732"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="822"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="884"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="915"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="946"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="1274"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="1305"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="1336"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="495"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="739"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="829"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="891"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="922"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="953"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1281"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1312"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1343"/>
         <source>Error saving CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="615"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="622"/>
         <source>Error deleting Characteristic Assignment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="641"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="648"/>
         <source>Error getting Characteristic Assignments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="711"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="987"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="718"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="994"/>
         <source>Error reading the CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="852"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="859"/>
         <source>Error creating Prospect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="1043"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1050"/>
         <source>Error collecting Lot/Serial data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="1086"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1093"/>
         <source>Error deleting Lot/Serial data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="1123"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1130"/>
         <source>Error deleting temporary CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="1246"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1253"/>
         <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="1249"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1256"/>
         <source>View...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="104"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="107"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/crmaccount.cpp" line="49"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="419"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="426"/>
         <source>User</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="654"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="661"/>
         <source>CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="178"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="185"/>
         <source>Error creating Initial Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="262"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="269"/>
         <source>Close without saving?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="263"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="270"/>
         <source>&lt;p&gt;Are you sure you want to close this window without saving the new CRM Account?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="757"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="765"/>
-        <location filename="../../guiclient/crmaccount.cpp" line="832"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="764"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="772"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="839"/>
         <source>Convert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="758"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="765"/>
         <source>&lt;p&gt;Are you sure you want to convert this Prospect to a Customer?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="766"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="773"/>
         <source>&lt;p&gt;Do you want to convert all of the Quotes for the Prospect to Sales Orders?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="785"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="792"/>
         <source>Convert Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="833"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="840"/>
         <source>&lt;p&gt;Are you sure you want to convert this Customer to a Prospect and delete its Customer information?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -21340,32 +21651,32 @@ creating Planned Orders.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="102"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="105"/>
         <source>Lot/Serial</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="103"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="106"/>
         <source>Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="105"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="108"/>
         <source>Qty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="106"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="109"/>
         <source>Sold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="107"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="110"/>
         <source>Registered</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="108"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="111"/>
         <source>Expires</source>
         <translation type="unfinished"></translation>
     </message>
@@ -21380,7 +21691,7 @@ creating Planned Orders.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/crmaccount.cpp" line="1252"/>
+        <location filename="../../guiclient/crmaccount.cpp" line="1259"/>
         <source>Workbench...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -21566,22 +21877,22 @@ creating Planned Orders.</source>
     </message>
     <message>
         <location filename="../../guiclient/crmaccountMergePurgePage.ui" line="20"/>
-        <source>The following CRM Accounts have been merged. The Delete Selected and Delete All buttons will remove the obsolete CRM Accounts and the data required to undo the merge. You should do this as soon as you have confirmed that the merge was successful.</source>
+        <source>The following CRM Accounts have been merged. Pick a parent account and click Purge Selected to remove the obsolete CRM Accounts and merge data. You should do this as soon as you have confirmed that the merge was successful.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/crmaccountMergePurgePage.ui" line="39"/>
+        <source>Purge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/crmaccountMergePurgePage.ui" line="49"/>
+        <source>Purge All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/crmaccountMergePurgePage.ui" line="26"/>
         <source>Completed Merges:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/crmaccountMergePurgePage.ui" line="39"/>
-        <source>Delete Selected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/crmaccountMergePurgePage.ui" line="49"/>
-        <source>Delete All</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -21627,6 +21938,7 @@ creating Planned Orders.</source>
     <name>crmaccounts</name>
     <message>
         <location filename="../../guiclient/crmaccounts.cpp" line="162"/>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="195"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -21826,6 +22138,46 @@ creating Planned Orders.</source>
         <source>Tax Auth.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="187"/>
+        <source>List Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="188"/>
+        <source> Show Active Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="189"/>
+        <source>Accounts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="190"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="191"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="192"/>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="193"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_crmaccounts.h" line="194"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>currencies</name>
@@ -21917,6 +22269,14 @@ creating Planned Orders.</source>
     <message>
         <location filename="../../guiclient/currencies.ui" line="21"/>
         <source>List Currencies</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>currenciesDialog</name>
+    <message>
+        <location filename="../../guiclient/currenciesDialog.cpp" line="20"/>
+        <source>Please select a base currency for this database.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -22531,200 +22891,200 @@ Please check the values of these dates.</source>
 <context>
     <name>customer</name>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="186"/>
+        <location filename="../../guiclient/customer.cpp" line="189"/>
         <source>Balance Forward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="187"/>
+        <location filename="../../guiclient/customer.cpp" line="190"/>
         <source>Open Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="192"/>
+        <location filename="../../guiclient/customer.cpp" line="195"/>
         <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="193"/>
-        <location filename="../../guiclient/customer.cpp" line="200"/>
+        <location filename="../../guiclient/customer.cpp" line="196"/>
+        <location filename="../../guiclient/customer.cpp" line="203"/>
         <source>Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="194"/>
+        <location filename="../../guiclient/customer.cpp" line="197"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="195"/>
+        <location filename="../../guiclient/customer.cpp" line="198"/>
         <source>Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="196"/>
+        <location filename="../../guiclient/customer.cpp" line="199"/>
         <source>City, State, Zip</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="198"/>
+        <location filename="../../guiclient/customer.cpp" line="201"/>
         <source>Sequence</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="199"/>
+        <location filename="../../guiclient/customer.cpp" line="202"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="201"/>
+        <location filename="../../guiclient/customer.cpp" line="204"/>
         <source>Active</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="203"/>
-        <location filename="../../guiclient/customer.cpp" line="210"/>
+        <location filename="../../guiclient/customer.cpp" line="206"/>
+        <location filename="../../guiclient/customer.cpp" line="213"/>
         <source>Characteristic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="204"/>
-        <location filename="../../guiclient/customer.cpp" line="211"/>
+        <location filename="../../guiclient/customer.cpp" line="207"/>
+        <location filename="../../guiclient/customer.cpp" line="214"/>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="505"/>
+        <location filename="../../guiclient/customer.cpp" line="507"/>
         <source>&lt;p&gt;The newly entered Customer Number cannot be used as it is currently in use by the Customer &apos;%1&apos;.  Please correct or enter a new Customer Number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="511"/>
+        <location filename="../../guiclient/customer.cpp" line="513"/>
         <source>Cannot Save Customer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="627"/>
+        <location filename="../../guiclient/customer.cpp" line="629"/>
         <source>Error Saving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="652"/>
+        <location filename="../../guiclient/customer.cpp" line="654"/>
         <source>Saving Characteristic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="794"/>
+        <location filename="../../guiclient/customer.cpp" line="796"/>
         <source>Convert Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="813"/>
+        <location filename="../../guiclient/customer.cpp" line="815"/>
         <source>Checking Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="944"/>
+        <location filename="../../guiclient/customer.cpp" line="946"/>
         <source>Deleting Ship To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="989"/>
+        <location filename="../../guiclient/customer.cpp" line="991"/>
         <source>Deleting Characteristic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1069"/>
+        <location filename="../../guiclient/customer.cpp" line="1071"/>
         <source>Getting Characteristics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1095"/>
+        <location filename="../../guiclient/customer.cpp" line="1097"/>
         <source>Getting Ship Tos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1148"/>
+        <location filename="../../guiclient/customer.cpp" line="1150"/>
         <source>Deleting Tax Registrations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1166"/>
+        <location filename="../../guiclient/customer.cpp" line="1168"/>
         <source>Getting Tax Registrations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1183"/>
+        <location filename="../../guiclient/customer.cpp" line="1185"/>
         <source>Getting Commission</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1301"/>
+        <location filename="../../guiclient/customer.cpp" line="1303"/>
         <source>Getting Customer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1511"/>
+        <location filename="../../guiclient/customer.cpp" line="1513"/>
         <source>Expiring Credit Card</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1526"/>
+        <location filename="../../guiclient/customer.cpp" line="1528"/>
         <source>Getting Credit Cards</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1555"/>
+        <location filename="../../guiclient/customer.cpp" line="1557"/>
         <source>Getting CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1650"/>
+        <location filename="../../guiclient/customer.cpp" line="1652"/>
         <source>Customer Saved</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1651"/>
+        <location filename="../../guiclient/customer.cpp" line="1653"/>
         <source>The customer record was automatically saved to the database. The committed changeswill not be cancelled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1774"/>
+        <location filename="../../guiclient/customer.cpp" line="1776"/>
         <source>Getting new id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="474"/>
+        <location filename="../../guiclient/customer.cpp" line="476"/>
         <source>You must enter a number for this Customer before continuing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="480"/>
+        <location filename="../../guiclient/customer.cpp" line="482"/>
         <source>You must select a Customer Type code for this Customer before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="483"/>
+        <location filename="../../guiclient/customer.cpp" line="485"/>
         <source>You must select a Terms code for this Customer before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="486"/>
+        <location filename="../../guiclient/customer.cpp" line="488"/>
         <source>You must select a Sales Rep. for this Customer before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="489"/>
+        <location filename="../../guiclient/customer.cpp" line="491"/>
         <source>You must select a default Shipping Form for this Customer before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="925"/>
+        <location filename="../../guiclient/customer.cpp" line="927"/>
         <source>Are you sure that you want to delete this Ship To?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="924"/>
+        <location filename="../../guiclient/customer.cpp" line="926"/>
         <source>Delete Ship To?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -22734,55 +23094,55 @@ Please check the values of these dates.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1078"/>
+        <location filename="../../guiclient/customer.cpp" line="1080"/>
         <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1079"/>
+        <location filename="../../guiclient/customer.cpp" line="1081"/>
         <source>View...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1080"/>
+        <location filename="../../guiclient/customer.cpp" line="1082"/>
         <source>Delete...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1285"/>
-        <location filename="../../guiclient/customer.cpp" line="1729"/>
+        <location filename="../../guiclient/customer.cpp" line="1287"/>
+        <location filename="../../guiclient/customer.cpp" line="1731"/>
         <source>CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1518"/>
+        <location filename="../../guiclient/customer.cpp" line="1520"/>
         <source>MasterCard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1519"/>
+        <location filename="../../guiclient/customer.cpp" line="1521"/>
         <source>VISA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1520"/>
+        <location filename="../../guiclient/customer.cpp" line="1522"/>
         <source>American Express</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1521"/>
+        <location filename="../../guiclient/customer.cpp" line="1523"/>
         <source>Discover</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="1522"/>
+        <location filename="../../guiclient/customer.cpp" line="1524"/>
         <source>Other</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/customer.ui" line="21"/>
-        <location filename="../../guiclient/customer.cpp" line="1288"/>
-        <location filename="../../guiclient/customer.cpp" line="1732"/>
+        <location filename="../../guiclient/customer.cpp" line="1290"/>
+        <location filename="../../guiclient/customer.cpp" line="1734"/>
         <source>Customer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -23122,12 +23482,12 @@ Please check the values of these dates.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="189"/>
+        <location filename="../../guiclient/customer.cpp" line="192"/>
         <source>Tax Authority</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="190"/>
+        <location filename="../../guiclient/customer.cpp" line="193"/>
         <source>Registration #</source>
         <translation type="unfinished"></translation>
     </message>
@@ -23147,34 +23507,34 @@ Please check the values of these dates.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="763"/>
-        <location filename="../../guiclient/customer.cpp" line="776"/>
-        <location filename="../../guiclient/customer.cpp" line="800"/>
+        <location filename="../../guiclient/customer.cpp" line="765"/>
+        <location filename="../../guiclient/customer.cpp" line="778"/>
+        <location filename="../../guiclient/customer.cpp" line="802"/>
         <source>Convert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="777"/>
+        <location filename="../../guiclient/customer.cpp" line="779"/>
         <source>&lt;p&gt;Do you want to convert all of the Quotes for the Prospect to Sales Orders?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="716"/>
+        <location filename="../../guiclient/customer.cpp" line="718"/>
         <source>Customer Exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="717"/>
+        <location filename="../../guiclient/customer.cpp" line="719"/>
         <source>&lt;p&gt;This number is currently used by an existing Customer. Do you want to edit that Customer?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="764"/>
+        <location filename="../../guiclient/customer.cpp" line="766"/>
         <source>&lt;p&gt;This number is currently assigned to a Prospect. Do you want to convert the Prospect to a Customer?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="801"/>
+        <location filename="../../guiclient/customer.cpp" line="803"/>
         <source>&lt;p&gt;This number is currently assigned to CRM Account. Do you want to convert the CRM Account to a Customer?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -23194,17 +23554,17 @@ Please check the values of these dates.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="477"/>
+        <location filename="../../guiclient/customer.cpp" line="479"/>
         <source>You must enter a name for this Customer before continuing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="737"/>
+        <location filename="../../guiclient/customer.cpp" line="739"/>
         <source>Invalid Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/customer.cpp" line="738"/>
+        <location filename="../../guiclient/customer.cpp" line="740"/>
         <source>&lt;p&gt;This number is currently assigned to another CRM account.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -23907,6 +24267,41 @@ Please check the values of these dates.</source>
     <message>
         <location filename="../../guiclient/customers.cpp" line="163"/>
         <source>Error Deleting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_customers.h" line="160"/>
+        <source>List Customers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_customers.h" line="161"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_customers.h" line="162"/>
+        <source>Customers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_customers.h" line="163"/>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_customers.h" line="164"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_customers.h" line="165"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_customers.h" line="166"/>
+        <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -26372,25 +26767,25 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspBacklog.cpp" line="37"/>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="84"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="85"/>
         <source>Customer Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspBacklog.cpp" line="38"/>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="88"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="89"/>
         <source>Customer Group Pattern</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspBacklog.cpp" line="39"/>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="76"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="77"/>
         <source>Customer Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspBacklog.cpp" line="40"/>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="80"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="81"/>
         <source>Customer Type Pattern</source>
         <translation type="unfinished"></translation>
     </message>
@@ -26401,25 +26796,25 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspBacklog.cpp" line="42"/>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="100"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="101"/>
         <source>Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspBacklog.cpp" line="43"/>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="92"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="93"/>
         <source>Product Category</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspBacklog.cpp" line="44"/>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="96"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="97"/>
         <source>Product Category Pattern</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspBacklog.cpp" line="45"/>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="104"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="105"/>
         <source>Sales Order</source>
         <translation type="unfinished"></translation>
     </message>
@@ -26479,33 +26874,110 @@ Would you like to post it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="188"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="64"/>
+        <source>Firm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="189"/>
         <source>Edit Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="192"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="193"/>
         <source>View Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="200"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="201"/>
         <source>Edit Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="204"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="205"/>
         <source>View Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="214"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="215"/>
         <source>Print Packing List...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspBacklog.cpp" line="218"/>
+        <location filename="../../guiclient/displays/dspBacklog.cpp" line="219"/>
         <source>Add to Packing List Batch</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBacklogByCustomer</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogByCustomer.h" line="181"/>
+        <source>Backlog by Customer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogByCustomer.h" line="186"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBacklogByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogByItem.h" line="183"/>
+        <source>Backlog by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogByItem.h" line="188"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBacklogByParameterList</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogByParameterList.h" line="173"/>
+        <source>Backlog by Parameter List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogByParameterList.h" line="178"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBacklogBySalesOrder</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogBySalesOrder.h" line="229"/>
+        <source>Backlog by Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogBySalesOrder.h" line="230"/>
+        <source>Sales Order #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogBySalesOrder.h" line="231"/>
+        <source>Order Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogBySalesOrder.h" line="233"/>
+        <source>Cust. Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogBySalesOrder.h" line="234"/>
+        <source>Cust. Phone:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBacklogBySalesOrder.h" line="235"/>
+        <source>P/O Number:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -26920,6 +27392,59 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
 </context>
 <context>
+    <name>dspBookingsByCustomer</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBookingsByCustomer.h" line="159"/>
+        <source>Bookings by Customer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBookingsByCustomerGroup</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBookingsByCustomerGroup.h" line="136"/>
+        <source>Bookings by Customer Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBookingsByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBookingsByItem.h" line="147"/>
+        <source>Bookings by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBookingsByProductCategory</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBookingsByProductCategory.h" line="137"/>
+        <source>Bookings by Product Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBookingsBySalesRep</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBookingsBySalesRep.h" line="199"/>
+        <source>Bookings by Sales Rep.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBookingsBySalesRep.h" line="201"/>
+        <source>Sales Rep.:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBookingsByShipTo</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBookingsByShipTo.h" line="182"/>
+        <source>Bookings by Ship-To</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspBriefEarnedCommissions</name>
     <message>
         <location filename="../../guiclient/displays/dspBriefEarnedCommissions.cpp" line="23"/>
@@ -27147,6 +27672,45 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
 </context>
 <context>
+    <name>dspBriefSalesHistoryByCustomer</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBriefSalesHistoryByCustomer.h" line="179"/>
+        <source>Brief Sales History by Customer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBriefSalesHistoryByCustomerType</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBriefSalesHistoryByCustomerType.h" line="137"/>
+        <source>Brief Sales History by Customer Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspBriefSalesHistoryBySalesRep</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBriefSalesHistoryBySalesRep.h" line="223"/>
+        <source>Brief Sales History by Sales Rep.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBriefSalesHistoryBySalesRep.h" line="225"/>
+        <source>Sales Rep.:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBriefSalesHistoryBySalesRep.h" line="228"/>
+        <source>Show Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspBriefSalesHistoryBySalesRep.h" line="229"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspCapacityUOMsByClassCode</name>
     <message>
         <location filename="../../guiclient/displays/dspCapacityUOMsByClassCode.cpp" line="24"/>
@@ -27190,7 +27754,28 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <location filename="../../guiclient/displays/dspCapacityUOMsByClassCode.cpp" line="19"/>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByClassCode.h" line="173"/>
         <source>Capacity UOMs by Class Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByClassCode.h" line="175"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByClassCode.h" line="176"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByClassCode.h" line="177"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByClassCode.h" line="178"/>
+        <source>Capacity UOMs</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -27251,7 +27836,28 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <location filename="../../guiclient/displays/dspCapacityUOMsByProductCategory.cpp" line="18"/>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByProductCategory.h" line="170"/>
         <source>Capacity UOMs by Product Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByProductCategory.h" line="172"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByProductCategory.h" line="173"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByProductCategory.h" line="174"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCapacityUOMsByProductCategory.h" line="175"/>
+        <source>Capacity UOMs</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -27773,12 +28379,38 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <location filename="../../guiclient/displays/dspCostedIndentedBOM.cpp" line="19"/>
+        <location filename="../../guiclient/ui/ui_dspCostedIndentedBOM.h" line="221"/>
         <source>Costed Indented Bill of Materials</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspCostedIndentedBOM.cpp" line="52"/>
         <source>Total Cost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedIndentedBOM.h" line="223"/>
+        <source>Use Standard Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedIndentedBOM.h" line="224"/>
+        <source>Use Actual Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedIndentedBOM.h" line="225"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedIndentedBOM.h" line="226"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedIndentedBOM.h" line="227"/>
+        <source>Costed Bill of Materials</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -27796,7 +28428,33 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <location filename="../../guiclient/displays/dspCostedSingleLevelBOM.cpp" line="19"/>
+        <location filename="../../guiclient/ui/ui_dspCostedSingleLevelBOM.h" line="224"/>
         <source>Costed Single Level Bill of Materials</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedSingleLevelBOM.h" line="226"/>
+        <source>Use Standard Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedSingleLevelBOM.h" line="227"/>
+        <source>Use Actual Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedSingleLevelBOM.h" line="228"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedSingleLevelBOM.h" line="229"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCostedSingleLevelBOM.h" line="230"/>
+        <source>Costed Bill of Materials</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -28433,7 +29091,33 @@ You must contact your Systems Administrator to have this corrected before you ma
     <name>dspCountTagsByClassCode</name>
     <message>
         <location filename="../../guiclient/displays/dspCountTagsByClassCode.cpp" line="16"/>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByClassCode.h" line="276"/>
         <source>Count Tags by Class Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByClassCode.h" line="281"/>
+        <source>Show Unposted Count Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByClassCode.h" line="282"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByClassCode.h" line="283"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByClassCode.h" line="284"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByClassCode.h" line="285"/>
+        <source>Count Tags:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -28441,7 +29125,33 @@ You must contact your Systems Administrator to have this corrected before you ma
     <name>dspCountTagsByItem</name>
     <message>
         <location filename="../../guiclient/displays/dspCountTagsByItem.cpp" line="16"/>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByItem.h" line="299"/>
         <source>Count Tags by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByItem.h" line="304"/>
+        <source>Show Unposted Count Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByItem.h" line="305"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByItem.h" line="306"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByItem.h" line="307"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByItem.h" line="308"/>
+        <source>Count Tags:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -28449,7 +29159,33 @@ You must contact your Systems Administrator to have this corrected before you ma
     <name>dspCountTagsByWarehouse</name>
     <message>
         <location filename="../../guiclient/displays/dspCountTagsByWarehouse.cpp" line="16"/>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByWarehouse.h" line="258"/>
         <source>Count Tags by Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByWarehouse.h" line="262"/>
+        <source>Show Unposted Count Tags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByWarehouse.h" line="263"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByWarehouse.h" line="264"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByWarehouse.h" line="265"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCountTagsByWarehouse.h" line="266"/>
+        <source>Count Tags:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -28830,6 +29566,156 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
 </context>
 <context>
+    <name>dspCustomerInformationExport</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="409"/>
+        <source>Customer Information Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="412"/>
+        <source>Show Inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="413"/>
+        <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="414"/>
+        <source>Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="415"/>
+        <source>Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="416"/>
+        <source>Billing Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="417"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="429"/>
+        <source>Address 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="418"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="430"/>
+        <source>Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="419"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="431"/>
+        <source>Address 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="420"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="432"/>
+        <source>Phone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="421"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="433"/>
+        <source>Address 3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="422"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="434"/>
+        <source>FAX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="423"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="435"/>
+        <source>City</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="424"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="436"/>
+        <source>Email</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="425"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="437"/>
+        <source>State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="426"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="438"/>
+        <source>Zip Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="427"/>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="439"/>
+        <source>Country</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomerInformationExport.h" line="428"/>
+        <source>Correspondence Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspCustomersByCharacteristic</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomersByCharacteristic.h" line="151"/>
+        <source>Customers by Characteristic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomersByCharacteristic.h" line="152"/>
+        <source>Value is empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomersByCharacteristic.h" line="153"/>
+        <source>Value:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomersByCharacteristic.h" line="154"/>
+        <source>Characteristic is set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomersByCharacteristic.h" line="155"/>
+        <source>Characteristic:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomersByCharacteristic.h" line="156"/>
+        <source>Show &amp;Inactive Customers</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspCustomersByCustomerType</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomersByCustomerType.h" line="122"/>
+        <source>Customers by Customer Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspCustomersByCustomerType.h" line="125"/>
+        <source>Show &amp;Inactive Customers</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspDepositsRegister</name>
     <message>
         <location filename="../../guiclient/displays/dspDepositsRegister.cpp" line="27"/>
@@ -29006,28 +29892,38 @@ You must contact your Systems Administrator to have this corrected before you ma
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="171"/>
+        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="174"/>
         <source>View Transaction Information...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="181"/>
+        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="184"/>
         <source>Enter Start Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="182"/>
+        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="185"/>
         <source>Please enter a valid Start Date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="188"/>
+        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="191"/>
         <source>Enter End Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="189"/>
+        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="192"/>
         <source>Please enter a valid End Date.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="201"/>
+        <source>Enter Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/displays/dspDetailedInventoryHistoryByLocation.cpp" line="202"/>
+        <source>Please enter a valid Location.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -30658,6 +31554,34 @@ Total</source>
     </message>
 </context>
 <context>
+    <name>dspIncidentsByCRMAccount</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIncidentsByCRMAccount.h" line="194"/>
+        <source>Incidents by CRM Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIncidentsByCRMAccount.h" line="196"/>
+        <source>All CRM Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIncidentsByCRMAccount.h" line="198"/>
+        <source>Selected:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIncidentsByCRMAccount.h" line="200"/>
+        <source>Show Accounts With No Incidents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIncidentsByCRMAccount.h" line="202"/>
+        <source>Show Closed Incidents</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspIndentedBOM</name>
     <message>
         <location filename="../../guiclient/displays/dspIndentedBOM.cpp" line="22"/>
@@ -30696,6 +31620,7 @@ Total</source>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspIndentedBOM.cpp" line="18"/>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="347"/>
         <source>Indented Bill of Materials</source>
         <translation type="unfinished"></translation>
     </message>
@@ -30712,6 +31637,42 @@ Total</source>
     <message>
         <location filename="../../guiclient/displays/dspIndentedBOM.cpp" line="31"/>
         <source>Reference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="348"/>
+        <source>Show &amp;Expired Components</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="349"/>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="351"/>
+        <source>Threshold Days:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="350"/>
+        <source>Show &amp;Future Components</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="352"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="353"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="354"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspIndentedBOM.h" line="355"/>
+        <source>Bill Of Materials:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -31257,6 +32218,122 @@ Total</source>
     </message>
 </context>
 <context>
+    <name>dspInventoryAvailabilityByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="316"/>
+        <source>Inventory Availability by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="319"/>
+        <source>Availability as of:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="320"/>
+        <source>Item Site Lead Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="321"/>
+        <source>Look Ahead Days:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="322"/>
+        <source>Cutoff Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="323"/>
+        <source>Dates:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="324"/>
+        <source>to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="325"/>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="326"/>
+        <source>Show Reorder Exceptions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="327"/>
+        <source>Ignore Reorder at 0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByItem.h" line="328"/>
+        <source>Show Shortages</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspInventoryAvailabilityByParameterList</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="296"/>
+        <source>Inventory Availability by Parameter List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="299"/>
+        <source>Show Availability as of:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="300"/>
+        <source>Item Site Lead Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="301"/>
+        <source>Look Ahead Days:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="302"/>
+        <source>Cutoff Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="303"/>
+        <source>Dates:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="304"/>
+        <source>to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="305"/>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="306"/>
+        <source>Reorder Exceptions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="307"/>
+        <source>Ignore Reorder at 0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityByParameterList.h" line="308"/>
+        <source>Shortages</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspInventoryAvailabilityBySalesOrder</name>
     <message>
         <location filename="../../guiclient/displays/dspInventoryAvailabilityBySalesOrder.cpp" line="34"/>
@@ -31414,6 +32491,64 @@ Total</source>
     </message>
 </context>
 <context>
+    <name>dspInventoryAvailabilityBySourceVendor</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="283"/>
+        <source>Inventory Availability by Source Vendor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="284"/>
+        <source>Show Availability as of:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="285"/>
+        <source>Item Site Lead Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="287"/>
+        <source>Look Ahead Days:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="288"/>
+        <source>Cutoff Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="289"/>
+        <source>Dates:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="290"/>
+        <source>to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="291"/>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="292"/>
+        <source>Reorder Exceptions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="293"/>
+        <source>Ignore Reorder at 0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryAvailabilityBySourceVendor.h" line="294"/>
+        <source>Shortages</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspInventoryAvailabilityByWorkOrder</name>
     <message>
         <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="37"/>
@@ -31507,32 +32642,32 @@ Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="93"/>
+        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="94"/>
         <source>Invalid W/O Selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="94"/>
+        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="95"/>
         <source>&lt;p&gt;You must specify a valid Work Order Number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="121"/>
+        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="122"/>
         <source>View Inventory History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="148"/>
+        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="149"/>
         <source>Create P/R...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="174"/>
+        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="175"/>
         <source>Post Misc. Production...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="191"/>
+        <location filename="../../guiclient/displays/dspInventoryAvailabilityByWorkOrder.cpp" line="192"/>
         <source>Enter Misc. Inventory Count...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -31793,6 +32928,153 @@ Total</source>
     <message>
         <location filename="../../guiclient/displays/dspInventoryHistory.cpp" line="335"/>
         <source>View Work Order Information...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspInventoryHistoryBase</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryBase.h" line="241"/>
+        <source>Inventory History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryBase.h" line="245"/>
+        <source>Trans. Types:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryBase.h" line="246"/>
+        <source>Order Types:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryBase.h" line="247"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryBase.h" line="248"/>
+        <source>Order #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspInventoryHistoryByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByItem.h" line="285"/>
+        <source>Inventory History by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByItem.h" line="290"/>
+        <source>Trans. Types:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByItem.h" line="291"/>
+        <source>Order Types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByItem.h" line="292"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByItem.h" line="293"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByItem.h" line="294"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByItem.h" line="295"/>
+        <source>Inventory History:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspInventoryHistoryByOrderNumber</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByOrderNumber.h" line="277"/>
+        <source>Inventory History by Order Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByOrderNumber.h" line="279"/>
+        <source>Order #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByOrderNumber.h" line="280"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByOrderNumber.h" line="282"/>
+        <source>Trans. Types:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByOrderNumber.h" line="285"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByOrderNumber.h" line="286"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByOrderNumber.h" line="287"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByOrderNumber.h" line="288"/>
+        <source>Inventory History:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspInventoryHistoryByParameterList</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByParameterList.h" line="275"/>
+        <source>Inventory History by Class Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByParameterList.h" line="280"/>
+        <source>Trans. Types:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByParameterList.h" line="281"/>
+        <source>Order Types:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByParameterList.h" line="282"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByParameterList.h" line="283"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByParameterList.h" line="284"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspInventoryHistoryByParameterList.h" line="285"/>
+        <source>Inventory History:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -32501,6 +33783,155 @@ Total</source>
     </message>
 </context>
 <context>
+    <name>dspItemSitesByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemSitesByItem.h" line="102"/>
+        <source>Item Sites by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemSitesByItem.h" line="103"/>
+        <source>Show Inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspItemSitesByParameterList</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemSitesByParameterList.h" line="116"/>
+        <source>Item Sites by Class Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemSitesByParameterList.h" line="118"/>
+        <source>Show Inactive</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspItemSourcesByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemSourcesByItem.h" line="82"/>
+        <source>Item Sources by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspItemSourcesByVendor</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemSourcesByVendor.h" line="82"/>
+        <source>Item Sources by Vendor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemSourcesByVendor.h" line="83"/>
+        <source>Vendor:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspItemsByCharacteristic</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByCharacteristic.h" line="143"/>
+        <source>Items by Characteristic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByCharacteristic.h" line="144"/>
+        <source>Characteristic:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByCharacteristic.h" line="145"/>
+        <source>Value:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByCharacteristic.h" line="146"/>
+        <source>Show &amp;Inactive Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspItemsByClassCode</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByClassCode.h" line="185"/>
+        <source>Items by Class Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByClassCode.h" line="187"/>
+        <source>Show &amp;Inactive Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByClassCode.h" line="188"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByClassCode.h" line="189"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByClassCode.h" line="190"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByClassCode.h" line="191"/>
+        <source>Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspItemsByParameter</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByParameter.h" line="91"/>
+        <source>Items by Class Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByParameter.h" line="93"/>
+        <source>Show &amp;Inactive Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspItemsByProductCategory</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByProductCategory.h" line="191"/>
+        <source>Items by Product Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByProductCategory.h" line="193"/>
+        <source>Show &amp;Inactive Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByProductCategory.h" line="194"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByProductCategory.h" line="195"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByProductCategory.h" line="196"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsByProductCategory.h" line="197"/>
+        <source>Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspItemsWithoutItemSources</name>
     <message>
         <location filename="../../guiclient/displays/dspItemsWithoutItemSources.cpp" line="28"/>
@@ -32540,7 +33971,23 @@ Total</source>
     <message>
         <location filename="../../guiclient/displays/dspItemsWithoutItemSources.cpp" line="24"/>
         <location filename="../../guiclient/displays/dspItemsWithoutItemSources.cpp" line="25"/>
+        <location filename="../../guiclient/ui/ui_dspItemsWithoutItemSources.h" line="124"/>
         <source>Items without Item Sources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsWithoutItemSources.h" line="125"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsWithoutItemSources.h" line="126"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspItemsWithoutItemSources.h" line="127"/>
+        <source>Items without Item Sources:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -33499,12 +34946,12 @@ Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="109"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="103"/>
         <source>Edit Sales Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="112"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="106"/>
         <source>View Sales Order...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -33544,197 +34991,197 @@ Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="87"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="86"/>
         <source>View Quote...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="96"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="93"/>
         <source>Edit Quote Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="100"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="96"/>
         <source>View Quote Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="119"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="113"/>
         <source>Edit Sales Order Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="122"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="116"/>
         <source>View Sales Order Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="129"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="123"/>
         <source>Edit Invoice...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="132"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="126"/>
         <source>View Invoice...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="139"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="133"/>
         <source>Edit Invoice Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="142"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="136"/>
         <source>View Invoice Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="149"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="143"/>
         <source>Edit Work Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="152"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="146"/>
         <source>View Work Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="159"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="153"/>
         <source>View Purchase Request...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="166"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="160"/>
         <source>Edit Purchase Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="169"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="163"/>
         <source>View Purchase Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="176"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="170"/>
         <source>Edit Purchase Order Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="179"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="173"/>
         <source>View Purchase Order Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="355"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="349"/>
         <source>Project Required</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="356"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="350"/>
         <source>You must specify a Project.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="367"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="364"/>
         <source>Sales Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="368"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="365"/>
         <source>Work Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="369"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="366"/>
         <source>Purchase Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="370"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="367"/>
         <source>Purchase Request</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="374"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="371"/>
         <source>Purchase Requests</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="378"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="375"/>
         <source>Invoices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="380"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="377"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="381"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="378"/>
         <source>Closed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="382"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="379"/>
         <source>Converted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="383"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="380"/>
         <source>Canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="384"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="381"/>
         <source>Expired</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="385"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="382"/>
         <source>Unposted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="386"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="383"/>
         <source>Posted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="387"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="384"/>
         <source>Exploded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="388"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="385"/>
         <source>Released</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="389"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="386"/>
         <source>In Process</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="390"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="387"/>
         <source>Unreleased</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="391"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="388"/>
         <source>Total</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="375"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="372"/>
         <source>Quote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="376"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="373"/>
         <source>Quotes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="377"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="374"/>
         <source>Invoice</source>
         <translation type="unfinished"></translation>
     </message>
@@ -33751,19 +35198,19 @@ Total</source>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspOrderActivityByProject.ui" line="49"/>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="371"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="368"/>
         <source>Sales Orders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspOrderActivityByProject.ui" line="56"/>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="372"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="369"/>
         <source>Work Orders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspOrderActivityByProject.ui" line="63"/>
-        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="373"/>
+        <location filename="../../guiclient/displays/dspOrderActivityByProject.cpp" line="370"/>
         <source>Purchase Orders</source>
         <translation type="unfinished"></translation>
     </message>
@@ -34600,6 +36047,42 @@ Total</source>
     <message>
         <location filename="../../guiclient/displays/dspPlannedOrders.cpp" line="137"/>
         <source>Delete Order...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspPlannedOrdersByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspPlannedOrdersByItem.h" line="117"/>
+        <source>Planned Orders by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspPlannedOrdersByPlannerCode</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspPlannedOrdersByPlannerCode.h" line="135"/>
+        <source>Planned Orders by Planner Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspPlannedOrdersByPlannerCode.h" line="138"/>
+        <source>Show Order Types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspPlannedOrdersByPlannerCode.h" line="139"/>
+        <source>Purchase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspPlannedOrdersByPlannerCode.h" line="140"/>
+        <source>Manufacture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspPlannedOrdersByPlannerCode.h" line="141"/>
+        <source>Transfer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -37187,6 +38670,39 @@ Total</source>
     </message>
 </context>
 <context>
+    <name>dspQOHByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByItem.h" line="175"/>
+        <source>Quantities on Hand by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByItem.h" line="178"/>
+        <source>As of Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByItem.h" line="179"/>
+        <source>Show Inventory Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByItem.h" line="180"/>
+        <source>Use Posted Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByItem.h" line="181"/>
+        <source>Use Standard Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByItem.h" line="182"/>
+        <source>Use Actual Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspQOHByLocation</name>
     <message>
         <location filename="../../guiclient/displays/dspQOHByLocation.cpp" line="26"/>
@@ -37262,6 +38778,54 @@ Total</source>
     <message>
         <location filename="../../guiclient/displays/dspQOHByLocation.cpp" line="44"/>
         <source>Reserved</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspQOHByParameterList</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="183"/>
+        <source>Quantities on Hand by Parameter List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="186"/>
+        <source>Show All Quantities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="187"/>
+        <source>Only Show Positive Quantities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="188"/>
+        <source>Only Show Negative Quantities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="190"/>
+        <source>As of Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="192"/>
+        <source>Show Inventory Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="193"/>
+        <source>Use Posted Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="194"/>
+        <source>Use Standard Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspQOHByParameterList.h" line="195"/>
+        <source>Use Actual Costs</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -37534,6 +39098,39 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../../guiclient/displays/dspQuotesByItem.cpp" line="142"/>
         <source>You may not view, edit, or convert this Quote as it references a Site for which you have not been granted privileges.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspRecurringInvoices</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspRecurringInvoices.h" line="165"/>
+        <source>List Recurring Invoices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspRecurringInvoices.h" line="166"/>
+        <source>Recurring Invoices:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspRecurringInvoices.h" line="167"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspRecurringInvoices.h" line="168"/>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspRecurringInvoices.h" line="169"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspRecurringInvoices.h" line="170"/>
+        <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -38072,6 +39669,124 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../../guiclient/displays/dspSalesHistory.cpp" line="175"/>
         <source>View...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSalesHistoryByBilltoName</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByBilltoName.h" line="198"/>
+        <source>Sales History by Bill-To Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByBilltoName.h" line="200"/>
+        <source>Bill-To Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByBilltoName.h" line="203"/>
+        <source>Show Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByBilltoName.h" line="204"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSalesHistoryByCustomer</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByCustomer.h" line="220"/>
+        <source>Sales History by Customer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByCustomer.h" line="224"/>
+        <source>Show Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByCustomer.h" line="225"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSalesHistoryByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByItem.h" line="210"/>
+        <source>Sales History by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByItem.h" line="213"/>
+        <source>Show Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByItem.h" line="214"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSalesHistoryByParameterList</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByParameterList.h" line="168"/>
+        <source>Sales History by Parameter List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByParameterList.h" line="171"/>
+        <source>Show Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByParameterList.h" line="172"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSalesHistoryBySalesrep</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryBySalesrep.h" line="204"/>
+        <source>Sales History by Sales Rep.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryBySalesrep.h" line="206"/>
+        <source>Sales Rep.:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryBySalesrep.h" line="209"/>
+        <source>Show Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryBySalesrep.h" line="210"/>
+        <source>Show Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSalesHistoryByShipTo</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByShipTo.h" line="252"/>
+        <source>Sales History by Ship-To</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByShipTo.h" line="256"/>
+        <source>Show Costs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSalesHistoryByShipTo.h" line="257"/>
+        <source>Show Prices</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -39026,7 +40741,53 @@ These line items must be fixed before you may convert this quote.</source>
     <name>dspShipmentsBySalesOrder</name>
     <message>
         <location filename="../../guiclient/displays/dspShipmentsBySalesOrder.cpp" line="16"/>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="341"/>
         <source>Shipments by Sales Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="342"/>
+        <source>Sales Order #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="343"/>
+        <source>Order Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="344"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="345"/>
+        <source>Cust. Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="346"/>
+        <source>Cust. Phone:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="347"/>
+        <source>P/O Number:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="348"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="349"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsBySalesOrder.h" line="350"/>
+        <source>Shipments:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -39034,7 +40795,43 @@ These line items must be fixed before you may convert this quote.</source>
     <name>dspShipmentsByShipment</name>
     <message>
         <location filename="../../guiclient/displays/dspShipmentsByShipment.cpp" line="16"/>
+        <location filename="../../guiclient/ui/ui_dspShipmentsByShipment.h" line="263"/>
         <source>Shipments by Shipment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsByShipment.h" line="264"/>
+        <source>Shipment:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsByShipment.h" line="265"/>
+        <source>Cust. Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsByShipment.h" line="266"/>
+        <source>Cust. Phone:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsByShipment.h" line="267"/>
+        <source>P/O Number:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsByShipment.h" line="268"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsByShipment.h" line="269"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspShipmentsByShipment.h" line="270"/>
+        <source>Shipments:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -39077,6 +40874,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspSingleLevelBOM.cpp" line="18"/>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="350"/>
         <source>Single Level Bill of Materials</source>
         <translation type="unfinished"></translation>
     </message>
@@ -39118,6 +40916,42 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../../guiclient/displays/dspSingleLevelBOM.cpp" line="35"/>
         <source>Reference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="351"/>
+        <source>Show &amp;Expired Components</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="352"/>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="354"/>
+        <source>Threshold Days:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="353"/>
+        <source>Show &amp;Future Components</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="355"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="356"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="357"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSingleLevelBOM.h" line="358"/>
+        <source>Bill of Materials:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -39429,6 +41263,14 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
 </context>
 <context>
+    <name>dspSubLedger</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSubLedger.h" line="82"/>
+        <source>Subledger Transactions</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspSubstituteAvailabilityByItem</name>
     <message>
         <location filename="../../guiclient/displays/dspSubstituteAvailabilityByItem.cpp" line="29"/>
@@ -39566,7 +41408,44 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <location filename="../../guiclient/displays/dspSummarizedBOM.cpp" line="18"/>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="351"/>
         <source>Summarized Bill of Materials</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="352"/>
+        <source>Show &amp;Expired Components</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="353"/>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="355"/>
+        <source>Threshold Days:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="354"/>
+        <source>Show &amp;Future Components</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="356"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="357"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="358"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedBOM.h" line="359"/>
+        <source>Bill Of Materials:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -40197,6 +42076,72 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
 </context>
 <context>
+    <name>dspSummarizedSalesByCustomer</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesByCustomer.h" line="124"/>
+        <source>Summarized Sales History by Customer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSummarizedSalesByCustomerByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesByCustomerByItem.h" line="139"/>
+        <source>Summarized Sales by Customer by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSummarizedSalesByCustomerType</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesByCustomerType.h" line="115"/>
+        <source>Summarized Sales by Customer Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSummarizedSalesByCustomerTypeByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesByCustomerTypeByItem.h" line="111"/>
+        <source>Summarized Sales by Customer Type by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSummarizedSalesByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesByItem.h" line="123"/>
+        <source>Summarized Sales History by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSummarizedSalesBySalesRep</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesBySalesRep.h" line="117"/>
+        <source>Summarized Sales History by Sales Rep.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspSummarizedSalesHistoryByShippingZone</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesHistoryByShippingZone.h" line="153"/>
+        <source>Summarized Sales History by Shipping Zone by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesHistoryByShippingZone.h" line="155"/>
+        <source>All Shipping Zones</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspSummarizedSalesHistoryByShippingZone.h" line="156"/>
+        <source>Selected Shipping Zone:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspTaxHistory</name>
     <message>
         <location filename="../../guiclient/dspTaxHistory.cpp" line="38"/>
@@ -40707,6 +42652,60 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
 </context>
 <context>
+    <name>dspTimePhasedBookingsByCustomer</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByCustomer.h" line="84"/>
+        <source>Time-Phased Bookings by Customer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspTimePhasedBookingsByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByItem.h" line="145"/>
+        <source>Time-Phased Bookings by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByItem.h" line="149"/>
+        <source>&amp;Inventory Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByItem.h" line="150"/>
+        <source>Sales Dollars</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspTimePhasedBookingsByProductCategory</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByProductCategory.h" line="163"/>
+        <source>Time-Phased Bookings by Product Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByProductCategory.h" line="167"/>
+        <source>&amp;Inventory Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByProductCategory.h" line="168"/>
+        <source>Capacity &amp;Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByProductCategory.h" line="169"/>
+        <source>Alt. Capacity Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedBookingsByProductCategory.h" line="170"/>
+        <source>Sales Dollars</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspTimePhasedOpenAPItems</name>
     <message>
         <location filename="../../guiclient/displays/dspTimePhasedOpenAPItems.cpp" line="247"/>
@@ -41055,6 +43054,76 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
 </context>
 <context>
+    <name>dspTimePhasedSalesByCustomer</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByCustomer.h" line="103"/>
+        <source>Time-Phased Sales History by Customer</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspTimePhasedSalesByCustomerByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByCustomerByItem.h" line="108"/>
+        <source>Time-Phased Sales History by Customer by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspTimePhasedSalesByCustomerGroup</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByCustomerGroup.h" line="103"/>
+        <source>Time-Phased Sales History by Customer Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspTimePhasedSalesByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByItem.h" line="143"/>
+        <source>Time-Phased Sales History by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByItem.h" line="147"/>
+        <source>&amp;Inventory Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByItem.h" line="148"/>
+        <source>Sales Dollars</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspTimePhasedSalesByProductCategory</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByProductCategory.h" line="155"/>
+        <source>Time-Phased Sales History by Product Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByProductCategory.h" line="159"/>
+        <source>&amp;Inventory Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByProductCategory.h" line="160"/>
+        <source>Capacity &amp;Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByProductCategory.h" line="161"/>
+        <source>Alt. Capacity Units</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTimePhasedSalesByProductCategory.h" line="162"/>
+        <source>Sales Dollars</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dspTimePhasedUsageStatisticsByItem</name>
     <message>
         <location filename="../../guiclient/displays/dspTimePhasedUsageStatisticsByItem.cpp" line="26"/>
@@ -41105,6 +43174,49 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../../guiclient/displays/dspTimePhasedUsageStatisticsByItem.cpp" line="31"/>
         <source>Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspTodoByUserAndIncident</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTodoByUserAndIncident.h" line="241"/>
+        <source>To-Do List Items by User and Incident</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTodoByUserAndIncident.h" line="244"/>
+        <source>All Incidents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTodoByUserAndIncident.h" line="246"/>
+        <source>Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTodoByUserAndIncident.h" line="247"/>
+        <source>Date Started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTodoByUserAndIncident.h" line="248"/>
+        <source>Date Due</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTodoByUserAndIncident.h" line="249"/>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTodoByUserAndIncident.h" line="250"/>
+        <source>Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTodoByUserAndIncident.h" line="251"/>
+        <source>Inactive</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -41188,7 +43300,33 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../../guiclient/displays/dspTrialBalances.cpp" line="30"/>
         <location filename="../../guiclient/displays/dspTrialBalances.cpp" line="31"/>
+        <location filename="../../guiclient/ui/ui_dspTrialBalances.h" line="199"/>
         <source>Trial Balances</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTrialBalances.h" line="201"/>
+        <source>All Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTrialBalances.h" line="202"/>
+        <source>Selected Account:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTrialBalances.h" line="204"/>
+        <source>All Periods</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTrialBalances.h" line="205"/>
+        <source>Selected Period:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspTrialBalances.h" line="206"/>
+        <source>Show Trial Balances with Zero</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -41582,6 +43720,131 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../../guiclient/displays/dspUsageStatistics.cpp" line="53"/>
         <source>Transfers</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspUsageStatisticsBase</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsBase.h" line="168"/>
+        <source>Item Usage Statistics by Class Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspUsageStatisticsByClassCode</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByClassCode.h" line="229"/>
+        <source>Item Usage Statistics by Class Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByClassCode.h" line="233"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByClassCode.h" line="234"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByClassCode.h" line="235"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByClassCode.h" line="236"/>
+        <source>Usage:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspUsageStatisticsByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItem.h" line="231"/>
+        <source>Item Usage Statistics by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItem.h" line="235"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItem.h" line="236"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItem.h" line="237"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItem.h" line="238"/>
+        <source>Usage:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspUsageStatisticsByItemGroup</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItemGroup.h" line="226"/>
+        <source>Item Usage Statistics by Item Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItemGroup.h" line="230"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItemGroup.h" line="231"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItemGroup.h" line="232"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByItemGroup.h" line="233"/>
+        <source>Usage:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspUsageStatisticsByWarehouse</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByWarehouse.h" line="207"/>
+        <source>Item Usage Statistics by Site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByWarehouse.h" line="208"/>
+        <source>&amp;Site:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByWarehouse.h" line="209"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByWarehouse.h" line="210"/>
+        <source>&amp;Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByWarehouse.h" line="211"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspUsageStatisticsByWarehouse.h" line="212"/>
+        <source>Usage:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -42804,6 +45067,126 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../../guiclient/displays/dspWoSchedule.cpp" line="491"/>
         <source>View Parent Work Order...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspWoScheduleByItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByItem.h" line="143"/>
+        <source>Work Order Schedule by Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByItem.h" line="146"/>
+        <source>Work Order Start Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByItem.h" line="147"/>
+        <source>Only show work orders that are</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByItem.h" line="148"/>
+        <source>&amp;Released and In-Process</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByItem.h" line="149"/>
+        <source>Top Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspWoScheduleByParameterList</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="156"/>
+        <source>Work Order Schedule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="159"/>
+        <source>Work Order Start Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="160"/>
+        <source>Include Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="161"/>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="162"/>
+        <source>&amp;Released</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="163"/>
+        <source>Exploded</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="164"/>
+        <source>In-Process</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="165"/>
+        <source>Show Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByParameterList.h" line="166"/>
+        <source>Top Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspWoScheduleByWorkOrder</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByWorkOrder.h" line="136"/>
+        <source>Work Order Schedule by Work Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByWorkOrder.h" line="139"/>
+        <source>Work Order Start Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByWorkOrder.h" line="140"/>
+        <source>Only show work orders that are</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByWorkOrder.h" line="141"/>
+        <source>&amp;Released and In-Process</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoScheduleByWorkOrder.h" line="142"/>
+        <source>Top Level</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspWoSoStatus</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoSoStatus.h" line="83"/>
+        <source>Open Work Orders with Parent Sales Orders</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dspWoSoStatusMismatch</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_dspWoSoStatusMismatch.h" line="83"/>
+        <source>Open Work Orders with Closed Parent Sales Orders</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -44604,12 +46987,12 @@ Would you like to automatically create a credit memo against this return?</sourc
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/errorReporter.cpp" line="1055"/>
+        <location filename="../../common/errorReporter.cpp" line="1054"/>
         <source>This Vendor Number cannot be used as it is in use by another Vendor.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/errorReporter.cpp" line="1072"/>
+        <location filename="../../common/errorReporter.cpp" line="1071"/>
         <source>Cannot save this Voucher with an invalid Vendor.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -45227,6 +47610,54 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
 </context>
 <context>
+    <name>exportXML</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="162"/>
+        <source>Export XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="163"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="164"/>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="165"/>
+        <source>Destination format:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="166"/>
+        <source>xTuple XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="167"/>
+        <source>Alternate XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="168"/>
+        <source>Query Set:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="169"/>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_exportXML.h" line="170"/>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>externalCCTransaction</name>
     <message>
         <location filename="../../guiclient/externalCCTransaction.ui" line="21"/>
@@ -45585,6 +48016,69 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="../../guiclient/failedPostList.ui" line="89"/>
         <source>Retry</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>file</name>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="192"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="192"/>
+        <source>file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="193"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="193"/>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="194"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="194"/>
+        <source>Internet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="195"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="195"/>
+        <source>Title:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="196"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="196"/>
+        <source>URL:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="197"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="197"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="198"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="198"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="199"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="199"/>
+        <source>Alt+C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="200"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="200"/>
+        <source>&amp;Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_file.h" line="201"/>
+        <location filename="../../widgets/tmp/lib/ui_file.h" line="201"/>
+        <source>Alt+S</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -48779,6 +51273,59 @@ Are you sure that you want to Implode the selected Work Order?</source>
     </message>
 </context>
 <context>
+    <name>importXML</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="166"/>
+        <source>Import XML</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="167"/>
+        <source>Files from which to import data:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="168"/>
+        <source>Automatically Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="169"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="170"/>
+        <source>Add To List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="171"/>
+        <source>Delete From List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="172"/>
+        <source>Reset List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="173"/>
+        <source>Clear Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="174"/>
+        <source>Import Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_importXML.h" line="175"/>
+        <source>Import All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>incident</name>
     <message>
         <location filename="../../guiclient/incident.ui" line="27"/>
@@ -49772,6 +52319,46 @@ Are you sure that you want to Implode the selected Work Order?</source>
         <source>Account</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_incidentWorkbench.h" line="189"/>
+        <source>Incident Workbench</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_incidentWorkbench.h" line="190"/>
+        <source>Search:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_incidentWorkbench.h" line="191"/>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_incidentWorkbench.h" line="192"/>
+        <source>Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_incidentWorkbench.h" line="193"/>
+        <source>Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_incidentWorkbench.h" line="194"/>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_incidentWorkbench.h" line="195"/>
+        <source>Incidents:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_incidentWorkbench.h" line="196"/>
+        <source>Automatically Update</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>invoice</name>
@@ -49988,6 +52575,11 @@ Are you sure that you want to Implode the selected Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../guiclient/invoice.ui" line="1101"/>
+        <source>Outstanding Credit:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../guiclient/invoice.ui" line="1127"/>
         <source>Tax:</source>
         <translation type="unfinished"></translation>
@@ -50003,11 +52595,6 @@ Are you sure that you want to Implode the selected Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/invoice.ui" line="1243"/>
-        <source>Allocated C/M&apos;s:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/invoice.ui" line="1026"/>
         <source>Freight Weight:</source>
         <translation type="unfinished"></translation>
@@ -50015,11 +52602,6 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="../../guiclient/invoice.ui" line="1063"/>
         <source>Freight:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/invoice.ui" line="1101"/>
-        <source>Outstanding C/M&apos;s:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -50040,6 +52622,11 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="../../guiclient/invoice.ui" line="1230"/>
         <source>Payment Received:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/invoice.ui" line="1243"/>
+        <source>Allocated Credit:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -51021,48 +53608,48 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="389"/>
-        <location filename="../../guiclient/item.cpp" line="397"/>
-        <location filename="../../guiclient/item.cpp" line="476"/>
-        <location filename="../../guiclient/item.cpp" line="485"/>
-        <location filename="../../guiclient/item.cpp" line="500"/>
-        <location filename="../../guiclient/item.cpp" line="536"/>
-        <location filename="../../guiclient/item.cpp" line="580"/>
-        <location filename="../../guiclient/item.cpp" line="589"/>
-        <location filename="../../guiclient/item.cpp" line="597"/>
-        <location filename="../../guiclient/item.cpp" line="605"/>
-        <location filename="../../guiclient/item.cpp" line="613"/>
-        <location filename="../../guiclient/item.cpp" line="621"/>
-        <location filename="../../guiclient/item.cpp" line="629"/>
-        <location filename="../../guiclient/item.cpp" line="636"/>
-        <location filename="../../guiclient/item.cpp" line="657"/>
+        <location filename="../../guiclient/item.cpp" line="363"/>
+        <location filename="../../guiclient/item.cpp" line="371"/>
+        <location filename="../../guiclient/item.cpp" line="450"/>
+        <location filename="../../guiclient/item.cpp" line="459"/>
+        <location filename="../../guiclient/item.cpp" line="474"/>
+        <location filename="../../guiclient/item.cpp" line="510"/>
+        <location filename="../../guiclient/item.cpp" line="554"/>
+        <location filename="../../guiclient/item.cpp" line="563"/>
+        <location filename="../../guiclient/item.cpp" line="571"/>
+        <location filename="../../guiclient/item.cpp" line="579"/>
+        <location filename="../../guiclient/item.cpp" line="587"/>
+        <location filename="../../guiclient/item.cpp" line="595"/>
+        <location filename="../../guiclient/item.cpp" line="603"/>
+        <location filename="../../guiclient/item.cpp" line="610"/>
+        <location filename="../../guiclient/item.cpp" line="631"/>
         <source>Cannot Save Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="581"/>
+        <location filename="../../guiclient/item.cpp" line="555"/>
         <source>You may not rename this Item to the entered Item Number as it is in use by another Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="590"/>
+        <location filename="../../guiclient/item.cpp" line="564"/>
         <source>You must enter a Item Number for this Item before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="598"/>
+        <location filename="../../guiclient/item.cpp" line="572"/>
         <source>You must select an Item Type for this Item Type before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="606"/>
-        <location filename="../../guiclient/item.cpp" line="637"/>
+        <location filename="../../guiclient/item.cpp" line="580"/>
+        <location filename="../../guiclient/item.cpp" line="611"/>
         <source>You must select a Class Code for this Item before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="390"/>
-        <location filename="../../guiclient/item.cpp" line="614"/>
+        <location filename="../../guiclient/item.cpp" line="364"/>
+        <location filename="../../guiclient/item.cpp" line="588"/>
         <source>You must select an Inventory Unit of Measure for this Item before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51072,87 +53659,87 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="886"/>
+        <location filename="../../guiclient/item.cpp" line="860"/>
         <source>Create New Item Sites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="888"/>
+        <location filename="../../guiclient/item.cpp" line="862"/>
         <source>&amp;Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="888"/>
+        <location filename="../../guiclient/item.cpp" line="862"/>
         <source>&amp;No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1402"/>
+        <location filename="../../guiclient/item.cpp" line="1376"/>
         <source>The selected Item is already a Transformation target for this Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1658"/>
-        <location filename="../../guiclient/item.cpp" line="1664"/>
-        <location filename="../../guiclient/item.cpp" line="1670"/>
-        <location filename="../../guiclient/item.cpp" line="1676"/>
-        <location filename="../../guiclient/item.cpp" line="1682"/>
-        <location filename="../../guiclient/item.cpp" line="1688"/>
+        <location filename="../../guiclient/item.cpp" line="1632"/>
+        <location filename="../../guiclient/item.cpp" line="1638"/>
+        <location filename="../../guiclient/item.cpp" line="1644"/>
+        <location filename="../../guiclient/item.cpp" line="1650"/>
+        <location filename="../../guiclient/item.cpp" line="1656"/>
+        <location filename="../../guiclient/item.cpp" line="1662"/>
         <source>Cannot Delete Item Site</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1659"/>
+        <location filename="../../guiclient/item.cpp" line="1633"/>
         <source>The selected Item Site cannot be deleted as there is Inventory History posted against it.
 You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1665"/>
+        <location filename="../../guiclient/item.cpp" line="1639"/>
         <source>The selected Item Site cannot be deleted as there is Work Order History posted against it.
 You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1671"/>
+        <location filename="../../guiclient/item.cpp" line="1645"/>
         <source>The selected Item Site cannot be deleted as there is Sales History posted against it.
 You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1677"/>
+        <location filename="../../guiclient/item.cpp" line="1651"/>
         <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it.
 You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1683"/>
+        <location filename="../../guiclient/item.cpp" line="1657"/>
         <source>The selected Item Site cannot be deleted as there is Planning History posted against it.
 You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1689"/>
+        <location filename="../../guiclient/item.cpp" line="1663"/>
         <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted againt it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1721"/>
+        <location filename="../../guiclient/item.cpp" line="1695"/>
         <source>Regular</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1722"/>
+        <location filename="../../guiclient/item.cpp" line="1696"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1723"/>
+        <location filename="../../guiclient/item.cpp" line="1697"/>
         <source>Lot #</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1724"/>
+        <location filename="../../guiclient/item.cpp" line="1698"/>
         <source>Serial #</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51259,8 +53846,8 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <location filename="../../guiclient/item.ui" line="172"/>
-        <location filename="../../guiclient/item.cpp" line="2121"/>
-        <location filename="../../guiclient/item.cpp" line="2140"/>
+        <location filename="../../guiclient/item.cpp" line="2095"/>
+        <location filename="../../guiclient/item.cpp" line="2114"/>
         <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51307,7 +53894,7 @@ You may edit the Item Site and deactivate it.</source>
         <location filename="../../guiclient/item.ui" line="1184"/>
         <location filename="../../guiclient/item.ui" line="1375"/>
         <location filename="../../guiclient/item.ui" line="1483"/>
-        <location filename="../../guiclient/item.cpp" line="2140"/>
+        <location filename="../../guiclient/item.cpp" line="2114"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51353,12 +53940,12 @@ You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="509"/>
+        <location filename="../../guiclient/item.cpp" line="483"/>
         <source>Planning Type Disallowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="510"/>
+        <location filename="../../guiclient/item.cpp" line="484"/>
         <source>This item is part of one or more Bills of Materials and cannot be a Planning Item.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51374,12 +53961,12 @@ You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="674"/>
+        <location filename="../../guiclient/item.cpp" line="648"/>
         <source>Item Costs Exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1770"/>
+        <location filename="../../guiclient/item.cpp" line="1744"/>
         <source>Any</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51395,23 +53982,23 @@ You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="622"/>
+        <location filename="../../guiclient/item.cpp" line="596"/>
         <source>You must select a Product Category for this Sold Item before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1607"/>
-        <location filename="../../guiclient/item.cpp" line="1612"/>
+        <location filename="../../guiclient/item.cpp" line="1581"/>
+        <location filename="../../guiclient/item.cpp" line="1586"/>
         <source>No Item Site Found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1608"/>
+        <location filename="../../guiclient/item.cpp" line="1582"/>
         <source>There is no Item Site for this item. Would you like to create one now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1613"/>
+        <location filename="../../guiclient/item.cpp" line="1587"/>
         <source>There is no Item Site for this item.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51426,17 +54013,17 @@ You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="630"/>
+        <location filename="../../guiclient/item.cpp" line="604"/>
         <source>You must select a Selling UOM for this Sold Item before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="692"/>
+        <location filename="../../guiclient/item.cpp" line="666"/>
         <source>Item Sites Exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1401"/>
+        <location filename="../../guiclient/item.cpp" line="1375"/>
         <source>Cannot Duplicate Transformation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51446,32 +54033,32 @@ You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="658"/>
+        <location filename="../../guiclient/item.cpp" line="632"/>
         <source>&lt;p&gt;This Item has Item Sites with either on hand quantities or pending inventory activity. This item type does not allow on hand balances or inventory activity.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="675"/>
+        <location filename="../../guiclient/item.cpp" line="649"/>
         <source>&lt;p&gt;You have changed the Item Type of this Item. This Item has Item Costs associated with it that will be deleted before this change may occur. Do you wish to continue saving and delete the Item Costs?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="693"/>
+        <location filename="../../guiclient/item.cpp" line="667"/>
         <source>&lt;p&gt;You have changed the Item Type of this Item. To ensure Item Sites do not have invalid settings, all Item Sites for it will be inactivated before this change may occur.  You may afterward edit the Item Sites, enter valid information, and reactivate them.  Do you wish to continue saving and inactivate the Item Sites?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="751"/>
+        <location filename="../../guiclient/item.cpp" line="725"/>
         <source>Add conversions?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="752"/>
+        <location filename="../../guiclient/item.cpp" line="726"/>
         <source>&lt;p&gt;There are records referring to this Item that do not have UOM Conversions to %1. Would you like to create UOM Conversions now?&lt;p&gt;If you  answer No then the Item will be saved and you may encounter errors later. The units without conversions are:&lt;br&gt;%2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="887"/>
+        <location filename="../../guiclient/item.cpp" line="861"/>
         <source>Would you like to create Item site inventory settings for the newly created Item now?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51546,52 +54133,52 @@ You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="398"/>
+        <location filename="../../guiclient/item.cpp" line="372"/>
         <source>You must select a Class Code before continuing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="477"/>
+        <location filename="../../guiclient/item.cpp" line="451"/>
         <source>This Item is used in an active Bill of Materials and must be marked as active. Expire the Bill of Material items to allow this Item to not be active.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="486"/>
+        <location filename="../../guiclient/item.cpp" line="460"/>
         <source>This Item is used in an active Item Site and must be marked as active. Deactivate the Item Sites to allow this Item to not be active.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="516"/>
+        <location filename="../../guiclient/item.cpp" line="490"/>
         <source>Must be Sold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="517"/>
+        <location filename="../../guiclient/item.cpp" line="491"/>
         <source>Kit item types must be Sold. Please mark this item as sold and set the appropriate options and save again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="537"/>
+        <location filename="../../guiclient/item.cpp" line="511"/>
         <source>This item is used in an active bill of materials for a kit and must be marked as sold. Expire the bill of material items or deactivate the kit items to allow this item to not be sold.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="558"/>
+        <location filename="../../guiclient/item.cpp" line="532"/>
         <source>BOM Items should be marked as Sold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="559"/>
+        <location filename="../../guiclient/item.cpp" line="533"/>
         <source>&lt;p&gt;You have changed the Item Type of this Item to Kit. This Item has BOM Items associated with it that are not marked as Sold. Do you wish to continue saving?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1954"/>
+        <location filename="../../guiclient/item.cpp" line="1928"/>
         <source>Access Denied</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="1955"/>
+        <location filename="../../guiclient/item.cpp" line="1929"/>
         <source>You may not view or edit this Item Site as it references a Site for which you have not been granted privileges.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51631,34 +54218,34 @@ You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="501"/>
+        <location filename="../../guiclient/item.cpp" line="475"/>
         <source>This Item is used in an active Item Source and must be marked as active. Deactivate the Item Sources to allow this Item to not be active.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="2118"/>
-        <location filename="../../guiclient/item.cpp" line="2133"/>
-        <location filename="../../guiclient/item.cpp" line="2138"/>
+        <location filename="../../guiclient/item.cpp" line="2092"/>
+        <location filename="../../guiclient/item.cpp" line="2107"/>
+        <location filename="../../guiclient/item.cpp" line="2112"/>
         <source>Delete Item Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="2119"/>
+        <location filename="../../guiclient/item.cpp" line="2093"/>
         <source>This item source is used by existing purchase order records and may not be deleted.  Would you like to deactivate it instead?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="2121"/>
+        <location filename="../../guiclient/item.cpp" line="2095"/>
         <source>&amp;Ok</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="2133"/>
+        <location filename="../../guiclient/item.cpp" line="2107"/>
         <source>This item source is used by existing purchase order records and may not be deleted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/item.cpp" line="2139"/>
+        <location filename="../../guiclient/item.cpp" line="2113"/>
         <source>Are you sure that you want to delete the Item Source?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -52873,43 +55460,43 @@ You may not create duplicate Item Aliases.</source>
 <context>
     <name>itemList</name>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="889"/>
+        <location filename="../../widgets/itemCluster.cpp" line="931"/>
         <source>Item List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="891"/>
+        <location filename="../../widgets/itemCluster.cpp" line="933"/>
         <source>Show &amp;Inactive Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="906"/>
+        <location filename="../../widgets/itemCluster.cpp" line="948"/>
         <source>Item Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="907"/>
+        <location filename="../../widgets/itemCluster.cpp" line="949"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="908"/>
+        <location filename="../../widgets/itemCluster.cpp" line="950"/>
         <source>Bar Code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="935"/>
-        <location filename="../../widgets/itemCluster.cpp" line="1022"/>
+        <location filename="../../widgets/itemCluster.cpp" line="977"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1064"/>
         <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="894"/>
+        <location filename="../../widgets/itemCluster.cpp" line="936"/>
         <source>&amp;Make Items Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="896"/>
+        <location filename="../../widgets/itemCluster.cpp" line="938"/>
         <source>&amp;Buy Items Only</source>
         <translation type="unfinished"></translation>
     </message>
@@ -53551,47 +56138,47 @@ You must delete these assignments before you may delete the selected Pricing Sch
 <context>
     <name>itemSearch</name>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1046"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1088"/>
         <source>Search for Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1048"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1090"/>
         <source>Search through Description 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1050"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1092"/>
         <source>Search through Description 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1052"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1094"/>
         <source>Search through Bar Code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1057"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1099"/>
         <source>Show &amp;Inactive Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1067"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1109"/>
         <source>Item Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1068"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1110"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1069"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1111"/>
         <source>Bar Code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/itemCluster.cpp" line="1096"/>
+        <location filename="../../widgets/itemCluster.cpp" line="1138"/>
         <source>Items</source>
         <translation type="unfinished"></translation>
     </message>
@@ -57177,633 +59764,608 @@ You must reassign these Item Sites before you may delete the selected Planner Co
 <context>
     <name>menuAccounting</name>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="154"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="152"/>
         <source>Accounting Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="218"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="216"/>
         <source>Accounts &amp;Payable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="221"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="219"/>
         <source>Purchase &amp;Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="222"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="229"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="293"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="308"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="356"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="220"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="227"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="287"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="302"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="347"/>
         <source>&amp;New...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="231"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="295"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="352"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="229"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="289"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="343"/>
         <source>&amp;List Unposted...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="233"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="297"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="310"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="360"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="231"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="291"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="304"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="351"/>
         <source>&amp;Post...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="228"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="226"/>
         <source>&amp;Voucher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="223"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="221"/>
         <source>&amp;List Open...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="225"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="223"/>
         <source>&amp;Release...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="230"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="228"/>
         <source>New &amp;Miscellaneous...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="231"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="229"/>
         <source>List Unposted Vouchers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="236"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="300"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="234"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="294"/>
         <source>&amp;Memos</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="237"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="301"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="235"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="295"/>
         <source>&amp;New Misc. Credit Memo...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="238"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="302"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="236"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="296"/>
         <source>&amp;List Unapplied Credit Memos...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="240"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="304"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="238"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="298"/>
         <source>New &amp;Misc. Debit Memo...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="243"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="241"/>
         <source>&amp;Payments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="244"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="242"/>
         <source>&amp;Select...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="244"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="242"/>
         <source>Select Payments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="245"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="243"/>
         <source>&amp;List Selected...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="247"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="245"/>
         <source>&amp;Prepare Check Run...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="248"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="246"/>
         <source>Create &amp;Miscellaneous Check...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="249"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="247"/>
         <source>Vie&amp;w Check Run...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="251"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="249"/>
         <source>&amp;Void Check Run...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="257"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="255"/>
         <source>Payables Workbench</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="261"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="317"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="259"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="311"/>
         <source>&amp;Forms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="262"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="260"/>
         <source>Print Purchase &amp;Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="265"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="263"/>
         <source>Print Check &amp;Run...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="268"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="325"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="370"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="387"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="433"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="266"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="319"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="361"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="378"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="424"/>
         <source>&amp;Reports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="269"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="267"/>
         <source>&amp;Uninvoiced Receipts and Returns...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="273"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="270"/>
         <source>Payables Aging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="275"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="272"/>
         <source>&amp;Check Register...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="276"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="273"/>
         <source>&amp;Voucher Register...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="280"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="277"/>
         <source>Vendor &amp;History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="286"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="280"/>
         <source>Ve&amp;ndors...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="289"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="283"/>
         <source>Accounts Recei&amp;vable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="292"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="286"/>
         <source>&amp;Invoice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="294"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="288"/>
         <source>&amp;List Recurring Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="295"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="289"/>
         <source>List Unposted Invoices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="307"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="301"/>
         <source>C&amp;ash Receipt</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="309"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="303"/>
         <source>&amp;Edit List...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="309"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="303"/>
         <source>Cash Receipt Edit List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="313"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="307"/>
         <source>Receivables Workbench</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="318"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="312"/>
         <source>Print &amp;Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="319"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="313"/>
         <source>&amp;Re-Print Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="321"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="315"/>
         <source>Print S&amp;tatement by Customer...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="322"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="316"/>
         <source>Print State&amp;ments by Customer Type...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="326"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="320"/>
         <source>&amp;Invoice Information...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="331"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="325"/>
         <source>In&amp;voice Register...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="332"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="326"/>
         <source>Cash &amp;Receipts...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="334"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="328"/>
         <source>&amp;Deposits Register...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="336"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="330"/>
         <source>Customer &amp;History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="338"/>
-        <source>Sales &amp;Journal...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="339"/>
-        <source>Credit &amp;Memo Journal...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="342"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="333"/>
         <source>&amp;Customers...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="345"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="336"/>
         <source>General &amp;Ledger</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="348"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="339"/>
         <source>&amp;Journal Entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="349"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="340"/>
         <source>S&amp;imple...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="350"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="373"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="341"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="364"/>
         <source>&amp;Series...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="352"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="343"/>
         <source>List Unposted Journal Entries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="355"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="346"/>
         <source>&amp;Standard Journals</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="357"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="348"/>
         <source>&amp;List...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="358"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="349"/>
         <source>List &amp;Groups...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="361"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="352"/>
         <source>Post G&amp;roup...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="371"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="362"/>
         <source>&amp;Transactions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="372"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="363"/>
         <source>Su&amp;mmarized Transactions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="378"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="369"/>
         <source>&amp;Bank Reconciliation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="379"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="370"/>
         <source>&amp;Reconcile...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="379"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="370"/>
         <source>Reconcile Bank Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="381"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="372"/>
         <source>&amp;New Adjustment...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="382"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="373"/>
         <source>Adjustment Edit &amp;List...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="449"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="440"/>
         <source>&amp;Setup...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="458"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="449"/>
         <source>Accountin&amp;g</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="374"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="365"/>
         <source>Standard &amp;Journal History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="394"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="385"/>
         <source>Financial &amp;Statements</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="395"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="386"/>
         <source>&amp;New Financial Report...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="396"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="387"/>
         <source>&amp;List Financial Reports...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="398"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="389"/>
         <source>View &amp;Trial Balances...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="399"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="390"/>
         <source>View &amp;Financial Report...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="404"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="395"/>
         <source>&amp;Fiscal Calendar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="405"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="396"/>
         <source>Fiscal &amp;Years...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="406"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="397"/>
         <source>Accounting &amp;Periods...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="409"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="400"/>
         <source>&amp;Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="411"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="402"/>
         <source>C&amp;ompanies...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="412"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="403"/>
         <source>&amp;Profit Center Numbers...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="413"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="404"/>
         <source>&amp;Subaccount Numbers...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="410"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="401"/>
         <source>&amp;Chart of Accounts...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="272"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="269"/>
         <source>Open &amp;Payables...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="328"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="322"/>
         <source>&amp;Open Receivables...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="329"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="323"/>
         <source>Receivables Aging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="364"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="355"/>
         <source>&amp;Post Journals to Ledger...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="376"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="367"/>
         <source>Journals...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="388"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="379"/>
         <source>&amp;History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="389"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="380"/>
         <source>Summari&amp;zed History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="414"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="405"/>
         <source>Su&amp;baccount Types...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="417"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="408"/>
         <source>Bu&amp;dget</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="418"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="409"/>
         <source>&amp;New Budget...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="419"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="410"/>
         <source>&amp;List Budgets...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="422"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="413"/>
         <source>&amp;Tax</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="423"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="414"/>
         <source>Tax &amp;Authorities...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="424"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="415"/>
         <source>Tax &amp;Zones...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="425"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="416"/>
         <source>Tax &amp;Classes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="426"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="417"/>
         <source>Tax &amp;Codes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="427"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="418"/>
         <source>Tax &amp;Types...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="429"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="420"/>
         <source>Tax &amp;Registrations...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="434"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="425"/>
         <source>&amp;Tax History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="439"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="430"/>
         <source>&amp;Utilities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="440"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="431"/>
         <source>&amp;Forward Update Accounts...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="441"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="432"/>
         <source>&amp;Duplicate Account Numbers...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="443"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="434"/>
         <source>Purge &amp;Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="253"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="251"/>
         <source>Post &amp;Check...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="254"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="252"/>
         <source>P&amp;ost Checks...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="264"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="262"/>
         <source>Print &amp;Check...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="282"/>
-        <source>Pa&amp;yables Journal...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="283"/>
-        <source>Check &amp;Journal...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="428"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="419"/>
         <source>Tax Assi&amp;gnments...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="444"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="435"/>
         <source>&amp;Update Late Customer Credit Status...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/menuAccounting.cpp" line="270"/>
-        <source>Vouchering &amp;Edit List...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="273"/>
         <source>&amp;Aging...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="257"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="313"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="255"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="307"/>
         <source>&amp;Workbench...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="329"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="323"/>
         <source>A&amp;ging...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="278"/>
-        <location filename="../../guiclient/menuAccounting.cpp" line="333"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="275"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="327"/>
         <source>&amp;Applications...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuAccounting.cpp" line="447"/>
+        <location filename="../../guiclient/menuAccounting.cpp" line="438"/>
         <source>&amp;Synchronize Companies</source>
         <translation type="unfinished"></translation>
     </message>
@@ -58970,256 +61532,251 @@ You must reassign these Item Sites before you may delete the selected Planner Co
 <context>
     <name>menuPurchase</name>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="84"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="83"/>
         <source>Purchase Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="121"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="120"/>
         <source>Purchase &amp;Requests</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="122"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="121"/>
         <source>by &amp;Planner Code...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="122"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="121"/>
         <source>Purchase Requests by Planner Code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="123"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="177"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="187"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="196"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="201"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="122"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="176"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="186"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="195"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="200"/>
         <source>by &amp;Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="126"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="125"/>
         <source>&amp;Purchase Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="127"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="140"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="211"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="218"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="126"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="139"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="208"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="215"/>
         <source>&amp;New...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="128"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="127"/>
         <source>&amp;List Open...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="128"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="127"/>
         <source>List Open Purchase Orders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="130"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="129"/>
         <source>&amp;Release...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="131"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="130"/>
         <source>Release by A&amp;gent...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="142"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="141"/>
         <source>&amp;List Unposted...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="144"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="143"/>
         <source>&amp;Post...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="132"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="131"/>
         <source>&amp;Close...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="134"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="133"/>
         <source>&amp;Reschedule...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="135"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="134"/>
         <source>Change &amp;Qty...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="136"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="135"/>
         <source>&amp;Add Comment...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="139"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="138"/>
         <source>&amp;Voucher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="141"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="140"/>
         <source>New &amp;Miscellaneous...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="148"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="147"/>
         <source>&amp;Forms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="149"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="148"/>
         <source>Print Purchase &amp;Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="150"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="149"/>
         <source>Print Purchase Orders by &amp;Agent...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="152"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="151"/>
         <source>Print &amp;P/O Form...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="153"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="152"/>
         <source>Print &amp;Vendor Form...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="156"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="155"/>
         <source>&amp;Reports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="158"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="157"/>
         <source>Item &amp;Sites...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/menuPurchase.cpp" line="169"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="174"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="184"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="194"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="199"/>
+        <source>by &amp;Vendor...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/menuPurchase.cpp" line="160"/>
+        <source>&amp;Buy Card...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/menuPurchase.cpp" line="168"/>
+        <source>&amp;Purchase Orders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/menuPurchase.cpp" line="170"/>
         <location filename="../../guiclient/menuPurchase.cpp" line="175"/>
         <location filename="../../guiclient/menuPurchase.cpp" line="185"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="195"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="200"/>
-        <source>by &amp;Vendor...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="161"/>
-        <source>&amp;Buy Card...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="169"/>
-        <source>&amp;Purchase Orders</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="171"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="176"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="186"/>
         <source>by &amp;Date...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="174"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="173"/>
         <source>Purchase &amp;Order Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="179"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="178"/>
         <source>Purchase Order &amp;History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="184"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="183"/>
         <source>&amp;Receipts and Returns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="189"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="188"/>
         <source>&amp;Uninvoiced Receipts and Returns...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="194"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="193"/>
         <source>Price &amp;Variances</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="199"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="198"/>
         <source>&amp;Delivery Date Variances</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="203"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="202"/>
         <source>Rejected &amp;Material...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="205"/>
-        <source>U&amp;nposted Vouchers...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="210"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="207"/>
         <source>V&amp;endor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="212"/>
-        <location filename="../../guiclient/menuPurchase.cpp" line="219"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="209"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="216"/>
         <source>&amp;List...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="217"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="214"/>
         <source>&amp;Item Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="224"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="221"/>
         <source>&amp;Utilities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="225"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="222"/>
         <source>&amp;Items without Item Sources...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="226"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="223"/>
         <source>&amp;Assign Item to Planner Code...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="227"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="224"/>
         <source>Assign Item&amp;s to Planner Code...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="230"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="227"/>
         <source>&amp;Setup...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="238"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="235"/>
         <source>P&amp;urchase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuPurchase.cpp" line="214"/>
+        <location filename="../../guiclient/menuPurchase.cpp" line="211"/>
         <source>&amp;Workbench...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -59227,442 +61784,437 @@ You must reassign these Item Sites before you may delete the selected Planner Co
 <context>
     <name>menuSales</name>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="118"/>
+        <location filename="../../guiclient/menuSales.cpp" line="117"/>
         <source>Sales Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="167"/>
-        <location filename="../../guiclient/menuSales.cpp" line="224"/>
+        <location filename="../../guiclient/menuSales.cpp" line="166"/>
+        <location filename="../../guiclient/menuSales.cpp" line="221"/>
         <source>&amp;Quote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="168"/>
-        <location filename="../../guiclient/menuSales.cpp" line="173"/>
-        <location filename="../../guiclient/menuSales.cpp" line="195"/>
-        <location filename="../../guiclient/menuSales.cpp" line="213"/>
-        <location filename="../../guiclient/menuSales.cpp" line="283"/>
-        <location filename="../../guiclient/menuSales.cpp" line="288"/>
+        <location filename="../../guiclient/menuSales.cpp" line="167"/>
+        <location filename="../../guiclient/menuSales.cpp" line="172"/>
+        <location filename="../../guiclient/menuSales.cpp" line="192"/>
+        <location filename="../../guiclient/menuSales.cpp" line="210"/>
+        <location filename="../../guiclient/menuSales.cpp" line="280"/>
+        <location filename="../../guiclient/menuSales.cpp" line="285"/>
         <source>&amp;New...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="169"/>
-        <location filename="../../guiclient/menuSales.cpp" line="284"/>
-        <location filename="../../guiclient/menuSales.cpp" line="289"/>
+        <location filename="../../guiclient/menuSales.cpp" line="168"/>
+        <location filename="../../guiclient/menuSales.cpp" line="281"/>
+        <location filename="../../guiclient/menuSales.cpp" line="286"/>
         <source>&amp;List...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="172"/>
-        <location filename="../../guiclient/menuSales.cpp" line="229"/>
+        <location filename="../../guiclient/menuSales.cpp" line="171"/>
+        <location filename="../../guiclient/menuSales.cpp" line="226"/>
         <source>&amp;Sales Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="174"/>
-        <location filename="../../guiclient/menuSales.cpp" line="214"/>
+        <location filename="../../guiclient/menuSales.cpp" line="173"/>
+        <location filename="../../guiclient/menuSales.cpp" line="211"/>
         <source>&amp;List Open...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="174"/>
+        <location filename="../../guiclient/menuSales.cpp" line="173"/>
         <source>List Open Sales Orders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="177"/>
+        <location filename="../../guiclient/menuSales.cpp" line="176"/>
         <source>&amp;Billing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="180"/>
+        <location filename="../../guiclient/menuSales.cpp" line="179"/>
         <source>&amp;Invoice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="181"/>
+        <location filename="../../guiclient/menuSales.cpp" line="180"/>
         <source>&amp;Uninvoiced Shipments...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="181"/>
+        <location filename="../../guiclient/menuSales.cpp" line="180"/>
         <source>Uninvoiced Shipments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="183"/>
+        <location filename="../../guiclient/menuSales.cpp" line="181"/>
         <source>Select &amp;All Shipped Orders for Billing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="184"/>
+        <location filename="../../guiclient/menuSales.cpp" line="182"/>
         <source>Select &amp;Order for Billing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="186"/>
-        <source>&amp;Billing Edit List...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/menuSales.cpp" line="187"/>
+        <location filename="../../guiclient/menuSales.cpp" line="184"/>
         <source>Billing &amp;Selections...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="187"/>
+        <location filename="../../guiclient/menuSales.cpp" line="184"/>
         <source>Billing Selections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="190"/>
+        <location filename="../../guiclient/menuSales.cpp" line="187"/>
         <source>&amp;List Unposted Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="191"/>
+        <location filename="../../guiclient/menuSales.cpp" line="188"/>
         <source>Post &amp;Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="194"/>
+        <location filename="../../guiclient/menuSales.cpp" line="191"/>
         <source>&amp;Credit Memo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="196"/>
+        <location filename="../../guiclient/menuSales.cpp" line="193"/>
         <source>&amp;List Unposted...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="197"/>
+        <location filename="../../guiclient/menuSales.cpp" line="194"/>
         <source>&amp;Edit List...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="199"/>
+        <location filename="../../guiclient/menuSales.cpp" line="196"/>
         <source>&amp;Post...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="204"/>
-        <location filename="../../guiclient/menuSales.cpp" line="239"/>
+        <location filename="../../guiclient/menuSales.cpp" line="201"/>
+        <location filename="../../guiclient/menuSales.cpp" line="236"/>
         <source>&amp;Forms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="205"/>
+        <location filename="../../guiclient/menuSales.cpp" line="202"/>
         <source>&amp;Print Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="206"/>
+        <location filename="../../guiclient/menuSales.cpp" line="203"/>
         <source>&amp;Re-Print Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="208"/>
+        <location filename="../../guiclient/menuSales.cpp" line="205"/>
         <source>Print &amp;Credit Memos...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="209"/>
+        <location filename="../../guiclient/menuSales.cpp" line="206"/>
         <source>Re-Print Credit &amp;Memos...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="221"/>
+        <location filename="../../guiclient/menuSales.cpp" line="218"/>
         <source>&amp;Lookup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="225"/>
-        <location filename="../../guiclient/menuSales.cpp" line="231"/>
+        <location filename="../../guiclient/menuSales.cpp" line="222"/>
+        <location filename="../../guiclient/menuSales.cpp" line="228"/>
         <source>by &amp;Customer...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="226"/>
-        <location filename="../../guiclient/menuSales.cpp" line="233"/>
+        <location filename="../../guiclient/menuSales.cpp" line="223"/>
+        <location filename="../../guiclient/menuSales.cpp" line="230"/>
         <source>by &amp;Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="230"/>
+        <location filename="../../guiclient/menuSales.cpp" line="227"/>
         <source>by Customer &amp;Type...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="232"/>
+        <location filename="../../guiclient/menuSales.cpp" line="229"/>
         <source>by Customer &amp;PO...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="236"/>
+        <location filename="../../guiclient/menuSales.cpp" line="233"/>
         <source>Sales Order S&amp;tatus...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="240"/>
+        <location filename="../../guiclient/menuSales.cpp" line="237"/>
         <source>Print Sales &amp;Order Form...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="243"/>
+        <location filename="../../guiclient/menuSales.cpp" line="240"/>
         <source>Packing &amp;List Batch...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="244"/>
+        <location filename="../../guiclient/menuSales.cpp" line="241"/>
         <source>&amp;Print Packing List...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="248"/>
-        <location filename="../../guiclient/menuSales.cpp" line="307"/>
+        <location filename="../../guiclient/menuSales.cpp" line="245"/>
+        <location filename="../../guiclient/menuSales.cpp" line="304"/>
         <source>&amp;Reports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="249"/>
+        <location filename="../../guiclient/menuSales.cpp" line="246"/>
         <source>Su&amp;mmarized Backlog...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="249"/>
+        <location filename="../../guiclient/menuSales.cpp" line="246"/>
         <source>Summarized Backlog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="253"/>
+        <location filename="../../guiclient/menuSales.cpp" line="250"/>
         <source>&amp;Partially Shipped Orders...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="263"/>
+        <location filename="../../guiclient/menuSales.cpp" line="260"/>
         <source>&amp;Earned Commissions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="264"/>
+        <location filename="../../guiclient/menuSales.cpp" line="261"/>
         <source>B&amp;rief Earned Commissions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="270"/>
+        <location filename="../../guiclient/menuSales.cpp" line="267"/>
         <source>&amp;Analysis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="282"/>
+        <location filename="../../guiclient/menuSales.cpp" line="279"/>
         <source>&amp;Prospect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="287"/>
+        <location filename="../../guiclient/menuSales.cpp" line="284"/>
         <source>&amp;Customer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="301"/>
+        <location filename="../../guiclient/menuSales.cpp" line="298"/>
         <source>Update Pricing Schedules...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="329"/>
+        <location filename="../../guiclient/menuSales.cpp" line="326"/>
         <source>&amp;Setup...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="338"/>
+        <location filename="../../guiclient/menuSales.cpp" line="335"/>
         <source>S&amp;ales</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="216"/>
-        <location filename="../../guiclient/menuSales.cpp" line="291"/>
+        <location filename="../../guiclient/menuSales.cpp" line="213"/>
+        <location filename="../../guiclient/menuSales.cpp" line="288"/>
         <source>&amp;Workbench...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="188"/>
+        <location filename="../../guiclient/menuSales.cpp" line="185"/>
         <source>&amp;Create Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="252"/>
+        <location filename="../../guiclient/menuSales.cpp" line="249"/>
         <source>&amp;Backlog...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="258"/>
+        <location filename="../../guiclient/menuSales.cpp" line="255"/>
         <source>Inventory &amp;Availability...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="259"/>
+        <location filename="../../guiclient/menuSales.cpp" line="256"/>
         <source>Availability by &amp;Sales Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="260"/>
+        <location filename="../../guiclient/menuSales.cpp" line="257"/>
         <source>Availability by &amp;Customer Type...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="265"/>
+        <location filename="../../guiclient/menuSales.cpp" line="262"/>
         <source>Tax History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="271"/>
+        <location filename="../../guiclient/menuSales.cpp" line="268"/>
         <source>&amp;Bookings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="272"/>
+        <location filename="../../guiclient/menuSales.cpp" line="269"/>
         <source>T&amp;ime Phased Bookings...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="274"/>
+        <location filename="../../guiclient/menuSales.cpp" line="271"/>
         <source>Sales &amp;History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="275"/>
+        <location filename="../../guiclient/menuSales.cpp" line="272"/>
         <source>Brie&amp;f Sales History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="276"/>
+        <location filename="../../guiclient/menuSales.cpp" line="273"/>
         <source>Summari&amp;zed Sales History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="277"/>
+        <location filename="../../guiclient/menuSales.cpp" line="274"/>
         <source>Time &amp;Phased Sales History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="293"/>
+        <location filename="../../guiclient/menuSales.cpp" line="290"/>
         <source>&amp;Groups...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="297"/>
+        <location filename="../../guiclient/menuSales.cpp" line="294"/>
         <source>Item &amp;List Price...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="298"/>
+        <location filename="../../guiclient/menuSales.cpp" line="295"/>
         <source>&amp;Update List Prices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="300"/>
+        <location filename="../../guiclient/menuSales.cpp" line="297"/>
         <source>Pricing &amp;Schedules...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="302"/>
+        <location filename="../../guiclient/menuSales.cpp" line="299"/>
         <source>Pricing Schedule Assi&amp;gnments...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="303"/>
+        <location filename="../../guiclient/menuSales.cpp" line="300"/>
         <source>S&amp;ales...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="317"/>
+        <location filename="../../guiclient/menuSales.cpp" line="314"/>
         <source>&amp;Utilities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="318"/>
+        <location filename="../../guiclient/menuSales.cpp" line="315"/>
         <source>&amp;Reassign Customer Type by Customer Type...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="319"/>
+        <location filename="../../guiclient/menuSales.cpp" line="316"/>
         <source>&amp;Update Credit Status by Customer...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="321"/>
+        <location filename="../../guiclient/menuSales.cpp" line="318"/>
         <source>Purge &amp;Invoices...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="322"/>
+        <location filename="../../guiclient/menuSales.cpp" line="319"/>
         <source>Purge Credit &amp;Memos...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="326"/>
+        <location filename="../../guiclient/menuSales.cpp" line="323"/>
         <source>&amp;Archive Sales History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="327"/>
+        <location filename="../../guiclient/menuSales.cpp" line="324"/>
         <source>Restore &amp;Sales History...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="212"/>
+        <location filename="../../guiclient/menuSales.cpp" line="209"/>
         <source>&amp;Return</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="241"/>
+        <location filename="../../guiclient/menuSales.cpp" line="238"/>
         <source>Print &amp;Return Auth. Form...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="324"/>
+        <location filename="../../guiclient/menuSales.cpp" line="321"/>
         <source>Allocate Reser&amp;vations...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="254"/>
+        <location filename="../../guiclient/menuSales.cpp" line="251"/>
         <source>Reservations by Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="291"/>
+        <location filename="../../guiclient/menuSales.cpp" line="288"/>
         <source>Customer Workbench</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="296"/>
+        <location filename="../../guiclient/menuSales.cpp" line="293"/>
         <source>Pricing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="308"/>
+        <location filename="../../guiclient/menuSales.cpp" line="305"/>
         <source>Item Prices by Customer &amp;Type...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="309"/>
+        <location filename="../../guiclient/menuSales.cpp" line="306"/>
         <source>Item Prices by &amp;Customer...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="310"/>
+        <location filename="../../guiclient/menuSales.cpp" line="307"/>
         <source>Item Prices by &amp;Item...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="312"/>
+        <location filename="../../guiclient/menuSales.cpp" line="309"/>
         <source>Freight Prices by Customer &amp;Type...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/menuSales.cpp" line="313"/>
+        <location filename="../../guiclient/menuSales.cpp" line="310"/>
         <source>Freight Prices by &amp;Customer...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -60073,74 +62625,86 @@ Version %2
 <context>
     <name>metasqls</name>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="44"/>
+        <location filename="../../guiclient/metasqls.cpp" line="47"/>
         <source>Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="45"/>
+        <location filename="../../guiclient/metasqls.cpp" line="48"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="46"/>
+        <location filename="../../guiclient/metasqls.cpp" line="49"/>
         <source>Grade</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="47"/>
+        <location filename="../../guiclient/metasqls.cpp" line="50"/>
         <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="48"/>
+        <location filename="../../guiclient/metasqls.cpp" line="51"/>
         <source>Package</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="53"/>
+        <location filename="../../guiclient/metasqls.cpp" line="56"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="79"/>
+        <location filename="../../guiclient/metasqls.cpp" line="82"/>
         <source>Delete MetaSQL?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="80"/>
+        <location filename="../../guiclient/metasqls.cpp" line="83"/>
         <source>Are you sure you want to delete this MetaSQL statement?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="112"/>
+        <location filename="../../guiclient/metasqls.cpp" line="100"/>
+        <location filename="../../guiclient/metasqls.cpp" line="107"/>
+        <source>Deleting MetaSQL Statement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/metasqls.cpp" line="119"/>
         <source>Interface Option is Invalid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="113"/>
+        <location filename="../../guiclient/metasqls.cpp" line="120"/>
         <source>&lt;p&gt;The embedded MetaSQL editor is only available when user preferences are set to show windows as free-floating.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="166"/>
+        <location filename="../../guiclient/metasqls.cpp" line="150"/>
+        <location filename="../../guiclient/metasqls.cpp" line="162"/>
+        <source>Getting MetaSQL Statements</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/metasqls.cpp" line="172"/>
         <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/metasqls.cpp" line="166"/>
+        <location filename="../../guiclient/metasqls.cpp" line="172"/>
         <source>View...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/metasqls.ui" line="29"/>
-        <location filename="../../guiclient/metasqls.cpp" line="171"/>
+        <location filename="../../guiclient/metasqls.cpp" line="177"/>
         <source>Print</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/metasqls.ui" line="72"/>
-        <location filename="../../guiclient/metasqls.cpp" line="175"/>
+        <location filename="../../guiclient/metasqls.cpp" line="181"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -60167,6 +62731,11 @@ Version %2
     <message>
         <location filename="../../guiclient/metasqls.ui" line="94"/>
         <source>MetaSQL Statements:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/metasqls.ui" line="104"/>
+        <source>Organize By Package</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -61029,44 +63598,64 @@ Version %2
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/openVouchers.cpp" line="324"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="308"/>
+        <source>A/P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/openVouchers.cpp" line="314"/>
+        <source>Journal Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/openVouchers.cpp" line="319"/>
+        <source>General Ledger Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/openVouchers.cpp" line="338"/>
         <source>Edit Voucher...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/openVouchers.cpp" line="327"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="341"/>
         <source>View Voucher...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/openVouchers.cpp" line="329"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="343"/>
         <source>Delete Voucher...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/openVouchers.cpp" line="334"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="348"/>
         <source>Post Voucher...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/openVouchers.cpp" line="349"/>
-        <location filename="../../guiclient/openVouchers.cpp" line="357"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="363"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="371"/>
         <source>Getting Open Vouchers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/openVouchers.cpp" line="375"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="389"/>
         <source>&lt;p&gt;You may not view or edit this Voucher as it references a Site for which you have not been granted privileges.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/openVouchers.cpp" line="381"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="395"/>
         <source>Checking Privileges</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/openVouchers.cpp" line="92"/>
         <source>Misc.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/openVouchers.ui" line="21"/>
+        <source>List Unposted Vouchers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -61115,6 +63704,11 @@ Version %2
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../guiclient/openVouchers.ui" line="199"/>
+        <source>Print Journal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../guiclient/openVouchers.cpp" line="51"/>
         <source>Dist. Date</source>
         <translation type="unfinished"></translation>
@@ -61145,17 +63739,7 @@ Version %2
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/openVouchers.ui" line="199"/>
-        <source>Print Journal after Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/openVouchers.ui" line="21"/>
-        <source>List Open Vouchers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/openVouchers.cpp" line="374"/>
+        <location filename="../../guiclient/openVouchers.cpp" line="388"/>
         <source>Access Denied</source>
         <translation type="unfinished"></translation>
     </message>
@@ -62867,6 +65451,29 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     </message>
 </context>
 <context>
+    <name>postBillingSelections</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_postBillingSelections.h" line="140"/>
+        <source>Post Billing Selections</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postBillingSelections.h" line="142"/>
+        <source>Consolidate By Customer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postBillingSelections.h" line="143"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postBillingSelections.h" line="144"/>
+        <source>&amp;Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>postCashReceipts</name>
     <message>
         <location filename="../../guiclient/postCashReceipts.cpp" line="67"/>
@@ -62919,12 +65526,27 @@ Contact you Systems Administrator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/postCashReceipts.cpp" line="160"/>
+        <location filename="../../guiclient/postCashReceipts.cpp" line="145"/>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postCashReceipts.cpp" line="151"/>
+        <source>Journal Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postCashReceipts.cpp" line="156"/>
+        <source>General Ledger Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postCashReceipts.cpp" line="174"/>
         <source>No Unposted Cash Receipts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/postCashReceipts.cpp" line="161"/>
+        <location filename="../../guiclient/postCashReceipts.cpp" line="175"/>
         <source>There are no unposted Cash Receipts to post.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -62935,7 +65557,7 @@ Contact you Systems Administrator.</source>
     </message>
     <message>
         <location filename="../../guiclient/postCashReceipts.ui" line="42"/>
-        <source>P&amp;rint Cash Receipts Journal</source>
+        <source>P&amp;rint Journal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -63012,6 +65634,21 @@ Contact you Systems Administrator.</source>
     <message>
         <location filename="../../guiclient/postChecks.ui" line="173"/>
         <source>&amp;Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postChecks.cpp" line="79"/>
+        <source>A/P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postChecks.cpp" line="85"/>
+        <source>Journal Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postChecks.cpp" line="90"/>
+        <source>General Ledger Series</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -63318,7 +65955,22 @@ post these Credit Memos.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/postCreditMemos.cpp" line="146"/>
+        <location filename="../../guiclient/postCreditMemos.cpp" line="134"/>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postCreditMemos.cpp" line="140"/>
+        <source>Journal Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postCreditMemos.cpp" line="145"/>
+        <source>General Ledger Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postCreditMemos.cpp" line="160"/>
         <source>A System Error occurred at postCreditMemos::%1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -63351,6 +66003,74 @@ post these Credit Memos.</source>
     <message>
         <location filename="../../guiclient/postCreditMemos.cpp" line="125"/>
         <source>Transaction Canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>postGLTransactionsToExternal</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="170"/>
+        <source>Post G/L Transactions to External Accounting System</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="171"/>
+        <source>Source &amp;Module</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="174"/>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="175"/>
+        <source>A/P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="176"/>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="177"/>
+        <source>I/M</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="178"/>
+        <source>P/D</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="179"/>
+        <source>P/O</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="180"/>
+        <source>S/O</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="181"/>
+        <source>S/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="182"/>
+        <source>W/O</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="184"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postGLTransactionsToExternal.h" line="185"/>
+        <source>&amp;Post</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -63415,6 +66135,21 @@ post these Invoices.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../guiclient/postInvoices.cpp" line="164"/>
+        <source>A/R</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postInvoices.cpp" line="170"/>
+        <source>Journal Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postInvoices.cpp" line="175"/>
+        <source>General Ledger Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../guiclient/postInvoices.cpp" line="112"/>
         <location filename="../../guiclient/postInvoices.cpp" line="146"/>
         <source>A System Error occurred at %1::%2, Error #%3.</source>
@@ -63443,7 +66178,7 @@ post these Invoices.</source>
     </message>
     <message>
         <location filename="../../guiclient/postInvoices.ui" line="66"/>
-        <source>P&amp;rint Sales Journal</source>
+        <source>P&amp;rint Journal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -64092,6 +66827,64 @@ transfer the production to the intended Site.</source>
     </message>
 </context>
 <context>
+    <name>postSubLedger</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="195"/>
+        <source>Post Subledger</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="196"/>
+        <source>Sub Ledger Transaction Dates</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="197"/>
+        <source>General Ledger Distribution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="198"/>
+        <source>Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="199"/>
+        <source>Preview Posting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="200"/>
+        <source>Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="201"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="202"/>
+        <source>Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="203"/>
+        <source>Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="204"/>
+        <source>Eligible Sub Ledger Posting Sources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_postSubLedger.h" line="205"/>
+        <source>Print on Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>postVouchers</name>
     <message>
         <location filename="../../guiclient/postVouchers.cpp" line="47"/>
@@ -64124,9 +66917,29 @@ post Vouchers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../guiclient/postVouchers.cpp" line="82"/>
+        <source>A/P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postVouchers.cpp" line="88"/>
+        <source>Journal Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../guiclient/postVouchers.cpp" line="93"/>
+        <source>General Ledger Series</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postVouchers.cpp" line="107"/>
         <source>A System Error occurred at %1::%2.
 %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/postVouchers.ui" line="41"/>
+        <source>P&amp;rint Journal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -64137,11 +66950,6 @@ post Vouchers.</source>
     <message>
         <location filename="../../guiclient/postVouchers.ui" line="21"/>
         <source>Post Vouchers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/postVouchers.ui" line="41"/>
-        <source>P&amp;rint Payables Journal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -64951,66 +67759,66 @@ references to this Credit Memo Form or this Credit Memo Form is created.</source
     </message>
     <message>
         <location filename="../../guiclient/printCreditMemos.cpp" line="45"/>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="96"/>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="192"/>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="201"/>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="208"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="97"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="197"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="206"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="213"/>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/printCreditMemos.cpp" line="45"/>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="208"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="213"/>
         <source>No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="101"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="102"/>
         <source>Cannot Find Credit Memo Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="102"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="103"/>
         <source>&lt;p&gt;The Credit Memo Form &apos;%1&apos; for Credit Memo #%2 cannot be found. This Credit Memo cannot be printed until Customer Form Assignments are updated to remove any references to this Credit Memo Form or this Credit Memo Form is created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="152"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="159"/>
         <source>Post Credit Memo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="152"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="159"/>
         <source>Transaction Canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="166"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="171"/>
         <source>&lt;p&gt;Did all of the Credit Memos print correctly?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="116"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="117"/>
         <source>A Printing Error occurred at printCreditMemos::%1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="165"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="170"/>
         <source>Mark Credit Memos as Printed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="176"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="181"/>
         <source>No Credit Memos to Print</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="177"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="182"/>
         <source>There aren&apos;t any Credit Memos to print.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printCreditMemos.cpp" line="192"/>
+        <location filename="../../guiclient/printCreditMemos.cpp" line="197"/>
         <source>Copy #%1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -65070,15 +67878,15 @@ references to this Credit Memo Form or this Credit Memo Form is created.</source
     <message>
         <location filename="../../guiclient/printInvoice.cpp" line="52"/>
         <location filename="../../guiclient/printInvoice.cpp" line="158"/>
-        <location filename="../../guiclient/printInvoice.cpp" line="293"/>
-        <location filename="../../guiclient/printInvoice.cpp" line="302"/>
-        <location filename="../../guiclient/printInvoice.cpp" line="309"/>
+        <location filename="../../guiclient/printInvoice.cpp" line="297"/>
+        <location filename="../../guiclient/printInvoice.cpp" line="306"/>
+        <location filename="../../guiclient/printInvoice.cpp" line="313"/>
         <source>Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/printInvoice.cpp" line="52"/>
-        <location filename="../../guiclient/printInvoice.cpp" line="309"/>
+        <location filename="../../guiclient/printInvoice.cpp" line="313"/>
         <source>No</source>
         <translation type="unfinished"></translation>
     </message>
@@ -65132,7 +67940,7 @@ Would you like to post it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printInvoice.cpp" line="293"/>
+        <location filename="../../guiclient/printInvoice.cpp" line="297"/>
         <source>Copy #%1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -65559,42 +68367,22 @@ Would you like to post it anyway?</source>
 <context>
     <name>printJournal</name>
     <message>
-        <location filename="../../guiclient/printJournal.cpp" line="66"/>
-        <source>Print Sales Journal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/printJournal.cpp" line="74"/>
-        <source>Print Credit Memo Journal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/printJournal.cpp" line="82"/>
-        <source>Print Payables Journal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/printJournal.cpp" line="90"/>
-        <source>Print Check Journal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/printJournal.ui" line="22"/>
+        <location filename="../../guiclient/ui/ui_printJournal.h" line="134"/>
         <source>Report Parameters - Sales Journal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printJournal.ui" line="50"/>
+        <location filename="../../guiclient/ui/ui_printJournal.h" line="135"/>
         <source>Journal Number:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printJournal.ui" line="105"/>
+        <location filename="../../guiclient/ui/ui_printJournal.h" line="136"/>
         <source>&amp;Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printJournal.ui" line="112"/>
+        <location filename="../../guiclient/ui/ui_printJournal.h" line="137"/>
         <source>&amp;Print</source>
         <translation type="unfinished"></translation>
     </message>
@@ -66240,6 +69028,34 @@ Would you like to post it anyway?</source>
     </message>
 </context>
 <context>
+    <name>printSASpecialCalendarForm</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_printSASpecialCalendarForm.h" line="175"/>
+        <source>Print S/A Special Calendar Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_printSASpecialCalendarForm.h" line="176"/>
+        <source>Calendar:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_printSASpecialCalendarForm.h" line="177"/>
+        <source>Report Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_printSASpecialCalendarForm.h" line="178"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_printSASpecialCalendarForm.h" line="179"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>printShippingForm</name>
     <message>
         <location filename="../../guiclient/printShippingForm.cpp" line="44"/>
@@ -66482,52 +69298,57 @@ Would you like to post it anyway?</source>
 <context>
     <name>printStatementByCustomer</name>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="68"/>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="73"/>
         <source>Enter a Valid Customer Number</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="69"/>
-        <source>You must enter a valid Customer Number for this Statement.</source>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="74"/>
+        <source>&lt;p&gt;You must enter a valid Customer Number for this Statement.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="86"/>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="80"/>
         <source>Invoice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="87"/>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="81"/>
         <source>Debit Memo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="88"/>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="82"/>
         <source>Credit Memo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="89"/>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="83"/>
         <source>Deposit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="106"/>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="131"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="112"/>
-        <source>A System Error occurred at %1::%2.</source>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="136"/>
+        <source>Getting Form</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="117"/>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="140"/>
+        <source>Database Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="144"/>
         <source>No Statement to Print</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/printStatementByCustomer.cpp" line="118"/>
+        <location filename="../../guiclient/printStatementByCustomer.cpp" line="145"/>
         <source>No statement is available for the specified Customer and Asof Date.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -67060,48 +69881,48 @@ You may not create a Product Category with this code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="221"/>
-        <location filename="../../guiclient/project.cpp" line="228"/>
+        <location filename="../../guiclient/project.cpp" line="215"/>
+        <location filename="../../guiclient/project.cpp" line="222"/>
         <source>Cannot Save Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="222"/>
+        <location filename="../../guiclient/project.cpp" line="216"/>
         <source>No Project Number was specified. You must specify a project number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="229"/>
+        <location filename="../../guiclient/project.cpp" line="223"/>
         <source>You must specify a due date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="393"/>
+        <location filename="../../guiclient/project.cpp" line="387"/>
         <source>Project task not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="396"/>
+        <location filename="../../guiclient/project.cpp" line="390"/>
         <source>Actual hours have been posted to this project task.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="399"/>
+        <location filename="../../guiclient/project.cpp" line="393"/>
         <source>Actual expenses have been posted to this project task.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="402"/>
+        <location filename="../../guiclient/project.cpp" line="396"/>
         <source>Error #%1 encountered while trying to delete project task.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="404"/>
+        <location filename="../../guiclient/project.cpp" line="398"/>
         <source>Cannot Delete Project Task</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/project.cpp" line="405"/>
+        <location filename="../../guiclient/project.cpp" line="399"/>
         <source>Could not delete the project task for one or more reasons.
 </source>
         <translation type="unfinished"></translation>
@@ -67730,6 +70551,41 @@ You may not create a Product Category with this code.</source>
         <source>Error deleting</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_prospects.h" line="143"/>
+        <source>List Prospects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_prospects.h" line="144"/>
+        <source>Prospects:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_prospects.h" line="145"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_prospects.h" line="146"/>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_prospects.h" line="147"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_prospects.h" line="148"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_prospects.h" line="149"/>
+        <source>&amp;Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>purchaseOrder</name>
@@ -67831,6 +70687,18 @@ You may not create a Product Category with this code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="314"/>
+        <source>Purchase Order Exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="315"/>
+        <source>An Unreleased Purchase Order already exists for this Vendor.
+Would you like to use this Purchase Order?
+Click Yes to use the existing Purchase Order otherwise a new one will be created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../guiclient/purchaseOrder.cpp" line="467"/>
         <source>&amp;View</source>
         <translation type="unfinished"></translation>
@@ -67903,7 +70771,7 @@ You may not create a Product Category with this code.</source>
     </message>
     <message>
         <location filename="../../guiclient/purchaseOrder.cpp" line="1199"/>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1523"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1526"/>
         <source>SO</source>
         <translation type="unfinished"></translation>
     </message>
@@ -67928,22 +70796,22 @@ You may not create a Product Category with this code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1525"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1528"/>
         <source>View Sales Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1528"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1531"/>
         <source>Edit Sales Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1534"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1537"/>
         <source>View Work Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1537"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1540"/>
         <source>Edit Work Order...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -68169,19 +71037,19 @@ You may not create a Product Category with this code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1368"/>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1418"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1370"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1421"/>
         <source>Save Quick Entry Data?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1369"/>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1419"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1371"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1422"/>
         <source>Do you want to save your Quick Entry changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="1395"/>
+        <location filename="../../guiclient/purchaseOrder.cpp" line="1398"/>
         <source>Removing row from view failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -68233,18 +71101,6 @@ You may not create a Product Category with this code.</source>
     <message>
         <location filename="../../guiclient/purchaseOrder.cpp" line="99"/>
         <source>Manuf. Item#</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="314"/>
-        <source>An Open Purchase Order Exists</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/purchaseOrder.cpp" line="315"/>
-        <source>An Open Purchase Order already exists for this Vendor.
-Would you like to use this Purchase Order?
-Click Yes to use the existing Purchase Order otherwise a new one will be created.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -68976,6 +71832,29 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     </message>
     <message>
         <location filename="../../guiclient/purgePostedCounts.ui" line="178"/>
+        <source>&amp;Purge</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>purgeShippingRecords</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_purgeShippingRecords.h" line="146"/>
+        <source>Purge Shipping Records</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_purgeShippingRecords.h" line="147"/>
+        <source>Cu&amp;toff Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_purgeShippingRecords.h" line="148"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_purgeShippingRecords.h" line="149"/>
         <source>&amp;Purge</source>
         <translation type="unfinished"></translation>
     </message>
@@ -71353,53 +74232,68 @@ submitting this job.</source>
 <context>
     <name>reports</name>
     <message>
-        <location filename="../../guiclient/reports.cpp" line="44"/>
+        <location filename="../../guiclient/reports.cpp" line="39"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.cpp" line="45"/>
+        <location filename="../../guiclient/reports.cpp" line="40"/>
         <source>Grade</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.cpp" line="46"/>
+        <location filename="../../guiclient/reports.cpp" line="41"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.cpp" line="130"/>
+        <location filename="../../guiclient/reports.cpp" line="42"/>
+        <source>Package</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/reports.cpp" line="74"/>
+        <location filename="../../guiclient/reports.cpp" line="85"/>
+        <source>Getting Reports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/reports.cpp" line="152"/>
         <source>Error Loading Report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.cpp" line="131"/>
-        <source>ERROR parsing content:
-	%1 (Line %2 Column %3)</source>
+        <location filename="../../guiclient/reports.cpp" line="172"/>
+        <source>Deleting Report</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.cpp" line="141"/>
+        <location filename="../../guiclient/reports.cpp" line="162"/>
         <source>Delete Report?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.cpp" line="142"/>
+        <location filename="../../guiclient/reports.cpp" line="163"/>
         <source>&lt;p&gt;Are you sure that you want to completely delete the selected Report?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.ui" line="50"/>
+        <location filename="../../guiclient/reports.ui" line="52"/>
         <source>Report Definitions:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.ui" line="87"/>
+        <location filename="../../guiclient/reports.ui" line="72"/>
+        <source>Organize By Package</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/reports.ui" line="95"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.ui" line="94"/>
+        <location filename="../../guiclient/reports.ui" line="102"/>
         <source>&amp;Print</source>
         <translation type="unfinished"></translation>
     </message>
@@ -71414,12 +74308,12 @@ submitting this job.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.ui" line="129"/>
+        <location filename="../../guiclient/reports.ui" line="145"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/reports.ui" line="22"/>
+        <location filename="../../guiclient/reports.ui" line="21"/>
         <source>List Report Definitions</source>
         <translation type="unfinished"></translation>
     </message>
@@ -71766,6 +74660,54 @@ not belong to an Open P/O.</source>
     <message>
         <location filename="../../guiclient/reschedulePoitem.ui" line="104"/>
         <source>Rescheduled</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>rescheduleSoLineItems</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="298"/>
+        <source>Reschedule S/O Line Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="299"/>
+        <source>Sales Order #:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="300"/>
+        <source>New Schedule Date:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="301"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="302"/>
+        <source>Cust. Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="303"/>
+        <source>Cust. Phone:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="304"/>
+        <source>P/O Number:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="305"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_rescheduleSoLineItems.h" line="306"/>
+        <source>&amp;Reschedule</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -72281,22 +75223,32 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="2010"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1795"/>
+        <source>Getting A/R Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1848"/>
+        <source>Creating R/A Credit Memo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="2018"/>
         <source>Manual Freight?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="2011"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="2019"/>
         <source>&lt;p&gt;Manually editing the freight will disable automatic Freight recalculations.  Are you sure you want to do this?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="2030"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="2038"/>
         <source>Automatic Freight?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="2031"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="2039"/>
         <source>&lt;p&gt;Manually clearing the freight will enable automatic Freight recalculations.  Are you sure you want to do this?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -72333,117 +75285,117 @@ You must Recall this Work Order before Rescheduling it.</source>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorization.cpp" line="456"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="658"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="659"/>
         <source>Invalid Receiving Site</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorization.cpp" line="457"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="659"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="660"/>
         <source>&lt;p&gt;You must enter a valid Receiving Site.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorization.cpp" line="464"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="667"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="668"/>
         <source>Invalid Shipping Site</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorization.cpp" line="465"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="668"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="669"/>
         <source>&lt;p&gt;You must enter a valid Shipping Site.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="642"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="643"/>
         <source>Invalid Sales Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="643"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="644"/>
         <source>This sales order is already linked to open return authorization %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1006"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1007"/>
         <source>&lt;p&gt;Are you sure that you want to delete the the selected Line Item(s)?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorization.ui" line="326"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1093"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1094"/>
         <source>Credit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorization.ui" line="331"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1094"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1095"/>
         <source>Return</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorization.ui" line="336"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1095"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1096"/>
         <source>Replace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorization.ui" line="341"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1096"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1097"/>
         <source>Service</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1097"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1098"/>
         <source>Ship</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1525"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1527"/>
         <source>Credit By &apos;None&apos; not allowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1651"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1653"/>
         <source>Non-Inventory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1098"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1652"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1099"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1654"/>
         <source>N/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1769"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1766"/>
         <source>New Credit Memo Created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1770"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1767"/>
         <source>&lt;p&gt;A new CreditMemo has been created and assigned #%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1775"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1810"/>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1831"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1773"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1817"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1838"/>
         <source>Credit Card Processing Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1816"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1823"/>
         <source>Credit Card Processing Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1819"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1826"/>
         <source>Credit Card Processing Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1832"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1839"/>
         <source>Could not find a Credit Card to use for this Credit transaction.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -72759,57 +75711,57 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1850"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1858"/>
         <source>Edit Line...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1852"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1860"/>
         <source>Close Line...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1854"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1862"/>
         <source>Open Line...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1855"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1863"/>
         <source>Delete Line...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1860"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1868"/>
         <source>View Original Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1868"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1876"/>
         <source>Edit New Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1871"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1879"/>
         <source>View New Order...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1876"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1884"/>
         <source>Edit New Order Line...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1879"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1887"/>
         <source>View New Order Line...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1884"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1892"/>
         <source>New Order Shipment Status...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1885"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1893"/>
         <source>New Order Shipments...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -72834,27 +75786,27 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1461"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1463"/>
         <source>Receiving Site Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1462"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1464"/>
         <source>This Return Authorization has line items with a different Receiving Site. You may need to review the line items.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1484"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1486"/>
         <source>Shipping Site Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1485"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1487"/>
         <source>This Return Authorization has line items with a different Shipping Site. You may need to review the line items.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorization.cpp" line="1526"/>
+        <location filename="../../guiclient/returnAuthorization.cpp" line="1528"/>
         <source>&lt;p&gt;This Return Authorization has authorized credit amounts. You may not set the Credit By to &apos;None&apos; unless all credit amounts are zero.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -72877,60 +75829,60 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="450"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="451"/>
         <source>Item site not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="451"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="452"/>
         <source>&lt;p&gt;No valid item site record was found for the selected item at the selected shipping site.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="515"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="517"/>
         <source>Reschedule W/O?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="516"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="518"/>
         <source>&lt;p&gt;The Scheduled Date for this Line Item has been changed.  Should the W/O for this Line Item be Re-Scheduled to reflect this change?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="551"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="553"/>
         <source>Change W/O Quantity?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="552"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="554"/>
         <source>&lt;p&gt;The quantity authorized for this Return Authorization Line Item has been changed. Should the quantity required for the associated Work Order be changed to reflect this?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="766"/>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1403"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="768"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1406"/>
         <source>&lt;p&gt;Only Items Sites using the Job cost method may have a Disposition of Service.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1050"/>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1088"/>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1775"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1053"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1091"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1778"/>
         <source>N/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1058"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1061"/>
         <source>In %1:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1511"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1514"/>
         <source>Delete Work Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1512"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1515"/>
         <source>&lt;p&gt;You are requesting to delete the Work Order created for the Sales Order Item linked to this Return. Are you sure you want to do this?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -72978,7 +75930,7 @@ You must Recall this Work Order before Rescheduling it.</source>
     </message>
     <message>
         <location filename="../../guiclient/returnAuthorizationItem.ui" line="294"/>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="638"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="668"/>
         <source>Credit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -73008,177 +75960,182 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="513"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="543"/>
         <source>Qty. Sold:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="533"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="563"/>
         <source>Qty. Received:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="553"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="583"/>
         <source>Qty. Shipped:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="648"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="678"/>
         <source>&amp;Restock Charge %:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="740"/>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="953"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="770"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="983"/>
         <source>Net Unit Price:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="718"/>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="931"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="748"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="961"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="750"/>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="963"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="450"/>
+        <source>Customer P/N:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="780"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="993"/>
         <source>&amp;Price UOM:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="820"/>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1033"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="850"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1063"/>
         <source>Extended Price:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="848"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="878"/>
         <source>Sale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="858"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="888"/>
         <source>Discount %:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1070"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1100"/>
         <source>Sc&amp;heduled Date:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1106"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1136"/>
         <location filename="../../guiclient/returnAuthorizationItem.cpp" line="95"/>
         <source>Warranty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1150"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1180"/>
         <source>Availability</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1162"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1192"/>
         <source>On Hand:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1185"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1215"/>
         <source>Allocated:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1208"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1238"/>
         <source>Unallocated:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1231"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1261"/>
         <source>On Order:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1254"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1284"/>
         <source>Available:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1277"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1307"/>
         <source>Leadtime:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1335"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1365"/>
         <source>Create Work Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1347"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1377"/>
         <source>W/O Qty.:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1379"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1409"/>
         <source>W/O Due Date:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1402"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1432"/>
         <source>W/O Status:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1554"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1584"/>
         <source>Costs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1566"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1596"/>
         <source>Unit Cost:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1576"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1606"/>
         <source>List Price:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1596"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1626"/>
         <source>Sale Price:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1616"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1646"/>
         <source>List Discount %:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1693"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1723"/>
         <source>Tax</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1706"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1736"/>
         <source>Tax Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1727"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1757"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1752"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1782"/>
         <source>Tax:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1842"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1872"/>
         <source>Alternate Cost of Sales Account:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1886"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1916"/>
         <source>Co&amp;mments</source>
         <translation type="unfinished"></translation>
     </message>
@@ -73188,17 +76145,17 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1507"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1537"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1520"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1550"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1494"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1524"/>
         <source>&amp;New</source>
         <translation type="unfinished"></translation>
     </message>
@@ -73213,28 +76170,28 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="765"/>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1402"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="767"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1405"/>
         <source>Cannot use Service Disposition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1416"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1419"/>
         <source>Cannot change Disposition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1417"/>
+        <location filename="../../guiclient/returnAuthorizationItem.cpp" line="1420"/>
         <source>&lt;p&gt;A work order is associated with this Return. First delete the work order, then change this disposition.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="463"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="493"/>
         <source>Qty. &amp;Auth.:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="476"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="506"/>
         <source>Qty. &amp;UOM:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -73259,27 +76216,27 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1128"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1158"/>
         <source>&amp;Supply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1455"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1485"/>
         <source>&amp;Lot/Serial</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1548"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1578"/>
         <source>&amp;Detail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1816"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1846"/>
         <source>No&amp;tes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1836"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1866"/>
         <source>A&amp;ccounting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -73294,12 +76251,12 @@ You must Recall this Work Order before Rescheduling it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1461"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1491"/>
         <source>Authorize &amp;only these Lot/Serial Numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1134"/>
+        <location filename="../../guiclient/returnAuthorizationItem.ui" line="1164"/>
         <source>Show Availability</source>
         <translation type="unfinished"></translation>
     </message>
@@ -74782,13 +77739,13 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4519"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4539"/>
         <source>Reschedule Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4520"/>
-        <source>&lt;p&gt;Should any associated W/O&apos;s be rescheduled to reflect this change?</source>
+        <location filename="../../guiclient/salesOrder.cpp" line="4540"/>
+        <source>&lt;p&gt;Should any associated work orders be rescheduled to reflect this change?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -74906,62 +77863,62 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4355"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4357"/>
         <source>Order Date Required</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4355"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4357"/>
         <source>Prices can not be recalculated without a valid Order Date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4365"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4367"/>
         <source>Schedule Date Required</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4365"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4367"/>
         <source>Prices can not be recalculated without a valid Schedule Date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4380"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4382"/>
         <source>Customer Cannot Buy at Quantity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4381"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4383"/>
         <source>&lt;p&gt;One or more items are marked as exclusive and no qualifying price schedule was found. </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4441"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4443"/>
         <source>Update all schedule dates?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4442"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4444"/>
         <source>Changing this date will update the Schedule Date on all editable line items. Is this what you want to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4480"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4483"/>
         <source>Can not reschedule all Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4481"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4484"/>
         <source>Some exclusive items may not be rescheduled because there is no valid price schedule for the date entered.  Proceed rescheduling only qualifying items?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4493"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4496"/>
         <source>Can not reschedule Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrder.cpp" line="4494"/>
+        <location filename="../../guiclient/salesOrder.cpp" line="4497"/>
         <source>No Items can be rescheduled because there are no valid price schedules for the date entered.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -75931,19 +78888,19 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <location filename="../../guiclient/salesOrderItem.cpp" line="1853"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2879"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="2885"/>
         <source>Create Purchase Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/salesOrderItem.cpp" line="1854"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2880"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="2886"/>
         <source>PO #:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/salesOrderItem.cpp" line="1855"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2881"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="2887"/>
         <source>PO Line #:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -76046,7 +79003,7 @@ Do you want to change the Qty Ordered?</source>
     </message>
     <message>
         <location filename="../../guiclient/salesOrderItem.cpp" line="2580"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3476"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3482"/>
         <source>Cannot Update Item</source>
         <translation type="unfinished"></translation>
     </message>
@@ -76056,54 +79013,54 @@ Do you want to change the Qty Ordered?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2882"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="2888"/>
         <source>PO Q&amp;ty.:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2883"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="2889"/>
         <source>PO Due Date:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2884"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="2890"/>
         <source>PO Status:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2989"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="2995"/>
         <source>In %1:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2996"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3095"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3198"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3002"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3101"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3204"/>
         <source>Unsaved Changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3259"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3265"/>
         <source>Can not delete PO</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3260"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3266"/>
         <source>Purchase Order linked to this Sales Order Item will not be affected. The Purchase Order should be closed or deleted manually if necessary.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3477"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3483"/>
         <source>The Purchase Order Item this Sales Order Item is linked to is closed.  The date may not be updated.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3505"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3511"/>
         <source>Invalid Item for Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3506"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3512"/>
         <source>This item may not be purchased in this date.  Please select another date or item.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -76356,9 +79313,9 @@ Do you want to change the Qty Ordered?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="2997"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3096"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3199"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3003"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3102"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3205"/>
         <source>&lt;p&gt;You have made some changes which have not yet been saved!
 Would you like to save them now?</source>
         <translation type="unfinished"></translation>
@@ -76436,13 +79393,13 @@ Would you like to save them now?</source>
     </message>
     <message>
         <location filename="../../guiclient/salesOrderItem.cpp" line="811"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3376"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3382"/>
         <source>Invalid Quantity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/salesOrderItem.cpp" line="812"/>
-        <location filename="../../guiclient/salesOrderItem.cpp" line="3377"/>
+        <location filename="../../guiclient/salesOrderItem.cpp" line="3383"/>
         <source>This UOM for this Item does not allow fractional quantities. Please fix the quantity.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -77184,68 +80141,290 @@ Would you like to save them now?</source>
 <context>
     <name>scripts</name>
     <message>
-        <location filename="../../guiclient/scripts.cpp" line="32"/>
+        <location filename="../../guiclient/scripts.cpp" line="35"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.cpp" line="33"/>
+        <location filename="../../guiclient/scripts.cpp" line="36"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.cpp" line="34"/>
+        <location filename="../../guiclient/scripts.cpp" line="37"/>
         <source>Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.cpp" line="35"/>
+        <location filename="../../guiclient/scripts.cpp" line="38"/>
         <source>Enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.ui" line="22"/>
+        <location filename="../../guiclient/scripts.cpp" line="91"/>
+        <source>Deleting Script</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/scripts.cpp" line="114"/>
+        <location filename="../../guiclient/scripts.cpp" line="125"/>
+        <source>Getting Scripts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/scripts.ui" line="21"/>
         <source>List Scripts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.ui" line="36"/>
+        <location filename="../../guiclient/scripts.ui" line="31"/>
         <source>Scripts:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.ui" line="65"/>
+        <location filename="../../guiclient/scripts.ui" line="51"/>
+        <source>Organize By Package</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/scripts.ui" line="77"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.ui" line="80"/>
+        <location filename="../../guiclient/scripts.ui" line="84"/>
         <source>&amp;New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.ui" line="90"/>
+        <location filename="../../guiclient/scripts.ui" line="94"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.ui" line="100"/>
+        <location filename="../../guiclient/scripts.ui" line="120"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.cpp" line="36"/>
+        <location filename="../../guiclient/scripts.cpp" line="39"/>
         <source>Package</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.cpp" line="78"/>
+        <location filename="../../guiclient/scripts.cpp" line="81"/>
         <source>Delete Script?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/scripts.cpp" line="79"/>
+        <location filename="../../guiclient/scripts.cpp" line="82"/>
         <source>&lt;p&gt;Are you sure that you want to completely delete the selected script?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>searchForCRMAccount</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="334"/>
+        <source>Search for CRM Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="335"/>
+        <source>S&amp;earch for:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="336"/>
+        <source>Search through:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="337"/>
+        <source>CRM Account Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="338"/>
+        <source>Primary Contact Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="339"/>
+        <source>CRM Account Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="340"/>
+        <source>Primary Contact Phone #</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="341"/>
+        <source>Street Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="342"/>
+        <source>Primary Contact Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="343"/>
+        <source>City</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="344"/>
+        <source>State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="345"/>
+        <source>Postal Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="346"/>
+        <source>Country</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="347"/>
+        <source>Show &amp;Inactive CRM Accounts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="348"/>
+        <source>Search Vendor Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="349"/>
+        <source>Primary Contact Email</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="350"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="351"/>
+        <source>CRM Accounts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="352"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForCRMAccount.h" line="353"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>searchForContact</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="297"/>
+        <source>Search for Contact</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="298"/>
+        <source>S&amp;earch for:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="299"/>
+        <source>Search through:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="300"/>
+        <source>CRM Account Number</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="301"/>
+        <source>Contact Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="302"/>
+        <source>CRM Account Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="303"/>
+        <source>Contact Phone #</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="304"/>
+        <source>Street Address</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="305"/>
+        <source>Contact Address:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="306"/>
+        <source>City</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="307"/>
+        <source>State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="308"/>
+        <source>Postal Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="309"/>
+        <source>Country</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="310"/>
+        <source>Show &amp;Inactive Contacts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="311"/>
+        <source>Contact Email</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="312"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="313"/>
+        <source>Contacts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="314"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="315"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForContact.h" line="316"/>
+        <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -77394,6 +80573,59 @@ Would you like to save them now?</source>
     <message>
         <location filename="../../guiclient/searchForEmp.ui" line="109"/>
         <source>Shifts</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>searchForItem</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="259"/>
+        <source>Search for Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="260"/>
+        <source>S&amp;earch for:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="261"/>
+        <source>Search through Item Numbers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="262"/>
+        <source>Search through Description 1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="263"/>
+        <source>Search through Description 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="264"/>
+        <source>Show &amp;Inactive Items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="265"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="266"/>
+        <source>Items:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="267"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_searchForItem.h" line="268"/>
+        <source>&amp;View</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -78734,7 +81966,7 @@ Would you like to save them now?</source>
 <context>
     <name>shipTo</name>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="146"/>
+        <location filename="../../guiclient/shipTo.cpp" line="148"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -78839,42 +82071,42 @@ Would you like to save them now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="183"/>
+        <location filename="../../guiclient/shipTo.cpp" line="185"/>
         <source>Question Saving Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="186"/>
+        <location filename="../../guiclient/shipTo.cpp" line="188"/>
         <source>Change This One</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="187"/>
+        <location filename="../../guiclient/shipTo.cpp" line="189"/>
         <source>Change Address for All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="188"/>
+        <location filename="../../guiclient/shipTo.cpp" line="190"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="184"/>
+        <location filename="../../guiclient/shipTo.cpp" line="186"/>
         <source>&lt;p&gt;There are multiple uses of this Ship-To Address. What would you like to do?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="165"/>
+        <location filename="../../guiclient/shipTo.cpp" line="169"/>
         <source>Cannot Save Ship To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="166"/>
+        <location filename="../../guiclient/shipTo.cpp" line="167"/>
         <source>You must enter a valid Name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/shipTo.cpp" line="197"/>
+        <location filename="../../guiclient/shipTo.cpp" line="199"/>
         <source>&lt;p&gt;There was an error saving this address (%1). Check the database server log for errors.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -80727,1537 +83959,1547 @@ Do you wish to convert %1 %2 at the current rate?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="276"/>
-        <source>Work Order can not be exploded because items on the BOM exist without itemsites.</source>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="277"/>
+        <source>Work Order can not be created because Site not allowed to Manufacture this Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="279"/>
+        <source>Work Order can not be exploded because items on the BOM exist without itemsites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="282"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Cost Categories.  You must reassign these Cost Category assignments before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="284"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="287"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Sales Account Assignment. You must reassign these Sales Account Assignments before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="289"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="292"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Customer A/R Account assignments. You must reassign these Customer A/R Account assignments before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="294"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="297"/>
         <source>The selected G/L Account cannot be deleted as it is currently used as the default Account one or more Sites. You must reassign the default Account for these Sites before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="299"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="302"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Bank Accounts. You must reassign these Bank Accounts before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="303"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="306"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Expense Categories. You must reassign these Expense Categories before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="308"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="311"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Tax Codes. You must reassign these Tax Codes before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="312"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="315"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Standard Journals. You must reassign these Standard Journal Items before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="317"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="320"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Customer A/P Account assignments. You must reassign these Customer A/P Account assignments before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="322"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="325"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Currency definition. You must reassign these Currency definitions before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="327"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="330"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more A/R Open Items. You must reassign these Currency definitions before you may delete the selected G/L Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="332"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="335"/>
         <source>The selected G/L Account cannot be deleted as there have been G/L Transactions posted against it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="336"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="339"/>
         <source>The selected Accounting Period has G/L Transactions posted against it and, thus, cannot be deleted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="340"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="343"/>
         <source>The selected Accounting Period is not the last accounting period and cannot be deleted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="344"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="347"/>
         <source>The selected Fiscal Year cannot be deleted because it is closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="347"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="350"/>
         <source>The selected Fiscal Year cannot be deleted because there are Accounting Periods defined for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="351"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="354"/>
         <source>The selected Address cannot be deleted as it is used by an active Contact.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="354"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="357"/>
         <source>The selected Address cannot be deleted as it is used by an active Vendor.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="357"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="360"/>
         <source>The selected Address cannot be deleted as it is used by an active Ship-To Address.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="360"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="363"/>
         <source>The selected Address cannot be deleted as it is used by an active Vendor Address.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="363"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="366"/>
         <source>The selected Address cannot be deleted as it is used by an active Site.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="367"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="370"/>
         <source>The selected Bank Adjustment Type cannot be deleted because it is currently used by a Bank Adjustment.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="372"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="375"/>
         <source>The selected Cash Receipt cannot be deleted because it is a Customer Deposit made with a Credit Card and the card has already been charged.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="377"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="380"/>
         <source>The selected Characteristic cannot be deleted because there are Items assigned to it. You must remove these assignments before you may delete the selected Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="383"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="386"/>
         <source>The selected Characteristic cannot be deleted because there are Customers assigned to it. You must remove these assignments before you may delete the selected Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="389"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="392"/>
         <source>The selected Characteristic cannot be deleted because there are Addresses assigned to it. You must remove these assignments before you may delete the selected Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="395"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="398"/>
         <source>The selected Characteristic cannot be deleted because there are Contacts assigned to it. You must remove these assignments before you may delete the selected Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="401"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="404"/>
         <source>The selected Characteristic cannot be deleted because there are CRM Accounts assigned to it. You must remove these assignments before you may delete the selected Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="407"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="410"/>
         <source>The selected Characteristic cannot be deleted because there are Incidents assigned to it. You must remove these assignments before you may delete the selected Characteristic.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="413"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="416"/>
         <source>Cannot delete this check because either it has not been voided, it has already been posted or replaced, or it has been transmitted electronically.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="418"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="421"/>
         <source>The selected Class Code cannot be deleted because there are Items that are assigned to it. You must reassign these Items before you may delete the selected Class Code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="423"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="426"/>
         <source>The selected Company cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Company.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="428"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="431"/>
         <source>The selected Contact cannot be deleted as s/he is the primary or secondary Contact  for a CRM Account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="431"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="434"/>
         <source>The selected Contact cannot be deleted as s/he is the Correspondence or Billing Contact for a Customer.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="434"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="437"/>
         <source>The selected Contact cannot be deleted as s/he is the primary or secondary Contact for a Vendor.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="437"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="440"/>
         <source>The selected Contact cannot be deleted as s/he is the Contact for a Ship-To Address.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="440"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="443"/>
         <source>The selected Contact cannot be deleted as s/he is the Contact for a Vendor Address.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="443"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="446"/>
         <source>The selected Contact cannot be deleted as s/he is the Contact for a Site.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="447"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="450"/>
         <source>The selected CRM Account cannot be deleted as it is a Customer.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="449"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="452"/>
         <source>The selected CRM Account cannot be deleted as it is a Vendor.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="451"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="454"/>
         <source>The selected CRM Account cannot be deleted as it is a Prospect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="453"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="456"/>
         <source>The selected CRM Account cannot be deleted as it has Contacts. You may Detach the Contacts from this CRM Account and try deleting it again or set its status to inactive</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="458"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="461"/>
         <source>The selected CRM Account cannot be deleted as it is a Tax Authority.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="460"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="463"/>
         <source>The selected CRM Account cannot be deleted as it is a Sales Rep.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="462"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="465"/>
         <source>The selected CRM Account cannot be deleted as it is a Employee.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="464"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="467"/>
         <source>The selected CRM Account cannot be deleted as it is a User.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="467"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="470"/>
         <source>The selected Customer cannot be deleted as there are still Ship-Tos assigned to it. You must delete all of the selected Customer&apos;s Ship-Tos before you may delete it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="471"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="474"/>
         <source>The selected Customer cannot be deleted as there has been Sales History recorded for this Customer. You may Edit the selected Customer and set its status to inactive.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="479"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="482"/>
         <source>The selected Customer cannot be deleted as Checks have been written to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="481"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="484"/>
         <source>The selected Customer cannot be deleted as there are still Invoices assigned to it. You must delete all of the selected Customer&apos;s Invoices before you may delete it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="485"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="488"/>
         <source>The selected Customer cannot be deleted as there are still Quotes assigned to it. You must delete all of the selected Customer&apos;s Quotes before you may delete it</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="490"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="493"/>
         <source>The selected Customer Type cannot be deleted as there are one or more Customers assigned to it. You must reassign these Customers before you may delete the selected Customer Type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="496"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="499"/>
         <source>The selected Employee Group cannot be deleted as there are one or more Employees assigned to it. You must reassign these Employees before you may delete the selected Employee Group.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="502"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="505"/>
         <source>The selected Check Format cannot be deleted as it is used by one or more Bank Accounts. You must reassign these Bank Accounts before you may delete the selected Check Form.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="507"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="510"/>
         <source>The selected Freight Class cannot be deleted because there are Items that are assigned to it. You must reassign these Items before you may delete the selected Freight Class.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="512"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="515"/>
         <source>This Incident cannot be deleted as there are To-Do List Items associated with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="515"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="518"/>
         <source>This Incident cannot be deleted as there are Comments associated with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="518"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="521"/>
         <source>This Item cannot be deleted as it is used in one or more bills of materials.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="520"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="523"/>
         <source>This Item cannot be deleted as there are Item Site records associated with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="522"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="525"/>
         <source>This Item cannot be deleted as there are Substitute records associated with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="524"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="527"/>
         <source>This Item cannot be deleted as there are Breeder BOM records associated with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="526"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="529"/>
         <source>This Item cannot be deleted as there are assignement records associated with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="528"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="531"/>
         <source>This Item cannot be deleted as there are Revision Control records associated with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="530"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="533"/>
         <source>The selected Item Site cannot be deleted as there is Inventory History posted against it. You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="533"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="536"/>
         <source>The selected Item Site cannot be deleted as there is Work Order History posted against it. You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="536"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="539"/>
         <source>The selected Item Site cannot be deleted as there is Sales History posted against it. You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="539"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="542"/>
         <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it. You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="542"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="545"/>
         <source>The selected Item Site cannot be deleted as there is Planning History posted against it. You may edit the Item Site and deactivate it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="545"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="548"/>
         <source>The selected Item Site cannot be deleted as there are Production Plans associated with it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="547"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="550"/>
         <source>The selected Item Site cannot be deleted as it is used as a Supplied from Site.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="549"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="552"/>
         <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted against it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="553"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="556"/>
         <source>This UOM Conversion cannot be deleted as there are records for this Item which use this UOM.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="559"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="562"/>
         <source>Cannot delete open recurring items with an invalid type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="561"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="564"/>
         <source>Cannot delete open recurring items without a valid parent item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="564"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="567"/>
         <source>The selected Opportunity cannot be deleted because there are ToDo Items assigned to it.  You must delete or reassign these ToDo Items before you may delete it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="568"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="571"/>
         <source>The selected Opportunity cannot be deleted because there are Quotes assigned to it.  You must delete or reassign these Quotes before you may delete it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="572"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="575"/>
         <source>The selected Opportunity cannot be deleted because there are Sales Orders assigned to it.  You must delete or reassign these Sales Orders before you may delete it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="577"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="580"/>
         <source>The selected Package cannot be deleted because there are other packages that depend on it to function properly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="582"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="585"/>
         <source>The selected Profit Center cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Profit Center.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="587"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="590"/>
         <source>The selected Prospect cannot be deleted as there are still Quotes for it. You must delete all of this Prospect&apos;s Quotes before you may delete the Prospect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="591"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="594"/>
         <source>The selected Sales Rep. cannot be deleted as he/she is still assigned to one or more Customers.  You must reassign different Sales Reps. to all Customers to which the selected Sales Rep. is assigned before you may delete the selected Sales Rep.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="597"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="600"/>
         <source>The selected Sales Rep. cannot be deleted as he/she is still assigned to one or more Ship-tos.  You must reassign different Sales Reps. to all Ship-tos to which the selected Sales Rep. is assigned before you may delete the selected Sales Rep.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="603"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="606"/>
         <source>The selected Sales Rep. cannot be deleted as there has been sales history recorded against him/her.  You may edit and set the selected Sales Rep&apos;s active status to inactive.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="609"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="612"/>
         <source>The selected Shipto cannot be deleted as there is still Archived Sales History assigned to it. You must delete all of the selected Customer&apos;s Ship-Tos before you may delete it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="613"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="616"/>
         <source>The selected Shipto cannot be deleted as there has been Sales History recorded for this Shipto. You may Edit the selected Shipto and set its status to inactive.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="639"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="642"/>
         <source>This Sales Order cannot be deleted because a Credit Card has been charged for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="641"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="644"/>
         <source>This Sales Order cannot be deleted because there is Credit Card transaction history for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="648"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="651"/>
         <source>This Sales Order cannot be deleted as some of its line items have already been shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="650"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="653"/>
         <source>This Sales Order cannot be deleted as some of its line items have already been issued to shipping.  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="652"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="655"/>
         <source>This Sales Order cannot be deleted as some of its line items are linked to a Return Authorization.  You must resolve this conflict before you may delete this Sales Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="656"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="659"/>
         <source>This Sales Order cannot be deleted as some of its line items are linked to an In Process Work Order.  You must resolve this conflict before you may delete this Sales Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="660"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="663"/>
         <source>This Sales Order cannot be deleted as some of its line items have transaction history.  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="662"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="665"/>
         <source>This Sales Order cannot be deleted as some of its line items are linked to a received Purchase Order.  You must resolve this conflict before you may delete this Sales Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="666"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="669"/>
         <source>This Sales Order cannot be deleted as some of its line items are linked to an open Purchase Order.  You must resolve this conflict before you may delete this Sales Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="671"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="674"/>
         <source>This Sales Order Item cannot be deleted as it has already been shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="672"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="675"/>
         <source>This Sales Order Item cannot be deleted as it has already been issued to shipping.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="673"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="676"/>
         <source>This Sales Order Item cannot be deleted as it is linked to a Return Authorization.  You must resolve this conflict before you may delete this Sales Order Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="676"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="679"/>
         <source>This Sales Order Item cannot be deleted as it is linked to an In Process Work Order.  You must resolve this conflict before you may delete this Sales Order Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="679"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="682"/>
         <source>This Sales Order Item cannot be deleted as it has generated Inventory History.  You may want to consider cancelling this Sales Order Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="683"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="686"/>
         <source>The selected Subaccount cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Subaccount.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="688"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="691"/>
         <source>This Transfer Order cannot be deleted as some of its line items have already been shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="691"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="694"/>
         <source>This Transfer Order cannot be deleted as some of its line items have already been issued to shipping. You must return this stock before you may delete this Transfer Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="697"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="700"/>
         <source>This Tax Code cannot be deleted as there are Tax Assignments that refer to it. Change those Tax Assignments before trying to delete this Tax Code.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="702"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="705"/>
         <source>This Tax Authority cannot be deleted as there are Tax Selections for it. Change or delete those Tax Selections before deleting this Tax Authority.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="706"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="709"/>
         <source>This Tax Authority cannot be deleted as Checks have been written to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="709"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="712"/>
         <source>This Tax Class cannot be deleted as there are Tax Codes that refer to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="712"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="715"/>
         <source>This Tax Zone cannot be deleted as there are Tax Assignments that refer to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="714"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="717"/>
         <source>This Tax Zone cannot be deleted as there are Tax Registrations that refer to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="717"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="720"/>
         <source>This Transfer Order cannot be deleted as line items for it have already been shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="719"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="722"/>
         <source>This Transfer Order cannot be deleted as line items for it have been issued to shipping.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="721"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="724"/>
         <source>This Transfer Order cannot be deleted as the order number cannot be released.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="724"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="727"/>
         <source>The selected Vendor cannot be deleted as therehave been P/Os created against it. You may deactivate this Vendor instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="728"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="731"/>
         <source>The selected Vendor cannot be deleted as therehas been P/O Material Receipt History posted against it. You may deactivate this Vendor instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="733"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="736"/>
         <source>The selected Vendor cannot be deleted as therehas been P/O Material Return History posted against it. You may deactivate this Vendor instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="738"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="741"/>
         <source>The selected Vendor cannot be deleted as therehave been Vouchers posted against it. You may deactivate this Vendor instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="742"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="745"/>
         <source>The selected Vendor cannot be deleted as therehave been A/P Open Items posted against it. You may deactivate this Vendor instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="746"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="749"/>
         <source>The selected Vendor cannot be deleted as therehave been A/P Applications posted against it. You may deactivate this Vendor instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="750"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="753"/>
         <source>The selected Vendor cannot be deleted as there have been Checks posted against it. You may deactivate this Vendor instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="755"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="758"/>
         <source>The Work Order cannot be deleted because time clock entries exist for it. Please Close it instead of trying to Delete it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="759"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="762"/>
         <source>The Work Order cannot be deleted for Job Item Types. Please close the associated Sales Order instead of trying to Delete it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="763"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="766"/>
         <source>The Work Order cannot be deleted in the current status. Please close the associated Sales Order instead of trying to Delete it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="768"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="771"/>
         <source>This version of the PostgreSQL database server does not support package enabling or disabling. Upgrade to PostgreSQL 8.2 or later.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="771"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="774"/>
         <source>Could not find a package with the internal id % to enable or disable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="774"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="777"/>
         <source>Distribution would result in zero quantity and amount.Please distribute manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="777"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="780"/>
         <source>The purchase order and voucher have different currencies. Please distribute manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="780"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="783"/>
         <source>Distribution would result in a negative amount. Please distribute manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="783"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="786"/>
         <source>Item has multiple cost elements. Please distribute manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="787"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="790"/>
         <source>You must select Master Card, Visa, American Express or Discover as the credit card type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="790"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="793"/>
         <source>The length of a Master Card credit card number has to be 16 digits.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="792"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="795"/>
         <source>The length of a Visa credit card number has to be either 13 or 16 digits.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="794"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="797"/>
         <source>The length of an American Express credit card number has to be 15 digits.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="796"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="799"/>
         <source>The length of a Discover credit card number has to be 16 digits.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="798"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="801"/>
         <source>The first two digits for a valid Master Card number must be between 51 and 55</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="801"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="804"/>
         <source>The first digit for a valid Visa number must be 4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="803"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="806"/>
         <source>The first two digits for a valid American Express number must be 34 or 37.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="806"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="809"/>
         <source>The first four digits for a valid Discover Express number must be 6011.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="808"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="811"/>
         <source>The credit card number that you have provided is not valid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="814"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="817"/>
         <source>Information for this order line item could not be found. If it is a Purchase Order Item then it does not appear to exist. If it is a Transfer Order Item then either the Transfer Order does not exist or there is no Item Site for this line item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="821"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="824"/>
         <source>Work Order %1 cannot be Exploded as there is no valid Bill of Materials on file for the Work Order Item. You must create a valid Bill of Materials for the Work Order Item before you may explode the Work Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="826"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="829"/>
         <source>Work Order %1 cannot be Exploded as there are one or more Component Items on the Bill of Materials for the Work Order Item that do not exist in the Work Order Site. You must create a valid Item Site for all of the Component Items before you may explode this Work Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="832"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="835"/>
         <source>Work Order %1 cannot be Exploded as there are one or more Co-Product/By-Product Items on the Breeder Bill of Materials for the Work Order Item that do not exist in the Work Order Site. You must create a valid Item Site for all of the Co-Product/By-Product Items before you may explode this Work Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="839"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="842"/>
         <source>Work Order %1 cannot be Exploded because it is not Open.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="841"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="844"/>
         <source>Work Order %1 cannot be Exploded because the quantityordered is not valid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="844"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="847"/>
+        <source>Cannot check dependencies when the contact is one of multiple foreign key columns.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="852"/>
         <source>Cannot freeze this Accounting Period because it is still open.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="846"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="854"/>
         <source>Cannot freeze this Accounting Period because it is already frozen.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="850"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="858"/>
         <source>Nothing to do as the value to post to the G/L is 0.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="853"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="861"/>
         <source>Cannot post a G/L transaction to a closed period.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="856"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="864"/>
         <source>Cannot add to a G/L Series because the Account is NULL or -1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="858"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="866"/>
         <source>Cannot add to a G/L Series because the Accounting Period is closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="878"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="886"/>
         <source>The Next Shipment Number has not been set in the Configure S/R window. Set that value and try issuing to shipping again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="881"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="889"/>
         <source>The selected Sales Order is on Credit Hold and must be taken off of Credit Hold before any inventory may be issued to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="884"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="892"/>
         <source>The selected Sales Order is on Packing Hold and must be taken off of Packing Hold before any inventory may be issued to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="887"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="895"/>
         <source>The selected Sales Order is on Return Hold. The Customer must return all materials for a related Return Authorization before any inventory may be issued to this Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="891"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="899"/>
         <source>The selected Sales Order is configured for Auto Registration. The Customer Account does not have a Primary Contact. A Primary Contact must be assigned to this Customer Account before any inventory may be issued to this Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="895"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="903"/>
         <source>There is not enough Inventory to issue the amount required of one of the Average Cost items requested.  Average Cost items may not have a negative quantity on hand.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="900"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="908"/>
         <source>The specified Username does not exist in the specified Database. Contact your Systems Administrator to report this issue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="903"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="911"/>
         <source>The specified Username exists in the specified Database but is not Active. Contact your Systems Administrator to report this issue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="906"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="914"/>
         <source>The specified Database is currently in Maintenance Mode and can only be accessed by System Administators. Contact your Systems Administrator to report this issue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="911"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="919"/>
         <source>Cannot make this BOM Item replacement because it would create a recursive BOM.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="915"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="923"/>
         <source>Cannot open this Accounting Period because it is already open.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="917"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="925"/>
         <source>Cannot open this Accounting Period because it is frozen.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="919"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="927"/>
         <source>Cannot open this Accounting Period because subsequent periods are closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="921"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="929"/>
         <source>Cannot open this Accounting Period because the fiscal year is closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="925"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="933"/>
         <source>Cannot open this Accounting Year because subsequent years are closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="928"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="936"/>
         <source>Cannot count open recurring items with an invalid type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="930"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="938"/>
         <source>Cannot count open recurring items without a valid parent item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="932"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="940"/>
         <source>Don&apos;t know how to count open recurring invoices.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="936"/>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="938"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="944"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="946"/>
         <source>There are no A/P Credit Memo applications to post.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="940"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="948"/>
         <source>The total value of the applications that are you attempting to post is greater than the value of the A/P Credit Memo itself.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="943"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="951"/>
         <source>At least one A/P Credit Memo application cannot be posted because there is no current exchange rate for its currency.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="946"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="954"/>
         <source>The A/P Credit Memo to apply was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="948"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="956"/>
         <source>The amount to apply for this A/P Credit Memo is NULL.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="951"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="959"/>
         <source>There are no A/R Credit Memo applications to post.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="953"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="961"/>
         <source>Either there are no A/R Credit Memo applications to post or there is no exchange rate for one of the applications.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="956"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="964"/>
         <source>The total value of the applications that you are attempting to post is greater than the value of the A/R Credit Memo itself. Please reduce the applications to total less than the value of the Credit Memo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="961"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="969"/>
         <source>At least one A/R Credit Memo application cannot be posted because there is no current exchange rate for its currency.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="965"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="973"/>
         <source>The A/R Credit Memo to apply was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="967"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="975"/>
         <source>This Bank Adjustment could not be posted because the one or more required records do not exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="970"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="978"/>
         <source>This Bank Adjustment could not be posted because the total adjustment is 0 so there is nothing to post.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="974"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="982"/>
         <source>This Bank Reconciliation could not be posted because the G/L Account could not be verified.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="978"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="986"/>
         <source>This Billing Selection cannot be posted because it has already been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="982"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="990"/>
         <source>The G/L Account Assignments for one or more of the Billing Selections that you are trying to post are not configured correctly. Therefore, G/L Transactions cannot be posted for these. You must contact your Systems Administrator to have this corrected before you may post these Billing Selections.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="989"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="997"/>
         <source>The selected Cash Receipt cannot be posted as the amount distributed is greater than the amount received. You must correct this before you may post this Cash Receipt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="993"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1001"/>
         <source>The selected Cash Receipt cannot be posted as the amount received must be greater than zero. You must correct this before you may post this Cash Receipt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="996"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1004"/>
         <source>The selected Cash Receipt cannot be posted as the A/R Account cannot be determined. You must make an A/R Account Assignment for the Customer Type to which this Customer is assigned before you may post this Cash Receipt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1002"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1010"/>
         <source>The selected Cash Receipt cannot be posted as the Bank Account cannot be determined. You must make a Bank Account Assignment for this Cash Receipt before you may post it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1006"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1014"/>
         <source>The selected Cash Receipt cannot be posted, probably because the Customer&apos;s Prepaid Account was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1009"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1017"/>
         <source>Cannot post this Cash Receipt because the credit card records could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1014"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1022"/>
         <source>Cannot post this Cash Receipt because the record of the credit card transaction either does not exist or is not consistent.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1019"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1027"/>
         <source>Cannot post this Credit Card refund because the default Bank Account for this Credit Card could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1022"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1030"/>
         <source>Cannot post this Credit Card refund because an invalid id/reference-type pair was passed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1025"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1033"/>
         <source>Cannot post this Credit Card refund because the credit card and refund records could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1028"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1036"/>
         <source>Cannot post this Credit Card refund because the credit card payment records is not for a refund.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1032"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1040"/>
         <source>Cannot post this Check because it has already been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1034"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1042"/>
         <source>Cannot post this Check because the recipient type is not valid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1036"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1044"/>
         <source>Cannot post this Check because the Expense Category could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1038"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1046"/>
         <source>Cannot post this Check because the G/L Account against which it is to be posted is not valid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1041"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1049"/>
         <source>Cannot post this Count Tag because The total Count Slip quantity is greater than the Count Tag quantity.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1045"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1053"/>
         <source>Cannot post this Count Tag because the total Count Slip quantity is less than the Count Tag quantity for a Lot/Serial-controlled Item Site.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1049"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1057"/>
         <source>Cannot post this Count Tag because the total Count Slip quantity is less than the Count Tag quantity and there is no default location.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1053"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1061"/>
         <source>Cannot post this Count Tag because the total Count Slip quantity is less than the Count Tag quantity and we don&apos;t post to default locations.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1063"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1071"/>
         <source>This Credit Memo cannot be posted because it has already been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1065"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1073"/>
         <source>This Credit Memo is on Hold and, thus, cannot be posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1067"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1075"/>
         <source>The Sales Account Assignment for this Credit Memo is not configured correctly. Because of this, G/L Transactions cannot be posted for this Credit Memo. You must contact your Systems Administrator to have this corrected before you may post this Credit Memo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1074"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1082"/>
         <source>The Misc. Charge Account Assignment for this Credit Memo is not configured correctly. Because of this, G/L Transactions cannot be posted for this Credit Memo. You must contact your Systems Administrator to have this corrected before you may post this Credit Memo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1081"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1089"/>
         <source>The Freight Account Assignment for this Credit Memo is not configured correctly. Because of this, G/L Transactions cannot be posted for this Credit Memo. You must contact your Systems Administrator to have this corrected before you may post this Credit Memo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1088"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1096"/>
         <source>The A/R Account Assignment for this Credit Memo is not configured correctly. Because of this, G/L Transactions cannot be posted for this Credit Memo. You must contact your Systems Administrator to have this corrected before you may post this Credit Memo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1096"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1104"/>
         <source>Could not post this G/L Series because the Accounting Period is closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1098"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1106"/>
         <source>Could not post this G/L Series because the G/L Series Discrepancy Account was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1101"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1109"/>
         <source>Could not post this G/L Series because the Debits and Credits are unbalanced.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1109"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1117"/>
         <source>Unable to post this Invoice because it has already been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1111"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1119"/>
         <source>Unable to post this Invoice because the Sales Account was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1113"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1121"/>
         <source>Unable to post this Invoice because there was an error processing Line Item taxes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1115"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1123"/>
         <source>Unable to post this Invoice because there was an error processing Misc. Line Item taxes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1117"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1125"/>
         <source>Unable to post this Invoice because the Freight Account was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1119"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1127"/>
         <source>Unable to post this Invoice because there was an error processing Freight taxes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1121"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1129"/>
         <source>Unable to post this Invoice because there was an error processing Tax Adjustments.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1123"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1131"/>
         <source>Unable to post this Invoice because the A/R Account was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1127"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1135"/>
         <source>Could not post an inventory transaction because the Item Site has no Control Method or the Item has an Item Type of Reference.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1131"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1139"/>
         <source>Could not post an inventory transaction because the transaction will cause an Average Costed Item to go negative which is not allowed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1146"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1154"/>
         <source>Unable to post this Production because the Work Order status is not Exploded, Released, or InProcess.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1148"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1156"/>
         <source>Unable to post this Production because backflushing component usage could not be completed due to missing Item Sites.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1151"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1159"/>
         <source>Unable to post this Production because of missing Item Site or Cost Category.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1158"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1166"/>
         <source>This Receipt Line has already been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1160"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1168"/>
         <source>This Receipt Line cannot be posted because it has a quantity of 0.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1162"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1170"/>
         <source>This Purchase Order Receipt Line has no Standard Cost assigned to it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1164"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1172"/>
         <source>Cannot not issue item to shipping. No Sales Order item found against this PO Item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1166"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1174"/>
         <source>Cannot not issue item to shipping. Inventory history not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1197"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1205"/>
         <source>The Cost Category for one or more Item Sites for the Purchase Order covered by this Voucher is not configured with Purchase Price Variance or P/O Liability Clearing Account Numbers or the Vendor of this Voucher is not configured with an A/P Account Number. Because of this, G/L Transactions cannot be posted for this Voucher.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1207"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1215"/>
         <source>This shipment cannot be recalled because it does not appear to have been shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1210"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1218"/>
         <source>This shipment cannot be recalled because it appears to have been invoiced.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1213"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1221"/>
         <source>This shipment cannot be recalled because it has already been received at its destination.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1216"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1224"/>
         <source>This shipment cannot be recalled because it appears to have been invoiced and the invoice has been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1219"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1227"/>
         <source>This shipment cannot be recalled because it contains one or more Line Items with Site/Product Category/Customer combinations that have not been properly described in Sales Account Assignments. These assignments must be made before G/L Transactions can be posted andthis Sales Order is allowed to be recalled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1227"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1235"/>
         <source>This shipment cannot be recalled because the associated Transfer Order is closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1231"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1239"/>
         <source>Cannot release this Purchase Order because it does not have any unreleased Purchase Order Items.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1234"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1242"/>
         <source>Cannot release this Transfer Order because it does not have any line items.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1237"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1245"/>
         <source>Cannot release this Billing Header because it has already been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1240"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1248"/>
         <source>Cannot release this Billing Header because it has Line Items.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1243"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1251"/>
         <source>You cannot Relocate more inventory than is available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1248"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1256"/>
         <source>Cannot replace this voided check because either it has not been voided, it has already been posted, or it has already beenreplaced.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1254"/>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1266"/>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1278"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1262"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1274"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1286"/>
         <source>Either a Cost Category for the Items you are trying to Return is not configured with a Shipping Asset Account Number or a Customer Type/Product Category/Site Sales Account assignment does not exist . Because of this, G/L Transactions cannot be posted for this Return. You must contact your Systems Administrator to have this corrected before you may Return this Shipment.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1289"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1297"/>
         <source>The selected Cash Receipt cannot be reversed as the amount distributed is greater than the amount received.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1292"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1300"/>
         <source>The selected Cash Receipt cannot be reversed as the amount received must be greater than zero.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1294"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1302"/>
         <source>The selected Cash Receipt cannot be reversed as the A/R Account cannot be determined. You must make an A/R Account Assignment for the Customer Type to which this Customer is assigned before you may reverse this Cash Receipt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1300"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1308"/>
         <source>The selected Cash Receipt cannot be reversed as the Bank Account cannot be determined. You must make a Bank Account Assignment for this Cash Receipt before you may reverse it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1304"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1312"/>
         <source>The selected Cash Receipt cannot be reversed, probably because the Customer&apos;s Prepaid Account was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1307"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1315"/>
         <source>Cannot reverse this Cash Receipt because the credit card records could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1310"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1318"/>
         <source>An alarm for this item already exists.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1312"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1320"/>
         <source>The quantity you have selected for Billing is less than the quantity shipped. You may not bill for less than the quantity shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1320"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1328"/>
         <source>This Sales Order may not be shipped as it contains one or more Line Items that have Site/Product Category/Customer combinations that have not been properly described in Sales Account Assignments.  These assignments must be made before G/L Transactions can be posted and this Sales Order is allowed to ship.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1327"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1335"/>
         <source>This Transfer Order may not be shipped because there is no Item Site for the Transit Site.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1330"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1338"/>
         <source>This Shipment cannot be shipped because it appears to have already shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1332"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1340"/>
         <source>The selected Order is on Credit Hold and must be taken off of Credit Hold before it may be shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1335"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1343"/>
         <source>The selected Order is on Packing Hold and must be taken off of Packing Hold before it may be shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1338"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1346"/>
         <source>The selected Order is on Return Hold. The Customer must return all materials for a related Return Authorization before this order may be shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1342"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1350"/>
         <source>The selected Order is on Shipping Hold and must be taken off of Shipping Hold before it may be shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1345"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1353"/>
         <source>This Shipment cannot be shipped because it does not appear to exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1347"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1355"/>
         <source>This Order may not be shipped because it has been marked as Ship Complete and quantities for one or more Line Items are still not completely issued. Please correct this before shipping the Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1352"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1360"/>
         <source>Only Purchase Order Receipts may be split.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1353"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1361"/>
         <source>Only posted receipts may be split.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1354"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1362"/>
         <source>Vouchered receitps may not be split.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1355"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1363"/>
         <source>Split quantity must me less than original receipt quantity.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1356"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1364"/>
         <source>Split freight may not be greater than original freight.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1357"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1365"/>
         <source>Receipt not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1358"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1366"/>
         <source>The split quantity must be a positive number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1361"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1369"/>
         <source>Cannot create recurring items without a valid parent item to copy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1365"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1373"/>
         <source>Cannot figure out which line item to issue.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1367"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1375"/>
         <source>There is not enough Inventory to issue the amount required of Item %1 in Site %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1370"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1378"/>
         <source>Item Number %1 in Site %2 is a Multiple Location or Lot/Serial controlled Item which is short on Inventory. This transaction cannot be completed as is. Please make sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1376"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1384"/>
         <source>Invalid Order Type.  Only Sales Orders and Transfer Orders may be shipped from this window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1379"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1387"/>
         <source>Cannot check inventory levels foran invalid item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1381"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1389"/>
         <source>There is not enough Inventory to issue the amount required of one of the items requested.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1384"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1392"/>
         <source>One of the requested items is a Multiple Location or Lot/Serial controlled Item which is sort on Inventory.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1390"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1398"/>
         <source>Cannot thaw this Accounting Period because it is not frozen.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1393"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1401"/>
         <source>Cannot change the Sequence of a non-existent To-Do List Item. Possible cause: no To-Do List Item was selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1398"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1406"/>
         <source>The To-Do List Item cannot be updated as there is no assigned User.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1400"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1408"/>
         <source>The To-Do List Item cannot be updated as the Task Name is blank.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1402"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1410"/>
         <source>The To-Do List Item cannot be updated as there is no Due Date.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1404"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1412"/>
         <source>The To-Do List Item cannot be updated as an invalid internal ID was supplied .</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1408"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1416"/>
         <source>Cannot void this check because either it has already been voided, posted, or replaced, or it has been transmitted electronically. If this check has been posted, try Void Posted Check with the Check Register window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1417"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1425"/>
         <source>Unable to void this Credit Memo because it has not been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1419"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1427"/>
         <source>Unable to void this Credit Memo because the Sales Account was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1421"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1429"/>
         <source>Unable to void this Credit Memo because there A/R Applications posted against this Credit Memo.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1427"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1435"/>
         <source>Unable to void this Invoice because it has not been posted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1429"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1437"/>
         <source>Unable to void this Invoice because the Sales Account was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1431"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1439"/>
         <source>Unable to void this Invoice because there A/R Applications posted against this Invoice.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1434"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1442"/>
         <source>Cannot void this check because it has already been voided.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1436"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1444"/>
         <source>Cannot void this check because the recipient type is not valid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1438"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1446"/>
         <source>Cannot void this check because the Expense Category could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1440"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1448"/>
         <source>Cannot void this check because the G/L account to which the funds should be credited is not valid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1444"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1452"/>
         <source>Cannot replace a check that is not voided or has already been posted or replaced.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1447"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1455"/>
         <source>Cannot replace this voided check because one of its line items has been reselected for billing and is represented on another check.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1456"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1464"/>
         <source>Cannot reserve more quantity than remaining on order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1457"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1465"/>
         <source>Cannot reserve negative quantities.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1458"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1466"/>
         <source>Cannot reserve more quantity than currently on hand and already reserved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1464"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1472"/>
         <source>Work Order %1 cannot be Exploded as it seems to have an invalid Order Quantity.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1466"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1474"/>
         <source>Work Order %1 has at least one Item in its Bill of Materials with the Push issue method that has not yet been issued. You must issue all Push Items to this Work Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1470"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1478"/>
         <source>Work Order %1 has at least one Item in its Bill of Materials with the Push issue method that does not have the required quantity issued. You must issue all Push Items to this Work Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1474"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1482"/>
         <source>Work Order %1 is closed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1481"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1489"/>
         <source>ErrorLookupHash initialization error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1482"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1490"/>
         <source>ErrorLookupHash has already been initialized.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1519"/>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1544"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1527"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1552"/>
         <source>Lookup Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1520"/>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1545"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1528"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1553"/>
         <source>Could not find (%1, %2) in ErrorLookupHash when trying to insert proxy entry for (%3, %4).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1580"/>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1588"/>
         <source>A Stored Procedure failed to run properly.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -82680,6 +85922,60 @@ You must reassign these G/L Accounts before you may delete the selected G/L Suba
     <message>
         <location filename="../../guiclient/submitReport.ui" line="303"/>
         <source>Response Body:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>subscriber</name>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_subscriber.h" line="205"/>
+        <location filename="../../widgets/tmp/lib/ui_subscriber.h" line="205"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_subscriber.h" line="208"/>
+        <location filename="../../widgets/tmp/lib/ui_subscriber.h" line="208"/>
+        <source>Select a User:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_subscriber.h" line="211"/>
+        <location filename="../../widgets/tmp/lib/ui_subscriber.h" line="211"/>
+        <source>Select a Contact:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_subscriber.h" line="212"/>
+        <location filename="../../widgets/tmp/lib/ui_subscriber.h" line="212"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_subscriber.h" line="213"/>
+        <location filename="../../widgets/tmp/lib/ui_subscriber.h" line="213"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>subscribers</name>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_subscribers.h" line="109"/>
+        <location filename="../../widgets/tmp/lib/ui_subscribers.h" line="109"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_subscribers.h" line="110"/>
+        <location filename="../../widgets/tmp/lib/ui_subscribers.h" line="110"/>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/tmp/dll/ui_subscribers.h" line="111"/>
+        <location filename="../../widgets/tmp/lib/ui_subscribers.h" line="111"/>
+        <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -83808,6 +87104,46 @@ You first need to Revoke those Tax Codes.</source>
     <message>
         <location filename="../../guiclient/taxAuthorities.cpp" line="73"/>
         <source>Error Deleting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_taxAuthorities.h" line="172"/>
+        <source>List Tax Authorities</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_taxAuthorities.h" line="173"/>
+        <source>Tax Authorities:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_taxAuthorities.h" line="174"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_taxAuthorities.h" line="175"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_taxAuthorities.h" line="176"/>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_taxAuthorities.h" line="177"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_taxAuthorities.h" line="178"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_taxAuthorities.h" line="179"/>
+        <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -85418,299 +88754,299 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="442"/>
+        <location filename="../../guiclient/todoList.cpp" line="457"/>
         <source>Completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="450"/>
+        <location filename="../../guiclient/todoList.cpp" line="465"/>
         <source>Closed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="451"/>
+        <location filename="../../guiclient/todoList.cpp" line="466"/>
         <source>Concept</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="452"/>
+        <location filename="../../guiclient/todoList.cpp" line="467"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="57"/>
+        <location filename="../../guiclient/todoList.cpp" line="60"/>
         <source>Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="40"/>
-        <location filename="../../guiclient/todoList.cpp" line="60"/>
+        <location filename="../../guiclient/todoList.cpp" line="43"/>
+        <location filename="../../guiclient/todoList.cpp" line="63"/>
         <source>Assigned To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="61"/>
+        <location filename="../../guiclient/todoList.cpp" line="64"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="65"/>
+        <location filename="../../guiclient/todoList.cpp" line="68"/>
         <source>Due Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="82"/>
-        <location filename="../../guiclient/todoList.cpp" line="438"/>
+        <location filename="../../guiclient/todoList.cpp" line="85"/>
+        <location filename="../../guiclient/todoList.cpp" line="453"/>
         <source>Incident</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="110"/>
+        <location filename="../../guiclient/todoList.cpp" line="125"/>
         <source>Edit To-Do...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="136"/>
+        <location filename="../../guiclient/todoList.cpp" line="151"/>
         <source>Edit Incident</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="138"/>
+        <location filename="../../guiclient/todoList.cpp" line="153"/>
         <source>View Incident</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="58"/>
+        <location filename="../../guiclient/todoList.cpp" line="61"/>
         <source>Priority</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="64"/>
+        <location filename="../../guiclient/todoList.cpp" line="67"/>
         <source>Start Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="66"/>
+        <location filename="../../guiclient/todoList.cpp" line="69"/>
         <source>Account#</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="67"/>
+        <location filename="../../guiclient/todoList.cpp" line="70"/>
         <source>Account Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="39"/>
-        <location filename="../../guiclient/todoList.cpp" line="59"/>
+        <location filename="../../guiclient/todoList.cpp" line="42"/>
+        <location filename="../../guiclient/todoList.cpp" line="62"/>
         <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="41"/>
+        <location filename="../../guiclient/todoList.cpp" line="44"/>
         <source>CRM Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="448"/>
+        <location filename="../../guiclient/todoList.cpp" line="463"/>
         <source>Assigned</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="30"/>
+        <location filename="../../guiclient/todoList.cpp" line="33"/>
         <source>To-Do Items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="75"/>
+        <location filename="../../guiclient/todoList.cpp" line="78"/>
         <source>To-Do Item</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="113"/>
+        <location filename="../../guiclient/todoList.cpp" line="128"/>
         <source>View To-Do...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="116"/>
+        <location filename="../../guiclient/todoList.cpp" line="131"/>
         <source>Delete To-Do</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="155"/>
+        <location filename="../../guiclient/todoList.cpp" line="170"/>
         <source>Edit Task</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="157"/>
+        <location filename="../../guiclient/todoList.cpp" line="172"/>
         <source>View Task</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="174"/>
+        <location filename="../../guiclient/todoList.cpp" line="189"/>
         <source>Edit Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="176"/>
+        <location filename="../../guiclient/todoList.cpp" line="191"/>
         <source>View Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="203"/>
+        <location filename="../../guiclient/todoList.cpp" line="218"/>
         <source>Edit Customer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="205"/>
+        <location filename="../../guiclient/todoList.cpp" line="220"/>
         <source>View Customer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="318"/>
+        <location filename="../../guiclient/todoList.cpp" line="333"/>
         <source>Delete Recurring Item?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="319"/>
+        <location filename="../../guiclient/todoList.cpp" line="334"/>
         <source>&lt;p&gt;This is a recurring item. Do you want to delete just this one item or delete all open items in this recurrence?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="339"/>
-        <location filename="../../guiclient/todoList.cpp" line="346"/>
+        <location filename="../../guiclient/todoList.cpp" line="354"/>
+        <location filename="../../guiclient/todoList.cpp" line="361"/>
         <source>Delete List Item?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="340"/>
-        <location filename="../../guiclient/todoList.cpp" line="347"/>
+        <location filename="../../guiclient/todoList.cpp" line="355"/>
+        <location filename="../../guiclient/todoList.cpp" line="362"/>
         <source>&lt;p&gt;Are you sure that you want to completely delete the selected item?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="437"/>
+        <location filename="../../guiclient/todoList.cpp" line="452"/>
         <source>To-do</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="439"/>
+        <location filename="../../guiclient/todoList.cpp" line="454"/>
         <source>Task</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="85"/>
-        <location filename="../../guiclient/todoList.cpp" line="440"/>
+        <location filename="../../guiclient/todoList.cpp" line="88"/>
+        <location filename="../../guiclient/todoList.cpp" line="455"/>
         <source>Project</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="38"/>
+        <location filename="../../guiclient/todoList.cpp" line="41"/>
         <source>User</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="42"/>
+        <location filename="../../guiclient/todoList.cpp" line="45"/>
         <source>Start Date on or Before</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="43"/>
+        <location filename="../../guiclient/todoList.cpp" line="46"/>
         <source>Start Date on or After</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="44"/>
+        <location filename="../../guiclient/todoList.cpp" line="47"/>
         <source>Due Date on or Before</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="45"/>
+        <location filename="../../guiclient/todoList.cpp" line="48"/>
         <source>Due Date on or After</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="46"/>
+        <location filename="../../guiclient/todoList.cpp" line="49"/>
         <source>Show Completed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="47"/>
+        <location filename="../../guiclient/todoList.cpp" line="50"/>
         <source>Show Completed Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="62"/>
+        <location filename="../../guiclient/todoList.cpp" line="65"/>
         <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="63"/>
+        <location filename="../../guiclient/todoList.cpp" line="66"/>
         <source>Stage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="68"/>
+        <location filename="../../guiclient/todoList.cpp" line="71"/>
         <source>Parent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="69"/>
+        <location filename="../../guiclient/todoList.cpp" line="72"/>
         <source>Customer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="79"/>
-        <location filename="../../guiclient/todoList.cpp" line="441"/>
+        <location filename="../../guiclient/todoList.cpp" line="82"/>
+        <location filename="../../guiclient/todoList.cpp" line="456"/>
         <source>Opportunity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="194"/>
+        <location filename="../../guiclient/todoList.cpp" line="209"/>
         <source>Edit Opportunity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="196"/>
+        <location filename="../../guiclient/todoList.cpp" line="211"/>
         <source>View Opportunity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="443"/>
+        <location filename="../../guiclient/todoList.cpp" line="458"/>
         <source>Deferred</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="444"/>
+        <location filename="../../guiclient/todoList.cpp" line="459"/>
         <source>Pending</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="445"/>
+        <location filename="../../guiclient/todoList.cpp" line="460"/>
         <source>InProcess</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="446"/>
+        <location filename="../../guiclient/todoList.cpp" line="461"/>
         <source>Feedback</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="447"/>
+        <location filename="../../guiclient/todoList.cpp" line="462"/>
         <source>Confirmed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="449"/>
+        <location filename="../../guiclient/todoList.cpp" line="464"/>
         <source>Resolved</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="700"/>
+        <location filename="../../guiclient/todoList.cpp" line="715"/>
         <source>Restricted Access</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/todoList.cpp" line="700"/>
+        <location filename="../../guiclient/todoList.cpp" line="715"/>
         <source>You have not been granted privileges to open this item.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -87529,38 +90865,54 @@ otherwise a new one will be created.</source>
 <context>
     <name>uiforms</name>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="37"/>
+        <location filename="../../guiclient/uiforms.cpp" line="40"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="38"/>
+        <location filename="../../guiclient/uiforms.cpp" line="41"/>
         <source>Description</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="39"/>
+        <location filename="../../guiclient/uiforms.cpp" line="42"/>
         <source>Grade</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="40"/>
+        <location filename="../../guiclient/uiforms.cpp" line="43"/>
         <source>Enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="156"/>
-        <location filename="../../guiclient/uiforms.cpp" line="170"/>
+        <location filename="../../guiclient/uiforms.cpp" line="96"/>
+        <source>Deleting Screen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/uiforms.cpp" line="118"/>
+        <location filename="../../guiclient/uiforms.cpp" line="129"/>
+        <source>Getting Screens</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/uiforms.cpp" line="144"/>
+        <source>Getting Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/uiforms.cpp" line="160"/>
+        <location filename="../../guiclient/uiforms.cpp" line="174"/>
         <source>Could not load file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="157"/>
+        <location filename="../../guiclient/uiforms.cpp" line="161"/>
         <source>There was an error loading the UI Form from the database.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="171"/>
+        <location filename="../../guiclient/uiforms.cpp" line="175"/>
         <source>&lt;p&gt;Could not interpret the UI Form data as a UI definition.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -87570,47 +90922,52 @@ otherwise a new one will be created.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.ui" line="44"/>
+        <location filename="../../guiclient/uiforms.ui" line="31"/>
         <source>Screens:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.ui" line="80"/>
+        <location filename="../../guiclient/uiforms.ui" line="51"/>
+        <source>Organize By Package</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/uiforms.ui" line="77"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.ui" line="104"/>
+        <location filename="../../guiclient/uiforms.ui" line="84"/>
         <source>&amp;New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.ui" line="114"/>
+        <location filename="../../guiclient/uiforms.ui" line="94"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.ui" line="124"/>
+        <location filename="../../guiclient/uiforms.ui" line="120"/>
         <source>&amp;Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.ui" line="136"/>
+        <location filename="../../guiclient/uiforms.ui" line="146"/>
         <source>&amp;Test</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="41"/>
+        <location filename="../../guiclient/uiforms.cpp" line="44"/>
         <source>Package</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="83"/>
+        <location filename="../../guiclient/uiforms.cpp" line="86"/>
         <source>Really delete?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/uiforms.cpp" line="84"/>
+        <location filename="../../guiclient/uiforms.cpp" line="87"/>
         <source>Are you sure you want to delete this screen?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -88276,27 +91633,42 @@ Would you like to post it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/unpostedInvoices.cpp" line="381"/>
-        <source>Edit...</source>
+        <location filename="../../guiclient/unpostedInvoices.cpp" line="365"/>
+        <source>A/R</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/unpostedInvoices.cpp" line="385"/>
-        <source>View...</source>
+        <location filename="../../guiclient/unpostedInvoices.cpp" line="371"/>
+        <source>Journal Series</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/unpostedInvoices.cpp" line="389"/>
-        <source>Delete...</source>
+        <location filename="../../guiclient/unpostedInvoices.cpp" line="376"/>
+        <source>General Ledger Series</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/unpostedInvoices.cpp" line="395"/>
-        <source>Print...</source>
+        <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/unpostedInvoices.cpp" line="399"/>
+        <source>View...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/unpostedInvoices.cpp" line="403"/>
+        <source>Delete...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/unpostedInvoices.cpp" line="409"/>
+        <source>Print...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/unpostedInvoices.cpp" line="413"/>
         <source>Post...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -88341,6 +91713,11 @@ Would you like to post it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../guiclient/unpostedInvoices.ui" line="187"/>
+        <source>P&amp;rint Journal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../guiclient/unpostedInvoices.cpp" line="50"/>
         <location filename="../../guiclient/unpostedInvoices.cpp" line="53"/>
         <source>Ship Date</source>
@@ -88373,11 +91750,6 @@ Would you like to post it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/unpostedInvoices.ui" line="187"/>
-        <source>P&amp;rint Sales Journal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/unpostedInvoices.cpp" line="52"/>
         <source>Recurring</source>
         <translation type="unfinished"></translation>
@@ -88388,12 +91760,12 @@ Would you like to post it anyway?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/unpostedInvoices.cpp" line="430"/>
+        <location filename="../../guiclient/unpostedInvoices.cpp" line="444"/>
         <source>Access Denied</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/unpostedInvoices.cpp" line="431"/>
+        <location filename="../../guiclient/unpostedInvoices.cpp" line="445"/>
         <source>You may not view or edit this Invoice as it references a Site for which you have not been granted privileges.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -89812,6 +93184,87 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="../../guiclient/updatePrices.ui" line="417"/>
         <source>Also Update Characteristic Prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>updatePricesByPricingSchedule</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByPricingSchedule.h" line="191"/>
+        <source>Update Prices by Pricing Schedule</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByPricingSchedule.h" line="192"/>
+        <source>Pricing Schedule:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByPricingSchedule.h" line="193"/>
+        <source>Update Prices by:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByPricingSchedule.h" line="194"/>
+        <source>Percent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByPricingSchedule.h" line="195"/>
+        <source>Fixed Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByPricingSchedule.h" line="196"/>
+        <source>Also update characteristic prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByPricingSchedule.h" line="197"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByPricingSchedule.h" line="198"/>
+        <source>&amp;Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>updatePricesByProductCategory</name>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByProductCategory.h" line="173"/>
+        <source>Update Prices by Product Category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByProductCategory.h" line="175"/>
+        <source>Update Prices by:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByProductCategory.h" line="176"/>
+        <source>Percent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByProductCategory.h" line="177"/>
+        <source>Fixed Amount</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByProductCategory.h" line="178"/>
+        <source>Also update characteristic prices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByProductCategory.h" line="179"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_updatePricesByProductCategory.h" line="180"/>
+        <source>&amp;Update</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -91999,6 +95452,46 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
         <source>Delete Vendor...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_vendors.h" line="151"/>
+        <source>List Vendors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_vendors.h" line="152"/>
+        <source>Vendors:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_vendors.h" line="153"/>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_vendors.h" line="154"/>
+        <source>&amp;Print</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_vendors.h" line="155"/>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_vendors.h" line="156"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_vendors.h" line="157"/>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/ui/ui_vendors.h" line="158"/>
+        <source>&amp;Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>viewCheckRun</name>
@@ -92615,12 +96108,12 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/voucherItem.cpp" line="643"/>
+        <location filename="../../guiclient/voucherItem.cpp" line="644"/>
         <source>Receiving</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/voucherItem.cpp" line="644"/>
+        <location filename="../../guiclient/voucherItem.cpp" line="645"/>
         <source>Reject</source>
         <translation type="unfinished"></translation>
     </message>
@@ -92824,12 +96317,12 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/voucherItem.cpp" line="682"/>
+        <location filename="../../guiclient/voucherItem.cpp" line="683"/>
         <source>Correct Receipt...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/voucherItem.cpp" line="685"/>
+        <location filename="../../guiclient/voucherItem.cpp" line="686"/>
         <source>Split Receipt...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -92979,93 +96472,23 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
 <context>
     <name>voucheringEditList</name>
     <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="35"/>
-        <source>Vchr. #</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="36"/>
-        <source>P/O #</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="37"/>
-        <source>Invc./Item #</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="38"/>
-        <source>Vendor #</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="39"/>
-        <source>Name/Description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="41"/>
-        <source>UOM</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="42"/>
-        <source>Qty. Vchrd.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="43"/>
-        <source>Cost</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="75"/>
-        <source>Edit...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="78"/>
-        <source>View...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="145"/>
-        <source>Not Assigned</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="144"/>
-        <source>Debit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="143"/>
-        <source>Credit</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.ui" line="22"/>
+        <location filename="../../guiclient/ui/ui_voucheringEditList.h" line="116"/>
         <source>Vouchering Edit List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/voucheringEditList.ui" line="36"/>
+        <location filename="../../guiclient/ui/ui_voucheringEditList.h" line="117"/>
         <source>Vouchering List:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/voucheringEditList.ui" line="64"/>
+        <location filename="../../guiclient/ui/ui_voucheringEditList.h" line="118"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/voucheringEditList.ui" line="71"/>
+        <location filename="../../guiclient/ui/ui_voucheringEditList.h" line="119"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/voucheringEditList.cpp" line="40"/>
-        <source>Vend. Type</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -93693,13 +97116,13 @@ that the selected Work Order does.</source>
     <name>workOrder</name>
     <message>
         <location filename="../../guiclient/workOrder.cpp" line="309"/>
-        <location filename="../../guiclient/workOrder.cpp" line="654"/>
+        <location filename="../../guiclient/workOrder.cpp" line="657"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/workOrder.cpp" line="319"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1985"/>
+        <location filename="../../guiclient/workOrder.cpp" line="2001"/>
         <source>A System Error occurred at %1::%2, W/O ID %3.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -93739,13 +97162,13 @@ that the selected Work Order does.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="537"/>
+        <location filename="../../guiclient/workOrder.cpp" line="540"/>
         <source>The Work Order was created but not Exploded as the Work Order status is not Open
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="566"/>
+        <location filename="../../guiclient/workOrder.cpp" line="569"/>
         <source>You have entered an invalid Qty. Ordered.
 Please correct before creating this Work Order</source>
         <translation type="unfinished"></translation>
@@ -93817,9 +97240,9 @@ Please correct before creating this Work Order</source>
     </message>
     <message>
         <location filename="../../guiclient/workOrder.cpp" line="439"/>
-        <location filename="../../guiclient/workOrder.cpp" line="501"/>
-        <location filename="../../guiclient/workOrder.cpp" line="669"/>
-        <location filename="../../guiclient/workOrder.cpp" line="760"/>
+        <location filename="../../guiclient/workOrder.cpp" line="504"/>
+        <location filename="../../guiclient/workOrder.cpp" line="685"/>
+        <location filename="../../guiclient/workOrder.cpp" line="776"/>
         <source>A System Error occurred at %1::%2.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -93837,99 +97260,99 @@ Do you want to update the order quantity and create the order?</source>
     </message>
     <message>
         <location filename="../../guiclient/workOrder.cpp" line="454"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1094"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1124"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1182"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1196"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1110"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1140"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1198"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1212"/>
         <source>&amp;Yes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../guiclient/workOrder.cpp" line="454"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1094"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1124"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1182"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1196"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1110"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1140"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1198"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1212"/>
         <source>&amp;No</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="524"/>
+        <location filename="../../guiclient/workOrder.cpp" line="527"/>
         <source>Work Order not Created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="525"/>
+        <location filename="../../guiclient/workOrder.cpp" line="528"/>
         <source>There was an error creating the work order.
 Make sure the itemsite you are creating the work order in is set to allow manufacturing of the item.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="531"/>
-        <location filename="../../guiclient/workOrder.cpp" line="536"/>
+        <location filename="../../guiclient/workOrder.cpp" line="534"/>
+        <location filename="../../guiclient/workOrder.cpp" line="539"/>
         <source>Work Order not Exploded</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="565"/>
-        <location filename="../../guiclient/workOrder.cpp" line="574"/>
-        <location filename="../../guiclient/workOrder.cpp" line="583"/>
+        <location filename="../../guiclient/workOrder.cpp" line="568"/>
+        <location filename="../../guiclient/workOrder.cpp" line="577"/>
+        <location filename="../../guiclient/workOrder.cpp" line="586"/>
         <source>Cannot Save Work Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="995"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1011"/>
         <source>&lt;p&gt;The Work Order that you selected to delete is a child of another Work Order.  If you delete the selected Work Order then the Work Order Materials Requirements for the Component Item will remain but the Work Order to relieve that demand will not. Are you sure that you want to delete the selected Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1002"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1018"/>
         <source>&lt;p&gt;The Work Order that you selected to delete was created to satisfy Sales Order demand. If you delete the selected Work Order then the Sales Order demand will remain but the Work Order to relieve that demand will not. Are you sure that you want to delete the selected Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1008"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1024"/>
         <source>&lt;p&gt;Are you sure that you want to delete the selected Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1010"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1026"/>
         <source>Delete Work Order?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1089"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1105"/>
         <source>Change Priority</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1121"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1150"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1137"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1144"/>
         <source>Change Date</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1176"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1192"/>
         <source>The new Order Quantity that you have entered does not meet the Order Parameters set for the parent Item Site for this Work Order.  In order to meet the Item Site Order Parameters the new Order Quantity must be increased to %1. Do you want to change the Order Quantity for this Work Order to %2?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1191"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1207"/>
         <source>Change Qty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1192"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1208"/>
         <source>A quantity change from %1 to %2 will update all work order requirements.  Are you sure you want to change the work order quantity?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1289"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1305"/>
         <source>Cannot return Work Order Material</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1290"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1306"/>
         <source>This Work Order has had material received against it
 and thus the material issued against it cannot be returned.
 You must instead return each Work Order Material item individually.
@@ -93937,33 +97360,33 @@ You must instead return each Work Order Material item individually.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1308"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1324"/>
         <source>A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2, Error #%3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1317"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1333"/>
         <source>Material Return</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1317"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1396"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1333"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1412"/>
         <source>Transaction Canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1327"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1343"/>
         <source>A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1361"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1377"/>
         <source>Insufficient Inventory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1362"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1378"/>
         <source>Item Number %1 in Site %2 is a Multiple Location or
 Lot/Serial controlled Item which is short on Inventory.
 This transaction cannot be completed as is. Please make
@@ -93971,159 +97394,159 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1385"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1401"/>
         <source>A System Error occurred at issueWoMaterialBatch::%1, Work Order ID #%2, Error #%3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1396"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1412"/>
         <source>Material Issue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1407"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1423"/>
         <source>A System Error occurred at issueWoMaterialBatch::%1, Work Order ID #%2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1512"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1544"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1528"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1560"/>
         <source>W/O Material Requirement cannot be Deleted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1513"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1529"/>
         <source>&lt;p&gt;This W/O Material Requirement cannot be deleted as it has has material issued to it. You must return this material to stock before you can delete this Material Requirement. Would you like to return this material to stock now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1545"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1561"/>
         <source>&lt;p&gt;This W/O Material Requirement cannot be deleted as it has material issued to it. You must return this material to stock before you can delete this Material Requirement.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1715"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1731"/>
         <source>Explode...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1721"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1737"/>
         <source>Implode...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1725"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1741"/>
         <source>Release</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1731"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1747"/>
         <source>Recall</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1738"/>
-        <location filename="../../guiclient/workOrder.cpp" line="1849"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1754"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1865"/>
         <source>Delete...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1746"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1762"/>
         <source>Close...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1763"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1779"/>
         <source>New Material...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1767"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1783"/>
         <source>Issue Batch...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1773"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1789"/>
         <source>Return Batch...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1784"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1800"/>
         <source>Post Production...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1790"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1806"/>
         <source>Correct Production Posting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1800"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1816"/>
         <source>Running Availability...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1804"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1820"/>
         <source>Inventory Availability...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1815"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1831"/>
         <source>Reprioritize...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1819"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1835"/>
         <source>Reschedule...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1823"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1839"/>
         <source>Change Quantity...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1837"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1853"/>
         <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1843"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1859"/>
         <source>View...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1858"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1874"/>
         <source>Issue...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1864"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1880"/>
         <source>Return...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1868"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1884"/>
         <source>Scrap...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1875"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1891"/>
         <source>Substitute...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1883"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1899"/>
         <source>Availability...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1885"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1901"/>
         <source>Substitute Availability...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1755"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1771"/>
         <source>Print Traveler...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -94228,36 +97651,36 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="575"/>
+        <location filename="../../guiclient/workOrder.cpp" line="578"/>
         <source>You have entered an invalid Due Date.
 Please correct before updating this Work Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="584"/>
+        <location filename="../../guiclient/workOrder.cpp" line="587"/>
         <source>You have entered an invalid Start Date.
 Please correct before updating this Work Order</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1090"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1106"/>
         <source>A priority change from %1 to %2 will update all work order requirements.  Are you sure you want to change the work order priority?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1122"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1138"/>
         <source>Changing the start or due date will update all work order requirements.  Are you sure you want to reschedule all dates?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1151"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1145"/>
         <source>Changing the due date may change the Bill of Material components that are effective.
 You may want to consider imploding and exploding the Work Order.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="1175"/>
+        <location filename="../../guiclient/workOrder.cpp" line="1191"/>
         <source>Invalid Order Qty</source>
         <translation type="unfinished"></translation>
     </message>
@@ -94323,7 +97746,7 @@ You may want to consider imploding and exploding the Work Order.
     </message>
     <message>
         <location filename="../../guiclient/workOrder.cpp" line="400"/>
-        <location filename="../../guiclient/workOrder.cpp" line="736"/>
+        <location filename="../../guiclient/workOrder.cpp" line="752"/>
         <source>Invalid Site</source>
         <translation type="unfinished"></translation>
     </message>
@@ -94335,14 +97758,14 @@ a &quot;Supplied At&quot; Site. You must select a different
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="532"/>
+        <location filename="../../guiclient/workOrder.cpp" line="535"/>
         <source>The Work Order was created but not Exploded as Component Items defined in the Bill of Materials for
 the selected Work Order Item do not exist in the selected  Work Order Site.
 You must create Item Sites for these Component Items before you may explode this Work Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/workOrder.cpp" line="737"/>
+        <location filename="../../guiclient/workOrder.cpp" line="753"/>
         <source>The selected Site for this Work Order is not
 a &quot;Supplied At&quot; Site. You must select a different
 Site before creating the Work Order.</source>
