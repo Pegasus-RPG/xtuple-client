@@ -362,6 +362,7 @@ void ParameterWidget::append(QString pName, QString pParam, ParameterWidgetTypes
                qPrintable(pExtraInfo));
   }
 
+  resetEmptyParameter();
 }
 
 /** \brief Add a new XComboBox-based filter to the set of available filters.
@@ -390,6 +391,8 @@ void ParameterWidget::appendComboBox(QString pName, QString pParam, int pType, Q
     pp->enabled = true;
     _params.insert(_params.count(), pp);
   }
+
+  resetEmptyParameter();
 }
 
 /** \brief Add a new XComboBox-based filter to the set of available filters.
@@ -417,6 +420,35 @@ void ParameterWidget::appendComboBox(QString pName, QString pParam, QString pQue
     pp->query = pQuery;
     pp->enabled = true;
     _params.insert(_params.count(), pp);
+  }
+
+  resetEmptyParameter();
+}
+
+/**
+  If the last parameter that has been added has not been selected, then reset it.
+  */
+void ParameterWidget::resetEmptyParameter()
+{
+  if (_filtersLayout->rowCount() > 1)
+  {
+    int id;
+    int row;
+    QLayoutItem *item;
+    XComboBox *box;
+    QToolButton *btn;
+
+    row = _filtersLayout->rowCount() - 1;
+    item = _filtersLayout->itemAtPosition(row, 0)->layout()->itemAt(0);
+    box = (XComboBox*)item->widget();
+    id = box->id();
+
+    if (id < 0) {
+      QString btnName = "button" + QString().setNum(row);
+      btn = _filterGroup->findChild<QToolButton *>(btnName);
+      btn->click();
+      addParam();
+    }
   }
 }
 
