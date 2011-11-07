@@ -3,6 +3,12 @@
  <title>Cash Receipts</title>
  <name>CashReceipts</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -101,7 +107,7 @@ WHERE ( (aropen_cust_id=cust_id)
       )
 &lt;? else ?>
 -- New mode
-SELECT currtobase(cashrcpt_curr_id,cashrcpt_amount,cashrcpt_distdate) AS base_applied
+SELECT (cashrcpt_amount / cashrcpt_curr_rate) AS base_applied
 FROM cashrcpt JOIN cust ON (cust_id=cashrcpt_cust_id) LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id)
 WHERE ( (cashrcpt_distdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? if exists("cust_id") ?>
