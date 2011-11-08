@@ -2604,10 +2604,7 @@ void salesOrder::populate()
 void salesOrder::sFillItemList()
 {
   if (ISORDER(_mode))
-    q.prepare( "SELECT COALESCE(MIN(coitem_scheddate),:ship_date) AS shipdate "
-               "FROM coitem "
-               "WHERE ((coitem_status <> 'X')"
-               "  AND  (coitem_cohead_id=:head_id));" );
+    q.prepare( "SELECT COALESCE(getSoSchedDate(:head_id),:ship_date) AS shipdate;" );
   else
     q.prepare( "SELECT COALESCE(MIN(quitem_scheddate),:ship_date) AS shipdate "
                "FROM quitem "
