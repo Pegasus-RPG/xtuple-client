@@ -1,2 +1,0 @@
-mywindow.windowTitle="OpPoTuNiTy TyPeS";
-
