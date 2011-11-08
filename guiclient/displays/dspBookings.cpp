@@ -121,6 +121,8 @@ enum SetResponse dspBookings::set(const ParameterList &pParams)
 
 void dspBookings::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
 {
+  Q_UNUSED(pSelected);
+  Q_UNUSED(pColumn);
   QAction* viewSoAct = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sViewOrder()));
   viewSoAct->setEnabled(_privileges->check("ViewSalesOrders") || _privileges->check("MaintainSalesOrders"));
 

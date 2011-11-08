@@ -17,7 +17,7 @@
 #include "xtreewidget.h"
 #include "dspSalesHistory.h"
 
-dspBriefSalesHistory::dspBriefSalesHistory(QWidget* parent, const char* name, Qt::WFlags fl)
+dspBriefSalesHistory::dspBriefSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspBriefSalesHistory", fl)
 {
   setWindowTitle(tr("Brief Sales History"));
