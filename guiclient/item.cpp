@@ -1974,6 +1974,7 @@ void item::sHandleRightButtons()
       _bom->hide();
     else
       if (itemtype == "M" || // manufactured
+          itemtype == "P" || // purchased
           itemtype == "B" || // breeder
           itemtype == "F" || // phantom
           itemtype == "K" || // kit
