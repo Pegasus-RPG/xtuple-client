@@ -28,6 +28,7 @@
 #include "transferOrders.h"
 #include "transferOrder.h"
 #include "releaseTransferOrdersByAgent.h"
+#include "releaseTransferOrdersByClassCode.h"
 #include "scrapTrans.h"
 #include "expenseTrans.h"
 #include "transformTrans.h"
@@ -197,11 +198,12 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   actionProperties acts[] = {
     //  Inventory |  Transfer Orders
     // TODO: switch between visibility of Inter-Warehouse Transfer and Transfer Orders based on config param?
-    { "menu",                     tr("Transfer &Order"),     (char*)transferOrderMenu,      mainMenu,          "true",                                      NULL, NULL, _metrics->boolean("MultiWhs"), NULL},
-    { "im.interWarehouseTransfer",tr("&New..."),             SLOT(sNewTransferOrder()),     transferOrderMenu, "MaintainTransferOrders",                    NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
-    { "im.transferOrders",        tr("&List Open..."),       SLOT(sTransferOrders()),       transferOrderMenu, "ViewTransferOrders MaintainTransferOrders", NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
-    { "separator",                NULL,                      NULL,                          transferOrderMenu, "true",                                      NULL, NULL, true,                          NULL},
-    { "im.releaseTransferOrders", tr("&Release by Agent..."),SLOT(sReleaseTransferOrders()),transferOrderMenu, "ReleaseTransferOrders",                     NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
+    { "menu",                                tr("Transfer &Order"),          (char*)transferOrderMenu,                 mainMenu,          "true",                                      NULL, NULL, _metrics->boolean("MultiWhs"), NULL},
+    { "im.interWarehouseTransfer",           tr("&New..."),                  SLOT(sNewTransferOrder()),                transferOrderMenu, "MaintainTransferOrders",                    NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
+    { "im.transferOrders",                   tr("&List Open..."),            SLOT(sTransferOrders()),                  transferOrderMenu, "ViewTransferOrders MaintainTransferOrders", NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
+    { "separator",                           NULL,                           NULL,                                     transferOrderMenu, "true",                                      NULL, NULL, true,                          NULL},
+    { "im.releaseTransferOrders",            tr("&Release by Agent..."),     SLOT(sReleaseTransferOrdersByAgent()),transferOrderMenu, "ReleaseTransferOrders",                     NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
+    { "im.releaseTransferOrdersByClassCode", tr("Release by &Class Code..."),SLOT(sReleaseTransferOrdersByClassCode()),transferOrderMenu, "ReleaseTransferOrders",          NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
 
     //  Inventory | Physical Inventory
     { "menu",                           tr("&Physical Inventory"),             (char*)physicalMenu,                  mainMenu,               "true",            NULL, NULL, true, NULL },
@@ -531,9 +533,14 @@ void menuInventory::sTransferOrders()
   omfgThis->handleNewWindow(new transferOrders());
 }
 
-void menuInventory::sReleaseTransferOrders()
+void menuInventory::sReleaseTransferOrdersByAgent()
 {
   omfgThis->handleNewWindow(new releaseTransferOrdersByAgent());
+}
+
+void menuInventory::sReleaseTransferOrdersByClassCode()
+{
+  omfgThis->handleNewWindow(new releaseTransferOrdersByClassCode());
 }
 
 void menuInventory::sReceiptTrans()
