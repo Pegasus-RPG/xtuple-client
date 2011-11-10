@@ -109,7 +109,7 @@ void dspVendorAPHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected,
         pMenu->addSeparator();
   
         menuItem = pMenu->addAction(tr("Void"), this, SLOT(sVoidVoucher()));
-        menuItem->setEnabled(_privileges->check("MaintainAPMemos"));
+        menuItem->setEnabled(_privileges->check("VoidPostedVouchers"));
       }
     } 
   }

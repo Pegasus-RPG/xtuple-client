@@ -220,7 +220,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
     if(((XTreeWidgetItem *)pItem)->rawValue("posted") != 0)
     {
       menuItem = pMenu->addAction(tr("Void Posted Invoice..."), this, SLOT(sVoidInvoiceDetails()));
-      menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
+      menuItem->setEnabled(_privileges->check("VoidPostedInvoices"));
 
       menuItem = pMenu->addAction(tr("Edit Posted Invoice..."), this, SLOT(sEditInvoiceDetails()));
       menuItem->setEnabled(_privileges->check("MaintainMiscInvoices"));
@@ -239,7 +239,7 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
     if(((XTreeWidgetItem *)pItem)->rawValue("posted") != 0)
     {
       menuItem = pMenu->addAction(tr("Void Posted Credit Memo..."), this, SLOT(sVoidCreditMemo()));
-      menuItem->setEnabled(_privileges->check("MaintainCreditMemos"));
+      menuItem->setEnabled(_privileges->check("VoidPostedARCreditMemos"));
     }
 
     menuItem = pMenu->addAction(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()));

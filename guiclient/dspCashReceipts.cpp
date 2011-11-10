@@ -127,7 +127,7 @@ void dspCashReceipts::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
       else if (!list()->altId())
       {
         menuItem = pMenu->addAction(tr("Void Posted Cash Receipt"), this, SLOT(sReversePosted()));
-        menuItem->setEnabled(_privileges->check("ReversePostedCashReceipt"));
+        menuItem->setEnabled(_privileges->check("VoidPostedCashReceipts"));
       }
     }
 
