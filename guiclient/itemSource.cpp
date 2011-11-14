@@ -436,13 +436,16 @@ void itemSource::sDelete()
 
 void itemSource::sPopulateMenu(QMenu *pMenu)
 {
-  QAction *menuItem;
+  if (_mode != cView)
+  {
+    QAction *menuItem;
 
-  menuItem = pMenu->addAction("Edit Item Source Price...", this, SLOT(sEdit()));
-  menuItem->setEnabled(_privileges->check("MaintainItemSources"));
+    menuItem = pMenu->addAction("Edit Item Source Price...", this, SLOT(sEdit()));
+    menuItem->setEnabled(_privileges->check("MaintainItemSources"));
 
-  menuItem = pMenu->addAction("Delete Item Source Price...", this, SLOT(sDelete()));
-  menuItem->setEnabled(_privileges->check("MaintainItemSources"));
+    menuItem = pMenu->addAction("Delete Item Source Price...", this, SLOT(sDelete()));
+    menuItem->setEnabled(_privileges->check("MaintainItemSources"));
+  }
 }
 
 void itemSource::sFillPriceList()
