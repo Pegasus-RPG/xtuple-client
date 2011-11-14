@@ -22,8 +22,11 @@ class ErrorReporter : public QObject
   public:
     static bool error(const QString &err, const QString file = QString(), int line = -1);
     static bool error(QtMsgType type, QWidget *parent, const QString title, const QString &err, const QString file = QString(), int line = -1);
+    static bool error(QtMsgType type, QWidget *parent, const QString title, const QString &userMessage, const QString &err, const QString file, int line);
     static bool error(QtMsgType type, QWidget *parent, const QString title, const QSqlError &err, const QString file = QString(), int line = -1);
+    static bool error(QtMsgType type, QWidget *parent, const QString title, const QString &userMessage, const QSqlError &err, const QString file = QString(), int line = -1);
     static bool error(QtMsgType type, QWidget *parent, const QString title, const QSqlQuery &qry, const QString file = QString(), int line = -1);
+    static bool error(QtMsgType type, QWidget *parent, const QString title, const QString &userMessage, const QSqlQuery &qry, const QString file = QString(), int line = -1);
 
   protected:
     ErrorReporter(QObject *parent = 0);

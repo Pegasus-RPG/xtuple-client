@@ -1218,7 +1218,7 @@ bool ErrorReporter::error(const QString &err, const QString file, int line)
   if (err.isEmpty())
     return false;
 
-  return error(QtCriticalMsg, 0, tr("Error"), err, file, line);
+  return error(QtCriticalMsg, 0, tr("Error"), err, QString(), file, line);
 }
 
 bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
@@ -1228,12 +1228,30 @@ bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
   if (err.type() == QSqlError::NoError)
     return false;
 
-  return error(type, parent, title,
+  return error(type, parent, title, reporter()->_private->text(err, Unknown),
+               QString(), file, line);
+}
+
+bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
+                          const QString title,  const QString &userMessage,
+                          const QSqlError &err, const QString file, int line)
+{
+  if (err.type() == QSqlError::NoError)
+    return false;
+
+  return error(type, parent, title, userMessage,
                reporter()->_private->text(err, Unknown), file, line);
 }
 
 bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
                           const QString title,
+                          const QSqlQuery &qry, const QString file, int line)
+{
+  return error(type, parent, title, QString(), qry, file, line);
+}
+
+bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
+                          const QString title,  const QString &userMessage,
                           const QSqlQuery &qry, const QString file, int line)
 {
   if (qry.lastError().type() == QSqlError::NoError)
@@ -1261,8 +1279,7 @@ bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
   else if (querystr.startsWith("INSERT", Qt::CaseInsensitive))
     stmttype = Insert;
 
-  QMessageBox dlg(icon, title,
-                  reporter()->_private->text(qry.lastError().text(), stmttype),
+  QMessageBox dlg(icon, title, userMessage,
                   QMessageBox::Ok, parent);
   if (! file.isEmpty())
   {
@@ -1278,7 +1295,10 @@ bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
   {
     i.next();
     bindings << QString("%1:\t%2").arg(i.key(), i.value().toString());
-   }
+  }
+
+  if (userMessage.isEmpty())
+    dlg.setText(reporter()->_private->text(qry.lastError().text(), stmttype));
 
   dlg.setDetailedText(QString("%1\n\nThe Query:\n%2\n\nBound Values:\n%3")
                       .arg(qry.lastError().text(), querystr, bindings.join("\n")));
@@ -1289,6 +1309,13 @@ bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
 
 bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
                           const QString title,
+                          const QString &err,   const QString file, int line)
+{
+  return error(type, parent, title, QString(), err, file, line);
+}
+
+bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
+                          const QString title,  const QString &userMessage,
                           const QString &err,   const QString file, int line)
 {
   if (err.isEmpty())
@@ -1305,7 +1332,7 @@ bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
     default:           icon = QMessageBox::Critical;     break;
   }
 
-  QMessageBox dlg(icon, title, err, QMessageBox::Ok, parent);
+  QMessageBox dlg(icon, title, userMessage, QMessageBox::Ok, parent);
   if (! file.isEmpty())
   {
     if (line >= 0)
@@ -1313,6 +1340,11 @@ bool ErrorReporter::error(QtMsgType type,       QWidget *parent,
     else
       dlg.setInformativeText(tr("File %1").arg(file));
   }
+
+  if (userMessage.isEmpty())
+    dlg.setText(err);
+  else
+    dlg.setDetailedText(err);
 
   dlg.exec();
   return true;

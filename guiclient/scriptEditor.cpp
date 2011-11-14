@@ -10,14 +10,15 @@
 
 #include "scriptEditor.h"
 
-#include <QMessageBox>
-#include <QSettings>
-#include <QSqlError>
-#include <QVariant>
 #include <QFileDialog>
-#include <QTextStream>
+#include <QMessageBox>
 #include <QScriptEngine>
+#include <QSettings>
+#include <QTextStream>
+#include <QVariant>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "jsHighlighter.h"
 #include "package.h"
 #include "storedProcErrorLookup.h"
@@ -175,13 +176,12 @@ void scriptEditor::setMode(const int pmode)
 
 bool scriptEditor::sSave()
 {
-  if (_name->text().trimmed().isEmpty())
-  {
-    QMessageBox::warning( this, tr("Script Name is Invalid"),
-                          tr("<p>You must enter a valid name for this Script.") );
-    _name->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("<p>You must enter a valid name for this Script."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save CRM Account"), errors))
     return false;
-  }
 
   QScriptEngine engine;
   if (!engine.canEvaluate(_source->toPlainText()) || _source->toPlainText().length() == 0)
@@ -234,42 +234,39 @@ bool scriptEditor::sSave()
   
 bool scriptEditor::sSaveToDB()
 {
-
+  XSqlQuery saveq;
   if (_mode == cNew)
-  {
-    q.prepare( "INSERT INTO script "
+    saveq.prepare( "INSERT INTO script "
                "(script_id, script_name, script_notes, script_order, script_enabled, script_source) "
                "VALUES "
-               "(DEFAULT, :script_name, :script_notes, :script_order, :script_enabled, :script_source) "
+               "(DEFAULT, :script_name, :script_notes, :script_order, :script_enabled, E:script_source) "
                "RETURNING script_id;" );
 
-  }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE script "
+    saveq.prepare( "UPDATE script "
                "SET script_name=:script_name, script_notes=:script_notes,"
                "    script_order=:script_order, script_enabled=:script_enabled,"
-               "    script_source=:script_source "
+               "    script_source=E:script_source "
                "WHERE (script_id=:script_id) "
                "RETURNING script_id;" );
 
-  q.bindValue(":script_id", _scriptid);
-  q.bindValue(":script_name", _name->text());
-  q.bindValue(":script_order", _order->value());
-  q.bindValue(":script_enabled", QVariant(_enabled->isChecked()));
-  q.bindValue(":script_source", _source->toPlainText());
-  q.bindValue(":script_notes", _notes->text());
+  saveq.bindValue(":script_id", _scriptid);
+  saveq.bindValue(":script_name", _name->text());
+  saveq.bindValue(":script_order", _order->value());
+  saveq.bindValue(":script_enabled", QVariant(_enabled->isChecked()));
+  saveq.bindValue(":script_source", _source->toPlainText());
+  saveq.bindValue(":script_notes", _notes->text());
 
-  q.exec();
-  if (q.first())
-    _scriptid = q.value("script_id").toInt();
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  saveq.exec();
+  if (saveq.first())
+    _scriptid = saveq.value("script_id").toInt();
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving"),
+                                saveq, __FILE__, __LINE__))
     return false;
-  }
   else
   {
-    systemError(this, tr("The script was not saved properly"),
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving"),
+                         tr("The script was not saved properly"),
                          __FILE__, __LINE__);
     return false;
   }
@@ -281,33 +278,29 @@ bool scriptEditor::sSaveToDB()
                                "to the %1 package?").arg(_package->code()),
                                 QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
   {
-    q.prepare("SELECT movescript(:scriptid, :oldpkgid, "
-              "                  :newpkgid) AS result;");
-    q.bindValue(":scriptid",  _scriptid);
-    q.bindValue(":oldpkgid", _pkgheadidOrig);
-    q.bindValue(":newpkgid",  _package->id());
-    q.exec();
-    if (q.first())
+    XSqlQuery moveq;
+    moveq.prepare("SELECT movescript(:scriptid, :oldpkgid,"
+                  "                  :newpkgid) AS result;");
+    moveq.bindValue(":scriptid", _scriptid);
+    moveq.bindValue(":oldpkgid", _pkgheadidOrig);
+    moveq.bindValue(":newpkgid", _package->id());
+    moveq.exec();
+    if (moveq.first())
     {
-      int result = q.value("result").toInt();
+      int result = moveq.value("result").toInt();
       if (result >= 0)
         _pkgheadidOrig = _package->id();
       else
-      {
-        systemError(this,
-                    tr("<p>The script was saved to its original location but "
-                       "could not be moved: %1")
-                     .arg(storedProcErrorLookup("movescript", result)),
-                    __FILE__, __LINE__);
-      }
+        ErrorReporter::error(QtCriticalMsg, this, tr("Saved but Not Moved"),
+                             tr("<p>The script was saved to its original location but "
+                                "could not be moved."),
+                             storedProcErrorLookup("movescript", result), __FILE__, __LINE__);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this,
-                  tr("<p>The script was saved to its original location but "
-                     "could not be moved: <pre>%1</pre>")
-                  .arg(q.lastError().databaseText()), __FILE__, __LINE__);
-    }
+    else // don't return immediately after reporting this error
+      ErrorReporter::error(QtCriticalMsg, this, tr("Saved but Not Moved"),
+                           tr("<p>The script was saved to its original location but "
+                              "could not be moved."),
+                           moveq, __FILE__, __LINE__);
   }
 
   setMode(cEdit);
@@ -316,42 +309,42 @@ bool scriptEditor::sSaveToDB()
 
 void scriptEditor::populate()
 {
-  q.prepare( "SELECT script.*, COALESCE(pkghead_id, -1) AS pkghead_id, "
+  XSqlQuery getq;
+  getq.prepare( "SELECT script.*, COALESCE(pkghead_id, -1) AS pkghead_id, "
             "        COALESCE(pkghead_indev,true) AS editable "
       	     "  FROM script, pg_class, pg_namespace "
              "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
              " WHERE ((script.tableoid=pg_class.oid)"
              "    AND (relnamespace=pg_namespace.oid) "
              "    AND (script_id=:script_id));" );
-  q.bindValue(":script_id", _scriptid);
-  q.exec();
-  if (q.first())
+  getq.bindValue(":script_id", _scriptid);
+  getq.exec();
+  if (getq.first())
   {
-    _name->setText(q.value("script_name").toString());
-    _order->setValue(q.value("script_order").toInt());
-    _enabled->setChecked(q.value("script_enabled").toBool());
-    _source->setText(q.value("script_source").toString());
-    _notes->setText(q.value("script_notes").toString());
-    _pkgheadidOrig = q.value("pkghead_id").toInt();
+    _name->setText(getq.value("script_name").toString());
+    _order->setValue(getq.value("script_order").toInt());
+    _enabled->setChecked(getq.value("script_enabled").toBool());
+    _source->setText(getq.value("script_source").toString());
+    _notes->setText(getq.value("script_notes").toString());
+    _pkgheadidOrig = getq.value("pkghead_id").toInt();
     _package->setId(_pkgheadidOrig);
 
     setWindowTitle("[*]" + tr("Script Editor - %1").arg(_name->text()));
     if (DEBUG)
       qDebug("scriptEditor::populate() editable = %d",
-             q.value("editable").toBool());
-    if (!q.value("editable").toBool())
+             getq.value("editable").toBool());
+    if (!getq.value("editable").toBool())
       setMode(cView);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Script"),
+                                getq, __FILE__, __LINE__))
     return;
-  }
 }
 
 void scriptEditor::sImport()
 {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), lastSaveDir, tr("Script (*.script *.js)"));
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                  lastSaveDir, tr("Script (*.script *.js)"));
   if(filename.isNull())
     return;
 

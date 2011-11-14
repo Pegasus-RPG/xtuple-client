@@ -22,33 +22,33 @@ Note: The build in step 3 is required to get the list of widgets
 First pass at usage guidelines; comments welcome.
 - document in the .cpp file instead of the .h as much as possible
   (e.g. describe methods in the .cpp but enums in the .h)
-- if the only items in the .cpp are class members, start the .cpp with \class;
-  if there are globals or statics in the .cpp, start with \file and continue
-  with \class?
+- if the only items in the .cpp are class members, start the .cpp with @class;
+  if there are globals or statics in the .cpp, start with @file and continue
+  with @class?
 - use /** to start doxygen comments, not /*!
-- use \ style directives, not @
-- use \brief instead of relying on doxygen to guess for you.
+- use @ style directives, not backslashes
+- use @brief instead of relying on doxygen to guess for you.
 - put % in front of words that you're using casually that happen to be
   names of classes/functions/... so they don't get converted to links
 - tag order seems to be important. put the tags you use in the following order:
-    /** \brief
+    /** @brief
 
         long description
 
-        \dontinclude samplefile.js
-          bits of samplefile.js using \skip, \until, ...
+        @dontinclude samplefile.js
+          bits of samplefile.js using @skip, @until, ...
 
         more long description
 
-        \param
+        @param
 
-        \return
+        @return
 
-        \see
-        \see samplefile.js
+        @see
+        @see samplefile.js
      */
     the method/function definition
-    /** \example */
+    /** @example */
 
 
 Futures:
