@@ -302,6 +302,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
       connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setEnabled(bool)));
       connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setChecked(bool)));
 
+      _salesrep->setType(XComboBox::SalesRepsActive);
       _number->setFocus();
 
       emit newMode(_mode);

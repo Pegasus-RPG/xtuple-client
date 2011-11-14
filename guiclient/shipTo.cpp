@@ -75,6 +75,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _salesRep->setType(XComboBox::SalesRepsActive);
 
       XSqlQuery cust;
       cust.prepare( "SELECT cust_number, cust_name, cust_taxzone_id, "
