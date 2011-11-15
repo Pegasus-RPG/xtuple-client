@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>400</height>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -681,6 +681,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>374</x>
      <y>493</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_amount</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_tax</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>476</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>476</x>
+     <y>336</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_amount</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_tax</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>476</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>476</x>
+     <y>336</y>
     </hint>
    </hints>
   </connection>
