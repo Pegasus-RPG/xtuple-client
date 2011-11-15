@@ -783,7 +783,6 @@ void reconcileBankaccount::sChecksItemChanged(XTreeWidgetItem *item, const int c
     {
       item->setData(col,Qt::EditRole,formatUOMRatio(item->data(col,Qt::EditRole).toDouble()));
       item->setText(8,formatMoney(item->text(col).toDouble() * item->rawValue("base_amount").toDouble()));
-//      item->setText(8,item->rawValue("base_amount").toDouble());
     }
   }
 }
