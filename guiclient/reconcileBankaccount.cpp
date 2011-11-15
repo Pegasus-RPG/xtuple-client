@@ -510,7 +510,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
       child = item->child(i);
       if(child->text(0) != (setto ? tr("Yes") : tr("No")))
       {
-        q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate) AS cleared");
+        q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
         q.bindValue(":bankrecid", _bankrecid);
         q.bindValue(":sourceid", child->id());
         if(child->altId()==1)
@@ -520,6 +520,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
         else if(child->altId()==3)
           q.bindValue(":source", "AD");
         q.bindValue(":currrate", child->text(6).toDouble());
+        q.bindValue(":amount", child->text(8).toDouble());
         q.exec();
         if(q.first())
           child->setText(0, (q.value("cleared").toBool() ? tr("Yes") : tr("No") ));
@@ -534,7 +535,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
   }
   else
   {
-    q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate) AS cleared");
+    q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
     q.bindValue(":bankrecid", _bankrecid);
     q.bindValue(":sourceid", item->id());
     if(item->altId()==1)
@@ -544,6 +545,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
     else if(item->altId()==3)
       q.bindValue(":source", "AD");
     q.bindValue(":currrate", item->text(6).toDouble());
+    q.bindValue(":amount", item->text(8).toDouble());
     q.exec();
     if(q.first())
     {
@@ -581,7 +583,7 @@ void reconcileBankaccount::sChecksToggleCleared()
 
   _checks->scrollToItem(item);
 
-  q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate) AS cleared");
+  q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
   q.bindValue(":bankrecid", _bankrecid);
   q.bindValue(":sourceid", item->id());
   if(item->altId()==1)
@@ -591,6 +593,7 @@ void reconcileBankaccount::sChecksToggleCleared()
   else if(item->altId()==3)
     q.bindValue(":source", "AD");
   q.bindValue(":currrate", item->text(6).toDouble());
+  q.bindValue(":amount", item->text(8).toDouble());
   q.exec();
   if(q.first())
     item->setText(0, (q.value("cleared").toBool() ? tr("Yes") : tr("No") ));
@@ -777,7 +780,11 @@ void reconcileBankaccount::sChecksItemChanged(XTreeWidgetItem *item, const int c
     if (item->data(col,Qt::EditRole).toDouble() < 0)
       item->setData(col,Qt::EditRole,0);
     else
-      item->setData(col,Qt::EditRole,item->data(col,Qt::EditRole).toDouble());
+    {
+      item->setData(col,Qt::EditRole,formatUOMRatio(item->data(col,Qt::EditRole).toDouble()));
+      item->setText(8,formatMoney(item->text(col).toDouble() * item->rawValue("base_amount").toDouble()));
+//      item->setText(8,item->rawValue("base_amount").toDouble());
+    }
   }
 }
 
@@ -803,7 +810,10 @@ void reconcileBankaccount::sReceiptsItemChanged(XTreeWidgetItem *item, const int
     if (item->data(col,Qt::EditRole).toDouble() < 0)
       item->setData(col,Qt::EditRole,0);
     else
-      item->setData(col,Qt::EditRole,item->data(col,Qt::EditRole).toDouble());
+    {
+      item->setData(col,Qt::EditRole,formatUOMRatio(item->data(col,Qt::EditRole).toDouble()));
+      item->setData(8,Qt::EditRole,formatMoney(item->data(col,Qt::EditRole).toDouble() * item->data(7,Qt::EditRole).toDouble()));
+    }
   }
 }
 
