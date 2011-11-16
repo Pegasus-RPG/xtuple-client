@@ -135,11 +135,13 @@ class XTUPLEWIDGETS_EXPORT GLCluster : public VirtualCluster
   protected slots:
     void sHandleProjectState(int p);
     void sHandleProjectId();
+    void sNewId(int p);
 
   private:
     ProjectLineEdit* _project;
     QLabel*          _projectLit;
     bool             _projectVisible;
+    int              _id;
 };
 
 #endif

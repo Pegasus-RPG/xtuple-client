@@ -231,6 +231,11 @@ GLCluster::GLCluster(QWidget *pParent, const char *pName) :
     VirtualCluster(pParent, pName)
 {
   addNumberWidget(new GLClusterLineEdit(this, pName));
+
+  disconnect(_number,	SIGNAL(newId(int)),	this,	 SIGNAL(newId(int)));
+  connect(_number,	SIGNAL(newId(int)),	this,	 SLOT(sNewId(int)));
+
+  _id = -1;
   _name->show();
 
   _projectVisible = false;
@@ -329,6 +334,14 @@ void GLCluster::sHandleProjectState(int p)
   }
 }
 
+void GLCluster::sNewId(int p)
+{
+  if(_project->isValid() && p != _id)
+    sHandleProjectId();
+  else
+    emit newId(p);
+}
+
 void GLCluster::sHandleProjectId()
 {
   XSqlQuery qry;
@@ -337,6 +350,7 @@ void GLCluster::sHandleProjectId()
   qry.bindValue(":accnt_id", _number->id());
   qry.exec();
   qry.first();
+  _id = qry.value("accnt_id").toInt();
   _number->setId(qry.value("accnt_id").toInt());
 }
 
