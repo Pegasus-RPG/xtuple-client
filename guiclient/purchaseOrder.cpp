@@ -1182,6 +1182,8 @@ void purchaseOrder::sHandleVendor(int pVendid)
       systemError(this, vq.lastError().text(), __FILE__, __LINE__);
       return;
     }
+
+    _qeitem->setHeadId(_poheadid);
   }
 }
 
