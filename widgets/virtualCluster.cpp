@@ -1096,6 +1096,7 @@ void VirtualList::sFillList()
 
 void VirtualList::showEvent(QShowEvent* e)
 {
+
   sFillList();
   QDialog::showEvent(e);
 }

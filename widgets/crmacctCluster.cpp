@@ -135,6 +135,10 @@ CRMAcctCluster::CRMAcctCluster(QWidget* pParent, const char* pName) :
 
 void CRMAcctCluster::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 {
+
+  // is this calling setSubtype on a class that sets its own type in its
+  // constructor?
+
   // TODO: make this do something useful
   if (_number->inherits("CRMAcctLineEdit"))
     (qobject_cast<CRMAcctLineEdit*>(_number))->setSubtype(subtype);
@@ -194,6 +198,7 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
   _parent = pParent;
   _queryParams = 0;
 
+  
   if (!pName)
     setObjectName("CRMAcctList");
 
@@ -232,33 +237,33 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
     switch (type)
     {
       case CLineEdit::AllCustomers:
-	setSubtype(CRMAcctLineEdit::Cust);
 	_showInactive = true;
+	setSubtype(CRMAcctLineEdit::Cust);
 	break;
 
       case CLineEdit::ActiveCustomers:
-	setSubtype(CRMAcctLineEdit::Cust);
 	_showInactive = false;
+	setSubtype(CRMAcctLineEdit::Cust);
 	break;
 
       case CLineEdit::AllProspects:
-	setSubtype(CRMAcctLineEdit::Prospect);
 	_showInactive = true;
+	setSubtype(CRMAcctLineEdit::Prospect);
 	break;
 
       case CLineEdit::ActiveProspects:
-	setSubtype(CRMAcctLineEdit::Prospect);
 	_showInactive = false;
+	setSubtype(CRMAcctLineEdit::Prospect);
 	break;
 
       case CLineEdit::AllCustomersAndProspects:
-	setSubtype(CRMAcctLineEdit::CustAndProspect);
 	_showInactive = true;
+	setSubtype(CRMAcctLineEdit::CustAndProspect);
 	break;
 
       case CLineEdit::ActiveCustomersAndProspects:
-	setSubtype(CRMAcctLineEdit::CustAndProspect);
 	_showInactive = false;
+	setSubtype(CRMAcctLineEdit::CustAndProspect);
 	break;
 
     }
@@ -281,8 +286,10 @@ void CRMAcctList::setId(const int id)
 
 void CRMAcctList::setShowInactive(const bool show)
 {
+
   if (_showInactive != show)
   {
+
     _showInactive = show;
     sFillList();
   }
@@ -301,6 +308,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   switch (subtype)
   {
   case CRMAcctLineEdit::Cust:
+
     setWindowTitle(tr("Search For Customer"));
     _queryParams->append("customer");
     break;
@@ -365,11 +373,17 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   _listTab->setColumnHidden(_listTab->column("addr_country"),     ! hasAddress);
   _listTab->setColumnHidden(_listTab->column("addr_postalcode"),  ! hasAddress);
 
-  sFillList();
+  // don't (re)populate the list if the widget isn't visible
+  // this also fixes an issue where the subType is being set
+  // multiple times before it is visible and thus running
+  // multiple queries and processing results for no reason
+  if(isVisible())
+    sFillList();
 }
 
 void CRMAcctList::sFillList()
 {
+
   MetaSQLQuery mql(_listAndSearchQueryString);
   ParameterList params(*_queryParams);
   if (! _showInactive)
@@ -388,6 +402,7 @@ void CRMAcctList::sFillList()
 CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   VirtualSearch(pParent, pFlags)
 {
+
   // remove the stuff we won't use
   disconnect(_searchDescrip,	SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   selectorsLyt->removeWidget(_searchDescrip);
@@ -484,6 +499,7 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     CLineEdit::CLineEditTypes type = _parent->inherits("CLineEdit") ?
 				  (qobject_cast<CLineEdit*>(_parent))->type() :
 				  (qobject_cast<CustCluster*>(_parent))->type();
+
     switch (type)
     {
       case CLineEdit::AllCustomers:
