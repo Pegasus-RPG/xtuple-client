@@ -144,6 +144,19 @@ enum SetResponse prospect::set(const ParameterList &pParams)
   return NoError;
 }
 
+int prospect::id() const
+{
+  return _prospectid;
+}
+
+/** \return one of cNew, cEdit, cView, ...
+    \todo   change possible modes to an enum in guiclient.h (and add cUnknown?)
+ */
+int prospect::mode() const
+{
+  return _mode;
+}
+
 void prospect::sSave()
 {
   QList<GuiErrorCheck> errors;

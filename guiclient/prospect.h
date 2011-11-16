@@ -25,7 +25,8 @@ public:
     prospect(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~prospect();
 
-    Q_INVOKABLE virtual int id() const { return _prospectid; }
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
