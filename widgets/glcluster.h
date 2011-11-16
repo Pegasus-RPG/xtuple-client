@@ -31,6 +31,7 @@ public slots:
 private:
     int          _accntid;
     bool         _showExternal;
+    bool         _ignoreCompany;
     unsigned int _type;
 
 };
@@ -52,6 +53,7 @@ protected:
 private:
     int          _accntid;
     bool         _showExternal;
+    bool         _ignoreCompany;
     unsigned int _typeval;
     QComboBox*   _type;
     QLabel*      _typeLit;

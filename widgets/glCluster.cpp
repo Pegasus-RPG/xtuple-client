@@ -129,6 +129,8 @@ void GLClusterLineEdit::sList()
     params.append("type", _type);
     if (_showExternal)
       params.append("showExternal");
+    if (_ignoreCompany)
+      params.append("ignoreCompany");
     newdlg->set(params);
 
     int id = newdlg->exec();
@@ -156,6 +158,8 @@ void GLClusterLineEdit::sSearch()
     params.append("type", _type);
     if (_showExternal)
       params.append("showExternal");
+    if (_ignoreCompany)
+      params.append("ignoreCompany");
     newdlg->set(params);
     newdlg->setSearchText(text());
     int id = newdlg->exec();
@@ -412,6 +416,7 @@ void accountList::set(const ParameterList &pParams)
     _type = param.toUInt();
 
   _showExternal = pParams.inList("showExternal");
+  _ignoreCompany = pParams.inList("ignoreCompany");
 }
 
 void accountList::sFillList()
@@ -450,10 +455,14 @@ void accountList::sFillList()
   if (! _showExternal)
     where << "(NOT COALESCE(company_external, false)) ";
 
+  if (! _ignoreCompany)
+  {
+    where << "(company_yearend_accnt_id <> -1)";
+    where << "(company_gainloss_accnt_id <> -1)";
+    where << "(company_dscrp_accnt_id <> -1)";
+  }
+
   where << "accnt_active ";
-  where << "(company_yearend_accnt_id <> -1)";
-  where << "(company_gainloss_accnt_id <> -1)";
-  where << "(company_dscrp_accnt_id <> -1)";
 
   if (!where.isEmpty())
     sql += " WHERE " + where.join(" AND ");
@@ -564,6 +573,7 @@ void accountSearch::set(const ParameterList &pParams)
   }
 
   _showExternal = pParams.inList("showExternal");
+  _ignoreCompany = pParams.inList("ignoreCompany");
 }
 
 void accountSearch::sFillList()
@@ -608,6 +618,13 @@ void accountSearch::sFillList()
 
   if (! _showExternal)
     where << "(NOT COALESCE(company_external, false))";
+
+  if (! _ignoreCompany)
+  {
+    where << "(company_yearend_accnt_id <> -1)";
+    where << "(company_gainloss_accnt_id <> -1)";
+    where << "(company_dscrp_accnt_id <> -1)";
+  }
 
   where << "accnt_active ";
 
