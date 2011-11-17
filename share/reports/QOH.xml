@@ -968,7 +968,7 @@ FROM ( SELECT itemsite_id, itemsite_costmethod,
    <vcenter/>
    <data>
     <query>detail</query>
-    <column>value</column>
+    <column>f_value</column>
    </data>
    <format builtin="true">money</format>
    <tracktotal/>
@@ -989,7 +989,7 @@ FROM ( SELECT itemsite_id, itemsite_costmethod,
    <vcenter/>
    <data>
     <query>detail</query>
-    <column>nnvalue</column>
+    <column>f_nnvalue</column>
    </data>
    <format builtin="true">money</format>
    <tracktotal/>

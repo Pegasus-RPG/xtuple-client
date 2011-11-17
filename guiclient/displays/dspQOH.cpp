@@ -64,11 +64,11 @@ dspQOH::dspQOH(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Default Location"), _itemColumn, Qt::AlignLeft,   true,  "defaultlocation"   );
   list()->addColumn(tr("Reorder Lvl."),     _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
   list()->addColumn(tr("QOH"),              _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
-  list()->addColumn(tr("Non-Netable"),      _qtyColumn,  Qt::AlignRight,  true,  "f_nnqoh"  );
+  list()->addColumn(tr("Non-Netable"),      _qtyColumn,  Qt::AlignRight,  true,  "nnqoh"  );
   list()->addColumn(tr("Unit Cost"),        _costColumn, Qt::AlignRight,  true,  "cost"  );
   list()->addColumn(tr("Value"),            _costColumn, Qt::AlignRight,  true,  "value"  );
-  list()->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight,  true,  "f_nnvalue"  );
-  list()->addColumn(tr("Cost Method"),      _costColumn, Qt::AlignCenter, true,  "f_costmethod" );
+  list()->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight,  true,  "nnvalue"  );
+  list()->addColumn(tr("Cost Method"),      _costColumn, Qt::AlignCenter, true,  "costmethod" );
 
   sHandleValue(_showValue->isChecked());
 
@@ -240,14 +240,14 @@ void dspQOH::sHandleValue(bool pShowValue)
 {
   list()->setColumnHidden(list()->column("cost"),         !pShowValue);
   list()->setColumnHidden(list()->column("value"),        !pShowValue);
-  list()->setColumnHidden(list()->column("f_nnvalue"),    !pShowValue);
-  list()->setColumnHidden(list()->column("f_costmethod"), !pShowValue);
+  list()->setColumnHidden(list()->column("nnvalue"),      !pShowValue);
+  list()->setColumnHidden(list()->column("costmethod"),   !pShowValue);
 }
 
 void dspQOH::sFillList()
 {
   list()->clear();
-  list()->setColumnVisible(list()->column("f_costmethod"),
+  list()->setColumnVisible(list()->column("costmethod"),
                          _showValue->isChecked() && _usePostedCosts->isChecked());
 
   display::sFillList();
