@@ -742,6 +742,7 @@ void user::populateSite()
     siteq.prepare("SELECT warehous_id, warehous_code"
                   "  FROM whsinfo"
                   " ORDER BY warehous_code;");
+    siteq.exec();
     _availableSite->populate(siteq);
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sites"),
                              siteq, __FILE__, __LINE__))
