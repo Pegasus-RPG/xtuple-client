@@ -455,7 +455,7 @@ void BOM::sFillList(int pItemid, bool)
     }
     else
     {
-      if (!_mode == cView)
+      if (_mode != cView)
       {
         _save->setEnabled(TRUE);
         _documentNum->setEnabled(TRUE);
