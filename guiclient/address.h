@@ -31,6 +31,7 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+    virtual void reject();
     virtual void sDeleteCharacteristic();
     virtual void sEdit();
     virtual void sEditCharacteristic();

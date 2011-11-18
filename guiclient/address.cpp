@@ -167,6 +167,23 @@ void address::internalSave(AddressCluster::SaveFlags flag)
   }
 }
 
+void address::reject()
+{
+  if (cNew == _mode)
+  {
+    q.prepare("SELECT deleteAddress(:addr_id) AS result;");
+    q.bindValue(":addr_id", _addr->id());
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  XDialog::reject();
+}
+
 void address::sNewCharacteristic()
 {
   internalSave();
