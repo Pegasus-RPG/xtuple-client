@@ -173,8 +173,7 @@ void relocateInventory::sMove()
       tr("<p>You must select a Target Location before relocating Inventory."),
       _target },
     { _source->id() > 0 && _target->id() > 0 &&
-      ((XTreeWidgetItem *)_source->currentItem())->id() ==
-        ((XTreeWidgetItem *)_target->currentItem())->id(),
+      _source->rawValue("location") == _target->rawValue("locationname"),
       tr("<p>Please select different Locations for the Source and Target."),
       _target },
     { true, "", NULL }
