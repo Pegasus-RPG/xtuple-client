@@ -3,6 +3,12 @@
  <title>Vendor Information</title>
  <name>VendorInformation</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -79,12 +85,13 @@
  </querysource>
  <querysource>
   <name>OpenBalance</name>
-  <sql>SELECT formatMoney((apopen_amount-apopen_paid) / apopen_curr_rate * 
+  <sql>SELECT formatMoney(COALESCE(SUM((apopen_amount-apopen_paid) / apopen_curr_rate * 
                       CASE WHEN (apopen_doctype IN ('D','V')) THEN 1 
-                      ELSE -1 END) AS balance 
+                      ELSE -1 END), 0.0)) AS balance 
                     FROM apopen 
                     WHERE ((apopen_open)
-                       AND (apopen_vend_id=&lt;? value("vend_id") ?>));</sql>
+                       AND (apopen_vend_id=&lt;? value("vend_id") ?>));
+</sql>
  </querysource>
  <querysource>
   <name>podate</name>
