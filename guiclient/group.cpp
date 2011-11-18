@@ -153,6 +153,7 @@ void group::reject()
                                  QMessageBox::Yes))
     {
       case QMessageBox::Yes:
+        sSave();
         endtxn.exec("COMMIT;");
         break;
 
