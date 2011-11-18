@@ -24,7 +24,7 @@ currency::currency(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _select = _buttonBox->addButton(tr("Select"), QDialogButtonBox::ActionRole);
 
     connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-    connect(_currBase, SIGNAL(toggled(bool)), this, SLOT(sConfirmBaseFlag()));
+//    connect(_currBase, SIGNAL(toggled(bool)), this, SLOT(sConfirmBaseFlag()));
     connect(_buttonBox, SIGNAL(rejected()), this, SLOT(sClose()));
     connect(_select,	SIGNAL(clicked()),	this, SLOT(sSelect()));
 
