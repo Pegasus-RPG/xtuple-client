@@ -66,6 +66,8 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _checkRun->setWindowFlags(Qt::Widget);
   _checkRun->show();
   _vendorgroup->synchronize((VendorGroup*)(_checkRun->findChild<QWidget*>("_vendorgroup")));
+  if (!_privileges->check("MaintainPayments"))
+    _checkRun->setEnabled(false);
 
   connect(_query, SIGNAL(clicked()), _vouchers, SLOT(sFillList()));
   connect(_query, SIGNAL(clicked()), _payables, SLOT(sFillList()));
