@@ -38,6 +38,7 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
   _targetId = -1;
   _cachenum = "";
   _typeText = "";
+  _mode = View;
   if (_x_metrics)
   {
     _isRevControl=(_x_metrics->boolean("RevControl"));
