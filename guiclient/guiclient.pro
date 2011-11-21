@@ -26,12 +26,13 @@ win32-msvc* {
                     ../$${OPENRPT_BLD}/lib/libMetaSQL.a  \
                     ../$${OPENRPT_BLD}/lib/librenderer.a \
                     ../$${OPENRPT_BLD}/lib/libwrtembed.a \
+                    ../$${OPENRPT_BLD}/lib/libDmtx_Library.a \
                     ../$${OPENRPT_BLD}/lib/libcommon.a
 }
 
 LIBS        += -L../lib -L../$${OPENRPT_BLD}/lib \
                -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer \
-               -lxtuplescriptapi -lMetaSQL
+               -lxtuplescriptapi -lDmtx_Library -lMetaSQL
 
 #not the best way to handle this, but it should do
 mac:!static:contains(QT_CONFIG, qt_framework) {
