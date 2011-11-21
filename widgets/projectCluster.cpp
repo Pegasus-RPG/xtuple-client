@@ -76,10 +76,6 @@ void ProjectLineEdit::buildExtraClause()
   QString statusClause;
   QStringList clauses;
 
-  CrmClusterLineEdit::buildExtraClause();
-  if(!_extraClause.isEmpty())
-    extraClause.append(_extraClause);
-
   // Add in type clause
   if (_type & SalesOrder)    clauses << "(prj_so)";
   if (_type & WorkOrder)     clauses << "(prj_wo)";
