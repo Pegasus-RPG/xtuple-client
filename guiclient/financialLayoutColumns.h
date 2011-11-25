@@ -36,7 +36,6 @@ public slots:
     virtual void sTogglePrior();
     virtual void sToggleYearToDate();
     virtual void sToggleFullYear();
-    virtual void sEdit();
 
 protected slots:
     virtual void languageChange();

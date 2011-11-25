@@ -24,7 +24,6 @@ financialLayoutColumns::financialLayoutColumns(QWidget* parent, const char* name
   setupUi(this);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_month, SIGNAL(toggled(bool)), this, SLOT(sToggleMonth()));
   connect(_quarter, SIGNAL(toggled(bool)), this, SLOT(sToggleQuarter()));
   connect(_year, SIGNAL(toggled(bool)), this, SLOT(sToggleYear()));
@@ -36,9 +35,6 @@ financialLayoutColumns::financialLayoutColumns(QWidget* parent, const char* name
   connect(_yeartodate, SIGNAL(toggled(bool)), this, SLOT(sToggleFullYear()));
 
   languageChange();
-  
-  //Hide Edit Button until we can figure out how to implement this
-  _edit->setHidden(true);
 }
 
 financialLayoutColumns::~financialLayoutColumns()
@@ -349,43 +345,3 @@ void financialLayoutColumns::sToggleFullYear()
     _fullyear->setChecked(false);
 }
 
-void financialLayoutColumns::sEdit()
-{
-  if (!omfgThis->_reportHandler)
-  {
-    omfgThis->_reportHandler = new ReportHandler(omfgThis, "report handler");
-    omfgThis->_reportHandler->setParentWindow(omfgThis->workspace());
-    omfgThis->_reportHandler->setAllowDBConnect(FALSE);
-    omfgThis->_reportHandler->setPlaceMenusOnWindows(TRUE);
-    omfgThis->_reportHandler->setPlaceToolbarsOnWindows(TRUE);
-    connect(omfgThis->_reportHandler, SIGNAL(reportsChanged(int, bool)), omfgThis, SLOT(sReportsChanged(int, bool)));
-  }
-
-  q.prepare( "SELECT report_name, report_grade, report_source "
-             "  FROM report "
-             " WHERE (report_id=:report_id); " );
-  q.bindValue(":report_id", _report->id());
-  q.exec();
-  if (q.first())
-  {
-    QDomDocument doc;
-    QString errorMessage;
-    int errorLine;
-    int errorColumn;
-
-    if (doc.setContent(q.value("report_source").toString(), &errorMessage, &errorLine, &errorColumn))
-      omfgThis->_reportHandler->fileOpen(doc, q.value("report_name").toString(), q.value("report_grade").toInt());
-    else
-      QMessageBox::warning( this, tr("Error Loading Report"),
-                            tr( "ERROR parsing content:\n"
-                                "\t%1 (Line %2 Column %3)" )
-                            .arg(errorMessage)
-                            .arg(errorLine)
-                            .arg(errorColumn) );
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
