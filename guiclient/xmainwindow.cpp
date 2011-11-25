@@ -12,7 +12,7 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QWorkspace>
+#include <QMdiSubWindow>
 #include <QStatusBar>
 #include <QCloseEvent>
 #include <QShowEvent>
@@ -151,7 +151,8 @@ void XMainWindow::showEvent(QShowEvent *event)
     else
     {
       QWidget * fw = focusWidget();
-      omfgThis->workspace()->addSubWindow(this);
+      QMdiSubWindow *win =  omfgThis->workspace()->addSubWindow(this);
+      connect(this, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
       QRect r(pos, size());
       if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
         move(pos);

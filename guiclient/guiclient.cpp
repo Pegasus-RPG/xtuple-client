@@ -13,6 +13,7 @@
 #include <QVBoxLayout>
 #include <QStatusBar>
 #include <QMdiArea>
+#include <QMdiSubWindow>
 #include <QDateTime>
 #include <QPushButton>
 #include <QCheckBox>
@@ -1739,7 +1740,8 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
   {
     QWidget * fw = w->focusWidget();
     w->setAttribute(Qt::WA_DeleteOnClose);
-    _workspace->addSubWindow(w);
+    QMdiSubWindow *win = _workspace->addSubWindow(w);
+    connect(w, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
     QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       w->move(pos);
