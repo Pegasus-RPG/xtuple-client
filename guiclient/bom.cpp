@@ -90,7 +90,6 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
-  _activate->hide();
   _revision->setMode(RevisionLineEdit::Maintain);
   _revision->setType("BOM");
 }
@@ -125,7 +124,6 @@ enum SetResponse BOM::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _item->setReadOnly(TRUE);
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -141,8 +139,6 @@ enum SetResponse BOM::set(const ParameterList &pParams)
       _save->setEnabled(FALSE);
       
       connect(_bomitem, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-      
-      _close->setFocus();
     }
 
     param = pParams.value("item_id", &valid);
@@ -158,13 +154,13 @@ enum SetResponse BOM::set(const ParameterList &pParams)
   return NoError;
 }
 
-void BOM::sSave()
+bool BOM::sSave()
 {
   if(_item->id() == -1)
   {
     QMessageBox::warning( this, tr("Item Number Required"),
       tr("You must specify a valid item number to continue."));
-    return;
+    return false;
   }
   
   if(_batchSize->text().length() == 0)
@@ -173,11 +169,11 @@ void BOM::sSave()
   {
     QMessageBox::warning( this, tr("Batch Size Error"),
       tr("<p>The Batch Size quantity must be greater than zero.") );
-    return;
+    return false;
   }
 
   if(!sCheckRequiredQtyPer())
-    return;
+    return false;
   
   q.prepare( "SELECT bomhead_id "
              "FROM bomhead "
@@ -220,6 +216,8 @@ void BOM::sSave()
   q.exec();
   
   close();
+
+  return true;
 }
 
 bool BOM::setParams(ParameterList &pParams)
@@ -589,20 +587,6 @@ void BOM::sFillList(int pItemid, bool)
     
     _bomitem->clear();
   }
-}
-
-void BOM::keyPressEvent( QKeyEvent * e )
-{
-#ifdef Q_WS_MAC
-  if(e->key() == Qt::Key_S && (e->modifiers() & Qt::ControlModifier))
-  {
-    _save->animateClick();
-    e->accept();
-  }
-  if(e->isAccepted())
-    return;
-#endif
-  e->ignore();
 }
 
 void BOM::sClose()

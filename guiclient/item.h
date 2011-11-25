@@ -13,6 +13,8 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
+#include "bom.h"
+#include "maintainItemCosts.h"
 #include <parameter.h>
 
 #include "ui_item.h"
@@ -74,7 +76,6 @@ public slots:
     virtual void sPopulatePriceUOMs();
     virtual void sConfiguredToggled(bool p);
     virtual void closeEvent( QCloseEvent * pEvent );
-    virtual void sNewClassCode();
     virtual void sHandleButtons();
     virtual void sHandleRightButtons();
     virtual void sFillSourceList();
@@ -83,10 +84,12 @@ public slots:
     virtual void sViewSource();
     virtual void sCopySource();
     virtual void sDeleteSource();
-    virtual void sMaintainItemCosts();
+    virtual void sSaveBom();
 
 protected:
-    virtual void keyPressEvent( QKeyEvent * e );
+    BOM *_bom;
+    BOM *_bomwin;
+    maintainItemCosts * _elements;
 
 protected slots:
     virtual void languageChange();

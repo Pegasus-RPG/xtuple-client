@@ -28,7 +28,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual bool setParams(ParameterList &pParams);
-    virtual void sSave();
+    virtual bool sSave();
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sNew();
@@ -43,9 +43,6 @@ public slots:
     virtual void sFillList( int pItemid, bool );
     virtual void sClose();
     virtual bool sCheckRequiredQtyPer();
-
-protected:
-    virtual void keyPressEvent( QKeyEvent * e );
 
 protected slots:
     virtual void languageChange();

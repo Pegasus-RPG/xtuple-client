@@ -23,7 +23,6 @@
 #include <metasql.h>
 #include <openreports.h>
 
-#include "bom.h"
 #include "characteristicAssignment.h"
 #include "comment.h"
 #include "image.h"
@@ -36,7 +35,6 @@
 #include "itemtax.h"
 #include "itemSource.h"
 #include "storedProcErrorLookup.h"
-#include "maintainItemCosts.h"
 
 const char *_itemTypes[] = { "P", "M", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
 
@@ -67,7 +65,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_deleteSubstitute, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
   connect(_newTransform, SIGNAL(clicked()), this, SLOT(sNewTransformation()));
   connect(_deleteTransform, SIGNAL(clicked()), this, SLOT(sDeleteTransformation()));
-  connect(_bom, SIGNAL(clicked()), this, SLOT(sEditBOM()));
   connect(_site, SIGNAL(clicked()), this, SLOT(sEditItemSite()));
   connect(_workbench, SIGNAL(clicked()), this, SLOT(sWorkbench()));
   connect(_deleteItemSite, SIGNAL(clicked()), this, SLOT(sDeleteItemSite()));
@@ -81,7 +78,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_editUOM, SIGNAL(clicked()), this, SLOT(sEditUOM()));
   connect(_deleteUOM, SIGNAL(clicked()), this, SLOT(sDeleteUOM()));
   connect(_configured, SIGNAL(toggled(bool)), this, SLOT(sConfiguredToggled(bool)));
-  connect(_classcode, SIGNAL(newID(int)), this, SLOT(sNewClassCode()));
   connect(_notesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_extDescripButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_commentsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
@@ -93,7 +89,8 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewSrc, SIGNAL(clicked()), this, SLOT(sViewSource()));
   connect(_copySrc, SIGNAL(clicked()), this, SLOT(sCopySource()));
   connect(_deleteSrc, SIGNAL(clicked()), this, SLOT(sDeleteSource()));
-  connect(_cost, SIGNAL(clicked()), this, SLOT(sMaintainItemCosts()));
+  connect(_elementsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_bomButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   
   _disallowPlanningType = false;
   _inTransaction = false;
@@ -118,6 +115,42 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter, true, "charass_default" );
   _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight, true, "charass_price" );
   _charass->hideColumn(3);
+
+  _elements = new maintainItemCosts(this, "maintainItemCosts", Qt::Widget);
+  _elementsPage->layout()->addWidget(_elements);
+  _elements->findChild<QWidget*>("_close")->hide();
+  _elements->findChild<QWidget*>("_item")->hide();
+  _elements->findChild<QWidget*>("_costingElementsLit")->hide();
+
+  _bom = new BOM(this, "BOM", Qt::Widget);
+  _bomPage->layout()->addWidget(_bom);
+  _bom->findChild<QWidget*>("_item")->hide();
+  _bom->findChild<QWidget*>("_itemLit")->hide();
+  _bom->findChild<QWidget*>("_save")->hide();
+  _bom->findChild<QWidget*>("_close")->hide();
+  _bom->findChild<QWidget*>("_print")->hide();
+  _bom->findChild<QWidget*>("_totalsGroup")->hide();
+  _bom->findChild<QWidget*>("_costsGroup")->hide();
+  _bom->findChild<QWidget*>("_showExpired")->hide();
+  _bom->findChild<QWidget*>("_showFuture")->hide();
+  _bom->findChild<QWidget*>("_documentNum")->hide();
+  _bom->findChild<QWidget*>("_documentNumLit")->hide();
+  _bom->findChild<QWidget*>("_batchSize")->hide();
+  _bom->findChild<QWidget*>("_batchSizeLit")->hide();
+  _bom->findChild<QWidget*>("_moveUp")->hide();
+  _bom->findChild<QWidget*>("_moveDown")->hide();
+
+  QPushButton *moreButton = new QPushButton(this);
+  moreButton->setText(tr("More"));
+  connect(moreButton, SIGNAL(clicked()), this, SLOT(sEditBOM()));
+  _bom->findChild<QVBoxLayout*>("_formButtonsLayout")->addWidget(moreButton);
+
+  ParameterList plist;
+  if(_privileges->check("MaintainBOMs"))
+    plist.append("mode", "edit");
+  else if (_privileges->check("ViewBOMs"))
+    plist.append("mode", "view");
+  _bom->set(plist);
 
   _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft, true, "uomname");
   _uomconv->addColumn(tr("Ratio"),      -1, Qt::AlignRight, true, "uomvalue"  );
@@ -298,7 +331,6 @@ enum SetResponse item::set(const ParameterList &pParams)
         connect(_itemSite, SIGNAL(valid(bool)), _deleteItemSite, SLOT(setEnabled(bool)));
 
       _itemNumber->setEnabled(FALSE);
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -871,6 +903,9 @@ void item::sSave()
     }
   }
 
+  if(_bomButton->isEnabled())
+    _bom->sSave();
+
   emit saved(_itemid);
 
   close();
@@ -1048,6 +1083,8 @@ void item::populate()
     _taxRecoverable->setChecked(item.value("item_tax_recoverable").toBool());
 
     sFillList();
+    _bom->findChild<ItemCluster*>("_item")->setId(_itemid);
+    _elements->findChild<ItemCluster*>("_item")->setId(_itemid);
     sFillUOMList();
     sFillSourceList();
     sFillAliasList();
@@ -1411,20 +1448,6 @@ void item::sFillTransformationList()
   _itemtrans->populate(q);
 }
 
-void item::keyPressEvent( QKeyEvent * e )
-{
-#ifdef Q_WS_MAC
-  if(e->key() == Qt::Key_S && (e->modifiers() & Qt::ControlModifier))
-  {
-    _save->animateClick();
-    e->accept();
-  }
-  if(e->isAccepted())
-    return;
-#endif
-  e->ignore();
-}
-
 void item::newItem()
 {
   // Check for an Item window in new mode already.
@@ -1517,15 +1540,34 @@ void item::sEditBOM()
 {
   ParameterList params;
 
-  if(_mode == cView)
-    params.append("mode", "view");
-  else
+  if(_privileges->check("MaintainBOMs"))
     params.append("mode", "edit");
+  else
+    params.append("mode", "view");
   params.append("item_id", _itemid);
 
-  BOM *newdlg = new BOM(this);
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  XDialog *newdlg = new XDialog(this);
+  _bomwin = new BOM(this);
+  QGridLayout *layout = new QGridLayout;
+  layout->setMargin(0);
+
+  _bomwin->set(params);
+  layout->addWidget(_bomwin);
+  newdlg->setLayout(layout);
+  newdlg->setWindowTitle(_bomwin->windowTitle());
+  connect(_bomwin->_close, SIGNAL(clicked()), newdlg, SLOT(close()));
+  disconnect(_bomwin->_save, SIGNAL(clicked()), _bomwin, SLOT(sSave()));
+  connect(_bomwin->_save, SIGNAL(clicked()), this, SLOT(sSaveBom()));
+
+  newdlg->exec();
+  _bom->sFillList();
+
+}
+
+void item::sSaveBom()
+{
+  if (_bomwin->sSave())
+    _bomwin->parentWidget()->close();
 }
 
 void item::sWorkbench()
@@ -1934,12 +1976,6 @@ bool item::checkSitePrivs(int itemsiteid)
   return true;
 }
 
-void item::sNewClassCode()
-{
-  // Don't understand the purpose of this
-  //_inventoryUOM->setFocus();
-}
-
 void item::sHandleButtons()
 {
   if (_notesButton->isChecked())
@@ -1949,6 +1985,11 @@ void item::sHandleButtons()
   else if (_commentsButton->isChecked())
     _remarksStack->setCurrentIndex(2);
     
+  if (_elementsButton->isChecked())
+    _costStack->setCurrentIndex(0);
+  else if (_bomButton->isChecked())
+    _costStack->setCurrentIndex(1);
+
   if (_aliasesButton->isChecked())
     _relationshipsStack->setCurrentIndex(0);
   else if (_transformationsButton->isChecked())
@@ -1970,26 +2011,25 @@ void item::sHandleRightButtons()
       else
         _workbench->show();
 
-    if(!_privileges->check("MaintainBOMs"))
-      _bom->hide();
-    else
-      if (itemtype == "M" || // manufactured
-          itemtype == "P" || // purchased
-          itemtype == "B" || // breeder
-          itemtype == "F" || // phantom
-          itemtype == "K" || // kit
-          itemtype == "T" || // tooling
-          itemtype == "L")   // planning
-        _bom->show();
-      else
-        _bom->hide();
-
     if((!_privileges->check("CreateCosts")) &&
        (!_privileges->check("EnterActualCosts")) &&
-       (!_privileges->check("UpdateActualCosts")))
-      _cost->hide();
-    else
-      _cost->show();
+       (!_privileges->check("UpdateActualCosts")) &&
+       (!_privileges->check("ViewCosts")))
+    {
+      _elementsButton->setEnabled(false);
+      _bomButton->setChecked(true);
+      sHandleButtons();
+    }
+
+    _bomButton->setEnabled((_privileges->check("MaintainBOMs") ||
+                             _privileges->check("ViewBOMs")) &&
+                             itemtype != "R" &&
+                             itemtype != "S");
+
+    // If can't do anything in costs tab, then disable
+    _tab->setTabEnabled(_tab->indexOf(_costTab),
+                        _elementsButton->isEnabled() ||
+                        _bomButton->isEnabled());
 
     if((_privileges->check("MaintainItemSites")) &&
        (!_metrics->boolean("MultiWhs")))
@@ -1999,8 +2039,6 @@ void item::sHandleRightButtons()
   }
   else
   {
-    _cost->hide();
-    _bom->hide();
     _workbench->hide();
     _site->hide();
   }
@@ -2123,16 +2161,6 @@ void item::sDeleteSource()
 
     sFillSourceList();
   }
-}
-
-void item::sMaintainItemCosts()
-{
-  ParameterList params;
-  params.append("item_id", _itemid);
-
-  maintainItemCosts *newdlg = new maintainItemCosts();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
 }
 
 void item::setId(int p)

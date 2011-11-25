@@ -29,64 +29,9 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
   connect(_number, SIGNAL(canActivate(bool)), this, SLOT(sCanActivate(bool)));
 }
 
-RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
-  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", 0, "CASE WHEN rev_status='A' THEN 'Active' WHEN rev_status='P' THEN 'Pending' ELSE 'Inactive' END", 0, pName)
-{
-  setTitles(tr("Revision"), tr("Revisions"));
-  _type=All;
-  _allowNew=FALSE;
-  _targetId = -1;
-  _cachenum = "";
-  _typeText = "";
-  _mode = View;
-  if (_x_metrics)
-  {
-    _isRevControl=(_x_metrics->boolean("RevControl"));
-    if (!_isRevControl)
-    {
-      _menuLabel->hide();
-      disconnect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
-      _listAct->disconnect();
-      _searchAct->disconnect();
-    }
-  }
-}
-
-RevisionLineEdit::RevisionTypes RevisionCluster::type()
-{
-  return (static_cast<RevisionLineEdit*>(_number))->type();
-}
-
-RevisionLineEdit::RevisionTypes RevisionLineEdit::type()
-{
-  return _type;
-}
-
-RevisionLineEdit::Modes RevisionCluster::mode()
-{
-  return (static_cast<RevisionLineEdit*>(_number))->mode();
-}
-
-RevisionLineEdit::Modes RevisionLineEdit::mode()
-{
-  return _mode;
-}
 void RevisionCluster::activate()
 {
-  XSqlQuery activate;
-  activate.prepare("SELECT activateRev(:rev_id) AS result;");
-  activate.bindValue(":rev_id", _number->id());
-  activate.exec();
-  if (activate.first())
-    setDescription("Active");
-  else  if (activate.lastError().type() != QSqlError::NoError)
-  {
-    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                              .arg(__FILE__)
-                                              .arg(__LINE__),
-    activate.lastError().databaseText());
-        return; 
-  }
+  return (static_cast<RevisionLineEdit*>(_number)->activate());
 }
 
 void RevisionCluster::sCanActivate(bool p)
@@ -150,6 +95,96 @@ void RevisionCluster::sModeChanged()
   }
 }
 
+RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
+  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", "rev_status", QString("case when rev_status='A' then '%1' when rev_status='P' then '%2' else '%3' end ").arg(tr("Active")).arg(tr("Pending")).arg(tr("Inactive")).toAscii(), 0, pName)
+{
+  setTitles(tr("Revision"), tr("Revisions"));
+  _type=All;
+  _allowNew=FALSE;
+  _targetId = -1;
+  _cachenum = "";
+  _typeText = "";
+  _status = Inactive;
+  _mode = View;
+  if (_x_metrics)
+  {
+    _isRevControl=(_x_metrics->boolean("RevControl"));
+    if (!_isRevControl)
+    {
+      _menuLabel->hide();
+      disconnect(this, SIGNAL(textEdited(QString)), this, SLOT(sHandleCompleter()));
+      _listAct->disconnect();
+      _searchAct->disconnect();
+    }
+    else
+    {
+      _activateSep = new QAction(this);
+      _activateSep->setSeparator(true);
+      _activateSep->setVisible(false);
+
+      _activateAct = new QAction(tr("Activate"), this);
+      _activateAct->setToolTip(tr("Activate revision"));
+      _activateAct->setVisible(false);
+      connect(_activateAct, SIGNAL(triggered()), this, SLOT(activate()));
+      addAction(_activateAct);
+
+      menu()->addAction(_activateSep);
+      menu()->addAction(_activateAct);
+    }
+  }
+}
+
+RevisionLineEdit::RevisionTypes RevisionCluster::type()
+{
+  return (static_cast<RevisionLineEdit*>(_number))->type();
+}
+
+RevisionLineEdit::RevisionTypes RevisionLineEdit::type()
+{
+  return _type;
+}
+
+RevisionLineEdit::Modes RevisionCluster::mode()
+{
+  return (static_cast<RevisionLineEdit*>(_number))->mode();
+}
+
+RevisionLineEdit::Modes RevisionLineEdit::mode()
+{
+  return _mode;
+}
+
+RevisionLineEdit::Statuses RevisionLineEdit::status()
+{
+  return _status;
+}
+
+void RevisionLineEdit::activate()
+{
+  if (QMessageBox::question(this, tr("Activate Revision"),
+                            tr("This action will make this revision the system default for the"
+                               "item it belongs to and deactivate the currently active revision. "
+                               "Are you sure you want proceed?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No  | QMessageBox::Escape | QMessageBox::Default) == QMessageBox::No)
+    return;
+
+  XSqlQuery activate;
+  activate.prepare("SELECT activateRev(:rev_id) AS result;");
+  activate.bindValue(":rev_id", id());
+  activate.exec();
+  if (activate.first())
+    setId(_id); // refresh
+  else  if (activate.lastError().type() != QSqlError::NoError)
+  {
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                            .arg(__FILE__)
+                                            .arg(__LINE__),
+    activate.lastError().databaseText());
+      return;
+  }
+}
+
 void RevisionLineEdit::setMode(Modes pMode)
 {
   if (_mode!=pMode)
@@ -202,10 +237,17 @@ void RevisionLineEdit::setId(const int pId)
 {
   VirtualClusterLineEdit::setId(pId);
   _cachenum = text();
+  if (_name == "A")
+    _status = Active;
+  else if (_name == "P")
+    _status = Pending;
+  else
+    _status = Inactive;
+
   if  (_x_privileges)
     emit canActivate((_mode==Maintain) && 
                         (_x_privileges->check("MaintainRevisions")) &&
-                                        (_description=="Pending"));
+                                        (_status==Pending));
 }
 
 void RevisionLineEdit::setTargetId(int pItem)
@@ -230,6 +272,26 @@ void RevisionLineEdit::setType(QString ptype)
                           tr("RevisionLineEdit::setType received "
                              "an invalid RevisionType %1").arg(ptype));
     setType(All);
+  }
+}
+
+void RevisionLineEdit::sUpdateMenu()
+{
+  VirtualClusterLineEdit::sUpdateMenu();
+  if (_x_privileges)
+  {
+    if((_mode==Maintain) &&
+       (_status==Pending))
+    {
+      _activateSep->setVisible(true);
+      _activateAct->setVisible(true);
+      _activateAct->setEnabled(_x_privileges->check("MaintainRevisions"));
+    }
+    else
+    {
+      _activateSep->setVisible(false);
+      _activateAct->setVisible(false);
+    }
   }
 }
 
@@ -266,14 +328,7 @@ void RevisionLineEdit::sParse()
     {
         
       XSqlQuery numQ;
-      numQ.prepare("SELECT rev_id, "
-                       "rev_number, "
-                       "CASE WHEN rev_status='A' THEN "
-                       "  :active "
-                       "WHEN rev_status='P' THEN "
-                       "  :pending "
-                       "ELSE :inactive "
-                       "END AS status "
+      numQ.prepare("SELECT rev_id "
                        "FROM rev "
                        "WHERE ((rev_number=UPPER(:number))"
                        " AND (rev_target_id=:target_id)"
@@ -281,15 +336,11 @@ void RevisionLineEdit::sParse()
       numQ.bindValue(":number", stripped);
       numQ.bindValue(":target_id",_targetId);
       numQ.bindValue(":target_type",typeText());
-      numQ.bindValue(":active",tr("Active"));
-      numQ.bindValue(":pending",tr("Pending"));
-      numQ.bindValue(":inactive",tr("Inactive"));
       numQ.exec();
       if (numQ.first())
       {
         _valid = true;
         setId(numQ.value("rev_id").toInt());
-        setText(numQ.value("rev_number").toString());
       }
       else
       {
