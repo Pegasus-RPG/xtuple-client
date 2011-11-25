@@ -31,13 +31,13 @@
 
 class Preferences;
 class Metrics;
-class QWorkspace;
+class QMdiArea;
 class Privileges;
 class QWidget;
 
 extern Preferences *_x_preferences;
 extern Metrics     *_x_metrics;
-extern QWorkspace  *_x_workspace;
+extern QMdiArea    *_x_workspace;
 extern Privileges  *_x_privileges;
 extern QString     _x_username;
 

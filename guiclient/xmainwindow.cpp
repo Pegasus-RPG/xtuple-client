@@ -151,7 +151,7 @@ void XMainWindow::showEvent(QShowEvent *event)
     else
     {
       QWidget * fw = focusWidget();
-      omfgThis->workspace()->addWindow(this);
+      omfgThis->workspace()->addSubWindow(this);
       QRect r(pos, size());
       if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
         move(pos);

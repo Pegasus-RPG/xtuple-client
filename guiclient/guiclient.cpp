@@ -12,7 +12,7 @@
 #include <QAction>
 #include <QVBoxLayout>
 #include <QStatusBar>
-#include <QWorkspace>
+#include <QMdiArea>
 #include <QDateTime>
 #include <QPushButton>
 #include <QCheckBox>
@@ -412,11 +412,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _fixedFont = new QFont("courier", 8);
   _systemFont = new QFont(qApp->font());
 
-  // TODO: replace QWorkspace with QMdiArea
-  _workspace = new QWorkspace();
+  _workspace = new QMdiArea();
   setCentralWidget(_workspace);
-  _workspace->setScrollBarsEnabled(true);
-  //_workspace->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+  _workspace->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  _workspace->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
   _workspace->setContentsMargins(0, 0, 0, 0);
 
@@ -1640,10 +1639,7 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
 
 QWidgetList GUIClient::windowList()
 {
-  if(_showTopLevel)
-    return _windowList;
-  else
-    return _workspace->windowList();
+  return _windowList;
 }
 
 void GUIClient::windowDestroyed(QObject * o)
@@ -1727,9 +1723,9 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     w->resize(size);
 
   bool wIsModal = w->isModal();
+  _windowList.append(w);
   if(_showTopLevel || wIsModal)
   {
-    _windowList.append(w);
     w->setAttribute(Qt::WA_DeleteOnClose);
     QMainWindow *mw = qobject_cast<QMainWindow*>(w);
     if (mw)
@@ -1743,7 +1739,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
   {
     QWidget * fw = w->focusWidget();
     w->setAttribute(Qt::WA_DeleteOnClose);
-    _workspace->addWindow(w);
+    _workspace->addSubWindow(w);
     QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       w->move(pos);
@@ -1824,18 +1820,6 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 void GUIClient::setCentralWidget(QWidget * widget)
 {
   QMainWindow::setCentralWidget(widget);
-}
-
-void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
-{
-  QWidget * thisActive = workspace()->activeWindow();
-  if(omfgThis->showTopLevel())
-    thisActive = qApp->activeWindow();
-  if(thisActive == this)
-    return;
-  if(thisActive && thisActive->inherits("QMessageBox"))
-    return;
-  _activeWindow = thisActive;
 }
 
 QWidget * GUIClient::myActiveWindow()

@@ -18,7 +18,8 @@
 #include <QPixmap>
 #include <QPluginLoader>
 #include <QToolBar>
-#include <QWorkspace>
+#include <QMdiArea>
+#include <QMdiSubWindow>
 
 #include "xtsettings.h"
 #include "guiclient.h"
@@ -121,9 +122,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 //  Window
   // TODO: windowMenu->setCheckable(TRUE);
 
-  cascade = new Action( parent, "window.cascade", tr("&Cascade"), parent->workspace(), SLOT(cascade()), windowMenu, true);
+  cascade = new Action( parent, "window.cascade", tr("&Cascade"), parent->workspace(), SLOT(cascadeSubWindows()), windowMenu, true);
 
-  tile = new Action( parent, "window.tile", tr("&Tile"), parent->workspace(), SLOT(tile()), windowMenu, true);
+  tile = new Action( parent, "window.tile", tr("&Tile"), parent->workspace(), SLOT(tileSubWindows()), windowMenu, true);
 
   closeActive = new Action( parent, "window.closeActiveWindow", tr("Close &Active Window"), this, SLOT(sCloseActive()), windowMenu, true);
 
@@ -309,7 +310,7 @@ void menuSystem::sPrepareWindowMenu()
 
   windowMenu->addSeparator();
 
-  QWidget * activeWindow = parent->workspace()->activeWindow();
+  QWidget * activeWindow = parent->workspace()->activeSubWindow()->widget();
   if(omfgThis->showTopLevel())
   {
     //activeWindow = qApp->activeWindow();
@@ -363,7 +364,7 @@ void menuSystem::sActivateWindow()
   QAction * m = qobject_cast<QAction*>(sender());
   if(m)
     intWindowid = m->data().toInt();
-  QWidgetList windows = parent->workspace()->windowList();
+  QWidgetList windows = parent->windowList();
   if(omfgThis->showTopLevel())
     windows = omfgThis->windowList();
   QWidget *window = windows.at(intWindowid);
@@ -404,7 +405,7 @@ void menuSystem::sCloseAll()
     }
   }
   else
-    parent->workspace()->closeAllWindows();
+    parent->workspace()->closeAllSubWindows();
 }
 
 void menuSystem::sCloseActive()
@@ -415,7 +416,7 @@ void menuSystem::sCloseActive()
       qApp->activeWindow()->close();
   }
   else
-    parent->workspace()->closeActiveWindow();
+    parent->workspace()->closeActiveSubWindow();
 }
 
 void menuSystem::sEventManager()

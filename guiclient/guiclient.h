@@ -14,6 +14,7 @@
 #include <QDate>
 #include <QDateTime>
 #include <QMainWindow>
+#include <QMdiArea>
 #include <QTimer>
 #include <QAction>
 #include <QCloseEvent>
@@ -29,7 +30,7 @@
 #include "../hunspell/hunspell.hxx"
 
 class QSplashScreen;
-class QWorkspace;
+class QMdiArea;
 class QPushButton;
 class QIntValidator;
 class QDoubleValidator;
@@ -174,7 +175,7 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void initMenuBar();
     Q_INVOKABLE void saveToolbarPositions();
 
-    Q_INVOKABLE inline QWorkspace *workspace()         { return _workspace;    }
+    Q_INVOKABLE inline QMdiArea *workspace()         { return _workspace;    }
     Q_INVOKABLE inline InputManager *inputManager()    { return _inputManager; }
     Q_INVOKABLE inline QString databaseURL()           { return _databaseURL;  }
     Q_INVOKABLE inline QString username()              { return _username;     }
@@ -308,8 +309,6 @@ class GUIClient : public QMainWindow
 
     void sIdleTimeout();
 
-    void sFocusChanged(QWidget* old, QWidget* now);
-
     void sClearErrorMessages();
     void sNewErrorMessage();
     void setWindowTitle();
@@ -377,7 +376,7 @@ class GUIClient : public QMainWindow
     void hunspell_uninitialize();
 
   private:
-    QWorkspace   *_workspace;
+    QMdiArea   *_workspace;
     QTimer       _tick;
     QPushButton  *_eventButton;
     QPushButton  *_registerButton;
