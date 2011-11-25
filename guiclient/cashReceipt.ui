@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>637</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@ to be bound by its terms.</comment>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <property name="topMargin">
-          <number>10</number>
+          <number>3</number>
          </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
