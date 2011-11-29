@@ -201,8 +201,8 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
   _doc = new QDomDocument();
 
   QDomNode xmlNode = _doc->createProcessingInstruction("xml",
-                                                       "version=\"1.0\" "
-                                                       "encoding=\"UTF-8\"");
+                                                       "version='1.0' "
+                                                       "encoding='UTF-8'");
   _doc->appendChild(xmlNode);
 
   QDomElement envelope = _doc->createElement(SOAP_ENV_NS ":Envelope");
@@ -412,6 +412,22 @@ int  CyberSourceProcessor::doCharge(const int pccardid, const int pcvv, const do
   capture.setAttribute("run", "true");
   _requestMessage.appendChild(capture);
 
+  if (_metrics->value("CCAvsCheck") == "W" ||
+      _metrics->value("CCAvsCheck") == "X" ||
+      _metrics->value("CCCVVCheck") == "W" ||
+      _metrics->value("CCCVVCheck") == "X")
+  {
+    QDomElement rules = _doc->createElement(CPDATA_NS ":businessRules");
+    _requestMessage.appendChild(rules);
+    if (_metrics->value("CCAvsCheck") == "W" ||
+        _metrics->value("CCAvsCheck") == "X")
+      createChildTextNode(rules, CPDATA_NS ":ignoreAVSResult", "true");
+
+    if (_metrics->value("CCCVVCheck") == "W" ||
+        _metrics->value("CCCVVCheck") == "X")
+      createChildTextNode(rules, CPDATA_NS ":ignoreCVResult", "true");
+  }
+
   if (DEBUG) qDebug("CS::doCharge sending %s", qPrintable(_doc->toString()));
   QString response;
   returnValue = sendViaHTTP(_doc->toString(), response);
@@ -422,6 +438,8 @@ int  CyberSourceProcessor::doCharge(const int pccardid, const int pcvv, const do
   returnValue = handleResponse(response, pccardid, Charge, amount, pcurrid,
                                pneworder, preforder, pccpayid, pparams);
 
+  if (DEBUG)
+    qDebug("CS:doCharge() returning %d", returnValue);
   return returnValue;
 }
 
