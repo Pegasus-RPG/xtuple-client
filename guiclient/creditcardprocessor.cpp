@@ -38,16 +38,16 @@
 
 #define DEBUG false
 
-/** \defgroup creditcards Credit Card API
+/** @defgroup creditcards Credit Card API
     The xTuple Credit Card subsystem contains the internal code
     for processing credit card transactions and the user interface
     for configuring the credit card handling.
   */
-/** \ingroup creditcards
+/** @ingroup creditcards
   
-    \class CreditCardProcessor
+    @class CreditCardProcessor
 
-    \brief This is a generic class that defines the interface between
+    @brief This is a generic class that defines the interface between
            xTuple ERP and credit card processing services.
 
     CreditCardProcessor encapsulates the common functionality shared across
@@ -56,25 +56,25 @@
 
     It should be subclassed once for each credit card processing %company to
     be supported.  Subclasses should override the following methods:
-    \li doAuthorize
-    \li doCharge
-    \li doChargePreauthorized
-    \li doCredit
-    \li doReversePreauthorized
-    \li doVoidPrevious
-    \li doTestConfiguration
+    @li doAuthorize
+    @li doCharge
+    @li doChargePreauthorized
+    @li doCredit
+    @li doReversePreauthorized
+    @li doVoidPrevious
+    @li doTestConfiguration
 
     Subclasses should also set
-    \li _defaultLiveServer
-    \li _defaultTestServer
-    \li _defaultLivePort
-    \li _defaultTestPort
+    @li _defaultLiveServer
+    @li _defaultTestServer
+    @li _defaultLivePort
+    @li _defaultTestPort
 
     It is the subclass' responsibility to ensure that all of the
     configuration options available on the Credit Card Configuration
     window are implemented either here or in the subclass. An example
-    of an option that \b must be implemented in each subclass is
-    \c CCTestResult since the method for requesting error responses from
+    of an option that @b must be implemented in each subclass is
+    @c CCTestResult since the method for requesting error responses from
     the credit card processing service is different for every
     service.
 
@@ -83,13 +83,13 @@
     CreditCardProcessor::getProcessor and configureCC, and to subclass
     ConfigCreditCardProcessor.
     CreditCardProcessor::getProcessor must be modified to instantiate the
-    right subclass of CreditCardProcessor based on the \c CCCompany
+    right subclass of CreditCardProcessor based on the @c CCCompany
     metric or its QString argument.  configureCC must be modified
-    to store the service-specific \c CCCompany value checked by getProcessor
+    to store the service-specific @c CCCompany value checked by getProcessor
     and to instantiate a ConfigCreditCardProcessor, which allows
     editing and saving service-specific metrics
 
-    \b Error \b handling:
+    @b Error @b handling:
 
     The following rules are followed by CreditCardProcessor, which also expects
     its subclasses to follow them. It is the subclass' responsibility
@@ -133,15 +133,15 @@
     subclasses
     and should be loaded into _msgHash in the subclass' constructor.
 
-    \see AuthorizeDotNetProcessor
-    \see CyberSourceProcessor
-    \see ExternalCCProcessor
-    \see PaymentechProcessor
-    \see YourPayProcessor
-    \see configureCC
+    @see AuthorizeDotNetProcessor
+    @see CyberSourceProcessor
+    @see ExternalCCProcessor
+    @see PaymentechProcessor
+    @see YourPayProcessor
+    @see configureCC
 
-    \todo expose portions of this in the scriptapi doxygen module
-    \todo use qabstractmessagehandler instead of qmessagebox
+    @todo expose portions of this in the scriptapi doxygen module
+    @todo use qabstractmessagehandler instead of qmessagebox
 */
 
 QString			 CreditCardProcessor::_errorMsg = "";
@@ -260,7 +260,7 @@ CreditCardProcessor::FraudCheckResult::FraudCheckResult(QChar pcode, int /*TODO:
   text = ptext;
 }
 
-/** \brief Construct and initialize a default CreditCardProcessor.
+/** @brief Construct and initialize a default CreditCardProcessor.
 
     This should never be called except by the constructor of a subclass.
     This should always be called by the constructor of a subclass.
@@ -316,7 +316,7 @@ CreditCardProcessor::~CreditCardProcessor()
     delete _cvvCodes.takeFirst();
 }
 
-/** \brief Get a new instance of a specific CreditCardProcessor subclass.
+/** @brief Get a new instance of a specific CreditCardProcessor subclass.
 
     This method is used to retrieve a CreditCardProcessor for actual use
     by the application, rather than calling
@@ -324,14 +324,14 @@ CreditCardProcessor::~CreditCardProcessor()
 
     getProcessor retrieves the right subclass for the current configuration.
 
-    \param pcompany This causes the method to instantiate the subclass
+    @param pcompany This causes the method to instantiate the subclass
                     for the named service, rather than the configured
                     service.  pcompany should be an empty string
                     except when checking for errors in configCC
 
-    \return An instance of a CreditCardProcessor subclass
+    @return An instance of a CreditCardProcessor subclass
 
-    \see configCC
+    @see configCC
  */
 CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
 {
@@ -398,41 +398,41 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
   return processor;
 }
 
-/** \brief Processes pre-authorization transactions.
+/** @brief Processes pre-authorization transactions.
 
     This method performs application-level error checking and
     all of the database work required
     to handle a pre-authorization transaction. It calls
     doAuthorize to handle the direct communication with the service.
 
-    \warning This method should never be overridden.
+    @warning This method should never be overridden.
              Service-specific functionality should be implemented
              in the doAuthorize method of the service' subclass.
 
-    \param[in]  pccardid   The internal id of the credit card to preauthorize
-    \param[in]  pcvv       The CVV/CCV code of the credit card to preauthorize
-    \param[in]  pamount    The total amount to preauthorize. If the credit card processor
+    @param[in]  pccardid   The internal id of the credit card to preauthorize
+    @param[in]  pcvv       The CVV/CCV code of the credit card to preauthorize
+    @param[in]  pamount    The total amount to preauthorize. If the credit card processor
                            does not preauthorize the full amount requested, the
                            database will store the actual amount that was authorized
                            If this occurs, the application will display an error if the
                            amount authorized is 0 or a warning if the amount authorized is
                            greater than 0.
-    \param[in]  ptax       The subportion of the total which is tax
-    \param[in]  ptaxexempt Whether or not this transaction is tax exempt
-    \param[in]  pfreight   The subportion of the total which is freight
-    \param[in]  pduty      The subportion of the total which is customs duty
-    \param[in]  pcurrid    The %currency of the amount to preauthorize
-    \param[in,out] pneworder The order number associated with this preauthorization
-    \param[out] preforder  The reference number associated with this
+    @param[in]  ptax       The subportion of the total which is tax
+    @param[in]  ptaxexempt Whether or not this transaction is tax exempt
+    @param[in]  pfreight   The subportion of the total which is freight
+    @param[in]  pduty      The subportion of the total which is customs duty
+    @param[in]  pcurrid    The %currency of the amount to preauthorize
+    @param[in,out] pneworder The order number associated with this preauthorization
+    @param[out] preforder  The reference number associated with this
                            preauthorization (may be required to 'capture' the
                            preauthorization)
-    \param[out] pccpayid   The ccpay_id of the record created by this
+    @param[out] pccpayid   The ccpay_id of the record created by this
                            transaction
-    \param[in]  preftype   Either \c cohead or \c cashrcpt or blank
-    \param[in,out] prefid  The cashrcpt_id or cohead_id associated with this
+    @param[in]  preftype   Either @c cohead or @c cashrcpt or blank
+    @param[in,out] prefid  The cashrcpt_id or cohead_id associated with this
                            transaction
 
-    \return An index into _errMsg; 0 indicates success
+    @return An index into _errMsg; 0 indicates success
  */
 int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
@@ -573,34 +573,34 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
   return returnVal;
 }
 
-/** \brief Processes charge transactions.
+/** @brief Processes charge transactions.
 
     This method performs application-level error checking and
     all of the database work required
     to handle a credit card charge transaction. It calls
     doCharge to handle the direct communication with the service.
 
-    \warning This method should never be overridden.
+    @warning This method should never be overridden.
              Service-specific functionality should be implemented
              in the doCharge method of the service' subclass.
 
-    \param[in]  pccardid   The internal id of the credit card to charge
-    \param[in]  pcvv       The CVV/CCV code of the credit card to charge
-    \param[in]  pamount    The total amount to charge
-    \param[in]  ptax       The subportion of the total which is tax
-    \param[in]  ptaxexempt Whether or not this transaction is tax exempt
-    \param[in]  pfreight   The subportion of the total which is freight
-    \param[in]  pduty      The subportion of the total which is customs duty
-    \param[in]  pcurrid    The %currency of the amount to charge
-    \param[in,out] pneworder The order number associated with this charge
-    \param[out] preforder  The reference number associated with this charge
-    \param[out] pccpayid   The ccpay_id of the record created by this
+    @param[in]  pccardid   The internal id of the credit card to charge
+    @param[in]  pcvv       The CVV/CCV code of the credit card to charge
+    @param[in]  pamount    The total amount to charge
+    @param[in]  ptax       The subportion of the total which is tax
+    @param[in]  ptaxexempt Whether or not this transaction is tax exempt
+    @param[in]  pfreight   The subportion of the total which is freight
+    @param[in]  pduty      The subportion of the total which is customs duty
+    @param[in]  pcurrid    The %currency of the amount to charge
+    @param[in,out] pneworder The order number associated with this charge
+    @param[out] preforder  The reference number associated with this charge
+    @param[out] pccpayid   The ccpay_id of the record created by this
                            transaction
-    \param[in]  preftype   Either \c cohead or \c cashrcpt or blank
-    \param[in,out] prefid  The cashrcpt_id or cohead_id associated with this
+    @param[in]  preftype   Either @c cohead or @c cashrcpt or blank
+    @param[in,out] prefid  The cashrcpt_id or cohead_id associated with this
                            transaction
 
-    \return An index into _errMsg; 0 indicates success
+    @return An index into _errMsg; 0 indicates success
  */
 int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
@@ -717,7 +717,7 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
   return returnVal;
 }
 
-/** \brief Processes 'capture' transactions, or charges against a
+/** @brief Processes 'capture' transactions, or charges against a
            prior preauthorization.
 
     This method performs application-level error checking and all
@@ -725,23 +725,23 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
     charge against a prior preauthorization. It calls doChargePreauthorized
     to handle the direct communication with the service.
 
-    \warning This method should never be overridden.
+    @warning This method should never be overridden.
              Service-specific functionality should be implemented
              in the doChargePreauthorized method of the service' subclass.
 
-    \param[in]  pcvv       The CVV/CCV code of the credit card to charge
-    \param[in]  pamount    The total amount to charge
-    \param[in]  pcurrid    The %currency of the amount to charge
-    \param[in,out] pneworder The order number associated with this charge
-    \param[in,out] preforder The reference number (preforder) generated by
+    @param[in]  pcvv       The CVV/CCV code of the credit card to charge
+    @param[in]  pamount    The total amount to charge
+    @param[in]  pcurrid    The %currency of the amount to charge
+    @param[in,out] pneworder The order number associated with this charge
+    @param[in,out] preforder The reference number (preforder) generated by
                              the preauthorization transaction
-    \param[in,out] pccpayid  When calling the method, pccpayid should be the
+    @param[in,out] pccpayid  When calling the method, pccpayid should be the
                              ccpay_id of the preauthorization record.
                              On return, this is the ccpay_id of the
                              charge record, which may be the same as the
                              preauthorization record.
 
-    \return An index into _errMsg; 0 indicates success
+    @return An index into _errMsg; 0 indicates success
  */
 int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
 {
@@ -910,7 +910,7 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
   return returnVal;
 }
 
-/** \brief Test whether common credit card processing configuration options
+/** @brief Test whether common credit card processing configuration options
            are consistent.
 
     Calls toTestConfiguration to check if service-specific options are set.
@@ -1038,36 +1038,36 @@ int CreditCardProcessor::testConfiguration()
   return returnValue;
 }
 
-/** \brief Processes credit transactions.
+/** @brief Processes credit transactions.
 
     This method performs application-level error checking and all
     of the database work required to credit a prior charge.
     It calls doCredit to handle the direct communication with the service.
 
-    \warning This method should never be overridden.
+    @warning This method should never be overridden.
              Service-specific functionality should be implemented
              in the doCredit method of the service' subclass.
 
-    \param[in]  pccardid   The internal id of the credit card to credit
-    \param[in]  pcvv       The CVV/CCV code of the credit card to credit
-    \param[in]  pamount    The total amount to credit
-    \param[in]  ptax       The subportion of the total which is tax
-    \param[in]  ptaxexempt Whether or not this transaction is tax exempt
-    \param[in]  pfreight   The subportion of the total which is freight
-    \param[in]  pduty      The subportion of the total which is customs duty
-    \param[in]  pcurrid    The %currency of the amount to credit
-    \param[in,out] pneworder The order number associated with this credit
-    \param[in,out] preforder The reference number (preforder) generated by
+    @param[in]  pccardid   The internal id of the credit card to credit
+    @param[in]  pcvv       The CVV/CCV code of the credit card to credit
+    @param[in]  pamount    The total amount to credit
+    @param[in]  ptax       The subportion of the total which is tax
+    @param[in]  ptaxexempt Whether or not this transaction is tax exempt
+    @param[in]  pfreight   The subportion of the total which is freight
+    @param[in]  pduty      The subportion of the total which is customs duty
+    @param[in]  pcurrid    The %currency of the amount to credit
+    @param[in,out] pneworder The order number associated with this credit
+    @param[in,out] preforder The reference number (preforder) generated by
                              the charge transaction
-    \param[in,out] pccpayid  When calling the method, pccpayid should be the
+    @param[in,out] pccpayid  When calling the method, pccpayid should be the
                              ccpay_id of the original charge record.
                              On return, this is the ccpay_id of the
                              credit record.
-    \param[in]  preftype   Either \c cohead or \c cashrcpt or blank
-    \param[in,out] prefid  The cashrcpt_id or cohead_id associated with this
+    @param[in]  preftype   Either @c cohead or @c cashrcpt or blank
+    @param[in,out] prefid  The cashrcpt_id or cohead_id associated with this
                            transaction
 
-    \return An index into _errMsg; 0 indicates success
+    @return An index into _errMsg; 0 indicates success
  */
 int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
@@ -1238,29 +1238,29 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
   return returnVal;
 }
 
-/** \brief Reverse a preauthorization.
+/** @brief Reverse a preauthorization.
 
     This method performs application-level error checking and all
     of the database work required to reverse a prior preauthorization.
     This makes available to the card holder the funds that have been
     reserved by that preauthorization.
 
-    \warning This method should never be overridden.
+    @warning This method should never be overridden.
               Service-specific functionality should be implemented in
               the doReversePreauthorized method of the service' subclass.
 
-    \param pamount   The amount to be reversed, not necessarily the same
+    @param pamount   The amount to be reversed, not necessarily the same
                      as the amount originally authorized.
-    \param pcurrid   The currency of the amount.
-    \param pneworder The order number associated with the preauthorization
-    \param preforder The reference number (preforder) generated by
+    @param pcurrid   The currency of the amount.
+    @param pneworder The order number associated with the preauthorization
+    @param preforder The reference number (preforder) generated by
                      the preauthorization transaction
-    \param pccpayid  The internal id of the preauthorization transaction
-    \param preftype  Either \c cohead or \c cashrcpt or blank
-    \param prefid    The cashrcpt_id or cohead_id associated with the
+    @param pccpayid  The internal id of the preauthorization transaction
+    @param preftype  Either @c cohead or @c cashrcpt or blank
+    @param prefid    The cashrcpt_id or cohead_id associated with the
                      preauthorization transaction
 
-    \return An index into _errMsg; 0 indicates success
+    @return An index into _errMsg; 0 indicates success
   */
 int CreditCardProcessor::reversePreauthorized(const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int prefid)
 {
@@ -1396,19 +1396,19 @@ int CreditCardProcessor::reversePreauthorized(const double pamount, const int pc
   return returnVal;
 }
 
-/** \brief Processes void transactions.
+/** @brief Processes void transactions.
 
     This method performs application-level error checking and all
     of the database work required to void a prior transaction.
     It calls doVoid to handle the direct communication with the service.
 
-    \warning This method should never be overridden.
+    @warning This method should never be overridden.
              Service-specific functionality should be implemented
              in the doVoid method of the service' subclass.
 
-    \param pccpayid  This should be the ccpay_id of the original transaction record.
+    @param pccpayid  This should be the ccpay_id of the original transaction record.
 
-    \return An index into _errMsg; 0 indicates success
+    @return An index into _errMsg; 0 indicates success
  */
 int CreditCardProcessor::voidPrevious(int &pccpayid)
 {
@@ -1489,19 +1489,19 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
   return returnVal;
 }
 
-/** \brief Returns whether credit card processing is configured in live mode. */
+/** @brief Returns whether credit card processing is configured in live mode. */
 bool CreditCardProcessor::isLive()
 {
   return (!_metrics->boolean("CCTest"));
 }
 
-/** \brief Returns whether credit card processing is configured in test mode. */
+/** @brief Returns whether credit card processing is configured in test mode. */
 bool CreditCardProcessor::isTest()
 {
   return (_metrics->boolean("CCTest"));
 }
 
-/** \brief Returns the most recent error message set by CreditCardProcessor
+/** @brief Returns the most recent error message set by CreditCardProcessor
            or one of its subclasses.
  */
 QString CreditCardProcessor::errorMsg()
@@ -1509,13 +1509,13 @@ QString CreditCardProcessor::errorMsg()
   return _errorMsg;
 }
 
-/** \brief Returns the error message associated with the given pcode. */
+/** @brief Returns the error message associated with the given pcode. */
 QString CreditCardProcessor::errorMsg(const int pcode)
 {
   return _msgHash.value(pcode);
 }
 
-/** \brief Check if the given credit card is consistent and active.
+/** @brief Check if the given credit card is consistent and active.
 
     This consistency %check is used in a number of places before executing
     a credit card transaction. It confirms that the given card is marked
@@ -1524,12 +1524,12 @@ QString CreditCardProcessor::errorMsg(const int pcode)
     in the database. It also makes sure that the CVV has been entered
     if the system is configured to require it.
 
-    \param pccid The ccard_id of the credit card to %check
-    \param pcvv  The CVV from the card holder, -1 if not known,
+    @param pccid The ccard_id of the credit card to %check
+    @param pcvv  The CVV from the card holder, -1 if not known,
                  -2 if the caller knows it is not required or available
                  (such as for void transactions).
-    \param[out] pccard_x The credit card number, with most of the digits
-                         replaced with \c X. Used for reporting errors.
+    @param[out] pccard_x The credit card number, with most of the digits
+                         replaced with @c X. Used for reporting errors.
   */
 int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QString &pccard_x)
 {
@@ -1617,8 +1617,8 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QStrin
   return 0;
 }
 
-/** \brief Placeholder for subclasses to override.
-     \see authorize
+/** @brief Placeholder for subclasses to override.
+     @see authorize
  */
 int CreditCardProcessor::doAuthorize(const int pccardid, const int pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &)
 {
@@ -1630,8 +1630,8 @@ int CreditCardProcessor::doAuthorize(const int pccardid, const int pcvv, double 
   return -19;
 }
 
-/** \brief Placeholder for subclasses to override.
-    \see charge
+/** @brief Placeholder for subclasses to override.
+    @see charge
  */
 int CreditCardProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &)
 {
@@ -1643,8 +1643,8 @@ int CreditCardProcessor::doCharge(const int pccardid, const int pcvv, const doub
   return -19;
 }
 
-/** \brief Placeholder for subclasses to override.
-    \see chargePreauthorized
+/** @brief Placeholder for subclasses to override.
+    @see chargePreauthorized
  */
 int CreditCardProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &)
 {
@@ -1656,8 +1656,8 @@ int CreditCardProcessor::doChargePreauthorized(const int pccardid, const int pcv
   return -19;
 }
 
-/** \brief Placeholder for subclasses to override.
-    \see testConfiguration
+/** @brief Placeholder for subclasses to override.
+    @see testConfiguration
  */
 int CreditCardProcessor::doTestConfiguration()
 {
@@ -1666,8 +1666,8 @@ int CreditCardProcessor::doTestConfiguration()
   return 0;	// assume that subclasses will override IFF they need to
 }
 
-/** \brief Placeholder for subclasses to override.
-    \see credit
+/** @brief Placeholder for subclasses to override.
+    @see credit
  */
 int CreditCardProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &)
 {
@@ -1679,8 +1679,8 @@ int CreditCardProcessor::doCredit(const int pccardid, const int pcvv, const doub
   return -19;
 }
 
-/** \brief Placeholder for subclasses to override.
-    \see   reversePreauthorized
+/** @brief Placeholder for subclasses to override.
+    @see   reversePreauthorized
   */
 int CreditCardProcessor::doReversePreauthorized(const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int pccpayid, ParameterList &/*pparams*/)
 {
@@ -1691,8 +1691,8 @@ int CreditCardProcessor::doReversePreauthorized(const double pamount, const int 
   return -19;
 }
 
-/** \brief Placeholder for subclasses to override.
-    \see   voidPrevious
+/** @brief Placeholder for subclasses to override.
+    @see   voidPrevious
  */
 int CreditCardProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &)
 {
@@ -1705,7 +1705,7 @@ int CreditCardProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
   return -19;
 }
 
-/** \brief Send an HTTP request to the configured credit card service and wait
+/** @brief Send an HTTP request to the configured credit card service and wait
            for its response.
 
     This method is intended to be called by subclasses of
@@ -1717,8 +1717,8 @@ int CreditCardProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
     It is the caller's responsibility to format an
     appropriate message and decode the response.
 
-    \param[in]  prequest  The string to send via HTTP
-    \param[out] presponse The string returned by the service
+    @param[in]  prequest  The string to send via HTTP
+    @param[out] presponse The string returned by the service
  */
 
 int CreditCardProcessor::sendViaHTTP(const QString &prequest,
@@ -1944,11 +1944,11 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 }
 
 
-/** \brief Insert into or update the ccpay table based on parameters extracted
+/** @brief Insert into or update the ccpay table based on parameters extracted
            from the credit card processing service' response to a transaction
            request.
 
-    \todo document the parameter names and expected values to help subclassers
+    @todo document the parameter names and expected values to help subclassers
 
  */
 int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
@@ -1993,41 +1993,41 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
     }
 
     sql =  "UPDATE ccpay SET"
-	   "<? if exists(\"fromcurr\") ?>"
-	   "      ccpay_amount=ROUND(currToCurr(<? value(\"fromcurr\") ?>,"
-	   "                                    <? value(\"tocurr\") ?>,"
-	   "                                    <? value(\"amount\") ?>,"
+	   "<? if exists('fromcurr') ?>"
+	   "      ccpay_amount=ROUND(currToCurr(<? value('fromcurr') ?>,"
+	   "                                    <? value('tocurr') ?>,"
+	   "                                    <? value('amount') ?>,"
 	   "                                    CURRENT_DATE), 2),"
-	   "       ccpay_curr_id=<? value(\"currid\") ?>,"
+	   "       ccpay_curr_id=<? value('currid') ?>,"
 	   "<? else ?>"
-	   "       ccpay_amount=ROUND(<? value(\"amount\") ?>, 2),"
-	   "       ccpay_curr_id=<? value(\"currid\") ?>,"
+	   "       ccpay_amount=ROUND(<? value('amount') ?>, 2),"
+	   "       ccpay_curr_id=<? value('currid') ?>,"
 	   "<? endif ?>"
-	   "       ccpay_auth=<? value(\"auth\") ?>,"
-	   "       ccpay_r_approved=<? value(\"approved\") ?>,"
-	   "       ccpay_r_avs=<? value(\"avs\") ?>,"
-	   "       ccpay_r_code=<? value(\"code\") ?>,"
-	   "       ccpay_r_error=<? value(\"error\") ?>,"
-	   "       ccpay_r_message=<? value(\"message\") ?>,"
-	   "       ccpay_r_ordernum=<? value(\"ordernum\") ?>,"
-	   "       ccpay_r_ref=<? value(\"ref\") ?>,"
-	   "<? if exists(\"shipping\") ?>"
-	   "       ccpay_r_shipping=<? value(\"shipping\") ?>,"
+	   "       ccpay_auth=<? value('auth') ?>,"
+	   "       ccpay_r_approved=<? value('approved') ?>,"
+	   "       ccpay_r_avs=<? value('avs') ?>,"
+	   "       ccpay_r_code=<? value('code') ?>,"
+	   "       ccpay_r_error=<? value('error') ?>,"
+	   "       ccpay_r_message=<? value('message') ?>,"
+	   "       ccpay_r_ordernum=<? value('ordernum') ?>,"
+	   "       ccpay_r_ref=<? value('ref') ?>,"
+	   "<? if exists('shipping') ?>"
+	   "       ccpay_r_shipping=<? value('shipping') ?>,"
 	   "<? endif ?>"
-	   "<? if exists(\"score\") ?>"
-	   "       ccpay_yp_r_score=<? value(\"score\") ?>,"
+	   "<? if exists('score') ?>"
+	   "       ccpay_yp_r_score=<? value('score') ?>,"
 	   "<? endif ?>"
-	   "<? if exists(\"tax\") ?>"
-	   "       ccpay_r_tax=<? value(\"tax\") ?>,"
+	   "<? if exists('tax') ?>"
+	   "       ccpay_r_tax=<? value('tax') ?>,"
 	   "<? endif ?>"
-	   "<? if exists(\"tdate\") ?>"
-	   "       ccpay_yp_r_tdate=<? value(\"tdate\") ?>,"
+	   "<? if exists('tdate') ?>"
+	   "       ccpay_yp_r_tdate=<? value('tdate') ?>,"
 	   "<? endif ?>"
-	   "<? if exists(\"time\") ?>"
-	   "       ccpay_yp_r_time=<? value(\"time\")?>,"
+	   "<? if exists('time') ?>"
+	   "       ccpay_yp_r_time=<? value('time')?>,"
 	   "<? endif ?>"
-	   "       ccpay_status=<? value(\"status\") ?>"
-	   " WHERE (ccpay_id=<? value(\"ccpay_id\") ?>);" ;
+	   "       ccpay_status=<? value('status') ?>"
+	   " WHERE (ccpay_id=<? value('ccpay_id') ?>);" ;
   }
   else
   {
@@ -2055,7 +2055,7 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
       QString maxs("SELECT MAX(COALESCE(ccpay_order_number_seq, -1)) + 1"
 		   "       AS next_seq "
 		   "  FROM ccpay "
-		   " WHERE (ccpay_order_number=<? value(\"ordernum\") ?>);");
+		   " WHERE (ccpay_order_number=<? value('ordernum') ?>);");
       MetaSQLQuery maxm(maxs);
       ccq = maxm.toQuery(pparams);
       if (ccq.first())
@@ -2078,39 +2078,39 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
 	   "    ccpay_r_code,    ccpay_r_error,"
 	   "    ccpay_r_message, ccpay_r_ordernum,"
 	   "    ccpay_r_ref,"
-	   "<? if exists(\"score\") ?>    ccpay_yp_r_score, <? endif ?>"
-	   "<? if exists(\"shipping\") ?> ccpay_r_shipping, <? endif ?>"
-	   "<? if exists(\"tax\") ?>      ccpay_r_tax,   <? endif ?>"
-	   "<? if exists(\"tdate\") ?>    ccpay_yp_r_tdate, <? endif ?>"
-	   "<? if exists(\"time\") ?>     ccpay_yp_r_time,  <? endif ?>"
+	   "<? if exists('score') ?>    ccpay_yp_r_score, <? endif ?>"
+	   "<? if exists('shipping') ?> ccpay_r_shipping, <? endif ?>"
+	   "<? if exists('tax') ?>      ccpay_r_tax,   <? endif ?>"
+	   "<? if exists('tdate') ?>    ccpay_yp_r_tdate, <? endif ?>"
+	   "<? if exists('time') ?>     ccpay_yp_r_time,  <? endif ?>"
 	   "    ccpay_status"
-	   ") SELECT <? value(\"ccpay_id\") ?>, ccard_id, cust_id,"
-	   "    <? value(\"type\") ?>,"
-	   "<? if exists(\"fromcurr\") ?>"
-	   "    ROUND(currToCurr(<? value(\"fromcurr\") ?>,"
-	   "                     <? value(\"tocurr\") ?>,"
-	   "                     <? value(\"amount\") ?>,CURRENT_DATE), 2),"
-	   "    <? value(\"tocurr\") ?>,"
+	   ") SELECT <? value('ccpay_id') ?>, ccard_id, cust_id,"
+	   "    <? value('type') ?>,"
+	   "<? if exists('fromcurr') ?>"
+	   "    ROUND(currToCurr(<? value('fromcurr') ?>,"
+	   "                     <? value('tocurr') ?>,"
+	   "                     <? value('amount') ?>,CURRENT_DATE), 2),"
+	   "    <? value('tocurr') ?>,"
 	   "<? else ?>"
-	   "    ROUND(<? value(\"amount\") ?>, 2),"
-	   "    <? value(\"currid\") ?>,"
+	   "    ROUND(<? value('amount') ?>, 2),"
+	   "    <? value('currid') ?>,"
 	   "<? endif ?>"
-	   "    <? value(\"auth\") ?>,     <? value(\"auth_charge\") ?>,"
-	   "    <? value(\"ordernum\") ?>,"
-	   "    COALESCE(<? value(\"next_seq\") ?>, 1),"
-	   "    <? value(\"approved\") ?>, <? value(\"avs\") ?>,"
-	   "    <? value(\"code\") ?>,     <? value(\"error\") ?>,"
-	   "    <? value(\"message\") ?>,  <? value(\"xactionid\") ?>,"
-	   "    <? value(\"ref\") ?>,"
-	   "<? if exists(\"score\") ?>    <? value(\"score\") ?>,   <? endif ?>"
-	   "<? if exists(\"shipping\") ?> <? value(\"shipping\") ?>,<? endif ?>"
-	   "<? if exists(\"tax\") ?>      <? value(\"tax\") ?>,     <? endif ?>"
-	   "<? if exists(\"tdate\") ?>    <? value(\"tdate\") ?>,   <? endif ?>"
-	   "<? if exists(\"time\") ?>     <? value(\"time\") ?>,    <? endif ?>"
-	   "    <? value(\"status\") ?>"
+	   "    <? value('auth') ?>,     <? value('auth_charge') ?>,"
+	   "    <? value('ordernum') ?>,"
+	   "    COALESCE(<? value('next_seq') ?>, 1),"
+	   "    <? value('approved') ?>, <? value('avs') ?>,"
+	   "    <? value('code') ?>,     <? value('error') ?>,"
+	   "    <? value('message') ?>,  <? value('xactionid') ?>,"
+	   "    <? value('ref') ?>,"
+	   "<? if exists('score') ?>    <? value('score') ?>,   <? endif ?>"
+	   "<? if exists('shipping') ?> <? value('shipping') ?>,<? endif ?>"
+	   "<? if exists('tax') ?>      <? value('tax') ?>,     <? endif ?>"
+	   "<? if exists('tdate') ?>    <? value('tdate') ?>,   <? endif ?>"
+	   "<? if exists('time') ?>     <? value('time') ?>,    <? endif ?>"
+	   "    <? value('status') ?>"
 	   "  FROM ccard, custinfo"
 	   "  WHERE ((ccard_cust_id=cust_id)"
-	   "    AND  (ccard_id=<? value(\"ccard_id\") ?>));";
+	   "    AND  (ccard_id=<? value('ccard_id') ?>));";
   }
 
   pparams.append("ccpay_id", pccpayid);
@@ -2128,7 +2128,7 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
   return 0;
 }
 
-/** \brief Return the default port expected by the subclass.
+/** @brief Return the default port expected by the subclass.
 
     This can differ depending on whether running in live or test mode.
     It is the subclass' responsibility to set both default ports.
@@ -2141,7 +2141,7 @@ int CreditCardProcessor::defaultPort(bool ptestmode)
     return _defaultLivePort;
 }
 
-/** \brief Return the default server expected by the subclass.
+/** @brief Return the default server expected by the subclass.
 
     This can differ depending on whether running in live or test mode.
     It is the subclass' responsibility to set both default servers.
@@ -2156,9 +2156,9 @@ QString CreditCardProcessor::defaultServer()
     return "";
 }
 
-/** \brief Reset error handling internal settings so previous transactions
+/** @brief Reset error handling internal settings so previous transactions
            don't interfere with new transactions.
-    \internal
+    @internal
  */
 void CreditCardProcessor::reset()
 {
@@ -2167,9 +2167,9 @@ void CreditCardProcessor::reset()
   _passedCvv = true;
 }
 
-/** \brief Handle fraud checking as determined by the system configuration.
+/** @brief Handle fraud checking as determined by the system configuration.
 
-    \internal
+    @internal
  */
 int CreditCardProcessor::fraudChecks()
 {
@@ -2208,9 +2208,9 @@ int CreditCardProcessor::fraudChecks()
   return returnValue;
 }
 
-/** \brief Print the CCReceipt report for a credit card transaction.
+/** @brief Print the CCReceipt report for a credit card transaction.
 
-    \param pccpayid The internal id of the transaction for which to print the
+    @param pccpayid The internal id of the transaction for which to print the
                     receipt
  */
 int CreditCardProcessor::printReceipt(const int pccpayid)
@@ -2267,18 +2267,18 @@ QString CreditCardProcessor::typeToCode(CCTransaction ptranstype)
   return QString::null;
 }
 
-/** \brief Convert between two %currencies.
+/** @brief Convert between two %currencies.
 
     This is slightly different than the version in the CurrDisplay
     widget because credit card processing has special error reporting
     needs.
 
-    \param pfrom   The source %currency
-    \param pto     The destination %currency
-    \param pamount The value of the transaction in the source %currency
-    \param[out] perror The CreditCardProcessor error code for a failed conversion
+    @param pfrom   The source %currency
+    @param pto     The destination %currency
+    @param pamount The value of the transaction in the source %currency
+    @param[out] perror The CreditCardProcessor error code for a failed conversion
 
-    \return The value of the transaction in the destination %currency
+    @return The value of the transaction in the destination %currency
  */
 double CreditCardProcessor::currToCurr(const int pfrom, const int pto, const double pamount, int *perror)
 {
@@ -2305,19 +2305,19 @@ double CreditCardProcessor::currToCurr(const int pfrom, const int pto, const dou
   return 0;
 }
 
-/** \brief Returns whether the subclass handles checks. */
+/** @brief Returns whether the subclass handles checks. */
 bool CreditCardProcessor::handlesChecks()
 {
   return false;
 }
 
-/** \brief Returns whether the subclass handles credit cards. */
+/** @brief Returns whether the subclass handles credit cards. */
 bool CreditCardProcessor::handlesCreditCards()
 {
   return false;
 }
 
-/** \brief Construct a valid URL from the information in the configuration.
+/** @brief Construct a valid URL from the information in the configuration.
   
     Handle the case where someone leaves off a piece of the URL when
     entering the basic configuration. Note that a lot of people are used
@@ -2326,13 +2326,13 @@ bool CreditCardProcessor::handlesCreditCards()
     If the %user did not enter values for the server or the port on the
     configuration, use the defaults provided by the service' subclass.
 
-    \param pserver   Use this server, or the defaultServer if blank
-    \param pport     Use this port, or the defaultPort if blank
-    \param pinclport Flag whether the port should be part of the constructed
+    @param pserver   Use this server, or the defaultServer if blank
+    @param pport     Use this port, or the defaultPort if blank
+    @param pinclport Flag whether the port should be part of the constructed
                      URL or not
 
-    \see defaultServer
-    \see defaultPort
+    @see defaultServer
+    @see defaultPort
 */
 QString CreditCardProcessor::buildURL(const QString pserver, const QString pport, const bool pinclport)
 {
@@ -2382,7 +2382,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
   return serverStr;
 }
 
-/** \brief Processes pre-authorization transactions.
+/** @brief Processes pre-authorization transactions.
 
     This version of authorize is intended for use by %scripts.
     Instead of passing all of the arguments in order, this method
@@ -2390,7 +2390,7 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
     on this object by name. Then the script can pass this object
     to 
     authorize(const int pccardid, const int pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid):
-    \code
+    @code
       var params = new Object;
       params.ccard_id = _ccardid;
       params.cvv      = _cvv.text;
@@ -2403,10 +2403,10 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
       else if (result.returnVal > 0)
         // handle warnings
       ...
-    \endcode
+    @endcode
     
-    \param pinput The parameter list to unpack and use to call authorize
-    \return A parameter list containing the output parameters, plus one
+    @param pinput The parameter list to unpack and use to call authorize
+    @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of authorize
  */
 // TODO: memory leak of poutput!
@@ -2559,7 +2559,7 @@ ParameterList CreditCardProcessor::authorize(const ParameterList &pinput)
   return *poutput;
 }
 
-/** \brief Processes charge transactions.
+/** @brief Processes charge transactions.
 
     This version of charge is intended for use by %scripts.
     Instead of passing all of the arguments in order, this method
@@ -2567,11 +2567,11 @@ ParameterList CreditCardProcessor::authorize(const ParameterList &pinput)
     on this object by name. Then the script can pass this object
     to charge.
     
-    \param pinput The parameter list to unpack and use to call charge
-    \return A parameter list containing the output parameters, plus one
+    @param pinput The parameter list to unpack and use to call charge
+    @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of charge
 
-    \see authorize(const ParameterList &pinput)
+    @see authorize(const ParameterList &pinput)
  */
 // TODO: memory leak of poutput!
 ParameterList CreditCardProcessor::charge(const ParameterList &pinput)
@@ -2723,7 +2723,7 @@ ParameterList CreditCardProcessor::charge(const ParameterList &pinput)
   return *poutput;
 }
 
-/** \brief Captures preauthorized transactions.
+/** @brief Captures preauthorized transactions.
 
     This version of chargePreauthorized is intended for use by %scripts.
     Instead of passing all of the arguments in order, this method
@@ -2731,11 +2731,11 @@ ParameterList CreditCardProcessor::charge(const ParameterList &pinput)
     on this object by name. Then the script can pass this object
     to chargePreauthorized.
     
-    \param pinput The parameter list to unpack and use to call chargePreauthorized
-    \return A parameter list containing the output parameters, plus one
+    @param pinput The parameter list to unpack and use to call chargePreauthorized
+    @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of chargePreauthorized
 
-    \see authorize(const ParameterList &pinput)
+    @see authorize(const ParameterList &pinput)
  */
 // TODO: memory leak of poutput!
 ParameterList CreditCardProcessor::chargePreauthorized(const ParameterList &pinput)
@@ -2822,7 +2822,7 @@ ParameterList CreditCardProcessor::chargePreauthorized(const ParameterList &pinp
   return *poutput;
 }
 
-/** \brief Processes credit transactions.
+/** @brief Processes credit transactions.
 
     This version of credit is intended for use by %scripts.
     Instead of passing all of the arguments in order, this method
@@ -2830,11 +2830,11 @@ ParameterList CreditCardProcessor::chargePreauthorized(const ParameterList &pinp
     on this object by name. Then the script can pass this object
     to credit.
     
-    \param pinput The parameter list to unpack and use to call credit
-    \return A parameter list containing the output parameters, plus one
+    @param pinput The parameter list to unpack and use to call credit
+    @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of credit
 
-    \see authorize(const ParameterList &pinput)
+    @see authorize(const ParameterList &pinput)
  */
 // TODO: memory leak of poutput!
 ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
@@ -2998,7 +2998,7 @@ ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
   return *poutput;
 }
 
-/** \brief Processes void transactions.
+/** @brief Processes void transactions.
 
     This version of voidPrevious is intended for use by %scripts.
     Instead of passing all of the arguments in order, this method
@@ -3006,11 +3006,11 @@ ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
     on this object by name. Then the script can pass this object
     to voidPrevious.
     
-    \param pinput The parameter list to unpack and use to call voidPrevious
-    \return A parameter list containing the output parameters, plus one
+    @param pinput The parameter list to unpack and use to call voidPrevious
+    @return A parameter list containing the output parameters, plus one
             called returnVal holding the return value of voidPrevious
 
-    \see authorize(const ParameterList &pinput)
+    @see authorize(const ParameterList &pinput)
  */
 // TODO: memory leak of poutput!
 ParameterList CreditCardProcessor::voidPrevious(const ParameterList &pinput)
