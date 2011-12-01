@@ -92,9 +92,10 @@ static bool   loadLocale()
         salespricescale = localeq.value("locale_salesprice_scale").toInt();
       if (!localeq.value("locale_uomratio_scale").toString().isEmpty())
         uomratioscale = localeq.value("locale_uomratio_scale").toInt();
+      if (!localeq.value("locale_weight_scale").toString().isEmpty())
+        weightscale = localeq.value("locale_weight_scale").toInt();
 
       // TODO: add locale_percent_scale
-      // TODO: add locale_weight_scale
     }
     else if (localeq.lastError().type() != QSqlError::NoError)
     {

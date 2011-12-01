@@ -38,6 +38,7 @@ sysLocale::sysLocale(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_salesPriceScale,SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_percentScale,   SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_buttonBox,      SIGNAL(accepted()),        this, SLOT(sSave()));
+  connect(_weightScale,    SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_uomRatioScale,  SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_warning,        SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
 
@@ -123,6 +124,7 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
       _costScale->setEnabled(FALSE);
       _qtyScale->setEnabled(FALSE);
       _qtyPerScale->setEnabled(FALSE);
+      _weightScale->setEnabled(FALSE);
       _uomRatioScale->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
       _buttonBox->clear();
@@ -180,7 +182,7 @@ void sysLocale::sSave()
                "  locale_extprice_scale, locale_cost_scale,"
                "  locale_qty_scale, locale_qtyper_scale,"
                "  locale_uomratio_scale, locale_percent_scale, "
-               "  locale_comments, "
+               "  locale_weight_scale, locale_comments, "
                "  locale_error_color, locale_warning_color,"
                "  locale_emphasis_color, locale_altemphasis_color,"
                "  locale_expired_color, locale_future_color) "
@@ -194,7 +196,7 @@ void sysLocale::sSave()
                "  :locale_extprice_scale, :locale_cost_scale,"
                "  :locale_qty_scale, :locale_qtyper_scale,"
                "  :locale_uomratio_scale, :local_percent_scale, "
-               "  :locale_comments,"
+               "  :locale_weight_scale, :locale_comments,"
                "  :locale_error_color, :locale_warning_color,"
                "  :locale_emphasis_color, :locale_altemphasis_color,"
                "  :locale_expired_color, :locale_future_color);" );
@@ -217,6 +219,7 @@ void sysLocale::sSave()
                 "    locale_cost_scale=:locale_cost_scale,"
                 "    locale_qty_scale=:locale_qty_scale,"
                 "    locale_qtyper_scale=:locale_qtyper_scale,"
+                "    locale_weight_scale=:locale_weight_scale,"
                 "    locale_uomratio_scale=:locale_uomratio_scale,"
                 "    locale_percent_scale=:locale_percent_scale,"
                 "    locale_comments=:locale_comments,"
@@ -240,6 +243,7 @@ void sysLocale::sSave()
   q.bindValue(":locale_cost_scale",        _costScale->text());
   q.bindValue(":locale_qty_scale",         _qtyScale->text());
   q.bindValue(":locale_qtyper_scale",      _qtyPerScale->text());
+  q.bindValue(":locale_weight_scale",      _weightScale->text());
   q.bindValue(":locale_uomratio_scale",    _uomRatioScale->text());
   q.bindValue(":locale_percent_scale",     _percentScale->text());
   q.bindValue(":locale_comments",          _comments->toPlainText());
@@ -359,6 +363,7 @@ void sysLocale::sUpdateSamples()
     _costSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _costScale->value()));
     _qtySample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _qtyScale->value()));
     _qtyPerSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _qtyPerScale->value()));
+    _weightSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _weightScale->value()));
     _uomRatioSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _uomRatioScale->value()));
     _percentSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _percentScale->value()));
   }
@@ -404,6 +409,7 @@ void sysLocale::populate()
     _costScale->setValue(popq.value("locale_cost_scale").toInt());
     _qtyScale->setValue(popq.value("locale_qty_scale").toInt());
     _qtyPerScale->setValue(popq.value("locale_qtyper_scale").toInt());
+    _weightScale->setValue(popq.value("locale_weight_scale").toInt());
     _uomRatioScale->setValue(popq.value("locale_uomratio_scale").toInt());
     _percentScale->setValue(popq.value("locale_percent_scale").toInt());
     _comments->setText(popq.value("locale_comments").toString());

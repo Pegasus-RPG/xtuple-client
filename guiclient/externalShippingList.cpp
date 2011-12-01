@@ -34,7 +34,7 @@ void externalShippingList::showEvent(QShowEvent *event)
     _ship->setColumn(tr("Package Type"),              100, Qt::AlignLeft, false, "billing_option");
     _ship->setColumn(tr("Tracking Number"),           100, Qt::AlignLeft, false, "tracking_number");
     _ship->setColumn(tr("Last Updated"),              100, Qt::AlignLeft, false, "last_updated");
-    _ship->setColumnFormat("weight", XSqlTableModel::Qty);
+    _ship->setColumnFormat("weight", XSqlTableModel::Weight);
     _ship->setColumnFormat("base_freight", XSqlTableModel::Curr);
     _ship->setColumnFormat("total_freight", XSqlTableModel::Curr);
     _ship->select();

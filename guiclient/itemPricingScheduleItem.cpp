@@ -62,7 +62,7 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
 
   _qtyBreak->setValidator(omfgThis->qtyVal());
   _qtyBreakCat->setValidator(omfgThis->qtyVal());
-  _qtyBreakFreight->setValidator(omfgThis->qtyVal());
+  _qtyBreakFreight->setValidator(omfgThis->weightVal());
   _discount->setValidator(new XDoubleValidator(-999, 999, decimalPlaces("percent"), this));
   _fixedAmtDiscount->setValidator(omfgThis->negMoneyVal());
   _pricingRatio->setPrecision(omfgThis->percentVal());
