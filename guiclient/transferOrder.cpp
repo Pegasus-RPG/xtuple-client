@@ -353,6 +353,10 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
 
     _status->setCurrentIndex(0);
 
+    // TODO: Why don't the constructor or setId earlier in set() handle this?
+    getWhsInfo(_srcWhs->id(), _srcWhs);
+    getWhsInfo(_dstWhs->id(), _dstWhs);
+
     _captive = FALSE;
     _edit->setEnabled(FALSE);
     _action->setEnabled(FALSE);
@@ -416,10 +420,6 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
   param = pParams.value("captive", &valid);
   if (valid)
     _captive = true;
-
-  // TODO: Why don't the constructor or setId earlier in set() handle this?
-  getWhsInfo(_srcWhs->id(), _srcWhs);
-  getWhsInfo(_dstWhs->id(), _dstWhs);
 
   return NoError;
 }
