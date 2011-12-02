@@ -212,9 +212,9 @@ enum SetResponse employee::set(const ParameterList &pParams)
     {
       connect(_groups, SIGNAL(valid(bool)), _editGroup,   SLOT(setEnabled(bool)));
     }
-    if (empGroup::userHasPriv(cView))
-      connect(_groups, SIGNAL(valid(bool)), _viewGroup,   SLOT(setEnabled(bool)));
   }
+  if (empGroup::userHasPriv(cView))
+    connect(_groups, SIGNAL(valid(bool)), _viewGroup,   SLOT(setEnabled(bool)));
 
   _code->setEnabled(editing);
   _number->setEnabled(editing);
