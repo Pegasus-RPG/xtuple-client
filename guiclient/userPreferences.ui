@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>499</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -384,10 +384,13 @@ to be bound by its terms.</comment>
             <string>Interface Options</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="spacing">
+             <number>12</number>
+            </property>
             <item>
              <widget class="QRadioButton" name="_interfaceWorkspace">
               <property name="text">
-               <string>Show windows inside workspace</string>
+               <string>Tabbed Windows</string>
               </property>
               <property name="checked">
                <bool>false</bool>
@@ -397,7 +400,7 @@ to be bound by its terms.</comment>
             <item>
              <widget class="QRadioButton" name="_interfaceTopLevel">
               <property name="text">
-               <string>Show windows as free-floating</string>
+               <string>Free Floating Windows</string>
               </property>
               <property name="checked">
                <bool>true</bool>

@@ -112,8 +112,6 @@ class menuSystem : public QObject
 
     QMenu *geometryMenu;
 
-    Action *cascade;
-    Action *tile;
     Action *closeActive;
     Action *closeAll;
     Action *_rememberPos;

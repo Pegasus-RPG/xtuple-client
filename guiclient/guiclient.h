@@ -309,6 +309,8 @@ class GUIClient : public QMainWindow
 
     void sIdleTimeout();
 
+    void sFocusChanged(QWidget* old, QWidget* now);
+
     void sClearErrorMessages();
     void sNewErrorMessage();
     void setWindowTitle();

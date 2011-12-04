@@ -100,7 +100,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
   errorLogListener::initialize();
 
-  cascade = tile = closeActive = closeAll = _rememberPos = _rememberSize = 0;
   _lastActive      = 0;
   geometryMenu     = 0;
 
@@ -122,10 +121,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 //  Window
   // TODO: windowMenu->setCheckable(TRUE);
 
-  cascade = new Action( parent, "window.cascade", tr("&Cascade"), parent->workspace(), SLOT(cascadeSubWindows()), windowMenu, true);
-
-  tile = new Action( parent, "window.tile", tr("&Tile"), parent->workspace(), SLOT(tileSubWindows()), windowMenu, true);
-
   closeActive = new Action( parent, "window.closeActiveWindow", tr("Close &Active Window"), this, SLOT(sCloseActive()), windowMenu, true);
 
   closeAll = new Action( parent, "window.closeAllWindows", tr("Close A&ll Windows"), this, SLOT(sCloseAll()), windowMenu, true);
@@ -139,9 +134,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   QAction * m = parent->menuBar()->addMenu(windowMenu );
   if(m)
     m->setText(tr("&Window"));
-  connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(sPrepareWindowMenu()));
-  connect(windowMenu, SIGNAL(aboutToHide()), this, SLOT(sHideWindowMenu()));
-  
 
   actionProperties acts[] = {
 
@@ -292,19 +284,12 @@ void menuSystem::sPrepareWindowMenu()
 {
   windowMenu->clear();
 
-  if(!omfgThis->showTopLevel())
-  {
-    windowMenu->addAction(cascade);
-    windowMenu->addAction(tile);
-  }
   windowMenu->addAction(closeActive);
   windowMenu->addAction(closeAll);
 
   QWidgetList windows = omfgThis->windowList();
 
   bool b = !windows.isEmpty();
-  cascade->setEnabled(b);
-  tile->setEnabled(b);
   closeActive->setEnabled(b);
   closeAll->setEnabled(b);
 
@@ -352,8 +337,6 @@ void menuSystem::sPrepareWindowMenu()
 
 void menuSystem::sHideWindowMenu()
 {
-  cascade->setEnabled(true);
-  tile->setEnabled(true);
   closeActive->setEnabled(true);
   closeAll->setEnabled(true);
 }

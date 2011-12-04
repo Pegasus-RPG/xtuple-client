@@ -52,6 +52,7 @@ void XComboBox::init()
   setAllowNull(false);
   _nullStr  = "";
   _label    = 0;
+  setMaximumWidth(200);
 
   _mapper = new XDataWidgetMapper(this);
 

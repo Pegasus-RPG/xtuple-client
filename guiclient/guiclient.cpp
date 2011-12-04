@@ -414,6 +414,12 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _systemFont = new QFont(qApp->font());
 
   _workspace = new QMdiArea();
+  _workspace->setViewMode(QMdiArea::TabbedView);
+#if defined Q_WS_MACX
+  _workspace->setDocumentMode(true);
+#else
+  _workspace->setTabShape(QTabWidget::Triangular)
+#endif
   setCentralWidget(_workspace);
   _workspace->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   _workspace->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -1741,6 +1747,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     QWidget * fw = w->focusWidget();
     w->setAttribute(Qt::WA_DeleteOnClose);
     QMdiSubWindow *win = _workspace->addSubWindow(w);
+    win->setWindowState(Qt::WindowMaximized);
     connect(w, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
     QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
@@ -1822,6 +1829,18 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 void GUIClient::setCentralWidget(QWidget * widget)
 {
   QMainWindow::setCentralWidget(widget);
+}
+
+void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
+ {
+   QWidget * thisActive = workspace()->activeSubWindow();
+   if(omfgThis->showTopLevel())
+     thisActive = qApp->activeWindow();
+   if(thisActive == this)
+     return;
+   if(thisActive && thisActive->inherits("QMessageBox"))
+     return;
+   _activeWindow = thisActive;
 }
 
 QWidget * GUIClient::myActiveWindow()
