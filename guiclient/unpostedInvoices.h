@@ -12,17 +12,14 @@
 #define UNPOSTEDINVOICES_H
 
 #include "guiclient.h"
-#include "xwidget.h"
-#include <parameter.h>
-#include "ui_unpostedInvoices.h"
+#include "display.h"
 
-class unpostedInvoices : public XWidget, public Ui::unpostedInvoices
+class unpostedInvoices : public display
 {
     Q_OBJECT
 
 public:
     unpostedInvoices(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~unpostedInvoices();
     virtual bool checkSitePrivs(int invcid);
 
 public slots:
@@ -32,11 +29,8 @@ public slots:
     virtual void sDelete();
     virtual void sPrint();
     virtual void sPost();
-    virtual void sPopulateMenu( QMenu * pMenu );
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
     virtual void sFillList();
-
-protected slots:
-    virtual void languageChange();
 
 };
 

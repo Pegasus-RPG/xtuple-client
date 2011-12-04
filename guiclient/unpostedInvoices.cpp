@@ -28,74 +28,34 @@
 #include "distributeInventory.h"
 
 unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+    : display(parent, "unpostedInvoices", fl)
 {
-  setupUi(this);
+  setWindowTitle(tr("Unposted invoices"));
+  setMetaSQLOptions("invoices", "detail");
+  setNewVisible(true);
 
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_invchead, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  //connect(list(), SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _invchead->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft,   true,  "invchead_invcnumber" );
-  _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "invchead_printed" );
-  _invchead->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft,   true,  "invchead_ordernumber" );
-  _invchead->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name" );
-  _invchead->addColumn(tr("Ship-to"),   100,          Qt::AlignLeft,   false,  "invchead_shipto_name" );
-  _invchead->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter, true,  "invchead_invcdate" );
-  _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, true,  "invchead_shipdate" );
-  _invchead->addColumn(tr("G/L Dist Date"),_dateColumn,Qt::AlignCenter, true,  "gldistdate" );
-  _invchead->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "isRecurring" );
-  _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, false, "invchead_shipdate" );
-  _invchead->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignCenter, false, "invchead_ponumber" );
-  _invchead->addColumn(tr("Total Amount"), _bigMoneyColumn, Qt::AlignRight, true, "extprice" );
-  _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  list()->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft,   true,  "invchead_invcnumber" );
+  list()->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "invchead_printed" );
+  list()->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft,   true,  "invchead_ordernumber" );
+  list()->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name" );
+  list()->addColumn(tr("Ship-to"),   100,          Qt::AlignLeft,   false,  "invchead_shipto_name" );
+  list()->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter, true,  "invchead_invcdate" );
+  list()->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, true,  "invchead_shipdate" );
+  list()->addColumn(tr("G/L Dist Date"),_dateColumn,Qt::AlignCenter, true,  "gldistdate" );
+  list()->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "isRecurring" );
+  list()->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, false, "invchead_shipdate" );
+  list()->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignCenter, false, "invchead_ponumber" );
+  list()->addColumn(tr("Total Amount"), _bigMoneyColumn, Qt::AlignRight, true, "extprice" );
+  list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (! _privileges->check("ChangeARInvcDistDate"))
-    _invchead->hideColumn(7);
-
-  if (_privileges->check("MaintainMiscInvoices"))
-  {
-    _new->setEnabled(TRUE);
-    connect(_invchead, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_invchead, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_invchead, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  }
-  else
-    connect(_invchead, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-
-  if (_privileges->check("MaintainMiscInvoices") || _privileges->check("ViewMiscInvoices"))
-    connect(_invchead, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-
-  if (_privileges->check("PrintInvoices"))
-    connect(_invchead, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-  
-  if (_privileges->check("PostMiscInvoices"))
-  {
-    connect(_invchead, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
-    connect(_invchead, SIGNAL(valid(bool)), _printJournal, SLOT(setEnabled(bool)));
-  }
+    list()->hideColumn(7);
 
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillList()));
 
-  if (_preferences->boolean("XCheckBox/forgetful"))
-    _printJournal->setChecked(true);
-
   sFillList();
-}
-
-unpostedInvoices::~unpostedInvoices()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-void unpostedInvoices::languageChange()
-{
-    retranslateUi(this);
 }
 
 void unpostedInvoices::sNew()
@@ -105,7 +65,7 @@ void unpostedInvoices::sNew()
 
 void unpostedInvoices::sEdit()
 {
-  QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
         invoice::editInvoice(((XTreeWidgetItem*)(selected[i]))->id());
@@ -114,7 +74,7 @@ void unpostedInvoices::sEdit()
 
 void unpostedInvoices::sView()
 {
-  QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
         invoice::viewInvoice(((XTreeWidgetItem*)(selected[i]))->id());
@@ -129,7 +89,7 @@ void unpostedInvoices::sDelete()
   {
     q.prepare("SELECT deleteInvoice(:invchead_id) AS result;");
 
-    QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
+    QList<XTreeWidgetItem*> selected = list()->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
@@ -159,7 +119,7 @@ void unpostedInvoices::sDelete()
 
 void unpostedInvoices::sPrint()
 {
-  QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
   printInvoice newdlg(this, "", TRUE);
 
   for (int i = 0; i < selected.size(); i++)
@@ -239,7 +199,7 @@ void unpostedInvoices::sPost()
   setDate.prepare("UPDATE invchead SET invchead_gldistdate=:distdate "
 		  "WHERE invchead_id=:invchead_id;");
 
-  QList<XTreeWidgetItem*> selected = _invchead->selectedItems();
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
   QList<XTreeWidgetItem*> triedToClosed;
 
   for (int i = 0; i < selected.size(); i++)
@@ -351,14 +311,14 @@ void unpostedInvoices::sPost()
     if (triedToClosed.size() > 0)
     {
       failedPostList newdlg(this, "", true);
-      newdlg.sSetList(triedToClosed, _invchead->headerItem(), _invchead->header());
+      newdlg.sSetList(triedToClosed, list()->headerItem(), list()->header());
       tryagain = (newdlg.exec() == XDialog::Accepted);
       selected = triedToClosed;
       triedToClosed.clear();
       }
     }
   } while (tryagain);
-
+/*
   if (_printJournal->isChecked())
   {
     ParameterList params;
@@ -384,11 +344,11 @@ void unpostedInvoices::sPost()
     else
       report.reportError(this);
   }
-
+*/
   omfgThis->sInvoicesUpdated(-1, TRUE);
 }
 
-void unpostedInvoices::sPopulateMenu(QMenu *pMenu)
+void unpostedInvoices::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 {
   QAction *menuItem;
 
@@ -415,20 +375,6 @@ void unpostedInvoices::sPopulateMenu(QMenu *pMenu)
     menuItem->setEnabled(false);
 }
 
-void unpostedInvoices::sFillList()
-{
-  MetaSQLQuery mql = mqlLoad("invoices", "detail");
-  ParameterList params;
-  params.append("unpostedOnly");
-  q = mql.toQuery(params);
-  _invchead->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
 bool unpostedInvoices::checkSitePrivs(int invcid)
 {
   if (_preferences->boolean("selectedSites"))
@@ -449,4 +395,11 @@ bool unpostedInvoices::checkSitePrivs(int invcid)
     }
   }
   return true;
+}
+
+void unpostedInvoices::sFillList()
+{
+  ParameterList params;
+  params.append("unpostedOnly");
+  display::sFillList(params, true);
 }

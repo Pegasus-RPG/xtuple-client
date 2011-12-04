@@ -557,7 +557,6 @@ FORMS =   absoluteCalendarItem.ui               \
           unpostedCreditMemos.ui                \
           unpostedGLTransactions.ui             \
           unpostedGlSeries.ui                   \
-          unpostedInvoices.ui                   \
           unpostedPoReceipts.ui                 \
           unpostedPurchaseOrders.ui             \
           uom.ui                                \
