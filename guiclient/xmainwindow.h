@@ -34,7 +34,7 @@ class XMainWindow : public QMainWindow
     Q_INVOKABLE QAction *action() const;
 
     Q_INVOKABLE bool forceFloat() { return _forceFloat; }
-    Q_INVOKABLE bool setForceFloat(bool forceFloat) { _forceFloat = forceFloat; }
+    Q_INVOKABLE void setForceFloat(bool forceFloat) { _forceFloat = forceFloat; }
 
   public slots:
     virtual enum SetResponse set(const ParameterList &);
