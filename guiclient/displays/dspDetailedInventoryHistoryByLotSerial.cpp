@@ -20,6 +20,7 @@
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
 #include "countTag.h"
+#include "parameterwidget.h"
 
 dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspDetailedInventoryHistoryByLotSerial", fl)
@@ -30,18 +31,38 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   setReportName("DetailedInventoryHistoryByLotSerial");
   setMetaSQLOptions("detailedInventoryHistory", "detail");
   setUseAltId(true);
+  setParameterWidgetVisible(true);
 
   connect(_selected, SIGNAL(clicked()), this, SLOT(sSelect()));
   connect(_pattern, SIGNAL(clicked()), this, SLOT(sSelect()));
 
-  _transType->append(cTransAll,       tr("All Transactions")       );
-  _transType->append(cTransReceipts,  tr("Receipts")               );
-  _transType->append(cTransIssues,    tr("Issues")                 );
-  _transType->append(cTransShipments, tr("Shipments")              );
-  _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
-  _transType->append(cTransTransfers, tr("Transfers")              );
-  _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentIndex(0);
+  QString qryTransType = QString("SELECT %1 AS id, '%8' AS type  UNION "
+                                 "SELECT %2 AS id, '%9' AS type  UNION "
+                                 "SELECT %3 AS id, '%10' AS type  UNION "
+                                 "SELECT %4 AS id, '%11' AS type  UNION "
+                                 "SELECT %5 AS id, '%12' AS type  UNION "
+                                 "SELECT %6 AS id, '%13' AS type  UNION "
+                                 "SELECT %7 AS id, '%14' AS type;")
+      .arg(cTransAll)
+      .arg(cTransReceipts)
+      .arg(cTransIssues)
+      .arg(cTransShipments)
+      .arg(cTransAdjCounts)
+      .arg(cTransTransfers)
+      .arg(cTransScraps)
+      .arg(tr("All Transactions"))
+      .arg(tr("Receipts"))
+      .arg(tr("Issues") )
+      .arg(tr("Shipments"))
+      .arg(tr("Adjustments and Counts"))
+      .arg(tr("Transfers"))
+      .arg(tr("Scraps") );
+
+  QString qryTrace = QString("SELECT 0 AS id, '%1' AS type  "
+                             "UNION "
+                             "SELECT 1 AS id, '%2' AS type; ")
+                             .arg(tr("Forward"))
+                             .arg(tr("Backward"));
 
   list()->addColumn(tr("Site"),         _whsColumn,          Qt::AlignCenter, true,  "lshist_warehous_code" );
   list()->addColumn(tr("Date"),         (_dateColumn + 30),  Qt::AlignRight,  true,  "lshist_transdate"  );
@@ -54,6 +75,13 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   list()->addColumn(tr("Trans-Qty"),    _qtyColumn,          Qt::AlignRight,  true,  "lshist_transqty"  );
   list()->addColumn(tr("Qty. Before"),  _qtyColumn,          Qt::AlignRight,  true,  "lshist_qty_before"  );
   list()->addColumn(tr("Qty. After"),   _qtyColumn,          Qt::AlignRight,  true,  "lshist_qty_after"  );
+
+  parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehouseid", ParameterWidget::Site);
+  parameterWidget()->appendComboBox(tr("Transaction Type"), "transType", qryTransType);
+  parameterWidget()->appendComboBox(tr("Multi-Level Trace"), "traceId", qryTrace);
 }
 
 void dspDetailedInventoryHistoryByLotSerial::languageChange()
@@ -143,26 +171,8 @@ void dspDetailedInventoryHistoryByLotSerial::sSelect()
 
 bool dspDetailedInventoryHistoryByLotSerial::setParams(ParameterList &params)
 {
-  QString trace;
-
-  if (_dateGroup->isChecked())
-  {
-    if (!_dates->startDate().isValid())
-    {
-      QMessageBox::critical( this, tr("Enter Start Date"),
-                             tr("Please enter a valid Start Date.") );
-      _dates->setFocus();
-      return false;
-    }
-
-    if (!_dates->endDate().isValid())
-    {
-      QMessageBox::critical( this, tr("Enter End Date"),
-                             tr("Please enter a valid End Date.") );
-      _dates->setFocus();
-      return false;
-    }
-  }
+  QString trace = "N";
+  params = parameterWidget()->parameters();
 
   if ( ((_selected->isChecked() && _lotSerial->number().trimmed().length() == 0)
      || (_pattern->isChecked() && _lotSerialPattern->text().trimmed().length() == 0))
@@ -175,23 +185,22 @@ bool dspDetailedInventoryHistoryByLotSerial::setParams(ParameterList &params)
     return false;
   }
 
-  if (_traceGroup->isChecked())
-  {
-    if (_forward->isChecked())
-      trace="F";
-    else
-      trace="B";
-  }
-  else
-    trace="N";
+  bool valid;
+  QVariant param;
 
-  if (_dateGroup->isChecked())
-    _dates->appendValue(params);
+  param = params.value("traceId", &valid);
+  if (valid)
+  {
+    int traceid = param.toInt();
+
+    if (traceid)
+      trace = "B";
+    else
+      trace = "F";
+  }
+
   if (_item->isValid())
     params.append("itemid", _item->id());
-  if (_warehouse->isSelected())
-    params.append("warehouseid", _warehouse->id());
-  params.append("transType", _transType->id());
   params.append("trace", trace);
   if (_selected->isChecked())
   {
