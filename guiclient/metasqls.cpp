@@ -113,22 +113,15 @@ void metasqls::sDelete()
 
 void metasqls::sEdit()
 {
-#ifdef Q_WS_MAC
-  if (_preferences->value("InterfaceWindowOption") == "Workspace")
-  {
-    QMessageBox::critical( this, tr("Interface Option is Invalid"),
-                          tr("<p>The embedded MetaSQL editor "
-                             "is only available when user preferences "
-                             "are set to show windows as free-floating.") );
-    return;
-  }
-#endif
-
   MQLEdit *newdlg = new MQLEdit(0);
   newdlg->fileDatabaseOpen(_list->id());
   newdlg->setReadOnly(! userHasPriv(cEdit) && userHasPriv(cView));
   newdlg->forceTestMode(! _privileges->check("ExecuteMetaSQL"));
+#ifndef Q_WS_MAC
+  omfgThis->handleNewWindow(newdlg, Qt::NonModal, true);
+#else
   omfgThis->handleNewWindow(newdlg);
+#endif
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 

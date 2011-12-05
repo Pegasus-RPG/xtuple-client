@@ -33,6 +33,9 @@ class XMainWindow : public QMainWindow
     Q_INVOKABLE virtual ParameterList get() const;
     Q_INVOKABLE QAction *action() const;
 
+    Q_INVOKABLE bool forceFloat() { return _forceFloat; }
+    Q_INVOKABLE bool setForceFloat(bool forceFloat) { _forceFloat = forceFloat; }
+
   public slots:
     virtual enum SetResponse set(const ParameterList &);
 
@@ -53,6 +56,8 @@ class XMainWindow : public QMainWindow
 
     ParameterList _lastSetParams;
     void loadScriptEngine();
+
+    bool _forceFloat;
 
   private slots:
     void showMe(bool);

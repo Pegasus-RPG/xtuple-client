@@ -62,6 +62,7 @@ XMainWindow::XMainWindow(QWidget * parent, Qt::WindowFlags flags)
   _private->_action->setText(windowTitle());
   _private->_action->setCheckable(true);
   connect(_private->_action, SIGNAL(triggered(bool)), this, SLOT(showMe(bool)));
+  _forceFloat=false;
 }
 
 XMainWindow::XMainWindow(QWidget * parent, const char * name, Qt::WindowFlags flags)
@@ -77,6 +78,7 @@ XMainWindow::XMainWindow(QWidget * parent, const char * name, Qt::WindowFlags fl
   _private->_action->setText(windowTitle());
   _private->_action->setCheckable(true);
   connect(_private->_action, SIGNAL(triggered(bool)), this, SLOT(showMe(bool)));
+  _forceFloat = false;
 }
 
 XMainWindow::~XMainWindow()
@@ -114,7 +116,7 @@ void XMainWindow::closeEvent(QCloseEvent *event)
   {
     QString objName = objectName();
     xtsettingsSetValue(objName + "/geometry/size", size());
-    if(omfgThis->showTopLevel() || isModal())
+    if(omfgThis->showTopLevel() || isModal() || forceFloat())
       xtsettingsSetValue(objName + "/geometry/pos", pos());
     else
       xtsettingsSetValue(objName + "/geometry/pos", parentWidget()->pos());
@@ -140,7 +142,7 @@ void XMainWindow::showEvent(QShowEvent *event)
       resize(lsize);
 
     setAttribute(Qt::WA_DeleteOnClose);
-    if(omfgThis->showTopLevel() || isModal())
+    if(omfgThis->showTopLevel() || isModal() || forceFloat())
     {
       omfgThis->_windowList.append(this);
       statusBar()->show();

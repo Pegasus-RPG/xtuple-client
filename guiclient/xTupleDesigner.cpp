@@ -138,6 +138,8 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   _propinspwindow = 0;
   _slotedwindow = 0;
 
+  setForceFloat(true);
+
   if(!_formeditor)
   {
     _formeditor = QDesignerComponents::createFormEditor(omfgThis);
@@ -200,6 +202,11 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
 #ifndef Q_WS_MAC
   _widgetwindow->setMenuBar(_menubar);
   _widgetwindow->action()->setVisible(false);
+#else
+  _widgetwindow->setForceFloat(true);
+  _objinspwindow->setForceFloat(true);
+  _propinspwindow->setForceFloat(true);
+  _slotedwindow->setForceFloat(true);
 #endif
   //_widgetwindow->addToolBar(m_fileToolBar);
   //_widgetwindow->addToolBar(m_editToolBar);
@@ -240,7 +247,11 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   if (_designer)
   {
     _designer->setObjectName("_designer");
+#ifdef Q_WS_MAC
+    omfgThis->handleNewWindow(_designer, Qt::NonModal, true);
+#else
     omfgThis->handleNewWindow(_designer);
+#endif
   }
 }
 

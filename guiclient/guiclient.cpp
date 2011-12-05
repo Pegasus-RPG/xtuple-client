@@ -1679,7 +1679,7 @@ bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
   return QObject::eventFilter(obj, event);
 }
 
-void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
+void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m, bool forceFloat)
 {
   // TO DO:  This function should be replaced by a centralized openWindow function
   // used by toolbox, guiclient interface, and core windows
@@ -1731,7 +1731,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
 
   bool wIsModal = w->isModal();
   _windowList.append(w);
-  if(_showTopLevel || wIsModal)
+  if(_showTopLevel || wIsModal || forceFloat)
   {
     w->setAttribute(Qt::WA_DeleteOnClose);
     QMainWindow *mw = qobject_cast<QMainWindow*>(w);

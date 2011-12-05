@@ -209,7 +209,7 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE QWidgetList windowList();
     Q_INVOKABLE void populateCustomMenu(QMenu*, const QString &);
 
-    Q_INVOKABLE void handleNewWindow(QWidget *, Qt::WindowModality = Qt::NonModal);
+    Q_INVOKABLE void handleNewWindow(QWidget *, Qt::WindowModality = Qt::NonModal, bool forceFloat = false);
     Q_INVOKABLE QMenuBar *menuBar();
 
     // Used by scripting
