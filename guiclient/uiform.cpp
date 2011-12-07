@@ -117,10 +117,6 @@ void uiform::setMode(const int pmode)
       _enabled->setEnabled(true);
       _close->setText(tr("&Cancel"));
       _save->show();
-      if (pmode == cNew)
-        _name->setFocus();
-      else
-        _save->setFocus();
       break;
 
     case cView:
@@ -132,7 +128,6 @@ void uiform::setMode(const int pmode)
       _enabled->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
-      _close->setFocus();
       break;
   }
   _mode = pmode;

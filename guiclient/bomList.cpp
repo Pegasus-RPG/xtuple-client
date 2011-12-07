@@ -53,8 +53,6 @@ bomList::bomList(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   sFillList(-1, FALSE);
-
-  _searchFor->setFocus();
 }
 
 bomList::~bomList()

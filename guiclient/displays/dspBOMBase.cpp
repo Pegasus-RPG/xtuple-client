@@ -34,7 +34,6 @@ dspBOMBase::dspBOMBase(QWidget* parent, const char* name, Qt::WFlags fl)
   _effectiveDaysLit->setEnabled(_showFuture->isChecked());
   _effectiveDays->setEnabled(_showFuture->isChecked());
 
-  _item->setFocus();
   _revision->setEnabled(false);
   _revision->setMode(RevisionLineEdit::View);
   _revision->setType("BOM");

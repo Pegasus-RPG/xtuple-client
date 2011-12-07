@@ -49,8 +49,6 @@ dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char*, Q
   list()->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter,true, "bomitem_expires");
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList()));
-
-  _item->setFocus();
 }
 
 void dspSingleLevelWhereUsed::languageChange()

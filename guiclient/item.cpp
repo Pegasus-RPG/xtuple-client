@@ -295,8 +295,6 @@ enum SetResponse item::set(const ParameterList &pParams)
       connect(_itemtrans, SIGNAL(valid(bool)), _deleteTransform, SLOT(setEnabled(bool)));
       connect(_itemtax, SIGNAL(valid(bool)), _itemtaxEdit, SLOT(setEnabled(bool)));
       connect(_itemtax, SIGNAL(valid(bool)), _itemtaxDelete, SLOT(setEnabled(bool)));
-
-      _itemNumber->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -375,8 +373,6 @@ enum SetResponse item::set(const ParameterList &pParams)
       disconnect(_itemtrans, SIGNAL(valid(bool)), _deleteTransform, SLOT(setEnabled(bool)));
 
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

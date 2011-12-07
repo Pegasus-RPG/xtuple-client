@@ -45,8 +45,6 @@ dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char*, Qt::WFl
   list()->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomwork_effective");
   list()->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomwork_expires");
   list()->setPopulateLinear();
-
-  _item->setFocus();
 }
 
 void dspIndentedWhereUsed::languageChange()

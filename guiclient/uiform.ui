@@ -164,19 +164,16 @@ to be bound by its terms.</comment>
           <number>5</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_close">
-           <property name="text">
-            <string>&amp;Cancel</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="_save">
            <property name="text">
             <string>&amp;Save</string>
            </property>
-           <property name="default">
-            <bool>true</bool>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_close">
+           <property name="text">
+            <string>&amp;Cancel</string>
            </property>
           </widget>
          </item>
@@ -405,6 +402,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -431,7 +429,6 @@ to be bound by its terms.</comment>
   <tabstop>_cmdEdit</tabstop>
   <tabstop>_cmdNew</tabstop>
   <tabstop>_cmdDelete</tabstop>
-  <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>

@@ -117,7 +117,6 @@ enum SetResponse BOM::set(const ParameterList &pParams)
     {
       _mode = cNew;
       _new->setEnabled(FALSE);
-      _item->setFocus();
       _revision->setId(-1);
     }
     else if (param.toString() == "edit")
