@@ -417,8 +417,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _workspace->setViewMode(QMdiArea::TabbedView);
 #if defined Q_WS_MACX
   _workspace->setDocumentMode(true);
-#else
-  _workspace->setTabShape(QTabWidget::Triangular);
 #endif
   setCentralWidget(_workspace);
   _workspace->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
