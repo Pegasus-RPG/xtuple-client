@@ -154,8 +154,9 @@ void group::reject()
     {
       case QMessageBox::Yes:
         sSave();
-        endtxn.exec("COMMIT;");
-        break;
+        return;
+//        endtxn.exec("COMMIT;");
+//        break;
 
       case QMessageBox::No:
         endtxn.exec("ROLLBACK;");
