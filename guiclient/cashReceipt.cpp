@@ -372,7 +372,8 @@ void cashReceipt::sApplyLineBalance()
     q.bindValue(":cashrcpt_id", _cashrcptid);
     q.bindValue(":cashrcptitem_aropen_id", cursor->id());
     if (_aropen->rawValue("doctype").toString() == "I" ||
-        _aropen->rawValue("doctype").toString() == "D")
+        _aropen->rawValue("doctype").toString() == "D"||
+        _aropen->rawValue("doctype").toString() == "C")
       q.bindValue(":amount", _received->localValue());
     else
     {
