@@ -188,10 +188,10 @@ void userPreferences::sPopulate()
     _warehouse->setId(_pref->value("PreferredWarehouse").toInt());
   }
 
-  if (_pref->value("InterfaceWindowOption") == "Workspace")
-    _interfaceWorkspace->setChecked(true);
-  else
+  if (_pref->value("InterfaceWindowOption") == "TopLevel")
     _interfaceTopLevel->setChecked(true);
+  else
+    _interfaceWorkspace->setChecked(true);
     
   if (_pref->boolean("CopyListsPlainText"))
     _plainText->setChecked(true);

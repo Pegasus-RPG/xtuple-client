@@ -371,9 +371,9 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _splash->showMessage(tr("Initializing Internal Data"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
 
-  _showTopLevel = true;
-  if(_preferences->value("InterfaceWindowOption") == "Workspace")
-    _showTopLevel = false;
+  _showTopLevel = false;
+  if(_preferences->value("InterfaceWindowOption") == "TopLevel")
+    _showTopLevel = true;
 
   __itemListSerial = 0;
   __custListSerial = 0;
