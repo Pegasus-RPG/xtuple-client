@@ -70,6 +70,7 @@ crmaccountMerge::crmaccountMerge(QWidget* parent, const char* name, Qt::WFlags f
   setDefaultProperty("XComboBox", "text", SIGNAL(currentIndexChanged(QString)));
 
   connect(mergeprgpage, SIGNAL(mergeSetChanged()), picktaskpage, SLOT(sUpdateComboBoxes()));
+  connect(mergeprgpage, SIGNAL(mergeSetChanged()), mergerespage, SLOT(clearIfPurged()));
 }
 
 crmaccountMerge::~crmaccountMerge()
