@@ -1474,7 +1474,7 @@ bool transferOrder::deleteForCancel()
     {
       int result = query.value("result").toInt();
       if (result < 0)
-        systemError(this, storedProcErrorLookup("deleteSO", result),
+        systemError(this, storedProcErrorLookup("deleteTO", result),
                     __FILE__, __LINE__);
     }
     else if (query.lastError().type() != QSqlError::NoError)
