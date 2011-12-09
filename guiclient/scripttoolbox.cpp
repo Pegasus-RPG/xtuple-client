@@ -47,11 +47,11 @@
 #include "xuiloader.h"
 #include "getscreen.h"
 
-/** \ingroup scriptapi
+/** @ingroup scriptapi
   
-    \class ScriptToolbox
+    @class ScriptToolbox
 
-    \brief The ScriptToolbox provides a collection of miscellaneous utility
+    @brief The ScriptToolbox provides a collection of miscellaneous utility
            methods used when writing xTuple ERP extension %scripts.
 
     The ScriptToolbox class provides the C++ implementation of the global
@@ -61,9 +61,9 @@
 
     Scripts should use these methods by using the toolbox object
     in the %script's global namespace:
-    \code
+    @code
       var qry = toolbox.executeQuery("SELECT CURRENT_DATE AS result;");
-    \endcode
+    @endcode
 
     The methods in the class are intended to be used from %scripts only.
     Use the appropriate classes and methods directly if you are writing in C++.
@@ -77,22 +77,22 @@
     toolbox. The documentation for these deprecated methods refers to
     better ways to handle relevant situations.
 
-    \see initMenu
-    \see toolbox
-    \see XDialog
-    \see XMainWindow
-    \see XWidget
+    @see initMenu
+    @see toolbox
+    @see XDialog
+    @see XMainWindow
+    @see XWidget
  */
 
 QWidget *ScriptToolbox::_lastWindow = 0;
 
-/** \brief Create a new ScriptToolbox.
+/** @brief Create a new ScriptToolbox.
 
   This constructor should not be called directly except in a small number
   of places in the xTuple ERP core. It does not install the toolbox
   object in the engine's global namespace.
 
-  \param engine The script engine in which to create the toolbox object
+  @param engine The script engine in which to create the toolbox object
 */
 
 ScriptToolbox::ScriptToolbox(QScriptEngine * engine)
@@ -105,7 +105,7 @@ ScriptToolbox::~ScriptToolbox()
 {
 }
 
-/** \brief Execute a simple database query.
+/** @brief Execute a simple database query.
 
     The passed-in string is sent to the database engine for execution.
     The resulting XSqlQuery object is returned.
@@ -116,25 +116,25 @@ ScriptToolbox::~ScriptToolbox()
     about %currencies with missing exchange rates.
     The following lines %check the database for
     %currencies that do not have exchange rates defined for today:
-    \dontinclude initMenu_executeQueryExample.js
-    \skip var
-    \until IS NULL
+    @dontinclude initMenu_executeQueryExample.js
+    @skip var
+    @until IS NULL
 
     Now the script must loop through the results to inform you of
     each row found:
-    \skip next()
-    \until curr_abbr
+    @skip next()
+    @until curr_abbr
 
     Without this loop, the script would have asked the database for
     the missing exchange rates but nothing would have been done with the
     results.
 
-    \param query The database query to execute
+    @param query The database query to execute
 
-    \return The XSqlQuery object after calling XSqlQuery::exec()
+    @return The XSqlQuery object after calling XSqlQuery::exec()
 
-    \see QSqlQuery
-    \see XSqlQuery
+    @see QSqlQuery
+    @see XSqlQuery
 */
 XSqlQuery ScriptToolbox::executeQuery(const QString & query)
 {
@@ -142,9 +142,9 @@ XSqlQuery ScriptToolbox::executeQuery(const QString & query)
   MetaSQLQuery mql(query);
   return mql.toQuery(params);
 }
-/** \example initMenu_executeQueryExample.js */
+/** @example initMenu_executeQueryExample.js */
 
-/** \brief Execute a MetaSQL query.
+/** @brief Execute a MetaSQL query.
 
   The passed-in string is processed as a MetaSQL query and then sent to
   the database engine for execution. The given ParameterList controls
@@ -154,24 +154,24 @@ XSqlQuery ScriptToolbox::executeQuery(const QString & query)
   the query but the caller is responsible for navigating the results
   and checking for errors.
 
-  The following scripted example creates a ParameterList \c params,
-  sets the \c site parameter to the internal id of the currently selected
-  \c _site widget, then queries the database for a list of %items
+  The following scripted example creates a ParameterList @c params,
+  sets the @c site parameter to the internal id of the currently selected
+  @c _site widget, then queries the database for a list of %items
   associated with that itemsite. The results are then used to populate
   an XTreeWidget.
 
-  \dontinclude itemSiteViewItem.js
-  \skip sFillList
-  \until }
+  @dontinclude itemSiteViewItem.js
+  @skip sFillList
+  @until }
 
-  \param query  The MetaSQL string from which to build the query
-  \param params The ParameterList used by MetaSQL to formulate the final query
+  @param query  The MetaSQL string from which to build the query
+  @param params The ParameterList used by MetaSQL to formulate the final query
 
-  \return The XSqlQuery object after calling XSqlQuery::exec()
+  @return The XSqlQuery object after calling XSqlQuery::exec()
 
-  \see MetaSQLQuery
-  \see XSqlQuery
-  \see QSqlQuery
+  @see MetaSQLQuery
+  @see XSqlQuery
+  @see QSqlQuery
 
  */
 XSqlQuery ScriptToolbox::executeQuery(const QString & query, const ParameterList & params)
@@ -179,30 +179,30 @@ XSqlQuery ScriptToolbox::executeQuery(const QString & query, const ParameterList
   MetaSQLQuery mql(query);
   return mql.toQuery(params);
 }
-/** \example itemSiteViewItem.js */
+/** @example itemSiteViewItem.js */
 
-/** \brief Execute a simple query loaded from the \c metasql table.
+/** @brief Execute a simple query loaded from the @c metasql table.
 
-  This loads a query string from the \c metasql table in the xTuple ERP
+  This loads a query string from the @c metasql table in the xTuple ERP
   database.
   This string is then executed as a database query.
   If the string has MetaSQL tags in it, they are all treated as undefined
   (the ParameterList is empty).
 
   It is the caller's responsibility to ensure that there is a record
-  in the \c metasql table that matches the given %group and name, and that
+  in the @c metasql table that matches the given %group and name, and that
   processing the query string with an empty parameter list will result in
   valid SQL.
 
-  \param %group The metasql_group value to use when searching for this query
-  \param name  The metasql_name value to use when searching for this query
+  @param %group The metasql_group value to use when searching for this query
+  @param name  The metasql_name value to use when searching for this query
 
-  \return The XSqlQuery object after calling XSqlQuery::exec()
+  @return The XSqlQuery object after calling XSqlQuery::exec()
 
-  \see mqlLoad
-  \see MetaSQLQuery
-  \see XSqlQuery
-  \see QSqlQuery
+  @see mqlLoad
+  @see MetaSQLQuery
+  @see XSqlQuery
+  @see QSqlQuery
  */
 XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & name)
 {
@@ -211,9 +211,9 @@ XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & n
   return mql.toQuery(params);
 }
 
-/** \brief Execute a MetaSQL query loaded from the \c metasql table.
+/** @brief Execute a MetaSQL query loaded from the @c metasql table.
 
-  This loads a query string from the \c metasql table in the xTuple ERP
+  This loads a query string from the @c metasql table in the xTuple ERP
   database.
   The given ParameterList controls
   parsing of the string to generate the actual query to execute.
@@ -222,39 +222,39 @@ XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & n
   the query but the caller is responsible for navigating the results
   and checking for errors.
 
-  The following scripted example creates a ParameterList \c params,
+  The following scripted example creates a ParameterList @c params,
   populates it with the number of days preauthorized credit card charges
   are configured to be valid (defaults to 7) and defines
   some standard text values to display instead of internal codes
-  (e.g. \c Preauthorization), then queries the database for a list of
-  credit card transactions. The query itself it taken from the \c metasql
-  table where the \c metasql_group is \c ccpayments and the
-  \c metasql_name is \c list.
+  (e.g. @c Preauthorization), then queries the database for a list of
+  credit card transactions. The query itself it taken from the @c metasql
+  table where the @c metasql_group is @c ccpayments and the
+  @c metasql_name is @c list.
   The results are then used to populate
   an XTreeWidget.
 
-  \dontinclude ccvoid.js
-  \skip sPopulateTransactions
-  \until }
+  @dontinclude ccvoid.js
+  @skip sPopulateTransactions
+  @until }
 
-  \param %group The metasql_group value to use when searching for this query
-  \param name  The metasql_name value to use when searching for this query
-  \param params The ParameterList used by MetaSQL to formulate the final query
+  @param %group The metasql_group value to use when searching for this query
+  @param name  The metasql_name value to use when searching for this query
+  @param params The ParameterList used by MetaSQL to formulate the final query
 
-  \return The XSqlQuery object after calling XSqlQuery::exec()
+  @return The XSqlQuery object after calling XSqlQuery::exec()
 
-  \see MetaSQLQuery
-  \see XSqlQuery
-  \see QSqlQuery
+  @see MetaSQLQuery
+  @see XSqlQuery
+  @see QSqlQuery
  */
 XSqlQuery ScriptToolbox::executeDbQuery(const QString & group, const QString & name, const ParameterList & params)
 {
   MetaSQLQuery mql = mqlLoad(group, name);
   return mql.toQuery(params);
 }
-/** \example ccvoid.js */
+/** @example ccvoid.js */
 
-/** \brief This is a convenience function that simply begins a database transaction.
+/** @brief This is a convenience function that simply begins a database transaction.
  */
 XSqlQuery ScriptToolbox::executeBegin()
 {
@@ -263,7 +263,7 @@ XSqlQuery ScriptToolbox::executeBegin()
   return mql.toQuery(params);
 }
 
-/** \brief This is a convenience function that simply commits the currently open
+/** @brief This is a convenience function that simply commits the currently open
            database transaction.
  */
 XSqlQuery ScriptToolbox::executeCommit()
@@ -273,7 +273,7 @@ XSqlQuery ScriptToolbox::executeCommit()
   return mql.toQuery(params);
 }
 
-/** \brief This is a convenience function that simply rolls back the currently
+/** @brief This is a convenience function that simply rolls back the currently
            open database transaction.
  */
 XSqlQuery ScriptToolbox::executeRollback()
@@ -283,8 +283,8 @@ XSqlQuery ScriptToolbox::executeRollback()
   return mql.toQuery(params);
 }
 
-/** \brief Get a standard Quantity QValidator.
-  \deprecated Use mainwindow.qtyVal() instead.
+/** @brief Get a standard Quantity QValidator.
+  @deprecated Use mainwindow.qtyVal() instead.
  */
 QObject * ScriptToolbox::qtyVal()
 {
@@ -292,8 +292,8 @@ QObject * ScriptToolbox::qtyVal()
   return val;
 }
 
-/** \brief Get a standard Transfer Quantity QValidator.
-  \deprecated Use mainwindow.transQtyVal() instead.
+/** @brief Get a standard Transfer Quantity QValidator.
+  @deprecated Use mainwindow.transQtyVal() instead.
  */
 QObject * ScriptToolbox::TransQtyVal()
 {
@@ -301,8 +301,8 @@ QObject * ScriptToolbox::TransQtyVal()
   return val;
 }
 
-/** \brief Get a standard Quantity Per QValidator.
-  \deprecated Use mainwindow.qtyPerVal() instead.
+/** @brief Get a standard Quantity Per QValidator.
+  @deprecated Use mainwindow.qtyPerVal() instead.
  */
 QObject * ScriptToolbox::qtyPerVal()
 {
@@ -310,8 +310,8 @@ QObject * ScriptToolbox::qtyPerVal()
   return val;
 }
 
-/** \brief Get a standard Percent QValidator.
-  \deprecated Use mainwindow.percentVal() instead.
+/** @brief Get a standard Percent QValidator.
+  @deprecated Use mainwindow.percentVal() instead.
  */
 QObject * ScriptToolbox::percentVal()
 {
@@ -319,8 +319,8 @@ QObject * ScriptToolbox::percentVal()
   return val;
 }
 
-/** \brief Get a standard Money QValidator.
-  \deprecated Use mainwindow.moneyVal() instead.
+/** @brief Get a standard Money QValidator.
+  @deprecated Use mainwindow.moneyVal() instead.
  */
 QObject * ScriptToolbox::moneyVal()
 {
@@ -328,8 +328,8 @@ QObject * ScriptToolbox::moneyVal()
   return val;
 }
 
-/** \brief Get a standard Negative Money QValidator.
-  \deprecated Use mainwindow.negMoneyVal() instead.
+/** @brief Get a standard Negative Money QValidator.
+  @deprecated Use mainwindow.negMoneyVal() instead.
  */
 QObject * ScriptToolbox::negMoneyVal()
 {
@@ -337,8 +337,8 @@ QObject * ScriptToolbox::negMoneyVal()
   return val;
 }
 
-/** \brief Get a standard Price QValidator.
-  \deprecated Use mainwindow.priceVal() instead.
+/** @brief Get a standard Price QValidator.
+  @deprecated Use mainwindow.priceVal() instead.
  */
 QObject * ScriptToolbox::priceVal()
 {
@@ -346,8 +346,8 @@ QObject * ScriptToolbox::priceVal()
   return val;
 }
 
-/** \brief Get a standard Cost QValidator.
-  \deprecated Use mainwindow.costVal() instead.
+/** @brief Get a standard Cost QValidator.
+  @deprecated Use mainwindow.costVal() instead.
  */
 QObject * ScriptToolbox::costVal()
 {
@@ -355,8 +355,8 @@ QObject * ScriptToolbox::costVal()
   return val;
 }
 
-/** \brief Get a standard Ratio QValidator.
-  \deprecated Use mainwindow.ratioVal() instead.
+/** @brief Get a standard Ratio QValidator.
+  @deprecated Use mainwindow.ratioVal() instead.
  */
 QObject * ScriptToolbox::ratioVal()
 {
@@ -364,8 +364,8 @@ QObject * ScriptToolbox::ratioVal()
   return val;
 }
 
-/** \brief Get a standard Weight QValidator.
-  \deprecated Use mainwindow.weightVal() instead.
+/** @brief Get a standard Weight QValidator.
+  @deprecated Use mainwindow.weightVal() instead.
  */
 QObject * ScriptToolbox::weightVal()
 {
@@ -373,8 +373,8 @@ QObject * ScriptToolbox::weightVal()
   return val;
 }
 
-/** \brief Get a standard Run Time QValidator.
-  \deprecated Use mainwindow.runTimeVal() instead.
+/** @brief Get a standard Run Time QValidator.
+  @deprecated Use mainwindow.runTimeVal() instead.
  */
 QObject * ScriptToolbox::runTimeVal()
 {
@@ -382,8 +382,8 @@ QObject * ScriptToolbox::runTimeVal()
   return val;
 }
 
-/** \brief Get a standard Order QValidator.
-  \deprecated Use mainwindow.orderVal() instead.
+/** @brief Get a standard Order QValidator.
+  @deprecated Use mainwindow.orderVal() instead.
  */
 QObject * ScriptToolbox::orderVal()
 {
@@ -391,8 +391,8 @@ QObject * ScriptToolbox::orderVal()
   return val;
 }
 
-/** \brief Get a standard Day QValidator.
-  \deprecated Use mainwindow.dayVal() instead.
+/** @brief Get a standard Day QValidator.
+  @deprecated Use mainwindow.dayVal() instead.
  */
 QObject * ScriptToolbox::dayVal()
 {
@@ -400,8 +400,8 @@ QObject * ScriptToolbox::dayVal()
   return val;
 }
 
-/** \brief Create a new QGridLayout.
-  \deprecated Use QGridLayout instead.
+/** @brief Create a new QGridLayout.
+  @deprecated Use QGridLayout instead.
  */
 QObject * ScriptToolbox::createGridLayout()
 {
@@ -409,19 +409,19 @@ QObject * ScriptToolbox::createGridLayout()
   return layout;
 }
 
-/** \brief Get the layout containing the given widget.
+/** @brief Get the layout containing the given widget.
 
   Search the object hierarchy and find the smallest QLayout 
   that contains the given widget. This lets a %script create a new
   QWidget and insert it into the %user interface near another widget.
 
-  \dontinclude addButton.js
-  \skip var
-  \until widgetGetLayout
+  @dontinclude addButton.js
+  @skip var
+  @until widgetGetLayout
 
-  \param w The widget whose layout you want to find
+  @param w The widget whose layout you want to find
 
-  \return A pointer to the layout or 0 if no such layout could be found
+  @return A pointer to the layout or 0 if no such layout could be found
 
 */
 QObject * ScriptToolbox::widgetGetLayout(QWidget * w)
@@ -438,10 +438,10 @@ QObject * ScriptToolbox::widgetGetLayout(QWidget * w)
   }
   return NULL;
 }
-/** \example addButton.js */
+/** @example addButton.js */
 
-/** \brief Insert a QGridLayout into an existing QGridLayout.
-    \deprecated Use QGridLayout::addLayout instead
+/** @brief Insert a QGridLayout into an existing QGridLayout.
+    @deprecated Use QGridLayout::addLayout instead
   */
 void ScriptToolbox::layoutGridAddLayout(QObject * parent, QObject * child, int row, int column, int alignment)
 {
@@ -452,8 +452,8 @@ void ScriptToolbox::layoutGridAddLayout(QObject * parent, QObject * child, int r
     parentLayout->addLayout(childLayout, row, column, (Qt::Alignment)alignment);
 }
 
-/** \brief Insert a QWidget into an existing QBoxLayout.
-    \deprecated Use QBoxLayout::insertWidget directly
+/** @brief Insert a QWidget into an existing QBoxLayout.
+    @deprecated Use QBoxLayout::insertWidget directly
   */
 void ScriptToolbox::layoutBoxInsertWidget(QObject * obj, int index, QWidget * widget, int stretch, int alignment)
 {
@@ -462,8 +462,8 @@ void ScriptToolbox::layoutBoxInsertWidget(QObject * obj, int index, QWidget * wi
     layout->insertWidget(index, widget, stretch, (Qt::Alignment)alignment);
 }
 
-/** \brief Insert a QWidget into an existing QGridLayout.
-    \deprecated Use QGridLayout::addWidget instead.
+/** @brief Insert a QWidget into an existing QGridLayout.
+    @deprecated Use QGridLayout::addWidget instead.
   */
 void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int row, int column, int alignment)
 {
@@ -472,8 +472,8 @@ void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int row
     layout->addWidget(widget, row, column, (Qt::Alignment)alignment);
 }
 
-/** \brief Insert a QWidget into an existing QGridLayout.
-    \deprecated Use QGridLayout::addWidget instead.
+/** @brief Insert a QWidget into an existing QGridLayout.
+    @deprecated Use QGridLayout::addWidget instead.
   */
 void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, int alignment)
 {
@@ -482,8 +482,8 @@ void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int fro
     layout->addWidget(widget, fromRow, fromColumn, rowSpan, columnSpan, (Qt::Alignment)alignment);
 }
 
-/** \brief Insert a QWidget into an existing QStackedLayout.
-    \deprecated Use QStackedWidget::insertWidget instead.
+/** @brief Insert a QWidget into an existing QStackedLayout.
+    @deprecated Use QStackedWidget::insertWidget instead.
   */
 void ScriptToolbox::layoutStackedInsertWidget(QObject * obj, int index, QWidget * widget)
 {
@@ -492,8 +492,8 @@ void ScriptToolbox::layoutStackedInsertWidget(QObject * obj, int index, QWidget 
     layout->insertWidget(index, widget);
 }
 
-/** \brief Add an action to an existing QMenu.
-    \deprecated Use QMenu::addAction instead.
+/** @brief Add an action to an existing QMenu.
+    @deprecated Use QMenu::addAction instead.
   */
 QObject * ScriptToolbox::menuAddAction(QObject * menu, const QString & text, const bool enabled)
 {
@@ -507,8 +507,8 @@ QObject * ScriptToolbox::menuAddAction(QObject * menu, const QString & text, con
   return act;
 }
 
-/** \brief Add an action to an existing QMenu.
-    \deprecated Use QMenu::addAction instead.
+/** @brief Add an action to an existing QMenu.
+    @deprecated Use QMenu::addAction instead.
   */
 QObject * ScriptToolbox::menuAddMenu(QObject * menu, const QString & text, const QString & name)
 {
@@ -523,8 +523,8 @@ QObject * ScriptToolbox::menuAddMenu(QObject * menu, const QString & text, const
   return nm;
 }
 
-/** \brief Add a separator to an existing QMenu.
-    \deprecated Use QMenu::addSeparator instead.
+/** @brief Add a separator to an existing QMenu.
+    @deprecated Use QMenu::addSeparator instead.
   */
 QObject * ScriptToolbox::menuAddSeparator(QObject * menu)
 {
@@ -535,8 +535,8 @@ QObject * ScriptToolbox::menuAddSeparator(QObject * menu)
   return na;
 }
 
-/** \brief Insert an action into an existing QMenu.
-    \deprecated Use QMenu::insertAction instead.
+/** @brief Insert an action into an existing QMenu.
+    @deprecated Use QMenu::insertAction instead.
   */
 QObject * ScriptToolbox::menuInsertAction(QObject * menu, QObject * before, const QString & name, const bool enabled)
 {
@@ -552,8 +552,8 @@ QObject * ScriptToolbox::menuInsertAction(QObject * menu, QObject * before, cons
   return 0;
 }
 
-/** \brief Insert a QMenu into an existing QMenu.
-    \deprecated Use QMenu::insertMenu instead.
+/** @brief Insert a QMenu into an existing QMenu.
+    @deprecated Use QMenu::insertMenu instead.
   */
 QObject * ScriptToolbox::menuInsertMenu(QObject * menu, QObject * before, const QString & name)
 {
@@ -573,8 +573,8 @@ QObject * ScriptToolbox::menuInsertMenu(QObject * menu, QObject * before, const 
 }
 
 
-/** \brief Insert a separator into an existing QMenu.
-    \deprecated Use QMenu::insertSeparator instead.
+/** @brief Insert a separator into an existing QMenu.
+    @deprecated Use QMenu::insertSeparator instead.
   */
 QObject * ScriptToolbox::menuInsertSeparator(QObject * menu, QObject * before)
 {
@@ -595,8 +595,8 @@ QObject * ScriptToolbox::menuInsertSeparator(QObject * menu, QObject * before)
   return 0;
 }
 
-/** \brief Remove a QAction from a QMenu.
-    \deprecated Use QMenu::removeAction instead.
+/** @brief Remove a QAction from a QMenu.
+    @deprecated Use QMenu::removeAction instead.
   */
 void ScriptToolbox::menuRemove(QObject * menu, QObject * action)
 {
@@ -611,9 +611,9 @@ void ScriptToolbox::menuRemove(QObject * menu, QObject * action)
     m->removeAction(act);
 }
 
-/** \brief Find the number of QActions in a QMenu.
-  \param menu The QMenu whose QAction children you want to count
-  \return The number of QAction objects in the menu or 0 if \c menu isn't really a QMenu
+/** @brief Find the number of QActions in a QMenu.
+  @param menu The QMenu whose QAction children you want to count
+  @return The number of QAction objects in the menu or 0 if @c menu isn't really a QMenu
  */
 int ScriptToolbox::menuActionCount(QObject * menu)
 {
@@ -623,8 +623,8 @@ int ScriptToolbox::menuActionCount(QObject * menu)
   return 0;
 }
 
-/** \brief Find the number of tabs in the QTabWidget
-    \deprecated Use QTabWidget::count directly.
+/** @brief Find the number of tabs in the QTabWidget
+    @deprecated Use QTabWidget::count directly.
  */
 int ScriptToolbox::tabCount(QWidget * tab)
 {
@@ -634,8 +634,8 @@ int ScriptToolbox::tabCount(QWidget * tab)
   return 0;
 }
 
-/** \brief Return the QWidget for a particular tab in a QTabWidget.
-    \deprecated Use QTabWidget::widget directly.
+/** @brief Return the QWidget for a particular tab in a QTabWidget.
+    @deprecated Use QTabWidget::widget directly.
   */
 QWidget * ScriptToolbox::tabWidget(QWidget * tab, int idx)
 {
@@ -646,8 +646,8 @@ QWidget * ScriptToolbox::tabWidget(QWidget * tab, int idx)
   return w;
 }
 
-/** \brief Insert a new tab into a QTabWidget.
-    \deprecated Use QTabWidget::insertTab directly.
+/** @brief Insert a new tab into a QTabWidget.
+    @deprecated Use QTabWidget::insertTab directly.
   */
 int ScriptToolbox::tabInsertTab(QWidget * tab, int idx, QWidget * page, const QString & text)
 {
@@ -658,8 +658,8 @@ int ScriptToolbox::tabInsertTab(QWidget * tab, int idx, QWidget * page, const QS
   return i;
 }
 
-/** \brief Get the index of a particular tab in a QTabWidget.
-    \deprecated Use QTabWidget::indexOf directly.
+/** @brief Get the index of a particular tab in a QTabWidget.
+    @deprecated Use QTabWidget::indexOf directly.
   */
 int ScriptToolbox::tabTabIndex(QWidget * tab, QWidget * page)
 {
@@ -669,8 +669,8 @@ int ScriptToolbox::tabTabIndex(QWidget * tab, QWidget * page)
   return 0;
 }
 
-/** \brief Remove a particular tab from a QTabWidget.
-    \deprecated Use QTabWidget::removeTab directly.
+/** @brief Remove a particular tab from a QTabWidget.
+    @deprecated Use QTabWidget::removeTab directly.
   */
 void ScriptToolbox::tabRemoveTab(QWidget * tab, int idx)
 {
@@ -679,8 +679,8 @@ void ScriptToolbox::tabRemoveTab(QWidget * tab, int idx)
     tw->removeTab(idx);
 }
 
-/** \brief Enable or disable a particular tab on a QTabWidget.
-    \deprecated Use QTabWidget::setTabEnabled directly.
+/** @brief Enable or disable a particular tab on a QTabWidget.
+    @deprecated Use QTabWidget::setTabEnabled directly.
   */
 void ScriptToolbox::tabSetTabEnabled(QWidget * tab, int idx, bool enable)
 {
@@ -689,8 +689,8 @@ void ScriptToolbox::tabSetTabEnabled(QWidget * tab, int idx, bool enable)
     tw->setTabEnabled(idx, enable);
 }
 
-/** \brief Set the text for a particular tab on a QTabWidget.
-    \deprecated Use QTabWidget::setTabText directly.
+/** @brief Set the text for a particular tab on a QTabWidget.
+    @deprecated Use QTabWidget::setTabText directly.
   */
 void ScriptToolbox::tabSetTabText(QWidget * tab, int idx, const QString & text)
 {
@@ -699,8 +699,8 @@ void ScriptToolbox::tabSetTabText(QWidget * tab, int idx, const QString & text)
     tw->setTabText(idx, text);
 }
 
-/** \brief Get the text for a particular tab on a QTabWidget.
-    \deprecated Use QTabWidget::tabText directly.
+/** @brief Get the text for a particular tab on a QTabWidget.
+    @deprecated Use QTabWidget::tabText directly.
   */
 QString ScriptToolbox::tabtabText(QWidget * tab, int idx)
 {
@@ -711,19 +711,19 @@ QString ScriptToolbox::tabtabText(QWidget * tab, int idx)
   return str;
 }
 
-/** \brief Create a widget based on the name of the desired class.
+/** @brief Create a widget based on the name of the desired class.
 
   This is a wrapper around XUiLoader::createWidget.
   
   The following example creates a new QPushButton:
-  \dontinclude addButton.js
-  \skipline newbutton
+  @dontinclude addButton.js
+  @skipline newbutton
 
-  \param className The name of the class of the desired widget
-  \param parent    The widget that should be set as the parent of the new widget
-  \param name      The name to give the newly-created widget
+  @param className The name of the class of the desired widget
+  @param parent    The widget that should be set as the parent of the new widget
+  @param name      The name to give the newly-created widget
 
-  \return The newly-created widget
+  @return The newly-created widget
  */
 QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * parent, const QString & name)
 {
@@ -731,20 +731,20 @@ QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * paren
   return ui.createWidget(className, parent, name);
 }
 
-/** \brief Create a new layout based on the name of the desired class.
+/** @brief Create a new layout based on the name of the desired class.
 
   This is a wrapper around XUiLoader::createLayout.
 
-  \param className The name of the class of the desired layout
-  \param parent    The widget that should be set as the parent of the new layout
-  \param name      The name to give the newly-created layout
+  @param className The name of the class of the desired layout
+  @param parent    The widget that should be set as the parent of the new layout
+  @param name      The name to give the newly-created layout
 
-  \return The newly-created layout
+  @return The newly-created layout
 
-  \see qboxlayoutproto.cpp
-  \see qgridlayoutproto.cpp
-  \see QBoxLayout
-  \see QGridLayout
+  @see qboxlayoutproto.cpp
+  @see qgridlayoutproto.cpp
+  @see QBoxLayout
+  @see QGridLayout
 */
 QObject * ScriptToolbox::createLayout(const QString & className, QWidget * parent, const QString & name)
 {
@@ -752,16 +752,16 @@ QObject * ScriptToolbox::createLayout(const QString & className, QWidget * paren
   return ui.createLayout(className, parent, name);
 }
 
-/** \brief Load a .ui definition from the %uiform table.
+/** @brief Load a .ui definition from the %uiform table.
 
   Instantiate a new %user interface using a .ui definition that has been stored
   in the %uiform table. If multiple rows in the %uiform match
-  the given name, the enabled row with the highest \c uiform_order is used.
+  the given name, the enabled row with the highest @c uiform_order is used.
 
-  \param screenName The name of the .ui to load (\c uiform_name)
-  \param parent     The widget to set as the parent of the loaded .ui
+  @param screenName The name of the .ui to load (@c uiform_name)
+  @param parent     The widget to set as the parent of the loaded .ui
 
-  \return A widget representing the %user interface; 0 if no record matches or
+  @return A widget representing the %user interface; 0 if no record matches or
           if there was an error
  */
 QWidget * ScriptToolbox::loadUi(const QString & screenName, QWidget * parent)
@@ -802,24 +802,24 @@ QWidget * ScriptToolbox::loadUi(const QString & screenName, QWidget * parent)
   return ui;
 }
 
-/** \brief Return the last window opened by this instance of the ScriptToolbox.
+/** @brief Return the last window opened by this instance of the ScriptToolbox.
   */
 QWidget * ScriptToolbox::lastWindow() const
 {
   return _lastWindow;
 }
 
-/** \brief Use the embedded OpenRPT to print a named report.
+/** @brief Use the embedded OpenRPT to print a named report.
 
     Print the report using the given parameters, optionally saving the
     output to a PDF %file.
 
-    \param name        The name of the report definition to use
-    \param params      The MetaSQL parameters used to control the report output
-    \param pdfFilename The name of the PDF %file to create.
+    @param name        The name of the report definition to use
+    @param params      The MetaSQL parameters used to control the report output
+    @param pdfFilename The name of the PDF %file to create.
                        If empty the function uses the standard print methodology
 
-    \return True if the report printed successfully; false if there was an apparent error printing
+    @return True if the report printed successfully; false if there was an apparent error printing
  */
 bool ScriptToolbox::printReport(const QString & name, const ParameterList & params, const QString & pdfFilename)
 {
@@ -843,17 +843,17 @@ bool ScriptToolbox::printReport(const QString & name, const ParameterList & para
   return true;
 }
 
-/** \brief Use the embedded OpenRPT to print or preview a named report.
+/** @brief Use the embedded OpenRPT to print or preview a named report.
 
     Print or preview on-screen the report using the given parameters.
 
-    \param name    The name of the report definition to use
-    \param params  The MetaSQL parameters used to control the report output
-    \param preview If \c preview is true, open a report preview window;
+    @param name    The name of the report definition to use
+    @param params  The MetaSQL parameters used to control the report output
+    @param preview If @c preview is true, open a report preview window;
                    otherwise print using the standard print methodology
-    \param parent  The parent widget to set for the preview window (optional)
+    @param parent  The parent widget to set for the preview window (optional)
 
-    \return True if the report printed successfully; false if there was an apparent error printing or previewing
+    @return True if the report printed successfully; false if there was an apparent error printing or previewing
  */
 bool ScriptToolbox::printReport(const QString & name, const ParameterList & params, const bool preview, QWidget *parent)
 {
@@ -868,7 +868,7 @@ bool ScriptToolbox::printReport(const QString & name, const ParameterList & para
   return true;
 }
 
-/** \brief Print multiple copies of a single report.
+/** @brief Print multiple copies of a single report.
 
   Print the same report multiple times using the same set of parameters as
   part of the same print job.
@@ -876,11 +876,11 @@ bool ScriptToolbox::printReport(const QString & name, const ParameterList & para
   all copies of the report are identical as only one set of parameters
   is passed in.
 
-  \param name   The name of the report definition to use
-  \param params The MetaSQL parameters used to control the report output
-  \param copies The number of copies to print
+  @param name   The name of the report definition to use
+  @param params The MetaSQL parameters used to control the report output
+  @param copies The number of copies to print
 
-  \return True if the report printed successfully; false if there was an error
+  @return True if the report printed successfully; false if there was an error
           or the %user canceled printing
   */
 bool ScriptToolbox::printReportCopies(const QString & name, const ParameterList & params, int copies)
@@ -911,7 +911,7 @@ bool ScriptToolbox::printReportCopies(const QString & name, const ParameterList 
   return userCanceled;
 }
 
-/** \brief Break a signal/slot or signal/signal connection established in the C++ core
+/** @brief Break a signal/slot or signal/signal connection established in the C++ core
 
     Much of the behavior in the core application is controlled by
     %Qt signal/slot connections. To modify certain behaviors, %scripts
@@ -925,38 +925,38 @@ bool ScriptToolbox::printReportCopies(const QString & name, const ParameterList 
 
     The caller is responsible for ensuring that the original behavior gets
     restored or appropriately modified. For example, if a script disconnects
-    a Save button's \c clicked signal from a core method to save the data,
+    a Save button's @c clicked signal from a core method to save the data,
     that script developer takes responsibility to either save the data in
     the script or call the core's save method at an appropriate time.
 
-    \param sender   The QObject that has emits the signal
-    \param signal   The particular signal that the script needs to intercept
-    \param receiver The core object coded to receive the signal
-    \param method   The slot (or signal) of the receiver to disconnect
+    @param sender   The QObject that has emits the signal
+    @param signal   The particular signal that the script needs to intercept
+    @param receiver The core object coded to receive the signal
+    @param method   The slot (or signal) of the receiver to disconnect
 
-    \return Returns true if the connection is successfully broken;
+    @return Returns true if the connection is successfully broken;
             otherwise false
 
-    \see QObject::disconnect
+    @see QObject::disconnect
 
-    \todo Add an example to sample_scripts
+    @todo Add an example to sample_scripts
  */
 bool ScriptToolbox::coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method)
 {
   return QObject::disconnect(sender, QString("2%1").arg(signal).toUtf8().data(), receiver, QString("1%1").arg(method).toUtf8().data());
 }
 
-/** \brief Open a QFileDialog window.
+/** @brief Open a QFileDialog window.
 
     This is a convenience wrapper around common uses for the QFileDialog class.
     It can be used to open files or directories or to save a %file.
 
-    \param parent  The QWidget to set as the parent of the QFileDialog
-    \param caption The caption to use on the dialog
-    \param dir     Start at the given directory
-    \param filter  A semicolon-separated list of strings to filter the
+    @param parent  The QWidget to set as the parent of the QFileDialog
+    @param caption The caption to use on the dialog
+    @param dir     Start at the given directory
+    @param filter  A semicolon-separated list of strings to filter the
                    directory contents
-    \param fileModeSel An integer limiting what the %user may select. Note that
+    @param fileModeSel An integer limiting what the %user may select. Note that
                        the values accepted here are not the same as the
                        integer values of the named %Qt constants:
                 <table width="50%">
@@ -966,14 +966,14 @@ bool ScriptToolbox::coreDisconnect(QObject * sender, const QString & signal, QOb
                   <tr><td>4</td><td>QFileDialog::ExistingFiles</td></tr>
                   <tr><td>anything else</td><td>QFileDialog::AnyFile</td></tr>
                 </table>
-    \param acceptModeSel An integer controlling whether the dialog is to be
+    @param acceptModeSel An integer controlling whether the dialog is to be
                          opened to let the %user open a %file or save a %file
               <table width="50%">
                 <tr><td>1</td><td>QFileDialog::AcceptSave</td></tr>
                 <tr><td>anything else</td><td>QFileDialog::AcceptOpen</td></tr>
               </table>
 
-    \see QFileDialog
+    @see QFileDialog
 
  */
 QString ScriptToolbox::fileDialog(QWidget * parent, const QString & caption, const QString & dir, const QString & filter, int fileModeSel, int acceptModeSel)
@@ -1024,11 +1024,11 @@ QString ScriptToolbox::fileDialog(QWidget * parent, const QString & caption, con
   return path;
 }
 
-/** \brief Open a web page or open a file with an appropriate application.
+/** @brief Open a web page or open a file with an appropriate application.
 
     This is a wrapper around QDesktopServices::openUrl.
 
-    \param fileUrl The file or URL to open.
+    @param fileUrl The file or URL to open.
  */
 void ScriptToolbox::openUrl(const QString & fileUrl)
 {
@@ -1039,49 +1039,49 @@ void ScriptToolbox::openUrl(const QString & fileUrl)
     QDesktopServices::openUrl(url);
 }
 
-/** \deprecated Use QFile.copyFile(oldName, newName) instead */
+/** @deprecated Use QFile.copyFile(oldName, newName) instead */
 bool ScriptToolbox::copyFile(const QString & oldName, const QString & newName)
 {
    return QFile::copy(oldName, newName);
 }
 
-/** \deprecated Use var file = new QFileInfo(path).fileName() instead */
+/** @deprecated Use var file = new QFileInfo(path).fileName() instead */
 QString ScriptToolbox::getFileName(const QString & path)
 {
     QFileInfo fi(path);
     return fi.fileName();
 }
 
-/** \deprecated Use QFile.rename(oldName, newName) instead */
+/** @deprecated Use QFile.rename(oldName, newName) instead */
 bool ScriptToolbox::renameFile(const QString & oldName, const QString & newName)
 {
    return QFile::rename(oldName, newName);
 }
 
-/** \deprecated Use QFile.removeFile(oldName, newName) instead */
+/** @deprecated Use QFile.removeFile(oldName, newName) instead */
 bool ScriptToolbox::removeFile(const QString & name)
 {
    return QFile::remove(name);
 }
 
-/** \deprecated Use QFile.exists(name) instead */
+/** @deprecated Use QFile.exists(name) instead */
 bool ScriptToolbox::fileExists(const QString & name)
 {
    return QFile::exists(name);
 }
 
-/** \brief Read the entire contents of a text %file.
+/** @brief Read the entire contents of a text %file.
 
     This method opens a text %file, reads its contents into a string, and
     closes the %file again.
 
-    \param name The name of the %file to open
+    @param name The name of the %file to open
 
-    \return The textual content of the %file, or "error" if the %file could not
+    @return The textual content of the %file, or "error" if the %file could not
             be opened
 
-    \see QFile
-    \see QTextStream
+    @see QFile
+    @see QTextStream
  */
 QString ScriptToolbox::textStreamRead(const QString & name)
 {
@@ -1093,19 +1093,19 @@ QString ScriptToolbox::textStreamRead(const QString & name)
   return fileText;
 }
 
-/** \brief Write the given text to the named %file.
+/** @brief Write the given text to the named %file.
 
     Create or overwrite a %file with the given name, using the given contents.
-    If the %file name passed does not contain a suffix, \c .txt is appended
+    If the %file name passed does not contain a suffix, @c .txt is appended
     when the file is created.
 
-    \param pName     The name of the %file to create
-    \param WriteText The string to write to the %file
+    @param pName     The name of the %file to create
+    @param WriteText The string to write to the %file
 
-    \return True if successful; false if any errors were detected
+    @return True if successful; false if any errors were detected
 
-    \see QFile
-    \see QTextStream
+    @see QFile
+    @see QTextStream
  */
 bool ScriptToolbox::textStreamWrite(const QString & pName, const QString & WriteText)
 {
@@ -1122,38 +1122,38 @@ bool ScriptToolbox::textStreamWrite(const QString & pName, const QString & Write
    return true;
 }
 
-/** \deprecated use QFile.exists(name) instead */
+/** @deprecated use QFile.exists(name) instead */
 bool fileExists(const QString & name)
 {
    QFile file(name);
    return file.exists();
 }
 
-/** \deprecated Use QDir.homePath() instead */
+/** @deprecated Use QDir.homePath() instead */
 QString ScriptToolbox::getHomeDir()
 {
    return QDir::homePath();
 }
 
-/** \deprecated Use QDir.currentPath() instead */
+/** @deprecated Use QDir.currentPath() instead */
 QString ScriptToolbox::getCurrentDir()
 {
    return QDir::currentPath();
 }
 
-/** \deprecated Use QDir.tempPath() instead */
+/** @deprecated Use QDir.tempPath() instead */
 QString ScriptToolbox::getTempDir()
 {
    return QDir::tempPath();
 }
 
-/** \deprecated Use QDir.rootPath() instead */
+/** @deprecated Use QDir.rootPath() instead */
 QString ScriptToolbox::rootPath()
 {
    return QDir::rootPath();
 }
 
-/** \deprecated Use var dir = new QDir(rootPath) followed by dir.mkpath(mkPath) instead */
+/** @deprecated Use var dir = new QDir(rootPath) followed by dir.mkpath(mkPath) instead */
 bool ScriptToolbox::makePath(const QString & mkPath, const QString & rootPath)
 {
    QDir dir(rootPath);
@@ -1161,7 +1161,7 @@ bool ScriptToolbox::makePath(const QString & mkPath, const QString & rootPath)
    return dir.mkpath(mkPath);
 }
 
-/** \deprecated Use var dir = new QDir(rootPath) followed by dir.rmpath(rmPath) instead */
+/** @deprecated Use var dir = new QDir(rootPath) followed by dir.rmpath(rmPath) instead */
 bool ScriptToolbox::removePath(const QString & rmPath, const QString & rootPath)
 {
    QDir dir(rootPath);
@@ -1169,7 +1169,7 @@ bool ScriptToolbox::removePath(const QString & rmPath, const QString & rootPath)
    return dir.rmpath(rmPath);
 }
 
-/** \brief Show the properties of a QtScript object.
+/** @brief Show the properties of a QtScript object.
 
     This writes all of the properties of a QtScript object using qWarning.
     This is a debugging tool, most useful when not using the Qt script debugger.
@@ -1181,19 +1181,19 @@ bool ScriptToolbox::removePath(const QString & rmPath, const QString & rootPath)
     so properties which are functions show as something like "function()".
     The values which would be returned by these functions are not displayed.
     For example,
-    \code
+    @code
       toolbox.listProperties(_aWarehouseClusterWidget);
-    \endcode
+    @endcode
     will show a line similar to this:
-    \code
+    @code
       id = "function() returning int"
-    \endcode
+    @endcode
     rather than the usually-more-useful
-    \code
+    @code
       id = -1
-    \endcode
+    @endcode
 
-    \param obj The object whose properties should be listed
+    @param obj The object whose properties should be listed
   */
 void ScriptToolbox::listProperties(const QScriptValue &obj) const
 {
@@ -1216,9 +1216,9 @@ void ScriptToolbox::listProperties(const QScriptValue &obj) const
   qWarning("End of %s", qPrintable(obj.toString()));
 }
 
-/** \brief A wrapper around the QMessageBox static methods for standard dialogs.
+/** @brief A wrapper around the QMessageBox static methods for standard dialogs.
 
-    \deprecated Use QMessageBox.critical, QMessageBox.information,
+    @deprecated Use QMessageBox.critical, QMessageBox.information,
                 QMessageBox.question, or QMessageBox.warning.
  */
 int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)
@@ -1235,15 +1235,15 @@ int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QStr
   return btn;
 }
 
-/** \brief Override the last window opened by this toolbox instance.
-    \internal
+/** @brief Override the last window opened by this toolbox instance.
+    @internal
  */
 void ScriptToolbox::setLastWindow(QWidget * lw)
 {
   _lastWindow = lw;
 }
 
-/** \brief Open a new scripted or core application window.
+/** @brief Open a new scripted or core application window.
 
     This method opens a new window on the display. It can be defined
     in its .ui as an XWidget, XDialog, or XMainWindow.
@@ -1256,16 +1256,16 @@ void ScriptToolbox::setLastWindow(QWidget * lw)
     Qt::WindowModal. The flags parameter gets Qt::Dialog set
     even if the caller did not set it.
     Because of the way the new windows are created,
-    a special \c mydialog object gets created to allow access to the
+    a special @c mydialog object gets created to allow access to the
     QDialog properties and methods, such as QDialog::exec.
 
-    \param pname  The name of the %uiform or core application class of the
+    @param pname  The name of the %uiform or core application class of the
                   window to open
-    \param parent The widget to set as the parent of the newly-created window
-    \param modality This can be any of the defined Qt::WindowModality values
-    \param flags    This can be any Qt::WindowFlags value
+    @param parent The widget to set as the parent of the newly-created window
+    @param modality This can be any of the defined Qt::WindowModality values
+    @param flags    This can be any Qt::WindowFlags value
 
-    \return The newly-opened window; 0 if there was an error
+    @return The newly-opened window; 0 if there was an error
   */
 QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowModality modality, Qt::WindowFlags flags)
 {
@@ -1377,8 +1377,8 @@ QWidget *ScriptToolbox::newDisplay(QString pname, QWidget *parent, Qt::WindowMod
   return window; 
 }
 
-/** \brief Add a column to an existing XTreeWidget
-    \deprecated Use XTreeWidget::addColumn directly.
+/** @brief Add a column to an existing XTreeWidget
+    @deprecated Use XTreeWidget::addColumn directly.
   */
 void ScriptToolbox::addColumnXTreeWidget(QWidget * tree, const QString & pString, int pWidth, int pAlignment, bool pVisible, const QString pEditColumn, const QString pDisplayColumn)
 {
@@ -1387,8 +1387,8 @@ void ScriptToolbox::addColumnXTreeWidget(QWidget * tree, const QString & pString
     xt->addColumn(pString, pWidth, pAlignment, pVisible, pEditColumn, pDisplayColumn);
 }
 
-/** \brief Populate an XTreeWidget with the results of the given query.
-    \deprecated Use XTreeWidget::populate directly.
+/** @brief Populate an XTreeWidget with the results of the given query.
+    @deprecated Use XTreeWidget::populate directly.
   */
 void ScriptToolbox::populateXTreeWidget(QWidget * tree, XSqlQuery pSql, bool pUseAltId)
 {
@@ -1397,7 +1397,7 @@ void ScriptToolbox::populateXTreeWidget(QWidget * tree, XSqlQuery pSql, bool pUs
     xt->populate(pSql, pUseAltId);
 }
 
-/** \brief Load the given QWebView with the given URL. */
+/** @brief Load the given QWebView with the given URL. */
 void ScriptToolbox::loadQWebView(QWidget * webView, const QString & url)
 {
   QUrl p = QUrl(url);
@@ -1406,73 +1406,73 @@ void ScriptToolbox::loadQWebView(QWidget * webView, const QString & url)
     wv->load(p);
 }
 
-/** \internal */
+/** @internal */
 QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr)
 {
   return QScriptValue(engine, (int)sr);
 }
 
-/** \internal */
+/** @internal */
 void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr)
 {
   sr = (enum SetResponse)obj.toInt32();
 }
 
-/** \internal */
+/** @internal */
 QScriptValue ParameterGroupStatestoScriptValue(QScriptEngine *engine, const enum ParameterGroup::ParameterGroupStates &en)
 {
   return QScriptValue(engine, (int)en);
 }
 
-/** \internal */
+/** @internal */
 void ParameterGroupStatesfromScriptValue(const QScriptValue &obj, enum ParameterGroup::ParameterGroupStates &en)
 {
   en = (enum ParameterGroup::ParameterGroupStates)obj.toInt32();
 }
 
-/** \internal */
+/** @internal */
 QScriptValue ParameterGroupTypestoScriptValue(QScriptEngine *engine, const enum ParameterGroup::ParameterGroupTypes &en)
 {
   return QScriptValue(engine, (int)en);
 }
 
-/** \internal */
+/** @internal */
 void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterGroup::ParameterGroupTypes &en)
 {
   en = (enum ParameterGroup::ParameterGroupTypes)obj.toInt32();
 }
 
-/** \internal */
+/** @internal */
 QScriptValue QtWindowModalitytoScriptValue(QScriptEngine *engine, const enum Qt::WindowModality &en)
 {
   return QScriptValue(engine, (int)en);
 }
 
-/** \internal */
+/** @internal */
 void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowModality &en)
 {
   en = (enum Qt::WindowModality)obj.toInt32();
 }
 
-/** \internal */
+/** @internal */
 QScriptValue WindowSystemtoScriptValue(QScriptEngine *engine, const enum GUIClient::WindowSystem &en)
 {
   return QScriptValue(engine, (int)en);
 }
 
-/** \internal */
+/** @internal */
 void WindowSystemfromScriptValue(const QScriptValue &obj, enum GUIClient::WindowSystem &en)
 {
   en = (enum GUIClient::WindowSystem)obj.toInt32();
 }
 
-/** \internal */
+/** @internal */
 QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum SaveFlags &en)
 {
   return QScriptValue(engine, (int)en);
 }
 
-/** \internal */
+/** @internal */
 void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en)
 {
   if (obj.isNumber())
@@ -1494,11 +1494,11 @@ void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en)
              qPrintable(obj.toString()));
 }
 
-/** \brief Save a credit card definition from a script.
+/** @brief Save a credit card definition from a script.
 
   This is a wrapper around creditCard::saveCreditCard().
 
-  \see creditCard::saveCreditCard
+  @see creditCard::saveCreditCard
  */
 int ScriptToolbox::saveCreditCard(QWidget *parent,
                                   int custId,
@@ -1534,31 +1534,31 @@ int ScriptToolbox::saveCreditCard(QWidget *parent,
 }
 
 
-/** \brief Get the CreditCardProcessor object for the default service.
+/** @brief Get the CreditCardProcessor object for the default service.
 
   This is a wrapper around CreditCardProcessor::getProcessor.
   There is no scriptable way to get a CreditCardProcessor
   object for a named service provider.
 
-  \return A CreditCardProcessor object for the current service provider
+  @return A CreditCardProcessor object for the current service provider
 
-  \see CreditCardProcessor::getProcessor
+  @see CreditCardProcessor::getProcessor
  */
 QObject *ScriptToolbox::getCreditCardProcessor()
 {
   return CreditCardProcessor::getProcessor();
 }
 
-/** \brief C++ implementation of the original script include mechanism.
+/** @brief C++ implementation of the original script include mechanism.
 
   This is the first implementation of script inclusion. It should never be
   called.
 
-  \deprecated See include.cpp for the proper way to include scripts. This
+  @deprecated See include.cpp for the proper way to include scripts. This
               function will be removed, as will all examples
               of its use.
 
-  \see include
+  @see include
  */
 QString scriptHandleIncludes(QString source)
 {
@@ -1612,13 +1612,13 @@ QString scriptHandleIncludes(QString source)
   return returnVal;
 }
 
-/** \brief This is a wrapper around the core storedProcErrorLookup. */
+/** @brief This is a wrapper around the core storedProcErrorLookup. */
 QString ScriptToolbox::storedProcErrorLookup(const QString proc, const int result)
 {
   return ::storedProcErrorLookup(proc, result);
 }
 
-/** \brief This functions takes a regexp string and creates and returns a QRegExpValidator. */
+/** @brief This functions takes a regexp string and creates and returns a QRegExpValidator. */
 QObject * ScriptToolbox::customVal(const QString & ReqExp)
 {
   QRegExp rx(ReqExp);
@@ -1627,45 +1627,45 @@ QObject * ScriptToolbox::customVal(const QString & ReqExp)
 }
 
 
-/** \fn int     ScriptToolbox::decimalPlaces(QString p)	
-    \brief This is a wrapper for the C++ core function decimalPlaces.
+/** @fn int     ScriptToolbox::decimalPlaces(QString p)	
+    @brief This is a wrapper for the C++ core function decimalPlaces.
  */
-/** \fn QString ScriptToolbox::formatNumber(double value, int decimals)
-    \brief This is a wrapper for the C++ core function formatNumber.
+/** @fn QString ScriptToolbox::formatNumber(double value, int decimals)
+    @brief This is a wrapper for the C++ core function formatNumber.
  */
-/** \fn QString ScriptToolbox::formatMoney(double val, int curr = -1, int extra = 0)	
-    \brief This is a wrapper for the C++ core function formatMoney.
+/** @fn QString ScriptToolbox::formatMoney(double val, int curr = -1, int extra = 0)	
+    @brief This is a wrapper for the C++ core function formatMoney.
  */
-/** \fn QString ScriptToolbox::formatCost(double val, int curr= -1)	
-    \brief This is a wrapper for the C++ core function formatCost.
+/** @fn QString ScriptToolbox::formatCost(double val, int curr= -1)	
+    @brief This is a wrapper for the C++ core function formatCost.
  */
-/** \fn QString ScriptToolbox::formatExtPrice(double val, int curr=-1)	
-    \brief This is a wrapper for the C++ core function formatExtPrice.
+/** @fn QString ScriptToolbox::formatExtPrice(double val, int curr=-1)	
+    @brief This is a wrapper for the C++ core function formatExtPrice.
  */
-/** \fn QString ScriptToolbox::formatWeight(double val)	
-    \brief This is a wrapper for the C++ core function formatWeight.
+/** @fn QString ScriptToolbox::formatWeight(double val)	
+    @brief This is a wrapper for the C++ core function formatWeight.
  */
-/** \fn QString ScriptToolbox::formatQty(double val)	
-    \brief This is a wrapper for the C++ core function formatQty.
+/** @fn QString ScriptToolbox::formatQty(double val)	
+    @brief This is a wrapper for the C++ core function formatQty.
  */
-/** \fn QString ScriptToolbox::formatQtyPer(double val)	
-    \brief This is a wrapper for the C++ core function  formatQtyPer.
+/** @fn QString ScriptToolbox::formatQtyPer(double val)	
+    @brief This is a wrapper for the C++ core function  formatQtyPer.
  */
-/** \fn QString ScriptToolbox::formatSalesPrice(double val, int curr = -1)	
-    \brief This is a wrapper for the C++ core function formatSalesPrice.
+/** @fn QString ScriptToolbox::formatSalesPrice(double val, int curr = -1)	
+    @brief This is a wrapper for the C++ core function formatSalesPrice.
  */
-/** \fn QString ScriptToolbox::formatPurchPrice(double val, int curr = -1)	
-    \brief This is a wrapper for the C++ core function formatPurchPrice.
+/** @fn QString ScriptToolbox::formatPurchPrice(double val, int curr = -1)	
+    @brief This is a wrapper for the C++ core function formatPurchPrice.
  */
-/** \fn QString ScriptToolbox::formatUOMRatio(double val)	
-    \brief This is a wrapper for the C++ core function formatUOMRatio.
+/** @fn QString ScriptToolbox::formatUOMRatio(double val)	
+    @brief This is a wrapper for the C++ core function formatUOMRatio.
  */
-/** \fn QString ScriptToolbox::formatPercent(double val)	
-    \brief This is a wrapper for the C++ core function formatPercent.
+/** @fn QString ScriptToolbox::formatPercent(double val)	
+    @brief This is a wrapper for the C++ core function formatPercent.
  */
-/** \fn QColor  ScriptToolbox::namedColor(QString name)	
-    \brief This is a wrapper for the C++ core function namedColor.
+/** @fn QColor  ScriptToolbox::namedColor(QString name)	
+    @brief This is a wrapper for the C++ core function namedColor.
  */
-/** \fn QString ScriptToolbox::formatDate(const QDate &pDate)
-    \brief This is a wrapper for the C++ core function formatDate.
+/** @fn QString ScriptToolbox::formatDate(const QDate &pDate)
+    @brief This is a wrapper for the C++ core function formatDate.
  */
