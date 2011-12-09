@@ -81,7 +81,6 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
                        "  WHERE ((toitem_tohead_id=orderhead_id)"
                        "     AND (orderhead_type = 'TO'))) ");
   }
-  _order->setFocus();
 
   _orderitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter  , true,  "linenumber");
   _orderitem->addColumn(tr("Due Date"),     _dateColumn, Qt::AlignLeft    , true,  "duedate");
@@ -129,7 +128,6 @@ enum SetResponse enterPoReceipt::set(const ParameterList &pParams)
   {
     _captive = TRUE;
     _order->setId(param.toInt(), "PO");
-    _orderitem->setFocus();
   }
 
   param = pParams.value("tohead_id", &valid);
@@ -137,7 +135,6 @@ enum SetResponse enterPoReceipt::set(const ParameterList &pParams)
   {
     _captive = TRUE;
     _order->setId(param.toInt(), "TO");
-    _orderitem->setFocus();
   }
 
   param = pParams.value("rahead_id", &valid);
@@ -145,7 +142,6 @@ enum SetResponse enterPoReceipt::set(const ParameterList &pParams)
   {
     _captive = TRUE;
     _order->setId(param.toInt(), "RA");
-    _orderitem->setFocus();
   }
 
   return NoError;

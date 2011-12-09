@@ -340,12 +340,12 @@ void menuProducts::sCopyBOM()
 
 void menuProducts::sMassReplaceComponent()
 {
-  omfgThis->handleNewWindow(new massReplaceComponent());
+  omfgThis->handleNewWindow(new massReplaceComponent(), Qt::ApplicationModal);
 }
 
 void menuProducts::sMassExpireComponent()
 {
-  omfgThis->handleNewWindow(new massExpireComponent());
+  omfgThis->handleNewWindow(new massExpireComponent(), Qt::ApplicationModal);
 }
 
 //  Costing

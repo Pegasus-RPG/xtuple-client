@@ -55,7 +55,6 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowF
 
   if (!_metrics->boolean("AllowAvgCostMethod"))
     _tab->removeTab(0);
-  _item->setFocus();
 }
 
 adjustmentTrans::~adjustmentTrans()
@@ -115,13 +114,6 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
-
-      if (!_item->isValid())
-        _item->setFocus();
-      else if (noQty)
-	_qty->setFocus();
-      else
-        _documentNum->setFocus();
     }
     else if (param.toString() == "view")
     {

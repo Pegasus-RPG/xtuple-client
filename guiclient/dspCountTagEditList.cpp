@@ -89,8 +89,6 @@ dspCountTagEditList::dspCountTagEditList(QWidget* parent, const char* name, Qt::
 
   if (_privileges->check("EnterCountSlips"))
     connect(_cnttag, SIGNAL(valid(bool)), _enterSlip, SLOT(setEnabled(bool)));
-
-  _searchFor->setFocus();
 }
 
 dspCountTagEditList::~dspCountTagEditList()

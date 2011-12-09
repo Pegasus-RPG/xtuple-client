@@ -65,7 +65,6 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight,  true, "atshipping");
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  _order->setFocus();
   _order->setFromSitePrivsEnforced(TRUE);
 
   _bcQty->setValidator(omfgThis->qtyVal());

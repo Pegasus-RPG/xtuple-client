@@ -346,11 +346,6 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
 
   if (cNew == _mode)
   {
-    if (_orderNumber->text().isEmpty())
-      _orderNumber->setFocus();
-    else
-      _packDate->setFocus();
-
     _status->setCurrentIndex(0);
 
     // TODO: Why don't the constructor or setId earlier in set() handle this?
@@ -367,14 +362,10 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
   {
     _captive = TRUE;
     _orderNumber->setEnabled(FALSE);
-
-    _new->setFocus();
   }
   else if (cView == _mode)
   {
     _project->setReadOnly(true);
-
-    _close->setFocus();
   }
 
   if( !_metrics->boolean("EnableTOShipping"))

@@ -1084,14 +1084,14 @@ to be bound by its terms.</comment>
    <header>xurllabel.h</header>
   </customwidget>
   <customwidget>
-   <class>ToitemTableView</class>
-   <extends>QTableView</extends>
-   <header>toitemTableView.h</header>
-  </customwidget>
-  <customwidget>
    <class>XTextEdit</class>
    <extends>QTextEdit</extends>
    <header>xtextedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ToitemTableView</class>
+   <extends>QTableView</extends>
+   <header>toitemTableView.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -1099,39 +1099,44 @@ to be bound by its terms.</comment>
   <tabstop>_orderDate</tabstop>
   <tabstop>_shipDate</tabstop>
   <tabstop>_packDate</tabstop>
+  <tabstop>_status</tabstop>
   <tabstop>_agent</tabstop>
+  <tabstop>_taxzone</tabstop>
+  <tabstop>_shipComplete</tabstop>
   <tabstop>_project</tabstop>
   <tabstop>_srcWhs</tabstop>
-  <tabstop>_srcAddr</tabstop>
   <tabstop>_trnsWhs</tabstop>
+  <tabstop>_srcAddr</tabstop>
   <tabstop>_dstWhs</tabstop>
-  <tabstop>_taxzone</tabstop>
-  <tabstop>_dstContact</tabstop>
   <tabstop>_dstAddr</tabstop>
+  <tabstop>_srcContact</tabstop>
+  <tabstop>_dstContact</tabstop>
   <tabstop>_shipVia</tabstop>
   <tabstop>_shippingForm</tabstop>
+  <tabstop>_clear</tabstop>
+  <tabstop>_saveAndAdd</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
   <tabstop>_tabs</tabstop>
   <tabstop>_toitem</tabstop>
-  <tabstop>_showCanceled</tabstop>
-  <tabstop>_requireInventory</tabstop>
-  <tabstop>_freightCurrency</tabstop>
-  <tabstop>_weight</tabstop>
-  <tabstop>_freight</tabstop>
-  <tabstop>_tax</tabstop>
-  <tabstop>_total</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
+  <tabstop>_action</tabstop>
   <tabstop>_delete</tabstop>
   <tabstop>_issueStock</tabstop>
   <tabstop>_issueLineBalance</tabstop>
-  <tabstop>_action</tabstop>
+  <tabstop>_showCanceled</tabstop>
+  <tabstop>_freightCurrency</tabstop>
+  <tabstop>_requireInventory</tabstop>
+  <tabstop>_weight</tabstop>
+  <tabstop>_freight</tabstop>
+  <tabstop>_total</tabstop>
   <tabstop>_orderComments</tabstop>
-  <tabstop>_comments</tabstop>
   <tabstop>_shippingComments</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_saveAndAdd</tabstop>
-  <tabstop>_clear</tabstop>
+  <tabstop>_qeitemView</tabstop>
+  <tabstop>_qesave</tabstop>
+  <tabstop>_qedelete</tabstop>
+  <tabstop>_qecurrency</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -60,14 +60,12 @@ bool dspCountTagsBase::setParams(ParameterList &params)
   {
     if (! _item->isValid())
     {
-      _item->setFocus();
       return false;
     }
     params.append("item_id", _item->id());
   }
   if (! _dates->allValid())
   {
-    _dates->setFocus();
     return false;
   }
 
