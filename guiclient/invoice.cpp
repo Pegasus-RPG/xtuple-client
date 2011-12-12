@@ -296,6 +296,29 @@ void invoice::sClose()
     if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
+  else if (_mode == cEdit)
+  {
+    if (_invcitem->topLevelItemCount() <= 0 )
+    {
+      int answer = QMessageBox::question(this,
+                     tr("Delete Invoice with no Line Items?"),
+                     tr("<p>This Invoice does not contain any Line Items "
+                        "associated with it. Do you wish to delete "
+                        "this Invoice?"),
+                   QMessageBox::No | QMessageBox::Default, QMessageBox::Yes);
+      if (QMessageBox::No == answer)
+        return;
+      else
+      {
+        q.prepare( "DELETE FROM invchead "
+                   "WHERE (invchead_id=:invchead_id);" );
+        q.bindValue(":invchead_id", _invcheadid);
+        q.exec();
+        if (q.lastError().type() != QSqlError::NoError)
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      }
+    }
+  }
 
   close();
 }
