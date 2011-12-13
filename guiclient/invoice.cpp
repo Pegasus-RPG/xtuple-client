@@ -310,12 +310,22 @@ void invoice::sClose()
         return;
       else
       {
-        q.prepare( "DELETE FROM invchead "
-                   "WHERE (invchead_id=:invchead_id);" );
+        q.prepare( "SELECT deleteInvoice(:invchead_id) AS result;" );
         q.bindValue(":invchead_id", _invcheadid);
         q.exec();
-        if (q.lastError().type() != QSqlError::NoError)
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        if (q.first())
+        {
+          int result = q.value("result").toInt();
+          if (result < 0)
+          {
+            systemError(this, storedProcErrorLookup("deleteInvoice", result),
+                        __FILE__, __LINE__);
+          }
+        }
+        else if (q.lastError().type() != QSqlError::NoError)
+          systemError(this,
+                      tr("Error deleting Invoice %1\n").arg(_invcheadid) +
+                         q.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
   }
