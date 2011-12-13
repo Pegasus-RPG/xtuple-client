@@ -47,7 +47,6 @@ scrapTrans::scrapTrans(QWidget* parent, const char* name, Qt::WFlags fl)
     _warehouse->hide();
   }
 
-  _item->setFocus();
 }
 
 scrapTrans::~scrapTrans()
@@ -79,7 +78,6 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setWindowTitle(tr("Enter Scrap Transaction"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -90,7 +88,6 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setWindowTitle(tr("Scrap Transaction"));
       _transDate->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
@@ -99,7 +96,6 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
       _notes->setEnabled(FALSE);
       _post->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
 
       q.prepare( "SELECT * "
                  "FROM invhist "
@@ -123,7 +119,6 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
 	return UndefinedError;
       }
 
-      _close->setFocus();
     }
   }
 

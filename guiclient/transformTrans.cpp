@@ -61,7 +61,6 @@ transformTrans::transformTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _controlled = true;   // safest assumption
   _targetIsValid = false;
-  _item->setFocus();
 }
 
 transformTrans::~transformTrans()
@@ -102,7 +101,6 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setWindowTitle(tr("Enter Transform Transaction"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -111,7 +109,6 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setWindowTitle(tr("Transform Transaction"));
       _transDate->setEnabled(FALSE);
       _item->setEnabled(FALSE);
       _warehouse->setEnabled(FALSE);

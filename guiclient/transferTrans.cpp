@@ -46,7 +46,6 @@ transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WFlags fl)
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _item->setFocus();
 }
 
 transferTrans::~transferTrans()
@@ -96,23 +95,14 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setWindowTitle(tr("Enter Inter-Site Transfer"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
-
-      if (!_item->isValid())
-        _item->setFocus();
-      else if (_qty->text().length() == 0)
-	_qty->setFocus();
-      else
-        _documentNum->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
 
-      setWindowTitle(tr("Inter-Site Transaction Information"));
       _transDate->setEnabled(FALSE);
       _item->setEnabled(FALSE);
       _toWarehouse->setEnabled(FALSE);
@@ -121,7 +111,6 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
       _documentNum->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _close->setText(tr("&Close"));
-      _close->setFocus();
       _post->hide();
 
       q.prepare( "SELECT invhist.*, "
@@ -165,7 +154,6 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
         _fromWarehouse->setId(q.value("fromWarehouse").toInt());
       }
 
-      _close->setFocus();
     }
   }
 

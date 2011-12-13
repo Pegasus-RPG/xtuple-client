@@ -55,8 +55,6 @@ materialReceiptTrans::materialReceiptTrans(QWidget* parent, const char* name, Qt
 
   if (!_metrics->boolean("AllowAvgCostMethod"))
     _tab->removeTab(0);
-
-  _item->setFocus();
 }
 
 materialReceiptTrans::~materialReceiptTrans()
@@ -87,7 +85,6 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setWindowTitle(tr("Enter Material Receipt"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -101,7 +98,6 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setWindowTitle(tr("Material Receipt"));
       _transDate->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);

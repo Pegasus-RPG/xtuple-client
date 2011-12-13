@@ -510,7 +510,7 @@ void menuInventory::sAdjustInvValue()
 
   adjustInvValue *newdlg = new adjustInvValue();
   newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
 }
 
 void menuInventory::sTransferTrans()

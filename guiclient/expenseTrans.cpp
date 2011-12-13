@@ -49,7 +49,6 @@ expenseTrans::expenseTrans(QWidget* parent, const char* name, Qt::WFlags fl)
     _warehouse->hide();
   }
 
-  _item->setFocus();
 }
 
 expenseTrans::~expenseTrans()
@@ -80,7 +79,6 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setWindowTitle(tr("Enter Expense Transaction"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -91,7 +89,6 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setWindowTitle(tr("Expense Transaction"));
       _transDate->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);

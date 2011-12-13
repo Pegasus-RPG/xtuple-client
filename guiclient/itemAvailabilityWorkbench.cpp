@@ -176,8 +176,6 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillListWhereUsed()));
   
   // General
-  _item->setFocus();
-
   if(!_privileges->check("ViewBOMs"))
     _tab->removeTab(5);
   if(!_privileges->check("ViewQOH"))
