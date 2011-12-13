@@ -36,7 +36,6 @@ dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char*, Qt::WFlag
   list()->addColumn(tr("Warranty"),  _dateColumn, Qt::AlignCenter,true, "warranty");
   list()->addColumn(tr("Qty."),       _qtyColumn, Qt::AlignRight, true, "qoh");
 
-  _item->setFocus();
 }
 
 void dspInventoryLocator::languageChange()

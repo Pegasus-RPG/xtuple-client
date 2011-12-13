@@ -29,7 +29,6 @@ dspValidLocationsByItem::dspValidLocationsByItem(QWidget* parent, const char*, Q
   list()->addColumn(tr("Restricted"),  _orderColumn, Qt::AlignCenter, true,  "location_restrict"  );
   list()->addColumn(tr("Netable"),     _orderColumn, Qt::AlignCenter, true,  "location_netable" );
 
-  _item->setFocus();
 }
 
 void dspValidLocationsByItem::languageChange()
