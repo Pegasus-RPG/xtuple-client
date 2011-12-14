@@ -13,14 +13,17 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>700</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Item Source</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="verticalSpacing">
+    <number>12</number>
+   </property>
    <item row="0" column="0">
     <layout class="QHBoxLayout">
      <property name="spacing">
@@ -528,7 +531,7 @@ to be bound by its terms.</comment>
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="_notesTab">
       <attribute name="title">

@@ -47,7 +47,6 @@ dspWoHistoryByItem::dspWoHistoryByItem(QWidget* parent, const char*, Qt::WFlags 
   
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
-  _item->setFocus();
 }
 
 void dspWoHistoryByItem::languageChange()

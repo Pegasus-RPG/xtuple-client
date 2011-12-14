@@ -171,7 +171,6 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
   XWidget::set(pParams);
   _captive = TRUE;
 
-  QString  returnValue;
   QVariant param;
   bool     valid;
 
@@ -311,8 +310,6 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _itemcharView->setEnabled(false);
         _jobCosGroup->setEnabled(FALSE);
         sFillList();
-        
-        _close->setFocus();
       }
       else
       {
@@ -781,17 +778,14 @@ void workOrder::populateWoNumber()
   if (generationMethod == "M")
   {
     _woNumber->setEnabled(TRUE);
-    _woNumber->setFocus();
   }
   else if (generationMethod == "O")
   {
     _woNumber->setEnabled(TRUE);
-    _item->setFocus();
   }
   else if (generationMethod == "A")
   {
     _woNumber->setEnabled(FALSE);
-    _item->setFocus();
   } 
 }
 

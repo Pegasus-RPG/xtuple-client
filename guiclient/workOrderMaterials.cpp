@@ -88,8 +88,6 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
   }
 
   connect(omfgThis, SIGNAL(workOrderMaterialsUpdated(int, int, bool)), this, SLOT(sCatchMaterialsUpdated(int, int, bool)));
-
-  _wo->setFocus();
 }
 
 workOrderMaterials::~workOrderMaterials()

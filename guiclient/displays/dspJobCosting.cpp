@@ -30,7 +30,6 @@ dspJobCosting::dspJobCosting(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("UOM"),   _uomColumn, Qt::AlignCenter,true, "uom");
   list()->addColumn(tr("Cost"),_moneyColumn, Qt::AlignRight, true, "cost");
 
-  _wo->setFocus();
 }
 
 void dspJobCosting::languageChange()
