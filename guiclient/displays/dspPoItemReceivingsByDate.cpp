@@ -46,7 +46,6 @@ dspPoItemReceivingsByDate::dspPoItemReceivingsByDate(QWidget* parent, const char
 
   _showVariances->setEnabled(_privileges->check("ViewCosts"));
 
-  _dates->setFocus();
   sHandleVariance(_showVariances->isChecked());
 }
 

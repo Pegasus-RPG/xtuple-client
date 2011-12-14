@@ -595,6 +595,24 @@ to be bound by its terms.</comment>
    <header>xlabel.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_vend</tabstop>
+  <tabstop>_crmacct</tabstop>
+  <tabstop>_active</tabstop>
+  <tabstop>_terms</tabstop>
+  <tabstop>_vendType</tabstop>
+  <tabstop>_shipvia</tabstop>
+  <tabstop>_firstPurchase</tabstop>
+  <tabstop>_lastPurchase</tabstop>
+  <tabstop>_tabWidget</tabstop>
+  <tabstop>_contact1Button</tabstop>
+  <tabstop>_contact2Button</tabstop>
+  <tabstop>_primaryContact</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_print</tabstop>
+  <tabstop>_edit</tabstop>
+  <tabstop>_secondaryContact</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

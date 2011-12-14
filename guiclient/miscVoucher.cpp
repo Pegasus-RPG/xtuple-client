@@ -77,12 +77,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _mode = cNew;
 
       if (_metrics->value("VoucherNumberGeneration") == "A")
-      {
         populateNumber();
-        _vendor->setFocus();
-      }
-      else
-        _voucherNumber->setFocus();
 
       connect(_vendor, SIGNAL(newId(int)), this, SLOT(sPopulateVendorInfo(int)));
 
@@ -112,8 +107,6 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
 
       _voucherNumber->setEnabled(false);
       _vendor->setEnabled(false);
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -138,7 +131,6 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _save->hide();
 
-      _close->setFocus();
     }
   }
 

@@ -35,6 +35,9 @@ to be bound by its terms.</comment>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <layout class="QGridLayout" name="gridLayout">
              <item row="0" column="0">
@@ -149,161 +152,12 @@ to be bound by its terms.</comment>
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout">
-               <property name="topMargin">
-                <number>6</number>
+             <item row="3" column="1" colspan="3">
+              <widget class="VendorCluster" name="_vendor">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
                </property>
-               <item>
-                <widget class="QLabel" name="_vendorLit">
-                 <property name="text">
-                  <string>Vendor:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="1">
-              <widget class="VendorCluster" name="_vendor"/>
-             </item>
-             <item row="3" column="2">
-              <layout class="QVBoxLayout" name="verticalLayout_3">
-               <property name="topMargin">
-                <number>6</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="_statusLit">
-                 <property name="text">
-                  <string>Status:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_4">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="3">
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <item>
-                <widget class="XComboBox" name="_status">
-                 <item>
-                  <property name="text">
-                   <string>Unreleased</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Open</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Closed</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="4">
-              <layout class="QVBoxLayout" name="verticalLayout_2">
-               <property name="topMargin">
-                <number>6</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="_soLit">
-                 <property name="text">
-                  <string>Sales Order #:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="5">
-              <layout class="QVBoxLayout" name="verticalLayout_5">
-               <item>
-                <widget class="OrderCluster" name="_so">
-                 <property name="label">
-                  <string/>
-                 </property>
-                 <property name="readOnly">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_5">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
+              </widget>
              </item>
              <item row="2" column="1">
               <widget class="DLineEdit" name="_releaseDate">
@@ -316,6 +170,85 @@ to be bound by its terms.</comment>
               <widget class="QLabel" name="_releaseDateLit">
                <property name="text">
                 <string>Release Date:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QLabel" name="_statusLit">
+               <property name="text">
+                <string>Status:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="XComboBox" name="_status">
+               <item>
+                <property name="text">
+                 <string>Unreleased</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Open</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Closed</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="2" column="4">
+              <widget class="QLabel" name="_soLit">
+               <property name="text">
+                <string>Sales Order #:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="5" rowspan="2">
+              <layout class="QVBoxLayout" name="verticalLayout_2">
+               <item>
+                <widget class="OrderCluster" name="_so">
+                 <property name="label">
+                  <string/>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="_vendorLit">
+               <property name="text">
+                <string>Vendor:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1070,12 +1003,6 @@ to be bound by its terms.</comment>
          <property name="text">
           <string>&amp;Save</string>
          </property>
-         <property name="autoDefault">
-          <bool>true</bool>
-         </property>
-         <property name="default">
-          <bool>true</bool>
-         </property>
         </widget>
        </item>
        <item>
@@ -1183,14 +1110,21 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_orderNumber</tabstop>
   <tabstop>_orderDate</tabstop>
+  <tabstop>_releaseDate</tabstop>
+  <tabstop>_vendor</tabstop>
   <tabstop>_terms</tabstop>
   <tabstop>_taxZone</tabstop>
+  <tabstop>_status</tabstop>
   <tabstop>_agent</tabstop>
   <tabstop>_printPO</tabstop>
+  <tabstop>_so</tabstop>
   <tabstop>_vendaddrCode</tabstop>
   <tabstop>_vendAddr</tabstop>
+  <tabstop>_vendCntct</tabstop>
   <tabstop>_warehouse</tabstop>
+  <tabstop>_dropShip</tabstop>
   <tabstop>_shiptoAddr</tabstop>
+  <tabstop>_shiptoCntct</tabstop>
   <tabstop>_fob</tabstop>
   <tabstop>_shipVia</tabstop>
   <tabstop>_purchaseOrderInformation</tabstop>

@@ -112,12 +112,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _mode = cNew;
 
       if (_metrics->value("VoucherNumberGeneration") == "A")
-      {
         populateNumber();
-        _poNumber->setFocus();
-      }
-      else
-        _voucherNumber->setFocus();
 
       XSqlQuery insq;
       insq.prepare("INSERT INTO vohead (vohead_number, vohead_posted)"
@@ -139,8 +134,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -168,7 +161,6 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _save->hide();
 
-      _close->setFocus();
       disconnect(_poitem, SIGNAL(valid(bool)), _distributions, SLOT(setEnabled(bool)));
       disconnect(_poitem, SIGNAL(valid(bool)), _distributeline, SLOT(setEnabled(bool)));
       disconnect(_poitem, SIGNAL(valid(bool)), _clear, SLOT(setEnabled(bool)));

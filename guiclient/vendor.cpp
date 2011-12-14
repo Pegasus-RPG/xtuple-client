@@ -181,7 +181,6 @@ SetResponse vendor::set(const ParameterList &pParams)
         connect(_vendaddr, SIGNAL(itemSelected(int)), _viewAddress, SLOT(animateClick()));
       }
 
-      _number->setFocus();
       emit newId(_vendid);
     }
     else if (param.toString() == "edit")
@@ -200,7 +199,6 @@ SetResponse vendor::set(const ParameterList &pParams)
         connect(_vendaddr, SIGNAL(itemSelected(int)), _viewAddress, SLOT(animateClick()));
       }
 
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -246,7 +244,6 @@ SetResponse vendor::set(const ParameterList &pParams)
       disconnect(_taxreg, SIGNAL(itemSelected(int)), _editTaxreg, SLOT(animateClick()));
       connect(_taxreg, SIGNAL(itemSelected(int)), _viewTaxreg, SLOT(animateClick()));
 
-      _close->setFocus();
     }
   }
 

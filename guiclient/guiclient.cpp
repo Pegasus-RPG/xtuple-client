@@ -1662,17 +1662,14 @@ void GUIClient::windowDestroyed(QObject * o)
 
 bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
 {
-  if(event->type() == QEvent::Close)
+  if(event->type() == QEvent::Close && omfgThis->showTopLevel())
   {
     QWidget * w = qobject_cast<QWidget *>(obj);
     if(w)
     {
       QString objName = w->objectName();
       xtsettingsSetValue(objName + "/geometry/size", w->size());
-      if(omfgThis->showTopLevel())
-        xtsettingsSetValue(objName + "/geometry/pos", w->pos());
-      else
-        xtsettingsSetValue(objName + "/geometry/pos", w->parentWidget()->pos());
+      xtsettingsSetValue(objName + "/geometry/pos", w->pos());
     }
   }
   return QObject::eventFilter(obj, event);

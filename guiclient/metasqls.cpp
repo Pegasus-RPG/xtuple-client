@@ -117,7 +117,7 @@ void metasqls::sEdit()
   newdlg->fileDatabaseOpen(_list->id());
   newdlg->setReadOnly(! userHasPriv(cEdit) && userHasPriv(cView));
   newdlg->forceTestMode(! _privileges->check("ExecuteMetaSQL"));
-#ifndef Q_WS_MAC
+#ifdef Q_WS_MAC
   omfgThis->handleNewWindow(newdlg, Qt::NonModal, true);
 #else
   omfgThis->handleNewWindow(newdlg);

@@ -54,7 +54,6 @@ dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char*, Qt::WFlags 
   list()->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_received"  );
   list()->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_returned"  );
 
-  _vendor->setFocus();
 }
 
 void dspPoItemsByVendor::languageChange()

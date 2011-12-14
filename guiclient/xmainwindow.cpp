@@ -118,8 +118,6 @@ void XMainWindow::closeEvent(QCloseEvent *event)
     xtsettingsSetValue(objName + "/geometry/size", size());
     if(omfgThis->showTopLevel() || isModal() || forceFloat())
       xtsettingsSetValue(objName + "/geometry/pos", pos());
-    else
-      xtsettingsSetValue(objName + "/geometry/pos", parentWidget()->pos());
   }
 }
 
