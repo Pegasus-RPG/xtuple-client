@@ -41,7 +41,8 @@ public slots:
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();
-	virtual void sExpire();
+    virtual void sExpire();
+    virtual void sClose();
 
 protected slots:
     virtual void languageChange();

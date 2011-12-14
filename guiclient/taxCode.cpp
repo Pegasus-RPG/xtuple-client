@@ -27,6 +27,7 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   setupUi(this);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(sClose()));
   connect(_code, SIGNAL(editingFinished()), this, SLOT(sCheck())); 
   connect(_taxClass, SIGNAL(newID(int)), this, SLOT(populateBasis()));
   connect(_taxitems, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -434,4 +435,9 @@ bool taxCode::setParams(ParameterList &pParams)
   pParams.append("never",       tr("Never"));
 
   return true;
+}
+
+void taxCode::sClose()
+{
+    XDialog::close();
 }
