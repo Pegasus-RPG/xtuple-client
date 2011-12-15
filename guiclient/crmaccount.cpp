@@ -141,8 +141,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removeTab(_tab->indexOf(_registrationsTab));
 
-  if((_metrics->value("CRMAccountNumberGeneration") == "A") ||
-      (_metrics->value("CRMAccountNumberGeneration") == "O"))
+  if(_metrics->value("CRMAccountNumberGeneration") == "A")
   {
     _number->setFocusPolicy(Qt::NoFocus);
     _active->setFocusPolicy(Qt::NoFocus);
