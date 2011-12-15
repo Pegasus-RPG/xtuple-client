@@ -41,7 +41,6 @@ dspSalesOrdersByCustomerPO::dspSalesOrdersByCustomerPO(QWidget* parent, const ch
   list()->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "cohead_shiptoname"   );
   list()->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "cohead_custponumber"   );
 
-  _poNumber->setFocus();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
 }
 

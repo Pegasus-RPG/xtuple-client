@@ -112,11 +112,11 @@ void XMainWindow::closeEvent(QCloseEvent *event)
   event->accept(); // we have no reason not to accept and let the script change it if needed
   _private->callCloseEvent(event);
 
-  if(event->isAccepted())
+  if(event->isAccepted() && omfgThis->showTopLevel() || forceFloat())
   {
     QString objName = objectName();
     xtsettingsSetValue(objName + "/geometry/size", size());
-    if(omfgThis->showTopLevel() || isModal() || forceFloat())
+    if(isModal() || forceFloat())
       xtsettingsSetValue(objName + "/geometry/pos", pos());
   }
 }

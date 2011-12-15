@@ -141,6 +141,13 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removeTab(_tab->indexOf(_registrationsTab));
 
+  if((_metrics->value("CRMAccountNumberGeneration") == "A") ||
+      (_metrics->value("CRMAccountNumberGeneration") == "O"))
+  {
+    _number->setFocusPolicy(Qt::NoFocus);
+    _active->setFocusPolicy(Qt::NoFocus);
+  }
+
 }
 
 crmaccount::~crmaccount()
@@ -165,7 +172,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _number->setFocus();
+      //_number->setFocus();
 
       XSqlQuery insq;
       insq.prepare("INSERT INTO crmacct(crmacct_number, crmacct_name,"
@@ -210,7 +217,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-      _name->setFocus();
+      //_name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -220,8 +227,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       disconnect(_reg, SIGNAL(valid(bool)), _editReg, SLOT(setEnabled(bool)));
       disconnect(_reg, SIGNAL(valid(bool)), _deleteReg, SLOT(setEnabled(bool)));
       disconnect(_reg, SIGNAL(valid(bool)), _editReg, SLOT(animateClick()));
-
-      _close->setFocus();
 
       ParameterList params;
       params.append("mode", "view");
@@ -1158,7 +1163,7 @@ void crmaccount::sCheckNumber()
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-      _name->setFocus();
+      //_name->setFocus();
       _number->setEnabled(FALSE);
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),

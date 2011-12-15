@@ -1028,6 +1028,7 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_woNumber</tabstop>
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_assembly</tabstop>
@@ -1053,7 +1054,6 @@ to be bound by its terms.</comment>
   <tabstop>_printTraveler</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_woNumber</tabstop>
  </tabstops>
  <resources/>
  <connections>

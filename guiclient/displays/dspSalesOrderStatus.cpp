@@ -42,7 +42,6 @@ dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char*, Qt::WFlag
   list()->addColumn(tr("Close User"),          _itemColumn, Qt::AlignLeft,   true,  "closeuser"  );
   list()->addColumn(tr("Child Ord. #/Status"), _itemColumn, Qt::AlignCenter, true,  "childinfo" );
 
-  _so->setFocus();
 }
 
 void dspSalesOrderStatus::languageChange()

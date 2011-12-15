@@ -303,7 +303,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
       connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setChecked(bool)));
 
       _salesrep->setType(XComboBox::SalesRepsActive);
-      _number->setFocus();
 
       emit newMode(_mode);
       emit newId(_custid);
@@ -321,8 +320,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setEnabled(bool)));
       connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setChecked(bool)));
-
-      _number->setFocus();
 
       emit newMode(_mode);
     }
@@ -383,8 +380,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
       ParameterList params;
       params.append("mode", "view");
       _contacts->set(params);
-
-      _close->setFocus();
 
       emit newMode(_mode);
     }
@@ -1756,7 +1751,6 @@ void customer::sNumberEditable(bool p)
 {
   if (p && _number->id() == -1)
     sClear();
-  _number->setFocus();
 }
 
 void customer::sPrepare()
@@ -1796,8 +1790,6 @@ void customer::sPrepare()
       _number->setNumber(num.value("number").toString());
     _custtype->setFocus();
   }
-  else
-    _number->setFocus();
 
   _NumberGen = _number->number().toInt();
 }

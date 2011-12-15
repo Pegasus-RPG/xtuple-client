@@ -85,6 +85,10 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _printTraveler->setEnabled(_privileges->check("PrintWorkOrderPaperWork"));
 
+  if ((_metrics->value("WONumberGeneration") == "A") ||
+      (_metrics->value("WONumberGeneration") == "O"))
+    _woNumber->setFocusPolicy(Qt::NoFocus);
+
   _project->setType(ProjectLineEdit::WorkOrder);
   if(!_metrics->boolean("UseProjects"))
     _project->hide();

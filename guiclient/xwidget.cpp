@@ -89,11 +89,11 @@ void XWidget::closeEvent(QCloseEvent *event)
   event->accept(); // we have no reason not to accept and let the script change it if needed
   _private->callCloseEvent(event);
 
-  if(event->isAccepted())
+  if(event->isAccepted() && omfgThis->showTopLevel())
   {
     QString objName = objectName();
     xtsettingsSetValue(objName + "/geometry/size", size());
-    if(omfgThis->showTopLevel() || isModal())
+    if(isModal())
       xtsettingsSetValue(objName + "/geometry/pos", pos());
   }
 }

@@ -113,6 +113,9 @@ to be bound by its terms.</comment>
       <layout class="QGridLayout" name="gridLayout_8">
        <item row="0" column="0" colspan="2">
         <layout class="QGridLayout">
+         <property name="verticalSpacing">
+          <number>2</number>
+         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="_orderNumberLit">
            <property name="maximumSize">
@@ -414,32 +417,6 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="3" column="6">
-          <widget class="QLabel" name="_expireLit">
-           <property name="text">
-            <string>E&amp;xpire:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="margin">
-            <number>3</number>
-           </property>
-           <property name="buddy">
-            <cstring>_expire</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="8">
-          <widget class="DLineEdit" name="_expire">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="8">
           <layout class="QHBoxLayout">
            <item>
@@ -470,17 +447,43 @@ to be bound by its terms.</comment>
            </item>
           </layout>
          </item>
-         <item row="2" column="6">
+         <item row="1" column="6">
           <widget class="QLabel" name="_quotestatusLit">
            <property name="text">
             <string>Quote Status:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="8">
+         <item row="1" column="8">
           <widget class="XLineEdit" name="_quotestaus">
            <property name="readOnly">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="6">
+          <widget class="QLabel" name="_expireLit">
+           <property name="text">
+            <string>E&amp;xpire:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="margin">
+            <number>3</number>
+           </property>
+           <property name="buddy">
+            <cstring>_expire</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="8">
+          <widget class="DLineEdit" name="_expire">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
          </item>
@@ -493,45 +496,71 @@ to be bound by its terms.</comment>
          </property>
          <layout class="QGridLayout" name="gridLayout_5">
           <item row="0" column="0">
-           <layout class="QHBoxLayout">
-            <item>
-             <widget class="CustCluster" name="_cust">
-              <property name="nameVisible">
-               <bool>false</bool>
-              </property>
-              <property name="descriptionVisible">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>36</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_copyToShipto">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Copy to Ship-to -&gt;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QFrame" name="_custFrame">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="CustCluster" name="_cust">
+               <property name="nameVisible">
+                <bool>false</bool>
+               </property>
+               <property name="descriptionVisible">
+                <bool>false</bool>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>13</width>
+                 <height>17</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_copyToShipto">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Copy to Ship-to -&gt;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item row="1" column="0">
-           <layout class="QGridLayout">
-            <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
              <widget class="QLabel" name="_billToNameLit">
               <property name="text">
                <string>   Name:</string>
@@ -544,7 +573,7 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item>
              <widget class="XLineEdit" name="_billToName">
               <property name="enabled">
                <bool>false</bool>
@@ -558,81 +587,6 @@ to be bound by its terms.</comment>
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::StrongFocus</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Ship-To</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout">
-            <item>
-             <widget class="ShiptoCluster" name="_shipTo">
-              <property name="nameVisible">
-               <bool>false</bool>
-              </property>
-              <property name="descriptionVisible">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType">
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>36</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <layout class="QGridLayout">
-            <property name="spacing">
-             <number>0</number>
-            </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="_shipToNameLit">
-              <property name="text">
-               <string>    Name:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy">
-               <cstring>_shipToName</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="XLineEdit" name="_shipToName"/>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="0">
-           <widget class="AddressCluster" name="_shipToAddr">
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -681,6 +635,9 @@ to be bound by its terms.</comment>
        </item>
        <item row="3" column="0" colspan="2">
         <layout class="QGridLayout">
+         <property name="verticalSpacing">
+          <number>2</number>
+         </property>
          <item row="0" column="0">
           <widget class="QLabel" name="_fobLit">
            <property name="minimumSize">
@@ -881,6 +838,107 @@ to be bound by its terms.</comment>
           </spacer>
          </item>
         </layout>
+       </item>
+       <item row="1" column="1">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Ship-To</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <widget class="QFrame" name="_shiptoFrame">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>32</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="ShiptoCluster" name="_shipTo">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="nameVisible">
+                <bool>false</bool>
+               </property>
+               <property name="descriptionVisible">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Expanding</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>197</width>
+                 <height>29</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="_shipToNameLit">
+              <property name="text">
+               <string>   Name:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>_shipToName</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="XLineEdit" name="_shipToName"/>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="AddressCluster" name="_shipToAddr">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::StrongFocus</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1980,7 +2038,6 @@ to be bound by its terms.</comment>
   <tabstop>_warehouse</tabstop>
   <tabstop>_origin</tabstop>
   <tabstop>_more</tabstop>
-  <tabstop>_expire</tabstop>
   <tabstop>_cust</tabstop>
   <tabstop>_billToName</tabstop>
   <tabstop>_billToAddr</tabstop>

@@ -45,7 +45,6 @@ dspPricesByItem::dspPricesByItem(QWidget* parent, const char*, Qt::WFlags fl)
     list()->hideColumn(CURR_COL);
   sHandleCosts(_showCosts->isChecked());
 
-  _item->setFocus();
 }
 
 void dspPricesByItem::languageChange()

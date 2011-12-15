@@ -58,7 +58,6 @@ dspTaxHistory::dspTaxHistory(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxdet->addColumn(tr("Tax %1").arg(base),    _moneyColumn,    Qt::AlignRight,  true, "taxbase"  );
 
   sHandleType();
-  _dates->setFocus();
 }
 
 dspTaxHistory::~dspTaxHistory()

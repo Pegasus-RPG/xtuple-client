@@ -515,8 +515,12 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   //Restore Window Size Saved on Close
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
 
+  QSize defsize = QSize();
+#if defined Q_WS_MACX
+  defsize = QSize(1000, 650);
+#endif
   QPoint pos = xtsettingsValue("GUIClient/geometry/pos", QPoint()).toPoint();
-  QSize size = xtsettingsValue("GUIClient/geometry/size", QSize()).toSize();
+  QSize size = xtsettingsValue("GUIClient/geometry/size", defsize).toSize();
   int mainXMax = availableGeometry.bottomRight().x();
   int mainYMax = availableGeometry.bottomRight().y();
 

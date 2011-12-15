@@ -506,7 +506,14 @@ void purchaseOrder::createHeader()
 //  Determine the new PO Number
   if ( (_metrics->value("PONumberGeneration") == "A") ||
        (_metrics->value("PONumberGeneration") == "O") )
+  {
     populateOrderNumber();
+    // Tabbed mode has problems with this behavior
+    if(omfgThis->showTopLevel())
+      _vendor->setFocus();
+  }
+  else if (omfgThis->showTopLevel())
+    _orderNumber->setFocus();
 
   q.exec("SELECT NEXTVAL('pohead_pohead_id_seq') AS pohead_id;");
   if (q.first())

@@ -53,8 +53,6 @@ itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt
   }
 
   sFillList();
-
-  _searchFor->setFocus();
 }
 
 itemPricingSchedules::~itemPricingSchedules()

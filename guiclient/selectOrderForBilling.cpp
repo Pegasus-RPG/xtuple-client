@@ -124,7 +124,6 @@ SetResponse selectOrderForBilling::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      _so->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -132,7 +131,6 @@ SetResponse selectOrderForBilling::set(const ParameterList &pParams)
 
       _close->setText(tr("&Cancel"));
 
-      _save->setFocus();
     }
   }
 

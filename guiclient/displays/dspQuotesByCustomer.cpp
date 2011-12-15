@@ -37,7 +37,6 @@ dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char*, Qt::WFlag
   list()->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "quhead_custponumber"   );
   list()->addColumn(tr("Status"),     _statusColumn,  Qt::AlignCenter, true,  "quhead_status" );
 
-  _cust->setFocus();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
 }
 

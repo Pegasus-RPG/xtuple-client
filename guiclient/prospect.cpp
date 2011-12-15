@@ -109,7 +109,6 @@ enum SetResponse prospect::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -125,7 +124,6 @@ enum SetResponse prospect::set(const ParameterList &pParams)
       connect(_quotes, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));
 
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
 

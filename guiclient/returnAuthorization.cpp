@@ -195,7 +195,9 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
-      _cust->setFocus();      
+      // Tabbed windows has a problem with this
+      if (omfgThis->showTopLevel())
+        _cust->setFocus();
       setNumber();
       _authDate->setDate(omfgThis->dbDate(), true);
       _calcfreight = _metrics->boolean("CalculateFreight");
@@ -257,7 +259,6 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _authNumber->setEnabled(FALSE);
-      _save->setFocus();
       _cancel->setText("&Close");
       
       connect(_authNumber, SIGNAL(editingFinished()), this, SLOT(sCheckAuthorizationNumber()));
@@ -339,7 +340,6 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _postReceipts->hide();
 
       _cancel->setText("&Close");
-      _cancel->setFocus();
   }
   
   return NoError;

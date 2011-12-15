@@ -384,15 +384,22 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     }
   }
 
+  sHandleMore();
+
   if (ISNEW(_mode))
   {
     _ignoreSignals = TRUE;
 
     populateOrderNumber();
-    if (_orderNumber->text().isEmpty())
-      _orderNumber->setFocus();
-    else
-      _cust->setFocus();
+
+    // Tabbed window mode has problems with this behavior
+    if (omfgThis->showTopLevel())
+    {
+      if (_orderNumber->text().isEmpty())
+        _orderNumber->setFocus();
+      else
+        _cust->setFocus();
+    }
 
     _ignoreSignals = FALSE;
 
@@ -438,7 +445,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
     connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
 
-    _new->setFocus();
   }
   else if (ISVIEW(_mode))
   {
@@ -454,7 +460,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _charge->hide();
     _project->setReadOnly(true);
 
-    _close->setFocus();
   }
 
   if (ISQUOTE(_mode))

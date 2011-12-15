@@ -242,7 +242,7 @@ void menuCRM::sEditOwners()
 
 void menuCRM::sCreateRecurringItems()
 {
-  omfgThis->handleNewWindow(new createRecurringItems());
+  omfgThis->handleNewWindow(new createRecurringItems(), Qt::ApplicationModal);
 }
 
 void menuCRM::sContact()
