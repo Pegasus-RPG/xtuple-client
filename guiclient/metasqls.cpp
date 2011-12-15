@@ -72,7 +72,7 @@ void metasqls::languageChange()
 void metasqls::sNew()
 {
   MQLEdit *newdlg = new MQLEdit(0);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::NonModal, true);
   newdlg->forceTestMode(! _privileges->check("ExecuteMetaSQL"));
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
@@ -117,11 +117,8 @@ void metasqls::sEdit()
   newdlg->fileDatabaseOpen(_list->id());
   newdlg->setReadOnly(! userHasPriv(cEdit) && userHasPriv(cView));
   newdlg->forceTestMode(! _privileges->check("ExecuteMetaSQL"));
-#ifdef Q_WS_MAC
   omfgThis->handleNewWindow(newdlg, Qt::NonModal, true);
-#else
-  omfgThis->handleNewWindow(newdlg);
-#endif
+
   connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 

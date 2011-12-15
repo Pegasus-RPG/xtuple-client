@@ -202,12 +202,12 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
 #ifndef Q_WS_MAC
   _widgetwindow->setMenuBar(_menubar);
   _widgetwindow->action()->setVisible(false);
-#else
+#endif
   _widgetwindow->setForceFloat(true);
   _objinspwindow->setForceFloat(true);
   _propinspwindow->setForceFloat(true);
   _slotedwindow->setForceFloat(true);
-#endif
+
   //_widgetwindow->addToolBar(m_fileToolBar);
   //_widgetwindow->addToolBar(m_editToolBar);
   //_widgetwindow->addToolBar(m_toolToolBar);
@@ -247,11 +247,8 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   if (_designer)
   {
     _designer->setObjectName("_designer");
-#ifdef Q_WS_MAC
+
     omfgThis->handleNewWindow(_designer, Qt::NonModal, true);
-#else
-    omfgThis->handleNewWindow(_designer);
-#endif
   }
 }
 
