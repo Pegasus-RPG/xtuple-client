@@ -101,7 +101,7 @@ void bankAdjustmentEditList::sNew()
   
   bankAdjustment *newdlg = new bankAdjustment();
   newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
 }
 
 void bankAdjustmentEditList::sEdit()
@@ -112,7 +112,7 @@ void bankAdjustmentEditList::sEdit()
   
   bankAdjustment *newdlg = new bankAdjustment();
   newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
 }
 
 void bankAdjustmentEditList::sView()

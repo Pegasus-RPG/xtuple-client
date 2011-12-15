@@ -200,7 +200,6 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
 
       _distDate->setDate(omfgThis->dbDate(), true);
       _applDate->setDate(omfgThis->dbDate(), true);
-      _cust->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -210,7 +209,6 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
 
       _cust->setReadOnly(TRUE);
 
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -239,7 +237,6 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
 
-      _close->setFocus();
     }
 
     // if this cash receipt was by credit card cash then prevent changes

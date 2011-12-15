@@ -81,10 +81,34 @@ to be bound by its terms.</comment>
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="_close">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>errorLog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>591</x>
+     <y>397</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>320</x>
+     <y>212</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

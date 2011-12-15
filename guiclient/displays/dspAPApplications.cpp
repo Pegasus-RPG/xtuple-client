@@ -42,7 +42,6 @@ dspAPApplications::dspAPApplications(QWidget* parent, const char*, Qt::WFlags fl
   list()->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currAbbr");
   list()->addColumn(tr("Amount (in %1)").arg(CurrDisplay::baseCurrAbbr()),_moneyColumn, Qt::AlignRight, true, "base_applied");
 
-  _vendorgroup->setFocus();
 }
 
 void dspAPApplications::languageChange()

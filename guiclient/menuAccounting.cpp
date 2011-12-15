@@ -588,7 +588,7 @@ void menuAccounting::sCreateMiscCheck()
 
   miscCheck *newdlg = new miscCheck();
   newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
 }
 
 void menuAccounting::sPrepareCheckRun()
@@ -603,7 +603,7 @@ void menuAccounting::sViewCheckRun()
 
 void menuAccounting::sPrintCheck()
 {
-  omfgThis->handleNewWindow(new printCheck(0, "printCheckFromAccountingMenu"));
+  omfgThis->handleNewWindow(new printCheck(0, "printCheckFromAccountingMenu"), Qt::ApplicationModal);
 }
 
 void menuAccounting::sPrintCheckRun()
@@ -995,7 +995,7 @@ void menuAccounting::sEnterAdjustment()
 
   bankAdjustment *newdlg = new bankAdjustment();
   newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
 }
 
 void menuAccounting::sAdjustmentEditList()

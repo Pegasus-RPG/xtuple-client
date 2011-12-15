@@ -50,7 +50,6 @@ dspARApplications::dspARApplications(QWidget* parent, const char*, Qt::WFlags fl
   list()->hideColumn(4);
   list()->hideColumn(7);
 
-  _allCustomers->setFocus();
 }
 
 void dspARApplications::languageChange()

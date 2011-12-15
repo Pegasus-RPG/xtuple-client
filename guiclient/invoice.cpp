@@ -167,8 +167,9 @@ enum SetResponse invoice::set(const ParameterList &pParams)
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           return UndefinedError;
         }
-
-        _cust->setFocus();
+        // Tabbed window mode doesn't work well with this
+        if (omfgThis->showTopLevel())
+          _cust->setFocus();
       }
       else
         sCheckInvoiceNumber();
@@ -218,7 +219,6 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _new->setEnabled(TRUE);
       _cust->setReadOnly(TRUE);
 
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -263,7 +263,6 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       disconnect(_invcitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
       connect(_invcitem, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
-      _close->setFocus();
     }
   }
 

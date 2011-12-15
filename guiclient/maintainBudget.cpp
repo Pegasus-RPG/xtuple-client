@@ -83,7 +83,6 @@ enum SetResponse maintainBudget::set(const ParameterList & pParams)
     else if(param.toString() == "edit")
     {
       _mode = cEdit;
-      _name->setFocus();
     }
     else if(param.toString() == "view")
     {
@@ -98,7 +97,6 @@ enum SetResponse maintainBudget::set(const ParameterList & pParams)
       _periodsInvert->setEnabled(false);
       _periodsNone->setEnabled(false);
       _generate->setEnabled(false);
-      _close->setFocus();
     }
   }
 

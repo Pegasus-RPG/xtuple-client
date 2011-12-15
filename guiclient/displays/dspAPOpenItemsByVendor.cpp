@@ -64,7 +64,6 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char*, Qt:
   }
 
   _asOf->setDate(omfgThis->dbDate(), true);
-  _vendorGroup->setFocus();
 }
 
 void dspAPOpenItemsByVendor::languageChange()
