@@ -117,9 +117,9 @@ void XWidget::showEvent(QShowEvent *event)
         resize(lsize);
 
       setAttribute(Qt::WA_DeleteOnClose);
+      omfgThis->_windowList.append(this);
       if(omfgThis->showTopLevel() || isModal())
       {
-        omfgThis->_windowList.append(this);
         QRect r(pos, size());
         if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
           move(pos);

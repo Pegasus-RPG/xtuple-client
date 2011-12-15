@@ -140,9 +140,9 @@ void XMainWindow::showEvent(QShowEvent *event)
       resize(lsize);
 
     setAttribute(Qt::WA_DeleteOnClose);
+    omfgThis->_windowList.append(this);
     if(omfgThis->showTopLevel() || isModal() || forceFloat())
     {
-      omfgThis->_windowList.append(this);
       statusBar()->show();
       QRect r(pos, size());
       if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
