@@ -16,6 +16,7 @@
 #include <QMessageBox>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QMainWindow>
 #include <QDebug>
 
 #ifdef Q_WS_MAC
@@ -128,10 +129,9 @@ void ParameterWidget::showEvent(QShowEvent * event)
 
   if(!_initialized)
   {
-    QString pname;
     if(window())
-      pname = window()->objectName() + "/";
-    _settingsName = pname + objectName();
+      _name = window()->objectName() + "/";
+    _settingsName = _name + objectName();
     if(_x_preferences)
       setFiltersVisible(_x_preferences->boolean(_settingsName + "/checked"));
     _initialized = true;
@@ -1491,10 +1491,7 @@ void ParameterWidget::setFiltersVisible(bool visible)
 
 void ParameterWidget::setFiltersVisabiltyPreference()
 {
-  QString pname;
-  if(window())
-    pname = window()->objectName() + "/";
-  _settingsName = pname + this->objectName();
+  _settingsName = _name + objectName();
   if (!_settingsName.isEmpty() && _x_preferences)
   {
     _x_preferences->set(_settingsName + "/checked", _filterGroup->isVisible());
