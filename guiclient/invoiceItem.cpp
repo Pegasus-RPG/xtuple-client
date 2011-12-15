@@ -322,7 +322,7 @@ void invoiceItem::populate()
 					"		taxzone_id,"
                     "       invchead_curr_id AS taxcurr_id,"
                     "       itemsite_costmethod"
-                    "FROM invcitem JOIN "
+                    " FROM invcitem JOIN "
                     "     invchead LEFT OUTER JOIN taxzone ON "
 					"       (invchead_taxzone_id = taxzone_id) "
 					"     ON (invcitem_invchead_id = invchead_id) LEFT OUTER JOIN "
