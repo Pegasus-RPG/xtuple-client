@@ -415,7 +415,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   _workspace = new QMdiArea();
   _workspace->setViewMode(QMdiArea::TabbedView);
-  _workspace->setWindowIcon(QIcon());
+  _workspace->setWindowIcon(QIcon(":/images/clear.png"));
   _workspace->setActivationOrder(QMdiArea::ActivationHistoryOrder);
 #if defined Q_WS_MACX
   _workspace->setDocumentMode(true);
@@ -1748,6 +1748,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m, bool forceFlo
     QWidget * fw = w->focusWidget();
     w->setAttribute(Qt::WA_DeleteOnClose);
     QMdiSubWindow *win = _workspace->addSubWindow(w);
+    win->setWindowState(Qt::WindowMaximized);
     connect(w, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
     QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
