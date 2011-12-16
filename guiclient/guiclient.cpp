@@ -415,6 +415,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   _workspace = new QMdiArea();
   _workspace->setViewMode(QMdiArea::TabbedView);
+  _workspace->setWindowIcon(QIcon());
   _workspace->setActivationOrder(QMdiArea::ActivationHistoryOrder);
 #if defined Q_WS_MACX
   _workspace->setDocumentMode(true);
