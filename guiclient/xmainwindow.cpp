@@ -152,7 +152,6 @@ void XMainWindow::showEvent(QShowEvent *event)
     {
       QWidget * fw = focusWidget();
       QMdiSubWindow *win =  omfgThis->workspace()->addSubWindow(this);
-      win->setWindowState(Qt::WindowMaximized);
       connect(this, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
       QRect r(pos, size());
       if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())

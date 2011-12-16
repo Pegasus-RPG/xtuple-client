@@ -1748,7 +1748,6 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m, bool forceFlo
     QWidget * fw = w->focusWidget();
     w->setAttribute(Qt::WA_DeleteOnClose);
     QMdiSubWindow *win = _workspace->addSubWindow(w);
-    win->setWindowState(Qt::WindowMaximized);
     connect(w, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
     QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
