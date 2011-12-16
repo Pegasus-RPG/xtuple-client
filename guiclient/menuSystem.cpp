@@ -317,7 +317,7 @@ void menuSystem::sPrepareWindowMenu()
   if(omfgThis->showTopLevel())
     activeWindow = omfgThis->myActiveWindow();
   else
-    parent->workspace()->activeSubWindow()->widget();
+    activeWindow = parent->workspace()->activeSubWindow()->widget();
 
   _lastActive = activeWindow;
 
