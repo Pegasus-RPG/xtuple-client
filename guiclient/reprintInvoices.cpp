@@ -151,7 +151,11 @@ void reprintInvoices::sPrint()
 void reprintInvoices::sHandleInvoiceCopies(int pValue)
 {
   if (_watermarks->topLevelItemCount() > pValue)
-    _watermarks->takeTopLevelItem(_watermarks->topLevelItemCount() - 1);
+  {
+    int diff = (_watermarks->topLevelItemCount() - pValue);
+    for (int i = 0; i < diff; i++)
+      _watermarks->takeTopLevelItem(_watermarks->topLevelItemCount() - 1);
+  }
   else
   {
     for (int i = (_watermarks->topLevelItemCount() + 1); i <= pValue; i++)

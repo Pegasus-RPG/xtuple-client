@@ -187,7 +187,11 @@ void printCreditMemos::sPrint()
 void printCreditMemos::sHandleCopies(int pValue)
 {
   if (_creditMemoWatermarks->topLevelItemCount() > pValue)
-    _creditMemoWatermarks->takeTopLevelItem(_creditMemoWatermarks->topLevelItemCount() - 1);
+  {
+    int diff = (_creditMemoWatermarks->topLevelItemCount() - pValue);
+    for (int i = 0; i < diff; i++)
+      _creditMemoWatermarks->takeTopLevelItem(_creditMemoWatermarks->topLevelItemCount() - 1);
+  }
   else
   {
     for (int i = (_creditMemoWatermarks->topLevelItemCount() + 1); i <= pValue; i++)
