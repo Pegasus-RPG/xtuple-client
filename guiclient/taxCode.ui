@@ -107,7 +107,7 @@ to be bound by its terms.</comment>
        <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="GLCluster" name="_account" native="true"/>
+          <widget class="GLCluster" name="_account"/>
          </item>
          <item>
           <spacer name="horizontalSpacer_2">
@@ -128,11 +128,14 @@ to be bound by its terms.</comment>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="XComboBox" name="_taxClass">
-           <property name="allowNull" stdset="0">
+           <property name="allowNull">
             <bool>true</bool>
            </property>
-           <property name="nullStr" stdset="0">
+           <property name="nullStr">
             <string>None</string>
+           </property>
+           <property name="type">
+            <enum>XComboBox::TaxClasses</enum>
            </property>
           </widget>
          </item>
@@ -148,11 +151,14 @@ to be bound by its terms.</comment>
          </item>
          <item>
           <widget class="XComboBox" name="_basis">
-           <property name="allowNull" stdset="0">
+           <property name="allowNull">
             <bool>true</bool>
            </property>
-           <property name="nullStr" stdset="0">
+           <property name="nullStr">
             <string>Base Price</string>
+           </property>
+           <property name="type">
+            <enum>XComboBox::TaxCodes</enum>
            </property>
           </widget>
          </item>
@@ -195,11 +201,14 @@ to be bound by its terms.</comment>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="XComboBox" name="_taxauth">
-           <property name="allowNull" stdset="0">
+           <property name="allowNull">
             <bool>true</bool>
            </property>
-           <property name="nullStr" stdset="0">
+           <property name="nullStr">
             <string>None</string>
+           </property>
+           <property name="type">
+            <enum>XComboBox::TaxAuths</enum>
            </property>
           </widget>
          </item>
