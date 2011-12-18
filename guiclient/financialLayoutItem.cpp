@@ -218,25 +218,34 @@ void financialLayoutItem::sSave()
 
   if (_selectAccount->isChecked())
   {
-    q.prepare( "SELECT count(*) AS result"
-             "  FROM flitem"
-             " WHERE ((flitem_flhead_id=:flhead_id)"
-             "   AND  (flitem_id != :flitem_id)"
-             "   AND  (flitem_accnt_id=:accnt_id) ); ");
-    q.bindValue(":flhead_id", _flheadid);
-    q.bindValue(":flitem_id", _flitemid);
-    q.bindValue(":accnt_id", _account->id());
-    q.exec();
-    if(q.first() && (q.value("result").toInt() > 0) )
+    if (_account->isValid())
     {
-      if ( QMessageBox::warning( this, tr("Duplicate Account Number"),
-           tr("The selected Account number is already being used in this Financial Report.\n"
-              "Would you like to continue anyway?"),
-           QMessageBox::Yes | QMessageBox::Default,
-           QMessageBox::No  | QMessageBox::Escape,
-           Qt::NoButton ) != QMessageBox::Yes)
-        return;
- 
+      q.prepare( "SELECT count(*) AS result"
+               "  FROM flitem"
+               " WHERE ((flitem_flhead_id=:flhead_id)"
+               "   AND  (flitem_id != :flitem_id)"
+               "   AND  (flitem_accnt_id=:accnt_id) ); ");
+      q.bindValue(":flhead_id", _flheadid);
+      q.bindValue(":flitem_id", _flitemid);
+      q.bindValue(":accnt_id", _account->id());
+      q.exec();
+      if(q.first() && (q.value("result").toInt() > 0) )
+      {
+        if ( QMessageBox::warning( this, tr("Duplicate Account Number"),
+             tr("The selected Account number is already being used in this Financial Report.\n"
+                "Would you like to continue anyway?"),
+              QMessageBox::Yes | QMessageBox::Default,
+              QMessageBox::No  | QMessageBox::Escape,
+              Qt::NoButton ) != QMessageBox::Yes)
+         return;
+      }
+    }
+    else
+    {
+      QMessageBox::warning( this, tr("Invalid Account Number"),
+      tr("The selected Account number is not valid. Please select a valid "
+         "account before continuing.") );
+      return;
     }
   }
   int order = 1;
