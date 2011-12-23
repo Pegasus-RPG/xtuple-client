@@ -190,3 +190,14 @@ bool Privileges::check(const QString &pName)
     return TRUE;
 }
 
+bool Privileges::isDba()
+{
+  XSqlQuery su;
+  su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=getEffectiveXtUser());");
+  if (su.lastError().type() != QSqlError::NoError)
+    su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=CURRENT_USER);");
+  if (su.first())
+    return su.value("rolsuper").toBool();
+
+  return false;
+}

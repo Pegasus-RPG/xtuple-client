@@ -125,14 +125,8 @@ void collectMetrics();
 static bool __privCheck(const QString & privname)
 {
   if(privname == "#superuser")
-  {
-    XSqlQuery su;
-    su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=getEffectiveXtUser());");
-    if (su.first())
-      return su.value("rolsuper").toBool();
-    else
-      return false;
-  }
+    return _privileges->isDba();
+
   return _privileges->check(privname);
 }
 

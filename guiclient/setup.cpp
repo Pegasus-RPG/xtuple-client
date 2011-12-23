@@ -76,6 +76,7 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     insert(tr("Registration"), "registrationKey", Configure, Xt::SystemModule, mode("MaintainRegistrationKey"), 0 );
     insert(tr("Schedule"), "configureMS", Configure, Xt::ScheduleModule, mode("ConfigureMS"), 0 );
   }
+  insert(tr("Search Path"), "configureSearchPath", Configure, Xt::SystemModule, _privileges->isDba() ? cEdit : 0, 0);
 
   // Account Mappings
   int modeVal;

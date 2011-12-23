@@ -84,6 +84,7 @@ class Privileges : public Parameters
 
   public slots:
     bool check(const QString &);
+    bool isDba();
 };
 
 #endif
