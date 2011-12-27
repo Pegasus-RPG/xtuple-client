@@ -38,6 +38,7 @@ sysLocale::sysLocale(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_salesPriceScale,SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_percentScale,   SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_buttonBox,      SIGNAL(accepted()),        this, SLOT(sSave()));
+  connect(_buttonBox,      SIGNAL(rejected()),        this, SLOT(close()));
   connect(_weightScale,    SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_uomRatioScale,  SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_warning,        SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
