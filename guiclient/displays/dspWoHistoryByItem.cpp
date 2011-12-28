@@ -27,6 +27,8 @@ dspWoHistoryByItem::dspWoHistoryByItem(QWidget* parent, const char*, Qt::WFlags 
   setReportName("WOHistoryByItem");
   setMetaSQLOptions("workOrderHistory", "detail");
 
+  _showCost->setForgetful(true);
+
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
