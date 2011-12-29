@@ -15,6 +15,10 @@
 #include <QSqlError>
 #include <openreports.h>
 #include <comment.h>
+#include <metasql.h>
+#include "mqlutil.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "task.h"
 #include "dspOrderActivityByProject.h"
 
@@ -25,21 +29,22 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
-  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(sClose()));
-  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_printTasks, SIGNAL(clicked()), this, SLOT(sPrintTasks()));
-  connect(_newTask, SIGNAL(clicked()), this, SLOT(sNewTask()));
-  connect(_editTask, SIGNAL(clicked()), this, SLOT(sEditTask()));
-  connect(_viewTask, SIGNAL(clicked()), this, SLOT(sViewTask()));
-  connect(_deleteTask, SIGNAL(clicked()), this, SLOT(sDeleteTask()));
-  connect(_number, SIGNAL(editingFinished()), this, SLOT(sNumberChanged()));
-  connect(_activity, SIGNAL(clicked()), this, SLOT(sActivity()));
+  connect(_buttonBox,     SIGNAL(rejected()),        this, SLOT(sClose()));
+  connect(_buttonBox,     SIGNAL(accepted()),        this, SLOT(sSave()));
+  connect(_printTasks,    SIGNAL(clicked()),         this, SLOT(sPrintTasks()));
+  connect(_newTask,       SIGNAL(clicked()),         this, SLOT(sNewTask()));
+  connect(_editTask,      SIGNAL(clicked()),         this, SLOT(sEditTask()));
+  connect(_viewTask,      SIGNAL(clicked()),         this, SLOT(sViewTask()));
+  connect(_deleteTask,    SIGNAL(clicked()),         this, SLOT(sDeleteTask()));
+  connect(_number,        SIGNAL(editingFinished()), this, SLOT(sNumberChanged()));
+  connect(_activity,      SIGNAL(clicked()),         this, SLOT(sActivity()));
+  connect(_crmacct,       SIGNAL(newId(int)),        this, SLOT(sCRMAcctChanged(int)));
 
-  _prjtask->addColumn( tr("Number"),			_itemColumn,	Qt::AlignLeft, true, "prjtask_number" );
-  _prjtask->addColumn( tr("Name"),				_itemColumn,	Qt::AlignLeft,  true, "prjtask_name"  );
-  _prjtask->addColumn( tr("Description"),		-1,				Qt::AlignLeft,  true, "prjtask_descrip" ); 
-  _prjtask->addColumn( tr("Hours Balance"),		_itemColumn,	Qt::AlignRight, true, "prjtaskhrbal" );
-  _prjtask->addColumn( tr("Expense Balance"),	_itemColumn, 	Qt::AlignRight, true, "prjtaskexpbal" );
+  _prjtask->addColumn( tr("Number"),            _itemColumn,    Qt::AlignLeft,  true, "prjtask_number" );
+  _prjtask->addColumn( tr("Name"),              _itemColumn,    Qt::AlignLeft,  true, "prjtask_name"  );
+  _prjtask->addColumn( tr("Description"),                -1,    Qt::AlignLeft,  true, "prjtask_descrip" );
+  _prjtask->addColumn( tr("Hours Balance"),     _itemColumn,    Qt::AlignRight, true, "prjtaskhrbal" );
+  _prjtask->addColumn( tr("Expense Balance"),   _itemColumn,    Qt::AlignRight, true, "prjtaskexpbal" );
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
@@ -83,6 +88,19 @@ enum SetResponse project::set(const ParameterList &pParams)
   {
     _prjid = param.toInt();
     populate();
+  }
+
+  param = pParams.value("crmacct_id", &valid);
+  if (valid)
+  {
+    _crmacct->setId(param.toInt());
+    _crmacct->setEnabled(false);
+  }
+
+  param = pParams.value("cntct_id", &valid);
+  if (valid)
+  {
+    _cntct->setId(param.toInt());
   }
 
   param = pParams.value("mode", &valid);
@@ -132,6 +150,8 @@ enum SetResponse project::set(const ParameterList &pParams)
       _wo->setEnabled(FALSE);
       _po->setEnabled(FALSE);
       _assignedTo->setEnabled(FALSE);
+      _crmacct->setEnabled(false);
+      _cntct->setEnabled(false);
       _newTask->setEnabled(FALSE);
       connect(_prjtask, SIGNAL(itemSelected(int)), _viewTask, SLOT(animateClick()));
       _comments->setReadOnly(TRUE);
@@ -152,11 +172,7 @@ enum SetResponse project::set(const ParameterList &pParams)
 
 void project::populate()
 {
-  q.prepare( "SELECT prj_number, prj_name, prj_descrip,"
-             "       prj_so, prj_wo, prj_po, prj_status, "
-             "       prj_owner_username, prj_username, prj_start_date, "
-             "       prj_assigned_date, prj_due_date, prj_completed_date,"
-             "       prj_recurring_prj_id "
+  q.prepare( "SELECT * "
              "FROM prj "
              "WHERE (prj_id=:prj_id);" );
   q.bindValue(":prj_id", _prjid);
@@ -172,6 +188,8 @@ void project::populate()
     _wo->setChecked(q.value("prj_wo").toBool());
     _po->setChecked(q.value("prj_po").toBool());
     _assignedTo->setUsername(q.value("prj_username").toString());
+    _cntct->setId(q.value("prj_cntct_id").toInt());
+    _crmacct->setId(q.value("prj_crmacct_id").toInt());
     _started->setDate(q.value("prj_start_date").toDate());
     _assigned->setDate(q.value("prj_assigned_date").toDate());
     _due->setDate(q.value("prj_due_date").toDate());
@@ -196,6 +214,11 @@ void project::populate()
   emit populated(_prjid);
 }
 
+void project::sCRMAcctChanged(const int newid)
+{
+  _cntct->setSearchAcct(newid);
+}
+
 void project::sClose()
 {
   if (_mode == cNew)
@@ -210,19 +233,16 @@ void project::sClose()
 
 bool project::sSave(bool partial)
 {
-  if (_number->text().trimmed().isEmpty())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Project"),
-      tr("No Project Number was specified. You must specify a project number.") );
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(_number->text().isEmpty(), _number,
+                         tr("No Project Number was specified. You must specify a project number "
+                            "before saving it."))
+        << GuiErrorCheck(!partial && !_due->isValid(), _due,
+                         tr("You must specify a due date before "
+                            "saving it."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Project"), errors))
     return false;
-  }
-
-  if (!partial && !_due->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Project"),
-      tr("You must specify a due date.") );
-    return false;
-  }
 
   RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
   if (cp == RecurrenceWidget::NoPolicy)
@@ -237,12 +257,14 @@ bool project::sSave(bool partial)
                "( prj_id, prj_number, prj_name, prj_descrip,"
                "  prj_so, prj_wo, prj_po, prj_status, prj_owner_username, "
                "  prj_start_date, prj_due_date, prj_assigned_date,"
-               "  prj_completed_date, prj_username, prj_recurring_prj_id ) "
+               "  prj_completed_date, prj_username, prj_recurring_prj_id,"
+               "  prj_crmacct_id, prj_cntct_id) "
                "VALUES "
                "( :prj_id, :prj_number, :prj_name, :prj_descrip,"
                "  :prj_so, :prj_wo, :prj_po, :prj_status, :prj_owner_username,"
                "  :prj_start_date, :prj_due_date, :prj_assigned_date,"
-               "  :prj_completed_date, :username, :prj_recurring_prj_id );" );
+               "  :prj_completed_date, :username, :prj_recurring_prj_id,"
+               "  :prj_crmacct_id, :prj_cntct_id);" );
   else
     q.prepare( "UPDATE prj "
                "SET prj_number=:prj_number, prj_name=:prj_name, prj_descrip=:prj_descrip,"
@@ -251,7 +273,9 @@ bool project::sSave(bool partial)
                "    prj_due_date=:prj_due_date, prj_assigned_date=:prj_assigned_date,"
                "    prj_completed_date=:prj_completed_date,"
                "    prj_username=:username,"
-               "    prj_recurring_prj_id=:prj_recurring_prj_id "
+               "    prj_recurring_prj_id=:prj_recurring_prj_id,"
+               "    prj_crmacct_id=:prj_crmacct_id,"
+               "    prj_cntct_id=:prj_cntct_id "
                "WHERE (prj_id=:prj_id);" );
 
   q.bindValue(":prj_id", _prjid);
@@ -262,11 +286,15 @@ bool project::sSave(bool partial)
   q.bindValue(":prj_wo", QVariant(_wo->isChecked()));
   q.bindValue(":prj_po", QVariant(_po->isChecked()));
   q.bindValue(":prj_owner_username", _owner->username());
-  q.bindValue(":username",   _assignedTo->username());
-  q.bindValue(":prj_start_date",	_started->date());
+  q.bindValue(":username", _assignedTo->username());
+  if (_crmacct->id() > 0)
+    q.bindValue(":prj_crmacct_id", _crmacct->id());
+  if (_cntct->id() > 0)
+    q.bindValue(":prj_cntct_id", _cntct->id());
+  q.bindValue(":prj_start_date", _started->date());
   q.bindValue(":prj_due_date",	_due->date());
-  q.bindValue(":prj_assigned_date",	_assigned->date());
-  q.bindValue(":prj_completed_date",	_completed->date());
+  q.bindValue(":prj_assigned_date", _assigned->date());
+  q.bindValue(":prj_completed_date", _completed->date());
   if (_recurring->isRecurring())
     q.bindValue(":prj_recurring_prj_id", _recurring->parentId());
 
@@ -335,11 +363,11 @@ void project::sNewTask()
   params.append("mode", "new");
   params.append("prj_id", _prjid);
   params.append("prj_owner_username", _owner->username());
-  params.append("prj_username",   _assignedTo->username());
-  params.append("prj_start_date",	_started->date());
+  params.append("prj_username", _assignedTo->username());
+  params.append("prj_start_date", _started->date());
   params.append("prj_due_date",	_due->date());
-  params.append("prj_assigned_date",	_assigned->date());
-  params.append("prj_completed_date",	_completed->date());
+  params.append("prj_assigned_date", _assigned->date());
+  params.append("prj_completed_date", _completed->date());
 
   task newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -406,42 +434,27 @@ void project::sDeleteTask()
 
 void project::sFillTaskList()
 {
-  q.prepare( "SELECT COALESCE(SUM(prjtask_hours_budget), 0.0) AS totalhrbud, "
-             "       COALESCE(SUM(prjtask_hours_actual), 0.0) AS totalhract, "
-			 "       COALESCE(SUM(prjtask_hours_budget - prjtask_hours_actual), 0.0) AS totalhrbal, "
-             "       COALESCE(SUM(prjtask_exp_budget), 0.0) AS totalexpbud, "
-             "       COALESCE(SUM(prjtask_exp_actual), 0.0) AS totalexpact, "
-			 "       COALESCE(SUM(prjtask_exp_budget - prjtask_exp_actual), 0.0) AS totalexpbal "
-             "FROM prjtask "
-             "WHERE (prjtask_prj_id=:prj_id);" );
-  q.bindValue(":prj_id", _prjid);
-  q.exec();
-  if (q.first())
+  MetaSQLQuery mql = mqlLoad("projectTasks", "detail");
+
+  ParameterList params;
+  params.append("prj_id", _prjid);
+  XSqlQuery qry = mql.toQuery(params);
+  if (qry.first())
   {
-    _totalHrBud->setDouble(q.value("totalhrbud").toDouble());
-    _totalHrAct->setDouble(q.value("totalhract").toDouble());
-    _totalHrBal->setDouble(q.value("totalhrbal").toDouble());
-    _totalExpBud->setDouble(q.value("totalexpbud").toDouble());
-    _totalExpAct->setDouble(q.value("totalexpact").toDouble());
-    _totalExpBal->setDouble(q.value("totalexpbal").toDouble());
+    _totalHrBud->setDouble(qry.value("totalhrbud").toDouble());
+    _totalHrAct->setDouble(qry.value("totalhract").toDouble());
+    _totalHrBal->setDouble(qry.value("totalhrbal").toDouble());
+    _totalExpBud->setDouble(qry.value("totalexpbud").toDouble());
+    _totalExpAct->setDouble(qry.value("totalexpact").toDouble());
+    _totalExpBal->setDouble(qry.value("totalexpbal").toDouble());
   }
-  
-  q.prepare( "SELECT prjtask_id, prjtask_number, prjtask_name, "
-  			 " COALESCE(prjtask_hours_budget - prjtask_hours_actual, 0.0) as prjtaskhrbal, "
-			 " COALESCE(prjtask_exp_budget - prjtask_exp_actual, 0.0) as prjtaskexpbal, "
-             "firstLine(prjtask_descrip) AS prjtask_descrip, totalhrbal, totalexpbal "
-			 " FROM (SELECT COALESCE(SUM(prjtask_hours_budget), 0.0) AS totalhrbud, "
-             " COALESCE(SUM(prjtask_hours_actual), 0.0) AS totalhract, "
-			 " COALESCE(SUM(prjtask_hours_budget - prjtask_hours_actual), 0.0) AS totalhrbal, "
-             " COALESCE(SUM(prjtask_exp_budget), 0.0) AS totalexpbud, "
-             " COALESCE(SUM(prjtask_exp_actual), 0.0) AS totalexpact, "
-			 " COALESCE(SUM(prjtask_exp_budget - prjtask_exp_actual), 0.0) AS totalexpbal FROM prjtask "
-			 " WHERE prjtask_prj_id = :prj_id) foo, prjtask "
-             "WHERE (prjtask_prj_id=:prj_id) "
-             "ORDER BY prjtask_number;" );
-  q.bindValue(":prj_id", _prjid);
-  q.exec();
-  _prjtask->populate(q);
+  if (qry.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  _prjtask->populate(qry);
 }
 
 void project::sNumberChanged()

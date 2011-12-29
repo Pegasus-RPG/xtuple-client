@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>729</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -203,7 +203,7 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QGroupBox" name="_statusGroup">
          <property name="title">
           <string/>
@@ -271,7 +271,7 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QGroupBox" name="_ordersGroup">
          <property name="title">
           <string>Assignable Orders</string>
@@ -342,6 +342,97 @@ to be bound by its terms.</comment>
              </widget>
             </item>
            </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="_crmGroup">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>CRM Account:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="CRMAcctCluster" name="_crmacct">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="label">
+                 <string/>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="ContactCluster" name="_cntct">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimalLayout">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -668,6 +759,16 @@ to be bound by its terms.</comment>
    <header>comments.h</header>
   </customwidget>
   <customwidget>
+   <class>ContactCluster</class>
+   <extends>QWidget</extends>
+   <header>contactcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CRMAcctCluster</class>
+   <extends>QWidget</extends>
+   <header>crmacctcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
@@ -716,6 +817,33 @@ to be bound by its terms.</comment>
    <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_buttonBox</tabstop>
+  <tabstop>_number</tabstop>
+  <tabstop>_name</tabstop>
+  <tabstop>_descrip</tabstop>
+  <tabstop>_status</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_owner</tabstop>
+  <tabstop>_assignedTo</tabstop>
+  <tabstop>_crmacct</tabstop>
+  <tabstop>_cntct</tabstop>
+  <tabstop>_due</tabstop>
+  <tabstop>_assigned</tabstop>
+  <tabstop>_started</tabstop>
+  <tabstop>_completed</tabstop>
+  <tabstop>_so</tabstop>
+  <tabstop>_po</tabstop>
+  <tabstop>_wo</tabstop>
+  <tabstop>_activity</tabstop>
+  <tabstop>_prjtask</tabstop>
+  <tabstop>_printTasks</tabstop>
+  <tabstop>_newTask</tabstop>
+  <tabstop>_editTask</tabstop>
+  <tabstop>_viewTask</tabstop>
+  <tabstop>_deleteTask</tabstop>
+  <tabstop>_recurring</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
