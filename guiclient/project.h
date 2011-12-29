@@ -27,6 +27,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
+    virtual void sStatusChanged(const int);
     virtual void sCRMAcctChanged(const int);
     virtual void sClose();
     virtual bool sSave(bool partial = false);

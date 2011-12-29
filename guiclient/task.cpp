@@ -14,7 +14,11 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "userList.h"
+
+const char *_taskStatuses[] = { "P", "O", "C" };
 
 task::task(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -109,6 +113,7 @@ enum SetResponse task::set(const ParameterList &pParams)
                           .arg(__LINE__) );
       }
 
+      connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
       _alarms->setId(_prjtaskid);
       _comments->setId(_prjtaskid);
     }
@@ -116,6 +121,7 @@ enum SetResponse task::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
+      connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
       _buttonBox->setFocus();
     }
     if (param.toString() == "view")
@@ -166,13 +172,11 @@ void task::populate()
     _due->setDate(q.value("prjtask_due_date").toDate());
     _completed->setDate(q.value("prjtask_completed_date").toDate());
 
-    QString status = q.value("prjtask_status").toString();
-    if("P" == status)
-      _status->setCurrentIndex(0);
-    else if("O" == status)
-      _status->setCurrentIndex(1);
-    else if("C" == status)
-      _status->setCurrentIndex(2);
+    for (int counter = 0; counter < _status->count(); counter++)
+    {
+      if (QString(q.value("prjtask_status").toString()[0]) == _taskStatuses[counter])
+        _status->setCurrentIndex(counter);
+    }
 
     _budgetHours->setText(formatQty(q.value("prjtask_hours_budget").toDouble()));
     _actualHours->setText(formatQty(q.value("prjtask_hours_actual").toDouble()));
@@ -200,30 +204,17 @@ void task::populate()
 
 void task::sSave()
 {
-  if (_number->text().length() == 0)
-  {
-      QMessageBox::warning( this, tr("Cannot Save Project Task"),
-                            tr("You must enter a valid Number.") );
-      _number->setFocus();
-      return;
-  }
-  
-  if (_name->text().length() == 0)
-  {
-      QMessageBox::warning( this, tr("Cannot Save Project Task"),
-                            tr("You must enter a valid Name.") );
-      _name->setFocus();
-      return;
-  }
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(_number->text().length() == 0, _number,
+                         tr("You must enter a valid Number."))
+        << GuiErrorCheck(_name->text().length() == 0, _name,
+                         tr("You must enter a valid Name."))
+        << GuiErrorCheck(!_due->isValid(), _due,
+                         tr("You must enter a valid due date."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Project Task"), errors))
+    return;
 
-  if (!_due->isValid())
-  {
-      QMessageBox::warning( this, tr("Cannot Save Project Task"),
-                            tr("You must enter a valid due date.") );
-      _due->setFocus();
-      return;
-  }
-  
   if (_mode == cNew)
   {
     q.prepare( "INSERT INTO prjtask "
@@ -264,31 +255,18 @@ void task::sSave()
   q.bindValue(":prjtask_number", _number->text());
   q.bindValue(":prjtask_name", _name->text());
   q.bindValue(":prjtask_descrip", _descrip->toPlainText());
+  q.bindValue(":prjtask_status", _taskStatuses[_status->currentIndex()]);
   q.bindValue(":prjtask_owner_username", _owner->username());
   q.bindValue(":username",   _assignedTo->username());
-  q.bindValue(":prjtask_start_date",	_started->date());
-  q.bindValue(":prjtask_due_date",	_due->date());
+  q.bindValue(":prjtask_start_date", _started->date());
+  q.bindValue(":prjtask_due_date", _due->date());
   q.bindValue(":prjtask_assigned_date",	_assigned->date());
-  q.bindValue(":prjtask_completed_date",	_completed->date());
+  q.bindValue(":prjtask_completed_date", _completed->date());
   //q.bindValue(":prjtask_anyuser", QVariant(_anyUser->isChecked()));
   q.bindValue(":prjtask_hours_budget", _budgetHours->text().toDouble());
   q.bindValue(":prjtask_hours_actual", _actualHours->text().toDouble());
   q.bindValue(":prjtask_exp_budget", _budgetExp->text().toDouble());
   q.bindValue(":prjtask_exp_actual", _actualExp->text().toDouble());
-
-  switch(_status->currentIndex())
-  {
-    case 0:
-    default:
-      q.bindValue(":prjtask_status", "P");
-      break;
-    case 1:
-      q.bindValue(":prjtask_status", "O");
-      break;
-    case 2:
-      q.bindValue(":prjtask_status", "C");
-      break;
-  }
 
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -298,6 +276,25 @@ void task::sSave()
   }
 
   done(_prjtaskid);
+}
+
+void task::sStatusChanged(const int pStatus)
+{
+  switch(pStatus)
+  {
+    case 0: // Concept
+    default:
+      _started->clear();
+      _completed->clear();
+      break;
+    case 1: // In Process
+      _started->setDate(omfgThis->dbDate());
+      _completed->clear();
+      break;
+    case 2: // Completed
+      _completed->setDate(omfgThis->dbDate());
+      break;
+  }
 }
 
 void task::sHoursAdjusted()

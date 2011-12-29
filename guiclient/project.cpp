@@ -22,6 +22,8 @@
 #include "task.h"
 #include "dspOrderActivityByProject.h"
 
+const char *_projectStatuses[] = { "P", "O", "C" };
+
 project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -110,6 +112,7 @@ enum SetResponse project::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
+      connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
       connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
@@ -133,6 +136,7 @@ enum SetResponse project::set(const ParameterList &pParams)
 
       _number->setEnabled(FALSE);
 
+      connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
       connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
@@ -194,24 +198,40 @@ void project::populate()
     _assigned->setDate(q.value("prj_assigned_date").toDate());
     _due->setDate(q.value("prj_due_date").toDate());
     _completed->setDate(q.value("prj_completed_date").toDate());
-    QString status = q.value("prj_status").toString();
+    for (int counter = 0; counter < _status->count(); counter++)
+    {
+      if (QString(q.value("prj_status").toString()[0]) == _projectStatuses[counter])
+        _status->setCurrentIndex(counter);
+    }
 
     _recurring->setParent(q.value("prj_recurring_prj_id").isNull() ?
                             _prjid : q.value("prj_recurring_prj_id").toInt(),
                           "J");
-
-    if("P" == status)
-      _status->setCurrentIndex(0);
-    else if("O" == status)
-      _status->setCurrentIndex(1);
-    else if("C" == status)
-      _status->setCurrentIndex(2);
   }
 
   sFillTaskList();
   _comments->setId(_prjid);
   _documents->setId(_prjid);
   emit populated(_prjid);
+}
+
+void project::sStatusChanged(const int pStatus)
+{
+  switch(pStatus)
+  {
+    case 0: // Concept
+    default:
+      _started->clear();
+      _completed->clear();
+      break;
+    case 1: // In Process
+      _started->setDate(omfgThis->dbDate());
+      _completed->clear();
+      break;
+    case 2: // Completed
+      _completed->setDate(omfgThis->dbDate());
+      break;
+  }
 }
 
 void project::sCRMAcctChanged(const int newid)
@@ -282,6 +302,7 @@ bool project::sSave(bool partial)
   q.bindValue(":prj_number", _number->text().trimmed().toUpper());
   q.bindValue(":prj_name", _name->text());
   q.bindValue(":prj_descrip", _descrip->toPlainText());
+  q.bindValue(":prj_status", _projectStatuses[_status->currentIndex()]);
   q.bindValue(":prj_so", QVariant(_so->isChecked()));
   q.bindValue(":prj_wo", QVariant(_wo->isChecked()));
   q.bindValue(":prj_po", QVariant(_po->isChecked()));
@@ -298,19 +319,6 @@ bool project::sSave(bool partial)
   if (_recurring->isRecurring())
     q.bindValue(":prj_recurring_prj_id", _recurring->parentId());
 
-  switch(_status->currentIndex())
-  {
-    case 0:
-    default:
-      q.bindValue(":prj_status", "P");
-      break;
-    case 1:
-      q.bindValue(":prj_status", "O");
-      break;
-    case 2:
-      q.bindValue(":prj_status", "C");
-      break;
-  }
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {

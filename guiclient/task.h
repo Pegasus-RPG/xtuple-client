@@ -32,6 +32,7 @@ public slots:
     virtual void sNewUser();
     virtual void sDeleteUser();
     virtual void sFillUserList();
+    virtual void sStatusChanged(const int);
     virtual void sHoursAdjusted();
     virtual void sExpensesAdjusted();
 
