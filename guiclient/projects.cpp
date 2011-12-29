@@ -13,7 +13,9 @@
 #include <QAction>
 #include <QMenu>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QVariant>
+#include <QSqlError>
 
 #include <parameter.h>
 
@@ -143,6 +145,63 @@ void projects::sDelete()
         tr("Could not delete the project for one or more reasons.\n") + errmsg);
       return;
     }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  sFillList();
+}
+
+void projects::sCopy()
+{
+  bool ok;
+  QString newNumber = QInputDialog::getText(this, tr("Project Number"),
+                                            tr("Project Number for the new Project:"),
+        QLineEdit::Normal, "", &ok);
+  if(!ok)
+    return;
+  int newDueOffset = QInputDialog::getInt(this, tr("Due Date"),
+                               tr("Offset from old Due Date:"),
+                               0, 0, 365, 1, &ok);
+  if ( !ok )
+    return;
+
+  q.prepare("SELECT copyProject(:prj_id, :newNumber, :newDueOffset) AS result");
+  q.bindValue(":prj_id", list()->id());
+  q.bindValue(":newNumber", newNumber);
+  q.bindValue(":newDueOffset", newDueOffset);
+  q.exec();
+  if(q.first())
+  {
+    int result = q.value("result").toInt();
+    if(result < 0)
+    {
+      QString errmsg;
+      switch(result)
+      {
+        case -1:
+          errmsg = tr("Project Number for the new Project cannot be blank.");
+          break;
+        case -2:
+          errmsg = tr("The Project Number entered for the new Project already exists.");
+          break;
+        case -3:
+          errmsg = tr("Source Project not found.");
+          break;
+        default:
+          errmsg = tr("Error #%1 encountered while trying to copy project.").arg(result);
+      }
+      QMessageBox::critical( this, tr("Cannot Copy Project"),
+        tr("Could not copy the project for one or more reasons.\n") + errmsg);
+      return;
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   sFillList();
 }
@@ -168,6 +227,9 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
   menuItem->setEnabled(editPriv);
 
   menuItem = pMenu->addAction("Delete...", this, SLOT(sDelete()));
+  menuItem->setEnabled(editPriv);
+
+  menuItem = pMenu->addAction("Copy...", this, SLOT(sCopy()));
   menuItem->setEnabled(editPriv);
 }
 
