@@ -113,6 +113,7 @@ enum SetResponse task::set(const ParameterList &pParams)
                           .arg(__LINE__) );
       }
 
+      connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
       _alarms->setId(_prjtaskid);
       _comments->setId(_prjtaskid);
@@ -121,6 +122,7 @@ enum SetResponse task::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
+      connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
       _buttonBox->setFocus();
     }
@@ -276,6 +278,14 @@ void task::sSave()
   }
 
   done(_prjtaskid);
+}
+
+void task::sAssignedToChanged(const int newid)
+{
+  if (newid == -1)
+    _assigned->clear();
+  else
+    _assigned->setDate(omfgThis->dbDate());
 }
 
 void task::sStatusChanged(const int pStatus)

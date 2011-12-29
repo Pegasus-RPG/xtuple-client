@@ -112,6 +112,7 @@ enum SetResponse project::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
+      connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
       connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
@@ -136,6 +137,7 @@ enum SetResponse project::set(const ParameterList &pParams)
 
       _number->setEnabled(FALSE);
 
+      connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
       connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
@@ -213,6 +215,14 @@ void project::populate()
   _comments->setId(_prjid);
   _documents->setId(_prjid);
   emit populated(_prjid);
+}
+
+void project::sAssignedToChanged(const int newid)
+{
+  if (newid == -1)
+    _assigned->clear();
+  else
+    _assigned->setDate(omfgThis->dbDate());
 }
 
 void project::sStatusChanged(const int pStatus)
