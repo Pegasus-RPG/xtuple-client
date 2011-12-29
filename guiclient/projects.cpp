@@ -36,20 +36,37 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   if (!_privileges->check("MaintainAllProjects") && !_privileges->check("MaintainPersonalProjects"))
     newAction()->setEnabled(FALSE);
 
-  list()->addColumn(tr("Number"),    _orderColumn, Qt::AlignLeft,   true, "prj_number" );
-  list()->addColumn(tr("Name"),      -1,           Qt::AlignLeft,   true, "prj_name"   );
-  list()->addColumn(tr("Status"),    _itemColumn,  Qt::AlignCenter, true, "prj_status" );
-  list()->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"prj_owner_username");
-  list()->addColumn(tr("Assigned"),  _userColumn,  Qt::AlignLeft,   true, "prj_username");
-  list()->addColumn(tr("Budget Hrs."),        -1,  Qt::AlignRight,  true, "budget_hrs");
-  list()->addColumn(tr("Actual Hrs."),        -1,  Qt::AlignRight,  true, "actual_hrs");
-  list()->addColumn(tr("Balance Hrs."),       -1,  Qt::AlignRight,  true, "balance_hrs");
+  list()->addColumn(tr("Number"),       _orderColumn,  Qt::AlignLeft,   true,  "prj_number");
+  list()->addColumn(tr("Name"),                   -1,  Qt::AlignLeft,   true,  "prj_name");
+  list()->addColumn(tr("Description"),            -1,  Qt::AlignLeft,   true,  "prj_descrip");
+  list()->addColumn(tr("Status"),        _itemColumn,  Qt::AlignCenter, true,  "prj_status" );
+  list()->addColumn(tr("Owner"),         _userColumn,  Qt::AlignLeft,   false, "prj_owner_username");
+  list()->addColumn(tr("Assigned To"),   _userColumn,  Qt::AlignLeft,   true,  "prj_username");
+  list()->addColumn(tr("CRM Account"),   _userColumn,  Qt::AlignLeft,   true,  "crmacct_number");
+  list()->addColumn(tr("Contact"),       _userColumn,  Qt::AlignLeft,   true,  "contact_name");
+  list()->addColumn(tr("Due"),           _dateColumn,  Qt::AlignCenter, true,  "prj_due_date");
+  list()->addColumn(tr("Assigned"),      _dateColumn,  Qt::AlignCenter, true,  "prj_assigned_date");
+  list()->addColumn(tr("Started"),       _dateColumn,  Qt::AlignCenter, true,  "prj_start_date");
+  list()->addColumn(tr("Completed"),     _dateColumn,  Qt::AlignCenter, true,  "prj_completed_date");
+  list()->addColumn(tr("Budget Hrs."),   _costColumn,  Qt::AlignRight,  true,  "budget_hrs");
+  list()->addColumn(tr("Actual Hrs."),   _costColumn,  Qt::AlignRight,  true,  "actual_hrs");
+  list()->addColumn(tr("Balance Hrs."),  _costColumn,  Qt::AlignRight,  true,  "balance_hrs");
 
   connect(omfgThis, SIGNAL(projectsUpdated(int)), this, SLOT(sFillList()));
   connect(_showComplete, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
   parameterWidget()->append(tr("AssignedTo"), "assigned_username", ParameterWidget::User);
+  parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
+  parameterWidget()->append(tr("Contact"), "cntct_id", ParameterWidget::Contact);
+  parameterWidget()->append(tr("Start Start Date"), "startStartDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Start End Date"), "startEndDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Due Start Date"), "dueStartDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Due End Date"), "dueEndDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Assigned Start Date"), "assignedStartDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Assigned End Date"), "assignedEndDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Completed Start Date"), "completedStartDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Completed End Date"), "completedEndDate", ParameterWidget::Date, QDate::currentDate());
 
   sFillList();
 }
