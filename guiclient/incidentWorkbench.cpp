@@ -71,6 +71,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   parameterWidget()->append(tr("Project"), "prj_id", ParameterWidget::Project);
   if(_metrics->boolean("IncidentsPublicPrivate"))
     parameterWidget()->append(tr("Public"), "public", ParameterWidget::CheckBox);
+  parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
+  parameterWidget()->append(tr("Lot/Serial Pattern"), "lspattern", ParameterWidget::Text);
   parameterWidget()->applyDefaultFilterSet();
 
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
@@ -93,6 +95,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   list()->addColumn(tr("Project"),     _userColumn, Qt::AlignLeft, false, "prj_number");
   if(_metrics->boolean("IncidentsPublicPrivate"))
     list()->addColumn(tr("Public"),     _userColumn, Qt::AlignLeft, false, "incdt_public");
+  list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft, false, "item_number");
+  list()->addColumn(tr("Lot/Serial"),   _itemColumn, Qt::AlignLeft, false, "ls_number");
 
   setupCharacteristics(characteristic::Incidents);
   parameterWidget()->applyDefaultFilterSet();
