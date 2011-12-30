@@ -61,6 +61,7 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( QuoteItem,         "QI"  ),
   DocumentMap( SalesOrder,        "S"   ),
   DocumentMap( SalesOrderItem,    "SI"  ),
+  DocumentMap( TimeExpense,       "TE"  ),
   DocumentMap( Todo,              "TODO"),
   DocumentMap( TransferOrder,     "TO"  ),
   DocumentMap( TransferOrderItem, "TI"  ),
@@ -503,6 +504,7 @@ void Documents::refresh()
               " WHEN (target_type='Q') THEN :quote "
               " WHEN (target_type='V') THEN :vendor "
               " WHEN (target_type='W') THEN :wo "
+              " WHEN (target_type='TE') THEN :timeexpense "
               " WHEN (target_type='TODO') THEN :todo "
               " ELSE :error "
               " END AS target_type_qtdisplayrole "
@@ -528,6 +530,7 @@ void Documents::refresh()
   query.bindValue(":wo", tr("Work Order"));
   query.bindValue(":image", tr("Image"));
   query.bindValue(":incident", tr("Incident"));
+  query.bindValue(":timeexpense", tr("Time Expense"));
   query.bindValue(":todo", tr("To-Do"));
   query.bindValue(":task", tr("Task"));
   query.bindValue(":project", tr("Project"));
