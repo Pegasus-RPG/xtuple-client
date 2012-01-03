@@ -771,6 +771,29 @@ void GUIClient::saveToolbarPositions()
 
 void GUIClient::closeEvent(QCloseEvent *event)
 {
+  if (_showTopLevel)
+  {
+    foreach (QWidget *child, QApplication::topLevelWidgets())
+    {
+      if (child != this && ! child->close())
+      {
+        event->ignore();
+        return;
+      }
+    }
+  }
+  else
+  {
+    foreach (QMdiSubWindow *child, _workspace->subWindowList())
+    {
+      if (! child->close())
+      {
+        event->ignore();
+        return;
+      }
+    }
+  }
+
   hunspell_uninitialize();
 
   _shuttingDown = true;
