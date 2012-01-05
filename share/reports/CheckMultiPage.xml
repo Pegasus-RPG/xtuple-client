@@ -426,7 +426,7 @@ WHERE ((checkhead_curr_id = curr_id)
      <top/>
      <data>
       <query>CheckDetail</query>
-      <column>chyeckdata_docdate</column>
+      <column>checkdata_docdate</column>
      </data>
     </field>
     <label>
@@ -818,7 +818,7 @@ WHERE ((checkhead_curr_id = curr_id)
      <top/>
      <data>
       <query>CheckDetail</query>
-      <column>chyeckdata_docdate</column>
+      <column>checkdata_docdate</column>
      </data>
     </field>
     <label>

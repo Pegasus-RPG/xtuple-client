@@ -28,7 +28,7 @@ public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sPost();
     virtual void sHandleBankAccount( int pBankaccntid );
-    virtual void populate( int pApchkid );
+    virtual void populate( int pcheckid );
 
 protected slots:
     virtual void languageChange();

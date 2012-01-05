@@ -198,7 +198,6 @@ void printCheck::sPrint()
     ParameterList params;
 
     params.append("checkhead_id", _check->id());
-    params.append("apchk_id", _check->id());
 
 // replace with new renderer code so we can get a page count
     ORPreRender pre;

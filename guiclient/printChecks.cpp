@@ -176,7 +176,6 @@ void printChecks::sPrint()
 
     ParameterList params;
     params.append("checkhead_id", checks.value("checkhead_id").toInt());
-    params.append("apchk_id", checks.value("checkhead_id").toInt());
 
     ORPreRender pre;
     pre.setDom(docReport);
