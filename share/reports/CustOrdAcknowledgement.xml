@@ -17,8 +17,8 @@
  <leftmargin>25</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>&lt;? if not exists("cosmisc_id") ?>
---Run query if no cosmisc_id passed - No Shipment Pack List
+  <sql>&lt;? if not exists("shiphead_id") ?>
+--Run query if no shiphead_id passed - No Shipment Pack List
 SELECT cust_number,
        formatsobarcode(cohead_id) AS order_barcode,
        formataddr(cust_address1, cust_address2, cust_address3, (cust_city || '  ' ||  cust_state || '  ' || cust_zipcode), cust_country) AS corr_address, 
@@ -57,7 +57,7 @@ SELECT cust_number,
 --Run New Query for Header with shipment number
 -----------------------------------------------
 
-SELECT cosmisc_number,
+SELECT shiphead_number,
 
        cohead_number,
        formatsobarcode(cohead_id) AS order_barcode,
@@ -80,19 +80,19 @@ SELECT cosmisc_number,
        shipchrg_descrip,
 
        terms_descrip
-  FROM cosmisc, cohead, cust, terms, shipchrg
+  FROM shiphead, cohead, cust, terms, shipchrg
  WHERE ((cohead_cust_id=cust_id)
    AND (cohead_terms_id=terms_id)
-   AND (cohead_id=cosmisc_cohead_id)
+   AND (cohead_id=shiphead_order_id)
    AND (cohead_shipchrg_id = shipchrg_id)
-   AND (cosmisc_id=&lt;? value("cosmisc_id") ?>)
+   AND (shiphead_id=&lt;? value("shiphead_id") ?>)
 );
 
 &lt;? endif ?></sql>
  </querysource>
  <querysource>
   <name>scheddate</name>
-  <sql>&lt;? if not exists("cosmisc_id") ?>
+  <sql>&lt;? if not exists("shiphead_id") ?>
 --Query without shipment number
 
 SELECT formatDate(MIN(coitem_scheddate)) AS scheddate
@@ -105,10 +105,10 @@ SELECT formatDate(MIN(coitem_scheddate)) AS scheddate
 
 
 SELECT formatDate(MIN(coitem_scheddate)) AS scheddate
-  FROM coitem, coship
+  FROM coitem, shipitem
  WHERE ((coitem_status &lt;> 'X')
-   AND  (coitem_id=coship_coitem_id)
-   AND  (coship_cosmisc_id=&lt;? value("cosmisc_id") ?>));
+   AND  (coitem_id=shipitem_orderitem_id)
+   AND  (shipitem_shiphead_id=&lt;? value("shiphead_id") ?>));
 
 &lt;? endif ?></sql>
  </querysource>

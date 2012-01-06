@@ -65,10 +65,6 @@ enum SetResponse shippingInformation::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("cosmisc_id", &valid);	// deprecated
-  if (valid)
-    _shipment->setId(param.toInt());
-
   param = pParams.value("shiphead_id", &valid);
   if (valid)
     _shipment->setId(param.toInt());

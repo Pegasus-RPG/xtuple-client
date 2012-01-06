@@ -147,7 +147,6 @@ void printShippingForms::sPrint()
       {
         ParameterList params;
 
-        params.append("cosmisc_id", reports.value("shiphead_id").toInt());
         params.append("shiphead_id", reports.value("shiphead_id").toInt());
 
         params.append("watermark", _shipformWatermarks->topLevelItem(i)->text(1));

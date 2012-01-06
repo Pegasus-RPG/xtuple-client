@@ -137,7 +137,7 @@ to be bound by its terms.</comment>
            </widget>
           </item>
           <item>
-           <widget class="XTreeWidget" name="_coship" />
+           <widget class="XTreeWidget" name="_shipitem" />
           </item>
          </layout>
         </item>
@@ -170,7 +170,7 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_warehouse</tabstop>
   <tabstop>_showUnselected</tabstop>
-  <tabstop>_coship</tabstop>
+  <tabstop>_shipitem</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

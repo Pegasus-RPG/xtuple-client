@@ -109,7 +109,7 @@ bool dspShipmentsBase::setParams(ParameterList& params)
 void dspShipmentsBase::sPrintShippingForm()
 {
   ParameterList params;
-  params.append("cosmisc_id", list()->id());
+  params.append("shiphead_id", list()->id());
 
   printShippingForm newdlg(this);
   newdlg.set(params);
@@ -190,32 +190,32 @@ void dspShipmentsBase::sFillURL()
 {
     QString url;
     
-     q.prepare( "SELECT upper(cosmisc_shipvia) AS cosmisc_shipvia, cosmisc_tracknum, cohead_shiptozipcode "
-               "FROM cosmisc, cohead "
-               "WHERE ((cosmisc_id=:cosmisc_id) "
-               "AND (cosmisc_cohead_id=cohead_id));");
+     q.prepare( "SELECT upper(shiphead_shipvia) AS shiphead_shipvia, shiphead_tracknum, cohead_shiptozipcode "
+               "FROM shiphead, cohead "
+               "WHERE ((shiphead_id=:shiphead_id) "
+               "AND (shiphead_order_id=cohead_id));");
      
-    q.bindValue(":cosmisc_id", list()->id());
+    q.bindValue(":shiphead_id", list()->id());
     q.exec();
     if (q.first()) {
      bool findShipper;
      findShipper = false;
      
 // Code for UPS	
-     if (q.value("cosmisc_shipvia").toString ().left(3) == "UPS") {
+     if (q.value("shiphead_shipvia").toString ().left(3) == "UPS") {
        QString url("http://wwwapps.ups.com/WebTracking/processInputRequest?HTMLVersion=5.0&loc=en_US&Requester=UPSHome&tracknum=");
-       url +=  q.value("cosmisc_tracknum").toString ();
+       url +=  q.value("shiphead_tracknum").toString ();
        url +=  "&AgreeToTermsAndConditions=yes&track.x=40&track.y=9";
        findShipper = true;
         omfgThis->launchBrowser(this, url);
       }
      
  // Code for SAIA	
-     if (q.value("cosmisc_shipvia").toString ().left(4) == "SAIA") {
+     if (q.value("shiphead_shipvia").toString ().left(4) == "SAIA") {
        QString url("http://www.SaiaSecure.com/tracing/manifest.asp?UID=&PWD=&PRONum1=");
        QString _partial;
        QString _tracknum;
-       _tracknum = q.value("cosmisc_tracknum").toString ();
+       _tracknum = q.value("shiphead_tracknum").toString ();
        int _length_tracknum;
        int _how_many;
        _length_tracknum = _tracknum.length();
@@ -229,35 +229,35 @@ void dspShipmentsBase::sFillURL()
       }
 
  // Code for A&B
-     if ((q.value("cosmisc_shipvia").toString ().left(5) == "A & B") || (q.value("cosmisc_shipvia").toString ().left(3) == "A&B")) {
+     if ((q.value("shiphead_shipvia").toString ().left(5) == "A & B") || (q.value("shiphead_shipvia").toString ().left(3) == "A&B")) {
        QString url("http://www.aandbfreight.com/");
        findShipper = true;
        omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("A & B"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("cosmisc_tracknum").toString (), QMessageBox::Ok);
+       QMessageBox::information(this, tr("A & B"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
       }
 
  // Code for AVERITT
-     if (q.value("cosmisc_shipvia").toString ().left(7) == "AVERITT") {
+     if (q.value("shiphead_shipvia").toString ().left(7) == "AVERITT") {
        QString url("http://www.averittexpress.com/");
        findShipper = true;
        omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("AVERITT"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("cosmisc_tracknum").toString (), QMessageBox::Ok);
+       QMessageBox::information(this, tr("AVERITT"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
       }
 
  // Code for DHL	
-     if (q.value("cosmisc_shipvia").toString ().left(3) == "DHL") {
+     if (q.value("shiphead_shipvia").toString ().left(3) == "DHL") {
        QString url("http://www.dhl-usa.com/home/Home.asp");
        findShipper = true;
        omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("DHL"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("cosmisc_tracknum").toString (), QMessageBox::Ok);
+       QMessageBox::information(this, tr("DHL"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
       }
 
  // Code for FEDEX	
-     if (q.value("cosmisc_shipvia").toString ().left(5) == "FEDEX") {
+     if (q.value("shiphead_shipvia").toString ().left(5) == "FEDEX") {
        QString url("http://www.fedex.com/Tracking?ascend_header=1&clienttype=dotcom&cntry_code=us&language=english&tracknumbers=");
        QString _partial;
        QString _tracknum;
-       _tracknum = q.value("cosmisc_tracknum").toString ();
+       _tracknum = q.value("shiphead_tracknum").toString ();
        int _length_tracknum;
        int _how_many;
        _length_tracknum = _tracknum.length();
@@ -280,16 +280,16 @@ void dspShipmentsBase::sFillURL()
       }
 
  // Code for R&L	
-     if ((q.value("cosmisc_shipvia").toString ().left(5) == "R & L") || (q.value("cosmisc_shipvia").toString ().left(3) == "R&L"))  {       QString url("http://www.rlcarriers.com/new/index.asp");
+     if ((q.value("shiphead_shipvia").toString ().left(5) == "R & L") || (q.value("shiphead_shipvia").toString ().left(3) == "R&L"))  {       QString url("http://www.rlcarriers.com/new/index.asp");
        findShipper = true;
        omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("R&L"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("cosmisc_tracknum").toString (), QMessageBox::Ok);
+       QMessageBox::information(this, tr("R&L"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
       }
 
  // Code for ROADWAY	
-     if (q.value("cosmisc_shipvia").toString ().left(7) == "ROADWAY") {
+     if (q.value("shiphead_shipvia").toString ().left(7) == "ROADWAY") {
        QString url("http://www.quiktrak.roadway.com/cgi-bin/quiktrak?type=0&pro0=");
-       url += q.value("cosmisc_tracknum").toString ();
+       url += q.value("shiphead_tracknum").toString ();
        url += "&zip0=";
        url += q.value("cohead_shiptozipcode").toString ();
        findShipper = true;
@@ -297,31 +297,31 @@ void dspShipmentsBase::sFillURL()
       }
 
  // Code for USF	
-     if (q.value("cosmisc_shipvia").toString ().left(3) == "USF") {
+     if (q.value("shiphead_shipvia").toString ().left(3) == "USF") {
        QString url("http://www.usfc.com/shipmentStatus/shipmentStatustWS.jsp?TrackType=H&TrackNumber=");
-       url +=  q.value("cosmisc_tracknum").toString ();
+       url +=  q.value("shiphead_tracknum").toString ();
        findShipper = true;
        omfgThis->launchBrowser(this, url);
       }
 
  // Code for WATKINS	
-     if (q.value("cosmisc_shipvia").toString ().left(7) == "WATKINS") {
+     if (q.value("shiphead_shipvia").toString ().left(7) == "WATKINS") {
        QString url("http://www.watkins.com/");
        findShipper = true;
        omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("WATKINS"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("cosmisc_tracknum").toString (), QMessageBox::Ok);
+       QMessageBox::information(this, tr("WATKINS"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
       }
 
  // Code for YELLOW	
-     if (q.value("cosmisc_shipvia").toString ().left(7) == "YELLOW") {
+     if (q.value("shiphead_shipvia").toString ().left(7) == "YELLOW") {
        QString url("http://www.myyellow.com/dynamic/services/content/index.jsp");
        findShipper = true;
        omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("YELLOW"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("cosmisc_tracknum").toString (), QMessageBox::Ok);
+       QMessageBox::information(this, tr("YELLOW"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
       }
 
      if (!findShipper){
-      QMessageBox::information(this, tr("Shipper"), tr("We do not currently process this shipper ") + q.value("cosmisc_shipvia").toString (), QMessageBox::Ok);
+      QMessageBox::information(this, tr("Shipper"), tr("We do not currently process this shipper ") + q.value("shiphead_shipvia").toString (), QMessageBox::Ok);
      }
     }
     else if (q.lastError().type() != QSqlError::NoError)

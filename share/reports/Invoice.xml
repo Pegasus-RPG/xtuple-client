@@ -256,12 +256,13 @@ WHERE ((image_name='logo'));</sql>
  </querysource>
  <querysource>
   <name>tracknum</name>
-  <sql>select formatdate(cosmisc_shipdate) AS f_shipdate, cosmisc_tracknum, cosmisc_shipvia from cohead, cosmisc, invchead &#xd;
+  <sql>select formatdate(shiphead_shipdate) AS f_shipdate, shiphead_tracknum, shiphead_shipvia from cohead, shiphead, invchead &#xd;
 where &#xd;
-cohead_id = cosmisc_cohead_id&#xd;
+cohead_id = shiphead_order_id&#xd;
+and shiphead_order_type = 'SO'&#xd;
 and cohead_number = invchead_ordernumber&#xd;
 and invchead_id = &lt;? value("invchead_id") ?>&#xd;
-order by cosmisc_shipdate;</sql>
+order by shiphead_shipdate;</sql>
  </querysource>
  <pghead>
   <firstpage/>
@@ -806,7 +807,7 @@ order by cosmisc_shipdate;</sql>
   <name>tracknumber</name>
   <group>
    <name>tracknum</name>
-   <column>cosmisc_shipdate</column>
+   <column>shiphead_shipdate</column>
    <head>
     <height>41</height>
     <line>
@@ -913,7 +914,7 @@ order by cosmisc_shipdate;</sql>
     <vcenter/>
     <data>
      <query>tracknum</query>
-     <column>cosmisc_shipvia</column>
+     <column>shiphead_shipvia</column>
     </data>
    </field>
    <field>
@@ -932,7 +933,7 @@ order by cosmisc_shipdate;</sql>
     <vcenter/>
     <data>
      <query>tracknum</query>
-     <column>cosmisc_tracknum</column>
+     <column>shiphead_tracknum</column>
     </data>
    </field>
    <field>

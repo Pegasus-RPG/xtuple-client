@@ -97,19 +97,19 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       _closeLine->setEnabled(_cachedPartialShip);
 
       double uninvoiced;
-      XSqlQuery coship;
-      coship.prepare( "SELECT SUM(coship_qty) AS uninvoiced "
-                      "FROM cosmisc, coship "
-                      "WHERE ( (coship_cosmisc_id=cosmisc_id)"
-                      " AND (NOT coship_invoiced)"
-                      " AND (cosmisc_shipped)"
-                      " AND (coship_coitem_id=:soitem_id) );" );
-      coship.bindValue(":soitem_id", _soitemid);
-      coship.exec();
-      if (coship.first())
+      XSqlQuery shipitem;
+      shipitem.prepare( "SELECT SUM(shipitem_qty) AS uninvoiced "
+                        "FROM shiphead JOIN shipitem ON (shipitem_shiphead_id=shiphead_id) "
+                        "WHERE ( (shiphead_shipped)"
+                        "  AND   (shiphead_order_type='SO')"
+                        "  AND   (NOT shipitem_invoiced)"
+                        "  AND   (shipitem_orderitem_id=:soitem_id) );" );
+      shipitem.bindValue(":soitem_id", _soitemid);
+      shipitem.exec();
+      if (shipitem.first())
       {
-        uninvoiced = coship.value("uninvoiced").toDouble();
-        _uninvoiced->setDouble(coship.value("uninvoiced").toDouble());
+        uninvoiced = shipitem.value("uninvoiced").toDouble();
+        _uninvoiced->setDouble(shipitem.value("uninvoiced").toDouble());
       }
       else
       {

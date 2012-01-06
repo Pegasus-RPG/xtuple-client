@@ -35,9 +35,9 @@
        SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
             (coitem_price / coitem_price_invuomratio) ) AS backlog,
        MIN(coitem_scheddate) AS scheddate,
-       COALESCE(MIN(coship_id), 0) AS shipped
+       COALESCE(MIN(shipitem_id), 0) AS shipped
   FROM cohead, itemsite, item, cust,
-       coitem LEFT OUTER JOIN coship ON (coship_coitem_id=coitem_id) 
+       coitem LEFT OUTER JOIN shipitem ON (shipitem_orderitem_id=coitem_id) 
  WHERE ( (coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
    AND (coitem_itemsite_id=itemsite_id)

@@ -222,7 +222,6 @@ void shipOrder::sShip()
   if (_print->isChecked())
   {
     ParameterList params;
-    params.append("cosmisc_id",  _shipment->id());
     params.append("shiphead_id", _shipment->id());
     params.append("print");
 
@@ -387,10 +386,10 @@ void shipOrder::sShip()
   // Update the shipdatasum record to reflect shipped     
   shipq.prepare("UPDATE shipdatasum "
 		"   SET shipdatasum_shipped=true "
-		" WHERE ((shipdatasum_cosmisc_tracknum = :cosmisc_tracknum)"
+                " WHERE ((shipdatasum_cosmisc_tracknum = :tracknum)"
 		"   AND  (   (shipdatasum_shiphead_number=:shiphead_number)"
 		"         OR (:shiphead_number IS NULL)));");
-  shipq.bindValue(":cosmisc_tracknum", _tracknum->currentText());
+  shipq.bindValue(":tracknum", _tracknum->currentText());
   if (! _shipment->number().isEmpty())
     shipq.bindValue(":shiphead_number", _shipment->number());
   shipq.exec();

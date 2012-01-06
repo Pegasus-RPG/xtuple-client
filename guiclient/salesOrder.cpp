@@ -2114,10 +2114,7 @@ void salesOrder::sAction()
                  "WHERE (coitem_id=:coitem_id);" );
     else
     {
-      q.prepare( "SELECT COALESCE(SUM(coship_qty), 0) - coitem_qtyshipped AS atshipping"
-                 "  FROM coitem LEFT OUTER JOIN coship ON (coship_coitem_id=coitem_id)"
-                 " WHERE (coitem_id=:coitem_id)"
-                 " GROUP BY coitem_qtyshipped;");
+      q.prepare( "SELECT qtyAtShipping(:coitem_id) AS atshipping;");
       q.bindValue(":coitem_id", _soitem->id());
       q.exec();
       if (q.first() && q.value("atshipping").toDouble() > 0)
@@ -3975,18 +3972,13 @@ void salesOrder::sIssueLineBalance()
     {
       if (_requireInventory->isChecked())
       {
+        // sufficientInventoryToShipItem assumes line balance if qty not passed
         q.prepare("SELECT itemsite_id, item_number, warehous_code, itemsite_costmethod, "
-                  "       (roundQty(item_fractional, noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - "
-                  "          ( SELECT COALESCE(SUM(coship_qty), 0) "
-                  "              FROM coship, cosmisc "
-                  "             WHERE ( (coship_coitem_id=coitem_id) "
-                  "               AND   (coship_cosmisc_id=cosmisc_id) "
-                  "               AND   (NOT cosmisc_shipped) ) ) ) ) <= itemsite_qtyonhand) AS isqtyavail "
-                  "  FROM coitem, itemsite, item, warehous "
-                  " WHERE ((coitem_itemsite_id=itemsite_id) "
-                  "   AND (itemsite_item_id=item_id) "
-                  "   AND (itemsite_warehous_id=warehous_id) "
-                  "   AND (coitem_id=:soitem_id)); ");
+                  "       sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail "
+                  "  FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
+                  "              JOIN item ON (item_id=itemsite_item_id)"
+                  "              JOIN warehous ON (warehous_id=itemsite_warehous_id) "
+                  " WHERE (coitem_id=:soitem_id); ");
         q.bindValue(":soitem_id", soitem->id());
         q.exec();
         while (q.next())
@@ -3994,7 +3986,7 @@ void salesOrder::sIssueLineBalance()
           if (q.value("itemsite_costmethod").toString() == "J")
             job = true;
 
-          if (!(q.value("isqtyavail").toBool()) && q.value("itemsite_costmethod").toString() != "J")
+          if (q.value("isqtyavail").toInt() < 0 && q.value("itemsite_costmethod").toString() != "J")
           {
             QMessageBox::critical(this, tr("Insufficient Inventory"),
                                   tr("<p>There is not enough Inventory to issue the amount required"
@@ -4007,28 +3999,18 @@ void salesOrder::sIssueLineBalance()
       }
 
       q.prepare("SELECT itemsite_id, itemsite_costmethod, item_number, warehous_code, "
-                "       (COALESCE((SELECT SUM(itemloc_qty) "
-                "                    FROM itemloc "
-                "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, "
-                "                          noNeg( coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - "
-                "                          ( SELECT COALESCE(SUM(coship_qty), 0) "
-                "                          FROM coship, cosmisc "
-                "                          WHERE ( (coship_coitem_id=coitem_id) "
-                "                          AND (coship_cosmisc_id=cosmisc_id) "
-                "                          AND (NOT cosmisc_shipped) ) ) ) "
-                "                         )) AS isqtyavail "
-                "  FROM coitem, itemsite, item, warehous "
-                " WHERE ((coitem_itemsite_id=itemsite_id) "
-                "   AND (itemsite_item_id=item_id) "
-                "   AND (itemsite_warehous_id=warehous_id) "
+                "       sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail "
+                "  FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
+                "              JOIN item ON (item_id=itemsite_item_id)"
+                "              JOIN warehous ON (warehous_id=itemsite_warehous_id) "
+                " WHERE ((coitem_id=:soitem_id) "
                 "   AND (NOT ((item_type = 'R') OR (itemsite_controlmethod = 'N'))) "
-                "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)) "
-                "   AND (coitem_id=:soitem_id)); ");
+                "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)));");
       q.bindValue(":soitem_id", soitem->id());
       q.exec();
       while (q.next())
       {
-        if (!q.value("isqtyavail").toBool() && q.value("itemsite_costmethod").toString() != "J")
+        if (q.value("isqtyavail").toInt() < 0 && q.value("itemsite_costmethod").toString() != "J")
         {
           QMessageBox::critical(this, tr("Insufficient Inventory"),
                                   tr("<p>Item Number %1 in Site %2 is a Multiple Location or "

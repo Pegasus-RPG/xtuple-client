@@ -11,30 +11,30 @@
  <leftmargin>0</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT cosmisc_shipvia, formatDate(cosmisc_shipdate) AS shipdate,
+  <sql>SELECT shiphead_shipvia, formatDate(shiphead_shipdate) AS shipdate,
                 cust_name, cust_number, cohead_number, cohead_fob, cohead_custponumber,
                 warehous_descrip, warehous_addr1, warehous_addr2, warehous_addr3, warehous_addr4, warehous_fob,
                 cohead_shiptoname, cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3,
                 (cohead_shiptocity || ' ' || cohead_shiptostate || ' ' || cohead_shiptozipcode) AS shiptocitystatezip,
                 cohead_shiptophone
-         FROM cosmisc, cohead, warehous, cust
-         WHERE ((cosmisc_cohead_id=cohead_id)
+         FROM shiphead, cohead, warehous, cust
+         WHERE ((shiphead_order_id=cohead_id)
           AND (cohead_cust_id=cust_id)
           AND (cohead_warehous_id=warehous_id)
-          AND (cosmisc_id=%1));</sql>
+          AND (shiphead_id=%1));</sql>
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT coitem_linenumber, formatQty(SUM(coship_qty)) AS invqty, uom_name, roundUp(SUM(coship_qty) / itemuomratiobytype(item_id, 'Selling'))::integer AS shipqty,
+  <sql>SELECT coitem_linenumber, formatQty(SUM(shipitem_qty)) AS invqty, uom_name, roundUp(SUM(shipitem_qty) / itemuomratiobytype(item_id, 'Selling'))::integer AS shipqty,
                 itemsellinguom(item_id) AS shipuom, item_number, item_descrip1, item_descrip2,
-                formatQty(SUM(coship_qty) * item_prodweight) AS netweight,
-                formatQty(SUM(coship_qty) * (item_prodweight + item_packweight)) AS grossweight
-         FROM coship, coitem, itemsite, item, uom
-         WHERE ((coship_coitem_id=coitem_id)
+                formatQty(SUM(shipitem_qty) * item_prodweight) AS netweight,
+                formatQty(SUM(shipitem_qty) * (item_prodweight + item_packweight)) AS grossweight
+         FROM shipitem, coitem, itemsite, item, uom
+         WHERE ((shipitem_orderitem_id=coitem_id)
           AND (coitem_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
           AND (item_inv_uom_id=uom_id)
-          AND (coship_cosmisc_id=%1))
+          AND (shipitem_shiphead_id=%1))
          GROUP BY coitem_linenumber, item_number, uom_name, shipuom,
                   item_descrip1, item_descrip2, item_prodweight, item_packweight
          ORDER BY coitem_linenumber;
@@ -42,8 +42,8 @@
  </querysource>
  <querysource>
   <name>foot</name>
-  <sql>SELECT formatQty(SUM(coship_qty * item_prodweight)) AS netweight,
-                formatQty(SUM(coship_qty * (item_prodweight + item_packweight))) AS grossweight,
+  <sql>SELECT formatQty(SUM(shipitem_qty * item_prodweight)) AS netweight,
+                formatQty(SUM(shipitem_qty * (item_prodweight + item_packweight))) AS grossweight,
                 CASE
                  WHEN ('%3' = 'C') THEN 'X'
                  ELSE ' '
@@ -68,17 +68,17 @@
                  WHEN ('%3' = 'C') THEN 'New Eagle  PA  15067'
                  ELSE ' '
                 END AS collect_address3
-         FROM coship, coitem, itemsite, item
-         WHERE ((coship_coitem_id=coitem_id)
+         FROM shipitem, coitem, itemsite, item
+         WHERE ((shipitem_orderitem_id=coitem_id)
           AND (coitem_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
-          AND (coship_cosmisc_id=%1));</sql>
+          AND (shipitem_shiphead_id=%1));</sql>
  </querysource>
  <querysource>
   <name>notes</name>
-  <sql>SELECT cosmisc_notes
-         FROM cosmisc
-         WHERE (cosmisc_id=%1);</sql>
+  <sql>SELECT shiphead_notes
+         FROM shiphead
+         WHERE (shiphead_id=%1);</sql>
  </querysource>
  <pghead>
   <firstpage/>
@@ -289,7 +289,7 @@
    <vcenter/>
    <data>
     <query>head</query>
-    <column>cosmisc_shipvia</column>
+    <column>shiphead_shipvia</column>
    </data>
   </field>
   <field>
@@ -822,7 +822,7 @@
    <top/>
    <data>
     <query>notes</query>
-    <column>cosmisc_notes</column>
+    <column>shiphead_notes</column>
    </data>
   </field>
  </pgfoot>

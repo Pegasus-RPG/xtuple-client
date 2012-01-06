@@ -72,37 +72,6 @@ enum SetResponse printShippingForm::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("cosmisc_id", &valid);	// deprecated
-  if (valid)
-  {
-    _shipment->setId(param.toInt());
-    q.prepare( "SELECT cohead_id, cohead_shiptoname, cohead_shiptoaddress1, cosmisc_shipchrg_id,"
-               "       COALESCE(cosmisc_shipform_id, cohead_shipform_id) AS shipform_id "
-               "FROM cosmisc, cohead "
-               "WHERE ( (cosmisc_cohead_id=cohead_id)"
-               " AND (cosmisc_id=:cosmisc_id) );" );
-    q.bindValue(":cosmisc_id", _shipment->id());
-    q.exec();
-    if (q.first())
-    {
-      _captive = TRUE;
-
-      _order->setId(q.value("cohead_id").toInt(),"SO");
-      _order->setEnabled(FALSE);
-
-      _shipToName->setText(q.value("cohead_shiptoname").toString());
-      _shipToAddr1->setText(q.value("cohead_shiptoaddress1").toString());
-      _shippingForm->setId(q.value("shipform_id").toInt());
-      _shipchrg->setId(q.value("cosmisc_shipchrg_id").toInt());
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return UndefinedError;
-    }
-    _buttonBox->setFocus();
-  }
-
   param = pParams.value("shiphead_id", &valid);
   if (valid)
   {
@@ -252,7 +221,6 @@ void printShippingForm::sPrint()
     {
       QTreeWidgetItem *cursor = _shipformWatermarks->topLevelItem(counter);
       ParameterList params;
-      params.append("cosmisc_id",  _shipment->id()); // for backwards compat
       params.append("shiphead_id", _shipment->id());
       params.append("watermark",   cursor->text(1));
       params.append("shipchrg_id", _shipchrg->id());

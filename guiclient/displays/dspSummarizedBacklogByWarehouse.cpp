@@ -198,7 +198,7 @@ void dspSummarizedBacklogByWarehouse::sPrintPackingList()
 {
   ParameterList params;
   if (list()->altId() > 0)
-    params.append("cosmisc_id", list()->altId());
+    params.append("shiphead_id", list()->altId());
   else
     params.append("sohead_id", list()->id());
 

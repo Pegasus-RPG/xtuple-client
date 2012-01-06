@@ -23,38 +23,38 @@
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT cohead_id, coship_id, cohead_number, coitem_linenumber,
+  <sql>SELECT cohead_id, shipitem_id, cohead_number, coitem_linenumber,
        item_number, item_descrip1, item_descrip2,
        uom_name,
        shipped, formatQty(shipped) AS f_shipped,
        selected, formatQty(selected) AS f_selected
 FROM (
-SELECT cohead_id, coship_id, cohead_number, coitem_linenumber,
+SELECT cohead_id, shipitem_id, cohead_number, coitem_linenumber,
        item_number, item_descrip1, item_descrip2,
        uom_name,
-       COALESCE(SUM(coship_qty), 0) AS shipped,
+       COALESCE(SUM(shipitem_qty), 0) AS shipped,
        COALESCE(SUM(cobill_qty), 0) AS selected
 FROM cohead, itemsite, item, uom,
-     warehous, coship, cosmisc,
+     warehous, shipitem, shiphead,
      coitem LEFT OUTER JOIN
       ( cobill JOIN cobmisc
         ON ( (cobill_cobmisc_id=cobmisc_id) AND (NOT cobmisc_posted) ) )
      ON (cobill_coitem_id=coitem_id)
-WHERE ( (coship_coitem_id=coitem_id)
- AND (coship_cosmisc_id=cosmisc_id)
+WHERE ( (shipitem_orderitem_id=coitem_id)
+ AND (shipitem_shiphead_id=shiphead_id)
  AND (coitem_cohead_id=cohead_id)
  AND (coitem_itemsite_id=itemsite_id)
  AND (coitem_qty_uom_id=uom_id)
  AND (itemsite_item_id=item_id)
  AND (itemsite_warehous_id=warehous_id)
- AND (cosmisc_shipped)
- AND (NOT coship_invoiced)
+ AND (shiphead_shipped)
+ AND (NOT shipitem_invoiced)
 &lt;? if exists("warehous_id") ?>
  AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
  )
 GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
-         item_descrip1, item_descrip2, cohead_id, coship_id, uom_name
+         item_descrip1, item_descrip2, cohead_id, shipitem_id, uom_name
 ) AS data
 &lt;? if exists("showUnselected") ?>
  WHERE (selected = 0)

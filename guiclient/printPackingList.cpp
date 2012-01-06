@@ -72,14 +72,6 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
   if (valid)
     _order->setId(param.toInt(), "TO");
 
-  // TODO: deprecate cosmisc_id parameters
-  param = pParams.value("cosmisc_id", &valid);
-  if (valid)
-  {
-    _shipment->setId(param.toInt());
-    _headtype = "SO";
-  }
-
   param = pParams.value("head_type", &valid);
   if (valid)
     _headtype = param.toString();
@@ -215,7 +207,6 @@ void printPackingList::sPrint()
 
     if (_shipment->id() > 0)
     {
-      params.append("cosmisc_id", _shipment->id());
       params.append("shiphead_id", _shipment->id());
     }
 

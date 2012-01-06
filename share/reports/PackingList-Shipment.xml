@@ -3,7 +3,7 @@
  <title>Packing List (Shipment)</title>
  <name>PackingList-Shipment</name>
  <description>Non-Hybrid version - driven only by shiphead_id parameter - Packing List showing the contents of a particular shipment - Shows RA# if SO is a replacement order for and RA</description>
- <parameter default="324" active="true" listtype="static" type="string" name="cosmisc_id">
+ <parameter default="324" active="true" listtype="static" type="string" name="shiphead_id">
   <description></description>
  </parameter>
  <grid>
@@ -84,10 +84,10 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
  <querysource>
   <name>scheddate</name>
   <sql>SELECT formatDate(MIN(coitem_scheddate)) AS scheddate
-  FROM coitem, coship
+  FROM coitem, shipitem
  WHERE ((coitem_status &lt;> 'X')
-   AND  (coitem_id=coship_coitem_id)
-   AND  (coship_cosmisc_id=&lt;? value("coship_cosmisc_id") ?>));</sql>
+   AND  (coitem_id=shipitem_orderitem_id)
+   AND  (shipitem_shiphead_id=&lt;? value("shipitem_shiphead_id") ?>));</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -115,7 +115,7 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
        END AS item_descrip2,
 
        formatQty(coitem_qtyord) AS ordered,
-       (SELECT formatQty(SUM(coship_qty)) FROM coship WHERE ((coship_cosmisc_id=&lt;? value("cosmisc_id") ?>) AND (coship_coitem_id=coitem_id))) AS shipped,
+       (SELECT formatQty(SUM(shipitem_qty)) FROM shipitem WHERE ((shipitem_shiphead_id=&lt;? value("shiphead_id") ?>) AND (shipitem_orderitem_id=coitem_id))) AS shipped,
 
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus
                                            FROM cust,cohead
@@ -143,28 +143,28 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
             ELSE coitem_status
        END AS f_status,
        CASE
-         WHEN (getPacklistItemLotSerial(coship_cosmisc_id, coitem_id) = '') THEN
+         WHEN (getPacklistItemLotSerial(shipitem_shiphead_id, coitem_id) = '') THEN
            ''
          ELSE
            'Serial #/Lot Information:'
        END AS lotserial_title,
-       getPacklistItemLotSerial(coship_cosmisc_id, coitem_id) AS lotserial,
+       getPacklistItemLotSerial(shipitem_shiphead_id, coitem_id) AS lotserial,
        CASE
-         WHEN (getPacklistCharName(coship_cosmisc_id, coitem_id) = '') THEN
+         WHEN (getPacklistCharName(shipitem_shiphead_id, coitem_id) = '') THEN
            ''
          ELSE
            'Characteristics:'
        END AS char_title,
-       getPacklistCharName(coship_cosmisc_id, coitem_id) AS char_name,
-       getPacklistCharValue(coship_cosmisc_id, coitem_id) AS char_value
-  FROM coship
-       JOIN coitem ON (coitem_id=coship_coitem_id)
+       getPacklistCharName(shipitem_shiphead_id, coitem_id) AS char_name,
+       getPacklistCharValue(shipitem_shiphead_id, coitem_id) AS char_value
+  FROM shipitem
+       JOIN coitem ON (coitem_id=shipitem_orderitem_id)
        JOIN itemsite ON (itemsite_id=coitem_itemsite_id)
        JOIN item ON (item_id=itemsite_item_id)
        JOIN uom ON (uom_id=item_inv_uom_id)
        LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id AND itemalias_number=coitem_custpn) 
  WHERE ( (coitem_status &lt;> 'X')
-   AND (coship_cosmisc_id=&lt;? value("cosmisc_id") ?>)
+   AND (shipitem_shiphead_id=&lt;? value("shiphead_id") ?>)
 )
 &lt;? if exists("MultiWhs") ?>
 UNION

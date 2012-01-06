@@ -139,13 +139,14 @@ void salesOrderList::sFillList()
     sql = "SELECT DISTINCT cohead_id, cohead_number, cust_name, cohead_custponumber,"
           "                cohead_orderdate,"
           "                MIN(coitem_scheddate) AS duedate "
-          "FROM cosmisc, coship, cohead, coitem, itemsite, cust "
+          "FROM shiphead, shipitem, cohead, coitem, itemsite, cust "
           "WHERE ((cohead_cust_id=cust_id)"
           " AND (coitem_cohead_id=cohead_id)"
           " AND (coitem_itemsite_id=itemsite_id)"
-          " AND (coship_coitem_id=coitem_id)"
-          " AND (coship_cosmisc_id=cosmisc_id)"
-          " AND (NOT cosmisc_shipped)";
+          " AND (shipitem_orderitem_id=coitem_id)"
+          " AND (shipitem_shiphead_id=shiphead_id)"
+          " AND (shiphead_order_type='SO')"
+          " AND (NOT shiphead_shipped)";
 
     if (_warehouse->isSelected())
       sql += " AND (itemsite_warehous_id=:warehous_id)";

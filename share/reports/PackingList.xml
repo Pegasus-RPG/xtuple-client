@@ -236,7 +236,7 @@ WHERE ((image_name='logo'));</sql>
   <sql>SELECT * FROM 
 (
   SELECT
-    shiphead_number AS cosmisc_number,
+    shiphead_number,
     (cohead_number || '-' || coitem_linenumber) AS ordernumber,
     item_number,
     formatlotserialnumber(invdetail_ls_id) AS invdetail_lotserial,
@@ -260,7 +260,7 @@ WHERE ((image_name='logo'));</sql>
 &lt;? if exists("MultiWhs") ?>
 UNION
   SELECT
-    shiphead_number AS cosmisc_number,
+    shiphead_number,
     (tohead_number || '-' || toitem_linenumber) AS ordernumber,
     item_number,
     formatlotserialnumber(invdetail_ls_id) AS invdetail_lotserial,

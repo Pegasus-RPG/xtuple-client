@@ -115,7 +115,7 @@ void packingListBatch::sPrintBatch()
   {
     int osmiscid = q.value("pack_shiphead_id").toInt();
 
-    // set sohead_id, tohead_id, and cosmisc_id for customer and 3rd-party use
+    // set sohead_id, tohead_id, and shiphead_id for customer and 3rd-party use
     ParameterList params;
     params.append("head_id",   q.value("pack_head_id").toInt());
     params.append("head_type", q.value("pack_head_type").toString());
@@ -125,7 +125,6 @@ void packingListBatch::sPrintBatch()
       params.append("tohead_id", q.value("pack_head_id").toInt());
     if (osmiscid > 0)
     {
-      params.append("cosmisc_id", osmiscid);
       params.append("shiphead_id",  osmiscid);
     }
     if (_metrics->boolean("MultiWhs"))
@@ -338,7 +337,6 @@ void packingListBatch::sPrintPackingList()
   else
   {
     params.append("sohead_id",   _pack->id());
-    params.append("cosmisc_id",  _pack->altId());
     params.append("shiphead_id", _pack->altId());
   }
 

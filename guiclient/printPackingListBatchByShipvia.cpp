@@ -91,7 +91,6 @@ void printPackingListBatchByShipvia::sPrint()
   }
   while (packq.next())
   {
-    // leave sohead_id and cosmisc_id for compatibility with existing reports
     ParameterList params;
     params.append("head_id",   packq.value("pack_head_id").toInt());
     params.append("head_type", packq.value("pack_head_type").toString());
@@ -101,7 +100,6 @@ void printPackingListBatchByShipvia::sPrint()
       params.append("tohead_id", packq.value("pack_head_id").toInt());
     if (! packq.value("pack_shiphead_id").isNull())
     {
-      params.append("cosmisc_id", packq.value("pack_shiphead_id").toInt());
       params.append("shiphead_id",  packq.value("pack_shiphead_id").toInt());
     }
     if (_metrics->boolean("MultiWhs"))

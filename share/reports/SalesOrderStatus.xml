@@ -21,7 +21,7 @@
        formatQty(coitem_qtyord) AS qtyord,
        formatQty(coitem_qtyshipped) AS qtyship,
        formatQty(coitem_qtyreturned) AS qtyret,
-       formatQty(SUM(COALESCE(coship_qty, 0))) AS qtyinvcd,
+       formatQty(SUM(COALESCE(shipitem_qty, 0))) AS qtyinvcd,
        formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,
        CASE WHEN (coitem_status='C') THEN
                 ( formatDate(coitem_closedate) || ' (' || coitem_close_username || ')' )
@@ -35,8 +35,8 @@
             ELSE ''
        END AS f_childord
   FROM itemsite, item, warehous, coitem LEFT OUTER JOIN
-       coship ON (coship_coitem_id=coitem_id
-              AND coship_invcitem_id IS NOT NULL)  
+       shipitem ON (shipitem_orderitem_id=coitem_id
+              AND shipitem_invcitem_id IS NOT NULL)  
  WHERE ((coitem_itemsite_id=itemsite_id)
    AND (coitem_status&lt;>'X')
    AND (itemsite_item_id=item_id)

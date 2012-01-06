@@ -2681,11 +2681,7 @@ void salesOrderItem::populate()
           "       coitem_price_invuomratio AS price_invuomratio,"
           "       coitem_promdate AS promdate,"
           "       coitem_substitute_item_id, coitem_prcost,"
-          // Sum coship_qty for this coitem and all of it's associated sub-lines
-          "       (SELECT COALESCE(SUM(coship_qty), 0)"
-          "        FROM coitem soitem JOIN coship ON (coship_coitem_id=soitem.coitem_id)"
-          "        WHERE (soitem.coitem_cohead_id=coitem.coitem_cohead_id)"
-          "          AND (soitem.coitem_linenumber=coitem.coitem_linenumber)) AS coship_qty,"
+          "       qtyAtShipping(coitem_id) AS qtyatshipping,"
           "       coitem_taxtype_id,"
           "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved, locale_qty_scale, "
           "       cohead_number AS ordnumber "
@@ -2721,7 +2717,7 @@ void salesOrderItem::populate()
             "       quitem_price_invuomratio AS price_invuomratio,"
             "       quitem_promdate AS promdate,"
             "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
-            "       0 AS coship_qty,"
+            "       0.0 AS qtyatshipping,"
             "       quitem_taxtype_id AS coitem_taxtype_id, quitem_dropship, quitem_itemsrc_id"
             "       locale_qty_scale, quhead_number AS ordnumber "
             "  FROM item, uom, quhead, locale "
@@ -2957,7 +2953,7 @@ void salesOrderItem::populate()
     _warehouse->setEnabled(FALSE);
 
     if ( (cView != _mode) && (item.value("coitem_status").toString() == "O") )
-      _cancel->setEnabled((item.value("qtyshipped").toDouble()==0.0) && (item.value("coship_qty").toDouble()==0.0));
+      _cancel->setEnabled((item.value("qtyshipped").toDouble()==0.0) && (item.value("qtyatshipping").toDouble()==0.0));
     else
       _cancel->setEnabled(false);
   }

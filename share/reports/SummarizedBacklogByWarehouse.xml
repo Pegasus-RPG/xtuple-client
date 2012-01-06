@@ -85,17 +85,17 @@
        SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
             ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin,
        MIN(coitem_scheddate) AS scheddate,
-       formatShipmentNumber(cosmisc_id) AS cosmisc_number,
-       CASE WHEN (cosmisc_shipped IS NULL) THEN text('')
-            WHEN (cosmisc_shipped) THEN text('Yes')
-            WHEN (NOT cosmisc_shipped) THEN text('No')
+       formatShipmentNumber(shiphead_id) AS shiphead_number,
+       CASE WHEN (shiphead_shipped IS NULL) THEN text('')
+            WHEN (shiphead_shipped) THEN text('Yes')
+            WHEN (NOT shiphead_shipped) THEN text('No')
        END AS shipstatus,
-       COALESCE(cosmisc_shipvia, '') AS shipvia,
-       CASE WHEN (cosmisc_shipdate IS NULL) THEN text('')
-            ELSE formatDate(cosmisc_shipdate)
+       COALESCE(shiphead_shipvia, '') AS shipvia,
+       CASE WHEN (shiphead_shipdate IS NULL) THEN text('')
+            ELSE formatDate(shiphead_shipdate)
        END AS shipdate
   FROM coitem, itemsite, item, cust, 
-       cohead LEFT OUTER JOIN cosmisc ON (cosmisc_cohead_id=cohead_id) 
+       cohead LEFT OUTER JOIN shiphead ON (shiphead_order_id=cohead_id AND shiphead_order_type='SO') 
  WHERE ( (coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
    AND (coitem_itemsite_id=itemsite_id)
@@ -114,15 +114,15 @@
 &lt;? endif ?>
 )
 GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
-         cohead_orderdate, cohead_packdate, cosmisc_shipped,
-         cosmisc_shipvia, cosmisc_shipdate, cosmisc_id
+         cohead_orderdate, cohead_packdate, shiphead_shipped,
+         shiphead_shipvia, shiphead_shipdate, shiphead_id
 ORDER BY 
 &lt;? if exists("orderByShipDate") ?>
   scheddate,
 &lt;? elseif exists("orderByPackDate") ?>
   cohead_packdate,
 &lt;? endif ?>
-cohead_number, cosmisc_shipped;</sql>
+cohead_number, shiphead_shipped;</sql>
  </querysource>
  <querysource>
   <name>totals</name>
@@ -916,7 +916,7 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cosmisc_number</column>
+     <column>shiphead_number</column>
     </data>
    </field>
    <field>

@@ -22,10 +22,10 @@ WHERE ((cohead_cust_id=cust_id)
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT cosmisc_id,
+  <sql>SELECT shiphead_id,
        coitem_id,
-       formatShipmentNumber(cosmisc_id) AS cosmisc_number,
-       formatDate(cosmisc_shipdate) AS f_shipdate,
+       formatShipmentNumber(shiphead_id) AS shiphead_number,
+       formatDate(shiphead_shipdate) AS f_shipdate,
        coitem_linenumber,
        item_number,
        item_descrip1,
@@ -33,11 +33,12 @@ WHERE ((cohead_cust_id=cust_id)
        uom_name,
        warehous_code,
        formatQty(coitem_qtyord) AS f_qtyord,
-       formatQty(SUM(coship_qty)) AS f_qtyshipped
-  FROM coship, cosmisc, coitem, itemsite, item, uom, warehous
- WHERE ( (coship_cosmisc_id=cosmisc_id)
-   AND (coship_coitem_id=coitem_id)
-   AND (cosmisc_shipped)
+       formatQty(SUM(shipitem_qty)) AS f_qtyshipped
+  FROM shipitem, shiphead, coitem, itemsite, item, uom, warehous
+ WHERE ( (shipitem_shiphead_id=shiphead_id)
+   AND (shiphead_order_type='SO')
+   AND (shipitem_orderitem_id=coitem_id)
+   AND (shiphead_shipped)
    AND (coitem_itemsite_id=itemsite_id)
    AND (coitem_status&lt;>'X')
    AND (itemsite_item_id=item_id)
@@ -45,11 +46,11 @@ WHERE ((cohead_cust_id=cust_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (coitem_cohead_id=&lt;? value("sohead_id") ?>)
 )
-GROUP BY cosmisc_id, coitem_id,
-         cosmisc_shipdate, coitem_linenumber,
+GROUP BY shiphead_id, coitem_id,
+         shiphead_shipdate, coitem_linenumber,
          item_number, item_descrip1, item_descrip2,
          uom_name, warehous_code, coitem_qtyord
-ORDER BY cosmisc_id DESC, coitem_linenumber DESC;</sql>
+ORDER BY shiphead_id DESC, coitem_linenumber DESC;</sql>
  </querysource>
  <rpthead>
   <height>221</height>
@@ -637,7 +638,7 @@ ORDER BY cosmisc_id DESC, coitem_linenumber DESC;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cosmisc_number</column>
+     <column>shiphead_number</column>
     </data>
    </field>
    <field>

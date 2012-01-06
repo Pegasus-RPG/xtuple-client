@@ -78,11 +78,11 @@
        CASE WHEN (qtyAtShipping('SO', coitem_id) > 0.0) THEN formatQty(qtyAtShipping('SO', coitem_id))
             ELSE NULL
        END AS atShipping,
-       formatQty(roundUp( ( SELECT COALESCE(SUM(coship_qty), 0)
-                            FROM coship, cosmisc
-                            WHERE ( (coship_coitem_id=coitem_id)
-                              AND (coship_cosmisc_id=cosmisc_id)
-                              AND (NOT cosmisc_shipped) ) )/ CASE WHEN(itemuomratiobytype(item_id, 'Selling') = 0) THEN 1 ELSE itemuomratiobytype(item_id, 'Selling') END ) ) AS shipatshipping,
+       formatQty(roundUp( ( SELECT COALESCE(SUM(shipitem_qty), 0)
+                            FROM shipitem, shiphead
+                            WHERE ( (shipitem_orderitem_id=coitem_id)
+                              AND (shipitem_shiphead_id=shiphead_id)
+                              AND (NOT shiphead_shipped) ) )/ CASE WHEN(itemuomratiobytype(item_id, 'Selling') = 0) THEN 1 ELSE itemuomratiobytype(item_id, 'Selling') END ) ) AS shipatshipping,
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM cust,cohead WHERE coitem_cohead_id=cohead_id AND cust_id=cohead_cust_id)='H') THEN 'H'
             WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)
                                             FROM cohead, invchead, invcitem
