@@ -95,12 +95,13 @@ static QScriptValue qdir_home(QScriptContext * /*context*/,
   return engine->newVariant(v);
 }
 
-static QScriptValue qdir_homePath(QScriptContext * /*context*/,
+static QScriptValue qdir_homePath(QScriptContext *context,
                                   QScriptEngine *engine)
 {
-  QVariant v;
-  v.setValue<QDir*>(new QDir(QDir::homePath()));
-  return engine->newVariant(v);
+  Q_UNUSED(context);
+  Q_UNUSED(engine);
+  QString result = QDir::homePath();
+  return QScriptValue(result);
 }
 
 static QScriptValue qdir_isAbsolutePath(QScriptContext *context,
@@ -160,12 +161,13 @@ static QScriptValue qdir_root(QScriptContext * /*context*/,
   return engine->newVariant(v);
 }
 
-static QScriptValue qdir_rootPath(QScriptContext * /*context*/,
+static QScriptValue qdir_rootPath(QScriptContext *context,
                                   QScriptEngine *engine)
 {
-  QVariant v;
-  v.setValue<QDir*>(new QDir(QDir::rootPath()));
-  return engine->newVariant(v);
+  Q_UNUSED(context);
+  Q_UNUSED(engine);
+  QString result = QDir::rootPath();
+  return QScriptValue(result);
 }
 
 static QScriptValue qdir_searchPaths(QScriptContext *context,
