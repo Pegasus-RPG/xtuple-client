@@ -846,7 +846,7 @@ void itemSite::sCheckItemsite()
 
 void itemSite::sHandleJobCost()
 {
-  if (_costJob->isChecked())
+  if (_costJob->isChecked() && _itemType == 'M')
   {
     _safetyStock->setEnabled(false);
     _abcClass->setEnabled(false);
@@ -864,6 +864,34 @@ void itemSite::sHandleJobCost()
     _inventory->setEnabled(false);
     _poSupply->setChecked(false);
     _poSupply->setEnabled(false);
+    _locationControl->setChecked(false);
+    _useDefaultLocation->setChecked(false);
+    _tab->setTabEnabled(_tab->indexOf(_restrictedLocations),false);
+    _useParameters->setChecked(false);
+    _planningType->setCurrentIndex(0);
+    _safetyStock->setDouble(0);
+    _createPlannedTransfers->setChecked(false);
+    _tab->setTabEnabled(_tab->indexOf(_planningTab),false);
+  }
+  else if (_costJob->isChecked() && _itemType == 'P')
+  {
+    _safetyStock->setEnabled(false);
+    _abcClass->setEnabled(false);
+    _autoUpdateABCClass->setEnabled(false);
+    _cycleCountFreq->setEnabled(false);
+    _useParameters->setEnabled(false);
+    _woSupply->setChecked(false);
+    _woSupply->setEnabled(false);
+    _createWo->setChecked(false);
+    _sold->setChecked(false);
+    _sold->setEnabled(false);
+    _stocked->setChecked(false);
+    _autoUpdateABCClass->setChecked(false);
+    _cycleCountFreq->setValue(0);
+    _inventory->setEnabled(false);
+    _poSupply->setChecked(true);
+    _poSupply->setEnabled(false);
+    _createPr->setChecked(true);
     _locationControl->setChecked(false);
     _useDefaultLocation->setChecked(false);
     _tab->setTabEnabled(_tab->indexOf(_restrictedLocations),false);
@@ -1028,7 +1056,7 @@ void itemSite::sHandleControlMethod()
     _costAvg->setEnabled(true);
     _costStd->setEnabled(true);
   }
-  if(_itemType == 'M' &&
+  if( (_itemType == 'M' || _itemType == 'P') &&
      _controlMethod->currentIndex() > 0 &&
      _costJob->isVisibleTo(this) &&
      _qohCache == 0)

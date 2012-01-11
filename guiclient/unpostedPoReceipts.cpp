@@ -287,7 +287,7 @@ void unpostedPoReceipts::sPost()
                         "FROM invhist, recv "
                         " JOIN poitem ON (poitem_id=recv_orderitem_id) "
                         " JOIN pohead ON (poitem_pohead_id=pohead_id) "
-                        " JOIN coitem ON (coitem_id=poitem_soitem_id) "
+                        " JOIN coitem ON (coitem_id=poitem_order_id AND poitem_order_type='S') "
                         " JOIN cohead ON (coitem_cohead_id=cohead_id) "
                         "WHERE ((invhist_series=:itemlocseries) "
                         " AND (recv_id=:id));");

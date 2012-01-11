@@ -198,8 +198,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       if (param.toString() == "releasePr")
       {
         q.prepare( "SELECT pr_itemsite_id, pr_qtyreq, pr_duedate,"
-                   "       CASE WHEN(pr_order_type='W') THEN"
-                   "              COALESCE((SELECT womatl_wo_id FROM womatl WHERE womatl_id=pr_order_id),-1)"
+                   "       CASE WHEN(pr_order_type='W') THEN pr_order_id"
                    "            ELSE -1"
                    "       END AS parentwo,"
                    "       CASE WHEN(pr_order_type='S') THEN pr_order_id"
@@ -1573,9 +1572,9 @@ void purchaseOrder::sEditSo()
 void purchaseOrder::sViewWo()
 {
   XSqlQuery fetchwo;
-  fetchwo.prepare( "SELECT wo_id "
-                   "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id )"
-                   "     JOIN wo ON (poitem_wohead_id=wo_id) "
+  fetchwo.prepare( "SELECT womatl_wo_id "
+                   "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id AND poitem_order_type='W')"
+                   "            JOIN womatl ON (womatl_id=poitem_order_id) "
                    "WHERE (pohead_id=:pohead_id);" );
   fetchwo.bindValue(":pohead_id", _poheadid);
   fetchwo.exec();
@@ -1583,7 +1582,7 @@ void purchaseOrder::sViewWo()
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("wo_id", (fetchwo.value("wo_id").toInt()));
+    params.append("wo_id", (fetchwo.value("womatl_wo_id").toInt()));
 
     workOrder *newdlg = new workOrder(this);
     newdlg->set(params);
@@ -1594,9 +1593,9 @@ void purchaseOrder::sViewWo()
 void purchaseOrder::sEditWo()
 {
   XSqlQuery fetchwo;
-  fetchwo.prepare( "SELECT wo_id "
-                   "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id )"
-                   "     JOIN wo ON (poitem_wohead_id=wo_id) "
+  fetchwo.prepare( "SELECT womatl_wo_id "
+                   "FROM pohead JOIN poitem ON (poitem_pohead_id=pohead_id AND poitem_order_type='W')"
+                   "            JOIN womatl ON (womatl_id=poitem_order_id) "
                    "WHERE (pohead_id=:pohead_id);" );
   fetchwo.bindValue(":pohead_id", _poheadid);
   fetchwo.exec();
@@ -1604,7 +1603,7 @@ void purchaseOrder::sEditWo()
   {
     ParameterList params;
     params.append("mode", "edit");
-    params.append("wo_id", (fetchwo.value("wo_id").toInt()));
+    params.append("wo_id", (fetchwo.value("womatl_wo_id").toInt()));
 
     workOrder *newdlg = new workOrder(this);
     newdlg->set(params);

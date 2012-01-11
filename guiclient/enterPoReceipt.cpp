@@ -250,7 +250,8 @@ void enterPoReceipt::sPost()
   rollback.prepare("ROLLBACK;");
 
   QString items = "SELECT recv_id, itemsite_controlmethod, itemsite_perishable,itemsite_warrpurc, "
-                  "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuewo, "
+                  "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuerawo, "
+                  "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuejobwo, "
                   "  COALESCE(pohead_dropship, false) AS dropship "
                   " FROM orderitem, recv "
                   "  LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id) "
@@ -307,7 +308,7 @@ void enterPoReceipt::sPost()
       }
 
       // Job item for Return Service; issue this to work order
-      if (qi.value("issuewo").toBool())
+      if (qi.value("issuerawo").toBool())
       {
         XSqlQuery issue;
         issue.prepare("SELECT issueWoRtnReceipt(coitem_order_id, invhist_id) AS result "
@@ -326,6 +327,42 @@ void enterPoReceipt::sPost()
           return;
         }
       }
+      // Job item for Purchase Order; issue this to work order
+      else if (qi.value("issuejobwo").toBool())
+      {
+        XSqlQuery issue;
+        issue.prepare("SELECT issueWoMaterial(womatl_id, "
+                      "       (recv_qty * poitem_invvenduomratio), "
+                      "       :itemlocseries, NOW(), invhist_id ) AS result "
+                      "FROM invhist, recv "
+                      " JOIN poitem ON (poitem_id=recv_orderitem_id) "
+                      " JOIN womatl ON (womatl_id=poitem_order_id AND poitem_order_type='W') "
+                      "WHERE ((invhist_series=:itemlocseries) "
+                      "  AND  (recv_id=:id));");
+        issue.bindValue(":itemlocseries", postLine.value("result").toInt());
+        issue.bindValue(":id",  qi.value("recv_id").toInt());
+        issue.exec();
+        if (issue.first())
+        {
+          if (issue.value("result").toInt() < 0)
+          {
+            rollback.exec();
+            systemError( this, storedProcErrorLookup("issueWoMaterial", issue.value("result").toInt()),
+                        __FILE__, __LINE__);
+            return;
+          }
+
+          issue.prepare("SELECT postItemLocSeries(:itemlocseries);");
+          issue.bindValue(":itemlocseries", postLine.value("result").toInt());
+          issue.exec();
+        }
+        else if (issue.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
+          rollback.exec();
+          return;
+        }
+      }
       // Issue drop ship orders to shipping
       else if (qi.value("dropship").toBool())
       {
@@ -336,7 +373,7 @@ void enterPoReceipt::sPost()
                       "  coitem_cohead_id, cohead_holdtype "
                       "FROM invhist, recv "
                       " JOIN poitem ON (poitem_id=recv_orderitem_id) "
-                      " JOIN coitem ON (coitem_id=poitem_soitem_id) "
+                      " JOIN coitem ON (coitem_id=poitem_order_id AND poitem_order_type='S') "
                       " JOIN cohead ON (coitem_cohead_id=cohead_id) "
                       "WHERE ((invhist_series=:itemlocseries) "
                       " AND (recv_id=:id));");

@@ -426,22 +426,16 @@ void purchaseOrderItem::populate()
     if(q.value("override_cost").toDouble() > 0)
       _overriddenUnitPrice = true;
 
-    if(q.value("pohead_cohead_id") != -1)
+    if(q.value("poitem_order_id") != -1)
     {
       _ordered->setEnabled(FALSE);
       _dueDate->setEnabled(FALSE);
-	  _soLit->setText(q.value("demand_type").toString());
-	  _so->setText(q.value("order_number").toString());
-	  _soLine->setText(q.value("orderline_number").toString());
-    }
-    else if(q.value("poitem_wohead_id") != -1)
-    {
       _soLit->setText(q.value("demand_type").toString());
-	  _so->setText(q.value("order_number").toString());
-	  _soLine->setText(q.value("orderline_number").toString());
-	}
-	else
-	  _tab->setTabEnabled(_tab->indexOf(_demandTab), FALSE);
+      _so->setText(q.value("order_number").toString());
+//      _soLine->setText(q.value("orderline_number").toString());
+    }
+    else
+      _tab->setTabEnabled(_tab->indexOf(_demandTab), FALSE);
 
     if (q.value("poitem_itemsite_id").toInt() == -1)
     {
@@ -750,7 +744,7 @@ void purchaseOrderItem::sSave()
 
   if (_parentwo != -1)
   {
-    q.prepare("UPDATE poitem SET poitem_wohead_id=:parentwo WHERE (poitem_id=:poitem_id);");
+    q.prepare("UPDATE poitem SET poitem_order_id=:parentwo, poitem_order_type='W' WHERE (poitem_id=:poitem_id);");
     q.bindValue(":parentwo", _parentwo);
     q.bindValue(":poitem_id", _poitemid);
     q.exec();
@@ -758,7 +752,7 @@ void purchaseOrderItem::sSave()
 
   if (_parentso != -1)
   {
-    q.prepare("UPDATE poitem SET poitem_soitem_id=:parentso WHERE (poitem_id=:poitem_id);");
+    q.prepare("UPDATE poitem SET poitem_order_id=:parentso, poitem_order_type='S' WHERE (poitem_id=:poitem_id);");
     q.bindValue(":parentso", _parentso);
     q.bindValue(":poitem_id", _poitemid);
     q.exec();
