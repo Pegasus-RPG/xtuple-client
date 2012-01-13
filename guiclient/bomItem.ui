@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>504</width>
-    <height>606</height>
+    <width>619</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -584,6 +584,119 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_costTab">
+      <attribute name="title">
+       <string>Costs</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QCheckBox" name="_bomDefinedCosts">
+         <property name="text">
+          <string>Costs are specific to this Bill of Material Item</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="_costingElementsLit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Costing &amp;Elements:</string>
+           </property>
+           <property name="buddy">
+            <cstring>_itemcost</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="_3">
+           <property name="spacing">
+            <number>7</number>
+           </property>
+           <item>
+            <widget class="XTreeWidget" name="_itemcost">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="_4">
+             <item>
+              <widget class="QPushButton" name="_newCost">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>&amp;New</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_editCost">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>&amp;Edit</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_deleteCost">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>&amp;Delete</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="Spacer12">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Expanding</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -732,6 +845,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>451</x>
      <y>655</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_bomDefinedCosts</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_itemcost</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>312</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>264</x>
+     <y>545</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_itemcost</sender>
+   <signal>itemDoubleClicked(XTreeWidgetItem*,int)</signal>
+   <receiver>_editCost</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>264</x>
+     <y>545</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>548</x>
+     <y>514</y>
     </hint>
    </hints>
   </connection>

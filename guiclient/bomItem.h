@@ -38,6 +38,12 @@ public slots:
     virtual void sFillSubstituteList();
     virtual void sItemIdChanged();
     virtual void sCharIdChanged();
+    virtual void sFillCostList();
+    virtual void sHandleBomitemCost();
+    virtual void sCostSelectionChanged();
+    virtual void sNewCost();
+    virtual void sEditCost();
+    virtual void sDeleteCost();
 
 signals:
    void saved(int);

@@ -16,7 +16,10 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
+
 #include "dspItemCostDetail.h"
+#include "mqlutil.h"
 #include "itemCost.h"
 
 maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -277,52 +280,35 @@ void maintainItemCosts::sFillList()
     double actualCostBase = 0.0;
     double actualCostLocal = 0.0;
 
-    q.prepare( "SELECT itemcost_id,"
-               "       CASE WHEN (costelem_sys) THEN 1"
-               "            ELSE 0"
-               "       END,"
-               "       CASE WHEN itemcost_costelem_id = -1 THEN :error "
-	       "	    ELSE costelem_type "
-	       "	END AS costelem_type, itemcost_lowlevel,"
-               "       itemcost_stdcost, currConcat(baseCurrID()) AS baseCurr, "
-	       "       itemcost_posted,"
-               "       itemcost_actcost, currConcat(itemcost_curr_id) AS costCurr, "
-	       "       itemcost_updated,"
-	       "       currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE) AS actcostBase, "
-	       "       itemcost_curr_id, "
-               "       CASE WHEN (COALESCE(itemcost_posted, startOfTime()) <= startOfTime()) THEN :never"
-               "       END AS itemcost_posted_qtdisplayrole,"
-               "       'cost' AS itemcost_stdcost_xtnumericrole, "
-               "       'cost' AS itemcost_actcost_xtnumericrole "
-               "FROM itemcost LEFT OUTER JOIN costelem ON "
-               "	(itemcost_costelem_id=costelem_id)"
-               "WHERE (itemcost_item_id=:item_id) "
-               "ORDER BY itemcost_lowlevel, costelem_type;" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":error", tr("!ERROR!"));
-    q.bindValue(":never", tr("Never"));
-    q.exec();
-    _itemcost->populate(q, TRUE);
+    MetaSQLQuery mql = mqlLoad("itemCost", "list");
+
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("error", tr("!ERROR!"));
+    params.append("never", tr("Never"));
+
+    XSqlQuery qry = mql.toQuery(params);
+    _itemcost->populate(qry, TRUE);
 
     bool multipleCurrencies = false;
     int firstCurrency = 0;
     bool baseKnown = true;
-    if (q.first())
+    if (qry.first())
     {
-      firstCurrency = q.value("itemcost_curr_id").toInt();
+      firstCurrency = qry.value("itemcost_curr_id").toInt();
       do
       {
-        standardCost += q.value("itemcost_stdcost").toDouble();
-	if (q.value("itemcost_actcost").isNull())
+        standardCost += qry.value("itemcost_stdcost").toDouble();
+        if (qry.value("itemcost_actcost").isNull())
 	    baseKnown = false;
 	else
-	    actualCostBase += q.value("actcostBase").toDouble();
-        actualCostLocal += q.value("itemcost_actcost").toDouble();
+            actualCostBase += qry.value("actcostBase").toDouble();
+        actualCostLocal += qry.value("itemcost_actcost").toDouble();
 	if (! multipleCurrencies &&
-	    q.value("itemcost_curr_id").toInt() != firstCurrency)
+            qry.value("itemcost_curr_id").toInt() != firstCurrency)
 	    multipleCurrencies = true;
       }
-      while (q.next());
+      while (qry.next());
     }
 
     XSqlQuery convert;

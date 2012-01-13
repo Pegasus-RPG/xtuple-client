@@ -15,8 +15,14 @@
 #include <QValidator>
 #include <QVariant>
 
+#include <metasql.h>
+
 #include "itemSubstitute.h"
+#include "itemCost.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
+#include "mqlutil.h"
 
 bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -35,6 +41,10 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_newSubstitution, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
   connect(_editSubstitution, SIGNAL(clicked()), this, SLOT(sEditSubstitute()));
   connect(_deleteSubstitution, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
+  connect(_itemcost, SIGNAL(itemSelectionChanged()), this, SLOT(sCostSelectionChanged()));
+  connect(_newCost, SIGNAL(clicked()), this, SLOT(sNewCost()));
+  connect(_editCost, SIGNAL(clicked()), this, SLOT(sEditCost()));
+  connect(_deleteCost, SIGNAL(clicked()), this, SLOT(sDeleteCost()));
   connect(_char, SIGNAL(activated(int)), this, SLOT(sCharIdChanged()));
 
   if (_metrics->boolean("AllowInactiveBomItems"))
@@ -57,8 +67,24 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 		  "item_descrip1");
   _bomitemsub->addColumn(tr("Ratio"),       _qtyColumn,  Qt::AlignRight, true, "bomitemsub_uomratio");
 
+  _itemcost->addColumn(tr("Element"),     -1,           Qt::AlignLeft,   true, "costelem_type");
+  _itemcost->addColumn(tr("Lower"),       _costColumn,  Qt::AlignCenter, true, "itemcost_lowlevel" );
+  _itemcost->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight,  true, "itemcost_stdcost"  );
+  _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,true, "baseCurr" );
+  _itemcost->addColumn(tr("Posted"),      _dateColumn,  Qt::AlignCenter, true, "itemcost_posted" );
+  _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight,  true, "itemcost_actcost"  );
+  _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,true, "costCurr" );
+  _itemcost->addColumn(tr("Updated"),     _dateColumn,  Qt::AlignCenter, true, "itemcost_updated" );
+
+  if (omfgThis->singleCurrency())
+  {
+      _itemcost->hideColumn(3);
+      _itemcost->hideColumn(6);
+  }
+
   _item->setFocus();
   
+  _itemid=0;
   _saved=FALSE;
   adjustSize();
 }
@@ -147,6 +173,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
         }
       }
 
+      connect(_bomDefinedCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleBomitemCost()));
       _item->setFocus();
     }
     else if (param.toString() == "replace")
@@ -171,6 +198,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _item->setReadOnly(TRUE);
+      connect(_bomDefinedCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleBomitemCost()));
     }
     else if (param.toString() == "copy")
     {
@@ -230,45 +258,23 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 
 void bomItem::sSave()
 {
-  // Cache the item type
-  QString _itemtype = "";
-  q.prepare("SELECT item_type "
-            "FROM item "
-            "WHERE (item_id=:item_id); ");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
-    _itemtype = q.value("item_type").toString();
-	
-  if (_qtyPer->toDouble() == 0.0 && _qtyFxd->toDouble() == 0.0)
-  {
-    QMessageBox::critical( this, tr("Enter Quantity Per"),
-                           tr("You must enter a Quantity Per value before saving this BOM Item.") );
-	if (_itemtype == "T" || _itemtype == "R")
-	  _qtyFxd->setFocus();
-	else
-      _qtyPer->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_qtyPer->toDouble() == 0.0 && _qtyFxd->toDouble() == 0.0, _qtyPer,
+                          tr("You must enter a Quantity Per value before saving this BOM Item."))
+         << GuiErrorCheck(_scrap->text().length() == 0, _scrap,
+                          tr("You must enter a Scrap value before saving this BOM Item."))
+         << GuiErrorCheck(_dates->endDate() < _dates->startDate(), _dates,
+                          tr("The expiration date cannot be earlier than the effective date."))
+     ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Bill of Material Item"), errors))
     return;
-  }
-
-  if (_scrap->text().length() == 0)
-  {
-    QMessageBox::critical( this, tr("Enter Scrap Value"),
-                           tr("You must enter a Scrap value before saving this BOM Item.") );
-    _scrap->setFocus();
-    return;
-  }
-
-  if (_dates->endDate() < _dates->startDate())
-  {
-    QMessageBox::critical( this, tr("Invalid Expiration Date"),
-                           tr("The expiration date cannot be earlier than the effective date.") );
-    _dates->setFocus();
-    return;
-  }
 
   // Check the component item type and if it is a Reference then issue a warning
-  if (_itemtype == "R")
+  XSqlQuery itemtype;
+  itemtype.prepare("SELECT item_type FROM item WHERE (item_id=:item_id); ");
+  itemtype.bindValue(":item_id", _item->id());
+  itemtype.exec();
+  if (itemtype.first() && itemtype.value("item_type").toString() == "R")
   {
     int answer = QMessageBox::question(this, tr("Reference Item"),
                             tr("<p>Adding a Reference Item to a Bill of Material "
@@ -279,7 +285,7 @@ void bomItem::sSave()
     if (answer == QMessageBox::No)
       return;
   }
-  
+
   if (_mode == cNew && !_saved)
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id, :issueMethod,"
                "                      :bomitem_uom_id, :qtyFxd, :qtyPer, :scrap,"
@@ -304,7 +310,8 @@ void bomItem::sSave()
                "    bomitem_createwo=:createWo, bomitem_issuemethod=:issueMethod,"
                "    bomitem_uom_id=:bomitem_uom_id,"
                "    bomitem_ecn=:ecn, bomitem_moddate=CURRENT_DATE, bomitem_subtype=:subtype, "
-               "    bomitem_char_id=:char_id, bomitem_value=:value, bomitem_notes=:notes, bomitem_ref=:ref "
+               "    bomitem_char_id=:char_id, bomitem_value=:value, bomitem_notes=:notes, "
+               "    bomitem_ref=:ref "
                "WHERE (bomitem_id=:bomitem_id);" );
   else
 //  ToDo
@@ -369,12 +376,18 @@ void bomItem::sSave()
 
       if (_mode == cReplace)
       {
-        q.prepare( "UPDATE bomitem "
-                   "SET bomitem_expires=:bomitem_expires "
-                   "WHERE (bomitem_id=:bomitem_id)" );
-        q.bindValue(":bomitem_expires", _dates->startDate());
-        q.bindValue(":bomitem_id", _sourceBomitemid);
-        q.exec();
+        XSqlQuery replace;
+        replace.prepare( "UPDATE bomitem "
+                         "SET bomitem_expires=:bomitem_expires "
+                         "WHERE (bomitem_id=:bomitem_id)" );
+        replace.bindValue(":bomitem_expires", _dates->startDate());
+        replace.bindValue(":bomitem_id", _sourceBomitemid);
+        replace.exec();
+        if (replace.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, replace.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -403,7 +416,9 @@ void bomItem::sClose()
   if (_mode == cNew)
   {
     q.prepare( "DELETE FROM bomitemsub "
-               "WHERE (bomitemsub_bomitem_id=:bomitem_id);" );
+               "WHERE (bomitemsub_bomitem_id=:bomitem_id);"
+               "DELETE FROM bomitemcost "
+               "WHERE (bomitemcost_bomitem_id=:bomitem_id);" );
     q.bindValue("bomitem_id", _bomitemid);
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
@@ -429,20 +444,9 @@ void bomItem::sItemTypeChanged(const QString &type)
 
 void bomItem::populate()
 {
-  q.prepare( "SELECT bomitem_item_id, bomitem_parent_item_id, item_config,"
-             "       bomitem_createwo, bomitem_issuemethod,"
-             "       bomitem_ecn, item_type,"
-             "       bomitem_qtyfxd, bomitem_qtyper,"
-             "       bomitem_scrap,"
-             "       bomitem_effective, bomitem_expires, bomitem_subtype,"
-             "       bomitem_uom_id, "
-             "       bomitem_char_id, "
-             "       bomitem_value, "
-             "       bomitem_notes, "
-             "       bomitem_ref "
-             "FROM bomitem, item "
-             "WHERE ( (bomitem_parent_item_id=item_id)"
-             " AND (bomitem_id=:bomitem_id) );" );
+  q.prepare( "SELECT bomitem.*, item_config, item_type "
+             "FROM bomitem JOIN item ON (item_id=bomitem_parent_item_id) "
+             "WHERE (bomitem_id=:bomitem_id);" );
   q.bindValue(":bomitem_id", _bomitemid);
   q.exec();
   if (q.first())
@@ -502,6 +506,7 @@ void bomItem::populate()
     else
       _noSubstitutes->setChecked(true);
     sFillSubstituteList();
+    sFillCostList();
 
   }
   else if (q.lastError().type() != QSqlError::NoError)
@@ -653,5 +658,158 @@ void bomItem::sCharIdChanged()
   _value->populate(charass);
 }
 
+void bomItem::sFillCostList()
+{
+  if (_item->isValid() && _bomitemid > 0)
+  {
+    _itemcost->clear();
+    double standardCost = 0.0;
+    double actualCostBase = 0.0;
+    double actualCostLocal = 0.0;
 
+    MetaSQLQuery mql = mqlLoad("itemCost", "list");
+
+    ParameterList params;
+    params.append("error", tr("!ERROR!"));
+    params.append("never", tr("Never"));
+    params.append("bomitem_id", _bomitemid);
+
+    XSqlQuery qry = mql.toQuery(params);
+    if (qry.first())
+    {
+      _bomDefinedCosts->setChecked(true);
+      if (_privileges->check("CreateCosts"))
+        _newCost->setEnabled(true);
+    }
+    else
+    {
+      params.append("item_id", _item->id());
+      qry = mql.toQuery(params);
+      _bomDefinedCosts->setChecked(false);
+      _newCost->setEnabled(false);
+    }
+
+    _itemcost->populate(qry, true);
+    if (qry.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    bool multipleCurrencies = false;
+    int firstCurrency = 0;
+    bool baseKnown = true;
+    if (qry.first())
+    {
+      firstCurrency = qry.value("itemcost_curr_id").toInt();
+      do
+      {
+        standardCost += qry.value("itemcost_stdcost").toDouble();
+        if (qry.value("itemcost_actcost").isNull())
+            baseKnown = false;
+        else
+            actualCostBase += qry.value("actcostBase").toDouble();
+        actualCostLocal += qry.value("itemcost_actcost").toDouble();
+        if (! multipleCurrencies &&
+            qry.value("itemcost_curr_id").toInt() != firstCurrency)
+            multipleCurrencies = true;
+      }
+      while (qry.next());
+    }
+
+    XSqlQuery convert;
+    double actualCost = 0;
+    if (multipleCurrencies)
+    {
+        actualCost = actualCostBase;
+        convert.prepare("SELECT currConcat(baseCurrId()) AS baseConcat, "
+                        "       currConcat(baseCurrId()) AS currConcat;");
+    }
+    else
+    {
+        actualCost = actualCostLocal;
+        baseKnown = true; // not necessarily but we can trust actualCost
+        convert.prepare("SELECT currConcat(baseCurrId()) AS baseConcat, "
+                        "	currConcat(:firstCurrency) AS currConcat;" );
+        convert.bindValue(":firstCurrency", firstCurrency);
+    }
+    convert.exec();
+    if (convert.first())
+        new XTreeWidgetItem(_itemcost,
+                            _itemcost->topLevelItem(_itemcost->topLevelItemCount() - 1), -1,
+                            QVariant(tr("Totals")),
+                            "",
+                            formatCost(standardCost),
+                            convert.value("baseConcat"),
+                            "",
+                            baseKnown ? formatCost(actualCost) : tr("?????"),
+                            convert.value("currConcat"));
+    else if (convert.lastError().type() != QSqlError::NoError)
+        systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
+
+  }
+  else
+    _itemcost->clear();
+}
+
+void bomItem::sHandleBomitemCost()
+{
+  XSqlQuery qry;
+  qry.prepare("SELECT toggleBomitemCost(:bomitem_id, :enabled);");
+  qry.bindValue(":bomitem_id", _bomitemid);
+  qry.bindValue(":enabled", _bomDefinedCosts->isChecked());
+  qry.exec();
+  if (qry.lastError().type() != QSqlError::NoError)
+    systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
+  sFillCostList();
+}
+
+void bomItem::sCostSelectionChanged()
+{
+  bool yes = (_itemcost->id() != -1);
+
+  if (_privileges->check("EnterActualCosts"))
+    _editCost->setEnabled(yes);
+
+  if (_privileges->check("DeleteCosts"))
+    _deleteCost->setEnabled(yes);
+}
+
+void bomItem::sNewCost()
+{
+  ParameterList params;
+  params.append("bomitem_id", _bomitemid);
+  params.append("mode", "new");
+
+  if (_mode == cNew)
+    params.append("bomitem_item_id", _item->id());
+
+  itemCost newdlg(this, "", TRUE);
+  if (newdlg.set(params) == NoError && newdlg.exec())
+    sFillCostList();
+}
+
+void bomItem::sEditCost()
+{
+  ParameterList params;
+  params.append("bomitemcost_id", _itemcost->id());
+  params.append("mode", "edit");
+
+  itemCost newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec())
+    sFillCostList();
+}
+
+void bomItem::sDeleteCost()
+{
+  q.prepare( "DELETE FROM bomitemcost WHERE (bomitemcost_id=:bomitemcost_id);" );
+  q.bindValue(":bomitemcost_id", _itemcost->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+
+  sFillCostList();
+}
 

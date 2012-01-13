@@ -37,6 +37,8 @@ private:
     bool _captive;
     int _itemcostid;
     int _mode;
+    int _type;
+    int _bomitemid;
 
 };
 
