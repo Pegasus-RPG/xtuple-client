@@ -34,18 +34,18 @@ dspTrialBalances::dspTrialBalances(QWidget* parent, const char*, Qt::WFlags fl)
   setUseAltId(true);
   setParameterWidgetVisible(true);
 
-  list()->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter, true,  "period_start" );
-  list()->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter, true,  "period_end" );
-  list()->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignLeft, true,  "account" );
-  list()->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "accnt_descrip"   );
-  list()->addColumn(tr("Beg. Bal."),   _bigMoneyColumn, Qt::AlignRight,  true,  "beginning"  );
-  list()->addColumn("",                25,              Qt::AlignLeft,   true,  "beginningsense"   );
-  list()->addColumn(tr("Debits"),      _bigMoneyColumn, Qt::AlignRight,  true,  "debits"  );
-  list()->addColumn(tr("Credits"),     _bigMoneyColumn, Qt::AlignRight,  true,  "credits"  );
-  list()->addColumn(tr("Difference"),  _bigMoneyColumn, Qt::AlignRight,  true,  "diff"  );
-  list()->addColumn("",                25,              Qt::AlignLeft,   true,  "diffsense"   );
-  list()->addColumn(tr("End Bal."),    _bigMoneyColumn, Qt::AlignRight,  true,  "ending"  );
-  list()->addColumn("",                25,              Qt::AlignLeft,   true,  "endingsense"   );
+  list()->addColumn(tr("Start"),            _dateColumn,     Qt::AlignCenter, true,  "period_start" );
+  list()->addColumn(tr("End"),              _dateColumn,     Qt::AlignCenter, true,  "period_end" );
+  list()->addColumn(tr("Account #"),        _itemColumn,     Qt::AlignLeft,   true,  "account" );
+  list()->addColumn(tr("Description"),      -1,              Qt::AlignLeft,   true,  "accnt_descrip"   );
+  list()->addColumn(tr("Beg. Bal."),        _bigMoneyColumn, Qt::AlignRight,  true,  "beginning"  );
+  list()->addColumn(tr("Beg. Bal. Sense"),  25,              Qt::AlignLeft,   true,  "beginningsense"   );
+  list()->addColumn(tr("Debits"),           _bigMoneyColumn, Qt::AlignRight,  true,  "debits"  );
+  list()->addColumn(tr("Credits"),          _bigMoneyColumn, Qt::AlignRight,  true,  "credits"  );
+  list()->addColumn(tr("Difference"),       _bigMoneyColumn, Qt::AlignRight,  true,  "diff"  );
+  list()->addColumn(tr("Difference Sense"), 25,              Qt::AlignLeft,   true,  "diffsense"   );
+  list()->addColumn(tr("End Bal."),         _bigMoneyColumn, Qt::AlignRight,  true,  "ending"  );
+  list()->addColumn(tr("End Bal. Sense"),   25,              Qt::AlignLeft,   true,  "endingsense"   );
 
   // Determine current period
   int periodid = -1;
