@@ -41,6 +41,10 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   _custid = -1;
   optionsWidget()->hide();
 
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartDate(QDate().currentDate().addDays(-90));
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
   parameterWidget()->append(tr("Customer"), "cust_id", ParameterWidget::Customer);
@@ -87,6 +91,26 @@ bool openSalesOrders::setParams(ParameterList &params)
 {
   if (!display::setParams(params))
     return false;
+
+  if (_dates->isVisible())
+  {
+    if (!_dates->startDate().isValid())
+    {
+      QMessageBox::critical( this, tr("Enter Start Date"),
+                             tr("You must enter a valid Start Date.") );
+      _dates->setFocus();
+      return false;
+    }
+
+    if (!_dates->endDate().isValid())
+    {
+      QMessageBox::critical( this, tr("Enter End Date"),
+                             tr("You must enter a valid End Date.") );
+      _dates->setFocus();
+      return false;
+    }
+    _dates->appendValue(params);
+  }
 
   params.append("error", tr("Error"));
   if (_showClosed->isChecked() && _showClosed->isVisible())
