@@ -24,6 +24,8 @@
 #include "storedProcErrorLookup.h"
 #include "mqlutil.h"
 
+const char *_issueMethods[] = { "S", "L", "M" };
+
 bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -84,7 +86,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _item->setFocus();
   
-  _itemid=0;
+  _parentitemid=0;
   _saved=FALSE;
   adjustSize();
 }
@@ -114,7 +116,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 
   param = pParams.value("item_id", &valid);
   if (valid)
-    _itemid = param.toInt();
+    _parentitemid = param.toInt();
 
   param = pParams.value("revision_id", &valid);
   if (valid)
@@ -128,12 +130,13 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _mode = cNew;
 
       QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
-      if (issueMethod == "S")
-        _issueMethod->setCurrentIndex(0);
-      else if (issueMethod == "L")
-        _issueMethod->setCurrentIndex(1);
-      else if (issueMethod == "M")
-        _issueMethod->setCurrentIndex(2);
+      for (int counter = 0; counter < _issueMethod->count(); counter++)
+      {
+        if (issueMethod == _issueMethods[counter])
+        {
+          _issueMethod->setCurrentIndex(counter);
+        }
+      }
 
       q.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
       if (q.first())
@@ -148,19 +151,22 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       q.prepare("SELECT item_config, item_type "
                 "FROM item "
                 "WHERE (item_id=:item_id); ");
-      q.bindValue(":item_id", _itemid);
+      q.bindValue(":item_id", _parentitemid);
       q.exec();
       if (q.first())
       {
         if (q.value("item_config").toBool())
-          _char->populate(QString( "SELECT -1 AS charass_char_id, '' AS char_name "
-                                   "UNION "
-                                   "SELECT DISTINCT charass_char_id, char_name "
-                                   "FROM charass, char "
-                                   "WHERE ((charass_char_id=char_id) "
-                                   "AND (charass_target_type='I') "
-                                   "AND (charass_target_id= %1)) "
-                                   "ORDER BY char_name; ").arg(_itemid));
+        {
+          MetaSQLQuery mql = mqlLoad("charass", "populate");
+
+          ParameterList params;
+          params.append("name", true);
+          params.append("type", "I");
+          params.append("id", _parentitemid);
+
+          XSqlQuery qry = mql.toQuery(params);
+          _char->populate(qry);
+        }
         else
           _tab->removeTab(_tab->indexOf(_configurationTab));
           
@@ -226,6 +232,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _scrap->setEnabled(FALSE);
       _dates->setEnabled(FALSE);
       _createWo->setEnabled(FALSE);
+      _issueWo->setEnabled(FALSE);
       _issueMethod->setEnabled(FALSE);
       _uom->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
@@ -242,7 +249,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
   q.prepare("SELECT item_type "
             "FROM item "
             "WHERE (item_id=:item_id); ");
-  q.bindValue(":item_id", _itemid);
+  q.bindValue(":item_id", _parentitemid);
   q.exec();
   if (q.first() && (q.value("item_type").toString() == "K"))
   {
@@ -270,6 +277,7 @@ void bomItem::sSave()
     return;
 
   // Check the component item type and if it is a Reference then issue a warning
+//  if (_item->type() == ItemLineEdit::cReference)
   XSqlQuery itemtype;
   itemtype.prepare("SELECT item_type FROM item WHERE (item_id=:item_id); ");
   itemtype.bindValue(":item_id", _item->id());
@@ -286,118 +294,124 @@ void bomItem::sSave()
       return;
   }
 
-  if (_mode == cNew && !_saved)
-    q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id, :issueMethod,"
-               "                      :bomitem_uom_id, :qtyFxd, :qtyPer, :scrap,"
-               "                      :effective, :expires,"
-               "                      :createWo, -1, :scheduledWithBooItem,"
-               "                      :ecn, :subtype, :revision_id,"
-               "                      :char_id, :value, :notes, :ref ) AS result;" );
-  else if ( (_mode == cCopy) || (_mode == cReplace) )
-    q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id,"
-               "                      bomitem_seqnumber, :issueMethod,"
-               "                      :bomitem_uom_id, :qtyFxd, :qtyPer, :scrap,"
-               "                      :effective, :expires,"
-               "                      :createWo, -1, :scheduledWithBooItem,"
-               "                      :ecn, :subtype, :revision_id,"
-               "                      :char_id, :value, :notes, :ref ) AS result "
-               "FROM bomitem "
-               "WHERE (bomitem_id=:sourceBomitem_id);" );
+  XSqlQuery bomitem;
+  if ( (_mode == cNew && !_saved) || (_mode == cCopy) || (_mode == cReplace) )
+    bomitem.prepare( "INSERT INTO bomitem"
+                     " ( bomitem_id, bomitem_parent_item_id, bomitem_seqnumber,"
+                     "   bomitem_item_id, bomitem_qtyper, bomitem_scrap,"
+                     "   bomitem_status, bomitem_effective, bomitem_expires,"
+                     "   bomitem_createwo, bomitem_issuemethod, bomitem_schedatwooper,"
+                     "   bomitem_ecn, bomitem_moddate, bomitem_subtype,"
+                     "   bomitem_uom_id, bomitem_rev_id, bomitem_booitem_seq_id,"
+                     "   bomitem_char_id, bomitem_value, bomitem_notes,"
+                     "   bomitem_ref, bomitem_qtyfxd, bomitem_issuewo )"
+                     " VALUES"
+                     " ( :bomitem_id, :bomitem_parent_item_id, :bomitem_seqnumber,"
+                     "   :bomitem_item_id, :bomitem_qtyper, :bomitem_scrap,"
+                     "   :bomitem_status, :bomitem_effective, :bomitem_expires,"
+                     "   :bomitem_createwo, :bomitem_issuemethod, :bomitem_schedatwooper,"
+                     "   :bomitem_ecn, :bomitem_moddate, :bomitem_subtype,"
+                     "   :bomitem_uom_id, :bomitem_rev_id, :bomitem_booitem_seq_id,"
+                     "   :bomitem_char_id, :bomitem_value, :bomitem_notes,"
+                     "   :bomitem_ref, :bomitem_qtyfxd, :bomitem_issuewo )"
+                     ";" );
   else if (_mode == cEdit  || _saved)
-    q.prepare( "UPDATE bomitem "
-               "SET bomitem_qtyfxd=:qtyFxd, bomitem_qtyper=:qtyPer, bomitem_scrap=:scrap,"
-               "    bomitem_effective=:effective, bomitem_expires=:expires,"
-               "    bomitem_createwo=:createWo, bomitem_issuemethod=:issueMethod,"
-               "    bomitem_uom_id=:bomitem_uom_id,"
-               "    bomitem_ecn=:ecn, bomitem_moddate=CURRENT_DATE, bomitem_subtype=:subtype, "
-               "    bomitem_char_id=:char_id, bomitem_value=:value, bomitem_notes=:notes, "
-               "    bomitem_ref=:ref "
-               "WHERE (bomitem_id=:bomitem_id);" );
+    bomitem.prepare( "UPDATE bomitem "
+                     "SET bomitem_qtyfxd=:bomitem_qtyfxd, bomitem_qtyper=:bomitem_qtyper,"
+                     "    bomitem_scrap=:bomitem_scrap, bomitem_effective=:bomitem_effective,"
+                     "    bomitem_expires=:bomitem_expires, bomitem_createwo=:bomitem_createwo,"
+                     "    bomitem_issuewo=:bomitem_issuewo, bomitem_issuemethod=:bomitem_issuemethod,"
+                     "    bomitem_uom_id=:bomitem_uom_id, bomitem_ecn=:bomitem_ecn,"
+                     "    bomitem_moddate=CURRENT_DATE, bomitem_subtype=:bomitem_subtype,"
+                     "    bomitem_char_id=:bomitem_char_id, bomitem_value=:bomitem_value,"
+                     "    bomitem_notes=:bomitem_notes, bomitem_ref=:bomitem_ref "
+                     "WHERE (bomitem_id=:bomitem_id);" );
   else
 //  ToDo
     return;
 
-  q.bindValue(":bomitem_id", _bomitemid);
-  q.bindValue(":sourceBomitem_id", _sourceBomitemid);
-  q.bindValue(":parent_item_id", _itemid);
-  q.bindValue(":revision_id", _revisionid);
-  q.bindValue(":component_item_id", _item->id());
-  q.bindValue(":bomitem_uom_id", _uom->id());
-  q.bindValue(":qtyFxd", _qtyFxd->toDouble());
-  q.bindValue(":qtyPer", _qtyPer->toDouble());
-  q.bindValue(":scrap", (_scrap->toDouble() / 100));
-  q.bindValue(":effective", _dates->startDate());
-  q.bindValue(":expires", _dates->endDate());
-  q.bindValue(":ecn", _ecn->text());
-  q.bindValue(":notes",	_notes->toPlainText());
-  q.bindValue(":ref",   _ref->toPlainText());
+  bomitem.bindValue(":bomitem_id", _bomitemid);
+  bomitem.bindValue(":bomitem_parent_item_id", _parentitemid);
+  bomitem.bindValue(":bomitem_revision_id", _revisionid);
+  bomitem.bindValue(":bomitem_item_id", _item->id());
+  bomitem.bindValue(":bomitem_uom_id", _uom->id());
+  bomitem.bindValue(":bomitem_qtyfxd", _qtyFxd->toDouble());
+  bomitem.bindValue(":bomitem_qtyper", _qtyPer->toDouble());
+  bomitem.bindValue(":bomitem_scrap", (_scrap->toDouble() / 100));
+  bomitem.bindValue(":bomitem_effective", _dates->startDate());
+  bomitem.bindValue(":bomitem_expires", _dates->endDate());
+  bomitem.bindValue(":bomitem_ecn", _ecn->text());
+  bomitem.bindValue(":bomitem_notes",	_notes->toPlainText());
+  bomitem.bindValue(":bomitem_ref",   _ref->toPlainText());
 
-  q.bindValue(":createWo", QVariant(_createWo->isChecked()));
-
-  if (_issueMethod->currentIndex() == 0)
-    q.bindValue(":issueMethod", "S");
-  if (_issueMethod->currentIndex() == 1)
-    q.bindValue(":issueMethod", "L");
-  if (_issueMethod->currentIndex() == 2)
-    q.bindValue(":issueMethod", "M");
+  bomitem.bindValue(":bomitem_createwo", QVariant(_createWo->isChecked()));
+  bomitem.bindValue(":bomitem_issuewo", QVariant(_createWo->isChecked() && _issueWo->isChecked()));
+  bomitem.bindValue(":bomitem_issuemethod", _issueMethods[_issueMethod->currentIndex()]);
+  bomitem.bindValue(":bomitem_revision_id", _revisionid);
+  bomitem.bindValue(":bomitem_schedatwooper", false);
 
   if (_noSubstitutes->isChecked())
-    q.bindValue(":subtype", "N");
+    bomitem.bindValue(":bomitem_subtype", "N");
   else if (_itemDefinedSubstitutes->isChecked())
-    q.bindValue(":subtype", "I");
+    bomitem.bindValue(":bomitem_subtype", "I");
   else if (_bomDefinedSubstitutes->isChecked())
-    q.bindValue(":subtype", "B");
-  q.bindValue(":revision_id", _revisionid);
+    bomitem.bindValue(":bomitem_subtype", "B");
   
   if (_char->id() != -1)
   {
-    q.bindValue(":char_id", _char->id());
-    q.bindValue(":value", _value->currentText());
+    bomitem.bindValue(":bomitem_char_id", _char->id());
+    bomitem.bindValue(":bomitem_value", _value->currentText());
   }
 
-  q.bindValue(":configType", "N");
-  q.bindValue(":configId", -1);
-  q.bindValue(":configFlag", QVariant(FALSE));
+//  Not used?
+//  bomitem.bindValue(":configType", "N");
+//  bomitem.bindValue(":configId", -1);
+//  bomitem.bindValue(":configFlag", QVariant(FALSE));
 
-  q.exec();
-
-  if ((_mode == cNew) || (_mode == cReplace) || (_mode == cCopy))
+  bomitem.exec();
+  if (bomitem.lastError().type() != QSqlError::NoError)
   {
-    if (q.first())
-    {
-      int result = q.value("result").toInt();
-      if (result < 0)
-      {
-	systemError(this, storedProcErrorLookup("createBOMItem", result),
-		    __FILE__, __LINE__);
-        _item->setFocus();
-	return;
-      }
+    systemError(this, bomitem.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
-      if (_mode == cReplace)
-      {
-        XSqlQuery replace;
-        replace.prepare( "UPDATE bomitem "
-                         "SET bomitem_expires=:bomitem_expires "
-                         "WHERE (bomitem_id=:bomitem_id)" );
-        replace.bindValue(":bomitem_expires", _dates->startDate());
-        replace.bindValue(":bomitem_id", _sourceBomitemid);
-        replace.exec();
-        if (replace.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, replace.lastError().databaseText(), __FILE__, __LINE__);
-          return;
-        }
-      }
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
+  if (_mode == cReplace || _mode == cCopy)
+  {
+    // update the sequence number of the new bomitemitem
+    XSqlQuery replace;
+    replace.prepare( "UPDATE bomitem "
+                     "SET bomitem_seqnumber=(SELECT bomitem_seqnumber"
+                     "                       FROM bomitem"
+                     "                       WHERE bomitem_id=:sourcebomitemid) "
+                     "WHERE (bomitem_id=:bomitem_id);" );
+    replace.bindValue(":sourcebomitemid", _sourceBomitemid);
+    replace.bindValue(":bomitem_id", _bomitemid);
+    replace.exec();
+    if (replace.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, replace.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
 
-  omfgThis->sBOMsUpdated(_itemid, TRUE);
+  if (_mode == cReplace)
+  {
+    // update the expiration date of the source item
+    XSqlQuery replace;
+    replace.prepare( "UPDATE bomitem "
+                     "SET bomitem_expires=:bomitem_expires "
+                     "WHERE (bomitem_id=:sourcebomitemid);" );
+    replace.bindValue(":bomitem_expires", _dates->startDate());
+    replace.bindValue(":sourcebomitemid", _sourceBomitemid);
+    replace.exec();
+    if (replace.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, replace.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  omfgThis->sBOMsUpdated(_parentitemid, TRUE);
   
   emit saved(_bomitemid);
 
@@ -444,75 +458,78 @@ void bomItem::sItemTypeChanged(const QString &type)
 
 void bomItem::populate()
 {
-  q.prepare( "SELECT bomitem.*, item_config, item_type "
-             "FROM bomitem JOIN item ON (item_id=bomitem_parent_item_id) "
-             "WHERE (bomitem_id=:bomitem_id);" );
-  q.bindValue(":bomitem_id", _bomitemid);
-  q.exec();
-  if (q.first())
+  XSqlQuery qbomitem;
+  qbomitem.prepare( "SELECT bomitem.*, item.* "
+                    "FROM bomitem JOIN item ON (item_id=bomitem_parent_item_id) "
+                    "WHERE (bomitem_id=:bomitem_id);" );
+  qbomitem.bindValue(":bomitem_id", _bomitemid);
+  qbomitem.exec();
+  if (qbomitem.lastError().type() != QSqlError::NoError)
   {
-    _itemid = q.value("bomitem_parent_item_id").toInt();
-    _item->setId(q.value("bomitem_item_id").toInt());
-    _uom->setId(q.value("bomitem_uom_id").toInt());
-    _notes->setText(q.value("bomitem_notes").toString());
-    _ref->setText(q.value("bomitem_ref").toString());
+    systemError(this, qbomitem.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  if (qbomitem.first())
+  {
+    _parentitemid = qbomitem.value("bomitem_parent_item_id").toInt();
+    _parentitemtype = qbomitem.value("item_type").toString();
+    _item->setId(qbomitem.value("bomitem_item_id").toInt());
+    _uom->setId(qbomitem.value("bomitem_uom_id").toInt());
+    _notes->setText(qbomitem.value("bomitem_notes").toString());
+    _ref->setText(qbomitem.value("bomitem_ref").toString());
 
-    if (q.value("bomitem_issuemethod").toString() == "S")
-      _issueMethod->setCurrentIndex(0);
-    else if (q.value("bomitem_issuemethod").toString() == "L")
-      _issueMethod->setCurrentIndex(1);
-    else if (q.value("bomitem_issuemethod").toString() == "M")
-      _issueMethod->setCurrentIndex(2);
+    for (int counter = 0; counter < _issueMethod->count(); counter++)
+    {
+      if (QString(qbomitem.value("bomitem_issuemethod").toString()[0]) == _issueMethods[counter])
+      {
+        _issueMethod->setCurrentIndex(counter);
+      }
+    }
 
-    if (q.value("item_type").toString() == "M" || q.value("item_type").toString() == "F")
-      _createWo->setChecked(q.value("bomitem_createwo").toBool());
+    if (_parentitemtype == "M" || _parentitemtype == "F")
+    {
+      _createWo->setChecked(qbomitem.value("bomitem_createwo").toBool());
+      _issueWo->setChecked(qbomitem.value("bomitem_issuewo").toBool());
+    }
 
-    _dates->setStartDate(q.value("bomitem_effective").toDate());
-    _dates->setEndDate(q.value("bomitem_expires").toDate());
-    _qtyFxd->setDouble(q.value("bomitem_qtyfxd").toDouble());
-    _qtyPer->setDouble(q.value("bomitem_qtyper").toDouble());
-    _scrap->setDouble(q.value("bomitem_scrap").toDouble() * 100);
+    _dates->setStartDate(qbomitem.value("bomitem_effective").toDate());
+    _dates->setEndDate(qbomitem.value("bomitem_expires").toDate());
+    _qtyFxd->setDouble(qbomitem.value("bomitem_qtyfxd").toDouble());
+    _qtyPer->setDouble(qbomitem.value("bomitem_qtyper").toDouble());
+    _scrap->setDouble(qbomitem.value("bomitem_scrap").toDouble() * 100);
 
     if (_mode != cCopy)
-      _ecn->setText(q.value("bomitem_ecn").toString());
+      _ecn->setText(qbomitem.value("bomitem_ecn").toString());
 
     _comments->setId(_bomitemid);
 
-    if (q.value("item_type").toString() == "M" || 
-        q.value("item_type").toString() == "F" )
-      _createWo->setChecked(q.value("bomitem_createwo").toBool());
-      
-    if (q.value("item_config").toBool())
+    if (qbomitem.value("item_config").toBool())
     {
-      _char->populate(QString( "SELECT -1 AS charass_char_id, '' AS char_name "
-                               "UNION "
-                               "SELECT DISTINCT charass_char_id, char_name "
-                               "FROM charass, char "
-                               "WHERE ((charass_char_id=char_id) "
-                               "AND (charass_target_type='I') "
-                               "AND (charass_target_id= %1)) "
-                               "ORDER BY char_name; ").arg(_itemid));
-      _char->setId(q.value("bomitem_char_id").toInt());
+      MetaSQLQuery mql = mqlLoad("charass", "populate");
+
+      ParameterList params;
+      params.append("name", true);
+      params.append("type", "I");
+      params.append("id", _parentitemid);
+
+      XSqlQuery qry = mql.toQuery(params);
+      _char->populate(qry);
+      _char->setId(qbomitem.value("bomitem_char_id").toInt());
       sCharIdChanged();
-      _value->setText(q.value("bomitem_value").toString());
+      _value->setText(qbomitem.value("bomitem_value").toString());
     }
     else
       _tab->removeTab(_tab->indexOf(_configurationTab));
 
-    if (q.value("bomitem_subtype").toString() == "I")
+    if (qbomitem.value("bomitem_subtype").toString() == "I")
       _itemDefinedSubstitutes->setChecked(true);
-    else if (q.value("bomitem_subtype").toString() == "B")
+    else if (qbomitem.value("bomitem_subtype").toString() == "B")
       _bomDefinedSubstitutes->setChecked(true);
     else
       _noSubstitutes->setChecked(true);
+
     sFillSubstituteList();
     sFillCostList();
-
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
   }
 }
 
@@ -581,81 +598,54 @@ void bomItem::sFillSubstituteList()
 
 void bomItem::sItemIdChanged()
 {
-  XSqlQuery uom;
-  uom.prepare("SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN uom ON (item_inv_uom_id=uom_id)"
-              " WHERE(item_id=:item_id)"
-              " UNION "
-              "SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id),"
-              "  itemuom, uomtype "
-              " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
-              "   AND (item_id=:item_id) "
-              "   AND (itemuom_itemuomconv_id=itemuomconv_id) "
-              "   AND (uomtype_id=itemuom_uomtype_id) "
-              "   AND (uomtype_name='MaterialIssue'))"
-              " UNION "
-              "SELECT uom_id, uom_name"
-              "  FROM item"
-              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id),"
-              "  itemuom, uomtype "
-              " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
-              "   AND (item_id=:item_id) "
-              "   AND (itemuom_itemuomconv_id=itemuomconv_id) "
-              "   AND (uomtype_id=itemuom_uomtype_id) "
-              "   AND (uomtype_name='MaterialIssue'))"
-              " ORDER BY uom_name;");
-  uom.bindValue(":item_id", _item->id());
-  uom.exec();
-  _uom->populate(uom);
-  uom.prepare("SELECT item_inv_uom_id, item_type "
-              "  FROM item"
-              " WHERE(item_id=:item_id);");
-  uom.bindValue(":item_id", _item->id());
-  uom.exec();
-  if(uom.first())
-  {
-    _uom->setId(uom.value("item_inv_uom_id").toInt());
+  MetaSQLQuery muom = mqlLoad("uoms", "item");
 
-    if (uom.value("item_type").toString() != "T" && uom.value("item_type").toString() != "R")
-	{
-	  if (_qtyPer->text().length() == 0)
-	  {
-	    _qtyFxd->setDouble(0.0);
-		_qtyPer->setDouble(1.0);
-	  }
-	}
-	else
-	{
-	  if (_qtyPer->text().length() == 0)
-	  {
-	    _qtyFxd->setDouble(1.0);
-		_qtyPer->setDouble(0.0);
-	  }
-	}
-	
-	if (_scrap->text().length() == 0)
-	  _scrap->setDouble(0.0);
+  ParameterList params;
+  params.append("uomtype", "MaterialIssue");
+  params.append("item_id", _item->id());
+
+  XSqlQuery quom = muom.toQuery(params);
+  _uom->populate(quom);
+
+  XSqlQuery qitem;
+  qitem.prepare("SELECT item_inv_uom_id, item_type "
+                          "  FROM item"
+                          " WHERE(item_id=:item_id);");
+  qitem.bindValue(":item_id", _item->id());
+  qitem.exec();
+  if(qitem.first())
+  {
+    _uom->setId(qitem.value("item_inv_uom_id").toInt());
+    if (qitem.value("item_type").toString() != "T" && qitem.value("item_type").toString() != "R")
+    {
+      if (_qtyPer->text().length() == 0)
+      {
+        _qtyFxd->setDouble(0.0);
+        _qtyPer->setDouble(1.0);
+      }
+    }
+    else if (_qtyPer->text().length() == 0)
+    {
+      _qtyFxd->setDouble(1.0);
+      _qtyPer->setDouble(0.0);
+    }
+    if (_scrap->text().length() == 0)
+      _scrap->setDouble(0.0);
   }
 }
 
 void bomItem::sCharIdChanged()
 {
-  XSqlQuery charass;
-  charass.prepare("SELECT charass_id, charass_value "
-            "FROM charass "
-            "WHERE ((charass_target_type='I') "
-            "AND (charass_target_id=:item_id) "
-            "AND (charass_char_id=:char_id) "
-            "AND (COALESCE(charass_value,'')!='')); ");
-  charass.bindValue(":item_id", _itemid);
-  charass.bindValue(":char_id", _char->id());
-  charass.exec();
-  _value->populate(charass);
+  MetaSQLQuery mql = mqlLoad("charass", "populate");
+
+  ParameterList params;
+  params.append("value", true);
+  params.append("char", _char->id());
+  params.append("type", "I");
+  params.append("id", _parentitemid);
+
+  XSqlQuery qry = mql.toQuery(params);
+  _value->populate(qry);
 }
 
 void bomItem::sFillCostList()

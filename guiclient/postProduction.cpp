@@ -166,7 +166,7 @@ bool postProduction::okToPost()
     _transDate->setFocus();
     return false;
   }
-  
+/*
   XSqlQuery type;
   type.prepare( "SELECT itemsite_costmethod "
                 "FROM itemsite,wo "
@@ -187,7 +187,7 @@ bool postProduction::okToPost()
     systemError(this, type.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
-
+*/
   if (_immediateTransfer->isChecked() &&
       _wo->currentWarehouse() == _transferWarehouse->id())
   {
@@ -276,6 +276,79 @@ QString postProduction::handleTransferAfterPost()
   return result;
 }
 
+QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
+{
+  QString result = QString::null;
+  XSqlQuery issueq;
+
+  // If this is a child W/O and the originating womatl
+  // is auto issue then issue this receipt to the parent W/O
+  issueq.prepare("SELECT issueWoMaterial(womatl_id, :qty,"
+                 "       :itemlocseries, NOW(), invhist_id ) AS result "
+                 "FROM wo, womatl, invhist "
+                 "WHERE (wo_id=:wo_id)"
+                 "  AND (womatl_id=wo_womatl_id)"
+                 "  AND (womatl_issuewo)"
+                 "  AND (invhist_series=:itemlocseries)"
+                 "  AND (invhist_transtype='RM');");
+  issueq.bindValue(":itemlocseries", itemlocSeries);
+  issueq.bindValue(":wo_id", _wo->id());
+  issueq.bindValue(":qty", _qty->toDouble());
+  issueq.exec();
+  if (issueq.first())
+  {
+    if (issueq.value("result").toInt() < 0)
+      result = "issueWoMaterial failed";
+    else
+    {
+      issueq.prepare("SELECT postItemLocSeries(:itemlocseries);");
+      issueq.bindValue(":itemlocseries", itemlocSeries);
+      issueq.exec();
+      if (issueq.lastError().type() != QSqlError::NoError)
+        result = issueq.lastError().databaseText();
+    }
+  }
+  else if (issueq.lastError().type() != QSqlError::NoError)
+    result = issueq.lastError().databaseText();
+
+  // If this is a W/O for a Job Cost item and the parent is a S/O
+  // then issue this receipt to the S/O
+  issueq.prepare("SELECT issueToShipping('SO', coitem_id, :qty,"
+                 "       :itemlocseries, NOW(), invhist_id) AS result "
+                 "FROM wo, itemsite, coitem, invhist "
+                 "WHERE (wo_id=:wo_id)"
+                 "  AND (wo_ordtype='S')"
+                 "  AND (itemsite_id=wo_itemsite_id)"
+                 "  AND (itemsite_costmethod='J')"
+                 "  AND (coitem_id=wo_ordid)"
+                 "  AND (invhist_series=:itemlocseries)"
+                 "  AND (invhist_transtype='RM');");
+  issueq.bindValue(":itemlocseries", itemlocSeries);
+  issueq.bindValue(":wo_id", _wo->id());
+  issueq.bindValue(":qty", _qty->toDouble());
+  issueq.exec();
+  if (issueq.first())
+  {
+    if (issueq.value("result").toInt() < 0)
+      result = "issueToShipping failed";
+    else
+    {
+      issueq.prepare("SELECT postItemLocSeries(:itemlocseries);");
+      issueq.bindValue(":itemlocseries", itemlocSeries);
+      issueq.exec();
+      if (issueq.lastError().type() != QSqlError::NoError)
+        result = issueq.lastError().databaseText();
+    }
+  }
+  else if (issueq.lastError().type() != QSqlError::NoError)
+    result = issueq.lastError().databaseText();
+
+  if (DEBUG)
+    qDebug("postProduction::handleIssueToParentAfterPost() returning %s",
+           qPrintable(result));
+  return result;
+}
+
 void postProduction::sPost()
 {
   if (! okToPost())
@@ -331,6 +404,14 @@ void postProduction::sPost()
     {
       rollback.exec();
       QMessageBox::information(this, tr("Post Production"), errmsg);
+      return;
+    }
+
+    errmsg = handleIssueToParentAfterPost(itemlocSeries);
+    if (! errmsg.isEmpty())
+    {
+      rollback.exec();
+      systemError(this, errmsg, __FILE__, __LINE__);
       return;
     }
 

@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>619</width>
-    <height>655</height>
+    <width>683</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -93,7 +93,7 @@ to be bound by its terms.</comment>
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <layout class="QGridLayout">
      <item row="1" column="0">
       <widget class="QLabel" name="_qtyPerLit">
@@ -196,11 +196,17 @@ to be bound by its terms.</comment>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="_createWo">
-         <property name="text">
-          <string>Create C&amp;hild W/O at Parent W/O Explosion</string>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -340,7 +346,7 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QTabWidget" name="_tab">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -699,6 +705,34 @@ to be bound by its terms.</comment>
      </widget>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="_createWo">
+     <property name="title">
+      <string>Create Child W/O at Parent W/O Explosion</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="_issueWo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Issue Child W/O to Parent W/O at Receipt</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
@@ -748,8 +782,6 @@ to be bound by its terms.</comment>
   <tabstop>_qtyFxd</tabstop>
   <tabstop>_qtyPer</tabstop>
   <tabstop>_uom</tabstop>
-  <tabstop>_scrap</tabstop>
-  <tabstop>_createWo</tabstop>
   <tabstop>_issueMethod</tabstop>
   <tabstop>_ecn</tabstop>
   <tabstop>_tab</tabstop>
@@ -877,6 +909,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>548</x>
      <y>514</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_createWo</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_issueWo</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>226</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>344</x>
+     <y>235</y>
     </hint>
    </hints>
   </connection>

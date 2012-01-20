@@ -251,7 +251,8 @@ void enterPoReceipt::sPost()
 
   QString items = "SELECT recv_id, itemsite_controlmethod, itemsite_perishable,itemsite_warrpurc, "
                   "  (recv_order_type = 'RA' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuerawo, "
-                  "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J') AS issuejobwo, "
+                  "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='W') AS issuejobwo, "
+                  "  (recv_order_type = 'PO' AND COALESCE(itemsite_costmethod,'') = 'J' AND poitem_order_type='S') AS issuejobso, "
                   "  COALESCE(pohead_dropship, false) AS dropship "
                   " FROM orderitem, recv "
                   "  LEFT OUTER JOIN itemsite ON (recv_itemsite_id=itemsite_id) "
@@ -363,8 +364,8 @@ void enterPoReceipt::sPost()
           return;
         }
       }
-      // Issue drop ship orders to shipping
-      else if (qi.value("dropship").toBool())
+      // Issue drop ship orders and Job Cost items to shipping
+      else if (qi.value("dropship").toBool() || qi.value("issuejobso").toBool())
       {
         XSqlQuery issue;
         issue.prepare("SELECT issueToShipping('SO', coitem_id, "
@@ -421,7 +422,7 @@ void enterPoReceipt::sPost()
   }
 
   // Ship if a drop shipped order
-  if (_soheadid != -1)
+  if (qi.value("dropship").toBool() && _soheadid != -1)
   {
     XSqlQuery ship;
     ship.prepare("SELECT shipShipment(shiphead_id) AS result, "
