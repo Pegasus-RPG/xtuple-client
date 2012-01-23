@@ -43,8 +43,6 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
   connect(_miscSelected, SIGNAL(toggled(bool)), this, SLOT(sMiscSelected(bool)));
 
-  _item->setType(ItemLineEdit::cSold);
-
   _ordered->setValidator(omfgThis->qtyVal());
   _billed->setValidator(omfgThis->qtyVal());
 
@@ -147,6 +145,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       connect(_billed, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
       connect(_billed, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
       connect(_price, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
+      _item->setType(ItemLineEdit::cSold);
       _salescat->setType(XComboBox::SalesCategoriesActive);
     }
     else if (param.toString() == "edit")
