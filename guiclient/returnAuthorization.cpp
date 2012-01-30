@@ -872,8 +872,11 @@ void returnAuthorization::sCheckAuthorizationNumber()
     XSqlQuery query;
     query.prepare( "SELECT rahead_id "
                    "FROM rahead "
-                   "WHERE (rahead_number=:rahead_number)" );
+                   "WHERE ((rahead_number=:rahead_number)"
+                   "   AND (rahead_id <> :rahead_id))");
     query.bindValue(":rahead_number", _authNumber->text());
+    query.bindValue(":rahead_id", _raheadid);
+
     query.exec();
     if (query.first())
     {
@@ -2003,6 +2006,8 @@ void returnAuthorization::sCheckNumber()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  sSave(true);
+  sFillList();
 }
 
 void returnAuthorization::sFreightChanged()
