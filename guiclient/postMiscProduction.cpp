@@ -12,6 +12,7 @@
 
 #include <QMessageBox>
 #include <QVariant>
+#include <QSqlError>
 
 #include "distributeInventory.h"
 #include "storedProcErrorLookup.h"
@@ -87,17 +88,88 @@ enum SetResponse postMiscProduction::set(const ParameterList &pParams)
 
 void postMiscProduction::sPost()
 {
+  if (!okToPost())
+    return;
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+
+  if (_qty > 0)
+  {
+    if (!createwo())
+    {
+      rollback.exec();
+      return;
+    }
+    if (!post())
+    {
+      rollback.exec();
+      return;
+    }
+    if (!closewo())
+    {
+      rollback.exec();
+      return;
+    }
+    if (_immediateTransfer->isChecked())
+    {
+      if (!transfer())
+      {
+        rollback.exec();
+        return;
+      }
+    }
+  }
+  else
+  {
+    _sense = -1;
+    if (_immediateTransfer->isChecked())
+    {
+      if (!transfer())
+      {
+        rollback.exec();
+        return;
+      }
+    }
+    if (!createwo())
+    {
+      rollback.exec();
+      return;
+    }
+    if (!post())
+    {
+      rollback.exec();
+      return;
+    }
+    if (!closewo())
+    {
+      rollback.exec();
+      return;
+    }
+  }
+
+  q.exec("COMMIT;");
+  if (_captive)
+    accept();
+  else
+    clear();
+}
+
+bool postMiscProduction::okToPost()
+{
   _qty = _qtyToPost->toDouble();
   if (_disassembly->isChecked())
     _qty = _qty * -1;
-  
+
   if (_qty == 0)
   {
     QMessageBox::warning( this, tr("Invalid Quantity"),
                         tr( "The quantity may not be zero." ) );
-    return;
+    return false;
   }
-  
+
   if (_immediateTransfer->isChecked())
   {
     if (_warehouse->id() == _transferWarehouse->id())
@@ -106,117 +178,147 @@ void postMiscProduction::sPost()
                             tr( "Transaction canceled. Cannot post an immediate transfer for the newly posted production as the\n"
                                 "transfer Site is the same as the production Site.  You must manually\n"
                                 "transfer the production to the intended Site." ) );
-      return;
+      return false;
     }
   }
-  
-  q.prepare( "SELECT itemsite_id "
-             "FROM itemsite "
-             "WHERE ( (itemsite_item_id=:item_id)"
-             " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":item_id", _item->id());
+
+  return true;
+}
+
+bool postMiscProduction::createwo()
+{
+  _itemsiteid = 0;
+  XSqlQuery itemsite;
+  itemsite.prepare( "SELECT itemsite_id "
+                    "FROM itemsite "
+                    "WHERE ( (itemsite_item_id=:item_id)"
+                    " AND (itemsite_warehous_id=:warehous_id) );" );
+  itemsite.bindValue(":item_id", _item->id());
   if (_qty > 0)
-    q.bindValue(":warehous_id", _warehouse->id());
+    itemsite.bindValue(":warehous_id", _warehouse->id());
   else
-    q.bindValue(":warehous_id", _transferWarehouse->id());
-  q.exec();
-  if (q.first())
+    itemsite.bindValue(":warehous_id", _transferWarehouse->id());
+  itemsite.exec();
+  if (itemsite.first())
   {
-    _itemsiteid = q.value("itemsite_id").toInt();
-
-    XSqlQuery rollback;
-    rollback.prepare("ROLLBACK;");
-
-    q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-    
-    if (_qty > 0)
-    {
-      if (post())
-      {
-        if (_immediateTransfer->isChecked())
-        {
-          if (transfer())
-            q.exec("COMMIT;");
-          else
-            rollback.exec();
-        }
-        else
-          q.exec("COMMIT;");
-      }
-      else
-        rollback.exec();
-    }
-    else
-    {
-      _sense = -1;
-      if (_immediateTransfer->isChecked())
-      {
-        if (transfer())
-        {
-          if (post())
-            q.exec("COMMIT;");
-          else
-            rollback.exec();
-        }
-        else
-          rollback.exec();
-      }
-      else
-      {
-        if (post())
-          q.exec("COMMIT;");
-        else
-          rollback.exec();
-      }
-    }
-
-    if (_captive)
-      accept();
-    else
-    {
-      _item->setId(-1);
-      _qtyToPost->clear();
-      _documentNum->clear();
-      _comments->clear();
-      _close->setText(tr("&Close"));
-
-      _item->setFocus();
-    }
+    _itemsiteid = itemsite.value("itemsite_id").toInt();
+  }
+  else if (itemsite.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
   }
   else
-    systemError(this, tr("A System Error occurred at %1::%2, Item Number %3.")
-                      .arg(__FILE__)
-                      .arg(__LINE__)
-                      .arg(_item->itemNumber()) );
+  {
+    systemError(this, "Itemsite not found", __FILE__, __LINE__);
+    return false;
+  }
+
+  _woid = 0;
+  XSqlQuery wo;
+  wo.prepare( "SELECT createWo(fetchWoNumber(), :itemsite_id, :qty, CURRENT_DATE, CURRENT_DATE, :comments) AS result;" );
+  wo.bindValue(":itemsite_id", _itemsiteid);
+  wo.bindValue(":qty", _qty);
+  wo.bindValue(":comments", (tr("Post Misc Production, Document Number ") +
+                             _documentNum->text().trimmed() + ", " + _comments->toPlainText()));
+  wo.exec();
+  if (wo.first())
+  {
+    _woid = wo.value("result").toInt();
+    if (_woid < 0)
+    {
+      systemError(this, storedProcErrorLookup("createWo", _woid),
+                  __FILE__, __LINE__);
+      return false;
+    }
+  }
+  else if (wo.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, wo.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
+  // Delete any Child W/O's created
+  XSqlQuery child;
+  child.prepare( "SELECT MAX(deleteWo(wo_id, TRUE)) AS result "
+                 "FROM wo "
+                 "WHERE ((wo_ordtype='W') AND (wo_ordid=:ordid));");
+  child.bindValue(":ordid", _woid);
+  child.exec();
+  if (child.first())
+  {
+    if (child.value("result").toInt() < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteWo", child.value("result").toInt()),
+                  __FILE__, __LINE__);
+      return false;
+    }
+  }
+  else if (child.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, child.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
+  return true;
 }
 
 bool postMiscProduction::post()
 {
-  q.prepare( "SELECT postMiscProduction( :itemsite_id, :qty, :backflushMaterials,"
-             "                           :docNumber, :comments ) AS result;" );
-  q.bindValue(":itemsite_id", _itemsiteid);
-  q.bindValue(":qty", _qty);
-  q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
-  q.bindValue(":docNumber", _documentNum->text().trimmed());
-  q.bindValue(":comments", _comments->toPlainText());
-  q.exec();
-  if (q.first())
+  int _itemlocseries = 0;
+  XSqlQuery post;
+  post.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, 0, CURRENT_DATE) AS result;");
+  post.bindValue(":wo_id", _woid);
+  post.bindValue(":qty", _qty);
+  post.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
+  post.exec();
+  if (post.first())
   {
-    if (q.value("result").toInt() < 0)
+    _itemlocseries = post.value("result").toInt();
+    if (_itemlocseries < 0)
     {
-      systemError(this, storedProcErrorLookup("postProduction", q.value("result").toInt()),
+      systemError(this, storedProcErrorLookup("postProduction", _itemlocseries),
                   __FILE__, __LINE__);
       return false;
     }
-    else
+  }
+  else if (post.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
+  // Distribute Inventory
+  if (distributeInventory::SeriesAdjust(_itemlocseries, this) == XDialog::Rejected)
+  {
+    QMessageBox::information( this, tr("Post Misc. Production"), tr("Transaction Canceled") );
+    return false;
+  }
+
+  return true;
+}
+
+bool postMiscProduction::closewo()
+{
+  XSqlQuery close;
+  close.prepare("SELECT closeWo(:wo_id, TRUE, CURRENT_DATE) AS result;");
+  close.bindValue(":wo_id", _woid);
+  close.exec();
+  if (close.first())
+  {
+    if (close.value("result").toInt() < 0)
     {
-      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
-      {
-        QMessageBox::information( this, tr("Post Misc. Production"), tr("Transaction Canceled") );
-        return false;
-      }
+      systemError(this, storedProcErrorLookup("closeWo", close.value("result").toInt()),
+                  __FILE__, __LINE__);
+      return false;
     }
   }
+  else if (close.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, close.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
   return true;
 }
 
@@ -247,8 +349,19 @@ bool postMiscProduction::transfer()
                        .arg(_transferWarehouse->id()));
     return false;
   }
+
   return true;
 }
 
+void postMiscProduction::clear()
+{
+  _item->setId(-1);
+  _qtyToPost->clear();
+  _documentNum->clear();
+  _comments->clear();
+  _close->setText(tr("&Close"));
+
+  _item->setFocus();
+}
 
 

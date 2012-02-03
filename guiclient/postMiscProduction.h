@@ -23,9 +23,17 @@ class postMiscProduction : public XDialog, public Ui::postMiscProduction
 public:
     postMiscProduction(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~postMiscProduction();
+    
+    Q_INVOKABLE int     getwoid() { return _woid; }
+    Q_INVOKABLE bool    captive() { return _captive; }
+    Q_INVOKABLE bool    okToPost();
+    Q_INVOKABLE bool    createwo();
+    Q_INVOKABLE bool    closewo();
+    Q_INVOKABLE bool    transfer();
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams);
+    virtual void clear();
     virtual void sPost();
 
 protected slots:
@@ -33,11 +41,11 @@ protected slots:
 
 private:
     bool post();
-    bool transfer();
     
     bool _captive;
     int  _sense;
     int  _itemsiteid;
+    int  _woid;
     double _qty;
 
 };
