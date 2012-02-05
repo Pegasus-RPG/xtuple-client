@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>740</width>
+    <height>838</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -1752,6 +1752,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>264</x>
      <y>547</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_warehouse</sender>
+   <signal>newID(int)</signal>
+   <receiver>_dueDate</receiver>
+   <slot>setNull()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>623</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>186</x>
+     <y>525</y>
     </hint>
    </hints>
   </connection>
