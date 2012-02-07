@@ -137,6 +137,7 @@ void dspTimePhasedOpenARItems::sPrintStatement()
 {
   ParameterList params;
   params.append("cust_id", list()->id());
+  params.append("asofDate", _asOf->date());
   params.append("print");
 
   printStatementByCustomer newdlg(this, "", TRUE);

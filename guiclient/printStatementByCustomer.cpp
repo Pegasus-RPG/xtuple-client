@@ -57,6 +57,10 @@ enum SetResponse printStatementByCustomer::set(const ParameterList &pParams)
   if (valid)
     _cust->setId(param.toInt());
 
+  param = pParams.value("asofDate", &valid);
+  if (valid)
+    _asOf->setDate(param.toDate());
+
   if (pParams.inList("print"))
   {
     sPrint();
