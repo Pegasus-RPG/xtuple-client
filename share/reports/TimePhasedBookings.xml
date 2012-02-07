@@ -243,8 +243,18 @@ LEFT OUTER JOIN
 GROUP BY
 &lt;? if exists("byCust") ?>
   cust_id, 
+  &lt;? if exists("capacityUnits") ?>
+    item_id,
+  &lt;? elseif exists("altCapacityUnits") ?>
+    item_id,
+  &lt;? endif ?>
 &lt;? elseif exists("byProdcat") ?>
   prodcat_id,
+  &lt;? if exists("capacityUnits") ?>
+    item_id,
+  &lt;? elseif exists("altCapacityUnits") ?>
+    item_id,
+  &lt;? endif ?>
 &lt;? elseif exists("byItem") ?>
   item_id,
 &lt;? endif ?>
