@@ -247,7 +247,7 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem,
 
   XTreeWidgetItem* item = (XTreeWidgetItem*)pItem;
   bool canMaintain = (item->rawValue("pohead_status").toString() == "U" && _privileges->check("MaintainPurchaseOrders")) ||
-                     (item->rawValue("pohead_status").toString()  == "O" && _privileges->check("MaintainPostedPurchaseOrders"));
+                     (item->rawValue("pohead_status").toString() == "O" && _privileges->check("MaintainPurchaseOrders") && _privileges->check("MaintainPostedPurchaseOrders"));
 
 
   menuItem = pMenu->addAction(tr("Print..."), this, SLOT(sPrint()));
