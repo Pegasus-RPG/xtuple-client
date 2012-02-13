@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>628</width>
-    <height>387</height>
+    <width>642</width>
+    <height>397</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,38 +95,28 @@ to be bound by its terms.</comment>
        </item>
        <item>
         <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
          <item>
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>5</number>
+          <widget class="QPushButton" name="_close">
+           <property name="text">
+            <string>&amp;Cancel</string>
            </property>
-           <item>
-            <widget class="QPushButton" name="_close">
-             <property name="text">
-              <string>&amp;Cancel</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_print">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>&amp;Print</string>
-             </property>
-             <property name="autoDefault">
-              <bool>true</bool>
-             </property>
-             <property name="default">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_print">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Print</string>
+           </property>
+           <property name="autoDefault">
+            <bool>true</bool>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <spacer>
@@ -361,8 +351,6 @@ to be bound by its terms.</comment>
   <tabstop>_order</tabstop>
   <tabstop>_shipment</tabstop>
   <tabstop>_orderDate</tabstop>
-  <tabstop>_print</tabstop>
-  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>

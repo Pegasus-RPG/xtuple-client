@@ -23,6 +23,7 @@ class printPackingList : public XDialog, public Ui::printPackingList
 public:
     printPackingList(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printPackingList();
+    Q_INVOKABLE virtual ParameterList getParams();
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
@@ -30,6 +31,9 @@ public slots:
     virtual void sHandleReprint();
     virtual void sPopulate();
     virtual void sPrint();
+
+signals:
+    void finishedPrinting();
 
 protected slots:
     virtual void languageChange();
