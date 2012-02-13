@@ -38,158 +38,10 @@
        formatDate(&lt;? value("startDate") ?>) AS startdate,
        formatDate(&lt;? value("endDate") ?>) AS enddate;</sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true">
   <name>detail</name>
-  <sql>SELECT 1 AS dummy,
-&lt;? foreach("groupLitList") ?>
-  &lt;? literal("groupLitList") ?>
-  &lt;? if not isLast("groupLitList") ?>
-  || E'\n' || 
-  &lt;? endif ?>
-&lt;? endforeach ?> AS groupsLit,
-&lt;? foreach("groupList") ?>
-  substring(&lt;? literal("groupList") ?> from 1 for 15) 
-  &lt;? if not isLast("groupList") ?>
-  || E'\n' || 
-  &lt;? endif ?>
-&lt;? endforeach ?> AS groups,
-&lt;? foreach("groupDescripList") ?>
-  substring(&lt;? literal("groupDescripList") ?> from 1 for 30) 
-  &lt;? if not isLast("groupDescripList") ?>
-  || E'\n' || 
-  &lt;? endif ?>
-&lt;? endforeach ?> AS groupsDescrip,
-       formatDate(MIN(cohist_invcdate)) AS firstsale,
-       formatDate(MAX(cohist_invcdate)) AS lastsale,
-       formatQty(SUM(cohist_qtyshipped)) AS qty,
-&lt;? if exists("byCurrency") ?>
-       currAbbr,
-       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS sales
-&lt;? else ?>
-       currConcat(baseCurrId()) AS currAbbr, 
-       formatMoney(SUM(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2))) AS sales 
-&lt;? endif ?>
-FROM saleshistory 
-WHERE (true
-&lt;? if exists("startDate") ?>
- AND (cohist_invcdate >= &lt;? value("startDate") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("endDate") ?>
- AND (cohist_invcdate &lt;= &lt;? value("endDate") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("shipStartDate") ?>
- AND (cohist_shipdate >= &lt;? value("shipStartDate") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("shipEndDate") ?>
- AND (cohist_shipdate &lt;= &lt;? value("shipEndDate") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("warehous_id") ?>
- AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("item_id") ?>
- AND (itemsite_item_id=&lt;? value("item_id") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("cust_id") ?>
- AND (cohist_cust_id=&lt;? value("cust_id") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("shipto_id") ?>
- AND (cohist_shipto_id=&lt;? value("shipto_id") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("salesrep_id") ?>
- AND (cohist_salesrep_id=&lt;? value("salesrep_id") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("prodcat_id") ?>
- AND (item_prodcat_id=&lt;? value("prodcat_id") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("prodcat_pattern") ?>
- AND (prodcat_code ~ &lt;? value("prodcat_pattern") ?>) 
-&lt;? endif ?>
-
-&lt;? if exists("custtype_id") ?>
- AND (cust_custtype_id=&lt;? value("custtype_id") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("custtype_pattern") ?>
-   AND (custtype_code ~ &lt;? value("custtype_pattern") ?>)
-&lt;? endif ?> 
-
-&lt;? if exists("custgrp_id") ?>
-  AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id
-                   FROM custgrpitem
-                   WHERE (custgrpitem_custgrp_id=&lt;? value("custgrp_id") ?>)))
-&lt;? endif ?>
-
-&lt;? if exists("custgrp_pattern") ?>
-  AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id
-                   FROM custgrp, custgrpitem
-                   WHERE ( (custgrpitem_custgrp_id=custgrp_id)
-                     AND   (custgrp_name ~ &lt;? value("custgrp_pattern") ?>) )) )
-&lt;? endif ?>
-
-&lt;? if exists("shipzone_id") ?>
- AND (shipzone_id=&lt;? value("shipzone_id") ?>)
-&lt;? endif ?>
-
-&lt;? if exists("curr_id") ?>
- AND cust_curr_id = &lt;? value("curr_id") ?>
-&lt;? endif ?>
-
-&lt;? if exists("currConcat_pattern") ?>
- AND (currAbbr ~ &lt;? value("currConcat_pattern") ?>) 
-&lt;? endif ?>
-) 
-GROUP BY dummy
-&lt;? if exists("bySalesRep") ?>
- , cohist_salesrep_id, salesrep_number, salesrep_name
-&lt;? endif ?>
-&lt;? if exists("byShippingZone") ?>
- , shipzone_id, shipzone_name, shipzone_descrip
-&lt;? endif ?>
-&lt;? if exists("byCustomer") ?>
- , cohist_cust_id, cust_number, cust_name
-&lt;? endif ?>
-&lt;? if exists("byCustomerType") ?>
- , cust_custtype_id, custtype_code, custtype_descrip
-&lt;? endif ?>
-&lt;? if exists("byItem") ?>
- , item_id, item_number, itemdescription
-&lt;? endif ?>
-&lt;? if exists("bySite") ?>
- , itemsite_warehous_id, warehous_code, warehous_descrip
-&lt;? endif ?>
-&lt;? if exists("byCurrency") ?>
- , cust_curr_id, currAbbr
-&lt;? endif ?>
- ORDER BY dummy
-&lt;? if exists("bySalesRep") ?>
- , salesrep_number
-&lt;? endif ?>
-&lt;? if exists("byShippingZone") ?>
- , shipzone_name
-&lt;? endif ?>
-&lt;? if exists("byCustomer") ?>
- , cust_number
-&lt;? endif ?>
-&lt;? if exists("byCustomerType") ?>
- , custtype_code
-&lt;? endif ?>
-&lt;? if exists("byItem") ?>
- , item_number
-&lt;? endif ?>
-&lt;? if exists("bySite") ?>
- , warehous_code
-&lt;? endif ?>
-;</sql>
+  <mqlgroup>summarizedSalesHistory</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>163</height>
@@ -530,8 +382,9 @@ GROUP BY dummy
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>sales</column>
+     <column>totalsales</column>
     </data>
+    <format builtin="true">extprice</format>
    </field>
    <field>
     <rect>
@@ -549,7 +402,7 @@ GROUP BY dummy
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qty</column>
+     <column>qtyshipped</column>
     </data>
    </field>
    <field>
@@ -568,7 +421,7 @@ GROUP BY dummy
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>firstsale</column>
+     <column>firstdate</column>
     </data>
    </field>
    <field>
@@ -587,7 +440,7 @@ GROUP BY dummy
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>lastsale</column>
+     <column>lastdate</column>
     </data>
    </field>
    <text>
