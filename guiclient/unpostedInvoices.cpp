@@ -30,6 +30,9 @@
 unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags fl)
     : display(parent, "unpostedInvoices", fl)
 {
+  if (name)
+    setObjectName(name);
+
   setWindowTitle(tr("Unposted invoices"));
   setMetaSQLOptions("invoices", "detail");
   setNewVisible(true);
