@@ -312,11 +312,11 @@ void menuSystem::sPrepareWindowMenu()
 
   windowMenu->addSeparator();
 
-  QWidget * activeWindow;
+  QWidget *activeWindow = 0;
 
   if(omfgThis->showTopLevel())
     activeWindow = omfgThis->myActiveWindow();
-  else
+  else if (parent->workspace() && parent->workspace()->activeSubWindow())
     activeWindow = parent->workspace()->activeSubWindow()->widget();
 
   _lastActive = activeWindow;
