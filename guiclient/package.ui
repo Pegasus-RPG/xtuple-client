@@ -81,25 +81,18 @@ to be bound by its terms.</comment>
    <item row="0" column="3" rowspan="5">
     <layout class="QVBoxLayout">
      <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>0</number>
+      <widget class="QPushButton" name="_close">
+       <property name="text">
+        <string>&amp;Cancel</string>
        </property>
-       <item>
-        <widget class="QPushButton" name="_close">
-         <property name="text">
-          <string>&amp;Cancel</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_save">
-         <property name="text">
-          <string>Save</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_save">
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer>
