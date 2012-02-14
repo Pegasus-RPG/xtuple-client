@@ -1015,6 +1015,37 @@ void returnAuthorization::sDelete()
     QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
+      XSqlQuery checkwo;
+      checkwo.prepare("SELECT wo_id, wo_status "
+                      "FROM wo LEFT OUTER JOIN coitem ON (wo_id=coitem_order_id)"
+                      "        LEFT OUTER JOIN raitem ON (coitem_id=raitem_new_coitem_id) "
+                      "WHERE (raitem_id = :raitem_id);");
+      checkwo.bindValue(":raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      checkwo.exec();
+      if (checkwo.first())
+      {
+        if (checkwo.value("wo_status").toString() == "E")
+        {
+          QMessageBox::information(this, tr("Work Order Closed"),
+                                   tr("The current Return Authorization Line Item has "
+                                      "associated Work Order which has not been processed. "
+                                      "This Work Order will be closed upon deletion of this "
+                                      "line item."));
+        }
+        else if (checkwo.value("wo_status").toString() == "I")
+        {
+          QMessageBox::information(this, tr("Work Order Unchanged"),
+                                   tr("The current Return Authorization Line Item has "
+                                      "associated Work Order with Transaction History. "
+                                      "This Work Order will not be closed/deleted upon "
+                                      "deletion of this line item."));
+        }
+      }
+      else if (checkwo.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, checkwo.lastError().databaseText(), __FILE__, __LINE__);
+      }
+
       q.prepare( "DELETE FROM raitem "
                  "WHERE (raitem_id=:raitem_id);" );
       q.bindValue(":raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());

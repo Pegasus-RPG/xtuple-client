@@ -157,17 +157,51 @@ void openReturnAuthorizations::sDelete()
 {
   if (!checkSitePrivs(_ra->id()))
     return;
-    
-  if ( QMessageBox::warning( this, tr("Delete Return Authorization?"),
-                             tr("Are you sure that you want to completely delete the selected Return Authorization?"),
-                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
+
+  XSqlQuery checkwo;
+  checkwo.prepare("SELECT wo_id, wo_status "
+                  "FROM wo LEFT OUTER JOIN coitem ON (wo_id=coitem_order_id)"
+                  "        LEFT OUTER JOIN raitem ON (coitem_id=raitem_new_coitem_id) "
+                  "WHERE (raitem_rahead_id = :rahead_id);");
+  checkwo.bindValue(":rahead_id", _ra->id());
+  checkwo.exec();
+  if (checkwo.first())
   {
-	q.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
-    q.bindValue(":rahead_id", _ra->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    if ( QMessageBox::warning( this, tr("Delete Return Authorization?"),
+                               tr("<p>One or more of Line items of this Return Authorization "
+                                  "has associated Work Order(s). Work Orders which have not "
+                                  "been processed will be closed and those with transaction "
+                                  "history will not be deleted or closed upon deletion of "
+                                  "this Return Authorization. <p>Are you sure that you want to "
+                                  "completely delete the selected Return Authorization?"),
+                               tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      q.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
+      q.bindValue(":rahead_id", _ra->id());
+      q.exec();
+      if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      }
+    }
+  }
+  else if (checkwo.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, checkwo.lastError().databaseText(), __FILE__, __LINE__);
+  }
+  else
+  {
+    if ( QMessageBox::warning( this, tr("Delete Return Authorization?"),
+                               tr("Are you sure that you want to completely delete the selected Return Authorization?"),
+                               tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
+    {
+      q.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
+      q.bindValue(":rahead_id", _ra->id());
+      q.exec();
+      if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      }
     }
   }
   omfgThis->sReturnAuthorizationsUpdated();
