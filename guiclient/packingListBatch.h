@@ -40,6 +40,9 @@ public slots:
     virtual void sViewTransferOrder();
     virtual void setParams(ParameterList &);
 
+signals:
+    void finishedPrinting(int orderid, QString ordertype, int shipheadid);
+
 protected slots:
     virtual void languageChange();
 

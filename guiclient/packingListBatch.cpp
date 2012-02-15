@@ -85,9 +85,6 @@ void packingListBatch::languageChange()
 
 void packingListBatch::sPrintBatch()
 {
-  QPrinter printer(QPrinter::HighResolution);
-  bool     setupPrinter = TRUE;
-
   XSqlQuery updateq;
   updateq.prepare("UPDATE pack "
 		  "SET pack_printed=TRUE "
@@ -104,6 +101,8 @@ void packingListBatch::sPrintBatch()
     return;
   }
 
+  QPrinter printer(QPrinter::HighResolution);
+  bool     setupPrinter = TRUE;
   bool userCanceled = false;
   if (orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
@@ -111,6 +110,7 @@ void packingListBatch::sPrintBatch()
       systemError(this, tr("Could not initialize printing system for multiple reports."));
     return;
   }
+
   while (q.next())
   {
     int osmiscid = q.value("pack_shiphead_id").toInt();
@@ -131,17 +131,24 @@ void packingListBatch::sPrintBatch()
       params.append("MultiWhs");
 
     orReport report(q.value(osmiscid > 0 ? "packform" : "pickform").toString(), params);
-    if (report.isValid() && report.print(&printer, setupPrinter))
+    if (! report.isValid())
     {
-        setupPrinter = FALSE;
-	updateq.bindValue(":packid", q.value("pack_id").toInt());
-	updateq.exec();
-	if (updateq.lastError().type() != QSqlError::NoError)
-	{
-	  systemError(this, updateq.lastError().databaseText(), __FILE__, __LINE__);
-	  orReport::endMultiPrint(&printer);
-	  return;
-	}
+      report.reportError(this);
+    }
+    else if (report.print(&printer, setupPrinter))
+    {
+      setupPrinter = FALSE;
+      updateq.bindValue(":packid", q.value("pack_id").toInt());
+      updateq.exec();
+      if (updateq.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, updateq.lastError().databaseText(), __FILE__, __LINE__);
+        orReport::endMultiPrint(&printer);
+        return;
+      }
+      emit finishedPrinting(q.value("pack_head_id").toInt(),
+                            q.value("pack_head_type").toString(),
+                            q.value("pack_shiphead_id").toInt());
     }
     else
     {
