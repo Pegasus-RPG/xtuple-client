@@ -27,6 +27,9 @@ public slots:
     virtual void sPrint();
     virtual void sPopulateShipVia();
 
+signals:
+    void finishedPrinting(int orderid, QString ordertype, int shipheadid);
+
 protected slots:
     virtual void languageChange();
 

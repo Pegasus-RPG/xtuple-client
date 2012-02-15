@@ -58,10 +58,10 @@ void printPackingListBatchByShipvia::sPrint()
 
   XSqlQuery prtd;
   QString prts("UPDATE pack SET pack_printed=TRUE"
-               " WHERE ((pack_head_id=<? value(\"head_id\") ?>) "
-	       "   AND  (pack_head_type=<? value(\"head_type\") ?>)"
-	       "<? if exists(\"shiphead_id\") ?>"
-	       "   AND  (pack_shiphead_id=<? value(\"shiphead_id\") ?>)"
+               " WHERE ((pack_head_id=<? value('head_id') ?>) "
+	       "   AND  (pack_head_type=<? value('head_type') ?>)"
+	       "<? if exists('shiphead_id') ?>"
+	       "   AND  (pack_shiphead_id=<? value('shiphead_id') ?>)"
 	       "<? else ?>"
 	       "   AND (pack_shiphead_id IS NULL)"
 	       "<? endif ?>"
@@ -118,7 +118,12 @@ void printPackingListBatchByShipvia::sPrint()
       if (report.isValid())
       {
         if (report.print(&printer, setupPrinter))
+        {
           setupPrinter = FALSE;
+          emit finishedPrinting(packq.value("pack_head_id").toInt(),
+                                packq.value("pack_head_type").toString(),
+                                packq.value("pack_shiphead_id").toInt());
+        }
         else
         {
           orReport::endMultiPrint(&printer);
