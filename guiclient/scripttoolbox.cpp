@@ -1195,7 +1195,7 @@ bool ScriptToolbox::removePath(const QString & rmPath, const QString & rootPath)
 
     @param obj The object whose properties should be listed
   */
-void ScriptToolbox::listProperties(const QScriptValue &obj) const
+void ScriptToolbox::listProperties(const QScriptValue &obj, const bool showPrototype) const
 {
   qWarning("Properties of %s:", qPrintable(obj.toString()));
   QScriptValue tmp = obj;
@@ -1208,10 +1208,15 @@ void ScriptToolbox::listProperties(const QScriptValue &obj) const
       qWarning("  %s\t= %s",
                qPrintable(prop.name()), qPrintable(prop.value().toString()));
     }
-    tmp = tmp.prototype();
-    if (! (tmp.isNull() || tmp.isUndefined()))
-      qWarning(" Prototype %s of %s:",
-               qPrintable(tmp.toString()), qPrintable(obj.toString()));
+    if (showPrototype)
+    {
+      tmp = tmp.prototype();
+      if (! (tmp.isNull() || tmp.isUndefined()))
+        qWarning(" Prototype %s of %s:",
+                 qPrintable(tmp.toString()), qPrintable(obj.toString()));
+    }
+    else
+      tmp = QScriptValue();
   }
   qWarning("End of %s", qPrintable(obj.toString()));
 }

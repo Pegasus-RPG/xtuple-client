@@ -175,7 +175,7 @@ class ScriptToolbox : public QObject
     QString getCurrentDir();
     QString getHomeDir();
     QString getTempDir();
-    void    listProperties(const QScriptValue &obj) const;
+    void    listProperties(const QScriptValue &obj, const bool showPrototype = true) const;
     bool    makePath(const QString & mkPath, const QString & rootPath);
     int     messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
     bool    removePath(const QString & rmPath, const QString & rootPath);
