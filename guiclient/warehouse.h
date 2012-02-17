@@ -24,6 +24,9 @@ public:
     warehouse(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~warehouse();
 
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
+
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void populate();
@@ -33,6 +36,12 @@ public slots:
     virtual void sFillList();
     virtual void sHandleWhsType();
     virtual void sNewZone();
+
+signals:
+    void newId(int);
+    void newMode(int);
+    void populated();
+    void saved(int);
 
 protected slots:
     virtual void languageChange();
