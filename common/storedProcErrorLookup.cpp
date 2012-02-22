@@ -662,14 +662,13 @@ const struct {
 		        "you may delete this Sales Order."),		0, "" },
   { "deleteSO",  -105, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Sales Order cannot be deleted as some of its "
 			"line items have transaction history.  "),		0, "" },
-  { "deleteSO",  -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Sales Order cannot be deleted as some of its "
-			"line items are linked to a received Purchase Order.  "
-			"You must resolve this conflict before "
-		        "you may delete this Sales Order."),		0, "" },
-  { "deleteSO",  -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Sales Order cannot be deleted as some of its "
-			"line items are linked to an open Purchase Order.  "
-			"You must resolve this conflict before "
-		        "you may delete this Sales Order."),		0, "" },
+  { "deleteSO",  -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Sales Order cannot be deleted as one or more "
+                        "of its Line items have associated Purchase Order Line Items which are either closed or "
+                        "have receipts associated with them. You may want to consider cancelling this Sales "
+                        "Order instead."), 0, "" },
+  { "deleteSO",  -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Sales Order was deleted successfully. However, "
+                        "the Released Purchase Orders associated with one or more line items of this Sales Order "
+                        "could not be deleted. You must delete these Purchase Orders seperately if desired."), 0, "" },
 
   { "deleteSOItem",  -101, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Sales Order Item cannot be deleted as it has already been shipped."),	0, "" },
   { "deleteSOItem",  -102, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Sales Order Item cannot be deleted as it has already been issued to shipping."),	0, "" },
@@ -681,6 +680,10 @@ const struct {
 		        "you may delete this Sales Order Item."),		0, "" },
   { "deleteSOItem",  -105, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Sales Order Item cannot be deleted as it has generated Inventory History.  "
 		        "You may want to consider cancelling this Sales Order Item."),		0, "" },
+  { "deleteSOItem",  -10, QT_TRANSLATE_NOOP("storedProcErrorLookup", "This Sales Order Item cannot be deleted as it has associated Purchase Order Line Item "
+                        "which is either closed or has receipts associated with it. You may want to consider cancelling this Sales Order Item instead."), 0, "" },
+  { "deleteSOItem",  -20, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Sales Order Item was deleted successfully. However, the Purchase Order Line Item "
+                        "associated with this Sales Line could not be deleted. You must delete this Purchase Line Item seperately if desired."), 0, "" },
 
   { "deleteSubaccount", -1,
                         QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Subaccount cannot be deleted as it "

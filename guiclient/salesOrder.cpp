@@ -2156,16 +2156,8 @@ void salesOrder::sDelete()
       {
         int result = q.value("result").toInt();
         if (result == -20)
-          QMessageBox::information(this, tr("Cannot Delete Purchase Order Item"),
-                                    tr("<p>Purchase Order Item and its associated "
-                                        "Purchase Order will remain open and must be "
-                                        "deleted separately if desired."));
-        else if (result == -10)
-          QMessageBox::critical(this, tr("Cannot Delete Sales Order Item"),
-                                    tr("<p>Purchase Order Item associated with this "
-                                     "Sales Order Item is Closed or has Receipts. "
-                                     "You may not delete the Sales Order line, "
-                                     "but instead must cancel it."));
+          QMessageBox::information(parent, "Cannot Delete Purchase Order",
+                                   storedProcErrorLookup("deleteSOItem", result));
         else if (result < 0)
           systemError(this, storedProcErrorLookup("deleteSOItem", result),  __FILE__, __LINE__);
       }
@@ -3448,6 +3440,9 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
                                    QMessageBox::No) == QMessageBox::Yes)
           closeInstead = true;
       }
+      else if (result == -20)
+        QMessageBox::information(parent, "Cannot Delete Purchase Order",
+                                 storedProcErrorLookup("deleteSo", result));
       else if (result < 0)
       {
         systemError(parent, storedProcErrorLookup("deleteSo", result),
