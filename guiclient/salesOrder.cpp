@@ -2156,7 +2156,7 @@ void salesOrder::sDelete()
       {
         int result = q.value("result").toInt();
         if (result == -20)
-          QMessageBox::information(parent, "Cannot Delete Purchase Order",
+          QMessageBox::information(this, tr("Cannot Delete Related Purchase Order"),
                                    storedProcErrorLookup("deleteSOItem", result));
         else if (result < 0)
           systemError(this, storedProcErrorLookup("deleteSOItem", result),  __FILE__, __LINE__);
