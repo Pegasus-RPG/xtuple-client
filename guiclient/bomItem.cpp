@@ -377,10 +377,13 @@ void bomItem::sSave()
 
   if (_mode == cReplace || _mode == cCopy)
   {
-    // update the sequence number of the new bomitemitem
+    // update the sequence number and revision of the new bomitemitem
     XSqlQuery replace;
     replace.prepare( "UPDATE bomitem "
                      "SET bomitem_seqnumber=(SELECT bomitem_seqnumber"
+                     "                       FROM bomitem"
+                     "                       WHERE bomitem_id=:sourcebomitemid), "
+                     "    bomitem_rev_id=(SELECT bomitem_rev_id"
                      "                       FROM bomitem"
                      "                       WHERE bomitem_id=:sourcebomitemid) "
                      "WHERE (bomitem_id=:bomitem_id);" );
