@@ -101,6 +101,9 @@ WHERE ( true
 &lt;? elseif exists("showSold") ?>
  AND (item_sold)
 &lt;? endif ?>
+&lt;? if exists("item_type") ?>
+ AND (item_type=&lt;? value("item_type") ?>)
+&lt;? endif ?>
 &lt;? if not exists("showInactive") ?>
  AND (item_active)
 &lt;? endif ?>
