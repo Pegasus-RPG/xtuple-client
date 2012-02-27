@@ -20,22 +20,18 @@ class configureSO : public XAbstractConfigure, public Ui::configureSO
 {
     Q_OBJECT
 
-public:
+  public:
     configureSO(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~configureSO();
 
-public slots:
+  public slots:
     virtual bool sSave();
-    virtual void sHandleInvoiceCopies( int pValue );
-    virtual void sHandleCreditMemoCopies( int pValue );
-    virtual void sEditInvoiceWatermark();
     virtual void sEditCreditLimit();
-    virtual void sEditCreditMemoWatermark();
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
-signals:
+  signals:
     void saving();
 
 };

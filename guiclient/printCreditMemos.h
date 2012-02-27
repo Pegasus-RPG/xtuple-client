@@ -11,7 +11,6 @@
 #ifndef PRINTCREDITMEMOS_H
 #define PRINTCREDITMEMOS_H
 
-#include <QGroupBox>
 #include "xdialog.h"
 #include "ui_printCreditMemos.h"
 
@@ -19,19 +18,17 @@ class printCreditMemos : public XDialog, public Ui::printCreditMemos
 {
     Q_OBJECT
 
-public:
+  public:
     printCreditMemos(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printCreditMemos();
 
-public slots:
+  public slots:
     virtual void sPrint();
-    virtual void sHandleCopies( int pValue );
-    virtual void sEditWatermark();
 
-signals:
-           void finishedPrinting(int);
+  signals:
+    void finishedPrinting(int);
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
 };

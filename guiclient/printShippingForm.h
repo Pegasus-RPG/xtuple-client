@@ -11,35 +11,37 @@
 #ifndef PRINTSHIPPINGFORM_H
 #define PRINTSHIPPINGFORM_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printMulticopyDocument.h"
 #include "ui_printShippingForm.h"
 
-class printShippingForm : public XDialog, public Ui::printShippingForm
+class printShippingForm : public printMulticopyDocument,
+                          public Ui::printShippingForm
 {
     Q_OBJECT
 
-public:
-    printShippingForm(QWidget* parent = 0, const char * = 0, Qt::WindowFlags fl = 0);
+  public:
+    printShippingForm(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);
     ~printShippingForm();
 
-public slots:
+    Q_INVOKABLE virtual void clear();
+    Q_INVOKABLE virtual ParameterList getParams(int row);
+    Q_INVOKABLE virtual bool isOkToPrint();
+    Q_INVOKABLE virtual void populate();
+
+  public slots:
     virtual SetResponse set(const ParameterList & pParams );
-    virtual void sEditShippingFormWatermark();
     virtual void sHandleShipment();
-    virtual void sHandleShippingFormCopies( int pValue );
     virtual void sHandleOrder();
     virtual void sHandleTo();
     virtual void sHandleSo();
-    virtual void sPrint();
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
-private:
-    bool _captive;
+  protected:
     virtual void depopulate();
+
+  private:
 
 };
 

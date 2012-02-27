@@ -13,8 +13,6 @@
 #include <QSqlError>
 #include <QMessageBox>
 
-#include "editICMWatermark.h"
-
 configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
@@ -23,20 +21,8 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   if (name)
     setObjectName(name);
 
-  connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleInvoiceCopies(int)));
-  connect(_creditMemoNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCreditMemoCopies(int)));
-  connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditInvoiceWatermark()));
   connect(_creditLimit,          SIGNAL(editingFinished()), this, SLOT(sEditCreditLimit()));
-  connect(_creditMemoWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditCreditMemoWatermark()));
   connect(_askUpdatePrice, SIGNAL(toggled(bool)), _ignoreCustDisc, SLOT(setEnabled(bool)));
-
-  _invoiceWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
-  _invoiceWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
-  _invoiceWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
-
-  _creditMemoWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
-  _creditMemoWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
-  _creditMemoWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
 
   _nextSoNumber->setValidator(omfgThis->orderVal());
   _nextQuNumber->setValidator(omfgThis->orderVal());
@@ -101,26 +87,6 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _calcFreight->setChecked(_metrics->boolean("CalculateFreight"));
   _includePkgWeight->setChecked(_metrics->boolean("IncludePackageWeight"));
   _quoteafterSO->setChecked(_metrics->boolean("ShowQuotesAfterSO"));
-
-  _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
-  if (_invoiceNumOfCopies->value())
-  {
-    for (int counter = 0; counter < _invoiceWatermarks->topLevelItemCount(); counter++)
-    {
-      _invoiceWatermarks->topLevelItem(counter)->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(counter)));
-      _invoiceWatermarks->topLevelItem(counter)->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(counter)) == "t") ? tr("Yes") : tr("No")));
-    }
-  }
-
-  _creditMemoNumOfCopies->setValue(_metrics->value("CreditMemoCopies").toInt());
-  if (_invoiceNumOfCopies->value())
-  {
-    for (int counter = 0; counter < _creditMemoWatermarks->topLevelItemCount(); counter++)
-    {
-      _creditMemoWatermarks->topLevelItem(counter)->setText(1, _metrics->value(QString("CreditMemoWatermark%1").arg(counter)));
-      _creditMemoWatermarks->topLevelItem(counter)->setText(2, ((_metrics->value(QString("CreditMemoShowPrices%1").arg(counter)) == "t") ? tr("Yes") : tr("No")));
-    }
-  }
 
   _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
   _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
@@ -357,25 +323,10 @@ bool configureSO::sSave()
   else
     _metrics->set("InvoiceDateSource", QString("currdate"));
 
-  _metrics->set("InvoiceCopies", _invoiceNumOfCopies->value());
-  if (_invoiceNumOfCopies->value())
-  {
-    for (int counter = 0; counter < _invoiceWatermarks->topLevelItemCount(); counter++ )
-    {
-      _metrics->set(QString("InvoiceWatermark%1").arg(counter),  _invoiceWatermarks->topLevelItem(counter)->text(1));
-      _metrics->set(QString("InvoiceShowPrices%1").arg(counter), _invoiceWatermarks->topLevelItem(counter)->text(2) == tr("Yes"));
-    }
-  }
-
-  _metrics->set("CreditMemoCopies", _creditMemoNumOfCopies->value());
-  if (_creditMemoNumOfCopies->value())
-  {
-    for (int counter = 0; counter < _creditMemoWatermarks->topLevelItemCount(); counter++)
-    {
-      _metrics->set(QString("CreditMemoWatermark%1").arg(counter), _creditMemoWatermarks->topLevelItem(counter)->text(1));
-      _metrics->set(QString("CreditMemoShowPrices%1").arg(counter), (_creditMemoWatermarks->topLevelItem(counter)->text(2) == tr("Yes")));
-    }
-  }
+  if (! _invoiceCopies->save())
+    return false;
+  if (! _creditMemoCopies->save())
+    return false;
 
   switch (_balanceMethod->currentIndex())
   {
@@ -422,71 +373,6 @@ bool configureSO::sSave()
   _metrics->set("EnableReturnAuth", (_enableReturns->isChecked() || !_enableReturns->isCheckable()));
 
   return true;
-}
-
-void configureSO::sHandleInvoiceCopies(int pValue)
-{
-  if (_invoiceWatermarks->topLevelItemCount() > pValue)
-    _invoiceWatermarks->takeTopLevelItem(_invoiceWatermarks->topLevelItemCount() - 1);
-  else
-  {
-    XTreeWidgetItem *last = static_cast<XTreeWidgetItem*>(_invoiceWatermarks->topLevelItem(_invoiceWatermarks->topLevelItemCount() - 1));
-    for (int counter = (_invoiceWatermarks->topLevelItemCount()); counter <= pValue; counter++)
-      last = new XTreeWidgetItem(_invoiceWatermarks, last, counter, QVariant(tr("Copy #%1").arg(counter)), QVariant(""), QVariant(tr("Yes")));
-  }
-}
-
-void configureSO::sHandleCreditMemoCopies(int pValue)
-{
-  if (_creditMemoWatermarks->topLevelItemCount() > pValue)
-    _creditMemoWatermarks->takeTopLevelItem(_creditMemoWatermarks->topLevelItemCount() - 1);
-  else
-  {
-    XTreeWidgetItem *last = static_cast<XTreeWidgetItem*>(_creditMemoWatermarks->topLevelItem(_creditMemoWatermarks->topLevelItemCount() - 1));
-    for (int counter = (_creditMemoWatermarks->topLevelItemCount()); counter <= pValue; counter++)
-      last = new XTreeWidgetItem(_creditMemoWatermarks, last, counter, QVariant(tr("Copy #%1").arg(counter)), QVariant(""), QVariant(tr("Yes")));
-  }
-}
-
-void configureSO::sEditInvoiceWatermark()
-{
-  QList<XTreeWidgetItem*>selected = _invoiceWatermarks->selectedItems();
-  for (int counter = 0; counter < selected.size(); counter++)
-  {
-    XTreeWidgetItem *cursor = static_cast<XTreeWidgetItem*>(selected[counter]);
-    ParameterList params;
-    params.append("watermark", cursor->text(1));
-    params.append("showPrices", (cursor->text(2) == tr("Yes")));
-
-    editICMWatermark newdlg(this, "", TRUE);
-    newdlg.set(params);
-    if (newdlg.exec() == XDialog::Accepted)
-    {
-      cursor->setText(1, newdlg.watermark());
-      cursor->setText(2, ((newdlg.showPrices()) ? tr("Yes") : tr("No")));
-    }
-  }
-}
-
-
-void configureSO::sEditCreditMemoWatermark()
-{
-  QList<XTreeWidgetItem*>selected = _creditMemoWatermarks->selectedItems();
-  for (int counter = 0; counter < selected.size(); counter++)
-  {
-    XTreeWidgetItem *cursor = static_cast<XTreeWidgetItem*>(selected[counter]);
-    ParameterList params;
-    params.append("watermark", cursor->text(1));
-    params.append("showPrices", (cursor->text(2) == tr("Yes")));
-
-    editICMWatermark newdlg(this, "", TRUE);
-    newdlg.set(params);
-    if (newdlg.exec() == XDialog::Accepted)
-    {
-      cursor->setText(1, newdlg.watermark());
-      cursor->setText(2, ((newdlg.showPrices()) ? tr("Yes") : tr("No")));
-    }
-  }
 }
 
 void configureSO::sEditCreditLimit()

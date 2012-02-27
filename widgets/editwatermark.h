@@ -8,32 +8,32 @@
  * to be bound by its terms.
  */
 
-#ifndef EDITICMWATERMARK_H
-#define EDITICMWATERMARK_H
+#ifndef EDITWATERMARK_H
+#define EDITWATERMARK_H
 
-#include "guiclient.h"
-#include "xdialog.h"
+#include <QDialog>
+
 #include <parameter.h>
 
-#include "ui_editICMWatermark.h"
+#include "ui_editWatermark.h"
 
-class editICMWatermark : public XDialog, public Ui::editICMWatermark
+class EditWatermark : public QDialog, public Ui::EditWatermark
 {
     Q_OBJECT
 
-public:
-    editICMWatermark(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~editICMWatermark();
+  public:
+    EditWatermark(QWidget* parent = 0, Qt::WindowFlags fl = 0);
+    ~EditWatermark();
 
+    virtual bool    showPrices();
     virtual QString watermark();
-    virtual bool showPrices();
 
-public slots:
-    virtual enum SetResponse set(const ParameterList & pParams);
+  public slots:
+    virtual bool set(const ParameterList &pParams);
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
 };
 
-#endif // EDITICMWATERMARK_H
+#endif // EDITWATERMARK_H

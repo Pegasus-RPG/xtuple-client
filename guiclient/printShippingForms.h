@@ -26,8 +26,6 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
-    virtual void sHandleShippingFormCopies( int pValue );
-    virtual void sEditShippingFormWatermark();
     virtual void sPrint();
 
 protected slots:

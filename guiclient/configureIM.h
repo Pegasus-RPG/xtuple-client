@@ -18,19 +18,17 @@ class configureIM : public XAbstractConfigure, public Ui::configureIM
 {
     Q_OBJECT
 
-public:
+  public:
     configureIM(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~configureIM();
 
-public slots:
+  public slots:
     virtual bool sSave();
 
-protected slots:
+  protected slots:
     virtual void languageChange();
-    virtual void sHandleShippingFormCopies( int pValue );
-    virtual void sEditShippingFormWatermark();
 
-signals:
+  signals:
     void saving();
 };
 

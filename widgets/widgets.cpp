@@ -79,6 +79,7 @@
 #include "plugins/workcenterlineeditplugin.h"
 #include "plugins/xcheckboxplugin.h"
 #include "plugins/xcomboboxplugin.h"
+#include "plugins/xdoccopysetterplugin.h"
 #include "plugins/xlabelplugin.h"
 #include "plugins/xlineeditplugin.h"
 #include "plugins/xtreewidgetplugin.h"
@@ -157,6 +158,7 @@ xTuplePlugin::xTuplePlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new WorkCenterLineEditPlugin(this));
   m_plugins.append(new XCheckBoxPlugin(this));
   m_plugins.append(new XComboBoxPlugin(this));
+  m_plugins.append(new XDocCopySetterPlugin(this));
   m_plugins.append(new XLabelPlugin(this));
   m_plugins.append(new XLineEditPlugin(this));
   m_plugins.append(new XSpinBoxPlugin(this));

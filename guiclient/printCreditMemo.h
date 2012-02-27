@@ -11,41 +11,29 @@
 #ifndef PRINTCREDITMEMO_H
 #define PRINTCREDITMEMO_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printMulticopyDocument.h"
 #include "ui_printCreditMemo.h"
 
-class printCreditMemo : public XDialog, public Ui::printCreditMemo
+class CustCluster;
+
+class printCreditMemo : public printMulticopyDocument,
+                        public Ui::printCreditMemo
 {
     Q_OBJECT
 
-public:
+  public:
     printCreditMemo(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printCreditMemo();
 
-    virtual void populate();
-    virtual bool isSetup();
-    virtual void setSetup(bool);
-
-public slots:
+  public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sHandleCopies( int pValue );
-    virtual void sEditWatermark();
 
-signals:
-            void finishedPrinting(int);
-
-protected slots:
+  protected slots:
     virtual void languageChange();
+    virtual void sGotDocInfo(QSqlRecord *record);
+    virtual void sHandleDocUpdated(int docid);
 
-private:
-    bool _captive;
-    bool _setup;
-    bool _alert;
-    int _cmheadid;
-    QPrinter _printer;
+  protected:
 
 };
 

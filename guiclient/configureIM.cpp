@@ -15,7 +15,6 @@
 #include <QMessageBox>
 
 #include "guiclient.h"
-#include "editICMWatermark.h"
 #include "errorReporter.h"
 #include "storedProcErrorLookup.h"
 
@@ -26,9 +25,6 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   if (name)
     setObjectName(name);
-
-  connect(_shipformWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditShippingFormWatermark()));
-  connect(_shipformNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleShippingFormCopies(int)));
 
   //Inventory
   //Disable multi-warehouse if PostBooks
@@ -131,22 +127,6 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _nextShipmentNum->setText(q.value("shipment_number"));
   else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
-  _shipformWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
-  _shipformWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
-  _shipformWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
-
-  _shipformNumOfCopies->setValue(_metrics->value("ShippingFormCopies").toInt());
-
-  if (_shipformNumOfCopies->value())
-  {
-    for (int counter = 0; counter < _shipformWatermarks->topLevelItemCount(); counter++)
-    {
-      QTreeWidgetItem *cursor = _shipformWatermarks->topLevelItem(counter);
-      cursor->setText(1, _metrics->value(QString("ShippingFormWatermark%1").arg(counter)));
-      cursor->setText(2, ((_metrics->boolean(QString("ShippingFormShowPrices%1").arg(counter))) ? tr("Yes") : tr("No")));
-    }
-  }
 
   _kitInheritCOS->setChecked(_metrics->boolean("KitComponentInheritCOS"));
   _disallowReceiptExcess->setChecked(_metrics->boolean("DisallowReceiptExcessQty"));
@@ -286,17 +266,8 @@ bool configureIM::sSave()
 
   _metrics->set("ShipmentNumberGeneration", QString(numberGenerationTypes[_shipmentNumGeneration->currentIndex()]));
 
-  _metrics->set("ShippingFormCopies", _shipformNumOfCopies->value());
-
-  if (_shipformNumOfCopies->value())
-  {
-    for (int counter = 0; counter < _shipformWatermarks->topLevelItemCount(); counter++)
-    {
-      QTreeWidgetItem *cursor = _shipformWatermarks->topLevelItem(counter);
-      _metrics->set(QString("ShippingFormWatermark%1").arg(counter), cursor->text(1));
-      _metrics->set(QString("ShippingFormShowPrices%1").arg(counter), (cursor->text(2) == tr("Yes")));
-    }
-  }
+  if (! _shipformCopies->save())
+    return false;
 
   _metrics->set("KitComponentInheritCOS", _kitInheritCOS->isChecked());
   _metrics->set("DisallowReceiptExcessQty", _disallowReceiptExcess->isChecked());
@@ -338,37 +309,3 @@ bool configureIM::sSave()
   return true;
 }
 
-
-void configureIM::sHandleShippingFormCopies(int pValue)
-{
-  if (_shipformWatermarks->topLevelItemCount() > pValue)
-    _shipformWatermarks->takeTopLevelItem(_shipformWatermarks->topLevelItemCount() - 1);
-  else
-  {
-    for (unsigned int counter = (_shipformWatermarks->topLevelItemCount() + 1); counter <= (unsigned int)pValue; counter++)
-      new XTreeWidgetItem(_shipformWatermarks,
-			  (XTreeWidgetItem*)(_shipformWatermarks->topLevelItem(_shipformWatermarks->topLevelItemCount() - 1)),
-			  counter,
-			  QVariant(tr("Copy #%1").arg(counter)), "", tr("Yes"));
-  }
-}
-
-void configureIM::sEditShippingFormWatermark()
-{
-  XTreeWidgetItem *cursor = (XTreeWidgetItem*)(_shipformWatermarks->currentItem());
-
-  if (cursor)
-  {
-    ParameterList params;
-    params.append("watermark", cursor->text(1));
-    params.append("showPrices", (cursor->text(2) == tr("Yes")));
-
-    editICMWatermark newdlg(this, "", TRUE);
-    newdlg.set(params);
-    if (newdlg.exec() == XDialog::Accepted)
-    {
-      cursor->setText(1, newdlg.watermark());
-      cursor->setText(2, ((newdlg.showPrices()) ? tr("Yes") : tr("No")));
-    }
-  }
-}

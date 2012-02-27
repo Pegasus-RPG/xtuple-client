@@ -12,17 +12,14 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QValidator>
 #include <QVariant>
 
 #include <metasql.h>
 #include <openreports.h>
 
 #include "mqlutil.h"
-#include "editICMWatermark.h"
 #include "storedProcErrorLookup.h"
 #include "distributeInventory.h"
-#include "submitAction.h"
 
 printInvoices::printInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -30,22 +27,6 @@ printInvoices::printInvoices(QWidget* parent, const char* name, bool modal, Qt::
   setupUi(this);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCopies(int)));
-  connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
-
-  _invoiceWatermarks->addColumn(tr("Copy #"),     _dateColumn, Qt::AlignCenter);
-  _invoiceWatermarks->addColumn(tr("Watermark"),  -1,          Qt::AlignLeft  );
-  _invoiceWatermarks->addColumn(tr("Show Prices"),_dateColumn, Qt::AlignCenter);
-
-  _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt() + 1);
-  if (_invoiceNumOfCopies->value())
-  {
-    for (int i = 0; i < _invoiceWatermarks->topLevelItemCount(); i++)
-    {
-      _invoiceWatermarks->topLevelItem(i)->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(i)));
-      _invoiceWatermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
-    }
-  }
 
   _shipvia->populate( "SELECT MIN(invchead_id), invchead_shipvia "
                       "  FROM invchead "
@@ -132,13 +113,12 @@ void printInvoices::sPrint()
       message( tr("Printing Invoice #%1...")
                .arg(invoiceNumber) );
 
-      for (int i = 0; i < _invoiceWatermarks->topLevelItemCount(); i++ )
+      for (int i = 0; i < _invoiceCopies->numCopies(); i++ )
       {
-	QTreeWidgetItem *cursor = _invoiceWatermarks->topLevelItem(i);
         ParameterList params;
         params.append("invchead_id", invoices.value("invchead_id").toInt());
-        params.append("showcosts", ((cursor->text(2) == tr("Yes")) ? "TRUE" : "FALSE"));
-        params.append("watermark", cursor->text(1));
+        params.append("showcosts", (_invoiceCopies->showCosts(i) ? "TRUE" : "FALSE"));
+        params.append("watermark", _invoiceCopies->watermark(i));
 
         orReport report(invoices.value("reportname").toString(), params);
 
@@ -287,38 +267,5 @@ void printInvoices::sPrint()
                               tr("There aren't any Invoices to print.") );
 
   accept();
-}
-
-void printInvoices::sHandleCopies(int pValue)
-{
-  if (_invoiceWatermarks->topLevelItemCount() > pValue)
-  {
-    int diff = (_invoiceWatermarks->topLevelItemCount() - pValue);
-    for (int i = 0; i < diff; i++)
-      _invoiceWatermarks->takeTopLevelItem(_invoiceWatermarks->topLevelItemCount() - 1);
-  }
-  else
-  {
-    for (int i = (_invoiceWatermarks->topLevelItemCount() + 1); i <= pValue; i++)
-      new XTreeWidgetItem(_invoiceWatermarks,
-			  _invoiceWatermarks->topLevelItem(_invoiceWatermarks->topLevelItemCount() - 1),
-			  i, i, tr("Copy #%1").arg(i), "", tr("Yes"));
-  }
-}
-
-void printInvoices::sEditWatermark()
-{
-  QTreeWidgetItem *cursor = _invoiceWatermarks->currentItem();
-  ParameterList params;
-  params.append("watermark", cursor->text(1));
-  params.append("showPrices", (cursor->text(2) == tr("Yes")));
-
-  editICMWatermark newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() == XDialog::Accepted)
-  {
-    cursor->setText(1, newdlg.watermark());
-    cursor->setText(2, ((newdlg.showPrices()) ? tr("Yes") : tr("No")));
-  }
 }
 

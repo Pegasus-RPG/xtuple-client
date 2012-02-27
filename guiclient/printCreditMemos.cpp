@@ -12,14 +12,10 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QValidator>
 #include <QVariant>
 
-#include <parameter.h>
 #include <openreports.h>
 
-#include "editICMWatermark.h"
-#include "guiclient.h"
 #include "storedProcErrorLookup.h"
 #include "distributeInventory.h"
 
@@ -29,22 +25,6 @@ printCreditMemos::printCreditMemos(QWidget* parent, const char* name, bool modal
   setupUi(this);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_creditMemoNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCopies(int)));
-  connect(_creditMemoWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
-
-  _creditMemoWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
-  _creditMemoWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
-  _creditMemoWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
-  
-  _creditMemoNumOfCopies->setValue(_metrics->value("CreditMemoCopies").toInt() + 1);
-  if (_creditMemoNumOfCopies->value())
-  {
-    for (int i = 0; i < _creditMemoWatermarks->topLevelItemCount(); i++)
-    {
-      _creditMemoWatermarks->topLevelItem(i)->setText(1, _metrics->value(QString("CreditMemoWatermark%1").arg(i)));
-      _creditMemoWatermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("CreditMemoShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
-    }
-  }
 
   if(!_privileges->check("PostARDocuments"))
   {
@@ -89,13 +69,12 @@ void printCreditMemos::sPrint()
 
     do
     {
-      for (int i = 0; i < _creditMemoWatermarks->topLevelItemCount(); i++ )
+      for (int i = 0; i < _creditMemoCopies->numCopies(); i++)
       {
         ParameterList params;
-
         params.append("cmhead_id", cmhead.value("cmhead_id").toInt());
-        params.append("showcosts", ((_creditMemoWatermarks->topLevelItem(i)->text(2) == tr("Yes")) ? "TRUE" : "FALSE"));
-        params.append("watermark", _creditMemoWatermarks->topLevelItem(i)->text(1));
+        params.append("showcosts", (_creditMemoCopies->showCosts(i) ? "TRUE" : "FALSE"));
+        params.append("watermark", _creditMemoCopies->watermark(i));
 
         orReport report(cmhead.value("_reportname").toString(), params);
         if (!report.isValid())
@@ -120,8 +99,6 @@ void printCreditMemos::sPrint()
             return;
           }
         }
-
-      
       }
       
       // if post after print was checked attempt to post it
@@ -184,36 +161,3 @@ void printCreditMemos::sPrint()
   accept();
 }
 
-void printCreditMemos::sHandleCopies(int pValue)
-{
-  if (_creditMemoWatermarks->topLevelItemCount() > pValue)
-  {
-    int diff = (_creditMemoWatermarks->topLevelItemCount() - pValue);
-    for (int i = 0; i < diff; i++)
-      _creditMemoWatermarks->takeTopLevelItem(_creditMemoWatermarks->topLevelItemCount() - 1);
-  }
-  else
-  {
-    for (int i = (_creditMemoWatermarks->topLevelItemCount() + 1); i <= pValue; i++)
-      new XTreeWidgetItem(_creditMemoWatermarks,
-			  _creditMemoWatermarks->topLevelItem(_creditMemoWatermarks->topLevelItemCount() - 1),
-			  i, i,
-			  tr("Copy #%1").arg(i), "", tr("Yes"));
-  }
-}
-
-void printCreditMemos::sEditWatermark()
-{
-  QTreeWidgetItem *cursor = _creditMemoWatermarks->currentItem();
-  ParameterList params;
-  params.append("watermark", cursor->text(1));
-  params.append("showPrices", (cursor->text(2) == tr("Yes")));
-
-  editICMWatermark newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() == XDialog::Accepted)
-  {
-    cursor->setText(1, newdlg.watermark());
-    cursor->setText(2, ((newdlg.showPrices()) ? tr("Yes") : tr("No")));
-  }
-}

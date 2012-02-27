@@ -708,7 +708,7 @@ to be bound by its terms.</comment>
          <string>Invoice</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_9">
-         <item row="0" column="0" colspan="2">
+         <item row="0" column="0" colspan="3">
           <widget class="QGroupBox" name="_invcDateGroup">
            <property name="title">
             <string>Invoice Date Source</string>
@@ -762,125 +762,35 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QGroupBox" name="_invoiceGroup">
-           <property name="title">
+          <widget class="XDocCopySetter" name="_invoiceCopies">
+           <property name="labelText">
             <string>Default Invoice Copies:</string>
            </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <layout class="QHBoxLayout">
-              <property name="margin">
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="_invoiceNumOfCopiesLit">
-                <property name="text">
-                 <string># of Copies:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="_invoiceNumOfCopies">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="minimum">
-                 <number>0</number>
-                </property>
-                <property name="maximum">
-                 <number>9</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>16</width>
-                  <height>10</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0">
-             <widget class="XTreeWidget" name="_invoiceWatermarks"/>
-            </item>
-           </layout>
+           <property name="numCopiesMetric">
+            <string>InvoiceCopies</string>
+           </property>
+           <property name="showPriceMetric">
+            <string>InvoiceShowPrices</string>
+           </property>
+           <property name="watermarkMetric">
+            <string>InvoiceWatermark</string>
+           </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QGroupBox" name="_creditMemoGroup">
-           <property name="title">
+          <widget class="XDocCopySetter" name="_creditMemoCopies">
+           <property name="labelText">
             <string>Default Credit Memo Copies:</string>
            </property>
-           <layout class="QGridLayout">
-            <item row="0" column="0">
-             <layout class="QHBoxLayout">
-              <property name="margin">
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="_creditMemoNumOfCopiesLit">
-                <property name="text">
-                 <string># of Copies:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="_creditMemoNumOfCopies">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="minimum">
-                 <number>0</number>
-                </property>
-                <property name="maximum">
-                 <number>9</number>
-                </property>
-                <property name="value">
-                 <number>0</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>16</width>
-                  <height>10</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0">
-             <widget class="XTreeWidget" name="_creditMemoWatermarks"/>
-            </item>
-           </layout>
+           <property name="numCopiesMetric">
+            <string>CreditMemoCopies</string>
+           </property>
+           <property name="showPriceMetric">
+            <string>CreditMemoShowPrices</string>
+           </property>
+           <property name="watermarkMetric">
+            <string>CreditMemoWatermark</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1382,15 +1292,14 @@ to be bound by its terms.</comment>
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
+   <class>XDocCopySetter</class>
+   <extends>QWidget</extends>
+   <header>xdoccopysetter.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -1438,10 +1347,6 @@ to be bound by its terms.</comment>
   <tabstop>_invcCurrdate</tabstop>
   <tabstop>_invcShipdate</tabstop>
   <tabstop>_invcScheddate</tabstop>
-  <tabstop>_invoiceNumOfCopies</tabstop>
-  <tabstop>_invoiceWatermarks</tabstop>
-  <tabstop>_creditMemoNumOfCopies</tabstop>
-  <tabstop>_creditMemoWatermarks</tabstop>
   <tabstop>_custtype</tabstop>
   <tabstop>_salesrep</tabstop>
   <tabstop>_shipvia</tabstop>

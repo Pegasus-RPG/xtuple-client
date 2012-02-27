@@ -18,7 +18,6 @@
 #include "mqlutil.h"
 #include <openreports.h>
 
-#include "editICMWatermark.h"
 #include "submitAction.h"
 
 reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -28,8 +27,6 @@ reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, 
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
-  connect(_numOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleInvoiceCopies(int)));
-  connect(_watermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
 
   _invoice->addColumn( tr("Invoice #"),    _orderColumn,    Qt::AlignRight, true, "invchead_invcnumber");
   _invoice->addColumn( tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter,true, "invchead_invcdate");
@@ -37,20 +34,6 @@ reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, 
   _invoice->addColumn( tr("Total Amount"), _bigMoneyColumn, Qt::AlignRight, true, "extprice" );
   _invoice->addColumn( tr("Balance"),      _bigMoneyColumn, Qt::AlignRight, true, "balance" );
   _invoice->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
-  _watermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
-  _watermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
-  _watermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
-
-  _numOfCopies->setValue(_metrics->value("InvoiceCopies").toInt() + 1);
-  if (_numOfCopies->value())
-  {
-    for (int i = 0; i < _watermarks->topLevelItemCount(); i++)
-    {
-      _watermarks->topLevelItem(i)->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(i)));
-      _watermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
-    }
-  }
 }
 
 reprintInvoices::~reprintInvoices()
@@ -93,12 +76,10 @@ void reprintInvoices::sPrint()
       systemError(this, tr("Could not initialize printing system for multiple reports."));
     return;
   }
-  QList<XTreeWidgetItem*> selected = _invoice->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
-  {
-    XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
 
-    for (int j = 0; j < _watermarks->topLevelItemCount(); j++)
+  foreach (XTreeWidgetItem *cursor, _invoice->selectedItems())
+  {
+    for (int j = 0; j < _invoiceCopies->numCopies(); j++)
     {
       q.prepare("SELECT findCustomerForm(:cust_id, 'I') AS _reportname;");
       q.bindValue(":cust_id", cursor->altId());
@@ -107,8 +88,8 @@ void reprintInvoices::sPrint()
       {
 	ParameterList params;
 	params.append("invchead_id", cursor->id());
-	params.append("showcosts", ((_watermarks->topLevelItem(j)->text(2) == tr("Yes")) ? "TRUE" : "FALSE") );
-	params.append("watermark", _watermarks->topLevelItem(j)->text(1));
+	params.append("showcosts", (_invoiceCopies->showCosts(j) ? "TRUE" : "FALSE") );
+	params.append("watermark", _invoiceCopies->watermark(j));
 
 	orReport report(q.value("_reportname").toString(), params);
 	if (report.isValid())
@@ -148,35 +129,3 @@ void reprintInvoices::sPrint()
   _print->setEnabled(FALSE);
 }
 
-void reprintInvoices::sHandleInvoiceCopies(int pValue)
-{
-  if (_watermarks->topLevelItemCount() > pValue)
-  {
-    int diff = (_watermarks->topLevelItemCount() - pValue);
-    for (int i = 0; i < diff; i++)
-      _watermarks->takeTopLevelItem(_watermarks->topLevelItemCount() - 1);
-  }
-  else
-  {
-    for (int i = (_watermarks->topLevelItemCount() + 1); i <= pValue; i++)
-      new XTreeWidgetItem(_watermarks,
-			  _watermarks->topLevelItem(_watermarks->topLevelItemCount() - 1),
-			  i, i, tr("Copy #%1").arg(i), "", tr("Yes"));
-  }
-}
-
-void reprintInvoices::sEditWatermark()
-{
-  QTreeWidgetItem *cursor = _watermarks->currentItem();
-  ParameterList params;
-  params.append("watermark", cursor->text(1));
-  params.append("showPrices", (cursor->text(2) == tr("Yes")));
-
-  editICMWatermark newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() == XDialog::Accepted)
-  {
-    cursor->setText(1, newdlg.watermark());
-    cursor->setText(2, ((newdlg.showPrices()) ? tr("Yes") : tr("No")));
-  }
-}

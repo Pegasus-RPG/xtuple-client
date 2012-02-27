@@ -14,7 +14,6 @@
 #include <QVariant>
 
 #include <openreports.h>
-#include "editICMWatermark.h"
 
 printShippingForms::printShippingForms(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -22,24 +21,8 @@ printShippingForms::printShippingForms(QWidget* parent, const char* name, bool m
   setupUi(this);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_shipformNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleShippingFormCopies(int)));
-  connect(_shipformWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditShippingFormWatermark()));
 
   _captive = FALSE;
-
-  _shipformWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
-  _shipformWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
-  _shipformWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
-
-  _shipformNumOfCopies->setValue(_metrics->value("ShippingFormCopies").toInt());
-  if (_shipformNumOfCopies->value())
-  {
-    for (int i = 0; i < _shipformWatermarks->topLevelItemCount(); i++)
-    {
-      _shipformWatermarks->topLevelItem(i)->setText(1, _metrics->value(QString("ShippingFormWatermark%1").arg(i)));
-      _shipformWatermarks->topLevelItem(i)->setText(2, ((_metrics->boolean(QString("ShippingFormShowPrices%1").arg(i))) ? tr("Yes") : tr("No")));
-    }
-  }
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -63,38 +46,6 @@ enum SetResponse printShippingForms::set(const ParameterList & pParams)
   XDialog::set(pParams);
   _captive = TRUE;
   return NoError;
-}
-
-void printShippingForms::sHandleShippingFormCopies(int pValue)
-{
-  if (_shipformWatermarks->topLevelItemCount() > pValue)
-    _shipformWatermarks->takeTopLevelItem(_shipformWatermarks->topLevelItemCount() - 1);
-  else
-  {
-    for (int i = (_shipformWatermarks->topLevelItemCount() + 1); i <= pValue; i++ )
-      new XTreeWidgetItem(_shipformWatermarks,
-			  _shipformWatermarks->topLevelItem(_shipformWatermarks->topLevelItemCount() - 1),
-			  i, i, tr("Copy #%1").arg(i), "", tr("Yes"));
-  }
-}
-
-void printShippingForms::sEditShippingFormWatermark()
-{
-  QTreeWidgetItem *cursor = _shipformWatermarks->currentItem();
-  if (cursor)
-  {
-    ParameterList params;
-    params.append("watermark", cursor->text(1));
-    params.append("showPrices", (cursor->text(2) == tr("Yes")));
-
-    editICMWatermark newdlg(this, "", TRUE);
-    newdlg.set(params);
-    if (newdlg.exec() == XDialog::Accepted)
-    {
-      cursor->setText(1, newdlg.watermark());
-      cursor->setText(2, ((newdlg.showPrices()) ? tr("Yes") : tr("No")));
-    }
-  }
 }
 
 void printShippingForms::sPrint()
@@ -143,20 +94,19 @@ void printShippingForms::sPrint()
 
     do
     {
-      for (int i = 0; i < _shipformWatermarks->topLevelItemCount(); i++ )
+      for (int i = 0; i < _shippingformCopies->numCopies(); i++ )
       {
         ParameterList params;
 
         params.append("shiphead_id", reports.value("shiphead_id").toInt());
-
-        params.append("watermark", _shipformWatermarks->topLevelItem(i)->text(1));
+        params.append("watermark",   _shippingformCopies->watermark(i));
 
 #if 0
         params.append("shipchrg_id", _shipchrg->id());
 
 #endif
 
-        if (_shipformWatermarks->topLevelItem(i)->text(2) == tr("Yes"))
+        if (_shippingformCopies->showCosts(i))
           params.append("showcosts");
 
         orReport report(reports.value("report_name").toString(), params);

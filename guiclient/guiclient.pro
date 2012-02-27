@@ -225,7 +225,6 @@ FORMS =   absoluteCalendarItem.ui               \
           dspMRPDetail.ui                               \
           dspTaxHistory.ui                              \
           duplicateAccountNumbers.ui            \
-          editICMWatermark.ui           \
           editOwners.ui                 \
           empGroup.ui                   \
           empGroups.ui                  \
@@ -394,6 +393,7 @@ FORMS =   absoluteCalendarItem.ui               \
           printLabelsByOrder.ui                 \
           printLabelsBySo.ui                    \
           printLabelsByTo.ui                    \
+          printMulticopyDocument.ui             \
           printOptions.ui                       \
           printPackingList.ui                   \
           printPackingListBatchByShipvia.ui     \
@@ -776,7 +776,6 @@ HEADERS = ../common/format.h                    \
           dspMRPDetail.h                                \
           dspTaxHistory.h                               \
           duplicateAccountNumbers.h             \
-          editICMWatermark.h                    \
           editOwners.h                          \
           empGroup.h                            \
           empGroups.h                           \
@@ -970,6 +969,7 @@ HEADERS = ../common/format.h                    \
           printLabelsBySo.h             \
           printLabelsByTo.h             \
           printOptions.h                \
+          printMulticopyDocument.h      \
           printPackingList.h            \
           printPackingListBatchByShipvia.h      \
           printPoForm.h                 \
@@ -1375,7 +1375,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           dspMRPDetail.cpp                              \
           dspTaxHistory.cpp                             \
           duplicateAccountNumbers.cpp           \
-          editICMWatermark.cpp                  \
           editOwners.cpp                        \
           empGroup.cpp                          \
           empGroups.cpp                         \
@@ -1568,6 +1567,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           printLabelsBySo.cpp                   \
           printLabelsByTo.cpp                   \
           printOptions.cpp                      \
+          printMulticopyDocument.cpp            \
           printPackingList.cpp                  \
           printPackingListBatchByShipvia.cpp    \
           printPoForm.cpp                       \

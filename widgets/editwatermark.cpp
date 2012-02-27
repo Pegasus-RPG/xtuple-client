@@ -8,33 +8,36 @@
  * to be bound by its terms.
  */
 
-#include "editICMWatermark.h"
+#include "editwatermark.h"
 
 #include <QVariant>
 
-editICMWatermark::editICMWatermark(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-  : XDialog(parent, name, modal, fl)
+/**
+  @class EditWatermark
+
+  @brief The EditWatermark class is for internal use only.
+
+  This is a helper dialog for XDocCopySetter.
+  */
+
+EditWatermark::EditWatermark(QWidget* parent, Qt::WindowFlags fl)
+  : QDialog(parent, fl)
 {
   setupUi(this);
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(accept()));
 }
 
-editICMWatermark::~editICMWatermark()
+EditWatermark::~EditWatermark()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-void editICMWatermark::languageChange()
+void EditWatermark::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-enum SetResponse editICMWatermark::set(const ParameterList &pParams)
+bool EditWatermark::set(const ParameterList &pParams)
 {
-  XDialog::set(pParams);
   QVariant param;
   bool     valid;
 
@@ -46,17 +49,17 @@ enum SetResponse editICMWatermark::set(const ParameterList &pParams)
   if (valid)
     _showPrices->setChecked(param.toBool());
 
-  return NoError;
+  return true;
 }
 
 
-QString editICMWatermark::watermark()
+QString EditWatermark::watermark()
 {
   return _watermark->text();
 }
 
 
-bool editICMWatermark::showPrices()
+bool EditWatermark::showPrices()
 {
   return _showPrices->isChecked();
 }

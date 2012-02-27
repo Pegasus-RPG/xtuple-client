@@ -13,27 +13,24 @@
 
 #include "guiclient.h"
 #include "xdialog.h"
-#include <parameter.h>
 #include "ui_reprintInvoices.h"
 
 class reprintInvoices : public XDialog, public Ui::reprintInvoices
 {
     Q_OBJECT
 
-public:
+  public:
     reprintInvoices(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~reprintInvoices();
 
-public slots:
+  public slots:
     virtual void sPrint();
     virtual void sQuery();
-    virtual void sHandleInvoiceCopies( int pValue );
-    virtual void sEditWatermark();
 
-signals:
-            void finishedPrinting(int);
+  signals:
+    void finishedPrinting(int);
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
 };

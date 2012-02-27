@@ -20,19 +20,17 @@ class reprintCreditMemos : public XDialog, public Ui::reprintCreditMemos
 {
     Q_OBJECT
 
-public:
+  public:
     reprintCreditMemos(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~reprintCreditMemos();
 
-public slots:
+  public slots:
     virtual void sPrint();
-    virtual void sHandleCopies( int pValue );
-    virtual void sEditWatermark();
 
-signals:
-            void finishedPrinting(int);
+  signals:
+    void finishedPrinting(int);
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
 };

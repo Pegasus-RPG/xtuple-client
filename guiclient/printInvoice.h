@@ -11,42 +11,27 @@
 #ifndef PRINTINVOICE_H
 #define PRINTINVOICE_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printMulticopyDocument.h"
 #include "ui_printInvoice.h"
 
-class printInvoice : public XDialog, public Ui::printInvoice
+class printInvoice : public printMulticopyDocument,
+                     public Ui::printInvoice
 {
     Q_OBJECT
 
-public:
-    printInvoice(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+  public:
+    printInvoice(QWidget *parent = 0, const char *name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printInvoice();
 
-    Q_INVOKABLE virtual int  id();
-    Q_INVOKABLE virtual bool isSetup();
-    Q_INVOKABLE virtual void populate();
-    Q_INVOKABLE virtual void setSetup(bool);
-
-public slots:
+  public slots:
     virtual enum SetResponse set(const ParameterList & pParams);
-    virtual void sPrint();
-    virtual void sHandleCopies( int pValue );
-    virtual void sEditWatermark();
 
-signals:
-            void finishedPrinting(int);
-
-protected slots:
+  protected slots:
     virtual void languageChange();
+    virtual void sGotDocInfo(QSqlRecord *record);
+    virtual void sHandleDocUpdated(int docid);
 
-private:
-    bool      _alert;
-    bool      _captive;
-    int       _invcheadid;
-    QPrinter *_printer;
-    bool      _setup;
+  protected:
 
 };
 

@@ -101,6 +101,7 @@ HEADERS += plugins/addressclusterplugin.h \
     plugins/workcenterlineeditplugin.h \
     plugins/xcheckboxplugin.h \
     plugins/xcomboboxplugin.h \
+    plugins/xdoccopysetterplugin.h      \
     plugins/xlabelplugin.h \
     plugins/xlineeditplugin.h \
     plugins/xtreewidgetplugin.h \
@@ -132,6 +133,7 @@ SOURCES += widgets.cpp \
     deptCluster.cpp \
     docAttach.cpp \
     documents.cpp \
+    editwatermark.cpp   \
     empcluster.cpp \
     empgroupcluster.cpp \
     expensecluster.cpp \
@@ -182,6 +184,7 @@ SOURCES += widgets.cpp \
     xcheckbox.cpp \
     xcombobox.cpp \
     xdatawidgetmapper.cpp \
+    xdoccopysetter.cpp \
     xdoublevalidator.cpp \
     xitemdelegate.cpp \
     xlabel.cpp \
@@ -220,6 +223,7 @@ HEADERS += widgets.h \
     deptcluster.h \
     docAttach.h \
     documents.h \
+    editwatermark.h     \
     empcluster.h \
     empgroupcluster.h \
     expensecluster.h \
@@ -270,6 +274,7 @@ HEADERS += widgets.h \
     xcheckbox.h \
     xcombobox.h \
     xdatawidgetmapper.h \
+    xdoccopysetter.h \
     xdoublevalidator.h \
     xitemdelegate.h \
     xlabel.h \
@@ -290,6 +295,7 @@ FORMS += alarmMaint.ui \
     customerselector.ui \
     docAttach.ui \
     documents.ui \
+    editwatermark.ui    \
     filemoveselector.ui \
     filterManager.ui \
     filterSave.ui \
@@ -300,8 +306,9 @@ FORMS += alarmMaint.ui \
     queryitem.ui \
     queryset.ui \
     recurrencewidget.ui \
-    vendorgroup.ui \
-    womatlcluster.ui
+    vendorgroup.ui      \
+    womatlcluster.ui    \
+    xdoccopysetter.ui
 
 RESOURCES += widgets.qrc
 
