@@ -15,7 +15,7 @@
 
 #include <parameter.h>
 
-#include "ui_editWatermark.h"
+#include "ui_editwatermark.h"
 
 class EditWatermark : public QDialog, public Ui::EditWatermark
 {
