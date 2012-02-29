@@ -8,152 +8,83 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>reprintInvoices</class>
- <widget class="QDialog" name="reprintInvoices">
+ <widget class="QWidget" name="reprintInvoices">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>488</width>
-    <height>442</height>
+    <width>374</width>
+    <height>126</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Re-Print Invoices</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="bottomMargin">
-      <number>12</number>
-     </property>
+    <layout class="QHBoxLayout">
      <item>
-      <layout class="QHBoxLayout">
+      <layout class="QVBoxLayout">
        <item>
-        <layout class="QVBoxLayout">
-         <item>
-          <widget class="QLabel" name="_invoicePatternLit">
-           <property name="text">
-            <string>Search for
+        <widget class="QLabel" name="_invoicePatternLit">
+         <property name="text">
+          <string>Search for
 Invoice Number:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-           </property>
-           <property name="buddy">
-            <cstring>_invoicePattern</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="_invoicePattern"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
+         <property name="alignment">
+          <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
          </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="DateCluster" name="_dates">
-         <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+         <property name="buddy">
+          <cstring>_invoicePattern</cstring>
          </property>
         </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="_invoicePattern"/>
        </item>
       </layout>
      </item>
      <item>
-      <widget class="XCheckBox" name="_balanceOnly">
-       <property name="text">
-        <string>Only include Invoices with Balance</string>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-      </widget>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="_invoicesLit">
-       <property name="text">
-        <string>Invoices:</string>
-       </property>
-       <property name="buddy">
-        <cstring>_invoice</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XTreeWidget" name="_invoice">
-       <zorder>_invoicesLit</zorder>
-      </widget>
-     </item>
-     <item>
-      <widget class="XDocCopySetter" name="_invoiceCopies">
-       <property name="labelText">
-        <string>Invoice Copies:</string>
-       </property>
-       <property name="numCopiesMetric">
-        <string>InvoiceCopies</string>
-       </property>
-       <property name="showPriceMetric">
-        <string>InvoiceShowPrices</string>
-       </property>
-       <property name="watermarkMetric">
-        <string>InvoiceWatermark</string>
+      <widget class="DateCluster" name="_dates">
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout">
-     <item>
-      <widget class="QPushButton" name="_close">
-       <property name="text">
-        <string>&amp;Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="_query">
-       <property name="text">
-        <string>Query</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="_print">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>&amp;Print</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>10</width>
-         <height>61</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <widget class="XCheckBox" name="_balanceOnly">
+     <property name="text">
+      <string>Only include Invoices with Balance</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -169,55 +100,11 @@ Invoice Number:</string>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
   </customwidget>
-  <customwidget>
-   <class>XDocCopySetter</class>
-   <extends>QWidget</extends>
-   <header>xdoccopysetter.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_invoicePattern</tabstop>
   <tabstop>_dates</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
-   <receiver>reprintInvoices</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_invoice</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_print</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

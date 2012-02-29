@@ -11,11 +11,11 @@
 #ifndef REPRINTINVOICES_H
 #define REPRINTINVOICES_H
 
-#include "guiclient.h"
-#include "xdialog.h"
+#include "reprintMulticopyDocument.h"
 #include "ui_reprintInvoices.h"
 
-class reprintInvoices : public XDialog, public Ui::reprintInvoices
+class reprintInvoices : public reprintMulticopyDocument,
+                        public Ui::reprintInvoices
 {
     Q_OBJECT
 
@@ -23,12 +23,7 @@ class reprintInvoices : public XDialog, public Ui::reprintInvoices
     reprintInvoices(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~reprintInvoices();
 
-  public slots:
-    virtual void sPrint();
-    virtual void sQuery();
-
-  signals:
-    void finishedPrinting(int);
+    Q_INVOKABLE ParameterList getParamsDocList();
 
   protected slots:
     virtual void languageChange();

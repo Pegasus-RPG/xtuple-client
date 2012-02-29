@@ -485,6 +485,7 @@
 #include "reports.h"
 #include "reprintCreditMemos.h"
 #include "reprintInvoices.h"
+#include "reprintMulticopyDocument.h"
 #include "reprioritizeWo.h"
 #include "reschedulePoitem.h"
 #include "rescheduleWo.h"

@@ -11,24 +11,18 @@
 #ifndef REPRINTCREDITMEMOS_H
 #define REPRINTCREDITMEMOS_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "reprintMulticopyDocument.h"
 #include "ui_reprintCreditMemos.h"
 
-class reprintCreditMemos : public XDialog, public Ui::reprintCreditMemos
+class reprintCreditMemos : public reprintMulticopyDocument,
+                           public Ui::reprintCreditMemos
 {
     Q_OBJECT
 
   public:
-    reprintCreditMemos(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    reprintCreditMemos(QWidget *parent = 0,     const char *name = 0,
+                       bool     modal  = false, Qt::WFlags  fl   = 0);
     ~reprintCreditMemos();
-
-  public slots:
-    virtual void sPrint();
-
-  signals:
-    void finishedPrinting(int);
 
   protected slots:
     virtual void languageChange();

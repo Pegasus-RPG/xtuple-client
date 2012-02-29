@@ -448,6 +448,7 @@ FORMS =   absoluteCalendarItem.ui               \
           reports.ui                            \
           reprintCreditMemos.ui                 \
           reprintInvoices.ui                    \
+          reprintMulticopyDocument.ui           \
           reprioritizeWo.ui                     \
           reschedulePoitem.ui                   \
           rescheduleWo.ui                       \
@@ -1024,6 +1025,7 @@ HEADERS = ../common/format.h                    \
           reports.h                             \
           reprintCreditMemos.h                  \
           reprintInvoices.h                     \
+          reprintMulticopyDocument.h            \
           reprioritizeWo.h                      \
           reschedulePoitem.h                    \
           rescheduleWo.h                        \
@@ -1622,6 +1624,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           reports.cpp                           \
           reprintCreditMemos.cpp                \
           reprintInvoices.cpp                   \
+          reprintMulticopyDocument.cpp          \
           reprioritizeWo.cpp                    \
           reschedulePoitem.cpp                  \
           rescheduleWo.cpp                      \

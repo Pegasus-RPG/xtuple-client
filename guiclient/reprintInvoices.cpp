@@ -10,30 +10,39 @@
 
 #include "reprintInvoices.h"
 
-#include <QMessageBox>
-#include <QSqlError>
-#include <QVariant>
+#include <mqlutil.h>
 
-#include <metasql.h>
-#include "mqlutil.h"
-#include <openreports.h>
+#include "errorReporter.h"
 
-#include "submitAction.h"
-
-reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+reprintInvoices::reprintInvoices(QWidget    *parent,
+                                 const char *name,
+                                 bool        modal,
+                                 Qt::WFlags  fl)
+    : reprintMulticopyDocument("InvoiceCopies",     "InvoiceWatermark",
+                               "InvoiceShowPrices",
+                               parent, name, modal, fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Re-Print Invoices"));
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
+  list()->addColumn(tr("Invoice #"),      _orderColumn, Qt::AlignRight, true, "docnumber");
+  list()->addColumn(tr("Doc. Date"),       _dateColumn, Qt::AlignCenter,true, "invchead_invcdate");
+  list()->addColumn(tr("Cust. #"),                  -1, Qt::AlignLeft,  true, "cust_number");
+  list()->addColumn(tr("Customer"),                 -1, Qt::AlignLeft,  true, "cust_name");
+  list()->addColumn(tr("Total Amount"),_bigMoneyColumn, Qt::AlignRight, true, "extprice" );
+  list()->addColumn(tr("Balance"),     _bigMoneyColumn, Qt::AlignRight, true, "balance" );
+  list()->addColumn(tr("Report"),                   -1, Qt::AlignLeft,  false,"reportname");
 
-  _invoice->addColumn( tr("Invoice #"),    _orderColumn,    Qt::AlignRight, true, "invchead_invcnumber");
-  _invoice->addColumn( tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter,true, "invchead_invcdate");
-  _invoice->addColumn( tr("Customer"),     -1,              Qt::AlignLeft,  true, "customer");
-  _invoice->addColumn( tr("Total Amount"), _bigMoneyColumn, Qt::AlignRight, true, "extprice" );
-  _invoice->addColumn( tr("Balance"),      _bigMoneyColumn, Qt::AlignRight, true, "balance" );
-  _invoice->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  QString      errmsg;
+  bool         ok  = false;
+  MetaSQLQuery mql = MQLUtil::mqlLoad("invoices", "detail", errmsg, &ok);
+  if (! ok)
+    ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Invoices"),
+                         errmsg, __FILE__, __LINE__);
+
+  _doctypefull = tr("Invoice");
+  _reportKey   = "invchead_id";
+  _docListQueryString = mql.getSource();
 }
 
 reprintInvoices::~reprintInvoices()
@@ -46,86 +55,17 @@ void reprintInvoices::languageChange()
   retranslateUi(this);
 }
 
-void reprintInvoices::sQuery()
+ParameterList reprintInvoices::getParamsDocList()
 {
-  MetaSQLQuery mql = mqlLoad("invoices", "detail");
   ParameterList params;
   params.append("invc_pattern", _invoicePattern->text().trimmed());
+  params.append("getForm");
+
   if (_dates->allValid())
     _dates->appendValue(params);
+
   if (_balanceOnly->isChecked())
     params.append("balanceOnly");
-  q = mql.toQuery(params);
-  _invoice->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+
+  return params;
 }
-
-void reprintInvoices::sPrint()
-{
-  QPrinter printer(QPrinter::HighResolution);
-  bool     setupPrinter = TRUE;
-
-  bool userCanceled = false;
-  if (orReport::beginMultiPrint(&printer, userCanceled) == false)
-  {
-    if(!userCanceled)
-      systemError(this, tr("Could not initialize printing system for multiple reports."));
-    return;
-  }
-
-  foreach (XTreeWidgetItem *cursor, _invoice->selectedItems())
-  {
-    for (int j = 0; j < _invoiceCopies->numCopies(); j++)
-    {
-      q.prepare("SELECT findCustomerForm(:cust_id, 'I') AS _reportname;");
-      q.bindValue(":cust_id", cursor->altId());
-      q.exec();
-      if (q.first())
-      {
-	ParameterList params;
-	params.append("invchead_id", cursor->id());
-	params.append("showcosts", (_invoiceCopies->showCosts(j) ? "TRUE" : "FALSE") );
-	params.append("watermark", _invoiceCopies->watermark(j));
-
-	orReport report(q.value("_reportname").toString(), params);
-	if (report.isValid())
-	{
-	  if (report.print(&printer, setupPrinter))
-		 setupPrinter = FALSE;
-	      else 
-	      {
-		report.reportError(this);
-		orReport::endMultiPrint(&printer);
-		return;
-	      }
-	}
-	else
-	  QMessageBox::critical(this, tr("Cannot Find Invoice Form"),
-				tr("<p>The Invoice Form '%1' cannot be found. "
-                                   "One or more of the selected Invoices "
-                                   "cannot be printed until a Customer Form "
-                                   "Assignment is updated to remove any "
-                                   "references to this Invoice Form or this "
-                                   "Invoice Form is created.")
-                                  .arg(q.value("_reportname").toString()) );
-      }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-      }
-    }
-
-    emit finishedPrinting(cursor->id());
-  }
-  orReport::endMultiPrint(&printer);
-
-  _invoice->clearSelection();
-  _close->setText(tr("&Close"));
-  _print->setEnabled(FALSE);
-}
-

@@ -8,147 +8,24 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>reprintCreditMemos</class>
- <widget class="QDialog" name="reprintCreditMemos">
+ <widget class="QWidget" name="reprintCreditMemos">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>489</width>
-    <height>431</height>
+    <width>355</width>
+    <height>24</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Re-Print Credit Memos</string>
   </property>
-  <layout class="QHBoxLayout" name="_reprintCreditMemosLyt">
-   <item>
-    <layout class="QVBoxLayout" name="_widgetLyt">
-     <item>
-      <widget class="QLabel" name="_creditMemosLit">
-       <property name="text">
-        <string>Credit Memos:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XTreeWidget" name="_cmhead"/>
-     </item>
-     <item>
-      <widget class="XDocCopySetter" name="_creditMemoCopies">
-       <property name="labelText">
-        <string>Credit Memo Copies</string>
-       </property>
-       <property name="numCopiesMetric">
-        <string>CreditMemoCopies</string>
-       </property>
-       <property name="showPriceMetric">
-        <string>CreditMemoShowPrices</string>
-       </property>
-       <property name="watermarkMetric">
-        <string>CreditMemoWatermark</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="_buttonLyt">
-     <item>
-      <widget class="QPushButton" name="_close">
-       <property name="text">
-        <string>&amp;Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="_print">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>&amp;Print</string>
-       </property>
-       <property name="autoDefault">
-        <bool>true</bool>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="Spacer2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>136</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-  </layout>
+  <layout class="QGridLayout" name="gridLayout"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>XDocCopySetter</class>
-   <extends>QWidget</extends>
-   <header>xdoccopysetter.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
- <tabstops>
-  <tabstop>_cmhead</tabstop>
- </tabstops>
  <includes>
   <include location="global">parameter.h</include>
  </includes>
  <resources/>
- <connections>
-  <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
-   <receiver>reprintCreditMemos</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_cmhead</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_print</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
