@@ -24,7 +24,7 @@ class printShippingForm : public printMulticopyDocument,
     ~printShippingForm();
 
     Q_INVOKABLE virtual void clear();
-    Q_INVOKABLE virtual ParameterList getParams(int row);
+    Q_INVOKABLE virtual ParameterList getParamsOneCopy(int row, XSqlQuery &qry);
     Q_INVOKABLE virtual bool isOkToPrint();
     Q_INVOKABLE virtual void populate();
 
@@ -40,8 +40,6 @@ class printShippingForm : public printMulticopyDocument,
 
   protected:
     virtual void depopulate();
-
-  private:
 
 };
 

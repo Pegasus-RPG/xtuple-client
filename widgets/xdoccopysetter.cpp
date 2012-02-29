@@ -107,7 +107,8 @@ void XDocCopySetter::setNumCopies(const int numCopies)
              : _x_metrics->value(QString("%1%2").arg(_watermarkMetric).arg(i));
     QString showprice;
     if (_showPriceMetric.isEmpty() ||
-        _x_metrics->boolean(QString("%1%2").arg(_showPriceMetric).arg(i)))
+        _x_metrics->boolean(QString("%1%2").arg(_showPriceMetric).arg(i)) ||
+        _x_metrics->value(QString("%1%2").arg(_showPriceMetric).arg(i)).isEmpty())
       showprice = yesStr;
     else
       showprice = noStr;

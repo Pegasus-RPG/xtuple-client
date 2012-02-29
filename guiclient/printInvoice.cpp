@@ -26,7 +26,8 @@ printInvoice::printInvoice(QWidget *parent, const char *name, bool modal, Qt::WF
   _distributeInventory = true;
 
   _docinfoQueryString =
-         "SELECT invchead_invcnumber AS docnumber,"
+         "SELECT invchead_id         AS docid,"
+         "       invchead_invcnumber AS docnumber,"
          "       invchead_printed    AS printed,"
          "       invchead_posted     AS posted,"
          "       invchead_cust_id,"
@@ -47,15 +48,15 @@ printInvoice::printInvoice(QWidget *parent, const char *name, bool modal, Qt::WF
   _errCheckBeforePostingMsg =
           tr("Could not post Invoice %1 because of a missing exchange rate.");
 
-  _markPrintedQry = "UPDATE invchead"
-                    "   SET invchead_printed=TRUE"
-                    " WHERE (invchead_id=<? value('docid') ?>);" ;
+  _markOnePrintedQry = "UPDATE invchead"
+                       "   SET invchead_printed=TRUE"
+                       " WHERE (invchead_id=<? value('docid') ?>);" ;
 
   _postFunction = "postInvoice";
   _postQuery = "SELECT postInvoice(<? value('docid') ?>) AS result;" ;
 
-  connect(this, SIGNAL(docUpdated(int)),         this, SLOT(sHandleDocUpdated(int)));
-  connect(this, SIGNAL(gotDocInfo(QSqlRecord*)), this, SLOT(sGotDocInfo(QSqlRecord*)));
+  connect(this, SIGNAL(docUpdated(int)),        this, SLOT(sHandleDocUpdated(int)));
+  connect(this, SIGNAL(populated(QSqlRecord*)), this, SLOT(sHandlePopulated(QSqlRecord*)));
 }
 
 printInvoice::~printInvoice()
@@ -79,7 +80,7 @@ enum SetResponse printInvoice::set(const ParameterList &pParams)
   return printMulticopyDocument::set(pParams); // this does XDialog::set()
 }
 
-void printInvoice::sGotDocInfo(QSqlRecord *record)
+void printInvoice::sHandlePopulated(QSqlRecord *record)
 {
   if (record)
   {

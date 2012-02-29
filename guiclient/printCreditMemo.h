@@ -14,8 +14,6 @@
 #include "printMulticopyDocument.h"
 #include "ui_printCreditMemo.h"
 
-class CustCluster;
-
 class printCreditMemo : public printMulticopyDocument,
                         public Ui::printCreditMemo
 {
@@ -30,7 +28,7 @@ class printCreditMemo : public printMulticopyDocument,
 
   protected slots:
     virtual void languageChange();
-    virtual void sGotDocInfo(QSqlRecord *record);
+    virtual void sHandlePopulated(QSqlRecord *record);
     virtual void sHandleDocUpdated(int docid);
 
   protected:

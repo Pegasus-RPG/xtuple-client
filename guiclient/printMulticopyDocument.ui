@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>364</height>
+    <width>601</width>
+    <height>356</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,7 @@ to be bound by its terms.</comment>
     </layout>
    </item>
    <item row="1" column="0" colspan="2">
-    <widget class="QCheckBox" name="_post">
+    <widget class="XCheckBox" name="_post">
      <property name="text">
       <string>Post after Printing</string>
      </property>
@@ -92,6 +92,11 @@ to be bound by its terms.</comment>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XDocCopySetter</class>
    <extends>QWidget</extends>

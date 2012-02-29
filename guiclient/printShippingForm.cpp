@@ -15,15 +15,10 @@
 #include <QVariant>
 
 #include <metasql.h>
-#include <openreports.h>
 
-#include "editwatermark.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "mqlutil.h"
-#include "ordercluster.h"
-#include "shipmentcluster.h"
-#include "xcombobox.h"
 
 printShippingForm::printShippingForm(QWidget *parent, const char *name, Qt::WFlags fl)
     : printMulticopyDocument("ShippingFormCopies",     "ShippingFormWatermark",
@@ -38,7 +33,8 @@ printShippingForm::printShippingForm(QWidget *parent, const char *name, Qt::WFla
   _distributeInventory = false;
 
   _docinfoQueryString = 
-             "SELECT shiphead_number           AS docnumber,"
+             "SELECT shiphead_id               AS docid,"
+             "       shiphead_number           AS docnumber,"
              "       (shiphead_sfstatus = 'P') AS printed,"
              "       NULL AS posted,"
              "       shipform_report_name      AS reportname,"
@@ -55,12 +51,9 @@ printShippingForm::printShippingForm(QWidget *parent, const char *name, Qt::WFla
              "<? endif ?>"
              " WHERE (shiphead_id=<? value('docid') ?>);" ;
 
-  _markPrintedQry = "UPDATE shiphead"
-                    "   SET shiphead_sfstatus='P'"
-                    " WHERE (shiphead_id=<? value('docid') ?>);" ;
-
-  _postFunction = "";
-  _postQuery    = "";
+  _markOnePrintedQry = "UPDATE shiphead"
+                       "   SET shiphead_sfstatus='P'"
+                       " WHERE (shiphead_id=<? value('docid') ?>);" ;
 
   // programatically hiding -- see issue # 5853. TODO: remove it altogether?
   _shipchrg->hide();
@@ -102,12 +95,10 @@ void printShippingForm::clear()
   _order->setFocus();
 }
 
-ParameterList printShippingForm::getParams(int row)
+ParameterList printShippingForm::getParamsOneCopy(int row, XSqlQuery &qry)
 {
-  ParameterList params;
+  ParameterList params = printMulticopyDocument::getParamsOneCopy(row, qry);
 
-  params.append("shiphead_id", _shipment->id());
-  params.append("watermark",   copies()->watermark(row));
   params.append("shipchrg_id", _shipchrg->id());
 
   if (_metrics->boolean("MultiWhs"))

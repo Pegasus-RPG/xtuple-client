@@ -14,8 +14,6 @@
 #include <QSqlRecord>
 #include <QVariant>
 
-#include "custcluster.h"
-
 printCreditMemo::printCreditMemo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : printMulticopyDocument("CreditMemoCopies",     "CreditMemoWatermark",
                              "CreditMemoShowPrices", "PostARDocuments",
@@ -29,7 +27,8 @@ printCreditMemo::printCreditMemo(QWidget* parent, const char* name, bool modal, 
   _distributeInventory = true;
 
   _docinfoQueryString =
-             "SELECT cmhead_number  AS docnumber,"
+             "SELECT cmhead_id      AS docid,"
+             "       cmhead_number  AS docnumber,"
              "       cmhead_printed AS printed,"
              "       cmhead_posted  AS posted,"
              "       cmhead_cust_id,"
@@ -37,14 +36,14 @@ printCreditMemo::printCreditMemo(QWidget* parent, const char* name, bool modal, 
              "FROM cmhead "
              "WHERE (cmhead_id=<? value('docid') ?>);" ;
 
-  _markPrintedQry = "UPDATE cmhead "
-                    "   SET cmhead_printed=TRUE "
-                    " WHERE (cmhead_id=<? value('docid') ?>);" ;
+  _markOnePrintedQry = "UPDATE cmhead "
+                       "   SET cmhead_printed=TRUE "
+                       " WHERE (cmhead_id=<? value('docid') ?>);" ;
   _postFunction = "postCreditMemo";
-  _postQuery    = "SELECT postCreditMemo(<? value('docid') ?>) AS result;" ;
+  _postQuery    = "SELECT postCreditMemo(<? value('docid') ?>, 0) AS result;" ;
 
-  connect(this, SIGNAL(docUpdated(int)),         this, SLOT(sHandleDocUpdated(int)));
-  connect(this, SIGNAL(gotDocInfo(QSqlRecord*)), this, SLOT(sGotDocInfo(QSqlRecord*)));
+  connect(this, SIGNAL(docUpdated(int)),        this, SLOT(sHandleDocUpdated(int)));
+  connect(this, SIGNAL(populated(QSqlRecord*)), this, SLOT(sHandlePopulated(QSqlRecord*)));
 }
 
 printCreditMemo::~printCreditMemo()
@@ -68,7 +67,7 @@ enum SetResponse printCreditMemo::set(const ParameterList &pParams)
   return printMulticopyDocument::set(pParams);
 }
 
-void printCreditMemo::sGotDocInfo(QSqlRecord *record)
+void printCreditMemo::sHandlePopulated(QSqlRecord *record)
 {
   if (record)
   {

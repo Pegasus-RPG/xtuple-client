@@ -11,12 +11,11 @@
 #ifndef PRINTINVOICES_H
 #define PRINTINVOICES_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printMulticopyDocument.h"
 #include "ui_printInvoices.h"
 
-class printInvoices : public XDialog, public Ui::printInvoices
+class printInvoices : public printMulticopyDocument,
+                      public Ui::printInvoices
 {
     Q_OBJECT
 
@@ -24,14 +23,13 @@ class printInvoices : public XDialog, public Ui::printInvoices
     printInvoices(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printInvoices();
 
-  public slots:
-    virtual void sPrint();
-
-  signals:
-    void finishedPrinting(int);
+    Q_INVOKABLE virtual ParameterList getParamsDocList();
+    Q_INVOKABLE virtual ParameterList getParamsOneCopy(int row, XSqlQuery &qry);
 
   protected slots:
     virtual void languageChange();
+    virtual void sHandleAboutToStart(XSqlQuery*);
+    virtual void sHandleFinishedWithAll();
 
 };
 

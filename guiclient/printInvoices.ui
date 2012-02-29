@@ -8,186 +8,89 @@ version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
 to be bound by its terms.</comment>
  <class>printInvoices</class>
- <widget class="QDialog" name="printInvoices">
+ <widget class="QWidget" name="printInvoices">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>521</width>
-    <height>330</height>
+    <width>389</width>
+    <height>115</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Print Invoices</string>
   </property>
-  <layout class="QHBoxLayout" name="_printInvoicesLyt">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QVBoxLayout" name="_widgetLyt">
-     <item>
-      <widget class="QGroupBox" name="_shipviaGroup">
-       <property name="title">
-        <string/>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="_allShipvia">
-          <property name="text">
-           <string>All Ship Vias</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QRadioButton" name="_selectedShipvia">
-          <property name="text">
-           <string>Selected Ship Via</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="XComboBox" name="_shipvia">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="type">
-           <enum>XComboBox::Adhoc</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="_postLyt">
-       <item>
-        <widget class="XCheckBox" name="_post">
-         <property name="text">
-          <string>Post Invoices after Printing</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>100</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="XDocCopySetter" name="_invoiceCopies">
-       <property name="labelText">
-        <string>Invoice Copies</string>
-       </property>
-       <property name="numCopiesMetric">
-        <string>InvoiceCopies</string>
-       </property>
-       <property name="showPriceMetric">
-        <string>InvoiceWatermark</string>
-       </property>
-       <property name="watermarkMetric">
-        <string>InvoiceShowPrices</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QGroupBox" name="_shipviaGroup">
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="_allShipvia">
+        <property name="text">
+         <string>All Ship Vias</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="_selectedShipvia">
+        <property name="text">
+         <string>Selected Ship Via</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="XComboBox" name="_shipvia">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="type">
+         <enum>XComboBox::Adhoc</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="_buttonLyt">
-     <item>
-      <widget class="QPushButton" name="_close">
-       <property name="text">
-        <string>&amp;Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="_print">
-       <property name="text">
-        <string>&amp;Print</string>
-       </property>
-       <property name="autoDefault">
-        <bool>true</bool>
-       </property>
-       <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>10</width>
-         <height>41</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>10</width>
+       <height>41</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
  <customwidgets>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
   </customwidget>
-  <customwidget>
-   <class>XDocCopySetter</class>
-   <extends>QWidget</extends>
-   <header>xdoccopysetter.h</header>
-  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>_close</sender>
-   <signal>clicked()</signal>
-   <receiver>printInvoices</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_selectedShipvia</sender>
    <signal>toggled(bool)</signal>

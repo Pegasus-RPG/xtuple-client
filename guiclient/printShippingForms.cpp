@@ -10,131 +10,109 @@
 
 #include "printShippingForms.h"
 
-#include <QMessageBox>
-#include <QVariant>
-
-#include <openreports.h>
+#include "guiErrorCheck.h"
 
 printShippingForms::printShippingForms(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : printMulticopyDocument("ShippingFormCopies",     "ShippingFormWatermark",
+                             "ShippingFormShowPrices", "",
+                             parent, name, modal, fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Print Shipping Forms"));
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-
-  _captive = FALSE;
+  _doctypefull = tr("Shipping Form");
+  _reportKey   = "shiphead_id";
+  _distributeInventory = false;
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _printNew->setChecked(true);
     _printDirty->setChecked(true);
   }
+
+  // TODO: tohead?
+  _docinfoQueryString =
+             "SELECT shiphead_id               AS docid,"
+             "       shiphead_number           AS docnumber,"
+             "       (shiphead_sfstatus = 'P') AS printed,"
+             "       NULL                      AS posted,"
+             "       shipform_report_name      AS reportname,"
+             "       shiphead_id, shiphead_shipchrg_id"
+             "  FROM shiphead"
+             "     JOIN cohead   ON (shiphead_order_id=cohead_id"
+	     "                   AND shiphead_order_type='SO')"
+             "     JOIN shipform ON (shipform_id=COALESCE(shiphead_shipform_id,"
+             "                                            cohead_shipform_id))"
+             " WHERE NOT shiphead_shipped"
+             "<? if exists('printFlags') ?>"
+             "   AND (shiphead_sfstatus IN ("
+             "    <? foreach('printFlags') ?>"
+             "      <? if not isfirst('printFlags') ?> , <? endif ?>"
+             "      <? value('printFlags') ?>"
+             "    <? endforeach ?>"
+             "    ))"
+             "<? endif ?>"
+             " ORDER BY shiphead_id;" ;
+
+  _markOnePrintedQry = "UPDATE shiphead"
+                       "   SET shiphead_sfstatus='P'"
+                       " WHERE (shiphead_id=<? value('docid') ?>);" ;
 }
 
 printShippingForms::~printShippingForms()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void printShippingForms::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-enum SetResponse printShippingForms::set(const ParameterList & pParams)
+ParameterList printShippingForms::getParamsDocList()
 {
-  XDialog::set(pParams);
-  _captive = TRUE;
-  return NoError;
-}
+  ParameterList params = printMulticopyDocument::getParamsDocList();
 
-void printShippingForms::sPrint()
-{
-  if (!_printNew->isChecked() && !_printDirty->isChecked())
-  {
-    QMessageBox::warning( this, tr("Cannot Print Shipping Forms"),
-                          tr("You must indicate if you wish to print Shipping Forms for New and/or Changed Shipments.") );
-    return;
-  }
-
-  QString sql( "SELECT shiphead_id, shipform_report_name AS report_name "
-               "FROM shiphead, cohead, shipform "
-               "WHERE ( (NOT shiphead_shipped)"
-               " AND (shiphead_order_id=cohead_id)"
-	       " AND (shiphead_order_type='SO')"
-               " AND (shipform_id=COALESCE(shiphead_shipform_id, cohead_shipform_id))"
-               " AND (shiphead_sfstatus IN (" );
-
+  QList<QVariant> printFlags;
   if (_printNew->isChecked())
-  {
-    sql += "'N'";
+    printFlags << "N";
 
-    if (_printDirty->isChecked())
-      sql += ", 'D'";
-  }
-  else if (_printDirty->isChecked())
-    sql += "'D'";
-  sql += ")) ) "
-         "ORDER BY shiphead_id;";
+  if (_printDirty->isChecked())
+    printFlags << "D";
 
-  XSqlQuery reports;
-  reports.exec(sql);
-  if (reports.first())
-  {
-    QPrinter printer(QPrinter::HighResolution);
+  if (printFlags.size() > 0)
+    params.append("printFlags", printFlags);
 
-    bool     setupPrinter = TRUE;
-    bool userCanceled = false;
-    if (orReport::beginMultiPrint(&printer, userCanceled) == false)
-    {
-      if(!userCanceled)
-        systemError(this, tr("Could not initialize printing system for multiple reports."));
-      return;
-    }
+  return params;
+}
 
-    do
-    {
-      for (int i = 0; i < _shippingformCopies->numCopies(); i++ )
-      {
-        ParameterList params;
+ParameterList printShippingForms::getParamsOneCopy(int row, XSqlQuery &qry)
+{
+  ParameterList params = printMulticopyDocument::getParamsOneCopy(row, qry);
 
-        params.append("shiphead_id", reports.value("shiphead_id").toInt());
-        params.append("watermark",   _shippingformCopies->watermark(i));
+  params.append("shiphead_id", qry.value("shiphead_id"));
+  params.append("shipchrg_id", qry.value("shiphead_shipchrg_id"));
 
-#if 0
-        params.append("shipchrg_id", _shipchrg->id());
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
 
-#endif
+  if (copies()->showCosts(row))
+    params.append("showcosts");
 
-        if (_shippingformCopies->showCosts(i))
-          params.append("showcosts");
+  return params;
+}
 
-        orReport report(reports.value("report_name").toString(), params);
-        if (report.print(&printer, setupPrinter))
-          setupPrinter = FALSE;
-        else
-        {
-          report.reportError(this);
-	  orReport::endMultiPrint(&printer);
-          return;
-        }
-      }
+bool printShippingForms::isOkToPrint()
+{
+  QList<GuiErrorCheck> errors;
+  errors<< GuiErrorCheck(!_printNew->isChecked() && !_printDirty->isChecked(),
+                         _printNew,
+                         tr("You must indicate if you wish to print Shipping "
+                            "Forms for New and/or Changed Shipments."))
+    ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Print Shipping Forms"),
+                                  errors))
+    return false;
 
-      XSqlQuery setStatus;
-      setStatus.prepare( "UPDATE shiphead "
-                         "SET shiphead_sfstatus='P' "
-                         "WHERE (shiphead_id=:shiphead_id);" );
-      setStatus.bindValue(":shiphead_id", reports.value("shiphead_id").toInt());
-      setStatus.exec();
-    }
-    while (reports.next());
-    orReport::endMultiPrint(&printer);
-
-    if (_captive)
-      accept();
-  }
-  else
-    QMessageBox::warning( this, tr("Cannot Print Shipping Forms"),
-                          tr("There are no New or Changed Shipments for which Shipping Forms should be printed.") );
-
+  return true;
 }

@@ -148,16 +148,17 @@ void printMulticopyDocument::sPrint()
   if (! isOkToPrint())
     return;
 
-  ParameterList docinfop;
-  docinfop.append("docid", _data->_docid);
+  ParameterList alldocsp = getParamsDocList();
 
   MetaSQLQuery docinfom(_docinfoQueryString);
-  MetaSQLQuery markPrintedm(_markPrintedQry);
+  MetaSQLQuery markAllPrintedm(_markAllPrintedQry);
+  MetaSQLQuery markOnePrintedm(_markOnePrintedQry);
   MetaSQLQuery askm(_askBeforePostingQry);
   MetaSQLQuery errm(_errCheckBeforePostingQry);
   MetaSQLQuery postm(_postQuery);
 
   bool mpStartedInitialized = _data->_mpIsInitialized;
+  QList<QVariant> printedDocs;
 
   if (! _data->_mpIsInitialized)
   {
@@ -170,47 +171,65 @@ void printMulticopyDocument::sPrint()
     }
   }
 
-  XSqlQuery docinfoq = docinfom.toQuery(docinfop);
+  XSqlQuery docinfoq = docinfom.toQuery(alldocsp);
   while (docinfoq.next())
   {
-    QString reportname = docinfoq.value("reportname").toString();
-    QString docnumber  = docinfoq.value("docnumber").toString();
-    bool    printedOK  = false;
+    emit aboutToStart(&docinfoq);
 
-    for (int i = 0; i < _data->_copies->numCopies(); i++)
+    message(tr("Printing %1 #%2")
+               .arg(_doctypefull, docinfoq.value("docnumber").toString()));
+
+    QString  reportname = docinfoq.value("reportname").toString();
+    QString  docnumber  = docinfoq.value("docnumber").toString();
+    bool     printedOK  = false;
+
+    ParameterList currdocp;
+    currdocp.append("docid",     docinfoq.value("docid"));
+    currdocp.append("docnumber", docinfoq.value("docnumber"));
+
+    orReport report(reportname);
+    if (! report.isValid())
+      QMessageBox::critical(this, tr("Cannot Find Form"),
+                            tr("<p>Cannot find form '%1' for %2 %3."
+                               "It cannot be printed until the Form"
+                               "Assignment is updated to remove references "
+                               "to this Form or the Form is created.")
+                             .arg(reportname, _doctypefull, docnumber));
+    else
     {
-      ParameterList params = getParams(i);
-
-      orReport report(reportname, params);
-      if (!report.isValid())
-        QMessageBox::critical(this, tr("Cannot Find Form"),
-                              tr("<p>Cannot find form '%1' for %2 %3."
-                                 "It cannot be printed until the Form"
-                                 "Assignment is updated to remove references "
-                                 "to this Form or the Form is created.")
-                               .arg(reportname, _doctypefull, docnumber));
-          
-      else if (report.print(_data->_printer, ! _data->_mpIsInitialized))
+      for (int i = 0; i < _data->_copies->numCopies(); i++)
       {
-        _data->_mpIsInitialized = true;
-        printedOK = true;
-      }
-      else
-      {
-        ErrorReporter::error(QtCriticalMsg, this,
-                             tr("A Printing Error occurred"),
-                             tr("A Printing Error occurred"),
-                             __FILE__, __LINE__);
-        continue;
+        report.setParamList(getParamsOneCopy(i, docinfoq));
+        if (! report.isValid())
+        {
+          ErrorReporter::error(QtCriticalMsg, this, tr("Invalid Parameters"),
+                               tr("<p>Report '%1' cannot be run. Parameters "
+                                   "are missing.").arg(reportname),
+                               __FILE__, __LINE__);
+          continue;
+        }
+        else if (report.print(_data->_printer, ! _data->_mpIsInitialized))
+        {
+          _data->_mpIsInitialized = true;
+          printedOK = true;
+        }
+        else
+        {
+          report.reportError(this);
+          continue;
+        }
       }
     }
 
     if (printedOK)
-      emit finishedPrinting(_data->_docid);
-
-    if (! _markPrintedQry.isEmpty())
     {
-      XSqlQuery markPrintedq = markPrintedm.toQuery(docinfop);
+      emit finishedPrinting(docinfoq.value("docid").toInt());
+      printedDocs.append(docinfoq.value("docid"));
+    }
+
+    if (! _markOnePrintedQry.isEmpty())
+    {
+      XSqlQuery markPrintedq = markOnePrintedm.toQuery(currdocp);
       ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
                            markPrintedq, __FILE__, __LINE__); // don't return
 
@@ -218,11 +237,15 @@ void printMulticopyDocument::sPrint()
         emit docUpdated(_data->_docid);
     }
 
-    if (! _postQuery.isEmpty() && _data->_post->isChecked())
+    if (! _postQuery.isEmpty() && _data->_post->isChecked() &&
+        ! docinfoq.value("posted").toBool())
     {
+      message(tr("Posting %1 #%2")
+               .arg(_doctypefull, docinfoq.value("docnumber").toString()));
+
       if (! _askBeforePostingQry.isEmpty())
       {
-        XSqlQuery askq = askm.toQuery(docinfop);
+        XSqlQuery askq = askm.toQuery(currdocp);
         if (ErrorReporter::error(QtCriticalMsg, this,
                                  tr("Cannot Post %1").arg(docnumber),
                                  askq, __FILE__, __LINE__))
@@ -238,7 +261,7 @@ void printMulticopyDocument::sPrint()
 
       if (! _errCheckBeforePostingQry.isEmpty())
       {
-        XSqlQuery errq = errm.toQuery(docinfop);
+        XSqlQuery errq = errm.toQuery(currdocp);
         if (ErrorReporter::error(QtCriticalMsg, this,
                                  tr("Cannot Post %1").arg(docnumber),
                                  errq, __FILE__, __LINE__))
@@ -258,7 +281,7 @@ void printMulticopyDocument::sPrint()
       XSqlQuery rollback;
       rollback.prepare("ROLLBACK;");
 
-      XSqlQuery postq = postm.toQuery(docinfop);
+      XSqlQuery postq = postm.toQuery(currdocp);
       if (postq.first())
       {
         int result = postq.value("result").toInt();
@@ -293,6 +316,8 @@ void printMulticopyDocument::sPrint()
 
       emit posted(_data->_docid);
     }
+
+    message("");
   }
 
   if (! mpStartedInitialized)
@@ -300,6 +325,26 @@ void printMulticopyDocument::sPrint()
     orReport::endMultiPrint(_data->_printer);
     _data->_mpIsInitialized = false;
   }
+
+  if (printedDocs.size() == 0)
+    QMessageBox::information(this, tr("No Documents to Print"),
+                             tr("There aren't any documents to print."));
+  else if (! _markAllPrintedQry.isEmpty() &&
+           QMessageBox::question(this, tr("Mark Documents as Printed?"),
+                                 tr("<p>Did all of the documents print correctly?"),
+                                 QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+  {
+    ParameterList allp;
+    allp.append("printedDocs", QVariant(printedDocs));
+    XSqlQuery markPrintedq = markAllPrintedm.toQuery(allp);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
+                         markPrintedq, __FILE__, __LINE__); // don't return
+
+    if (_data->_alert)
+      emit docUpdated(-1);
+  }
+
+  emit finishedWithAll();
 
   if (_data->_captive)
     accept();
@@ -313,8 +358,7 @@ void printMulticopyDocument::sPrint()
 
 void printMulticopyDocument::populate()
 {
-  ParameterList getp;
-  getp.append("docid", _data->_docid);
+  ParameterList getp = getParamsDocList();
 
   MetaSQLQuery getm(_docinfoQueryString);
   XSqlQuery getq = getm.toQuery(getp);
@@ -327,7 +371,7 @@ void printMulticopyDocument::populate()
     }
     else
       _data->_post->setVisible(! _data->_postPrivilege.isEmpty());
-    emit gotDocInfo(&getq.record());
+    emit populated(&getq.record());
   }
 }
 
@@ -340,10 +384,25 @@ void printMulticopyDocument::clear()
 {
 }
 
-ParameterList printMulticopyDocument::getParams(int row)
+ParameterList printMulticopyDocument::getParamsDocList()
 {
   ParameterList params;
-  params.append(_reportKey, _data->_docid);
+
+  if (_data->_docid > 0)
+  {
+    params.append(_reportKey, _data->_docid);
+    params.append("docid",    _data->_docid);
+  }
+
+  return params;
+}
+
+ParameterList printMulticopyDocument::getParamsOneCopy(int row, XSqlQuery &qry)
+{
+  Q_UNUSED(qry);
+
+  ParameterList params;
+  params.append(_reportKey,  qry.value("docid"));
   params.append("showcosts", (_data->_copies->showCosts(row) ? "TRUE" : "FALSE"));
   params.append("watermark", _data->_copies->watermark(row));
 

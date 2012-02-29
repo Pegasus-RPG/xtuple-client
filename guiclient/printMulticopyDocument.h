@@ -45,7 +45,8 @@ class printMulticopyDocument : public XDialog
 
     Q_INVOKABLE virtual void            clear();
     Q_INVOKABLE virtual XDocCopySetter *copies();
-    Q_INVOKABLE virtual ParameterList   getParams(int row);
+    Q_INVOKABLE virtual ParameterList   getParamsDocList();
+    Q_INVOKABLE virtual ParameterList   getParamsOneCopy(int row, XSqlQuery &qry);
     Q_INVOKABLE virtual int             id();
     Q_INVOKABLE virtual bool            isOkToPrint();
     Q_INVOKABLE virtual bool            isSetup();
@@ -64,8 +65,10 @@ class printMulticopyDocument : public XDialog
 
   signals:
     void docUpdated(int);
-    void gotDocInfo(QSqlRecord *record);
+    void aboutToStart(XSqlQuery *qry);
     void finishedPrinting(int);
+    void finishedWithAll();
+    void populated(QSqlRecord *record);
     void posted(int);
 
   protected slots:
@@ -81,7 +84,8 @@ class printMulticopyDocument : public XDialog
     QString _askBeforePostingMsg;
     QString _errCheckBeforePostingQry;
     QString _errCheckBeforePostingMsg;
-    QString _markPrintedQry;
+    QString _markAllPrintedQry;
+    QString _markOnePrintedQry;
     QString _postFunction;
     QString _postQuery;
     QString _reportKey;

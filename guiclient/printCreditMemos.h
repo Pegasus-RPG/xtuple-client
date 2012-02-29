@@ -11,10 +11,11 @@
 #ifndef PRINTCREDITMEMOS_H
 #define PRINTCREDITMEMOS_H
 
-#include "xdialog.h"
+#include "printMulticopyDocument.h"
 #include "ui_printCreditMemos.h"
 
-class printCreditMemos : public XDialog, public Ui::printCreditMemos
+class printCreditMemos : public printMulticopyDocument,
+                         public Ui::printCreditMemos
 {
     Q_OBJECT
 
@@ -22,14 +23,9 @@ class printCreditMemos : public XDialog, public Ui::printCreditMemos
     printCreditMemos(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printCreditMemos();
 
-  public slots:
-    virtual void sPrint();
-
-  signals:
-    void finishedPrinting(int);
-
   protected slots:
     virtual void languageChange();
+    virtual void sHandleFinishedWithAll();
 
 };
 
