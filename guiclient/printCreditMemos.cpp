@@ -27,8 +27,8 @@ printCreditMemos::printCreditMemos(QWidget* parent, const char* name, bool modal
   setupUi(optionsWidget());
   setWindowTitle(tr("Print Credit Memos"));
 
-  _doctypefull = tr("Credit Memo");
-  _reportKey   = "cmhead_id";
+  setDoctype("CM");
+  setReportKey("cmhead_id");
   _distributeInventory = true;
 
   _docinfoQueryString =

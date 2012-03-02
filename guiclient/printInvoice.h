@@ -24,11 +24,11 @@ class printInvoice : public printMulticopyDocument,
     ~printInvoice();
 
   public slots:
-    virtual enum SetResponse set(const ParameterList & pParams);
+    virtual enum SetResponse set(const ParameterList &pParams);
 
   protected slots:
     virtual void languageChange();
-    virtual void sHandlePopulated(QSqlRecord *record);
+    virtual void sHandlePopulated(XSqlQuery *qry);
     virtual void sHandleDocUpdated(int docid);
 
   protected:

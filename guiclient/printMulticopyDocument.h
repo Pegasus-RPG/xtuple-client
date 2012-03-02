@@ -27,6 +27,8 @@ class printMulticopyDocument : public XDialog
   Q_OBJECT
 
   friend class printMulticopyDocumentPrivate;
+  Q_PROPERTY(QString doctype   READ doctype   WRITE setDoctype)
+  Q_PROPERTY(QString reportKey READ reportKey WRITE setReportKey)
 
   public:
     printMulticopyDocument(QWidget    *parent = 0,
@@ -43,33 +45,47 @@ class printMulticopyDocument : public XDialog
                            Qt::WFlags  fl     = 0);
     ~printMulticopyDocument();
 
+    Q_INVOKABLE virtual enum SetResponse set(const ParameterList &pParams);
+
     Q_INVOKABLE virtual void            clear();
     Q_INVOKABLE virtual XDocCopySetter *copies();
+                virtual QString         doctype();
     Q_INVOKABLE virtual ParameterList   getParamsDocList();
-    Q_INVOKABLE virtual ParameterList   getParamsOneCopy(int row, XSqlQuery &qry);
+    Q_INVOKABLE virtual ParameterList   getParamsOneCopy(const int row, XSqlQuery *qry);
     Q_INVOKABLE virtual int             id();
     Q_INVOKABLE virtual bool            isOkToPrint();
+    Q_INVOKABLE virtual bool            isOnPrintedList(const int docid);
     Q_INVOKABLE virtual bool            isSetup();
     Q_INVOKABLE virtual QWidget        *optionsWidget();
     Q_INVOKABLE virtual void            populate();
-    Q_INVOKABLE virtual void            setId(int docid);
+                virtual QString         reportKey();
     Q_INVOKABLE virtual void            setNumCopiesMetric(QString metric);
     Q_INVOKABLE virtual void            setPostPrivilege(QString priv);
+                virtual void            setReportKey(QString key);
     Q_INVOKABLE virtual void            setSetup(bool setup);
     Q_INVOKABLE virtual void            setShowPriceMetric(QString metric);
     Q_INVOKABLE virtual void            setWatermarkMetric(QString metric);
 
   public slots:
-    virtual enum SetResponse set(const ParameterList & pParams);
-    virtual void sPrint();
+    virtual void    sAddToPrintedList(XSqlQuery *docq);
+    virtual bool    sMarkOnePrinted(XSqlQuery *docq);
+    virtual bool    sPostOneDoc(XSqlQuery  *docq);
+    virtual void    sPrint();
+    virtual bool    sPrintOneDoc(XSqlQuery *docq);
+    virtual void    setDoctype(QString doctype);
+    virtual void    setId(int docid);
 
   signals:
     void docUpdated(int);
     void aboutToStart(XSqlQuery *qry);
     void finishedPrinting(int);
     void finishedWithAll();
-    void populated(QSqlRecord *record);
+    void newId(int id);
+    void populated(XSqlQuery            *docq);
     void posted(int);
+    void timeToMarkOnePrinted(XSqlQuery *docq);
+    void timeToPrintOneDoc(XSqlQuery    *docq);
+    void timeToPostOneDoc(XSqlQuery     *docq);
 
   protected slots:
     virtual void languageChange();
@@ -77,7 +93,6 @@ class printMulticopyDocument : public XDialog
   protected:
     printMulticopyDocumentPrivate *_data;
 
-    QString _doctypefull;
     bool    _distributeInventory;
     QString _docinfoQueryString;
     QString _askBeforePostingQry;
@@ -88,7 +103,6 @@ class printMulticopyDocument : public XDialog
     QString _markOnePrintedQry;
     QString _postFunction;
     QString _postQuery;
-    QString _reportKey;
 
   private:
 };

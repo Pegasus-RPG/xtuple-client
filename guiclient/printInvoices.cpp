@@ -26,8 +26,8 @@ printInvoices::printInvoices(QWidget *parent, const char *name, bool modal, Qt::
   setupUi(optionsWidget());
   setWindowTitle(tr("Print Invoices"));
 
-  _doctypefull = tr("Invoice");
-  _reportKey   = "invchead_id";
+  setDoctype("IN");
+  setReportKey("invchead_id");
   _distributeInventory = true;
 
   _shipvia->populate( "SELECT MIN(invchead_id), invchead_shipvia "
@@ -94,7 +94,7 @@ ParameterList printInvoices::getParamsDocList()
   return params;
 }
 
-ParameterList printInvoices::getParamsOneCopy(int row, XSqlQuery &qry)
+ParameterList printInvoices::getParamsOneCopy(int row, XSqlQuery *qry)
 {
   ParameterList params = printMulticopyDocument::getParamsOneCopy(row, qry);
   if (_selectedShipvia->isChecked())

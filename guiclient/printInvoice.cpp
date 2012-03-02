@@ -21,8 +21,8 @@ printInvoice::printInvoice(QWidget *parent, const char *name, bool modal, Qt::WF
   setupUi(optionsWidget());
   setWindowTitle(tr("Print Invoice"));
 
-  _doctypefull = tr("Invoice");
-  _reportKey   = "invchead_id";
+  setDoctype("IN");
+  setReportKey("invchead_id");
   _distributeInventory = true;
 
   _docinfoQueryString =
@@ -55,8 +55,8 @@ printInvoice::printInvoice(QWidget *parent, const char *name, bool modal, Qt::WF
   _postFunction = "postInvoice";
   _postQuery = "SELECT postInvoice(<? value('docid') ?>) AS result;" ;
 
-  connect(this, SIGNAL(docUpdated(int)),        this, SLOT(sHandleDocUpdated(int)));
-  connect(this, SIGNAL(populated(QSqlRecord*)), this, SLOT(sHandlePopulated(QSqlRecord*)));
+  connect(this, SIGNAL(docUpdated(int)),       this, SLOT(sHandleDocUpdated(int)));
+  connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sHandlePopulated(XSqlQuery*)));
 }
 
 printInvoice::~printInvoice()
@@ -80,12 +80,12 @@ enum SetResponse printInvoice::set(const ParameterList &pParams)
   return printMulticopyDocument::set(pParams); // this does XDialog::set()
 }
 
-void printInvoice::sHandlePopulated(QSqlRecord *record)
+void printInvoice::sHandlePopulated(XSqlQuery *qry)
 {
-  if (record)
+  if (qry)
   {
-    _invoiceNum->setText(record->value(record->indexOf("docnumber")).toString());
-    _cust->setId(record->value(record->indexOf("invchead_cust_id")).toInt());
+    _invoiceNum->setText(qry->value("docnumber").toString());
+    _cust->setId(qry->value("invchead_cust_id").toInt());
   }
 }
 

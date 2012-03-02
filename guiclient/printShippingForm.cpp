@@ -28,8 +28,8 @@ printShippingForm::printShippingForm(QWidget *parent, const char *name, Qt::WFla
   setupUi(optionsWidget());
   setWindowTitle(tr("Print Shipping Form"));
 
-  _doctypefull = tr("Shipping Form");
-  _reportKey   = "shiphead_id";
+  setDoctype("P");
+  setReportKey("shiphead_id");
   _distributeInventory = false;
 
   _docinfoQueryString = 
@@ -95,7 +95,7 @@ void printShippingForm::clear()
   _order->setFocus();
 }
 
-ParameterList printShippingForm::getParamsOneCopy(int row, XSqlQuery &qry)
+ParameterList printShippingForm::getParamsOneCopy(int row, XSqlQuery *qry)
 {
   ParameterList params = printMulticopyDocument::getParamsOneCopy(row, qry);
 
@@ -103,9 +103,6 @@ ParameterList printShippingForm::getParamsOneCopy(int row, XSqlQuery &qry)
 
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-
-  if (copies()->showCosts(row))
-    params.append("showcosts");
 
   return params;
 }
@@ -197,6 +194,8 @@ void printShippingForm::sHandleShipment()
 {
   if (_shipment->isValid())
   {
+    setId(_shipment->id());
+
     bool         ok = false;
     QString      errmsg;
     MetaSQLQuery sfm = MQLUtil::mqlLoad("shippingForm", "shipment",

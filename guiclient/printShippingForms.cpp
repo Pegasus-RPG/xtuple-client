@@ -20,8 +20,8 @@ printShippingForms::printShippingForms(QWidget* parent, const char* name, bool m
   setupUi(optionsWidget());
   setWindowTitle(tr("Print Shipping Forms"));
 
-  _doctypefull = tr("Shipping Form");
-  _reportKey   = "shiphead_id";
+  setDoctype("P");
+  setReportKey("shiphead_id");
   _distributeInventory = false;
 
   if (_preferences->boolean("XCheckBox/forgetful"))
@@ -86,12 +86,12 @@ ParameterList printShippingForms::getParamsDocList()
   return params;
 }
 
-ParameterList printShippingForms::getParamsOneCopy(int row, XSqlQuery &qry)
+ParameterList printShippingForms::getParamsOneCopy(int row, XSqlQuery *qry)
 {
   ParameterList params = printMulticopyDocument::getParamsOneCopy(row, qry);
 
-  params.append("shiphead_id", qry.value("shiphead_id"));
-  params.append("shipchrg_id", qry.value("shiphead_shipchrg_id"));
+  params.append("shiphead_id", qry->value("shiphead_id"));
+  params.append("shipchrg_id", qry->value("shiphead_shipchrg_id"));
 
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");

@@ -22,8 +22,8 @@ printCreditMemo::printCreditMemo(QWidget* parent, const char* name, bool modal, 
   setupUi(optionsWidget());
   setWindowTitle(tr("Print Credit Memo"));
 
-  _doctypefull = tr("Credit Memo");
-  _reportKey   = "cmhead_id";
+  setDoctype("CM");
+  setReportKey("cmhead_id");
   _distributeInventory = true;
 
   _docinfoQueryString =
@@ -42,8 +42,8 @@ printCreditMemo::printCreditMemo(QWidget* parent, const char* name, bool modal, 
   _postFunction = "postCreditMemo";
   _postQuery    = "SELECT postCreditMemo(<? value('docid') ?>, 0) AS result;" ;
 
-  connect(this, SIGNAL(docUpdated(int)),        this, SLOT(sHandleDocUpdated(int)));
-  connect(this, SIGNAL(populated(QSqlRecord*)), this, SLOT(sHandlePopulated(QSqlRecord*)));
+  connect(this, SIGNAL(docUpdated(int)),       this, SLOT(sHandleDocUpdated(int)));
+  connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sHandlePopulated(XSqlQuery*)));
 }
 
 printCreditMemo::~printCreditMemo()
@@ -67,12 +67,12 @@ enum SetResponse printCreditMemo::set(const ParameterList &pParams)
   return printMulticopyDocument::set(pParams);
 }
 
-void printCreditMemo::sHandlePopulated(QSqlRecord *record)
+void printCreditMemo::sHandlePopulated(XSqlQuery *qry)
 {
-  if (record)
+  if (qry)
   {
-    _number->setText(record->value(record->indexOf("docnumber")).toString());
-    _cust->setId(record->value(record->indexOf("cmhead_cust_id")).toInt());
+    _number->setText(qry->value("docnumber").toString());
+    _cust->setId(qry->value("cmhead_cust_id").toInt());
   }
 }
 

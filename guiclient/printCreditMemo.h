@@ -28,8 +28,8 @@ class printCreditMemo : public printMulticopyDocument,
 
   protected slots:
     virtual void languageChange();
-    virtual void sHandlePopulated(QSqlRecord *record);
     virtual void sHandleDocUpdated(int docid);
+    virtual void sHandlePopulated(XSqlQuery *qry);
 
   protected:
 
