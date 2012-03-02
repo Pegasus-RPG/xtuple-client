@@ -40,8 +40,8 @@ reprintCreditMemos::reprintCreditMemos(QWidget    *parent,
                         "  JOIN custinfo ON (cmhead_cust_id=cust_id)"
                         " WHERE checkCreditMemoSitePrivs(cmhead_id)"
                         " ORDER BY cmhead_docdate DESC;" ;
-  _doctypefull = tr("Credit Memo");
-  _reportKey   = "cmhead_id";
+  setDoctype("CM");
+  setReportKey("cmhead_id");
 
   sPopulate();
 }

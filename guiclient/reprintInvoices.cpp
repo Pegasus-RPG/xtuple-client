@@ -40,8 +40,8 @@ reprintInvoices::reprintInvoices(QWidget    *parent,
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Invoices"),
                          errmsg, __FILE__, __LINE__);
 
-  _doctypefull = tr("Invoice");
-  _reportKey   = "invchead_id";
+  setDoctype("IN");
+  setReportKey("invchead_id");
   _docListQueryString = mql.getSource();
 }
 

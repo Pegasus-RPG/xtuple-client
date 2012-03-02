@@ -27,6 +27,8 @@ class reprintMulticopyDocument : public XDialog
   Q_OBJECT
 
   friend class reprintMulticopyDocumentPrivate;
+  Q_PROPERTY(QString doctype   READ doctype   WRITE setDoctype)
+  Q_PROPERTY(QString reportKey READ reportKey WRITE setReportKey)
 
   public:
     reprintMulticopyDocument(QWidget    *parent = 0,
@@ -43,24 +45,32 @@ class reprintMulticopyDocument : public XDialog
     ~reprintMulticopyDocument();
 
     Q_INVOKABLE virtual XDocCopySetter *copies();
+                virtual QString         doctype();
     Q_INVOKABLE virtual ParameterList   getParamsDocList();
     Q_INVOKABLE virtual ParameterList   getParamsOneCopy(int row, XTreeWidgetItem *item);
+    Q_INVOKABLE virtual bool            isOnPrintedList(const int docid);
     Q_INVOKABLE virtual XTreeWidget    *list();
     Q_INVOKABLE virtual QWidget        *optionsWidget();
+                virtual QString         reportKey();
     Q_INVOKABLE virtual void            setNumCopiesMetric(QString metric);
+                virtual void            setReportKey(QString key);
     Q_INVOKABLE virtual void            setShowPriceMetric(QString metric);
     Q_INVOKABLE virtual void            setWatermarkMetric(QString metric);
 
   public slots:
     virtual enum SetResponse set(const ParameterList & pParams);
+    virtual void sAddToPrintedList(XTreeWidgetItem *item);
     virtual void sPopulate();
     virtual void sPrint();
+    virtual bool sPrintOneDoc(XTreeWidgetItem *item);
+    virtual void setDoctype(QString doctype);
 
   signals:
     void docUpdated(int);
     void aboutToStart(XTreeWidgetItem*);
     void finishedPrinting(int);
     void finishedWithAll();
+    void timeToPrintOneDoc(XTreeWidgetItem*);
 
   protected slots:
     virtual void languageChange();
@@ -68,11 +78,8 @@ class reprintMulticopyDocument : public XDialog
   protected:
     reprintMulticopyDocumentPrivate *_data;
 
-    QString _doctypefull;
     QString _docListQueryString;
-    QString _reportKey;
 
-  private:
 };
 
 #endif // REPRINTMULTICOPYDOCUMENT_H

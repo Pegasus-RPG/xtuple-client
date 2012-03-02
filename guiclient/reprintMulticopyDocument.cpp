@@ -25,6 +25,7 @@ class reprintMulticopyDocumentPrivate : public Ui::reprintMulticopyDocument
 {
   public:
     reprintMulticopyDocumentPrivate(::reprintMulticopyDocument *parent) :
+      _mpIsInitialized(false),
       _parent(parent),
       _printer(0)
     {
@@ -43,8 +44,13 @@ class reprintMulticopyDocumentPrivate : public Ui::reprintMulticopyDocument
       }
     }
 
+    QString                     _doctype;
+    QString                     _doctypefull;
+    bool                        _mpIsInitialized;
     ::reprintMulticopyDocument *_parent;
+    QList<QVariant>             _printed;
     QPrinter                   *_printer;
+    QString                     _reportKey;
 };
 
 reprintMulticopyDocument::reprintMulticopyDocument(QWidget    *parent,
@@ -57,6 +63,10 @@ reprintMulticopyDocument::reprintMulticopyDocument(QWidget    *parent,
 
   connect(_data->_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_data->_query, SIGNAL(clicked()), this, SLOT(sPopulate()));
+
+  // this indirection allows scripts to replace core behavior - 14285
+  connect(this, SIGNAL(timeToPrintOneDoc(XTreeWidgetItem*)),
+          this, SLOT(sPrintOneDoc(XTreeWidgetItem*)));
 }
 
 reprintMulticopyDocument::reprintMulticopyDocument(QString numCopiesMetric,
@@ -76,6 +86,10 @@ reprintMulticopyDocument::reprintMulticopyDocument(QString numCopiesMetric,
 
   connect(_data->_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_data->_query, SIGNAL(clicked()), this, SLOT(sPopulate()));
+
+  // this indirection allows scripts to replace core behavior - 14285
+  connect(this, SIGNAL(timeToPrintOneDoc(XTreeWidgetItem*)),
+          this, SLOT(sPrintOneDoc(XTreeWidgetItem*)));
 }
 
 reprintMulticopyDocument::~reprintMulticopyDocument()
@@ -99,81 +113,99 @@ enum SetResponse reprintMulticopyDocument::set(const ParameterList &pParams)
   return NoError;
 }
 
+void reprintMulticopyDocument::sAddToPrintedList(XTreeWidgetItem *item)
+{
+  QVariant docid = item->id();
+  if (!_data->_printed.contains(docid))
+    _data->_printed.append(docid);
+}
+
 void reprintMulticopyDocument::sPrint()
 {
-  bool mpIsInitialized = false;
-  QList<QVariant> printedDocs;
-
-  bool userCanceled = false;
-  if (orReport::beginMultiPrint(_data->_printer, userCanceled) == false)
-  {
-    if(!userCanceled)
-      systemError(this, tr("Could not initialize printing system for multiple reports."));
-    return;
-  }
+  _data->_printed.clear();
 
   foreach (XTreeWidgetItem *item, list()->selectedItems())
   {
+    message(tr("Printing %1 #%2")
+            .arg(_data->_doctypefull, item->text("docnumber")));
+
     emit aboutToStart(item);
-
-    message(tr("Printing %1 #%2").arg(_doctypefull, item->text("docnumber")));
-
-    QString  reportname = item->text("reportname");
-    QString  docnumber  = item->text("docnumber");
-    bool     printedOK  = false;
-
-    orReport report(reportname);
-    if (! report.isValid())
-      QMessageBox::critical(this, tr("Cannot Find Form"),
-                            tr("<p>Cannot find form '%1' for %2 %3."
-                               "It cannot be printed until the Form"
-                               "Assignment is updated to remove references "
-                               "to this Form or the Form is created.")
-                             .arg(reportname, _doctypefull, docnumber));
-    else
-    {
-      for (int i = 0; i < _data->_copies->numCopies(); i++)
-      {
-        report.setParamList(getParamsOneCopy(i, item));
-        if (! report.isValid())
-        {
-          ErrorReporter::error(QtCriticalMsg, this, tr("Invalid Parameters"),
-                               tr("<p>Report '%1' cannot be run. Parameters "
-                                   "are missing.").arg(reportname),
-                               __FILE__, __LINE__);
-          continue;
-        }
-        else if (report.print(_data->_printer, ! mpIsInitialized))
-        {
-          mpIsInitialized = true;
-          printedOK = true;
-        }
-        else
-        {
-          report.reportError(this);
-          continue;
-        }
-      }
-    }
-
-    if (printedOK)
-    {
-      emit finishedPrinting(item->id());
-      printedDocs.append(item->id());
-    }
+    emit timeToPrintOneDoc(item);
 
     message("");
   }
 
   orReport::endMultiPrint(_data->_printer);
+  _data->_mpIsInitialized = false;
 
-  if (printedDocs.size() == 0)
+  if (_data->_printed.size() == 0)
     QMessageBox::information(this, tr("No Documents to Print"),
                              tr("There aren't any documents to print."));
 
+  _data->_printed.clear();
   emit finishedWithAll();
 
   list()->clearSelection();
+}
+
+bool reprintMulticopyDocument::sPrintOneDoc(XTreeWidgetItem *item)
+{
+  QString  reportname = item->text("reportname");
+  bool     printedOk  = false;
+
+  if (! _data->_mpIsInitialized)
+  {
+    bool userCanceled = false;
+    if (orReport::beginMultiPrint(_data->_printer, userCanceled) == false)
+    {
+      if(!userCanceled)
+        systemError(this, tr("Could not initialize printing system for multiple reports."));
+      return false;
+    }
+  }
+
+  orReport report(reportname);
+  if (! report.isValid())
+    QMessageBox::critical(this, tr("Cannot Find Form"),
+                          tr("<p>Cannot find form '%1' for %2 %3."
+                             "It cannot be printed until the Form"
+                             "Assignment is updated to remove references "
+                             "to this Form or the Form is created.")
+                           .arg(reportname, _data->_doctypefull,
+                                item->text("docnumber")));
+  else
+  {
+    for (int i = 0; i < _data->_copies->numCopies(); i++)
+    {
+      report.setParamList(getParamsOneCopy(i, item));
+      if (! report.isValid())
+      {
+        ErrorReporter::error(QtCriticalMsg, this, tr("Invalid Parameters"),
+                             tr("<p>Report '%1' cannot be run. Parameters "
+                                 "are missing.").arg(reportname),
+                             __FILE__, __LINE__);
+        break;
+      }
+      else if (report.print(_data->_printer, ! _data->_mpIsInitialized))
+      {
+        _data->_mpIsInitialized = true;
+        printedOk = true;
+      }
+      else
+      {
+        report.reportError(this);
+        break;
+      }
+    }
+  }
+
+  if (printedOk)
+  {
+    emit finishedPrinting(item->id());
+    sAddToPrintedList(item);
+  }
+
+  return printedOk;
 }
 
 void reprintMulticopyDocument::sPopulate()
@@ -192,11 +224,16 @@ XDocCopySetter *reprintMulticopyDocument::copies()
   return _data->_copies;
 }
 
+QString reprintMulticopyDocument::doctype()
+{
+  return _data->_doctype;
+}
+
 ParameterList reprintMulticopyDocument::getParamsDocList()
 {
   ParameterList params;
 
-  params.append(_reportKey, list()->id());
+  params.append(_data->_reportKey, list()->id());
 
   return params;
 }
@@ -205,11 +242,16 @@ ParameterList reprintMulticopyDocument::getParamsOneCopy(int row,
                                                          XTreeWidgetItem *item)
 {
   ParameterList params;
-  params.append(_reportKey,  item->id());
+  params.append(_data->_reportKey,  item->id());
   params.append("showcosts", (_data->_copies->showCosts(row) ? "TRUE" : "FALSE"));
   params.append("watermark", _data->_copies->watermark(row));
 
   return params;
+}
+
+bool reprintMulticopyDocument::isOnPrintedList(const int docid)
+{
+  return _data->_printed.contains(docid);
 }
 
 XTreeWidget *reprintMulticopyDocument::list()
@@ -222,9 +264,43 @@ QWidget *reprintMulticopyDocument::optionsWidget()
   return _data->_optionsFrame;
 }
 
+QString reprintMulticopyDocument::reportKey()
+{
+  return _data->_reportKey;
+}
+
+void reprintMulticopyDocument::setDoctype(QString doctype)
+{
+  _data->_doctype = doctype;
+  if (doctype == "AR")
+    _data->_doctypefull = tr("A/R Statement");
+  else if (doctype == "CM")
+    _data->_doctypefull = tr("Credit Memo");
+  else if (doctype == "IN")
+    _data->_doctypefull = tr("Invoice");
+  else if (doctype == "L")
+    _data->_doctypefull = tr("Pick List");
+  else if (doctype == "P")
+    _data->_doctypefull = tr("Packing List");
+  else if (doctype == "PO")
+    _data->_doctypefull = tr("Purchase Order");
+  else if (doctype == "QT)")
+    _data->_doctypefull = tr("Quote");
+  else if (doctype == "SO")
+    _data->_doctypefull = tr("Sales Order");
+  else
+    qWarning("printMulticopyDocument could not figure out doctypefull for %s",
+             qPrintable(doctype));
+}
+
 void reprintMulticopyDocument::setNumCopiesMetric(QString metric)
 {
   _data->_copies->setNumCopiesMetric(metric);
+}
+
+void reprintMulticopyDocument::setReportKey(QString key)
+{
+  _data->_reportKey = key;
 }
 
 void reprintMulticopyDocument::setShowPriceMetric(QString metric)
