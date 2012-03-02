@@ -158,7 +158,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheckRequired()));
   connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
   connect(_terms, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
-  connect(_shipform, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
   connect(_custtype, SIGNAL(newID(int)), this, SLOT(sCheckRequired()));
 
   connect(_contactsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
@@ -483,9 +482,6 @@ bool customer::sSave()
          << GuiErrorCheck(_salesrep->id() == -1, _salesrep,
                           tr("You must select a Sales Rep. for this "
                              "Customer before continuing."))
-         << GuiErrorCheck(_shipform->id() == -1, _shipform,
-                          tr("You must select a default Shipping Form for this "
-                             "Customer before continuing."))
      ;
 
   if (_number->number().trimmed() != _cachedNumber)
@@ -603,7 +599,8 @@ bool customer::sSave()
 
   q.bindValue(":cust_shipvia", _shipvia->currentText());
   q.bindValue(":cust_shipchrg_id", _shipchrg->id());
-  q.bindValue(":cust_shipform_id", _shipform->id());
+  if(_shipform->id() > 0)
+    q.bindValue(":cust_shipform_id", _shipform->id());
 
   q.bindValue(":cust_active",     QVariant(_active->isChecked()));
   q.bindValue(":cust_usespos",    QVariant(_usesPOs->isChecked()));
@@ -820,7 +817,6 @@ bool customer::sCheckRequired()
          (_custtype->id() == -1) ||
          (_terms->id() == -1) ||
          (_salesrep->id() == -1) ||
-         (_shipform->id() == -1) ||
          (_custid == -1) )
     {
       setValid(false);

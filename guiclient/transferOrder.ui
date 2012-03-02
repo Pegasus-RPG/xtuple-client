@@ -536,10 +536,13 @@ to be bound by its terms.</comment>
               </size>
              </property>
              <property name="allowNull">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="type">
               <enum>XComboBox::ShippingForms</enum>
+             </property>
+             <property name="defaultCode">
+              <enum>XComboBox::None</enum>
              </property>
             </widget>
            </item>

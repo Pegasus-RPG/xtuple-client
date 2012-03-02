@@ -1134,7 +1134,8 @@ bool salesOrder::save(bool partial)
   if (_terms->id() != -1)
     q.bindValue(":terms_id", _terms->id());
   q.bindValue(":shipchrg_id", _shippingCharges->id());
-  q.bindValue(":shipform_id", _shippingForm->id());
+  if(_shippingForm->id() > 0)
+    q.bindValue(":shipform_id", _shippingForm->id());
   q.bindValue(":freight", _freight->localValue());
   q.bindValue(":calcfreight", _calcfreight);
   q.bindValue(":commission", (_commission->toDouble() / 100.0));
