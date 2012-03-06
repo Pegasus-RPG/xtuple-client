@@ -132,7 +132,7 @@ void duplicateAccountNumbers::sFillList()
 
   sql += " accnt_descrip,"
          " accnt_type "
-         "FROM accnt "
+         "FROM ONLY accnt "
          "ORDER BY accnt_number, accnt_sub, accnt_profit;";
 
   _account->populate(sql);
