@@ -761,12 +761,20 @@ bool itemSite::sSave()
       newItemSite.bindValue(":itemsite_location_id", -1);
       newItemSite.bindValue(":itemsite_recvlocation_id", -1);
       newItemSite.bindValue(":itemsite_issuelocation_id", -1);
+      newItemSite.bindValue(":itemsite_location_dist", false);
+      newItemSite.bindValue(":itemsite_recvlocation_dist", false);
+      newItemSite.bindValue(":itemsite_issuelocation_dist", false);
       newItemSite.bindValue(":itemsite_location", _miscLocationName->text().trimmed());
     }
   }
   else
   {
     newItemSite.bindValue(":itemsite_location_id", -1);
+    newItemSite.bindValue(":itemsite_recvlocation_id", -1);
+    newItemSite.bindValue(":itemsite_issuelocation_id", -1);
+    newItemSite.bindValue(":itemsite_location_dist", false);
+    newItemSite.bindValue(":itemsite_recvlocation_dist", false);
+    newItemSite.bindValue(":itemsite_issuelocation_dist", false);
     newItemSite.bindValue(":itemsite_location", "");
   }
     
