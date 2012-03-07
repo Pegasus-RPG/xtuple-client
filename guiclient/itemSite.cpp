@@ -282,7 +282,12 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_useDefaultLocation->setEnabled(FALSE);
 	_location->setEnabled(FALSE);
 	_locations->setEnabled(FALSE);
-	_miscLocation->setEnabled(FALSE);
+        _recvlocations->setEnabled(FALSE);
+        _issuelocations->setEnabled(FALSE);
+        _locations_dist->setEnabled(FALSE);
+        _recvlocations_dist->setEnabled(FALSE);
+        _issuelocations_dist->setEnabled(FALSE);
+        _miscLocation->setEnabled(FALSE);
 	_miscLocationName->setEnabled(FALSE);
 	_locationComments->setEnabled(FALSE);
 	_plannerCode->setEnabled(FALSE);
@@ -570,6 +575,8 @@ bool itemSite::sSave()
                          "  itemsite_stocked, itemsite_planning_type, itemsite_supply_itemsite_id,"
                          "  itemsite_controlmethod, itemsite_perishable, itemsite_active,"
                          "  itemsite_loccntrl, itemsite_location_id, itemsite_location,"
+                         "  itemsite_recvlocation_id, itemsite_issuelocation_id,"
+                         "  itemsite_location_dist, itemsite_recvlocation_dist, itemsite_issuelocation_dist,"
                          "  itemsite_location_comments, itemsite_notes,"
                          "  itemsite_abcclass, itemsite_autoabcclass,"
                          "  itemsite_freeze, itemsite_datelastused, itemsite_ordergroup, itemsite_ordergroup_first,"
@@ -589,6 +596,8 @@ bool itemSite::sSave()
                          "  :itemsite_stocked, :itemsite_planning_type, :itemsite_supply_itemsite_id,"
                          "  :itemsite_controlmethod, :itemsite_perishable, :itemsite_active,"
                          "  :itemsite_loccntrl, :itemsite_location_id, :itemsite_location,"
+                         "  :itemsite_recvlocation_id, :itemsite_issuelocation_id,"
+                         "  :itemsite_location_dist, :itemsite_recvlocation_dist, :itemsite_issuelocation_dist,"
                          "  :itemsite_location_comments, :itemsite_notes,"
                          "  :itemsite_abcclass, :itemsite_autoabcclass,"
                          "  FALSE, startOfTime(), :itemsite_ordergroup, :itemsite_ordergroup_first,"
@@ -671,6 +680,9 @@ bool itemSite::sSave()
                          "    itemsite_perishable=:itemsite_perishable,"
                          "    itemsite_loccntrl=:itemsite_loccntrl, itemsite_location_id=:itemsite_location_id,"
                          "    itemsite_location=:itemsite_location, itemsite_location_comments=:itemsite_location_comments,"
+                         "    itemsite_recvlocation_id=:itemsite_recvlocation_id, itemsite_issuelocation_id=:itemsite_issuelocation_id,"
+                         "    itemsite_location_dist=:itemsite_location_dist,"
+                         "    itemsite_recvlocation_dist=:itemsite_recvlocation_dist, itemsite_issuelocation_dist=:itemsite_issuelocation_dist,"
                          "    itemsite_abcclass=:itemsite_abcclass, itemsite_autoabcclass=:itemsite_autoabcclass,"
                          "    itemsite_notes=:itemsite_notes,"
                          "    itemsite_ordergroup=:itemsite_ordergroup,"
@@ -737,11 +749,18 @@ bool itemSite::sSave()
     if (_location->isChecked())
     {
       newItemSite.bindValue(":itemsite_location_id", _locations->id());
+      newItemSite.bindValue(":itemsite_recvlocation_id", _recvlocations->id());
+      newItemSite.bindValue(":itemsite_issuelocation_id", _issuelocations->id());
+      newItemSite.bindValue(":itemsite_location_dist", QVariant(_locations_dist->isChecked()));
+      newItemSite.bindValue(":itemsite_recvlocation_dist", QVariant(_recvlocations_dist->isChecked()));
+      newItemSite.bindValue(":itemsite_issuelocation_dist", QVariant(_issuelocations_dist->isChecked()));
       newItemSite.bindValue(":itemsite_location", "");
     }
     else if (_miscLocation->isChecked())
     {
       newItemSite.bindValue(":itemsite_location_id", -1);
+      newItemSite.bindValue(":itemsite_recvlocation_id", -1);
+      newItemSite.bindValue(":itemsite_issuelocation_id", -1);
       newItemSite.bindValue(":itemsite_location", _miscLocationName->text().trimmed());
     }
   }
@@ -1261,6 +1280,8 @@ void itemSite::populateLocations()
     query.bindValue(":item_id", _item->id());
     query.exec();
     _locations->populate(query);
+    _recvlocations->populate(query);
+    _issuelocations->populate(query);
     sDefaultLocChanged();
     sFillRestricted();
 }
@@ -1423,6 +1444,11 @@ void itemSite::populate()
       _useDefaultLocation->setChecked(TRUE);
       _location->setChecked(TRUE);
       _locations->setId(itemsite.value("itemsite_location_id").toInt());
+      _recvlocations->setId(itemsite.value("itemsite_recvlocation_id").toInt());
+      _issuelocations->setId(itemsite.value("itemsite_issuelocation_id").toInt());
+      _locations_dist->setChecked(itemsite.value("itemsite_location_dist").toBool());
+      _recvlocations_dist->setChecked(itemsite.value("itemsite_recvlocation_dist").toBool());
+      _issuelocations_dist->setChecked(itemsite.value("itemsite_issuelocation_dist").toBool());
     }
 	
     _locationComments->setText(itemsite.value("itemsite_location_comments").toString());

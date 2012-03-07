@@ -35,7 +35,7 @@ public slots:
     virtual void sBcDistribute();
     virtual void sCatchLotSerialNumber(const QString);
     virtual bool sDefault();
-    virtual void sDefaultAndPost();
+    virtual bool sDefaultAndPost();
     virtual void sFillList();
     virtual void sPost();
     virtual void sSelectLocation();
@@ -47,6 +47,7 @@ protected slots:
 
 private:
     QString	_controlMethod;
+    QString	_transtype;
     int		_itemlocdistid;
     int		_mode;
     int   _itemsite_id;

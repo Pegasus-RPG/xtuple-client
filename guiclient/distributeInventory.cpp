@@ -76,6 +76,7 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   }
 
   _itemlocdistid = -1;
+  _transtype = "O";
   
   _locationDefaultLit->hide();
   _locations->hide();
@@ -102,12 +103,22 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
     itemloc.prepare( "SELECT itemlocdist_id, itemlocdist_reqlotserial," 
                      "       itemlocdist_distlotserial, itemlocdist_qty,"
                      "       itemsite_loccntrl, itemsite_controlmethod,"
-                     "       itemsite_perishable, itemsite_warrpurc, "
-                     "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id, "
-                     "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id "
-                     "FROM itemlocdist, itemsite "
-                     "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
-                     " AND (itemlocdist_series=:itemlocdist_series) ) "
+                     "       itemsite_perishable, itemsite_warrpurc,"
+                     "       COALESCE(itemsite_lsseq_id,-1) AS itemsite_lsseq_id,"
+                     "       COALESCE(itemlocdist_source_id,-1) AS itemlocdist_source_id,"
+                     "       CASE WHEN (invhist_transtype IN ('RM','RP','RR','RX')) THEN 'R'"
+                     "            WHEN (invhist_transtype = 'IM') THEN 'I'"
+                     "            ELSE 'O'"
+                     "       END AS trans_type,"
+                     "       CASE WHEN (invhist_transtype IN ('RM','RP','RR','RX')"
+                     "                  AND itemsite_recvlocation_dist) THEN TRUE"
+                     "            WHEN (invhist_transtype = 'IM'"
+                     "                  AND itemsite_issuelocation_dist) THEN TRUE"
+                     "            ELSE FALSE"
+                     "       END AS auto_dist "
+                     "FROM itemlocdist JOIN itemsite ON (itemlocdist_itemsite_id=itemsite_id) "
+                     "                 LEFT OUTER JOIN invhist ON (itemlocdist_invhist_id=invhist_id) "
+                     "WHERE (itemlocdist_series=:itemlocdist_series) "
                      "ORDER BY itemlocdist_id;" );
     itemloc.bindValue(":itemlocdist_series", pItemlocSeries);
     itemloc.exec();
@@ -231,13 +242,30 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           {
             ParameterList params;
             params.append("itemlocdist_id", query.value("itemlocdist_id").toInt());
+            params.append("trans_type", itemloc.value("trans_type").toString());
             distributeInventory newdlg(pParent, "", TRUE);
             newdlg.set(params);
-            result = newdlg.exec();
-            if (result == XDialog::Rejected)
-              return XDialog::Rejected;
+            if (itemloc.value("auto_dist").toBool())
+            {
+              if (newdlg.sDefaultAndPost())
+                ildList.append(query.value("itemlocdist_id").toInt());
+              else
+              {
+                result = newdlg.exec();
+                if (result == XDialog::Rejected)
+                  return XDialog::Rejected;
+                else
+                  ildList.append(result);
+              }
+            }
             else
-              ildList.append(result);
+            {
+              result = newdlg.exec();
+              if (result == XDialog::Rejected)
+                return XDialog::Rejected;
+              else
+                ildList.append(result);
+            }
           }
         }
         else
@@ -256,17 +284,34 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
       {
         ParameterList params;
         params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
+        params.append("trans_type", itemloc.value("trans_type").toString());
 
         if (itemloc.value("itemlocdist_distlotserial").toBool())
           params.append("includeLotSerialDetail");
 
         distributeInventory newdlg(pParent, "", TRUE);
         newdlg.set(params);
-        result = newdlg.exec();
-        if (result == XDialog::Rejected)
-          return XDialog::Rejected;
+        if (itemloc.value("auto_dist").toBool())
+        {
+          if (newdlg.sDefaultAndPost())
+            ildList.append(itemloc.value("itemlocdist_id").toInt());
+          else
+          {
+            result = newdlg.exec();
+            if (result == XDialog::Rejected)
+              return XDialog::Rejected;
+            else
+              ildList.append(result);
+          }
+        }
         else
-          ildList.append(result);
+        {
+          result = newdlg.exec();
+          if (result == XDialog::Rejected)
+            return XDialog::Rejected;
+          else
+            ildList.append(result);
+        }
       }
     }
 
@@ -329,6 +374,13 @@ enum SetResponse distributeInventory::set(const ParameterList &pParams)
   }
   else
     _mode = cNoIncludeLotSerial;
+
+  param = pParams.value("trans_type", &valid);
+  if (valid)
+  {
+    _transtype = param.toString();
+    populate();
+  }
 
   param = pParams.value("itemlocdist_id", &valid);
   if (valid)
@@ -423,6 +475,23 @@ bool distributeInventory::sDefault()
    bool distribOk = true;
    double qty = 0.0;
    double availToDistribute = 0.0;
+   int defaultlocid = 0;
+
+   q.prepare("SELECT itemsite_location_id, itemsite_recvlocation_id, itemsite_issuelocation_id "
+             "   FROM   itemlocdist, itemsite "
+             "  WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
+             "    AND (itemlocdist_id=:itemlocdist_id) ) ");
+   q.bindValue(":itemlocdist_id", _itemlocdistid);
+   q.exec();
+   if (q.first())
+   {
+     if (_transtype == "R")
+       defaultlocid = q.value("itemsite_recvlocation_id").toInt();
+     else if (_transtype == "I")
+       defaultlocid = q.value("itemsite_issuelocation_id").toInt();
+     else
+       defaultlocid = q.value("itemsite_location_id").toInt();
+   }
 
    q.prepare("SELECT   itemlocdist_qty AS qty, "
              "         qtyLocation(location_id, NULL, NULL, NULL, itemsite_id, itemlocdist_order_type, itemlocdist_order_id, itemlocdist_id) AS availToDistribute "
@@ -430,9 +499,10 @@ bool distributeInventory::sDefault()
              "  WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
              "    AND (itemsite_loccntrl)"
              "    AND (itemsite_warehous_id=location_warehous_id)"
-             "    AND (location_id=itemsite_location_id) "
+             "    AND (location_id=:defaultlocid) "
              "    AND (itemlocdist_id=:itemlocdist_id) ) ");
    q.bindValue(":itemlocdist_id", _itemlocdistid);
+   q.bindValue(":defaultlocid", defaultlocid);
    q.exec();
    if (q.first())
    {
@@ -454,11 +524,27 @@ bool distributeInventory::sDefault()
    if(distribOk)
    {
       if(_mode == cIncludeLotSerial)
-        q.prepare("SELECT distributeToDefaultItemLoc(:itemlocdist_id) AS result;");
+        q.prepare("SELECT distributeToDefaultItemLoc(:itemlocdist_id, :transtype) AS result;");
       else
-        q.prepare("SELECT distributeToDefault(:itemlocdist_id) AS result;");
+        q.prepare("SELECT distributeToDefault(:itemlocdist_id, :transtype) AS result;");
       q.bindValue(":itemlocdist_id", _itemlocdistid);
+      q.bindValue(":transtype", _transtype);
       q.exec();
+      if (q.first())
+      {
+        int result = q.value("result").toInt();
+        if (result < 0)
+        {
+          QMessageBox::warning( 0, tr("Inventory Distribution"),
+                                tr("There was an error distributing to default location."));
+          return false;
+        }
+      }
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return false;
+      }
       sFillList();
       //prevent default from been changed after default distribute
       //stopping the operator from thinking the inventory has been posted
@@ -470,10 +556,15 @@ bool distributeInventory::sDefault()
        return false;
 }
 
-void distributeInventory::sDefaultAndPost()
+bool distributeInventory::sDefaultAndPost()
 {
   if(sDefault())
+  {
     sPost();
+    return true;
+  }
+  else
+    return false;
 }
 
 void distributeInventory::sFillList()

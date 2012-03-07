@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>714</width>
+    <height>619</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -774,33 +774,6 @@ to be bound by its terms.</comment>
                </property>
               </widget>
              </item>
-             <item row="0" column="1" colspan="2">
-              <layout class="QHBoxLayout" name="horizontalLayout_5">
-               <item>
-                <widget class="XComboBox" name="_locations">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_4">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>0</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
              <item row="1" column="0" colspan="2">
               <widget class="QRadioButton" name="_miscLocation">
                <property name="text">
@@ -829,6 +802,151 @@ to be bound by its terms.</comment>
                   </size>
                  </property>
                 </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="2">
+              <layout class="QGridLayout" name="gridLayout_22">
+               <item row="0" column="0">
+                <widget class="QLabel" name="_recvlocationsLit">
+                 <property name="text">
+                  <string>Receive:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_11">
+                 <item>
+                  <widget class="XComboBox" name="_recvlocations">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XCheckBox" name="_recvlocations_dist">
+                   <property name="text">
+                    <string>Auto</string>
+                   </property>
+                   <property name="forgetful">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_10">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="_locationsLit">
+                 <property name="text">
+                  <string>Stock:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="XComboBox" name="_locations">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XCheckBox" name="_locations_dist">
+                   <property name="text">
+                    <string>Auto</string>
+                   </property>
+                   <property name="forgetful">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="_issuelocationsLit">
+                 <property name="text">
+                  <string>W/O Issue:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_13">
+                 <item>
+                  <widget class="XComboBox" name="_issuelocations">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XCheckBox" name="_issuelocations_dist">
+                   <property name="text">
+                    <string>Auto</string>
+                   </property>
+                   <property name="forgetful">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_11">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
                </item>
               </layout>
              </item>
@@ -1535,6 +1653,11 @@ to be bound by its terms.</comment>
    <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -1590,7 +1713,6 @@ to be bound by its terms.</comment>
   <tabstop>_locationControl</tabstop>
   <tabstop>_useDefaultLocation</tabstop>
   <tabstop>_location</tabstop>
-  <tabstop>_locations</tabstop>
   <tabstop>_miscLocation</tabstop>
   <tabstop>_miscLocationName</tabstop>
   <tabstop>_locationComments</tabstop>
@@ -1699,22 +1821,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_location</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_locations</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>73</x>
-     <y>333</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>183</x>
-     <y>333</y>
     </hint>
    </hints>
   </connection>
