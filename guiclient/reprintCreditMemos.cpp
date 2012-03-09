@@ -24,7 +24,7 @@ reprintCreditMemos::reprintCreditMemos(QWidget    *parent,
                                "CreditMemoShowPrices", parent, name, modal, fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Re-Print Credit Memos"));
+  setWindowTitle(optionsWidget()->windowTitle());
 
   list()->addColumn(tr("C/M #"),    _orderColumn, Qt::AlignRight, true,  "docnumber");
   list()->addColumn(tr("Doc. Date"), _dateColumn, Qt::AlignCenter,true,  "cmhead_docdate");

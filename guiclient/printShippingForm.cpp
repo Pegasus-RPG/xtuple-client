@@ -26,7 +26,7 @@ printShippingForm::printShippingForm(QWidget *parent, const char *name, Qt::WFla
                              parent, name, false, fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Print Shipping Form"));
+  setWindowTitle(optionsWidget()->windowTitle());
 
   setDoctype("P");
   setReportKey("shiphead_id");

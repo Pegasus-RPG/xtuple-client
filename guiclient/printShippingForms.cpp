@@ -18,7 +18,7 @@ printShippingForms::printShippingForms(QWidget* parent, const char* name, bool m
                              parent, name, modal, fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Print Shipping Forms"));
+  setWindowTitle(optionsWidget()->windowTitle());
 
   setDoctype("P");
   setReportKey("shiphead_id");

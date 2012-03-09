@@ -24,7 +24,7 @@ printInvoices::printInvoices(QWidget *parent, const char *name, bool modal, Qt::
                              parent, name, modal, fl)
 {
   setupUi(optionsWidget());
-  setWindowTitle(tr("Print Invoices"));
+  setWindowTitle(optionsWidget()->windowTitle());
 
   setDoctype("IN");
   setReportKey("invchead_id");
