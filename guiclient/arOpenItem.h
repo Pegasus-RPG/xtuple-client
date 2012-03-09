@@ -39,6 +39,7 @@ public slots:
     virtual void sPopulateDueDate();
     virtual void sPrintOnPost(int temp_id);
     virtual void sTaxDetail();
+    virtual void sReleaseNumber();
 
 protected slots:
     virtual void languageChange();
@@ -49,6 +50,7 @@ private:
     int _last;
     double _cAmount;
     double _commprcnt;
+    int _seqiss;
 
 };
 

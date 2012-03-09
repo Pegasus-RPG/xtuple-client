@@ -35,6 +35,7 @@ public slots:
     virtual void sPopulateVendInfo( int vend_id );
     virtual void sPopulateDueDate();
     virtual void sTaxDetail();
+    virtual void sReleaseNumber();
 
 protected slots:
     virtual void languageChange();
@@ -43,6 +44,7 @@ private:
     int _mode;
     int _apopenid;
     double _cAmount;
+    int _seqiss;
 
 };
 

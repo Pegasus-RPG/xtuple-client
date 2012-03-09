@@ -397,6 +397,18 @@ bool employee::sSave(const bool pClose)
   return true;
 }
 
+void employee::sReleaseNumber()
+{
+  q.prepare("SELECT releaseCRMAccountNumber(:number);");
+  q.bindValue(":number", _NumberGen);
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
 void employee::reject()
 {
   if (DEBUG)
@@ -410,6 +422,9 @@ void employee::reject()
     delq.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Employee"),
                          delq, __FILE__, __LINE__);
+
+    if(_NumberGen != -1)
+      sReleaseNumber();
   }
 
   XDialog::reject();
@@ -691,4 +706,7 @@ void employee::sHandleButtons()
                         _privileges->check("ViewAllCRMAccounts") ||
                         (omfgThis->username() == _crmowner && _privileges->check("MaintainPersonalCRMAccounts")) ||
                         (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
+
+  if(_NumberGen != -1 && _code->text().toInt() != _NumberGen)
+    sReleaseNumber();
 }

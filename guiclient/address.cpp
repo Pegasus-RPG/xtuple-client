@@ -86,9 +86,6 @@ enum SetResponse address::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      q.exec("SELECT fetchNextNumber('AddressNumber') AS result;");
-      q.first();
-      _addr->setNumber(q.value("result").toString());
       _addr->setLine1("Address" + QDateTime::currentDateTime().toString());
       int addrSaveResult = _addr->save(AddressCluster::CHANGEONE);
       if (addrSaveResult < 0)
@@ -171,8 +168,10 @@ void address::reject()
 {
   if (cNew == _mode)
   {
-    q.prepare("SELECT deleteAddress(:addr_id) AS result;");
+    q.prepare("SELECT deleteAddress(:addr_id) AS result;"
+              "SELECT releaseNumber('AddressNumber', :number); ");
     q.bindValue(":addr_id", _addr->id());
+    q.bindValue(":number", _addr->number().toInt());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {

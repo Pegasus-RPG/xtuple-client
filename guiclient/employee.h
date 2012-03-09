@@ -45,6 +45,7 @@ class employee : public XDialog, public Ui::employee
     virtual void sHandleButtons();
     virtual void sNewCharass();
     virtual void sViewGroup();
+    virtual void sReleaseNumber();
 
   private:
     int _crmacctid;

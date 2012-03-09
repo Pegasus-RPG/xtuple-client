@@ -514,6 +514,7 @@ int AddressCluster::save(enum SaveFlags flag)
       _id=datamodQ.value("result").toInt();
       _selected = FALSE;
       _valid = true;
+      silentSetId(id());
       return id();
     }
     if (datamodQ.value("result").toInt() == -2)

@@ -27,9 +27,11 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_terms,          SIGNAL(newID(int)),                     this, SLOT(sPopulateDueDate()));
   connect(_vend,           SIGNAL(newId(int)),                     this, SLOT(sPopulateVendInfo(int)));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_docNumber,      SIGNAL(textEdited(QString)),       this, SLOT(sReleaseNumber()));
 
   _cAmount = 0.0;
   _apopenid = -1;
+  _seqiss = 0;
 
   _apapply->addColumn( tr("Type"),        _dateColumn, Qt::AlignCenter,true, "doctype");
   _apapply->addColumn( tr("Doc. #"),               -1, Qt::AlignLeft,  true, "docnumber");
@@ -94,8 +96,10 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
 
       q.exec("SELECT fetchAPMemoNumber() AS number;");
       if (q.first())
+      {
         _docNumber->setText(q.value("number").toString());
-//  ToDo
+        _seqiss = q.value("number").toInt();
+      }
 
       _paid->clear();
       _buttonBox->button(QDialogButtonBox::Save)->setText(tr("Post"));
@@ -318,13 +322,19 @@ void apOpenItem::sSave()
 void apOpenItem::sClose()
 {
   if (_mode == cNew)
-  {
-    q.prepare("SELECT releaseAPMemoNumber(:docNumber);");
-    q.bindValue(":docNumber", _docNumber->text().toInt());
-    q.exec();
-  }
+    sReleaseNumber();
 
   reject();
+}
+
+void apOpenItem::sReleaseNumber()
+{
+  if(_seqiss)
+  {
+    q.prepare("SELECT releaseAPMemoNumber(:docNumber);");
+    q.bindValue(":docNumber", _seqiss);
+    q.exec();
+  }
 }
 
 void apOpenItem::populate()

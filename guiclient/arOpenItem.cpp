@@ -39,9 +39,11 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_docDate,        SIGNAL(newDate(const QDate&)),     this, SLOT(sPopulateDueDate()));
   connect(_taxLit,         SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_amount,         SIGNAL(valueChanged()),            this, SLOT(sCalculateCommission()));
+  connect(_docNumber,      SIGNAL(textEdited(QString)),       this, SLOT(sReleaseNumber()));
 
   _last = -1;
   _aropenid = -1;
+  _seqiss = 0;
 
   _arapply->addColumn(tr("Type"),            _dateColumn, Qt::AlignCenter,true, "doctype");
   _arapply->addColumn(tr("Doc. #"),                   -1, Qt::AlignLeft,  true, "docnumber");
@@ -121,7 +123,10 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
 
       q.exec("SELECT fetchARMemoNumber() AS number;");
       if (q.first())
+      {
         _docNumber->setText(q.value("number").toString());
+        _seqiss = q.value("number").toInt();
+      }
       else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -374,14 +379,8 @@ void arOpenItem::sClose()
 {
   if (_mode == cNew)
   {
-    q.prepare("SELECT releaseARMemoNumber(:docNumber);");
-    q.bindValue(":docNumber", _docNumber->text().toInt());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    if(_seqiss)
+      sReleaseNumber();
 
     if(_last != -1)
     {
@@ -391,6 +390,21 @@ void arOpenItem::sClose()
   }
 
   reject();
+}
+
+void arOpenItem::sReleaseNumber()
+{
+  if(_seqiss)
+  {
+    q.prepare("SELECT releaseARMemoNumber(:docNumber);");
+    q.bindValue(":docNumber", _seqiss);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
 }
 
 void arOpenItem::sPopulateCustInfo(int pCustid)

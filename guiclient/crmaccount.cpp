@@ -170,27 +170,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-      _mode = cNew;
       //_number->setFocus();
-
-      XSqlQuery insq;
-      insq.prepare("INSERT INTO crmacct(crmacct_number, crmacct_name,"
-                   "                    crmacct_active, crmacct_type)"
-                   "  SELECT 'TEMPORARY' || (last_value + 1), '', true, 'O'"
-                   "    FROM crmacct_crmacct_id_seq"
-                   " RETURNING crmacct_id AS result;");
-      insq.bindValue(":crmacct_id", _crmacctId);
-      insq.exec();
-      if (insq.first())
-      {
-        setId(insq.value("result").toInt());
-        _primary->setSearchAcct(-1);
-        _secondary->setSearchAcct(-1);
-      }
-      else if (ErrorReporter::error(QtCriticalMsg, this,
-                             tr("Error creating Initial Account"), insq,
-                             __FILE__, __LINE__))
-        return UndefinedError;
 
       _number->clear();
 
@@ -206,6 +186,31 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
           _NumberGen = numq.value("number").toInt();
         }
       }
+
+      XSqlQuery insq;
+      insq.prepare("INSERT INTO crmacct(crmacct_number, crmacct_name,"
+                   "                    crmacct_active, crmacct_type)"
+                   "  SELECT CASE WHEN :number > 1 THEN "
+                   "           :number::text "
+                   "         ELSE 'TEMPORARY' || (last_value + 1) "
+                   "         END, "
+                   "   '', true, 'O'  "
+                   "    FROM crmacct_crmacct_id_seq"
+                   " RETURNING crmacct_id AS result;");
+      insq.bindValue(":number", _NumberGen);
+      insq.exec();
+      if (insq.first())
+      {
+        setId(insq.value("result").toInt());
+        _primary->setSearchAcct(-1);
+        _secondary->setSearchAcct(-1);
+      }
+      else if (ErrorReporter::error(QtCriticalMsg, this,
+                             tr("Error creating Initial Account"), insq,
+                             __FILE__, __LINE__))
+        return UndefinedError;
+
+      _mode = cNew;
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
@@ -1132,6 +1137,15 @@ void crmaccount::sCheckNumber()
   {
     _number->setText(_number->text().trimmed().toUpper());
 
+    XSqlQuery query;
+    if(-1 != _NumberGen && _number->text().toInt() != _NumberGen)
+    {
+      query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+      query.bindValue(":Number", _NumberGen);
+      query.exec();
+      _NumberGen = -1;
+    }
+
     XSqlQuery newq;
     newq.prepare("SELECT crmacct_id "
                  "FROM crmacct "
@@ -1142,14 +1156,6 @@ void crmaccount::sCheckNumber()
     newq.exec();
     if (newq.first())
     {
-      XSqlQuery query;
-      if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
-      {
-        query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
-        query.bindValue(":Number", _NumberGen);
-        query.exec();
-        _NumberGen = -1;
-      }
       // Delete temporary
       query.prepare( "DELETE FROM crmacct WHERE (crmacct_id=:crmacct_id);" );
       query.bindValue(":crmacct_id", _crmacctId);
@@ -1175,7 +1181,7 @@ void crmaccount::sCheckNumber()
 
 void crmaccount::closeEvent(QCloseEvent *pEvent)
 {
-  if(cNew == _mode && -1 != _NumberGen)
+  if(-1 != _NumberGen)
   {
     XSqlQuery query;
     query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
