@@ -11,47 +11,72 @@
 #include "printPackingList.h"
 
 #include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
 
 #include <metasql.h>
 #include <mqlutil.h>
-#include <openreports.h>
 #include <xsqlquery.h>
 
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "inputManager.h"
 
-printPackingList::printPackingList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+/* printPackingList is a subclass of printSinglecopyDocument that
+   overrides most of the behavior of its parent. The logic of this
+   window is so complex that it's hard to know how to simplify it
+   to better fit the printSinglecopyDocument model.
+   TODO: figure out how to simplify it anyway. use orderhead table?
+ */
+class printPackingListPrivate 
 {
-  setupUi(this);
+  public:
+    printPackingListPrivate(::printPackingList *parent) :
+      _shipformid(-1)
+    {
+      Q_UNUSED(parent);
+    }
+
+    int          _shipformid;
+};
+
+printPackingList::printPackingList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : printSinglecopyDocument(parent, name, modal, fl)
+{
+  setupUi(optionsWidget());
+  setWindowTitle(optionsWidget()->windowTitle());
+  _pldata = new printPackingListPrivate(this);
+
+  setDoctype("P");
+
+  // a simple singleton select allows using printSinglecopyDocument::sPrint()
+  _docinfoQueryString = "SELECT <? value('docid') ?>     AS docid,"
+                        "       <? value('docnumber') ?> AS docnumber,"
+                        "       false                    AS printed,"
+                        "       <? value('reportname' ?> AS reportname"
+                        ";" ;
 
   connect(_order,     SIGNAL(valid(bool)), this, SLOT(sPopulate()));
-  connect(_print,       SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_reprint, SIGNAL(toggled(bool)), this, SLOT(sHandleReprint()));
   connect(_shipment,   SIGNAL(newId(int)), this, SLOT(sHandleShipment()));
 
   _order->setAllowedStatuses(OrderLineEdit::Open);
-  _order->setAllowedTypes(OrderLineEdit::Sales |
-                          OrderLineEdit::Transfer);
+  _order->setAllowedTypes(OrderLineEdit::Sales | OrderLineEdit::Transfer);
   _order->setFromSitePrivsEnforced(TRUE);
   _shipment->setStatus(ShipmentClusterLineEdit::Unshipped);
-
-  _captive    = FALSE;
-  _shipformid = -1;
 
   _orderDate->setEnabled(false);
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _order, SLOT(setId(int)));
   _order->setFocus();
-  adjustSize();
 }
 
 printPackingList::~printPackingList()
 {
-  // no need to delete child widgets, Qt does it all for us
+  if (_pldata)
+  {
+    delete _pldata;
+    _pldata = 0;
+  }
 }
 
 void printPackingList::languageChange()
@@ -61,9 +86,6 @@ void printPackingList::languageChange()
 
 enum SetResponse printPackingList::set(const ParameterList &pParams)
 {
-  XDialog::set(pParams);
-  _captive = TRUE;
-
   QVariant param;
   bool     valid;
 
@@ -75,19 +97,18 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
   if (valid)
     _order->setId(param.toInt(), "TO");
 
+  QString ordertype;
   param = pParams.value("head_type", &valid);
   if (valid)
-    _headtype = param.toString();
+    ordertype = param.toString();
 
   param = pParams.value("head_id", &valid);
   if (valid)
   {
-    if (_headtype == "SO")
-      _order->setId(param.toInt(), "SO");
-    else if (_headtype == "TO")
-      _order->setId(param.toInt(), "TO");
-    else
+    if (ordertype.isEmpty())
       return UndefinedError;
+    else
+      _order->setId(param.toInt(), ordertype);
   }
 
   param = pParams.value("shiphead_id", &valid);
@@ -102,12 +123,10 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
     shipq.exec();
     if (shipq.first())
     {
-      _shipformid = shipq.value("shiphead_shipform_id").toInt();
-      _headtype = shipq.value("shiphead_order_type").toString();
-      if (_headtype == "SO")
-        _order->setId(shipq.value("shiphead_order_id").toInt(), "SO");
-      else if (_headtype == "TO")
-        _order->setId(shipq.value("shiphead_order_id").toInt(), "TO");
+      _pldata->_shipformid = shipq.value("shiphead_shipform_id").toInt();
+      ordertype            = shipq.value("shiphead_order_type").toString();
+      if (ordertype == "SO" || ordertype == "TO")
+        _order->setId(shipq.value("shiphead_order_id").toInt(), ordertype);
       else
         return UndefinedError;
     }
@@ -116,45 +135,23 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
       return UndefinedError;
   }
 
-  if(pParams.inList("print"))
-  {
-    sPrint();
-    return NoError_Print;
-  }
+  setId(_order->id());
 
-  if (_order->isValid() || _shipment->isValid())
-    _print->setFocus();
-
-  return NoError;
+  return printSinglecopyDocument::set(pParams);
 }
 
-ParameterList printPackingList::getParams()
+ParameterList printPackingList::getParams(XSqlQuery *docq)
 {
+  Q_UNUSED(docq);
+  // unlike other printSinglecopyDocuments, don't call parent::getParams
   ParameterList params;
 
-  QList<GuiErrorCheck> errors;
-  errors << GuiErrorCheck(! _order->isValid() && _headtype == "SO", _order,
-                          tr("You must enter a Sales Order Number"))
-         << GuiErrorCheck(! _order->isValid() && _headtype == "TO", _order,
-                          tr("You must enter a Transfer Order Number"))
-     ;
-  if (GuiErrorCheck::reportErrors(this, tr("Cannot Print"), errors))
-    return params;
+  params.append(reportKey(),  _order->id());
+  params.append("docid",      _order->id());
+  params.append("form",       doctype());
 
-  if (_printPack->isChecked())
-    params.append("form", "P");
-  else if (_printPick->isChecked())
-    params.append("form", "L");
-  else
-    params.append("form", (_shipment->id() > 0) ? "P" : "L");
-
-  if (_shipformid > 0 && ! _printPick->isChecked())
-    params.append("shipformid", _shipformid);
-
-  if (_headtype == "SO")
-    params.append("sohead_id", _order->id());
-  else if (_headtype == "TO")
-    params.append("tohead_id", _order->id());
+  if (_pldata->_shipformid > 0 && ! _printPick->isChecked())
+    params.append("shipformid", _pldata->_shipformid);
 
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
@@ -173,17 +170,12 @@ ParameterList printPackingList::getParams()
 
   QString msg;
   bool    valid = false;
-  MetaSQLQuery formm = MQLUtil::mqlLoad("packingList", "getreport", msg, &valid);
+  MetaSQLQuery formm = MQLUtil::mqlLoad("packingList", "getreport",
+                                        msg, &valid);
   if (! valid)
-  {
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Finding Form"),
                          msg, __FILE__, __LINE__);
-    params.clear();
-    return params;
-  }
-
   XSqlQuery formq = formm.toQuery(params);
-  formq.exec();
   if (formq.first())
     params.append("reportname", formq.value("reportname").toString());
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Finding Form"),
@@ -196,61 +188,60 @@ ParameterList printPackingList::getParams()
   return params;
 }
 
-void printPackingList::sPrint()
+ParameterList printPackingList::getParamsDocList()
 {
-  ParameterList params = getParams();
-  if (params.isEmpty())
-    return;
+  // unlike other printSinglecopyDocuments
+  ParameterList params = getParams(0);
+  return params;
+}
 
-  orReport report(params.value("reportname").toString(), params);
-  if (report.isValid())
-  {
-    report.print();
-    emit finishedPrinting();
-  }
-  else
-  {
-    report.reportError(this);
-    if (_captive)
-      reject();
-    return;
-  }
+bool printPackingList::isOkToPrint()
+{
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(! _order->isValid() && _order->type() == "SO",
+                          _order,
+                          tr("You must enter a Sales Order Number"))
+         << GuiErrorCheck(! _order->isValid() && _order->type() == "TO",
+                          _order,
+                          tr("You must enter a Transfer Order Number"))
+     ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Print"), errors))
+    return false;
 
-  if (_captive)
-    accept();
-  else
-  {
-    _close->setText(tr("&Close"));
-    _order->setId(-1);
-    _headtype = "";
-    _order->setFocus();
-  }
+  return true;
+}
+
+QString printPackingList::reportKey()
+{
+  if (_order->isSO())
+    return "sohead_id";
+  else if (_order->isTO())
+    return "tohead_id";
+
+  return "";
 }
 
 void printPackingList::sPopulate()
 {
   if (_order->isSO() && _order->isValid())
   {
-    _headtype = "SO";
     _shipment->setType(ShipmentClusterLineEdit::SalesOrder);
     _shipment->limitToOrder(_order->id());
   }
   else if (_order->isTO() && _order->isValid())
   {
-    _headtype = "TO";
     _shipment->setType(ShipmentClusterLineEdit::TransferOrder);
     _shipment->limitToOrder(_order->id());
   }
   else
   {
-    _headtype = "";
     _shipment->setType(ShipmentClusterLineEdit::All);
     _shipment->removeOrderLimit();
   }
 
-  _print->setEnabled(_order->isValid());
+  setPrintEnabled(_order->isValid());
 
-  if (! _headtype.isEmpty())
+  if (! _order->type().isEmpty())
   {
     ParameterList destp;
 
@@ -258,7 +249,6 @@ void printPackingList::sPopulate()
       destp.append("sohead_id", _order->id());
     else if (_order->isTO())
       destp.append("tohead_id", _order->id());
-    destp.append("to", tr("Transfer Order"));
 
     QString dests = "<? if exists('sohead_id') ?>"
                     "SELECT cohead_number AS order_number,"
@@ -292,7 +282,7 @@ void printPackingList::sPopulate()
 
     ParameterList params;
     params.append("order_id", _order->id());
-    params.append("ordertype", _headtype);
+    params.append("ordertype", _order->type());
     if (_shipment->id() > 0)
       params.append("shiphead_id", _shipment->id());
 
@@ -328,7 +318,24 @@ void printPackingList::sPopulate()
     _poNumber->clear();
     _custName->clear();
     _custPhone->clear();
+    _pldata->_shipformid = -1;
   }
+}
+
+void printPackingList::clear()
+{
+  _order->setId(-1);
+  _order->setFocus();
+}
+
+QString printPackingList::doctype()
+{
+  if (_printPack->isChecked())
+    return "P";
+  else if (_printPick->isChecked())
+    return "L";
+  else
+    return (_shipment->id() > 0) ? "P" : "L";
 }
 
 void printPackingList::sHandleShipment()
@@ -347,16 +354,16 @@ void printPackingList::sHandleShipment()
   XSqlQuery plq = mql.toQuery(params);
   if (plq.first())
   {
-    _shipformid = plq.value("shiphead_shipform_id").toInt();
-    _headtype = plq.value("shiphead_order_type").toString();
-    int orderid = plq.value("shiphead_order_id").toInt();
-    if (_headtype == "SO" && ! _order->isValid())
+    _pldata->_shipformid = plq.value("shiphead_shipform_id").toInt();
+    QString ordertype = plq.value("shiphead_order_type").toString();
+    int     orderid   = plq.value("shiphead_order_id").toInt();
+    if (ordertype == "SO" && ! _order->isValid())
       _order->setId(orderid);
-    else if (_headtype == "TO" && ! _order->isValid())
+    else if (ordertype == "TO" && ! _order->isValid())
       _order->setId(orderid);
     else if (orderid != _order->id())
     {
-      if (_headtype == "SO")
+      if (ordertype == "SO")
       {
         if (QMessageBox::question(this, tr("Shipment for different Order"),
                                         tr("<p>Shipment %1 is for Sales Order %2. "
@@ -367,11 +374,11 @@ void printPackingList::sHandleShipment()
           _order->setId(plq.value("shiphead_order_id").toInt());
         else
         {
-          _shipformid = -1;
+          _pldata->_shipformid = -1;
           _shipment->clear();
         }
       }
-      else if (_headtype == "TO")
+      else if (ordertype == "TO")
       {
         if (QMessageBox::question(this, tr("Shipment for different Order"),
                                         tr("<p>Shipment %1 is for Transfer Order %2. "
@@ -382,7 +389,7 @@ void printPackingList::sHandleShipment()
           _order->setId(plq.value("shiphead_order_id").toInt());
         else
         {
-          _shipformid = -1;
+          _pldata->_shipformid = -1;
           _shipment->clear();
         }
       }

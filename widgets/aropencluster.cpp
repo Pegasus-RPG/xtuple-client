@@ -76,15 +76,7 @@ AropenLineEdit::AropenLineEdit(QWidget *pParent, const char *pName) :
           
           ")"
           
-          , QString("CASE WHEN (aropen_doctype='I') THEN '%1' "
-                    "     WHEN (aropen_doctype='D') THEN '%2' "
-                    "     WHEN (aropen_doctype='C') THEN '%3' "
-                    "     WHEN (aropen_doctype='R') THEN '%4' "
-                    "END ")
-          .arg(tr("Invoice"))
-          .arg(tr("Debit Memo"))
-          .arg(tr("Credit Memo"))
-          .arg(tr("Customer Deposit")).toAscii(),
+          , "aropen_doctype", 
           EXTRACLAUSE, pName)
 {
   setAllowedDocTypes(AnyType);

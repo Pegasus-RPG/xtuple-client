@@ -404,6 +404,7 @@ FORMS =   absoluteCalendarItem.ui               \
           printRaForm.ui                        \
           printShippingForm.ui                  \
           printShippingForms.ui                 \
+          printSinglecopyDocument.ui            \
           printSoForm.ui                        \
           printStatementByCustomer.ui           \
           printStatementsByCustomerType.ui      \
@@ -980,6 +981,7 @@ HEADERS = ../common/format.h                    \
           printRaForm.h                 \
           printShippingForm.h           \
           printShippingForms.h          \
+          printSinglecopyDocument.h     \
           printSoForm.h                 \
           printStatementByCustomer.h    \
           printStatementsByCustomerType.h       \
@@ -1579,6 +1581,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           printRaForm.cpp                       \
           printShippingForm.cpp                 \
           printShippingForms.cpp                \
+          printSinglecopyDocument.cpp           \
           printSoForm.cpp                       \
           printStatementByCustomer.cpp          \
           printStatementsByCustomerType.cpp     \

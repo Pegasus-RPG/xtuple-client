@@ -10,27 +10,34 @@
 
 #include "printQuote.h"
 
-#include <QMessageBox>
-#include <QSqlError>
-#include <QVariant>
+#include <metasql.h>
 
-#include <openreports.h>
-
-#include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 
 printQuote::printQuote(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : printSinglecopyDocument(parent, name, modal, fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(optionsWidget()->windowTitle());
+  
+  setDoctype("QT");
+  setReportKey("quhead_id");
 
-  connect(_number, SIGNAL(editingFinished()), this, SLOT(sHandleButtons()));
-  connect(_print,    SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_report,  SIGNAL(newID(int)), this, SLOT(sHandleButtons()));
+  _docinfoQueryString = "SELECT quhead_id AS docid, quhead_id,"
+                        "       quhead_number AS docnumber,"
+                        "       false         AS printed,"
+                        "<? if exists('reportname') ?>"
+                        "       <? value('reportname') ?>"
+                        "<? else ?>"
+                        "       findCustomerForm(quhead_cust_id, 'Q')"
+                        " <? endif ?> AS reportname"
+                        "  FROM quhead"
+                        " WHERE (quhead_id=<? value('docid') ?>);" ;
 
-  _cust->setFocus();
-
-  _captive  = false;
-  _quheadid = -1; // TODO: replace with a QuoteCluster
+  connect(_quote,          SIGNAL(newId(int)), this, SLOT(sHandleNewQuoteId()));
+  connect(_report,         SIGNAL(newID(int)), this, SLOT(sHandleButtons()));
+  connect(this,     SIGNAL(finishedWithAll()), this, SLOT(sFinishedWithAll()));
+  connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sPopulate(XSqlQuery*)));
 }
 
 printQuote::~printQuote()
@@ -42,74 +49,44 @@ void printQuote::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse printQuote::set(const ParameterList &pParams)
+ParameterList printQuote::getParamsDocList()
 {
-  XDialog::set(pParams);
-  _captive = true;
-  _cust->setEnabled(false);
+  ParameterList params = printSinglecopyDocument::getParamsDocList();
+  if (_report->isValid())
+    params.append("reportname", _report->code());
 
-  QVariant param;
-  bool     valid;
-
-  param = pParams.value("quhead_id", &valid);
-  if (valid)
-  {
-    _quheadid = param.toInt();
-    populate();
-  }
-
-  return NoError;
+  return params;
 }
 
-void printQuote::sPrint()
+void printQuote::sFinishedWithAll()
 {
-  ParameterList params;
-  params.append("quhead_id", _quheadid);
-
-  orReport report(_report->code(), params);
-  if (report.isValid())
-  {
-    if (report.print())
-      emit finishedPrinting(_quheadid);
-    if (_captive)
-      accept();
-  }
-  else
-  {
-    report.reportError(this);
-    if (_captive)
-      reject();
-  }
-
-  _quheadid = -1;
-  _number->clear();
-  _cust->setId(-1);
-  _cust->setFocus();
-  _cust->setEnabled(true);
-}
-
-void printQuote::populate()
-{
-  q.prepare("SELECT quhead_number, quhead_cust_id,"
-            "       findCustomerForm(quhead_cust_id, 'Q') AS reportname "
-            "FROM quhead "
-            "WHERE (quhead_id=:quhead_id);");
-  q.bindValue(":quhead_id", _quheadid);
-  q.exec();
-  if (q.first())
-  {
-    _number->setText(q.value("quhead_number").toString());
-    _cust->setId(q.value("quhead_cust_id").toInt());
-    _report->setCode(q.value("reportname").toString());
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  _quote->setId(-1);
 }
 
 void printQuote::sHandleButtons()
 {
-  _print->setEnabled(! _number->text().isEmpty() && _report->isValid());
+  setPrintEnabled(_quote->isValid() && _report->isValid());
+}
+
+void printQuote::sHandleNewQuoteId()
+{
+  if (_quote->isValid())
+  {
+    ParameterList params;
+    params.append("docid", _quote->id());
+    MetaSQLQuery mql(_docinfoQueryString);
+    XSqlQuery    qry = mql.toQuery(params);
+    if (qry.first())
+      _report->setCode(qry.value("reportname").toString());
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Quote Form"),
+                                  qry, __FILE__, __LINE__))
+      return;
+  }
+  sHandleButtons();
+}
+
+void printQuote::sPopulate(XSqlQuery *docq)
+{
+  _quote->setId(docq->value("docid").toInt());
+  _report->setCode(docq->value("reportname").toString());
 }

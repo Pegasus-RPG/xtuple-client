@@ -11,35 +11,29 @@
 #ifndef PRINTSTATEMENTBYCUSTOMER_H
 #define PRINTSTATEMENTBYCUSTOMER_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printSinglecopyDocument.h"
 #include "ui_printStatementByCustomer.h"
 
-class printStatementByCustomer : public XDialog, public Ui::printStatementByCustomer
+class printStatementByCustomer : public printSinglecopyDocument,
+                                 public Ui::printStatementByCustomer
 {
     Q_OBJECT
 
-public:
+  public:
     printStatementByCustomer(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printStatementByCustomer();
 
+    Q_INVOKABLE virtual void          clear();
     Q_INVOKABLE virtual ParameterList getParams();
-                virtual bool          setParams(ParameterList &params);
+    Q_INVOKABLE virtual bool          isOkToPrint();
 
-public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
+  public slots:
+    virtual enum SetResponse set(const ParameterList &pParams);
 
-signals:
-    void finishedPrinting(int);
+    virtual void sPopulate(XSqlQuery *docq);
 
-protected slots:
+  protected slots:
     virtual void languageChange();
-
-private:
-    bool _captive;
-
 };
 
 #endif // PRINTSTATEMENTBYCUSTOMER_H

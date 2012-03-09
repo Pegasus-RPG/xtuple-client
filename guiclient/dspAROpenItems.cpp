@@ -40,6 +40,7 @@
 #include "printArOpenItem.h"
 #include "printCreditMemo.h"
 #include "printInvoice.h"
+#include "printStatementByCustomer.h"
 #include "salesOrder.h"
 #include "storedProcErrorLookup.h"
 
@@ -57,7 +58,6 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char*, Qt::WFlags fl)
   connect(_customerSelector, SIGNAL(updated()), list(), SLOT(clear()));
   connect(_customerSelector, SIGNAL(updated()), this, SLOT(sHandlePrintGroup()));
   connect(_closed, SIGNAL(toggled(bool)), this, SLOT(sClosedToggled(bool)));
-  connect(_printList, SIGNAL(toggled(bool)), this, SLOT(sHandleReportName()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -860,20 +860,27 @@ bool dspAROpenItems::setParams(ParameterList &params)
 
 void dspAROpenItems::sPrint()
 {
-  ParameterList params;
-  if (! setParams(params))
-    return;
-  params.append("includeFormatted");
-
-  orReport report(reportName(), params);
-  if (report.isValid())
+  if (_printStatement->isChecked())
   {
-    report.print();
-    if (_printStatement->isChecked())
-      emit finishedPrintingStatement(_customerSelector->custId());
+    printStatementByCustomer newdlg(this, "", true);
+    ParameterList params;
+    params.append("cust_id", _customerSelector->custId());
+    params.append("print");
+    newdlg.set(params);
   }
   else
-    report.reportError(this);
+  {
+    ParameterList params;
+    if (! setParams(params))
+      return;
+    params.append("includeFormatted");
+
+    orReport report(reportName(), params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
 }
 
 void dspAROpenItems::sPrintItem()
@@ -1208,20 +1215,6 @@ void dspAROpenItems::sShipment()
     dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
-  }
-}
-
-void dspAROpenItems::sHandleReportName()
-{
-  if (_printList->isChecked())
-    setReportName("AROpenItems");
-  else
-  {
-    q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
-    q.bindValue(":cust_id", _customerSelector->custId());
-    q.exec();
-    if (q.first())
-      setReportName(q.value("_reportname").toString());
   }
 }
 

@@ -11,34 +11,28 @@
 #ifndef _PRINTQUOTE_H
 #define _PRINTQUOTE_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printSinglecopyDocument.h"
 #include "ui_printQuote.h"
 
-class printQuote : public XDialog, public Ui::printQuote
+class printQuote : public printSinglecopyDocument,
+                   public Ui::printQuote
 {
-  Q_OBJECT
+    Q_OBJECT
 
-public:
-  printQuote(QWidget* parent = 0, const char* name = 0, bool modal = 0, Qt::WindowFlags fl = 0);
-  ~printQuote();
+  public:
+    printQuote(QWidget* parent = 0, const char* name = 0, bool modal = 0, Qt::WFlags fl = 0);
+    ~printQuote();
 
-public slots:
-  virtual enum SetResponse set(const ParameterList & pParams);
-  virtual void populate();
-  virtual void sHandleButtons();
-  virtual void sPrint();
+    Q_INVOKABLE virtual ParameterList getParamsDocList();
 
-signals:
-          void finishedPrinting(int);
+  public slots:
+    virtual void sFinishedWithAll();
+    virtual void sHandleButtons();
+    virtual void sHandleNewQuoteId();
+    virtual void sPopulate(XSqlQuery *docq);
 
-protected slots:
+  protected slots:
     virtual void languageChange();
-
-private:
-    bool _captive;
-    int  _quheadid;
 };
 
 #endif // _PRINTQUOTE_H

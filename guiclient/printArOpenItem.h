@@ -11,34 +11,26 @@
 #ifndef PRINTAROPENITEM_H
 #define PRINTAROPENITEM_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printSinglecopyDocument.h"
 #include "ui_printArOpenItem.h"
 
-class printArOpenItem : public XDialog, public Ui::printArOpenItem
+class printArOpenItem : public printSinglecopyDocument,
+                        public Ui::printArOpenItem
 {
     Q_OBJECT
 
-public:
+  public:
     printArOpenItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printArOpenItem();
 
-public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
+    Q_INVOKABLE virtual QString       doctype();
+    Q_INVOKABLE virtual ParameterList getParams(XSqlQuery *docq);
 
-signals:
-            void finishedPrinting(int);
+  public slots:
+    virtual void sPopulate(XSqlQuery *qry);
 
-protected slots:
+  protected slots:
     virtual void languageChange();
-
-    virtual void sPrint();
-
-
-private:
-    bool _captive;
-
 };
 
 #endif // PRINTAROPENITEM_H

@@ -11,38 +11,38 @@
 #ifndef PRINTPACKINGLIST_H
 #define PRINTPACKINGLIST_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printSinglecopyDocument.h"
 #include "ui_printPackingList.h"
 
-class printPackingList : public XDialog, public Ui::printPackingList
+class printPackingListPrivate;
+
+class printPackingList : public printSinglecopyDocument,
+                         public Ui::printPackingList
 {
     Q_OBJECT
 
-public:
+  public:
     printPackingList(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printPackingList();
-    Q_INVOKABLE virtual ParameterList getParams();
 
-public slots:
+    Q_INVOKABLE virtual void          clear();
+                virtual QString       doctype();
+    Q_INVOKABLE virtual ParameterList getParams(XSqlQuery *docq);
+    Q_INVOKABLE virtual ParameterList getParamsDocList();
+    Q_INVOKABLE virtual bool          isOkToPrint();
+                virtual QString       reportKey();
+
+  public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sHandleShipment();
     virtual void sHandleReprint();
     virtual void sPopulate();
-    virtual void sPrint();
 
-signals:
-    void finishedPrinting();
-
-protected slots:
+  protected slots:
     virtual void languageChange();
 
-private:
-    bool	_captive;
-    QString	_headtype;
-    int         _shipformid;
-
+  protected:
+    printPackingListPrivate *_pldata;
 };
 
 #endif // PRINTPACKINGLIST_H

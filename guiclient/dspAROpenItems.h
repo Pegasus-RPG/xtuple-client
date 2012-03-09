@@ -59,12 +59,8 @@ public slots:
     virtual void sPostInvoice();
     virtual void sPostCreditMemo();
     virtual void sShipment();
-    virtual void sHandleReportName();
     virtual void sHandlePrintGroup();
     virtual void sClosedToggled(bool);
-
-signals:
-    void finishedPrintingStatement(int);
 };
 
 #endif // DSPAROPENITEMS_H

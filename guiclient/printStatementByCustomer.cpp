@@ -14,26 +14,29 @@
 #include <QVariant>
 
 #include <metasql.h>
-#include <openreports.h>
 
 #include "errorReporter.h"
-#include "../scriptapi/parameterlistsetup.h"
 
 printStatementByCustomer::printStatementByCustomer(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-  : XDialog(parent, name, modal, fl)
+  : printSinglecopyDocument(parent, name, modal, fl)
 {
-  setupUi(this);
-
+  setupUi(optionsWidget());
+  setWindowTitle(optionsWidget()->windowTitle());
   _asOf->setDate(omfgThis->dbDate(), true);
-
-  connect(_print,  SIGNAL(clicked()), this,   SLOT(sPrint()));
-  connect(_close,  SIGNAL(clicked()), this,   SLOT(reject()));
-  connect(_cust, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-
-  _captive = FALSE;
-
   _cust->setType(CLineEdit::ActiveCustomers);
-  _cust->setFocus();
+
+  setDoctype("AR");
+  setReportKey("cust_id");
+
+  _docinfoQueryString = "SELECT cust_id     AS docid, cust_id,"
+                        "       cust_number AS docnumber,"
+                        "       false       AS printed,"
+                        "       findCustomerForm(cust_id, 'S') AS reportname"
+                        "  FROM custinfo"
+                        " WHERE (cust_id=<? value('docid') ?>);" ;
+
+  connect(_cust,          SIGNAL(valid(bool)), this, SLOT(setPrintEnabled(bool)));
+  connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sPopulate(XSqlQuery*)));
 }
 
 printStatementByCustomer::~printStatementByCustomer()
@@ -48,30 +51,38 @@ void printStatementByCustomer::languageChange()
 
 enum SetResponse printStatementByCustomer::set(const ParameterList &pParams)
 {
-  XDialog::set(pParams);
-  _captive = TRUE;
-
   QVariant param;
   bool     valid;
-
-  param = pParams.value("cust_id", &valid);
-  if (valid)
-    _cust->setId(param.toInt());
 
   param = pParams.value("asofDate", &valid);
   if (valid)
     _asOf->setDate(param.toDate());
 
-  if (pParams.inList("print"))
-  {
-    sPrint();
-    return NoError_Print;
-  }
-
-  return NoError;
+  return printSinglecopyDocument::set(pParams); // this does XDialog::set()
 }
 
-bool printStatementByCustomer::setParams(ParameterList &params)
+void printStatementByCustomer::clear()
+{
+  setId(-1);
+  _cust->setId(-1);
+  _cust->setFocus();
+}
+
+ParameterList printStatementByCustomer::getParams()
+{
+  ParameterList params;
+
+  params.append("cust_id",  _cust->id());
+  params.append("invoice",  tr("Invoice"));
+  params.append("debit",    tr("Debit Memo"));
+  params.append("credit",   tr("Credit Memo"));
+  params.append("deposit",  tr("Deposit"));
+  params.append("asofdate", _asOf->date());
+
+  return params;
+}
+
+bool printStatementByCustomer::isOkToPrint()
 {
   if (!_cust->isValid())
   {
@@ -82,71 +93,30 @@ bool printStatementByCustomer::setParams(ParameterList &params)
     return false;
   }
 
-  params.append("invoice",  tr("Invoice"));
-  params.append("debit",    tr("Debit Memo"));
-  params.append("credit",   tr("Credit Memo"));
-  params.append("deposit",  tr("Deposit"));
-  params.append("cust_id",  _cust->id());
-  params.append("asofdate", _asOf->date());
-
-  return true;
-}
-
-ParameterList printStatementByCustomer::getParams()
-{
-  ParameterList params;
-  bool ret = setParams(params);
-  params.append("checkParamsReturn", ret);
-
-  return params;
-}
-
-void printStatementByCustomer::sPrint()
-{
-  ParameterList params;
-  if(! setParams(params))
-    return;
+  ParameterList params = getParams();
+  if (params.value("checkParamsReturn") == false)
+    return false;
 
   MetaSQLQuery agem("SELECT * FROM araging (<? value('asofDate') ?>, true)"
                     " WHERE (araging_cust_id = <? value('cust_id') ?>);"); 
   XSqlQuery ageq = agem.toQuery(params);
-  if(ageq.first())
-  {
-    MetaSQLQuery formm("SELECT findCustomerForm(<? value('cust_id') ?>, 'S')"
-                       "    AS _reportname;");
-    XSqlQuery formq = formm.toQuery(params);
-    if (formq.first())
-    {
-      orReport report(formq.value("_reportname").toString(), params);
-      if (report.isValid())
-      {
-        if (report.print())
-          emit finishedPrinting(_cust->id());
-      }
-      else
-      {
-        report.reportError(this);
-        reject();
-      }
-
-      if (_captive)
-        accept();
-      else
-      {
-        _close->setText(tr("&Close"));
-        _cust->setId(-1);
-        _cust->setFocus();
-      }
-    }
-    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Form"),
-                                  formq, __FILE__, __LINE__))
-      return;
-  }
+  if (ageq.first())
+    ; // fall through - cust is OK
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
                                 ageq, __FILE__, __LINE__))
-    return;
+    return false;
   else
-    QMessageBox::warning( this, tr("No Statement to Print"),
-                          tr("No statement is available for the specified "   
-                                        "Customer and Asof Date.") );
+  {
+    QMessageBox::warning(this, tr("No Statement to Print"),
+                         tr("<p>No statement is available for the specified "
+                            "Customer and Asof Date.") );
+    return false;
+  }
+
+  return true;
+}
+
+void printStatementByCustomer::sPopulate(XSqlQuery *docq)
+{
+  _cust->setId(docq->value("docid").toInt());
 }

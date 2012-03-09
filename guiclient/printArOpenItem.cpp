@@ -11,19 +11,25 @@
 #include "printArOpenItem.h"
 
 #include <QMessageBox>
-#include <QSqlError>
 #include <QVariant>
 
-#include <openreports.h>
-
 printArOpenItem::printArOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : printSinglecopyDocument(parent, name, modal, fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(optionsWidget()->windowTitle());
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  _docinfoQueryString = "SELECT aropen_id        AS docid, aropen_id,"
+                        "       aropen_docnumber AS docnumber,"
+                        "       false            AS printed,"
+                        "       'AROpenItem'     AS reportname,"
+                        "       aropen_doctype"
+                        "  FROM aropen"
+                        " WHERE (aropen_id=<? value('docid') ?>);" ;
+  setReportKey("aropen_id");
 
-  _captive = FALSE;
+  connect(_aropen,        SIGNAL(valid(bool)), this, SLOT(setPrintEnabled(bool)));
+  connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sPopulate(XSqlQuery*)));
 }
 
 printArOpenItem::~printArOpenItem()
@@ -36,80 +42,59 @@ void printArOpenItem::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse printArOpenItem::set(const ParameterList &pParams)
+// standard document type abbreviation, not the aropen-specific abbreviation
+QString printArOpenItem::doctype()
 {
-  XDialog::set(pParams);
-  _captive = TRUE;
-
-  QVariant param;
-  bool     valid;
-
-  param = pParams.value("aropen_id", &valid);
-  if (valid)
+  switch (_aropen->type())
   {
-    _aropen->setId(param.toInt());
-    _print->setFocus();
+    case AropenLineEdit::Invoice:       return "IN";
+    case AropenLineEdit::DebitMemo:     return "DM";
+    case AropenLineEdit::CreditMemo:    return "CM";
+    case AropenLineEdit::CashDeposit:   return "CR";
+    default:
+      qWarning("printArOpenItem::doctype() unknown for %d", _aropen->type());
+      return "";
   }
-
-  return NoError;
 }
 
-void printArOpenItem::sPrint()
+ParameterList printArOpenItem::getParams(XSqlQuery *docq)
 {
-  QString doctype;
-
-  XSqlQuery qry;
-  qry.prepare("SELECT aropen_doctype "
-              "FROM aropen "
-              "WHERE (aropen_id=:aropen_id);");
-  qry.bindValue(":aropen_id", _aropen->id());
-  qry.exec();
-  if (qry.first())
-    doctype = qry.value("aropen_doctype").toString();
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
   ParameterList params;
-  params.append("aropen_id", _aropen->id());
-  if ("I" == doctype || "D" == doctype)
+  params.append("aropen_id", docq->value("aropen_id").toInt());
+  switch (docq->value("aropen_doctype").toChar().toAscii())
   {
-    params.append("docTypeID", 1);
-    params.append("creditMemo", tr("Credit Memo"));
-    params.append("cashdeposit", tr("Cash Deposit"));
-    params.append("check", tr("Check"));
-    params.append("certifiedCheck", tr("Certified Check"));
-    params.append("masterCard", tr("Master Card"));
-    params.append("visa", tr("Visa"));
-    params.append("americanExpress", tr("American Express"));
-    params.append("discoverCard", tr("Discover Card"));
-    params.append("otherCreditCard", tr("Other Credit Card"));
-    params.append("cash", tr("Cash"));
-    params.append("wireTransfer", tr("Wire Transfer"));
-    params.append("other", tr("Other"));
-  }
-  else if ("R" == doctype || "C" == doctype)
-  {
-    params.append("docTypeRC", 1);
-    params.append("invoice", tr("Invoice"));
-    params.append("debitMemo", tr("Debit Memo"));
-    params.append("apcheck", tr("A/P Check"));
-    params.append("cashreceipt", tr("Cash Receipt"));
+    case 'I':
+    case 'D':
+      params.append("docTypeID", 1);
+      params.append("creditMemo",       tr("Credit Memo"));
+      params.append("cashdeposit",      tr("Cash Deposit"));
+      params.append("check",            tr("Check"));
+      params.append("certifiedCheck",   tr("Certified Check"));
+      params.append("masterCard",       tr("Master Card"));
+      params.append("visa",             tr("Visa"));
+      params.append("americanExpress",  tr("American Express"));
+      params.append("discoverCard",     tr("Discover Card"));
+      params.append("otherCreditCard",  tr("Other Credit Card"));
+      params.append("cash",             tr("Cash"));
+      params.append("wireTransfer",     tr("Wire Transfer"));
+      params.append("other",            tr("Other"));
+      break;
+    case 'C':
+    case 'R':
+      params.append("docTypeRC",   1);
+      params.append("invoice",     tr("Invoice"));
+      params.append("debitMemo",   tr("Debit Memo"));
+      params.append("apcheck",     tr("A/P Check"));
+      params.append("cashreceipt", tr("Cash Receipt"));
+      break;
+    default:
+      params.append("checkParamsReturn", false);
   }
 
-  orReport report("AROpenItem", params);
+  return params;
+}
 
-  if (report.isValid())
-  {
-    if (report.print())
-      emit finishedPrinting(_aropen->id());
-    accept();
-  }
-  else
-  {
-    report.reportError(this);
-    reject();
-  }
+void printArOpenItem::sPopulate(XSqlQuery *qry)
+{
+  _aropen->setId(qry->value("docid").toInt());
 }
