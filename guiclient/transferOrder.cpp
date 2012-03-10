@@ -1149,7 +1149,8 @@ void transferOrder::sDelete()
             int result = q.value("result").toInt();
             if (result < 0)
               systemError(this, storedProcErrorLookup("deleteTO", result),
-			  __FILE__, __LINE__);
+			  __FILE__, __LINE__);            
+            sReleaseNumber();
           }
           else if (q.lastError().type() != QSqlError::NoError)
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1476,6 +1477,8 @@ bool transferOrder::deleteForCancel()
       if (result < 0)
         systemError(this, storedProcErrorLookup("deleteTO", result),
                     __FILE__, __LINE__);
+
+      sReleaseNumber();
     }
     else if (query.lastError().type() != QSqlError::NoError)
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
@@ -2142,4 +2145,17 @@ void transferOrder::sReleaseTohead()
     systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
   else
     _locked = false;
+}
+
+void transferOrder::sReleaseNumber()
+{
+  if(-1 != _orderNumberGen)
+  {
+    q.prepare("SELECT releaseToNumber(:number);" );
+    q.bindValue(":number", _orderNumberGen);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    _orderNumberGen = -1;
+  }
 }

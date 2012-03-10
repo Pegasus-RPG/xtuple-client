@@ -64,6 +64,7 @@ public slots:
     virtual void sSaveAndAdd();
     virtual void sSetUserEnteredOrderNumber();
     virtual void sTaxDetail();
+    virtual void sReleaseNumber();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );

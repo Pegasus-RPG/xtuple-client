@@ -113,6 +113,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _captive         = false;
   _userOrderNumber = false;
   _printed         = false;
+  _NumberGen       = -1;
 
   setPoheadid(-1);
   _vendaddrid = -1;
@@ -1243,6 +1244,9 @@ void purchaseOrder::sSetUserOrderNumber()
     
 void purchaseOrder::sHandleOrderNumber()
 {
+  if(-1 != _NumberGen && _orderNumber->text().toInt() != _NumberGen)
+    sReleaseNumber();
+
   if (_orderNumber->text().length() == 0)
   {
     if ( (_metrics->value("PONumberGeneration") == "A") ||
@@ -1310,7 +1314,10 @@ void purchaseOrder::populateOrderNumber()
   XSqlQuery on;
   on.exec("SELECT fetchPoNumber() AS ponumber;");
   if (on.first())
+  {
     _orderNumber->setText(on.value("ponumber"));
+    _NumberGen = on.value("ponumber").toInt();
+  }
 
   if (_metrics->value("PONumberGeneration") == "A")
     _orderNumber->setEnabled(FALSE);
@@ -1337,13 +1344,13 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
     q.prepare( "DELETE FROM pohead "
                "WHERE (pohead_id=:pohead_id);"
                "DELETE FROM poitem "
-               "WHERE (poitem_pohead_id=:pohead_id);"
-               "SELECT releasePoNumber(:orderNumber);" );
+               "WHERE (poitem_pohead_id=:pohead_id);" );
     q.bindValue(":pohead_id", _poheadid);
-    q.bindValue(":orderNumber", _orderNumber->text().toInt());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+
+    sReleaseNumber();
   }
   else if (_mode == cEdit && _poitem->topLevelItemCount() == 0)
   {
@@ -1379,6 +1386,19 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
   }
 
   XWidget::closeEvent(pEvent);
+}
+
+void purchaseOrder::sReleaseNumber()
+{
+  if(-1 != _NumberGen)
+  {
+    q.prepare("SELECT releasePoNumber(:number);" );
+    q.bindValue(":number", _NumberGen);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    _NumberGen = -1;
+  }
 }
 
 bool purchaseOrder::sQESave()

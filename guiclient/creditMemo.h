@@ -49,6 +49,7 @@ public slots:
     virtual void sTaxZoneChanged();
     virtual void sTaxDetail();
     virtual void sFreightChanged();
+    virtual void sReleaseNumber();
 
 protected slots:
     virtual void languageChange();
@@ -64,6 +65,7 @@ private:
     double _freightCache;
     int _taxzoneidCache;
     bool save();
+    int _NumberGen;
 };
 
 #endif // CREDITMEMO_H

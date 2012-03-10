@@ -53,6 +53,7 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   _custtaxzoneid	= -1;
   _freightCache         = 0;
   _taxzoneidCache       = -1;
+  _NumberGen            = -1;
 
   _memoNumber->setValidator(omfgThis->orderVal());
   _commission->setValidator(omfgThis->scrapVal());
@@ -206,6 +207,7 @@ void creditMemo::setNumber()
     if (q.first())
     {
       _memoNumber->setText(q.value("cmnumber").toString());
+      _NumberGen = q.value("cmnumber").toInt();
 
       if (_metrics->value("CMNumberGeneration") == "A")
         _memoNumber->setEnabled(FALSE);
@@ -223,6 +225,7 @@ void creditMemo::setNumber()
     if (q.first())
     {
       _memoNumber->setText(q.value("cmnumber").toString());
+      _NumberGen = q.value("cmnumber").toInt();
       _memoNumber->setEnabled(FALSE);
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -569,6 +572,10 @@ void creditMemo::sPopulateCustomerInfo()
 
 void creditMemo::sCheckCreditMemoNumber()
 {
+qDebug("_numbergen->%d, memo#->%d", _NumberGen, _memoNumber->text().toInt());
+  if (-1 != _NumberGen && _NumberGen != _memoNumber->text().toInt())
+    sReleaseNumber();
+
   if ( (_memoNumber->text().length()) && _mode != cNew &&
        ( (_metrics->value("CMNumberGeneration") == "O") || 
          (_metrics->value("CMNumberGeneration") == "M")   ) )
@@ -913,22 +920,28 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
       return;
     }
 
-    if ( (_metrics->value("CMNumberGeneration") == "A") || 
-         (_metrics->value("CMNumberGeneration") == "O")   )
-      q.prepare("SELECT releaseCmNumber(:number) AS result;");
-    else if (_metrics->value("CMNumberGeneration") == "S")
-      q.prepare("SELECT releaseSoNumber(:number) AS result;");
-
-    q.bindValue(":number", _memoNumber->text());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    if (-1 != _NumberGen)
+      sReleaseNumber();
   }
 
   XWidget::closeEvent(pEvent);
+}
+
+void creditMemo::sReleaseNumber()
+{
+  if ( (_metrics->value("CMNumberGeneration") == "A") ||
+       (_metrics->value("CMNumberGeneration") == "O")   )
+    q.prepare("SELECT releaseCmNumber(:number) AS result;");
+  else if (_metrics->value("CMNumberGeneration") == "S")
+    q.prepare("SELECT releaseSoNumber(:number) AS result;");
+
+  q.bindValue(":number", _NumberGen);
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void creditMemo::sTaxDetail()

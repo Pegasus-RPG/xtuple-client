@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QValidator>
 #include <QVariant>
+#include <QSqlError>
 
 #include <QCloseEvent>
 
@@ -24,8 +25,10 @@ purchaseRequest::purchaseRequest(QWidget* parent, const char* name, bool modal, 
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_create, SIGNAL(clicked()), this, SLOT(sCreate()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sCheckWarehouse(int)));
+  connect(_number, SIGNAL(textEdited(QString)), this, SLOT(sReleaseNumber()));
 
   _planordid = -1;
+  _NumberGen = -1;
   _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured);
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
   _lastWarehousid = _warehouse->id();
@@ -299,6 +302,7 @@ void purchaseRequest::populateNumber()
     }
 
     _number->setText(q.value("number").toString());
+    _NumberGen = q.value("number").toInt();
   }
 
   if (generationMethod == "M")
@@ -322,14 +326,29 @@ void purchaseRequest::closeEvent(QCloseEvent *pEvent)
 {
   if ( ((_mode == cNew) || (_mode == cRelease)) &&
        ((_metrics->value("PrNumberGeneration") == "A") || (_metrics->value("PrNumberGeneration") == "O")) )
-  {
-    q.prepare("SELECT releasePrNumber(:orderNumber);");
-    q.bindValue(":orderNumber", _number->text().toInt());
-    q.exec();
-  }
+    sReleaseNumber();
 
   if (pEvent != NULL)
     XDialog::closeEvent(pEvent);
+}
+
+void purchaseRequest::sNumberChanged()
+{
+  if(-1 != _NumberGen && _number->text().toInt() != _NumberGen)
+    sReleaseNumber();
+}
+
+void purchaseRequest::sReleaseNumber()
+{
+  if(-1 != _NumberGen)
+  {
+    q.prepare("SELECT releasePrNumber(:number);" );
+    q.bindValue(":number", _NumberGen);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    _NumberGen = -1;
+  }
 }
 
 void purchaseRequest::sCheckWarehouse( int pWarehousid )

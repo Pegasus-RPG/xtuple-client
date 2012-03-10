@@ -57,6 +57,7 @@ public slots:
     virtual void sEditWo();
 	virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
 	virtual void sHandleShipTo();
+    virtual void sReleaseNumber();
 
 protected slots:
     virtual void languageChange();
@@ -81,6 +82,7 @@ private:
     int _mode;
     bool _printed;
     PoitemTableModel* _qeitem;
+    int _NumberGen;
 };
 
 #endif // PURCHASEORDER_H

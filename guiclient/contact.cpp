@@ -485,8 +485,10 @@ void contact::sClose()
   if (_data->_mode == cNew)
   {
     XSqlQuery delq;
-    delq.prepare("DELETE FROM cntct WHERE (cntct_id=:cntct_id);");
+    delq.prepare("DELETE FROM cntct WHERE (cntct_id=:cntct_id);"
+                 "SELECT releaseNumber('ContactNumber',:number);");
     delq.bindValue(":cntct_id", _contact->id());
+    delq.bindValue(":number", _contact->number().toInt());
     delq.exec();
     if (ErrorReporter::error(QtCriticalMsg, this, tr("Cleaning up Contact"),
                              delq, __FILE__, __LINE__))

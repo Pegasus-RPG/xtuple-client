@@ -328,3 +328,17 @@ bool salesRep::sPopulate()
                                 (omfgThis->username() == _crmowner && _privileges->check("ViewPersonalCRMAccounts"))));
   return true;
 }
+
+void salesRep::reject()
+{
+qDebug("close event");
+  if(cNew == _mode && -1 != _NumberGen)
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+    query.bindValue(":Number", _NumberGen);
+    query.exec();
+    _NumberGen = -1;
+  }
+  QDialog::reject();
+}

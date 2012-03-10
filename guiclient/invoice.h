@@ -54,6 +54,7 @@ public slots:
     virtual void sHandleShipchrg( int pShipchrgid );
     virtual void sTaxZoneChanged();
     virtual void sFreightChanged();
+    virtual void sReleaseNumber();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
@@ -73,6 +74,7 @@ private:
     double      _freightCache;
     bool        save();
     bool        _posted;
+    int         _NumberGen;
 
 };
 

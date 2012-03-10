@@ -67,6 +67,7 @@ public slots:
     virtual void sSubstituteMatl();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sSave();
+    virtual void sNumberChanged();
 
 protected slots:
     virtual void languageChange();

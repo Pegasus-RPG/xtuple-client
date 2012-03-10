@@ -79,6 +79,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _loading = false;
   _freightCache = 0;
   _posted = false;
+  _NumberGen = -1;
 
   _cust->setType(CLineEdit::ActiveCustomers);
 
@@ -159,6 +160,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
         if (q.first())
         {
           _invoiceNumber->setText(q.value("number").toString());
+          _NumberGen = q.value("number").toInt();
           if (_metrics->value("InvcNumberGeneration") == "A")
             _invoiceNumber->setEnabled(false);
         }
@@ -932,17 +934,31 @@ void invoice::closeEvent(QCloseEvent *pEvent)
   if ( (_mode == cNew) && (_invcheadid != -1) )
   {
     q.prepare( "DELETE FROM invcitem "
-               "WHERE (invcitem_invchead_id=:invchead_id);"
-               "SELECT releaseInvcNumber(:invoiceNumber);" );
+               "WHERE (invcitem_invchead_id=:invchead_id);" );
     q.bindValue(":invchead_id", _invcheadid);
     q.bindValue(":invoiceNumber", _invoiceNumber->text().toInt());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    sReleaseNumber();
   }
 
   XWidget::closeEvent(pEvent);
 }
+
+void invoice::sReleaseNumber()
+{
+  if(-1 != _NumberGen)
+  {
+    q.prepare("SELECT releaseInvcNumber(:number);" );
+    q.bindValue(":number", _NumberGen);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    _NumberGen = -1;
+  }
+}
+
 
 void invoice::sTaxDetail()
 {
@@ -1295,6 +1311,9 @@ bool invoice::sCheckInvoiceNumber()
 {
   if (cNew == _mode)
   {
+    if(-1 != _NumberGen && _invoiceNumber->text().toInt() != _NumberGen)
+      sReleaseNumber();
+
     if (_invoiceNumber->text().isEmpty())
     {
       QMessageBox::warning(this, tr("Enter Invoice Number"),

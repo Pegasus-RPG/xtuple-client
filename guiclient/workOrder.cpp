@@ -59,6 +59,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_showOperations, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_indented, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_woIndentedList, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+  connect(_woNumber, SIGNAL(textEdited(QString)), this, SLOT(sNumberChanged()));
 
   _bomRevision->setMode(RevisionLineEdit::Use);
   _bomRevision->setType("BOM");
@@ -85,8 +86,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _printTraveler->setEnabled(_privileges->check("PrintWorkOrderPaperWork"));
 
-  if ((_metrics->value("WONumberGeneration") == "A") ||
-      (_metrics->value("WONumberGeneration") == "O"))
+  if (_metrics->value("WONumberGeneration") == "A")
     _woNumber->setFocusPolicy(Qt::NoFocus);
 
   _project->setType(ProjectLineEdit::WorkOrder);
@@ -817,6 +817,16 @@ void workOrder::sClose()
   }
 
   close();
+}
+
+void workOrder::sNumberChanged()
+{
+  if(_wonumber != -1 && _wonumber != _woNumber->text().toInt())
+  {
+    q.prepare("SELECT releaseWoNumber(:woNumber);");
+    q.bindValue(":woNumber", _wonumber);
+    q.exec();
+  }
 }
 
 void workOrder::sHandleButtons()

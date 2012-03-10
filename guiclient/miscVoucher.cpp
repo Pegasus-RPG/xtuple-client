@@ -541,8 +541,10 @@ void miscVoucher::closeEvent(QCloseEvent *pEvent)
   if ( (_mode == cNew) && (_voheadid != -1) )
   {
     XSqlQuery delq;
-    delq.prepare("DELETE FROM vohead WHERE (vohead_id=:vohead_id);");
+    delq.prepare("DELETE FROM vohead WHERE (vohead_id=:vohead_id);"
+                 "SELECT releaseVoNumber(:number);");
     delq.bindValue(":vohead_id", _voheadid);
+    delq.bindValue(":number", _voucherNumber->text().toInt());
     delq.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Voucher"),
                          delq, __FILE__, __LINE__);

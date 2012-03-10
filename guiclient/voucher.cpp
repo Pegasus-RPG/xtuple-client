@@ -832,8 +832,10 @@ void voucher::closeEvent(QCloseEvent *pEvent)
   if (_mode == cNew)
   {
     XSqlQuery delq;
-    delq.prepare("DELETE FROM vohead WHERE (vohead_id=:vohead_id);");
+    delq.prepare("DELETE FROM vohead WHERE (vohead_id=:vohead_id);"
+                 "SELECT releaseVoNumber(:number);");
     delq.bindValue(":vohead_id", _voheadid);
+    delq.bindValue(":number", _voucherNumber->text().toInt());
     delq.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Deleting Placeholder"),
                          delq, __FILE__, __LINE__);
@@ -960,3 +962,4 @@ void voucher::sDataChanged()
 {
   setWindowModified(true);
 }
+

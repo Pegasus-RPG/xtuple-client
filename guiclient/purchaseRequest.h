@@ -30,6 +30,8 @@ public slots:
     virtual void sCreate();
     virtual void populateNumber();
     virtual void closeEvent( QCloseEvent * pEvent );
+    virtual void sNumberChanged();
+    virtual void sReleaseNumber();
 
 protected slots:
     virtual void languageChange();
@@ -42,6 +44,7 @@ private:
     bool _captive;
     int _planordid;
     int _lastWarehousid;
+    int _NumberGen;
 
 };
 
