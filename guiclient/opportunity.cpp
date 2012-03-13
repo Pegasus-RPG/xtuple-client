@@ -36,7 +36,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
   connect(_crmacct, SIGNAL(newId(int)), this, SLOT(sHandleCrmacct(int)));
-  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(sCancel()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_deleteTodoItem, SIGNAL(clicked()), this, SLOT(sDeleteTodoItem()));
   connect(_viewTodoItem, SIGNAL(clicked()), this, SLOT(sViewTodoItem()));
@@ -145,7 +145,16 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
       if (q.first())
       {
         _opheadid = q.value("result").toInt();
-        _number->setText(QString().number(_opheadid));
+      }
+      else if(q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      }
+
+      q.exec("SELECT fetchNextNumber('OpportunityNumber') AS result;");
+      if (q.first())
+      {
+        _number->setText(q.value("result").toString());
       }
       else if(q.lastError().type() != QSqlError::NoError)
       {
@@ -208,6 +217,20 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
 
 void opportunity::sCancel()
 {
+qDebug("->%d ->%d", cNew, _mode);
+  if(cNew == _mode)
+  {
+  qDebug("wtf? ->%d", _number->text().toInt());
+    q.prepare("SELECT releaseNumber('OpportunityNumber', :number);");
+    q.bindValue(":number", _number->text().toInt());
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
   if (_saved && cNew == _mode)
   {
     q.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
