@@ -10,34 +10,45 @@
 
 #include "printSoForm.h"
 
-#include <QMessageBox>
-#include <QVariant>
+#include <metasql.h>
 
-#include <openreports.h>
-#include <parameter.h>
-
-#include "guiclient.h"
+#include "errorReporter.h"
 
 printSoForm::printSoForm(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : printSinglecopyDocument(parent, name, modal, fl)
 {
-  setupUi(this);
-
+  setupUi(optionsWidget());
+  setWindowTitle(optionsWidget()->windowTitle());
   _so->setAllowedTypes(OrderLineEdit::Sales);
 
-  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sPrint()));
-  QPushButton *ok = _buttonBox->button(QDialogButtonBox::Ok);
-  if(ok)
-  {
-    connect(_so, SIGNAL(valid(bool)), ok, SLOT(setEnabled(bool)));
-    ok->setEnabled(false);
-  }
+  setDoctype("SO");
+  setReportKey("sohead_id");
 
-  _captive = FALSE; 
+  _docinfoQueryString = "SELECT cohead_id     AS docid, cohead_id,"
+                        "       cohead_number AS docnumber,"
+                        "       false         AS printed,"
+                        "<? if exists('reportname') ?>"
+                        "       (SELECT form_report_name"
+                        "          FROM form"
+                        "         WHERE ((form_name=<? value('reportname') ?>)"
+                        "            AND (form_key='SO')))"
+                        "<? else ?>"
+                        "       COALESCE((SELECT MIN(form_report_name)"
+                        "                   FROM form WHERE (form_key='SO')),"
+                        "                'SalesOrderAcknowledgement')"
+                        "<? endif ?> AS reportname"
+                        "  FROM cohead"
+                        " WHERE (cohead_id=<? value('docid') ?>);" ;
+
   _report->populate( "SELECT form_id, form_name "
                      "FROM form "
                      "WHERE (form_key='SO') "
                      "ORDER BY form_name;" );
+
+  connect(_so,    SIGNAL(newId(int, QString)), this, SLOT(sHandleNewOrderId()));
+  connect(_report,         SIGNAL(newID(int)), this, SLOT(sHandleButtons()));
+  connect(this,     SIGNAL(finishedWithAll()), this, SLOT(sFinishedWithAll()));
+  connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sPopulate(XSqlQuery*)));
 }
 
 printSoForm::~printSoForm()
@@ -50,61 +61,69 @@ void printSoForm::languageChange()
   retranslateUi(this);
 }
 
-
 enum SetResponse printSoForm::set(const ParameterList &pParams)
 {
-  XDialog::set(pParams);
-  _captive = TRUE;
-
   QVariant param;
   bool     valid;
 
-  param = pParams.value("sohead_id", &valid);
+  param = pParams.value("cohead_id", &valid);
   if (valid)
-  {
-    _so->setId(param.toInt());
-    _buttonBox->setFocus();
-  }
+    setId(param.toInt());
 
-  return NoError;
+  return printSinglecopyDocument::set(pParams);
 }
 
-void printSoForm::sPrint()
+ParameterList printSoForm::getParams(XSqlQuery *docq)
 {
-  q.prepare( "SELECT form_report_name AS report_name "
-             "  FROM form "
-             " WHERE((form_id=:form_id));");
-  q.bindValue(":form_id", _report->id());
-  q.exec();
-  if (q.first())
+  ParameterList params = printSinglecopyDocument::getParams(docq);
+
+  params.append("includeFormatted", true);
+  params.append("excludeCancelled", true);
+  params.append("reportname",       _report->code());
+
+  return params;
+}
+
+ParameterList printSoForm::getParamsDocList()
+{
+  ParameterList params = printSinglecopyDocument::getParamsDocList();
+  if (_report->isValid())
+    params.append("reportname", _report->code());
+
+  return params;
+}
+
+void printSoForm::sFinishedWithAll()
+{
+  _so->setId(-1);
+}
+
+void printSoForm::sHandleButtons()
+{
+  setPrintEnabled(_so->isValid() && _report->isValid());
+}
+
+void printSoForm::sHandleNewOrderId()
+{
+  setId(_so->id());
+  if (_so->isValid())
   {
     ParameterList params;
-    params.append("sohead_id", _so->id());
-    params.append("includeFormatted", true);
-    params.append("excludeCancelled", true);
-
-    orReport report(q.value("report_name").toString(), params);
-    if (report.isValid())
-    {
-      if (report.print())
-        emit finishedPrinting(_so->id());
-    }
-    else
-    {
-      report.reportError(this);
-      reject();
-    }
-
-    if (_captive)
-      accept();
-    else
-    {
-    _so->setId(-1);
-    _so->setFocus();
-    }
+    params.append("docid", _so->id());
+    MetaSQLQuery mql(_docinfoQueryString);
+    XSqlQuery    qry = mql.toQuery(params);
+    if (qry.first())
+      _report->setCode(qry.value("reportname").toString());
+    else if (ErrorReporter::error(QtCriticalMsg, this,
+                                  tr("Getting Sales Order Form"),
+                                  qry, __FILE__, __LINE__))
+      return;
   }
-  else
-    QMessageBox::warning( this, tr("Could not locate report"),
-                          tr("Could not locate the report definition the form \"%1\"")
-                          .arg(_report->currentText()) );
+  sHandleButtons();
+}
+
+void printSoForm::sPopulate(XSqlQuery *docq)
+{
+  if (docq)
+    _so->setId(docq->value("docid").toInt());
 }

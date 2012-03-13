@@ -10,31 +10,34 @@
 
 #include "printStatementsByCustomerType.h"
 
-#include <QMessageBox>
-#include <QSqlError>
-#include <QVariant>
-
 #include <metasql.h>
-#include <openreports.h>
 
 #include "mqlutil.h"
-
-#define DEBUG false
+#include "errorReporter.h"
 
 printStatementsByCustomerType::printStatementsByCustomerType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : printSinglecopyDocument(parent, name, modal, fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(optionsWidget()->windowTitle());
+
   _asOf->setDate(omfgThis->dbDate(), true);
-
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-
-  _captive = FALSE;
-
   _customerTypes->setType(ParameterGroup::CustomerType);
-
   if (_preferences->boolean("XCheckBox/forgetful"))
     _dueonly->setChecked(true);
+  setPrintEnabled(true);
+
+  setDoctype("AR");
+  setReportKey("cust_id");
+
+  bool    ok = false;
+  QString msg;
+  MetaSQLQuery custm = MQLUtil::mqlLoad("customers", "statement", msg, &ok);
+  if (ok)
+    _docinfoQueryString = custm.getSource();
+  else
+    ErrorReporter::error(QtCriticalMsg, this, tr("Getting Customers to Print"),
+                         msg, __FILE__, __LINE__);
 }
 
 printStatementsByCustomerType::~printStatementsByCustomerType()
@@ -47,95 +50,31 @@ void printStatementsByCustomerType::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse printStatementsByCustomerType::set(const ParameterList &pParams)
+ParameterList printStatementsByCustomerType::getParams(XSqlQuery *docq)
 {
-  XDialog::set(pParams);
-  QVariant param;
+  ParameterList params = printSinglecopyDocument::getParams(docq);
 
-  if (pParams.inList("print"))
-  {
-    sPrint();
-    return NoError_Print;
-  }
+  params.append("invoice",  tr("Invoice"));
+  params.append("debit",    tr("Debit Memo"));
+  params.append("credit",   tr("Credit Memo"));
+  params.append("deposit",  tr("Deposit"));
+  params.append("cust_id",  docq->value("cust_id").toInt());
+  params.append("asofdate", _asOf->date());
 
-  return NoError;
+  return params;
 }
 
-void printStatementsByCustomerType::sPrint()
+ParameterList printStatementsByCustomerType::getParamsDocList()
 {
-  MetaSQLQuery custm = mqlLoad("customers", "statement");
+  ParameterList params = printSinglecopyDocument::getParamsDocList();
 
-  ParameterList custp;
-  _customerTypes->appendValue(custp);
+  _customerTypes->appendValue(params);
   if (_graceDays->value() > 0)
-    custp.append("graceDays", _graceDays->value());
+    params.append("graceDays", _graceDays->value());
 
   if (_dueonly->isChecked())
-	  custp.append("graceDays", _graceDays->value());
+	  params.append("graceDays", _graceDays->value());
 
-  custp.append("asofDate", _asOf->date());
-
-  XSqlQuery custq = custm.toQuery(custp);
-  if (custq.first())
-  {
-    QPrinter printer(QPrinter::HighResolution);
-    bool userCanceled = false;
-    if (orReport::beginMultiPrint(&printer, userCanceled) == false)
-    {
-      if(!userCanceled)
-        systemError(this, tr("Could not initialize printing system for multiple reports."));
-      return;
-    }
-    bool doSetup = true;
-    do
-    {
-      if (DEBUG)
-        qDebug("printing statement for %s",
-               qPrintable(custq.value("customer").toString()));
-
-      message( tr("Printing Statement for Customer %1.")
-               .arg(custq.value("customer").toString()) );
-
-      ParameterList params;
-      params.append("invoice", tr("Invoice"));
-      params.append("debit", tr("Debit Memo"));
-      params.append("credit", tr("Credit Memo"));
-      params.append("deposit", tr("Deposit"));
-      params.append("cust_id", custq.value("cust_id").toInt());
-      params.append("asofdate", _asOf->date());
-
-      if (DEBUG) qDebug("instantiating report");
-      orReport report(custq.value("reportname").toString(), params);
-      if (! (report.isValid() && report.print(&printer, doSetup)) )
-      {
-        report.reportError(this);
-	orReport::endMultiPrint(&printer);
-        reject();
-      }
-      doSetup = false;
-
-      if (DEBUG)
-        qDebug("emitting finishedPrinting(%d)", custq.value("cust_id").toInt());
-      emit finishedPrinting(custq.value("cust_id").toInt());
-    }
-    while (custq.next());
-    orReport::endMultiPrint(&printer);
-
-    message("");
-  }
-  else if (custq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, custq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  else
-    QMessageBox::information( this, tr("No Statement to Print"),
-                              tr("<p>There are no Customers whose accounts are "
-                                 "past due within the specified AsOf date for "
-                                 "which Statements should be printed.") );
-
-  if (_captive)
-    accept();
-  else
-    _close->setText(tr("&Close"));
+  params.append("asofDate", _asOf->date());
+  return params;
 }

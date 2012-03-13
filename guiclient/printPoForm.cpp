@@ -10,25 +10,44 @@
 
 #include "printPoForm.h"
 
-#include <QMessageBox>
-#include <QVariant>
+#include <metasql.h>
 
-#include <openreports.h>
-#include <parameter.h>
-
-#include "guiclient.h"
+#include "errorReporter.h"
 
 printPoForm::printPoForm(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-  : XDialog(parent, name, modal, fl)
+  : printSinglecopyDocument(parent, name, modal, fl)
 {
-  setupUi(this);
+  setupUi(optionsWidget());
+  setWindowTitle(optionsWidget()->windowTitle());
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  setDoctype("PO");
+  setReportKey("pohead_id");
+
+  _docinfoQueryString = "SELECT pohead_id      AS docid, pohead_id,"
+                        "       pohead_number  AS docnumber,"
+                        "       pohead_printed AS printed,"
+                        "<? if exists('reportname') ?>"
+                        "       (SELECT form_report_name"
+                        "          FROM form"
+                        "         WHERE ((form_name=<? value('reportname') ?>)"
+                        "            AND (form_key='PO')))"
+                        "<? else ?>"
+                        "       COALESCE((SELECT MIN(form_report_name)"
+                        "                   FROM form WHERE (form_key='PO')),"
+                        "                'PurchaseOrder')"
+                        "<? endif ?> AS reportname"
+                        "  FROM pohead"
+                        " WHERE (pohead_id=<? value('docid') ?>);" ;
 
   _report->populate( "SELECT form_id, form_name, form_name "
                      "FROM form "
                      "WHERE (form_key='PO') "
                      "ORDER BY form_name;" );
+
+  connect(_po,    SIGNAL(newId(int, QString)), this, SLOT(sHandleNewOrderId()));
+  connect(_report,         SIGNAL(newID(int)), this, SLOT(sHandleButtons()));
+  connect(this,     SIGNAL(finishedWithAll()), this, SLOT(sFinishedWithAll()));
+  connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sPopulate(XSqlQuery*)));
 }
 
 printPoForm::~printPoForm()
@@ -41,35 +60,46 @@ void printPoForm::languageChange()
   retranslateUi(this);
 }
 
-void printPoForm::sPrint()
+ParameterList printPoForm::getParamsDocList()
 {
-  q.prepare( "SELECT form_report_name AS report_name "
-             "FROM form "
-             "WHERE ( (form_id=:form_id) );");
-  q.bindValue(":form_id", _report->id());
-  q.exec();
-  if (q.first())
+  ParameterList params = printSinglecopyDocument::getParamsDocList();
+  if (_report->isValid())
+    params.append("reportname", _report->code());
+
+  return params;
+}
+
+void printPoForm::sFinishedWithAll()
+{
+  _po->setId(-1);
+}
+
+void printPoForm::sHandleButtons()
+{
+  setPrintEnabled(_po->isValid() && _report->isValid());
+}
+
+void printPoForm::sHandleNewOrderId()
+{
+  setId(_po->id());
+  if (_po->isValid())
   {
     ParameterList params;
-    params.append("pohead_id", _po->id());
-
-    orReport report(q.value("report_name").toString(), params);
-    if (report.isValid())
-    {
-      if (report.print())
-        emit finishedPrinting(_po->id());
-    }
-    else
-    {
-      report.reportError(this);
-      reject();
-    }
-
-    _po->setId(-1);
-    _po->setFocus();
+    params.append("docid", _po->id());
+    MetaSQLQuery mql(_docinfoQueryString);
+    XSqlQuery    qry = mql.toQuery(params);
+    if (qry.first())
+      _report->setCode(qry.value("reportname").toString());
+    else if (ErrorReporter::error(QtCriticalMsg, this,
+                                  tr("Getting Purchase Order Form"),
+                                  qry, __FILE__, __LINE__))
+      return;
   }
-  else
-    QMessageBox::warning( this, tr("Could not locate report"),
-                          tr("Could not locate the report definition the form \"%1\"")
-                          .arg(_report->currentText()) );
+  sHandleButtons();
+}
+
+void printPoForm::sPopulate(XSqlQuery *docq)
+{
+  _po->setId(docq->value("docid").toInt());
+  _report->setCode(docq->value("reportname").toString());
 }

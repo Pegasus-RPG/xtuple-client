@@ -70,6 +70,7 @@ void printQuote::sHandleButtons()
 
 void printQuote::sHandleNewQuoteId()
 {
+  setId(_quote->id());
   if (_quote->isValid())
   {
     ParameterList params;

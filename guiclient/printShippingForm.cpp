@@ -73,18 +73,6 @@ void printShippingForm::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse printShippingForm::set(const ParameterList &pParams)
-{
-  QVariant param;
-  bool     valid;
-
-  param = pParams.value("shiphead_id", &valid);
-  if (valid)
-    setId(param.toInt());
-
-  return printMulticopyDocument::set(pParams);
-}
-
 void printShippingForm::clear()
 {
   depopulate();

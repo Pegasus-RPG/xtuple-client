@@ -11,10 +11,11 @@
 #ifndef PRINTPOFORM_H
 #define PRINTPOFORM_H
 
-#include "xdialog.h"
+#include "printSinglecopyDocument.h"
 #include "ui_printPoForm.h"
 
-class printPoForm : public XDialog, public Ui::printPoForm
+class printPoForm : public printSinglecopyDocument,
+                    public Ui::printPoForm
 {
     Q_OBJECT
 
@@ -22,11 +23,13 @@ class printPoForm : public XDialog, public Ui::printPoForm
     printPoForm(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printPoForm();
 
-  public slots:
-    virtual void sPrint();
+    Q_INVOKABLE virtual ParameterList getParamsDocList();
 
-  signals:
-            void finishedPrinting(int);
+  public slots:
+    virtual void sFinishedWithAll();
+    virtual void sHandleButtons();
+    virtual void sHandleNewOrderId();
+    virtual void sPopulate(XSqlQuery *docq);
 
   protected slots:
     virtual void languageChange();

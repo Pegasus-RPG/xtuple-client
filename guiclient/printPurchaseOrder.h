@@ -11,30 +11,26 @@
 #ifndef PRINTPURCHASEORDER_H
 #define PRINTPURCHASEORDER_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "printMulticopyDocument.h"
 #include "ui_printPurchaseOrder.h"
 
-class printPurchaseOrder : public XDialog, public Ui::printPurchaseOrder
+class printPurchaseOrder : public printMulticopyDocument,
+                           public Ui::printPurchaseOrder
 {
     Q_OBJECT
 
-public:
+  public:
     printPurchaseOrder(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printPurchaseOrder();
 
-public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
+    Q_INVOKABLE virtual ParameterList getParamsOneCopy(const int row,
+                                                       XSqlQuery *qry);
+    Q_INVOKABLE virtual bool isOkToPrint();
 
-protected slots:
+  protected slots:
     virtual void languageChange();
-
-    virtual void sPrint();
-
-
-private:
-    bool _captive;
+    virtual void sHandleDocUpdated(int docid);
+    virtual void sHandlePopulated(XSqlQuery *docq);
 
 };
 

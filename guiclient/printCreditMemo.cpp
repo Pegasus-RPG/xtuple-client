@@ -55,18 +55,6 @@ void printCreditMemo::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse printCreditMemo::set(const ParameterList &pParams)
-{
-  QVariant param;
-  bool     valid;
-
-  param = pParams.value("cmhead_id", &valid);
-  if (valid)
-    setId(param.toInt());
-
-  return printMulticopyDocument::set(pParams);
-}
-
 void printCreditMemo::sHandlePopulated(XSqlQuery *qry)
 {
   if (qry)

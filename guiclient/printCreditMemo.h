@@ -23,9 +23,6 @@ class printCreditMemo : public printMulticopyDocument,
     printCreditMemo(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printCreditMemo();
 
-  public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
-
   protected slots:
     virtual void languageChange();
     virtual void sHandleDocUpdated(int docid);

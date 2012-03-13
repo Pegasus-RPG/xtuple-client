@@ -11,13 +11,13 @@
 #include "printSinglecopyDocument.h"
 
 #include <QMessageBox>
+#include <QSqlRecord>
 #include <QVariant>
 
 #include <metasql.h>
 #include <openreports.h>
 
 #include "errorReporter.h"
-#include "storedProcErrorLookup.h"
 
 class printSinglecopyDocumentPrivate : public Ui::printSinglecopyDocument
 {
@@ -324,7 +324,13 @@ ParameterList printSinglecopyDocument::getParams(XSqlQuery *docq)
 {
   ParameterList params;
   if (! reportKey().isEmpty() && docq)
-    params.append(reportKey(), docq->value("docid"));
+  {
+    QVariant docid = docq->record().contains("docid") ? docq->value("docid")
+                                                      : docq->value(reportKey());
+
+    params.append(reportKey(), docid);
+    params.append("docid",     docid);
+  }
 
   return params;
 }
@@ -374,7 +380,7 @@ void printSinglecopyDocument::setDoctype(QString doctype)
     _data->_doctypefull = tr("Packing List");
   else if (doctype == "PO")
     _data->_doctypefull = tr("Purchase Order");
-  else if (doctype == "QT)")
+  else if (doctype == "QT")
     _data->_doctypefull = tr("Quote");
   else if (doctype == "SO")
     _data->_doctypefull = tr("Sales Order");
@@ -385,9 +391,12 @@ void printSinglecopyDocument::setDoctype(QString doctype)
 
 void printSinglecopyDocument::setId(int docid)
 {
-  _data->_docid = docid;
-  sPopulate();
-  emit newId(_data->_docid);
+  if (_data->_docid != docid)
+  {
+    _data->_docid = docid;
+    sPopulate();
+    emit newId(_data->_docid);
+  }
 }
 
 void printSinglecopyDocument::setPrintEnabled(bool enabled)

@@ -11,31 +11,31 @@
 #ifndef PRINTSOFORM_H
 #define PRINTSOFORM_H
 
-#include "xdialog.h"
-#include <parameter.h>
+#include "printSinglecopyDocument.h"
 #include "ui_printSoForm.h"
 #include "guiclient.h"
 
-class printSoForm : public XDialog, public Ui::printSoForm
+class printSoForm : public printSinglecopyDocument,
+                    public Ui::printSoForm
 {
     Q_OBJECT
 
-public:
+  public:
     printSoForm(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printSoForm();
 
+    Q_INVOKABLE virtual ParameterList getParams(XSqlQuery *docq);
+    Q_INVOKABLE virtual ParameterList getParamsDocList();
+
 public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
+    virtual enum SetResponse set( const ParameterList & pParams);
+    virtual void sFinishedWithAll();
+    virtual void sHandleButtons();
+    virtual void sHandleNewOrderId();
+    virtual void sPopulate(XSqlQuery *docq);
 
-signals:
-            void finishedPrinting(int sohead_id);
-
-protected slots:
+  protected slots:
     virtual void languageChange();
-
-private:
-    bool _captive;
 
 };
 

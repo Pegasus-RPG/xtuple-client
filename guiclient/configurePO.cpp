@@ -21,8 +21,6 @@ configurePO::configurePO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   if (name)
     setObjectName(name);
 
-  connect(_internalCopy, SIGNAL(toggled(bool)), _numOfCopies, SLOT(setEnabled(bool)));
-
   XSqlQuery configq;
   if (_metrics->value("Application") == "PostBooks")
   {  
@@ -32,22 +30,22 @@ configurePO::configurePO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   else
   {
     configq.prepare("SELECT pohead_id FROM pohead "
-	          "WHERE ( (pohead_dropship = 'TRUE') "
-              "  AND (pohead_status = 'O') )");
+                    "WHERE ( (pohead_dropship = 'TRUE') "
+                    "  AND (pohead_status = 'O') )");
     configq.exec();
     if (configq.first())
     {
       _enableDropShip->setChecked(TRUE);
-	  _enableDropShip->setEnabled(FALSE);
-	  _billDropShip->setChecked(_metrics->boolean("BillDropShip"));
-	  _billDropShip->setEnabled(FALSE);
+      _enableDropShip->setEnabled(FALSE);
+      _billDropShip->setChecked(_metrics->boolean("BillDropShip"));
+      _billDropShip->setEnabled(FALSE);
 
     }
     else
-	{
+    {
       _enableDropShip->setChecked(_metrics->boolean("EnableDropShipments"));
-	  _billDropShip->setChecked(_metrics->boolean("BillDropShip"));
-	}
+      _billDropShip->setChecked(_metrics->boolean("BillDropShip"));
+    }
   }
 
   if (_metrics->value("PONumberGeneration") == "M")
@@ -79,14 +77,14 @@ configurePO::configurePO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _nextPrNumber->setValidator(omfgThis->orderVal());
 
   configq.exec( "SELECT ponumber.orderseq_number AS ponumber,"
-          "       vcnumber.orderseq_number AS vcnumber,"
-          "       prnumber.orderseq_number AS prnumber "
-          "FROM orderseq AS ponumber,"
-          "     orderseq AS vcnumber,"
-          "     orderseq AS prnumber "
-          "WHERE ( (ponumber.orderseq_name='PoNumber')"
-          " AND (vcnumber.orderseq_name='VcNumber')"
-          " AND (prnumber.orderseq_name='PrNumber') );" );
+                "       vcnumber.orderseq_number AS vcnumber,"
+                "       prnumber.orderseq_number AS prnumber "
+                "FROM orderseq AS ponumber,"
+                "     orderseq AS vcnumber,"
+                "     orderseq AS prnumber "
+                "WHERE ( (ponumber.orderseq_name='PoNumber')"
+                " AND (vcnumber.orderseq_name='VcNumber')"
+                " AND (prnumber.orderseq_name='PrNumber') );" );
   if (configq.first())
   {
     _nextPoNumber->setText(configq.value("ponumber").toString());
@@ -99,19 +97,8 @@ configurePO::configurePO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _earliestPO->setChecked(_metrics->boolean("UseEarliestAvailDateOnPOItem"));
   _printPO->setChecked(_metrics->boolean("DefaultPrintPOOnSave"));
 
-  _vendorCopy->setChecked(_metrics->boolean("POVendor"));
   _requirePoitemStdCost->setChecked(_metrics->boolean("RequireStdCostForPOItem"));
   _notes->setChecked(_metrics->boolean("CopyPRtoPOItem"));
-  if (_metrics->value("POInternal").toInt() > 0)
-  {
-    _internalCopy->setChecked(TRUE);
-    _numOfCopies->setValue(_metrics->value("POInternal").toInt());
-  }
-  else
-  {
-    _internalCopy->setChecked(FALSE);
-    _numOfCopies->setEnabled(FALSE);
-  }
 
   _defaultShipVia->setText(_metrics->value("DefaultPOShipVia"));
 
@@ -131,6 +118,9 @@ void configurePO::languageChange()
 bool configurePO::sSave()
 {
   emit saving();
+
+  if (! _poCopies->save())
+    return false;
 
   if (_orderNumGeneration->currentIndex() == 0)
     _metrics->set("PONumberGeneration", QString("M"));
@@ -155,10 +145,8 @@ bool configurePO::sSave()
   _metrics->set("EnableDropShipments",  _enableDropShip->isChecked());
   _metrics->set("BillDropShip",         _billDropShip->isChecked());
  
-  _metrics->set("POVendor", _vendorCopy->isChecked());
   _metrics->set("RequireStdCostForPOItem", _requirePoitemStdCost->isChecked());
   _metrics->set("CopyPRtoPOItem", _notes->isChecked());
-  _metrics->set("POInternal", ((_internalCopy->isChecked()) ? _numOfCopies->value() : 0) );
   _metrics->set("DefaultPOShipVia", _defaultShipVia->text().trimmed());
 
   XSqlQuery configq;

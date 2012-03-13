@@ -29,7 +29,6 @@ class printShippingForm : public printMulticopyDocument,
     Q_INVOKABLE virtual void populate();
 
   public slots:
-    virtual SetResponse set(const ParameterList & pParams );
     virtual void sHandleShipment();
     virtual void sHandleOrder();
     virtual void sHandleTo();

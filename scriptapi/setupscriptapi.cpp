@@ -109,6 +109,7 @@
 #include "xcombobox.h"
 #include "xdatawidgetmapperproto.h"
 #include "xdateeditsetup.h"
+#include "xdoccopysetter.h"
 #include "xnetworkaccessmanager.h"
 #include "xsqltablemodelproto.h"
 #include "xsqlqueryproto.h"
@@ -227,6 +228,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupXComboBox(engine);
   setupXDataWidgetMapperProto(engine);
   setupXDateEdit(engine);
+  setupXDocCopySetter(engine);
   setupXSqlTableModelProto(engine);
   setupXSqlQueryProto(engine);
   setupXt(engine);

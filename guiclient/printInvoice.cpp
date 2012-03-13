@@ -68,18 +68,6 @@ void printInvoice::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse printInvoice::set(const ParameterList &pParams)
-{
-  QVariant param;
-  bool     valid;
-
-  param = pParams.value("invchead_id", &valid);
-  if (valid)
-    setId(param.toInt());
-
-  return printMulticopyDocument::set(pParams); // this does XDialog::set()
-}
-
 void printInvoice::sHandlePopulated(XSqlQuery *qry)
 {
   if (qry)

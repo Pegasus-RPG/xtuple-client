@@ -138,6 +138,10 @@ enum SetResponse printMulticopyDocument::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value(reportKey(), &valid);
+  if (valid)
+    setId(param.toInt());
+
   param = pParams.value("docid", &valid);
   if (valid)
     setId(param.toInt());
@@ -518,7 +522,7 @@ void printMulticopyDocument::setDoctype(QString doctype)
     _data->_doctypefull = tr("Packing List");
   else if (doctype == "PO")
     _data->_doctypefull = tr("Purchase Order");
-  else if (doctype == "QT)")
+  else if (doctype == "QT")
     _data->_doctypefull = tr("Quote");
   else if (doctype == "SO")
     _data->_doctypefull = tr("Sales Order");
