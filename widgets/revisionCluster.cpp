@@ -96,16 +96,23 @@ void RevisionCluster::sModeChanged()
 }
 
 RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
-  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", "rev_status", QString("case when rev_status='A' then '%1' when rev_status='P' then '%2' else '%3' end ").arg(tr("Active")).arg(tr("Pending")).arg(tr("Inactive")).toAscii(), 0, pName)
+  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", "rev_status",
+                         QString("case when rev_status='A' then '%1' when rev_status='P' then '%2' else '%3' end ").arg(tr("Active")).arg(tr("Pending")).arg(tr("Inactive")).toAscii(),
+                         0, pName),
+  _allowNew(false),
+  _isRevControl(false),
+  _mode(View),
+  _type(All),
+  _targetId(-1),
+  _cachenum(""),
+  _typeText(""),
+  _status(Inactive),
+  _activateSep(0),
+  _activateAct(0)
+
 {
   setTitles(tr("Revision"), tr("Revisions"));
-  _type=All;
-  _allowNew=FALSE;
-  _targetId = -1;
-  _cachenum = "";
-  _typeText = "";
-  _status = Inactive;
-  _mode = View;
+
   if (_x_metrics)
   {
     _isRevControl=(_x_metrics->boolean("RevControl"));
@@ -278,7 +285,7 @@ void RevisionLineEdit::setType(QString ptype)
 void RevisionLineEdit::sUpdateMenu()
 {
   VirtualClusterLineEdit::sUpdateMenu();
-  if (_x_privileges)
+  if (_x_privileges && _activateSep && _activateAct)
   {
     if((_mode==Maintain) &&
        (_status==Pending))
