@@ -19,7 +19,9 @@
 #include "warehouseZone.h"
 
 warehouse::warehouse(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl),
+    _mode(cView),
+    _warehousid(-1)
 {
   setupUi(this);
 
@@ -37,35 +39,14 @@ warehouse::warehouse(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _whsezone->addColumn(tr("Name"),        _itemColumn, Qt::AlignCenter, true,  "whsezone_name" );
   _whsezone->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "whsezone_descrip"   );
 
-  //Handle single warehouse scenario
   if (!_metrics->boolean("MultiWhs"))
   {
-    ParameterList params;
-    q.exec("SELECT warehous_id "
-              "FROM whsinfo; ");
-    if (q.first())
-    {
-      params.append("mode", "edit");
-      params.append("warehous_id", q.value("warehous_id").toInt());
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-    else
-      params.append("mode", "new");
-    set(params);
-
     _active->setChecked(TRUE);
     _active->hide();
   }
 
   _standard->setVisible(_metrics->boolean("MultiWhs"));
   _transit->setVisible(_metrics->boolean("MultiWhs"));
-
-  _warehousid = -1;
-  _mode       = cView;
 }
 
 warehouse::~warehouse()

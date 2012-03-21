@@ -16,6 +16,7 @@
 
 #include <parameter.h>
 
+#include "errorReporter.h"
 #include "guiclient.h"
 #include "inputManager.h"
 
@@ -935,7 +936,22 @@ void menuInventory::sWarehouses()
     omfgThis->handleNewWindow(new warehouses());
   else
   {
-    omfgThis->handleNewWindow(new warehouse());
+    ParameterList params;
+    XSqlQuery whsq("SELECT warehous_id FROM whsinfo;");
+    if (whsq.first())
+    {
+      params.append("mode", "edit");
+      params.append("warehous_id", whsq.value("warehous_id").toInt());
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, omfgThis, tr("Error Finding Site"),
+                                  whsq, __FILE__, __LINE__))
+      return;
+    else
+      params.append("mode", "new");
+
+    warehouse *newdlg = new warehouse();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
   }
 }
 
