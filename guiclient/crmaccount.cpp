@@ -170,8 +170,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-      //_number->setFocus();
-
       _number->clear();
 
       if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
@@ -191,7 +189,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       insq.prepare("INSERT INTO crmacct(crmacct_number, crmacct_name,"
                    "                    crmacct_active, crmacct_type)"
                    "  SELECT CASE WHEN :number > 1 THEN "
-                   "           :number::text "
+                   "           CAST(:number AS TEXT) "
                    "         ELSE 'TEMPORARY' || (last_value + 1) "
                    "         END, "
                    "   '', true, 'O'  "
@@ -202,6 +200,8 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       if (insq.first())
       {
         setId(insq.value("result").toInt());
+        if (_NumberGen <= 0)
+          _number->clear();     // don't show TEMPORARY#
         _primary->setSearchAcct(-1);
         _secondary->setSearchAcct(-1);
       }
