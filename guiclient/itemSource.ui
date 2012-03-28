@@ -2,7 +2,7 @@
 <ui version="4.0">
  <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
 open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
 It is licensed to you under the Common Public Attribution License
 version 1.0, the full text of which (including xTuple-specific Exhibits)
 is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -13,17 +13,14 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>570</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Item Source</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="verticalSpacing">
-    <number>12</number>
-   </property>
    <item row="0" column="0">
     <layout class="QHBoxLayout">
      <property name="spacing">
@@ -152,7 +149,7 @@ to be bound by its terms.</comment>
         <property name="focusPolicy">
          <enum>Qt::StrongFocus</enum>
         </property>
-        <property name="label">
+        <property name="label" stdset="0">
          <string>Vendor #:</string>
         </property>
        </widget>
@@ -305,12 +302,9 @@ to be bound by its terms.</comment>
          <number>5</number>
         </property>
         <item>
-         <widget class="XLineEdit" name="_vendorUOM">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="XComboBox" name="_vendorUOM">
+          <property name="editable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -546,7 +540,7 @@ to be bound by its terms.</comment>
        </property>
        <item>
         <widget class="XTextEdit" name="_notes">
-         <property name="spellEnable">
+         <property name="spellEnable" stdset="0">
           <bool>true</bool>
          </property>
         </widget>
@@ -644,7 +638,7 @@ to be bound by its terms.</comment>
         <number>5</number>
        </property>
        <item>
-        <widget class="XTextEdit" name="_vendorItemDescrip">
+        <widget class="QTextEdit" name="_vendorItemDescrip">
          <property name="tabChangesFocus">
           <bool>true</bool>
          </property>
@@ -696,9 +690,6 @@ to be bound by its terms.</comment>
              <property name="editable">
               <bool>true</bool>
              </property>
-             <property name="allowNull">
-              <bool>true</bool>
-             </property>
             </widget>
            </item>
           </layout>
@@ -740,7 +731,7 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="XTextEdit" name="_manufItemDescrip">
+          <widget class="QTextEdit" name="_manufItemDescrip">
            <property name="tabChangesFocus">
             <bool>true</bool>
            </property>
@@ -755,6 +746,7 @@ to be bound by its terms.</comment>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>ItemCluster</class>

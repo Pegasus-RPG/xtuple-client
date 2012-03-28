@@ -1,7 +1,7 @@
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
- * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
+ * Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
  * It is licensed to you under the Common Public Attribution License
  * version 1.0, the full text of which (including xTuple-specific Exhibits)
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
@@ -43,6 +43,7 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
 //  connect(_vendorUOM, SIGNAL(textChanged()), this, SLOT(sClearVendorUOM()));
 //  connect(_invVendorUOMRatio, SIGNAL(textChanged(QString)), this, SLOT(sClearVendorUOM()));
 
+  _vendorUOM->setType(XComboBox::UOMs);
 
   _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cTooling);
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
@@ -76,7 +77,7 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _vendorCurrency->setType(XComboBox::Currencies);
   _vendorCurrency->setLabel(_vendorCurrencyLit);
   
-  q.exec("SELECT MAX(itemsrc_id),itemsrc_manuf_name, itemsrc_manuf_name FROM itemsrc GROUP BY itemsrc_manuf_name ORDER BY itemsrc_manuf_name;");
+  q.exec("SELECT MAX(itemsrc_id),itemsrc_manuf_name, itemsrc_manuf_name FROM itemsrc GROUP BY itemsrc_manuf_name;");
   _manufName->populate(q);
   _manufName->setCurrentIndex(0);
 }
@@ -269,8 +270,8 @@ bool itemSource::sSave()
       return false;
     }
   }
-
-  if (_vendorUOM->text().length() == 0)
+  
+  if (_vendorUOM->currentText().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Item Source"),
                           tr( "You must indicate the Unit of Measure that this Item Source is sold in\n"
@@ -346,7 +347,7 @@ bool itemSource::sSave()
   q.bindValue(":itemsrc_vend_id", _vendor->id());
   q.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
   q.bindValue(":itemsrc_vend_item_descrip", _vendorItemDescrip->toPlainText());
-  q.bindValue(":itemsrc_vend_uom", _vendorUOM->text().trimmed());
+  q.bindValue(":itemsrc_vend_uom", _vendorUOM->currentText());
   q.bindValue(":itemsrc_invvendoruomratio", _invVendorUOMRatio->toDouble());
   q.bindValue(":itemsrc_upccode", _upcCode->text());
   q.bindValue(":itemsrc_minordqty", _minOrderQty->toDouble());
@@ -436,16 +437,13 @@ void itemSource::sDelete()
 
 void itemSource::sPopulateMenu(QMenu *pMenu)
 {
-  if (_mode != cView)
-  {
-    QAction *menuItem;
+  QAction *menuItem;
 
-    menuItem = pMenu->addAction("Edit Item Source Price...", this, SLOT(sEdit()));
-    menuItem->setEnabled(_privileges->check("MaintainItemSources"));
+  menuItem = pMenu->addAction("Edit Item Source Price...", this, SLOT(sEdit()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSources"));
 
-    menuItem = pMenu->addAction("Delete Item Source Price...", this, SLOT(sDelete()));
-    menuItem->setEnabled(_privileges->check("MaintainItemSources"));
-  }
+  menuItem = pMenu->addAction("Delete Item Source Price...", this, SLOT(sDelete()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSources"));
 }
 
 void itemSource::sFillPriceList()
@@ -487,7 +485,9 @@ void itemSource::populate()
     _vendor->setId(itemsrcQ.value("itemsrc_vend_id").toInt());
     _vendorItemNumber->setText(itemsrcQ.value("itemsrc_vend_item_number").toString());
     _vendorItemDescrip->setText(itemsrcQ.value("itemsrc_vend_item_descrip").toString());
-    _vendorUOM->setText(itemsrcQ.value("itemsrc_vend_uom").toString());
+	//U-HAUL
+    _vendorUOM->setCode(itemsrcQ.value("itemsrc_vend_uom").toString());
+	//U-HAUL
     _invVendorUOMRatio->setDouble(itemsrcQ.value("itemsrc_invvendoruomratio").toDouble());
     _upcCode->setText(itemsrcQ.value("itemsrc_upccode"));
     _minOrderQty->setDouble(itemsrcQ.value("itemsrc_minordqty").toDouble());
