@@ -102,17 +102,18 @@ bool configureIE::sSave()
   else if (_external->isChecked())
   {
     if (_linuxCmd->text().isEmpty() && _macCmd->text().isEmpty() &&
-        _windowsCmd->text().isEmpty())
+        _windowsCmd->text().isEmpty() &&
+        QMessageBox::question(this, tr("Incomplete Data"),
+                              tr("<p>XSLT is not configured. Some XML imports may fail. "
+                                 "Would you like to fix this now?</p>"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No) == QMessageBox::Yes)
     {
-      QMessageBox::critical(this, tr("Incomplete Data"),
-                            tr("<p>Please enter the XSLT processor command "
-                               "line for at least one platform."));
-      _tabs->setCurrentIndex(_tabs->indexOf(_importTab));
+      _tabs->setCurrentIndex(_tabs->indexOf(_mappingTab));
       _linuxCmd->setFocus();
       return false;
     }
-    else
-      _metrics->set("XSLTLibrary",        ! _external->isChecked());
+    _metrics->set("XSLTLibrary",        ! _external->isChecked());
   }
   else
   {
