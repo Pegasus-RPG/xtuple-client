@@ -216,7 +216,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _chartempl->setItemDelegate(delegate);
 
   key = omfgThis->_key;
-  if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
+  if(!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
   {
     _creditcardsButton->hide();
     _cctransButton->hide();
