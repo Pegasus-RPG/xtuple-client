@@ -129,7 +129,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
       _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
   }
 
-  if (!_metrics->boolean("CCAccept") && ! _privileges->check("ProcessCreditCards"))
+  if (!_metrics->boolean("CCAccept") || ! _privileges->check("ProcessCreditCards"))
     _tab->removeTab(_tab->indexOf(_creditCardTab));
 
   if(_metrics->boolean("HideApplyToBalance"))
@@ -205,7 +205,6 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 	  _transType = cEdit;
-      //_tab->removeTab(_tab->indexOf(_creditCardTab));
 
       _cust->setReadOnly(TRUE);
 
@@ -214,7 +213,6 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     {
       _mode = cView;
 	  _transType = cView;
-      _tab->removeTab(_tab->indexOf(_creditCardTab));
 
       _cust->setReadOnly(TRUE);
       _received->setEnabled(FALSE);
@@ -260,7 +258,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
   param = pParams.value("cust_id", &valid);
   if(cNew == _mode && valid)
     _cust->setId(param.toInt());
-    
+
   param = pParams.value("docnumber", & valid);
   if (valid)
     _searchDocNum->setText(param.toString());
@@ -307,7 +305,7 @@ void cashReceipt::sApply()
       return;
 	}
   }
-	  
+
   bool update  = FALSE;
   QList<XTreeWidgetItem*> list = _aropen->selectedItems();
   XTreeWidgetItem *cursor = 0;
@@ -330,7 +328,7 @@ void cashReceipt::sApply()
     params.append("cashrcpt_id", _cashrcptid);
     params.append("aropen_id", cursor->id());
     params.append("curr_id", _received->id());
-	
+
     cashReceiptItem newdlg(this, "", TRUE);
     newdlg.set(params);
 
@@ -358,7 +356,7 @@ void cashReceipt::sApplyLineBalance()
   applyToBal.bindValue(":curr_id", _received->id());
   applyToBal.bindValue(":docdate", _docDate->date());
   applyToBal.exec();
-	  
+
   XSqlQuery applyq;
   applyq.prepare("SELECT applycashreceiptlinebalance(:cashrcpt_id,"
                  "       :cashrcptitem_aropen_id,:amount,:curr_id) AS result;");
@@ -458,7 +456,7 @@ void cashReceipt::sAdd()
   if(_mode == cNew)
     if(!save(true))
       return;
-	  
+
   ParameterList params;
   params.append("mode", "new");
   params.append("cashrcpt_id", _cashrcptid);
@@ -788,7 +786,7 @@ void cashReceipt::sFillApplyList()
       if(_mindate > _applDate->date())
         _applDate->setDate(_mindate);
     }
-    
+
 	XSqlQuery discount ;
 
 	discount.prepare( "SELECT SUM(COALESCE(cashrcptitem_discount, 0.00)) AS disc "
