@@ -39,7 +39,7 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_tracknum, SIGNAL(highlighted(const QString&)), this, SLOT(sFillFreight()));
 
   _captive = FALSE;
-  
+
   _coitem->addColumn( tr("#"),           _whsColumn,  Qt::AlignCenter , true, "linenumber");
   _coitem->addColumn( tr("Item Number"), _itemColumn, Qt::AlignLeft   , true, "item_number");
   _coitem->addColumn( tr("Description"), -1,          Qt::AlignLeft   , true, "itemdescrip");
@@ -53,12 +53,12 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   sCreateToggled(_create->isChecked());
   sHandleButtons();
   _reject = false;
-  
+
   _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Sales |
                           OrderLineEdit::Transfer);
   _order->setFromSitePrivsEnforced(TRUE);
-  
+
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
 
@@ -383,7 +383,7 @@ void shipOrder::sShip()
     _order->setFocus();
   }
 
-  // Update the shipdatasum record to reflect shipped     
+  // Update the shipdatasum record to reflect shipped
   shipq.prepare("UPDATE shipdatasum "
 		"   SET shipdatasum_shipped=true "
                 " WHERE ((shipdatasum_cosmisc_tracknum = :tracknum)"
@@ -430,7 +430,7 @@ void shipOrder::sHandleSo()
 
   q.prepare( "SELECT cohead_holdtype, cust_name, cohead_shiptoname, "
              "       cohead_shiptoaddress1, cohead_curr_id, cohead_freight "
-             "FROM cohead, cust "
+             "FROM cohead, custinfo "
              "WHERE ((cohead_cust_id=cust_id) "
              "  AND  (cohead_id=:sohead_id));" );
   q.bindValue(":sohead_id", _order->id());
@@ -773,7 +773,7 @@ void shipOrder::sFillList()
       systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    
+
     QString vals = "<? if exists(\"sohead_id\") ?>"
 	    "SELECT SUM(round((shipitem_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS value "
             "FROM shiphead JOIN shipitem ON (shipitem_shiphead_id=shiphead_id) "

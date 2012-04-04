@@ -27,7 +27,7 @@
    to better fit the printSinglecopyDocument model.
    TODO: figure out how to simplify it anyway. use orderhead table?
  */
-class printPackingListPrivate 
+class printPackingListPrivate
 {
   public:
     printPackingListPrivate(::printPackingList *parent) :
@@ -254,8 +254,10 @@ void printPackingList::sPopulate()
                     "SELECT cohead_number AS order_number,"
                     "       cohead_orderdate AS orderdate,"
                     "       cohead_custponumber AS alternate_number,"
-                    "       cust_name AS name, cust_phone AS phone "
-                    "FROM cohead, cust "
+                    "       cust_name AS name, cntct_phone AS phone "
+                    "FROM cohead "
+                    " JOIN custinfo ON (cohead_cust_id=cust_id)"
+                    " LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
                     "WHERE ( (cohead_cust_id=cust_id)"
                     " AND (cohead_id=<? value('sohead_id') ?>) );"
                     "<? elseif exists('tohead_id') ?>"

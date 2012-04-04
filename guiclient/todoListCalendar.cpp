@@ -229,7 +229,7 @@ void todoListCalendar::sDelete()
 void todoListCalendar::sEditCustomer()
 {
   XSqlQuery cust;
-  cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
+  cust.prepare("SELECT cust_id FROM custinfo WHERE (cust_number=:number);");
   cust.bindValue(":number", _list->currentItem()->text(9));
   if (cust.exec() && cust.first())
   {
@@ -249,7 +249,7 @@ void todoListCalendar::sEditCustomer()
 void todoListCalendar::sViewCustomer()
 {
   XSqlQuery cust;
-  cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
+  cust.prepare("SELECT cust_id FROM custinfo WHERE (cust_number=:number);");
   cust.bindValue(":number", _list->currentItem()->text(9));
   if (cust.exec() && cust.first())
   {
@@ -302,7 +302,7 @@ void todoListCalendar::sFillList(const QDate & date)
                 "       END AS due_qtforegroundrole "
                 "  FROM todoitem() LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
                 "                  LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
-                "                  LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+                "                  LEFT OUTER JOIN custinfo ON (cust_id=crmacct_cust_id) "
                 "                  LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
                 " WHERE( (todoitem_due_date = <? value(\"date\") ?>)"
                 "  <? if not exists(\"completed\") ?>"

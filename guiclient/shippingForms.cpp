@@ -95,7 +95,7 @@ void shippingForms::sView()
 void shippingForms::sDelete()
 {
   q.prepare( "SELECT cust_id "
-             "FROM cust "
+             "FROM custinfo "
              "WHERE (cust_shipform_id=:shipform_id);" );
   q.bindValue(":shipform_id", _bolformat->id());
   q.exec();

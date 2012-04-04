@@ -199,7 +199,7 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
 
 void creditMemo::setNumber()
 {
-  if ( (_metrics->value("CMNumberGeneration") == "A") || 
+  if ( (_metrics->value("CMNumberGeneration") == "A") ||
        (_metrics->value("CMNumberGeneration") == "O")   )
   {
     q.prepare("SELECT fetchCmNumber() AS cmnumber;");
@@ -251,7 +251,7 @@ void creditMemo::sSave()
   }
 
   if ( _mode == cNew &&
-       ( (_metrics->value("CMNumberGeneration") == "O") || 
+       ( (_metrics->value("CMNumberGeneration") == "O") ||
          (_metrics->value("CMNumberGeneration") == "M")   ) )
   {
     XSqlQuery query;
@@ -292,7 +292,7 @@ void creditMemo::sSave()
     _miscChargeAccount->setFocus();
     return;
   }
-  
+
   if (_total->localValue() < 0 )
   {
     QMessageBox::information(this, tr("Total Less than Zero"),
@@ -305,11 +305,11 @@ void creditMemo::sSave()
   // but don't make any global changes to the data and ignore errors
   _billToAddr->save(AddressCluster::CHANGEONE);
   _shipToAddr->save(AddressCluster::CHANGEONE);
-  
+
   // finally save the cmhead
   if (!save())
     return;
-	
+
   omfgThis->sCreditMemosUpdated();
 
   _cmheadid = -1;
@@ -544,7 +544,7 @@ void creditMemo::sPopulateCustomerInfo()
 
         _billtoName->setEnabled(ffBillTo);
         _billToAddr->setEnabled(ffBillTo);
-	  
+
         if ((cNew == _mode) && (query.value("shiptoid").toInt() != -1))
           populateShipto(query.value("shiptoid").toInt());
       }
@@ -577,7 +577,7 @@ qDebug("_numbergen->%d, memo#->%d", _NumberGen, _memoNumber->text().toInt());
     sReleaseNumber();
 
   if ( (_memoNumber->text().length()) && _mode != cNew &&
-       ( (_metrics->value("CMNumberGeneration") == "O") || 
+       ( (_metrics->value("CMNumberGeneration") == "O") ||
          (_metrics->value("CMNumberGeneration") == "M")   ) )
   {
     _memoNumber->setEnabled(FALSE);
@@ -595,7 +595,7 @@ qDebug("_numbergen->%d, memo#->%d", _NumberGen, _memoNumber->text().toInt());
       _cust->setReadOnly(TRUE);
 
       populate();
-     
+
       if (query.value("cmhead_posted").toBool())
       {
         _memoDate->setEnabled(FALSE);
@@ -669,14 +669,14 @@ void creditMemo::sNew()
 {
   if (!save())
     return;
-	
+
   ParameterList params;
   params.append("mode", "new");
   params.append("cmhead_id", _cmheadid);
 
   creditMemoItem newdlg(this, "", TRUE);
   newdlg.set(params);
-  
+
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
@@ -685,7 +685,7 @@ void creditMemo::sEdit()
 {
   if (!save())
     return;
-	
+
   ParameterList params;
   params.append("mode", "edit");
   params.append("cmhead_id", _cmheadid);
@@ -693,7 +693,7 @@ void creditMemo::sEdit()
 
   creditMemoItem newdlg(this, "", TRUE);
   newdlg.set(params);
-  
+
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
@@ -822,7 +822,7 @@ void creditMemo::populate()
   XSqlQuery cmhead;
   cmhead.prepare( "SELECT cmhead.*,"
                   "       cust_name, cust_ffbillto, cust_ffshipto "
-                  "FROM cust, cmhead "
+                  "FROM custinfo, cmhead "
                   "WHERE ( (cmhead_cust_id=cust_id)"
                   " AND (cmhead_id=:cmhead_id) );" );
   cmhead.bindValue(":cmhead_id", _cmheadid);
@@ -1008,6 +1008,6 @@ void creditMemo::sFreightChanged()
     _freightCache = _freight->localValue();
     sCalculateTax();
     sCalculateTotal();
-  }   
+  }
 }
 

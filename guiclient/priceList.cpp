@@ -176,7 +176,7 @@ void priceList::sSelect()
       q.prepare( "SELECT currToLocal(:curr_id, "
                  "        item_listprice - (item_listprice * cust_discntprcnt),"
                  "        :effective) AS price "
-                 "FROM cust, item "
+                 "FROM custinfo, item "
                  "WHERE ( (cust_id=:cust_id)"
                  " AND (item_id=:item_id) );" );
       q.bindValue(":cust_id", _cust->id());

@@ -274,7 +274,7 @@ void shipTo::populate()
                 "       shipto_addr_id,"
                 "       crmacct_id "
                 "FROM shiptoinfo "
-                "  LEFT OUTER JOIN cust ON (shipto_cust_id=cust_id) "
+                "  LEFT OUTER JOIN custinfo ON (shipto_cust_id=cust_id) "
                 "  LEFT OUTER JOIN crmacct ON (cust_id=crmacct_cust_id) "
                 "WHERE (shipto_id=:shipto_id);" );
   popq.bindValue(":shipto_id", _shiptoid);

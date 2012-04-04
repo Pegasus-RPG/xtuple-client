@@ -71,7 +71,7 @@ void postCashReceipts::sPost()
   }
 
   q.exec( "SELECT cashrcpt_id, cust_number "
-          "FROM cashrcpt, cust "
+          "FROM cashrcpt, custinfo "
           "WHERE ( (NOT cashrcpt_posted)"
           "  AND   (NOT cashrcpt_void)"
           "  AND   (cashrcpt_cust_id=cust_id) );" );
@@ -81,7 +81,7 @@ void postCashReceipts::sPost()
 
     XSqlQuery post;
     post.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
-    
+
     do
     {
       message( tr("Posting Cash Receipt #%1...")

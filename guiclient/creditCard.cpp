@@ -21,13 +21,13 @@
 #define DEBUG false
 
 int creditCard::saveCreditCard(QWidget *parent,
-                              int &custId, 
-                              QString &ccName, 
-                              QString &ccAddress1, 
+                              int &custId,
+                              QString &ccName,
+                              QString &ccAddress1,
                               QString &ccAddress2,
-                              QString &ccCity, 
-                              QString &ccState, 
-                              QString &ccZip, 
+                              QString &ccCity,
+                              QString &ccState,
+                              QString &ccZip,
                               QString &ccCountry,
                               QString &ccNumber,
                               QString &ccType,
@@ -40,7 +40,7 @@ int creditCard::saveCreditCard(QWidget *parent,
   everythingOK = true;
   int mode = cNew;
   int seq = 0;
-  
+
   if (ccId > 0)
     mode = cEdit;
 
@@ -100,7 +100,7 @@ int creditCard::saveCreditCard(QWidget *parent,
 
   QString key;
   key = omfgThis->_key;
-  
+
   ccNumber = ccNumber.trimmed().remove(QRegExp("[-\\s]"));
   bool allNumeric = QRegExp( "[0-9]{13,16}" ).exactMatch(ccNumber);
   bool hasBeenFormatted = QRegExp( "\\**([0-9]){4}" ).exactMatch(ccNumber); // tricky - repeated *s
@@ -324,7 +324,7 @@ enum SetResponse creditCard::set(const ParameterList &pParams)
   {
     XSqlQuery cust;
     cust.prepare( "SELECT cust_number, cust_name "
-               "FROM cust "
+               "FROM custinfo "
                "WHERE (cust_id=:cust_id);" );
     cust.bindValue(":cust_id", _custid);
     cust.exec();
@@ -423,7 +423,7 @@ void creditCard::sSave()
   QString ccType        = QString(*(_fundsTypes2 + _fundsType2->currentIndex()));
   QString ccExpireMonth	= _expireMonth->text();
   QString ccExpireYear	= _expireYear->text();
-  
+
   int result = saveCreditCard(this,
                               _custid,
                               ccName,
@@ -439,7 +439,7 @@ void creditCard::sSave()
                               ccExpireYear,
                               _ccardid,
                               ccActive);
-  
+
   switch (result)
   {
     case -1:

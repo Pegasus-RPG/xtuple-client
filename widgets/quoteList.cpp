@@ -115,11 +115,9 @@ void quoteList::set(const ParameterList &pParams)
   param = pParams.value("quhead_id", &valid);
   if (valid)
     _quheadid = param.toInt();
-    
   param = pParams.value("quoteType", &valid);
   if (valid)
     _type = param.toInt();
-    
   param = pParams.value("openOnly", &valid);
   if (valid)
     _openOnly = param.toBool();
@@ -127,7 +125,6 @@ void quoteList::set(const ParameterList &pParams)
   param = pParams.value("cust_id", &valid);
   if (valid)
     _custid = param.toInt();
- 
   sFillList();
 }
 
@@ -142,7 +139,7 @@ void quoteList::sFillList()
 
   sql = "SELECT DISTINCT quhead_id, quhead_number, cust_name, quhead_quotedate,"
         "                MIN(quitem_scheddate) AS duedate "
-        "FROM quhead, quitem, itemsite, cust "
+        "FROM quhead, quitem, itemsite, custinfo "
         "WHERE ((quhead_cust_id=cust_id)"
         " AND (quitem_quhead_id=quhead_id)"
         " AND (quitem_itemsite_id=itemsite_id)";

@@ -39,7 +39,7 @@ pricingScheduleAssignments::pricingScheduleAssignments(QWidget* parent, const ch
   connect(_ipsass, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
 //  statusBar()->hide();
-  
+
   _ipsass->addColumn(tr("Ship-To"),          _itemColumn, Qt::AlignCenter, true, "shiptonum" );
   _ipsass->addColumn(tr("Customer #"),       _itemColumn, Qt::AlignCenter, true, "custnumber" );
   _ipsass->addColumn(tr("Cust. Name"),       150,         Qt::AlignCenter, true, "custname" );
@@ -140,13 +140,13 @@ void pricingScheduleAssignments::sFillList()
                      "            WHEN (COALESCE(LENGTH(ipsass_shipto_pattern), 0) > 0) THEN ipsass_shipto_pattern"
                      "            ELSE TEXT('ANY')"
                      "       END AS shiptonum,"
-                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT cust_number FROM shipto, cust WHERE ((shipto_cust_id=cust_id) AND (shipto_id=ipsass_shipto_id))) "
+                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT cust_number FROM shipto, custinfo WHERE ((shipto_cust_id=cust_id) AND (shipto_id=ipsass_shipto_id))) "
                      "            WHEN (ipsass_cust_id=-1) THEN TEXT('Any')"
-                     "            ELSE (SELECT cust_number FROM cust WHERE (cust_id=ipsass_cust_id))"
+                     "            ELSE (SELECT cust_number FROM custinfo WHERE (cust_id=ipsass_cust_id))"
                      "       END AS custnumber,"
-                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT cust_name FROM shipto, cust WHERE ((shipto_cust_id=cust_id) AND (shipto_id=ipsass_shipto_id))) "
+                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT cust_name FROM shipto, custinfo WHERE ((shipto_cust_id=cust_id) AND (shipto_id=ipsass_shipto_id))) "
                      "            WHEN (ipsass_cust_id=-1) THEN ''"
-                     "            ELSE (SELECT cust_name FROM cust WHERE (cust_id=ipsass_cust_id))"
+                     "            ELSE (SELECT cust_name FROM custinfo WHERE (cust_id=ipsass_cust_id))"
                      "       END AS custname,"
                      "       CASE WHEN (ipsass_cust_id != -1) THEN TEXT('N/A')"
                      "            WHEN (ipsass_shipto_id != -1) THEN TEXT('N/A')"

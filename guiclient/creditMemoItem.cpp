@@ -64,14 +64,14 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _discountFromSale->setValidator(new XDoubleValidator(-9999, 100, 2, this));
 
   _taxType->setEnabled(_privileges->check("OverrideTax"));
-  
+
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
     _warehouse->hide();
   }
-  
+
   adjustSize();
 }
 
@@ -457,7 +457,7 @@ void creditMemoItem::populate()
   cmitem.bindValue(":cmitem_id", _cmitemid);
   cmitem.exec();
   if (cmitem.first())
-  { 
+  {
     _cmheadid = cmitem.value("cmitem_cmhead_id").toInt();
     _taxzoneid = cmitem.value("cmhead_taxzone_id").toInt();
     _rsnCode->setId(cmitem.value("cmitem_rsncode_id").toInt());
@@ -561,18 +561,18 @@ void creditMemoItem::sListPrices()
              "        AND (ipsass_shipto_id=:shipto_id)"
              "        AND (ipsass_shipto_id != -1)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-             
+
              "       UNION SELECT ipsprice_price AS price"
-             "       FROM ipsass, ipshead, ipsprice, cust "
+             "       FROM ipsass, ipshead, ipsprice, custinfo "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
              "        AND (ipsass_custtype_id=cust_custtype_id)"
              "        AND (cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-             
+
              "       UNION SELECT ipsprice_price AS price"
-             "       FROM ipsass, ipshead, ipsprice, custtype, cust "
+             "       FROM ipsass, ipshead, ipsprice, custtype, custinfo "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
@@ -581,7 +581,7 @@ void creditMemoItem::sListPrices()
              "        AND (cust_custtype_id=custtype_id)"
              "        AND (cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)))"
-             
+
              "       UNION SELECT ipsprice_price AS price"
              "       FROM ipsass, ipshead, ipsprice, shipto "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
@@ -601,7 +601,7 @@ void creditMemoItem::sListPrices()
              "        AND (CURRENT_DATE BETWEEN sale_startdate AND (sale_enddate - 1)) ) "
 
              "       UNION SELECT (item_listprice - (item_listprice * cust_discntprcnt)) AS price "
-             "       FROM item, cust "
+             "       FROM item, custinfo "
              "       WHERE ( (item_sold)"
              "        AND (NOT item_exclusive)"
              "        AND (item_id=:item_id)"
@@ -643,7 +643,7 @@ void creditMemoItem::sCalculateTax()
   XSqlQuery calcq;
   calcq.prepare( "SELECT calculateTax(cmhead_taxzone_id,:taxtype_id,cmhead_docdate,cmhead_curr_id,ROUND(:ext,2)) AS tax "
                  "FROM cmhead "
-                 "WHERE (cmhead_id=:cmhead_id); "); 
+                 "WHERE (cmhead_id=:cmhead_id); ");
   calcq.bindValue(":cmhead_id", _cmheadid);
   calcq.bindValue(":taxtype_id", _taxType->id());
   calcq.bindValue(":ext", _extendedPrice->localValue());
@@ -667,10 +667,10 @@ void creditMemoItem::sTaxDetail()
   params.append("subtotal", _extendedPrice->localValue());
   params.append("curr_id",  _tax->id());
   params.append("sense", -1);
-  
+
   if(cView == _mode)
     params.append("readOnly");
-  
+
   if(_saved == true)
   {
     params.append("order_id", _cmitemid);
@@ -678,7 +678,7 @@ void creditMemoItem::sTaxDetail()
   }
 
   newdlg.set(params);
-  
+
   if (newdlg.set(params) == NoError && newdlg.exec())
   {
     if (_taxType->id() != newdlg.taxtype())

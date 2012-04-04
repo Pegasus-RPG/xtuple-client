@@ -171,7 +171,7 @@ void prospect::sSave()
 	       "  AND (prospect_id<>:prospect_id) "
 	       "UNION "
 	       "SELECT cust_name AS name "
-	       "FROM cust "
+	       "FROM custinfo "
 	       "WHERE (UPPER(cust_number)=UPPER(:prospect_number));" );
     dupq.bindValue(":prospect_number", _number->text().trimmed());
     dupq.bindValue(":prospect_id",     _prospectid);
@@ -304,7 +304,7 @@ void prospect::sEditQuote()
   ParameterList params;
   params.append("mode", "editQuote");
   params.append("quhead_id", _quotes->id());
-    
+
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -315,7 +315,7 @@ void prospect::sViewQuote()
   ParameterList params;
   params.append("mode", "viewQuote");
   params.append("quhead_id", _quotes->id());
-    
+
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);

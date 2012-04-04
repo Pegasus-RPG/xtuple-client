@@ -257,7 +257,7 @@ void customerGroup::sNew()
 void customerGroup::sFillList()
 {
   q.prepare( "SELECT custgrpitem_id, cust_number, cust_name "
-             "FROM custgrpitem, cust "
+             "FROM custgrpitem, custinfo "
              "WHERE ( (custgrpitem_cust_id=cust_id) "
              " AND (custgrpitem_custgrp_id=:custgrp_id) ) "
              "ORDER BY cust_number;" );

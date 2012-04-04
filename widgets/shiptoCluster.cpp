@@ -233,8 +233,10 @@ void shipToList::set(const ParameterList &pParams)
   if (valid)
   {
      XSqlQuery cust;
-     cust.prepare("SELECT cust_number, cust_name, cust_address1 "
-                  "FROM cust "
+     cust.prepare("SELECT cust_number, cust_name, addr_line1 "
+                  "FROM custinfo "
+                  "LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id) "
+                  "LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id) "
                   "WHERE (cust_id=:cust_id)");
      cust.bindValue(":cust_id", param.toInt());
      cust.exec();
@@ -242,7 +244,7 @@ void shipToList::set(const ParameterList &pParams)
      {
        _custNumber->setText(cust.value("cust_number").toString());
        _custName->setText(cust.value("cust_name").toString());
-       _custAddr->setText(cust.value("cust_address1").toString());
+       _custAddr->setText(cust.value("addr_line1").toString());
      }
   }
 }

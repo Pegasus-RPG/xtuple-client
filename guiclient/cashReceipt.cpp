@@ -708,7 +708,7 @@ void cashReceipt::sPopulateCustomerInfo(int)
   if (_mode == cNew)
   {
     XSqlQuery cust;
-    cust.prepare("SELECT cust_curr_id FROM cust WHERE cust_id = :cust_id;");
+    cust.prepare("SELECT cust_curr_id FROM custinfo WHERE cust_id = :cust_id;");
     cust.bindValue(":cust_id", _cust->id());
     cust.exec();
     if (cust.first())

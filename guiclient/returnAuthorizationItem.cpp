@@ -52,7 +52,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _crmacctid = -1;
   _unitcost = 0;
   _origsoid = -1;
-  _costmethod = ""; 
+  _costmethod = "";
   _coitemitemsiteid = -1;
 
   connect(_discountFromSale,     SIGNAL(editingFinished()),                    this, SLOT(sCalculateFromDiscount()));
@@ -86,11 +86,11 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_showAvailability,     SIGNAL(toggled(bool)),                  this, SLOT(sDetermineAvailability()));
   connect(this,                  SIGNAL(rejected()),                     this, SLOT(rejectEvent()));
   connect(_authLotSerial,        SIGNAL(toggled(bool)),                  _qtyUOM, SLOT(setDisabled(bool)));
-      
+
   connect(_new,                  SIGNAL(clicked()),	                     this, SLOT(sNew()));
   connect(_edit,	               SIGNAL(clicked()),	                     this, SLOT(sEdit()));
   connect(_delete,	             SIGNAL(clicked()),	                     this, SLOT(sDelete()));
-    
+
   _raitemls->addColumn(tr("Lot/Serial"),  -1,           Qt::AlignLeft , true, "ls_number"  );
   _raitemls->addColumn(tr("Warranty"),	  _dateColumn,  Qt::AlignRight, true, "lsreg_expiredate"  );
   _raitemls->addColumn(tr("Registered"),  _qtyColumn,   Qt::AlignRight, true, "raitemls_qtyregistered"  );
@@ -117,7 +117,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _onOrder->setPrecision(omfgThis->qtyVal());
   _available->setPrecision(omfgThis->qtyVal());
   _discountFromList->setPrecision(omfgThis->percentVal());
-  
+
   //If not multi-warehouse hide whs controls
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -125,16 +125,16 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
     _warehouse->hide();
     _shipWhs->hide();
     _shipWhsLit->hide();
-  } 
+  }
 
   //Remove lot/serial  if no lot/serial tracking
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removeTab(_tab->indexOf(_lotserial));
-  
+
   adjustSize();
 
   _altcosAccntid->setType(GLCluster::cRevenue | GLCluster::cExpense);
-  
+
   q.exec("BEGIN;"); //In case problems or we cancel out
 }
 
@@ -211,7 +211,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      
+
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_saleDiscountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateSaleFromDiscount()));
 
@@ -285,7 +285,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_saleDiscountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateSaleFromDiscount()));
- 
+
       _save->setFocus();
     }
     else if (param.toString() == "view")
@@ -334,7 +334,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     populate();
   }
 
-  return NoError; 
+  return NoError;
 }
 
 void returnAuthorizationItem::sSaveClicked()
@@ -347,10 +347,10 @@ void returnAuthorizationItem::sSaveClicked()
 }
 
 bool returnAuthorizationItem::sSave()
-{ 
+{
   // credit, return, replace, service, ship
   const char *dispositionTypes[] = { "C", "R", "P", "V", "S" };
-  
+
   if (!(_scheduledDate->isValid()) && _scheduledDate->isEnabled())
   {
     QMessageBox::warning( this, windowTitle(),
@@ -358,7 +358,7 @@ bool returnAuthorizationItem::sSave()
     _scheduledDate->setFocus();
     return false;
   }
-  
+
   if ( (_coitemid != -1) && (_qtyAuth->toDouble() > _soldQty) )
     if (QMessageBox::question(this, tr("Over Authorize"),
             tr("<p>The authorized quantity exceeds "
@@ -431,7 +431,7 @@ bool returnAuthorizationItem::sSave()
                "    raitem_unitcost=:raitem_unitcost, "
                "    raitem_custpn=:raitem_custpn "
                "WHERE (raitem_id=:raitem_id);" );
-    
+
      if (_disposition->currentIndex() >= 2)
      {
        XSqlQuery coitemsite;
@@ -478,7 +478,7 @@ bool returnAuthorizationItem::sSave()
   if (_disposition->currentIndex() >= 2) // replace, service, or ship
     q.bindValue(":shipWhs_id", _shipWhs->id());
   if (_altcosAccntid->id() != -1)
-    q.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id()); 
+    q.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id());
   q.bindValue(":raitem_scheddate", _scheduledDate->date());
   q.bindValue(":raitem_warranty",QVariant(_warranty->isChecked()));
   q.bindValue(":raitem_saleprice", _saleNetUnitPrice->localValue());
@@ -491,7 +491,7 @@ bool returnAuthorizationItem::sSave()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
   }
-  
+
 //  Check to see if a S/O should be re-scheduled
   if (_orderId != -1)
   {
@@ -659,7 +659,7 @@ bool returnAuthorizationItem::sSave()
     }
   }
   _mode = cEdit;
-  return true; 
+  return true;
 }
 
 void returnAuthorizationItem::sPopulateItemInfo()
@@ -712,13 +712,13 @@ void returnAuthorizationItem::sPopulateItemInfo()
     _invuomid = item.value("item_inv_uom_id").toInt();
     _listPrice->setBaseValue(item.value("item_listprice").toDouble());
     _unitCost->setBaseValue(item.value("stdcost").toDouble());
-    _taxType->setId(item.value("taxtype_id").toInt()); 
+    _taxType->setId(item.value("taxtype_id").toInt());
   }
   else if (item.lastError().type() != QSqlError::NoError)
   {
     systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  } 
+  }
 
   if (_item->itemType() == "M" && _costmethod != "J")
     _createOrder->setEnabled(TRUE);
@@ -779,8 +779,8 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
           _createOrder->setEnabled(FALSE);
         }
       }
-      
-     if ( _disposition->currentIndex() == 1 || 
+
+     if ( _disposition->currentIndex() == 1 ||
           _disposition->currentIndex() == 2)
      {
       if (_costmethod == "A")
@@ -815,7 +815,7 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
      }
      else
        _unitCost->setEnabled(false);
-      
+
       _tab->setTabEnabled(_tab->indexOf(_lotserial),
       (itemsite.value("itemsite_controlmethod").toString() == "L" ||
        itemsite.value("itemsite_controlmethod").toString() == "S"));
@@ -836,7 +836,7 @@ void returnAuthorizationItem::populate()
                  "       och.cohead_number AS orig_number, formatSoLineNumber(oc.coitem_id) AS orig_linenumber, "
                  "       nch.cohead_number AS new_number, formatSoLineNumber(nc.coitem_id) AS new_linenumber, "
                  "       COALESCE(raitem_orig_coitem_id,-1) AS ra_coitem_id, oc.coitem_price, "
-                 "       oc.coitem_qtyshipped AS qtysold,"   
+                 "       oc.coitem_qtyshipped AS qtysold,"
                  "       raitem_qtyauthorized AS qtyauth,"
                  "       raitem_qtyreceived AS qtyrcvd,"
                  "       nc.coitem_qtyshipped AS qtyshipd,"
@@ -960,14 +960,14 @@ void returnAuthorizationItem::populate()
       _salePriceLit->hide();
     }
     sDetermineAvailability();
-    
-    
-    
-    if (raitem.value("qtyrcvd").toDouble() > 0 || 
+
+
+
+    if (raitem.value("qtyrcvd").toDouble() > 0 ||
         raitem.value("qtyshipd").toDouble() > 0 ||
         raitem.value("qtytorcv").toDouble() > 0 ||
         _qtycredited > 0)
-      _disposition->setEnabled(FALSE); 
+      _disposition->setEnabled(FALSE);
 
     if (_orderId != -1)
     {
@@ -1013,7 +1013,7 @@ void returnAuthorizationItem::populate()
   {
     systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  } 
+  }
   sFillList();
 }
 
@@ -1058,7 +1058,7 @@ void returnAuthorizationItem::sCalculateFromDiscount()
 void returnAuthorizationItem::sPriceGroup()
 {
   if (! omfgThis->singleCurrency())
-    _priceGroup->setTitle(tr("In %1:").arg(_netUnitPrice->currAbbr())); 
+    _priceGroup->setTitle(tr("In %1:").arg(_netUnitPrice->currAbbr()));
 }
 
 void returnAuthorizationItem::sCalculateSaleExtendedPrice()
@@ -1112,18 +1112,18 @@ void returnAuthorizationItem::sListPrices()
              "        AND (ipsass_shipto_id=:shipto_id)"
              "        AND (ipsass_shipto_id != -1)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-             
+
              "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
-             "       FROM ipsass, ipshead, ipsprice, cust "
+             "       FROM ipsass, ipshead, ipsprice, custinfo "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
              "        AND (ipsass_custtype_id=cust_custtype_id)"
              "        AND (cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-             
+
              "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
-             "       FROM ipsass, ipshead, ipsprice, custtype, cust "
+             "       FROM ipsass, ipshead, ipsprice, custtype, custinfo "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
@@ -1132,7 +1132,7 @@ void returnAuthorizationItem::sListPrices()
              "        AND (cust_custtype_id=custtype_id)"
              "        AND (cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)))"
-             
+
              "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
              "       FROM ipsass, ipshead, ipsprice, shipto "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
@@ -1152,7 +1152,7 @@ void returnAuthorizationItem::sListPrices()
              "        AND (CURRENT_DATE BETWEEN sale_startdate AND (sale_enddate - 1)) ) "
 
              "       UNION SELECT formatSalesPrice(item_listprice - (item_listprice * cust_discntprcnt)) AS price "
-             "       FROM item, cust "
+             "       FROM item, custinfo "
              "       WHERE ( (item_sold)"
              "        AND (NOT item_exclusive)"
              "        AND (item_id=:item_id)"
@@ -1207,18 +1207,18 @@ void returnAuthorizationItem::sSaleListPrices()
              "        AND (ipsass_shipto_id=:shipto_id)"
              "        AND (ipsass_shipto_id != -1)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-             
+
              "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
-             "       FROM ipsass, ipshead, ipsprice, cust "
+             "       FROM ipsass, ipshead, ipsprice, custinfo "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
              "        AND (ipsass_custtype_id=cust_custtype_id)"
              "        AND (cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
-             
+
              "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
-             "       FROM ipsass, ipshead, ipsprice, custtype, cust "
+             "       FROM ipsass, ipshead, ipsprice, custtype, custinfo "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
@@ -1227,7 +1227,7 @@ void returnAuthorizationItem::sSaleListPrices()
              "        AND (cust_custtype_id=custtype_id)"
              "        AND (cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)))"
-             
+
              "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
              "       FROM ipsass, ipshead, ipsprice, shipto "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
@@ -1247,7 +1247,7 @@ void returnAuthorizationItem::sSaleListPrices()
              "        AND (CURRENT_DATE BETWEEN sale_startdate AND (sale_enddate - 1)) ) "
 
              "       UNION SELECT formatSalesPrice(item_listprice - (item_listprice * cust_discntprcnt)) AS price "
-             "       FROM item, cust "
+             "       FROM item, custinfo "
              "       WHERE ( (item_sold)"
              "        AND (NOT item_exclusive)"
              "        AND (item_id=:item_id)"
@@ -1301,7 +1301,7 @@ void returnAuthorizationItem::sCalculateTax()
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  } 
+  }
 }
 
 void returnAuthorizationItem::sTaxDetail()
@@ -1353,8 +1353,8 @@ void returnAuthorizationItem::sQtyUOMChanged()
     _pricingUOM->setEnabled(true);
     _salePricingUOM->setEnabled(true);
   }
-  sCalculateExtendedPrice(); 
-  sCalculateSaleExtendedPrice(); 
+  sCalculateExtendedPrice();
+  sCalculateSaleExtendedPrice();
 }
 
 void returnAuthorizationItem::sPriceUOMChanged()
@@ -1380,7 +1380,7 @@ void returnAuthorizationItem::sPriceUOMChanged()
   }
   //_ratio->setText(formatUOMRatio(_priceinvuomratio));
 
-  updatePriceInfo(); 
+  updatePriceInfo();
 }
 
 void returnAuthorizationItem::updatePriceInfo()
@@ -1394,7 +1394,7 @@ void returnAuthorizationItem::updatePriceInfo()
   item.first();
   _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio)  * _priceinvuomratio);
   sCalculateExtendedPrice();
-} 
+}
 
 void returnAuthorizationItem::sDispositionChanged()
 {
@@ -1451,8 +1451,8 @@ void returnAuthorizationItem::sDispositionChanged()
     _listPrices->setEnabled(TRUE);
     _pricingUOM->setEnabled(TRUE);
     _discountFromSale->setEnabled(TRUE);
-  } 
-  
+  }
+
   if (_disposition->currentIndex() >= 2) // replace, service, or ship
   {
     _tab->setTabEnabled(_tab->indexOf(_supply),TRUE);
@@ -1478,7 +1478,7 @@ void returnAuthorizationItem::sDispositionChanged()
     _saleListPrices->setEnabled(FALSE);
     _salePricingUOM->setEnabled(FALSE);
     _saleDiscountFromSale->setEnabled(FALSE);
-  } 
+  }
 
   if (_creditmethod == "N")
   {
@@ -1486,7 +1486,7 @@ void returnAuthorizationItem::sDispositionChanged()
     _netUnitPrice->setEnabled(FALSE);
     _listPrices->setEnabled(FALSE);
     _pricingUOM->setEnabled(FALSE);
-    _discountFromSale->setEnabled(FALSE); 
+    _discountFromSale->setEnabled(FALSE);
     disconnect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
   }
 
@@ -1541,11 +1541,11 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
               _orderQty->clear();
               _orderDueDate->clear();
               _orderStatus->clear();
-              if (_qtyReceived->toDouble() == 0 && 
-                  _qtyShipped->toDouble() == 0 && 
+              if (_qtyReceived->toDouble() == 0 &&
+                  _qtyShipped->toDouble() == 0 &&
                   _qtycredited == 0 &&
                   _status == "O")
-                _disposition->setEnabled(TRUE); 
+                _disposition->setEnabled(TRUE);
 
               _createOrder->setChecked(FALSE);
             }
@@ -1711,7 +1711,7 @@ void returnAuthorizationItem::sEdit()
 		for (int i = 0; i < selected.size(); i++)
 		{
 			ParameterList params;
-      params.append("raitem_id", _raitemid);			
+      params.append("raitem_id", _raitemid);
       params.append("item_id", _item->id());
       params.append("warehouse_id", _warehouse->id());
       params.append("uom", _qtyUOM->currentText());
@@ -1724,7 +1724,7 @@ void returnAuthorizationItem::sEdit()
 
 			returnAuthItemLotSerial newdlg(this, "", TRUE);
 			newdlg.set(params);
-	  
+
 			int raitemlsid = newdlg.exec();
 			if (raitemlsid > 0)
 				fill = TRUE;
@@ -1751,11 +1751,11 @@ void returnAuthorizationItem::sDelete()
            reject();
         }
   }
-  populate(); 
+  populate();
 }
 
 void returnAuthorizationItem::sFillList()
-{ 
+{
   q.prepare("SELECT raitemls_id,ls_id,ls_number, "
             "       MAX(lsreg_expiredate) AS lsreg_expiredate, "
             "       COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0) AS raitemls_qtyregistered, "

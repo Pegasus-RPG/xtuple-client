@@ -112,15 +112,15 @@ void salesOrderList::set(const ParameterList &pParams)
   param = pParams.value("sohead_id", &valid);
   if (valid)
     _soheadid = param.toInt();
-    
+
   param = pParams.value("soType", &valid);
   if (valid)
     _type = param.toInt();
-    
+
   param = pParams.value("cust_id", &valid);
   if (valid)
     _custid = param.toInt();
- 
+
   sFillList();
 }
 
@@ -139,7 +139,7 @@ void salesOrderList::sFillList()
     sql = "SELECT DISTINCT cohead_id, cohead_number, cust_name, cohead_custponumber,"
           "                cohead_orderdate,"
           "                MIN(coitem_scheddate) AS duedate "
-          "FROM shiphead, shipitem, cohead, coitem, itemsite, cust "
+          "FROM shiphead, shipitem, cohead, coitem, itemsite, custinfo "
           "WHERE ((cohead_cust_id=cust_id)"
           " AND (coitem_cohead_id=cohead_id)"
           " AND (coitem_itemsite_id=itemsite_id)"
@@ -163,7 +163,7 @@ void salesOrderList::sFillList()
     sql = "SELECT DISTINCT cohead_id, cohead_number, cust_name, cohead_custponumber,"
           "                cohead_orderdate,"
           "                MIN(coitem_scheddate) AS duedate "
-          "FROM cohead, coitem, itemsite, cust "
+          "FROM cohead, coitem, itemsite, custinfo "
           "WHERE ((cohead_cust_id=cust_id)"
           " AND (coitem_status <> 'X')"
           " AND (coitem_cohead_id=cohead_id)"
@@ -195,7 +195,7 @@ void salesOrderList::sFillList()
       sql += "(cohead_holdtype='N')";
       statusCheck = TRUE;
     }
-    
+
     if (_type & cSoCustomer)
     {
       if (statusCheck)

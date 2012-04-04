@@ -75,10 +75,11 @@ void copySalesOrder::sPopulateSoInfo(int)
   {
     q.prepare( "SELECT cohead_number,"
               "        cohead_orderdate,"
-              "        cohead_custponumber, cust_name, cust_phone "
-              "FROM cohead, cust "
-              "WHERE ( (cohead_cust_id=cust_id)"
-              " AND (cohead_id=:sohead_id) );" );
+              "        cohead_custponumber, cust_name, cntct_phone "
+              " FROM cohead "
+              " JOIN custinfo ON (cohead_cust_id=cust_id)"
+              " LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
+              " WHERE (cohead_id=:sohead_id);" );
     q.bindValue(":sohead_id", _so->id());
     q.exec();
     if (q.first())
@@ -86,7 +87,7 @@ void copySalesOrder::sPopulateSoInfo(int)
       _orderDate->setDate(q.value("cohead_orderdate").toDate());
       _poNumber->setText(q.value("cohead_custponumber").toString());
       _custName->setText(q.value("cust_name").toString());
-      _custPhone->setText(q.value("cust_phone").toString());
+      _custPhone->setText(q.value("cntct_phone").toString());
     }
     else if (q.lastError().type() != QSqlError::NoError)
     {

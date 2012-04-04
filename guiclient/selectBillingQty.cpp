@@ -26,7 +26,7 @@ selectBillingQty::selectBillingQty(QWidget* parent, const char* name, bool modal
   connect(_toBill, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleBillingQty()));
 
   _taxType->setEnabled(_privileges->check("OverrideTax"));
- 
+
   _taxzoneid = -1;
 
   _toBill->setValidator(omfgThis->qtyVal());
@@ -55,7 +55,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
   param = pParams.value("taxzone_id", &valid);
   if (valid)
     _taxzoneid = param.toInt();
-    
+
   param = pParams.value("soitem_id", &valid);
   if (valid)
   {
@@ -71,7 +71,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
                     "       coitem_qtyshipped,"
                     "       (coitem_qtyord - coitem_qtyshipped) AS qtybalance,"
                     "       COALESCE(coitem_taxtype_id, -1) AS taxtype_id "
-                    "FROM coitem, itemsite, cohead, cust, uom "
+                    "FROM coitem, itemsite, cohead, custinfo, uom "
                     "WHERE ( (coitem_itemsite_id=itemsite_id)"
                     " AND (coitem_cohead_id=cohead_id)"
                     " AND (coitem_status <> 'X')"
@@ -90,7 +90,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       _qtyUOM->setText(soitem.value("uom_name").toString());
       _ordered->setDouble(soitem.value("coitem_qtyord").toDouble());
       _shipped->setDouble(soitem.value("coitem_qtyshipped").toDouble());
-      _balance->setDouble(soitem.value("qtybalance").toDouble());               
+      _balance->setDouble(soitem.value("qtybalance").toDouble());
 
       _cachedPartialShip = soitem.value("cust_partialship").toBool();
       _closeLine->setChecked(!_cachedPartialShip);
@@ -122,7 +122,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
 
       XSqlQuery cobill;
       cobill.prepare( "SELECT cobill_qty, cobill_toclose,"
-		              "       cobill_taxtype_id " 
+		              "       cobill_taxtype_id "
                       "FROM cobill, cobmisc "
                       "WHERE ((cobill_cobmisc_id=cobmisc_id) "
 		              "      AND   (NOT cobmisc_posted)"
@@ -182,9 +182,9 @@ void selectBillingQty::sSave()
   select.bindValue(":close",	 QVariant(_closeLine->isChecked()));
   if(_taxType->isValid())
     select.bindValue(":taxtypeid", _taxType->id());
- 
+
   select.exec();
-  
+
   if(select.first())
   {
     int result = select.value("result").toInt();
@@ -212,7 +212,7 @@ void selectBillingQty::sHandleItem()
   itemq.prepare("SELECT getItemTaxType(:item_id, :taxzone) AS result;");
   itemq.bindValue(":item_id", _item->id());
   if (_taxzoneid != -1)
-    itemq.bindValue(":taxzone", _taxzoneid);    
+    itemq.bindValue(":taxzone", _taxzoneid);
   itemq.exec();
   if (itemq.first())
   {

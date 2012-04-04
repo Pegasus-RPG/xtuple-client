@@ -27,7 +27,7 @@ QString todoCalendarControl::contents(const QDate & date)
   QString sql = "SELECT count(*) AS result"
                 "  FROM todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
                 "                     LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
-                "                     LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+                "                     LEFT OUTER JOIN custinfo ON (cust_id=crmacct_cust_id) "
                 "                     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
                 " WHERE((todoitem_due_date = <? value(\"date\") ?>)"
                 "  <? if not exists(\"completed\") ?>"

@@ -290,7 +290,7 @@ void shippingInformation::sFillList()
                "       cohead_shipchrg_id AS shipchrg_id,"
                "       cohead_shipform_id AS shipform_id, "
                "       cohead_shiptoname AS shiptoname "
-               "FROM cohead, cust "
+               "FROM cohead, custinfo "
                "WHERE ((cohead_cust_id=cust_id)"
                " AND (cohead_id=:cohead_id));" );
     q.bindValue(":cohead_id", _order->id());
@@ -389,7 +389,7 @@ void shippingInformation::sFillList()
                    "<? endif ?>"
                    "  ) AS data "
                    "ORDER BY linenumber;");
-         
+
   XSqlQuery qry = mql.toQuery(params);
   _item->populate(qry, true);
 
