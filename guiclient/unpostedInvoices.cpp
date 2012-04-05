@@ -54,6 +54,14 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   if (! _privileges->check("ChangeARInvcDistDate"))
     list()->hideColumn(7);
 
+  if (_privileges->check("MaintainMiscInvoices"))
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
+  else
+  {
+    newAction()->setEnabled(false);
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
+  }
+
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillList()));
 
   sFillList();
