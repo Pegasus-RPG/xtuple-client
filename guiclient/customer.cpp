@@ -289,6 +289,8 @@ enum SetResponse customer::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _salesrep->setType(XComboBox::SalesRepsActive);
+
       sClear();
 
       connect(_shipto, SIGNAL(valid(bool)), _editShipto, SLOT(setEnabled(bool)));
@@ -300,8 +302,6 @@ enum SetResponse customer::set(const ParameterList &pParams)
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setEnabled(bool)));
       connect(_backorders, SIGNAL(toggled(bool)), _partialShipments, SLOT(setChecked(bool)));
-
-      _salesrep->setType(XComboBox::SalesRepsActive);
 
       emit newMode(_mode);
       emit newId(_custid);
