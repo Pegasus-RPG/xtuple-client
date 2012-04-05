@@ -67,7 +67,6 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _rsnCode->setType(XComboBox::ReasonCodes);
 
   _journalNumber->setEnabled(FALSE);
-  _commissionPaid->setEnabled(FALSE);
 
   _altAccntid->setType(GLCluster::cRevenue | GLCluster::cExpense);
 }
@@ -134,7 +133,6 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       }
 
       _paid->clear();
-      _commissionPaid->clear();
       _save->setText(tr("Post"));
       _printOnPost->setVisible(true);
     }
@@ -168,7 +166,6 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _terms->setType(XComboBox::Terms);
       _salesrep->setEnabled(FALSE);
       _commissionDue->setEnabled(FALSE);
-      _commissionPaid->setEnabled(FALSE);
       _rsnCode->setEnabled(FALSE);
       _useAltPrepaid->setEnabled(FALSE);
       _altPrepaid->setEnabled(FALSE);
@@ -614,7 +611,6 @@ void arOpenItem::reset()
   _salesrep->setId(-1);
   _tax->clear();
   _commissionDue->clear();
-  _commissionPaid->clear();
   _amount->clear();
   _paid->clear();
   _balance->clear();
