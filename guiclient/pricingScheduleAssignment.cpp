@@ -133,7 +133,7 @@ void pricingScheduleAssignment::sAssign()
       q.bindValue(":ipsass_shipto_id", _customerShipto->id());
     else
       q.bindValue(":ipsass_shipto_id", -1);
-  
+
     if (_selectedCustomerType->isChecked())
       q.bindValue(":ipsass_custtype_id", _customerTypes->id());
     else
@@ -156,7 +156,7 @@ void pricingScheduleAssignment::sAssign()
                             tr("<p>This Pricing Schedule Assignment already exists."));
       return;
     }
-               
+
     q.exec("SELECT NEXTVAL('ipsass_ipsass_id_seq') AS ipsass_id;");
     if (q.first())
       _ipsassid = q.value("ipsass_id").toInt();
@@ -199,7 +199,7 @@ void pricingScheduleAssignment::sAssign()
     q.bindValue(":ipsass_shipto_id", _customerShipto->id());
   else
     q.bindValue(":ipsass_shipto_id", -1);
-  
+
   if (_selectedCustomerType->isChecked())
     q.bindValue(":ipsass_custtype_id", _customerTypes->id());
   else
@@ -226,7 +226,7 @@ void pricingScheduleAssignment::populate()
              "       ipsass_custtype_id, ipsass_custtype_pattern,"
              "       ipsass_shipto_pattern,"
              "       ipsass_shipto_id, shipto_cust_id "
-             "FROM ipsass LEFT OUTER JOIN shipto ON (ipsass_shipto_id=shipto_id) "
+             "FROM ipsass LEFT OUTER JOIN shiptoinfo ON (ipsass_shipto_id=shipto_id) "
              "WHERE (ipsass_id=:ipsass_id);" );
   q.bindValue(":ipsass_id", _ipsassid);
   q.exec();
@@ -269,7 +269,7 @@ void pricingScheduleAssignment::sCustomerSelected()
 {
   _customerShipto->clear();
   q.prepare("SELECT shipto_id, shipto_num"
-            "  FROM shipto"
+            "  FROM shiptoinfo"
             " WHERE (shipto_cust_id=:cust_id); ");
   q.bindValue(":cust_id", _cust->id());
   q.exec();

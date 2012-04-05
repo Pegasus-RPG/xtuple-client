@@ -136,15 +136,15 @@ void pricingScheduleAssignments::sDelete()
 void pricingScheduleAssignments::sFillList()
 {
   _ipsass->populate( "SELECT ipsass_id,"
-                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT shipto_num FROM shipto WHERE (shipto_id=ipsass_shipto_id))"
+                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT shipto_num FROM shiptoinfo WHERE (shipto_id=ipsass_shipto_id))"
                      "            WHEN (COALESCE(LENGTH(ipsass_shipto_pattern), 0) > 0) THEN ipsass_shipto_pattern"
                      "            ELSE TEXT('ANY')"
                      "       END AS shiptonum,"
-                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT cust_number FROM shipto, custinfo WHERE ((shipto_cust_id=cust_id) AND (shipto_id=ipsass_shipto_id))) "
+                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT cust_number FROM shiptoinfo, custinfo WHERE ((shipto_cust_id=cust_id) AND (shipto_id=ipsass_shipto_id))) "
                      "            WHEN (ipsass_cust_id=-1) THEN TEXT('Any')"
                      "            ELSE (SELECT cust_number FROM custinfo WHERE (cust_id=ipsass_cust_id))"
                      "       END AS custnumber,"
-                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT cust_name FROM shipto, custinfo WHERE ((shipto_cust_id=cust_id) AND (shipto_id=ipsass_shipto_id))) "
+                     "       CASE WHEN (ipsass_shipto_id != -1) THEN (SELECT cust_name FROM shiptoinfo, custinfo WHERE ((shipto_cust_id=cust_id) AND (shipto_id=ipsass_shipto_id))) "
                      "            WHEN (ipsass_cust_id=-1) THEN ''"
                      "            ELSE (SELECT cust_name FROM custinfo WHERE (cust_id=ipsass_cust_id))"
                      "       END AS custname,"

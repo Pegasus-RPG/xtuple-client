@@ -1134,7 +1134,7 @@ void returnAuthorizationItem::sListPrices()
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)))"
 
              "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
-             "       FROM ipsass, ipshead, ipsprice, shipto "
+             "       FROM ipsass, ipshead, ipsprice, shiptoinfo "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
@@ -1229,7 +1229,7 @@ void returnAuthorizationItem::sSaleListPrices()
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)))"
 
              "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
-             "       FROM ipsass, ipshead, ipsprice, shipto "
+             "       FROM ipsass, ipshead, ipsprice, shiptoinfo "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"

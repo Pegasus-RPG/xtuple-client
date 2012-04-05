@@ -1633,7 +1633,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "FROM custinfo "
                 "  LEFT OUTER JOIN cntct  ON (cust_cntct_id=cntct_id) "
                 "  LEFT OUTER JOIN addr   ON (cntct_addr_id=addr_id) "
-                "  LEFT OUTER JOIN shipto ON ((shipto_cust_id=cust_id)"
+                "  LEFT OUTER JOIN shiptoinfo ON ((shipto_cust_id=cust_id)"
                 "                         AND (shipto_default)) "
                 "LEFT OUTER JOIN crmacct ON (crmacct_cust_id = cust_id) "
                 "WHERE (cust_id=<? value(\"cust_id\") ?>) "

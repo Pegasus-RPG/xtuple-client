@@ -107,10 +107,10 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _commission->setValidator(omfgThis->percentVal());
   _weight->setValidator(omfgThis->weightVal());
-  
+
   // some customers are creating scripts to show these widgets, probably shouldn't remove
   _paymentLit->hide();
-  _payment->hide(); // Issue 9895:  if no objections over time, we should ultimately remove this. 
+  _payment->hide(); // Issue 9895:  if no objections over time, we should ultimately remove this.
 
   _recurring->setParent(-1, "I");
 
@@ -367,7 +367,7 @@ void invoice::sPopulateCustomerInfo(int pCustid)
                   "       cust_curr_id "
                   "FROM custinfo "
                   "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id) "
-                  "  LEFT OUTER JOIN shipto ON ( (shipto_cust_id=cust_id) "
+                  "  LEFT OUTER JOIN shiptoinfo ON ( (shipto_cust_id=cust_id) "
                   "                         AND (shipto_default) ) "
                   "WHERE (cust_id=:cust_id);" );
     cust.bindValue(":cust_id", pCustid);
@@ -502,7 +502,7 @@ void invoice::sSave()
     // TODO: add more error checks here?
     { true, "", NULL }
   };
-  
+
   if (_total->localValue() < 0 )
   {
     QMessageBox::information(this, tr("Total Less than Zero"),
@@ -510,7 +510,7 @@ void invoice::sSave()
     _cust->setFocus();
     return;
   }
-  
+
   //Invoices must have atleast one line item.
   if (_invcitem->topLevelItemCount() <= 0 )
   {
@@ -519,7 +519,7 @@ void invoice::sSave()
     _new->setFocus();
     return;
   }
-  
+
   //  We can't post a Misc. Charge without a Sales Account
   if ( (! _miscAmount->isZero()) && (!_miscChargeAccount->isValid()) )
   {
@@ -655,7 +655,7 @@ bool invoice::save()
 
   if (_orderNumber->text().length())
     q.bindValue(":invchead_ordernumber", _orderNumber->text().toInt());
-  
+
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -681,7 +681,7 @@ void invoice::sNew()
 {
   if (!save())
     return;
-	
+
   ParameterList params;
   params.append("mode", "new");
   params.append("invchead_id", _invcheadid);
@@ -696,7 +696,7 @@ void invoice::sEdit()
 {
   if (!save())
     return;
-	
+
   ParameterList params;
   params.append("mode", "edit");
   params.append("invchead_id", _invcheadid);
@@ -759,7 +759,7 @@ void invoice::populate()
     // database manipulation that may be unnecessary or even harmful
     // and we intend to set the values a little further down and they
     // may differ.
-    _taxzoneidCache = q.value("cust_taxzone_id").toInt(); 
+    _taxzoneidCache = q.value("cust_taxzone_id").toInt();
 
     _cust->setId(q.value("invchead_cust_id").toInt());
     _custCurrency->setId(q.value("invchead_curr_id").toInt());
@@ -788,7 +788,7 @@ void invoice::populate()
 
     _salesrep->setId(q.value("invchead_salesrep_id").toInt());
     _commission->setDouble(q.value("invchead_commission").toDouble() * 100);
-    _taxzoneidCache = q.value("taxzone_id").toInt(); 
+    _taxzoneidCache = q.value("taxzone_id").toInt();
     _taxzone->setId(q.value("taxzone_id").toInt());
     _terms->setId(q.value("invchead_terms_id").toInt());
     _project->setId(q.value("invchead_prj_id").toInt());
@@ -824,7 +824,7 @@ void invoice::populate()
     _shipTo->blockSignals(true);
     _shipTo->setId(q.value("invchead_shipto_id").toInt());
     _shipTo->blockSignals(false);
-    
+
     _payment->setLocalValue(q.value("invchead_payment").toDouble());
     _miscChargeDescription->setText(q.value("invchead_misc_descrip"));
     _miscChargeAccount->setId(q.value("invchead_misc_accnt_id").toInt());
@@ -1304,7 +1304,7 @@ void invoice::sFreightChanged()
 	  return;
     _freightCache = _freight->localValue();
     sCalculateTax();
-  }   
+  }
 }
 
 bool invoice::sCheckInvoiceNumber()

@@ -64,7 +64,7 @@ void shippingZones::languageChange()
 void shippingZones::sDelete()
 {
   q.prepare( "SELECT shipto_id "
-             "FROM shipto "
+             "FROM shiptoinfo "
              "WHERE (shipto_shipzone_id=:shipzone_id);" );
   q.bindValue(":shipzone_id", _shipzone->id());
   q.exec();

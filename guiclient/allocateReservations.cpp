@@ -98,7 +98,7 @@ void allocateReservations::sCustomerSelected()
 {
   _customerShipto->clear();
   q.prepare("SELECT shipto_id, shipto_num"
-            "  FROM shipto"
+            "  FROM shiptoinfo"
             " WHERE (shipto_cust_id=:cust_id); ");
   q.bindValue(":cust_id", _cust->id());
   q.exec();

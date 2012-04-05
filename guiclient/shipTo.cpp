@@ -335,7 +335,7 @@ void shipTo::sPopulateNumber()
   {
     XSqlQuery nextnumq;
     nextnumq.prepare( "SELECT (COALESCE(MAX(CAST(shipto_num AS INTEGER)), 0) + 1) AS n_shipto_num "
-                      "  FROM shipto "
+                      "  FROM shiptoinfo "
                       " WHERE ((shipto_cust_id=:cust_id)"
                       "   AND  (shipto_num~'^[0-9]*$') )" );
     nextnumq.bindValue(":cust_id", _custid);
@@ -352,7 +352,7 @@ void shipTo::sPopulateNumber()
   {
     XSqlQuery dupnumq;
     dupnumq.prepare( "SELECT shipto_id "
-                     "FROM shipto "
+                     "FROM shiptoinfo "
                      "WHERE ( (shipto_cust_id=:cust_id)"
                      " AND (UPPER(shipto_num)=UPPER(:shipto_num))"
                      " AND (shipto_id != :shipto_id));" );

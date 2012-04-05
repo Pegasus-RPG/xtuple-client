@@ -108,7 +108,7 @@ void shippingForms::sDelete()
   }
 
   q.prepare( "SELECT shipto_id "
-             "FROM shipto "
+             "FROM shiptoinfo "
              "WHERE (shipto_shipform_id=:shipform_id);" );
   q.bindValue(":shipform_id", _bolformat->id());
   q.exec();

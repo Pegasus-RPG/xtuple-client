@@ -50,7 +50,7 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   _invoiceList->setMaximumWidth(25);
 #endif
 
-  _custtaxzoneid	= -1;
+  _custtaxzoneid        = -1;
   _freightCache         = 0;
   _taxzoneidCache       = -1;
   _NumberGen            = -1;
@@ -513,7 +513,7 @@ void creditMemo::sPopulateCustomerInfo()
                      "       cust_ffshipto, cust_ffbillto, "
                      "       COALESCE(shipto_id, -1) AS shiptoid "
                      "FROM custinfo LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id) "
-					 "              LEFT OUTER JOIN shipto ON ((shipto_cust_id=cust_id) "
+					 "              LEFT OUTER JOIN shiptoinfo ON ((shipto_cust_id=cust_id) "
 					 "                                     AND (shipto_default)) "
                      "WHERE (cust_id=:cust_id);" );
       query.bindValue(":cust_id", _cust->id());
