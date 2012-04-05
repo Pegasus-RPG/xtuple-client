@@ -223,6 +223,27 @@ void warehouse::sSave()
                                 uniq, __FILE__, __LINE__))
     return;
 
+  XSqlQuery activeq;
+  if (!_active->isChecked())
+  {
+    activeq.prepare( "SELECT itemsite_id "
+                     "FROM itemsite "
+                     "WHERE ( (itemsite_active)"
+                     " AND (itemsite_warehous_id=:warehous_id) );" );
+    activeq.bindValue(":warehous_id", _warehousid);
+    activeq.exec();
+    if (activeq.first())
+    {
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Site is used in an active Item Site and must be marked as active. "
+                              "Deactivate the Item Sites to allow this Site to not be active.") );
+      _active->setFocus();
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Active Itemsites"),
+                                  activeq, __FILE__, __LINE__))
+      return;
+  }
+
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Site"), errors))
     return;
 
