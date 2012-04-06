@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "costCategory.h"
 
 #include <QMessageBox>
@@ -162,82 +164,40 @@ void costCategory::sCheck()
 
 void costCategory::sSave()
 {
+  QList<GuiErrorCheck> errors;
+
+  errors << GuiErrorCheck(_category->text().trimmed().isEmpty(), _category,
+                         tr("<p>You must enter a name for this Cost Category before saving it."));
+
   if (_metrics->boolean("InterfaceToGL"))
   {
-    struct {
-      bool	condition;
-      QString	msg;
-      QWidget*	widget;
-    } error[] = {
-      { _category->text().trimmed().length() == 0,
-        tr("<p>You must enter a name for this Cost Category before saving it."),
-        _category
-      },
-      { _asset->id() < 0,
-        tr("<p>You must select an Inventory Asset Account before saving."),
-        _asset
-      },
-      { _expense->id() < 0,
-        tr("<p>You must select an Expense Asset Account before saving."),
-        _asset
-      },
-      { _wip->id() < 0,
-        tr("<p>You must select a WIP Asset Account before saving."),
-        _wip
-      },
-      { _inventoryCost->id() < 0,
-        tr("<p>You must select an Inventory Cost Variance Account before saving."),
-        _inventoryCost
-      },
-      { _metrics->boolean("MultiWhs") && _metrics->boolean("Transforms") && _transformClearing->id() < 0,
-        tr("<p>You must select a Transform Clearing Account before saving."),
-        _transformClearing
-      },
-      { _purchasePrice->id() < 0,
-        tr("<p>You must select a Purchase Price Variance Account before saving."),
-        _purchasePrice
-      },
-      { _adjustment->id() < 0,
-        tr("<p>You must select an Inventory Adjustment Account before saving."),
-        _adjustment
-      },
-      { _invScrap->id() < 0,
-        tr("<p>You must select an Inventory Scrap Account before saving."),
-        _invScrap
-      },
-      { _mfgScrap->id() < 0,
-        tr("<p>You must select a Manufacturing Scrap Account before saving."),
-        _mfgScrap
-      },
-      { _liability->id() < 0,
-        tr("<p>You must select a P/O Liability Clearing Account before saving."),
-        _liability
-      },
-      { _shippingAsset->id() < 0,
-        tr("<p>You must select a Shipping Asset Account before saving."),
-        _shippingAsset
-      },
-      { _freight->id() < 0,
-        tr("<p>You must select a Line Item Freight Expense Account before saving."),
-        _freight
-      },
-      { _metrics->boolean("MultiWhs") && _toLiabilityClearing->id() < 0,
-        tr("<p>You must select a Transfer Order Liability Clearing Account before saving."),
-        _toLiabilityClearing
-      },
-      { true, "", NULL }
-    }; // error[]
-
-    int errIndex;
-    for (errIndex = 0; ! error[errIndex].condition; errIndex++)
-      ;
-    if (! error[errIndex].msg.isEmpty())
-    {
-      QMessageBox::critical(this, tr("Cannot Save Cost Category"),
-	  		  error[errIndex].msg);
-      error[errIndex].widget->setFocus();
-      return;
-    }
+    errors << GuiErrorCheck(!_asset->isValid(), _asset,
+                            tr("<p>You must select an Inventory Asset Account before saving."))
+           << GuiErrorCheck(!_expense->isValid(), _expense,
+                            tr("<p>You must select an Expense Asset Account before saving."))
+           << GuiErrorCheck(!_wip->isValid(), _wip,
+                            tr("<p>You must select a WIP Asset Account before saving."))
+           << GuiErrorCheck(!_inventoryCost->isValid(), _inventoryCost,
+                            tr("<p>You must select an Inventory Cost Variance Account before saving."))
+           << GuiErrorCheck(_metrics->boolean("MultiWhs") && _metrics->boolean("Transforms") && !_transformClearing->isValid(), _transformClearing,
+                            tr("<p>You must select a Transform Clearing Account before saving."))
+           << GuiErrorCheck(!_purchasePrice->isValid(), _purchasePrice,
+                            tr("<p>You must select a Purchase Price Variance Account before saving."))
+           << GuiErrorCheck(!_adjustment->isValid(), _adjustment,
+                            tr("<p>You must select an Inventory Adjustment Account before saving."))
+           << GuiErrorCheck(!_invScrap->isValid(), _invScrap,
+                            tr("<p>You must select an Inventory Scrap Account before saving."))
+           << GuiErrorCheck(!_mfgScrap->isValid(), _mfgScrap,
+                            tr("<p>You must select a Manufacturing Scrap Account before saving."))
+           << GuiErrorCheck(!_liability->isValid(), _liability,
+                            tr("<p>You must select a P/O Liability Clearing Account before saving."))
+           << GuiErrorCheck(!_shippingAsset->isValid(), _shippingAsset,
+                            tr("<p>You must select a Shipping Asset Account before saving."))
+           << GuiErrorCheck(!_freight->isValid(), _freight,
+                            tr("<p>You must select a Line Item Freight Expense Account before saving."))
+           << GuiErrorCheck(_metrics->boolean("MultiWhs") && !_toLiabilityClearing->isValid(), _toLiabilityClearing,
+                            tr("<p>You must select a Transfer Order Liability Clearing Account before saving."))
+           ;
   }
 
   q.prepare( "SELECT costcat_id"
@@ -249,12 +209,12 @@ void costCategory::sSave()
   q.exec();
   if (q.first())
   {
-    QMessageBox::critical(this, tr("Cannot Save Cost Category"),
-                          tr("The Name you have entered for this Cost Category is already in use. "
-                             "Please enter in a different Name for this Cost Category."));
-    _category->setFocus();
-    return;
+    errors << GuiErrorCheck(true, _category,
+                           tr("<p>The Name you have entered for this Cost Category is already in use."));
   }
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Cost Category"), errors))
+    return;
 
   QSqlQuery newCostCategory;
 

@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "salesCategory.h"
 
 #include <QVariant>
@@ -115,13 +117,10 @@ void salesCategory::sCheck()
 
 void salesCategory::sSave()
 {
-  if(_category->text().trimmed().isEmpty())
-  {
-    QMessageBox::warning(this, tr("Cannot Save Sales Category"),
-      tr("You must specify a name for the Sales Category."));
-    _category->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+
+  errors << GuiErrorCheck(_category->text().trimmed().isEmpty(), _category,
+                          tr("<p>You must specify a name for the Sales Category."));
 
   q.prepare("SELECT salescat_id"
             "  FROM salescat"
@@ -132,35 +131,23 @@ void salesCategory::sSave()
   q.exec();
   if(q.first())
   {
-    QMessageBox::warning(this, tr("Cannot Save Sales Category"),
-      tr("You cannot specify a duplicate name for the Sales Category."));
-    _category->setFocus();
-    return;
+    errors << GuiErrorCheck(true, _category,
+                            tr("<p>You cannot specify a duplicate name for the Sales Category."));
   }
 
-  if (!_sales->isValid())
+  if (_metrics->boolean("InterfaceARToGL"))
   {
-    QMessageBox::warning( this, tr("Cannot Save Sales Category"),
-                          tr("You must select a Sales Account Number for this Sales Category before you may save it.") );
-    _sales->setFocus();
-    return;
+    errors << GuiErrorCheck(!_sales->isValid(), _sales,
+                            tr("<p>You must select a Sales Account Number for this Sales Category before you may save it."))
+           << GuiErrorCheck(!_prepaid->isValid(), _prepaid,
+                            tr("<p>You must select a Prepaid Account Number for this Sales Category before you may save it."))
+           << GuiErrorCheck(!_araccnt->isValid(), _araccnt,
+                            tr("<p>You must select an A/R Account Number for this Sales Category before you may save it."))
+           ;
   }
 
-  if (!_prepaid->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Category"),
-                          tr("You must select a Prepaid Account Number for this Sales Category before you may save it.") );
-    _prepaid->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Category"), errors))
     return;
-  }
-
-  if (!_araccnt->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Category"),
-                          tr("You must select an A/R Account Number for this Sales Category before you may save it.") );
-    _araccnt->setFocus();
-    return;
-  }
 
   if ( (_mode == cNew) || (_mode == cCopy) )
   {

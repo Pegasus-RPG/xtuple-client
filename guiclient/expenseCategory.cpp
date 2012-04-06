@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "expenseCategory.h"
 
 #include <QVariant>
@@ -117,13 +119,10 @@ void expenseCategory::sCheck()
 
 void expenseCategory::sSave()
 {
-  if(_category->text().trimmed().isEmpty())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-      tr("You must specify a name."));
-    _category->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+
+  errors << GuiErrorCheck(_category->text().trimmed().isEmpty(), _category,
+                         tr("<p>You must specify a name."));
 
   if (_mode == cEdit)
   {
@@ -136,44 +135,26 @@ void expenseCategory::sSave()
     q.exec();
     if (q.first())
     {
-      QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                                  tr("The name you have specified is already in use."));
-      _category->setFocus();
-      return;
+      errors << GuiErrorCheck(true, _category,
+                             tr("<p>The name you have specified is already in use."));
     }
   }
 
-  if (!_expense->isValid())
+  if (_metrics->boolean("InterfaceAPToGL"))
   {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                          tr("You must select a Expense Account Number for this Expense Category before you may save it.") );
-    _expense->setFocus();
-    return;
+    errors << GuiErrorCheck(!_expense->isValid(), _expense,
+                            tr("<p>You must select a Expense Account Number for this Expense Category before you may save it."))
+           << GuiErrorCheck(!_purchasePrice->isValid(), _purchasePrice,
+                            tr("<p>You must select a Purchase Price Variance Account Number for this Expense Category before you may save it."))
+           << GuiErrorCheck(!_liability->isValid(), _liability,
+                            tr("<p>You must select a P/O Liability Clearing Account Number for this Expense Category before you may save it."))
+           << GuiErrorCheck(!_freight->isValid(), _freight,
+                            tr("<p>You must select a Freight Receiving Account Number for this Expense Category before you may save it."))
+           ;
   }
 
-  if (!_purchasePrice->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                          tr("You must select a Purchase Price Variance Account Number for this Expense Category before you may save it.") );
-    _purchasePrice->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Expense Category"), errors))
     return;
-  }
-
-  if (!_liability->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                          tr("You must select a P/O Liability Clearing Account Number for this Expense Category before you may save it.") );
-    _expense->setFocus();
-    return;
-  }
-
-  if (!_freight->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Expense Category"),
-                          tr("You must select a Freight Receiving Account Number for this Expense Category before you may save it.") );
-    _freight->setFocus();
-    return;
-  }
 
   if ( (_mode == cNew) || (_mode == cCopy) )
   {

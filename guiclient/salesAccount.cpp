@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "salesAccount.h"
 
 #include <QMessageBox>
@@ -105,70 +107,25 @@ enum SetResponse salesAccount::set(const ParameterList &pParams)
 
 void salesAccount::sSave()
 {
-  if (!_sales->isValid())
+  QList<GuiErrorCheck> errors;
+
+  if (_metrics->boolean("InterfaceARToGL"))
   {
-    QMessageBox::warning( this, tr("Select Sales Account"),
-                          tr("You must select a Sales Account for this Assignment.") );
-    _sales->setFocus();
-    return;
+    errors << GuiErrorCheck(!_sales->isValid(), _sales,
+                            tr("<p>You must select a Sales Account for this Assignment."))
+           << GuiErrorCheck(!_credit->isValid(), _credit,
+                            tr("<p>You must select a Credit Memo Account for this Assignment."))
+           << GuiErrorCheck(!_cos->isValid(), _cos,
+                            tr("<p>You must select a Cost of Sales Account for this Assignment."))
+           << GuiErrorCheck(_metrics->boolean("EnableReturnAuth") && !_returns->isValid(), _returns,
+                            tr("<p>You must select a Returns Account for this Assignment."))
+           << GuiErrorCheck(!_cor->isValid(), _cor,
+                            tr("<p>You must select a Cost of Returns Account for this Assignment."))
+           << GuiErrorCheck(!_cow->isValid(), _cow,
+                            tr("<p>You must select a Cost of Warranty Account for this Assignment."))
+           ;
   }
 
-  if (!_credit->isValid())
-  {
-    QMessageBox::warning( this, tr("Select Credit Memo Account"),
-                          tr("You must select a Credit Memo Account for this Assignment.") );
-    _credit->setFocus();
-    return;
-  }
-
-  if (!_cos->isValid())
-  {
-    QMessageBox::warning( this, tr("Select Cost of Sales Account"),
-                          tr("You must select a Cost of Sales Account for this Assignment.") );
-    _cos->setFocus();
-    return;
-  }
-
-  if (_metrics->boolean("EnableReturnAuth"))
-  {
-
-    if (!_returns->isValid())
-    {
-      QMessageBox::warning( this, tr("Select Returns Account"),
-                            tr("You must select a Returns Account for this Assignment.") );
-      _returns->setFocus();
-      return;
-    }
-
-    if (!_cor->isValid())
-    {
-      QMessageBox::warning( this, tr("Select Cost of Returns Account"),
-                            tr("You must select a Cost of Returns Account for this Assignment.") );
-      _cor->setFocus();
-      return;
-    }
-
-    if (!_cow->isValid())
-    {
-      QMessageBox::warning( this, tr("Select Cost of Warranty Account"),
-                            tr("You must select a Cost of Warranty Account for this Assignment.") );
-      _cow->setFocus();
-      return;
-    }
-  }
-
-  if (_mode == cNew)
-  {
-    q.exec("SELECT NEXTVAL('salesaccnt_salesaccnt_id_seq') AS salesaccnt_id;");
-    if (q.first())
-      _salesaccntid = q.value("salesaccnt_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-    
   q.prepare("SELECT salesaccnt_id"
             "  FROM salesaccnt"
             " WHERE((salesaccnt_warehous_id=:salesaccnt_warehous_id)"
@@ -214,14 +171,24 @@ void salesAccount::sSave()
   q.exec();
   if(q.first())
   {
-    QMessageBox::warning(this, tr("Cannot Save Sales Account Assignment"),
-      tr("You cannot specify a duplicate Warehouse/Customer Type/Product Category for the Sales Account Assignment."));
-    _warehouse->setFocus();
-    return;
+    errors << GuiErrorCheck(true, _warehouse,
+                           tr("<p>You cannot specify a duplicate Warehouse/Customer Type/Product Category for the Sales Account Assignment."));
   }
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Account Assignment"), errors))
+    return;
 
   if (_mode == cNew)
   {
+    q.exec("SELECT NEXTVAL('salesaccnt_salesaccnt_id_seq') AS salesaccnt_id;");
+    if (q.first())
+      _salesaccntid = q.value("salesaccnt_id").toInt();
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
     q.prepare( "INSERT INTO salesaccnt "
                "( salesaccnt_warehous_id,"
                "  salesaccnt_custtype, salesaccnt_custtype_id,"

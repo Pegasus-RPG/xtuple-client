@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "apAccountAssignment.h"
 
 #include <QVariant>
@@ -87,28 +89,17 @@ enum SetResponse apAccountAssignment::set(const ParameterList &pParams)
 
 void apAccountAssignment::sSave()
 {
-  if (!_ap->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
-                          tr("You must select an A/P Account before saving this A/P Account Assignment") );
-    _ap->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
 
-  if (!_prepaid->isValid())
+  if (_metrics->boolean("InterfaceAPToGL"))
   {
-    QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
-                          tr("You must select a Prepaid Account before saving this A/P Account Assignment") );
-    _prepaid->setFocus();
-    return;
-  }
-
-  if (!_discount->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/P Account Assignment"),
-                          tr("You must select a Discount Account before saving this A/P Account Assignment") );
-    _discount->setFocus();
-    return;
+    errors << GuiErrorCheck(!_ap->isValid(), _ap,
+                            tr("<p>You must select an A/P Account before saving this A/P Account Assignment."))
+           << GuiErrorCheck(!_prepaid->isValid(), _prepaid,
+                            tr("<p>You must select a Prepaid Account before saving this A/P Account Assignment."))
+           << GuiErrorCheck(!_discount->isValid(), _discount,
+                            tr("<p>You must select a Discount Account before saving this A/P Account Assignment."))
+           ;
   }
 
   if (_mode == cNew)
@@ -137,11 +128,16 @@ void apAccountAssignment::sSave()
     q.exec();
     if (q.first())
     {
-      QMessageBox::critical( this, tr("Cannot Create A/P Account Assignment"),
-                             tr("You may not save this A/P Account Assignment as it already exists.") );
-      return;
+      errors << GuiErrorCheck(true, _allVendorTypes,
+                             tr("<p>You may not save this A/P Account Assignment as it already exists."));
     }
+  }
 
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save A/P Account Assignment"), errors))
+    return;
+
+  if (_mode == cNew)
+  {
     q.exec("SELECT NEXTVAL('apaccnt_apaccnt_id_seq') AS _apaccnt_id;");
     if (q.first())
       _apaccntid = q.value("_apaccnt_id").toInt();

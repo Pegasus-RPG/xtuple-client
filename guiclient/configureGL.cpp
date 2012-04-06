@@ -190,6 +190,10 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   _int2gl->setChecked(_metrics->boolean("InterfaceToGL"));
   _cacheint2gl = _int2gl->isChecked();
+  _intap2gl->setChecked(_metrics->boolean("InterfaceAPToGL"));
+  _cacheintap2gl = _intap2gl->isChecked();
+  _intar2gl->setChecked(_metrics->boolean("InterfaceARToGL"));
+  _cacheintar2gl = _intar2gl->isChecked();
 
   if (_metrics->boolean("UseJournals"))
   {
@@ -317,6 +321,10 @@ bool configureGL::sSave()
         return false;
       }
     }
+  }
+
+  if (!_cacheintap2gl && _intap2gl->isChecked())
+  {
     q.exec("SELECT expcat_id "
            "FROM expcat "
            "WHERE (expcat_exp_accnt_id IS NULL) "
@@ -349,6 +357,10 @@ bool configureGL::sSave()
                             "You must assign G/L Accounts to all Payables Assignments");
       return false;
     }
+  }
+
+  if (!_cacheintar2gl && _intar2gl->isChecked())
+  {
     q.exec("SELECT araccnt_id "
            "FROM araccnt "
            "WHERE (araccnt_ar_accnt_id IS NULL) "
@@ -633,6 +645,8 @@ bool configureGL::sSave()
   _metrics->set("DefaultTaxAuthority", _taxauth->id());
 
   _metrics->set("InterfaceToGL", _int2gl->isChecked());
+  _metrics->set("InterfaceAPToGL", _intap2gl->isChecked());
+  _metrics->set("InterfaceARToGL", _intar2gl->isChecked());
 
   omfgThis->sConfigureGLUpdated();
 

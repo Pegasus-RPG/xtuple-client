@@ -8,6 +8,8 @@
  * to be bound by its terms.
  */
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "arAccountAssignment.h"
 
 #include <QVariant>
@@ -98,44 +100,21 @@ enum SetResponse arAccountAssignment::set(const ParameterList &pParams)
 
 void arAccountAssignment::sSave()
 {
-  if (!_ar->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a A/R Account before saving this A/R Account Assignment") );
-    _ar->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
 
-  if (!_prepaid->isValid())
+  if (_metrics->boolean("InterfaceARToGL"))
   {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a Prepaid Receivables Account before saving this A/R Account Assignment") );
-    _ar->setFocus();
-    return;
-  }
-
-  if (!_freight->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a Freight Account before saving this A/R Account Assignment") );
-    _freight->setFocus();
-    return;
-  }
-
-  if(_metrics->boolean("EnableCustomerDeposits") && !_deferred->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a Deferred Revenue Account before saving this A/R Account Assignment") );
-    _deferred->setFocus();
-    return;
-  }
-
-  if (!_discount->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-                          tr("You must select a Discount Account before saving this A/R Account Assignment") );
-    _discount->setFocus();
-    return;
+    errors << GuiErrorCheck(!_ar->isValid(), _ar,
+                            tr("<p>You must select a A/R Account before saving this A/R Account Assignment."))
+           << GuiErrorCheck(!_prepaid->isValid(), _prepaid,
+                            tr("<p>You must select a Prepaid Receivables Account before saving this A/R Account Assignment."))
+           << GuiErrorCheck(!_freight->isValid(), _freight,
+                            tr("<p>You must select a Freight Account before saving this A/R Account Assignment."))
+           << GuiErrorCheck(_metrics->boolean("EnableCustomerDeposits") && !_deferred->isValid(), _deferred,
+                            tr("<p>You must select a Deferred Revenue Account before saving this A/R Account Assignment."))
+           << GuiErrorCheck(!_discount->isValid(), _discount,
+                            tr("<p>You must select a Discount Account before saving this A/R Account Assignment."))
+           ;
   }
 
   q.prepare("SELECT araccnt_id"
@@ -157,10 +136,12 @@ void arAccountAssignment::sSave()
   q.exec();
   if(q.first())
   {
-    QMessageBox::warning( this, tr("Cannot Save A/R Account Assignment"),
-      tr("A record for that assignment already exists."));
-    return;
+    errors << GuiErrorCheck(true, _customerTypePattern,
+                           tr("<p>You may not save this A/R Account Assignment as it already exists."));
   }
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save A/R Account Assignment"), errors))
+    return;
 
   if (_mode == cNew)
   {
