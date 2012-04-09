@@ -156,7 +156,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
     q.prepare( "SELECT pohead_taxzone_id, pohead_number, pohead_orderdate, pohead_status, " // pohead_taxzone_id added
                "       vend_id, vend_restrictpurch, pohead_curr_id "
-               "FROM pohead, vend "
+               "FROM pohead, vendinfo "
                "WHERE ( (pohead_vend_id=vend_id)"
                " AND (pohead_id=:pohead_id) );" );
     q.bindValue(":pohead_id", param.toInt());
@@ -1046,7 +1046,7 @@ void purchaseOrderItem::sVendorItemNumberList()
   ParameterList params;
 
   q.prepare( "SELECT vend_id"
-             "  FROM pohead, vend "
+             "  FROM pohead, vendinfo "
              " WHERE((pohead_vend_id=vend_id)"
              "   AND (pohead_id=:pohead_id));" );
   q.bindValue(":pohead_id", _poheadid);

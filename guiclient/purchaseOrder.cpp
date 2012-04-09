@@ -285,7 +285,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
         }
 
         q.prepare( "SELECT itemsrc_vend_id, vend_name  "
-                   "from itemsrc left join vend on vend.vend_id = itemsrc.itemsrc_vend_id "
+                   "FROM itemsrc "
+                   "LEFT OUTER JOIN vendinfo ON vend.vend_id = itemsrc.itemsrc_vend_id "
                    "WHERE (itemsrc_id=:itemsrc_id);" );
         q.bindValue(":itemsrc_id", itemsrcid);
         q.exec();
@@ -1016,52 +1017,43 @@ void purchaseOrder::sVendaddrList()
   {
     if (vendaddrid != -1)
     {
-      q.prepare( "SELECT vendaddr_code, vendaddr_name,"
-                 "       vendaddr_address1, vendaddr_address2, vendaddr_address3, "
-                 "       vendaddr_city, vendaddr_state, vendaddr_zipcode, vendaddr_country "
-                 "FROM vendaddr "
+      q.prepare( "SELECT vendaddr_code AS code, "
+                 "       vendaddr_name AS name, "
+                 "       addr_line1, addr_line2, addr_line3, "
+                 "       addr_city, addr_state, addr_postalcode, addr_country "
+                 "FROM vendaddrinfo "
+                 "LEFT OUTER JOIN addr ON (vendaddr_addr_id=addr_id) "
                  "WHERE (vendaddr_id=:vendaddr_id);" );
       q.bindValue(":vendaddr_id", vendaddrid);
+
+    }
+    else
+    {
+      q.prepare( "SELECT 'Main' AS code, "
+                 "       vend_name AS name, "
+                 "       addr_line1, addr_line2, addr_line3, "
+                 "       addr_city, addr_state, addr_postalcode, addr_country "
+                 "FROM vendinfo "
+                 "LEFT OUTER JOIN addr ON (vend_addr_id=addr_id) "
+                 "WHERE (vend_id=:vend_id);" );
+      q.bindValue(":vend_id", _vendor->id());
+    }
       q.exec();
       if (q.first())
       {
         _vendaddrid = vendaddrid;
-                disconnect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
-        _vendaddrCode->setText(q.value("vendaddr_code"));
-        _vendAddr->setLine1(q.value("vendaddr_address1").toString());
-        _vendAddr->setLine2(q.value("vendaddr_address2").toString());
-        _vendAddr->setLine3(q.value("vendaddr_address3").toString());
-        _vendAddr->setCity(q.value("vendaddr_city").toString());
-        _vendAddr->setState(q.value("vendaddr_state").toString());
-        _vendAddr->setPostalCode(q.value("vendaddr_zipcode").toString());
-        _vendAddr->setCountry(q.value("vendaddr_country").toString());
-                connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
+        disconnect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
+        _vendaddrCode->setText(q.value("code").toString());
+        _vendAddr->setLine1(q.value("addr_line1").toString());
+        _vendAddr->setLine2(q.value("addr_line2").toString());
+        _vendAddr->setLine3(q.value("addr_line3").toString());
+        _vendAddr->setCity(q.value("addr_city").toString());
+        _vendAddr->setState(q.value("addr_state").toString());
+        _vendAddr->setPostalCode(q.value("addr_postalcode").toString());
+        _vendAddr->setCountry(q.value("addr_country").toString());
+        connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
       }
-    }
-    else
-    {
-      q.prepare( "SELECT vend_name, "
-                 "       vend_address1, vend_address2, vend_address3, "
-                 "       vend_city, vend_state, vend_zip, vend_country "
-                 "FROM vend "
-                 "WHERE (vend_id=:vend_id);" );
-      q.bindValue(":vend_id", _vendor->id());
-      q.exec();
-      if (q.first())
-      {
-        _vendaddrid = -1;
-                disconnect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
-        _vendaddrCode->setText(tr("Main"));
-        _vendAddr->setLine1(q.value("vend_address1").toString());
-        _vendAddr->setLine2(q.value("vend_address2").toString());
-        _vendAddr->setLine3(q.value("vend_address3").toString());
-        _vendAddr->setCity(q.value("vend_city").toString());
-        _vendAddr->setState(q.value("vend_state").toString());
-        _vendAddr->setPostalCode(q.value("vend_zip").toString());
-        _vendAddr->setCountry(q.value("vend_country").toString());
-                connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
-      }
-    }
+
   }
 }
 

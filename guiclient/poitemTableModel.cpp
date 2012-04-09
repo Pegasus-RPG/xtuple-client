@@ -95,7 +95,7 @@ void PoitemTableModel::findHeadData()
 		    "WHERE (pohead_id=:pohead_id);");
     poheadq.bindValue(":pohead_id", _poheadid);
     vendq.prepare("SELECT vend_id, vend_restrictpurch "
-		  "FROM vend, pohead "
+          "FROM vendinfo, pohead "
 		  "WHERE ((vend_id=pohead_vend_id)"
 		  "  AND  (pohead_id=:id));");
     vendq.bindValue(":id", _poheadid);
@@ -109,7 +109,7 @@ void PoitemTableModel::findHeadData()
 		    "                    FROM poitem WHERE poitem_id=:poitem_id);");
     poheadq.bindValue(":poitem_id", _poitemid);
     vendq.prepare("SELECT vend_id, vend_restrictpurch "
-		  "FROM vend, pohead, poitem "
+          "FROM vendinfo, pohead, poitem "
 		  "WHERE ((vend_id=pohead_vend_id)"
 		  "  AND  (pohead_id=poitem_pohead_id)"
 		  "  AND  (poitem_id=:id));");

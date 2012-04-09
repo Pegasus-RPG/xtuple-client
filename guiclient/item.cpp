@@ -2049,7 +2049,7 @@ void item::sFillSourceList()
 			   "       CASE WHEN itemsrc_default = 'TRUE' THEN 'Yes' "
 			   "       ELSE 'No' "
 			   "       END AS default "
-               "FROM item, vend, itemsrc "
+               "FROM item, vendinfo, itemsrc "
                "WHERE ( (itemsrc_item_id=item_id)"
                " AND (itemsrc_vend_id=vend_id)"
 	       " AND (itemsrc_item_id=<? value(\"item_id\") ?>) "

@@ -129,7 +129,7 @@ void unappliedAPCreditMemos::sFillList()
              "       0 AS basebalance_xttotalrole, "
              "       0 AS base_amount_xttotalrole, "
              "       0 AS base_applied_xttotalrole "
-             "FROM apopen, vend "
+             "FROM apopen, vendinfo "
              "WHERE ( (apopen_doctype='C')"
              " AND (apopen_open)"
              " AND (apopen_vend_id=vend_id)"

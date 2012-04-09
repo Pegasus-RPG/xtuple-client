@@ -88,7 +88,7 @@ void applyDiscount::populate()
             "             ELSE 0.0 END - applied) AS amount,"
             "       (determineDiscountDate(terms_id, apopen_docdate) < CURRENT_DATE) AS past"
             "  FROM apopen LEFT OUTER JOIN terms ON (apopen_terms_id=terms_id)"
-            "              JOIN vend ON (apopen_vend_id=vend_id), "
+            "              JOIN vendinfo ON (apopen_vend_id=vend_id), "
             "       (SELECT COALESCE(SUM(apapply_amount),0) AS applied"
             "          FROM apapply, apopen"
             "         WHERE ((apapply_target_apopen_id=:apopen_id)"

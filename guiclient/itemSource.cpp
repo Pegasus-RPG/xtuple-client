@@ -525,7 +525,7 @@ void itemSource::sRejected()
 
 void itemSource::sVendorChanged( int pId )
 {
-    q.prepare("SELECT vend_curr_id FROM vend WHERE vend_id = :vend_id;");
+    q.prepare("SELECT vend_curr_id FROM vendinfo WHERE vend_id = :vend_id;");
     q.bindValue(":vend_id", pId);
     q.exec();
     if (q.first())

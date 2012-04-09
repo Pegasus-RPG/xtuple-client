@@ -77,8 +77,9 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
   if (_po->id() != -1)
   {
     q.prepare( "SELECT pohead_orderdate,"
-              "        vend_id, vend_phone1, pohead_curr_id "
-              "FROM pohead, vend "
+              "        vend_id, cntct_phone, pohead_curr_id "
+              "FROM pohead, vendinfo "
+              "LEFT OUTER JOIN cntct ON (vendinfo.vend_cntct1_id = c1.cntct_id) "
               "WHERE ( (pohead_vend_id=vend_id)"
               " AND (pohead_id=:pohead_id) );" );
     q.bindValue(":pohead_id", _po->id());
@@ -87,7 +88,7 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
     {
       _orderDate->setDate(q.value("pohead_orderdate").toDate());
       _vend->setId(q.value("vend_id").toInt());
-      _vendPhone->setText(q.value("vend_phone1").toString());
+      _vendPhone->setText(q.value("cntct_phone").toString());
       _currency->setId(q.value("pohead_curr_id").toInt());
     }
     else if (q.lastError().type() != QSqlError::NoError)

@@ -479,7 +479,7 @@ void apOpenItem::sPopulateVendInfo(int vend_id)
   XSqlQuery vendor;
   vendor.prepare("SELECT vend_curr_id,"
                  "       vend_terms_id "
-                 "  FROM vend"
+                 "  FROM vendinfo"
                  " WHERE(vend_id = :vend_id);");
   vendor.bindValue(":vend_id", vend_id);
   vendor.exec();

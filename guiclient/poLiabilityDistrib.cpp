@@ -69,14 +69,14 @@ enum SetResponse poLiabilityDistrib::set(const ParameterList &pParams)
 
 void poLiabilityDistrib::populate()
 {
-  q.prepare( "SELECT porecv_value "
-             "FROM porecv "
-             "WHERE (porecv_id=:porecv_id);" ) ;
+  q.prepare( "SELECT recv_value "
+             "FROM recv "
+             "WHERE (recv_id=:recv_id);" ) ;
   q.bindValue(":porecv_id", _porecvid);
   q.exec();
   if (q.first())
   {
-    _amount->setLocalValue(q.value("porecv_value").toDouble());
+    _amount->setLocalValue(q.value("recv_value").toDouble());
   }
 }
 
@@ -90,19 +90,19 @@ void poLiabilityDistrib::sPost()
     return;
   }
 
-  q.prepare( "SELECT insertGLTransaction( 'G/L', 'PO', pohead_number, 'Qty. ' || formatqty(porecv_qty) || ' for ' || COALESCE(item_number,poitem_vend_item_number) || ' marked as invoiced',"
+  q.prepare( "SELECT insertGLTransaction( 'G/L', 'PO', pohead_number, 'Qty. ' || formatqty(recv_qty) || ' for ' || COALESCE(item_number,poitem_vend_item_number) || ' marked as invoiced',"
              "                            :creditAccntid, COALESCE(costcat_liability_accnt_id,expcat_liability_accnt_id) ,-1, :amount, current_date ) AS result"
-			 " FROM porecv, pohead, poitem "
+             " FROM recv, pohead, poitem "
 			 " LEFT OUTER JOIN expcat ON (poitem_expcat_id=expcat_id) "
 			 " LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id) "
 			 " LEFT OUTER JOIN costcat ON (itemsite_costcat_id=costcat_id) "
 			 " LEFT OUTER JOIN item ON (itemsite_item_id=item_id) "
-			 " WHERE ( (porecv_id=:porecv_id) "
-			 " AND (poitem_id=porecv_poitem_id) "
+             " WHERE ( (recv_id=:recv_id) "
+             " AND (poitem_id=recv_orderitem_id) "
 			 " AND (pohead_id=poitem_pohead_id) );" );
   q.bindValue(":creditAccntid", _account->id());
   q.bindValue(":amount", _amount->baseValue());
-  q.bindValue(":porecv_id", _porecvid);
+  q.bindValue(":recv_id", _porecvid);
   q.exec();
   if (!q.first())
   {

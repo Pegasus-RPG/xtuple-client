@@ -125,7 +125,7 @@ void purchaseOrderList::sFillList()
                "       vend_name, pohead_agent_username,"
 	       "       pohead_orderdate,"
 	       "       item_number "
-               "FROM vend, pohead LEFT OUTER JOIN"
+               "FROM vendinfo, pohead LEFT OUTER JOIN"
 	       "     poitem ON (poitem_pohead_id=pohead_id AND poitem_linenumber=1)"
 	       "     LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id)"
 	       "     LEFT OUTER JOIN item ON (itemsite_item_id=item_id) "

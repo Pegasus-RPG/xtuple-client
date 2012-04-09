@@ -84,7 +84,7 @@ void vendorTypes::sFillList()
 void vendorTypes::sDelete()
 {
   q.prepare( "SELECT vend_id "
-             "FROM vend "
+             "FROM vendinfo "
              "WHERE (vend_vendtype_id=:vendtype_id) "
              "LIMIT 1;" );
   q.bindValue(":vendtype_id", _vendtype->id());

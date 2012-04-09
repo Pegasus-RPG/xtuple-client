@@ -92,14 +92,16 @@ void vendorAddressList::sClose()
 
 void vendorAddressList::sFillList()
 {
-  q.prepare( "SELECT -1 AS id, 'Main' AS code, vend_name AS name, vend_address1 AS address,"
+  q.prepare( "SELECT -1 AS id, 'Main' AS code, vend_name AS name, addr_line1 AS address,"
              "       0 AS orderby "
-             "FROM vend "
+             "FROM vendinfo "
+             "LEFT OUTER JOIN addr ON (vend_addr_id=addr_id) "
              "WHERE (vend_id=:vend_id) "
              "UNION "
-             "SELECT vendaddr_id AS id, vendaddr_code AS code, vendaddr_name AS name, vendaddr_address1 AS address,"
+             "SELECT vendaddr_id AS id, vendaddr_code AS code, vendaddr_name AS name, addr_line1 AS address,"
              "       1 AS orderby "
-             "FROM vendaddr "
+             "FROM vendaddrinfo "
+             "LEFT OUTER JOIN addr ON (vendaddr_addr_id=addr_id) "
              "WHERE (vendaddr_vend_id=:vend_id) "
              "ORDER BY orderby, code;" );
   q.bindValue(":vend_id", _vendid);

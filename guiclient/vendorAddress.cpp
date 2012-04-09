@@ -193,7 +193,7 @@ void vendorAddress::sCheck()
   if ((_mode == cNew) && (_number->text().length()))
   {
     q.prepare( "SELECT vendaddr_id "
-               "FROM vendaddr "
+               "FROM vendaddrinfo "
                "WHERE ( (vendaddr_vend_id=:vend_id)"
                " AND (UPPER(vendaddr_code)=UPPER(:vendaddr_code)) );" );
     q.bindValue(":vend_id", _vendid);
