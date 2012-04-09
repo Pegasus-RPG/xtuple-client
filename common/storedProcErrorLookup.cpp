@@ -1398,6 +1398,9 @@ const struct {
                                              "Inventory."),             0, ""},
   { "sufficientInventoryToShipOrder",-11, "",-11, "sufficientInventoryToShipItem"},
 
+  { "thawAccountingPeriod", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot thaw this Accounting Period "
+				     "because it is closed."), 0, "" },
+
   { "thawAccountingPeriod", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot thaw this Accounting Period "
 				     "because it is not frozen."), 0, "" },
 

@@ -614,7 +614,6 @@ void syncCompanies::sSync()
                               "    accnt_comments=:accnt_comments,"
                               "    accnt_type=:accnt_type,"
                               "    accnt_extref=:accnt_extref,"
-                              "    accnt_closedpost=:accnt_closedpost,"
                               "    accnt_forwardupdate=:accnt_forwardupdate,"
                               "    accnt_subaccnttype_code=:accnt_subaccnttype_code,"
                               "    accnt_curr_id=:accnt_curr_id "
@@ -636,13 +635,13 @@ void syncCompanies::sSync()
                               "    accnt_id, accnt_number, accnt_descrip,"
                               "    accnt_comments, accnt_profit, accnt_sub,"
                               "    accnt_type, accnt_extref, accnt_company, "
-                              "    accnt_closedpost, accnt_forwardupdate, "
+                              "    accnt_forwardupdate, "
                               "    accnt_subaccnttype_code, accnt_curr_id) "
                               "VALUES ("
                               "    :accnt_id, :accnt_number,:accnt_descrip,"
                               "    :accnt_comments,:accnt_profit,:accnt_sub,"
                               "    :accnt_type,:accnt_extref,:accnt_company, "
-                              "    :accnt_closedpost,:accnt_forwardupdate, "
+                              "    :accnt_forwardupdate, "
                               "    :accnt_subaccnttype_code,:accnt_curr_id);");
             q.prepare("SELECT NEXTVAL('accnt_accnt_id_seq') AS accnt_id;");
             q.exec();
@@ -667,7 +666,6 @@ void syncCompanies::sSync()
           laccntups.bindValue(":accnt_type",	  raccnt.value("accnt_type"));
           laccntups.bindValue(":accnt_extref",	  raccnt.value("accnt_extref"));
           laccntups.bindValue(":accnt_company",	  raccnt.value("accnt_company"));
-          laccntups.bindValue(":accnt_closedpost",raccnt.value("accnt_closedpost"));
           laccntups.bindValue(":accnt_forwardupdate",raccnt.value("accnt_forwardupdate"));
           laccntups.bindValue(":accnt_subaccnttype_code",raccnt.value("accnt_subaccnttype_code"));
           laccntups.bindValue(":accnt_curr_id",	  raccnt.value("accnt_curr_id"));

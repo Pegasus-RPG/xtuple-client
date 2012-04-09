@@ -94,17 +94,19 @@ void accountingPeriods::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
   if (altId == 0)
   {
+    menuItem = pMenu->addAction(tr("Freeze..."), this, SLOT(sFreezePeriod()));
+
     menuItem = pMenu->addAction(tr("Close..."), this, SLOT(sClosePeriod()));
   }
   else if (altId == 1)
   {
-    menuItem = pMenu->addAction(tr("Open..."), this, SLOT(sOpenPeriod()));
-
-    menuItem = pMenu->addAction(tr("Freeze..."), this, SLOT(sFreezePeriod()));
-  }
-  else if (altId == 2)
-  {
     menuItem = pMenu->addAction(tr("Thaw..."), this, SLOT(sThawPeriod()));
+
+    menuItem = pMenu->addAction(tr("Close..."), this, SLOT(sClosePeriod()));
+  }
+  else if (altId == 2 || altId == 3)
+  {
+    menuItem = pMenu->addAction(tr("Open..."), this, SLOT(sOpenPeriod()));
   }
 }
 
@@ -309,9 +311,10 @@ void accountingPeriods::sFillList()
 {
   _period->clear();
   _period->populate( "SELECT period_id,"
-                     "       CASE WHEN (NOT period_closed) THEN 0"
-                     "            WHEN ( (period_closed) AND (NOT period_freeze) ) THEN 1"
-                     "            WHEN ( (period_closed) AND (period_freeze) ) THEN 2"
+                     "       CASE WHEN ( (NOT period_freeze) AND (NOT period_closed) ) THEN 0"
+                     "            WHEN ( (period_freeze) AND (NOT period_closed) ) THEN 1"
+                     "            WHEN ( (NOT period_freeze) AND (period_closed) ) THEN 2"
+                     "            WHEN ( (period_freeze) AND (period_closed) ) THEN 3"
                      "            ELSE 0"
                      "       END,"
                      "       period_number, period_name,"

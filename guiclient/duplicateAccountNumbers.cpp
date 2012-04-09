@@ -63,12 +63,12 @@ void duplicateAccountNumbers::sDuplicate()
   QString sql ("INSERT INTO accnt"
                "      (accnt_number, accnt_descrip,"
                "       accnt_comments, accnt_type, accnt_extref,"
-               "       accnt_closedpost, accnt_forwardupdate,"
+               "       accnt_forwardupdate,"
                "       accnt_subaccnttype_code, accnt_curr_id,"
                "       accnt_company, accnt_profit, accnt_sub) "
                "SELECT accnt_number, (accnt_descrip||' '||:descrip),"
                "       accnt_comments, accnt_type, accnt_extref,"
-               "       accnt_closedpost, accnt_forwardupdate,"
+               "       accnt_forwardupdate,"
                "       accnt_subaccnttype_code, accnt_curr_id,");
   if(_changeCompany->isChecked())
     sql +=     " :company,";

@@ -107,7 +107,6 @@ enum SetResponse accountNumber::set(const ParameterList &pParams)
       _sub->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _extReference->setEnabled(FALSE);
-      _postIntoClosed->setEnabled(FALSE);
       _forwardUpdate->setEnabled(FALSE);
       _active->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
@@ -214,13 +213,13 @@ void accountNumber::sSave()
     q.prepare( "INSERT INTO accnt "
                "( accnt_id,"
                "  accnt_company, accnt_profit, accnt_number, accnt_sub,"
-               "  accnt_closedpost, accnt_forwardupdate, accnt_active,"
+               "  accnt_forwardupdate, accnt_active,"
                "  accnt_type, accnt_descrip, accnt_extref, accnt_comments, "
 	       "  accnt_subaccnttype_code, accnt_curr_id ) "
                "VALUES "
                "( :accnt_id,"
                "  :accnt_company, :accnt_profit, :accnt_number, :accnt_sub,"
-               "  :accnt_closedpost, :accnt_forwardupdate, :accnt_active,"
+               "  :accnt_forwardupdate, :accnt_active,"
                "  :accnt_type, :accnt_descrip, :accnt_extref, :accnt_comments,"
                "  (SELECT subaccnttype_code FROM subaccnttype WHERE subaccnttype_id=:accnt_subaccnttype_id), "
 	       "  :accnt_curr_id );" );
@@ -229,7 +228,7 @@ void accountNumber::sSave()
     q.prepare( "UPDATE accnt "
                "SET accnt_company=:accnt_company, accnt_profit=:accnt_profit,"
                "    accnt_number=:accnt_number, accnt_sub=:accnt_sub,"
-               "    accnt_closedpost=:accnt_closedpost, accnt_forwardupdate=:accnt_forwardupdate,"
+               "    accnt_forwardupdate=:accnt_forwardupdate,"
                "    accnt_active=:accnt_active,"
                "    accnt_type=:accnt_type, accnt_descrip=:accnt_descrip, accnt_extref=:accnt_extref,"
                "    accnt_comments=:accnt_comments,"
@@ -244,7 +243,6 @@ void accountNumber::sSave()
   q.bindValue(":accnt_sub", _sub->currentText());
   q.bindValue(":accnt_descrip", _description->text());
   q.bindValue(":accnt_extref", _extReference->text());
-  q.bindValue(":accnt_closedpost",    QVariant(_postIntoClosed->isChecked()));
   q.bindValue(":accnt_forwardupdate", QVariant(_forwardUpdate->isChecked()));
   q.bindValue(":accnt_active", QVariant(_active->isChecked()));
   q.bindValue(":accnt_comments", _comments->toPlainText());
@@ -274,11 +272,7 @@ void accountNumber::sSave()
 
 void accountNumber::populate()
 {
-  q.prepare( "SELECT accnt_company, accnt_profit, accnt_number, accnt_sub,"
-             "       accnt_closedpost, accnt_forwardupdate,"
-             "       accnt_type, accnt_descrip, accnt_extref, accnt_comments, subaccnttype_id, "
-             "       accnt_curr_id, "
-             "       accnt_active, "
+  q.prepare( "SELECT accnt.*, subaccnttype_id, "
              "       CASE WHEN (gltrans_id IS NULL) THEN false ELSE true END AS used "
              "FROM accnt "
              "  LEFT OUTER JOIN subaccnttype ON (subaccnttype_code=accnt_subaccnttype_code) "
@@ -301,7 +295,6 @@ void accountNumber::populate()
     _number->setText(q.value("accnt_number"));
     _description->setText(q.value("accnt_descrip"));
     _extReference->setText(q.value("accnt_extref"));
-    _postIntoClosed->setChecked(q.value("accnt_closedpost").toBool());
     _forwardUpdate->setChecked(q.value("accnt_forwardupdate").toBool());
     _active->setChecked(q.value("accnt_active").toBool());
     _wasActive = _active->isChecked();
