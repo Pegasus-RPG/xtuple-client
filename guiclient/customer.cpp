@@ -194,7 +194,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
   _shipto->addColumn(tr("Default"), _itemColumn, Qt::AlignLeft, true, "shipto_default");
   _shipto->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "shipto_num");
   _shipto->addColumn(tr("Name"),            150, Qt::AlignLeft, true, "shipto_name");
-  _shipto->addColumn(tr("Address"),         150, Qt::AlignLeft, true, "shipto_address1");
+  _shipto->addColumn(tr("Address"),         150, Qt::AlignLeft, true, "addr_line1");
   _shipto->addColumn(tr("City, State, Zip"), -1, Qt::AlignLeft, true, "shipto_csz");
 
   _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
