@@ -768,7 +768,7 @@ void creditMemo::sFillList()
              "       'qty' AS cmitem_qtycredit_xtnumericrole,"
              "       'salesprice' AS cmitem_unitprice_xtnumericrole,"
              "       'curr' AS extprice_xtnumericrole "
-             "FROM cmitem, itemsite, item, warehous, uom AS quom, uom AS puom "
+             "FROM cmitem, itemsite, item, whsinfo, uom AS quom, uom AS puom "
              "WHERE ( (cmitem_itemsite_id=itemsite_id)"
              " AND (cmitem_qty_uom_id=quom.uom_id)"
              " AND (cmitem_price_uom_id=puom.uom_id)"

@@ -61,7 +61,7 @@ enum SetResponse countTagList::set(const ParameterList &pParams)
 void countTagList::sFillList()
 {
   QString sql( "SELECT invcnt_id, invcnt_tagnumber, item_number, item_descrip1, warehous_code "
-               "FROM invcnt, itemsite, item, warehous "
+               "FROM invcnt, itemsite, item, whsinfo "
                "WHERE ((invcnt_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)" );

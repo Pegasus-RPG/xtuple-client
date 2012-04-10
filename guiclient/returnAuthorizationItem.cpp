@@ -978,7 +978,7 @@ void returnAuthorizationItem::populate()
         query.prepare( "SELECT wo_status,"
                        "       wo_qtyord AS qty,"
                        "       wo_duedate, warehous_id, warehous_code "
-                       "FROM wo, itemsite, warehous "
+                       "FROM wo, itemsite, whsinfo "
                        "WHERE ((wo_itemsite_id=itemsite_id)"
                        " AND (itemsite_warehous_id=warehous_id)"
                        " AND (wo_id=:wo_id));" );

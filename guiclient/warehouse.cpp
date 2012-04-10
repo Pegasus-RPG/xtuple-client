@@ -177,14 +177,14 @@ void warehouse::sSave()
   if (_mode != cNew)
   {
     ctq.prepare( "SELECT warehous_id "
-               "FROM warehous "
+               "FROM whsinfo "
                "WHERE ( (warehous_counttag_prefix=:prefix)"
                " AND (warehous_id<>:warehous_id) );" );
     ctq.bindValue(":warehous_id", _warehousid);
   }
   else
     ctq.prepare( "SELECT warehous_id "
-               "FROM warehous "
+               "FROM whsinfo "
                "WHERE (warehous_counttag_prefix=:prefix)" );
   ctq.bindValue(":prefix", _countTagPrefix->text());
   ctq.exec();
@@ -204,7 +204,7 @@ void warehouse::sSave()
 
   XSqlQuery uniq;
   uniq.prepare("SELECT warehous_id "
-               "FROM warehous "
+               "FROM whsinfo "
                "WHERE ( (warehous_id<>:warehous_id)"
                " AND (UPPER(warehous_code)=UPPER(:warehous_code)) );" );
   uniq.bindValue(":warehous_id", _warehousid);
@@ -474,7 +474,7 @@ void warehouse::sCheck()
   if (_mode == cNew)
   {
     q.prepare( "SELECT warehous_id "
-               "FROM warehous "
+               "FROM whsinfo "
                "WHERE (UPPER(warehous_code)=UPPER(:warehous_code));" );
     q.bindValue(":warehous_code", _code->text());
     q.exec();

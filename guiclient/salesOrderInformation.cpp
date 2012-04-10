@@ -88,7 +88,7 @@ void salesOrderInformation::populate()
              "       cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3,"
              "       cohead_shiptocity, cohead_shiptostate, cohead_shiptozipcode "
              "FROM cohead, coitem, itemsite LEFT OUTER JOIN "
-	     "     warehous ON (itemsite_warehous_id = warehous_id) "
+         "     whsinfo ON (itemsite_warehous_id = warehous_id) "
              "WHERE ( (coitem_cohead_id=cohead_id)"
 	     " AND (coitem_itemsite_id=itemsite_id) "
              " AND (coitem_status <> 'X')"

@@ -25,7 +25,7 @@ salesAccount::salesAccount(QWidget* parent, const char* name, bool modal, Qt::WF
 
   _warehouse->populate( "SELECT -1, 'Any'::text AS warehous_code, 0 AS sort "
 			"UNION SELECT warehous_id, warehous_code, 1 AS sort "
-			"FROM warehous "
+            "FROM whsinfo "
 			"ORDER BY sort, warehous_code" );
 
   _customerTypes->setType(ParameterGroup::CustomerType);

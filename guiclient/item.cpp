@@ -1722,7 +1722,7 @@ void item::sFillListItemSites()
                "            WHEN itemsite_controlmethod='L' THEN :lotNumber"
                "            WHEN itemsite_controlmethod='S' THEN :serialNumber"
                "       END AS itemsite_controlmethod "
-               "FROM itemsite, item, warehous "
+               "FROM itemsite, item, whsinfo "
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id) "
                " AND (item_id=:item_id) ) "

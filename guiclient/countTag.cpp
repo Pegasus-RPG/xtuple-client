@@ -305,7 +305,7 @@ void countTag::populate()
              "                              END "
              "                    FROM location"
              "                   WHERE (location_id=invcnt_location_id)), :na) AS f_location "
-             "FROM invcnt, itemsite, warehous "
+             "FROM invcnt, itemsite, whsinfo "
              "WHERE ( (invcnt_itemsite_id=itemsite_id)"
              " AND (itemsite_warehous_id=warehous_id)"
              " AND (invcnt_id=:cnttag_id) );" );

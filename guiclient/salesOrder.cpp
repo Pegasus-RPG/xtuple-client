@@ -1604,7 +1604,7 @@ void salesOrder::sPopulateFOB(int pWarehousid)
 {
   XSqlQuery fob;
   fob.prepare( "SELECT warehous_fob "
-               "FROM warehous "
+               "FROM whsinfo "
                "WHERE (warehous_id=:warehous_id);" );
   fob.bindValue(":warehous_id", pWarehousid);
   fob.exec();
@@ -2696,7 +2696,7 @@ void salesOrder::sFillItemList()
                 "       'salesprice' AS coitem_price_xtnumericrole,"
                 "       'curr' AS extprice_xtnumericrole "
                 "  FROM item, uom AS quom, uom AS puom,"
-                "       quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
+                "       quitem LEFT OUTER JOIN (itemsite JOIN whsinfo ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
                 " WHERE ( (quitem_item_id=item_id)"
                 "   AND   (quitem_qty_uom_id=quom.uom_id)"
                 "   AND   (quitem_price_uom_id=puom.uom_id)"
@@ -3974,7 +3974,7 @@ void salesOrder::sIssueLineBalance()
                   "       sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail "
                   "  FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
                   "              JOIN item ON (item_id=itemsite_item_id)"
-                  "              JOIN warehous ON (warehous_id=itemsite_warehous_id) "
+                  "              JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
                   " WHERE (coitem_id=:soitem_id); ");
         q.bindValue(":soitem_id", soitem->id());
         q.exec();
@@ -3999,7 +3999,7 @@ void salesOrder::sIssueLineBalance()
                 "       sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail "
                 "  FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
                 "              JOIN item ON (item_id=itemsite_item_id)"
-                "              JOIN warehous ON (warehous_id=itemsite_warehous_id) "
+                "              JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
                 " WHERE ((coitem_id=:soitem_id) "
                 "   AND (NOT ((item_type = 'R') OR (itemsite_controlmethod = 'N'))) "
                 "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)));");

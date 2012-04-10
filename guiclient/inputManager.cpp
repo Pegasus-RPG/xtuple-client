@@ -866,7 +866,7 @@ void InputManager::dispatchItemSite()
 
     XSqlQuery itemsiteid;
     itemsiteid.prepare( "SELECT itemsite_id, itemsite_item_id "
-                        "FROM itemsite, item, warehous "
+                        "FROM itemsite, item, whsinfo "
                         "WHERE ( (itemsite_warehous_id=warehous_id)"
                         " AND (itemsite_item_id=item_id)"
                         " AND (item_number=:item_number)"
@@ -1005,7 +1005,7 @@ void InputManager::dispatchLocation()
 
     XSqlQuery locationid;
     locationid.prepare( "SELECT location_id "
-                        "FROM location, warehous "
+                        "FROM location, whsinfo "
                         "WHERE ( (location_warehous_id=warehous_id)"
                         " AND (warehous_code=:warehous_code)"
                         " AND (location_name=:location_name) );" );
@@ -1041,7 +1041,7 @@ void InputManager::dispatchLocationIssue()
 
     XSqlQuery locationid;
     locationid.prepare( "SELECT location_id "
-                        "FROM location, warehous "
+                        "FROM location, whsinfo "
                         "WHERE ( (location_warehous_id=warehous_id)"
                         " AND (warehous_code=:warehous_code)"
                         " AND (location_name=:location_name) );" );
@@ -1088,7 +1088,7 @@ void InputManager::dispatchLocationContents()
 
     XSqlQuery locationid;
     locationid.prepare( "SELECT location_id "
-                        "FROM location, warehous "
+                        "FROM location, whsinfo "
                         "WHERE ( (location_warehous_id=warehous_id)"
                         " AND (warehous_code=:warehous_code)"
                         " AND (location_name=:location_name) );" );

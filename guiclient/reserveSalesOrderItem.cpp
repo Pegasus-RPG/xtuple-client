@@ -127,12 +127,12 @@ void reserveSalesOrderItem::populate()
                 "       coitem_qtyreserved,"
 		"       noNeg(coitem_qtyord - coitem_qtyshipped +"
 		"             coitem_qtyreturned - coitem_qtyreserved) AS balance "
-		"FROM cohead, coitem, itemsite, item, warehous, uom "
+        "FROM cohead, coitem, itemsite, item, whsinfo, uom "
 		"WHERE ((coitem_cohead_id=cohead_id)"
 		"  AND  (coitem_itemsite_id=itemsite_id)"
 		"  AND  (coitem_status <> 'X')"
                 "  AND  (coitem_qty_uom_id=uom_id)"
-		"  AND  (itemsite_item_id=item_id)"
+        "  AND  (itemsite_item_id=item_id)"
 		"  AND  (itemsite_warehous_id=warehous_id)"
 		"  AND  (coitem_id=<? value(\"soitem_id\") ?>) );";
 

@@ -167,7 +167,7 @@ void locations::sFillList()
                "       firstLine(location_descrip) AS locationname,"
                "       formatBoolYN(location_netable) AS netable,"
                "       formatBoolYN(location_restrict) AS restricted "
-               "FROM location, warehous "
+               "FROM location, whsinfo "
                "WHERE ( (location_warehous_id=warehous_id)" );
 
   if (_warehouse->isSelected())

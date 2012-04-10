@@ -102,7 +102,7 @@ void copySalesOrder::sPopulateSoInfo(int)
                "       'qty' AS coitem_qtyord_xtnumericrole,"
                "       'price' AS coitem_price_xtnumericrole,"
                "       'curr' AS extended_xtnumericrole "
-               "FROM coitem, itemsite, item, warehous "
+               "FROM coitem, itemsite, item, whsinfo "
                "WHERE ( (coitem_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)"

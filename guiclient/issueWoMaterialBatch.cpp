@@ -92,7 +92,7 @@ void issueWoMaterialBatch::sIssue()
           "                    FROM itemloc "
           "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) "
           "        >= roundQty(item_fractional, noNeg(itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)))) AS isqtyavail "
-          "  FROM womatl, itemsite, item, warehous "
+          "  FROM womatl, itemsite, item, whsinfo "
           " WHERE ( (womatl_itemsite_id=itemsite_id) "
           "   AND (itemsite_item_id=item_id) "
           "   AND (itemsite_warehous_id=warehous_id) "

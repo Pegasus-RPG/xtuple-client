@@ -107,7 +107,7 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
                "       'curr' AS extended_xtnumericrole "
                "FROM poitem LEFT OUTER JOIN "
                "      (itemsite JOIN item ON (itemsite_item_id=item_id) "
-               "                JOIN warehous ON (itemsite_warehous_id=warehous_id) ) "
+               "                JOIN whsinfo ON (itemsite_warehous_id=warehous_id) ) "
                "      ON (poitem_itemsite_id=itemsite_id) "
                "WHERE (poitem_pohead_id=:pohead_id) "
                "ORDER BY poitem_linenumber;" );

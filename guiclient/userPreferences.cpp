@@ -77,7 +77,7 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   _warehouses->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter, true,  "warehous_code" );
   _warehouses->addColumn(tr("Description"), -1,         Qt::AlignLeft,   true,  "warehous_descrip"   );
   _warehouses->populate( "SELECT warehous_id, TEXT('-') AS notify, warehous_code, warehous_descrip "
-                        "FROM warehous "
+                        "FROM whsinfo "
                         "ORDER BY warehous_code" );
 
   _dirty = FALSE;
@@ -582,7 +582,7 @@ void userPreferences::sAllWarehousesToggled(int pEvnttypeid)
                "INSERT INTO evntnot "
                "(evntnot_username, evntnot_evnttype_id, evntnot_warehous_id) "
                "SELECT :username, :evnttype_id, warehous_id "
-               "FROM warehous;" );
+               "FROM whsinfo;" );
 
   if (_currentUser->isChecked())
 	q.bindValue(":username", omfgThis->username());

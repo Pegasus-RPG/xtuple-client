@@ -256,7 +256,7 @@ void location::sHandleWarehouse(int pWarehousid)
              "       warehous_racksize, warehous_rackalpha,"
              "       warehous_binsize, warehous_binalpha,"
              "       warehous_locationsize, warehous_locationalpha "
-             "FROM warehous "
+             "FROM whsinfo "
              "WHERE (warehous_id=:warehous_id);" );
   q.bindValue(":warehous_id", pWarehousid);
   q.exec();

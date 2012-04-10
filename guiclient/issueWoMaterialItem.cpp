@@ -150,7 +150,7 @@ void issueWoMaterialItem::sIssue()
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
             "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty))) AS isqtyavail "
-            "  FROM womatl, itemsite, item, warehous "
+            "  FROM womatl, itemsite, item, whsinfo "
             " WHERE ((womatl_itemsite_id=itemsite_id) "
             "   AND (itemsite_item_id=item_id) "
             "   AND (itemsite_warehous_id=warehous_id) "

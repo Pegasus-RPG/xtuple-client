@@ -325,7 +325,7 @@ void itemAvailabilityWorkbench::sFillListItemloc()
                  "       END AS itemloc_warrpurc_qtforegroundrole,"
                  "       itemloc_qty AS qoh,"
                  "       'qty' AS qoh_xtnumericrole "
-                 "FROM itemsite, warehous,"
+                 "FROM itemsite, whsinfo,"
                  "     itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
                  "WHERE ( ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) )"
                  " AND (itemloc_itemsite_id=itemsite_id)"
@@ -348,7 +348,7 @@ void itemAvailabilityWorkbench::sFillListItemloc()
            "             NULL AS itemloc_warrpurc_qtforegroundrole,"
            "             itemsite_qtyonhand AS qoh,"
            "             'qty' AS qoh_xtnumericrole "
-           "FROM itemsite, warehous "
+           "FROM itemsite, whsinfo "
            "WHERE ( (NOT itemsite_loccntrl)"
            " AND (itemsite_controlmethod NOT IN ('L', 'S'))"
            " AND (itemsite_warehous_id=warehous_id)"
@@ -635,7 +635,7 @@ void itemAvailabilityWorkbench::sFillListAvail()
            " qtyOrdered(itemsite_id, :startDate, :endDate) AS ordered ";
 
 
-   sql += "FROM itemsite, warehous, item "
+   sql += "FROM itemsite, whsinfo, item "
           "WHERE ( (itemsite_active)"
           " AND (itemsite_warehous_id=warehous_id)"
           " AND (itemsite_item_id=item_id)"

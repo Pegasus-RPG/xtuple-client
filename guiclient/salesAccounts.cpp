@@ -137,7 +137,7 @@ void salesAccounts::sFillList()
   XSqlQuery r;
   r.exec("SELECT salesaccnt_id,"
 	 "       CASE WHEN (salesaccnt_warehous_id=-1) THEN TEXT('Any')"
-	 "            ELSE (SELECT warehous_code FROM warehous WHERE (warehous_id=salesaccnt_warehous_id))"
+     "            ELSE (SELECT warehous_code FROM whsinfo WHERE (warehous_id=salesaccnt_warehous_id))"
 	 "       END AS warehouscode,"
 	 "       CASE WHEN ((salesaccnt_custtype_id=-1) AND (salesaccnt_custtype='.*')) THEN 'All'"
 	 "            WHEN (salesaccnt_custtype_id=-1) THEN salesaccnt_custtype"

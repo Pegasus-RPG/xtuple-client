@@ -978,7 +978,7 @@ void woList::sFillList()
         "       formatWONumber(wo_id) AS number,"
         "       wo_status, warehous_code, item_number,"
         "       (item_descrip1 || ' ' || item_descrip2) AS description "
-        "FROM wo, itemsite, warehous, item "
+        "FROM wo, itemsite, whsinfo, item "
         "WHERE ( (wo_itemsite_id=itemsite_id)"
         " AND (itemsite_warehous_id=warehous_id)"
         " AND (itemsite_item_id=item_id)";
@@ -1067,7 +1067,7 @@ void woSearch::sFillList()
         "       formatWONumber(wo_id) AS number,"
         "       wo_status, warehous_code, item_number,"
         "       (item_descrip1 || ' ' || item_descrip2) AS description "
-        "FROM wo, itemsite, warehous, item "
+        "FROM wo, itemsite, whsinfo, item "
         "WHERE ( (wo_itemsite_id=itemsite_id)"
         " AND (itemsite_warehous_id=warehous_id)"
         " AND (itemsite_item_id=item_id)";
