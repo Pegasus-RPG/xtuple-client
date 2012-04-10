@@ -1617,7 +1617,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
 {
   _holdType->setCurrentIndex(0);
 
-  if (pCustid != -1)
+  if (_cust->isValid())
   {
     QString sql("SELECT cust_name, addr_id, "
                 "       cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
