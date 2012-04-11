@@ -672,8 +672,9 @@ bool cashReceipt::save(bool partial)
 	       "    cashrcpt_curr_id=:curr_id,"
 	       "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit,"
            "    cashrcpt_applydate=:cashrcpt_applydate,"
-		   "    cashrcpt_discount=:cashrcpt_discount "
-		   "WHERE (cashrcpt_id=:cashrcpt_id);" );
+           "    cashrcpt_discount=:cashrcpt_discount, "
+           "    cashrcpt_curr_rate=null " // force a curr rate re-evaluation
+           "WHERE (cashrcpt_id=:cashrcpt_id);" );
 
   q.bindValue(":cashrcpt_id", _cashrcptid);
   q.bindValue(":cashrcpt_number", _number->text());
