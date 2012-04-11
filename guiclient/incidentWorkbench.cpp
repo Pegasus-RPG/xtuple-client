@@ -72,7 +72,8 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char*, Qt::WFlags fl
   if(_metrics->boolean("IncidentsPublicPrivate"))
     parameterWidget()->append(tr("Public"), "public", ParameterWidget::CheckBox);
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
-  parameterWidget()->append(tr("Lot/Serial Pattern"), "lspattern", ParameterWidget::Text);
+  if (_metrics->boolean("LotSerialControl"))
+    parameterWidget()->append(tr("Lot/Serial Pattern"), "lspattern", ParameterWidget::Text);
   parameterWidget()->applyDefaultFilterSet();
 
   connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
