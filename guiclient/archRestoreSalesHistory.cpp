@@ -12,6 +12,10 @@
 
 #include <QVariant>
 
+#include "metasql.h"
+
+#include "errorReporter.h"
+
 #define cArchive 0x01
 #define cRestore  0x02
 
@@ -20,7 +24,6 @@ archRestoreSalesHistory::archRestoreSalesHistory(QWidget* parent, const char* na
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSelect()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
@@ -67,70 +70,70 @@ enum SetResponse archRestoreSalesHistory::set(const ParameterList &pParams)
 
 void archRestoreSalesHistory::sSelect()
 {
-  QString sql;
-
+  // TODO: can we reduce the diffs between archive and restore cases?
+  // TODO: can we reduce the diffs between miscitems and else cases?
+  MetaSQLQuery mql("<? if exists('archive') ?>"
+                   "SELECT archiveSalesHistory(cohist_id) "     
+                   "  FROM custinfo"
+                   "  JOIN custtype ON (cust_custtype_id=custtype_id)"
+                   "  JOIN cohist   ON (cohist_cust_id=cust_id)"
+                   "  LEFT OUTER JOIN itemsite ON (cohist_itemsite_id=itemsite_id)"
+                   "  LEFT OUTER JOIN item     ON (itemsite_item_id=item_id)"
+                   "  LEFT OUTER JOIN prodcat  ON (item_prodcat_id=prodcat_id)"
+                   " WHERE (cohist_invcdate BETWEEN <? value('startDate') ?> AND <? value('endDate') ?>)"
+                   "<? elseif exists('restore') ?>"
+                   "SELECT restoreSalesHistory(asohist_id) "
+                   "  FROM custinfo"
+                   "  JOIN custtype ON (cust_custtype_id=custtype_id)"
+                   "  JOIN asohist  ON (asohist_cust_id=cust_id)"
+                   "  LEFT OUTER JOIN itemsite ON (asohist_itemsite_id=itemsite_id) "
+                   "  LEFT OUTER JOIN item     ON (itemsite_item_id=item_id)"
+                   "  LEFT OUTER JOIN prodcat  ON (item_prodcat_id=prodcat_id)"
+                   "WHERE (asohist_invcdate BETWEEN <? value('startDate') ?> AND <? value('endDate') ?>)"
+                   "<? endif ?>"
+                   "<? if exists('miscitems') ?>"
+                   "  <? if exists('warehous_id') ?>"
+                   " AND ( (itemsite_id IS NULL) OR (itemsite_warehous_id=:warehous_id) )"
+                   "  <? endif ?>"
+                   "  <? if exists('prodcat_id') ?>"
+                   " AND ( (itemsite_id IS NULL) OR (prodcat_id=<? value('prodcat_id') ?>) )"
+                   "  <? elseif exists('prodcat_pattern') ?>"
+                   " AND ( (itemsite_id IS NULL) OR (prodcat_code ~ <? value('prodcat_pattern') ?>) )"
+                   "<? else ?>"
+                   " AND (itemsite_id IS NOT NULL)"
+                   "  <? if exists('warehous_id') ?>"
+                   " AND (itemsite_warehous_id=:warehous_id)"
+                   "  <? endif ?>"
+                   "  <? if exists('prodcat_id') ?>"
+                   " AND (prodcat_id=<? value('prodcat_id') ?>)"
+                   "  <? elseif exists('prodcat_pattern') ?>"
+                   " AND (prodcat_code ~ <? value('prodcat_pattern') ?>)"
+                   "  <? endif ?>"
+                   "<? endif ?>"
+                   "<? if exists('custtype_id') ?>"
+                   " AND (custtype_id=<? value('custtype_id') ?>)"
+                   "<? elseif exists('custtype_pattern') ?>"
+                   " AND (custtype_code ~ <? value('custtype_pattern') ?>)"
+                   " );");
+  ParameterList params;
   if (_mode == cArchive)
-    sql = "SELECT archiveSalesHistory(cohist_id) "
-          "FROM cust, custtype,"
-          "     cohist LEFT OUTER JOIN"
-          "     ( itemsite JOIN"
-          "       ( item JOIN prodcat"
-          "         ON (item_prodcat_id=prodcat_id) )"
-          "       ON (itemsite_item_id=item_id) )"
-          "     ON (cohist_itemsite_id=itemsite_id) "
-          "WHERE ( (cohist_cust_id=cust_id)"
-          " AND (cust_custtype_id=custtype_id)"
-          " AND (cohist_invcdate BETWEEN :startDate AND :endDate)";
+    params.append("archive");
   else if (_mode == cRestore)
-    sql = "SELECT restoreSalesHistory(asohist_id) "
-          "FROM cust, custtype,"
-          "     asohist LEFT OUTER JOIN"
-          "     ( itemsite JOIN"
-          "       ( item JOIN prodcat"
-          "         ON (item_prodcat_id=prodcat_id) )"
-          "       ON (itemsite_item_id=item_id) )"
-          "     ON (asohist_itemsite_id=itemsite_id) "
-          "WHERE ( (asohist_cust_id=cust_id)"
-          " AND (cust_custtype_id=custtype_id)"
-          " AND (asohist_invcdate BETWEEN :startDate AND :endDate)";
-
+    params.append("restore");
+  
   if (_miscItems->isChecked())
-  {
-    if (_warehouse->isSelected())
-      sql += " AND ( (itemsite_id IS NULL) OR (itemsite_warehous_id=:warehous_id) )";
+    params.append("miscitems");
 
-    if (_productCategory->isChecked())
-      sql += " AND ( (itemsite_id IS NULL) OR (prodcat_id=:prodcat_id) )";
-    else if (_productCategory->isPattern())
-      sql += " AND ( (itemsite_id IS NULL) OR (prodcat_code ~ :prodcat_pattern) )";
-  }
-  else
-  {
-    sql += " AND (itemsite_id IS NOT NULL)";
+  _warehouse->appendValue(params);
+  _customerType->appendValue(params);
+  _productCategory->appendValue(params);
+  _dates->appendValue(params);
 
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    if (_productCategory->isChecked())
-      sql += " AND (prodcat_id=:prodcat_id)";
-    else if (_productCategory->isPattern())
-      sql += " AND (prodcat_code ~ :prodcat_pattern)";
-
-  }
-
-  if (_customerType->isSelected())
-    sql += " AND (custtype_id=:custtype_id)";
-  else if (_customerType->isPattern())
-    sql += " AND (custtype_code ~ :custtype_pattern)";
-
-  sql += " );";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _customerType->bindValue(q);
-  _productCategory->bindValue(q);
-  _dates->bindValue(q);
-  q.exec();
+  XSqlQuery qry = mql.toQuery(params);
+  qry.exec();
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Processing Error"),
+                           qry, __FILE__, __LINE__))
+    reject();
 
   accept();
 }

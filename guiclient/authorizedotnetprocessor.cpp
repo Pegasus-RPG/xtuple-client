@@ -83,11 +83,11 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
     "  formatbytea(decrypt(setbytea(ccard_country),  setbytea(:key),'bf')) AS ccard_country,"
     "  formatbytea(decrypt(setbytea(ccard_month_expired),setbytea(:key),'bf')) AS ccard_month_expired,"
     "  formatbytea(decrypt(setbytea(ccard_year_expired),setbytea(:key), 'bf')) AS ccard_year_expired,"
-    "  cust.* "
-    "  FROM ccard, cust "
-    "WHERE ((ccard_id=:ccardid)"
-    "  AND  (ccard_cust_id=cust_id));");
-  // note use of the cust view instead of the custinfo table
+    "  custinfo.*, cntct_phone, cntct_email"
+    "  FROM ccard"
+    "  JOIN custinfo ON (ccard_cust_id=cust_id)"
+    "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
+    "WHERE (ccard_id=:ccardid);");
   anq.bindValue(":ccardid", pccardid);
   anq.bindValue(":key",     omfgThis->_key);
   anq.exec();
@@ -151,8 +151,8 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
 
   if (_metrics->boolean("CCANWellsFargoSecureSource"))
   {
-    APPENDFIELD(prequest, "x_phone",    anq.value("cust_phone").toString());
-    APPENDFIELD(prequest, "x_email",    anq.value("cust_email").toString());
+    APPENDFIELD(prequest, "x_phone",    anq.value("cntct_phone").toString());
+    APPENDFIELD(prequest, "x_email",    anq.value("cntct_email").toString());
   }
 
   anq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");

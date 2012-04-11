@@ -10,26 +10,21 @@
 
 #include "unappliedARCreditMemos.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMenu>
-#include <parameter.h>
+#include <QVariant>
+
 #include <openreports.h>
+#include <parameter.h>
+
 #include "applyARCreditMemo.h"
 #include "arOpenItem.h"
-/*
- *  Constructs a unappliedARCreditMemos as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "errorReporter.h"
+
 unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_aropen, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
@@ -43,7 +38,8 @@ unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name
   connect(_aropen, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
   _aropen->addColumn( tr("Doc. #"),   _itemColumn,     Qt::AlignCenter, true,  "aropen_docnumber" );
-  _aropen->addColumn( tr("Customer"), -1,              Qt::AlignLeft,   true,  "customer"   );
+  _aropen->addColumn( tr("Cust. #"),  _orderColumn,    Qt::AlignLeft,   true,  "cust_number"   );
+  _aropen->addColumn( tr("Customer"), -1,              Qt::AlignLeft,   true,  "cust_name"   );
   _aropen->addColumn( tr("Amount"),   _moneyColumn,    Qt::AlignRight,  true,  "aropen_amount"  );
   _aropen->addColumn( tr("Applied"),  _moneyColumn,    Qt::AlignRight,  true,  "applied"  );
   _aropen->addColumn( tr("Balance"),  _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
@@ -117,8 +113,9 @@ void unappliedARCreditMemos::sPopulateMenu( QMenu * )
 
 void unappliedARCreditMemos::sFillList()
 {
-  q.prepare( "SELECT aropen_id, aropen_docnumber,"
-             "       (cust_number || '-' || cust_name) AS customer,"
+  XSqlQuery aq;
+  aq.prepare("SELECT aropen_id, aropen_docnumber,"
+             "       cust_number, cust_name,"
              "       aropen_amount,"
              "       (aropen_paid + COALESCE(prepared,0.0) + COALESCE(cashapplied,0.0)) AS applied,"
              "       (aropen_amount - aropen_paid - COALESCE(prepared,0.0) - COALESCE(cashapplied,0.0)) AS balance, "
@@ -142,14 +139,16 @@ void unappliedARCreditMemos::sFillList()
              "                         WHERE (NOT cashrcpt_posted)"
              "                         GROUP BY aropen_id ) AS sub2"
              "         ON (cash_aropen_id=aropen_id)"
-             ", cust "
+             "  JOIN custinfo ON (aropen_cust_id=cust_id)"
              "WHERE ( (aropen_doctype IN ('C', 'R'))"
              " AND (aropen_open)"
              " AND ((aropen_amount - aropen_paid - COALESCE(prepared,0.0) - COALESCE(cashapplied,0.0)) > 0.0)"
-             " AND (aropen_cust_id=cust_id) ) "
+             " ) "
              "ORDER BY aropen_docnumber;" );
-  q.exec();
-  _aropen->populate(q);
+  aq.exec();
+  _aropen->populate(aq);
+  ErrorReporter::error(QtCriticalMsg, this, tr("Getting Credit Memos"),
+                       aq, __FILE__, __LINE__);
 }
 
 void unappliedARCreditMemos::sApply()
