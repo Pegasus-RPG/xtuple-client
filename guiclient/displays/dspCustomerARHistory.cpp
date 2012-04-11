@@ -20,6 +20,8 @@
 dspCustomerARHistory::dspCustomerARHistory(QWidget* parent, const char* name, Qt::WFlags fl)
   : display(parent, "dspCustomerARHistory", fl)
 {
+  Q_UNUSED(name);
+
   setupUi(optionsWidget());
   setWindowTitle(tr("Customer History"));
   setListLabel(tr("Customer History"));
