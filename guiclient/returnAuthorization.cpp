@@ -137,10 +137,10 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
     _CCCVVLit->hide();
     _CCCVV->hide();
   }
-  
+
   if (! _metrics->boolean("CCAccept"))
     _creditBy->removeItem(3);
-  
+
   _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
 
   _receiveAll->setEnabled(_privileges->check("EnterReceipts"));
@@ -153,7 +153,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
     _warehouse->hide();
     _shipWhs->hide();
     _shipWhsLit->hide();
-  } 
+  }
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
   _incident->setDescriptionVisible(true);
@@ -260,7 +260,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
       _authNumber->setEnabled(FALSE);
       _cancel->setText("&Close");
-      
+
       connect(_authNumber, SIGNAL(editingFinished()), this, SLOT(sCheckAuthorizationNumber()));
     }
     else if (param.toString() == "view")
@@ -341,13 +341,13 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
       _cancel->setText("&Close");
   }
-  
+
   return NoError;
 }
 
 void returnAuthorization::setNumber()
 {
-  if ( (_metrics->value("RANumberGeneration") == "A") || 
+  if ( (_metrics->value("RANumberGeneration") == "A") ||
        (_metrics->value("RANumberGeneration") == "O")   )
   {
     q.prepare("SELECT fetchRaNumber() AS ranumber;");
@@ -378,7 +378,7 @@ bool returnAuthorization::sSave(bool partial)
   QString disposition = QString(dispositionTypes[_disposition->currentIndex()]);
   QString timing = QString(timingTypes[_timing->currentIndex()]);
   QString creditBy = QString(creditMethods[_creditBy->currentIndex()]);
-  
+
   if ( !partial && (disposition.isEmpty()) )
   {
     QMessageBox::warning( this, tr("Invalid Disposition"),
@@ -386,7 +386,7 @@ bool returnAuthorization::sSave(bool partial)
     _disposition->setFocus();
     return false;
   }
-  
+
   if ( !partial && (timing.isEmpty()) )
   {
     QMessageBox::warning( this, tr("Invalid Timing"),
@@ -394,7 +394,7 @@ bool returnAuthorization::sSave(bool partial)
     _timing->setFocus();
     return false;
   }
-  
+
   if ( !partial && (creditBy.isEmpty()) )
   {
     QMessageBox::warning( this, tr("Invalid Credit Method"),
@@ -402,7 +402,7 @@ bool returnAuthorization::sSave(bool partial)
     _creditBy->setFocus();
     return false;
   }
-  
+
   if (_authNumber->text().isEmpty())
   {
     if(partial && !isVisible())
@@ -421,7 +421,7 @@ bool returnAuthorization::sSave(bool partial)
     _creditBy->setFocus();
     return false;
   }
-  
+
   if ( ! _miscCharge->isZero() && (!_miscChargeAccount->isValid()) )
   {
     QMessageBox::warning( this, tr("No Misc. Charge Account Number"),
@@ -433,7 +433,7 @@ bool returnAuthorization::sSave(bool partial)
     _miscChargeAccount->setFocus();
     return false;
   }
-  
+
   if (!partial && _raitem->topLevelItemCount() == 0)
   {
     QMessageBox::warning( this, tr("Create Line Items for this Order"),
@@ -565,9 +565,9 @@ bool returnAuthorization::sSave(bool partial)
   omfgThis->sProjectsUpdated(_project->id());
   _saved = TRUE;
   _comments->setId(_raheadid);
-  
+
   connect(_authNumber, SIGNAL(editingFinished()), this, SLOT(sCheckAuthorizationNumber()));
-  
+
   emit saved(_raheadid);
 
   return true;
@@ -598,7 +598,7 @@ void returnAuthorization::sSaveClick()
 /*   TO DO: This isn't going to work right now because the EDI profile is specific to S/O.
      We really need to rearchitect the EDI profiles for customers to one to many
      With profile types for Invoice, S/O, R/A etc...
-     
+
       if (_custEmail && _metrics->boolean("EnableBatchManager"))
       {
         deliverReturnAuthorization newdlgD(this, "", true);
@@ -650,7 +650,7 @@ void returnAuthorization::sOrigSoChanged()
       return;
     }
   }
-  if (!_ignoreSoSignals) 
+  if (!_ignoreSoSignals)
   {
     if (_origso->isValid())
     {
@@ -788,7 +788,7 @@ void returnAuthorization::sPopulateCustomerInfo()
     if (_cust->isValid())
     {
       _origso->setCustId(_cust->id());
-      
+
       XSqlQuery query;
       query.prepare( "SELECT custtype_code, cust_salesrep_id,"
                      "       cust_commprcnt,"
@@ -864,7 +864,7 @@ void returnAuthorization::sPopulateCustomerInfo()
 void returnAuthorization::sCheckAuthorizationNumber()
 {
   if ( (_authNumber->text().length()) &&
-       ( (_metrics->value("RANumberGeneration") == "O") || 
+       ( (_metrics->value("RANumberGeneration") == "O") ||
          (_metrics->value("RANumberGeneration") == "M")   ) )
   {
     _authNumber->setEnabled(FALSE);
@@ -944,7 +944,7 @@ void returnAuthorization::sNew()
 
     returnAuthorizationItem newdlg(this, "", TRUE);
     newdlg.set(params);
-  
+
     if (newdlg.exec() != XDialog::Rejected)
     {
       populate();
@@ -975,7 +975,7 @@ void returnAuthorization::sEdit()
 
       returnAuthorizationItem newdlg(this, "", TRUE);
       newdlg.set(params);
-  
+
       if (newdlg.exec() != XDialog::Rejected)
         fill = TRUE;
     }
@@ -999,7 +999,7 @@ void returnAuthorization::sView()
 
     returnAuthorizationItem newdlg(this, "", TRUE);
     newdlg.set(params);
-  
+
     newdlg.exec();
   }
 }
@@ -1036,7 +1036,7 @@ void returnAuthorization::sDelete()
         {
           QMessageBox::information(this, tr("Work Order Unchanged"),
                                    tr("The current Return Authorization Line Item has "
-                                      "associated Work Order with Transaction History. "
+                                      "an associated Work Order with Transaction History. "
                                       "This Work Order will not be closed/deleted upon "
                                       "deletion of this line item."));
         }
@@ -1142,7 +1142,7 @@ void returnAuthorization::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  
+
   sCalculateSubtotal();
 
   if (_creditBy->currentIndex() != 0 && _calcfreight)
@@ -1419,7 +1419,7 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
       omfgThis->sProjectsUpdated(_project->id());
     }
 
-    if ( (_metrics->value("RANumberGeneration") == "A") || 
+    if ( (_metrics->value("RANumberGeneration") == "A") ||
          (_metrics->value("RANumberGeneration") == "O")   )
     {
       q.prepare("SELECT releaseRaNumber(:number) AS result;");
@@ -1455,7 +1455,7 @@ void returnAuthorization::sTaxDetail()
 }
 
 void returnAuthorization::sCalculateTax()
-{  
+{
   XSqlQuery taxq;
   taxq.prepare( "SELECT calcRATaxAmt(:rahead_id) AS tax;" );
 
@@ -1467,7 +1467,7 @@ void returnAuthorization::sCalculateTax()
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  }              
+  }
 }
 
 void returnAuthorization::sTaxZoneChanged()
@@ -1480,7 +1480,7 @@ void returnAuthorization::sTaxZoneChanged()
 void returnAuthorization::sRecvWhsChanged()
 {
   if (!_ignoreWhsSignals)
-  { 
+  {
     if ( (_raheadid == -1) || (!_warehouse->isValid()) )
       return;
 
@@ -1503,7 +1503,7 @@ void returnAuthorization::sRecvWhsChanged()
 void returnAuthorization::sShipWhsChanged()
 {
   if (!_ignoreWhsSignals)
-  { 
+  {
     if ( (_raheadid == -1) || (!_shipWhs->isValid()) )
       return;
 
@@ -1525,9 +1525,9 @@ void returnAuthorization::sShipWhsChanged()
 
 void returnAuthorization::sDispositionChanged()
 {
-  _new->setEnabled(_cust->isValid() || 
+  _new->setEnabled(_cust->isValid() ||
               (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
-  
+
   bool enableReceipt = _privileges->check("EnterReceipts") &&
                       (_disposition->currentIndex() != 0);
 
@@ -1546,7 +1546,7 @@ void returnAuthorization::sDispositionChanged()
 
   _refund->setEnabled(_creditBy->currentIndex() == 3);
 
-  if (!_ignoreSoSignals) 
+  if (!_ignoreSoSignals)
   {
 // Save the change so that disposition of raitems is changed
     sSave(true);
@@ -1600,7 +1600,7 @@ void returnAuthorization::sAuthorizeLine()
 
   if (_newso->isValid())
     omfgThis->sSalesOrdersUpdated(_newso->id());
-    
+
   sFillList();
 }
 
@@ -1902,7 +1902,7 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
     pMenu->addAction(tr("View Original Order..."), this, SLOT(sViewOrigOrder()));
     menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
   }
-  
+
   pMenu->addSeparator();
 
   if (((XTreeWidgetItem *)selected)->id("newcohead_number") > -1)
@@ -1920,12 +1920,12 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
 
     pMenu->addAction(tr("View New Order Line..."), this, SLOT(sViewNewOrderLine()));
     menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
-  
+
     pMenu->addSeparator();
 
     pMenu->addAction(tr("New Order Shipment Status..."), this, SLOT(sShipmentStatus()));
     pMenu->addAction(tr("New Order Shipments..."), this, SLOT(sShipment()));
-  
+
   }
 }
 

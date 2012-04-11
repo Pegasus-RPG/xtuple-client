@@ -44,7 +44,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
   _ra->addColumn(tr("Disposition"),      _itemColumn,  Qt::AlignLeft,   true,  "disposition"   );
   _ra->addColumn(tr("Created"),          _dateColumn,  Qt::AlignCenter, true,  "rahead_authdate" );
   _ra->addColumn(tr("Expires"),          -1,           Qt::AlignCenter, true,  "rahead_expiredate" );
-  
+
   if (_privileges->check("MaintainReturns"))
   {
     connect(_ra, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -75,7 +75,7 @@ enum SetResponse openReturnAuthorizations::set(const ParameterList& pParams)
   XWidget::set(pParams);
   QVariant param;
   bool	   valid;
-  
+
   param = pParams.value("run", &valid);
   if (valid)
   {
@@ -129,7 +129,7 @@ void openReturnAuthorizations::sEdit()
 {
   if (!checkSitePrivs(_ra->id()))
     return;
-    
+
   ParameterList params;
   params.append("mode", "edit");
   params.append("rahead_id", _ra->id());
@@ -140,10 +140,10 @@ void openReturnAuthorizations::sEdit()
 }
 
 void openReturnAuthorizations::sView()
-{  
+{
   if (!checkSitePrivs(_ra->id()))
     return;
-    
+
   ParameterList params;
   params.append("mode", "view");
   params.append("rahead_id", _ra->id());
@@ -168,9 +168,9 @@ void openReturnAuthorizations::sDelete()
   if (checkwo.first())
   {
     if ( QMessageBox::warning( this, tr("Delete Return Authorization?"),
-                               tr("<p>One or more of Line items of this Return Authorization "
-                                  "has associated Work Order(s). Work Orders which have not "
-                                  "been processed will be closed and those with transaction "
+                               tr("<p>One or more Line Items on this Return Authorization "
+                                  "have associated Work Order(s). Work Orders which have not "
+                                  "been processed will be closed but those with transaction "
                                   "history will not be deleted or closed upon deletion of "
                                   "this Return Authorization. <p>Are you sure that you want to "
                                   "completely delete the selected Return Authorization?"),
@@ -221,7 +221,7 @@ void openReturnAuthorizations::sPopulateMenu(QMenu *pMenu)
 
   pMenu->addSeparator();
 
-  menuItem = pMenu->addAction(tr("Print Return Authorization Form..."), this, SLOT(sPrintForms())); 
+  menuItem = pMenu->addAction(tr("Print Return Authorization Form..."), this, SLOT(sPrintForms()));
 
 }
 
@@ -245,7 +245,7 @@ void openReturnAuthorizations::sPrintForms()
 {
   if (!checkSitePrivs(_ra->id()))
     return;
-    
+
   ParameterList params;
   params.append("rahead_id", _ra->id());
 
