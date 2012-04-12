@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>820</width>
+    <height>825</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1739,27 +1739,6 @@ to be bound by its terms.</comment>
          <string>Accountin&amp;g</string>
         </attribute>
         <layout class="QGridLayout">
-         <item row="0" column="0">
-          <layout class="QHBoxLayout">
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Alternate Cost of Sales Account</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="GLCluster" name="_altCosAccnt">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::StrongFocus</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="0" column="1">
           <spacer>
            <property name="orientation">
@@ -1785,6 +1764,58 @@ to be bound by its terms.</comment>
             </size>
            </property>
           </spacer>
+         </item>
+         <item row="0" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Alternate Cost of Sales Account:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="_altRevAccntLit">
+               <property name="text">
+                <string>Alternate Revenue Account:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="GLCluster" name="_altCosAccnt">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="GLCluster" name="_altRevAccnt">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -1903,7 +1934,6 @@ to be bound by its terms.</comment>
   <tabstop>_tax</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
-  <tabstop>_altCosAccnt</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_cancel</tabstop>

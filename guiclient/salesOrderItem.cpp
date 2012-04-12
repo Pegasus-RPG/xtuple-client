@@ -204,6 +204,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _showIndented->setEnabled(_showAvailability->isChecked());
 
   _altCosAccnt->setType(GLCluster::cRevenue | GLCluster::cExpense);
+  _altRevAccnt->setType(GLCluster::cRevenue);
 
   // TO DO **** Fix tab order issues and offer alternate means for "Express Tab Order"  ****
 }
@@ -505,6 +506,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _warranty->setEnabled(!viewMode);
     _listPrices->setEnabled(!viewMode);
     _altCosAccnt->setEnabled(!viewMode);
+    _altRevAccnt->setEnabled(!viewMode);
 
     _subItemList->setVisible(!viewMode);
     _save->setVisible(!viewMode);
@@ -755,6 +757,7 @@ void salesOrderItem::clear()
   _baseUnitPrice->clear();
   _itemcharView->setEnabled(TRUE);
   _itemsrc = -1;
+  _altRevAccnt->clear();
 }
 
 void salesOrderItem::sSave()
@@ -906,7 +909,8 @@ void salesOrderItem::sSave()
                "  coitem_price, coitem_price_uom_id, coitem_price_invuomratio,"
                "  coitem_order_type, coitem_order_id,"
                "  coitem_custpn, coitem_memo, coitem_substitute_item_id,"
-               "  coitem_prcost, coitem_taxtype_id, coitem_cos_accnt_id, coitem_warranty ) "
+               "  coitem_prcost, coitem_taxtype_id, coitem_warranty,"
+               "  coitem_cos_accnt_id, coitem_rev_accnt_id) "
                "  SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
                "       'O', :soitem_scheddate, :soitem_promdate,"
                "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
@@ -914,7 +918,8 @@ void salesOrderItem::sSave()
                "       :soitem_price, :price_uom_id, :price_invuomratio,"
                "       '', -1,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
-               "       :soitem_prcost, :soitem_taxtype_id, :soitem_cos_accnt_id, :soitem_warranty "
+               "       :soitem_prcost, :soitem_taxtype_id, :soitem_warranty, "
+               "       :soitem_cos_accnt_id, :soitem_rev_accnt_id "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -941,6 +946,8 @@ void salesOrderItem::sSave()
       q.bindValue(":soitem_taxtype_id", _taxtype->id());
     if (_altCosAccnt->isValid())
       q.bindValue(":soitem_cos_accnt_id", _altCosAccnt->id());
+    if (_altRevAccnt->isValid())
+      q.bindValue(":soitem_rev_accnt_id", _altRevAccnt->id());
     q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
@@ -962,6 +969,7 @@ void salesOrderItem::sSave()
                "    coitem_prcost=:soitem_prcost,"
                "    coitem_taxtype_id=:soitem_taxtype_id, "
                "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
+               "    coitem_rev_accnt_id=:soitem_rev_accnt_id, "
                "    coitem_warranty=:soitem_warranty "
                "WHERE (coitem_id=:soitem_id);" );
     q.bindValue(":soitem_scheddate", _scheduledDate->date());
@@ -991,6 +999,8 @@ void salesOrderItem::sSave()
       q.bindValue(":soitem_taxtype_id", _taxtype->id());
     if (_altCosAccnt->isValid())
       q.bindValue(":soitem_cos_accnt_id", _altCosAccnt->id());
+    if (_altRevAccnt->isValid())
+      q.bindValue(":soitem_rev_accnt_id", _altRevAccnt->id());
     q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
 
     q.exec();
@@ -2686,7 +2696,8 @@ void salesOrderItem::populate()
           "       coitem_substitute_item_id, coitem_prcost,"
           "       qtyAtShipping(coitem_id) AS qtyatshipping,"
           "       coitem_taxtype_id,"
-          "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved, locale_qty_scale, "
+          "       coitem_cos_accnt_id, coitem_rev_accnt_id, "
+          "       coitem_warranty, coitem_qtyreserved, locale_qty_scale, "
           "       cohead_number AS ordnumber "
           "FROM coitem, whsinfo, itemsite, item, uom, cohead, locale "
           "LEFT OUTER JOIN usr ON (usr_username = getEffectiveXtUser()) "
@@ -2804,6 +2815,7 @@ void salesOrderItem::populate()
 
     _warranty->setChecked(item.value("coitem_warranty").toBool());
     _altCosAccnt->setId(item.value("coitem_cos_accnt_id").toInt());
+    _altRevAccnt->setId(item.value("coitem_rev_accnt_id").toInt());
     _qtyreserved = item.value("coitem_qtyreserved").toDouble();
 
     sCalculateDiscountPrcnt();

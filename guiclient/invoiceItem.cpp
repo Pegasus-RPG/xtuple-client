@@ -46,6 +46,8 @@ invoiceItem::invoiceItem(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _ordered->setValidator(omfgThis->qtyVal());
   _billed->setValidator(omfgThis->qtyVal());
 
+  _altRevAccnt->setType(GLCluster::cRevenue);
+
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
   
   _mode = cNew;
@@ -169,6 +171,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _price->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _taxtype->setEnabled(false);
+      _altRevAccnt->setEnabled(false);
       _save->hide();
       _close->setText(tr("&Cancel"));
 
@@ -239,7 +242,7 @@ void invoiceItem::sSave()
                "  invcitem_custprice, invcitem_price,"
                "  invcitem_price_uom_id, invcitem_price_invuomratio,"
                "  invcitem_notes, "
-			   "  invcitem_taxtype_id) "
+               "  invcitem_taxtype_id, invcitem_rev_accnt_id) "
 	           "VALUES "
                "( :invcitem_id, :invchead_id, :invcitem_linenumber,"
                "  :item_id, :warehous_id,"
@@ -250,7 +253,7 @@ void invoiceItem::sSave()
                "  :invcitem_custprice, :invcitem_price,"
                "  :price_uom_id, :price_invuomratio,"
                "  :invcitem_notes, "
-			   "  :invcitem_taxtype_id);");
+               "  :invcitem_taxtype_id, :invcitem_rev_accnt_id);");
 	       
     q.bindValue(":invchead_id", _invcheadid);
     q.bindValue(":invcitem_linenumber", _lineNumber->text());
@@ -266,7 +269,8 @@ void invoiceItem::sSave()
                "    invcitem_custprice=:invcitem_custprice, invcitem_price=:invcitem_price,"
                "    invcitem_price_uom_id=:price_uom_id, invcitem_price_invuomratio=:price_invuomratio,"
                "    invcitem_notes=:invcitem_notes,"
-			   "    invcitem_taxtype_id=:invcitem_taxtype_id "
+               "    invcitem_taxtype_id=:invcitem_taxtype_id,"
+               "    invcitem_rev_accnt_id=:invcitem_rev_accnt_id "
 	           "WHERE (invcitem_id=:invcitem_id);" );
 
   if (_itemSelected->isChecked())
@@ -299,7 +303,9 @@ void invoiceItem::sSave()
   q.bindValue(":invcitem_notes", _notes->toPlainText());
   if(_taxtype->isValid())
     q.bindValue(":invcitem_taxtype_id",	_taxtype->id());
-  
+  if (_altRevAccnt->isValid())
+    q.bindValue(":invcitem_rev_accnt_id", _altRevAccnt->id());
+
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -366,6 +372,7 @@ void invoiceItem::populate()
       _taxzoneid = invcitem.value("taxzone_id").toInt();
 	_tax->setId(invcitem.value("taxcurr_id").toInt());
     _taxtype->setId(invcitem.value("invcitem_taxtype_id").toInt());
+    _altRevAccnt->setId(invcitem.value("invcitem_rev_accnt_id").toInt());
 
     _ordered->setDouble(invcitem.value("invcitem_ordered").toDouble());
     _billed->setDouble(invcitem.value("invcitem_billed").toDouble());
