@@ -284,13 +284,14 @@ void shippingInformation::sFillList()
     q.prepare( "SELECT cohead_orderdate AS orderdate,"
 	       "       cohead_holdtype AS holdtype,"
                "       cohead_custponumber AS ponumber,"
-               "       cust_name AS name, cust_phone AS phone,"
+               "       cust_name AS name, cntct_phone AS phone,"
                "       cohead_shipcomments AS shipcomments,"
 	       "       cohead_shipvia AS shipvia,"
                "       cohead_shipchrg_id AS shipchrg_id,"
                "       cohead_shipform_id AS shipform_id, "
                "       cohead_shiptoname AS shiptoname "
                "FROM cohead, custinfo "
+               "LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
                "WHERE ((cohead_cust_id=cust_id)"
                " AND (cohead_id=:cohead_id));" );
     q.bindValue(":cohead_id", _order->id());
