@@ -31,7 +31,7 @@
        &lt;? endif ?>
        AS f_showWoSupply,
 &lt;? if exists("custtype_id") ?>
-       SELECT custtype_code from custtype where (cust_custtype_id=&lt;? value("custtype_id") ?>)
+       (SELECT custtype_code from custtype where (custtype_id=&lt;? value("custtype_id") ?>))
 &lt;? elseif exists("custtype_pattern") ?>
        &lt;? value("custtype_pattern") ?>
 &lt;? else ?>
