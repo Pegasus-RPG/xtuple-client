@@ -928,7 +928,8 @@ void cashReceipt::sChangeCurrency( int newId)
   {
     XSqlQuery id;
     id.prepare( "UPDATE cashrcpt "
-                "SET cashrcpt_curr_id=:curr_id "
+                "SET cashrcpt_curr_id=:curr_id, "
+                "    cashrcpt_curr_rate=null "
                 "WHERE (cashrcpt_id=:cashrcpt_id);" );
     id.bindValue(":cashrcpt_id", _cashrcptid);
     id.bindValue(":curr_id", newId);
