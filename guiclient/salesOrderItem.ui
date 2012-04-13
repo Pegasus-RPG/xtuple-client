@@ -284,6 +284,9 @@ to be bound by its terms.</comment>
               <property name="focusPolicy">
                <enum>Qt::ClickFocus</enum>
               </property>
+              <property name="allowNull">
+               <bool>true</bool>
+              </property>
               <property name="type">
                <enum>WComboBox::Sold</enum>
               </property>

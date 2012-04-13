@@ -274,6 +274,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
   if (valid)
   {
     int _warehouseid = param.toInt();
+    _warehouse->setId(-1);
     _warehouse->setId(_warehouseid);
     _preferredWarehouseid = _warehouseid;
   }
