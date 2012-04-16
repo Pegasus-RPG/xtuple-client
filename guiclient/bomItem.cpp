@@ -332,7 +332,7 @@ void bomItem::sSave()
 
   bomitem.bindValue(":bomitem_id", _bomitemid);
   bomitem.bindValue(":bomitem_parent_item_id", _parentitemid);
-  bomitem.bindValue(":bomitem_revision_id", _revisionid);
+  bomitem.bindValue(":bomitem_rev_id", _revisionid);
   bomitem.bindValue(":bomitem_item_id", _item->id());
   bomitem.bindValue(":bomitem_uom_id", _uom->id());
   bomitem.bindValue(":bomitem_qtyfxd", _qtyFxd->toDouble());
@@ -347,7 +347,6 @@ void bomItem::sSave()
   bomitem.bindValue(":bomitem_createwo", QVariant(_createWo->isChecked()));
   bomitem.bindValue(":bomitem_issuewo", QVariant(_createWo->isChecked() && _issueWo->isChecked()));
   bomitem.bindValue(":bomitem_issuemethod", _issueMethods[_issueMethod->currentIndex()]);
-  bomitem.bindValue(":bomitem_revision_id", _revisionid);
   bomitem.bindValue(":bomitem_schedatwooper", false);
 
   if (_noSubstitutes->isChecked())
