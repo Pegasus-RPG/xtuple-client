@@ -106,7 +106,6 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _miscAmount->setAllowNegative(true);
 
   _commission->setValidator(omfgThis->percentVal());
-  _weight->setValidator(omfgThis->weightVal());
 
   // some customers are creating scripts to show these widgets, probably shouldn't remove
   _paymentLit->hide();
