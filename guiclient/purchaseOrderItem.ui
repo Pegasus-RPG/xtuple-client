@@ -1755,21 +1755,5 @@ to be bound by its terms.</comment>
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>_warehouse</sender>
-   <signal>newID(int)</signal>
-   <receiver>_dueDate</receiver>
-   <slot>setNull()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>623</x>
-     <y>114</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>186</x>
-     <y>525</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

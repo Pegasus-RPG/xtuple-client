@@ -285,8 +285,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
         }
 
         q.prepare( "SELECT itemsrc_vend_id, vend_name  "
-                   "FROM itemsrc "
-                   "LEFT OUTER JOIN vendinfo ON vend.vend_id = itemsrc.itemsrc_vend_id "
+                   "FROM itemsrc LEFT OUTER JOIN vendinfo ON (vend_id = itemsrc_vend_id) "
                    "WHERE (itemsrc_id=:itemsrc_id);" );
         q.bindValue(":itemsrc_id", itemsrcid);
         q.exec();
