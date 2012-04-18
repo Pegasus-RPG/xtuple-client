@@ -41,6 +41,9 @@ applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool mod
   _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "opencurrabbr");
   _apopen->addColumn(tr("Applied"),     _moneyColumn,    Qt::AlignRight, true, "apcreditapply_amount");
   _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "appliedcurrabbr");
+
+  if (_privileges->check("ApplyAPMemos"))
+      connect(_apopen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));
   if (omfgThis->singleCurrency())
   {
     _apopen->hideColumn("opencurrabbr");

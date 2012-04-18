@@ -72,6 +72,9 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl,
 //    _apopen->headerItem()->setText(11, tr("Running"));
 //  }
 
+  if (_privileges->check("ApplyAPMemos"))
+      connect(_apopen, SIGNAL(valid(bool)), _applyallcredits, SLOT(setEnabled(bool)));
+
   connect(omfgThis, SIGNAL(paymentsUpdated(int, int, bool)), this, SLOT(sFillList()));
 
   _ignoreUpdates = false;
