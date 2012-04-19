@@ -1215,39 +1215,49 @@ void salesOrderItem::sSave()
           }
         }
       }
-      // Update Work Order Characteristics
-      QModelIndex idx1, idx2, idx3;
-
-      q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
-
-      for (int i = 0; i < _itemchar->rowCount(); i++)
+      // Update Supply Order Characteristics
+      if (_itemchar->rowCount() > 0)
       {
-        idx1 = _itemchar->index(i, CHAR_ID);
-        idx2 = _itemchar->index(i, CHAR_VALUE);
-        if (_createPO)
-          q.bindValue(":target_type", "PI");
-        else
-          q.bindValue(":target_type", "W");
-        q.bindValue(":target_id", _orderId);
-        q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
-        q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
-        q.exec();
-        if (q.first())
+        if (QMessageBox::question(this, tr("Change Characteristics?"),
+                                  tr("<p>Should the characteristics for the "
+                                       "associated supply order be updated?"),
+                                  QMessageBox::Yes | QMessageBox::Default,
+                                  QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
         {
-          int result = q.value("result").toInt();
-          if (result < 0)
+          QModelIndex idx1, idx2, idx3;
+
+          q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
+
+          for (int i = 0; i < _itemchar->rowCount(); i++)
           {
-            rollback.exec();
-                  systemError(this, storedProcErrorLookup("updateCharAssignment", result),
-                        __FILE__, __LINE__);
-            return;
+            idx1 = _itemchar->index(i, CHAR_ID);
+            idx2 = _itemchar->index(i, CHAR_VALUE);
+            if (_createPO)
+              q.bindValue(":target_type", "PI");
+            else
+              q.bindValue(":target_type", "W");
+            q.bindValue(":target_id", _orderId);
+            q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+            q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+            q.exec();
+            if (q.first())
+            {
+              int result = q.value("result").toInt();
+              if (result < 0)
+              {
+                rollback.exec();
+                      systemError(this, storedProcErrorLookup("updateCharAssignment", result),
+                            __FILE__, __LINE__);
+                return;
+              }
+            }
+            else if (q.lastError().type() != QSqlError::NoError)
+            {
+              rollback.exec();
+                      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+              return;
+            }
           }
-        }
-        else if (q.lastError().type() != QSqlError::NoError)
-        {
-          rollback.exec();
-                  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-          return;
         }
       }
 
