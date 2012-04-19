@@ -899,7 +899,7 @@ void item::sSave()
     }
   }
 
-  if(_bomButton->isEnabled())
+  if(_bomButton->isEnabled() && _bomButton->isChecked())
     _bom->sSave();
 
   emit saved(_itemid);
