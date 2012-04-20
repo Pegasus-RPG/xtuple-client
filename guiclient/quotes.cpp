@@ -194,6 +194,7 @@ void quotes::sConvert(int pType)
     bool tryagain = false;
     QList<int> converted;
     do {
+      tryagain = false;
       int soheadid = -1;
       QList<XTreeWidgetItem*> selected = list()->selectedItems();
       QList<XTreeWidgetItem*> notConverted;
