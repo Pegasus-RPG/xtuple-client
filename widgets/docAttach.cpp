@@ -408,8 +408,13 @@ void docAttach::sSave()
       url.setScheme("");
     }
 
-    // For now urls are handled differently because of legacy structures...
-    if (_mode == "new")
+    // TODO: replace use of URL view
+    if (_mode == "new" && bytarr.isNull())
+      newDocass.prepare( "INSERT INTO url "
+                         "( url_source, url_source_id, url_title, url_url, url_stream ) "
+                         "VALUES "
+                         "( :docass_source_type, :docass_source_id, :title, :url, :stream );" );
+    else if (_mode == "new")
       newDocass.prepare( "INSERT INTO url "
                          "( url_source, url_source_id, url_title, url_url, url_stream ) "
                          "VALUES "
