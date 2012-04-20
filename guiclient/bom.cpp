@@ -596,7 +596,7 @@ void BOM::sClose()
 
 bool BOM::sCheckRequiredQtyPer()
 {
-  if(cView == _mode || !_doRequireQtyPer->isChecked())
+  if(cView == _mode || !_doRequireQtyPer->isChecked() || _totalQtyPerCache == 0.0)
     return true;
 
   if(_requiredQtyPer->toDouble() != _totalQtyPerCache)
