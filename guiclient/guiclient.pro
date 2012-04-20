@@ -1274,7 +1274,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           classCodes.cpp                        \
           closePurchaseOrder.cpp                \
           closeWo.cpp                           \
-          collectMetrics.cpp                    \
           commentType.cpp                       \
           commentTypes.cpp                      \
           companies.cpp                         \

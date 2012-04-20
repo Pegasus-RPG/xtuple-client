@@ -117,8 +117,6 @@ static SaveSizePositionEventFilter * __saveSizePositionEventFilter = 0;
 static int __interval = 0;
 static int __intervalCount = 0;
 
-void collectMetrics();
-
 // #name is a special check like calling a function
 // @name:mode is a class call to static method userHasPriv(mode)
 //     where mode is one of new edit view
@@ -545,8 +543,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
                     availableGeometry.top()));
     move(pos);
   }
-
-  collectMetrics();
 
   setDocumentMode(true);
 
