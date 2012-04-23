@@ -33,19 +33,19 @@ dspPoPriceVariancesByVendor::dspPoPriceVariancesByVendor(QWidget* parent, const 
                     " AND (usr_agent) ) "
                     "ORDER BY usename;" );
   
-  list()->addColumn(tr("P/O #"),              _orderColumn,    Qt::AlignRight,  true,  "porecv_ponumber"  );
+  list()->addColumn(tr("P/O #"),              _orderColumn,    Qt::AlignRight,  true,  "recv_order_number"  );
   list()->addColumn(tr("Dist. Date"),         _dateColumn,     Qt::AlignCenter, true,  "distdate" );
   list()->addColumn(tr("Recv. Date"),         _dateColumn,     Qt::AlignCenter, false, "receivedate" );
   list()->addColumn(tr("Vendor Number"),      _itemColumn,     Qt::AlignLeft,   false,  "vend_number"   );
   list()->addColumn(tr("Vendor Name"),        -1,              Qt::AlignLeft,   false,  "vend_name"   );
   list()->addColumn(tr("Item Number"),        _itemColumn,     Qt::AlignLeft,   true,  "itemnumber"   );
   list()->addColumn(tr("Description"),        -1,              Qt::AlignLeft,   true,  "itemdescrip"   );
-  list()->addColumn(tr("Qty."),               _qtyColumn,      Qt::AlignRight,  true,  "porecv_qty"  );
-  list()->addColumn(tr("Purch. Cost"),        _priceColumn,    Qt::AlignRight,  false, "porecv_purchcost"  );
+  list()->addColumn(tr("Qty."),               _qtyColumn,      Qt::AlignRight,  true,  "recv_qty"  );
+  list()->addColumn(tr("Purch. Cost"),        _priceColumn,    Qt::AlignRight,  false, "recv_purchcost"  );
   if (!omfgThis->singleCurrency())
     list()->addColumn(tr("Purch. Curr."),       _priceColumn,    Qt::AlignRight,  false, "poCurrAbbr"  );
-  list()->addColumn(tr("Rcpt. Cost"),         _priceColumn,    Qt::AlignRight,  false, "porecv_recvcost"  );
-  list()->addColumn(tr("Received"),           _moneyColumn,    Qt::AlignRight,  true,  "porecv_value"  );
+  list()->addColumn(tr("Rcpt. Cost"),         _priceColumn,    Qt::AlignRight,  false, "recv_recvcost"  );
+  list()->addColumn(tr("Received"),           _moneyColumn,    Qt::AlignRight,  true,  "recv_value"  );
   list()->addColumn(tr("Vouch. Cost"),        _priceColumn,    Qt::AlignRight,  false, "vouchercost"  );
   list()->addColumn(tr("Vouchered"),          _moneyColumn,    Qt::AlignRight,  true,  "voucher_value"  );
   list()->addColumn(tr("Variance"),           _moneyColumn,    Qt::AlignRight,  true,  "variance"  );

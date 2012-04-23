@@ -3,6 +3,10 @@
  <title>Purchase Price Variances By Item</title>
  <name>PurchasePriceVariancesByItem</name>
  <description></description>
+ <grid>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -30,7 +34,7 @@
   FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value("item_id") ?>);</sql>
  </querysource>
- <querysource loadFromDb="true" >
+ <querysource loadFromDb="true">
   <name>detail</name>
   <mqlgroup>poPriceVariances</mqlgroup>
   <mqlname>detail</mqlname>
@@ -666,7 +670,7 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>porecv_ponumber</column>
+     <column>recv_order_number</column>
     </data>
    </field>
    <field>
@@ -749,7 +753,7 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_porecv_value</column>
+     <column>f_recv_value</column>
     </data>
    </field>
    <field>

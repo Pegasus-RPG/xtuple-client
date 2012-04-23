@@ -30,12 +30,12 @@ dspPoDeliveryDateVariancesByVendor::dspPoDeliveryDateVariancesByVendor(QWidget* 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
   
-  list()->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight,  true,  "porecv_ponumber"  );
+  list()->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight,  true,  "recv_order_number"  );
   list()->addColumn(tr("Vendor"),             _orderColumn, Qt::AlignLeft,   true,  "vend_name"   );
   list()->addColumn(tr("Date"),               _dateColumn,  Qt::AlignCenter, true,  "receivedate" );
   list()->addColumn(tr("Vend. Item #"),       _itemColumn,  Qt::AlignLeft,   true,  "venditemnumber"   );
   list()->addColumn(tr("Vendor Description"), -1,           Qt::AlignLeft,   true,  "venditemdescrip"   );
-  list()->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight,  true,  "porecv_qty"  );
+  list()->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight,  true,  "recv_qty"  );
   list()->addColumn(tr("Req. Due"),           _dateColumn,  Qt::AlignCenter, true,  "release_duedate"  );
   list()->addColumn(tr("Req. Leadtime"),      _dateColumn,  Qt::AlignRight,  true,  "req_leadtime"  );
   list()->addColumn(tr("Agrd. Due"),          _dateColumn,  Qt::AlignCenter, true,  "argd_duedate"  );
