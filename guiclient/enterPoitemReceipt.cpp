@@ -144,13 +144,6 @@ enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
     populate();
   }
 
-  param = pParams.value("porecv_id", &valid);	// deprecated
-  if (valid)
-  {
-    _recvid = param.toInt();
-    populate();
-  }
-
   param = pParams.value("recv_id", &valid);
   if (valid)
   {

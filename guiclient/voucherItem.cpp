@@ -622,7 +622,7 @@ void voucherItem::sFillList()
   q.prepare( "SELECT recv_id AS item_id, 1 AS item_type, :receiving AS action,"
              "       recv_date AS item_date,"
              "       recv_qty AS qty, 'qty' AS qty_xtnumericrole,"
-             "       formatBoolYN(porecv_vohead_id=:vohead_id) AS f_tagged,"
+             "       formatBoolYN(recv_vohead_id=:vohead_id) AS f_tagged,"
              "       0 AS qty_xttotalrole "
              "FROM recv "
              "WHERE ( (NOT recv_invoiced)"

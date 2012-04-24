@@ -57,10 +57,10 @@ enum SetResponse poLiabilityDistrib::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("porecv_id", &valid);
+  param = pParams.value("recv_id", &valid);
   if (valid)
   {
-    _porecvid = param.toInt();
+    _recvid = param.toInt();
     populate();
   }
 
@@ -72,7 +72,7 @@ void poLiabilityDistrib::populate()
   q.prepare( "SELECT recv_value "
              "FROM recv "
              "WHERE (recv_id=:recv_id);" ) ;
-  q.bindValue(":porecv_id", _porecvid);
+  q.bindValue(":recv_id", _recvid);
   q.exec();
   if (q.first())
   {
@@ -102,7 +102,7 @@ void poLiabilityDistrib::sPost()
 			 " AND (pohead_id=poitem_pohead_id) );" );
   q.bindValue(":creditAccntid", _account->id());
   q.bindValue(":amount", _amount->baseValue());
-  q.bindValue(":recv_id", _porecvid);
+  q.bindValue(":recv_id", _recvid);
   q.exec();
   if (!q.first())
   {
@@ -112,6 +112,6 @@ void poLiabilityDistrib::sPost()
     return;
   }
 
-  done(_porecvid);
+  done(_recvid);
 }
 

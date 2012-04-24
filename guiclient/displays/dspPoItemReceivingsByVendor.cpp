@@ -183,7 +183,7 @@ void dspPoItemReceivingsByVendor::sMarkAsInvoiced()
   if (recvHasValue())
   {
     ParameterList params;
-    params.append("porecv_id", list()->id());  
+    params.append("recv_id", list()->id());
     poLiabilityDistrib newdlg(this, "", true);
     newdlg.set(params);
     if (newdlg.exec() == XDialog::Rejected)
@@ -198,8 +198,8 @@ void dspPoItemReceivingsByVendor::sMarkAsInvoiced()
   {
     q.prepare("UPDATE recv "
 	      "SET recv_invoiced=true "
-	      "WHERE (recv_id=:porecv_id); ");
-    q.bindValue(":porecv_id",list()->id());
+          "WHERE (recv_id=:recv_id); ");
+    q.bindValue(":recv_id",list()->id());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {

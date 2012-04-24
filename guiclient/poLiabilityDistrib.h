@@ -33,7 +33,7 @@ protected slots:
     virtual void languageChange();
 
 private:
-    int _porecvid;
+    int _recvid;
 
 };
 

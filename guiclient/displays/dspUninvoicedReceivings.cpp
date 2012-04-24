@@ -72,15 +72,15 @@ void dspUninvoicedReceivings::sMarkAsInvoiced()
 {
   bool update = true;
   
-  q.prepare("SELECT * FROM porecv "
-            "WHERE ((porecv_value <> 0) "
-            "AND (porecv_id=:porecv_id));");
-  q.bindValue(":porecv_id",list()->id());
+  q.prepare("SELECT * FROM recv "
+            "WHERE ((recv_value <> 0) "
+            "AND (recv_id=:recv_id));");
+  q.bindValue(":recv_id",list()->id());
   q.exec();
   if (q.first())
   {
     ParameterList params;
-    params.append("porecv_id", list()->id());  
+    params.append("recv_id", list()->id());
     poLiabilityDistrib newdlg(this, "", true);
     newdlg.set(params);
     if (newdlg.exec() == XDialog::Rejected)
@@ -95,8 +95,8 @@ void dspUninvoicedReceivings::sMarkAsInvoiced()
   {
     q.prepare("UPDATE recv "
 	      "SET recv_invoiced=true "
-	      "WHERE (recv_id=:porecv_id); ");
-    q.bindValue(":porecv_id",list()->id());
+          "WHERE (recv_id=:recv_id); ");
+    q.bindValue(":recv_id",list()->id());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
