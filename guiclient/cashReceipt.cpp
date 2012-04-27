@@ -223,6 +223,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _distDate->setEnabled(FALSE);
       _applDate->setEnabled(false);
       _aropen->setEnabled(FALSE);
+      _searchDocNum->setEnabled(false);
       _cashrcptmisc->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _applyToBalance->setEnabled(FALSE);
