@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
+    <width>746</width>
     <height>177</height>
    </rect>
   </property>
@@ -66,6 +66,20 @@ to be bound by its terms.</comment>
       <string/>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QRadioButton" name="_useDocDate">
+        <property name="text">
+         <string>Document Date</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="_useDistDate">
+        <property name="text">
+         <string>Distribution Date</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QLabel" name="_asOfLit">
         <property name="text">

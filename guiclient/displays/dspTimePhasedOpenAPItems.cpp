@@ -130,6 +130,10 @@ void dspTimePhasedOpenAPItems::sViewOpenItems()
   params.append("run");
   params.append("asofDate",_asOf->date());
 
+  // have both in case we add a third option
+  params.append("useDocDate",  QVariant(_useDocDate->isChecked()));
+  params.append("useDistDate", QVariant(_useDistDate->isChecked()));
+
   dspAPOpenItemsByVendor *newdlg = new dspAPOpenItemsByVendor();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);

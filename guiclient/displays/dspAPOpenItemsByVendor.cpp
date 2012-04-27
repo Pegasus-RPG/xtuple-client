@@ -64,6 +64,10 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char*, Qt:
   }
 
   _asOf->setDate(omfgThis->dbDate(), true);
+  if(_preferences->value("APAgingDefaultDate") == "doc")
+    _useDocDate->setChecked(true);
+  else
+    _useDistDate->setChecked(true);
 }
 
 void dspAPOpenItemsByVendor::languageChange()
@@ -92,8 +96,18 @@ enum SetResponse dspAPOpenItemsByVendor::set(const ParameterList &pParams)
 
   param = pParams.value("asofDate", &valid);
   if (valid)
+  {
     _asOf->setDate(param.toDate());
     _asOf->setEnabled(false);
+  }
+
+  param = pParams.value("useDocDate", &valid);
+  if (valid)
+    _useDocDate->setChecked(param.toBool());
+
+  param = pParams.value("useDistDate", &valid);
+  if (valid)
+    _useDistDate->setChecked(param.toBool());
 
   if (pParams.inList("run"))
   {
@@ -161,8 +175,13 @@ void dspAPOpenItemsByVendor::sView()
 bool dspAPOpenItemsByVendor::setParams(ParameterList & params)
 {
   _vendorGroup->appendValue(params);
-  params.append("asofDate", _asOf->date());
   _dates->appendValue(params);
+  params.append("asofDate", _asOf->date());
+
+  // have both in case we add a third option
+  params.append("useDocDate",  QVariant(_useDocDate->isChecked()));
+  params.append("useDistDate", QVariant(_useDistDate->isChecked()));
+
   params.append("creditMemo", tr("Credit Memo"));
   params.append("debitMemo", tr("Debit Memo"));
   params.append("voucher", tr("Voucher"));
