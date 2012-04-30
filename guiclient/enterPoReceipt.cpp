@@ -404,6 +404,48 @@ void enterPoReceipt::sPost()
           issue.prepare("SELECT postItemLocSeries(:itemlocseries);");
           issue.bindValue(":itemlocseries", postLine.value("result").toInt());
           issue.exec();
+
+          if (qi.value("dropship").toBool() && _soheadid != -1)
+          {
+            XSqlQuery ship;
+            ship.prepare("SELECT shipShipment(shiphead_id) AS result, "
+                         "  shiphead_id "
+                         "FROM shiphead "
+                         "WHERE ( (shiphead_order_type='SO') "
+                         " AND (shiphead_order_id=:cohead_id) "
+                         " AND (NOT shiphead_shipped) );");
+            ship.bindValue(":cohead_id", _soheadid);
+            ship.exec();
+            if (ship.first())
+            {
+              if (ship.value("result").toInt() < 0)
+              {
+                rollback.exec();
+                systemError( this, storedProcErrorLookup("shipShipment", ship.value("result").toInt()),
+                            __FILE__, __LINE__);
+                return;
+              }
+              if (_metrics->boolean("BillDropShip"))
+              {
+                int shipheadid = ship.value("shiphead_id").toInt();
+                ship.prepare("SELECT selectUninvoicedShipment(:shiphead_id);");
+                ship.bindValue(":shiphead_id", shipheadid);
+                ship.exec();
+                if (ship.lastError().type() != QSqlError::NoError)
+                {
+                  rollback.exec();
+                  systemError(this, ship.lastError().databaseText(), __FILE__, __LINE__);
+                  return;
+                }
+              }
+            }
+            else if (ship.lastError().type() != QSqlError::NoError)
+            {
+              systemError(this, ship.lastError().databaseText(), __FILE__, __LINE__);
+              rollback.exec();
+              return;
+            }
+          }
         }
         else if (issue.lastError().type() != QSqlError::NoError)
         {
@@ -421,38 +463,6 @@ void enterPoReceipt::sPost()
     }
   }
 
-  // Ship if a drop shipped order
-  if (qi.value("dropship").toBool() && _soheadid != -1)
-  {
-    XSqlQuery ship;
-    ship.prepare("SELECT shipShipment(shiphead_id) AS result, "
-                 "  shiphead_id "
-                 "FROM shiphead "
-                 "WHERE ( (shiphead_order_type='SO') "
-                 " AND (shiphead_order_id=:cohead_id) "
-                 " AND (NOT shiphead_shipped) );");
-    ship.bindValue(":cohead_id", _soheadid);
-    ship.exec();
-    if (_metrics->boolean("BillDropShip") && ship.first())
-    {
-      int shipheadid = ship.value("shiphead_id").toInt();
-      ship.prepare("SELECT selectUninvoicedShipment(:shiphead_id);");
-      ship.bindValue(":shiphead_id", shipheadid);
-      ship.exec();
-      if (ship.lastError().type() != QSqlError::NoError)
-      {
-        rollback.exec();
-        systemError(this, ship.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-    }
-    else if (ship.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
-      systemError(this, ship.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
   _soheadid = -1;
 
   q.exec("COMMIT;");
