@@ -33,6 +33,8 @@ private:
     bool _cacheint2gl;
     bool _cacheintap2gl;
     bool _cacheintar2gl;
+    bool _cacheuseProfitCenters;
+    bool _cacheuseSubaccounts;
 
 signals:
     void saving();
