@@ -10,9 +10,9 @@
 
 #include "dspSalesOrderStatus.h"
 
-#include <QSqlError>
 #include <QVariant>
 
+#include "errorReporter.h"
 #include "inputManager.h"
 #include "salesOrderList.h"
 
@@ -74,45 +74,43 @@ void dspSalesOrderStatus::sFillList()
 {
   if (_so->id() != -1)
   {
-    q.prepare( "SELECT cohead_number,"
-               "       cohead_orderdate,"
-               "       cohead_custponumber,"
-               "       cust_name, cust_phone "
-               "FROM cohead, cust "
-               "WHERE ( (cohead_cust_id=cust_id)"
-               " AND (cohead_id=:sohead_id) );" );
-    q.bindValue(":sohead_id", _so->id());
-    q.exec();
-    if (q.first())
+    XSqlQuery coq;
+    coq.prepare( "SELECT cohead_number,"
+                 "       cohead_orderdate,"
+                 "       cohead_custponumber,"
+                 "       cust_name, cntct_phone"
+                 "  FROM cohead"
+                 "  JOIN custinfo ON (cohead_cust_id=cust_id)"
+                 "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
+                 "WHERE (cohead_id=:sohead_id);" );
+    coq.bindValue(":sohead_id", _so->id());
+    coq.exec();
+    if (coq.first())
     {
-      _orderDate->setDate(q.value("cohead_orderdate").toDate());
-      _poNumber->setText(q.value("cohead_custponumber").toString());
-      _custName->setText(q.value("cust_name").toString());
-      _custPhone->setText(q.value("cust_phone").toString());
+      _orderDate->setDate(coq.value("cohead_orderdate").toDate());
+      _poNumber->setText(coq.value("cohead_custponumber").toString());
+      _custName->setText(coq.value("cust_name").toString());
+      _custPhone->setText(coq.value("cntct_phone").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting S/O"),
+                                  coq, __FILE__, __LINE__))
       return;
-    }
 
-    q.prepare( "SELECT MAX(lastupdated) AS lastupdated "
-               "  FROM (SELECT cohead_lastupdated AS lastupdated "
-               "          FROM cohead "
-               "         WHERE (cohead_id=:sohead_id) "
-               "         UNION "
-               "        SELECT coitem_lastupdated AS lastupdated "
-               "          FROM coitem "
-               "         WHERE (coitem_cohead_id=:sohead_id) ) AS data; " );
-    q.bindValue(":sohead_id", _so->id());
-    q.exec();
-    if (q.first())
-      _lastUpdated->setDate(q.value("lastupdated").toDate());
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    coq.prepare( "SELECT MAX(lastupdated) AS lastupdated "
+                 "  FROM (SELECT cohead_lastupdated AS lastupdated "
+                 "          FROM cohead "
+                 "         WHERE (cohead_id=:sohead_id) "
+                 "         UNION "
+                 "        SELECT coitem_lastupdated AS lastupdated "
+                 "          FROM coitem "
+                 "         WHERE (coitem_cohead_id=:sohead_id) ) AS data; " );
+    coq.bindValue(":sohead_id", _so->id());
+    coq.exec();
+    if (coq.first())
+      _lastUpdated->setDate(coq.value("lastupdated").toDate());
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Dates"),
+                                  coq, __FILE__, __LINE__))
       return;
-    }
 
     display::sFillList();
   }

@@ -12,20 +12,11 @@
 
 #include <QVariant>
 
-/*
- *  Constructs a vendorAddressList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 vendorAddressList::vendorAddressList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
   connect(_vendaddr, SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
@@ -35,18 +26,11 @@ vendorAddressList::vendorAddressList(QWidget* parent, const char* name, bool mod
   _vendaddr->addColumn(tr("Address"), 100,          Qt::AlignLeft,   true,  "address" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 vendorAddressList::~vendorAddressList()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void vendorAddressList::languageChange()
 {
   retranslateUi(this);
@@ -63,15 +47,16 @@ enum SetResponse vendorAddressList::set(const ParameterList &pParams)
   {
     _vendid = param.toInt();
     q.prepare("SELECT (vend_number||' - '||vend_name) AS f_name,"
-              "       vend_address1"
-              "  FROM vend"
+              "       addr_line1"
+              "  FROM vendinfo"
+              "  LEFT OUTER JOIN addr ON (vend_addr_id=addr_id)"
               " WHERE(vend_id=:vend_id);");
     q.bindValue(":vend_id", _vendid);
     q.exec();
     if(q.first())
     {
       _vendName->setText(q.value("f_name").toString());
-      _vendAddr1->setText(q.value("vend_address1").toString());
+      _vendAddr1->setText(q.value("addr_line1").toString());
     }
   }
 

@@ -286,13 +286,14 @@ void dspInventoryAvailabilityBySalesOrder::sIssueCountTag()
 void dspInventoryAvailabilityBySalesOrder::sFillList()
 {
   XSqlQuery qq;
-  qq.prepare( "SELECT cohead_number,"
+  qq.prepare("SELECT cohead_number,"
              "       cohead_orderdate,"
              "       cohead_custponumber,"
-             "       cust_name, cust_phone "
-             "FROM cohead, cust "
-             "WHERE ( (cohead_cust_id=cust_id)"
-             " AND (cohead_id=:sohead_id) );" );
+             "       cust_name, cntct_phone "
+             "  FROM cohead"
+             "  JOIN custinfo ON (cohead_cust_id=cust_id)"
+             "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
+             " WHERE (cohead_id=:sohead_id);" );
   qq.bindValue(":sohead_id", _so->id());
   qq.exec();
   if (qq.first())
@@ -300,7 +301,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
     _orderDate->setDate(qq.value("cohead_orderdate").toDate());
     _poNumber->setText(qq.value("cohead_custponumber").toString());
     _custName->setText(qq.value("cust_name").toString());
-    _custPhone->setText(qq.value("cust_phone").toString());
+    _custPhone->setText(qq.value("cntct_phone").toString());
   }
                
   display::sFillList();

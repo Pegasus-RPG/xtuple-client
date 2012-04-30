@@ -14,13 +14,13 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QRegExp>
-#include <QSqlError>
 #include <QVariant>
 
 #include <metasql.h>
-#include "mqlutil.h"
+#include <mqlutil.h>
 #include <openreports.h>
 
+#include "errorReporter.h"
 #include "inputManager.h"
 #include "printShippingForm.h"
 
@@ -120,22 +120,27 @@ void dspShipmentsBase::sPopulateSalesOrder(int pSoheadid)
 {
   if (pSoheadid != -1)
   {
-    q.prepare( "SELECT cohead_number,"
-               "       formatDate(cohead_orderdate) AS orderdate,"
-               "       cohead_custponumber,"
-               "       cust_name, cust_phone "
-               "FROM cohead, cust "
-               "WHERE ( (cohead_cust_id=cust_id)"
-               " AND (cohead_id=:sohead_id) );" );
-    q.bindValue(":sohead_id", pSoheadid);
-    q.exec();
-    if (q.first())
+    XSqlQuery coq;
+    coq.prepare( "SELECT cohead_number,"
+                 "       cohead_orderdate,"
+                 "       cohead_custponumber,"
+                 "       cust_name, cntct_phone "
+                 "  FROM cohead"
+                 "  JOIN custinfo ON (cohead_cust_id=cust_id)"
+                 "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
+                 " WHERE (cohead_id=:sohead_id);" );
+    coq.bindValue(":sohead_id", pSoheadid);
+    coq.exec();
+    if (coq.first())
     {
-      _orderDate->setText(q.value("orderdate").toString());
-      _poNumber->setText(q.value("cohead_custponumber").toString());
-      _custName->setText(q.value("cust_name").toString());
-      _custPhone->setText(q.value("cust_phone").toString());
+      _orderDate->setDate(coq.value("cohead_orderdate").toDate());
+      _poNumber->setText(coq.value("cohead_custponumber").toString());
+      _custName->setText(coq.value("cust_name").toString());
+      _custPhone->setText(coq.value("cntct_phone").toString());
     }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Sales Order"),
+                                  coq, __FILE__, __LINE__))
+      return;
   }
   else
   {
@@ -150,33 +155,36 @@ void dspShipmentsBase::sPopulateShipment(int pShipheadid)
 {
   if (pShipheadid != -1)
   {
-    q.prepare( "SELECT formatDate(orderdate) AS orderdate,"
-               "       custponumber,"
-               "       cust_name,"
-               "       cust_phone"
-               "  FROM (SELECT cust_name, cust_phone,"
-               "               cohead_orderdate AS orderdate,"
-               "               cohead_custponumber AS custponumber"
-               "        FROM shiphead JOIN cohead ON (shiphead_order_id=cohead_id)"
-               "                      JOIN cust ON (cohead_cust_id=cust_id)"
-               "        WHERE (shiphead_id=:shiphead_id) AND (shiphead_order_type='SO')"
-               "        UNION"
-               "        SELECT warehous_code AS cust_name, NULL AS cust_phone,"
-               "               tohead_orderdate AS orderdate,"
-               "               NULL AS custponumber"
-               "        FROM shiphead JOIN tohead ON (shiphead_order_id=tohead_id)"
-               "                      JOIN whsinfo ON (tohead_dest_warehous_id=warehous_id)"
-               "                 WHERE (shiphead_id=:shiphead_id) AND (shiphead_order_type='TO')"
-               "        ) AS taborder;");
-    q.bindValue(":shiphead_id", pShipheadid);
-    q.exec();
-    if (q.first())
+    XSqlQuery shq;
+    shq.prepare("SELECT cust_name, cntct_phone,"
+                "       cohead_orderdate AS orderdate,"
+                "       cohead_custponumber AS custponumber"
+                "  FROM shiphead"
+                "  JOIN cohead ON (shiphead_order_id=cohead_id)"
+                "  JOIN custinfo ON (cohead_cust_id=cust_id)"
+                "  JOIN cntct ON (cust_cntct_id=cntct_id)"
+                " WHERE (shiphead_id=:shiphead_id) AND (shiphead_order_type='SO')"
+                " UNION "
+                "SELECT warehous_code, cntct_phone,"
+                "       tohead_orderdate AS orderdate,"
+                "       NULL AS custponumber"
+                "  FROM shiphead"
+                "  JOIN tohead ON (shiphead_order_id=tohead_id)"
+                "  JOIN whsinfo ON (tohead_dest_warehous_id=warehous_id)"
+                "  LEFT OUTER JOIN cntct ON (warehous_cntct_id=cntct_id)"
+                " WHERE (shiphead_id=:shiphead_id) AND (shiphead_order_type='TO');");
+    shq.bindValue(":shiphead_id", pShipheadid);
+    shq.exec();
+    if (shq.first())
     {
-      //_orderDate->setText(q.value("orderdate").toString());
-      _poNumber->setText(q.value("custponumber").toString());
-      _custName->setText(q.value("cust_name").toString());
-      _custPhone->setText(q.value("cust_phone").toString());
+      _orderDate->setDate(shq.value("orderdate").toDate());
+      _poNumber->setText(shq.value("custponumber").toString());
+      _custName->setText(shq.value("cust_name").toString());
+      _custPhone->setText(shq.value("cntct_phone").toString());
     }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Shipment"),
+                                  shq, __FILE__, __LINE__))
+      return;
   }
   else
   {
@@ -188,145 +196,133 @@ void dspShipmentsBase::sPopulateShipment(int pShipheadid)
 
 void dspShipmentsBase::sFillURL()
 {
-    QString url;
-    
-     q.prepare( "SELECT upper(shiphead_shipvia) AS shiphead_shipvia, shiphead_tracknum, cohead_shiptozipcode "
-               "FROM shiphead, cohead "
-               "WHERE ((shiphead_id=:shiphead_id) "
-               "AND (shiphead_order_id=cohead_id));");
-     
-    q.bindValue(":shiphead_id", list()->id());
-    q.exec();
-    if (q.first()) {
-     bool findShipper;
-     findShipper = false;
-     
-// Code for UPS	
-     if (q.value("shiphead_shipvia").toString ().left(3) == "UPS") {
-       QString url("http://wwwapps.ups.com/WebTracking/processInputRequest?HTMLVersion=5.0&loc=en_US&Requester=UPSHome&tracknum=");
-       url +=  q.value("shiphead_tracknum").toString ();
-       url +=  "&AgreeToTermsAndConditions=yes&track.x=40&track.y=9";
-       findShipper = true;
-        omfgThis->launchBrowser(this, url);
-      }
-     
- // Code for SAIA	
-     if (q.value("shiphead_shipvia").toString ().left(4) == "SAIA") {
-       QString url("http://www.SaiaSecure.com/tracing/manifest.asp?UID=&PWD=&PRONum1=");
-       QString _partial;
-       QString _tracknum;
-       _tracknum = q.value("shiphead_tracknum").toString ();
-       int _length_tracknum;
-       int _how_many;
-       _length_tracknum = _tracknum.length();
-       _how_many = _length_tracknum - 5;
-       _partial = _tracknum.left(3);
-       _partial += _tracknum.mid( 4, _how_many);
-       url +=  _partial;
-       url +=  "&Type=Pro&x=55&y=8";
-       findShipper = true;
-        omfgThis->launchBrowser(this, url);
-      }
+   XSqlQuery shq;
+   shq.prepare("SELECT UPPER(shiphead_shipvia) AS shiphead_shipvia,"
+               "       shiphead_tracknum, cohead_shiptozipcode "
+               "  FROM shiphead, cohead "
+               " WHERE ((shiphead_id=:shiphead_id) "
+               "    AND (shiphead_order_id=cohead_id));");
+   
+  shq.bindValue(":shiphead_id", list()->id());
+  shq.exec();
+  if (shq.first())
+  {
+   QString url;
+   bool    canOpenTrackingPage = true;
+   QString tracknum = shq.value("shiphead_tracknum").toString();
+   QString shipvia  = shq.value("shiphead_shipvia").toString();
+   
+   if (shipvia.startsWith("UPS"))
+   {
+     url = "http://wwwapps.ups.com/WebTracking/processInputRequest?HTMLVersion=5.0&loc=en_US&Requester=UPSHome&tracknum=";
+     url +=  tracknum;
+     url +=  "&AgreeToTermsAndConditions=yes&track.x=40&track.y=9";
+    }
+   
+   if (shipvia.startsWith("SAIA"))
+   {
+     url = "http://www.SaiaSecure.com/tracing/manifest.asp?UID=&PWD=&PRONum1=";
+     int _how_many = tracknum.length() - 5;
+     QString _partial;
+     _partial = tracknum.left(3);
+     _partial += tracknum.mid( 4, _how_many);
+     url +=  _partial;
+     url +=  "&Type=Pro&x=55&y=8";
+    }
 
- // Code for A&B
-     if ((q.value("shiphead_shipvia").toString ().left(5) == "A & B") || (q.value("shiphead_shipvia").toString ().left(3) == "A&B")) {
-       QString url("http://www.aandbfreight.com/");
-       findShipper = true;
-       omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("A & B"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
-      }
+   if (shipvia.startsWith("A & B") || shipvia.startsWith("A&B"))
+   {
+     url = "http://www.aandbfreight.com/";
+     canOpenTrackingPage = false;
+    }
 
- // Code for AVERITT
-     if (q.value("shiphead_shipvia").toString ().left(7) == "AVERITT") {
-       QString url("http://www.averittexpress.com/");
-       findShipper = true;
-       omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("AVERITT"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
-      }
+   if (shipvia.startsWith("AVERITT"))
+   {
+     url = "http://www.averittexpress.com/";
+     canOpenTrackingPage = false;
+    }
 
- // Code for DHL	
-     if (q.value("shiphead_shipvia").toString ().left(3) == "DHL") {
-       QString url("http://www.dhl-usa.com/home/Home.asp");
-       findShipper = true;
-       omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("DHL"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
-      }
+   if (shipvia.startsWith("DHL"))
+   {
+     // see http://www.dhl-usa.com/en/express/tracking/tracking_tools.html
+     url = QString("http://www.dhl-usa.com/home/content/us/en/express/tracking.shtml?brand=DHL&AWB=")
+         + tracknum;
+   }
 
- // Code for FEDEX	
-     if (q.value("shiphead_shipvia").toString ().left(5) == "FEDEX") {
-       QString url("http://www.fedex.com/Tracking?ascend_header=1&clienttype=dotcom&cntry_code=us&language=english&tracknumbers=");
-       QString _partial;
-       QString _tracknum;
-       _tracknum = q.value("shiphead_tracknum").toString ();
-       int _length_tracknum;
-       int _how_many;
-       _length_tracknum = _tracknum.length();
-       _how_many = _length_tracknum - 5;
-       QString _check_tail;
-       _check_tail = _tracknum.right(2);
-       _check_tail = _check_tail.left(1);
-       if (_check_tail == "-") {
-       // Ok we need to strip the hyphen out
-         _partial = _tracknum.left( _length_tracknum -2);
-         _partial += _tracknum.right(1);
-       }
-       else
-       {
-         _partial = _tracknum;
-       }
-       url +=  _partial;
-       findShipper = true;
-        omfgThis->launchBrowser(this, url);
-      }
-
- // Code for R&L	
-     if ((q.value("shiphead_shipvia").toString ().left(5) == "R & L") || (q.value("shiphead_shipvia").toString ().left(3) == "R&L"))  {       QString url("http://www.rlcarriers.com/new/index.asp");
-       findShipper = true;
-       omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("R&L"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
-      }
-
- // Code for ROADWAY	
-     if (q.value("shiphead_shipvia").toString ().left(7) == "ROADWAY") {
-       QString url("http://www.quiktrak.roadway.com/cgi-bin/quiktrak?type=0&pro0=");
-       url += q.value("shiphead_tracknum").toString ();
-       url += "&zip0=";
-       url += q.value("cohead_shiptozipcode").toString ();
-       findShipper = true;
-       omfgThis->launchBrowser(this, url);
-      }
-
- // Code for USF	
-     if (q.value("shiphead_shipvia").toString ().left(3) == "USF") {
-       QString url("http://www.usfc.com/shipmentStatus/shipmentStatustWS.jsp?TrackType=H&TrackNumber=");
-       url +=  q.value("shiphead_tracknum").toString ();
-       findShipper = true;
-       omfgThis->launchBrowser(this, url);
-      }
-
- // Code for WATKINS	
-     if (q.value("shiphead_shipvia").toString ().left(7) == "WATKINS") {
-       QString url("http://www.watkins.com/");
-       findShipper = true;
-       omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("WATKINS"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
-      }
-
- // Code for YELLOW	
-     if (q.value("shiphead_shipvia").toString ().left(7) == "YELLOW") {
-       QString url("http://www.myyellow.com/dynamic/services/content/index.jsp");
-       findShipper = true;
-       omfgThis->launchBrowser(this, url);
-       QMessageBox::information(this, tr("YELLOW"), tr("We cannot direct link to shipper at this time - tracking number is ") + q.value("shiphead_tracknum").toString (), QMessageBox::Ok);
-      }
-
-     if (!findShipper){
-      QMessageBox::information(this, tr("Shipper"), tr("We do not currently process this shipper ") + q.value("shiphead_shipvia").toString (), QMessageBox::Ok);
+   if (shipvia.startsWith("FEDEX"))
+   {
+     url = "http://www.fedex.com/Tracking?ascend_header=1&clienttype=dotcom&cntry_code=us&language=english&tracknumbers=";
+     QString _partial;
+     QString _check_tail;
+     _check_tail = tracknum.right(2);
+     _check_tail = _check_tail.left(1);
+     if (_check_tail == "-")
+     {
+     // Ok we need to strip the hyphen out
+       _partial = tracknum.left(tracknum.length() - 2);
+       _partial += tracknum.right(1);
      }
+     else
+       _partial = tracknum;
+
+     url += _partial;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+
+   if (shipvia.startsWith("R & L") || shipvia.startsWith("R&L"))
+   {
+     url = "http://www.rlcarriers.com/index.asp";
+     canOpenTrackingPage = false;
+   }
+
+   if (shipvia.startsWith("ROADWAY"))
+   {
+     url = "http://www.quiktrak.roadway.com/cgi-bin/quiktrak?type=0&pro0=";
+     url += tracknum;
+     url += "&zip0=";
+     url += shq.value("cohead_shiptozipcode").toString ();
     }
+
+   if (shipvia.startsWith("USF"))
+   {
+     url = "http://www.usfc.com/shipmentStatus/shipmentStatustWS.jsp?TrackType=H&TrackNumber=";
+     url += tracknum;
+    }
+
+   if (shipvia.startsWith("WATKINS"))
+   {
+     url = "http://www.watkins.com/";
+     canOpenTrackingPage = false;
+    }
+
+   if (shipvia.startsWith("YELLOW"))
+   {
+     /* TODO: http://my.yrc.com/dynamic/national/servlet?
+                   CONTROLLER=com.rdwy.ec.rextracking
+                   .http.controller.ProcessPublicTrackingController
+                   &type=1&pro0=nnnnnnnnnn&ozip0=nnnnn&dzip0=nnnnnn 
+        type = 1 to track by bill of lading #, 2 by p/o #, 3 by booking #
+        ozip0 = origin zip code, dzip = destination zip code
+      */
+     url = "http://www.myyellow.com/dynamic/services/content/index.jsp";
+     canOpenTrackingPage = false;
+    }
+
+   if (url.isEmpty())
+    QMessageBox::information(this, tr("Shipper"),
+                             tr("We do not currently process the shipper %1.")
+                             .arg(shipvia));
+   else
+     omfgThis->launchBrowser(this, url);
+
+   if (! canOpenTrackingPage)
+     QMessageBox::information(this, tr("Cannot Track %1").arg(shipvia),
+                              tr("We cannot directly show tracking pages for "
+                                 "the shipper %1. The tracking number is %2.")
+                                  .arg(shipvia, tracknum));
+  }
+  else if (shq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, shq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

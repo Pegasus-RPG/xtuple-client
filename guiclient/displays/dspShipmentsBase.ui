@@ -16,7 +16,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
+    <width>692</width>
     <height>93</height>
    </rect>
   </property>
@@ -105,12 +105,9 @@ to be bound by its terms.</comment>
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="_orderDate">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>32767</height>
-               </size>
+             <widget class="DLineEdit" name="_orderDate">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -297,6 +294,11 @@ to be bound by its terms.</comment>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
   <customwidget>
    <class>OrderCluster</class>
    <extends>QWidget</extends>

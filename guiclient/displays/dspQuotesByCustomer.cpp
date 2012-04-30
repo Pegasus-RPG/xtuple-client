@@ -10,11 +10,12 @@
 
 #include "dspQuotesByCustomer.h"
 
-#include <QAction>
 #include <QMenu>
 #include <QMessageBox>
 
+#include "errorReporter.h"
 #include "salesOrder.h"
+#include "storedProcErrorLookup.h"
 
 dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspQuotesByCustomer", fl)
@@ -46,23 +47,23 @@ void dspQuotesByCustomer::languageChange()
   retranslateUi(this);
 }
 
-
 void dspQuotesByCustomer::sPopulatePo()
 {
   _poNumber->clear();
 
   if ((_cust->isValid()) && (_dates->allValid()))
   {
-    q.prepare( "SELECT MIN(quhead_id), quhead_custponumber "
-               "FROM quhead "
-               "WHERE ( (quhead_cust_id=:cust_id)"
-               " AND (quhead_quotedate BETWEEN :startDate AND :endDate) ) "
-               "GROUP BY quhead_custponumber "
-               "ORDER BY quhead_custponumber;" );
-    _dates->bindValue(q);
-    q.bindValue(":cust_id", _cust->id());
-    q.exec();
-    _poNumber->populate(q);
+    XSqlQuery minq;
+    minq.prepare("SELECT MIN(quhead_id), quhead_custponumber "
+                 "FROM quhead "
+                 "WHERE ( (quhead_cust_id=:cust_id)"
+                 " AND (quhead_quotedate BETWEEN :startDate AND :endDate) ) "
+                 "GROUP BY quhead_custponumber "
+                 "ORDER BY quhead_custponumber;" );
+    _dates->bindValue(minq);
+    minq.bindValue(":cust_id", _cust->id());
+    minq.exec();
+    _poNumber->populate(minq);
   }
 }
 
@@ -70,24 +71,23 @@ void dspQuotesByCustomer::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
 {
   menuThis->addAction(tr("Edit..."), this, SLOT(sEditOrder()));
   menuThis->addAction(tr("View..."), this, SLOT(sViewOrder()));
-  
+
   if (_privileges->check("ConvertQuotes"))
   {
     menuThis->addSeparator();
     menuThis->addAction(tr("Convert..."), this, SLOT(sConvert()));
   }
-
 }
 
 void dspQuotesByCustomer::sEditOrder()
 {
   if (!checkSitePrivs(list()->id()))
     return;
-    
+
   ParameterList params;
   params.append("mode", "editQuote");
   params.append("quhead_id", list()->id());
-      
+
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -97,11 +97,11 @@ void dspQuotesByCustomer::sViewOrder()
 {
   if (!checkSitePrivs(list()->id()))
     return;
-    
+
   ParameterList params;
   params.append("mode", "viewQuote");
   params.append("quhead_id", list()->id());
-      
+
   salesOrder *newdlg = new salesOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -109,9 +109,15 @@ void dspQuotesByCustomer::sViewOrder()
 
 bool dspQuotesByCustomer::setParams(ParameterList & params)
 {
-  if ( !(( (_allPOs->isChecked()) ||
-         ( (_selectedPO->isChecked()) && (_poNumber->currentIndex() != -1) ) ) &&
-       (_dates->allValid())  ))
+  if (! _dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Dates"),
+                         tr("Enter valid Start and End dates."));
+    _dates->setFocus();
+    return false;
+  }
+
+  if (_selectedPO->isChecked() && ! _poNumber->isValid())
   {
     QMessageBox::warning(this, tr("Invalid Options"),
       tr("One or more options are not complete."));
@@ -132,15 +138,17 @@ bool dspQuotesByCustomer::setParams(ParameterList & params)
 
 void dspQuotesByCustomer::sConvert()
 {
-  if ( QMessageBox::information( this, tr("Convert Selected Quote(s)"),
-                                 tr("Are you sure that you want to convert the selected Quote(s) to Sales Order(s)?" ),
-                                 tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
+  if (QMessageBox::question(this, tr("Convert Selected Quote(s)"),
+                            tr("<p>Are you sure that you want to convert the "
+                               "selected Quote(s) to Sales Order(s)?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     XSqlQuery check;
-    check.prepare( "SELECT quhead_number, quhead_status, cust_creditstatus "
-                   "FROM quhead, cust "
-                   "WHERE ( (quhead_cust_id=cust_id)"
-                   " AND (quhead_id=:quhead_id) );" );
+    check.prepare("SELECT quhead_number, quhead_status, cust_creditstatus "
+                  " FROM quhead"
+                  "  JOIN custinfo ON (quhead_cust_id=cust_id)"
+                  " WHERE (quhead_id=:quhead_id);" );
 
     XSqlQuery convert;
     convert.prepare("SELECT convertQuote(:quhead_id) AS sohead_id;");
@@ -148,76 +156,49 @@ void dspQuotesByCustomer::sConvert()
     int counter = 0;
     int soheadid = -1;
 
-    QList<XTreeWidgetItem*> selected = list()->selectedItems();
-    for (int i = 0; i < selected.size(); i++)
+    foreach (XTreeWidgetItem *cursor, list()->selectedItems())
     {
-      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+      if (checkSitePrivs(cursor->id()))
       {
-        XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
         check.bindValue(":quhead_id", cursor->id());
         check.exec();
         if (check.first())
         {
+          // TODO: add this check to convertquote
           if (check.value("quhead_status").toString() == "C")
           {
-            QMessageBox::warning( this, tr("Cannot Convert Quote"),
-                                    tr( "Quote #%1 has already been converted to a Sales Order." )
-                            .arg(check.value("quhead_number").toString()) );
-            return;
-          }
-
-          if ( (check.value("cust_creditstatus").toString() == "H") && (!_privileges->check("CreateSOForHoldCustomer")) )
-          {
-            QMessageBox::warning( this, tr("Cannot Convert Quote"),
-					tr( "Quote #%1 is for a Customer that has been placed on a Credit Hold and you do not have\n"
-				    "privilege to create Sales Orders for Customers on Credit Hold.  The selected\n"
-				    "Customer must be taken off of Credit Hold before you may create convert this Quote." )
-                                .arg(check.value("quhead_number").toString()) );
-            return;
-          }
-
-          if ( (check.value("cust_creditstatus").toString() == "W") && (!_privileges->check("CreateSOForWarnCustomer")) )
-          {
-            QMessageBox::warning( this, tr("Cannot Convert Quote"),
-			    	tr( "Quote #%1 is for a Customer that has been placed on a Credit Warning and you do not have\n"
-				    "privilege to create Sales Orders for Customers on Credit Warning.  The selected\n"
-				    "Customer must be taken off of Credit Warning before you may create convert this Quote." )
-                                .arg(check.value("quhead_number").toString()) );
+            QMessageBox::warning(this, tr("Cannot Convert Quote"),
+                                 tr("<p>Quote #%1 has already been converted "
+                                    "to a Sales Order." )
+                            .arg(cursor->text("quhead_number")));
             return;
           }
         }
-        else
-        {
-	      systemError( this, tr("A System Error occurred at %1::%2.")
-			   .arg(__FILE__)
-			   .arg(__LINE__) );
-	      continue;
-        }
+        else if (ErrorReporter::error(QtCriticalMsg, this,
+                                      tr("Error Getting Quote"),
+                                      check, __FILE__, __LINE__))
+          continue;
 
         convert.bindValue(":quhead_id", cursor->id());
         convert.exec();
         if (convert.first())
-        { 
-	      soheadid = convert.value("sohead_id").toInt();
-	      if(soheadid < 0)
-	      {
-	        QMessageBox::warning( this, tr("Cannot Convert Quote"),
-				tr( "Quote #%1 has one or more line items without a warehouse specified.\n"
-				    "These line items must be fixed before you may convert this quote." )
-				.arg(check.value("quhead_number").toString()) );
-	        return;
-	      }
-	      counter++;
-	      omfgThis->sSalesOrdersUpdated(soheadid);
-		}
-        else
         {
-	      systemError( this, tr("A System Error occurred at %1::%2.")
-			   .arg(__FILE__)
-			   .arg(__LINE__) );
-	      return;
+          soheadid = convert.value("sohead_id").toInt();
+          if(soheadid < 0)
+          {
+            QMessageBox::warning(this, tr("Cannot Convert Quote"),
+                                 storedProcErrorLookup("convertQuote", soheadid)
+                                 .arg(check.value("quhead_number").toString()));
+            continue;
+          }
+          counter++;
+          omfgThis->sSalesOrdersUpdated(soheadid);
         }
-	  }
+        else if (ErrorReporter::error(QtCriticalMsg, this,
+                                      tr("Converting Error"),
+                                      convert, __FILE__, __LINE__))
+          continue;
+      }
     }
 
     if (counter)
