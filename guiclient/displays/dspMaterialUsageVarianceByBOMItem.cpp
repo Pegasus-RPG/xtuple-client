@@ -16,6 +16,9 @@
 dspMaterialUsageVarianceByBOMItem::dspMaterialUsageVarianceByBOMItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : display(parent, "dspMaterialUsageVarianceByBOMItem", fl)
 {
+  if (name)
+    setObjectName(name);
+
   setupUi(optionsWidget());
   setWindowTitle(tr("Material Usage Variance by Bill of Materials Item"));
   setListLabel(tr("Material Usage Variance"));

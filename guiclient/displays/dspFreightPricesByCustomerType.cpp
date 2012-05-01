@@ -14,6 +14,9 @@
 dspFreightPricesByCustomerType::dspFreightPricesByCustomerType(QWidget* parent, const char* name, Qt::WFlags fl)
   : display(parent, "dspFreightPricesByCustomerType", fl)
 {
+  if (name)
+    setObjectName(name);
+
   setupUi(optionsWidget());
   setWindowTitle(tr("Freight Prices by Customer Type"));
   setListLabel(tr("Freight Prices"));

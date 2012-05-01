@@ -20,6 +20,9 @@
 dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
   : display(parent, "dspCountSlipsByWarehouse", fl)
 {
+  if (name)
+    setObjectName(name);
+
   setupUi(optionsWidget());
   setWindowTitle(tr("Count Slips by Site"));
   setListLabel(tr("Count Slips"));
