@@ -628,6 +628,7 @@ void distributeInventory::sFillList()
     params.append("undefined",      tr("Undefined"));
     params.append("itemlocdist_id", _itemlocdistid);
     params.append("itemsite_id",    q.value("itemsite_id").toInt());
+    params.append("transtype",      _transtype);
 
     MetaSQLQuery mql = mqlLoad("distributeInventory", "locations");
     q = mql.toQuery(params);
