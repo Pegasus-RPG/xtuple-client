@@ -34,8 +34,10 @@ employees::employees(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _emp->addColumn(tr("Site"),   _whsColumn,  Qt::AlignLeft, true, "warehous_code");
+  _emp->addColumn(tr("Active"), _ynColumn,   Qt::AlignLeft, true, "emp_active");
   _emp->addColumn(tr("Code"),   _itemColumn, Qt::AlignLeft, true, "emp_code");
   _emp->addColumn(tr("Number"), -1,          Qt::AlignLeft, true, "emp_number");
   _emp->addColumn(tr("First"),  _itemColumn, Qt::AlignLeft, true, "cntct_first_name");
@@ -113,20 +115,26 @@ void employees::sView()
 void employees::sFillList()
 {
   
-  QString sql("SELECT emp_id, warehous_code, emp_code, emp_number, "
+  QString sql("SELECT emp_id, warehous_code, emp_active, emp_code, emp_number, "
               "       cntct_first_name, cntct_last_name "
               "FROM emp "
               "  LEFT OUTER JOIN cntct ON (emp_cntct_id=cntct_id) "
               "  LEFT OUTER JOIN whsinfo ON (emp_warehous_id=warehous_id) "
-	     "<? if exists(\"warehouse_id\") ?>"
-             "WHERE (warehous_id=<? value(\"warehouse_id\") ?>)"
-             "<? endif ?>"
+              "WHERE (true) "
+              "<? if exists('warehouse_id') ?>"
+              "  AND (warehous_id=<? value('warehouse_id') ?>)"
+              "<? endif ?>"
+              "<? if exists('activeOnly') ?>"
+              "  AND (emp_active)"
+              "<? endif ?>"
               "ORDER BY emp_code;" );
               
   MetaSQLQuery mql(sql);
   ParameterList params;
   if (!_warehouse->isAll())
     params.append("warehouse_id", _warehouse->id());
+  if (!_showInactive->isChecked())
+    params.append("activeOnly", true);
   XSqlQuery r = mql.toQuery(params);
   _emp->populate(r);
   if (r.lastError().type() != QSqlError::NoError)
