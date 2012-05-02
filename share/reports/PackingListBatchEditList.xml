@@ -23,7 +23,7 @@
             ELSE &lt;? value("other") ?>
        END AS f_holdtype,
        formatBoolYN(pack_printed) AS f_printed
-FROM pack, cohead, cust 
+FROM pack, cohead, custinfo
 WHERE ((pack_head_id=cohead_id)
   AND  (cohead_cust_id=cust_id)
   AND  (pack_head_type='SO'))

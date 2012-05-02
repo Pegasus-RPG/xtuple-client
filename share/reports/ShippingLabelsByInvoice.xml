@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Shippinig Labels By Invoice</title>
+ <title>Shipping Labels By Invoice</title>
  <name>ShippingLabelsByInvoice</name>
  <description></description>
  <labeltype>Avery 5263</labeltype>
@@ -22,7 +22,7 @@
        invchead_shipto_address2,
        invchead_shipto_address3,
        (COALESCE(invchead_shipto_city,'') || ' ' || COALESCE(invchead_shipto_state,'') || ' ' || COALESCE(invchead_shipto_zipcode,'')) AS citystatezip
-  FROM invchead, cust, sequence
+  FROM invchead, custinfo, sequence
  WHERE ( (invchead_cust_id=cust_id)
    AND (sequence_value BETWEEN &lt;? value(&quot;labelFrom&quot;) ?> AND &lt;? value(&quot;labelTo&quot;) ?>)
    AND (invchead_id=&lt;? value(&quot;invchead_id&quot;) ?>) );

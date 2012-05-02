@@ -39,16 +39,18 @@ ORDER BY araging_duedate;</sql>
  </querysource>
  <querysource>
   <name>head</name>
-  <sql>SELECT cust_name, cust_address1, cust_address2, cust_address3,
-       (cust_city || '  ' || cust_state || '  ' || cust_zipcode) AS citystatezip,
+  <sql>SELECT cust_name, addr_line1 AS cust_address1, addr_line2 AS cust_address2, addr_line3 AS cust_address3,
+       (addr_city || '  ' || addr_state || '  ' || addr_postalcode) AS citystatezip,
        formatDate(COALESCE(&lt;? value("asofdate") ?>, current_date)) AS asofdate
-FROM cust
+FROM custinfo
+LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
 WHERE (cust_id = &lt;? value("cust_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>Currency</name>
   <sql>SELECT currconcat(cust_curr_id) AS currAbbr
-  FROM cust
+  FROM custinfo
  WHERE (cust_id=&lt;? value("cust_id") ?>)
 </sql>
  </querysource>

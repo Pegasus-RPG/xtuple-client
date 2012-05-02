@@ -73,7 +73,7 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
                 (stdcost(item_id) * iteminvpricerat(item_id))
               &lt;? endif ?>
               AS cost
-         FROM ipsass, ipshead, ipsprice, cust, item
+         FROM ipsass, ipshead, ipsprice, custinfo, item
         WHERE ( (ipsass_ipshead_id=ipshead_id)
           AND (ipsprice_ipshead_id=ipshead_id)
           AND (ipsass_cust_id=cust_id)
@@ -177,7 +177,7 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
            (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
-    FROM ipsass, ipshead, ipsprice, cust, shipto, item
+    FROM ipsass, ipshead, ipsprice, custinfo, shipto, item
    WHERE ( (ipsass_ipshead_id=ipshead_id)
      AND (ipsprice_ipshead_id=ipshead_id)
      AND (ipsass_shipto_id=shipto_id)
@@ -204,7 +204,7 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
            (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
-    FROM ipsass, ipshead, ipsprice, cust, shipto, item
+    FROM ipsass, ipshead, ipsprice, custinfo, shipto, item
    WHERE ( (ipsass_ipshead_id=ipshead_id)
      AND (ipsprice_ipshead_id=ipshead_id)
      AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) > 0)

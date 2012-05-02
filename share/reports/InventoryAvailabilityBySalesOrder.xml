@@ -15,7 +15,7 @@
        formatDate(cohead_orderdate) AS orderdate,
        cohead_custponumber,
        cust_name,
-       cust_phone,
+       cntct_phone AS cust_phone,
        &lt;? if exists("onlyShowShortages") ?>
          text('Only Showing Shortages')
        &lt;? else ?>
@@ -28,7 +28,9 @@
          text('')
        &lt;? endif ?>
        AS f_showWoSupply
-  FROM cohead, cust
+  FROM cohead, custinfo
+  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+  LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
  WHERE ((cohead_cust_id=cust_id)
    AND (cohead_id=&lt;? value("sohead_id") ?>) );</sql>
  </querysource>

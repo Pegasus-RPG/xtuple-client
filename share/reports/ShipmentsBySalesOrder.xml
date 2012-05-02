@@ -11,13 +11,14 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT cohead_number as f_sonumber,
+  <sql>SELECT cohead_number AS f_sonumber,
        formatDate(cohead_orderdate) AS f_orderdate,
        cohead_custponumber AS f_ponumber,
-       cust_name as f_custname,
-       cust_phone as f_custphone
-FROM cohead, cust
+       cust_name AS f_custname,
+       cntct_phone AS f_custphone
+FROM cohead, custinfo, cntct
 WHERE ((cohead_cust_id=cust_id)
+ AND (cust_cntct_id=cntct_id)
  AND (cohead_id=&lt;? value("sohead_id") ?>));</sql>
  </querysource>
  <querysource>

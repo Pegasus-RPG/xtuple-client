@@ -18,8 +18,8 @@
        formatDate(orderdate) AS f_orderdate,
        custponumber AS f_ponumber,
        cust_name AS f_custname,
-       cust_phone AS f_custphone
-  FROM cust, (SELECT shiphead_number,
+       cntct_phone AS f_custphone
+  FROM custinfo JOIN cntct ON (cust_cntct_id=cntct_id), (SELECT shiphead_number,
                      shiphead_tracknum,
                      shiphead_freight,
                      cohead_number AS ordernumber,

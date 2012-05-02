@@ -21,19 +21,19 @@
 --Run query if no shiphead_id passed - No Shipment Pack List
 SELECT cust_number,
        formatsobarcode(cohead_id) AS order_barcode,
-       formataddr(cust_address1, cust_address2, cust_address3, (cust_city || '  ' ||  cust_state || '  ' || cust_zipcode), cust_country) AS corr_address, 
+       formataddr(addr_line1, addr_line2, addr_line3, (addr_city || '  ' ||  addr_state || '  ' || addr_postalcode), addr_country) AS corr_address,
        formataddr(cohead_billtoaddress1, cohead_billtoaddress2, cohead_billtoaddress3, (cohead_billtocity || '  ' ||   cohead_billtostate || '  ' || cohead_billtozipcode), cohead_billtocountry) AS billing_address, 
 
   formataddr(cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3, (cohead_shiptocity || '  ' ||   cohead_shiptostate || '  ' || cohead_shiptozipcode), cohead_shiptocountry) AS shipping_address,           
 
-       cust_contact,
+       trim(cntct_first_name || ' ' || cntct_last_name) AS cust_contact,
        cohead_fob,
        cohead_billtoname,
        cohead_billtoaddress1,
        cohead_billtoaddress2,
        cohead_billtoaddress3,
        (cohead_billtocity || '  ' || cohead_billtostate || '  ' || cohead_billtozipcode) AS billtocitystatezip,
-       cust_phone,
+       cntct_phone AS cust_phone,
        cohead_shiptoname,
        cohead_shiptoaddress1,
        cohead_shiptoaddress2,
@@ -46,11 +46,11 @@ SELECT cust_number,
        formatDate(cohead_orderdate) AS orderdate,
        cohead_shipcomments, 
        terms_descrip
-  FROM cohead, cust, terms 
- WHERE ((cohead_cust_id=cust_id)
-   AND (cohead_terms_id=terms_id)
-   AND (cohead_id=&lt;? value("sohead_id") ?>)
-);
+  FROM cohead JOIN custinfo ON (cohead_cust_id=cust_id)
+  JOIN terms ON (cohead_terms_id=terms_id)
+  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+  LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
+ WHERE (cohead_id=&lt;? value("sohead_id") ?>);
 
 -------------------
 &lt;? else ?>
@@ -74,19 +74,20 @@ SELECT shiphead_number,
                   (cohead_shiptocity || '  ' ||   cohead_shiptostate || '  ' || cohead_shiptozipcode), cohead_shiptocountry) AS shipping_address,           
 
        cust_number,
-       cust_contact,
-       cust_phone,
+       trim(cntct_first_name || ' ' || cntct_last_name) AS cust_contact,
+       cntct_phone AS cust_phone,
        cohead_shipchrg_id,
        shipchrg_descrip,
 
        terms_descrip
-  FROM shiphead, cohead, cust, terms, shipchrg
- WHERE ((cohead_cust_id=cust_id)
-   AND (cohead_terms_id=terms_id)
-   AND (cohead_id=shiphead_order_id)
-   AND (cohead_shipchrg_id = shipchrg_id)
-   AND (shiphead_id=&lt;? value("shiphead_id") ?>)
-);
+  FROM shiphead
+  JOIN cohead ON (cohead_id=shiphead_order_id)
+  JOIN custinfo ON (cohead_cust_id=cust_id)
+  JOIN terms ON (cohead_terms_id=terms_id)
+  JOIN shipchrg ON (cohead_shipchrg_id = shipchrg_id)
+  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+  LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
+ WHERE (shiphead_id=&lt;? value("shiphead_id") ?>);
 
 &lt;? endif ?></sql>
  </querysource>

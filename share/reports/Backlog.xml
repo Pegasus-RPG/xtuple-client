@@ -60,7 +60,7 @@ formatMoney(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)
        AS foreign_ammount,
 round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio)
     * (currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio),2) AS backlog 
-  FROM cohead, coitem, itemsite, item, cust, uom
+  FROM cohead, coitem, itemsite, item, custinfo, uom
  WHERE ((coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
    AND (coitem_itemsite_id=itemsite_id)

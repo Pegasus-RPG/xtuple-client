@@ -17,7 +17,7 @@
        cohead_number,
        cust_number,
        cust_name
-  FROM cobmisc, cohead, cust
+  FROM cobmisc, cohead, custinfo
  WHERE ((cobmisc_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
    AND (NOT cobmisc_posted) )

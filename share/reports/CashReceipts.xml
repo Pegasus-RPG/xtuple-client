@@ -19,7 +19,7 @@
   <name>head</name>
   <sql>SELECT &lt;? if exists("cust_id") ?>
          (SELECT (cust_number || '-' || cust_name)
-            FROM cust
+            FROM custinfo
            WHERE (cust_id=&lt;? value("cust_id") ?>) )
        &lt;? elseif exists("custtype_id") ?>
          (select (custtype_code||'-'||custtype_descrip)
@@ -54,7 +54,7 @@ FROM (
 &lt;? if exists("LegacyDisplayMode") ?>
 -- Posted cash receipts
 SELECT  currtobase(arapply_curr_id,arapply_applied,arapply_postdate) AS base_applied
-FROM cust LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id), arapply
+FROM custinfo LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id), arapply
 WHERE ( (arapply_cust_id=cust_id)
   AND   (arapply_postdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
   AND   (arapply_source_doctype ='K')
@@ -72,7 +72,7 @@ WHERE ( (arapply_cust_id=cust_id)
 -- Unposted cash receipts
 UNION ALL
 SELECT currtobase(cashrcpt_curr_id,cashrcpt_amount,cashrcpt_distdate) AS base_applied
-FROM cashrcpt, cust LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id)
+FROM cashrcpt, custinfo LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id)
 WHERE ( (NOT cashrcpt_posted)
   AND   (cashrcpt_cust_id=cust_id)
   AND   (cashrcpt_distdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
@@ -90,7 +90,7 @@ WHERE ( (NOT cashrcpt_posted)
 -- Cash Advance
 UNION ALL
 SELECT aropen_amount / aropen_curr_rate AS base_applied
-FROM cust LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id), aropen
+FROM custinfo LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id), aropen
   JOIN cashrcptitem ON (aropen_id=cashrcptitem_aropen_id)
 WHERE ( (aropen_cust_id=cust_id)
   AND   (aropen_doctype IN ('R','C'))
@@ -108,7 +108,7 @@ WHERE ( (aropen_cust_id=cust_id)
 &lt;? else ?>
 -- New mode
 SELECT (cashrcpt_amount / cashrcpt_curr_rate) AS base_applied
-FROM cashrcpt JOIN cust ON (cust_id=cashrcpt_cust_id) LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id)
+FROM cashrcpt JOIN custinfo ON (cust_id=cashrcpt_cust_id) LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id)
 WHERE ( (cashrcpt_distdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? if exists("cust_id") ?>
   AND   (cust_id=&lt;? value("cust_id") ?>)

@@ -12,9 +12,9 @@
  <querysource>
   <name>head</name>
   <sql>SELECT cust_name,
-       cust_address1,
-       cust_address2,
-       cust_address3,
+       addr_line1 AS cust_address1,
+       addr_line2 AS cust_address2,
+       addr_line3 AS cust_address3,
        &lt;? if exists("showExpired") ?>
          text('Yes')
        &lt;? else ?>
@@ -41,7 +41,9 @@
          text('') AS f_costlabel,
          text('') AS f_marginlabel
        &lt;? endif ?>
-   FROM cust
+   FROM custinfo
+   LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+   LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
 WHERE (cust_id=&lt;? value("cust_id") ?>);
 </sql>
  </querysource>
@@ -99,7 +101,7 @@ FROM (
            (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
-    FROM ipsass, ipshead, ipsprice, item, cust
+    FROM ipsass, ipshead, ipsprice, item, custinfo
    WHERE ((ipsass_ipshead_id=ipshead_id)
      AND (ipsprice_ipshead_id=ipshead_id)
      AND (ipsprice_item_id=item_id)
@@ -147,7 +149,7 @@ FROM (
            (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
-    FROM item, cust
+    FROM item, custinfo
    WHERE ( (item_sold)
      AND (item_active)
      AND (cust_id=&lt;? value("cust_id") ?>)

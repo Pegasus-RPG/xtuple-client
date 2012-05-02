@@ -88,7 +88,7 @@
                      ((wo_startdate &lt;= CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) AS wo_latestart,
                      (wo_duedate&lt;=CURRENT_DATE) AS wo_latedue  
 &lt;? endif ?> 
-                FROM cohead, itemsite, item, uom, cust, coitem
+                FROM cohead, itemsite, item, uom, custinfo, coitem
 &lt;? if exists(showWoSupply) ?> 
                 LEFT OUTER JOIN wo
                   ON ((coitem_itemsite_id=wo_itemsite_id)

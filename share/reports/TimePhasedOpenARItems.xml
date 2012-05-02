@@ -13,7 +13,7 @@
   <name>head</name>
   <sql>SELECT &lt;? if exists(&quot;cust_id&quot;) ?>
          ( SELECT cust_name
-             FROM cust
+             FROM custinfo
             WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>) )
        &lt;? elseif exists(&quot;custtype_id&quot;) ?>
          ( SELECT (custtype_code || '-' || custtype_descrip)
@@ -53,7 +53,7 @@
          cust_number,
          cust_name,
          openARItemsValue(cust_id, calitem_id) AS value
-    FROM cust LEFT OUTER JOIN custgrpitem ON (cust_id=custgrpitem_cust_id)
+    FROM custinfo LEFT OUTER JOIN custgrpitem ON (cust_id=custgrpitem_cust_id)
          LEFT OUTER JOIN custgrp ON (custgrpitem_custgrp_id=custgrp_id),
          ( SELECT rcalitem_id AS calitem_id,
                   findPeriodStart(rcalitem_id) AS calitem_start,

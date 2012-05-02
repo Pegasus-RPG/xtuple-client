@@ -51,7 +51,7 @@ formatAddr(remitto_address1, remitto_address2, remitto_address3, remitto_citysta
       formatDate(invchead_orderdate) AS f_orderdate,
       formatDate(invchead_shipdate) AS f_shipdate,
       invchead_fob, terms_descrip, invchead_shipvia
-FROM remitto, cust, invchead, terms
+FROM remitto, custinfo, invchead, terms
 WHERE ( (invchead_cust_id=cust_id)
 AND (invchead_terms_id=terms_id)
 AND (invchead_id=&lt;? value("invchead_id") ?>) )

@@ -12,9 +12,9 @@
  <querysource>
   <name>head</name>
   <sql>SELECT cust_name,
-       cust_address1,
-       cust_address2,
-       cust_address3,
+       addr_line1 AS cust_address1,
+       addr_line2 AS cust_address2,
+       addr_line3 AS cust_address3,
        &lt;? if exists("showExpired") ?>
          text('Yes')
        &lt;? else ?>
@@ -27,7 +27,9 @@
          text('No')
        &lt;? endif ?>
        AS f_showfuture
-   FROM cust
+   FROM custinfo
+   LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+   LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
 WHERE (cust_id=&lt;? value("cust_id") ?>);
 </sql>
  </querysource>
@@ -73,7 +75,7 @@ UNION SELECT ipsfreight_id AS itemid, 2 AS sourcetype,
              warehous_code, shipzone_name, freightclass_code, ipsfreight_shipvia
 FROM ipsass JOIN ipshead ON (ipshead_id=ipsass_ipshead_id)
             JOIN ipsfreight ON (ipsfreight_ipshead_id=ipshead_id)
-            JOIN cust ON (cust_custtype_id=ipsass_custtype_id)
+            JOIN custinfo ON (cust_custtype_id=ipsass_custtype_id)
             LEFT OUTER JOIN whsinfo ON (warehous_id=ipsfreight_warehous_id)
             LEFT OUTER JOIN shipzone ON (shipzone_id=ipsfreight_shipzone_id)
             LEFT OUTER JOIN freightclass ON (freightclass_id=ipsfreight_freightclass_id)
@@ -92,7 +94,7 @@ UNION SELECT ipsfreight_id AS itemid, 3 AS sourcetype,
              ipsfreight_qtybreak, ipsfreight_price,
              ipsfreight_type, ipshead_curr_id,
              warehous_code, shipzone_name, freightclass_code, ipsfreight_shipvia
-FROM cust   JOIN custtype ON (custtype_id=cust_custtype_id)
+FROM custinfo   JOIN custtype ON (custtype_id=cust_custtype_id)
             JOIN ipsass ON ((coalesce(length(ipsass_custtype_pattern), 0) > 0) AND
                             (custtype_code ~ ipsass_custtype_pattern))
             JOIN ipshead ON (ipshead_id=ipsass_ipshead_id)

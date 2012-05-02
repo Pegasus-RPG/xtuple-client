@@ -24,7 +24,7 @@ formataddr(cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3, 
        cohead_shiptoaddress2,&#xd;
        cohead_shiptoaddress3,&#xd;
        (COALESCE(cohead_shiptocity,'') || ' ' || COALESCE(cohead_shiptostate,'') || ' ' || COALESCE(cohead_shiptozipcode,'')) AS citystatezip&#xd;
-FROM cohead, cust, sequence&#xd;
+FROM cohead, custinfo, sequence&#xd;
 WHERE ( (cohead_cust_id=cust_id)&#xd;
  AND (sequence_value BETWEEN &lt;? value("labelFrom") ?> AND &lt;? value("labelTo") ?>)&#xd;
  AND (cohead_id=&lt;? value("sohead_id") ?>) )&#xd;

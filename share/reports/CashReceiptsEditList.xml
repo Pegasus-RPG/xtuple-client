@@ -38,7 +38,7 @@
        0 AS detailedamount,
        formatMoney(0) AS f_detailedamount,
        bankaccnt_name
-FROM cashrcpt, bankaccnt, cust
+FROM cashrcpt, bankaccnt, custinfo
 WHERE ( (cashrcpt_bankaccnt_id=bankaccnt_id)
   AND   (cashrcpt_cust_id=cust_id)
   AND   (NOT cashrcpt_posted)

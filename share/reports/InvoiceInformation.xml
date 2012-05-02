@@ -49,11 +49,13 @@ GROUP BY invchead_id, invchead_ponumber,
   <sql>SELECT cust_id,
        cust_number,
        cust_name,
-       cust_address1,
-       cust_address2,
-       cust_address3,
-       cust_city || ' ' || cust_state || ', ' || cust_zipcode AS custcitystatezip
-FROM invchead, cust
+       addr_line1 AS cust_address1,
+       addr_line2 AS cust_address2,
+       addr_line3 AS cust_address3,
+       addr_city || ' ' || addr_state || ', ' || addr_postalcode AS custcitystatezip
+FROM invchead, custinfo
+LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
 WHERE ( (invchead_id=&lt;? value("invchead_id") ?>)
  AND (invchead_cust_id=cust_id) );</sql>
  </querysource>

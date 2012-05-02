@@ -17,7 +17,7 @@
                 cohead_shiptoname, cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3,
                 (cohead_shiptocity || ' ' || cohead_shiptostate || ' ' || cohead_shiptozipcode) AS shiptocitystatezip,
                 cohead_shiptophone
-         FROM shiphead, cohead, warehous, cust
+         FROM shiphead, cohead, warehous, custinfo
          WHERE ((shiphead_cohead_id=cohead_id)
           AND (cohead_cust_id=cust_id)
           AND (cohead_warehous_id=warehous_id)

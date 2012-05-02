@@ -41,7 +41,7 @@
        cmhead_misc_descrip,
        curr_symbol,
        curr_name
-  FROM remitto, cmhead, cust, curr_symbol
+  FROM remitto, cmhead, custinfo, curr_symbol
  WHERE ((cmhead_cust_id=cust_id)
        AND (cmhead_curr_id = curr_id)
        AND (cmhead_id=&lt;? value("cmhead_id") ?>))

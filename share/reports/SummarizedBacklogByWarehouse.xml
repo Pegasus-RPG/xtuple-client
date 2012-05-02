@@ -94,7 +94,7 @@
        CASE WHEN (shiphead_shipdate IS NULL) THEN text('')
             ELSE formatDate(shiphead_shipdate)
        END AS shipdate
-  FROM coitem, itemsite, item, cust, 
+  FROM coitem, itemsite, item, custinfo,
        cohead LEFT OUTER JOIN shiphead ON (shiphead_order_id=cohead_id AND shiphead_order_type='SO') 
  WHERE ( (coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
@@ -137,7 +137,7 @@ SELECT SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)
        SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) AS cost,
        SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
                          ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin
-  FROM coitem, itemsite, item, cust, 
+  FROM coitem, itemsite, item, custinfo,
        cohead
  WHERE ( (coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)

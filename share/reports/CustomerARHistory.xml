@@ -14,7 +14,7 @@
   <sql>SELECT cust_name,
        formatDate(date(&lt;? value("startDate") ?>)) AS startDate,
        formatDate(date(&lt;? value("endDate") ?>)) AS endDate
-  FROM cust
+  FROM custinfo
  WHERE (cust_id=&lt;? value("cust_id") ?>);
     </sql>
  </querysource>

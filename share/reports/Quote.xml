@@ -48,7 +48,7 @@
        quhead_custponumber,
        quhead_fob
 FROM quhead
-     LEFT OUTER JOIN cust ON (quhead_cust_id = cust_id)
+     LEFT OUTER JOIN custinfo ON (quhead_cust_id = cust_id)
      LEFT OUTER JOIN terms ON (quhead_terms_id = terms_id)
      LEFT OUTER JOIN salesrep ON (quhead_salesrep_id = salesrep_id)
 WHERE (quhead_id = &lt;? value("quhead_id") ?>)

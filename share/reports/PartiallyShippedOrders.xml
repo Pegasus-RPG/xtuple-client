@@ -36,7 +36,7 @@
             (coitem_price / coitem_price_invuomratio) ) AS backlog,
        MIN(coitem_scheddate) AS scheddate,
        COALESCE(MIN(shipitem_id), 0) AS shipped
-  FROM cohead, itemsite, item, cust,
+  FROM cohead, itemsite, item, custinfo,
        coitem LEFT OUTER JOIN shipitem ON (shipitem_orderitem_id=coitem_id) 
  WHERE ( (coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)

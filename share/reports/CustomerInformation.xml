@@ -12,21 +12,26 @@
  <querysource>
   <name>head</name>
   <sql>SELECT cust_name, cust_number,
-       cust_address1, cust_address2, cust_address3,
-       cust_city, cust_state, cust_zipcode,
-       (cust_city || ', ' || cust_state || ' ' || cust_zipcode) AS citystatezip,
-       cust_contact, cust_phone, cust_fax, cust_email,
-       cust_corraddress1, cust_corraddress2, cust_corraddress3,
-       cust_corrcity, cust_corrstate, cust_corrzipcode,
-       (cust_corrcity || ', ' || cust_corrstate || ' ' || cust_corrzipcode) AS corrcitystatezip,
-       cust_corrcontact, cust_corrphone, cust_corrfax, cust_corremail,
+       ba.addr_line1 AS cust_address1, ba.addr_line2 AS cust_address2, ba.addr_line3 AS cust_address3,
+       ba.addr_city AS cust_city, ba.addr_state AS cust_state, ba.addr_postalcode AS cust_zipcode,
+       (ba.addr_city || ', ' || ba.addr_state || ' ' || ba.addr_postalcode) AS citystatezip,
+       trim(bc.cntct_first_name || ' ' || bc.cntct_last_name) AS cust_contact, bc.cntct_phone AS cust_phone, bc.cntct_fax AS cust_fax, bc.cntct_email AS cust_email,
+       ca.addr_line1 AS cust_corraddress1, ca.addr_line2 AS cust_corraddress2, ca.addr_line3 AS cust_corraddress3,
+       ca.addr_city AS cust_corrcity, ca.addr_state AS cust_corrstate, ca.addr_postalcode AS cust_corrzipcode,
+       (ca.addr_city || ', ' || ca.addr_state || ' ' || ca.addr_postalcode) AS corrcitystatezip,
+       trim(cc.cntct_first_name || ' ' || cc.cntct_last_name) AS cust_corrcontact, cc.cntct_phone AS cust_corrphone,
+       cc.cntct_fax AS cust_corrfax, cc.cntct_email AS cust_corremail,
        CASE WHEN (cust_creditstatus='G') THEN 'In Good Standing'
             WHEN (cust_creditstatus='W') THEN 'On Credit Warning'
             WHEN (cust_creditstatus='H') THEN 'On Credit Hold'
             ELSE ('Unknown Status: ' || cust_creditstatus)
        END AS f_creditstatus,
        cust_comments
-  FROM cust
+ FROM custinfo
+ LEFT OUTER JOIN cntct cc ON (cust_corrcntct_id=cc.cntct_id)
+ LEFT OUTER JOIN addr ca ON (cc.cntct_addr_id=ca.addr_id)
+ LEFT OUTER JOIN cntct bc ON (cust_cntct_id=bc.cntct_id)
+ LEFT OUTER JOIN addr ba ON (bc.cntct_addr_id=ba.addr_id)
  WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
  </querysource>
  <querysource>

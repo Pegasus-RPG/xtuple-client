@@ -13,7 +13,7 @@
   <name>head</name>
   <sql>SELECT &lt;? if exists("cust_id") ?>
          (SELECT (cust_number || '-' || cust_name)
-            FROM cust
+            FROM custinfo
            WHERE (cust_id=&lt;? value("cust_id") ?>) )
        &lt;? elseif exists("custtype_id") ?>
          (select (custtype_code||'-'||custtype_descrip)

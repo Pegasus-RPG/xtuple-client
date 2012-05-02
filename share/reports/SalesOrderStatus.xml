@@ -57,9 +57,10 @@ ORDER BY coitem_linenumber;</sql>
   <sql>SELECT cohead_number,
        formatDate(cohead_orderdate) AS orderdate,
        cohead_custponumber,
-       cust_name, cust_phone 
-  FROM cohead, cust 
+       cust_name, cntct_phone AS cust_phone
+  FROM cohead, custinfo, cntct
  WHERE ((cohead_cust_id=cust_id)
+   AND (cust_cntct_id=cntct_id)
    AND (cohead_id=&lt;? value("sohead_id") ?>)
 );</sql>
  </querysource>

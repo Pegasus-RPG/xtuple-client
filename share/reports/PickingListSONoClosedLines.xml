@@ -27,13 +27,13 @@
 
   formataddr(cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3, (cohead_shiptocity || '  ' ||   cohead_shiptostate || '  ' || cohead_shiptozipcode), cohead_shiptocountry) AS shipping_address,           
 
-       cust_contact,
+       trim(cntct_first_name || ' ' || cntct_last_name) AS cust_contact,
        cohead_billtoname,
        cohead_billtoaddress1,
        cohead_billtoaddress2,
        cohead_billtoaddress3,
        (cohead_billtocity || '  ' || cohead_billtostate || '  ' || cohead_billtozipcode) AS billtocitystatezip,
-       cust_phone,
+       cntct_phone AS cust_phone,
        cohead_shiptoname,
        cohead_shiptoaddress1,
        cohead_shiptoaddress2,
@@ -46,11 +46,12 @@
        formatDate(cohead_orderdate) AS orderdate,
        cohead_shipcomments, 
        terms_descrip
-  FROM cohead, cust, terms
- WHERE ((cohead_cust_id=cust_id)
-   AND (cohead_terms_id=terms_id)
-   AND (cohead_id=&lt;? value("sohead_id") ?>)
-);</sql>
+  FROM cohead
+  JOIN custinfo ON (cohead_cust_id=cust_id)
+  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+  LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
+  JOIN terms ON (cohead_terms_id=terms_id)
+ WHERE (cohead_id=&lt;? value("sohead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>scheddate</name>
@@ -83,7 +84,7 @@
                             WHERE ( (shipitem_orderitem_id=coitem_id)
                               AND (shipitem_shiphead_id=shiphead_id)
                               AND (NOT shiphead_shipped) ) )/ CASE WHEN(itemuomratiobytype(item_id, 'Selling') = 0) THEN 1 ELSE itemuomratiobytype(item_id, 'Selling') END ) ) AS shipatshipping,
-       CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM cust,cohead WHERE coitem_cohead_id=cohead_id AND cust_id=cohead_cust_id)='H') THEN 'H'
+       CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM custinfo,cohead WHERE coitem_cohead_id=cohead_id AND cust_id=cohead_cust_id)='H') THEN 'H'
             WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)
                                             FROM cohead, invchead, invcitem
                                            WHERE ((invchead_ordernumber=cohead_number)

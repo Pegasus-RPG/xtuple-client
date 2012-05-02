@@ -15,14 +15,15 @@
  <querysource>
   <name>head</name>
   <sql>SELECT shiphead_shipvia, formatDate(shiphead_shipdate) AS shipdate,
-                cust_name, cust_address1, cust_address2,
-                (cust_city || '  ' || cust_state || '  ' || cust_zipcode) AS custcitystatezip,
+                cust_name, addr_line1 AS cust_address1, addr_line2 AS cust_address2,
+                (addr_city || '  ' || addr_state || '  ' || addr_postalcode) AS custcitystatezip,
                 cust_number, cohead_number, cohead_fob, cohead_custponumber,
                 warehous_descrip, warehous_addr1, warehous_addr2, warehous_addr3, warehous_addr4, warehous_fob,
                 cohead_shiptoname, cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3,
                 (cohead_shiptocity || ' ' || cohead_shiptostate || ' ' || cohead_shiptozipcode) AS shiptocitystatezip,
                 cohead_shiptophone
-         FROM shiphead, cohead, warehous, cust
+         FROM shiphead, cohead, warehous, custinfo
+         LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
          WHERE ((shiphead_order_id=cohead_id)
           AND (cohead_cust_id=cust_id)
           AND (cohead_warehous_id=warehous_id)
@@ -62,25 +63,26 @@
                  ELSE ' '
                 END AS collect_name,
                 CASE
-                 WHEN ('%3' = 'C') THEN cust_address1
+                 WHEN ('%3' = 'C') THEN addr_line1
                  ELSE ' '
                 END AS collect_address1,
                 CASE
-                 WHEN ('%3' = 'C') THEN cust_address2
+                 WHEN ('%3' = 'C') THEN addr_line2
                  ELSE ' '
                 END AS collect_address2,
                 CASE
-                 WHEN ('%3' = 'C') THEN (cust_city || '  ' || cust_state || '  ' || cust_zipcode)
+                 WHEN ('%3' = 'C') THEN (addr_city || '  ' || addr_state || '  ' || addr_postalcode)
                  ELSE ' '
                 END AS collect_address3
-         FROM shipitem, cohead, cust, coitem, itemsite, item
+         FROM shipitem, cohead, custinfo, coitem, itemsite, item
+         LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
          WHERE ((shipitem_orderitem_id=coitem_id)
           AND (coitem_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
           AND (coitem_cohead_id=cohead_id)
           AND (cohead_cust_id=cust_id)
           AND (shipitem_shiphead_id=%1))
-         GROUP BY cust_name, cust_address1, cust_address2, cust_city, cust_state, cust_zipcode;</sql>
+         GROUP BY cust_name, addr_line1, addr_line2, addr_city, addr_state, addr_postalcode;</sql>
  </querysource>
  <querysource>
   <name>notes</name>

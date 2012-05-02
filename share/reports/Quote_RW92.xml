@@ -19,7 +19,7 @@
        quhead_billtoaddress2 AS billtoaddress2,
        quhead_billtoaddress3 AS billtoaddress3,
        (quhead_billtocity || '  ' || quhead_billtostate || '  ' || quhead_billtozip) AS billtocitystatezip,
-       cust_phone,
+       cntct_phone AS cust_phone,
        quhead_shiptoname AS shiptoname,
        quhead_shiptoaddress1 AS shiptoaddress1,
        quhead_shiptoaddress2 AS shiptoaddress2,
@@ -27,8 +27,9 @@
        (quhead_shiptocity || '  ' || quhead_shiptostate || '  ' || quhead_shiptozipcode) AS shiptocitystatezip,
        quhead_custponumber, quhead_ordercomments,
        quhead_shipvia, terms_descrip
-  FROM quhead, cust, terms
+  FROM quhead, custinfo, terms, cntct
  WHERE ( (quhead_cust_id=cust_id)
+   AND (cust_cntct_id=cntct_id)
    AND (quhead_terms_id=terms_id)
    AND (quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>) );</sql>
  </querysource>

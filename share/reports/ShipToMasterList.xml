@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT cust_number, cust_name
-   FROM cust
+   FROM custinfo
 WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);
     </sql>
  </querysource>

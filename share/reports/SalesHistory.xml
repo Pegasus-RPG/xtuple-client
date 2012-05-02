@@ -31,7 +31,7 @@
        '' AS f_total,
        &lt;? endif ?>
        round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2) AS total
-  FROM cohist JOIN cust ON (cust_id=cohist_cust_id)
+  FROM cohist JOIN custinfo ON (cust_id=cohist_cust_id)
               JOIN salesrep ON (salesrep_id=cohist_salesrep_id)
 &lt;? if exists("includeMisc") ?>
               LEFT OUTER JOIN itemsite ON (itemsite_id=cohist_itemsite_id)

@@ -40,16 +40,17 @@
                   '  ' || cohead_shiptozipcode), cohead_shiptocountry) AS shipping_address,           
 
        cust_number,
-       cust_contact,
-       cust_phone,
+       trim(cntct_first_name || ' ' || cntct_last_name) AS cust_contact,
+       cntct_phone AS cust_phone,
        terms_descrip
-  FROM shiphead, cohead, cust, terms
- WHERE ((cohead_cust_id=cust_id)
-   AND (cohead_terms_id=terms_id)
-   AND (cohead_id=shiphead_order_id)
-   AND (shiphead_order_type='SO')
-   AND (shiphead_id=&lt;? value("shiphead_id") ?>)
-)
+  FROM shiphead
+  JOIN cohead ON (cohead_id=shiphead_order_id)
+  JOIN custinfo ON (cohead_cust_id=cust_id)
+  JOIN terms ON (cohead_terms_id=terms_id)
+  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
+  LEFT OUTER JOIN addr ON (cntct_addr_id=addr_id)
+ WHERE (shiphead_id=&lt;? value("shiphead_id") ?>)
+
 &lt;? if exists("MultiWhs") ?>
 UNION
 SELECT shiphead_number, 'T/O #:' AS ordertype,
@@ -118,9 +119,9 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
        (SELECT formatQty(SUM(shipitem_qty)) FROM shipitem WHERE ((shipitem_shiphead_id=&lt;? value("shiphead_id") ?>) AND (shipitem_orderitem_id=coitem_id))) AS shipped,
 
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus
-                                           FROM cust,cohead
+                                           FROM custinfo,cohead
                                           WHERE coitem_cohead_id=cohead_id
-                                            AND cust_id=cohead_cust_id)='H') THEN 'H'
+                                            AND (cust_id=cohead_cust_id))='H') THEN 'H'
             WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)
                                             FROM cohead, invchead, invcitem
                                            WHERE ((invchead_ordernumber=cohead_number)

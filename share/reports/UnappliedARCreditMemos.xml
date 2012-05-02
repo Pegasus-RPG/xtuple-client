@@ -16,7 +16,7 @@
        formatMoney(aropen_amount) AS f_amount,
        formatMoney(aropen_paid) AS f_paid,
        formatMoney(aropen_amount - aropen_paid) AS f_balance
-FROM aropen, cust
+FROM aropen, custinfo
 WHERE ( (aropen_doctype IN ('C', 'R'))
  AND (aropen_open)
  AND (aropen_cust_id=cust_id) )
