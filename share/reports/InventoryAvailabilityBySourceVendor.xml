@@ -86,7 +86,7 @@
              &lt;? endif ?>
       FROM item, itemsite, warehous 
            &lt;? if reExists("[vV]end") ?>
-             , vend JOIN itemsrc ON (itemsrc_vend_id=vend_id)
+             , vendinfo JOIN itemsrc ON (itemsrc_vend_id=vend_id)
            &lt;? endif ?>
       WHERE ( (itemsite_active)
           AND (itemsite_item_id=item_id)

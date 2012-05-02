@@ -16,7 +16,7 @@
        formatMoney(apopen_amount) AS f_amount,
        formatMoney(apopen_paid) AS f_paid,
        formatMoney(apopen_amount - apopen_paid) AS f_balance
-FROM apopen, vend
+FROM apopen, vendinfo
 WHERE ( (apopen_doctype='C')
  AND (apopen_open)
  AND (apopen_vend_id=vend_id)

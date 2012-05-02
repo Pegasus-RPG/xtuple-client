@@ -18,11 +18,12 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT shipto_num as num,
-       shipto_name as name,
-       shipto_address1 AS address,
-       (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode)  AS citystatezip
-  FROM shipto 
+  <sql>SELECT shipto_num AS num,
+       shipto_name AS name,
+       addr_line1 AS address,
+       (addr_city || ', ' || addr_state || '  ' || addr_postalcode)  AS citystatezip
+  FROM shiptoinfo
+  LEFT OUTER JOIN addr ON (shipto_addr_id=addr_id)
  WHERE (shipto_cust_id=&lt;? value(&quot;cust_id&quot;) ?>) 
 ORDER BY shipto_num;</sql>
  </querysource>

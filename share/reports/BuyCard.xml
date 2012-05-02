@@ -14,7 +14,7 @@
   <sql>SELECT vend_number, vend_name,
        itemsrc_vend_item_number,
        itemsrc_vend_item_descrip
-  FROM vend, itemsrc
+  FROM vendinfo, itemsrc
  WHERE ((vend_id=&lt;? value("vend_id") ?>)
    AND  (itemsrc_id=&lt;? value("itemsrc_id") ?>) )</sql>
  </querysource>

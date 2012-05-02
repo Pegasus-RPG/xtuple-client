@@ -44,7 +44,7 @@
        firstLine(porecv_vend_item_descrip) AS venditemdescrip, formatQty(porecv_qty) as f_qty,
        porecv_qty, formatDate(porecv_rlsd_duedate) AS release_duedate,   
        formatDate(porecv_duedate) AS argd_duedate
-  FROM porecv, vend, itemsite 
+  FROM porecv, vendinfo, itemsite
  WHERE ( (porecv_vend_id=vend_id)
    AND (porecv_itemsite_id=itemsite_id)
    AND (itemsite_item_id=&lt;? value("item_id") ?>)

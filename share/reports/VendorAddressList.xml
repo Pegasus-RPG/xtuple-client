@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT vend_number, vend_name
-  FROM vend
+  FROM vendinfo
  WHERE (vend_id=&lt;? value(&quot;vend_id&quot;) ?>);
     </sql>
  </querysource>

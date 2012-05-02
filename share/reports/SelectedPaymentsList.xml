@@ -17,7 +17,7 @@
        apopen_docnumber,
        apopen_ponumber,
        formatMoney(apselect_amount) AS f_selected
-  FROM apselect, apopen, vend, bankaccnt
+  FROM apselect, apopen, vendinfo, bankaccnt
  WHERE ((apopen_vend_id=vend_id)
    AND (apselect_apopen_id=apopen_id)
    AND (apselect_bankaccnt_id=bankaccnt_id)

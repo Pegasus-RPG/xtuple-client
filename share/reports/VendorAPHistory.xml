@@ -15,7 +15,7 @@
        vend_name,
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate
-  FROM vend
+  FROM vendinfo
  WHERE (vend_id=&lt;? value("vend_id") ?>);</sql>
  </querysource>
  <querysource>

@@ -44,7 +44,7 @@
        formatQty(poitem_qty_ordered) as f_ordered,
        formatQty(poitem_qty_received) as f_received,
        formatQty(poitem_qty_returned) as f_returned 
-  FROM pohead, poitem, vend, itemsite, warehous 
+  FROM pohead, poitem, vendinfo, itemsite, warehous
  WHERE ((poitem_pohead_id=pohead_id)
    AND (pohead_vend_id=vend_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>

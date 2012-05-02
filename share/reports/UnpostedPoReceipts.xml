@@ -44,7 +44,7 @@ FROM orderhead JOIN
                JOIN site() ON (itemsite_warehous_id=warehous_id)
        )
       ON (recv_itemsite_id=itemsite_id) LEFT OUTER JOIN
-     vend ON (orderhead_type='PO' AND orderhead_from_id=vend_id)
+     vendinfo ON (orderhead_type='PO' AND orderhead_from_id=vend_id)
 WHERE (NOT recv_posted)
 ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
 </sql>

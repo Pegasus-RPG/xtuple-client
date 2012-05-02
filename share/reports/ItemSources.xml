@@ -23,7 +23,7 @@
        itemsrc_vend_item_number as f_venditem,
        itemsrc_vend_uom as f_venduom,
        formatQty(itemsrc_invvendoruomratio) as f_uomratio
-FROM itemsrc, vend, item, uom 
+FROM itemsrc, vendinfo, item, uom
 WHERE ((itemsrc_vend_id=vend_id)
   AND (itemsrc_item_id=item_id)
   AND (item_inv_uom_id=uom_id)

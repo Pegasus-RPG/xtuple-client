@@ -49,7 +49,7 @@
          text('')
        &lt;? endif ?>
        AS f_username
-  FROM accnt, gltrans LEFT OUTER JOIN vohead JOIN vend ON (vohead_vend_id=vend_id) ON (gltrans_doctype='VO' and gltrans_docnumber=vohead_number)
+  FROM accnt, gltrans LEFT OUTER JOIN vohead JOIN vendinfo ON (vohead_vend_id=vend_id) ON (gltrans_doctype='VO' and gltrans_docnumber=vohead_number)
  WHERE ((gltrans_accnt_id=accnt_id)
    AND (gltrans_date BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
 &lt;? if exists(&quot;accnt_id&quot;) ?>

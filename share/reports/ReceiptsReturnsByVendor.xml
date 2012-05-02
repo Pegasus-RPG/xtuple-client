@@ -16,7 +16,7 @@
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
        &lt;? if exists("warehous_id") ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
+         (SELECT warehous_code FROM warehous WHERE warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
@@ -34,7 +34,7 @@
          text('') AS f_purchcost,
          text('') AS f_recvcost
        &lt;? endif ?>
-FROM vend
+FROM vendinfo
 WHERE (vend_id=&lt;? value("vend_id") ?>);</sql>
  </querysource>
  <querysource loadFromDb="true">

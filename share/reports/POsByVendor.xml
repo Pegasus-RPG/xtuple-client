@@ -68,7 +68,7 @@
        pohead_orderdate AS sortDate,
 &lt;? endif ?>
        (MIN(poitem_duedate) &lt; CURRENT_DATE) AS late
-  FROM vend, poitem,
+  FROM vendinfo, poitem,
 &lt;? if exists("byReceiptDate") ?>
        porecv,
 &lt;? endif ?>

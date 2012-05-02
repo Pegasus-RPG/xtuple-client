@@ -37,7 +37,7 @@
                  (quhead_billtocity || ', ' || quhead_billtostate || ' ' || quhead_billtozip),
                   quhead_billtocountry) AS f_billtoaddress,
        CASE WHEN(quhead_shipto_id=-1) THEN text('')
-            ELSE (select text(shipto_num) from shipto where shipto_id=quhead_shipto_id)
+            ELSE (SELECT text(shipto_num) FROM shiptoinfo WHERE (shipto_id=quhead_shipto_id))
        END AS f_shiptonum,
        quhead_shiptoname,
        formatAddr(quhead_shiptoaddress1,
