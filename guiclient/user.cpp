@@ -53,11 +53,6 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
   connect(_addSite, SIGNAL(clicked()), this, SLOT(sAddSite()));
   connect(_revokeSite, SIGNAL(clicked()), this, SLOT(sRevokeSite()));
 
-  if(omfgThis->useCloud())
-    _company->setText("_" + omfgThis->company());
-  else
-    _company->setText("");
-
   _available->addColumn("Available Privileges", -1, Qt::AlignLeft);
   _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft);
 
@@ -79,12 +74,6 @@ user::user(QWidget* parent, const char * name, Qt::WindowFlags fl)
     _enhancedAuth->setEnabled(false);
     _passwd->setEnabled(false);
     _verify->setEnabled(false);
-  }
-
-  if(omfgThis->useCloud())
-  {
-    _enhancedAuth->setChecked(true);
-    _enhancedAuth->setEnabled(false);
   }
 
   if (!_metrics->boolean("MultiWhs"))
@@ -135,10 +124,7 @@ enum SetResponse user::set(const ParameterList &pParams)
       else
       {
         _username->setEnabled(false);
-        if(omfgThis->useCloud() && _cUsername.endsWith("_" + omfgThis->company()))
-          _username->setText(_cUsername.left(_cUsername.length() - (omfgThis->company().length()+1)));
-        else
-          _username->setText(_cUsername);
+        _username->setText(_cUsername);
         _active->setFocus();
         sCheck();
       }
@@ -231,8 +217,6 @@ void user::sSave()
 bool user::save()
 {
   QString username = _username->text().trimmed().toLower();
-  if(omfgThis->useCloud())
-    username = username + "_" + omfgThis->company();
 
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(! username.contains(QRegExp("[A-Za-z]")), _username,
@@ -259,10 +243,7 @@ bool user::save()
   QString passwd = _passwd->text();
   if(_enhancedAuth->isChecked())
   {
-    if(omfgThis->useCloud())
-      passwd = passwd + "cloudkey" + username;
-    else
-      passwd = passwd + "xTuple" + username;
+    passwd = passwd + "xTuple" + username;
     passwd = QMd5(passwd);
   }
 
@@ -541,8 +522,6 @@ void user::sRevokeGroup()
 void user::sCheck()
 {
   _cUsername = _username->text().trimmed();
-  if(omfgThis->useCloud())
-    _cUsername = _cUsername + "_" + omfgThis->company();
   if (_cUsername.length() > 0)
   {
     XSqlQuery usrq;
@@ -597,10 +576,7 @@ bool user::sPopulate()
   usrq.exec();
   if (usrq.first())
   {
-    if(omfgThis->useCloud() && usrq.value("usr_username").toString().endsWith("_"+omfgThis->company()))
-      _username->setText(usrq.value("usr_username").toString().left(usrq.value("usr_username").toString().length() - (omfgThis->company().length()+1)));
-    else
-      _username->setText(usrq.value("usr_username"));
+    _username->setText(usrq.value("usr_username"));
 
     if (_crmacctid > 0)
     {
@@ -771,10 +747,7 @@ void user::populateSite()
     MetaSQLQuery mql;
     ParameterList params;
 
-    if(omfgThis->useCloud())
-      params.append("username", _username->text().trimmed().toLower() + "_" + omfgThis->company());
-    else
-      params.append("username", _username->text().trimmed().toLower());
+    params.append("username", _username->text().trimmed().toLower());
 
     sql = "SELECT warehous_id, warehous_code "
           " FROM whsinfo "

@@ -358,7 +358,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _databaseURL = pDatabaseURL;
   _username = pUsername;
   __saveSizePositionEventFilter = new SaveSizePositionEventFilter(this);
-  _useCloud = false;
 
   _splash->showMessage(tr("Initializing Internal Data"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
@@ -366,9 +365,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _showTopLevel = false;
   if(_preferences->value("InterfaceWindowOption") == "TopLevel")
     _showTopLevel = true;
-
-  __itemListSerial = 0;
-  __custListSerial = 0;
 
   _q.exec("SELECT startOfTime() AS sot, endOfTime() AS eot;");
   if (_q.first())

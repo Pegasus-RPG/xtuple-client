@@ -45,16 +45,12 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   Q_INIT_RESOURCE(xTupleCommon);
   setupUi(this);
 
-  _company->hide();
-  _companyLit->hide();
-
   _options = _buttonBox->addButton(tr("Options..."), QDialogButtonBox::ActionRole);
   _recent = _buttonBox->addButton(tr("Recent"), QDialogButtonBox::ActionRole);
   _buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Login"));
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sLogin()));
   connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
-  connect(_cloudLink, SIGNAL(linkActivated(QString)), this, SLOT(cloudLink(QString)));
   connect(_otherOption, SIGNAL(toggled(bool)), _options, SLOT(setEnabled(bool)));
   connect(_otherOption, SIGNAL(toggled(bool)), _recent, SLOT(setEnabled(bool)));
 
@@ -63,7 +59,6 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _captive = false; _nonxTupleDB = false;
   _multipleConnections = false;
   _evalDatabaseURL = "pgsql://demo.xtuple.com:5434/%1";
-  _cloudDatabaseURL= "pgsql://cloud.xtuple.com:5432/%1";
 
   _password->setEchoMode(QLineEdit::Password);
 
@@ -73,9 +68,6 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _requireSSL = xtsettingsValue("/xTuple/_requireSSL", false).toBool();
   if(xtsettingsValue("/xTuple/_demoOption", false).toBool())
     _demoOption->setChecked(true);
-  else if(xtsettingsValue("/xTuple/_cloudOption", false).toBool())
-    _cloudOption->setChecked(true);
-  _company->setText(xtsettingsValue("/xTuple/cloud_company", "").toString());
 
   adjustSize();
 }
@@ -135,14 +127,6 @@ int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
   if (valid)
     _demoOption->setChecked(TRUE);
 
-  param = pParams.value("cloud", &valid);
-  if (valid)
-    _cloudOption->setChecked(true);
-
-  param = pParams.value("company", &valid);
-  if (valid)
-    _company->setText(param.toString());
-
   param = pParams.value("name", &valid);
   if (valid)
     _nameLit->setText(param.toString());
@@ -183,8 +167,6 @@ void login2::sLogin()
   databaseURL = _databaseURL;
   if (_demoOption->isChecked())
     databaseURL = _evalDatabaseURL.arg(_username->text().trimmed());
-  else if(_cloudOption->isChecked())
-    databaseURL = _cloudDatabaseURL.arg(_company->text().trimmed());
 
   QString protocol;
   QString hostName;
@@ -239,27 +221,11 @@ void login2::sLogin()
 
   _cUsername = _username->text().trimmed();
   _cPassword = _password->text().trimmed();
-  _cCompany  = _company->text().trimmed();
-  if(_cloudOption->isChecked())
-  {
-    if(_cCompany.isEmpty())
-    {
-      QMessageBox::warning(this, tr("Incomplete Connection Options"),
-        tr("<p>You must specify the Company name to connect to the cloud."));
-      return;
-    }
-    _cUsername = _cUsername + "_" + _cCompany;
-  }
 
   db.setUserName(_cUsername);
   if(_demoOption->isChecked())
   {
     QString passwd = QMd5(QString(_cPassword + "private" + _cUsername)); 
-    db.setPassword(passwd);
-  }
-  else if(_cloudOption->isChecked())
-  {
-    QString passwd = QMd5(QString(_cPassword + "cloudkey" + _cUsername)); 
     db.setPassword(passwd);
   }
   else
@@ -327,8 +293,6 @@ void login2::sLogin()
   }
 
   xtsettingsSetValue("/xTuple/_demoOption", (bool)_demoOption->isChecked());
-  xtsettingsSetValue("/xTuple/_cloudOption", (bool)_cloudOption->isChecked());
-  xtsettingsSetValue("/xTuple/cloud_company", _company->text());
 
   if (_splash)
   {
@@ -445,16 +409,6 @@ QString login2::password()
   return _cPassword;
 }
 
-QString login2::company()
-{
-  return _cCompany;
-}
-
-bool login2::useCloud() const
-{
-  return _cloudOption->isChecked();
-}
-
 void login2::setLogo(const QImage & img)
 {
   if(img.isNull())
@@ -475,9 +429,8 @@ void login2::setRequireSSL(bool on)
 
 void login2::updateRecentOptions()
 {
-  if (_demoOption->isChecked() || _cloudOption->isChecked())
+  if (_demoOption->isChecked())
     return;
-
     
   QStringList list = xtsettingsValue("/xTuple/_recentOptionsList").toStringList();
   list.removeAll(_databaseURL);
@@ -541,9 +494,4 @@ void login2::clearRecentOptions()
     QStringList list;
     xtsettingsSetValue("/xTuple/_recentOptionsList", list);
     updateRecentOptionsActions();
-}
-
-void login2::cloudLink(const QString & /*link*/)
-{
-  QDesktopServices::openUrl(QUrl("http://www.xtuple.com/cloud"));
 }

@@ -57,13 +57,6 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_company">
-           <property name="text">
-            <string notr="true">_company</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>

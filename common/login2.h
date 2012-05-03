@@ -37,10 +37,8 @@ class login2 : public QDialog, public Ui::login2
     virtual void populateDatabaseInfo();
     virtual QString username();
     virtual QString password();
-    virtual QString company();
     virtual bool enhancedAuth() const { return _enhancedAuth; }
     virtual bool requireSSL() const { return _requireSSL; }
-    virtual bool useCloud() const;
 
     QPushButton* _recent;
     QPushButton* _options;
@@ -54,7 +52,6 @@ class login2 : public QDialog, public Ui::login2
     virtual void updateRecentOptionsActions();
     virtual void selectRecentOptions();
     virtual void clearRecentOptions();
-    virtual void cloudLink(const QString &);
 
   protected slots:
     virtual void languageChange();
@@ -73,8 +70,6 @@ class login2 : public QDialog, public Ui::login2
     QString _cUsername;
     QString _cPassword;
     QString _evalDatabaseURL;
-    QString _cloudDatabaseURL;
-    QString _cCompany;
 };
 
 #endif

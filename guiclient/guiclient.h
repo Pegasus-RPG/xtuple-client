@@ -221,10 +221,6 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void setCentralWidget(QWidget * widget);
 
     XSqlQuery        _q;
-    XSqlQuery        __item;
-    int              __itemListSerial;
-    XSqlQuery        __cust;
-    int              __custListSerial;
     TimeoutHandler   *_timeoutHandler;
     ReportHandler    *_reportHandler;
 
@@ -232,12 +228,6 @@ class GUIClient : public QMainWindow
 
     QString _key;
     Q_INVOKABLE QString key() { return _key; }
-
-    QString _company;
-    Q_INVOKABLE QString company() { return _company; }
-
-    bool _useCloud;
-    Q_INVOKABLE bool useCloud() { return _useCloud; }
 
     QString _singleWindow;
 

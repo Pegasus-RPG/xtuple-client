@@ -138,7 +138,6 @@ int main(int argc, char *argv[])
   QString username;
   QString databaseURL;
   QString passwd;
-  QString company;
   bool    haveUsername    = FALSE;
   bool    haveDatabaseURL = FALSE;
   bool    loggedIn        = FALSE;
@@ -147,8 +146,6 @@ int main(int argc, char *argv[])
   bool    haveRequireSSL  = false;
   bool    _requireSSL     = false;
   bool    havePasswd      = false;
-  bool    cloudOption     = false;
-  bool    haveCloud       = false;
   bool    forceWelcomeStub= false;
 
   qInstallMsgHandler(xTupleMessageOutput);
@@ -211,19 +208,8 @@ int main(int argc, char *argv[])
         if(argument.contains("=no", Qt::CaseInsensitive) || argument.contains("=false", Qt::CaseInsensitive))
           _requireSSL = false;
       }
-      else if (argument.contains("-cloud", Qt::CaseInsensitive))
-      {
-        haveCloud = true;
-        cloudOption = true;
-        if(argument.contains("=no", Qt::CaseInsensitive) || argument.contains("=false", Qt::CaseInsensitive))
-          cloudOption = false;
-      }
       else if (argument.contains("-forceWelcomeStub", Qt::CaseInsensitive))
         forceWelcomeStub = true;
-      else if (argument.contains("-company=", Qt::CaseInsensitive))
-      {
-        company = argument.right(argument.length() - 9);
-      }
     }
   }
 
@@ -281,12 +267,6 @@ int main(int argc, char *argv[])
     if ( (haveDatabaseURL) && (haveUsername) && (havePasswd) )
       params.append("login");
 
-    if (haveCloud)
-      params.append("cloud", cloudOption);
-
-    if (!company.isEmpty())
-      params.append("company", company);
-
     login2 newdlg(0, "", TRUE);
     newdlg.set(params, _splash);
 
@@ -299,8 +279,6 @@ int main(int argc, char *argv[])
         databaseURL = newdlg._databaseURL;
         username = newdlg.username();
         __password = newdlg.password();
-        company = newdlg.company();
-        cloudOption = newdlg.useCloud();
       }
     }
   }
@@ -687,11 +665,7 @@ int main(int argc, char *argv[])
   omfgThis = 0;
   omfgThis = new GUIClient(databaseURL, username);
   omfgThis->_key = key;
-  omfgThis->_company = company;
-  omfgThis->_useCloud = cloudOption;
 
-// qDebug("Encryption Key: %s", key.toAscii().data() );
-  
   if (key.length() > 0) {
 	_splash->showMessage(QObject::tr("Loading Database Encryption Metrics"), SplashTextAlignment, SplashTextColor);
 	qApp->processEvents();
