@@ -8,27 +8,146 @@
  * to be bound by its terms.
  */
 
+#include <QAbstractItemView>
 #include <QApplication>
-#include <QComboBox>
-#include <QCursor>
+#include <QDialog>
 #include <QLabel>
-#include <QMessageBox>
+#include <QLayout>
 #include <QMouseEvent>
+#include <QPair>
+#include <QPushButton>
 #include <QSqlRecord>
 #include <QSqlRelationalDelegate>
 #include <QSqlTableModel>
 #include <QtScript>
 
 #include <xsqlquery.h>
+
 #include "xcombobox.h"
+#include "xcomboboxprivate.h"
+#include "xdatawidgetmapper.h"
 #include "xsqltablemodel.h"
 
 #define DEBUG false
 
+class XComboBoxEditorDescrip {
+  public:
+    XComboBoxEditorDescrip(int pType, const QString &pUi, const QString &pPriv)
+      : obj(0), slot(0)
+    {
+      type   = pType;
+      uiName = pUi;
+      priv   = pPriv;
+    }
+
+    XComboBoxEditorDescrip(int   pType,       QObject *pObj,
+                           char *pSlot, const QString &pPriv)
+    {
+      type = pType;
+      obj  = pObj;
+      slot = pSlot;
+      priv = pPriv;
+    }
+
+    int      type;   // XComboBoxTypes + possible out-of-range
+    QString  priv;
+    QString  uiName;
+    QObject *obj;
+    char    *slot;
+};
+
+XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
+  : QObject(pParent),
+    _default(XComboBox::First),
+    _editButton(0),
+    _label(0),
+    _lastId(-1),
+    _parent(pParent),
+    _popupCounter(0),
+    _mapper(0)
+{
+  _mapper = new XDataWidgetMapper(pParent);
+  setType(XComboBox::Adhoc);
+}
+
+XComboBoxPrivate::~XComboBoxPrivate()
+{
+}
+
+int XComboBoxPrivate::numberOfCurrencies()
+{
+  // run the query no more than once per instance
+  static int numberOfCurrencies = -1;
+  if (numberOfCurrencies <= 0)
+  {
+    XSqlQuery currCounter("SELECT COUNT(*) AS count FROM curr_symbol;");
+    if (currCounter.first())
+      numberOfCurrencies = currCounter.value("count").toInt();
+    else
+      numberOfCurrencies = 0;
+  }
+
+  return numberOfCurrencies;
+}
+
+void XComboBoxPrivate::sEdit()
+{
+  if (_parent->_guiClientInterface && _parent->parentWidget()->window())
+  {
+    XComboBoxEditorDescrip *editor = _editorMap.value(_parent->type());
+
+    ParameterList params;
+    params.append("mode", "edit");
+
+    QWidget *w = _parent->_guiClientInterface->openWindow(editor->uiName,
+                                                          params,
+                                                          _parent->parentWidget()->window(),
+                                                          Qt::ApplicationModal,
+                                                          Qt::Dialog);
+    connect(w, SIGNAL(destroyed()), _parent, SLOT(populate()));
+    if (qobject_cast<QDialog*>(w))
+      (qobject_cast<QDialog*>(w))->exec();
+  }
+}
+
+/* let the user create/edit records of this XComboBoxType if s/he has privs */
+void XComboBoxPrivate::setType(XComboBox::XComboBoxTypes ptype)
+{
+  _type = ptype;
+
+  XComboBoxEditorDescrip *editor = _editorMap.value(_type);
+
+  if (_x_privileges && editor &&
+      (editor->priv.isEmpty() || _x_privileges->check(editor->priv)))
+  {
+    QAbstractItemView *view = _parent->view();
+
+    if (view && ! _editButton)
+    {
+      QWidget *vp = qobject_cast<QWidget*>(view->parent());
+      if (vp && vp->layout())
+      {
+        _editButton = new QPushButton(tr("Edit List"), _parent);
+        vp->layout()->addWidget(_editButton);
+        if (editor->obj)
+          connect(_editButton, SIGNAL(clicked()), editor->obj, editor->slot);
+        else
+          connect(_editButton, SIGNAL(clicked()), this, SLOT(sEdit()));
+      }
+    }
+  }
+  else if (_editButton)
+  {
+    delete _editButton;       // TODO: deletelater?
+    _editButton = 0;
+  }
+}
+
 GuiClientInterface* XComboBox::_guiClientInterface = 0;
 
 XComboBox::XComboBox(QWidget *pParent, const char *pName) :
-  QComboBox(pParent)
+  QComboBox(pParent),
+  _data(0)
 {
   if(pName)
     setObjectName(pName);
@@ -36,7 +155,8 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
 }
 
 XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
-  QComboBox(pParent)
+  QComboBox(pParent),
+  _data(0)
 {
   if(pName)
     setObjectName(pName);
@@ -44,17 +164,16 @@ XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
   setEditable(pEditable);
 }
 
+XComboBox::~XComboBox()
+{
+}
+
 void XComboBox::init()
 {
-  _default  = First;
-  _type     = Adhoc;
-  _lastId   = -1;
-  setAllowNull(false);
-  _nullStr  = "";
-  _label    = 0;
-  setMaximumWidth(200);
+  _data = new XComboBoxPrivate(this);
 
-  _mapper = new XDataWidgetMapper(this);
+  setAllowNull(false);
+  setMaximumWidth(200);
 
   connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
 
@@ -65,9 +184,8 @@ void XComboBox::init()
   setMinimumHeight(26);
 #endif
 
-  // Build map of editor widgets to types
   insertEditor(AddressCommentTypes,"commentTypes","MaintainCommentTypes");
-  // insertEditor(AdHoc,"",""); Users will insert this one as needed at the implementation
+  // insertEditor(AdHoc,"",""); caller must insert this at the implementation
   insertEditor(APBankAccounts,"bankAccounts","MaintainBankAccounts");
   insertEditor(APTerms,"termses","MaintainTerms");
   insertEditor(ARBankAccounts,"bankAccounts","MaintainBankAccounts");
@@ -170,17 +288,88 @@ void XComboBox::init()
   insertEditor(WorkOrderCommentTypes,"commentTypes","MaintainCommentTypes");
 }
 
+bool XComboBox::allowNull() const
+{
+  return _allowNull;
+}
+
+XComboBox::Defaults XComboBox::defaultCode() const
+{
+  return _data->_default;
+}
+
+QString XComboBox::fieldName() const
+{
+  return _data->_fieldName;
+}
+
+QLabel* XComboBox::label() const
+{
+  return _data->_label;
+}
+
+QString XComboBox::listDisplayFieldName() const
+{
+  return _data->_listDisplayFieldName;
+}
+
+QString XComboBox::listIdFieldName() const
+{
+  return _data->_listIdFieldName;
+}
+
+QString XComboBox::listSchemaName() const
+{
+  return _data->_listSchemaName;
+}
+
+QString XComboBox::listTableName() const
+{
+  return _data->_listTableName;
+}
+
+QString XComboBox::nullStr() const
+{
+  return _data->_nullStr;
+}
+
+void XComboBox::setDefaultCode(Defaults p)
+{
+  _data->_default = p;
+}
+
+void XComboBox::setFieldName(QString p)
+{
+  _data->_fieldName = p;
+}
+
+void XComboBox::setListDisplayFieldName(QString p)
+{
+  _data->_listDisplayFieldName = p;
+}
+
+void XComboBox::setListIdFieldName(QString p)
+{
+  _data->_listIdFieldName = p;
+} 
+
+// exists only for script exposure
+void XComboBox::removeItem(int idx)
+{
+  QComboBox::removeItem(idx);
+}
+
 enum XComboBox::XComboBoxTypes XComboBox::type()
 {
-  return _type;
+  return _data->_type;
 }
 
 QString XComboBox::currentDefault()
 {
-  if (_codes.count())
+  if (_data->_codes.count())
   {
-    if (_default == First)
-      return _codes.first();
+    if (_data->_default == First)
+      return _data->_codes.first();
     else
       return code();
   }
@@ -192,78 +381,68 @@ void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
   disconnect(this, SIGNAL(editTextChanged(QString)), this, SLOT(updateMapperData()));
 
-  if (!_listTableName.isEmpty())
+  if (!_data->_listTableName.isEmpty())
   {
     QString tableName="";
-    if (_listSchemaName.length())
-      tableName=_listSchemaName + ".";
-    tableName+=_listTableName;
-    static_cast<XSqlTableModel*>(m->model())->setRelation(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_fieldName),
-                                 QSqlRelation(tableName, _listIdFieldName, _listDisplayFieldName));
+    if (_data->_listSchemaName.length())
+      tableName = _data->_listSchemaName + ".";
+    tableName+= _data->_listTableName;
+    static_cast<XSqlTableModel*>(m->model())->setRelation(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_data->_fieldName),
+                                 QSqlRelation(tableName, _data->_listIdFieldName, _data->_listDisplayFieldName));
 
-    QSqlTableModel *rel =static_cast<XSqlTableModel*>(m->model())->relationModel(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_fieldName));
+    QSqlTableModel *rel =static_cast<XSqlTableModel*>(m->model())->relationModel(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_data->_fieldName));
     setModel(rel);
-    setModelColumn(rel->fieldIndex(_listDisplayFieldName));
+    setModelColumn(rel->fieldIndex(_data->_listDisplayFieldName));
 
     m->setItemDelegate(new QSqlRelationalDelegate(this));
-    m->addMapping(this, _fieldName);
+    m->addMapping(this, _data->_fieldName);
     return;
   }
-  else if (_codes.count())
-    m->addMapping(this, _fieldName, "code", "currentDefault");
+  else if (_data->_codes.count())
+    m->addMapping(this, _data->_fieldName, "code", "currentDefault");
   else
-    m->addMapping(this, _fieldName, "text", "text");
+    m->addMapping(this, _data->_fieldName, "text", "text");
 
-  _mapper=m;
+  _data->_mapper=m;
   connect(this, SIGNAL(editTextChanged(QString)), this, SLOT(updateMapperData()));
 }
 
 void XComboBox::setListSchemaName(QString p)
 {
-  if (_listSchemaName == p)
+  if (_data->_listSchemaName == p)
     return;
 
   if (!p.isEmpty())
     setType(Adhoc);
-  _listSchemaName = p;
+  _data->_listSchemaName = p;
 }
 
 void XComboBox::setListTableName(QString p)
 {
-  if (_listTableName == p)
+  if (_data->_listTableName == p)
     return;
 
-  _listTableName = p;
+  _data->_listTableName = p;
   if (!p.isEmpty())
     setType(Adhoc);
 }
 
 void XComboBox::setType(XComboBoxTypes pType)
 {
-  if (_type == pType)
-    return;
-
   if (pType != Adhoc)
   {
     setListSchemaName("");
     setListTableName("");
   }
-  _type = pType;
-
-  // set the query to be run if this is a currencies related xcombobox
-  if(_type == Currencies || _type == CurrenciesNotBase)
-    _currCounter.prepare("SELECT COUNT(*) AS count FROM curr_symbol");
+  _data->setType(pType);
 
   if (_x_metrics == 0)
     return;
 
   // If we're in Designer, don't populate
-  QObject *ancestor = this;
-  bool designMode;
-  for ( ; ancestor; ancestor = ancestor->parent())
+  for (QObject *ancestor = this; ancestor; ancestor = ancestor->parent())
   {
-    designMode = ancestor->inherits("xTupleDesigner");
-    if (designMode)
+    if (ancestor->inherits("xTupleDesigner"))
       return;
   }
 
@@ -989,61 +1168,33 @@ void XComboBox::setType(XComboBoxTypes pType)
       break;
 
     case Currencies:
-      if (numberOfCurrencies() <= 1)
-      {
-        hide();
-        if (_label)
-          _label->hide();
-      }
-      break;
-
     case CurrenciesNotBase:
-      if (numberOfCurrencies() < 1)
+      if (_data->numberOfCurrencies() <= 1)
       {
         hide();
-        if (_label)
-          _label->hide();
+        if (_data->_label)
+          _data->_label->hide();
       }
       break;
 
     default:
       break;
   }
-
-  if (_x_privileges && _editorMap.contains(type()))
-  {
-    QString priv = _editorMap.value(type()).second;
-    if (_x_privileges->check(priv))
-    {
-      insertSeparator(count());
-      _ids.append(-2);
-      _codes.append(QString("separator"));
-      append(-3,tr("Edit List"));
-    }
-  }
 }
 
 void XComboBox::setLabel(QLabel* pLab)
 {
-  _label = pLab;
+  _data->_label = pLab;
 
-  switch (_type)
+  switch (_data->_type)
   {
     case Currencies:
-      if (numberOfCurrencies() <= 1)
-      {
-        hide();
-        if (_label)
-          _label->hide();
-      }
-      break;
-
     case CurrenciesNotBase:
-      if (numberOfCurrencies() < 1)
+      if (_data->numberOfCurrencies() <= 1)
       {
         hide();
-        if (_label)
-          _label->hide();
+        if (_data->_label)
+          _data->_label->hide();
       }
       break;
 
@@ -1057,34 +1208,34 @@ void XComboBox::setCode(const QString &pString)
   if (DEBUG)
     qDebug("%s::setCode(%d %d %s) with _codes.count %d and _ids.count %d",
            objectName().toAscii().data(), pString.isNull(), pString.isEmpty(),
-           pString.toAscii().data(), _codes.count(), _ids.count());
+           pString.toAscii().data(), _data->_codes.count(), _data->_ids.count());
 
   if (pString.isEmpty())
   {
     setId(-1);
     setItemText(0, pString);
   }
-  else if (_codes.count())
+  else if (_data->_codes.count())
   {
-    for (int counter = 0; counter < _codes.count(); counter++)
+    for (int counter = 0; counter < _data->_codes.count(); counter++)
     {
-      if (_codes.at(counter) == pString)
+      if (_data->_codes.at(counter) == pString)
       {
         if (DEBUG)
           qDebug("%s::setCode(%s) found at %d with _ids.count %d & _lastId %d",
                  objectName().toAscii().data(), pString.toAscii().data(),
-                 counter, _ids.count(), _lastId);
+                 counter, _data->_ids.count(), _data->_lastId);
         setCurrentIndex(counter);
 
-        if (_ids.count() && _lastId!=_ids.at(counter))
-          setId(_ids.at(counter));
+        if (_data->_ids.count() && _data->_lastId!=_data->_ids.at(counter))
+          setId(_data->_ids.at(counter));
 
         return;
       }
       else if (DEBUG)
         qDebug("%s::setCode(%s) not found (%s)",
                qPrintable(objectName()), qPrintable(pString),
-               qPrintable(_codes.at(counter)));
+               qPrintable(_data->_codes.at(counter)));
     }
   }
   else  // this is an ad-hoc combobox without a query behind it?
@@ -1094,15 +1245,15 @@ void XComboBox::setCode(const QString &pString)
       qDebug("%s::setCode(%s) set current item to %d using findData()",
              objectName().toAscii().data(), pString.toAscii().data(),
              currentIndex());
-    if (_ids.count() > currentIndex())
-      setId(_ids.at(currentIndex()));
+    if (_data->_ids.count() > currentIndex())
+      setId(_data->_ids.at(currentIndex()));
     if (DEBUG)
       qDebug("%s::setCode(%s) current item is %d after setId",
              objectName().toAscii().data(), pString.toAscii().data(),
              currentIndex());
   }
 
-  if (editable())
+  if (isEditable())
   {
     setId(-1);
     setItemText(0, pString);
@@ -1112,7 +1263,7 @@ void XComboBox::setCode(const QString &pString)
 void XComboBox::setId(int pTarget)
 {
   // reports are a special case: they should really be stored by name, not id
-  if (_type == Reports)
+  if (_data->_type == Reports)
   {
     XSqlQuery query;
     query.prepare("SELECT report_id "
@@ -1127,13 +1278,13 @@ void XComboBox::setId(int pTarget)
       int id = query.value("report_id").toInt();
       for (int counter = 0; counter < count(); counter++)
       {
-        if (_ids.at(counter) == id)
+        if (_data->_ids.at(counter) == id)
         {
           setCurrentIndex(counter);
 
-          if(_lastId!=id)
+          if(_data->_lastId!=id)
           {
-            _lastId = id;
+            _data->_lastId = id;
             updateMapperData();
             emit newID(pTarget);
             emit valid(TRUE);
@@ -1149,15 +1300,15 @@ void XComboBox::setId(int pTarget)
   }
   else
   {
-    for (int counter = 0; counter < _ids.count(); counter++)
+    for (int counter = 0; counter < _data->_ids.count(); counter++)
     {
-      if (_ids.at(counter) == pTarget)
+      if (_data->_ids.at(counter) == pTarget)
       {
         setCurrentIndex(counter);
 
-        if(_lastId!=pTarget)
+        if(_data->_lastId!=pTarget)
         {
-          _lastId = pTarget;
+          _data->_lastId = pTarget;
           updateMapperData();
           emit newID(pTarget);
           emit valid(TRUE);
@@ -1198,7 +1349,7 @@ void XComboBox::setText(const QString &pString)
     }
   }
 
-  if (editable())
+  if (isEditable())
   {
     setId(-1);
     setItemText(0, pString);
@@ -1213,8 +1364,8 @@ void XComboBox::setAllowNull(bool pAllowNull)
   _allowNull = pAllowNull;
   if (pAllowNull)
   {
-    append(-1, _nullStr);
-    setItemText(0, _nullStr);
+    append(-1, _data->_nullStr);
+    setItemText(0, _data->_nullStr);
   }
 }
 
@@ -1222,7 +1373,7 @@ void XComboBox::setNull()
 {
   if (allowNull())
   {
-    _lastId = -1;
+    _data->_lastId = -1;
 
     setCurrentIndex(0);
     updateMapperData();
@@ -1237,10 +1388,10 @@ void XComboBox::setNullStr(const QString& pNullStr)
   if (DEBUG)
     qDebug("%s::setNullStr(%s)",
            qPrintable(objectName()), qPrintable(pNullStr));
-  _nullStr = pNullStr;
+  _data->_nullStr = pNullStr;
   if (allowNull())
   {
-    append(-1, _nullStr);
+    append(-1, _data->_nullStr);
     setItemText(0, pNullStr);
   }
 }
@@ -1250,116 +1401,40 @@ void XComboBox::setText(const QVariant &pVariant)
   setText(pVariant.toString());
 }
 
-void XComboBox::setEditable(bool pEditable)
-{
-/*
-  QWidget    *before = NULL;
-  QWidget    *after  = NULL;
-
-// Find the focus proxy before and after this
-  QFocusData *fd = focusData();
-  for (QWidget *cursor = fd->first();; cursor=fd->next())
-  {
-    if (cursor == this)
-    {
-      before = fd->prev();
-      fd->next();
-      after = fd->next();
-      break;
-    }
-    else if (cursor == fd->last())
-      break;
-  }
-*/
-
-//  Set the editable state
-  QComboBox::setEditable(pEditable);
-
-/*
-//  If possible, reset the tab order
-  if (before)
-  {
-    setTabOrder(before, this);
-    setTabOrder(this, after);
-  }
-*/
-}
-
-bool XComboBox::editable() const
-{
-  return QComboBox::isEditable();
-}
-
 void XComboBox::clear()
 {
   QComboBox::clear();
 
-  if (_ids.count())
-    _ids.clear();
+  if (_data->_ids.count())
+    _data->_ids.clear();
 
-  if (_codes.count())
-    _codes.clear();
+  if (_data->_codes.count())
+    _data->_codes.clear();
 
   if (allowNull())
-    append(-1, _nullStr);
+    append(-1, _data->_nullStr);
 }
 
-// a hack to repopulate the combobox to fix MC bug 3698
+// allow repopulating after the underlying contents have changed (e.g. #3698)
 void XComboBox::populate()
 {
-    enum XComboBoxTypes tmpType = _type;
-    setType(Adhoc);
-    setType(tmpType);
+  setType(_data->_type);
 }
 
 void XComboBox::populate(XSqlQuery pQuery, int pSelected)
 {
-  int selected = 0;
-  int counter  = 0;
-
-//  Clear any old data
+  int selected = (pSelected >= 0) ? pSelected : id();
   clear();
 
-  if (allowNull())
-    counter++;
-
-//  Load the combobox with the contents of the passed query, if any
-  if (pQuery.first())
+  while (pQuery.next())
   {
-    do
-    {
-      if (pQuery.record().count() < 3)
-        append(pQuery.value(0).toInt(), pQuery.value(1).toString());
-      else
-        append(pQuery.value(0).toInt(), pQuery.value(1).toString(), pQuery.value(2).toString());
-
-      if (pQuery.value(0).toInt() == pSelected)
-        selected = counter;
-
-      counter++;
-    }
-    while(pQuery.next());
+    if (pQuery.record().count() < 3)
+      append(pQuery.value(0).toInt(), pQuery.value(1).toString());
+    else
+      append(pQuery.value(0).toInt(), pQuery.value(1).toString(), pQuery.value(2).toString());
   }
 
-  setCurrentIndex(selected);
-  if (_ids.count() > selected)
-  {
-    _lastId = _ids.at(selected);
-
-    if (allowNull())
-      emit notNull(TRUE);
-  }
-  else
-  {
-    _lastId = -1;
-
-    if (allowNull())
-      emit notNull(FALSE);
-  }
-
-  updateMapperData();
-  emit newID(_lastId);
-  emit valid((_lastId != -1));
+  setId(selected);
 }
 
 void XComboBox::populate(const QString & pSql, int pSelected)
@@ -1382,20 +1457,11 @@ void XComboBox::append(int pId, const QString &pText, const QString &pCode)
              qPrintable(objectName()), pId,
              qPrintable(pText), qPrintable(pCode));
 
-  if (! _ids.contains(pId))
+  if (! _data->_ids.contains(pId))
   {
-    if (_ids.contains(-3)) // Has edit list
-    {
-      insertItem(count()-2,pText);
-      _ids.insert(_ids.count()-2,pId);
-      _codes.insert(_codes.count()-2,pCode);
-    }
-    else
-    {
-      addItem(pText);
-      _ids.append(pId);
-      _codes.append(pCode);
-    }
+    addItem(pText);
+    _data->_ids.append(pId);
+    _data->_codes.append(pCode);
   }
 }
 
@@ -1405,20 +1471,20 @@ int XComboBox::id(int pIndex) const
   {
     if ( (allowNull()) && (currentIndex() <= 0) )
       return -1;
-    else if(pIndex < _ids.count())
-      return _ids.at(pIndex);
+    else if(pIndex < _data->_ids.count())
+      return _data->_ids.at(pIndex);
   }
   return -1;
 }
 
 int XComboBox::id() const
 {
-  if (_ids.count() && currentIndex() != -1)
+  if (_data->_ids.count() && currentIndex() != -1)
   {
     if ( (allowNull()) && (currentIndex() <= 0) )
       return -1;
     else
-      return _ids.at(currentIndex());
+      return _data->_ids.at(currentIndex());
   }
   else
     return -1;
@@ -1429,14 +1495,14 @@ QString XComboBox::code() const
   if (DEBUG)
     qDebug("%s::code() with currentIndex %d, allowNull %d, and _codes.count %d",
            objectName().toAscii().data(), currentIndex(), allowNull(),
-           _codes.count());
+           _data->_codes.count());
 
   QString returnValue;
 
   if ( allowNull() && (currentIndex() <= 0) )
     returnValue = QString::Null();
-  else if (currentIndex() >= 0 && _codes.count() > currentIndex())
-    returnValue = _codes.at(currentIndex());
+  else if (currentIndex() >= 0 && _data->_codes.count() > currentIndex())
+    returnValue = _data->_codes.at(currentIndex());
   else if (currentIndex() >= 0)
     returnValue = currentText();
   else
@@ -1461,39 +1527,16 @@ void XComboBox::sHandleNewIndex(int pIndex)
   if (DEBUG)
     qDebug("%s::sHandleNewIndex(%d)",objectName().toAscii().data(), pIndex);
 
-  // See if request is to edit list
-  if (id() == -3 && _guiClientInterface)
+  if ((pIndex >= 0) && (pIndex < _data->_ids.count()) &&
+      (_data->_ids.at(pIndex) != _data->_lastId))
   {
-    QString ui = _editorMap.value(type()).first;
-    ParameterList params;
-    params.append("mode", "edit");
-
-    QWidget* w = 0;
-    if (parentWidget()->window())
-      w = _guiClientInterface->openWindow(ui, params, parentWidget()->window() , Qt::ApplicationModal, Qt::Dialog);
-
-    if (w)
-    {
-      if (w->inherits("QDialog"))
-      {
-        QDialog* newdlg = qobject_cast<QDialog*>(w);
-        newdlg->exec();
-      }
-
-      connect(w, SIGNAL(destroyed()), this, SLOT(populate()));
-    }
-    return;
-  }
-
-  if ((pIndex >= 0) && (pIndex < _ids.count()) && (_ids.at(pIndex) != _lastId))
-  {
-    _lastId = _ids.at(pIndex);
+    _data->_lastId = _data->_ids.at(pIndex);
     updateMapperData();
-    emit newID(_lastId);
+    emit newID(_data->_lastId);
 
     if (DEBUG)
       qDebug("%s::sHandleNewIndex() emitted %d",
-             objectName().toAscii().data(), _lastId);
+             objectName().toAscii().data(), _data->_lastId);
 
     if (allowNull())
     {
@@ -1514,6 +1557,17 @@ void XComboBox::mousePressEvent(QMouseEvent *event)
   QComboBox::mousePressEvent(event);
 }
 
+void XComboBox::showPopup()
+{
+  QComboBox::showPopup();
+  QAbstractItemView *itemView = view();
+  if (_data->_editButton && _data->_popupCounter == 0)
+  {
+    _data->_popupCounter++;
+    itemView->setFixedHeight(itemView->height() + _data->_editButton->height() + 5);
+  }
+}
+
 QSize XComboBox::sizeHint() const
 {
   QSize s = QComboBox::sizeHint();
@@ -1526,14 +1580,32 @@ QSize XComboBox::sizeHint() const
 void XComboBox::updateMapperData()
 {
   QString val;
-  if (_codes.count())
+  if (_data->_codes.count())
     val = code();
   else
     val = currentText();
 
-  if (_mapper->model() &&
-    _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != val)
-  _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), val);
+  if (_data->_mapper->model() &&
+    _data->_mapper->model()->data(_data->_mapper->model()->index(_data->_mapper->currentIndex(),_data->_mapper->mappedSection(this))).toString() != val)
+  _data->_mapper->model()->setData(_data->_mapper->model()->index(_data->_mapper->currentIndex(),_data->_mapper->mappedSection(this)), val);
+}
+
+void XComboBox::insertEditor(XComboBoxTypes type, const QString &uiName,
+                             const QString &privilege)
+{
+  _data->_editorMap.insert(type, new XComboBoxEditorDescrip(type, uiName,
+                                                            privilege));
+  if (_data->_type == type && ! _data->_editButton) // add edit button if needed
+    _data->setType(type);
+}
+
+void XComboBox::insertEditor(XComboBoxTypes type, QObject *obj,
+                             char *slot, const QString &privilege)
+{
+  _data->_editorMap.insert(type, new XComboBoxEditorDescrip(type, obj,
+                                                            slot, privilege));
+  if (_data->_type == type && ! _data->_editButton) // add edit button if needed
+    _data->setType(type);
 }
 
 // scripting exposure /////////////////////////////////////////////////////////
@@ -1547,18 +1619,6 @@ void XComboBoxfromScriptValue(const QScriptValue &obj, XComboBox* &item)
 {
   item = qobject_cast<XComboBox*>(obj.toQObject());
 }
-
-/*
-QScriptValue XComboBoxTypestoScriptValue(QScriptEngine *engine, XComboBox::XComboBoxTypes const &item)
-{
-  return QScriptValue(engine, (int)item);
-}
-
-void XComboBoxTypesfromScriptValue(const QScriptValue &obj, XComboBox::XComboBoxTypes &item)
-{
-  item = (XComboBox::XComboBoxTypes)(obj.toInt32());
-}
-*/
 
 QScriptValue XComboBoxDefaultstoScriptValue(QScriptEngine *engine, XComboBox::Defaults const &item)
 {
@@ -1692,22 +1752,4 @@ void setupXComboBox(QScriptEngine *engine)
   widget.setProperty("WorkCenters",          QScriptValue(engine, XComboBox::WorkCenters),          QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
   engine->globalObject().setProperty("XComboBox", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
-}
-
-void XComboBox::insertEditor(int type, const QString &uiName, const QString &privilege)
-{
-  QPair<QString, QString> data;
-  data.first = uiName;
-  data.second = privilege;
-
-  _editorMap.insert(type, data);
-}
-
-int XComboBox::numberOfCurrencies()
-{
-  _currCounter.exec();
-  if(_currCounter.first())
-    return _currCounter.value("count").toInt();
-  else
-    return 0;
 }

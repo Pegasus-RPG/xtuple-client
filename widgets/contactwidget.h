@@ -302,7 +302,7 @@ public slots:
 
 private slots:
   void sCheck();
-  void sEmailIndexChanged();
+  void sEditEmailList();
   void setChanged();
 
 signals:

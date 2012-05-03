@@ -133,6 +133,7 @@ void ContactWidget::init()
     _email->setEditable(true);
     _email->setValidator(validator);
     _email->lineEdit()->installEventFilter(this);
+    _email->insertEditor(XComboBox::Adhoc, this, SLOT(sEditEmailList()));
     _webaddrLit		= new QLabel(tr("Web:"), this);
     _webaddrLit->setObjectName("_webaddrLit");
     _webaddr		= new XLineEdit(this, "_webaddr");
@@ -213,7 +214,6 @@ void ContactWidget::init()
     connect(_webaddr,	SIGNAL(editingFinished()), this, SLOT(sCheck()));
     connect(_address,	SIGNAL(changed()),   this, SLOT(sCheck()));
 
-    connect(_email,     SIGNAL(currentIndexChanged(int)), this, SLOT(sEmailIndexChanged()));
     connect(_webaddr,   SIGNAL(doubleClicked()), this, SLOT(sLaunchWebaddr()));
     
     setListVisible(true);
@@ -1391,6 +1391,7 @@ void ContactWidget::setEmailBodyText(const QString text)
 
 void ContactWidget::fillEmail()
 {
+  // TODO: why block signals? the only connection is to emit changed()
   _email->blockSignals(true);
   XSqlQuery qry;
   qry.prepare("SELECT cntcteml_id AS id, cntcteml_email AS email "
@@ -1400,22 +1401,14 @@ void ContactWidget::fillEmail()
   qry.bindValue(":cntct_id", _id);
   qry.exec();
   _email->populate(qry);
-  _email->insertSeparator(_email->count());
-  _email->append(-3, tr("Edit List"));
   _email->setText(_emailCache);
   _email->blockSignals(false);
 }
 
-void ContactWidget::sEmailIndexChanged()
+void ContactWidget::sEditEmailList()
 {
-  // See if just selected another address
-  if (_email->currentIndex() != _email->count() - 1)
-  {
-    _emailCache = _email->currentText();
-    return;
-  }
-
-  // Edit requested
+  _emailCache = _email->currentText();
+  
   ParameterList params;
   params.append("cntct_id", _id);
 

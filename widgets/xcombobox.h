@@ -12,19 +12,17 @@
 #define xcombobox_h
 
 #include <QComboBox>
-#include <QLabel>
-#include <QMouseEvent>
-#include <QList>
-#include <QPair>
-#include <QSqlTableModel>
 
 #include "guiclientinterface.h"
 #include "widgets.h"
-#include "xdatawidgetmapper.h"
 
 #include <xsqlquery.h>
 
+class QLabel;
+class QMouseEvent;
 class QScriptEngine;
+class XComboBoxPrivate;
+class XDataWidgetMapper;
 
 void setupXComboBox(QScriptEngine *engine);
 
@@ -51,6 +49,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
   public:
     XComboBox(QWidget * = 0, const char * = 0);
     XComboBox(bool, QWidget * = 0, const char * = 0);
+    virtual ~XComboBox();
 
     enum Defaults { First, None };
     enum XComboBoxTypes
@@ -103,35 +102,34 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
 
     void setCode(const QString&);
 
-
-    virtual bool      allowNull()            const  { return _allowNull; };
-    virtual Defaults  defaultCode()                 { return _default;};
+    virtual bool      allowNull()            const;
+    virtual Defaults  defaultCode()          const;
     virtual void      setAllowNull(bool);
     virtual void      setNull();
 
-    QString           nullStr()              const  { return _nullStr; };
+    QString           nullStr()              const;
     void              setNullStr(const QString &);
 
-    Q_INVOKABLE bool  editable()             const;
-    Q_INVOKABLE void  setEditable(bool);
-
-    Q_INVOKABLE inline QLabel* label()        const  { return _label; };
+    Q_INVOKABLE QLabel* label()        const;
     Q_INVOKABLE void   setLabel(QLabel* pLab);
 
-    Q_INVOKABLE bool isValid()              const;
+    Q_INVOKABLE bool  isValid()              const;
     int               id(int)                const;
     Q_INVOKABLE int   id()                   const;
-    Q_INVOKABLE void  insertEditor(int type, const QString& uiName, const QString& privilege);
+    Q_INVOKABLE void  insertEditor(XComboBoxTypes type, const QString &uiName, const QString& privilege);
+    Q_INVOKABLE void  insertEditor(XComboBoxTypes type, QObject *obj, char *slot, const QString &privilege = QString());
     QString           code()                 const;
-    QString           fieldName()            const  { return _fieldName;            };
-    QString           listDisplayFieldName() const  { return _listDisplayFieldName; };
-    QString           listIdFieldName()      const  { return _listIdFieldName;      };
-    QString           listSchemaName()       const  { return _listSchemaName;       };
-    QString           listTableName()        const  { return _listTableName;        };
 
+    QString           fieldName()            const;
+    QString           listDisplayFieldName() const;
+    QString           listIdFieldName()      const;
+    QString           listSchemaName()       const;
+    QString           listTableName()        const;
+
+    virtual void      showPopup();
     QSize             sizeHint()             const;
 
-    Q_INVOKABLE inline void removeItem(int idx) { QComboBox::removeItem(idx); }
+    Q_INVOKABLE void  removeItem(int idx); // exists only for script exposure
 
   public slots:
     void clear();
@@ -141,10 +139,12 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     void populate(const QString &, int = -1);
     void populate();
     void setDataWidgetMap(XDataWidgetMapper* m);
-    void setDefaultCode(Defaults p)                 { _default = p;               };
-    void setFieldName(QString p)                    { _fieldName = p;             };
-    void setListDisplayFieldName(QString p)         { _listDisplayFieldName = p;  };
-    void setListIdFieldName(QString p)              { _listIdFieldName = p;       };
+
+    void setDefaultCode(Defaults p);
+    void setFieldName(QString p);
+    void setListDisplayFieldName(QString p);
+    void setListIdFieldName(QString p);
+
     void setListSchemaName(QString p);
     void setListTableName(QString p);
     void setId(int);
@@ -153,41 +153,23 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     void setText(const QVariant &);
     void updateMapperData();
 
-  private slots:
-    void sHandleNewIndex(int);
-
   signals:
     void clicked();
     void newID(int);
     void notNull(bool);
     void valid(bool);
 
+  protected slots:
+    void sHandleNewIndex(int);
+
   protected:
-    QString   currentDefault();
-    void      mousePressEvent(QMouseEvent *);
+    QString      currentDefault();
+    void         mousePressEvent(QMouseEvent *);
 
-    bool                _allowNull;
-    int                 _lastId;
-    enum XComboBoxTypes _type;
-    QLabel*             _label;
-    QList<int>          _ids;
-    QList<QString>      _codes;
-    QString             _nullStr;
-
-  private:
+    bool              _allowNull;
+    XComboBoxPrivate *_data;
     void init();
 
-    int  numberOfCurrencies();
-
-    enum Defaults       _default;
-    QString             _fieldName;
-    QString             _listDisplayFieldName;
-    QString             _listIdFieldName;
-    QString             _listSchemaName;
-    QString             _listTableName;
-    XDataWidgetMapper   *_mapper;
-    QMap<int, QPair<QString, QString > > _editorMap;
-    XSqlQuery           _currCounter;
 };
 
 // TODO: is this necessary for script exposure?

@@ -273,6 +273,7 @@ HEADERS += widgets.h \
     workcentercluster.h \
     xcheckbox.h \
     xcombobox.h \
+    xcomboboxprivate.h \
     xdatawidgetmapper.h \
     xdoccopysetter.h \
     xdoublevalidator.h \
