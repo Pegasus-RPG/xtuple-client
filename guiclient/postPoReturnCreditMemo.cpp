@@ -66,13 +66,13 @@ enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
     q.prepare("SELECT pohead_curr_id,"
               "       COALESCE(item_number, poitem_vend_item_number) AS itemnumber,"
               "       poreject_qty,"
-              "       (poitem_unitprice * poreject_qty) AS itemAmount"
-              "  FROM pohead, poreject, poitem"
-              "       LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id)"
-              "       LEFT OUTER JOIN item ON (itemsite_item_id=item_id)"
-              " WHERE((poreject_poitem_id=poitem_id)"
-              "   AND (pohead_id=poitem_pohead_id)"
-              "   AND (poreject_id=:poreject_id));");
+              "       (COALESCE(recv_purchcost, poitem_unitprice) * poreject_qty) AS itemAmount"
+              "  FROM poreject JOIN poitem ON (poitem_id=poreject_poitem_id)"
+              "                JOIN pohead ON (pohead_id=poitem_pohead_id)"
+              "                LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id)"
+              "                LEFT OUTER JOIN item ON (itemsite_item_id=item_id)"
+              "                LEFT OUTER JOIN recv ON (recv_id=poreject_recv_id) "
+              " WHERE (poreject_id=:poreject_id);");
     q.bindValue(":poreject_id", _porejectid);
     q.exec();
     if(q.first())

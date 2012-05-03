@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>711</width>
-    <height>603</height>
+    <height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -497,6 +497,22 @@ to be bound by its terms.</comment>
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="_receiptCostOverrideGroupBox">
+           <property name="title">
+            <string/>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QCheckBox" name="_receiptCostOverride">
+              <property name="text">
+               <string>Allow Inventory Receipt Cost Override (Average costing method only)</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item>
           <spacer>

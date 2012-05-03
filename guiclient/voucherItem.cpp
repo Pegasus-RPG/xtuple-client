@@ -49,13 +49,15 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   _uninvoicedRejected->setValidator(omfgThis->qtyVal());
 
   _qtyToVoucher->setValidator(omfgThis->qtyVal());
-  
+  _amtToVoucher->setValidator(omfgThis->moneyVal());
+
   _vodist->addColumn(tr("Cost Element"), -1,           Qt::AlignLeft, true, "costelem_type");
   _vodist->addColumn(tr("Amount"),       _priceColumn, Qt::AlignRight,true, "vodist_amount");
 
   _uninvoiced->addColumn(tr("Receipt/Reject"), -1,          Qt::AlignCenter, true, "action");
   _uninvoiced->addColumn(tr("Date"),           _dateColumn, Qt::AlignCenter, true, "item_date");
   _uninvoiced->addColumn(tr("Qty."),           _qtyColumn,  Qt::AlignRight,  true, "qty");
+  _uninvoiced->addColumn(tr("Unit Price"),     _moneyColumn,Qt::AlignRight,  true, "unitprice");
   _uninvoiced->addColumn(tr("Tagged"),         _ynColumn,   Qt::AlignCenter, true, "f_tagged");
   
   _rejectedMsg = tr("The application has encountered an error and must "
@@ -185,7 +187,11 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
   {
     q.prepare( "SELECT voitem_id, voitem_close, voitem_taxtype_id, "
                "       voitem_qty,"
-               "       voitem_freight "
+               "       voitem_freight,"
+               "       ( SELECT SUM(vodist_amount) "
+               "         FROM vodist "
+               "         WHERE ((vodist_vohead_id=:vohead_id) "
+               "           AND  (vodist_poitem_id=:poitem_id)) ) AS voitem_amt "
                "FROM voitem "
                "WHERE ( (voitem_vohead_id=:vohead_id)"
                " AND (voitem_poitem_id=:poitem_id) );" );
@@ -197,6 +203,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _voitemid = q.value("voitem_id").toInt();
       _closePoitem->setChecked(q.value("voitem_close").toBool());
       _qtyToVoucher->setText(q.value("voitem_qty").toDouble());
+      _amtToVoucher->setText(q.value("voitem_amt").toDouble());
       _freightToVoucher->setLocalValue(q.value("voitem_freight").toDouble());
       _taxtype->setId(q.value("voitem_taxtype_id").toInt());
     }
@@ -212,6 +219,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _voitemid = -1;
       _closePoitem->setChecked(FALSE);
       _qtyToVoucher->clear();
+      _amtToVoucher->clear();
       _freightToVoucher->clear();
     }
 
@@ -348,16 +356,12 @@ void voucherItem::sSave()
 
 void voucherItem::sNew()
 {
-  q.prepare( "SELECT (poitem_unitprice * :voitem_qty - "
-		" (SELECT COALESCE(SUM(vodist_amount),0) "
-		"	FROM vodist " 
-		"       WHERE ( (vodist_vohead_id=:vohead_id) "
-		"       AND (vodist_poitem_id=:poitem_id) ) " 
-		" ) ) AS f_amount FROM poitem "
-		" WHERE (poitem_id=:poitem_id); " );
+  q.prepare( "SELECT COALESCE(SUM(vodist_amount),0) AS f_amount "
+             "	FROM vodist "
+             " WHERE ( (vodist_vohead_id=:vohead_id) "
+             "   AND (vodist_poitem_id=:poitem_id) );" );
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":poitem_id", _poitemid);
-  q.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -374,14 +378,9 @@ void voucherItem::sNew()
   params.append("curr_id", _freightToVoucher->id());
   params.append("effective", _freightToVoucher->effective());
   if (q.first())
-  	params.append("amount", q.value("f_amount").toDouble() );
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
-                __FILE__, __LINE__);
-    reject();
-    return;
-  }
+    params.append("amount", (_amtToVoucher->toDouble() - q.value("f_amount").toDouble()) );
+  else
+    params.append("amount", _amtToVoucher->toDouble());
 
   voucherItemDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -425,19 +424,24 @@ void voucherItem::sDelete()
 void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
 {
   double n;
+  double a;
   QString s;
   XTreeWidgetItem* item = (XTreeWidgetItem*)pItem;
   if(item->id() == -1)
     return;
-  if (item->text(3) == "Yes")
+  if (item->text(4) == "Yes")
   {
-    item->setText(3, "No");
+    item->setText(4, "No");
     if (item->text(0) == "Receiving")
     {
-    	n = _qtyToVoucher->toDouble();
-    	_qtyToVoucher->setText(item->text(2));
-    	n = n - _qtyToVoucher->toDouble();
-    	_qtyToVoucher->setText(s.setNum(n));
+      n = _qtyToVoucher->toDouble();
+      a = _amtToVoucher->toDouble();
+      _qtyToVoucher->setText(item->text(2));
+      _amtToVoucher->setText(item->text(3));
+      n = n - _qtyToVoucher->toDouble();
+      a = a - (_qtyToVoucher->toDouble() * _amtToVoucher->toDouble());
+      _qtyToVoucher->setText(s.setNum(n));
+      _amtToVoucher->setText(s.setNum(a));
 
       n = _uninvoicedReceived->toDouble();
       _uninvoicedReceived->setText(item->text(2));
@@ -446,10 +450,14 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     }
     else
     {
-    	n = _qtyToVoucher->toDouble();
-    	_qtyToVoucher->setText(item->text(2));
-    	n = n - _qtyToVoucher->toDouble();
-    	_qtyToVoucher->setText(s.setNum(n));
+      n = _qtyToVoucher->toDouble();
+      a = _amtToVoucher->toDouble();
+      _qtyToVoucher->setText(item->text(2));
+      _amtToVoucher->setText(item->text(3));
+      n = n - _qtyToVoucher->toDouble();
+      a = a - (_qtyToVoucher->toDouble() * _amtToVoucher->toDouble());
+      _qtyToVoucher->setText(s.setNum(n));
+      _amtToVoucher->setText(s.setNum(a));
 
       n = _uninvoicedRejected->toDouble();
       _uninvoicedRejected->setText(item->text(2));
@@ -459,13 +467,17 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   }
   else 
   {
-    item->setText(3, "Yes");
+    item->setText(4, "Yes");
     if (item->text(0) == "Receiving")
     {
-    	n = _qtyToVoucher->toDouble();
-    	_qtyToVoucher->setText(item->text(2));
-    	n = n + _qtyToVoucher->toDouble();
-    	_qtyToVoucher->setText(s.setNum(n));
+      n = _qtyToVoucher->toDouble();
+      a = _amtToVoucher->toDouble();
+      _qtyToVoucher->setText(item->text(2));
+      _amtToVoucher->setText(item->text(3));
+      n = n + _qtyToVoucher->toDouble();
+      a = a + (_qtyToVoucher->toDouble() * _amtToVoucher->toDouble());
+      _qtyToVoucher->setText(s.setNum(n));
+      _amtToVoucher->setText(s.setNum(a));
 
       n = _uninvoicedReceived->toDouble();
       _uninvoicedReceived->setText(item->text(2));
@@ -475,9 +487,13 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     else
     {
       n = _qtyToVoucher->toDouble();
+      a = _amtToVoucher->toDouble();
       _qtyToVoucher->setText(item->text(2));
+      _amtToVoucher->setText(item->text(3));
       n = n + _qtyToVoucher->toDouble();
+      a = a + (_qtyToVoucher->toDouble() * _amtToVoucher->toDouble());
       _qtyToVoucher->setText(s.setNum(n));
+      _amtToVoucher->setText(s.setNum(a));
 
       n = _uninvoicedRejected->toDouble();
       _uninvoicedRejected->setText(item->text(2));
@@ -538,7 +554,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   }
   
   // Update the receipt record
-  if (item->text(3) == "Yes")
+  if (item->text(4) == "Yes")
   {
     if (item->altId() == 1)
       q.prepare( "UPDATE recv "
@@ -622,6 +638,7 @@ void voucherItem::sFillList()
   q.prepare( "SELECT recv_id AS item_id, 1 AS item_type, :receiving AS action,"
              "       recv_date AS item_date,"
              "       recv_qty AS qty, 'qty' AS qty_xtnumericrole,"
+             "       recv_purchcost AS unitprice, 'curr' AS unitprice_xtnumericrole,"
              "       formatBoolYN(recv_vohead_id=:vohead_id) AS f_tagged,"
              "       0 AS qty_xttotalrole "
              "FROM recv "
@@ -634,9 +651,11 @@ void voucherItem::sFillList()
              "SELECT poreject_id AS item_id, 2 AS item_type, :reject AS action,"
              "       poreject_date AS item_date,"
              "       poreject_qty * -1 AS qty, 'qty', "
+             "       COALESCE(recv_purchcost, poitem_unitprice) AS unitprice, 'curr' AS unitprice_xtnumericrole,"
              "       formatBoolYN(poreject_vohead_id=:vohead_id) AS f_tagged,"
              "       0 AS qty_xttotalrole "
-             "FROM poreject "
+             "FROM poreject LEFT OUTER JOIN recv ON (recv_id=poreject_recv_id) "
+             "              LEFT OUTER JOIN poitem ON (poitem_id=poreject_poitem_id) "
              "WHERE ( (poreject_posted)"
              " AND (NOT poreject_invoiced)"
              " AND ((poreject_vohead_id IS NULL) OR (poreject_vohead_id=:vohead_id))"
@@ -678,7 +697,7 @@ void voucherItem::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
   QAction *menuItem;
   
-  if (selected->text(3) == "No")
+  if (selected->text(4) == "No")
   {
     menuItem = pMenu->addAction(tr("Correct Receipt..."), this, SLOT(sCorrectReceiving()));
     menuItem->setEnabled(_privileges->check("EnterReceipts"));

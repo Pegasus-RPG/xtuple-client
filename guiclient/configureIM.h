@@ -27,6 +27,7 @@ class configureIM : public XAbstractConfigure, public Ui::configureIM
 
   protected slots:
     virtual void languageChange();
+    virtual void sReceiptCostOverrideWarning();
 
   signals:
     void saving();

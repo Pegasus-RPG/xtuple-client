@@ -33,6 +33,7 @@ public slots:
     virtual void sReceive();
     virtual void sDetermineToReceiveInv();
     virtual void sPrintItemLabel();
+    virtual void sHandleExtendedCost();
 
 protected:
     bool _snooze;

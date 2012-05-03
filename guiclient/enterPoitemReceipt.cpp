@@ -30,6 +30,8 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sReceive()));
   connect(_toReceive, SIGNAL(editingFinished()), this, SLOT(sDetermineToReceiveInv()));
+  connect(_toReceive, SIGNAL(editingFinished()), this, SLOT(sHandleExtendedCost()));
+  connect(_purchCost,  SIGNAL(editingFinished()), this, SLOT(sHandleExtendedCost()));
 
   _invVendorUOMRatio->setPrecision(omfgThis->ratioVal());
   _ordered->setPrecision(omfgThis->qtyVal());
@@ -233,6 +235,12 @@ void enterPoitemReceipt::populate()
       _item->setItemsiteid(itemsiteid);
     _item->setEnabled(false);
 
+    _purchCost->setId(q.value("recv_purchcost_curr_id").toInt());
+    _purchCost->setLocalValue(q.value("recv_purchcost").toDouble());
+    _purchCost->setEnabled(q.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
+
+    _extendedCost->setId(q.value("recv_purchcost_curr_id").toInt());
+
     if (q.value("inventoryitem").toBool() && itemsiteid <= 0)
     {
       MetaSQLQuery ism = mqlLoad("itemReceipt", "sourceItemSite");
@@ -299,7 +307,7 @@ void enterPoitemReceipt::sReceive()
   if (_mode == cNew)
   {
     q.prepare("SELECT enterReceipt(:ordertype, :poitem_id, :qty, :freight, :notes, "
-		  ":curr_id, :effective) AS result;");
+              ":curr_id, :effective, :purchcost) AS result;");
     q.bindValue(":poitem_id",	_orderitemid);
     q.bindValue(":ordertype",	_ordertype);
     storedProc = "enterReceipt";
@@ -319,7 +327,7 @@ void enterPoitemReceipt::sReceive()
     }
     
     q.prepare("SELECT correctReceipt(:recv_id, :qty, :freight, 0, "
-		":curr_id, :effective) AS result;");
+              ":curr_id, :effective, :purchcost) AS result;");
     q.bindValue(":recv_id", _recvid);
     storedProc = "correctReceipt";
   }
@@ -329,6 +337,7 @@ void enterPoitemReceipt::sReceive()
   q.bindValue(":notes",		_notes->toPlainText());
   q.bindValue(":curr_id",	_freight->id());
   q.bindValue(":effective",	_receiptDate->date());
+  q.bindValue(":purchcost",     _purchCost->localValue());
   q.exec();
   if (q.first())
   {
@@ -387,4 +396,9 @@ void enterPoitemReceipt::sPrintItemLabel()
     {
       report.reportError(this);
     }
+}
+
+void enterPoitemReceipt::sHandleExtendedCost()
+{
+  _extendedCost->setLocalValue(_toReceive->toDouble() * _purchCost->localValue());
 }

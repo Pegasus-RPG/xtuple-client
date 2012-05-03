@@ -166,7 +166,11 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
   // similar code checks as for Avg and Std cost
   _costJob->setChecked(true);
   _costJob->setEnabled(false);
-    
+
+  // Receipt Cost Override
+  _receiptCostOverride->setChecked(_metrics->boolean("AllowReceiptCostOverride"));
+  connect(_receiptCostOverride, SIGNAL(toggled(bool)), this, SLOT(sReceiptCostOverrideWarning()));
+
   this->setWindowTitle("Inventory Configuration");
 
   // Requires Consolidated shipping package
@@ -208,7 +212,8 @@ bool configureIM::sSave()
   _metrics->set("AllowAvgCostMethod", _costAvg->isChecked());
   _metrics->set("AllowStdCostMethod", _costStd->isChecked());
   _metrics->set("AllowJobCostMethod", _costJob->isChecked());
-  
+  _metrics->set("AllowReceiptCostOverride", _receiptCostOverride->isChecked());
+
   if (_toNumGeneration->currentIndex() == 0)
     _metrics->set("TONumberGeneration", QString("M"));
   else if (_toNumGeneration->currentIndex() == 1)
@@ -309,3 +314,9 @@ bool configureIM::sSave()
   return true;
 }
 
+void configureIM::sReceiptCostOverrideWarning()
+{
+  if (!_receiptCostOverride->isChecked())
+    QMessageBox::warning(this, tr("Receipt Cost Override Warning"),
+                         tr("Unposted or uninvoiced receipts could be negatively affected if this feature is disabled."));
+}

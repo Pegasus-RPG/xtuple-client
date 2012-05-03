@@ -49,10 +49,10 @@ private:
     int _voheadid;
     int _voitemid;
     int _poitemid;
-	int _taxzoneid;
+    int _taxzoneid;
     bool _inTransaction;
-	bool _saved;
-	double _distamount;
+    bool _saved;
+    double _distamount;
     QString _rejectedMsg;
 };
 

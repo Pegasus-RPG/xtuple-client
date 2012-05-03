@@ -34,6 +34,15 @@ enterPoitemReturn::enterPoitemReturn(QWidget* parent, const char* name, bool mod
   _rejectCode->populate( "SELECT rjctcode_id, rjctcode_code "
                          "FROM rjctcode "
                          "ORDER BY rjctcode_code;" );
+
+  _receipts->addColumn(tr("Receipt Date"),    _timeDateColumn,  Qt::AlignCenter, true, "recv_date");
+  _receipts->addColumn(tr("Receiving Agent"), 100,		Qt::AlignCenter, true, "recv_agent_username");
+  _receipts->addColumn(tr("G/L Post Date"),   _dateColumn,	Qt::AlignCenter, true, "recv_gldistdate");
+  _receipts->addColumn(tr("Returnable Qty."), 100,		Qt::AlignRight,  true, "returnable");
+  _receipts->addColumn(tr("Purchase Cost"),   -1,		Qt::AlignRight,  true, "recv_purchcost");
+  _receiptsLit->hide();
+  _receiptsLine->hide();
+  _receipts->hide();
 }
 
 enterPoitemReturn::~enterPoitemReturn()
@@ -56,6 +65,38 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
   if (valid)
   {
     _poitemid = param.toInt();
+
+    q.prepare("	SELECT recv_id, recv_date, recv_agent_username, recv_gldistdate,"
+              "        recv_qty-COALESCE(SUM(poreject_qty),0) AS returnable, recv_purchcost "
+              "	FROM recv LEFT OUTER JOIN poreject ON (recv_id = poreject_recv_id) "
+              " WHERE recv_orderitem_id=:poitem_id AND recv_order_type='PO' "
+              " GROUP BY recv_id, recv_date, recv_agent_username, recv_gldistdate, recv_purchcost, recv_qty;");
+    q.bindValue(":poitem_id", _poitemid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
+    _receipts->clear();
+    _receipts->populate(q);
+
+    q.prepare(	"SELECT CASE WHEN itemsite_costmethod='A' THEN TRUE ELSE FALSE END AS costmethod_average "
+                "FROM poitem LEFT OUTER JOIN itemsite ON (poitem_itemsite_id = itemsite_id) "
+                "WHERE poitem_id = :poitem_id;");
+    q.bindValue(":poitem_id", _poitemid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
+    if (q.first())
+    {
+      _receipts->setVisible(q.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
+      _receiptsLit->setVisible(q.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
+      _receiptsLine->setVisible(q.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
+    }
 
     q.prepare( "SELECT pohead_number, poitem_linenumber,"
                "       COALESCE(itemsite_id, -1) AS itemsiteid,"
@@ -138,10 +179,32 @@ void enterPoitemReturn::sReturn()
     return;
   }
 
-  q.prepare("SELECT enterPoReturn(:poitem_id, :qty, :rjctcode_id) AS result;");
+  if (_receipts->isVisible() && _receipts->id() == -1)
+  {
+    QMessageBox::critical( this, tr("Cannot Enter Return"),
+                           tr("You may not enter this return until you select a Receipt.\n") );
+    _receipts->setFocus();
+    return;
+  }
+
+  if (_receipts->isVisible())
+  {
+    QList<XTreeWidgetItem*> items = _receipts->selectedItems();
+    if (_toReturn->toDouble() > items.at(0)->text(3).toDouble())
+    {
+      QMessageBox::critical( this, tr("Cannot Enter Return"),
+                            tr("Quantity to return may not be greater than the returnable quantity from the selected receipt.\n") );
+      _toReturn->setFocus();
+      return;
+    }
+  }
+
+  q.prepare("SELECT enterPoReturn(:poitem_id, :qty, :rjctcode_id, :recv_id) AS result;");
   q.bindValue(":poitem_id", _poitemid);
   q.bindValue(":qty", _toReturn->toDouble());
   q.bindValue(":rjctcode_id", _rejectCode->id());
+  if (_receipts->id() != -1)
+    q.bindValue(":recv_id", _receipts->id());
   q.exec();
   if (q.first())
   {
