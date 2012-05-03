@@ -436,7 +436,6 @@ FORMS =   absoluteCalendarItem.ui               \
           reassignProductCategoryByProductCategory.ui   \
           recallOrders.ui                       \
           reconcileBankaccount.ui               \
-          registration.ui                       \
           registrationKey.ui                    \
           registrationKeyDialog.ui              \
           rejectCode.ui                         \
@@ -1014,7 +1013,6 @@ HEADERS = ../common/format.h                    \
           reassignProductCategoryByProductCategory.h    \
           recallOrders.h                        \
           reconcileBankaccount.h                \
-          registration.h                        \
           registrationKey.h                     \
           registrationKeyDialog.h               \
           rejectCode.h                          \
@@ -1613,7 +1611,6 @@ SOURCES = absoluteCalendarItem.cpp              \
           reassignProductCategoryByProductCategory.cpp  \
           recallOrders.cpp                      \
           reconcileBankaccount.cpp              \
-          registration.cpp                      \
           registrationKey.cpp                   \
           registrationKeyDialog.cpp             \
           rejectCode.cpp                        \

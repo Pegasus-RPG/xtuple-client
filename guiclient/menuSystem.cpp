@@ -75,7 +75,6 @@
 #include "importData.h"
 
 #include "checkForUpdates.h"
-#include "registration.h"
 
 #include "setup.h"
 
@@ -209,7 +208,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   actionProperties community[] = {
     { "community.home",        tr("xTuple.org &Home"),             SLOT(sCommunityHome()),        communityMenu, "true", QPixmap(":images/community.png"), toolBar, true },
     { "separator",	       NULL,				   NULL,		          communityMenu, "true", NULL, NULL, true	},
-    { "community.register",    tr("&Register"),      SLOT(sRegister()),                           communityMenu, "true", QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") == "PostBooks" },
     { "community.editAccount", tr("My Online User &Account"),      SLOT(sCommunityEditAccount()), communityMenu, "true", NULL, NULL, true },
     { "community.support",     tr("Online Customer &Support"),     SLOT(sCommunitySupport()),     communityMenu, "true", NULL, NULL, true },
     { "community.wiki",        tr("Online Documentation / &Wiki"), SLOT(sCommunityWiki()),        communityMenu, "true", NULL, NULL, true },
@@ -607,19 +605,6 @@ void menuSystem::sCommunityHome()
 {
   omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/");
 }
-
-void menuSystem::sRegister()
-{
-  registration newdlg(parent);
-  newdlg.exec();
-}
-
-/*
-void menuSystem::sCommunityNewAccount()
-{
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_registration&task=register");
-}
-*/
 
 void menuSystem::sCommunityEditAccount()
 {

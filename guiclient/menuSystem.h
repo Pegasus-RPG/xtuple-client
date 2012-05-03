@@ -89,7 +89,6 @@ class menuSystem : public QObject
     void sCommunityIssues();
     void sCommunityWiki();
     void sCommunityDownloads();
-    void sRegister();
     void sCommunitySupport();
     void sCommunityTranslation();
     void sCommunityXchange();
