@@ -16,7 +16,7 @@
        item_descrip2,
        &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
-                   FROM warehous
+                   FROM whsinfo
                    WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -33,7 +33,7 @@
        firstLine(location_descrip) as f_descrip,
        formatBoolYN(location_restrict) AS restricted,
        formatBoolYN(location_netable) AS netable
-  FROM itemsite, location, warehous
+  FROM itemsite, location, whsinfo
  WHERE ((validLocation(location_id, itemsite_id))
    AND  ((itemsite_loccntrl) OR (itemsite_location_id=location_id))
    AND  (itemsite_item_id=&lt;? value("item_id") ?>)

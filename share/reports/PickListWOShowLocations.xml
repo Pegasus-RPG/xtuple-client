@@ -20,7 +20,7 @@
                 formatQty(wo_qtyrcv) AS qtyrcv,
                 formatDate(wo_startdate) AS startdate,
                 formatDate(wo_duedate) AS duedate
-         FROM wo, itemsite, item, warehous, uom
+         FROM wo, itemsite, item, whsinfo, uom
          WHERE ((wo_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
           AND (item_inv_uom_id=uom_id)
@@ -30,7 +30,7 @@
  </querysource>
  <querysource>
   <name>Detail</name>
-  <sql>select 
+  <sql>SELECT
      warehous_code, 
      wo_number,
      womatl_id,
@@ -66,14 +66,14 @@
           ELSE CAST(formatdate(itemloc_expiration) AS text)
      END AS expiration 
 
-from 
+FROM
 
-     item, uom, warehous, womatl, wo, itemsite
+     item, uom, whsinfo, womatl, wo, itemsite
      LEFT OUTER JOIN itemloc  ON (itemloc_itemsite_id = itemsite_id)
      LEFT OUTER JOIN location ON (itemloc_location_id = location_id)
 
 
-where
+WHERE
      itemsite_item_id = item_id
      and 
      itemsite_warehous_id = warehous_id
@@ -85,7 +85,7 @@ where
      womatl_wo_id = wo_id
      and
      wo_id = &lt;? value("wo_id") ?>
-order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</sql>
+ORDER BY wo_number, womatl_id, item_number, itemloc_expiration, location_name;</sql>
  </querysource>
  <rpthead>
   <height>188</height>

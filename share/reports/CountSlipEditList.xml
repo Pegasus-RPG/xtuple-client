@@ -16,7 +16,7 @@
        item_descrip2,
        warehous_code as warehouse,
        invcnt_tagnumber
-  FROM item, itemsite, invcnt, warehous
+  FROM item, itemsite, invcnt, whsinfo
  WHERE ((itemsite_item_id=item_id)
    AND (invcnt_itemsite_id=itemsite_id)
    AND (invcnt_id=&lt;? value(&quot;cnttag_id&quot;) ?>)

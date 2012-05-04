@@ -22,7 +22,7 @@
        formatBoolYN(location_restrict) AS f_restricted,
        warehous_code,
        formatDate(&lt;? value("asOf") ?>) AS asofdate
-  FROM location, warehous
+  FROM location, whsinfo
  WHERE ((location_warehous_id=warehous_id)
        AND (location_id=&lt;? value("location_id") ?>) );</sql>
  </querysource>

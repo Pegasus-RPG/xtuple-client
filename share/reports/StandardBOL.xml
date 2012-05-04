@@ -13,11 +13,12 @@
   <name>head</name>
   <sql>SELECT shiphead_shipvia, formatDate(shiphead_shipdate) AS shipdate,
                 cust_name, cust_number, cohead_number, cohead_fob, cohead_custponumber,
-                warehous_descrip, warehous_addr1, warehous_addr2, warehous_addr3, warehous_addr4, warehous_fob,
+                warehous_descrip, addr_line1 AS warehous_addr1, addr_line2 AS warehous_addr2, addr_line3 AS warehous_addr3, addr_city AS warehous_addr4, warehous_fob,
                 cohead_shiptoname, cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3,
                 (cohead_shiptocity || ' ' || cohead_shiptostate || ' ' || cohead_shiptozipcode) AS shiptocitystatezip,
                 cohead_shiptophone
-         FROM shiphead, cohead, warehous, custinfo
+         FROM shiphead, cohead, whsinfo, custinfo
+         LEFT OUTER JOIN addr ON (warehous_addr_id=addr_id)
          WHERE ((shiphead_order_id=cohead_id)
           AND (cohead_cust_id=cust_id)
           AND (cohead_warehous_id=warehous_id)

@@ -15,7 +15,7 @@
        warehous_code, item_number, uom_name,
        item_descrip1, item_descrip2,
        wo_status
-  FROM wo, itemsite, item, warehous, uom
+  FROM wo, itemsite, item, whsinfo, uom
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)

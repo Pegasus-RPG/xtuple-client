@@ -28,7 +28,7 @@
          text('No')
        &lt;? endif ?>
        AS showplnord
-  FROM item, uom, warehous
+  FROM item, uom, whsinfo
  WHERE ((item_id=&lt;? value("item_id") ?>)
    AND (item_inv_uom_id=uom_id)
    AND (warehous_id=&lt;? value("warehous_id") ?>))</sql>

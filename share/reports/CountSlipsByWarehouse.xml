@@ -19,7 +19,7 @@
   <name>head</name>
   <sql>SELECT &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -46,7 +46,7 @@
        ('( ' || cntslip_username || ' )') AS enteredby,
        formatQty(cntslip_qty) AS f_qtycounted,
        formatBoolYN(cntslip_posted) AS f_posted
-  FROM cntslip, invcnt, itemsite, item, warehous
+  FROM cntslip, invcnt, itemsite, item, whsinfo
  WHERE ((cntslip_cnttag_id=invcnt_id)
    AND (invcnt_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)

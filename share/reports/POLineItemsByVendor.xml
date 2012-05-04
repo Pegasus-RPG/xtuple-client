@@ -23,7 +23,7 @@
 &lt;? endif ?>
        AS selection,
        &lt;? if exists("warehous_id") ?>
-         ( SELECT warehous_code FROM warehous WHERE warehous_id=&lt;? value("warehous_id") ?>)
+         ( SELECT warehous_code FROM whsinfo WHERE warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>

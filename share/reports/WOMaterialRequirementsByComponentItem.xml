@@ -14,7 +14,7 @@
   <sql>SELECT item_number, item_descrip1, item_descrip2,
        &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')

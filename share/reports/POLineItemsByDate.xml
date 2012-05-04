@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT &lt;? if exists(&quot;warehous_id&quot;) ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+         (SELECT warehous_code FROM whsinfo WHERE warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
@@ -38,10 +38,10 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT CASE WHEN (itemsite_id IS NULL) THEN ( SELECT warehous_code
-                                              FROM warehous
+                                              FROM whsinfo
                                               WHERE (pohead_warehous_id=warehous_id) )
             ELSE ( SELECT warehous_code
-                   FROM warehous
+                   FROM whsinfo
                    WHERE (itemsite_warehous_id=warehous_id) )
        END AS warehousecode,
        pohead_number as f_ponumber,

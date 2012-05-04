@@ -17,7 +17,7 @@
                 formatQty(wo_qtyrcv) AS qtyrcv,
                 formatDate(wo_startdate) AS startdate,
                 formatDate(wo_duedate) AS duedate
-         FROM wo, itemsite, item, warehous, uom
+         FROM wo, itemsite, item, whsinfo, uom
          WHERE ((wo_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
           AND (item_inv_uom_id=uom_id)

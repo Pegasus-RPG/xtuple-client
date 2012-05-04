@@ -25,7 +25,7 @@
        AS classcode,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -63,7 +63,7 @@
             WHEN (invcnt_qoh_before=0) THEN formatScrap(1)
             ELSE formatScrap((1 - (invcnt_qoh_after / invcnt_qoh_before)) * -1)
        END AS percentage
-  FROM invcnt, itemsite, item, warehous
+  FROM invcnt, itemsite, item, whsinfo
  WHERE ((invcnt_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (itemsite_warehous_id=warehous_id)

@@ -13,7 +13,7 @@
   <name>head</name>
   <sql>SELECT &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -39,7 +39,7 @@
        uom_name,
        warehous_code,
        formatQty(SUM(summProd(itemsite_id, calitem_id))) AS f_unit
-  FROM itemsite, item, uom, warehous,
+  FROM itemsite, item, uom, whsinfo,
        (SELECT rcalitem_id AS calitem_id
           FROM rcalitem
          WHERE (rcalitem_id in (

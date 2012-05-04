@@ -18,7 +18,7 @@
        warehous_code AS warehouse,
        formatDate(&lt;? value("startDate") ?>) AS startdate,
        formatDate(&lt;? value("endDate") ?>) AS enddate
-  FROM location, warehous
+  FROM location, whsinfo
  WHERE ((location_id=&lt;? value("location_id") ?>)
    AND (location_warehous_id=warehous_id) );
 </sql>

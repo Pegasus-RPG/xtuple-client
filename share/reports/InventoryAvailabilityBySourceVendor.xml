@@ -84,7 +84,7 @@
                qtyOrdered(itemsite_id,   &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS ordered,
                qtypr(itemsite_id,   &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS requests
              &lt;? endif ?>
-      FROM item, itemsite, warehous 
+      FROM item, itemsite, whsinfo
            &lt;? if reExists("[vV]end") ?>
              , vendinfo JOIN itemsrc ON (itemsrc_vend_id=vend_id)
            &lt;? endif ?>

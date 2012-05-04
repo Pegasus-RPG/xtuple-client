@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT &lt;? if exists("warehous_id") ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
+         (SELECT warehous_code FROM whsinfo WHERE warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
@@ -72,7 +72,7 @@
 &lt;? if exists("byReceiptDate") ?>
        porecv,
 &lt;? endif ?>
-       pohead LEFT OUTER JOIN warehous ON (pohead_warehous_id=warehous_id)
+       pohead LEFT OUTER JOIN whsinfo ON (pohead_warehous_id=warehous_id)
  WHERE ((poitem_pohead_id=pohead_id)
    AND  (pohead_vend_id=vend_id)
 &lt;? if exists("byReceiptDate") ?>

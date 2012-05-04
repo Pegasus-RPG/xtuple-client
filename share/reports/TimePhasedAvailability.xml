@@ -13,7 +13,7 @@
   <name>head</name>
   <sql>SELECT &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -39,7 +39,7 @@
        uom_name AS f_uom,
        warehous_code,
        formatQty(qtyAvailable(itemsite_id, findPeriodStart(rcalitem_id))) AS f_unit
-  FROM rcalitem, itemsite, item, uom, warehous
+  FROM rcalitem, itemsite, item, uom, whsinfo
  WHERE ((rcalitem_id in (
 &lt;? foreach(&quot;period_id_list&quot;) ?>
   &lt;? if not isfirst(&quot;period_id_list&quot;) ?>
@@ -70,7 +70,7 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
        uom_name AS f_uom,
        warehous_code,
        formatQty(qtyAvailable(itemsite_id, findPeriodStart(acalitem_id))) AS f_unit
-  FROM acalitem, itemsite, item, uom, warehous
+  FROM acalitem, itemsite, item, uom, whsinfo
  WHERE ((acalitem_id IN (
 &lt;? foreach(&quot;period_id_list&quot;) ?>
   &lt;? if not isfirst(&quot;period_id_list&quot;) ?>

@@ -26,7 +26,7 @@
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS f_enddate,
 &lt;? if exists("warehous_id") ?>
        warehous_code
-FROM warehous
+FROM whsinfo
 WHERE (warehous_id=&lt;? value("warehous_id") ?>);
 &lt;? else ?>
        TEXT('All Sites') AS warehous_code;

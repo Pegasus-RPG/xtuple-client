@@ -15,7 +15,7 @@
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
        &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -57,7 +57,7 @@
             WHEN (invcnt_qoh_before=0) THEN formatScrap(1)
             ELSE formatScrap((1 - (invcnt_qoh_after / invcnt_qoh_before)) * -1)
        END AS percentage
-  FROM invcnt, itemsite, item, warehous
+  FROM invcnt, itemsite, item, whsinfo
  WHERE ((invcnt_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (itemsite_warehous_id=warehous_id)

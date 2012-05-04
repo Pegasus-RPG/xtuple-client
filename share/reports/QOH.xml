@@ -92,7 +92,7 @@ FROM ( SELECT itemsite_id, itemsite_costmethod,
                 (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END)
               &lt;? endif ?>
               AS standardcost
-         FROM itemsite, item, uom, warehous, costcat
+         FROM itemsite, item, uom, whsinfo, costcat
         WHERE ((itemsite_item_id=item_id)
           AND (item_inv_uom_id=uom_id)
           AND (itemsite_warehous_id=warehous_id)

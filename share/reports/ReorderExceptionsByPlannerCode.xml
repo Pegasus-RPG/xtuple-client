@@ -29,7 +29,7 @@
        AS includeplnord,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -67,7 +67,7 @@
                                                     WHERE (plancode_code ~ &lt;? value(&quot;plancode_pattern&quot;) ?>)))
 &lt;? endif ?>
                          )
-                ) AS itemsitedate, item, warehous
+                ) AS itemsitedate, item, whsinfo
           WHERE ((itemsite_item_id=item_id)
             AND (itemsite_warehous_id=warehous_id))
        ) AS data 

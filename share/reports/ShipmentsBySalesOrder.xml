@@ -35,7 +35,7 @@ WHERE ((cohead_cust_id=cust_id)
        warehous_code,
        formatQty(coitem_qtyord) AS f_qtyord,
        formatQty(SUM(shipitem_qty)) AS f_qtyshipped
-  FROM shipitem, shiphead, coitem, itemsite, item, uom, warehous
+  FROM shipitem, shiphead, coitem, itemsite, item, uom, whsinfo
  WHERE ( (shipitem_shiphead_id=shiphead_id)
    AND (shiphead_order_type='SO')
    AND (shipitem_orderitem_id=coitem_id)

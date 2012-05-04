@@ -32,7 +32,7 @@
          text('') AS lbl_value,
          text('') AS value
        &lt;? endif ?>
-  FROM wo, itemsite, warehous, item, uom
+  FROM wo, itemsite, whsinfo, item, uom
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)

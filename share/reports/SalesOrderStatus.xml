@@ -34,7 +34,7 @@
                    WHERE (wo_id=coitem_order_id) )
             ELSE ''
        END AS f_childord
-  FROM itemsite, item, warehous, coitem LEFT OUTER JOIN
+  FROM itemsite, item, whsinfo, coitem LEFT OUTER JOIN
        shipitem ON (shipitem_orderitem_id=coitem_id
               AND shipitem_invcitem_id IS NOT NULL)  
  WHERE ((coitem_itemsite_id=itemsite_id)

@@ -57,7 +57,7 @@
                     FROM plancode
                    WHERE (plancode_id=itemsite_plancode_id) )
        END AS plannercode
-  FROM item, uom, itemsite, warehous 
+  FROM item, uom, itemsite, whsinfo
  WHERE ((itemsite_warehous_id=warehous_id)
          AND (itemsite_item_id=item_id)
          AND(item_inv_uom_id=uom_id)

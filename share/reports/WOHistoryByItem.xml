@@ -23,7 +23,7 @@
          text('')
        &lt;? endif ?>
        AS value
-  FROM wo, itemsite, warehous
+  FROM wo, itemsite, whsinfo
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=&lt;? value(&quot;item_id&quot;) ?>)
@@ -44,7 +44,7 @@ ORDER BY wo_startdate DESC, wo_number, wo_subnumber;
        item_descrip2,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          (SELECT warehous_code
-            FROM warehous
+            FROM whsinfo
            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>))
        &lt;? else ?>
          text('All Sites')

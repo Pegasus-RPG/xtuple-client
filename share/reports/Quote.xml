@@ -83,7 +83,7 @@ WHERE (quhead_id = &lt;? value("quhead_id") ?>)
        charass_value 
 FROM quitem
      JOIN item ON (item_id=quitem_item_id)
-     LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id)
+     LEFT OUTER JOIN (itemsite JOIN whsinfo ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id)
      LEFT OUTER JOIN charass ON ((charass_target_id = quitem_id) 
                             AND (charass_target_type = 'QI'))
      LEFT OUTER JOIN char ON (charass_char_id = char_id)

@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT warehous_code
-FROM warehous
+FROM whsinfo
 WHERE (warehous_id=%1);</sql>
  </querysource>
  <querysource>

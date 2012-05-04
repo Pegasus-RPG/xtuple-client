@@ -16,7 +16,7 @@
        item_descrip2,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -47,7 +47,7 @@
        formatQty(qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime)) AS f_ordered,
        formatQty(sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) - qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime)) as f_avail
 &lt;? endif ?>
-  FROM item, itemsite AS sub, itemsite AS root, warehous, itemsub
+  FROM item, itemsite AS sub, itemsite AS root, whsinfo, itemsub
  WHERE ((sub.itemsite_item_id=item_id)
    AND (root.itemsite_item_id=itemsub_parent_item_id)
    AND (sub.itemsite_item_id=itemsub_sub_item_id)

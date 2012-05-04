@@ -102,7 +102,7 @@
                   (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END)
                 &lt;? endif ?>
                 AS cost
-           FROM itemloc, itemsite, item, warehous, uom, ls
+           FROM itemloc, itemsite, item, whsinfo, uom, ls
           WHERE ((itemloc_itemsite_id=itemsite_id)
             AND (itemloc_ls_id=ls_id)
             AND (itemsite_item_id=item_id)

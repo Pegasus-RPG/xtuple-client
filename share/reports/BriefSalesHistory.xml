@@ -35,19 +35,19 @@
            text('') AS lbl_total,
        &lt;? endif ?>
        &lt;? if exists("warehous_id") ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
+         (SELECT warehous_code FROM whsinfo WHERE warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists("cust_id") ?>
-         (select cust_name from custinfo where cust_id=&lt;? value("cust_id") ?>)
+         (SELECT cust_name FROM custinfo WHERE cust_id=&lt;? value("cust_id") ?>)
        &lt;? else ?>
          text('All Customers')
        &lt;? endif ?>
          AS cust_name,
        &lt;? if exists("custtype_id") ?>
-         (select custtype_code from custtype where custtype_id=&lt;? value("custtype_id") ?>)
+         (SELECT custtype_code FROM custtype WHERE custtype_id=&lt;? value("custtype_id") ?>)
        &lt;? else ?>
          text('All Customer Types')
        &lt;? endif ?>
@@ -59,7 +59,7 @@
        &lt;? endif ?>
          AS custtype_pattern,
        &lt;? if exists("custgrp_id") ?>
-         (select custgrp_name from custgrp where custgrp_id=&lt;? value("custgrp_id") ?>)
+         (SELECT custgrp_name FROM custgrp WHERE custgrp_id=&lt;? value("custgrp_id") ?>)
        &lt;? else ?>
          text('All Customer Groups')
        &lt;? endif ?>
@@ -71,7 +71,7 @@
        &lt;? endif ?>
          AS custgrp_pattern,
       &lt;? if exists("prodcat_id") ?>
-         (select prodcat_code from prodcat where prodcat_id=&lt;? value("prodcat_id") ?>)
+         (SELECT prodcat_code FROM prodcat WHERE prodcat_id=&lt;? value("prodcat_id") ?>)
        &lt;? else ?>
          text('All Product Categories')
        &lt;? endif ?>
@@ -83,13 +83,13 @@
        &lt;? endif ?>
          AS prodcat_pattern,
        &lt;? if exists("item_id") ?>
-         (select item_number from item where item_id=&lt;? value("item_id") ?>)
+         (SELECT item_number FROM item WHERE item_id=&lt;? value("item_id") ?>)
        &lt;? else ?>
          text('All Item Numbers')
        &lt;? endif ?>
          AS item_number,
        &lt;? if exists("cohead_id") ?>
-         (select cohead_number from cohead where cohead_id=&lt;? value("cohead_id") ?>)
+         (SELECT cohead_number FROM cohead WHERE cohead_id=&lt;? value("cohead_id") ?>)
        &lt;? else ?>
          text('All Orders')
        &lt;? endif ?>

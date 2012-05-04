@@ -16,7 +16,7 @@
        item_descrip2,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
          text('All Sites')
@@ -36,7 +36,7 @@
        formatQty(summTransS(itemsite_id, calitem_id)) AS sold,
        formatQty(summTransC(itemsite_id, calitem_id)) AS scrap,
        formatQty(summTransA(itemsite_id, calitem_id)) AS adjustments
-  FROM itemsite, warehous,
+  FROM itemsite, whsinfo,
 
        ( SELECT rcalitem_id as calitem_id,
                 findPeriodStart(rcalitem_id) as calitem_pstart,

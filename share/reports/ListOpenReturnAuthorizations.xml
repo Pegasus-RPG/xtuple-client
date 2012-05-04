@@ -13,7 +13,7 @@
   <name>head</name>
   <sql>SELECT &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Warehouses')
