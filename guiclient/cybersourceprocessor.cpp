@@ -151,7 +151,7 @@ CyberSourceProcessor::~CyberSourceProcessor()
   }
 }
 
-int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString & /*preforder*/, const CCTransaction ptranstype)
+int CyberSourceProcessor::buildCommon(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString & /*preforder*/, const CCTransaction ptranstype)
 {
   XSqlQuery csq;
   csq.prepare(
@@ -352,9 +352,8 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
     createChildTextNode(card, CPDATA_NS ":expirationMonth", month.left(2));
     createChildTextNode(card, CPDATA_NS ":expirationYear",
                         csq.value("ccard_year_expired").toString().left(4));
-    if (pcvv > 0)
-      createChildTextNode(card, CPDATA_NS ":cvNumber",
-                          QString::number(pcvv).left(4));
+    if (! pcvv.isEmpty())
+      createChildTextNode(card, CPDATA_NS ":cvNumber", pcvv.trimmed());
     createChildTextNode(card, CPDATA_NS ":cardType",        cardtype.left(3));
   }
 
@@ -363,11 +362,11 @@ int CyberSourceProcessor::buildCommon(const int pccardid, const int pcvv, const 
   return 0;
 }
 
-int  CyberSourceProcessor::doAuthorize(const int pccardid, const int pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  CyberSourceProcessor::doAuthorize(const int pccardid, const QString &pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("CS:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-           pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty,
+    qDebug("CS:doAuthorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+           pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty,
            pcurrid, qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = buildCommon(pccardid, pcvv, pamount, pcurrid, pneworder,
@@ -392,11 +391,11 @@ int  CyberSourceProcessor::doAuthorize(const int pccardid, const int pcvv, doubl
   return returnValue;
 }
 
-int  CyberSourceProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  CyberSourceProcessor::doCharge(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("CS:doCharge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-           pccardid, pcvv, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("CS:doCharge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+           pccardid, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
            qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = buildCommon(pccardid, pcvv, pamount, pcurrid, pneworder,
@@ -443,11 +442,11 @@ int  CyberSourceProcessor::doCharge(const int pccardid, const int pcvv, const do
   return returnValue;
 }
 
-int CyberSourceProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int CyberSourceProcessor::doChargePreauthorized(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("CS:doChargePreauthorized(%d, %d, %f, %d, %s, %s, %d)",
-           pccardid, pcvv, pamount,  pcurrid,
+    qDebug("CS:doChargePreauthorized(%d, pcvv, %f, %d, %s, %s, %d)",
+           pccardid, pamount,  pcurrid,
            qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = buildCommon(pccardid, pcvv, pamount, pcurrid, pneworder, preforder, Capture);
@@ -479,11 +478,11 @@ int CyberSourceProcessor::doChargePreauthorized(const int pccardid, const int pc
   return returnValue;
 }
 
-int CyberSourceProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int CyberSourceProcessor::doCredit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("CS:doCredit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-           pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("CS:doCredit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+           pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
            qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = buildCommon(pccardid, pcvv, pamount, pcurrid, pneworder, preforder, Credit);
@@ -516,10 +515,12 @@ int CyberSourceProcessor::doReverseAuthorize(const int pccardid, const double pa
 {
   if (DEBUG)
     qDebug("CS::doReverseAuthorize(%d, %f, %d, %s, %s, %d, pparams",
-           pccardid, pamount, pcurrid, qPrintable(pneworder), qPrintable(preforder), pccpayid);
+           pccardid, pamount, pcurrid,
+           qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   QString tmpErrorMsg = _errorMsg;
-  int returnValue = buildCommon(pccardid, -2, pamount, pcurrid, pneworder, preforder, Reverse);
+  int returnValue = buildCommon(pccardid, "-2", pamount, pcurrid, pneworder,
+                                preforder, Reverse);
   if (returnValue != 0)
     return returnValue;
 
@@ -550,12 +551,16 @@ int CyberSourceProcessor::doReverseAuthorize(const int pccardid, const double pa
   return returnValue;
 }
 
-int CyberSourceProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
+int CyberSourceProcessor::doVoidPrevious(const int pccardid, const QString &pcvv,
+                                         const double pamount, const int pcurrid,
+                                         QString &pneworder, QString &preforder,
+                                         QString &papproval, int &pccpayid,
+                                         ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("CS::doVoidPrevious(%d, %d, %f, %d, %s, %s, %s, %d)",
-           pccardid, pcvv, pamount, pcurrid, qPrintable(pneworder), qPrintable(preforder),
-           qPrintable(papproval), pccpayid);
+    qDebug("CS::doVoidPrevious(%d, pcvv, %f, %d, %s, %s, %s, %d)",
+           pccardid, pamount, pcurrid, qPrintable(pneworder),
+           qPrintable(preforder), qPrintable(papproval), pccpayid);
 
   QString requestId;
   XSqlQuery refq;

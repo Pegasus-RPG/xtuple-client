@@ -19,8 +19,8 @@
 
 #define DEBUG false
 
-/** \ingroup creditcards
-    \class   YourPayProcessor
+/** @ingroup creditcards
+    @class   YourPayProcessor
  */
 
 // convenience macro to add <ChildName>Content</ChildName> to the Parent node
@@ -78,7 +78,7 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
                            "YourPay."));
 }
 
-int YourPayProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, QDomDocument &prequest, QString pordertype)
+int YourPayProcessor::buildCommon(const int pccardid, const QString &pcvv, const double pamount, QDomDocument &prequest, QString pordertype)
 {
   QDomElement order = prequest.createElement("order");
   prequest.appendChild(order);
@@ -177,9 +177,9 @@ int YourPayProcessor::buildCommon(const int pccardid, const int pcvv, const doub
   CREATECHILDTEXTNODE(elem,  "cardexpmonth", work_month);
   CREATECHILDTEXTNODE(elem,  "cardexpyear",
 		      ypq.value("ccard_year_expired").toString().right(2));
-  if (pcvv > 0)
+  if (! pcvv.isEmpty())
   {
-    CREATECHILDTEXTNODE(elem, "cvmvalue", QString::number(pcvv));
+    CREATECHILDTEXTNODE(elem, "cvmvalue", pcvv);
     CREATECHILDTEXTNODE(elem, "cvmindicator", "provided");
   }
 
@@ -203,11 +203,11 @@ int YourPayProcessor::buildCommon(const int pccardid, const int pcvv, const doub
   return 0;
 }
 
-int YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int YourPayProcessor::doAuthorize(const int pccardid, const QString &pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+    qDebug("YP:doAuthorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
   int returnValue = 0;
@@ -275,11 +275,11 @@ int YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, double &pa
   return returnValue;
 }
 
-int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  YourPayProcessor::doCharge(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP:doCharge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+    qDebug("YP:doCharge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
   int returnValue = 0;
@@ -349,12 +349,12 @@ int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double
   return returnValue;
 }
 
-int YourPayProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int YourPayProcessor::doChargePreauthorized(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP:doChargePreauthorized(%d, %d, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+    qDebug("YP:doChargePreauthorized(%d, pcvv, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, pcurrid,
+           qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = 0;
   double amount = currToCurr(pcurrid, _ypcurrid, pamount, &returnValue);
@@ -383,12 +383,12 @@ int YourPayProcessor::doChargePreauthorized(const int pccardid, const int pcvv, 
   return returnValue;
 }
 
-int YourPayProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int YourPayProcessor::doCredit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP:doCredit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+    qDebug("YP:doCredit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+	   qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = 0;
   double amount = currToCurr(pcurrid, _ypcurrid, pamount, &returnValue);
@@ -422,13 +422,12 @@ int YourPayProcessor::doCredit(const int pccardid, const int pcvv, const double 
   return returnValue;
 }
 
-int YourPayProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
+int YourPayProcessor::doVoidPrevious(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP:doVoidPrevious(%d, %d, %f, %d, %s, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(),
-	   papproval.toAscii().data(), pccpayid);
+    qDebug("YP:doVoidPrevious(%d, pcvv, %f, %d, %s, %s, %s, %d)",
+	   pccardid, pamount, pcurrid, qPrintable(pneworder),
+           qPrintable(preforder), qPrintable(papproval), pccpayid);
 
   int returnValue = 0;
   double amount = currToCurr(pcurrid, _ypcurrid, pamount, &returnValue);

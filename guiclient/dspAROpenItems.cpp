@@ -396,7 +396,7 @@ void dspAROpenItems::sCCRefundCM()
   else
   {
     int refid = list()->id();
-    int returnVal = cardproc->credit(ccardid, -2, total, tax, taxexempt,
+    int returnVal = cardproc->credit(ccardid, "-2", total, tax, taxexempt,
 				     freight, duty, currid,
 				     docnum, refnum, ccpayid, "aropen", refid);
     if (returnVal < 0)

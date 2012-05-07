@@ -305,7 +305,7 @@ void returnAuthorizationWorkbench::sProcess()
 	    QString refnum = ccq.value("cohead_number").toString();
 	    int refid = -1;
 	    int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
-					 -2,
+					 "-2",
 					 ccq.value("total").toDouble(),
 					 ccq.value("tax_in_cmcurr").toDouble(),
 					 ccq.value("cmhead_tax_id").isNull(),

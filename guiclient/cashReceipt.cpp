@@ -623,7 +623,7 @@ bool cashReceipt::save(bool partial)
 	  	      QString::number(_cashrcptid) : _docNumber->text();
       QString reforder = neworder; // 2 sep variables because they're passed by ref
       int returnVal = cardproc->charge(_cc->id(),
-				     _CCCVV->text().isEmpty() ? -1 : _CCCVV->text().toInt(),
+				     _CCCVV->text(),
 				     _received->localValue(),
 				     0, false, 0, 0,
 				     _received->id(),

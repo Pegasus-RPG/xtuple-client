@@ -24,13 +24,13 @@ class AuthorizeDotNetProcessor : public CreditCardProcessor
     AuthorizeDotNetProcessor();
 
   protected:
-    virtual int  buildCommon(const int, const int, const double, const int, QString&, QString);
+    virtual int  buildCommon(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype);
     virtual int  doTestConfiguration();
-    virtual int  doAuthorize(const int, const int, double&, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
-    virtual int  doCharge(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
-    virtual int  doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&, ParameterList &);
-    virtual int  doCredit(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
-    virtual int  doVoidPrevious(const int, const int, const double, const int, QString&, QString&, QString&, int&, ParameterList &);
+    virtual int  doAuthorize(const int, const QString &pcvv, double&, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual int  doCharge(const int, const QString &pcvv, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual int  doChargePreauthorized(const int, const QString &pcvv, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual int  doCredit(const int, const QString &pcvv, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual int  doVoidPrevious(const int, const QString &pcvv, const double, const int, QString&, QString&, QString&, int&, ParameterList &);
     virtual bool handlesCreditCards();
     virtual int  handleResponse(const QString&, const int, const QString&, const double, const int, QString&, QString&, int&, ParameterList&);
 

@@ -19,7 +19,6 @@
 #include "mqlutil.h"
 
 #include "cashReceipt.h"
-#include "creditcardprocessor.h"
 #include "storedProcErrorLookup.h"
 #include "xtreewidget.h"
 

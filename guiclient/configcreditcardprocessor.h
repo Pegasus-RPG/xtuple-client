@@ -13,11 +13,11 @@
 
 #include "xwidget.h"
 
-/** \ingroup creditcards
+/** @ingroup creditcards
   
-    \class ConfigCreditCardProcessor
+    @class ConfigCreditCardProcessor
   
-    \brief An abstract class for showing and saving configuration information
+    @brief An abstract class for showing and saving configuration information
            for a specific credit card processor.
 
     Each credit card processing company has its own API and requirements
@@ -30,8 +30,8 @@
     specific details in their constructors, present them in a UI for the user
     to view and change, and save these changes with the sSave slot.
 
-    \see CreditCardProcessor
-    \see configureCC
+    @see CreditCardProcessor
+    @see configureCC
  */
 
 class ConfigCreditCardProcessor : public XWidget
@@ -43,14 +43,14 @@ class ConfigCreditCardProcessor : public XWidget
     virtual ~ConfigCreditCardProcessor();
 
   public slots:
-    /** \brief Save the details required for a specific credit card
+    /** @brief Save the details required for a specific credit card
                processing company.
 
         An abstract method.
         Child classes are expected to save the details specific to their
         own credit card processing companies with the sSave slot.
 
-        \returns true if successful; false if there was an error, such as
+        @returns true if successful; false if there was an error, such as
                  a missing required field.
       */
     virtual bool sSave() = 0;

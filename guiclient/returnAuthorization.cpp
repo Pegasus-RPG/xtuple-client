@@ -1837,8 +1837,7 @@ void returnAuthorization::sRefund()
           reftype = "cmhead";
         }
         int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
-                                       (_CCCVV->text().isEmpty()) ? -1 :
-                                                        _CCCVV->text().toInt(),
+                                       _CCCVV->text(),
                                        ccq.value("total").toDouble(),
                                        ccq.value("tax_in_cmcurr").toDouble(),
                                        ccq.value("cmhead_tax_id").isNull(),

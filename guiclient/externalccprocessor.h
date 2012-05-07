@@ -25,13 +25,13 @@ class ExternalCCProcessor : public CreditCardProcessor
     Q_INVOKABLE virtual int testConfiguration();
 
   protected:
-    virtual int  doAuthorize(const int, const int, double &, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
-    virtual int  doCharge(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
-    virtual int  doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&, ParameterList &);
-    virtual int  doCredit(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
-    virtual int  doVoidPrevious(const int, const int, const double, const int, QString&, QString&, QString&, int&, ParameterList &);
+    virtual int  doAuthorize(const int pccardid, const QString &pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pnweorder, QString &preforder, int &pccpayid, ParameterList &pparams);
+    virtual int  doCharge(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pnweorder, QString &preforder, int &pccpayid, ParameterList &pparams);
+    virtual int  doChargePreauthorized(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pnweorder, QString &preforder, int &pccpayid, ParameterList &pparams);
+    virtual int  doCredit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pnweorder, QString &preforder, int &pccpayid, ParameterList &pparams);
+    virtual int  doVoidPrevious(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pnweorder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams);
     virtual bool handlesCreditCards();
-    virtual int  handleTrans(const int, const QString&, const int, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int  handleTrans(const int pccardid, const QString &ptype, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams);
 
   private:
 };

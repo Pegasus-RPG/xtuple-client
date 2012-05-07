@@ -22,9 +22,9 @@
 
 bool shownEncryptedMsg = false;
 
-/** \ingroup creditcards
-    \class   configureCC
-    \brief   This is the master setup window for configuring the credit card
+/** @ingroup creditcards
+    @class   configureCC
+    @brief   This is the master setup window for configuring the credit card
              subsystem.
  */
 configureCC::configureCC(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)

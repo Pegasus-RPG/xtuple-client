@@ -18,9 +18,9 @@
 
 #define DEBUG false
 
-/** \ingroup creditcards
-    \class   ExternalCCProcessor
-    \brief   A simple interface for entering credit card transaction
+/** @ingroup creditcards
+    @class   ExternalCCProcessor
+    @brief   A simple interface for entering credit card transaction
              information manually.
  */
 ExternalCCProcessor::ExternalCCProcessor() : CreditCardProcessor()
@@ -32,7 +32,7 @@ ExternalCCProcessor::ExternalCCProcessor() : CreditCardProcessor()
   _defaultTestServer = "";
 }
 
-/** \brief Simplify CreditCardProcessor's implementation - we really don't care about
+/** @brief Simplify CreditCardProcessor's implementation - we really don't care about
            much with the external credit card processor.
  */
 int ExternalCCProcessor::testConfiguration()
@@ -78,11 +78,11 @@ int ExternalCCProcessor::testConfiguration()
   return 0;
 }
 
-int ExternalCCProcessor::doAuthorize(const int pccardid, const int pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int ExternalCCProcessor::doAuthorize(const int pccardid, const QString &pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("ExtCC:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("ExtCC:doAuthorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
 	   qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = handleTrans(pccardid, "A", pcvv, pamount, pcurrid,
@@ -91,11 +91,11 @@ int ExternalCCProcessor::doAuthorize(const int pccardid, const int pcvv, double 
   return returnValue;
 }
 
-int  ExternalCCProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  ExternalCCProcessor::doCharge(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("ExtCC:doCharge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("ExtCC:doCharge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
 	   qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = handleTrans(pccardid, "C", pcvv, pamount, pcurrid,
@@ -103,11 +103,11 @@ int  ExternalCCProcessor::doCharge(const int pccardid, const int pcvv, const dou
   return returnValue;
 }
 
-int ExternalCCProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int ExternalCCProcessor::doChargePreauthorized(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("ExtCC:doChargePreauthorized(%d, %d, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount,  pcurrid,
+    qDebug("ExtCC:doChargePreauthorized(%d, pcvv, %f, %d, %s, %s, %d)",
+	   pccardid, pamount,  pcurrid,
 	   qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = handleTrans(pccardid, "CP", pcvv, pamount, pcurrid,
@@ -115,11 +115,11 @@ int ExternalCCProcessor::doChargePreauthorized(const int pccardid, const int pcv
   return returnValue;
 }
 
-int ExternalCCProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int ExternalCCProcessor::doCredit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("ExtCC:doCredit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("ExtCC:doCredit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
 	   qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int returnValue = handleTrans(pccardid, "R", pcvv, pamount, pcurrid,
@@ -127,11 +127,11 @@ int ExternalCCProcessor::doCredit(const int pccardid, const int pcvv, const doub
   return returnValue;
 }
 
-int ExternalCCProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
+int ExternalCCProcessor::doVoidPrevious(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("ExtCC:doVoidPrevious(%d, %d, %f, %d, %s, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
+    qDebug("ExtCC:doVoidPrevious(%d, pcvv, %f, %d, %s, %s, %s, %d)",
+	   pccardid, pamount, pcurrid,
 	   qPrintable(pneworder), qPrintable(preforder),
 	   qPrintable(papproval), pccpayid);
 
@@ -140,11 +140,11 @@ int ExternalCCProcessor::doVoidPrevious(const int pccardid, const int pcvv, cons
   return returnValue;
 }
 
-int ExternalCCProcessor::handleTrans(const int pccardid, const QString &ptype, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int ExternalCCProcessor::handleTrans(const int pccardid, const QString &ptype, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("ExtCC::handleTrans(%d, %s, %d, %f, %d, %s, %s, %d, pparams)",
-	   pccardid, qPrintable(ptype), pcvv, pamount, pcurrid,
+    qDebug("ExtCC::handleTrans(%d, %s, pcvv, %f, %d, %s, %s, %d, pparams)",
+	   pccardid, qPrintable(ptype), pamount, pcurrid,
            qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   // TODO: if check and not credit card transaction do something else

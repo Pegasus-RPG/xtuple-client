@@ -15,7 +15,6 @@
 #include <QVariant>
 
 #include "copySalesOrder.h"
-#include "creditcardprocessor.h"
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "errorReporter.h"

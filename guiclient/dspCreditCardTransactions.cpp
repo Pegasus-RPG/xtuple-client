@@ -198,7 +198,7 @@ void dspCreditCardTransactions::sPostPreauth()
   int ccpayid   = _preauth->id();
   QString neworder = _preauth->currentItem()->text("docnumber");
   QString reforder = neworder;
-  int returnVal = cardproc->chargePreauthorized(-2,
+  int returnVal = cardproc->chargePreauthorized("-2",
 						_CCAmount->localValue(),
 						_CCAmount->id(),
 						neworder, reforder, ccpayid);

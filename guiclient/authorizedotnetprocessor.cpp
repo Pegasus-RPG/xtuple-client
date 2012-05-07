@@ -12,9 +12,9 @@
    support Visa ECI, MasterCard UCAF for x_authentication_indicator?
    support Visa CAVV or MasterCard UCAF for x_cardholder_authentication_value?
 */
-/** \ingroup creditcards
-    \class   AuthorizeDotNetProcessor
-    \brief   The implementation of Authorize.Net-specific credit card handling
+/** @ingroup creditcards
+    @class   AuthorizeDotNetProcessor
+    @brief   The implementation of Authorize.Net-specific credit card handling
  */
 
 #include <QSqlError>
@@ -66,7 +66,7 @@ AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
 
 }
 
-int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype)
+int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype)
 {
   // TODO: if check and not credit card transaction do something else
   XSqlQuery anq;
@@ -177,19 +177,19 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
   APPENDFIELD(prequest, "x_method",     "CC");
   APPENDFIELD(prequest, "x_type",       pordertype);
 
-  if (pcvv > 0)
-    APPENDFIELD(prequest, "x_card_code", QString::number(pcvv));
+  if (! pcvv.isEmpty())
+    APPENDFIELD(prequest, "x_card_code", pcvv);
 
   if (DEBUG)
     qDebug("AN:buildCommon built %s\n", prequest.toAscii().data());
   return 0;
 }
 
-int  AuthorizeDotNetProcessor::doAuthorize(const int pccardid, const int pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  AuthorizeDotNetProcessor::doAuthorize(const int pccardid, const QString &pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("AN:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("AN:doAuthorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
   int    returnValue = 0;
@@ -241,11 +241,11 @@ int  AuthorizeDotNetProcessor::doAuthorize(const int pccardid, const int pcvv, d
   return returnValue;
 }
 
-int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("AN:doCharge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("AN:doCharge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
   int    returnValue = 0;
@@ -298,11 +298,11 @@ int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const int pcvv, cons
   return returnValue;
 }
 
-int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("AN:doChargePreauthorized(%d, %d, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount,  pcurrid,
+    qDebug("AN:doChargePreauthorized(%d, pcvv, %f, %d, %s, %s, %d)",
+	   pccardid, pamount,  pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
   int    returnValue = 0;
@@ -337,11 +337,11 @@ int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const in
   return returnValue;
 }
 
-int AuthorizeDotNetProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int AuthorizeDotNetProcessor::doCredit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("AN:doCredit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("AN:doCredit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
   int    returnValue = 0;
@@ -391,11 +391,11 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const int pcvv, const
   return returnValue;
 }
 
-int AuthorizeDotNetProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
+int AuthorizeDotNetProcessor::doVoidPrevious(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("AN:doVoidPrevious(%d, %d, %f, %d, %s, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
+    qDebug("AN:doVoidPrevious(%d, pcvv, %f, %d, %s, %s, %s, %d)",
+	   pccardid, pamount, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(),
 	   papproval.toAscii().data(), pccpayid);
 
@@ -614,8 +614,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
 
   if (DEBUG)
     qDebug("AN:%s _passedAvs %d\t%s _passedCvv %d",
-	    r_avs.toAscii().data(), _passedAvs,
-	    r_cvv.toAscii().data(), _passedCvv);
+	    qPrintable(r_avs), _passedAvs, qPrintable(r_cvv), _passedCvv);
 
   pparams.append("ccard_id",    pccardid);
   pparams.append("currid",      pcurrid);

@@ -17,8 +17,8 @@
 
 #define DEBUG false
 
-/** \ingroup creditcards
-    \class   PaymentechProcessor
+/** @ingroup creditcards
+    @class   PaymentechProcessor
  */
 
 PaymentechProcessor::PaymentechProcessor() : CreditCardProcessor()
@@ -43,8 +43,10 @@ PaymentechProcessor::PaymentechProcessor() : CreditCardProcessor()
   _msgHash.insert(-209, tr("The selected credit card is not a know type for Paymentech."));
 }
 
-int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, const int pcvv, const double pamount, const int /*pcurrid*/, QString &prequest, QString pordertype, const QString & pAuthcode, const QString & pRespdate)
+int PaymentechProcessor::buildCommon(QString &pordernum, const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype, const QString &pAuthcode, const QString &pRespdate)
 {
+  Q_UNUSED(pcurrid);
+
   XSqlQuery anq;
   anq.prepare(
     "SELECT ccard_active,"
@@ -199,11 +201,11 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
     prequest += "        "; // DebitTraceNumber: leave blank
   }
 
-  if (pcvv > 0)
+  if (! pcvv.isEmpty())
   {
     prequest += "FR";
     prequest += "1";
-    prequest += QString::number(pcvv).leftJustified(4, ' ', true);
+    prequest += pcvv.leftJustified(4, ' ', true);
   }
 
   // version records -- should always include
@@ -217,11 +219,11 @@ int PaymentechProcessor::buildCommon(QString & pordernum, const int pccardid, co
   return 0;
 }
 
-int  PaymentechProcessor::doAuthorize(const int pccardid, const int pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  PaymentechProcessor::doAuthorize(const int pccardid, const QString &pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("Paymentech:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+    qDebug("Paymentech:doAuthorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
 
   int    returnValue = 0;
@@ -232,7 +234,8 @@ int  PaymentechProcessor::doAuthorize(const int pccardid, const int pcvv, double
   int    currid  = pcurrid;
 
   QString request;
-  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request, "AU");
+  returnValue = buildCommon(pneworder, pccardid, pcvv, amount, currid, request,
+                            "AU");
   if (returnValue != 0)
     return returnValue;
 
@@ -254,23 +257,18 @@ int  PaymentechProcessor::doAuthorize(const int pccardid, const int pcvv, double
            charged later. If the processor can't do the charge then the transaction
            must be undone.
  */
-int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+int  PaymentechProcessor::doCharge(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("Paymentech:doCharge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+    qDebug("Paymentech:doCharge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+	   qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int    returnValue = 0;
 
   int refid = 0;
   returnValue = authorize(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, "", refid);
-  /* don't return here because the caller is going to need all of the parameter data
-  if(returnValue < 0)
-  {
-    return returnValue;
-  }
-  */
+  // don't return here because the caller needs all of the parameter data
 
   double amount  = pamount;
   int    currid  = pcurrid;
@@ -315,12 +313,13 @@ int  PaymentechProcessor::doCharge(const int pccardid, const int pcvv, const dou
            of the charge updating the record appropriately. If the later processing
            fails then the appropriate step must be taken to undo any record money.
  */
-int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int PaymentechProcessor::doChargePreauthorized(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
+  Q_UNUSED(pcvv);
   if (DEBUG)
-    qDebug("Paymentech:doChargePreauthorized(%d, %d, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount,  pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+    qDebug("Paymentech:doChargePreauthorized(%d, pcvv, %f, %d, %s, %s, %d)",
+	   pccardid, pamount,  pcurrid,
+	   qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int    returnValue = 0;
   double amount  = pamount;
@@ -365,12 +364,13 @@ int PaymentechProcessor::doChargePreauthorized(const int pccardid, const int pcv
 /** \brief Create a credit record that will be processed later by a processor.
            If the processing fails then the record needs to undo any transactions.
  */
-int PaymentechProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+int PaymentechProcessor::doCredit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
+  Q_UNUSED(pcvv);
   if (DEBUG)
-    qDebug("Paymentech:doCredit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+    qDebug("Paymentech:doCredit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+	   qPrintable(pneworder), qPrintable(preforder), pccpayid);
 
   int    returnValue = 0;
   double amount  = pamount;
@@ -391,13 +391,12 @@ int PaymentechProcessor::doCredit(const int pccardid, const int pcvv, const doub
   return returnValue;
 }
 
-int PaymentechProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
+int PaymentechProcessor::doVoidPrevious(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("Paymentech:doVoidPrevious(%d, %d, %f, %d, %s, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(),
-	   papproval.toAscii().data(), pccpayid);
+    qDebug("Paymentech:doVoidPrevious(%d, pcvv, %f, %d, %s, %s, %s, %d)",
+	   pccardid, pamount, pcurrid, qPrintable(pneworder),
+           qPrintable(preforder), qPrintable(papproval), pccpayid);
 
   QString tmpErrorMsg = _errorMsg;
 
@@ -539,8 +538,7 @@ int PaymentechProcessor::handleResponse(const QString &presponse, const int pcca
 
   if (DEBUG)
     qDebug("Paymentech:%s _passedAvs %d\t%s _passedCvv %d",
-	    r_avs.toAscii().data(), _passedAvs, 
-	    r_cvv.toAscii().data(), _passedCvv);
+	    qPrintable(r_avs), _passedAvs, qPrintable(r_cvv), _passedCvv);
 
   pparams.append("ccard_id",    pccardid);
   pparams.append("currid",      pcurrid);

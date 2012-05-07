@@ -17,9 +17,9 @@
 
 #define DEBUG false
 
-/** \ingroup creditcards
-    \class   VerisignProcessor
-    \todo    Finish implementing this
+/** @ingroup creditcards
+    @class   VerisignProcessor
+    @todo    Finish implementing this
  */
 
 VerisignProcessor::VerisignProcessor() : CreditCardProcessor()

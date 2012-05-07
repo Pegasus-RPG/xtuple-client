@@ -3385,7 +3385,7 @@ bool salesOrder::deleteSalesOrder(int pId, QWidget *parent)
               int ccpayid    = ccq.value("ccpay_id").toInt();
               int coheadid   = pId;
               int returnVal = cardproc->credit(ccq.value("ccpay_ccard_id").toInt(),
-                                               -2,
+                                               "-2",
                                                ccq.value("amount").toDouble(),
                                                ccq.value("tax").toDouble(),
                                                true,
@@ -3755,7 +3755,7 @@ void salesOrder::sAuthorizeCC()
   int     ccpayid    = -1;
   QString sonumber   = _orderNumber->text();
   QString ponumber   = _custPONumber->text();
-  int     returnVal  = cardproc->authorize(_cc->id(), _CCCVV->text().toInt(),
+  int     returnVal  = cardproc->authorize(_cc->id(), _CCCVV->text(),
                                            _CCAmount->localValue(),
                                            _tax->localValue(),
                                            (_tax->isZero() && _taxZone->id() == -1),
@@ -3809,7 +3809,7 @@ void salesOrder::sChargeCC()
   int     ccpayid    = -1;
   QString ordernum   = _orderNumber->text();
   QString refnum     = _custPONumber->text();
-  int     returnVal  = cardproc->charge(_cc->id(), _CCCVV->text().toInt(),
+  int     returnVal  = cardproc->charge(_cc->id(), _CCCVV->text(),
                                         _CCAmount->localValue(),
                                         _tax->localValue(),
                                         (_tax->isZero() && _taxZone->id() == -1),

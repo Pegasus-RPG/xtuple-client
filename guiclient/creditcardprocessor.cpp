@@ -38,6 +38,11 @@
 
 #define DEBUG false
 
+/* TODO: split this into CreditCardProcessor and CreditCardTransaction.
+         the _passedAvs and _passedCvv flags are examples of why the
+         current structure is problematic. bug 8215 might be another example.
+*/
+
 /** @defgroup creditcards Credit Card API
     The xTuple Credit Card subsystem contains the internal code
     for processing credit card transactions and the user interface
@@ -434,11 +439,11 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
 
     @return An index into _errMsg; 0 indicates success
  */
-int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
+int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
   if (DEBUG)
-    qDebug("CCP:authorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+    qDebug("CCP:authorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
 	   preftype.toAscii().data(), prefid);
   reset();
@@ -602,11 +607,11 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 
     @return An index into _errMsg; 0 indicates success
  */
-int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
+int CreditCardProcessor::charge(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
   if (DEBUG)
-    qDebug("CCP:charge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+    qDebug("CCP:charge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
 	   preftype.toAscii().data(), prefid);
   reset();
@@ -733,11 +738,11 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
 
     @return An index into _errMsg; 0 indicates success
  */
-int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
+int CreditCardProcessor::chargePreauthorized(const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
 {
   if (DEBUG)
-    qDebug("CCP:chargePreauthorized(%d, %f, %d, %s, %s, %d)",
-	   pcvv, pamount, pcurrid,
+    qDebug("CCP:chargePreauthorized(pcvv, %f, %d, %s, %s, %d)",
+	   pamount, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
   reset();
 
@@ -1050,11 +1055,11 @@ int CreditCardProcessor::testConfiguration()
 
     @return An index into _errMsg; 0 indicates success
  */
-int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
+int CreditCardProcessor::credit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
   if (DEBUG)
-    qDebug("CCP:credit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+    qDebug("CCP:credit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
 	   preftype.toAscii().data(), prefid);
   reset();
@@ -1397,8 +1402,6 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
     qDebug("CCP:voidPrevious(%d)", pccpayid);
   // don't reset(); because we're probably voiding because of a previous error
 
-  int ccv = -2;
-
   XSqlQuery ccq;
   ccq.prepare("SELECT * FROM ccpay WHERE (ccpay_id=:ccpayid);");
   ccq.bindValue(":ccpayid", pccpayid);
@@ -1424,7 +1427,7 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
   QString reforder = ccq.value("ccpay_r_ordernum").toString();
   QString approval = ccq.value("ccpay_r_ref").toString();
   ParameterList dbupdateinfo;
-  int returnVal = doVoidPrevious(ccardid, ccv,
+  int returnVal = doVoidPrevious(ccardid, "-2",
 				 ccq.value("ccpay_amount").toDouble(),
 				 ccq.value("ccpay_curr_id").toInt(),
 				 neworder, reforder, approval,
@@ -1512,10 +1515,10 @@ QString CreditCardProcessor::errorMsg(const int pcode)
     @param[out] pccard_x The credit card number, with most of the digits
                          replaced with @c X. Used for reporting errors.
   */
-int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QString &pccard_x)
+int CreditCardProcessor::checkCreditCard(const int pccid, const QString &pcvv, QString &pccard_x)
 {
   if (DEBUG)
-    qDebug("CCP:checkCreditCard(%d, %d)", pccid, pcvv);
+    qDebug("CCP:checkCreditCard(%d, pcvv)", pccid);
   reset();
 
   if(omfgThis->_key.isEmpty())
@@ -1569,12 +1572,12 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QStrin
     }
   }
 
-  if (pcvv == -1 && _metrics->boolean("CCRequireCVV"))
+  if (pcvv.isEmpty() && _metrics->boolean("CCRequireCVV"))
   {
     _errorMsg = errorMsg(-98);
     return -98;
   }
-  else if (pcvv == -1)
+  else if (pcvv.isEmpty())
   {
     if (QMessageBox::question(0,
 	      tr("Confirm No CVV Code"),
@@ -1587,9 +1590,9 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QStrin
       return -75;
     }
   }
-  else if (pcvv == -2)
+  else if (pcvv.toInt() == -2)  // TODO: this doesn't feel right
     ; // the caller knows that this transaction doesn't have cvv available
-  else if (pcvv > 9999) // YP docs are not consistent - 000-999 or 3-4 digits?
+  else if (pcvv.length() > 4)
   {
     _errorMsg = errorMsg(-99);
     return -99;
@@ -1601,11 +1604,13 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QStrin
 /** @brief Placeholder for subclasses to override.
      @see authorize
  */
-int CreditCardProcessor::doAuthorize(const int pccardid, const int pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &)
+int CreditCardProcessor::doAuthorize(const int pccardid, const QString &pcvv, double &pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pParams)
 {
+  Q_UNUSED(pcvv);
+  Q_UNUSED(pParams);
   if (DEBUG)
-    qDebug("CCP:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+    qDebug("CCP:doAuthorize(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doAuthorize");
   return -19;
@@ -1614,11 +1619,13 @@ int CreditCardProcessor::doAuthorize(const int pccardid, const int pcvv, double 
 /** @brief Placeholder for subclasses to override.
     @see charge
  */
-int CreditCardProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &)
+int CreditCardProcessor::doCharge(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pParams)
 {
+  Q_UNUSED(pcvv);
+  Q_UNUSED(pParams);
   if (DEBUG)
-    qDebug("CCP:doCharge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	    pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+    qDebug("CCP:doCharge(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	    pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doCharge");
   return -19;
@@ -1627,11 +1634,13 @@ int CreditCardProcessor::doCharge(const int pccardid, const int pcvv, const doub
 /** @brief Placeholder for subclasses to override.
     @see chargePreauthorized
  */
-int CreditCardProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &)
+int CreditCardProcessor::doChargePreauthorized(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pParams)
 {
+  Q_UNUSED(pcvv);
+  Q_UNUSED(pParams);
   if (DEBUG)
-    qDebug("CCP:doChargePreauthorized(%d, %d, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
+    qDebug("CCP:doChargePreauthorized(%d, pcvv, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, pcurrid,
 	    pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doChargePreauthorized");
   return -19;
@@ -1650,11 +1659,13 @@ int CreditCardProcessor::doTestConfiguration()
 /** @brief Placeholder for subclasses to override.
     @see credit
  */
-int CreditCardProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &)
+int CreditCardProcessor::doCredit(const int pccardid, const QString &pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pParams)
 {
+  Q_UNUSED(pcvv);
+  Q_UNUSED(pParams);
   if (DEBUG)
-    qDebug("CCP:doCredit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
+    qDebug("CCP:doCredit(%d, pcvv, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doCredit");
   return -19;
@@ -1675,11 +1686,13 @@ int CreditCardProcessor::doReversePreauthorized(const double pamount, const int 
 /** @brief Placeholder for subclasses to override.
     @see   voidPrevious
  */
-int CreditCardProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &)
+int CreditCardProcessor::doVoidPrevious(const int pccardid, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, QString &papproval, int &pccpayid, ParameterList &pParams)
 {
+  Q_UNUSED(pcvv);
+  Q_UNUSED(pParams);
   if (DEBUG)
-    qDebug("CCP:doVoidPrevious(%d, %d, %f, %d, %s, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
+    qDebug("CCP:doVoidPrevious(%d, pcvv, %f, %d, %s, %s, %s, %d)",
+	   pccardid, pamount, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(),
 	   papproval.toAscii().data(), pccpayid);
   _errorMsg = errorMsg(-19).arg("doVoidPrevious");
@@ -2401,7 +2414,7 @@ ParameterList CreditCardProcessor::authorize(const ParameterList &pinput)
   QString        context = "authorize";
 
   int    ccard_id = -1;
-  int    cvv      =  0;
+  QString cvv;
   double amount   =  0.0;
   double tax      =  0.0;
   bool   taxExempt=  true;
@@ -2428,15 +2441,7 @@ ParameterList CreditCardProcessor::authorize(const ParameterList &pinput)
 
   param = pinput.value("cvv", &valid);
   if (valid)
-  {
-    cvv = param.toInt(&valid);
-    if (!valid)
-    {
-      _errorMsg = errorMsg(-81).arg(context).arg("cvv").arg("int");
-      poutput->append("returnVal", -81);
-      return *poutput;
-    }
-  }
+    cvv = param.toString();
 
   param = pinput.value("amount", &valid);
   if (valid)
@@ -2565,7 +2570,7 @@ ParameterList CreditCardProcessor::charge(const ParameterList &pinput)
   QString        context = "charge";
 
   int    ccard_id = -1;
-  int    cvv      =  0;
+  QString cvv;
   double amount   =  0.0;
   double tax      =  0.0;
   bool   taxExempt=  true;
@@ -2592,15 +2597,7 @@ ParameterList CreditCardProcessor::charge(const ParameterList &pinput)
 
   param = pinput.value("cvv", &valid);
   if (valid)
-  {
-    cvv = param.toInt(&valid);
-    if (!valid)
-    {
-      _errorMsg = errorMsg(-81).arg(context).arg("cvv").arg("int");
-      poutput->append("returnVal", -81);
-      return *poutput;
-    }
-  }
+    cvv = param.toString();
 
   param = pinput.value("amount", &valid);
   if (valid)
@@ -2728,7 +2725,7 @@ ParameterList CreditCardProcessor::chargePreauthorized(const ParameterList &pinp
   bool           valid;
   QString        context = "chargePreauthorized";
 
-  int    cvv      =  0;
+  QString cvv;
   double amount   =  0.0;
   int    curr_id  = -1;
   int    ccpay_id = -1;
@@ -2737,15 +2734,7 @@ ParameterList CreditCardProcessor::chargePreauthorized(const ParameterList &pinp
 
   param = pinput.value("cvv", &valid);
   if (valid)
-  {
-    cvv = param.toInt(&valid);
-    if (!valid)
-    {
-      _errorMsg = errorMsg(-81).arg(context).arg("cvv").arg("int");
-      poutput->append("returnVal", -81);
-      return *poutput;
-    }
-  }
+    cvv = param.toString();
 
   param = pinput.value("amount", &valid);
   if (valid)
@@ -2828,7 +2817,7 @@ ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
   QString        context = "credit";
 
   int    ccard_id = -1;
-  int    cvv      =  0;
+  QString cvv;
   double amount   =  0.0;
   double tax      =  0.0;
   bool   taxExempt=  true;
@@ -2855,15 +2844,7 @@ ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
 
   param = pinput.value("cvv", &valid);
   if (valid)
-  {
-    cvv = param.toInt(&valid);
-    if (!valid)
-    {
-      _errorMsg = errorMsg(-81).arg(context).arg("cvv").arg("int");
-      poutput->append("returnVal", -81);
-      return *poutput;
-    }
-  }
+    cvv = param.toString();
 
   param = pinput.value("amount", &valid);
   if (valid)
