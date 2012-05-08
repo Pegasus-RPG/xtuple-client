@@ -30,10 +30,11 @@
        END AS poitemstatus,
        formatDate(poitem_duedate) as f_duedate,
        formatQty(poitem_qty_ordered) as f_qtyord,
-       formatQty(COALESCE(SUM(porecv_qty), 0)) as f_qty,
+       formatQty(COALESCE(SUM(recv_qty), 0)) as f_qty,
        formatPrice(poitem_unitprice) as f_unitprice
-FROM pohead, poitem LEFT OUTER JOIN porecv ON (porecv_poitem_id=poitem_id)
+FROM pohead, poitem LEFT OUTER JOIN recv ON (recv_orderitem_id=poitem_id)
 WHERE ( (poitem_pohead_id=pohead_id)
+ AND (recv_order_type='PO')
  AND (pohead_vend_id=&lt;? value("vend_id") ?>)
  AND (poitem_vend_item_number=(select itemsrc_vend_item_number from itemsrc where itemsrc_id=&lt;? value("itemsrc_id") ?>)) ) 
 GROUP BY poitem_id, pohead_number, poitem_linenumber,

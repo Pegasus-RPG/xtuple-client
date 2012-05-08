@@ -20,9 +20,10 @@
   <name>detail</name>
   <sql>SELECT vendaddr_code as num,
        vendaddr_name as name,
-       vendaddr_address1 AS address,
-       (vendaddr_city || ', ' || vendaddr_state || '  ' || vendaddr_zipcode)  AS citystatezip
-  FROM vendaddr 
+       addr_line1 AS address,
+       (addr_city || ', ' || addr_state || '  ' || addr_postalcode)  AS citystatezip
+  FROM vendaddrinfo
+  LEFT OUTER JOIN addr ON (vendaddr_addr_id=addr_id)
  WHERE (vendaddr_vend_id=&lt;? value(&quot;vend_id&quot;) ?>) 
 ORDER BY vendaddr_code;</sql>
  </querysource>

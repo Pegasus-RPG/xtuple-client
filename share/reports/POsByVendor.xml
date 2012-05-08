@@ -58,8 +58,8 @@
        END AS poitemstatus,
        vend_number,
 &lt;? if exists("byReceiptDate") ?>
-       formatDate(MIN(date(porecv_date))) AS f_date,
-       MIN(date(porecv_date)) AS sortDate,
+       formatDate(MIN(date(recv_date))) AS f_date,
+       MIN(date(recv_date)) AS sortDate,
 &lt;? elseif exists("byDueDate") ?>
        formatDate(MIN(poitem_duedate)) AS f_date,
        MIN(poitem_duedate) AS sortDate,
@@ -70,15 +70,16 @@
        (MIN(poitem_duedate) &lt; CURRENT_DATE) AS late
   FROM vendinfo, poitem,
 &lt;? if exists("byReceiptDate") ?>
-       porecv,
+       recv,
 &lt;? endif ?>
        pohead LEFT OUTER JOIN whsinfo ON (pohead_warehous_id=warehous_id)
  WHERE ((poitem_pohead_id=pohead_id)
    AND  (pohead_vend_id=vend_id)
+   AND  (recv_order_type='PO')
 &lt;? if exists("byReceiptDate") ?>
-   AND  (porecv_itemsite_id=poitem_itemsite_id)
-   AND  (porecv_ponumber=pohead_number)
-   AND  (date(porecv_date) BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+   AND  (recv_itemsite_id=poitem_itemsite_id)
+   AND  (recv_order_number=pohead_number)
+   AND  (date(recv_date) BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? elseif exists("byDueDate") ?>
    AND  (poitem_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? else ?>
