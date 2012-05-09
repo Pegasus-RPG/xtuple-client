@@ -13746,12 +13746,12 @@
     </message>
     <message>
       <width>80</width>
-      <source>Planned</source>
+      <source>Available</source>
       <translation type="unfinished"/>
     </message>
     <message>
       <width>80</width>
-      <source>Availability</source>
+      <source>Projected QOH</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -13776,7 +13776,7 @@
     </message>
     <message>
       <width>80</width>
-      <source>Available</source>
+      <source>To Promise</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -13796,7 +13796,7 @@
     </message>
     <message>
       <width>80</width>
-      <source>Projected QOH</source>
+      <source>Forecast</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -13816,12 +13816,12 @@
     </message>
     <message>
       <width>80</width>
-      <source>Available</source>
+      <source>To Promise</source>
       <translation type="unfinished"/>
     </message>
     <message>
       <width>80</width>
-      <source>Projected QOH</source>
+      <source>Forecast</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -13841,12 +13841,12 @@
     </message>
     <message>
       <width>80</width>
-      <source>Availability</source>
+      <source>Projected QOH</source>
       <translation type="unfinished"/>
     </message>
     <message>
       <width>80</width>
-      <source>Planned</source>
+      <source>Available</source>
       <translation type="unfinished"/>
     </message>
     <message>
