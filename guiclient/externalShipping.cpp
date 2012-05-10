@@ -7,7 +7,7 @@
  * is available at www.xtuple.com/CPAL.  By using this software, you agree
  * to be bound by its terms.
  */
-
+#include <QMessageBox>
 #include "externalShipping.h"
 
 bool externalShipping::userHasPriv(const int /*pMode*/)
@@ -122,11 +122,53 @@ void externalShipping::sHandleOrder()
 
 void externalShipping::sSave()
 {
-  _screen->save();
-  if (_screen->mode() != Screen::New)
-    accept();
-  else
+  if (!_order->isValid())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
+      tr("You may not save this External Shipping Record until you have entered a valid Order Number.") );
     _order->setFocus();
+    return;
+  }
+  if (!_shipment->isValid())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
+      tr("You may not save this External Shipping Record until you have entered a valid Shipment Number.") );
+    _shipment->setFocus();
+    return;
+  }
+  if (_shipper->text().isEmpty())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
+      tr("You may not save this External Shipping Record until you have entered a valid Shipper.") );
+    _shipper->setFocus();
+    return;
+  }
+  if (_packnumTracknum->text().isEmpty())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
+      tr("You may not save this External Shipping Record until you have entered a valid Package Tracking Number.") );
+    _packnumTracknum->setFocus();
+    return;
+  }
+  if (_tracknum->text().isEmpty())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
+      tr("You may not save this External Shipping Record until you have entered a valid Tracking Number.") );
+    _tracknum->setFocus();
+    return;
+  }
+  else
+  {
+    _screen->save();
+  }
+  if (_screen->mode() != Screen::New)
+  {
+    accept();
+  }
+  else
+  {
+    _order->setFocus();
+  }
 }
 
 void externalShipping::sClose()
