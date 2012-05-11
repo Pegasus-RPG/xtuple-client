@@ -119,9 +119,9 @@ void salesAccount::sSave()
                             tr("<p>You must select a Cost of Sales Account for this Assignment."))
            << GuiErrorCheck(_metrics->boolean("EnableReturnAuth") && !_returns->isValid(), _returns,
                             tr("<p>You must select a Returns Account for this Assignment."))
-           << GuiErrorCheck(!_cor->isValid(), _cor,
+           << GuiErrorCheck(_metrics->boolean("EnableReturnAuth") && !_cor->isValid(), _cor,
                             tr("<p>You must select a Cost of Returns Account for this Assignment."))
-           << GuiErrorCheck(!_cow->isValid(), _cow,
+           << GuiErrorCheck(_metrics->boolean("EnableReturnAuth") && !_cow->isValid(), _cow,
                             tr("<p>You must select a Cost of Warranty Account for this Assignment."))
            ;
   }
