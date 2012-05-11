@@ -15,29 +15,6 @@
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
-  <name>head</name>
-  <sql>SELECT &lt;? if exists("warehous_id") ?>
-         ( SELECT warehous_code
-             FROM whsinfo
-            WHERE warehous_id=&lt;? value("warehous_id") ?>)
-       &lt;? else ?>
-         text('All Sites')
-       &lt;? endif ?>
-       AS warehouse,
-       &lt;? if exists("prodcat_id") ?>
-         ( SELECT (prodcat_code||'-'||prodcat_descrip)
-             FROM prodcat
-            WHERE prodcat_id=&lt;? value("prodcat_id") ?>)
-       &lt;? elseif exists("prodcat_pattern") ?>
-         text(&lt;? value("prodcat_pattern") ?>)
-       &lt;? else ?>
-         text('All Categories')
-       &lt;? endif ?>
-       AS prodcat,
-       formatDate(&lt;? value("startDate") ?>) AS startdate,
-       formatDate(&lt;? value("endDate") ?>) AS enddate;</sql>
- </querysource>
  <querysource loadFromDb="true">
   <name>detail</name>
   <mqlgroup>summarizedSalesHistory</mqlgroup>
@@ -171,7 +148,7 @@
     <width>725</width>
     <height>15</height>
    </rect>
-   <bottompad>12</bottompad>
+   <bottompad>11</bottompad>
    <font>
     <face>Arial</face>
     <size>10</size>
@@ -450,7 +427,7 @@
      <width>80</width>
      <height>15</height>
     </rect>
-    <bottompad>12</bottompad>
+    <bottompad>11</bottompad>
     <font>
      <face>Arial</face>
      <size>8</size>
@@ -470,7 +447,7 @@
      <width>90</width>
      <height>15</height>
     </rect>
-    <bottompad>12</bottompad>
+    <bottompad>11</bottompad>
     <font>
      <face>Arial</face>
      <size>8</size>
@@ -490,7 +467,7 @@
      <width>190</width>
      <height>15</height>
     </rect>
-    <bottompad>12</bottompad>
+    <bottompad>11</bottompad>
     <font>
      <face>Arial</face>
      <size>8</size>
