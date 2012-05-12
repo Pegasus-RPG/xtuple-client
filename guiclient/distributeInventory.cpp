@@ -114,6 +114,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                      "                  AND itemsite_recvlocation_dist) THEN TRUE"
                      "            WHEN (invhist_transtype = 'IM'"
                      "                  AND itemsite_issuelocation_dist) THEN TRUE"
+                     "            WHEN (invhist_transtype NOT IN ('RM','RP','RR','RX','IM')"
+                     "                  AND itemsite_location_dist) THEN TRUE"
                      "            ELSE FALSE"
                      "       END AS auto_dist "
                      "FROM itemlocdist JOIN itemsite ON (itemlocdist_itemsite_id=itemsite_id) "
