@@ -31,7 +31,8 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowF
   connect(_post,                           SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_qty,          SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
   connect(_qty,          SIGNAL(textChanged(const QString&)), this, SLOT(sCostUpdated()));
-  connect(_warehouse,                     SIGNAL(newID(int)), this, SLOT(sPopulateQOH(int)));
+  connect(_item,                          SIGNAL(newId(int)), this, SLOT(sPopulateQOH()));
+  connect(_warehouse,                     SIGNAL(newID(int)), this, SLOT(sPopulateQOH()));
   connect(_cost, SIGNAL(textChanged(const QString&)), this, SLOT(sCostUpdated()));
 
   _captive = FALSE;
@@ -271,7 +272,7 @@ void adjustmentTrans::sPost()
   }
 }
 
-void adjustmentTrans::sPopulateQOH(int pWarehousid)
+void adjustmentTrans::sPopulateQOH()
 {
   if (_mode != cView)
   {
@@ -280,7 +281,7 @@ void adjustmentTrans::sPopulateQOH(int pWarehousid)
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id));" );
     q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", pWarehousid);
+    q.bindValue(":warehous_id", _warehouse->id());
     q.exec();
 
     _absolute->setStyleSheet("");

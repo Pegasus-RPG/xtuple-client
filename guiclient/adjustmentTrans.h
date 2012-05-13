@@ -28,7 +28,7 @@ public:
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPost();
-    virtual void sPopulateQOH( int pWarehousid );
+    virtual void sPopulateQOH();
     virtual void sPopulateQty();
     virtual void sCostUpdated();
 

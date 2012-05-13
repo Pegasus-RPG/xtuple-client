@@ -187,61 +187,24 @@ void adjustInvValue::sPost()
     return;
   }
 
-  q.exec("BEGIN;");
-  QString sql = "SELECT <? value(\"newValue\") ?> - itemsite_value AS delta "
-       "FROM itemsite "
-       "WHERE (itemsite_id=<? value(\"itemsite_id\") ?>) "
-       "FOR UPDATE ";
-
   ParameterList params;
-  params.append("newValue", _newValue->toDouble() - 0);  // Use toDouble() on 3.4 and above
+  params.append("newValue", _newValue->toDouble());
   params.append("itemsite_id", _itemsiteid);
   if (_altAccnt->isChecked() && _accnt->id() != -1)
     params.append("accnt_id", _accnt->id());
 
+  QString sql = "SELECT adjustInvValue(<? value('itemsite_id') ?>, "
+                "                      <? value('newValue') ?>, "
+                "                      <? value('accnt_id') ?>) AS result;";
+
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  if (q.first())
+  if (q.lastError().type() != QSqlError::NoError)
   {
-    params.append("delta", q.value("delta").toDouble() - 0);
-
-    sql = "SELECT insertGLTransaction('I/M', '', 'Post Value', "
-         "       'Inventory Value Adjustment for ' || item_number, "
-         "       COALESCE (<? value(\"accnt_id\") ?>,costcat_adjustment_accnt_id), "
-         "       costcat_asset_accnt_id, -1, "
-         "       <? value(\"delta\") ?>, current_date) AS glreturn "
-         "FROM itemsite "
-         " JOIN costcat ON (itemsite_costcat_id=costcat_id) "
-         " JOIN item ON (itemsite_item_id=item_id) "
-         "WHERE (itemsite_id=<? value(\"itemsite_id\") ?>); "
-         "UPDATE itemsite SET "
-         "  itemsite_value=<? value(\"newValue\") ?> "
-         "WHERE (itemsite_id=<? value(\"itemsite_id\") ?>);";
-
-    MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      q.exec("ROLLBACK;");
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    q.exec("ROLLBACK;");
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  else
-  {
-    q.exec("ROLLBACK;");
-    QMessageBox::critical( this, tr("Cannot Post"),
-                           tr( "<p>Itemsite not found. "
-                              "Please see your administrator." ) );
-  }
 
-  q.exec("COMMIT;");
   QMessageBox::information( this, tr("Post Successful"),
                          tr( "<p>Value successfully updated. ") );
   sPopulate();
