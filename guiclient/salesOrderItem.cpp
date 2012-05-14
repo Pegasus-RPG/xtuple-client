@@ -17,6 +17,7 @@
 
 #include <metasql.h>
 
+#include "errorReporter.h"
 #include "itemCharacteristicDelegate.h"
 #include "priceList.h"
 #include "storedProcErrorLookup.h"
@@ -1208,7 +1209,7 @@ void salesOrderItem::sSave()
               else if (q.lastError().type() != QSqlError::NoError)
               {
                 rollback.exec();
-                  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+                systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
                 return;
               }
             }
@@ -1218,43 +1219,73 @@ void salesOrderItem::sSave()
       // Update Supply Order Characteristics
       if (_itemchar->rowCount() > 0)
       {
-        if (QMessageBox::question(this, tr("Change Characteristics?"),
+        bool changed = false;
+        XSqlQuery chgq;
+        chgq.prepare("SELECT (charass_value=:value) AS same"
+                     "  FROM charass"
+                     " WHERE ((charass_char_id=:id)"
+                     "    AND (charass_target_id=:target)"
+                     "    AND (charass_target_type='SI'));");
+        for (int i = 0; i < _itemchar->rowCount(); i++)
+        {
+          chgq.bindValue(":id",     _itemchar->data(_itemchar->index(i, CHAR_ID),
+                                                    Qt::UserRole));
+          chgq.bindValue(":value",  _itemchar->data(_itemchar->index(i, CHAR_VALUE)));
+          chgq.bindValue(":target", _soitemid);
+          if (chgq.exec() && chgq.first() && ! chgq.value("same").toBool())
+          {
+            changed = true;
+            break;
+          }
+          else if (chgq.lastError().type() != QSqlError::NoError)
+          {
+            rollback.exec();
+            ErrorReporter::error(QtCriticalMsg, this, tr("Error Checking Characteristics"),
+                                 chgq, __FILE__, __LINE__);
+            return;
+          }
+        }
+
+        if (changed &&
+            QMessageBox::question(this, tr("Change Characteristics?"),
                                   tr("<p>Should the characteristics for the "
                                        "associated supply order be updated?"),
                                   QMessageBox::Yes | QMessageBox::Default,
                                   QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
         {
-          QModelIndex idx1, idx2, idx3;
-
-          q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
+          QModelIndex idx1, idx2;
+          XSqlQuery charq;
+          charq.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
 
           for (int i = 0; i < _itemchar->rowCount(); i++)
           {
             idx1 = _itemchar->index(i, CHAR_ID);
             idx2 = _itemchar->index(i, CHAR_VALUE);
             if (_createPO)
-              q.bindValue(":target_type", "PI");
+              charq.bindValue(":target_type", "PI");
             else
-              q.bindValue(":target_type", "W");
-            q.bindValue(":target_id", _orderId);
-            q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
-            q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
-            q.exec();
-            if (q.first())
+              charq.bindValue(":target_type", "W");
+            charq.bindValue(":target_id", _orderId);
+            charq.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+            charq.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+            charq.exec();
+            if (charq.first())
             {
-              int result = q.value("result").toInt();
+              int result = charq.value("result").toInt();
               if (result < 0)
               {
                 rollback.exec();
-                      systemError(this, storedProcErrorLookup("updateCharAssignment", result),
-                            __FILE__, __LINE__);
+                ErrorReporter::error(QtCriticalMsg, this, tr("Error with Characteristics"),
+                                     storedProcErrorLookup("updateCharAssignment", result),
+                                     __FILE__, __LINE__);
                 return;
               }
             }
-            else if (q.lastError().type() != QSqlError::NoError)
+            else if (charq.lastError().type() != QSqlError::NoError)
             {
               rollback.exec();
-                      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+              ErrorReporter::error(QtCriticalMsg, this, tr("Error with Characteristics"),
+                                   charq, __FILE__, __LINE__);
               return;
             }
           }
