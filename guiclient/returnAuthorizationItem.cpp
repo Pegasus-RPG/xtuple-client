@@ -59,6 +59,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_saleDiscountFromSale, SIGNAL(editingFinished()),                    this, SLOT(sCalculateSaleFromDiscount()));
   connect(_extendedPrice,        SIGNAL(valueChanged()),                 this, SLOT(sCalculateTax()));
   connect(_item,                 SIGNAL(newId(int)),                     this, SLOT(sPopulateItemInfo()));
+  connect(_item,                 SIGNAL(newId(int)),                     this, SLOT(sPopulateItemsiteInfo()));
   connect(_item,                 SIGNAL(warehouseIdChanged(int)),        this, SLOT(sPopulateItemsiteInfo()));
   connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sPopulateItemsiteInfo()));
   connect(_listPrices,           SIGNAL(clicked()),                      this, SLOT(sListPrices()));
