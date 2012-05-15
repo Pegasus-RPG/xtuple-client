@@ -1437,6 +1437,12 @@ void XComboBox::populate(XSqlQuery pQuery, int pSelected)
     } while (pQuery.next());
 
   setId(selected);
+
+  // TODO: why doesn't setId() handle the following as expected? {
+  updateMapperData();
+  emit newID(_data->_lastId);
+  emit valid((_data->_lastId != -1));
+  // } end why
 }
 
 void XComboBox::populate(const QString & pSql, int pSelected)
