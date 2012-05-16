@@ -399,9 +399,9 @@ void workOrder::sCreate()
     if (!q.first())
     {
       QMessageBox::warning(this, tr("Invalid Site"),
-          tr("The Site which you selected for this Item is not\n"
-             "a \"Supplied At\" Site. You must select a different\n"
-             " Site before creating this Work Order.") );
+          tr("<p>The selected Site for this Work Order is not "
+             "a \"Supplied At\" Site. You must select a different "
+             "Site before creating the Work Order.") );
       return;
     }
     else
@@ -723,7 +723,8 @@ void workOrder::sPopulateItemChar( int pItemid )
 
 void workOrder::sPopulateLeadTime(int pWarehousid)
 {
-  if(_lastWarehousid==pWarehousid && _lastItemid==_item->id())
+  if (pWarehousid < 0 || ! _item->isValid() ||
+      (_lastWarehousid==pWarehousid && _lastItemid==_item->id()))
     return;
 
   _lastItemid = _item->id();
@@ -748,8 +749,8 @@ void workOrder::sPopulateLeadTime(int pWarehousid)
   else
   {
     QMessageBox::warning(this, tr("Invalid Site"),
-        tr("The selected Site for this Work Order is not\n"
-           "a \"Supplied At\" Site. You must select a different\n"
+        tr("<p>The selected Site for this Work Order is not "
+           "a \"Supplied At\" Site. You must select a different "
            "Site before creating the Work Order.") );
     _warehouse->setEnabled(TRUE);
   }
