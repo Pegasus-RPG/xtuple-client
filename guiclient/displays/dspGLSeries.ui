@@ -56,51 +56,6 @@ to be bound by its terms.</comment>
             <property name="enabled">
              <bool>false</bool>
             </property>
-            <item>
-             <property name="text">
-              <string>A/P</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>A/R</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>G/L</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>I/M</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>P/D</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>P/O</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>S/O</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>S/R</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>W/O</string>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>
@@ -113,7 +68,7 @@ to be bound by its terms.</comment>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
-           <widget class="DateCluster" name="_dates">
+           <widget class="DateCluster" name="_dates" native="true">
             <property name="focusPolicy">
              <enum>Qt::StrongFocus</enum>
             </property>

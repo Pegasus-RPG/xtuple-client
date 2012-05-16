@@ -43,6 +43,18 @@ dspGLSeries::dspGLSeries(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Credit"),_bigMoneyColumn, Qt::AlignRight, true, "credit");
   list()->addColumn(tr("Posted"),      _ynColumn, Qt::AlignCenter,true, "posted");
 
+  _source->setAllowNull(false);
+  _source->append(0, tr("A/P"),      "A/P");
+  _source->append(1, tr("A/R"),      "A/R");
+  _source->append(2, tr("G/L"),      "G/L");
+  _source->append(3, tr("I/M"),      "I/M");
+  _source->append(4, tr("P/D"),      "P/D");
+  _source->append(5, tr("P/O"),      "P/O");
+  _source->append(6, tr("S/O"),      "S/O");
+  _source->append(7, tr("S/R"),      "S/R");
+  _source->append(8, tr("W/O"),      "W/O");
+
+
   if (!_metrics->boolean("UseJournals"))
     _typeGroup->hide();
 
@@ -170,7 +182,7 @@ bool dspGLSeries::setParams(ParameterList &params)
   _dates->appendValue(params);
 
   if(_selectedSource->isChecked())
-    params.append("source", _source->currentText());
+    params.append("source", _source->code());
 
   if(_jrnlGroup->isChecked())
   {
