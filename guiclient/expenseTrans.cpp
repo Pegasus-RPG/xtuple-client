@@ -15,6 +15,8 @@
 #include <QValidator>
 #include <QVariant>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "distributeInventory.h"
 #include "inputManager.h"
 #include "storedProcErrorLookup.h"
@@ -23,8 +25,6 @@ expenseTrans::expenseTrans(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_post,                 SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_qty,SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
@@ -100,27 +100,28 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _close->setFocus();
 
-      q.prepare( "SELECT * "
-                 "FROM invhist "
-                 "WHERE (invhist_id=:invhist_id);" );
-      q.bindValue(":invhist_id", invhistid);
-      q.exec();
-      if (q.first())
+      XSqlQuery histq;
+      histq.prepare("SELECT invhist.*, invhistexpcat_expcat_id"
+                "  FROM invhist"
+                "  LEFT OUTER JOIN invhistexpcat ON (invhist_id=invhistexpcat_invhist_id)"
+                " WHERE (invhist_id=:invhist_id);" );
+      histq.bindValue(":invhist_id", invhistid);
+      histq.exec();
+      if (histq.first())
       {
-        _transDate->setDate(q.value("invhist_transdate").toDate());
-        _username->setText(q.value("invhist_user").toString());
-        _qty->setDouble(q.value("invhist_invqty").toDouble());
-        _beforeQty->setDouble(q.value("invhist_qoh_before").toDouble());
-        _afterQty->setDouble(q.value("invhist_qoh_after").toDouble());
-        _documentNum->setText(q.value("invhist_ordnumber"));
-        _notes->setText(q.value("invhist_comments").toString());
-        _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
+        _transDate->setDate(histq.value("invhist_transdate").toDate());
+        _username->setText(histq.value("invhist_user").toString());
+        _qty->setDouble(histq.value("invhist_invqty").toDouble());
+        _beforeQty->setDouble(histq.value("invhist_qoh_before").toDouble());
+        _afterQty->setDouble(histq.value("invhist_qoh_after").toDouble());
+        _documentNum->setText(histq.value("invhist_ordnumber"));
+        _notes->setText(histq.value("invhist_comments").toString());
+        _item->setItemsiteid(histq.value("invhist_itemsite_id").toInt());
+        _expcat->setId(histq.value("invhistexpcat_expcat_id").toInt());
       }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting History"),
+                                    histq, __FILE__, __LINE__))
 	return UndefinedError;
-      }
 
       _close->setFocus();
     }
@@ -131,69 +132,45 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
 
 void expenseTrans::sPost()
 {
-  struct {
-    bool        condition;
-    QString     msg;
-    QWidget     *widget;
-  } error[] = {
-    { ! _item->isValid(),
-      tr("You must select an Item before posting this transaction."), _item },
-    { _qty->text().length() == 0,
-      tr("<p>You must enter a Quantity before posting this Transaction."),
-      _qty },
-    { !_expcat->isValid(), tr("You must select an Expense Category before "
-                              "posting this Transaction."), _expcat },
-    { true, "", NULL }
-  };
-
-  int errIndex;
-  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
-    ;
-  if (! error[errIndex].msg.isEmpty())
-  {
-    QMessageBox::critical(this, tr("Cannot Post Transaction"),
-                          error[errIndex].msg);
-    error[errIndex].widget->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(! _item->isValid(), _item,
+                          tr("You must select an Item before posting this "
+                             "transaction."))
+         << GuiErrorCheck(_qty->text().isEmpty(), _qty,
+                          tr("<p>You must enter a Quantity before posting this "
+                             "transaction."))
+         << GuiErrorCheck(!_expcat->isValid(), _expcat,
+                          tr("You must select an Expense Category before "
+                             "posting this transaction."))
+         ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Post Transaction"), errors))
     return;
-  }
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible distribution cancelations
-  q.prepare( "SELECT invExpense(itemsite_id, :qty, :expcatid, :docNumber,"
-             "                  :comments, :date, :prj_id) AS result "
-             "FROM itemsite "
-             "WHERE ( (itemsite_item_id=:item_id)"
-             " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":qty", _qty->toDouble());
-  q.bindValue(":expcatid", _expcat->id());
-  q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->toPlainText());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":date",        _transDate->date());
+  XSqlQuery begin("BEGIN;");	// because of possible distribution cancelations
+  XSqlQuery expq;
+  expq.prepare("SELECT invExpense(itemsite_id, :qty, :expcatid, :docNumber,"
+               "                  :comments, :date, :prj_id) AS result"
+               "  FROM itemsite"
+               " WHERE ((itemsite_item_id=:item_id)"
+               "    AND (itemsite_warehous_id=:warehous_id));" );
+  expq.bindValue(":qty",         _qty->toDouble());
+  expq.bindValue(":expcatid",    _expcat->id());
+  expq.bindValue(":docNumber",   _documentNum->text());
+  expq.bindValue(":comments",    _notes->toPlainText());
+  expq.bindValue(":item_id",     _item->id());
+  expq.bindValue(":warehous_id", _warehouse->id());
+  expq.bindValue(":date",        _transDate->date());
   if (_prjid != -1)
-    q.bindValue(":prj_id", _prjid);
-  q.exec();
+    expq.bindValue(":prj_id", _prjid);
+  expq.exec();
 
-  if (q.first())
+  if (expq.first())
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      rollback.exec();
-      systemError(this, storedProcErrorLookup("invExpense", result),
-                  __FILE__, __LINE__);
-      return;
-    }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
-    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    if (distributeInventory::SeriesAdjust(expq.value("result").toInt(),
+                                          this) == XDialog::Rejected)
     {
       rollback.exec();
       QMessageBox::information(this, tr("Expense Transaction"),
@@ -201,7 +178,7 @@ void expenseTrans::sPost()
       return;
     }
 
-    q.exec("COMMIT;");
+    XSqlQuery commit("COMMIT;");
 
     if (_captive)
       close();
@@ -219,19 +196,20 @@ void expenseTrans::sPost()
       _item->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (expq.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    ErrorReporter::error(QtCriticalMsg, this, tr("Could Not Post"),
+                         expq, __FILE__, __LINE__);
     return;
   }
   else
   {
     rollback.exec();
-    systemError( this,
-                tr("<p>No transaction was done because Item %1 "
-                   "was not found at Site %2.")
-                .arg(_item->itemNumber()).arg(_warehouse->currentText()));
+    ErrorReporter::error(QtCriticalMsg, this, tr("Item not found"),
+                         tr("<p>No transaction was done because Item %1 "
+                            "was not found at Site %2.")
+                         .arg(_item->itemNumber(), _warehouse->currentText()));
   }
 }
 
@@ -239,24 +217,23 @@ void expenseTrans::sPopulateQOH(int pWarehousid)
 {
   if (_mode != cView)
   {
-    q.prepare( "SELECT itemsite_qtyonhand "
+    XSqlQuery qohq;
+    qohq.prepare( "SELECT itemsite_qtyonhand "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", pWarehousid);
-    q.exec();
-    if (q.first())
+    qohq.bindValue(":item_id", _item->id());
+    qohq.bindValue(":warehous_id", pWarehousid);
+    qohq.exec();
+    if (qohq.first())
     {
-      _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
-      _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
+      _cachedQOH = qohq.value("itemsite_qtyonhand").toDouble();
+      _beforeQty->setDouble(qohq.value("itemsite_qtyonhand").toDouble());
       sPopulateQty();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting QOH"),
+                                  qohq, __FILE__, __LINE__))
       return;
-    }
   }
 }
 
