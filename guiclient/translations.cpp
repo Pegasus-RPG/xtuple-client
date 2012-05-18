@@ -11,8 +11,6 @@
 #include "translations.h"
 
 #include <QDebug>
-#include <QVariant>
-#include <QMessageBox>
 #include <QDesktopServices>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -30,10 +28,11 @@ translations::translations(QWidget* parent, const char* name, Qt::WFlags fl)
 
   nwam = new QNetworkAccessManager(this);
 
-  connect(_locale, SIGNAL(newID(int)), this, SLOT(sLocaleChanged()));
-  connect(_translations, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(sLanguageSelected(QTreeWidgetItem*, int)));
-  connect(_translations, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*, int)));
-  connect(nwam, SIGNAL(finished(QNetworkReply*)), this, SLOT(finished(QNetworkReply*)));
+  connect(_check,       SIGNAL(clicked()),                                 this, SLOT(sDownload()));
+  connect(_locale,      SIGNAL(newID(int)),                                this, SLOT(sLocaleChanged()));
+  connect(_translations,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),  this, SLOT(sLanguageSelected(QTreeWidgetItem*, int)));
+  connect(_translations,SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*, int)));
+  connect(nwam,         SIGNAL(finished(QNetworkReply*)),                  this, SLOT(finished(QNetworkReply*)));
 
   _translations->addColumn(tr("Package"),  _itemColumn, Qt::AlignLeft,   true, "package" );
   _translations->addColumn(tr("Found"),    _ynColumn,   Qt::AlignCenter, true, "found" );
@@ -216,8 +215,8 @@ void translations::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int /*pColumn
 
 void translations::sDownload()
 {
-  QTreeWidgetItem * item = _translations->currentItem();
-  if(item)
+  foreach (XTreeWidgetItem *item, _translations->selectedItems())
     sLanguageSelected(item, 0);
+  _translations->clearSelection();
 }
 

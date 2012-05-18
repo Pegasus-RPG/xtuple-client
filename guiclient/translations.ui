@@ -87,10 +87,31 @@ to be bound by its terms.</comment>
        </property>
       </widget>
      </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="_close">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3">
+      <widget class="QPushButton" name="_check">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Check for Translations</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
-    <widget class="XTreeWidget" name="_translations"/>
+    <widget class="XTreeWidget" name="_translations">
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -110,7 +131,42 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_locale</tabstop>
   <tabstop>_translations</tabstop>
+  <tabstop>_check</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>translations</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>413</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_translations</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_check</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>236</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>92</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
