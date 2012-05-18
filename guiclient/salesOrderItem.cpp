@@ -2715,7 +2715,7 @@ void salesOrderItem::populate()
 
   XSqlQuery item;
   QString sql;
-  sql = "<? if exists(\"isSalesOrder\") ?>"
+  sql = "<? if exists('isSalesOrder') ?>"
           "SELECT itemsite_leadtime, warehous_id, warehous_code, "
           "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
           "       item_inv_uom_id,"
@@ -2748,7 +2748,7 @@ void salesOrderItem::populate()
           " AND (itemsite_item_id=item_id)"
           " AND (item_inv_uom_id=uom_id)"
           " AND (cohead_id=coitem_cohead_id)"
-          " AND (coitem_id=<? value(\"id\") ?>) "
+          " AND (coitem_id=<? value('id') ?>) "
           " AND (locale_id = usr_locale_id));"
           "<? else ?>"
             "SELECT itemsite_leadtime, COALESCE(warehous_id, -1) AS warehous_id, "
@@ -2784,7 +2784,7 @@ void salesOrderItem::populate()
             " WHERE ( (quitem_item_id=item_id)"
             "   AND   (item_inv_uom_id=uom_id)"
             "   AND   (quhead_id=quitem_quhead_id)"
-            "   AND   (quitem_id=<? value(\"id\") ?>) "
+            "   AND   (quitem_id=<? value('id') ?>) "
             "   AND   (locale_id = usr_locale_id));"
             "<? endif ?>";
 
@@ -3003,10 +3003,12 @@ void salesOrderItem::populate()
   else if (ISORDER(_mode))
     _createOrder->setChecked(FALSE);
 
+  // _warehouse is populated with active records. append if this one is inactive
   if (ISORDER(_mode))
   {
-    _warehouse->clear();
-    _warehouse->append(item.value("warehous_id").toInt(), item.value("warehous_code").toString());
+    _warehouse->append(item.value("warehous_id").toInt(),
+                       item.value("warehous_code").toString());
+    _warehouse->setId(item.value("warehous_id").toInt());
     _warehouse->setEnabled(FALSE);
 
     if ( (cView != _mode) && (item.value("coitem_status").toString() == "O") )
@@ -3024,8 +3026,9 @@ void salesOrderItem::populate()
     }
     else
     {
-      _warehouse->clear();
-      _warehouse->append(item.value("warehous_id").toInt(), item.value("warehous_code").toString());
+      _warehouse->append(item.value("warehous_id").toInt(),
+                         item.value("warehous_code").toString());
+      _warehouse->setId(item.value("warehous_id").toInt());
       _warehouse->setEnabled(FALSE);
     }
   }
@@ -3550,10 +3553,10 @@ void salesOrderItem::sHandleScheduleDate()
     params.append("shipto_id", _shiptoid);
     params.append("shipDate", _scheduledDate->date());
 
-    QString sql("SELECT customerCanPurchase(<? value(\"item_id\") ?>, "
-                "<? value(\"cust_id\") ?>, "
-                "<? value(\"shipto_id\") ?>, "
-                "<? value(\"shipDate\") ?>) AS canPurchase; ");
+    QString sql("SELECT customerCanPurchase(<? value('item_id') ?>, "
+                "<? value('cust_id') ?>, "
+                "<? value('shipto_id') ?>, "
+                "<? value('shipDate') ?>) AS canPurchase; ");
 
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
