@@ -72,6 +72,8 @@ XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
 
 XComboBoxPrivate::~XComboBoxPrivate()
 {
+  foreach (int key, _editorMap.keys())
+    delete _editorMap.take(key);
 }
 
 int XComboBoxPrivate::numberOfCurrencies()
