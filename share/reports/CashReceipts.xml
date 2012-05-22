@@ -108,7 +108,10 @@ WHERE ( (aropen_cust_id=cust_id)
 &lt;? else ?>
 -- New mode
 SELECT (cashrcpt_amount / cashrcpt_curr_rate) AS base_applied
-FROM cashrcpt JOIN custinfo ON (cust_id=cashrcpt_cust_id) LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id)
+FROM cashrcpt JOIN custinfo ON (cust_id=cashrcpt_cust_id)
+&lt;? if exists("custgrp_id") ?>
+ LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id)
+&lt;? endif ?>
 WHERE ( (cashrcpt_distdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
 &lt;? if exists("cust_id") ?>
   AND   (cust_id=&lt;? value("cust_id") ?>)
