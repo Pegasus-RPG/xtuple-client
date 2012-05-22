@@ -36,6 +36,7 @@ printStatementByCustomer::printStatementByCustomer(QWidget* parent, const char* 
                         " WHERE (cust_id=<? value('docid') ?>);" ;
 
   connect(_cust,          SIGNAL(valid(bool)), this, SLOT(setPrintEnabled(bool)));
+  connect(_cust,           SIGNAL(newId(int)), this, SLOT(setId(int)));
   connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sPopulate(XSqlQuery*)));
 }
 
