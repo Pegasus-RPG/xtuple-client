@@ -781,7 +781,7 @@ void salesOrderItem::sSave()
     {
       XSqlQuery itemsrcdefault;
       itemsrcdefault.prepare("SELECT itemsrc_id FROM itemsrc "
-                             "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) ");
+                             "WHERE ((itemsrc_item_id=:item_id) AND (itemsrc_default) AND (itemsrc_active)) ");
       itemsrcdefault.bindValue(":item_id", _item->id());
       itemsrcdefault.exec();
       if (itemsrcdefault.first())
@@ -1963,6 +1963,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         itemsrc.prepare("SELECT itemsrc_id, itemsrc_item_id "
                         "FROM itemsrc "
                         "WHERE (itemsrc_item_id = :item_id) "
+                        "  AND (itemsrc_active) "
                         "LIMIT 1;");
         itemsrc.bindValue(":item_id", _item->id());
         itemsrc.exec();
