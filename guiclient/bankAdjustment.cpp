@@ -36,7 +36,7 @@ bankAdjustment::bankAdjustment(QWidget* parent, const char* name, Qt::WFlags fl)
 			 "       bankadjtype_name "
                          "FROM bankadjtype "
                          "ORDER BY bankadjtype_name;");
-  
+
   _bankadjid = -1;
 }
 
@@ -193,9 +193,9 @@ void bankAdjustment::sBankAccount(int accountId)
     bankQ.exec();
     if (bankQ.first())
 	_amount->setId(bankQ.value("bankaccnt_curr_id").toInt());
-    else
+    if (bankQ.lastError().type() != QSqlError::NoError)
 	QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
 			      .arg(__FILE__)
 			      .arg(__LINE__),
-			      q.lastError().databaseText());
+                              bankQ.lastError().databaseText());
 }
