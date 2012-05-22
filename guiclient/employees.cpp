@@ -161,6 +161,8 @@ void employees::sPrint()
   ParameterList params;
   if (!_warehouse->isAll())
     params.append("warehouse_id", _warehouse->id());
+  if (!_showInactive->isChecked())
+    params.append("activeOnly", true);
 
   orReport report("EmployeeList", params);
   if (report.isValid())
