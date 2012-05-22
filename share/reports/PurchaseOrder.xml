@@ -37,7 +37,7 @@
        va.addr_line1 AS vend_address1,
        va.addr_line2 AS vend_address2,
        va.addr_line3 AS vend_address3,
-       (va.addr_city || '  '  || va.addr_state || '  ' || va.addr_zip) AS vendcitystatezip,
+       (va.addr_city || '  '  || va.addr_state || '  ' || va.addr_postalcode) AS vendcitystatezip,
        formataddr(va.addr_line1, va.addr_line2, va.addr_line3, (va.addr_city || '  '  || va.addr_state || '   ' || va.addr_postalcode), va.addr_country) as vend_address,
        warehous_descrip,
        wa.addr_line1 as warehous_addr1,
@@ -55,8 +55,9 @@
  FROM pohead
    LEFT OUTER JOIN usr ON (pohead.pohead_agent_username = usr.usr_username)
    LEFT OUTER JOIN terms ON (pohead_terms_id = terms_id),
-   vendinfo, whsinfo
-   LEFT OUTER JOIN addr va ON (vend_addr_id=va.addr_id)
+   vendinfo
+   LEFT OUTER JOIN addr va ON (vend_addr_id=va.addr_id),
+   whsinfo
    LEFT OUTER JOIN addr wa ON (warehous_addr_id = wa.addr_id)
  WHERE ((pohead_vend_id=vend_id)
    AND (pohead_warehous_id = warehous_id)
@@ -145,20 +146,20 @@ WHERE
        terms_descrip,
        vend_number,
        vend_name,
-       vend_address1,
-       vend_address2,
-       vend_address3,
-       (vend_city || '  '  || vend_state || '  ' || vend_zip) AS vendcitystatezip,
+       va.addr_line1 AS vend_address1,
+       va.addr_line2 AS vend_address2,
+       va.addr_line3 AS vend_address3,
+       (va.addr_city || '  '  || va.addr_state || '  ' || va.addr_postalcode) AS vendcitystatezip,
        formatcntctname(pohead_vend_cntct_id) AS vend_contact,
        formataddr(pohead_vendaddress1, pohead_vendaddress2, pohead_vendaddress3, (pohead_vendcity || '  '  || pohead_vendstate || '   ' || pohead_vendzipcode), pohead_vendcountry) as vend_address,
        warehous_descrip,
-       addr_line1 as warehous_addr1,
-       addr_line2 as warehous_addr2,
-       addr_line3 as warehous_addr3,
-       addr_city  as warehous_addr4,
-       addr_postalcode as zip,
-       addr_state,
-       addr_country,
+       wa.addr_line1 as warehous_addr1,
+       wa.addr_line2 as warehous_addr2,
+       wa.addr_line3 as warehous_addr3,
+       wa.addr_city  as warehous_addr4,
+       wa.addr_postalcode as zip,
+       wa.addr_state,
+       wa.addr_country,
        formatcntctname(pohead_shipto_cntct_id) AS shipto_contact,
        formataddr(pohead_shiptoaddress1, pohead_shiptoaddress2, pohead_shiptoaddress3, (pohead_shiptocity || ' ' || pohead_shiptostate || ' ' || pohead_shiptozipcode), pohead_shiptocountry) as shipto_address,
        pohead_agent_username AS username,
@@ -166,8 +167,10 @@ WHERE
        text(&lt;? value("title") ?>) AS title
  FROM pohead
    LEFT OUTER JOIN terms ON (pohead_terms_id = terms_id),
-   vend, whsinfo
-   LEFT OUTER JOIN addr ON (warehous_addr_id = addr_id)
+   vendinfo
+   LEFT OUTER JOIN addr va ON (vend_addr_id=va.addr_id),
+   whsinfo
+   LEFT OUTER JOIN addr wa ON (warehous_addr_id = wa.addr_id)
  WHERE ((pohead_vend_id=vend_id)
    AND (pohead_warehous_id = warehous_id)
    AND (pohead_id=&lt;? value("pohead_id") ?>) );</sql>
