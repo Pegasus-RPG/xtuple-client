@@ -101,7 +101,7 @@ void dspVendorAPHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected,
     if(item->altId() == -1 && item->text(1)==tr("Voucher"))
     {
       menuItem = pMenu->addAction(tr("View Voucher..."), this, SLOT(sViewVoucher()));
-      menuItem->setEnabled(_privileges->check("ViewVouchers"));
+      menuItem->setEnabled(_privileges->check("ViewVouchers") || _privileges->check("MaintainVouchers"));
 
       if(item->rawValue("amount")==item->rawValue("balance"))
       {
