@@ -3,6 +3,12 @@
  <title>P/Os By Vendor</title>
  <name>POsByVendor</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -45,71 +51,10 @@
        AS f_descrip
 </sql>
  </querysource>
- <querysource>
+ <querysource loadFromDb="true">
   <name>detail</name>
-  <sql>SELECT pohead_id, pohead_number,
-       warehous_code AS warehousecode,
-       CASE WHEN(poitem_status='C') THEN TEXT('Closed')
-            WHEN(poitem_status='U') THEN TEXT('Unposted')
-            WHEN(poitem_status='O' AND (SUM(poitem_qty_received-poitem_qty_returned) > 0) AND (SUM(poitem_qty_ordered)>SUM(poitem_qty_received-poitem_qty_returned))) THEN TEXT('Partial')
-            WHEN(poitem_status='O' AND (SUM(poitem_qty_received-poitem_qty_returned) > 0) AND (SUM(poitem_qty_ordered)=SUM(poitem_qty_received-poitem_qty_returned))) THEN TEXT('Received')
-            WHEN(poitem_status='O') THEN TEXT('Open')
-            ELSE poitem_status
-       END AS poitemstatus,
-       vend_number,
-&lt;? if exists("byReceiptDate") ?>
-       formatDate(MIN(date(recv_date))) AS f_date,
-       MIN(date(recv_date)) AS sortDate,
-&lt;? elseif exists("byDueDate") ?>
-       formatDate(MIN(poitem_duedate)) AS f_date,
-       MIN(poitem_duedate) AS sortDate,
-&lt;? else ?>
-       formatDate(pohead_orderdate) AS f_date,
-       pohead_orderdate AS sortDate,
-&lt;? endif ?>
-       (MIN(poitem_duedate) &lt; CURRENT_DATE) AS late
-  FROM vendinfo, poitem,
-&lt;? if exists("byReceiptDate") ?>
-       recv,
-&lt;? endif ?>
-       pohead LEFT OUTER JOIN whsinfo ON (pohead_warehous_id=warehous_id)
- WHERE ((poitem_pohead_id=pohead_id)
-   AND  (pohead_vend_id=vend_id)
-   AND  (recv_order_type='PO')
-&lt;? if exists("byReceiptDate") ?>
-   AND  (recv_itemsite_id=poitem_itemsite_id)
-   AND  (recv_order_number=pohead_number)
-   AND  (date(recv_date) BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? elseif exists("byDueDate") ?>
-   AND  (poitem_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? else ?>
-   AND  (pohead_orderdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-&lt;? endif ?>
-&lt;? if exists("vend_id") ?>
-   AND  (vend_id=&lt;? value("vend_id") ?>)
-&lt;? endif ?>
-&lt;? if exists("warehous_id") ?>
-   AND (pohead_warehous_id=&lt;? value("warehous_id") ?>)
-&lt;? endif ?>
-&lt;? if not exists("showClosed") ?>
-   AND (poitem_status!='C')
-&lt;? endif ?>
-&lt;? if exists("descrip_pattern") ?>
-  AND ((poitem_vend_item_descrip ~* &lt;? value("descrip_pattern") ?>)
-    OR (poitem_itemsite_id IN (
-      SELECT itemsite_id
-        FROM itemsite, item
-       WHERE ((itemsite_item_id=item_id)
-         AND  ((item_descrip1 ~* &lt;? value("descrip_pattern") ?>)
-            OR (item_descrip2 ~* &lt;? value("descrip_pattern") ?>)))
-                              )))
-&lt;? endif ?>
-
-)
-GROUP BY pohead_id, pohead_number, warehous_code,
-         poitem_status, pohead_orderdate, vend_number
-ORDER BY sortDate
-</sql>
+  <mqlgroup>purchaseOrders</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <rpthead>
   <height>221</height>
@@ -512,7 +457,7 @@ ORDER BY sortDate
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_date</column>
+     <column>f_orderdate</column>
     </data>
    </field>
    <field>
@@ -550,7 +495,7 @@ ORDER BY sortDate
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>poitemstatus</column>
+     <column>f_status</column>
     </data>
    </field>
    <field>
