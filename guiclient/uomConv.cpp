@@ -115,6 +115,7 @@ enum SetResponse uomConv::set(const ParameterList &pParams)
 
 void uomConv::sSave()
 {
+  XSqlQuery uomSave;
   bool valid;
   if (_fromValue->toDouble(&valid) == 0)
   {
@@ -133,16 +134,16 @@ void uomConv::sSave()
   }
 
   if (_mode == cEdit)
-    q.prepare( "UPDATE uomconv "
+    uomSave.prepare( "UPDATE uomconv "
                "   SET uomconv_from_value=:uomconv_from_value,"
                "       uomconv_to_value=:uomconv_to_value,"
                "       uomconv_fractional=:uomconv_fractional "
                " WHERE(uomconv_id=:uomconv_id);" );
   else if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('uomconv_uomconv_id_seq') AS uomconv_id");
-    if (q.first())
-      _uomconvid = q.value("uomconv_id").toInt();
+    uomSave.exec("SELECT NEXTVAL('uomconv_uomconv_id_seq') AS uomconv_id");
+    if (uomSave.first())
+      _uomconvid = uomSave.value("uomconv_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -151,19 +152,19 @@ void uomConv::sSave()
       return;
     }
  
-    q.prepare( "INSERT INTO uomconv "
+    uomSave.prepare( "INSERT INTO uomconv "
                "( uomconv_id, uomconv_from_uom_id, uomconv_from_value, uomconv_to_uom_id, uomconv_to_value, uomconv_fractional ) "
                "VALUES "
                "( :uomconv_id, :uomconv_from_uom_id, :uomconv_from_value, :uomconv_to_uom_id, :uomconv_to_value, :uomconv_fractional );" );
   }
 
-  q.bindValue(":uomconv_id", _uomconvid);
-  q.bindValue(":uomconv_from_uom_id", _uomFrom->id());
-  q.bindValue(":uomconv_to_uom_id", _uomTo->id());
-  q.bindValue(":uomconv_from_value", _fromValue->toDouble());
-  q.bindValue(":uomconv_to_value", _toValue->toDouble());
-  q.bindValue(":uomconv_fractional", QVariant(_fractional->isChecked()));
-  q.exec();
+  uomSave.bindValue(":uomconv_id", _uomconvid);
+  uomSave.bindValue(":uomconv_from_uom_id", _uomFrom->id());
+  uomSave.bindValue(":uomconv_to_uom_id", _uomTo->id());
+  uomSave.bindValue(":uomconv_from_value", _fromValue->toDouble());
+  uomSave.bindValue(":uomconv_to_value", _toValue->toDouble());
+  uomSave.bindValue(":uomconv_fractional", QVariant(_fractional->isChecked()));
+  uomSave.exec();
 
   accept();
 }
@@ -198,18 +199,19 @@ void uomConv::sToChanged()
 
 void uomConv::sCheck()
 {
+  XSqlQuery uomCheck;
   if ( (_mode == cNew) )
   {
-    q.prepare( "SELECT uomconv_id"
+    uomCheck.prepare( "SELECT uomconv_id"
                "  FROM uomconv"
                " WHERE((uomconv_from_uom_id=:from AND uomconv_to_uom_id=:to)"
                "    OR (uomconv_from_uom_id=:to AND uomconv_to_uom_id=:from));" );
-    q.bindValue(":from", _uomFrom->id());
-    q.bindValue(":to", _uomTo->id());
-    q.exec();
-    if (q.first())
+    uomCheck.bindValue(":from", _uomFrom->id());
+    uomCheck.bindValue(":to", _uomTo->id());
+    uomCheck.exec();
+    if (uomCheck.first())
     {
-      _uomconvid = q.value("uomconv_id").toInt();
+      _uomconvid = uomCheck.value("uomconv_id").toInt();
       _mode = cEdit;
       _uomTo->setEnabled(false);
       _uomFrom->setEnabled(false);
@@ -220,22 +222,23 @@ void uomConv::sCheck()
 
 void uomConv::populate()
 {
-  q.prepare( "SELECT uomconv_from_uom_id,"
+  XSqlQuery uompopulate;
+  uompopulate.prepare( "SELECT uomconv_from_uom_id,"
              "       uomconv_from_value,"
              "       uomconv_to_uom_id,"
              "       uomconv_to_value,"
              "       uomconv_fractional "
              "  FROM uomconv"
              " WHERE(uomconv_id=:uomconv_id);" );
-  q.bindValue(":uomconv_id", _uomconvid);
-  q.exec();
-  if (q.first())
+  uompopulate.bindValue(":uomconv_id", _uomconvid);
+  uompopulate.exec();
+  if (uompopulate.first())
   {
-    _uomFrom->setId(q.value("uomconv_from_uom_id").toInt());
-    _uomTo->setId(q.value("uomconv_to_uom_id").toInt());
-    _fromValue->setText(q.value("uomconv_from_value").toDouble());
-    _toValue->setText(q.value("uomconv_to_value").toDouble());
-    _fractional->setChecked(q.value("uomconv_fractional").toBool());
+    _uomFrom->setId(uompopulate.value("uomconv_from_uom_id").toInt());
+    _uomTo->setId(uompopulate.value("uomconv_to_uom_id").toInt());
+    _fromValue->setText(uompopulate.value("uomconv_from_value").toDouble());
+    _toValue->setText(uompopulate.value("uomconv_to_value").toDouble());
+    _fractional->setChecked(uompopulate.value("uomconv_fractional").toBool());
   }
 }
 

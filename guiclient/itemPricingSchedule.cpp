@@ -28,6 +28,7 @@
 itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery itemitemPricingSchedule;
   setupUi(this);
 
 
@@ -59,7 +60,7 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   _currency->setLabel(_currencyLit);
   _updated = QDate::currentDate();
   
-  q.exec("BEGIN;");
+  itemitemPricingSchedule.exec("BEGIN;");
   _rejectedMsg = tr("The application has encountered an error and must "
                     "stop editing this Pricing Schedule.\n%1");
 }
@@ -83,6 +84,7 @@ void itemPricingSchedule::languageChange()
 
 enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
 {
+  XSqlQuery itemet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -140,12 +142,12 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
 
   if ( (_mode == cNew) )
   {
-    q.exec("SELECT NEXTVAL('ipshead_ipshead_id_seq') AS ipshead_id;");
-    if (q.first())
-      _ipsheadid = q.value("ipshead_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    itemet.exec("SELECT NEXTVAL('ipshead_ipshead_id_seq') AS ipshead_id;");
+    if (itemet.first())
+      _ipsheadid = itemet.value("ipshead_id").toInt();
+    else if (itemet.lastError().type() != QSqlError::NoError)
     {
-	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+	systemError(this, _rejectedMsg.arg(itemet.lastError().databaseText()),
                   __FILE__, __LINE__);
         reject();
         return UndefinedError;
@@ -157,6 +159,7 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
 
 bool itemPricingSchedule::sSave(bool p)
 {
+  XSqlQuery itemSave;
   if (_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical( this, tr("Enter Name"),
@@ -189,14 +192,14 @@ bool itemPricingSchedule::sSave(bool p)
     return false;
   }
 
-  q.prepare("SELECT ipshead_id"
+  itemSave.prepare("SELECT ipshead_id"
             "  FROM ipshead"
             " WHERE ((ipshead_name=:ipshead_name)"
             "   AND  (ipshead_id != :ipshead_id))");
-  q.bindValue(":ipshead_id", _ipsheadid);
-  q.bindValue(":ipshead_name", _name->text());
-  q.exec();
-  if(q.first())
+  itemSave.bindValue(":ipshead_id", _ipsheadid);
+  itemSave.bindValue(":ipshead_name", _name->text());
+  itemSave.exec();
+  if(itemSave.first())
   {
     QMessageBox::warning(this, tr("Pricing Schedule Already Exists"),
                       tr("A Pricing Schedule with the entered Name already exists."));
@@ -204,7 +207,7 @@ bool itemPricingSchedule::sSave(bool p)
   }
 
   if (_mode == cNew) 
-    q.prepare( "INSERT INTO ipshead "
+    itemSave.prepare( "INSERT INTO ipshead "
                "( ipshead_id, ipshead_name, ipshead_descrip,"
                "  ipshead_effective, ipshead_expires, "
 	       "  ipshead_curr_id, ipshead_updated ) "
@@ -213,23 +216,23 @@ bool itemPricingSchedule::sSave(bool p)
                "  :ipshead_effective, :ipshead_expires, "
 	       "  :ipshead_curr_id, CURRENT_DATE );" );
   else if ( (_mode == cEdit) || (_mode == cCopy) )
-    q.prepare( "UPDATE ipshead "
+    itemSave.prepare( "UPDATE ipshead "
                "SET ipshead_name=:ipshead_name, ipshead_descrip=:ipshead_descrip,"
                "    ipshead_effective=:ipshead_effective, ipshead_expires=:ipshead_expires, "
 	       "    ipshead_curr_id=:ipshead_curr_id, "
 	       "    ipshead_updated=CURRENT_DATE "
                "WHERE (ipshead_id=:ipshead_id);" );
 
-  q.bindValue(":ipshead_id", _ipsheadid);
-  q.bindValue(":ipshead_name", _name->text());
-  q.bindValue(":ipshead_descrip", _descrip->text());
-  q.bindValue(":ipshead_effective", _dates->startDate());
-  q.bindValue(":ipshead_expires", _dates->endDate());
-  q.bindValue(":ipshead_curr_id", _currency->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  itemSave.bindValue(":ipshead_id", _ipsheadid);
+  itemSave.bindValue(":ipshead_name", _name->text());
+  itemSave.bindValue(":ipshead_descrip", _descrip->text());
+  itemSave.bindValue(":ipshead_effective", _dates->startDate());
+  itemSave.bindValue(":ipshead_expires", _dates->endDate());
+  itemSave.bindValue(":ipshead_curr_id", _currency->id());
+  itemSave.exec();
+  if (itemSave.lastError().type() != QSqlError::NoError)
   {
-	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+	systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
                   __FILE__, __LINE__);
         reject();
   }
@@ -238,7 +241,7 @@ bool itemPricingSchedule::sSave(bool p)
   
   if (p)
   {
-    q.exec("COMMIT;");
+    itemSave.exec("COMMIT;");
     done(_ipsheadid);
   }
   return true;
@@ -246,6 +249,7 @@ bool itemPricingSchedule::sSave(bool p)
 
 void itemPricingSchedule::sSave()
 {
+  XSqlQuery itemSave;
   sSave(true) ;  
 }
 
@@ -308,22 +312,23 @@ void itemPricingSchedule::sEdit()
 
 void itemPricingSchedule::sDelete()
 {
+  XSqlQuery itemDelete;
   if(_ipsitem->altId() == 1)
-    q.prepare( "DELETE FROM ipsitem "
+    itemDelete.prepare( "DELETE FROM ipsitem "
                "WHERE (ipsitem_id=:ipsitem_id);" );
   else if(_ipsitem->altId() == 2)
-    q.prepare( "DELETE FROM ipsprodcat "
+    itemDelete.prepare( "DELETE FROM ipsprodcat "
                "WHERE (ipsprodcat_id=:ipsitem_id);" );
   else if(_ipsitem->altId() == 3)
-    q.prepare( "DELETE FROM ipsfreight "
+    itemDelete.prepare( "DELETE FROM ipsfreight "
                "WHERE (ipsfreight_id=:ipsitem_id);" );
   else
     return;
-  q.bindValue(":ipsitem_id", _ipsitem->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  itemDelete.bindValue(":ipsitem_id", _ipsitem->id());
+  itemDelete.exec();
+  if (itemDelete.lastError().type() != QSqlError::NoError)
   {
-	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+	systemError(this, _rejectedMsg.arg(itemDelete.lastError().databaseText()),
                   __FILE__, __LINE__);
         reject();
   }
@@ -333,11 +338,13 @@ void itemPricingSchedule::sDelete()
 
 void itemPricingSchedule::sFillList()
 {
+  XSqlQuery itemFillList;
   sFillList(-1);
 }
 
 void itemPricingSchedule::sFillList(int pIpsitemid)
 {
+  XSqlQuery itemFillList;
   MetaSQLQuery mql = mqlLoad("itemPricingSchedule", "detail");
   ParameterList params;
   params.append("ipshead_id", _ipsheadid);
@@ -347,18 +354,19 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
   params.append("flatrate", tr("Flat Rate"));
   params.append("peruom", tr("Price Per UOM"));
 
-  q = mql.toQuery(params);
+  itemFillList = mql.toQuery(params);
 
   if (pIpsitemid == -1)
-    _ipsitem->populate(q, true);
+    _ipsitem->populate(itemFillList, true);
   else
-    _ipsitem->populate(q, pIpsitemid, true);
+    _ipsitem->populate(itemFillList, pIpsitemid, true);
 
   _currency->setEnabled(_ipsitem->topLevelItemCount() <= 0);
 }
 
 void itemPricingSchedule::populate()
 {
+  XSqlQuery itempopulate;
   XSqlQuery pop;
   pop.prepare( "SELECT ipshead_name, ipshead_descrip,"
              "       ipshead_effective, ipshead_expires, "
@@ -381,9 +389,9 @@ void itemPricingSchedule::populate()
 
     sFillList(-1);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (itempopulate.lastError().type() != QSqlError::NoError)
   {
-	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+	systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
                   __FILE__, __LINE__);
 		  reject();
   }
@@ -391,10 +399,11 @@ void itemPricingSchedule::populate()
 
 void itemPricingSchedule::reject()
 {
-  q.exec("ROLLBACK;");
+  XSqlQuery itemreject;
+  itemreject.exec("ROLLBACK;");
   if(_mode == cCopy) 
   {
-    q.prepare( "DELETE FROM ipsitem "
+    itemreject.prepare( "DELETE FROM ipsitem "
                "WHERE (ipsitem_ipshead_id=:ipshead_id); "
                "DELETE FROM ipsprodcat "
                "WHERE (ipsprodcat_ipshead_id=:ipshead_id); "
@@ -402,8 +411,8 @@ void itemPricingSchedule::reject()
                "WHERE (ipsfreight_ipshead_id=:ipshead_id); "
                "DELETE FROM ipshead "
                "WHERE (ipshead_id=:ipshead_id);" );
-    q.bindValue(":ipshead_id", _ipsheadid);
-    q.exec();
+    itemreject.bindValue(":ipshead_id", _ipsheadid);
+    itemreject.exec();
   }
   
   XDialog::reject();

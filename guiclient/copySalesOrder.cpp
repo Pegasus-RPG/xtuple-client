@@ -71,31 +71,32 @@ enum SetResponse copySalesOrder::set(const ParameterList &pParams)
 
 void copySalesOrder::sPopulateSoInfo(int)
 {
+  XSqlQuery copyPopulateSoInfo;
   if (_so->id() != -1)
   {
-    q.prepare( "SELECT cohead_number,"
+    copyPopulateSoInfo.prepare( "SELECT cohead_number,"
               "        cohead_orderdate,"
               "        cohead_custponumber, cust_name, cntct_phone "
               " FROM cohead "
               " JOIN custinfo ON (cohead_cust_id=cust_id)"
               " LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
               " WHERE (cohead_id=:sohead_id);" );
-    q.bindValue(":sohead_id", _so->id());
-    q.exec();
-    if (q.first())
+    copyPopulateSoInfo.bindValue(":sohead_id", _so->id());
+    copyPopulateSoInfo.exec();
+    if (copyPopulateSoInfo.first())
     {
-      _orderDate->setDate(q.value("cohead_orderdate").toDate());
-      _poNumber->setText(q.value("cohead_custponumber").toString());
-      _custName->setText(q.value("cust_name").toString());
-      _custPhone->setText(q.value("cntct_phone").toString());
+      _orderDate->setDate(copyPopulateSoInfo.value("cohead_orderdate").toDate());
+      _poNumber->setText(copyPopulateSoInfo.value("cohead_custponumber").toString());
+      _custName->setText(copyPopulateSoInfo.value("cust_name").toString());
+      _custPhone->setText(copyPopulateSoInfo.value("cntct_phone").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (copyPopulateSoInfo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, copyPopulateSoInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "SELECT coitem.*, item_number,"
+    copyPopulateSoInfo.prepare( "SELECT coitem.*, item_number,"
 	       "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
 	       "       warehous_code,"
                "       ((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) AS extended,"
@@ -110,12 +111,12 @@ void copySalesOrder::sPopulateSoInfo(int)
                " AND (coitem_cohead_id=:sohead_id) "
                " AND (coitem_subnumber = 0) ) "
                "ORDER BY coitem_linenumber;" );
-    q.bindValue(":sohead_id", _so->id());
-    q.exec();
-    _soitem->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
+    copyPopulateSoInfo.bindValue(":sohead_id", _so->id());
+    copyPopulateSoInfo.exec();
+    _soitem->populate(copyPopulateSoInfo);
+    if (copyPopulateSoInfo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, copyPopulateSoInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -132,25 +133,26 @@ void copySalesOrder::sPopulateSoInfo(int)
 
 void copySalesOrder::sCopy()
 {
-  q.prepare("SELECT copySo(:sohead_id, :scheddate) AS sohead_id;");
-  q.bindValue(":sohead_id", _so->id());
+  XSqlQuery copyCopy;
+  copyCopy.prepare("SELECT copySo(:sohead_id, :scheddate) AS sohead_id;");
+  copyCopy.bindValue(":sohead_id", _so->id());
 
   if (_reschedule->isChecked())
-    q.bindValue(":scheddate", _scheduleDate->date());
+    copyCopy.bindValue(":scheddate", _scheduleDate->date());
 
-  q.exec();
+  copyCopy.exec();
 
   if (_captive)
   {
-    if (q.first())
+    if (copyCopy.first())
     {
-      int soheadid = q.value("sohead_id").toInt();
+      int soheadid = copyCopy.value("sohead_id").toInt();
       omfgThis->sSalesOrdersUpdated(soheadid);
       done(soheadid);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (copyCopy.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

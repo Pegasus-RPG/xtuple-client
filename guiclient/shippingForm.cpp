@@ -77,27 +77,28 @@ enum SetResponse shippingForm::set(const ParameterList &pParams)
 
 void shippingForm::sCheck()
 {
+  XSqlQuery shippingCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) || (_name->text().length()))
   {
-    q.prepare( "SELECT shipform_id"
+    shippingCheck.prepare( "SELECT shipform_id"
                "  FROM shipform"
                " WHERE((UPPER(shipform_name)=UPPER(:shipform_name))"
                "   AND (shipform_id != :shipform_id));" );
-    q.bindValue(":shipform_name", _name->text());
-    q.bindValue(":shipform_id", _shipformid);
-    q.exec();
-    if (q.first())
+    shippingCheck.bindValue(":shipform_name", _name->text());
+    shippingCheck.bindValue(":shipform_id", _shipformid);
+    shippingCheck.exec();
+    if (shippingCheck.first())
     {
-      _shipformid = q.value("shipform_id").toInt();
+      _shipformid = shippingCheck.value("shipform_id").toInt();
       _mode = cEdit;
       populate();
 
       _name->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (shippingCheck.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, shippingCheck.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -105,6 +106,7 @@ void shippingForm::sCheck()
 
 void shippingForm::sSave()
 {
+  XSqlQuery shippingSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::warning( this, tr("Format Name is Invalid"),
@@ -125,33 +127,33 @@ void shippingForm::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('shipform_shipform_id_seq') AS shipform_id;");
-    if (q.first())
-      _shipformid = q.value("shipform_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    shippingSave.exec("SELECT NEXTVAL('shipform_shipform_id_seq') AS shipform_id;");
+    if (shippingSave.first())
+      _shipformid = shippingSave.value("shipform_id").toInt();
+    else if (shippingSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, shippingSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO shipform "
+    shippingSave.prepare( "INSERT INTO shipform "
                "(shipform_id, shipform_name, shipform_report_name) "
                "VALUES "
                "(:shipform_id, :shipform_name, :shipform_report_name);" );
 
   }
   if (_mode == cEdit)
-    q.prepare( "UPDATE shipform "
+    shippingSave.prepare( "UPDATE shipform "
                "SET shipform_name=:shipform_name, shipform_report_name=:shipform_report_name "
                "WHERE (shipform_id=:shipform_id);" );
 
-  q.bindValue(":shipform_id", _shipformid);
-  q.bindValue(":shipform_name", _name->text());
-  q.bindValue(":shipform_report_name", _report->code());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  shippingSave.bindValue(":shipform_id", _shipformid);
+  shippingSave.bindValue(":shipform_name", _name->text());
+  shippingSave.bindValue(":shipform_report_name", _report->code());
+  shippingSave.exec();
+  if (shippingSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shippingSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -160,19 +162,20 @@ void shippingForm::sSave()
 
 void shippingForm::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery shippingpopulate;
+  shippingpopulate.prepare( "SELECT * "
        	     "FROM shipform "
 	     "WHERE (shipform_id=:shipform_id);" );
-  q.bindValue(":shipform_id", _shipformid);
-  q.exec();
-  if (q.first())
+  shippingpopulate.bindValue(":shipform_id", _shipformid);
+  shippingpopulate.exec();
+  if (shippingpopulate.first())
   {
-    _name->setText(q.value("shipform_name").toString());
-    _report->setCode(q.value("shipform_report_name").toString());
+    _name->setText(shippingpopulate.value("shipform_name").toString());
+    _report->setCode(shippingpopulate.value("shipform_report_name").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (shippingpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shippingpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

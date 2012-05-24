@@ -45,6 +45,7 @@ TODO:	refactor:
 PoitemTableView::PoitemTableView(QWidget* parent) :
   QTableView(parent)
 {
+  XSqlQuery PoitemetModelData;
   PoitemTableDelegate *delegate = new PoitemTableDelegate(this);
   setItemDelegate(delegate);
   setShowGrid(false);
@@ -347,6 +348,7 @@ void PoitemTableDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
 
 void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pModel, const QModelIndex &index) const
 {
+  XSqlQuery PoitemetModelData;
   if (DEBUG)
     qDebug("PoitemTableDelegate::setModelData() entered");
   bool hitError = false;
@@ -610,26 +612,26 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	if (model->data(model->index(index.row(), POITEM_QTY_ORDERED_COL)).toDouble() > 0 &&
 	  model->data(model->index(index.row(), POITEM_ITEMSRC_ID_COL)).toInt() > 0)
 	{
-	  q.prepare( "SELECT ROUND(currToCurr(itemsrcp_curr_id, :curr_id, itemsrcp_price, :effective), :prec) "
+	  PoitemetModelData.prepare( "SELECT ROUND(currToCurr(itemsrcp_curr_id, :curr_id, itemsrcp_price, :effective), :prec) "
 		      "AS new_itemsrcp_price "
 		     "FROM itemsrcp "
 		     "WHERE ( (itemsrcp_itemsrc_id=:itemsrc_id)"
 		     " AND (itemsrcp_qtybreak <= :qty) ) "
 		     "ORDER BY itemsrcp_qtybreak DESC "
 		     "LIMIT 1;" );
-	  q.bindValue(":itemsrc_id", model->data(model->index(index.row(), POITEM_ITEMSRC_ID_COL)).toInt());
-	  q.bindValue(":qty", model->data(model->index(index.row(), POITEM_QTY_ORDERED_COL)).toDouble());
-	  q.bindValue(":curr_id", model->currId());
-	  q.bindValue(":effective", model->transDate().toString());
-	  q.bindValue(":prec", omfgThis->priceVal()->decimals());
-	  q.exec();
-	  if (q.first())
+	  PoitemetModelData.bindValue(":itemsrc_id", model->data(model->index(index.row(), POITEM_ITEMSRC_ID_COL)).toInt());
+	  PoitemetModelData.bindValue(":qty", model->data(model->index(index.row(), POITEM_QTY_ORDERED_COL)).toDouble());
+	  PoitemetModelData.bindValue(":curr_id", model->currId());
+	  PoitemetModelData.bindValue(":effective", model->transDate().toString());
+	  PoitemetModelData.bindValue(":prec", omfgThis->priceVal()->decimals());
+	  PoitemetModelData.exec();
+	  if (PoitemetModelData.first())
 	  {
-	    model->setData(model->index(index.row(), POITEM_UNITPRICE_COL), q.value("new_itemsrcp_price").toDouble());
+	    model->setData(model->index(index.row(), POITEM_UNITPRICE_COL), PoitemetModelData.value("new_itemsrcp_price").toDouble());
 	  }
-	  else if (q.lastError().type() != QSqlError::NoError)
+	  else if (PoitemetModelData.lastError().type() != QSqlError::NoError)
 	  {
-	    systemError(0, q.lastError().databaseText(), __FILE__, __LINE__);
+	    systemError(0, PoitemetModelData.lastError().databaseText(), __FILE__, __LINE__);
 	    hitError = true;
 	    break;
 	  }

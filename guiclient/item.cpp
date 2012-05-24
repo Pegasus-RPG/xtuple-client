@@ -41,6 +41,7 @@ const char *_itemTypes[] = { "P", "M", "F", "R", "S", "T", "O", "L", "K", "B", "
 item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
+  XSqlQuery itemitem;
   setupUi(this);
 
   _notes->setSpellEnable(true); 
@@ -224,11 +225,11 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   else
     _tab->setTabEnabled(_tab->indexOf(_itemsitesTab), FALSE);
 
-  q.exec("SELECT uom_name FROM uom WHERE (uom_item_weight);");
-  if (q.first())
+  itemitem.exec("SELECT uom_name FROM uom WHERE (uom_item_weight);");
+  if (itemitem.first())
   {
     QString title (tr("Weight in "));
-    title += q.value("uom_name").toString();
+    title += itemitem.value("uom_name").toString();
     _weightGroup->setTitle(title);
   }
 
@@ -253,6 +254,7 @@ void item::languageChange()
 
 enum SetResponse item::set(const ParameterList &pParams)
 {
+  XSqlQuery itemet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -275,9 +277,9 @@ enum SetResponse item::set(const ParameterList &pParams)
       _newUOM->setEnabled(false);
 	  _print->hide();
 
-      q.exec("SELECT NEXTVAL('item_item_id_seq') AS item_id");
-      if (q.first())
-        _itemid = q.value("item_id").toInt();
+      itemet.exec("SELECT NEXTVAL('item_item_id_seq') AS item_id");
+      if (itemet.first())
+        _itemid = itemet.value("item_id").toInt();
 //  ToDo
 
       _comments->setId(_itemid);
@@ -383,6 +385,7 @@ enum SetResponse item::set(const ParameterList &pParams)
 
 void item::saveCore()
 {
+  XSqlQuery itemaveCore;
   if(cNew != _mode || _inTransaction)
     return;
 
@@ -404,10 +407,10 @@ void item::saveCore()
   
   else
   {
-    q.exec("BEGIN;");
+    itemaveCore.exec("BEGIN;");
     _inTransaction = true;
 
-    q.prepare("INSERT INTO item"
+    itemaveCore.prepare("INSERT INTO item"
             "      (item_id, item_number, item_Descrip1, item_descrip2,"
             "       item_classcode_id,"
             "       item_picklist, item_sold, item_fractional, item_active,"
@@ -422,15 +425,15 @@ void item::saveCore()
             "       0.0, 0.0, -1,"
             "       true, 0.0, 0.0,"
             "       :item_inv_uom_id, :item_inv_uom_id);");
-    q.bindValue(":item_id", _itemid);
-    q.bindValue(":item_number", _itemNumber->text().trimmed().toUpper());
-    q.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
-    q.bindValue(":item_classcode_id", _classcode->id());
-    q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
-    q.bindValue(":item_active", QVariant(_active->isChecked()));
-    if(!q.exec() || q.lastError().type() != QSqlError::NoError)
+    itemaveCore.bindValue(":item_id", _itemid);
+    itemaveCore.bindValue(":item_number", _itemNumber->text().trimmed().toUpper());
+    itemaveCore.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
+    itemaveCore.bindValue(":item_classcode_id", _classcode->id());
+    itemaveCore.bindValue(":item_inv_uom_id", _inventoryUOM->id());
+    itemaveCore.bindValue(":item_active", QVariant(_active->isChecked()));
+    if(!itemaveCore.exec() || itemaveCore.lastError().type() != QSqlError::NoError)
     {
-      q.exec("ROLLBACK;");
+      itemaveCore.exec("ROLLBACK;");
       _inTransaction = false;
       return;
     }
@@ -446,24 +449,25 @@ void item::saveCore()
 
 void item::sSave()
 {
+  XSqlQuery itemSave;
   QString sql;
   QString itemNumber = _itemNumber->text().trimmed().toUpper();
 
   //Check To see if the item has active sites associated with it
   int fActive = false;
-  q.prepare("SELECT itemsite_id "
+  itemSave.prepare("SELECT itemsite_id "
             "FROM itemsite "
             "WHERE ((itemsite_item_id=:item_id)"
             "  AND  (itemsite_active)) "
             "LIMIT 1; ");
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  if (q.first()) fActive = true;
+  itemSave.bindValue(":item_id", _itemid);
+  itemSave.exec();
+  if (itemSave.first()) fActive = true;
 
 
   if(!_active->isChecked())
   {
-    q.prepare("SELECT bomitem_id "
+    itemSave.prepare("SELECT bomitem_id "
               "FROM bomitem, item "
               "WHERE ((bomitem_parent_item_id=item_id) "
               "AND (item_active) "
@@ -471,9 +475,9 @@ void item::sSave()
               "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
               "AND (bomitem_item_id=:item_id)) "
               "LIMIT 1; ");
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if (q.first())         
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.exec();
+    if (itemSave.first())         
     { 
       QMessageBox::warning( this, tr("Cannot Save Item"),
         tr("This Item is used in an active Bill of Materials and must be marked as active. "
@@ -490,14 +494,14 @@ void item::sSave()
       return;
     }
 
-    q.prepare("SELECT itemsrc_id "
+    itemSave.prepare("SELECT itemsrc_id "
               "FROM itemsrc "
               "WHERE ((itemsrc_item_id=:item_id)"
               "  AND  (itemsrc_active)) "
               "LIMIT 1; ");
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if (q.first())         
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.exec();
+    if (itemSave.first())         
     { 
       QMessageBox::warning( this, tr("Cannot Save Item"),
         tr("This Item is used in an active Item Source and must be marked as active. "
@@ -522,7 +526,7 @@ void item::sSave()
   
   if(!_sold->isChecked())
   {
-    q.prepare("SELECT bomitem_id "
+    itemSave.prepare("SELECT bomitem_id "
               "FROM bomitem, item "
               "WHERE ((bomitem_parent_item_id=item_id) "
               "AND (item_active) "
@@ -531,9 +535,9 @@ void item::sSave()
               "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
               "AND (bomitem_item_id=:item_id)) "
               "LIMIT 1; ");
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if (q.first())         
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.exec();
+    if (itemSave.first())         
     { 
       QMessageBox::warning( this, tr("Cannot Save Item"),
         tr("This item is used in an active bill of materials for a kit and must be marked as sold. "
@@ -544,7 +548,7 @@ void item::sSave()
 
   if (cEdit == _mode && _itemtype->currentText() != _originalItemType && QString(_itemTypes[_itemtype->currentIndex()]) == "K")
   {
-    q.prepare("SELECT bomitem_id "
+    itemSave.prepare("SELECT bomitem_id "
               "FROM bomitem, item "
               "WHERE ((bomitem_item_id=item_id) "
               "AND (item_active) "
@@ -553,9 +557,9 @@ void item::sSave()
               "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
               "AND (bomitem_parent_item_id=:item_id)) "
               "LIMIT 1; ");
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if (q.first())         
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.exec();
+    if (itemSave.first())         
     { 
       if(QMessageBox::question( this, tr("BOM Items should be marked as Sold"),
                                 tr("<p>You have changed the Item Type of this "
@@ -570,14 +574,14 @@ void item::sSave()
 
   if (_mode == cEdit)
   {
-    q.prepare( "SELECT item_id "
+    itemSave.prepare( "SELECT item_id "
                "FROM item "
                "WHERE ( (item_number=:item_number)"
                " AND (item_id <> :item_id) );" );
-    q.bindValue(":item_number", itemNumber);
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if (q.first())
+    itemSave.bindValue(":item_number", itemNumber);
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.exec();
+    if (itemSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Item"),
                             tr("You may not rename this Item to the entered Item Number as it is in use by another Item.") );
@@ -647,14 +651,14 @@ void item::sSave()
         (QString(_itemTypes[_itemtype->currentIndex()]) == "S") ||
         (QString(_itemTypes[_itemtype->currentIndex()]) == "T"))
         {
-      q.prepare( "SELECT itemsite_id "
+      itemSave.prepare( "SELECT itemsite_id "
                  "  FROM itemsite "
                  " WHERE ((itemsite_item_id=:item_id) "
 				 " AND (itemsite_qtyonhand + qtyallocated(itemsite_id,startoftime(),endoftime()) +"
 		         "      qtyordered(itemsite_id,startoftime(),endoftime()) > 0 ));" );
-      q.bindValue(":item_id", _itemid);
-      q.exec();
-      if (q.first())
+      itemSave.bindValue(":item_id", _itemid);
+      itemSave.exec();
+      if (itemSave.first())
       {
         QMessageBox::information(this, tr("Cannot Save Item"),
                                  tr("<p>This Item has Item Sites with either "
@@ -666,12 +670,12 @@ void item::sSave()
       }
         }
 
-    q.prepare( "SELECT itemcost_id "
+    itemSave.prepare( "SELECT itemcost_id "
                "  FROM itemcost "
                " WHERE (itemcost_item_id=:item_id);" );
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if (q.first())
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.exec();
+    if (itemSave.first())
     {
       if(QMessageBox::question( this, tr("Item Costs Exist"),
                                 tr("<p>You have changed the Item Type of this "
@@ -684,12 +688,12 @@ void item::sSave()
         return;
 	}
 
-    q.prepare( "SELECT itemsite_id "
+    itemSave.prepare( "SELECT itemsite_id "
                "  FROM itemsite "
                " WHERE (itemsite_item_id=:item_id);" );
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if (q.first())
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.exec();
+    if (itemSave.first())
     {
       if(QMessageBox::question( this, tr("Item Sites Exist"),
                                 tr("<p>You have changed the Item Type of this "
@@ -709,7 +713,7 @@ void item::sSave()
 
   // look for all of the uom ids we have associated with this item
   QStringList knownunits;
-  q.prepare("SELECT :uom_id AS uom_id "
+  itemSave.prepare("SELECT :uom_id AS uom_id "
             "UNION "
             "SELECT itemuomconv_from_uom_id "
             "FROM itemuomconv "
@@ -719,14 +723,14 @@ void item::sSave()
             "FROM itemuomconv "
             "WHERE (itemuomconv_item_id=:item_id);"
            );
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":uom_id", _inventoryUOM->id());
-  q.exec();
-  while (q.next())
-    knownunits.append(q.value("uom_id").toString());
-  if (q.lastError().type() != QSqlError::NoError)
+  itemSave.bindValue(":item_id", _itemid);
+  itemSave.bindValue(":uom_id", _inventoryUOM->id());
+  itemSave.exec();
+  while (itemSave.next())
+    knownunits.append(itemSave.value("uom_id").toString());
+  if (itemSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -738,14 +742,14 @@ void item::sSave()
   ParameterList params;
   params.append("item_id", _itemid);
   params.append("knownunits", knownunits.join(", "));
-  q = mql.toQuery(params);
-  q.exec();
+  itemSave = mql.toQuery(params);
+  itemSave.exec();
   QStringList missingunitnames;
-  while (q.next())
-    missingunitnames.append(q.value("uom_name").toString());
-  if (q.lastError().type() != QSqlError::NoError)
+  while (itemSave.next())
+    missingunitnames.append(itemSave.value("uom_name").toString());
+  if (itemSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   if (missingunitnames.size() > 0)
@@ -772,9 +776,9 @@ void item::sSave()
 
   if (_mode == cCopy)
   {
-    q.exec("SELECT NEXTVAL('item_item_id_seq') AS _item_id");
-    if (q.first())
-       _itemid = q.value("_item_id").toInt();
+    itemSave.exec("SELECT NEXTVAL('item_item_id_seq') AS _item_id");
+    if (itemSave.first())
+       _itemid = itemSave.value("_item_id").toInt();
 // ToDo
   }
 
@@ -816,46 +820,46 @@ void item::sSave()
                "    item_freightclass_id=:item_freightclass_id,"
                "    item_tax_recoverable=:item_tax_recoverable "
                "WHERE (item_id=:item_id);";
-  q.prepare(sql);
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":item_number", itemNumber);
-  q.bindValue(":item_descrip1", _description1->text());
-  q.bindValue(":item_descrip2", _description2->text());
-  q.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
-  q.bindValue(":item_classcode_id", _classcode->id());
-  q.bindValue(":item_sold", QVariant(_sold->isChecked()));
-  q.bindValue(":item_prodcat_id", _prodcat->id());
-  q.bindValue(":item_exclusive", QVariant(_exclusive->isChecked()));
-  q.bindValue(":item_price_uom_id", _priceUOM->id());
-  q.bindValue(":item_listprice", _listprice->toDouble());
-  q.bindValue(":item_upccode", _upcCode->text());
-  q.bindValue(":item_active", QVariant(_active->isChecked()));
-  q.bindValue(":item_picklist", QVariant(_pickListItem->isChecked()));
-  q.bindValue(":item_fractional", QVariant(_fractional->isChecked()));
-  q.bindValue(":item_config", QVariant(_configured->isChecked()));  
-  q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
-  q.bindValue(":item_maxcost", _maximumDesiredCost->localValue());
-  q.bindValue(":item_prodweight", _prodWeight->toDouble());
-  q.bindValue(":item_packweight", _packWeight->toDouble());
-  q.bindValue(":item_comments", _notes->toPlainText());
-  q.bindValue(":item_extdescrip", _extDescription->toPlainText());
-  q.bindValue(":item_warrdays", _warranty->value());
+  itemSave.prepare(sql);
+  itemSave.bindValue(":item_id", _itemid);
+  itemSave.bindValue(":item_number", itemNumber);
+  itemSave.bindValue(":item_descrip1", _description1->text());
+  itemSave.bindValue(":item_descrip2", _description2->text());
+  itemSave.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
+  itemSave.bindValue(":item_classcode_id", _classcode->id());
+  itemSave.bindValue(":item_sold", QVariant(_sold->isChecked()));
+  itemSave.bindValue(":item_prodcat_id", _prodcat->id());
+  itemSave.bindValue(":item_exclusive", QVariant(_exclusive->isChecked()));
+  itemSave.bindValue(":item_price_uom_id", _priceUOM->id());
+  itemSave.bindValue(":item_listprice", _listprice->toDouble());
+  itemSave.bindValue(":item_upccode", _upcCode->text());
+  itemSave.bindValue(":item_active", QVariant(_active->isChecked()));
+  itemSave.bindValue(":item_picklist", QVariant(_pickListItem->isChecked()));
+  itemSave.bindValue(":item_fractional", QVariant(_fractional->isChecked()));
+  itemSave.bindValue(":item_config", QVariant(_configured->isChecked()));  
+  itemSave.bindValue(":item_inv_uom_id", _inventoryUOM->id());
+  itemSave.bindValue(":item_maxcost", _maximumDesiredCost->localValue());
+  itemSave.bindValue(":item_prodweight", _prodWeight->toDouble());
+  itemSave.bindValue(":item_packweight", _packWeight->toDouble());
+  itemSave.bindValue(":item_comments", _notes->toPlainText());
+  itemSave.bindValue(":item_extdescrip", _extDescription->toPlainText());
+  itemSave.bindValue(":item_warrdays", _warranty->value());
   if (_freightClass->isValid())
-    q.bindValue(":item_freightclass_id", _freightClass->id());
-  q.bindValue(":item_tax_recoverable", QVariant(_taxRecoverable->isChecked()));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    itemSave.bindValue(":item_freightclass_id", _freightClass->id());
+  itemSave.bindValue(":item_tax_recoverable", QVariant(_taxRecoverable->isChecked()));
+  itemSave.exec();
+  if (itemSave.lastError().type() != QSqlError::NoError)
   {
-    q.exec("ROLLBACK;");
+    itemSave.exec("ROLLBACK;");
     _inTransaction = false;
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_mode == cCopy)
   {
 //  Copy all of the costs for this item
-    q.prepare( "INSERT INTO itemcost "
+    itemSave.prepare( "INSERT INTO itemcost "
                "(itemcost_item_id, itemcost_costelem_id, itemcost_lowlevel,"
                " itemcost_stdcost, itemcost_posted, itemcost_actcost, "
 	       " itemcost_updated, itemcost_curr_id ) "
@@ -864,14 +868,14 @@ void item::sSave()
 	       "       itemcost_updated, itemcost_curr_id "
                "FROM itemcost "
                "WHERE (itemcost_item_id=:sourceItem_id);" );
-    q.bindValue(":item_id", _itemid);
-    q.bindValue(":sourceItem_id", sourceItemid);
-    q.exec();
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.bindValue(":sourceItem_id", sourceItemid);
+    itemSave.exec();
   }
 
   if(_inTransaction)
   {
-    q.exec("COMMIT;");
+    itemSave.exec("COMMIT;");
     _inTransaction = false;
   }
 
@@ -940,17 +944,19 @@ void item::sEdit()
 
 void item::sDelete()
 {
-  q.prepare( "DELETE FROM charass "
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM charass "
              "WHERE (charass_id=:charass_id);" );
-  q.bindValue(":charass_id", _charass->id());
-  q.exec();
+  itemDelete.bindValue(":charass_id", _charass->id());
+  itemDelete.exec();
 
   sFillList();
 }
 
 void item::sFillList()
 {
-  q.prepare( "SELECT charass_id, char_name, "
+  XSqlQuery itemFillList;
+  itemFillList.prepare( "SELECT charass_id, char_name, "
              " CASE WHEN char_type < 2 THEN "
              "   charass_value "
              " ELSE "
@@ -963,9 +969,9 @@ void item::sFillList()
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:item_id) ) "
              "ORDER BY char_order, char_name;" );
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  _charass->populate(q);
+  itemFillList.bindValue(":item_id", _itemid);
+  itemFillList.exec();
+  _charass->populate(itemFillList);
 }
 
 void item::sPrint()
@@ -987,21 +993,22 @@ void item::sPrint()
 
 void item::sFormatItemNumber()
 {
+  XSqlQuery itemFormatItemNumber;
   if ((_mode == cNew) && (_itemNumber->text().length()))
   {
     _itemNumber->setText(_itemNumber->text().trimmed().toUpper());
 
   //  Check to see if this item exists
-    q.prepare( "SELECT item_id "
+    itemFormatItemNumber.prepare( "SELECT item_id "
                "FROM item "
                "WHERE (item_number=:item_number);" );
-    q.bindValue(":item_number", _itemNumber->text());
-    q.exec();
-    if (q.first())
+    itemFormatItemNumber.bindValue(":item_number", _itemNumber->text());
+    itemFormatItemNumber.exec();
+    if (itemFormatItemNumber.first())
     {
       _mode = cEdit;
       ParameterList params;
-      params.append("item_id", q.value("item_id").toInt());
+      params.append("item_id", itemFormatItemNumber.value("item_id").toInt());
       params.append("mode", "edit");
       set(params);
     }
@@ -1096,10 +1103,11 @@ void item::populate()
 
 void item::clear()
 {
+  XSqlQuery itemclear;
   _disallowPlanningType = false;
-  q.exec("SELECT NEXTVAL('item_item_id_seq') AS item_id");
-  if (q.first())
-    _itemid = q.value("item_id").toInt();
+  itemclear.exec("SELECT NEXTVAL('item_item_id_seq') AS item_id");
+  if (itemclear.first())
+    _itemid = itemclear.value("item_id").toInt();
 //  ToDo
 
   _itemNumber->clear();
@@ -1317,23 +1325,25 @@ void item::sEditAlias()
 
 void item::sDeleteAlias()
 {
-  q.prepare( "DELETE FROM itemalias "
+  XSqlQuery itemDeleteAlias;
+  itemDeleteAlias.prepare( "DELETE FROM itemalias "
              "WHERE (itemalias_id=:itemalias_id);" );
-  q.bindValue(":itemalias_id", _itemalias->id());
-  q.exec();
+  itemDeleteAlias.bindValue(":itemalias_id", _itemalias->id());
+  itemDeleteAlias.exec();
 
   sFillAliasList();
 }
 
 void item::sFillAliasList()
 {
-  q.prepare( "SELECT itemalias_id, itemalias_number, firstLine(itemalias_comments) AS itemalias_comments "
+  XSqlQuery itemFillAliasList;
+  itemFillAliasList.prepare( "SELECT itemalias_id, itemalias_number, firstLine(itemalias_comments) AS itemalias_comments "
              "FROM itemalias "
              "WHERE (itemalias_item_id=:item_id) "
              "ORDER BY itemalias_number;" );
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  _itemalias->populate(q);
+  itemFillAliasList.bindValue(":item_id", _itemid);
+  itemFillAliasList.exec();
+  _itemalias->populate(itemFillAliasList);
 }
 
 void item::sNewSubstitute()
@@ -1364,30 +1374,33 @@ void item::sEditSubstitute()
 
 void item::sDeleteSubstitute()
 {
-  q.prepare( "DELETE FROM itemsub "
+  XSqlQuery itemDeleteSubstitute;
+  itemDeleteSubstitute.prepare( "DELETE FROM itemsub "
              "WHERE (itemsub_id=:itemsub_id);" );
-  q.bindValue(":itemsub_id", _itemsub->id());
-  q.exec();
+  itemDeleteSubstitute.bindValue(":itemsub_id", _itemsub->id());
+  itemDeleteSubstitute.exec();
 
   sFillSubstituteList();
 }
 
 void item::sFillSubstituteList()
 {
-  q.prepare( "SELECT itemsub_id, itemsub_rank, item_number, item_descrip1,"
+  XSqlQuery itemFillSubstituteList;
+  itemFillSubstituteList.prepare( "SELECT itemsub_id, itemsub_rank, item_number, item_descrip1,"
              "       itemsub_uomratio, 'uomratio' AS itemsub_uomratio_xtnumericrole "
              "FROM itemsub, item "
              "WHERE ( (itemsub_sub_item_id=item_id)"
              " AND (itemsub_parent_item_id=:item_id) ) "
              "ORDER BY itemsub_rank, item_number" );
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  _itemsub->populate(q);
+  itemFillSubstituteList.bindValue(":item_id", _itemid);
+  itemFillSubstituteList.exec();
+  _itemsub->populate(itemFillSubstituteList);
 }
 
 
 void item::sNewTransformation()
 {
+  XSqlQuery itemNewTransformation;
   ParameterList params;
   params.append("itemType", ItemLineEdit::cAllItemTypes_Mask ^ ItemLineEdit::cPhantom);
   itemList* newdlg = new itemList(this);
@@ -1396,27 +1409,27 @@ void item::sNewTransformation()
   int itemid = newdlg->exec();
   if (itemid != -1)
   {
-    q.prepare( "SELECT itemtrans_id "
+    itemNewTransformation.prepare( "SELECT itemtrans_id "
                "FROM itemtrans "
                "WHERE ( (itemtrans_source_item_id=:source_item_id)"
                " AND (itemtrans_target_item_id=:target_item_id) );" );
-    q.bindValue(":source_item_id", _itemid);
-    q.bindValue(":target_item_id", itemid);
-    q.exec();
-    if (q.first())
+    itemNewTransformation.bindValue(":source_item_id", _itemid);
+    itemNewTransformation.bindValue(":target_item_id", itemid);
+    itemNewTransformation.exec();
+    if (itemNewTransformation.first())
     {
       QMessageBox::warning( this, tr("Cannot Duplicate Transformation"),
                             tr("The selected Item is already a Transformation target for this Item.") );
       return;
     }
 
-    q.prepare( "INSERT INTO itemtrans "
+    itemNewTransformation.prepare( "INSERT INTO itemtrans "
                "( itemtrans_source_item_id, itemtrans_target_item_id )"
                "VALUES "
                "( :source_item_id, :target_item_id );" );
-    q.bindValue(":source_item_id", _itemid);
-    q.bindValue(":target_item_id", itemid);
-    q.exec();
+    itemNewTransformation.bindValue(":source_item_id", _itemid);
+    itemNewTransformation.bindValue(":target_item_id", itemid);
+    itemNewTransformation.exec();
     sFillTransformationList();
   }
 }
@@ -1424,24 +1437,26 @@ void item::sNewTransformation()
 
 void item::sDeleteTransformation()
 {
-  q.prepare( "DELETE FROM itemtrans "
+  XSqlQuery itemDeleteTransformation;
+  itemDeleteTransformation.prepare( "DELETE FROM itemtrans "
              "WHERE (itemtrans_id=:itemtrans_id);" );
-  q.bindValue(":itemtrans_id", _itemtrans->id());
-  q.exec();
+  itemDeleteTransformation.bindValue(":itemtrans_id", _itemtrans->id());
+  itemDeleteTransformation.exec();
   sFillTransformationList();
 }
 
 void item::sFillTransformationList()
 {
-  q.prepare( "SELECT itemtrans_id,"
+  XSqlQuery itemFillTransformationList;
+  itemFillTransformationList.prepare( "SELECT itemtrans_id,"
              "       item_number, (item_descrip1 || ' ' || item_descrip2) as item_descrip "
              "FROM itemtrans, item "
              "WHERE ( (itemtrans_target_item_id=item_id)"
              " AND (itemtrans_source_item_id=:item_id) ) "
              "ORDER BY item_number;" );
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  _itemtrans->populate(q);
+  itemFillTransformationList.bindValue(":item_id", _itemid);
+  itemFillTransformationList.exec();
+  _itemtrans->populate(itemFillTransformationList);
 }
 
 void item::newItem()
@@ -1589,6 +1604,7 @@ void item::sNewItemSite()
 
 void item::sEditItemSite()
 {
+  XSqlQuery itemEditItemSite;
   ParameterList params;
   if (_mode == cEdit || _mode == cNew)
     params.append("mode", "edit");
@@ -1597,22 +1613,22 @@ void item::sEditItemSite()
     
   if (!_metrics->boolean("MultiWhs"))
   {
-    q.prepare("SELECT itemsite_id "
+    itemEditItemSite.prepare("SELECT itemsite_id "
               "FROM itemsite "
               "WHERE (itemsite_item_id=:item_id AND itemsite_active);");
-    q.bindValue(":item_id",_itemid);
-    q.exec();
-    if (q.first())
-      params.append("itemsite_id", q.value("itemsite_id").toInt());
+    itemEditItemSite.bindValue(":item_id",_itemid);
+    itemEditItemSite.exec();
+    if (itemEditItemSite.first())
+      params.append("itemsite_id", itemEditItemSite.value("itemsite_id").toInt());
     else
     {
-      q.prepare("SELECT itemsite_id "
+      itemEditItemSite.prepare("SELECT itemsite_id "
                 "FROM itemsite "
                 "WHERE (itemsite_item_id=:item_id);");
-      q.bindValue(":item_id",_itemid);
-      q.exec();
-      if (q.first())
-        params.append("itemsite_id", q.value("itemsite_id").toInt());
+      itemEditItemSite.bindValue(":item_id",_itemid);
+      itemEditItemSite.exec();
+      if (itemEditItemSite.first())
+        params.append("itemsite_id", itemEditItemSite.value("itemsite_id").toInt());
       else
       {
         if((_mode == cEdit) &&
@@ -1656,15 +1672,16 @@ void item::sViewItemSite()
 
 void item::sDeleteItemSite()
 {
+  XSqlQuery itemDeleteItemSite;
   if (!checkSitePrivs(_itemSite->id()))
       return;
           
-  q.prepare("SELECT deleteItemSite(:itemsite_id) AS result;");
-  q.bindValue(":itemsite_id", _itemSite->id());
-  q.exec();
-  if (q.first())
+  itemDeleteItemSite.prepare("SELECT deleteItemSite(:itemsite_id) AS result;");
+  itemDeleteItemSite.bindValue(":itemsite_id", _itemSite->id());
+  itemDeleteItemSite.exec();
+  if (itemDeleteItemSite.first())
   {
-    switch (q.value("result").toInt())
+    switch (itemDeleteItemSite.value("result").toInt())
     {
       case -1:
         QMessageBox::warning( this, tr("Cannot Delete Item Site"),
@@ -1715,6 +1732,7 @@ void item::sDeleteItemSite()
 
 void item::sFillListItemSites()
 {
+  XSqlQuery itemFillListItemSites;
   QString sql( "SELECT itemsite_id, itemsite_active,"
                "       warehous_code, warehous_descrip, "
                "       CASE WHEN itemsite_controlmethod='R' THEN :regular"
@@ -1728,14 +1746,14 @@ void item::sFillListItemSites()
                " AND (item_id=:item_id) ) "
                "ORDER BY item_number, warehous_code;" );
 
-  q.prepare(sql);
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":regular", tr("Regular"));
-  q.bindValue(":none", tr("None"));
-  q.bindValue(":lotNumber", tr("Lot #"));
-  q.bindValue(":serialNumber", tr("Serial #"));
-  q.exec();
-  _itemSite->populate(q);
+  itemFillListItemSites.prepare(sql);
+  itemFillListItemSites.bindValue(":item_id", _itemid);
+  itemFillListItemSites.bindValue(":regular", tr("Regular"));
+  itemFillListItemSites.bindValue(":none", tr("None"));
+  itemFillListItemSites.bindValue(":lotNumber", tr("Lot #"));
+  itemFillListItemSites.bindValue(":serialNumber", tr("Serial #"));
+  itemFillListItemSites.exec();
+  _itemSite->populate(itemFillListItemSites);
 }
 
 void item::sNewItemtax()
@@ -1763,28 +1781,30 @@ void item::sEditItemtax()
 }
 void item::sDeleteItemtax()
 {
-  q.prepare("DELETE FROM itemtax"
+  XSqlQuery itemDeleteItemtax;
+  itemDeleteItemtax.prepare("DELETE FROM itemtax"
             " WHERE (itemtax_id=:itemtax_id);");
-  q.bindValue(":itemtax_id", _itemtax->id());
-  q.exec();
+  itemDeleteItemtax.bindValue(":itemtax_id", _itemtax->id());
+  itemDeleteItemtax.exec();
   sFillListItemtax();
 }
 
 void item::sFillListItemtax()
 {
-  q.prepare("SELECT itemtax_id, taxtype_name,"
+  XSqlQuery itemFillListItemtax;
+  itemFillListItemtax.prepare("SELECT itemtax_id, taxtype_name,"
             "       COALESCE(taxzone_code,:any) AS taxzone"
             "  FROM itemtax JOIN taxtype ON (itemtax_taxtype_id=taxtype_id)"
             "       LEFT OUTER JOIN taxzone ON (itemtax_taxzone_id=taxzone_id)"
             " WHERE (itemtax_item_id=:item_id)"
             " ORDER BY taxtype_name;");
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":any", tr("Any"));
-  q.exec();
-  _itemtax->populate(q, _itemtax->id());
-  if (q.lastError().type() != QSqlError::NoError)
+  itemFillListItemtax.bindValue(":item_id", _itemid);
+  itemFillListItemtax.bindValue(":any", tr("Any"));
+  itemFillListItemtax.exec();
+  _itemtax->populate(itemFillListItemtax, _itemtax->id());
+  if (itemFillListItemtax.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemFillListItemtax.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1818,12 +1838,13 @@ void item::sEditUOM()
 
 void item::sDeleteUOM()
 {
-  q.prepare("SELECT deleteItemUOMConv(:itemuomconv_id) AS result;");
-  q.bindValue(":itemuomconv_id", _uomconv->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery itemDeleteUOM;
+  itemDeleteUOM.prepare("SELECT deleteItemUOMConv(:itemuomconv_id) AS result;");
+  itemDeleteUOM.bindValue(":itemuomconv_id", _uomconv->id());
+  itemDeleteUOM.exec();
+  if (itemDeleteUOM.first())
   {
-    int result = q.value("result").toInt();
+    int result = itemDeleteUOM.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteItemUOMConv", result),
@@ -1831,9 +1852,9 @@ void item::sDeleteUOM()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (itemDeleteUOM.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemDeleteUOM.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -1842,7 +1863,8 @@ void item::sDeleteUOM()
 
 void item::sFillUOMList()
 {
-  q.prepare("SELECT * FROM ( "
+  XSqlQuery itemFillUOMList;
+  itemFillUOMList.prepare("SELECT * FROM ( "
             "SELECT itemuomconv_id, -1 AS itemuom_id, 0 AS xtindentrole, "
             "       (nuom.uom_name||'/'||duom.uom_name) AS uomname,"
             "       (formatUOMRatio(itemuomconv_from_value)||'/'||formatUOMRatio(itemuomconv_to_value)) AS uomvalue,"
@@ -1871,23 +1893,24 @@ void item::sFillUOMList()
             " WHERE (item_id=:item_id)"
             " ) AS data "
             " ORDER BY itemuomconv_id, xtindentrole, uomname;");
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  _uomconv->populate(q,TRUE);
+  itemFillUOMList.bindValue(":item_id", _itemid);
+  itemFillUOMList.exec();
+  _uomconv->populate(itemFillUOMList,TRUE);
   _uomconv->expandAll();
 
-  q.prepare("SELECT itemInventoryUOMInUse(:item_id) AS result;");
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  if(q.first())
-    _inventoryUOM->setEnabled(!q.value("result").toBool());
+  itemFillUOMList.prepare("SELECT itemInventoryUOMInUse(:item_id) AS result;");
+  itemFillUOMList.bindValue(":item_id", _itemid);
+  itemFillUOMList.exec();
+  if(itemFillUOMList.first())
+    _inventoryUOM->setEnabled(!itemFillUOMList.value("result").toBool());
   sPopulatePriceUOMs();
 }
 
 void item::sPopulatePriceUOMs()
 {
+  XSqlQuery itemPopulatePriceUOMs;
   int pid = _priceUOM->id();
-  q.prepare("SELECT uom_id, uom_name, uom_name"
+  itemPopulatePriceUOMs.prepare("SELECT uom_id, uom_name, uom_name"
             "  FROM uom"
             " WHERE(uom_id=:uom_id)"
             " UNION "
@@ -1909,22 +1932,23 @@ void item::sPopulatePriceUOMs()
             " WHERE((itemuomconv_item_id=:item_id)"
             "   AND (uomtype_name='Selling'))"
             " ORDER BY 2;");
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":uom_id", _inventoryUOM->id());
-  q.exec();
-  _priceUOM->populate(q, pid);
-  if (q.lastError().type() != QSqlError::NoError)
+  itemPopulatePriceUOMs.bindValue(":item_id", _itemid);
+  itemPopulatePriceUOMs.bindValue(":uom_id", _inventoryUOM->id());
+  itemPopulatePriceUOMs.exec();
+  _priceUOM->populate(itemPopulatePriceUOMs, pid);
+  if (itemPopulatePriceUOMs.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemPopulatePriceUOMs.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void item::closeEvent(QCloseEvent *pEvent)
 {
+  XSqlQuery itemcloseEvent;
   if(_inTransaction)
   {
-    q.exec("ROLLBACK;");
+    itemcloseEvent.exec("ROLLBACK;");
     _inTransaction = false;
   }
 
@@ -2042,6 +2066,7 @@ void item::sHandleRightButtons()
 
 void item::sFillSourceList()
 {
+  XSqlQuery itemFillSourceList;
   QString sql( "SELECT itemsrc_id, vend_number,"
                "       vend_name, itemsrc_vend_item_number, "
 	       "       itemsrc_active, itemsrc_manuf_name, "
@@ -2058,8 +2083,8 @@ void item::sFillSourceList()
   ParameterList params;
   MetaSQLQuery mql(sql);
   params.append("item_id", _itemid);
-  q = mql.toQuery(params);
-  _itemsrc->populate(q);
+  itemFillSourceList = mql.toQuery(params);
+  _itemsrc->populate(itemFillSourceList);
 }
 
 void item::sNewSource()
@@ -2114,26 +2139,27 @@ void item::sCopySource()
 
 void item::sDeleteSource()
 {
-  q.prepare("SELECT poitem_id, itemsrc_active "
+  XSqlQuery itemDeleteSource;
+  itemDeleteSource.prepare("SELECT poitem_id, itemsrc_active "
             "FROM poitem, itemsrc "
             "WHERE ((poitem_itemsrc_id=:itemsrc_id) "
             "AND (itemsrc_id=:itemsrc_id)); ");
-  q.bindValue(":itemsrc_id", _itemsrc->id());
-  q.exec();
-  if (q.first())
+  itemDeleteSource.bindValue(":itemsrc_id", _itemsrc->id());
+  itemDeleteSource.exec();
+  if (itemDeleteSource.first())
   {
-    if (q.value("itemsrc_active").toBool())
+    if (itemDeleteSource.value("itemsrc_active").toBool())
     {
       if (QMessageBox::question( this, tr("Delete Item Source"),
                                     tr( "This item source is used by existing purchase order records"
                                     " and may not be deleted.  Would you like to deactivate it instead?"),
                                     tr("&Ok"), tr("&Cancel"), 0, 0, 1 ) == 0  )
       {
-        q.prepare( "UPDATE itemsrc SET "
+        itemDeleteSource.prepare( "UPDATE itemsrc SET "
                    "  itemsrc_active=false "
                    "WHERE (itemsrc_id=:itemsrc_id);" );
-        q.bindValue(":itemsrc_id", _itemsrc->id());
-        q.exec();
+        itemDeleteSource.bindValue(":itemsrc_id", _itemsrc->id());
+        itemDeleteSource.exec();
 
         sFillSourceList();
       }
@@ -2148,12 +2174,12 @@ void item::sDeleteSource()
                                  tr( "Are you sure that you want to delete the Item Source?"),
                                 tr("&Delete"), tr("&Cancel"), 0, 0, 1 ) == 0  )
   {
-    q.prepare( "DELETE FROM itemsrc "
+    itemDeleteSource.prepare( "DELETE FROM itemsrc "
                "WHERE (itemsrc_id=:itemsrc_id);"
                "DELETE FROM itemsrcp "
                "WHERE (itemsrcp_itemsrc_id=:itemsrc_id);" );
-    q.bindValue(":itemsrc_id", _itemsrc->id());
-    q.exec();
+    itemDeleteSource.bindValue(":itemsrc_id", _itemsrc->id());
+    itemDeleteSource.exec();
 
     sFillSourceList();
   }

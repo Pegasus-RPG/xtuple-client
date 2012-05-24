@@ -99,12 +99,13 @@ void bankAdjustmentTypes::sView()
 
 void bankAdjustmentTypes::sDelete()
 {
-  q.prepare( "SELECT deleteBankAdjustmentType(:bankadjtype_id) AS result;" );
-  q.bindValue(":bankadjtype_id", _bankadjtype->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery bankDelete;
+  bankDelete.prepare( "SELECT deleteBankAdjustmentType(:bankadjtype_id) AS result;" );
+  bankDelete.bindValue(":bankadjtype_id", _bankadjtype->id());
+  bankDelete.exec();
+  if (bankDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = bankDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this,
@@ -113,9 +114,9 @@ void bankAdjustmentTypes::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (bankDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bankDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

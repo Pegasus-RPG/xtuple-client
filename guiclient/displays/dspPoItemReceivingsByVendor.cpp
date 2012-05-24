@@ -174,6 +174,7 @@ void dspPoItemReceivingsByVendor::sCreateVoucher()
 
 void dspPoItemReceivingsByVendor::sMarkAsInvoiced()
 {
+  XSqlQuery dspMarkAsInvoiced;
   if (list()->currentItem()->rawValue("invoiced").toBool()
       || list()->currentItem()->rawValue("invoiced").isNull())
     return;
@@ -189,21 +190,21 @@ void dspPoItemReceivingsByVendor::sMarkAsInvoiced()
     if (newdlg.exec() == XDialog::Rejected)
       update = false;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspMarkAsInvoiced.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspMarkAsInvoiced.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   if (update)
   {
-    q.prepare("UPDATE recv "
+    dspMarkAsInvoiced.prepare("UPDATE recv "
 	      "SET recv_invoiced=true "
           "WHERE (recv_id=:recv_id); ");
-    q.bindValue(":recv_id",list()->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    dspMarkAsInvoiced.bindValue(":recv_id",list()->id());
+    dspMarkAsInvoiced.exec();
+    if (dspMarkAsInvoiced.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspMarkAsInvoiced.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList();

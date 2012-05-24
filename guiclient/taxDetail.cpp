@@ -128,6 +128,7 @@ int taxDetail::taxtype() const
 
 void taxDetail::sCalculateTax()
 {
+  XSqlQuery taxCalculateTax;
    ParameterList params;
    params.append("taxzone_id", _taxzoneId);  
    params.append("taxtype_id", _taxType->id());
@@ -144,12 +145,12 @@ void taxDetail::sCalculateTax()
 			        " <? value(\"subtotal\") ?>) "); 
 			  
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
+  taxCalculateTax = mql.toQuery(params);
   _taxcodes->clear();
-  _taxcodes->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _taxcodes->populate(taxCalculateTax);
+  if (taxCalculateTax.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxCalculateTax.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -161,6 +162,7 @@ void taxDetail::clear()
 
 void taxDetail::sPopulate()
 {
+  XSqlQuery taxPopulate;
   XSqlQuery popq;
 
   popq.prepare("SELECT taxtype_descrip from taxtype where taxtype_id=:taxtype_id;");
@@ -203,13 +205,13 @@ void taxDetail::sPopulate()
   }
    
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
+  taxPopulate = mql.toQuery(params);
   
   _taxcodes->clear();
-  _taxcodes->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _taxcodes->populate(taxPopulate);
+  if (taxPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -231,6 +233,7 @@ void taxDetail::sNew()
 
 void taxDetail::sDelete()
 {
+  XSqlQuery taxDelete;
   QString table;
   if (_ordertype == "I")
     table = "invcheadtax";
@@ -256,13 +259,13 @@ void taxDetail::sDelete()
                           "WHERE taxhist_parent_id=:parent_id "
                           " AND taxhist_taxtype_id=getadjustmenttaxtypeid() "
                           " AND taxhist_tax_id=:tax_id;").arg(table);
-          q.prepare(sql);       
-	  q.bindValue(":parent_id", _orderid);
-          q.bindValue(":tax_id", _taxcodes->id());
-          q.exec();
-          if (q.lastError().type() != QSqlError::NoError)
+          taxDelete.prepare(sql);       
+	  taxDelete.bindValue(":parent_id", _orderid);
+          taxDelete.bindValue(":tax_id", _taxcodes->id());
+          taxDelete.exec();
+          if (taxDelete.lastError().type() != QSqlError::NoError)
           {
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+            systemError(this, taxDelete.lastError().databaseText(), __FILE__, __LINE__);
             return;
           }
 	}

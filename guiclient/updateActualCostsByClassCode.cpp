@@ -111,6 +111,7 @@ void updateActualCostsByClassCode::sSelectAll()
 
 void updateActualCostsByClassCode::sUpdate()
 {
+  XSqlQuery updateUpdate;
   QString sql = "SELECT doUpdateCosts(item_id, TRUE, :lowMaterial, :directLabor, "
                 "       :lowDirectLabor, :overhead, :lowOverhead, "
                 "       :machOverhead, :lowMachOverhead, :lowUser, :rollUp, "
@@ -128,25 +129,25 @@ void updateActualCostsByClassCode::sUpdate()
           "        :machOverhead, :lowMachOverhead, :lowUser, :rollUp, "
           "        :updateActual);";
 
-  q.prepare(sql);
-  q.bindValue(":lowMaterial",     _lowerMaterial->isChecked()     ? "t" : "f" );
-  q.bindValue(":directLabor",     _directLabor->isChecked()       ? "t" : "f" );
-  q.bindValue(":lowDirectLabor",  _lowerDirectLabor->isChecked()  ? "t" : "f" );
-  q.bindValue(":overhead",        _overhead->isChecked()          ? "t" : "f" );
-  q.bindValue(":lowOverhead",     _lowerOverhead->isChecked()     ? "t" : "f" );
-  q.bindValue(":machOverhead",    (_machOverhead->isChecked() ||
+  updateUpdate.prepare(sql);
+  updateUpdate.bindValue(":lowMaterial",     _lowerMaterial->isChecked()     ? "t" : "f" );
+  updateUpdate.bindValue(":directLabor",     _directLabor->isChecked()       ? "t" : "f" );
+  updateUpdate.bindValue(":lowDirectLabor",  _lowerDirectLabor->isChecked()  ? "t" : "f" );
+  updateUpdate.bindValue(":overhead",        _overhead->isChecked()          ? "t" : "f" );
+  updateUpdate.bindValue(":lowOverhead",     _lowerOverhead->isChecked()     ? "t" : "f" );
+  updateUpdate.bindValue(":machOverhead",    (_machOverhead->isChecked() ||
       ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
-  q.bindValue(":lowMachOverhead", (_lowerMachOverhead->isChecked() ||
+  updateUpdate.bindValue(":lowMachOverhead", (_lowerMachOverhead->isChecked() ||
       ((_metrics->value("TrackMachineOverhead") != "M") && _metrics->boolean("Routings"))) ? "t" : "f");
-  q.bindValue(":lowUser",         _lowerUser->isChecked()         ? "t" : "f" );
-  q.bindValue(":rollUp",          _rollUp->isChecked()            ? "t" : "f" );
-  q.bindValue(":updateActual",    _updateActual                   ? "t" : "f" );
-  _classCode->bindValue(q);
+  updateUpdate.bindValue(":lowUser",         _lowerUser->isChecked()         ? "t" : "f" );
+  updateUpdate.bindValue(":rollUp",          _rollUp->isChecked()            ? "t" : "f" );
+  updateUpdate.bindValue(":updateActual",    _updateActual                   ? "t" : "f" );
+  _classCode->bindValue(updateUpdate);
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  updateUpdate.exec();
+  if (updateUpdate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, updateUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

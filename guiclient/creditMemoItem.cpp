@@ -87,6 +87,7 @@ void creditMemoItem::languageChange()
 
 enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 {
+  XSqlQuery creditet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -96,32 +97,32 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
   if (valid)
   {
     _cmheadid = param.toInt();
-    q.prepare("SELECT cmhead_cust_id, cmhead_shipto_id, "
+    creditet.prepare("SELECT cmhead_cust_id, cmhead_shipto_id, "
 			  "       cmhead_number, COALESCE(cmhead_invcnumber, '-1') AS cmhead_invcnumber, "
 			  "       cmhead_docdate, cmhead_curr_id, "
 			  "       cmhead_taxzone_id, cmhead_rsncode_id "
               "FROM cmhead "
               "WHERE (cmhead_id=:cmhead_id);");
-    q.bindValue(":cmhead_id", _cmheadid);
-    q.exec();
-    if (q.first())
+    creditet.bindValue(":cmhead_id", _cmheadid);
+    creditet.exec();
+    if (creditet.first())
     {
-      _custid = q.value("cmhead_cust_id").toInt();
-      _shiptoid = q.value("cmhead_shipto_id").toInt();
-      _orderNumber->setText(q.value("cmhead_number").toString());
-	  _invoiceNumber = q.value("cmhead_invcnumber").toInt();
+      _custid = creditet.value("cmhead_cust_id").toInt();
+      _shiptoid = creditet.value("cmhead_shipto_id").toInt();
+      _orderNumber->setText(creditet.value("cmhead_number").toString());
+	  _invoiceNumber = creditet.value("cmhead_invcnumber").toInt();
 	  if ( (_invoiceNumber != -1) && (_metrics->boolean("RestrictCreditMemos")) )
         vrestrict = TRUE;
-      _taxzoneid = q.value("cmhead_taxzone_id").toInt();
-      _tax->setId(q.value("cmhead_curr_id").toInt());
-      _tax->setEffective(q.value("cmhead_docdate").toDate());
-      _netUnitPrice->setId(q.value("cmhead_curr_id").toInt());
-      _netUnitPrice->setEffective(q.value("cmhead_docdate").toDate());
-      _rsnCode->setId(q.value("cmhead_rsncode_id").toInt());
+      _taxzoneid = creditet.value("cmhead_taxzone_id").toInt();
+      _tax->setId(creditet.value("cmhead_curr_id").toInt());
+      _tax->setEffective(creditet.value("cmhead_docdate").toDate());
+      _netUnitPrice->setId(creditet.value("cmhead_curr_id").toInt());
+      _netUnitPrice->setEffective(creditet.value("cmhead_docdate").toDate());
+      _rsnCode->setId(creditet.value("cmhead_rsncode_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (creditet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -140,16 +141,16 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.prepare( "SELECT (COALESCE(MAX(cmitem_linenumber), 0) + 1) AS n_linenumber "
+      creditet.prepare( "SELECT (COALESCE(MAX(cmitem_linenumber), 0) + 1) AS n_linenumber "
                  "FROM cmitem "
                  "WHERE (cmitem_cmhead_id=:cmhead_id);" );
-      q.bindValue(":cmhead_id", _cmheadid);
-      q.exec();
-      if (q.first())
-        _lineNumber->setText(q.value("n_linenumber").toString());
-      else if (q.lastError().type() == QSqlError::NoError)
+      creditet.bindValue(":cmhead_id", _cmheadid);
+      creditet.exec();
+      if (creditet.first())
+        _lineNumber->setText(creditet.value("n_linenumber").toString());
+      else if (creditet.lastError().type() == QSqlError::NoError)
       {
-	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	      systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
 	      return UndefinedError;
       }
 
@@ -224,6 +225,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 
 void creditMemoItem::sSave()
 {
+  XSqlQuery creditSave;
   if (_qtyToCredit->toDouble() == 0.0)
   {
     QMessageBox::warning(this, tr("Invalid Credit Quantity"),
@@ -239,16 +241,16 @@ void creditMemoItem::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('cmitem_cmitem_id_seq') AS _cmitem_id");
-    if (q.first())
-      _cmitemid  = q.value("_cmitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    creditSave.exec("SELECT NEXTVAL('cmitem_cmitem_id_seq') AS _cmitem_id");
+    if (creditSave.first())
+      _cmitemid  = creditSave.value("_cmitem_id").toInt();
+    else if (creditSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, creditSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO cmitem "
+    creditSave.prepare( "INSERT INTO cmitem "
                "( cmitem_id, cmitem_cmhead_id, cmitem_linenumber, cmitem_itemsite_id,"
                "  cmitem_qtyreturned, cmitem_qtycredit, cmitem_updateinv,"
                "  cmitem_qty_uom_id, cmitem_qty_invuomratio,"
@@ -266,7 +268,7 @@ void creditMemoItem::sSave()
                " AND (itemsite_warehous_id=:warehous_id) );" );
   }
   else
-    q.prepare( "UPDATE cmitem "
+    creditSave.prepare( "UPDATE cmitem "
                "SET cmitem_qtyreturned=:cmitem_qtyreturned,"
                "    cmitem_qtycredit=:cmitem_qtycredit,"
                "    cmitem_updateinv=:cmitem_updateinv,"
@@ -280,27 +282,27 @@ void creditMemoItem::sSave()
                "    cmitem_rsncode_id=:cmitem_rsncode_id "
                "WHERE (cmitem_id=:cmitem_id);" );
 
-  q.bindValue(":cmitem_id", _cmitemid);
-  q.bindValue(":cmhead_id", _cmheadid);
-  q.bindValue(":cmitem_linenumber", _lineNumber->text().toInt());
-  q.bindValue(":cmitem_qtyreturned", _qtyReturned->toDouble());
-  q.bindValue(":cmitem_qtycredit", _qtyToCredit->toDouble());
-  q.bindValue(":cmitem_updateinv", QVariant(_updateInv->isChecked()));
-  q.bindValue(":qty_uom_id", _qtyUOM->id());
-  q.bindValue(":qty_invuomratio", _qtyinvuomratio);
-  q.bindValue(":price_uom_id", _pricingUOM->id());
-  q.bindValue(":price_invuomratio", _priceinvuomratio);
-  q.bindValue(":cmitem_unitprice", _netUnitPrice->localValue());
+  creditSave.bindValue(":cmitem_id", _cmitemid);
+  creditSave.bindValue(":cmhead_id", _cmheadid);
+  creditSave.bindValue(":cmitem_linenumber", _lineNumber->text().toInt());
+  creditSave.bindValue(":cmitem_qtyreturned", _qtyReturned->toDouble());
+  creditSave.bindValue(":cmitem_qtycredit", _qtyToCredit->toDouble());
+  creditSave.bindValue(":cmitem_updateinv", QVariant(_updateInv->isChecked()));
+  creditSave.bindValue(":qty_uom_id", _qtyUOM->id());
+  creditSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
+  creditSave.bindValue(":price_uom_id", _pricingUOM->id());
+  creditSave.bindValue(":price_invuomratio", _priceinvuomratio);
+  creditSave.bindValue(":cmitem_unitprice", _netUnitPrice->localValue());
   if (_taxType->isValid())
-    q.bindValue(":cmitem_taxtype_id",	_taxType->id());
-  q.bindValue(":cmitem_comments", _comments->toPlainText());
-  q.bindValue(":cmitem_rsncode_id", _rsnCode->id());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    creditSave.bindValue(":cmitem_taxtype_id",	_taxType->id());
+  creditSave.bindValue(":cmitem_comments", _comments->toPlainText());
+  creditSave.bindValue(":cmitem_rsncode_id", _rsnCode->id());
+  creditSave.bindValue(":item_id", _item->id());
+  creditSave.bindValue(":warehous_id", _warehouse->id());
+  creditSave.exec();
+  if (creditSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, creditSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -544,7 +546,8 @@ void creditMemoItem::sPriceGroup()
 
 void creditMemoItem::sListPrices()
 {
-  q.prepare( "SELECT currToCurr(ipshead_curr_id, :curr_id, ipsprice_price, :effective) AS price"
+  XSqlQuery creditListPrices;
+  creditListPrices.prepare( "SELECT currToCurr(ipshead_curr_id, :curr_id, ipsprice_price, :effective) AS price"
              "       FROM ipsass, ipshead, ipsprice "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
@@ -606,16 +609,16 @@ void creditMemoItem::sListPrices()
              "        AND (NOT item_exclusive)"
              "        AND (item_id=:item_id)"
              "        AND (cust_id=:cust_id) );");
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":cust_id", _custid);
-  q.bindValue(":shipto_id", _shiptoid);
-  q.bindValue(":curr_id", _netUnitPrice->id());
-  q.bindValue(":effective", _netUnitPrice->effective());
-  q.exec();
-  if (q.size() == 1)
+  creditListPrices.bindValue(":item_id", _item->id());
+  creditListPrices.bindValue(":cust_id", _custid);
+  creditListPrices.bindValue(":shipto_id", _shiptoid);
+  creditListPrices.bindValue(":curr_id", _netUnitPrice->id());
+  creditListPrices.bindValue(":effective", _netUnitPrice->effective());
+  creditListPrices.exec();
+  if (creditListPrices.size() == 1)
   {
-	q.first();
-	_netUnitPrice->setLocalValue(q.value("price").toDouble() * (_priceinvuomratio / _priceRatio));
+	creditListPrices.first();
+	_netUnitPrice->setLocalValue(creditListPrices.value("price").toDouble() * (_priceinvuomratio / _priceRatio));
   }
   else
   {

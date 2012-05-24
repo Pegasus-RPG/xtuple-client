@@ -37,6 +37,7 @@ void vendorAddress::languageChange()
 enum SetResponse vendorAddress::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
+  XSqlQuery setVendor;
   QVariant param;
   bool     valid;
 
@@ -59,20 +60,20 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
       _mode = cNew;
       _number->setFocus();
 
-      q.prepare("SELECT crmacct_id "
+      setVendor.prepare("SELECT crmacct_id "
                 "FROM vendinfo "
                 "  JOIN crmacct ON (crmacct_vend_id=vend_id) "
                 "WHERE (vend_id=:vend_id);");
-      q.bindValue(":vend_id", _vendid);
-      q.exec();
-      if(q.first())
+      setVendor.bindValue(":vend_id", _vendid);
+      setVendor.exec();
+      if(setVendor.first())
       {
-        _address->setSearchAcct(q.value("crmacct_id").toInt());
-        _contact->setSearchAcct(q.value("crmacct_id").toInt());
+        _address->setSearchAcct(setVendor.value("crmacct_id").toInt());
+        _contact->setSearchAcct(setVendor.value("crmacct_id").toInt());
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (setVendor.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, setVendor.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
     }
@@ -102,9 +103,10 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
 
 void vendorAddress::sSave()
 {
-  if (! q.exec("BEGIN"))
+  XSqlQuery vendorSave;
+  if (! vendorSave.exec("BEGIN"))
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, vendorSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -139,17 +141,17 @@ void vendorAddress::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('vendaddr_vendaddr_id_seq') AS vendaddr_id;");
-    if (q.first())
-      _vendaddrid = q.value("vendaddr_id").toInt();
+    vendorSave.exec("SELECT NEXTVAL('vendaddr_vendaddr_id_seq') AS vendaddr_id;");
+    if (vendorSave.first())
+      _vendaddrid = vendorSave.value("vendaddr_id").toInt();
     else
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, vendorSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO vendaddrinfo "
+    vendorSave.prepare( "INSERT INTO vendaddrinfo "
                "( vendaddr_id, vendaddr_vend_id,"
                "  vendaddr_code, vendaddr_name,"
                "  vendaddr_cntct_id, vendaddr_comments, vendaddr_addr_id ) "
@@ -159,49 +161,50 @@ void vendorAddress::sSave()
                "  :vendaddr_cntct_id, :vendaddr_comments, :vendaddr_addr_id );");
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE vendaddrinfo "
+    vendorSave.prepare( "UPDATE vendaddrinfo "
                "SET vendaddr_code=:vendaddr_code, vendaddr_name=:vendaddr_name,"
                "    vendaddr_cntct_id=:vendaddr_cntct_id,"
 	       "    vendaddr_comments=:vendaddr_comments, "
                "    vendaddr_addr_id=:vendaddr_addr_id "
                "WHERE (vendaddr_id=:vendaddr_id);" );
 
-  q.bindValue(":vendaddr_id", _vendaddrid);
-  q.bindValue(":vendaddr_vend_id", _vendid);
-  q.bindValue(":vendaddr_code", _number->text().trimmed());
-  q.bindValue(":vendaddr_name", _name->text().trimmed());
+  vendorSave.bindValue(":vendaddr_id", _vendaddrid);
+  vendorSave.bindValue(":vendaddr_vend_id", _vendid);
+  vendorSave.bindValue(":vendaddr_code", _number->text().trimmed());
+  vendorSave.bindValue(":vendaddr_name", _name->text().trimmed());
   if (_contact->id() > 0)
-    q.bindValue(":vendaddr_cntct_id", _contact->id());
+    vendorSave.bindValue(":vendaddr_cntct_id", _contact->id());
   if (_address->id() > 0)
-    q.bindValue(":vendaddr_addr_id", _address->id());
-  q.bindValue(":vendaddr_comments", _notes->toPlainText().trimmed());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    vendorSave.bindValue(":vendaddr_addr_id", _address->id());
+  vendorSave.bindValue(":vendaddr_comments", _notes->toPlainText().trimmed());
+  vendorSave.exec();
+  if (vendorSave.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, vendorSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.exec("COMMIT;");
+  vendorSave.exec("COMMIT;");
 
   done(_vendaddrid);
 }
 
 void vendorAddress::sCheck()
 {
+  XSqlQuery vendorCheck;
   if ((_mode == cNew) && (_number->text().length()))
   {
-    q.prepare( "SELECT vendaddr_id "
+    vendorCheck.prepare( "SELECT vendaddr_id "
                "FROM vendaddrinfo "
                "WHERE ( (vendaddr_vend_id=:vend_id)"
                " AND (UPPER(vendaddr_code)=UPPER(:vendaddr_code)) );" );
-    q.bindValue(":vend_id", _vendid);
-    q.bindValue(":vendaddr_code", _number->text().trimmed());
-    q.exec();
-    if (q.first())
+    vendorCheck.bindValue(":vend_id", _vendid);
+    vendorCheck.bindValue(":vendaddr_code", _number->text().trimmed());
+    vendorCheck.exec();
+    if (vendorCheck.first())
     {
-      _vendaddrid = q.value("vendaddr_id").toInt();
+      _vendaddrid = vendorCheck.value("vendaddr_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -212,21 +215,22 @@ void vendorAddress::sCheck()
 
 void vendorAddress::populate()
 {
-  q.prepare( "SELECT vendaddrinfo.*, crmacct_id "
+  XSqlQuery vendorpopulate;
+  vendorpopulate.prepare( "SELECT vendaddrinfo.*, crmacct_id "
              "FROM vendaddrinfo "
              " JOIN crmacct ON (vendaddr_vend_id=crmacct_vend_id) "
              "WHERE (vendaddr_id=:vendaddr_id);" );
-  q.bindValue(":vendaddr_id", _vendaddrid);
-  q.exec();
-  if (q.first())
+  vendorpopulate.bindValue(":vendaddr_id", _vendaddrid);
+  vendorpopulate.exec();
+  if (vendorpopulate.first())
   {
-    _vendid = q.value("vendaddr_vend_id").toInt();
-    _number->setText(q.value("vendaddr_code"));
-    _name->setText(q.value("vendaddr_name"));
-    _contact->setId(q.value("vendaddr_cntct_id").toInt());
-    _address->setId(q.value("vendaddr_addr_id").toInt());
-    _notes->setText(q.value("vendaddr_comments").toString());
-    _address->setSearchAcct(q.value("crmacct_id").toInt());
-    _contact->setSearchAcct(q.value("crmacct_id").toInt());
+    _vendid = vendorpopulate.value("vendaddr_vend_id").toInt();
+    _number->setText(vendorpopulate.value("vendaddr_code"));
+    _name->setText(vendorpopulate.value("vendaddr_name"));
+    _contact->setId(vendorpopulate.value("vendaddr_cntct_id").toInt());
+    _address->setId(vendorpopulate.value("vendaddr_addr_id").toInt());
+    _notes->setText(vendorpopulate.value("vendaddr_comments").toString());
+    _address->setSearchAcct(vendorpopulate.value("crmacct_id").toInt());
+    _contact->setSearchAcct(vendorpopulate.value("crmacct_id").toInt());
   }
 }

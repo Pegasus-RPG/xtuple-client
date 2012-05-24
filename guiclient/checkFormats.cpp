@@ -72,12 +72,13 @@ void checkFormats::sEdit()
 
 void checkFormats::sDelete()
 {
-  q.prepare("SELECT deleteForm(:form_id) AS result;");
-  q.bindValue(":form_id", _form->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery checkDelete;
+  checkDelete.prepare("SELECT deleteForm(:form_id) AS result;");
+  checkDelete.bindValue(":form_id", _form->id());
+  checkDelete.exec();
+  if (checkDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = checkDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteForm", result),
@@ -85,9 +86,9 @@ void checkFormats::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (checkDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, checkDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

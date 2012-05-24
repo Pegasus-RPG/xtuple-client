@@ -212,16 +212,17 @@ void eventManager::sInventoryAvailabilityByWorkOrder()
 
 void eventManager::sViewSalesOrder()
 {
-  q.prepare( "SELECT coitem_cohead_id "
+  XSqlQuery eventViewSalesOrder;
+  eventViewSalesOrder.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
-  q.exec();
-  if (q.first())
-    salesOrder::viewSalesOrder(q.value("coitem_cohead_id").toInt());
-  else if (q.lastError().type() != QSqlError::NoError)
+  eventViewSalesOrder.bindValue(":coitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+  eventViewSalesOrder.exec();
+  if (eventViewSalesOrder.first())
+    salesOrder::viewSalesOrder(eventViewSalesOrder.value("coitem_cohead_id").toInt());
+  else if (eventViewSalesOrder.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, eventViewSalesOrder.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -250,23 +251,24 @@ void eventManager::sViewPurchaseOrderItem()
 
 void eventManager::sPrintPackingList()
 {
-  q.prepare( "SELECT coitem_cohead_id "
+  XSqlQuery eventPrintPackingList;
+  eventPrintPackingList.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
-  q.exec();
-  if (q.first())
+  eventPrintPackingList.bindValue(":coitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+  eventPrintPackingList.exec();
+  if (eventPrintPackingList.first())
   {
     ParameterList params;
-    params.append("sohead_id", q.value("coitem_cohead_id").toInt());
+    params.append("sohead_id", eventPrintPackingList.value("coitem_cohead_id").toInt());
 
     printPackingList newdlg(this, "", TRUE);
     newdlg.set(params);
     newdlg.exec();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (eventPrintPackingList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, eventPrintPackingList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -304,21 +306,22 @@ void eventManager::sViewInventoryAvailability()
 
 void eventManager::sRecallWo()
 {
-  q.prepare("SELECT recallWo(:wo_id, FALSE) AS result;");
-  q.bindValue(":wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
-  q.exec();
-  if (q.first())
+  XSqlQuery eventRecallWo;
+  eventRecallWo.prepare("SELECT recallWo(:wo_id, FALSE) AS result;");
+  eventRecallWo.bindValue(":wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+  eventRecallWo.exec();
+  if (eventRecallWo.first())
   {
-    int result = q.value("result").toInt();
+    int result = eventRecallWo.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("recallWo", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (eventRecallWo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, eventRecallWo.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -356,25 +359,26 @@ void eventManager::sPrintWoTraveler()
 
 void eventManager::sDeleteWorkOrder()
 {
+  XSqlQuery eventDeleteWorkOrder;
   if ( QMessageBox::warning( this, tr("Delete Work Order?"),
                              tr("Are you sure that you want to delete the selected Work Order?"),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
   {
-    q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
-    q.bindValue(":wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
-    q.exec();
-    if (q.first())
+    eventDeleteWorkOrder.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
+    eventDeleteWorkOrder.bindValue(":wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+    eventDeleteWorkOrder.exec();
+    if (eventDeleteWorkOrder.first())
     {
-      int result = q.value("result").toInt();
+      int result = eventDeleteWorkOrder.value("result").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("deleteWo", result), __FILE__, __LINE__);
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (eventDeleteWorkOrder.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, eventDeleteWorkOrder.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -415,18 +419,19 @@ void eventManager::sViewTask()
 
 void eventManager::sAcknowledge()
 {
-  q.prepare( "UPDATE evntlog "
+  XSqlQuery eventAcknowledge;
+  eventAcknowledge.prepare( "UPDATE evntlog "
              "SET evntlog_dispatched=CURRENT_TIMESTAMP "
              "WHERE (evntlog_id=:evntlog_id)" );
 
   QList<XTreeWidgetItem*> list = _event->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
-    q.bindValue(":evntlog_id", ((XTreeWidgetItem*)(list[i]))->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    eventAcknowledge.bindValue(":evntlog_id", ((XTreeWidgetItem*)(list[i]))->id());
+    eventAcknowledge.exec();
+    if (eventAcknowledge.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, eventAcknowledge.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -436,17 +441,18 @@ void eventManager::sAcknowledge()
 
 void eventManager::sDelete()
 {
-  q.prepare( "DELETE FROM evntlog "
+  XSqlQuery eventDelete;
+  eventDelete.prepare( "DELETE FROM evntlog "
              "WHERE (evntlog_id=:evntlog_id);" );
 
   QList<XTreeWidgetItem*> list = _event->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
-    q.bindValue(":evntlog_id", ((XTreeWidgetItem*)(list[i]))->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    eventDelete.bindValue(":evntlog_id", ((XTreeWidgetItem*)(list[i]))->id());
+    eventDelete.exec();
+    if (eventDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, eventDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -456,6 +462,7 @@ void eventManager::sDelete()
 
 void eventManager::sFillList()
 {
+  XSqlQuery eventFillList;
   MetaSQLQuery mql = mqlLoad("events", "detail");
   ParameterList params;
   params.append("username", _currentUser->isChecked() ? omfgThis->username() :
@@ -463,11 +470,11 @@ void eventManager::sFillList()
   _warehouse->appendValue(params);
   if (_showAcknowledged->isChecked())
     params.append("showAcknowledged");
-  q = mql.toQuery(params);
-  _event->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  eventFillList = mql.toQuery(params);
+  _event->populate(eventFillList);
+  if (eventFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, eventFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

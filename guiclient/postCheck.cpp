@@ -62,23 +62,24 @@ enum SetResponse postCheck::set(const ParameterList &pParams)
 
 void postCheck::sPost()
 {
-  q.prepare( "SELECT checkhead_bankaccnt_id,"
+  XSqlQuery postPost;
+  postPost.prepare( "SELECT checkhead_bankaccnt_id,"
 	     "       postCheck(checkhead_id, NULL) AS result "
              "FROM checkhead "
              "WHERE ((checkhead_id=:checkhead_id)"
              " AND  (NOT checkhead_posted) );" );
-  q.bindValue(":checkhead_id", _check->id());
-  q.exec();
-  if (q.first())
+  postPost.bindValue(":checkhead_id", _check->id());
+  postPost.exec();
+  if (postPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = postPost.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("postCheck", result),
 		  __FILE__, __LINE__);
       return;
     }
-    omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
+    omfgThis->sChecksUpdated(postPost.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
 
     if (_captive)
       accept();
@@ -88,16 +89,17 @@ void postCheck::sPost()
       _close->setText(tr("&Close"));
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (postPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, postPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void postCheck::sHandleBankAccount(int pBankaccntid)
 {
-  q.prepare( "SELECT checkhead_id,"
+  XSqlQuery postHandleBankAccount;
+  postHandleBankAccount.prepare( "SELECT checkhead_id,"
 	     "       (TEXT(checkhead_number) || '-' || checkrecip_name) "
              "FROM checkhead LEFT OUTER JOIN"
 	     "     checkrecip ON ((checkhead_recip_id=checkrecip_id)"
@@ -107,27 +109,28 @@ void postCheck::sHandleBankAccount(int pBankaccntid)
              "  AND  (checkhead_printed)"
              "  AND  (checkhead_bankaccnt_id=:bankaccnt_id) ) "
              "ORDER BY checkhead_number;" );
-  q.bindValue(":bankaccnt_id", pBankaccntid);
-  q.exec();
-  _check->populate(q);
+  postHandleBankAccount.bindValue(":bankaccnt_id", pBankaccntid);
+  postHandleBankAccount.exec();
+  _check->populate(postHandleBankAccount);
   _check->setNull();
 }
 
 void postCheck::populate(int pcheckid)
 {
-  q.prepare( "SELECT checkhead_bankaccnt_id "
+  XSqlQuery postpopulate;
+  postpopulate.prepare( "SELECT checkhead_bankaccnt_id "
              "FROM checkhead "
              "WHERE (checkhead_id=:check_id);" );
-  q.bindValue(":check_id", pcheckid);
-  q.exec();
-  if (q.first())
+  postpopulate.bindValue(":check_id", pcheckid);
+  postpopulate.exec();
+  if (postpopulate.first())
   {
-    _bankaccnt->setId(q.value("checkhead_bankaccnt_id").toInt());
+    _bankaccnt->setId(postpopulate.value("checkhead_bankaccnt_id").toInt());
     _check->setId(pcheckid);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (postpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, postpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

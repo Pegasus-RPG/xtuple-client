@@ -57,12 +57,13 @@ void customerGroups::languageChange()
 
 void customerGroups::sDelete()
 {
-  q.prepare( "DELETE FROM custgrpitem "
+  XSqlQuery customerDelete;
+  customerDelete.prepare( "DELETE FROM custgrpitem "
              "WHERE (custgrpitem_custgrp_id=:custgrp_id); "
              "DELETE FROM custgrp "
              "WHERE (custgrp_id=:custgrp_id);" );
-  q.bindValue(":custgrp_id", _custgrp->id());
-  q.exec();
+  customerDelete.bindValue(":custgrp_id", _custgrp->id());
+  customerDelete.exec();
 
   sFillList();
 }

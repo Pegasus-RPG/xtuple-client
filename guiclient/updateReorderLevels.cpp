@@ -111,6 +111,7 @@ bool updateReorderLevels::setParams(ParameterList &params)
 
 void updateReorderLevels::sUpdate()
 {
+  XSqlQuery updateUpdate;
   _results->clear();
   _totalDays->setText("");
 
@@ -129,19 +130,19 @@ void updateReorderLevels::sUpdate()
       return;
 
     MetaSQLQuery mql = mqlLoad("updateReorderLevels", method);
-    q = mql.toQuery(params);
-    if (q.lastError().type() != QSqlError::NoError)
+    updateUpdate = mql.toQuery(params);
+    if (updateUpdate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, updateUpdate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
     if (_preview->isChecked())
     {
-      _results->populate(q, true);
-      if (q.first())
+      _results->populate(updateUpdate, true);
+      if (updateUpdate.first())
       {
-        _totalDays->setText(q.value("reordlvl_total_days").toString());
+        _totalDays->setText(updateUpdate.value("reordlvl_total_days").toString());
         disconnect(_results, SIGNAL(itemChanged(XTreeWidgetItem*, int)), this, SLOT(sItemChanged(XTreeWidgetItem*, int)));
         connect(_results, SIGNAL(itemChanged(XTreeWidgetItem*, int)), this, SLOT(sItemChanged(XTreeWidgetItem*, int)));
         _tab->setCurrentIndex(1);
@@ -194,6 +195,7 @@ void updateReorderLevels::sHandleButtons()
 
 void updateReorderLevels::sPost()
 {
+  XSqlQuery updatePost;
   MetaSQLQuery mql = mqlLoad("updateReorderLevels", "post");
   ParameterList params;
   QList<XTreeWidgetItem*> selected = _results->selectedItems();
@@ -205,10 +207,10 @@ void updateReorderLevels::sPost()
     params.clear();
     params.append("itemsite_id",           selected[i]->id());
     params.append("itemsite_reorderlevel", selected[i]->data(7,Qt::EditRole).toDouble());
-    q = mql.toQuery(params);
-    if (q.lastError().type() != QSqlError::NoError)
+    updatePost = mql.toQuery(params);
+    if (updatePost.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, updatePost.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     delete selected[i];

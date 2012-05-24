@@ -41,6 +41,7 @@ void firmPlannedOrder::languageChange()
 
 enum SetResponse firmPlannedOrder::set(const ParameterList &pParams)
 {
+  XSqlQuery firmet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -51,30 +52,30 @@ enum SetResponse firmPlannedOrder::set(const ParameterList &pParams)
     _planordid = param.toInt();
     _item->setReadOnly(TRUE);
 
-    q.prepare( "SELECT planord.*, (planord_duedate - planord_startdate) AS leadtime "
+    firmet.prepare( "SELECT planord.*, (planord_duedate - planord_startdate) AS leadtime "
                "FROM planord "
                "WHERE (planord_id=:planord_id);" );
-    q.bindValue(":planord_id", _planordid);
-    q.exec();
-    if (q.first())
+    firmet.bindValue(":planord_id", _planordid);
+    firmet.exec();
+    if (firmet.first())
     {
-      _item->setItemsiteid(q.value("planord_itemsite_id").toInt());
-      _quantity->setDouble(q.value("planord_qty").toDouble());
-      _dueDate->setDate(q.value("planord_duedate").toDate());
-      _comments->setText(q.value("planord_comments").toString());
-      _number = q.value("planord_number").toInt();
-      _itemsiteid = q.value("planord_itemsite_id").toInt();
-      _leadTime = q.value("leadtime").toInt();
+      _item->setItemsiteid(firmet.value("planord_itemsite_id").toInt());
+      _quantity->setDouble(firmet.value("planord_qty").toDouble());
+      _dueDate->setDate(firmet.value("planord_duedate").toDate());
+      _comments->setText(firmet.value("planord_comments").toString());
+      _number = firmet.value("planord_number").toInt();
+      _itemsiteid = firmet.value("planord_itemsite_id").toInt();
+      _leadTime = firmet.value("leadtime").toInt();
 
-      _type = q.value("planord_type").toString();  
-      if (q.value("planord_type").toString() == "P")
+      _type = firmet.value("planord_type").toString();  
+      if (firmet.value("planord_type").toString() == "P")
         _orderType->setText(tr("Purchase Order"));
-      else if (q.value("planord_type").toString() == "W")
+      else if (firmet.value("planord_type").toString() == "W")
         _orderType->setText(tr("Work Order"));
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (firmet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, firmet.lastError().databaseText(), __FILE__, __LINE__);
       reject();
     }
   }
@@ -84,31 +85,32 @@ enum SetResponse firmPlannedOrder::set(const ParameterList &pParams)
 
 void firmPlannedOrder::sFirm()
 {
-  q.prepare( "UPDATE planord "
+  XSqlQuery firmFirm;
+  firmFirm.prepare( "UPDATE planord "
              "SET planord_firm=TRUE, "
              "    planord_comments=:planord_comments, "
              "    planord_qty=:planord_qty, "
              "    planord_duedate=:planord_dueDate, "
              "    planord_startdate=(DATE(:planord_dueDate) - :planord_leadTime) "
              "WHERE (planord_id=:planord_id);" );
-  q.bindValue(":planord_qty", _quantity->toDouble());
-  q.bindValue(":planord_dueDate", _dueDate->date());
-  q.bindValue(":planord_leadTime", _leadTime);
-  q.bindValue(":planord_comments", _comments->toPlainText());
-  q.bindValue(":planord_id", _planordid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  firmFirm.bindValue(":planord_qty", _quantity->toDouble());
+  firmFirm.bindValue(":planord_dueDate", _dueDate->date());
+  firmFirm.bindValue(":planord_leadTime", _leadTime);
+  firmFirm.bindValue(":planord_comments", _comments->toPlainText());
+  firmFirm.bindValue(":planord_id", _planordid);
+  firmFirm.exec();
+  if (firmFirm.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, firmFirm.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare( "SELECT explodePlannedOrder( :planord_id, true) AS result;" );
-  q.bindValue(":planord_id", _planordid);
-  q.exec();
-  if (q.first())
+  firmFirm.prepare( "SELECT explodePlannedOrder( :planord_id, true) AS result;" );
+  firmFirm.bindValue(":planord_id", _planordid);
+  firmFirm.exec();
+  if (firmFirm.first())
   {
-    double result = q.value("result").toDouble();
+    double result = firmFirm.value("result").toDouble();
     if (result < 0.0)
     {
       systemError(this, tr("ExplodePlannedOrder returned %, indicating an "
@@ -117,9 +119,9 @@ void firmPlannedOrder::sFirm()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (firmFirm.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, firmFirm.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

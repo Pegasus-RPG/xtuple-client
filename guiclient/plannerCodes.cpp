@@ -78,12 +78,13 @@ void plannerCodes::languageChange()
 
 void plannerCodes::sDelete()
 {
-  q.prepare( "SELECT itemsite_id "
+  XSqlQuery plannerDelete;
+  plannerDelete.prepare( "SELECT itemsite_id "
              "FROM itemsite "
              "WHERE (itemsite_plancode_id=:plancode_id);" );
-  q.bindValue(":plancode_id", _plancode->id());
-  q.exec();
-  if (q.first())
+  plannerDelete.bindValue(":plancode_id", _plancode->id());
+  plannerDelete.exec();
+  if (plannerDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Planner Code"),
                            tr( "The selected Planner Code cannot be deleted as there are one or more Item Sites currently assigned to it.\n"
@@ -91,10 +92,10 @@ void plannerCodes::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM plancode "
+  plannerDelete.prepare( "DELETE FROM plancode "
              "WHERE (plancode_id=:plancode_id);" );
-  q.bindValue(":plancode_id", _plancode->id());
-  q.exec();
+  plannerDelete.bindValue(":plancode_id", _plancode->id());
+  plannerDelete.exec();
 
   sFillList();
 }

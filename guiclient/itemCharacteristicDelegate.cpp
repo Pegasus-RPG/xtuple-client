@@ -45,7 +45,7 @@ QWidget *ItemCharacteristicDelegate::createEditor(QWidget *parent,
   if (chartype == characteristic::Text ||
       chartype == characteristic::List)
   {
-    q.prepare("SELECT charass_value "
+    qry.prepare("SELECT charass_value "
               "FROM char, charass "
               "  LEFT OUTER JOIN charopt ON ((charopt_char_id=charass_char_id) "
               "                          AND (charopt_value=charass_value)) "
@@ -54,9 +54,9 @@ QWidget *ItemCharacteristicDelegate::createEditor(QWidget *parent,
               " AND  (charass_target_id=:item_id)"
               " AND  (char_id=:char_id) ) "
               "ORDER BY COALESCE(charopt_order,0), charass_value;");
-    q.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
-    q.bindValue(":item_id", index.model()->data(index, Xt::IdRole));
-    q.exec();
+    qry.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
+    qry.bindValue(":item_id", index.model()->data(index, Xt::IdRole));
+    qry.exec();
 
     QComboBox *editor = new QComboBox(parent);
     editor->setEditable(chartype == characteristic::Text);
@@ -68,8 +68,8 @@ QWidget *ItemCharacteristicDelegate::createEditor(QWidget *parent,
     editor->setFont(boxfont);
 #endif
 
-    while(q.next())
-      editor->addItem(q.value("charass_value").toString());
+    while(qry.next())
+      editor->addItem(qry.value("charass_value").toString());
     editor->installEventFilter(const_cast<ItemCharacteristicDelegate*>(this));
 
     return editor;
@@ -109,6 +109,7 @@ void ItemCharacteristicDelegate::setEditorData(QWidget *editor,
 void ItemCharacteristicDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
                                    const QModelIndex &index) const
 {
+  XSqlQuery ItemetModelData;
   QComboBox *comboBox = static_cast<QComboBox*>(editor);
   QModelIndex charidx = index.sibling(index.row(), CHAR);
   QModelIndex priceidx = index.sibling(index.row(), PRICE);
@@ -122,19 +123,19 @@ void ItemCharacteristicDelegate::setModelData(QWidget *editor, QAbstractItemMode
   {
     if (listVars.value(CUST_ID).toInt())
     {
-      q.prepare("SELECT itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective)::numeric(16,4) AS price;");
+      ItemetModelData.prepare("SELECT itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective)::numeric(16,4) AS price;");
 
-      q.bindValue(":item_id"  , listVars.value(ITEM_ID).toInt());
-      q.bindValue(":char_id"  , charidx.model()->data(charidx, Qt::UserRole));
-      q.bindValue(":value"    , comboBox->currentText());
-      q.bindValue(":cust_id"  , listVars.value(CUST_ID));
-      q.bindValue(":shipto_id", listVars.value(SHIPTO_ID));
-      q.bindValue(":qty"      , listVars.value(QTY));
-      q.bindValue(":curr_id"  , listVars.value(CURR_ID));
-      q.bindValue(":effective", listVars.value(EFFECTIVE));
-      q.exec();
-      if (q.first())
-        model->setData(priceidx, q.value("price").toString());
+      ItemetModelData.bindValue(":item_id"  , listVars.value(ITEM_ID).toInt());
+      ItemetModelData.bindValue(":char_id"  , charidx.model()->data(charidx, Qt::UserRole));
+      ItemetModelData.bindValue(":value"    , comboBox->currentText());
+      ItemetModelData.bindValue(":cust_id"  , listVars.value(CUST_ID));
+      ItemetModelData.bindValue(":shipto_id", listVars.value(SHIPTO_ID));
+      ItemetModelData.bindValue(":qty"      , listVars.value(QTY));
+      ItemetModelData.bindValue(":curr_id"  , listVars.value(CURR_ID));
+      ItemetModelData.bindValue(":effective", listVars.value(EFFECTIVE));
+      ItemetModelData.exec();
+      if (ItemetModelData.first())
+        model->setData(priceidx, ItemetModelData.value("price").toString());
     }
     model->setData(index, comboBox->currentText());
   }

@@ -110,10 +110,11 @@ void arAccountAssignments::sView()
 
 void arAccountAssignments::sDelete()
 {
-  q.prepare( "DELETE FROM araccnt "
+  XSqlQuery arDelete;
+  arDelete.prepare( "DELETE FROM araccnt "
              "WHERE (araccnt_id=:araccnt_id);" );
-  q.bindValue(":araccnt_id", _araccnt->id());
-  q.exec();
+  arDelete.bindValue(":araccnt_id", _araccnt->id());
+  arDelete.exec();
   sFillList();
 }
 

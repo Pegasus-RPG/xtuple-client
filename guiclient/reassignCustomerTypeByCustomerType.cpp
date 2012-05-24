@@ -39,6 +39,7 @@ void reassignCustomerTypeByCustomerType::languageChange()
 
 void reassignCustomerTypeByCustomerType::sReassign()
 {
+  XSqlQuery reassignReassign;
   if ( (_customerTypePattern->isChecked()) && (_customerType->text().length() == 0) )
   {
     QMessageBox::warning(this, tr("Missing Customer Type Pattern"),
@@ -55,11 +56,11 @@ void reassignCustomerTypeByCustomerType::sReassign()
   else if (_customerTypePattern->isChecked())
     sql += "WHERE (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :old_custtype_code)));";
 
-  q.prepare(sql);
-  q.bindValue(":new_custtype_id", _newCustomerType->id());
-  q.bindValue(":old_custtype_id", _customerTypes->id());
-  q.bindValue(":old_custtype_code", _customerType->text());
-  q.exec();
+  reassignReassign.prepare(sql);
+  reassignReassign.bindValue(":new_custtype_id", _newCustomerType->id());
+  reassignReassign.bindValue(":old_custtype_id", _customerTypes->id());
+  reassignReassign.bindValue(":old_custtype_code", _customerType->text());
+  reassignReassign.exec();
 
   accept();
 }

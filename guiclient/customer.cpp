@@ -465,6 +465,7 @@ void customer::setValid(bool valid)
 
 bool customer::sSave()
 {
+  XSqlQuery customerSave;
 
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(_number->number().trimmed().isEmpty(), _number,
@@ -507,7 +508,7 @@ bool customer::sSave()
 
   if (_mode == cEdit)
   {
-    q.prepare( "UPDATE custinfo SET "
+    customerSave.prepare( "UPDATE custinfo SET "
                "       cust_number=:cust_number, cust_name=:cust_name,"
                "       cust_salesrep_id=:cust_salesrep_id,"
                "       cust_corrcntct_id=:cust_corrcntct_id, cust_cntct_id=:cust_cntct_id,"
@@ -531,7 +532,7 @@ bool customer::sSave()
                "WHERE (cust_id=:cust_id);" );
   }
   else
-    q.prepare( "INSERT INTO custinfo "
+    customerSave.prepare( "INSERT INTO custinfo "
                "( cust_id, cust_number,"
                "  cust_salesrep_id, cust_name,"
                "  cust_corrcntct_id, cust_cntct_id,"
@@ -564,63 +565,63 @@ bool customer::sSave()
                "  :cust_preferred_warehous_id, "
                "  :cust_gracedays, :cust_curr_id ) " );
 
-  q.bindValue(":cust_id", _custid);
-  q.bindValue(":cust_number", _number->number().trimmed());
-  q.bindValue(":cust_name", _name->text().trimmed());
-  q.bindValue(":cust_salesrep_id", _salesrep->id());
+  customerSave.bindValue(":cust_id", _custid);
+  customerSave.bindValue(":cust_number", _number->number().trimmed());
+  customerSave.bindValue(":cust_name", _name->text().trimmed());
+  customerSave.bindValue(":cust_salesrep_id", _salesrep->id());
   if (_corrCntct->id() > 0)
-    q.bindValue(":cust_corrcntct_id", _corrCntct->id());        // else NULL
+    customerSave.bindValue(":cust_corrcntct_id", _corrCntct->id());        // else NULL
   if (_billCntct->id() > 0)
-    q.bindValue(":cust_cntct_id", _billCntct->id());            // else NULL
-  q.bindValue(":cust_custtype_id", _custtype->id());
+    customerSave.bindValue(":cust_cntct_id", _billCntct->id());            // else NULL
+  customerSave.bindValue(":cust_custtype_id", _custtype->id());
 
-  q.bindValue(":cust_balmethod", _balanceMethod->code());
+  customerSave.bindValue(":cust_balmethod", _balanceMethod->code());
 
   if (_inGoodStanding->isChecked())
-    q.bindValue(":cust_creditstatus", "G");
+    customerSave.bindValue(":cust_creditstatus", "G");
   else if (_onCreditWarning->isChecked())
-    q.bindValue(":cust_creditstatus", "W");
+    customerSave.bindValue(":cust_creditstatus", "W");
   else if (_onCreditHold->isChecked())
-    q.bindValue(":cust_creditstatus", "H");
+    customerSave.bindValue(":cust_creditstatus", "H");
   else
-    q.bindValue(":cust_creditstatus", "U");
+    customerSave.bindValue(":cust_creditstatus", "U");
 
-  q.bindValue(":cust_creditlmt_curr_id", _creditLimit->id());
-  q.bindValue(":cust_creditlmt", _creditLimit->localValue());
-  q.bindValue(":cust_creditrating", _creditRating->text());
-  q.bindValue(":cust_autoupdatestatus", QVariant(_autoUpdateStatus->isChecked()));
-  q.bindValue(":cust_autoholdorders", QVariant(_autoHoldOrders->isChecked()));
-  q.bindValue(":cust_commprcnt", (_defaultCommissionPrcnt->toDouble() / 100.0));
-  q.bindValue(":cust_terms_id", _terms->id());
-  q.bindValue(":cust_discntprcnt", (_defaultDiscountPrcnt->toDouble() / 100.0));
+  customerSave.bindValue(":cust_creditlmt_curr_id", _creditLimit->id());
+  customerSave.bindValue(":cust_creditlmt", _creditLimit->localValue());
+  customerSave.bindValue(":cust_creditrating", _creditRating->text());
+  customerSave.bindValue(":cust_autoupdatestatus", QVariant(_autoUpdateStatus->isChecked()));
+  customerSave.bindValue(":cust_autoholdorders", QVariant(_autoHoldOrders->isChecked()));
+  customerSave.bindValue(":cust_commprcnt", (_defaultCommissionPrcnt->toDouble() / 100.0));
+  customerSave.bindValue(":cust_terms_id", _terms->id());
+  customerSave.bindValue(":cust_discntprcnt", (_defaultDiscountPrcnt->toDouble() / 100.0));
 
   if (_taxzone->isValid())
-    q.bindValue(":cust_taxzone_id", _taxzone->id());
+    customerSave.bindValue(":cust_taxzone_id", _taxzone->id());
 
-  q.bindValue(":cust_shipvia", _shipvia->currentText());
-  q.bindValue(":cust_shipchrg_id", _shipchrg->id());
+  customerSave.bindValue(":cust_shipvia", _shipvia->currentText());
+  customerSave.bindValue(":cust_shipchrg_id", _shipchrg->id());
   if(_shipform->id() > 0)
-    q.bindValue(":cust_shipform_id", _shipform->id());
+    customerSave.bindValue(":cust_shipform_id", _shipform->id());
 
-  q.bindValue(":cust_active",     QVariant(_active->isChecked()));
-  q.bindValue(":cust_usespos",    QVariant(_usesPOs->isChecked()));
-  q.bindValue(":cust_blanketpos", QVariant(_blanketPos->isChecked()));
-  q.bindValue(":cust_partialship",QVariant(_partialShipments->isChecked()));
-  q.bindValue(":cust_backorder",  QVariant(_backorders->isChecked()));
-  q.bindValue(":cust_ffshipto",   QVariant(_allowFFShipto->isChecked()));
-  q.bindValue(":cust_ffbillto",   QVariant(_allowFFBillto->isChecked()));
+  customerSave.bindValue(":cust_active",     QVariant(_active->isChecked()));
+  customerSave.bindValue(":cust_usespos",    QVariant(_usesPOs->isChecked()));
+  customerSave.bindValue(":cust_blanketpos", QVariant(_blanketPos->isChecked()));
+  customerSave.bindValue(":cust_partialship",QVariant(_partialShipments->isChecked()));
+  customerSave.bindValue(":cust_backorder",  QVariant(_backorders->isChecked()));
+  customerSave.bindValue(":cust_ffshipto",   QVariant(_allowFFShipto->isChecked()));
+  customerSave.bindValue(":cust_ffbillto",   QVariant(_allowFFBillto->isChecked()));
 
-  q.bindValue(":cust_comments", _notes->toPlainText());
+  customerSave.bindValue(":cust_comments", _notes->toPlainText());
 
-  q.bindValue(":cust_preferred_warehous_id", _sellingWarehouse->id());
-  q.bindValue(":cust_curr_id", _currency->id());
+  customerSave.bindValue(":cust_preferred_warehous_id", _sellingWarehouse->id());
+  customerSave.bindValue(":cust_curr_id", _currency->id());
 
   if(_warnLate->isChecked())
-    q.bindValue(":cust_gracedays", _graceDays->value());
+    customerSave.bindValue(":cust_gracedays", _graceDays->value());
 
-  q.exec();
+  customerSave.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving"),
-                           q, __FILE__, __LINE__))
+                           customerSave, __FILE__, __LINE__))
     return false;
 
   if (_mode == cNew)
@@ -633,19 +634,19 @@ bool customer::sSave()
   //Save characteristics
   if (_widgetStack->currentIndex() == 1)
   {
-    q.prepare("SELECT updateCharAssignment('C', :target_id, :char_id, :char_value);");
+    customerSave.prepare("SELECT updateCharAssignment('C', :target_id, :char_id, :char_value);");
 
     QModelIndex idx1, idx2;
     for(int i = 0; i < _custchar->rowCount(); i++)
     {
       idx1 = _custchar->index(i, 0);
       idx2 = _custchar->index(i, 1);
-      q.bindValue(":target_id", _custid);
-      q.bindValue(":char_id", _custchar->data(idx1, Qt::UserRole));
-      q.bindValue(":char_value", _custchar->data(idx2, Qt::DisplayRole));
-      q.exec();
+      customerSave.bindValue(":target_id", _custid);
+      customerSave.bindValue(":char_id", _custchar->data(idx1, Qt::UserRole));
+      customerSave.bindValue(":char_value", _custchar->data(idx2, Qt::DisplayRole));
+      customerSave.exec();
       ErrorReporter::error(QtCriticalMsg, this, tr("Saving Characteristic"),
-                           q, __FILE__, __LINE__);
+                           customerSave, __FILE__, __LINE__);
     }
   }
 
@@ -676,6 +677,7 @@ void customer::sSaveClicked()
 
 void customer::sCheck()
 {
+  XSqlQuery customerCheck;
   _number->setNumber(_number->number().trimmed().toUpper());
 
   if (_cachedNumber == _number->number())
@@ -690,7 +692,7 @@ void customer::sCheck()
     _NumberGen = -1;
   }
 
-  q.prepare( "SELECT cust_id, 1 AS type "
+  customerCheck.prepare( "SELECT cust_id, 1 AS type "
              "FROM custinfo "
              "WHERE (cust_number=:cust_number) "
              "UNION "
@@ -702,11 +704,11 @@ void customer::sCheck()
              "FROM crmacct "
              "WHERE (crmacct_number=:cust_number) "
              "ORDER BY type; ");
-  q.bindValue(":cust_number", _number->number());
-  q.exec();
-  if (q.first())
+  customerCheck.bindValue(":cust_number", _number->number());
+  customerCheck.exec();
+  if (customerCheck.first())
   {
-    if ((q.value("type").toInt() == 1) && (_notice))
+    if ((customerCheck.value("type").toInt() == 1) && (_notice))
     {
       if (QMessageBox::question(this, tr("Customer Exists"),
               tr("<p>This number is currently used by an existing Customer. "
@@ -719,14 +721,14 @@ void customer::sCheck()
         return;
       }
 
-      _number->setId(q.value("cust_id").toInt());
+      _number->setId(customerCheck.value("cust_id").toInt());
       _mode = cEdit;
       _name->setFocus();
       emit newMode(_mode);
     }
     else if ( (_mode == cEdit) &&
-              ((q.value("type").toInt() == 2) ||
-              (q.value("type").toInt() == 3)) &&
+              ((customerCheck.value("type").toInt() == 2) ||
+              (customerCheck.value("type").toInt() == 3)) &&
               (_notice))
     {
       if (QMessageBox::critical(this, tr("Invalid Number"),
@@ -739,7 +741,7 @@ void customer::sCheck()
         return;
       }
     }
-    else if ((q.value("type").toInt() == 2) && (_notice))
+    else if ((customerCheck.value("type").toInt() == 2) && (_notice))
     {
       int quotecount = 0;
       if (_privileges->check("ConvertQuotes"))
@@ -748,7 +750,7 @@ void customer::sCheck()
         quoteq.prepare("SELECT COUNT(*) AS quotecount"
                        "  FROM quhead"
                        " WHERE (quhead_cust_id=:id);");
-        quoteq.bindValue(":id", q.value("cust_id"));
+        quoteq.bindValue(":id", customerCheck.value("cust_id"));
         quoteq.exec();
         if (quoteq.first())
           quotecount = quoteq.value("quotecount").toInt();
@@ -777,7 +779,7 @@ void customer::sCheck()
 
       XSqlQuery convertq;
       convertq.prepare("SELECT convertProspectToCustomer(:id, :convertquotes) AS result;");
-      convertq.bindValue(":id", q.value("cust_id"));
+      convertq.bindValue(":id", customerCheck.value("cust_id"));
       convertq.bindValue(":convertquotes", convertquotes);
       convertq.exec();
       if (convertq.first())
@@ -790,7 +792,7 @@ void customer::sCheck()
                                     convertq, __FILE__, __LINE__))
         return;
     } // number in use by prospect
-    else if ((q.value("type").toInt() == 3) && (_notice))
+    else if ((customerCheck.value("type").toInt() == 3) && (_notice))
     {
       if (QMessageBox::question(this, tr("Convert"),
                   tr("<p>This number is currently assigned to CRM Account. "
@@ -802,11 +804,11 @@ void customer::sCheck()
         _number->setFocus();
         return;
       }
-      sLoadCrmAcct(q.value("cust_id").toInt());
+      sLoadCrmAcct(customerCheck.value("cust_id").toInt());
     }
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Number"),
-                                q, __FILE__, __LINE__))
+                                customerCheck, __FILE__, __LINE__))
     return;
 }
 
@@ -989,20 +991,21 @@ void customer::sDeleteCharacteristic()
 
 void customer::sFillCharacteristicList()
 {
-  q.prepare( "SELECT custtype_char "
+  XSqlQuery customerFillCharacteristicList;
+  customerFillCharacteristicList.prepare( "SELECT custtype_char "
              "FROM custtype "
              "WHERE (custtype_id=:custtype_id);");
-  q.bindValue(":custtype_id",_custtype->id());
-  q.exec();
+  customerFillCharacteristicList.bindValue(":custtype_id",_custtype->id());
+  customerFillCharacteristicList.exec();
 
-  q.first();
-  if (q.value("custtype_char").toBool())
+  customerFillCharacteristicList.first();
+  if (customerFillCharacteristicList.value("custtype_char").toBool())
   {
     if (_charfilled)
       return;
     _widgetStack->setCurrentIndex(1);
     _custchar->removeRows(0, _custchar->rowCount());
-    q.prepare( "SELECT char_id, char_name, "
+    customerFillCharacteristicList.prepare( "SELECT char_id, char_name, "
                " CASE WHEN char_type < 2 THEN "
                "   charass_value "
                " ELSE "
@@ -1021,21 +1024,21 @@ void customer::sFillCharacteristicList()
                "   AND   (a.charass_target_type='CT')"
                "   AND   (a.charass_target_id=:custtype_id) ) "
                " ORDER BY char_order, char_name) data;" );
-    q.bindValue(":custtype_id", _custtype->id());
-    q.bindValue(":cust_id", _custid);
-    q.exec();
+    customerFillCharacteristicList.bindValue(":custtype_id", _custtype->id());
+    customerFillCharacteristicList.bindValue(":cust_id", _custid);
+    customerFillCharacteristicList.exec();
 
     int row = 0;
     QModelIndex idx;
-    while(q.next())
+    while(customerFillCharacteristicList.next())
     {
       _custchar->insertRow(_custchar->rowCount());
       idx = _custchar->index(row, 0);
-      _custchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
-      _custchar->setData(idx, q.value("char_id"), Qt::UserRole);
+      _custchar->setData(idx, customerFillCharacteristicList.value("char_name"), Qt::DisplayRole);
+      _custchar->setData(idx, customerFillCharacteristicList.value("char_id"), Qt::UserRole);
       idx = _custchar->index(row, 1);
-      _custchar->setData(idx, q.value("f_charass_value"), Qt::DisplayRole);
-      _custchar->setData(idx, q.value("charass_value"), Qt::UserRole);
+      _custchar->setData(idx, customerFillCharacteristicList.value("f_charass_value"), Qt::DisplayRole);
+      _custchar->setData(idx, customerFillCharacteristicList.value("charass_value"), Qt::UserRole);
       _custchar->setData(idx, _custtype->id(), Xt::IdRole);
       row++;
     }

@@ -74,6 +74,7 @@ void shipOrder::languageChange()
 
 enum SetResponse shipOrder::set(const ParameterList &pParams)
 {
+  XSqlQuery shipet;
   XDialog::set(pParams);
   QString  returnValue;
   QVariant param;
@@ -82,26 +83,26 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
   param = pParams.value("shiphead_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT shiphead_order_id, shiphead_order_type "
+    shipet.prepare( "SELECT shiphead_order_id, shiphead_order_type "
                "FROM shiphead "
                "WHERE (shiphead_id=:shiphead_id);" );
-    q.bindValue(":shiphead_id", param.toInt());
-    q.exec();
-    if (q.first())
+    shipet.bindValue(":shiphead_id", param.toInt());
+    shipet.exec();
+    if (shipet.first())
     {
       _captive = true;	// so order handling can reject if necessary
-      if (q.value("shiphead_order_type").toString() == "SO")
+      if (shipet.value("shiphead_order_type").toString() == "SO")
       {
         _order->setId(param.toInt(), "SO");
       }
-      else if (q.value("shiphead_order_type").toString() == "TO")
+      else if (shipet.value("shiphead_order_type").toString() == "TO")
       {
         _order->setId(param.toInt(), "TO");
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (shipet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, shipet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
 
@@ -413,6 +414,7 @@ void shipOrder::sHandleOrder()
 
 void shipOrder::sHandleSo()
 {
+  XSqlQuery shipHandleSo;
   _coitem->clear();
   _shipment->setEnabled(false);
   _shipment->removeOrderLimit();
@@ -420,23 +422,23 @@ void shipOrder::sHandleSo()
   sHandleButtons();
 
 
-  q.prepare( "SELECT cohead_holdtype, cust_name, cohead_shiptoname, "
+  shipHandleSo.prepare( "SELECT cohead_holdtype, cust_name, cohead_shiptoname, "
              "       cohead_shiptoaddress1, cohead_curr_id, cohead_freight "
              "FROM cohead, custinfo "
              "WHERE ((cohead_cust_id=cust_id) "
              "  AND  (cohead_id=:sohead_id));" );
-  q.bindValue(":sohead_id", _order->id());
-  q.exec();
-  if (q.first())
+  shipHandleSo.bindValue(":sohead_id", _order->id());
+  shipHandleSo.exec();
+  if (shipHandleSo.first())
   {
     QString msg;
-    if ( (q.value("cohead_holdtype").toString() == "C"))
+    if ( (shipHandleSo.value("cohead_holdtype").toString() == "C"))
       msg = storedProcErrorLookup("shipShipment", -12);
-    else if (q.value("cohead_holdtype").toString() == "P")
+    else if (shipHandleSo.value("cohead_holdtype").toString() == "P")
       msg = storedProcErrorLookup("shipShipment", -13);
-    else if (q.value("cohead_holdtype").toString() == "R")
+    else if (shipHandleSo.value("cohead_holdtype").toString() == "R")
       msg = storedProcErrorLookup("shipShipment", -14);
-    else if (q.value("cohead_holdtype").toString() == "S")
+    else if (shipHandleSo.value("cohead_holdtype").toString() == "S")
       msg = storedProcErrorLookup("shipShipment", -15);
 
     if (! msg.isEmpty())
@@ -454,11 +456,11 @@ void shipOrder::sHandleSo()
       }
     }
 
-    _freight->setId(q.value("cohead_curr_id").toInt());
-    _freight->setLocalValue(q.value("cohead_freight").toDouble());
-    _billToName->setText(q.value("cust_name").toString());
-    _shipToName->setText(q.value("cohead_shiptoname").toString());
-    _shipToAddr1->setText(q.value("cohead_shiptoaddress1").toString());
+    _freight->setId(shipHandleSo.value("cohead_curr_id").toInt());
+    _freight->setLocalValue(shipHandleSo.value("cohead_freight").toDouble());
+    _billToName->setText(shipHandleSo.value("cust_name").toString());
+    _shipToName->setText(shipHandleSo.value("cohead_shiptoname").toString());
+    _shipToAddr1->setText(shipHandleSo.value("cohead_shiptoaddress1").toString());
 
     QString sql( "SELECT shiphead_id "
                  "FROM shiphead "
@@ -473,22 +475,22 @@ void shipOrder::sHandleSo()
     if (_shipment->isValid())
       params.append("shiphead_id", _shipment->id());
     MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    if (q.first())
+    shipHandleSo = mql.toQuery(params);
+    if (shipHandleSo.first())
     {
-      if (_shipment->id() != q.value("shiphead_id").toInt())
-        _shipment->setId(q.value("shiphead_id").toInt());
+      if (_shipment->id() != shipHandleSo.value("shiphead_id").toInt())
+        _shipment->setId(shipHandleSo.value("shiphead_id").toInt());
 
-      if (q.next())
+      if (shipHandleSo.next())
       {
         _shipment->setType("SO");
         _shipment->limitToOrder(_order->id());
         _shipment->setEnabled(true);
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (shipHandleSo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, shipHandleSo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else if (_shipment->isValid())
@@ -496,20 +498,20 @@ void shipOrder::sHandleSo()
       params.clear();
       params.append("sohead_id", _order->id());
       MetaSQLQuery mql(sql);
-      q = mql.toQuery(params);
-      if (q.first())
+      shipHandleSo = mql.toQuery(params);
+      if (shipHandleSo.first())
       {
-        _shipment->setId(q.value("shiphead_id").toInt());
-        if (q.next())
+        _shipment->setId(shipHandleSo.value("shiphead_id").toInt());
+        if (shipHandleSo.next())
         {
           _shipment->setType("SO");
           _shipment->limitToOrder(_order->id());
           _shipment->setEnabled(true);
         }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (shipHandleSo.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, shipHandleSo.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
       else
@@ -524,22 +526,23 @@ void shipOrder::sHandleSo()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (shipHandleSo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shipHandleSo.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void shipOrder::sHandleTo()
 {
+  XSqlQuery shipHandleTo;
   _coitem->clear();
   _shipment->setEnabled(false);
   _shipment->removeOrderLimit();
 
   sHandleButtons();
 
-  q.prepare("SELECT tohead_freight_curr_id, tohead_destname,"
+  shipHandleTo.prepare("SELECT tohead_freight_curr_id, tohead_destname,"
             "       tohead_destaddress1,"
             "       SUM(toitem_freight) + tohead_freight AS freight "
             "FROM tohead, toitem "
@@ -548,19 +551,19 @@ void shipOrder::sHandleTo()
             "  AND  (tohead_id=:tohead_id)) "
             "GROUP BY tohead_freight_curr_id, tohead_destname,"
             "         tohead_destaddress1, tohead_freight;");
-  q.bindValue(":tohead_id", _order->id());
-  q.exec();
-  if (q.first())
+  shipHandleTo.bindValue(":tohead_id", _order->id());
+  shipHandleTo.exec();
+  if (shipHandleTo.first())
   {
-    _freight->setId(q.value("tohead_freight_curr_id").toInt());
-    _freight->setLocalValue(q.value("freight").toDouble());
+    _freight->setId(shipHandleTo.value("tohead_freight_curr_id").toInt());
+    _freight->setLocalValue(shipHandleTo.value("freight").toDouble());
     _billToName->setText(tr("Transfer Order"));
-    _shipToName->setText(q.value("tohead_destname").toString());
-    _shipToAddr1->setText(q.value("tohead_destaddress1").toString());
+    _shipToName->setText(shipHandleTo.value("tohead_destname").toString());
+    _shipToAddr1->setText(shipHandleTo.value("tohead_destaddress1").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (shipHandleTo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shipHandleTo.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -577,22 +580,22 @@ void shipOrder::sHandleTo()
   if (_shipment->isValid())
     params.append("shiphead_id", _shipment->id());
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.first())
+  shipHandleTo = mql.toQuery(params);
+  if (shipHandleTo.first())
   {
-    if (_shipment->id() != q.value("shiphead_id").toInt())
-      _shipment->setId(q.value("shiphead_id").toInt());
+    if (_shipment->id() != shipHandleTo.value("shiphead_id").toInt())
+      _shipment->setId(shipHandleTo.value("shiphead_id").toInt());
 
-    if (q.next())
+    if (shipHandleTo.next())
     {
       _shipment->setType("TO");
       _shipment->limitToOrder(_order->id());
       _shipment->setEnabled(true);
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (shipHandleTo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shipHandleTo.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else if (_shipment->isValid())
@@ -600,20 +603,20 @@ void shipOrder::sHandleTo()
     params.clear();
     params.append("tohead_id", _order->id());
     MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    if (q.first())
+    shipHandleTo = mql.toQuery(params);
+    if (shipHandleTo.first())
     {
-      _shipment->setId(q.value("shiphead_id").toInt());
-      if (q.next())
+      _shipment->setId(shipHandleTo.value("shiphead_id").toInt());
+      if (shipHandleTo.next())
       {
         _shipment->setType("TO");
         _shipment->limitToOrder(_order->id());
         _shipment->setEnabled(true);
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (shipHandleTo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, shipHandleTo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else

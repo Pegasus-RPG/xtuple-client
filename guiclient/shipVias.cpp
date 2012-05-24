@@ -91,10 +91,11 @@ void shipVias::sView()
 
 void shipVias::sDelete()
 {
-  q.prepare( "DELETE FROM shipvia "
+  XSqlQuery shipDelete;
+  shipDelete.prepare( "DELETE FROM shipvia "
              "WHERE (shipvia_id=:shipvia_id);" );
-  q.bindValue(":shipvia_id", _shipvia->id());
-  q.exec();
+  shipDelete.bindValue(":shipvia_id", _shipvia->id());
+  shipDelete.exec();
 
   sFillList();
 }

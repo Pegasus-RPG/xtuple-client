@@ -97,13 +97,14 @@ void rejectCodes::sView()
 
 void rejectCodes::sDelete()
 {
-  q.prepare( "SELECT poreject_id "
+  XSqlQuery rejectDelete;
+  rejectDelete.prepare( "SELECT poreject_id "
              "FROM poreject "
              "WHERE (poreject_rjctcode_id=:rjctcode_id) "
              "LIMIT 1;" );
-  q.bindValue(":rjctcode_id", _rjctcode->id());
-  q.exec();
-  if (q.first())
+  rejectDelete.bindValue(":rjctcode_id", _rjctcode->id());
+  rejectDelete.exec();
+  if (rejectDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Reject Code"),
                            tr( "You may not delete the selected Reject Code as there are Material Reject records that refer it.\n"
@@ -111,10 +112,10 @@ void rejectCodes::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM rjctcode "
+  rejectDelete.prepare( "DELETE FROM rjctcode "
              "WHERE (rjctcode_id=:rjctcode_id);" );
-  q.bindValue(":rjctcode_id", _rjctcode->id());
-  q.exec();
+  rejectDelete.bindValue(":rjctcode_id", _rjctcode->id());
+  rejectDelete.exec();
 
   sFillList();
 }

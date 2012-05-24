@@ -55,6 +55,7 @@ void returnWoMaterialItem::languageChange()
 
 enum SetResponse returnWoMaterialItem::set(const ParameterList &pParams)
 {
+  XSqlQuery returnet;
   XDialog::set(pParams);
   _captive = TRUE;
 
@@ -64,12 +65,12 @@ enum SetResponse returnWoMaterialItem::set(const ParameterList &pParams)
   param = pParams.value("womatl_id", &valid);
   if (valid)
   {
-    q.prepare("SELECT womatl_wo_id FROM womatl WHERE (womatl_id=:womatl_id); ");
-    q.bindValue(":womatl_id", param.toInt());
-    q.exec();
-    if(q.first())
+    returnet.prepare("SELECT womatl_wo_id FROM womatl WHERE (womatl_id=:womatl_id); ");
+    returnet.bindValue(":womatl_id", param.toInt());
+    returnet.exec();
+    if(returnet.first())
     {
-      _wo->setId(q.value("womatl_wo_id").toInt());
+      _wo->setId(returnet.value("womatl_wo_id").toInt());
       _wo->setEnabled(false);
     }
    if (valid)

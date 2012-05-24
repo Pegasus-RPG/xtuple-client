@@ -314,6 +314,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 
 bool itemSite::sSave()
 {
+  XSqlQuery itemSave;
   if (_warehouse->id() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Save Item Site"),
@@ -402,14 +403,14 @@ bool itemSite::sSave()
     
   if(_active->isChecked())
   {
-    q.prepare("SELECT item_id "
+    itemSave.prepare("SELECT item_id "
               "FROM item "
               "WHERE ((item_id=:item_id)"
               "  AND  (item_active)) "
               "LIMIT 1; ");
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (!q.first())         
+    itemSave.bindValue(":item_id", _item->id());
+    itemSave.exec();
+    if (!itemSave.first())         
     { 
       QMessageBox::warning( this, tr("Cannot Save Item Site"),
         tr("This Item Site refers to an inactive Item and must be marked as inactive.") );
@@ -419,7 +420,7 @@ bool itemSite::sSave()
 
   if (_locationControl->isChecked() && _disallowBlankWIP->isChecked())
   {
-    q.prepare("SELECT EXISTS(SELECT boohead_id"
+    itemSave.prepare("SELECT EXISTS(SELECT boohead_id"
               "              FROM boohead"
               "              WHERE ((COALESCE(boohead_final_location_id, -1) = -1)"
               "                 AND (boohead_rev_id=getActiveRevId('BOO', :item_id))"
@@ -432,11 +433,11 @@ bool itemSite::sSave()
               "                 AND (boohead_rev_id=getActiveRevId('BOO', :item_id))"
               "                 AND (boohead_item_id=:item_id))"
               "       ) AS isBlank;");
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (q.first())
+    itemSave.bindValue(":item_id", _item->id());
+    itemSave.exec();
+    if (itemSave.first())
     {
-      if (q.value("isBlank").toBool() &&
+      if (itemSave.value("isBlank").toBool() &&
           QMessageBox::question(this, tr("Save anyway?"),
                                 tr("<p>You have selected to disallow blank WIP "
                                    "locations but the active Bill Of Operations "
@@ -449,9 +450,9 @@ bool itemSite::sSave()
                                 QMessageBox::No) == QMessageBox::No)
         return false;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (itemSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
@@ -465,7 +466,7 @@ bool itemSite::sSave()
       return false;
     }
 
-    q.prepare("SELECT coitem_id "
+    itemSave.prepare("SELECT coitem_id "
               "FROM coitem "
               "WHERE ((coitem_itemsite_id=:itemsite_id)"
               "  AND  (coitem_status NOT IN ('X','C'))) "
@@ -486,9 +487,9 @@ bool itemSite::sSave()
               "WHERE ((poitem_itemsite_id=:itemsite_id)"
               "  AND  (poitem_status<>'C')) "
               "LIMIT 1; ");
-    q.bindValue(":itemsite_id", _itemsiteid);
-    q.exec();
-    if (q.first())         
+    itemSave.bindValue(":itemsite_id", _itemsiteid);
+    itemSave.exec();
+    if (itemSave.first())         
     { 
       QMessageBox::warning( this, tr("Cannot Save Item Site"),
         tr("This Item Site is used in an active order and must be marked as active.") );
@@ -497,7 +498,7 @@ bool itemSite::sSave()
     
     if (_metrics->boolean("MultiWhs"))
     {
-      q.prepare("SELECT raitem_id "
+      itemSave.prepare("SELECT raitem_id "
                 "FROM raitem "
                 "WHERE ((raitem_itemsite_id=:itemsite_id)"
                 "  AND  (raitem_status<>'C')) "
@@ -510,9 +511,9 @@ bool itemSite::sSave()
                 "FROM planreq "
                 "WHERE (planreq_itemsite_id=:itemsite_id)"
                 "LIMIT 1; ");
-      q.bindValue(":itemsite_id", _itemsiteid);
-      q.exec();
-      if (q.first())         
+      itemSave.bindValue(":itemsite_id", _itemsiteid);
+      itemSave.exec();
+      if (itemSave.first())         
       { 
         QMessageBox::warning( this, tr("Cannot Save Item Site"),
           tr("This Item Site is used in an active order and must be marked as active.") );
@@ -524,23 +525,23 @@ bool itemSite::sSave()
   int _supplyItemsiteId = -1;
   if (_createPlannedTransfers->isChecked())
   {
-    q.prepare("SELECT itemsite_id "
+    itemSave.prepare("SELECT itemsite_id "
               "FROM itemsite "
               "WHERE ( (itemsite_item_id=:item_id)"
               "  AND   (itemsite_warehous_id=:warehous_id) ); ");
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _suppliedFromSite->id());
-    q.exec();
-    if (q.first())
+    itemSave.bindValue(":item_id", _item->id());
+    itemSave.bindValue(":warehous_id", _suppliedFromSite->id());
+    itemSave.exec();
+    if (itemSave.first())
     {
-      if (q.value("itemsite_id").toInt() == _itemsiteid)
+      if (itemSave.value("itemsite_id").toInt() == _itemsiteid)
       { 
         QMessageBox::warning( this, tr("Cannot Save Item Site"),
           tr("The Supplied From Site must be different from this Site.") );
         return false;
       }
       else
-        _supplyItemsiteId = q.value("itemsite_id").toInt();
+        _supplyItemsiteId = itemSave.value("itemsite_id").toInt();
     }
     else
     { 
@@ -1541,8 +1542,9 @@ void itemSite::clear()
 
 void itemSite::sFillRestricted()
 {
+  XSqlQuery itemFillRestricted;
   int locationid = _restricted->id();
-  q.prepare("SELECT location_id, COALESCE(locitem_id, -1),"
+  itemFillRestricted.prepare("SELECT location_id, COALESCE(locitem_id, -1),"
             "       formatLocationName(location_id) AS location_name, firstLine(location_descrip) AS location_descrip,"
             "       (locitem_id IS NOT NULL) AS allowed"
             "  FROM location LEFT OUTER JOIN locitem"
@@ -1550,31 +1552,32 @@ void itemSite::sFillRestricted()
             " WHERE ((location_restrict)"
             "   AND  (location_warehous_id=:warehouse_id) ) "
             "ORDER BY location_name; ");
-  q.bindValue(":warehouse_id", _warehouse->id());
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  _restricted->populate(q, locationid, true);
+  itemFillRestricted.bindValue(":warehouse_id", _warehouse->id());
+  itemFillRestricted.bindValue(":item_id", _item->id());
+  itemFillRestricted.exec();
+  _restricted->populate(itemFillRestricted, locationid, true);
 }
 
 
 void itemSite::sToggleRestricted()
 {
+  XSqlQuery itemToggleRestricted;
   XTreeWidgetItem * locitem = static_cast<XTreeWidgetItem*>(_restricted->currentItem());
   if(0 == locitem)
     return;
 
   if(-1 != locitem->altId())
   {
-    q.prepare("DELETE FROM locitem WHERE (locitem_id=:locitem_id); ");
-    q.bindValue(":locitem_id", locitem->altId());
-    q.exec();
+    itemToggleRestricted.prepare("DELETE FROM locitem WHERE (locitem_id=:locitem_id); ");
+    itemToggleRestricted.bindValue(":locitem_id", locitem->altId());
+    itemToggleRestricted.exec();
   }
   else
   {
-    q.prepare("INSERT INTO locitem(locitem_location_id, locitem_item_id) VALUES (:location_id, :item_id);");
-    q.bindValue(":location_id", locitem->id());
-    q.bindValue(":item_id", _item->id());
-    q.exec();
+    itemToggleRestricted.prepare("INSERT INTO locitem(locitem_location_id, locitem_item_id) VALUES (:location_id, :item_id);");
+    itemToggleRestricted.bindValue(":location_id", locitem->id());
+    itemToggleRestricted.bindValue(":item_id", _item->id());
+    itemToggleRestricted.exec();
   }
 
   sFillRestricted();

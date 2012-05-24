@@ -103,6 +103,7 @@ void bomItem::languageChange()
 
 enum SetResponse bomItem::set(const ParameterList &pParams)
 {
+  XSqlQuery bomet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -138,24 +139,24 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
         }
       }
 
-      q.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
-      if (q.first())
-        _bomitemid = q.value("bomitem_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      bomet.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
+      if (bomet.first())
+        _bomitemid = bomet.value("bomitem_id").toInt();
+      else if (bomet.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, bomet.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
   
       //Set up configuration tab if parent item is configured or kit
-      q.prepare("SELECT item_config, item_type "
+      bomet.prepare("SELECT item_config, item_type "
                 "FROM item "
                 "WHERE (item_id=:item_id); ");
-      q.bindValue(":item_id", _parentitemid);
-      q.exec();
-      if (q.first())
+      bomet.bindValue(":item_id", _parentitemid);
+      bomet.exec();
+      if (bomet.first())
       {
-        if (q.value("item_config").toBool())
+        if (bomet.value("item_config").toBool())
         {
           MetaSQLQuery mql = mqlLoad("charass", "populate");
 
@@ -170,7 +171,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
         else
           _tab->removeTab(_tab->indexOf(_configurationTab));
           
-        if (q.value("item_type").toString() == "K")
+        if (bomet.value("item_type").toString() == "K")
         {
           if (_metrics->boolean("AllowInactiveBomItems"))
             _item->setType(ItemLineEdit::cKitComponents);
@@ -191,12 +192,12 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _item->setFocus();
 
       _sourceBomitemid = _bomitemid;
-      q.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
-      if (q.first())
-        _bomitemid = q.value("bomitem_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      bomet.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
+      if (bomet.first())
+        _bomitemid = bomet.value("bomitem_id").toInt();
+      else if (bomet.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, bomet.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
     }
@@ -211,12 +212,12 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _mode = cCopy;
 
       _sourceBomitemid = _bomitemid;
-      q.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
-      if (q.first())
-        _bomitemid = q.value("bomitem_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      bomet.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
+      if (bomet.first())
+        _bomitemid = bomet.value("bomitem_id").toInt();
+      else if (bomet.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, bomet.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
 
@@ -246,12 +247,12 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
   }
 
   // Check the parent item type and if it is a Kit then change some widgets
-  q.prepare("SELECT item_type "
+  bomet.prepare("SELECT item_type "
             "FROM item "
             "WHERE (item_id=:item_id); ");
-  q.bindValue(":item_id", _parentitemid);
-  q.exec();
-  if (q.first() && (q.value("item_type").toString() == "K"))
+  bomet.bindValue(":item_id", _parentitemid);
+  bomet.exec();
+  if (bomet.first() && (bomet.value("item_type").toString() == "K"))
   {
     _createWo->setChecked(false);
     _createWo->setEnabled(false);
@@ -429,17 +430,18 @@ void bomItem::sSaveClick()
 
 void bomItem::sClose()
 {
+  XSqlQuery bomClose;
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM bomitemsub "
+    bomClose.prepare( "DELETE FROM bomitemsub "
                "WHERE (bomitemsub_bomitem_id=:bomitem_id);"
                "DELETE FROM bomitemcost "
                "WHERE (bomitemcost_bomitem_id=:bomitem_id);" );
-    q.bindValue("bomitem_id", _bomitemid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    bomClose.bindValue("bomitem_id", _bomitemid);
+    bomClose.exec();
+    if (bomClose.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, bomClose.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -567,13 +569,14 @@ void bomItem::sEditSubstitute()
 
 void bomItem::sDeleteSubstitute()
 {
-  q.prepare( "DELETE FROM bomitemsub "
+  XSqlQuery bomDeleteSubstitute;
+  bomDeleteSubstitute.prepare( "DELETE FROM bomitemsub "
              "WHERE (bomitemsub_id=:bomitemsub_id);" );
-  q.bindValue(":bomitemsub_id", _bomitemsub->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  bomDeleteSubstitute.bindValue(":bomitemsub_id", _bomitemsub->id());
+  bomDeleteSubstitute.exec();
+  if (bomDeleteSubstitute.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bomDeleteSubstitute.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -582,18 +585,19 @@ void bomItem::sDeleteSubstitute()
 
 void bomItem::sFillSubstituteList()
 {
-  q.prepare( "SELECT bomitemsub.*, item_number, item_descrip1,"
+  XSqlQuery bomFillSubstituteList;
+  bomFillSubstituteList.prepare( "SELECT bomitemsub.*, item_number, item_descrip1,"
              "       'ratio' AS bomitemsub_uomratio_xtnumericrole "
              "FROM bomitemsub, item "
              "WHERE ( (bomitemsub_item_id=item_id)"
              " AND (bomitemsub_bomitem_id=:bomitem_id) ) "
              "ORDER BY bomitemsub_rank, item_number" );
-  q.bindValue(":bomitem_id", _bomitemid);
-  q.exec();
-  _bomitemsub->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  bomFillSubstituteList.bindValue(":bomitem_id", _bomitemid);
+  bomFillSubstituteList.exec();
+  _bomitemsub->populate(bomFillSubstituteList);
+  if (bomFillSubstituteList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bomFillSubstituteList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -796,11 +800,12 @@ void bomItem::sEditCost()
 
 void bomItem::sDeleteCost()
 {
-  q.prepare( "DELETE FROM bomitemcost WHERE (bomitemcost_id=:bomitemcost_id);" );
-  q.bindValue(":bomitemcost_id", _itemcost->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  XSqlQuery bomDeleteCost;
+  bomDeleteCost.prepare( "DELETE FROM bomitemcost WHERE (bomitemcost_id=:bomitemcost_id);" );
+  bomDeleteCost.bindValue(":bomitemcost_id", _itemcost->id());
+  bomDeleteCost.exec();
+  if (bomDeleteCost.lastError().type() != QSqlError::NoError)
+    systemError(this, bomDeleteCost.lastError().databaseText(), __FILE__, __LINE__);
 
   sFillCostList();
 }

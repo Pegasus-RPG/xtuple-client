@@ -51,6 +51,7 @@ void recallOrders::languageChange()
 
 void recallOrders::sRecall()
 {
+  XSqlQuery recallRecall;
   if (!checkSitePrivs(_ship->id()))
     return;
 
@@ -67,12 +68,12 @@ void recallOrders::sRecall()
       return;
   }
 
-  q.prepare("SELECT recallShipment(:shiphead_id) AS result;");
-  q.bindValue(":shiphead_id", _ship->id());
-  q.exec();
-  if (q.first())
+  recallRecall.prepare("SELECT recallShipment(:shiphead_id) AS result;");
+  recallRecall.bindValue(":shiphead_id", _ship->id());
+  recallRecall.exec();
+  if (recallRecall.first())
   {
-    int result = q.value("result").toInt();
+    int result = recallRecall.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("recallShipment", result),
@@ -81,9 +82,9 @@ void recallOrders::sRecall()
     }
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (recallRecall.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, recallRecall.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

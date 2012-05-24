@@ -119,13 +119,14 @@ void salesAccounts::sView()
 
 void salesAccounts::sDelete()
 {
-  q.prepare( "DELETE FROM salesaccnt "
+  XSqlQuery salesDelete;
+  salesDelete.prepare( "DELETE FROM salesaccnt "
              "WHERE (salesaccnt_id=:salesaccnt_id);" );
-  q.bindValue(":salesaccnt_id", _salesaccnt->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  salesDelete.bindValue(":salesaccnt_id", _salesaccnt->id());
+  salesDelete.exec();
+  if (salesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, salesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

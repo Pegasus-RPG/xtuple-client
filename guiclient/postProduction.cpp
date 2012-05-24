@@ -99,6 +99,7 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
 
 void postProduction::sHandleWoid(int pWoid)
 {
+  XSqlQuery postHandleWoid;
   if (DEBUG)
     qDebug("postProduction::sHandleWoid(%d) entered with method %s",
            pWoid, qPrintable(_wo->method()));
@@ -115,19 +116,19 @@ void postProduction::sHandleWoid(int pWoid)
     _qtyOrderedLit->setText(tr("Qty. Ordered:"));
     _qtyReceivedLit->setText(tr("Qty. Received:"));
 
-    q.prepare( "SELECT womatl_issuemethod "
+    postHandleWoid.prepare( "SELECT womatl_issuemethod "
               "FROM womatl "
               "WHERE (womatl_wo_id=:womatl_wo_id);" );
-    q.bindValue(":womatl_wo_id", pWoid);
-    q.exec();
-    if (q.first())
+    postHandleWoid.bindValue(":womatl_wo_id", pWoid);
+    postHandleWoid.exec();
+    if (postHandleWoid.first())
     {
-      if (q.findFirst("womatl_issuemethod", "L") != -1)
+      if (postHandleWoid.findFirst("womatl_issuemethod", "L") != -1)
       {
         _backflush->setEnabled(FALSE);
         _backflush->setChecked(TRUE);
       }
-      else if (q.findFirst("womatl_issuemethod", "M") != -1)
+      else if (postHandleWoid.findFirst("womatl_issuemethod", "M") != -1)
       {
         _backflush->setEnabled(TRUE);
         _backflush->setChecked(TRUE);
@@ -351,6 +352,7 @@ QString postProduction::handleIssueToParentAfterPost(int itemlocSeries)
 
 void postProduction::sPost()
 {
+  XSqlQuery postPost;
   if (! okToPost())
     return;
 
@@ -369,19 +371,19 @@ void postProduction::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// handle cancel of lot, serial, or loc distributions
-  q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, 0, :date) AS result;");
-  q.bindValue(":wo_id", _wo->id());
+  postPost.exec("BEGIN;");	// handle cancel of lot, serial, or loc distributions
+  postPost.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, 0, :date) AS result;");
+  postPost.bindValue(":wo_id", _wo->id());
   if (_wo->method() == "A")
-    q.bindValue(":qty", _qty->toDouble());
+    postPost.bindValue(":qty", _qty->toDouble());
   else
-    q.bindValue(":qty", _qty->toDouble() * -1);
-  q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
-  q.bindValue(":date",  _transDate->date());
-  q.exec();
-  if (q.first())
+    postPost.bindValue(":qty", _qty->toDouble() * -1);
+  postPost.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
+  postPost.bindValue(":date",  _transDate->date());
+  postPost.exec();
+  if (postPost.first())
   {
-    itemlocSeries = q.value("result").toInt();
+    itemlocSeries = postPost.value("result").toInt();
 
     if (itemlocSeries < 0)
     {
@@ -423,7 +425,7 @@ void postProduction::sPost()
       return;
     }
 
-    q.exec("COMMIT;");
+    postPost.exec("COMMIT;");
 
     omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
 
@@ -438,10 +440,10 @@ void postProduction::sPost()
       newdlg.exec();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (postPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, postPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

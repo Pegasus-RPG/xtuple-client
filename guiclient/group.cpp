@@ -27,6 +27,7 @@
 group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery groupgroup;
   setupUi(this);
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -45,11 +46,11 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _available->addColumn("Available Privileges", -1, Qt::AlignLeft, true, "priv_name");
   _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft, true, "priv_name");
 
-  q.exec( "SELECT DISTINCT priv_module "
+  groupgroup.exec( "SELECT DISTINCT priv_module "
           "FROM priv "
           "ORDER BY priv_module;" );
-  for (int i = 0; q.next(); i++)
-    _module->append(i, q.value("priv_module").toString());
+  for (int i = 0; groupgroup.next(); i++)
+    _module->append(i, groupgroup.value("priv_module").toString());
 
   _trapClose = false;
 }
@@ -66,6 +67,7 @@ void group::languageChange()
 
 enum SetResponse group::set(const ParameterList &pParams)
 {
+  XSqlQuery groupet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -82,27 +84,27 @@ enum SetResponse group::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-      q.exec("SELECT NEXTVAL('grp_grp_id_seq') AS grp_id;");
-      if (q.first())
-        _grpid = q.value("grp_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      groupet.exec("SELECT NEXTVAL('grp_grp_id_seq') AS grp_id;");
+      if (groupet.first())
+        _grpid = groupet.value("grp_id").toInt();
+      else if (groupet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, groupet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
       _mode = cNew;
       _trapClose = true;
-      q.exec("BEGIN;");
-      q.prepare( "INSERT INTO grp "
+      groupet.exec("BEGIN;");
+      groupet.prepare( "INSERT INTO grp "
                  "( grp_id, grp_name, grp_descrip)"
                  "VALUES( :grp_id, :grp_id, '' );" );
-      q.bindValue(":grp_id", _grpid);
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      groupet.bindValue(":grp_id", _grpid);
+      groupet.exec();
+      if (groupet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        q.exec("ROLLBACK;");
+        systemError(this, groupet.lastError().databaseText(), __FILE__, __LINE__);
+        groupet.exec("ROLLBACK;");
         _trapClose = false;
         return UndefinedError;
       }
@@ -176,17 +178,18 @@ void group::reject()
 
 void group::sCheck()
 {
+  XSqlQuery groupCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
-    q.prepare( "SELECT grp_id "
+    groupCheck.prepare( "SELECT grp_id "
                "  FROM grp "
                " WHERE (UPPER(grp_name)=UPPER(:grp_name));" );
-    q.bindValue(":grp_name", _name->text());
-    q.exec();
-    if (q.first())
+    groupCheck.bindValue(":grp_name", _name->text());
+    groupCheck.exec();
+    if (groupCheck.first())
     {
-      _grpid = q.value("grp_id").toInt();
+      _grpid = groupCheck.value("grp_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -197,6 +200,7 @@ void group::sCheck()
 
 void group::sSave()
 {
+  XSqlQuery groupSave;
   _name->setText(_name->text().trimmed().toUpper());
   if (_name->text().length() == 0)
   {
@@ -206,21 +210,21 @@ void group::sSave()
     return;
   }
 
-  q.prepare( "UPDATE grp "
+  groupSave.prepare( "UPDATE grp "
              "   SET grp_name=:grp_name,"
              "       grp_descrip=:grp_descrip "
              " WHERE(grp_id=:grp_id);" );
-  q.bindValue(":grp_id", _grpid);
-  q.bindValue(":grp_name", _name->text());
-  q.bindValue(":grp_descrip", _description->text().trimmed());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  groupSave.bindValue(":grp_id", _grpid);
+  groupSave.bindValue(":grp_name", _name->text());
+  groupSave.bindValue(":grp_descrip", _description->text().trimmed());
+  groupSave.exec();
+  if (groupSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, groupSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.exec("COMMIT;");
+  groupSave.exec("COMMIT;");
   _trapClose = false;
   _mode = cEdit;
 
@@ -268,13 +272,14 @@ void group::sModuleSelected(const QString &pModule)
 
 void group::sAdd()
 {
-  q.prepare("SELECT grantPrivGroup(:grp_id, :priv_id) AS result;");
-  q.bindValue(":grp_id", _grpid);
-  q.bindValue(":priv_id", _available->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery groupAdd;
+  groupAdd.prepare("SELECT grantPrivGroup(:grp_id, :priv_id) AS result;");
+  groupAdd.bindValue(":grp_id", _grpid);
+  groupAdd.bindValue(":priv_id", _available->id());
+  groupAdd.exec();
+  if (groupAdd.first())
   {
-    int result = q.value("result").toInt();
+    int result = groupAdd.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("grantPrivGroup", result),
@@ -282,9 +287,9 @@ void group::sAdd()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (groupAdd.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, groupAdd.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -293,13 +298,14 @@ void group::sAdd()
 
 void group::sAddAll()
 {
-  q.prepare("SELECT grantAllModulePrivGroup(:grp_id, :module) AS result;");
-  q.bindValue(":grp_id", _grpid);
-  q.bindValue(":module", _module->currentText());
-  q.exec();
-  if (q.first())
+  XSqlQuery groupAddAll;
+  groupAddAll.prepare("SELECT grantAllModulePrivGroup(:grp_id, :module) AS result;");
+  groupAddAll.bindValue(":grp_id", _grpid);
+  groupAddAll.bindValue(":module", _module->currentText());
+  groupAddAll.exec();
+  if (groupAddAll.first())
   {
-    int result = q.value("result").toInt();
+    int result = groupAddAll.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("grantAllModulePrivGroup", result),
@@ -307,9 +313,9 @@ void group::sAddAll()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (groupAddAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, groupAddAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -318,13 +324,14 @@ void group::sAddAll()
 
 void group::sRevoke()
 {
-  q.prepare("SELECT revokePrivGroup(:grp_id, :priv_id) AS result;");
-  q.bindValue(":grp_id", _grpid);
-  q.bindValue(":priv_id", _granted->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery groupRevoke;
+  groupRevoke.prepare("SELECT revokePrivGroup(:grp_id, :priv_id) AS result;");
+  groupRevoke.bindValue(":grp_id", _grpid);
+  groupRevoke.bindValue(":priv_id", _granted->id());
+  groupRevoke.exec();
+  if (groupRevoke.first())
   {
-    int result = q.value("result").toInt();
+    int result = groupRevoke.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("revokePrivGroup", result),
@@ -332,9 +339,9 @@ void group::sRevoke()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (groupRevoke.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, groupRevoke.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -343,13 +350,14 @@ void group::sRevoke()
 
 void group::sRevokeAll()
 {
-  q.prepare("SELECT revokeAllModulePrivGroup(:grp_id, :module) AS result;");
-  q.bindValue(":grp_id", _grpid);
-  q.bindValue(":module", _module->currentText());
-  q.exec();
-  if (q.first())
+  XSqlQuery groupRevokeAll;
+  groupRevokeAll.prepare("SELECT revokeAllModulePrivGroup(:grp_id, :module) AS result;");
+  groupRevokeAll.bindValue(":grp_id", _grpid);
+  groupRevokeAll.bindValue(":module", _module->currentText());
+  groupRevokeAll.exec();
+  if (groupRevokeAll.first())
   {
-    int result = q.value("result").toInt();
+    int result = groupRevokeAll.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("revokeAllModulePrivGroup", result),
@@ -357,9 +365,9 @@ void group::sRevokeAll()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (groupRevokeAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, groupRevokeAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -368,29 +376,30 @@ void group::sRevokeAll()
 
 void group::populate()
 {
-  q.prepare( "SELECT grp_name, grp_descrip "
+  XSqlQuery grouppopulate;
+  grouppopulate.prepare( "SELECT grp_name, grp_descrip "
              "  FROM grp "
              " WHERE(grp_id=:grp_id);" );
-  q.bindValue(":grp_id", _grpid);
-  q.exec();
-  if (q.first())
+  grouppopulate.bindValue(":grp_id", _grpid);
+  grouppopulate.exec();
+  if (grouppopulate.first())
   {
-    _name->setText(q.value("grp_name"));
-    _description->setText(q.value("grp_descrip"));
+    _name->setText(grouppopulate.value("grp_name"));
+    _description->setText(grouppopulate.value("grp_descrip"));
 
-    q.prepare( "SELECT priv_module "
+    grouppopulate.prepare( "SELECT priv_module "
                "FROM grppriv, priv "
                "WHERE ( (grppriv_priv_id=priv_id)"
                " AND (grppriv_id=:grp_id) ) "
                "ORDER BY priv_module "
                "LIMIT 1;" );
-    q.bindValue(":grp_id", _grpid);
-    q.exec();
-    if (q.first())
+    grouppopulate.bindValue(":grp_id", _grpid);
+    grouppopulate.exec();
+    if (grouppopulate.first())
     {
       for (int counter = 0; counter < _module->count(); counter++)
       {
-        if (_module->itemText(counter) == q.value("priv_module").toString())
+        if (_module->itemText(counter) == grouppopulate.value("priv_module").toString())
         {
           _module->setCurrentIndex(counter);
           sModuleSelected(_module->itemText(counter));
@@ -403,9 +412,9 @@ void group::populate()
       sModuleSelected(_module->itemText(0));
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (grouppopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, grouppopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

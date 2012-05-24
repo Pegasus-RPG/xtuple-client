@@ -87,16 +87,17 @@ enum SetResponse systemMessage::set(const ParameterList &pParams)
 
 void systemMessage::sClose()
 {
+  XSqlQuery systemClose;
   if (_mode == cNew)
     reject();
 
   else if (_mode == cAcknowledge)
   {
-    q.prepare( "SELECT acknowledgeMessage(msguser_msg_id) "
+    systemClose.prepare( "SELECT acknowledgeMessage(msguser_msg_id) "
                "FROM msguser "
                "WHERE (msguser_id=:msguser_id);" );
-    q.bindValue(":msguser_id", _msguserid);
-    q.exec();
+    systemClose.bindValue(":msguser_id", _msguserid);
+    systemClose.exec();
 
     accept();
   }
@@ -104,6 +105,7 @@ void systemMessage::sClose()
 
 void systemMessage::sSave()
 {
+  XSqlQuery systemSave;
   if (_mode == cNew)
   {
     if (!_scheduledDate->isValid())
@@ -114,7 +116,7 @@ void systemMessage::sSave()
     }
     else
     {
-      q.prepare("SELECT postMessage(:scheduled, :expires, :message) AS msgid;");
+      systemSave.prepare("SELECT postMessage(:scheduled, :expires, :message) AS msgid;");
 
       QDateTime scheduled;
       QDateTime expires;
@@ -123,23 +125,23 @@ void systemMessage::sSave()
       expires.setDate(_expiresDate->date());
       expires.setTime(_expiresTime->time());
 
-      q.bindValue(":scheduled", scheduled);
-      q.bindValue(":expires", expires);
-      q.bindValue(":message", (_message->toPlainText()));
-      q.exec();
-      if (q.first())
-        done(q.value("msgid").toInt());
+      systemSave.bindValue(":scheduled", scheduled);
+      systemSave.bindValue(":expires", expires);
+      systemSave.bindValue(":message", (_message->toPlainText()));
+      systemSave.exec();
+      if (systemSave.first())
+        done(systemSave.value("msgid").toInt());
       else
         reject();
     }
   }
   else if (_mode == cAcknowledge)
   {
-    q.prepare( "SELECT snoozeMessage(msguser_msg_id) "
+    systemSave.prepare( "SELECT snoozeMessage(msguser_msg_id) "
                "FROM msguser "
                "WHERE (msguser_id=:msguser_id);" );
-    q.bindValue(":msguser_id", _msguserid);
-    q.exec();
+    systemSave.bindValue(":msguser_id", _msguserid);
+    systemSave.exec();
 
     accept();
   }
@@ -147,6 +149,7 @@ void systemMessage::sSave()
 
 void systemMessage::populate()
 {
+  XSqlQuery systempopulate;
   QString sql = QString( "SELECT DATE(msg_posted) AS postdate,"
                          "       msg_posted::TIME AS posttime,"
                          "       DATE(msg_scheduled) AS scheduleddate,"
@@ -158,20 +161,20 @@ void systemMessage::populate()
                          "WHERE ( (msguser_msg_id=msg_id)"
                          " AND (msguser_id=%1) );" )
                 .arg(_msguserid);
-  q.exec(sql);
-  if (q.first())
+  systempopulate.exec(sql);
+  if (systempopulate.first())
   {
-    _postedDate->setDate(q.value("postdate").toDate());
-    _postedTime->setTime(q.value("posttime").toTime());
-    _scheduledDate->setDate(q.value("scheduleddate").toDate());
-    _scheduledTime->setTime(q.value("scheduledtime").toTime());
-    _expiresDate->setDate(q.value("expiresdate").toDate());
+    _postedDate->setDate(systempopulate.value("postdate").toDate());
+    _postedTime->setTime(systempopulate.value("posttime").toTime());
+    _scheduledDate->setDate(systempopulate.value("scheduleddate").toDate());
+    _scheduledTime->setTime(systempopulate.value("scheduledtime").toTime());
+    _expiresDate->setDate(systempopulate.value("expiresdate").toDate());
 
-    if (q.value("expiresdate") != tr("Never"))
-      _expiresTime->setTime(q.value("expirestime").toTime());
+    if (systempopulate.value("expiresdate") != tr("Never"))
+      _expiresTime->setTime(systempopulate.value("expirestime").toTime());
 
-    _user->setText(q.value("msg_username").toString());
-    _message->setText(q.value("msg_text").toString());
+    _user->setText(systempopulate.value("msg_username").toString());
+    _message->setText(systempopulate.value("msg_text").toString());
   }
 }
 

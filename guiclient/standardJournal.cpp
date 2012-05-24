@@ -54,17 +54,19 @@ void standardJournal::languageChange()
 
 void standardJournal::sReject()
 {
+  XSqlQuery standardReject;
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM stdjrnlitem "
+    standardReject.prepare( "DELETE FROM stdjrnlitem "
                "WHERE (stdjrnlitem_stdjrnl_id=:stdjrnl_id);" );
-    q.bindValue(":stdjrnl_id", _stdjrnlid);
-    q.exec();
+    standardReject.bindValue(":stdjrnl_id", _stdjrnlid);
+    standardReject.exec();
   }
 }
 
 enum SetResponse standardJournal::set(const ParameterList &pParams)
 {
+  XSqlQuery standardet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -83,9 +85,9 @@ enum SetResponse standardJournal::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('stdjrnl_stdjrnl_id_seq') AS _stdjrnl_id");
-      if (q.first())
-        _stdjrnlid = q.value("_stdjrnl_id").toInt();
+      standardet.exec("SELECT NEXTVAL('stdjrnl_stdjrnl_id_seq') AS _stdjrnl_id");
+      if (standardet.first())
+        _stdjrnlid = standardet.value("_stdjrnl_id").toInt();
 
       connect(_stdjrnlitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_stdjrnlitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -125,6 +127,7 @@ enum SetResponse standardJournal::set(const ParameterList &pParams)
 
 void standardJournal::sSave()
 {
+  XSqlQuery standardSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::warning( this, tr("Cannot Save Standard Journal"),
@@ -132,14 +135,14 @@ void standardJournal::sSave()
     return;
   }
   
-  q.prepare( "SELECT stdjrnl_id"
+  standardSave.prepare( "SELECT stdjrnl_id"
              "  FROM stdjrnl "
              " WHERE((UPPER(stdjrnl_name)=UPPER(:stdjrnl_name))"
              "   AND (stdjrnl_id != :stdjrnl_id));" );
-  q.bindValue(":stdjrnl_name", _name->text());
-  q.bindValue(":stdjrnl_id", _stdjrnlid);
-  q.exec();
-  if (q.first())
+  standardSave.bindValue(":stdjrnl_name", _name->text());
+  standardSave.bindValue(":stdjrnl_id", _stdjrnlid);
+  standardSave.exec();
+  if (standardSave.first())
   {
     QMessageBox::warning( this, tr("Cannot Save Standard Journal"),
                           tr("The Name you have entered for this Standard Journal already exists. "
@@ -149,39 +152,40 @@ void standardJournal::sSave()
   }
 
   if (_mode == cNew)
-    q.prepare( "INSERT INTO stdjrnl "
+    standardSave.prepare( "INSERT INTO stdjrnl "
                "(stdjrnl_id, stdjrnl_name, stdjrnl_descrip, stdjrnl_notes) "
                "VALUES "
                "(:stdjrnl_id, :stdjrnl_name, :stdjrnl_descrip, :stdjrnl_notes);" );
   else if (_mode == cEdit)
-    q.prepare( "UPDATE stdjrnl "
+    standardSave.prepare( "UPDATE stdjrnl "
                " SET stdjrnl_name=:stdjrnl_name, stdjrnl_descrip=:stdjrnl_descrip, stdjrnl_notes=:stdjrnl_notes "
                " WHERE (stdjrnl_id=:stdjrnl_id);" );
 
-  q.bindValue(":stdjrnl_id", _stdjrnlid);
-  q.bindValue(":stdjrnl_name", _name->text());
-  q.bindValue(":stdjrnl_descrip", _descrip->text());
-  q.bindValue(":stdjrnl_notes", _notes->toPlainText());
-  q.exec();
+  standardSave.bindValue(":stdjrnl_id", _stdjrnlid);
+  standardSave.bindValue(":stdjrnl_name", _name->text());
+  standardSave.bindValue(":stdjrnl_descrip", _descrip->text());
+  standardSave.bindValue(":stdjrnl_notes", _notes->toPlainText());
+  standardSave.exec();
 
   done(_stdjrnlid);
 }
 
 void standardJournal::sCheck()
 {
+  XSqlQuery standardCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
-    q.prepare( "SELECT stdjrnl_id"
+    standardCheck.prepare( "SELECT stdjrnl_id"
                "  FROM stdjrnl"
                " WHERE((UPPER(stdjrnl_name)=UPPER(:stdjrnl_name))"
                "   AND (stdjrnl_id != :stdjrnl_id));" );
-    q.bindValue(":stdjrnl_name", _name->text());
-    q.bindValue(":stdjrnl_id", _stdjrnlid);
-    q.exec();
-    if (q.first())
+    standardCheck.bindValue(":stdjrnl_name", _name->text());
+    standardCheck.bindValue(":stdjrnl_id", _stdjrnlid);
+    standardCheck.exec();
+    if (standardCheck.first())
     {
-      _stdjrnlid = q.value("stdjrnl_id").toInt();
+      _stdjrnlid = standardCheck.value("stdjrnl_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -229,16 +233,18 @@ void standardJournal::sView()
 
 void standardJournal::sDelete()
 {
-  q.prepare( "DELETE FROM stdjrnlitem "
+  XSqlQuery standardDelete;
+  standardDelete.prepare( "DELETE FROM stdjrnlitem "
              "WHERE (stdjrnlitem_id=:stdjrnlitem_id);" );
-  q.bindValue(":stdjrnlitem_id", _stdjrnlitem->id());
-  q.exec();
+  standardDelete.bindValue(":stdjrnlitem_id", _stdjrnlitem->id());
+  standardDelete.exec();
   sFillList();
 }
 
 void standardJournal::sFillList()
 {
-  q.prepare( "SELECT stdjrnlitem_id,"
+  XSqlQuery standardFillList;
+  standardFillList.prepare( "SELECT stdjrnlitem_id,"
              "       CASE WHEN(accnt_id IS NOT NULL) THEN (formatGLAccount(accnt_id) || '-' || accnt_descrip)"
              "            ELSE 'ERROR - NO ACCOUNT SPECIFIED'"
              "       END AS account,"
@@ -256,11 +262,11 @@ void standardJournal::sFillList()
              "  FROM stdjrnlitem LEFT OUTER JOIN accnt ON (stdjrnlitem_accnt_id=accnt_id)"
              " WHERE (stdjrnlitem_stdjrnl_id=:stdjrnl_id) "
              " ORDER BY accnt_number, accnt_profit, accnt_sub;" );
-  q.bindValue(":stdjrnl_id", _stdjrnlid);
-  q.exec();
-  _stdjrnlitem->populate(q);
+  standardFillList.bindValue(":stdjrnl_id", _stdjrnlid);
+  standardFillList.exec();
+  _stdjrnlitem->populate(standardFillList);
 
-  q.prepare( "SELECT SUM( CASE WHEN (stdjrnlitem_amount < 0) THEN (stdjrnlitem_amount * -1)"
+  standardFillList.prepare( "SELECT SUM( CASE WHEN (stdjrnlitem_amount < 0) THEN (stdjrnlitem_amount * -1)"
              "                 ELSE 0"
              "            END ) AS debit,"
              "       SUM( CASE WHEN (stdjrnlitem_amount > 0) THEN stdjrnlitem_amount"
@@ -269,15 +275,15 @@ void standardJournal::sFillList()
              "       (SUM(stdjrnlitem_amount) <> 0) AS oob "
              "FROM stdjrnlitem "
              "WHERE (stdjrnlitem_stdjrnl_id=:stdjrnl_id);" );
-  q.bindValue(":stdjrnl_id", _stdjrnlid);
-  q.exec();
-  if (q.first())
+  standardFillList.bindValue(":stdjrnl_id", _stdjrnlid);
+  standardFillList.exec();
+  if (standardFillList.first())
   {
-    _debits->setDouble(q.value("debit").toDouble());
-    _credits->setDouble(q.value("credit").toDouble());
+    _debits->setDouble(standardFillList.value("debit").toDouble());
+    _credits->setDouble(standardFillList.value("credit").toDouble());
 
     QString stylesheet;
-    if (q.value("oob").toBool())
+    if (standardFillList.value("oob").toBool())
       stylesheet = QString("* { color: %1; }").arg(namedColor("error").name());
     _debits->setStyleSheet(stylesheet);
     _credits->setStyleSheet(stylesheet);
@@ -290,16 +296,17 @@ void standardJournal::sFillList()
 
 void standardJournal::populate()
 {
-  q.prepare( "SELECT stdjrnl_name, stdjrnl_descrip, stdjrnl_notes "
+  XSqlQuery standardpopulate;
+  standardpopulate.prepare( "SELECT stdjrnl_name, stdjrnl_descrip, stdjrnl_notes "
              "FROM stdjrnl "
              "WHERE (stdjrnl_id=:stdjrnl_id);" );
-  q.bindValue(":stdjrnl_id", _stdjrnlid);
-  q.exec();
-  if (q.first())
+  standardpopulate.bindValue(":stdjrnl_id", _stdjrnlid);
+  standardpopulate.exec();
+  if (standardpopulate.first())
   {
-    _name->setText(q.value("stdjrnl_name").toString());
-    _descrip->setText(q.value("stdjrnl_descrip").toString());
-    _notes->setText(q.value("stdjrnl_notes").toString());
+    _name->setText(standardpopulate.value("stdjrnl_name").toString());
+    _descrip->setText(standardpopulate.value("stdjrnl_descrip").toString());
+    _notes->setText(standardpopulate.value("stdjrnl_notes").toString());
 
     sFillList();
   }

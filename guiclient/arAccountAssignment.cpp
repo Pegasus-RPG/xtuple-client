@@ -100,6 +100,7 @@ enum SetResponse arAccountAssignment::set(const ParameterList &pParams)
 
 void arAccountAssignment::sSave()
 {
+  XSqlQuery arSave;
   QList<GuiErrorCheck> errors;
 
   if (_metrics->boolean("InterfaceARToGL"))
@@ -117,24 +118,24 @@ void arAccountAssignment::sSave()
            ;
   }
 
-  q.prepare("SELECT araccnt_id"
+  arSave.prepare("SELECT araccnt_id"
             "  FROM araccnt"
             " WHERE((araccnt_custtype_id=:araccnt_custtype_id)"
             "   AND (araccnt_custtype=:araccnt_custtype)"
             "   AND (araccnt_id != :araccnt_id))");
-  q.bindValue(":araccnt_id", _araccntid);
+  arSave.bindValue(":araccnt_id", _araccntid);
   if (_selectedCustomerType->isChecked())
   {
-    q.bindValue(":araccnt_custtype_id", _customerTypes->id());
-    q.bindValue(":araccnt_custtype", "^[a-zA-Z0-9_]");
+    arSave.bindValue(":araccnt_custtype_id", _customerTypes->id());
+    arSave.bindValue(":araccnt_custtype", "^[a-zA-Z0-9_]");
   }
   else if (_customerTypePattern->isChecked())
   {
-    q.bindValue(":araccnt_custtype_id", -1);
-    q.bindValue(":araccnt_custtype", _customerType->text());
+    arSave.bindValue(":araccnt_custtype_id", -1);
+    arSave.bindValue(":araccnt_custtype", _customerType->text());
   }
-  q.exec();
-  if(q.first())
+  arSave.exec();
+  if(arSave.first())
   {
     errors << GuiErrorCheck(true, _customerTypePattern,
                            tr("<p>You may not save this A/R Account Assignment as it already exists."));
@@ -145,12 +146,12 @@ void arAccountAssignment::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('araccnt_araccnt_id_seq') AS _araccntid;");
-    if (q.first())
-      _araccntid = q.value("_araccntid").toInt();
+    arSave.exec("SELECT NEXTVAL('araccnt_araccnt_id_seq') AS _araccntid;");
+    if (arSave.first())
+      _araccntid = arSave.value("_araccntid").toInt();
 //  ToDo
 
-    q.prepare( "INSERT INTO araccnt "
+    arSave.prepare( "INSERT INTO araccnt "
                "( araccnt_id, araccnt_custtype_id, araccnt_custtype,"
                "  araccnt_ar_accnt_id, araccnt_prepaid_accnt_id, araccnt_freight_accnt_id,"
                "  araccnt_deferred_accnt_id, araccnt_discount_accnt_id ) "
@@ -160,7 +161,7 @@ void arAccountAssignment::sSave()
                "  :araccnt_deferred_accnt_id, :araccnt_discount_accnt_id );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE araccnt "
+    arSave.prepare( "UPDATE araccnt "
                "SET araccnt_custtype_id=:araccnt_custtype_id, araccnt_custtype=:araccnt_custtype,"
                "    araccnt_ar_accnt_id=:araccnt_ar_accnt_id,"
                "    araccnt_prepaid_accnt_id=:araccnt_prepaid_accnt_id,"
@@ -169,57 +170,58 @@ void arAccountAssignment::sSave()
 			   "    araccnt_discount_accnt_id=:araccnt_discount_accnt_id "
                "WHERE (araccnt_id=:araccnt_id);" );
 
-  q.bindValue(":araccnt_id", _araccntid);
+  arSave.bindValue(":araccnt_id", _araccntid);
 
   if (_selectedCustomerType->isChecked())
   {
-    q.bindValue(":araccnt_custtype_id", _customerTypes->id());
-    q.bindValue(":araccnt_custtype", "^[a-zA-Z0-9_]");
+    arSave.bindValue(":araccnt_custtype_id", _customerTypes->id());
+    arSave.bindValue(":araccnt_custtype", "^[a-zA-Z0-9_]");
   }
   else if (_customerTypePattern->isChecked())
   {
-    q.bindValue(":araccnt_custtype_id", -1);
-    q.bindValue(":araccnt_custtype", _customerType->text());
+    arSave.bindValue(":araccnt_custtype_id", -1);
+    arSave.bindValue(":araccnt_custtype", _customerType->text());
   }
 
-  q.bindValue(":araccnt_ar_accnt_id", _ar->id());
-  q.bindValue(":araccnt_prepaid_accnt_id", _prepaid->id());
-  q.bindValue(":araccnt_freight_accnt_id", _freight->id());
-  q.bindValue(":araccnt_deferred_accnt_id", _deferred->id());
-  q.bindValue(":araccnt_discount_accnt_id", _discount->id());
+  arSave.bindValue(":araccnt_ar_accnt_id", _ar->id());
+  arSave.bindValue(":araccnt_prepaid_accnt_id", _prepaid->id());
+  arSave.bindValue(":araccnt_freight_accnt_id", _freight->id());
+  arSave.bindValue(":araccnt_deferred_accnt_id", _deferred->id());
+  arSave.bindValue(":araccnt_discount_accnt_id", _discount->id());
 
-  q.exec();
+  arSave.exec();
 
   done(_araccntid);
 }
 
 void arAccountAssignment::populate()
 {
-  q.prepare( "SELECT araccnt_custtype_id, araccnt_custtype,"
+  XSqlQuery arpopulate;
+  arpopulate.prepare( "SELECT araccnt_custtype_id, araccnt_custtype,"
              "       araccnt_ar_accnt_id, araccnt_prepaid_accnt_id,"
              "       araccnt_freight_accnt_id, araccnt_deferred_accnt_id, "
 			 "       araccnt_discount_accnt_id "
              "FROM araccnt "
              "WHERE (araccnt_id=:araccnt_id);" );
-  q.bindValue(":araccnt_id", _araccntid);
-  q.exec();
-  if (q.first())
+  arpopulate.bindValue(":araccnt_id", _araccntid);
+  arpopulate.exec();
+  if (arpopulate.first())
   {
-    if (q.value("araccnt_custtype_id").toInt() == -1)
+    if (arpopulate.value("araccnt_custtype_id").toInt() == -1)
     {
       _customerTypePattern->setChecked(TRUE);
-      _customerType->setText(q.value("araccnt_custtype").toString());
+      _customerType->setText(arpopulate.value("araccnt_custtype").toString());
     }
     else
     {
       _selectedCustomerType->setChecked(TRUE);
-      _customerTypes->setId(q.value("araccnt_custtype_id").toInt());
+      _customerTypes->setId(arpopulate.value("araccnt_custtype_id").toInt());
     }
 
-    _ar->setId(q.value("araccnt_ar_accnt_id").toInt());
-    _prepaid->setId(q.value("araccnt_prepaid_accnt_id").toInt());
-    _freight->setId(q.value("araccnt_freight_accnt_id").toInt());
-    _deferred->setId(q.value("araccnt_deferred_accnt_id").toInt());
-    _discount->setId(q.value("araccnt_discount_accnt_id").toInt());
+    _ar->setId(arpopulate.value("araccnt_ar_accnt_id").toInt());
+    _prepaid->setId(arpopulate.value("araccnt_prepaid_accnt_id").toInt());
+    _freight->setId(arpopulate.value("araccnt_freight_accnt_id").toInt());
+    _deferred->setId(arpopulate.value("araccnt_deferred_accnt_id").toInt());
+    _discount->setId(arpopulate.value("araccnt_discount_accnt_id").toInt());
   }
 }

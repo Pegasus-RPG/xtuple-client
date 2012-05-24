@@ -160,14 +160,15 @@ void fixSerial::sHandleSerial()
 
 bool fixSerial::fixOne(XTreeWidgetItem *pItem)
 {
-  q.prepare("SELECT SETVAL(:sequence, :value);");
-  q.bindValue(":sequence",	pItem->text(3));
-  q.bindValue(":value",		pItem->text(4));
+  XSqlQuery fixfixOne;
+  fixfixOne.prepare("SELECT SETVAL(:sequence, :value);");
+  fixfixOne.bindValue(":sequence",	pItem->text(3));
+  fixfixOne.bindValue(":value",		pItem->text(4));
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  fixfixOne.exec();
+  if (fixfixOne.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, fixfixOne.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 

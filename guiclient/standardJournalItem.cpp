@@ -83,6 +83,7 @@ enum SetResponse standardJournalItem::set(const ParameterList &pParams)
 
 void standardJournalItem::sSave()
 {
+  XSqlQuery standardSave;
   double amount = _amount->baseValue();
   if (_debit->isChecked())
     amount *= -1;
@@ -116,15 +117,15 @@ void standardJournalItem::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('stdjrnlitem_stdjrnlitem_id_seq') AS stdjrnlitem_id;");
-    if (q.first())
-      _stdjrnlitemid = q.value("stdjrnlitem_id").toInt();
+    standardSave.exec("SELECT NEXTVAL('stdjrnlitem_stdjrnlitem_id_seq') AS stdjrnlitem_id;");
+    if (standardSave.first())
+      _stdjrnlitemid = standardSave.value("stdjrnlitem_id").toInt();
     else
       systemError(this, tr("A System Error occurred at %1::%2.")
                         .arg(__FILE__)
                         .arg(__LINE__) );
 
-    q.prepare( "INSERT INTO stdjrnlitem "
+    standardSave.prepare( "INSERT INTO stdjrnlitem "
                "( stdjrnlitem_id, stdjrnlitem_stdjrnl_id, stdjrnlitem_accnt_id,"
                "  stdjrnlitem_amount, stdjrnlitem_notes ) "
                "VALUES "
@@ -132,41 +133,42 @@ void standardJournalItem::sSave()
                "  :stdjrnlitem_amount, :stdjrnlitem_notes );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE stdjrnlitem "
+    standardSave.prepare( "UPDATE stdjrnlitem "
                "SET stdjrnlitem_accnt_id=:stdjrnlitem_accnt_id,"
                "    stdjrnlitem_amount=:stdjrnlitem_amount,"
                "    stdjrnlitem_notes=:stdjrnlitem_notes "
                "WHERE (stdjrnlitem_id=:stdjrnlitem_id);" );
  
-  q.bindValue(":stdjrnlitem_id", _stdjrnlitemid);
-  q.bindValue(":stdjrnlitem_stdjrnl_id", _stdjrnlid);
-  q.bindValue(":stdjrnlitem_accnt_id", _account->id());
-  q.bindValue(":stdjrnlitem_amount", amount);
-  q.bindValue(":stdjrnlitem_notes", _notes->toPlainText().trimmed());
-  q.exec();
+  standardSave.bindValue(":stdjrnlitem_id", _stdjrnlitemid);
+  standardSave.bindValue(":stdjrnlitem_stdjrnl_id", _stdjrnlid);
+  standardSave.bindValue(":stdjrnlitem_accnt_id", _account->id());
+  standardSave.bindValue(":stdjrnlitem_amount", amount);
+  standardSave.bindValue(":stdjrnlitem_notes", _notes->toPlainText().trimmed());
+  standardSave.exec();
 
   done(_stdjrnlitemid);
 }
 
 void standardJournalItem::populate()
 {
-  q.prepare( "SELECT stdjrnlitem_accnt_id, stdjrnlitem_notes,"
+  XSqlQuery standardpopulate;
+  standardpopulate.prepare( "SELECT stdjrnlitem_accnt_id, stdjrnlitem_notes,"
              "       ABS(stdjrnlitem_amount) AS amount,"
              "       (stdjrnlitem_amount < 0) AS debit "
              "FROM stdjrnlitem "
              "WHERE (stdjrnlitem_id=:stdjrnlitem_id);" );
-  q.bindValue(":stdjrnlitem_id", _stdjrnlitemid);
-  q.exec();
-  if (q.first())
+  standardpopulate.bindValue(":stdjrnlitem_id", _stdjrnlitemid);
+  standardpopulate.exec();
+  if (standardpopulate.first())
   {
-    _amount->setBaseValue(q.value("amount").toDouble());
-    if (q.value("debit").toBool())
+    _amount->setBaseValue(standardpopulate.value("amount").toDouble());
+    if (standardpopulate.value("debit").toBool())
       _debit->setChecked(TRUE);
     else
       _credit->setChecked(TRUE);
 
-    _account->setId(q.value("stdjrnlitem_accnt_id").toInt());
-    _notes->setText(q.value("stdjrnlitem_notes").toString());
+    _account->setId(standardpopulate.value("stdjrnlitem_accnt_id").toInt());
+    _notes->setText(standardpopulate.value("stdjrnlitem_notes").toString());
   }
 }
 

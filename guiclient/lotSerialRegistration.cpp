@@ -59,6 +59,7 @@ void lotSerialRegistration::languageChange()
 
 enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
 {
+  XSqlQuery lotet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -87,20 +88,20 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      q.exec ("SELECT fetchlsregnumber() AS number;");
-      if (q.first())
-	_regNumber->setText(q.value("number").toString());
-      else if(q.lastError().type() != QSqlError::NoError)
+      lotet.exec ("SELECT fetchlsregnumber() AS number;");
+      if (lotet.first())
+	_regNumber->setText(lotet.value("number").toString());
+      else if(lotet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, lotet.lastError().databaseText(), __FILE__, __LINE__);
         reject();
       }
-      q.exec("SELECT NEXTVAL('lsreg_lsreg_id_seq') AS _lsreg_id;");
-      if (q.first())
-        _lsregid = q.value("_lsreg_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      lotet.exec("SELECT NEXTVAL('lsreg_lsreg_id_seq') AS _lsreg_id;");
+      if (lotet.first())
+        _lsregid = lotet.value("_lsreg_id").toInt();
+      else if (lotet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, lotet.lastError().databaseText(), __FILE__, __LINE__);
         reject();
       }
       _qty->setText("1");
@@ -144,13 +145,14 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
 
 void lotSerialRegistration::closeEvent(QCloseEvent *pEvent)
 {
+  XSqlQuery lotcloseEvent;
   if (_mode == cNew)
   {
-    q.prepare("SELECT releaseLsRegNumber(:regNumber);" );
-    q.bindValue(":regNumber", _regNumber->text());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    lotcloseEvent.prepare("SELECT releaseLsRegNumber(:regNumber);" );
+    lotcloseEvent.bindValue(":regNumber", _regNumber->text());
+    lotcloseEvent.exec();
+    if (lotcloseEvent.lastError().type() != QSqlError::NoError)
+      systemError(this, lotcloseEvent.lastError().databaseText(), __FILE__, __LINE__);
   }
 
   pEvent->accept();
@@ -184,13 +186,14 @@ void lotSerialRegistration::sEditCharass()
 
 void lotSerialRegistration::sDeleteCharass()
 {
-  q.prepare( "DELETE FROM charass "
+  XSqlQuery lotDeleteCharass;
+  lotDeleteCharass.prepare( "DELETE FROM charass "
              "WHERE (charass_id=:charass_id);" );
-  q.bindValue(":charass_id", _charass->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  lotDeleteCharass.bindValue(":charass_id", _charass->id());
+  lotDeleteCharass.exec();
+  if (lotDeleteCharass.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, lotDeleteCharass.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -199,59 +202,62 @@ void lotSerialRegistration::sDeleteCharass()
 
 void lotSerialRegistration::sFillList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value "
+  XSqlQuery lotFillList;
+  lotFillList.prepare( "SELECT charass_id, char_name, charass_value "
              "FROM charass, char "
              "WHERE ((charass_target_type='LSR')"
              " AND   (charass_char_id=char_id)"
              " AND   (charass_target_id=:lsreg_id) ) "
              "ORDER BY char_name;" );
-  q.bindValue(":lsreg_id", _lsregid);
-  q.exec();
+  lotFillList.bindValue(":lsreg_id", _lsregid);
+  lotFillList.exec();
   _charass->clear();
-  _charass->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _charass->populate(lotFillList);
+  if (lotFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, lotFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void lotSerialRegistration::populate()
 {
-  q.prepare("SELECT *"
+  XSqlQuery lotpopulate;
+  lotpopulate.prepare("SELECT *"
             "  FROM lsreg LEFT OUTER JOIN ls ON (lsreg_ls_id=ls_id)"
             " WHERE(lsreg_id=:lsreg_id);");
-  q.bindValue(":lsreg_id", _lsregid);
-  q.exec();
-  if(q.first())
+  lotpopulate.bindValue(":lsreg_id", _lsregid);
+  lotpopulate.exec();
+  if(lotpopulate.first())
   {
-    _lsregid = q.value("lsreg_id").toInt();
-    _regNumber->setText(q.value("lsreg_number").toString());
-    _type->setId(q.value("lsreg_regtype_id").toInt());
-    _qty->setDouble(q.value("lsreg_qty").toDouble());
-    _item->setId(q.value("ls_item_id").toInt());
-    _lotSerial->setId(q.value("lsreg_ls_id").toInt());
-    _regDate->setDate(q.value("lsreg_regdate").toDate());
-    _soldDate->setDate(q.value("lsreg_solddate").toDate());
-    _expireDate->setDate(q.value("lsreg_expiredate").toDate());
-    _crmacct->setId(q.value("lsreg_crmacct_id").toInt());
-    _cntct->setId(q.value("lsreg_cntct_id").toInt());
-    _notes->setText(q.value("lsreg_notes").toString());
-    if(!q.value("lsreg_cohead_id").isNull())
-      _so->setId(q.value("lsreg_cohead_id").toInt());
-    if(!q.value("lsreg_shiphead_id").isNull())
-      _shipment->setId(q.value("lsreg_shiphead_id").toInt());
+    _lsregid = lotpopulate.value("lsreg_id").toInt();
+    _regNumber->setText(lotpopulate.value("lsreg_number").toString());
+    _type->setId(lotpopulate.value("lsreg_regtype_id").toInt());
+    _qty->setDouble(lotpopulate.value("lsreg_qty").toDouble());
+    _item->setId(lotpopulate.value("ls_item_id").toInt());
+    _lotSerial->setId(lotpopulate.value("lsreg_ls_id").toInt());
+    _regDate->setDate(lotpopulate.value("lsreg_regdate").toDate());
+    _soldDate->setDate(lotpopulate.value("lsreg_solddate").toDate());
+    _expireDate->setDate(lotpopulate.value("lsreg_expiredate").toDate());
+    _crmacct->setId(lotpopulate.value("lsreg_crmacct_id").toInt());
+    _cntct->setId(lotpopulate.value("lsreg_cntct_id").toInt());
+    _notes->setText(lotpopulate.value("lsreg_notes").toString());
+    if(!lotpopulate.value("lsreg_cohead_id").isNull())
+      _so->setId(lotpopulate.value("lsreg_cohead_id").toInt());
+    if(!lotpopulate.value("lsreg_shiphead_id").isNull())
+      _shipment->setId(lotpopulate.value("lsreg_shiphead_id").toInt());
     sFillList();
   }
-  else if(q.lastError().type() != QSqlError::NoError)
+  else if(lotpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, lotpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void lotSerialRegistration::sSave()
 {
+  XSqlQuery lotSave;
   if(cView == _mode)
     return;
 
@@ -306,7 +312,7 @@ void lotSerialRegistration::sSave()
 
   if(cNew == _mode)
   {
-    q.prepare("INSERT INTO lsreg"
+    lotSave.prepare("INSERT INTO lsreg"
               "      (lsreg_id, lsreg_number, lsreg_regtype_id,"
               "       lsreg_ls_id, lsreg_qty, lsreg_regdate, lsreg_solddate,"
               "       lsreg_expiredate, lsreg_crmacct_id, lsreg_cntct_id,"
@@ -317,7 +323,7 @@ void lotSerialRegistration::sSave()
               "       :lsreg_notes, :lsreg_cohead_id, :lsreg_shiphead_id);");
   }
   else if(cEdit == _mode)
-    q.prepare("UPDATE lsreg"
+    lotSave.prepare("UPDATE lsreg"
               "   SET lsreg_number=:lsreg_number,"
               "       lsreg_regtype_id=:lsreg_regtype_id,"
               "       lsreg_ls_id=:lsreg_ls_id,"
@@ -332,26 +338,26 @@ void lotSerialRegistration::sSave()
               "       lsreg_shiphead_id=:lsreg_shiphead_id"
               " WHERE(lsreg_id=:lsreg_id);");
   
-  q.bindValue(":lsreg_id", _lsregid);
-  q.bindValue(":lsreg_number", _regNumber->text().trimmed());
-  q.bindValue(":lsreg_regtype_id", _type->id());
-  q.bindValue(":lsreg_ls_id", _lotSerial->id());
-  q.bindValue(":lsreg_qty", _qty->toDouble());
-  q.bindValue(":lsreg_regdate", _regDate->date());
-  q.bindValue(":lsreg_solddate", _soldDate->date());
-  q.bindValue(":lsreg_expiredate", _expireDate->date());
-  q.bindValue(":lsreg_crmacct_id", _crmacct->id());
-  q.bindValue(":lsreg_cntct_id", _cntct->id());
-  q.bindValue(":lsreg_notes",    _notes->toPlainText());
+  lotSave.bindValue(":lsreg_id", _lsregid);
+  lotSave.bindValue(":lsreg_number", _regNumber->text().trimmed());
+  lotSave.bindValue(":lsreg_regtype_id", _type->id());
+  lotSave.bindValue(":lsreg_ls_id", _lotSerial->id());
+  lotSave.bindValue(":lsreg_qty", _qty->toDouble());
+  lotSave.bindValue(":lsreg_regdate", _regDate->date());
+  lotSave.bindValue(":lsreg_solddate", _soldDate->date());
+  lotSave.bindValue(":lsreg_expiredate", _expireDate->date());
+  lotSave.bindValue(":lsreg_crmacct_id", _crmacct->id());
+  lotSave.bindValue(":lsreg_cntct_id", _cntct->id());
+  lotSave.bindValue(":lsreg_notes",    _notes->toPlainText());
   if(_so->id() != -1)
-    q.bindValue(":lsreg_cohead_id", _so->id());
+    lotSave.bindValue(":lsreg_cohead_id", _so->id());
   if(_shipment->id() != -1)
-    q.bindValue(":lsreg_shiphead_id", _shipment->id());
+    lotSave.bindValue(":lsreg_shiphead_id", _shipment->id());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  lotSave.exec();
+  if (lotSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, lotSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

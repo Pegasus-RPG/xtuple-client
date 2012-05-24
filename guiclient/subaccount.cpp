@@ -75,6 +75,7 @@ enum SetResponse subaccount::set(const ParameterList &pParams )
 
 void subaccount::sSave()
 {
+  XSqlQuery subaccountSave;
   if (_number->text().length() == 0)
   {
       QMessageBox::warning( this, tr("Cannot Save Sub Account"),
@@ -82,14 +83,14 @@ void subaccount::sSave()
       return;
   }
   
-  q.prepare("SELECT subaccnt_id"
+  subaccountSave.prepare("SELECT subaccnt_id"
             "  FROM subaccnt"
             " WHERE((subaccnt_id != :subaccnt_id)"
             "   AND (subaccnt_number=:subaccnt_number))");
-  q.bindValue(":subaccnt_id", _subaccntid);
-  q.bindValue(":subaccnt_number", _number->text());
-  q.exec();
-  if(q.first())
+  subaccountSave.bindValue(":subaccnt_id", _subaccntid);
+  subaccountSave.bindValue(":subaccnt_number", _number->text());
+  subaccountSave.exec();
+  if(subaccountSave.first())
   {
     QMessageBox::critical(this, tr("Duplicate Sub Account Number"),
       tr("A Sub Account Number already exists for the one specified.") );
@@ -98,16 +99,16 @@ void subaccount::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('subaccnt_subaccnt_id_seq') AS subaccnt_id;");
-    if (q.first())
-      _subaccntid = q.value("subaccnt_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    subaccountSave.exec("SELECT NEXTVAL('subaccnt_subaccnt_id_seq') AS subaccnt_id;");
+    if (subaccountSave.first())
+      _subaccntid = subaccountSave.value("subaccnt_id").toInt();
+    else if (subaccountSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, subaccountSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
-    q.prepare( "INSERT INTO subaccnt "
+    subaccountSave.prepare( "INSERT INTO subaccnt "
                "( subaccnt_id, subaccnt_number, subaccnt_descrip ) "
                "VALUES "
                "( :subaccnt_id, :subaccnt_number, :subaccnt_descrip );" );
@@ -128,19 +129,19 @@ void subaccount::sSave()
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
 
-    q.prepare( "UPDATE subaccnt "
+    subaccountSave.prepare( "UPDATE subaccnt "
                "SET subaccnt_number=:subaccnt_number,"
                "    subaccnt_descrip=:subaccnt_descrip "
                "WHERE (subaccnt_id=:subaccnt_id);" );
   }
   
-  q.bindValue(":subaccnt_id", _subaccntid);
-  q.bindValue(":subaccnt_number", _number->text());
-  q.bindValue(":subaccnt_descrip", _descrip->toPlainText());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  subaccountSave.bindValue(":subaccnt_id", _subaccntid);
+  subaccountSave.bindValue(":subaccnt_number", _number->text());
+  subaccountSave.bindValue(":subaccnt_descrip", _descrip->toPlainText());
+  subaccountSave.exec();
+  if (subaccountSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, subaccountSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -149,15 +150,16 @@ void subaccount::sSave()
 
 void subaccount::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery subaccountpopulate;
+  subaccountpopulate.prepare( "SELECT * "
              "FROM subaccnt "
              "WHERE (subaccnt_id=:subaccnt_id);" );
-  q.bindValue(":subaccnt_id", _subaccntid);
-  q.exec();
-  if (q.first())
+  subaccountpopulate.bindValue(":subaccnt_id", _subaccntid);
+  subaccountpopulate.exec();
+  if (subaccountpopulate.first())
   {
-    _number->setText(q.value("subaccnt_number").toString());
-    _descrip->setText(q.value("subaccnt_descrip").toString());
-    _cachedNumber = q.value("subaccnt_number").toString();
+    _number->setText(subaccountpopulate.value("subaccnt_number").toString());
+    _descrip->setText(subaccountpopulate.value("subaccnt_descrip").toString());
+    _cachedNumber = subaccountpopulate.value("subaccnt_number").toString();
   }
 }

@@ -250,8 +250,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId, Populat
   }
   _workingParams.append(args);
 
-  _linear = _alwaysLinear || (_guiClientInterface &&
-                              _guiClientInterface->globalQ()->result() == pQuery.result());
+  _linear = _alwaysLinear;
   if (_linear)
     populateWorker();
   else if (! _workingTimer.isActive())

@@ -96,23 +96,24 @@ void unpostedGlSeries::sEdit()
 
 void unpostedGlSeries::sDelete()
 {
+  XSqlQuery unpostedDelete;
   if (QMessageBox::question(this, tr("Cancel G/L Transactions?"),
 			    tr("<p>Are you sure you want to delete these "
 			       "unposted G/L Transactions?"),
 			    QMessageBox::Yes,
 			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare( "DELETE FROM glseries "
+    unpostedDelete.prepare( "DELETE FROM glseries "
 	       "WHERE (glseries_sequence=:id);");
     QList<XTreeWidgetItem*>selected = _glseries->selectedItems();
     removeDupAltIds(selected);
     for (int i = 0; i < selected.size(); i++)
     {
-      q.bindValue(":id", ((XTreeWidgetItem*)(selected[i]))->altId() );
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      unpostedDelete.bindValue(":id", ((XTreeWidgetItem*)(selected[i]))->altId() );
+      unpostedDelete.exec();
+      if (unpostedDelete.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, unpostedDelete.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }

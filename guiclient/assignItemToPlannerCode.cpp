@@ -39,6 +39,7 @@ void assignItemToPlannerCode::languageChange()
 
 void assignItemToPlannerCode::sAssign()
 {
+  XSqlQuery assignAssign;
   if(!_plannerCode->isValid())
   {
     QMessageBox::warning(this, tr("No Planner Code Selected"),
@@ -55,11 +56,11 @@ void assignItemToPlannerCode::sAssign()
 
   sql += ");";
 
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  q.bindValue(":plancode_id", _plannerCode->id());
-  q.bindValue(":item_id", _item->id());
-  q.exec();
+  assignAssign.prepare(sql);
+  _warehouse->bindValue(assignAssign);
+  assignAssign.bindValue(":plancode_id", _plannerCode->id());
+  assignAssign.bindValue(":item_id", _item->id());
+  assignAssign.exec();
 
   accept();
 }

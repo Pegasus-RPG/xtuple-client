@@ -86,17 +86,18 @@ enum SetResponse incidentPriority::set(const ParameterList &pParams)
 
 void incidentPriority::sCheck()
 {
+  XSqlQuery incidentCheck;
   _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT incdtpriority_id "
+    incidentCheck.prepare( "SELECT incdtpriority_id "
                "FROM incdtpriority "
                "WHERE (UPPER(incdtpriority_name)=UPPER(:incdtpriority_name));" );
-    q.bindValue(":incdtpriority_name", _name->text());
-    q.exec();
-    if (q.first())
+    incidentCheck.bindValue(":incdtpriority_name", _name->text());
+    incidentCheck.exec();
+    if (incidentCheck.first())
     {
-      _incdtpriorityId = q.value("incdtpriority_id").toInt();
+      _incdtpriorityId = incidentCheck.value("incdtpriority_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -107,6 +108,7 @@ void incidentPriority::sCheck()
 
 void incidentPriority::sSave()
 {
+  XSqlQuery incidentSave;
   if(_name->text().length() == 0)
   {
     QMessageBox::critical(this, tr("Priority Name Required"),
@@ -117,30 +119,30 @@ void incidentPriority::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('incdtpriority_incdtpriority_id_seq') AS _incdtpriority_id");
-    if (q.first())
-      _incdtpriorityId = q.value("_incdtpriority_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    incidentSave.exec("SELECT NEXTVAL('incdtpriority_incdtpriority_id_seq') AS _incdtpriority_id");
+    if (incidentSave.first())
+      _incdtpriorityId = incidentSave.value("_incdtpriority_id").toInt();
+    else if (incidentSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO incdtpriority "
+    incidentSave.prepare( "INSERT INTO incdtpriority "
                "(incdtpriority_id, incdtpriority_name, incdtpriority_order, incdtpriority_descrip)"
                " VALUES "
                "(:incdtpriority_id, :incdtpriority_name, :incdtpriority_order, :incdtpriority_descrip);" );
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT incdtpriority_id "
+    incidentSave.prepare( "SELECT incdtpriority_id "
                "FROM incdtpriority "
                "WHERE ( (UPPER(incdtpriority_name)=UPPER(:incdtpriority_name))"
                " AND (incdtpriority_id<>:incdtpriority_id) );" );
-    q.bindValue(":incdtpriority_id", _incdtpriorityId);
-    q.bindValue(":incdtpriority_name", _name->text());
-    q.exec();
-    if (q.first())
+    incidentSave.bindValue(":incdtpriority_id", _incdtpriorityId);
+    incidentSave.bindValue(":incdtpriority_name", _name->text());
+    incidentSave.exec();
+    if (incidentSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Incident Priority"),
                             tr("You may not rename this Incident Priority with "
@@ -148,27 +150,27 @@ void incidentPriority::sSave()
 			       "Incident Priority.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (incidentSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "UPDATE incdtpriority "
+    incidentSave.prepare( "UPDATE incdtpriority "
                "SET incdtpriority_name=:incdtpriority_name, "
 	       "    incdtpriority_order=:incdtpriority_order, "
 	       "    incdtpriority_descrip=:incdtpriority_descrip "
                "WHERE (incdtpriority_id=:incdtpriority_id);" );
   }
 
-  q.bindValue(":incdtpriority_id", _incdtpriorityId);
-  q.bindValue(":incdtpriority_name", _name->text());
-  q.bindValue(":incdtpriority_order", _order->value());
-  q.bindValue(":incdtpriority_descrip", _descrip->toPlainText());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  incidentSave.bindValue(":incdtpriority_id", _incdtpriorityId);
+  incidentSave.bindValue(":incdtpriority_name", _name->text());
+  incidentSave.bindValue(":incdtpriority_order", _order->value());
+  incidentSave.bindValue(":incdtpriority_descrip", _descrip->toPlainText());
+  incidentSave.exec();
+  if (incidentSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -177,20 +179,21 @@ void incidentPriority::sSave()
 
 void incidentPriority::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery incidentpopulate;
+  incidentpopulate.prepare( "SELECT * "
              "FROM incdtpriority "
              "WHERE (incdtpriority_id=:incdtpriority_id);" );
-  q.bindValue(":incdtpriority_id", _incdtpriorityId);
-  q.exec();
-  if (q.first())
+  incidentpopulate.bindValue(":incdtpriority_id", _incdtpriorityId);
+  incidentpopulate.exec();
+  if (incidentpopulate.first())
   {
-    _name->setText(q.value("incdtpriority_name").toString());
-    _order->setValue(q.value("incdtpriority_order").toInt());
-    _descrip->setText(q.value("incdtpriority_descrip").toString());
+    _name->setText(incidentpopulate.value("incdtpriority_name").toString());
+    _order->setValue(incidentpopulate.value("incdtpriority_order").toInt());
+    _descrip->setText(incidentpopulate.value("incdtpriority_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (incidentpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

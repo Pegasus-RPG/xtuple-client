@@ -80,6 +80,7 @@ enum SetResponse reasonCode::set(const ParameterList &pParams)
 
 void reasonCode::sSave()
 {
+  XSqlQuery reasonSave;
   if (_code->text().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Reason Code"),
@@ -88,14 +89,14 @@ void reasonCode::sSave()
     return;
   }
 
-  q.prepare( "SELECT rsncode_id"
+  reasonSave.prepare( "SELECT rsncode_id"
              "  FROM rsncode"
              " WHERE((UPPER(rsncode_code)=UPPER(:rsncode_code))"
              "   AND (rsncode_id != :rsncode_id));" );
-  q.bindValue(":rsncode_code", _code->text());
-  q.bindValue(":rsncode_id", _rsncodeid);
-  q.exec();
-  if (q.first())
+  reasonSave.bindValue(":rsncode_code", _code->text());
+  reasonSave.bindValue(":rsncode_id", _rsncodeid);
+  reasonSave.exec();
+  if (reasonSave.first())
   {
     QMessageBox::information( this, tr("Cannot Save Reason Code"),
                               tr("The Code you have entered for this Reason Code already exists. "
@@ -106,47 +107,48 @@ void reasonCode::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('rsncode_rsncode_id_seq') AS rsncode_id");
-    if (q.first())
-      _rsncodeid = q.value("rsncode_id").toInt();
+    reasonSave.exec("SELECT NEXTVAL('rsncode_rsncode_id_seq') AS rsncode_id");
+    if (reasonSave.first())
+      _rsncodeid = reasonSave.value("rsncode_id").toInt();
 
-    q.prepare( "INSERT INTO rsncode "
+    reasonSave.prepare( "INSERT INTO rsncode "
                "(rsncode_id, rsncode_code, rsncode_descrip, rsncode_doctype) "
                "VALUES "
                "(:rsncode_id, :rsncode_code, :rsncode_descrip, :rsncode_doctype);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE rsncode "
+    reasonSave.prepare( "UPDATE rsncode "
                "SET rsncode_code=:rsncode_code,"
                "    rsncode_descrip=:rsncode_descrip,"
                "    rsncode_doctype=:rsncode_doctype "
                "WHERE (rsncode_id=:rsncode_id);" );
 
-  q.bindValue(":rsncode_id", _rsncodeid);
-  q.bindValue(":rsncode_code", _code->text());
-  q.bindValue(":rsncode_descrip", _description->text().trimmed());
+  reasonSave.bindValue(":rsncode_id", _rsncodeid);
+  reasonSave.bindValue(":rsncode_code", _code->text());
+  reasonSave.bindValue(":rsncode_descrip", _description->text().trimmed());
   if (!_allDocTypes->isChecked())
-    q.bindValue(":rsncode_doctype", _docTypes[_docType->currentIndex()]);
-  q.exec();
+    reasonSave.bindValue(":rsncode_doctype", _docTypes[_docType->currentIndex()]);
+  reasonSave.exec();
 
   done(_rsncodeid);
 }
 
 void reasonCode::sCheck()
 {
+  XSqlQuery reasonCheck;
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
-    q.prepare( "SELECT rsncode_id"
+    reasonCheck.prepare( "SELECT rsncode_id"
                "  FROM rsncode"
                " WHERE((UPPER(rsncode_code)=UPPER(:rsncode_code))"
                "   AND (rsncode_id != :rsncode_id));" );
-    q.bindValue(":rsncode_code", _code->text());
-    q.bindValue(":rsncode_id", _rsncodeid);
-    q.exec();
-    if (q.first())
+    reasonCheck.bindValue(":rsncode_code", _code->text());
+    reasonCheck.bindValue(":rsncode_id", _rsncodeid);
+    reasonCheck.exec();
+    if (reasonCheck.first())
     {
-      _rsncodeid = q.value("rsncode_id").toInt();
+      _rsncodeid = reasonCheck.value("rsncode_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -157,26 +159,27 @@ void reasonCode::sCheck()
 
 void reasonCode::populate()
 {
-  q.prepare( "SELECT rsncode.* "
+  XSqlQuery reasonpopulate;
+  reasonpopulate.prepare( "SELECT rsncode.* "
              "FROM rsncode "
              "WHERE (rsncode_id=:rsncode_id);" );
-  q.bindValue(":rsncode_id", _rsncodeid);
-  q.exec();
-  if (q.first())
+  reasonpopulate.bindValue(":rsncode_id", _rsncodeid);
+  reasonpopulate.exec();
+  if (reasonpopulate.first())
   {
-    _code->setText(q.value("rsncode_code").toString());
-    _description->setText(q.value("rsncode_descrip").toString());
-    if (q.value("rsncode_doctype").toString() == "ARCM")
+    _code->setText(reasonpopulate.value("rsncode_code").toString());
+    _description->setText(reasonpopulate.value("rsncode_descrip").toString());
+    if (reasonpopulate.value("rsncode_doctype").toString() == "ARCM")
     {
       _selectedDocType->setChecked(TRUE);
       _docType->setCurrentIndex(0);
     }
-    else if (q.value("rsncode_doctype").toString() == "ARDM")
+    else if (reasonpopulate.value("rsncode_doctype").toString() == "ARDM")
     {
       _selectedDocType->setChecked(TRUE);
       _docType->setCurrentIndex(1);
     }
-    else if (q.value("rsncode_doctype").toString() == "RA")
+    else if (reasonpopulate.value("rsncode_doctype").toString() == "RA")
     {
       _selectedDocType->setChecked(TRUE);
       _docType->setCurrentIndex(2);

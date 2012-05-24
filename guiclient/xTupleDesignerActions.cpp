@@ -267,25 +267,26 @@ bool xTupleDesignerActions::sSaveAs()
 
 bool xTupleDesignerActions::sSaveToDB()
 {
+  XSqlQuery xSaveToDB;
   if (_designer->formId() == -1)
   {
-    q.exec("SELECT NEXTVAL('uiform_uiform_id_seq') AS _uiform_id");
-    if (q.first())
-      _designer->setFormId(q.value("_uiform_id").toInt());
-    else if (q.lastError().type() != QSqlError::NoError)
+    xSaveToDB.exec("SELECT NEXTVAL('uiform_uiform_id_seq') AS _uiform_id");
+    if (xSaveToDB.first())
+      _designer->setFormId(xSaveToDB.value("_uiform_id").toInt());
+    else if (xSaveToDB.lastError().type() != QSqlError::NoError)
     {
-      systemError(_designer, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(_designer, xSaveToDB.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
 
-    q.prepare( "INSERT INTO uiform "
+    xSaveToDB.prepare( "INSERT INTO uiform "
                "(uiform_id, uiform_name, uiform_notes, uiform_order, uiform_enabled, uiform_source) "
                "VALUES "
                "(:uiform_id, :uiform_name, :uiform_notes, :uiform_order, :uiform_enabled, :uiform_source);" );
 
   }
   else
-    q.prepare( "UPDATE uiform "
+    xSaveToDB.prepare( "UPDATE uiform "
                "SET uiform_name=:uiform_name, uiform_notes=:uiform_notes,"
                "    uiform_order=:uiform_order, uiform_enabled=:uiform_enabled,"
                "    uiform_source=:uiform_source "
@@ -293,17 +294,17 @@ bool xTupleDesignerActions::sSaveToDB()
 
   QString source = _designer->source();
 
-  q.bindValue(":uiform_id",      _designer->formId());
-  q.bindValue(":uiform_name",    _designer->name());
-  q.bindValue(":uiform_order",   _designer->order());
-  q.bindValue(":uiform_enabled", _designer->formEnabled());
-  q.bindValue(":uiform_source",  source);
-  q.bindValue(":uiform_notes",   _designer->notes());
+  xSaveToDB.bindValue(":uiform_id",      _designer->formId());
+  xSaveToDB.bindValue(":uiform_name",    _designer->name());
+  xSaveToDB.bindValue(":uiform_order",   _designer->order());
+  xSaveToDB.bindValue(":uiform_enabled", _designer->formEnabled());
+  xSaveToDB.bindValue(":uiform_source",  source);
+  xSaveToDB.bindValue(":uiform_notes",   _designer->notes());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  xSaveToDB.exec();
+  if (xSaveToDB.lastError().type() != QSqlError::NoError)
   {
-    systemError(_designer, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(_designer, xSaveToDB.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 

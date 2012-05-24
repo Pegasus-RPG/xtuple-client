@@ -106,16 +106,18 @@ void apAccountAssignments::sView()
 
 void apAccountAssignments::sDelete()
 {
-  q.prepare( "DELETE FROM apaccnt "
+  XSqlQuery deleteAssign;
+  deleteAssign.prepare( "DELETE FROM apaccnt "
              "WHERE (apaccnt_id=:apaccnt_id);" );
-  q.bindValue(":apaccnt_id", _apaccnt->id());
-  q.exec();
+  deleteAssign.bindValue(":apaccnt_id", _apaccnt->id());
+  deleteAssign.exec();
   sFillList();
 }
 
 void apAccountAssignments::sFillList()
 {
-  q.prepare( "SELECT apaccnt_id,"
+  XSqlQuery fillAssign;
+  fillAssign.prepare( "SELECT apaccnt_id,"
              "       CASE WHEN (apaccnt_vendtype='.*') THEN :all"
              "            WHEN (apaccnt_vendtype<> '') THEN apaccnt_vendtype"
              "            ELSE (SELECT vendtype_code FROM vendtype WHERE (vendtype_id=apaccnt_vendtype_id))"
@@ -128,7 +130,7 @@ void apAccountAssignments::sFillList()
              "            ELSE formatGLAccount(apaccnt_discount_accnt_id) END AS discountaccnt "
              "FROM apaccnt "
              "ORDER BY vendtypecode;" );
-  q.bindValue(":all", tr("All"));
-  q.exec();
-  _apaccnt->populate(q);
+  fillAssign.bindValue(":all", tr("All"));
+  fillAssign.exec();
+  _apaccnt->populate(fillAssign);
 }

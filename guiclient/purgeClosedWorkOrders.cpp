@@ -49,25 +49,26 @@ void purgeClosedWorkOrders::languageChange()
 
 void purgeClosedWorkOrders::sPurge()
 {
+  XSqlQuery purgePurge;
   // note that below is the code for performing this as a stored procedure
   // and we should implement this after version 2.1
   if (_cutOffDate->isValid())
   {
     if (_warehouse->isAll())
-      q.prepare("SELECT MIN(deleteWo(wo_id, false)) AS result"
+      purgePurge.prepare("SELECT MIN(deleteWo(wo_id, false)) AS result"
                 "  FROM wo"
                 " WHERE ((wo_status = 'C')"
                 "   AND  (wo_duedate <= :cutoffDate))");
     else
-      q.prepare("SELECT MIN(deleteWo(wo_id, false)) AS result"
+      purgePurge.prepare("SELECT MIN(deleteWo(wo_id, false)) AS result"
                 "  FROM wo, itemsite"
                 " WHERE ((wo_status = 'C')"
                 "   AND  (wo_duedate <= :cutoffDate)"
                 "   AND  (wo_itemsite_id = itemsite_id)"
                 "   AND  (itemsite_warehous_id = :whs_id))");
-    q.bindValue(":cutoffDate", _cutOffDate->date());
-    q.bindValue(":whs_id", _warehouse->id());
-    q.exec();
+    purgePurge.bindValue(":cutoffDate", _cutOffDate->date());
+    purgePurge.bindValue(":whs_id", _warehouse->id());
+    purgePurge.exec();
 
     _cutOffDate->clear();
     _cutOffDate->setFocus();

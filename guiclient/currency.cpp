@@ -45,18 +45,19 @@ void currency::languageChange()
 
 bool currency::isBaseSet()
 {
+  XSqlQuery currencyisBaseSet;
     int numSet = 0;
     
-    q.prepare("SELECT count(*) AS numSet "
+    currencyisBaseSet.prepare("SELECT count(*) AS numSet "
               "FROM curr_symbol WHERE curr_base = TRUE");
-    q.exec();
-    if (q.first())
+    currencyisBaseSet.exec();
+    if (currencyisBaseSet.first())
     {
-	numSet = q.value("numSet").toInt();
+	numSet = currencyisBaseSet.value("numSet").toInt();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (currencyisBaseSet.lastError().type() != QSqlError::NoError)
     {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, currencyisBaseSet.lastError().databaseText(), __FILE__, __LINE__);
     }
     return numSet != 0;
 }
@@ -111,6 +112,7 @@ enum SetResponse currency::set(const ParameterList &pParams)
 
 void currency::sSave()
 {
+  XSqlQuery currencySave;
   sConfirmBaseFlag();
 
   if (_currName->text().isEmpty())
@@ -150,29 +152,29 @@ void currency::sSave()
   
   if (_mode == cNew)
   {
-      q.prepare( "INSERT INTO curr_symbol "
+      currencySave.prepare( "INSERT INTO curr_symbol "
 		 "(  curr_name,  curr_symbol,  curr_abbr,  curr_base ) "
 		 "VALUES "
 		 "( :curr_name, :curr_symbol, :curr_abbr, :curr_base );" );
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "UPDATE curr_symbol "
+    currencySave.prepare( "UPDATE curr_symbol "
                "SET curr_name=:curr_name, curr_symbol=:curr_symbol, "
 	       "    curr_abbr=:curr_abbr, curr_base = :curr_base "
                "WHERE (curr_id=:curr_id);" );
-    q.bindValue(":curr_id", _currid);
+    currencySave.bindValue(":curr_id", _currid);
    }
   
-  q.bindValue(":curr_name", _currName->text());
-  q.bindValue(":curr_symbol", _currSymbol->text());
-  q.bindValue(":curr_abbr", _currAbbr->text());
-  q.bindValue(":curr_base", QVariant(_currBase->isChecked()));
-  q.exec();
+  currencySave.bindValue(":curr_name", _currName->text());
+  currencySave.bindValue(":curr_symbol", _currSymbol->text());
+  currencySave.bindValue(":curr_abbr", _currAbbr->text());
+  currencySave.bindValue(":curr_base", QVariant(_currBase->isChecked()));
+  currencySave.exec();
 
-  if (q.lastError().type() != QSqlError::NoError)
+  if (currencySave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, currencySave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -181,23 +183,24 @@ void currency::sSave()
 
 void currency::populate()
 {
-  q.prepare( "SELECT curr_name, curr_symbol, curr_base, curr_abbr "
+  XSqlQuery currencypopulate;
+  currencypopulate.prepare( "SELECT curr_name, curr_symbol, curr_base, curr_abbr "
              "FROM curr_symbol "
              "WHERE (curr_id=:curr_id);" );
-  q.bindValue(":curr_id", _currid);
-  q.exec();
-  if (q.first())
+  currencypopulate.bindValue(":curr_id", _currid);
+  currencypopulate.exec();
+  if (currencypopulate.first())
   {
-    _currName->setText(q.value("curr_name").toString());
-    _currSymbol->setText(q.value("curr_symbol").toString());
-    _currBase->setChecked(q.value("curr_base").toBool());
-    _currAbbr->setText(q.value("curr_abbr").toString());
+    _currName->setText(currencypopulate.value("curr_name").toString());
+    _currSymbol->setText(currencypopulate.value("curr_symbol").toString());
+    _currBase->setChecked(currencypopulate.value("curr_base").toBool());
+    _currAbbr->setText(currencypopulate.value("curr_abbr").toString());
 
     baseOrig = _currBase->isChecked();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (currencypopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, currencypopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -227,22 +230,23 @@ void currency::sClose()
 
 void currency::sSelect()
 {
+  XSqlQuery cs;
   currencySelect *newdlg = new currencySelect(this, "", true);
   int country_id = newdlg->exec();
   if (country_id > 0)
   {
-    q.prepare("SELECT * FROM country WHERE country_id = :country_id;");
-    q.bindValue(":country_id", country_id);
-    q.exec();
-    if (q.first())
+    cs.prepare("SELECT * FROM country WHERE country_id = :country_id;");
+    cs.bindValue(":country_id", country_id);
+    cs.exec();
+    if (cs.first())
     {
-      _currName->setText(q.value("country_curr_name").toString());
-      _currAbbr->setText(q.value("country_curr_abbr").toString());
-      _currSymbol->setText(q.value("country_curr_symbol").toString());
+      _currName->setText(cs.value("country_curr_name").toString());
+      _currAbbr->setText(cs.value("country_curr_abbr").toString());
+      _currSymbol->setText(cs.value("country_curr_symbol").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (cs.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, cs.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

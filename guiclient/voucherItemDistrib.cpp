@@ -102,36 +102,38 @@ enum SetResponse voucherItemDistrib::set(const ParameterList &pParams)
 
 void voucherItemDistrib::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery voucherpopulate;
+  voucherpopulate.prepare( "SELECT * "
              "FROM vodist "
              "WHERE (vodist_id=:vodist_id);" ) ;
-  q.bindValue(":vodist_id", _vodistid);
-  q.exec();
-  if (q.first())
+  voucherpopulate.bindValue(":vodist_id", _vodistid);
+  voucherpopulate.exec();
+  if (voucherpopulate.first())
   {
-    _costelem->setId(q.value("vodist_costelem_id").toInt());
-    _amount->setLocalValue(q.value("vodist_amount").toDouble());
-    _discountable->setChecked(q.value("vodist_discountable").toBool());
-    _notes->setText(q.value("vodist_notes").toString());
+    _costelem->setId(voucherpopulate.value("vodist_costelem_id").toInt());
+    _amount->setLocalValue(voucherpopulate.value("vodist_amount").toDouble());
+    _discountable->setChecked(voucherpopulate.value("vodist_discountable").toBool());
+    _notes->setText(voucherpopulate.value("vodist_notes").toString());
   }
 }
 
 bool voucherItemDistrib::sCheck()
 {
+  XSqlQuery voucherCheck;
   if (_mode == cNew)
   {
-    q.prepare( "SELECT vodist_id "
+    voucherCheck.prepare( "SELECT vodist_id "
                "FROM vodist "
                "WHERE ( (vodist_vohead_id=:vodist_vohead_id)"
                "  AND   (vodist_poitem_id=:vodist_poitem_id)"
                "  AND   (vodist_costelem_id=:vodist_costelem_id) );" );
-    q.bindValue(":vodist_vohead_id", _voheadid);
-    q.bindValue(":vodist_poitem_id", _poitemid);
-    q.bindValue(":vodist_costelem_id", _costelem->id());
-    q.exec();
-    if (q.first())
+    voucherCheck.bindValue(":vodist_vohead_id", _voheadid);
+    voucherCheck.bindValue(":vodist_poitem_id", _poitemid);
+    voucherCheck.bindValue(":vodist_costelem_id", _costelem->id());
+    voucherCheck.exec();
+    if (voucherCheck.first())
     {
-      _vodistid = q.value("vodist_id").toInt();
+      _vodistid = voucherCheck.value("vodist_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -144,16 +146,17 @@ bool voucherItemDistrib::sCheck()
 
 void voucherItemDistrib::sSave()
 {
+  XSqlQuery voucherSave;
   if (_mode == cNew)
   {
     if (!sCheck())
       return;
       
-    q.exec("SELECT NEXTVAL('vodist_vodist_id_seq') AS _vodistid;");
-    if (q.first())
-      _vodistid = q.value("_vodistid").toInt();
+    voucherSave.exec("SELECT NEXTVAL('vodist_vodist_id_seq') AS _vodistid;");
+    if (voucherSave.first())
+      _vodistid = voucherSave.value("_vodistid").toInt();
 
-    q.prepare( "INSERT INTO vodist "
+    voucherSave.prepare( "INSERT INTO vodist "
                "( vodist_id, vodist_vohead_id, vodist_poitem_id,"
                "  vodist_costelem_id, vodist_amount, vodist_discountable,"
 			   "  vodist_notes ) "
@@ -163,21 +166,21 @@ void voucherItemDistrib::sSave()
 			   "  :vodist_notes );" );
   }
   if (_mode == cEdit)
-    q.prepare( "UPDATE vodist "
+    voucherSave.prepare( "UPDATE vodist "
                "SET vodist_costelem_id=:vodist_costelem_id,"
                "    vodist_amount=:vodist_amount,"
                "    vodist_discountable=:vodist_discountable,"
 			   "    vodist_notes=:vodist_notes "
                "WHERE (vodist_id=:vodist_id);" );
 
-  q.bindValue(":vodist_id", _vodistid);
-  q.bindValue(":vodist_vohead_id", _voheadid);
-  q.bindValue(":vodist_poitem_id", _poitemid);
-  q.bindValue(":vodist_costelem_id", _costelem->id());
-  q.bindValue(":vodist_amount", _amount->localValue());
-  q.bindValue(":vodist_discountable", QVariant(_discountable->isChecked()));
-  q.bindValue(":vodist_notes", _notes->toPlainText().trimmed());
-  q.exec();
+  voucherSave.bindValue(":vodist_id", _vodistid);
+  voucherSave.bindValue(":vodist_vohead_id", _voheadid);
+  voucherSave.bindValue(":vodist_poitem_id", _poitemid);
+  voucherSave.bindValue(":vodist_costelem_id", _costelem->id());
+  voucherSave.bindValue(":vodist_amount", _amount->localValue());
+  voucherSave.bindValue(":vodist_discountable", QVariant(_discountable->isChecked()));
+  voucherSave.bindValue(":vodist_notes", _notes->toPlainText().trimmed());
+  voucherSave.exec();
 
   done(_vodistid);
 }

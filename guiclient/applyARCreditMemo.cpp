@@ -87,25 +87,26 @@ enum SetResponse applyARCreditMemo::set(const ParameterList &pParams)
 
 void applyARCreditMemo::sPost()
 {
+  XSqlQuery applyPost;
   populate(); // repeat in case someone else has updated applications
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");
-  if (q.lastError().type() != QSqlError::NoError)
+  applyPost.exec("BEGIN;");
+  if (applyPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applyPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT postARCreditMemoApplication(:aropen_id) AS result;");
-  q.bindValue(":aropen_id", _aropenid);
-  q.exec();
-  if (q.first())
+  applyPost.prepare("SELECT postARCreditMemoApplication(:aropen_id) AS result;");
+  applyPost.bindValue(":aropen_id", _aropenid);
+  applyPost.exec();
+  if (applyPost.first())
   {
     QString msg;
-    int result = q.value("result").toInt();
+    int result = applyPost.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -114,16 +115,16 @@ void applyARCreditMemo::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (applyPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applyPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  q.exec("COMMIT;");
-  if (q.lastError().type() != QSqlError::NoError)
+  applyPost.exec("COMMIT;");
+  if (applyPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applyPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -132,21 +133,22 @@ void applyARCreditMemo::sPost()
 
 void applyARCreditMemo::sApplyBalance()
 {
-  q.prepare("SELECT applyARCreditMemoToBalance(:aropen_id) AS result;");
-  q.bindValue(":aropen_id", _aropenid);
-  q.exec();
-  if (q.first())
+  XSqlQuery applyApplyBalance;
+  applyApplyBalance.prepare("SELECT applyARCreditMemoToBalance(:aropen_id) AS result;");
+  applyApplyBalance.bindValue(":aropen_id", _aropenid);
+  applyApplyBalance.exec();
+  if (applyApplyBalance.first())
   {
-    int result = q.value("result").toInt();
+    int result = applyApplyBalance.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("applyARCreditMemoToBalance", result));
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (applyApplyBalance.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applyApplyBalance.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -155,22 +157,23 @@ void applyARCreditMemo::sApplyBalance()
 
 void applyARCreditMemo::sApplyLineBalance()
 {
-  q.prepare("SELECT applyARCreditMemoToBalance(:sourceAropenid, :targetAropenid) AS result;");
-  q.bindValue(":sourceAropenid", _aropenid);
-  q.bindValue(":targetAropenid", _aropen->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery applyApplyLineBalance;
+  applyApplyLineBalance.prepare("SELECT applyARCreditMemoToBalance(:sourceAropenid, :targetAropenid) AS result;");
+  applyApplyLineBalance.bindValue(":sourceAropenid", _aropenid);
+  applyApplyLineBalance.bindValue(":targetAropenid", _aropen->id());
+  applyApplyLineBalance.exec();
+  if (applyApplyLineBalance.first())
   {
-    int result = q.value("result").toInt();
+    int result = applyApplyLineBalance.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("applyARCreditMemoToBalance", result));
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (applyApplyLineBalance.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applyApplyLineBalance.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -191,33 +194,36 @@ void applyARCreditMemo::sApply()
 
 void applyARCreditMemo::sClear()
 {
-  q.prepare( "DELETE FROM arcreditapply "
+  XSqlQuery applyClear;
+  applyClear.prepare( "DELETE FROM arcreditapply "
              "WHERE ( (arcreditapply_source_aropen_id=:sourceAropenid) "
              " AND (arcreditapply_target_aropen_id=:targetAropenid) );" );
-  q.bindValue(":sourceAropenid", _aropenid);
-  q.bindValue(":targetAropenid", _aropen->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  applyClear.bindValue(":sourceAropenid", _aropenid);
+  applyClear.bindValue(":targetAropenid", _aropen->id());
+  applyClear.exec();
+  if (applyClear.lastError().type() != QSqlError::NoError)
+      systemError(this, applyClear.lastError().databaseText(), __FILE__, __LINE__);
 
   populate();
 }
 
 void applyARCreditMemo::sClose()
 {
-  q.prepare( "DELETE FROM arcreditapply "
+  XSqlQuery applyClose;
+  applyClose.prepare( "DELETE FROM arcreditapply "
              "WHERE (arcreditapply_source_aropen_id=:sourceAropenid);" );
-  q.bindValue(":sourceAropenid", _aropenid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  applyClose.bindValue(":sourceAropenid", _aropenid);
+  applyClose.exec();
+  if (applyClose.lastError().type() != QSqlError::NoError)
+      systemError(this, applyClose.lastError().databaseText(), __FILE__, __LINE__);
 
   reject();
 }
 
 void applyARCreditMemo::populate()
 {
-  q.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_docdate,"
+  XSqlQuery applypopulate;
+  applypopulate.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_docdate,"
              "       (aropen_amount - aropen_paid - COALESCE(prepared,0.0) - COALESCE(cashapplied,0.0)) AS available,"
              "       COALESCE(SUM(currToCurr(arcreditapply_curr_id, "
              "				     aropen_curr_id, "
@@ -244,21 +250,21 @@ void applyARCreditMemo::populate()
              "WHERE (aropen_id=:aropen_id) "
              "GROUP BY aropen_cust_id, aropen_docnumber, aropen_docdate,"
              "         aropen_amount, aropen_paid, aropen_curr_id, prepared, cashapplied;" );
-  q.bindValue(":aropen_id", _aropenid);
-  q.exec();
-  if (q.first())
+  applypopulate.bindValue(":aropen_id", _aropenid);
+  applypopulate.exec();
+  if (applypopulate.first())
   {
-    _available->set(q.value("available").toDouble(),
-		    q.value("aropen_curr_id").toInt(),
-		    q.value("aropen_docdate").toDate(), false);
-    _cust->setId(q.value("aropen_cust_id").toInt());
-    _applied->setLocalValue(q.value("f_applied").toDouble());
+    _available->set(applypopulate.value("available").toDouble(),
+		    applypopulate.value("aropen_curr_id").toInt(),
+		    applypopulate.value("aropen_docdate").toDate(), false);
+    _cust->setId(applypopulate.value("aropen_cust_id").toInt());
+    _applied->setLocalValue(applypopulate.value("f_applied").toDouble());
     _balance->setLocalValue(_available->localValue() - _applied->localValue());
-    _docNumber->setText(q.value("aropen_docnumber").toString());
-    _docDate->setDate(q.value("aropen_docdate").toDate(), true);
+    _docNumber->setText(applypopulate.value("aropen_docnumber").toString());
+    _docDate->setDate(applypopulate.value("aropen_docdate").toDate(), true);
   }
   else
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, applypopulate.lastError().databaseText(), __FILE__, __LINE__);
 
   MetaSQLQuery mql = mqlLoad("arOpenApplications", "detail");
   ParameterList params;
@@ -266,11 +272,11 @@ void applyARCreditMemo::populate()
   params.append("debitMemo",        tr("Debit Memo"));
   params.append("invoice",          tr("Invoice"));
   params.append("source_aropen_id", _aropenid);
-  q = mql.toQuery(params);
-  _aropen->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  applypopulate = mql.toQuery(params);
+  _aropen->populate(applypopulate);
+  if (applypopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applypopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

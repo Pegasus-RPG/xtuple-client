@@ -110,9 +110,10 @@ void standardJournalGroups::sView()
 
 void standardJournalGroups::sDelete()
 {
-  q.prepare("SELECT deleteStandardJournalGroup(:stdjrnlgrp_id);");
-  q.bindValue(":stdjrnlgrp_id", _stdjrnlgrp->id());
-  q.exec();
+  XSqlQuery standardDelete;
+  standardDelete.prepare("SELECT deleteStandardJournalGroup(:stdjrnlgrp_id);");
+  standardDelete.bindValue(":stdjrnlgrp_id", _stdjrnlgrp->id());
+  standardDelete.exec();
 
   sFillList();
 }

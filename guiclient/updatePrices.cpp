@@ -24,6 +24,7 @@
 updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery updateupdatePrices;
   setupUi(this);
 
 
@@ -49,9 +50,9 @@ updatePrices::updatePrices(QWidget* parent, const char* name, bool modal, Qt::WF
 
   MetaSQLQuery mql = mqlLoad("updateprices", "createselsched");
   ParameterList params;
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  updateupdatePrices = mql.toQuery(params);
+  if (updateupdatePrices.lastError().type() != QSqlError::NoError)
+    systemError(this, updateupdatePrices.lastError().databaseText(), __FILE__, __LINE__);
 
   _avail->addColumn(tr("Schedule"),      -1,          Qt::AlignLeft,  true,  "ipshead_name");
   _avail->addColumn(tr("Description"),   -1,          Qt::AlignLeft,  true,  "ipshead_descrip");
@@ -80,15 +81,17 @@ void updatePrices::languageChange()
 
 void updatePrices::closeEvent(QCloseEvent * /*pEvent*/)
 {
+  XSqlQuery updatecloseEvent;
   MetaSQLQuery mql = mqlLoad("updateprices", "dropselsched");
   ParameterList params;
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  updatecloseEvent = mql.toQuery(params);
+  if (updatecloseEvent.lastError().type() != QSqlError::NoError)
+    systemError(this, updatecloseEvent.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void updatePrices::sUpdate()
 {
+  XSqlQuery updateUpdate;
   if (_byItem->isChecked() && !_item->isValid())
   {
     QMessageBox::critical( this, tr("Incomplete Data"),
@@ -125,20 +128,20 @@ void updatePrices::sUpdate()
     params.append("updateByPercent", true);
 
   MetaSQLQuery mql = mqlLoad("updateprices", "update");
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  updateUpdate = mql.toQuery(params);
+  if (updateUpdate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, updateUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_updateCharPrices->isChecked())
   {
     MetaSQLQuery mql2 = mqlLoad("updateprices", "updatechar");
-    q = mql2.toQuery(params);
-    if (q.lastError().type() != QSqlError::NoError)
+    updateUpdate = mql2.toQuery(params);
+    if (updateUpdate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, updateUpdate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -150,6 +153,7 @@ void updatePrices::sUpdate()
 
 void updatePrices::populate()
 {
+  XSqlQuery updatepopulate;
   ParameterList params;
   if (_showEffective->isChecked())
     params.append("showEffective", true);
@@ -159,35 +163,37 @@ void updatePrices::populate()
     params.append("showCurrent", true);
 
   MetaSQLQuery mql = mqlLoad("updateprices", "availsched");
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-  _avail->populate(q);
+  updatepopulate = mql.toQuery(params);
+  if (updatepopulate.lastError().type() != QSqlError::NoError)
+    systemError(this, updatepopulate.lastError().databaseText(), __FILE__, __LINE__);
+  _avail->populate(updatepopulate);
 
   MetaSQLQuery mql2 = mqlLoad("updateprices", "selsched");
-  q = mql2.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-  _sel->populate(q);
+  updatepopulate = mql2.toQuery(params);
+  if (updatepopulate.lastError().type() != QSqlError::NoError)
+    systemError(this, updatepopulate.lastError().databaseText(), __FILE__, __LINE__);
+  _sel->populate(updatepopulate);
 }
 
 void updatePrices::sAdd()
 {
+  XSqlQuery updateAdd;
   QList<XTreeWidgetItem*> selected = _avail->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     MetaSQLQuery mql = mqlLoad("updateprices", "add");
     ParameterList params;
     params.append("ipshead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-    q = mql.toQuery(params);
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    updateAdd = mql.toQuery(params);
+    if (updateAdd.lastError().type() != QSqlError::NoError)
+      systemError(this, updateAdd.lastError().databaseText(), __FILE__, __LINE__);
   }
   populate();
 }
 
 void updatePrices::sAddAll()
 {
+  XSqlQuery updateAddAll;
   ParameterList params;
   if (_showEffective->isChecked())
     params.append("showEffective", true);
@@ -197,30 +203,32 @@ void updatePrices::sAddAll()
     params.append("showCurrent", true);
 
   MetaSQLQuery mql = mqlLoad("updateprices", "add");
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  updateAddAll = mql.toQuery(params);
+  if (updateAddAll.lastError().type() != QSqlError::NoError)
+    systemError(this, updateAddAll.lastError().databaseText(), __FILE__, __LINE__);
   populate();
 }
 
 void updatePrices::sRemove()
 {
+  XSqlQuery updateRemove;
   MetaSQLQuery mql = mqlLoad("updateprices", "remove");
   ParameterList params;
   params.append("ipshead_id", _sel->id());
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  updateRemove = mql.toQuery(params);
+  if (updateRemove.lastError().type() != QSqlError::NoError)
+    systemError(this, updateRemove.lastError().databaseText(), __FILE__, __LINE__);
   populate();
 }
 
 void updatePrices::sRemoveAll()
 {
+  XSqlQuery updateRemoveAll;
   MetaSQLQuery mql = mqlLoad("updateprices", "remove");
   ParameterList params;
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  updateRemoveAll = mql.toQuery(params);
+  if (updateRemoveAll.lastError().type() != QSqlError::NoError)
+    systemError(this, updateRemoveAll.lastError().databaseText(), __FILE__, __LINE__);
   populate();
 }
 

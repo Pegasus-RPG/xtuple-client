@@ -39,6 +39,7 @@ void vendorAddressList::languageChange()
 enum SetResponse vendorAddressList::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
+  XSqlQuery setVendor;
   QVariant param;
   bool     valid;
 
@@ -46,17 +47,17 @@ enum SetResponse vendorAddressList::set(const ParameterList &pParams)
   if (valid)
   {
     _vendid = param.toInt();
-    q.prepare("SELECT (vend_number||' - '||vend_name) AS f_name,"
+    setVendor.prepare("SELECT (vend_number||' - '||vend_name) AS f_name,"
               "       addr_line1"
               "  FROM vendinfo"
               "  LEFT OUTER JOIN addr ON (vend_addr_id=addr_id)"
               " WHERE(vend_id=:vend_id);");
-    q.bindValue(":vend_id", _vendid);
-    q.exec();
-    if(q.first())
+    setVendor.bindValue(":vend_id", _vendid);
+    setVendor.exec();
+    if(setVendor.first())
     {
-      _vendName->setText(q.value("f_name").toString());
-      _vendAddr1->setText(q.value("addr_line1").toString());
+      _vendName->setText(setVendor.value("f_name").toString());
+      _vendAddr1->setText(setVendor.value("addr_line1").toString());
     }
   }
 
@@ -77,7 +78,8 @@ void vendorAddressList::sClose()
 
 void vendorAddressList::sFillList()
 {
-  q.prepare( "SELECT -1 AS id, 'Main' AS code, vend_name AS name, addr_line1 AS address,"
+  XSqlQuery vendorFillList;
+  vendorFillList.prepare( "SELECT -1 AS id, 'Main' AS code, vend_name AS name, addr_line1 AS address,"
              "       0 AS orderby "
              "FROM vendinfo "
              "LEFT OUTER JOIN addr ON (vend_addr_id=addr_id) "
@@ -89,8 +91,8 @@ void vendorAddressList::sFillList()
              "LEFT OUTER JOIN addr ON (vendaddr_addr_id=addr_id) "
              "WHERE (vendaddr_vend_id=:vend_id) "
              "ORDER BY orderby, code;" );
-  q.bindValue(":vend_id", _vendid);
-  q.exec();
-  _vendaddr->populate(q, _vendid);
+  vendorFillList.bindValue(":vend_id", _vendid);
+  vendorFillList.exec();
+  _vendaddr->populate(vendorFillList, _vendid);
 }
 

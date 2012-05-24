@@ -82,13 +82,14 @@ void financialLayouts::sNew()
 
 void financialLayouts::sEdit()
 {
+  XSqlQuery financialEdit;
   ParameterList params;
-  q.prepare("SELECT * FROM flhead "
+  financialEdit.prepare("SELECT * FROM flhead "
             " WHERE ((flhead_id=:flhead_id)"
             "   AND  (flhead_sys));");
-  q.bindValue(":flhead_id", _flhead->id());
-  q.exec();
-  if (q.first())
+  financialEdit.bindValue(":flhead_id", _flhead->id());
+  financialEdit.exec();
+  if (financialEdit.first())
   {
     QMessageBox::information(this, tr("System Report"), 
             tr("This is a system report and will be opened in "
@@ -108,12 +109,13 @@ void financialLayouts::sEdit()
 
 void financialLayouts::sDelete()
 {
-  q.prepare("SELECT * FROM flhead "
+  XSqlQuery financialDelete;
+  financialDelete.prepare("SELECT * FROM flhead "
             " WHERE ((flhead_id=:flhead_id)"
             "   AND  (flhead_sys));");
-  q.bindValue(":flhead_id", _flhead->id());
-  q.exec();
-  if (q.first())
+  financialDelete.bindValue(":flhead_id", _flhead->id());
+  financialDelete.exec();
+  if (financialDelete.first())
   {
     QMessageBox::critical(this, tr("System Report"), 
             tr("You may not delete a system report,\n"
@@ -126,7 +128,7 @@ void financialLayouts::sDelete()
           "Are you sure you want to continue?"),
        QMessageBox::Yes, QMessageBox::No | QMessageBox::Escape | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare( "DELETE FROM flcol "
+    financialDelete.prepare( "DELETE FROM flcol "
                "WHERE (flcol_flhead_id=:flhead_id);"
                "DELETE FROM flitem "
                "WHERE (flitem_flhead_id=:flhead_id);"
@@ -134,8 +136,8 @@ void financialLayouts::sDelete()
                "WHERE (flgrp_flhead_id=:flhead_id);"
                "DELETE FROM flhead "
                "WHERE (flhead_id=:flhead_id);" );
-    q.bindValue(":flhead_id", _flhead->id());
-    q.exec();
+    financialDelete.bindValue(":flhead_id", _flhead->id());
+    financialDelete.exec();
 
     sFillList();
   }
@@ -159,6 +161,7 @@ void financialLayouts::sFillList()
 
 void financialLayouts::sCopy()
 {
+  XSqlQuery financialCopy;
   bool ok;
   QString text;
   do {
@@ -166,16 +169,16 @@ void financialLayouts::sCopy()
                                  tr("Target Report:"), QLineEdit::Normal,
                                  text, &ok);
     if ( ok ) {
-      q.prepare("SELECT copyFinancialLayout(:flhead_id, :name) AS result;");
-      q.bindValue(":flhead_id", _flhead->id());
-      q.bindValue(":name", text);
-      q.exec();
-      if(q.first())
+      financialCopy.prepare("SELECT copyFinancialLayout(:flhead_id, :name) AS result;");
+      financialCopy.bindValue(":flhead_id", _flhead->id());
+      financialCopy.bindValue(":name", text);
+      financialCopy.exec();
+      if(financialCopy.first())
       {
-        if(q.value("result").toInt() < 0)
+        if(financialCopy.value("result").toInt() < 0)
         {
           QString message;
-          switch(q.value("result").toInt())
+          switch(financialCopy.value("result").toInt())
           {
             case -1:
               message = tr("The record you are trying to copy is no longer on the database.");

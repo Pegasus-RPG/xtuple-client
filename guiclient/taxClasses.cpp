@@ -80,13 +80,14 @@ void taxClasses::languageChange()
 
 void taxClasses::sDelete()
 {
-  q.prepare("SELECT deletetaxclass(:tax_class_id) AS result;");
-  q.bindValue(":tax_class_id", _taxclass->id());
-  q.exec();
+  XSqlQuery taxDelete;
+  taxDelete.prepare("SELECT deletetaxclass(:tax_class_id) AS result;");
+  taxDelete.bindValue(":tax_class_id", _taxclass->id());
+  taxDelete.exec();
 
-  if (q.first())
+  if (taxDelete.first())
   {
-    int returnVal = q.value("result").toInt();
+    int returnVal = taxDelete.value("result").toInt();
     if (returnVal < 0)
     {
       systemError(this, storedProcErrorLookup("deleteTaxClass", returnVal), __FILE__, __LINE__);
@@ -94,9 +95,9 @@ void taxClasses::sDelete()
     }
 	sFillList(-1);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (taxDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

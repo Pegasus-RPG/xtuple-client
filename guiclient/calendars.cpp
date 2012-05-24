@@ -79,6 +79,7 @@ void calendars::sEdit()
 
 void calendars::sDelete()
 {
+  XSqlQuery calendarsDelete;
   QString sql( "DELETE FROM calhead "
                "WHERE (calhead_id=:calhead_id);" );
 
@@ -89,9 +90,9 @@ void calendars::sDelete()
     sql += "DELETE FROM rcalitem "
            "WHERE (rcalitem_calhead_id=:calhead_id);";
 
-  q.prepare(sql);
-  q.bindValue(":calhead_id", _calhead->id());
-  q.exec();
+  calendarsDelete.prepare(sql);
+  calendarsDelete.bindValue(":calhead_id", _calhead->id());
+  calendarsDelete.exec();
 
   sFillList();
 }

@@ -47,15 +47,16 @@ void commentTypes::languageChange()
 
 void commentTypes::sFillList()
 {
-  q.prepare( "SELECT cmnttype_id, cmnttype_name,"
+  XSqlQuery commentFillList;
+  commentFillList.prepare( "SELECT cmnttype_id, cmnttype_name,"
              "       cmnttype_sys, cmnttype_descrip, cmnttype_order "
              "FROM cmnttype "
              "ORDER BY cmnttype_order, cmnttype_name;" );
-  q.exec();
-  _cmnttype->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  commentFillList.exec();
+  _cmnttype->populate(commentFillList);
+  if (commentFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, commentFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -113,13 +114,14 @@ void commentTypes::sView()
 
 void commentTypes::sDelete()
 {
-  q.prepare( "SELECT comment_id "
+  XSqlQuery commentDelete;
+  commentDelete.prepare( "SELECT comment_id "
              "FROM comment "
              "WHERE (comment_cmnttype_id=:cmnttype_id) "
              "LIMIT 1;" );
-  q.bindValue(":cmnttype_id", _cmnttype->id());
-  q.exec();
-  if (q.first())
+  commentDelete.bindValue(":cmnttype_id", _cmnttype->id());
+  commentDelete.exec();
+  if (commentDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Comment Type"),
                            tr("The selected Comment Type cannot be deleted because there are Comments that are assigned to it.\n") );
@@ -127,15 +129,15 @@ void commentTypes::sDelete()
   }
   else
   {
-    q.prepare( "DELETE FROM cmnttypesource "
+    commentDelete.prepare( "DELETE FROM cmnttypesource "
                "WHERE (cmnttypesource_cmnttype_id=:cmnttype_id);" );
-    q.bindValue(":cmnttype_id", _cmnttype->id());
-    q.exec();
+    commentDelete.bindValue(":cmnttype_id", _cmnttype->id());
+    commentDelete.exec();
 
-    q.prepare( "DELETE FROM cmnttype "
+    commentDelete.prepare( "DELETE FROM cmnttype "
                "WHERE (cmnttype_id=:cmnttype_id);" );
-    q.bindValue(":cmnttype_id", _cmnttype->id());
-    q.exec();
+    commentDelete.bindValue(":cmnttype_id", _cmnttype->id());
+    commentDelete.exec();
 
     sFillList();
   }

@@ -94,24 +94,26 @@ void labelForms::sView()
 
 void labelForms::sDelete()
 {
-  q.prepare( "DELETE FROM labelform "
+  XSqlQuery labelDelete;
+  labelDelete.prepare( "DELETE FROM labelform "
              "WHERE (labelform_id=:labelform_id);" );
-  q.bindValue(":labelform_id", _labelforms->id());
-  q.exec();
+  labelDelete.bindValue(":labelform_id", _labelforms->id());
+  labelDelete.exec();
 
   sFillList();
 }
 
 void labelForms::sFillList()
 {
-  q.prepare("SELECT labelform_id, labelform_name, labelform_perpage "
+  XSqlQuery labelFillList;
+  labelFillList.prepare("SELECT labelform_id, labelform_name, labelform_perpage "
             "FROM labelform "
             "ORDER BY labelform_name;");
-  q.exec();
-  _labelforms->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  labelFillList.exec();
+  _labelforms->populate(labelFillList);
+  if (labelFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, labelFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

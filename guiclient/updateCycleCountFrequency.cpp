@@ -81,6 +81,7 @@ enum SetResponse updateCycleCountFrequency::set(const ParameterList &pParams)
 
 void updateCycleCountFrequency::sUpdate()
 {
+  XSqlQuery updateUpdate;
   QString sql( "UPDATE itemsite "
                "SET itemsite_cyclecountfreq=:afreq "
                "FROM item "
@@ -127,13 +128,13 @@ void updateCycleCountFrequency::sUpdate()
 
   sql += ");";
 
-  q.prepare(sql);
-  q.bindValue(":afreq", _classAFrequency->value());
-  q.bindValue(":bfreq", _classBFrequency->value());
-  q.bindValue(":cfreq", _classCFrequency->value());
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  q.exec();
+  updateUpdate.prepare(sql);
+  updateUpdate.bindValue(":afreq", _classAFrequency->value());
+  updateUpdate.bindValue(":bfreq", _classBFrequency->value());
+  updateUpdate.bindValue(":cfreq", _classCFrequency->value());
+  _warehouse->bindValue(updateUpdate);
+  _classCode->bindValue(updateUpdate);
+  updateUpdate.exec();
 
   accept();
 }

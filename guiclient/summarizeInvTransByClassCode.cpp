@@ -38,6 +38,7 @@ void summarizeInvTransByClassCode::languageChange()
 
 void summarizeInvTransByClassCode::sSummarize()
 {
+  XSqlQuery summarizeSummarize;
   if ( QMessageBox::warning( this, tr("Summarize Inventory Transactions?"),
                              tr( "<p>You are about to summarize Inventory Transactions for the selected Site and Class Code(s). "
                                  "Summarizing Inventory Transactions will delete any detailed Transaction information.<br>"
@@ -62,11 +63,11 @@ void summarizeInvTransByClassCode::sSummarize()
 
   sql += ");";
 
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  _dates->bindValue(q);
-  q.exec();
+  summarizeSummarize.prepare(sql);
+  _warehouse->bindValue(summarizeSummarize);
+  _classCode->bindValue(summarizeSummarize);
+  _dates->bindValue(summarizeSummarize);
+  summarizeSummarize.exec();
 
   QMessageBox::information( this, tr("Summary Complete"),
                             tr("The selected Inventory Transactions have been summarized.") );

@@ -102,31 +102,32 @@ void apAccountAssignment::sSave()
            ;
   }
 
+  XSqlQuery saveAssign;
   if (_mode == cNew)
   {
-    q.prepare( "SELECT apaccnt_id "
+    saveAssign.prepare( "SELECT apaccnt_id "
                "FROM apaccnt "
                "WHERE ( (apaccnt_vendtype_id=:apaccnt_vendtype_id)"
                " AND (apaccnt_vendtype=:apaccnt_vendtype) );" );
 
     if (_allVendorTypes->isChecked())
     {
-      q.bindValue(":apaccnt_vendtype_id", -1);
-      q.bindValue(":apaccnt_vendtype", ".*");
+      saveAssign.bindValue(":apaccnt_vendtype_id", -1);
+      saveAssign.bindValue(":apaccnt_vendtype", ".*");
     }
     else if (_selectedVendorType->isChecked())
     {
-      q.bindValue(":apaccnt_vendtype_id", _vendorTypes->id());
-      q.bindValue(":apaccnt_vendtype", "");
+      saveAssign.bindValue(":apaccnt_vendtype_id", _vendorTypes->id());
+      saveAssign.bindValue(":apaccnt_vendtype", "");
     }
     else if (_vendorTypePattern->isChecked())
     {
-      q.bindValue(":apaccnt_vendtype_id", -1);
-      q.bindValue(":apaccnt_vendtype", _vendorType->text().trimmed());
+      saveAssign.bindValue(":apaccnt_vendtype_id", -1);
+      saveAssign.bindValue(":apaccnt_vendtype", _vendorType->text().trimmed());
     }
 
-    q.exec();
-    if (q.first())
+    saveAssign.exec();
+    if (saveAssign.first())
     {
       errors << GuiErrorCheck(true, _allVendorTypes,
                              tr("<p>You may not save this A/P Account Assignment as it already exists."));
@@ -138,12 +139,12 @@ void apAccountAssignment::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('apaccnt_apaccnt_id_seq') AS _apaccnt_id;");
-    if (q.first())
-      _apaccntid = q.value("_apaccnt_id").toInt();
+    saveAssign.exec("SELECT NEXTVAL('apaccnt_apaccnt_id_seq') AS _apaccnt_id;");
+    if (saveAssign.first())
+      _apaccntid = saveAssign.value("_apaccnt_id").toInt();
 //  ToDo
 
-    q.prepare( "INSERT INTO apaccnt "
+    saveAssign.prepare( "INSERT INTO apaccnt "
                "( apaccnt_id, apaccnt_vendtype_id, apaccnt_vendtype,"
                "  apaccnt_ap_accnt_id, apaccnt_prepaid_accnt_id,"
                "  apaccnt_discount_accnt_id ) "
@@ -153,7 +154,7 @@ void apAccountAssignment::sSave()
                "  :apaccnt_discount_accnt_id ) " );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE apaccnt "
+    saveAssign.prepare( "UPDATE apaccnt "
                "SET apaccnt_vendtype_id=:apaccnt_vendtype_id,"
                "    apaccnt_vendtype=:apaccnt_vendtype,"
                "    apaccnt_ap_accnt_id=:apaccnt_ap_accnt_id,"
@@ -161,62 +162,63 @@ void apAccountAssignment::sSave()
                "    apaccnt_discount_accnt_id=:apaccnt_discount_accnt_id "
                "WHERE (apaccnt_id=:apaccnt_id);" );
 
-  q.bindValue(":apaccnt_id", _apaccntid);
-  q.bindValue(":apaccnt_ap_accnt_id", _ap->id());
-  q.bindValue(":apaccnt_prepaid_accnt_id", _prepaid->id());
-  q.bindValue(":apaccnt_discount_accnt_id", _discount->id());
+  saveAssign.bindValue(":apaccnt_id", _apaccntid);
+  saveAssign.bindValue(":apaccnt_ap_accnt_id", _ap->id());
+  saveAssign.bindValue(":apaccnt_prepaid_accnt_id", _prepaid->id());
+  saveAssign.bindValue(":apaccnt_discount_accnt_id", _discount->id());
 
   if (_allVendorTypes->isChecked())
   {
-    q.bindValue(":apaccnt_vendtype_id", -1);
-    q.bindValue(":apaccnt_vendtype", ".*");
+    saveAssign.bindValue(":apaccnt_vendtype_id", -1);
+    saveAssign.bindValue(":apaccnt_vendtype", ".*");
   }
   else if (_selectedVendorType->isChecked())
   {
-    q.bindValue(":apaccnt_vendtype_id", _vendorTypes->id());
-    q.bindValue(":apaccnt_vendtype", "");
+    saveAssign.bindValue(":apaccnt_vendtype_id", _vendorTypes->id());
+    saveAssign.bindValue(":apaccnt_vendtype", "");
   }
   else if (_vendorTypePattern->isChecked())
   {
-    q.bindValue(":apaccnt_vendtype_id", -1);
-    q.bindValue(":apaccnt_vendtype", _vendorType->text().trimmed());
+    saveAssign.bindValue(":apaccnt_vendtype_id", -1);
+    saveAssign.bindValue(":apaccnt_vendtype", _vendorType->text().trimmed());
   }
 
-  q.exec();
+  saveAssign.exec();
 
   done(_apaccntid);
 }
 
 void apAccountAssignment::populate()
 {
-  q.prepare( "SELECT apaccnt_vendtype_id, apaccnt_vendtype,"
+  XSqlQuery populateAssign;
+  populateAssign.prepare( "SELECT apaccnt_vendtype_id, apaccnt_vendtype,"
              "       apaccnt_ap_accnt_id, apaccnt_prepaid_accnt_id,"
              "       apaccnt_discount_accnt_id "
              "FROM apaccnt "
              "WHERE (apaccnt_id=:apaccnt_id);" );
-  q.bindValue(":apaccnt_id", _apaccntid);
-  q.exec();
-  if (q.first())
+  populateAssign.bindValue(":apaccnt_id", _apaccntid);
+  populateAssign.exec();
+  if (populateAssign.first())
   {
-    if (q.value("apaccnt_vendtype_id").toInt() == -1)
+    if (populateAssign.value("apaccnt_vendtype_id").toInt() == -1)
     {
-      if (q.value("apaccnt_vendtype").toString() == ".*")
+      if (populateAssign.value("apaccnt_vendtype").toString() == ".*")
         _allVendorTypes->setChecked(TRUE);
       else
       {
         _vendorTypePattern->setChecked(TRUE);
-        _vendorType->setText(q.value("apaccnt_vendtype").toString());
+        _vendorType->setText(populateAssign.value("apaccnt_vendtype").toString());
       }
     }
     else
     {
       _selectedVendorType->setChecked(TRUE);
-      _vendorTypes->setId(q.value("apaccnt_vendtype_id").toInt());
+      _vendorTypes->setId(populateAssign.value("apaccnt_vendtype_id").toInt());
     }
 
-    _ap->setId(q.value("apaccnt_ap_accnt_id").toInt());
-    _prepaid->setId(q.value("apaccnt_prepaid_accnt_id").toInt());
-    _discount->setId(q.value("apaccnt_discount_accnt_id").toInt());
+    _ap->setId(populateAssign.value("apaccnt_ap_accnt_id").toInt());
+    _prepaid->setId(populateAssign.value("apaccnt_prepaid_accnt_id").toInt());
+    _discount->setId(populateAssign.value("apaccnt_discount_accnt_id").toInt());
   }
 }
 

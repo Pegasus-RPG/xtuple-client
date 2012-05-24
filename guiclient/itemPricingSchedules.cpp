@@ -94,14 +94,15 @@ void itemPricingSchedules::sEdit()
 
 void itemPricingSchedules::sCopy()
 {
-  q.prepare("SELECT copypricingschedule(:ipshead_id) AS result;");
-  q.bindValue(":ipshead_id", _ipshead->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery itemCopy;
+  itemCopy.prepare("SELECT copypricingschedule(:ipshead_id) AS result;");
+  itemCopy.bindValue(":ipshead_id", _ipshead->id());
+  itemCopy.exec();
+  if (itemCopy.first())
   {
     ParameterList params;
     params.append("mode", "copy");
-    params.append("ipshead_id", q.value("result").toInt());
+    params.append("ipshead_id", itemCopy.value("result").toInt());
 
     itemPricingSchedule newdlg(this, "", TRUE);
     newdlg.set(params);
@@ -109,8 +110,8 @@ void itemPricingSchedules::sCopy()
 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-	systemError(this,q.lastError().databaseText(),
+  else if (itemCopy.lastError().type() != QSqlError::NoError)
+	systemError(this,itemCopy.lastError().databaseText(),
                   __FILE__, __LINE__);
 }
 
@@ -127,13 +128,14 @@ void itemPricingSchedules::sView()
 
 void itemPricingSchedules::sDelete()
 {
-  q.prepare( "SELECT ipsass_id "
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "SELECT ipsass_id "
              "FROM ipsass "
              "WHERE (ipsass_ipshead_id=:ipshead_id) "
              "LIMIT 1;" );
-  q.bindValue(":ipshead_id", _ipshead->id());
-  q.exec();
-  if (q.first())
+  itemDelete.bindValue(":ipshead_id", _ipshead->id());
+  itemDelete.exec();
+  if (itemDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Pricing Schedule"),
                            tr( "The selected Pricing Schedule cannot be deleted as it has been assign to one or more Customers.\n"
@@ -141,13 +143,13 @@ void itemPricingSchedules::sDelete()
     return;
   }
 
-  q.prepare( "SELECT sale_id "
+  itemDelete.prepare( "SELECT sale_id "
              "FROM sale "
              "WHERE (sale_ipshead_id=:ipshead_id) "
              "LIMIT 1;" );
-  q.bindValue(":ipshead_id", _ipshead->id());
-  q.exec();
-  if (q.first())
+  itemDelete.bindValue(":ipshead_id", _ipshead->id());
+  itemDelete.exec();
+  if (itemDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Pricing Schedule"),
                            tr( "The selected Pricing Schedule cannot be deleted as it has been assign to one or more Sales.\n"
@@ -155,7 +157,7 @@ void itemPricingSchedules::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM ipsitem "
+  itemDelete.prepare( "DELETE FROM ipsitem "
              "WHERE (ipsitem_ipshead_id=:ipshead_id); "
              "DELETE FROM ipsprodcat "
              "WHERE (ipsprodcat_ipshead_id=:ipshead_id); "
@@ -163,14 +165,15 @@ void itemPricingSchedules::sDelete()
              "WHERE (ipsfreight_ipshead_id=:ipshead_id); "
              "DELETE FROM ipshead "
              "WHERE (ipshead_id=:ipshead_id);" );
-  q.bindValue(":ipshead_id", _ipshead->id());
-  q.exec();
+  itemDelete.bindValue(":ipshead_id", _ipshead->id());
+  itemDelete.exec();
 
   sFillList();
 }
 
 void itemPricingSchedules::sDeleteExpired()
 {
+  XSqlQuery itemDeleteExpired;
   int answer = QMessageBox::question(this, tr("Delete Expired?"),
                           tr("<p>This will permanently delete all "
 						     "expired Pricing Schedules. <p> "
@@ -180,10 +183,10 @@ void itemPricingSchedules::sDeleteExpired()
   if (answer == QMessageBox::No)
     return;
 
-  q.prepare("SELECT deleteexpiredips() AS result;");
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-	systemError(this,q.lastError().databaseText(), __FILE__, __LINE__);
+  itemDeleteExpired.prepare("SELECT deleteexpiredips() AS result;");
+  itemDeleteExpired.exec();
+  if (itemDeleteExpired.lastError().type() != QSqlError::NoError)
+	systemError(this,itemDeleteExpired.lastError().databaseText(), __FILE__, __LINE__);
 	
   sFillList();
 }

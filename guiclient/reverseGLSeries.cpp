@@ -38,6 +38,7 @@ void reverseGLSeries::languageChange()
 
 enum SetResponse reverseGLSeries::set( const ParameterList & pParams )
 {
+  XSqlQuery reverseet;
   XDialog::set(pParams);
   QVariant param;
   bool valid = false;
@@ -47,21 +48,21 @@ enum SetResponse reverseGLSeries::set( const ParameterList & pParams )
   {
     _glseries = param.toInt();
     
-    q.prepare("SELECT gltrans_journalnumber AS journalnumber, gltrans_date AS transdate "
+    reverseet.prepare("SELECT gltrans_journalnumber AS journalnumber, gltrans_date AS transdate "
               "FROM gltrans "
               "WHERE (gltrans_sequence=:glseries) "
               "UNION "
               "SELECT sltrans_journalnumber AS journalnumber, sltrans_date AS transdate "
               "FROM sltrans "
               "WHERE (sltrans_sequence=:glseries); " );
-    q.bindValue(":glseries", _glseries);
-    q.exec();
-    if(q.first())
+    reverseet.bindValue(":glseries", _glseries);
+    reverseet.exec();
+    if(reverseet.first())
     {
       _notes->setText(tr("Reversal for Journal #") +
-                      q.value("journalnumber").toString());
-      _journalNum->setText(q.value("journalnumber").toString());
-      _distDate->setDate(q.value("transdate").toDate());
+                      reverseet.value("journalnumber").toString());
+      _journalNum->setText(reverseet.value("journalnumber").toString());
+      _distDate->setDate(reverseet.value("transdate").toDate());
     }
     else
     {
@@ -76,6 +77,7 @@ enum SetResponse reverseGLSeries::set( const ParameterList & pParams )
 
 void reverseGLSeries::sPost()
 {
+  XSqlQuery reversePost;
   if(!_distDate->isValid())
   {
     QMessageBox::warning(this, tr("Cannot Reverse Series"),
@@ -93,14 +95,14 @@ void reverseGLSeries::sPost()
   }
 
   
-  q.prepare("SELECT reverseGLSeries(:glseries, :distdate, :notes) AS result;");
-  q.bindValue(":glseries", _glseries);
-  q.bindValue(":distdate", _distDate->date());
-  q.bindValue(":notes", _notes->toPlainText());
-  q.exec();
-  if(q.first())
+  reversePost.prepare("SELECT reverseGLSeries(:glseries, :distdate, :notes) AS result;");
+  reversePost.bindValue(":glseries", _glseries);
+  reversePost.bindValue(":distdate", _distDate->date());
+  reversePost.bindValue(":notes", _notes->toPlainText());
+  reversePost.exec();
+  if(reversePost.first())
   {
-    int result = q.value("result").toInt();
+    int result = reversePost.value("result").toInt();
     if(result < 0)
     {
       switch(result)
@@ -114,7 +116,7 @@ void reverseGLSeries::sPost()
     }
     else
       QMessageBox::information( this, tr("Reversed G/L Series"),
-                                tr("Reversing Journal #%1 was sucessfully created.").arg(q.value("result").toString()) );
+                                tr("Reversing Journal #%1 was sucessfully created.").arg(reversePost.value("result").toString()) );
   }
   else
     systemError( this, tr("A System Error occurred at reverseGLSeries::%1.")

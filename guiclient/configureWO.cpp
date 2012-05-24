@@ -18,6 +18,7 @@
 configureWO::configureWO(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  XSqlQuery configureconfigureWO;
   setupUi(this);
 
   if (name)
@@ -28,11 +29,11 @@ configureWO::configureWO(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   _nextWoNumber->setValidator(omfgThis->orderVal());
 
-  q.exec( "SELECT orderseq_number "
+  configureconfigureWO.exec( "SELECT orderseq_number "
           "FROM orderseq "
           "WHERE (orderseq_name='WoNumber')" );
-  if (q.first())
-    _nextWoNumber->setText(q.value("orderseq_number").toString());
+  if (configureconfigureWO.first())
+    _nextWoNumber->setText(configureconfigureWO.value("orderseq_number").toString());
 
   _autoExplode->setChecked(_metrics->boolean("AutoExplodeWO"));
   _workOrderChangeLog->setChecked(_metrics->boolean("WorkOrderChangeLog"));
@@ -75,11 +76,12 @@ void configureWO::languageChange()
 
 bool configureWO::sSave()
 {
+  XSqlQuery configureSave;
   emit saving();
 
-  q.prepare("SELECT setNextWoNumber(:woNumber) AS result;");
-  q.bindValue(":woNumber", _nextWoNumber->text().toInt());
-  q.exec();
+  configureSave.prepare("SELECT setNextWoNumber(:woNumber) AS result;");
+  configureSave.bindValue(":woNumber", _nextWoNumber->text().toInt());
+  configureSave.exec();
 
   _metrics->set("AutoExplodeWO", _autoExplode->isChecked());
   _metrics->set("WorkOrderChangeLog", _workOrderChangeLog->isChecked());

@@ -99,17 +99,18 @@ enum SetResponse taxClass::set(const ParameterList &pParams)
 
 void taxClass::sCheck()
 {
+  XSqlQuery taxCheck;
   _taxClass->setText(_taxClass->text().trimmed());
   if ( (_mode == cNew) && (_taxClass->text().length()) )
   {
-	q.prepare( "SELECT taxclass_id "
+	taxCheck.prepare( "SELECT taxclass_id "
                "FROM taxclass "
                "WHERE (UPPER(taxclass_code) = UPPER(:taxclass_code));" );
-    q.bindValue(":taxclass_code", _taxClass->text());
-    q.exec();
-    if (q.first())
+    taxCheck.bindValue(":taxclass_code", _taxClass->text());
+    taxCheck.exec();
+    if (taxCheck.first())
     {
-      _taxclassid = q.value("taxclass_id").toInt();
+      _taxclassid = taxCheck.value("taxclass_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -120,6 +121,7 @@ void taxClass::sCheck()
 
 void taxClass::sSave()
 {
+  XSqlQuery taxSave;
   if (_taxClass->text().length() == 0)
   {
       QMessageBox::warning( this, tr("Cannot Save Tax Class"),
@@ -129,21 +131,21 @@ void taxClass::sSave()
   
   if (_mode == cEdit)
   {
-    q.prepare( "SELECT taxclass_id "
+    taxSave.prepare( "SELECT taxclass_id "
                "FROM taxclass "
                "WHERE ( (taxclass_id <> :taxclass_id)"
                " AND (UPPER(taxclass_code) = UPPER(:taxclass_code)) );");
-    q.bindValue(":taxclass_id", _taxclassid);
+    taxSave.bindValue(":taxclass_id", _taxclassid);
   }
   else
   {
-    q.prepare( "SELECT taxclass_id "
+    taxSave.prepare( "SELECT taxclass_id "
                "FROM taxclass "
                "WHERE (taxclass_code = :taxclass_code);");
   }
-  q.bindValue(":taxclass_code", _taxClass->text().trimmed());
-  q.exec();
-  if (q.first())
+  taxSave.bindValue(":taxclass_code", _taxClass->text().trimmed());
+  taxSave.exec();
+  if (taxSave.first())
   {
     QMessageBox::critical( this, tr("Cannot Create Tax Class"),
 			   tr( "A Tax Class with the entered code already exists."
@@ -151,20 +153,20 @@ void taxClass::sSave()
     _taxClass->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (taxSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");
+  taxSave.exec("BEGIN;");
 
   if (_mode == cEdit)
   {
-    q.prepare( "UPDATE taxclass "
+    taxSave.prepare( "UPDATE taxclass "
                "SET taxclass_code=:taxclass_code,"
                "    taxclass_descrip=:taxclass_descrip, "
 			   "    taxclass_sequence=:taxclass_sequence "
@@ -172,54 +174,55 @@ void taxClass::sSave()
   }
   else if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('taxclass_taxclass_id_seq') AS taxclass_id;");
-    if (q.first())
-      _taxclassid = q.value("taxclass_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    taxSave.exec("SELECT NEXTVAL('taxclass_taxclass_id_seq') AS taxclass_id;");
+    if (taxSave.first())
+      _taxclassid = taxSave.value("taxclass_id").toInt();
+    else if (taxSave.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, taxSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO taxclass "
+    taxSave.prepare( "INSERT INTO taxclass "
                "(taxclass_id, taxclass_code, taxclass_descrip, taxclass_sequence)" 
                "VALUES "
                "(:taxclass_id, :taxclass_code, :taxclass_descrip, :taxclass_sequence);" ); 
   }
-  q.bindValue(":taxclass_id", _taxclassid);
-  q.bindValue(":taxclass_code", _taxClass->text().trimmed());
-  q.bindValue(":taxclass_descrip", _description->text());
-  q.bindValue(":taxclass_sequence", _seq->value());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  taxSave.bindValue(":taxclass_id", _taxclassid);
+  taxSave.bindValue(":taxclass_code", _taxClass->text().trimmed());
+  taxSave.bindValue(":taxclass_descrip", _description->text());
+  taxSave.bindValue(":taxclass_sequence", _seq->value());
+  taxSave.exec();
+  if (taxSave.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.exec("COMMIT;");
+  taxSave.exec("COMMIT;");
 
   done(_taxclassid);
 }
 
 void taxClass::populate()
 {
-  q.prepare( "SELECT taxclass_code, taxclass_descrip, taxclass_sequence "
+  XSqlQuery taxpopulate;
+  taxpopulate.prepare( "SELECT taxclass_code, taxclass_descrip, taxclass_sequence "
              "FROM taxclass "
              "WHERE (taxclass_id=:taxclass_id);" );
-  q.bindValue(":taxclass_id", _taxclassid);
-  q.exec();
-  if (q.first())
+  taxpopulate.bindValue(":taxclass_id", _taxclassid);
+  taxpopulate.exec();
+  if (taxpopulate.first())
   {
-    _taxClass->setText(q.value("taxclass_code").toString());
-    _description->setText(q.value("taxclass_descrip").toString());
-	_seq->setValue(q.value("taxclass_sequence").toInt());
+    _taxClass->setText(taxpopulate.value("taxclass_code").toString());
+    _description->setText(taxpopulate.value("taxclass_descrip").toString());
+	_seq->setValue(taxpopulate.value("taxclass_sequence").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (taxpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

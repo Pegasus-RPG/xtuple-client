@@ -77,6 +77,7 @@ enum SetResponse bankAdjustmentType::set(const ParameterList &pParams)
 
 void bankAdjustmentType::sSave()
 {
+  XSqlQuery bankSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::information( this, tr("Cannot Save Adjustment Type"),
@@ -94,46 +95,47 @@ void bankAdjustmentType::sSave()
   
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('bankadjtype_bankadjtype_id_seq') AS bankadjtype_id");
-    if (q.first())
-      _bankadjtypeid = q.value("bankadjtype_id").toInt();
+    bankSave.exec("SELECT NEXTVAL('bankadjtype_bankadjtype_id_seq') AS bankadjtype_id");
+    if (bankSave.first())
+      _bankadjtypeid = bankSave.value("bankadjtype_id").toInt();
 
-    q.prepare( "INSERT INTO bankadjtype "
+    bankSave.prepare( "INSERT INTO bankadjtype "
                "(bankadjtype_id, bankadjtype_name, bankadjtype_descrip, bankadjtype_accnt_id, bankadjtype_iscredit) "
                "VALUES "
                "(:bankadjtype_id, :bankadjtype_name, :bankadjtype_descrip, :bankadjtype_accnt_id, :bankadjtype_iscredit);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE bankadjtype "
+    bankSave.prepare( "UPDATE bankadjtype "
                "SET bankadjtype_name=:bankadjtype_name,"
                "    bankadjtype_descrip=:bankadjtype_descrip, "
                "    bankadjtype_accnt_id=:bankadjtype_accnt_id,"
                "    bankadjtype_iscredit=:bankadjtype_iscredit "
                "WHERE (bankadjtype_id=:bankadjtype_id);" );
 
-  q.bindValue(":bankadjtype_id", _bankadjtypeid);
-  q.bindValue(":bankadjtype_name", _name->text());
-  q.bindValue(":bankadjtype_descrip", _description->text().trimmed());
-  q.bindValue(":bankadjtype_accnt_id", _accnt->id());
-  q.bindValue(":bankadjtype_iscredit", _credit->isChecked());
-  q.exec();
+  bankSave.bindValue(":bankadjtype_id", _bankadjtypeid);
+  bankSave.bindValue(":bankadjtype_name", _name->text());
+  bankSave.bindValue(":bankadjtype_descrip", _description->text().trimmed());
+  bankSave.bindValue(":bankadjtype_accnt_id", _accnt->id());
+  bankSave.bindValue(":bankadjtype_iscredit", _credit->isChecked());
+  bankSave.exec();
 
   done(_bankadjtypeid);
 }
 
 void bankAdjustmentType::sCheck()
 {
+  XSqlQuery bankCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
-    q.prepare( "SELECT bankadjtype_id "
+    bankCheck.prepare( "SELECT bankadjtype_id "
                "FROM bankadjtype "
                "WHERE (UPPER(bankadjtype_name)=UPPER(:bankadjtype_name));" );
-    q.bindValue(":bankadjtype_name", _name->text());
-    q.exec();
-    if (q.first())
+    bankCheck.bindValue(":bankadjtype_name", _name->text());
+    bankCheck.exec();
+    if (bankCheck.first())
     {
-      _bankadjtypeid = q.value("bankadjtype_id").toInt();
+      _bankadjtypeid = bankCheck.value("bankadjtype_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -144,18 +146,19 @@ void bankAdjustmentType::sCheck()
 
 void bankAdjustmentType::populate()
 {
-  q.prepare( "SELECT bankadjtype_name, bankadjtype_descrip,"
+  XSqlQuery bankpopulate;
+  bankpopulate.prepare( "SELECT bankadjtype_name, bankadjtype_descrip,"
              "       bankadjtype_accnt_id, bankadjtype_iscredit "
              "FROM bankadjtype "
              "WHERE (bankadjtype_id=:bankadjtype_id);" );
-  q.bindValue(":bankadjtype_id", _bankadjtypeid);
-  q.exec();
-  if (q.first())
+  bankpopulate.bindValue(":bankadjtype_id", _bankadjtypeid);
+  bankpopulate.exec();
+  if (bankpopulate.first())
   {
-    _name->setText(q.value("bankadjtype_name"));
-    _description->setText(q.value("bankadjtype_descrip"));
-    _accnt->setId(q.value("bankadjtype_accnt_id").toInt());
-    if(q.value("bankadjtype_iscredit").toBool())
+    _name->setText(bankpopulate.value("bankadjtype_name"));
+    _description->setText(bankpopulate.value("bankadjtype_descrip"));
+    _accnt->setId(bankpopulate.value("bankadjtype_accnt_id").toInt());
+    if(bankpopulate.value("bankadjtype_iscredit").toBool())
       _credit->setChecked(true);
   }
 } 

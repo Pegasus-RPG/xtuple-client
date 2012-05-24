@@ -280,6 +280,7 @@ void itemAvailabilityWorkbench::setParams(ParameterList & params)
 
 void itemAvailabilityWorkbench::sFillListWhereUsed()
 {
+  XSqlQuery itemFillListWhereUsed;
   if ((_item->isValid()) && (_effective->isValid()))
   {
     ParameterList params;
@@ -288,11 +289,11 @@ void itemAvailabilityWorkbench::sFillListWhereUsed()
     params.append("always", tr("Always"));
     params.append("never", tr("Never"));
     MetaSQLQuery mql = mqlLoad("whereUsed", "detail");
-    q = mql.toQuery(params);
-    _whereused->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
+    itemFillListWhereUsed = mql.toQuery(params);
+    _whereused->populate(itemFillListWhereUsed, true);
+    if (itemFillListWhereUsed.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemFillListWhereUsed.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -302,6 +303,7 @@ void itemAvailabilityWorkbench::sFillListWhereUsed()
 
 void itemAvailabilityWorkbench::sFillListItemloc()
 {
+  XSqlQuery itemFillListItemloc;
     if (_item->isValid())
   {
     QString sql( "SELECT itemloc_id, 1 AS type, warehous_code,"
@@ -360,15 +362,15 @@ void itemAvailabilityWorkbench::sFillListItemloc()
     sql += ") "
            "ORDER BY warehous_code, locationname, lotserial;";
 
-    q.prepare(sql);
-    q.bindValue(":yes", tr("Yes"));
-    q.bindValue(":no", tr("No"));
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":undefined", tr("Undefined"));
-    q.bindValue(":item_id", _item->id());
-    _itemlocWarehouse->bindValue(q);
-    q.exec();
-    _itemloc->populate(q, true);
+    itemFillListItemloc.prepare(sql);
+    itemFillListItemloc.bindValue(":yes", tr("Yes"));
+    itemFillListItemloc.bindValue(":no", tr("No"));
+    itemFillListItemloc.bindValue(":na", tr("N/A"));
+    itemFillListItemloc.bindValue(":undefined", tr("Undefined"));
+    itemFillListItemloc.bindValue(":item_id", _item->id());
+    _itemlocWarehouse->bindValue(itemFillListItemloc);
+    itemFillListItemloc.exec();
+    _itemloc->populate(itemFillListItemloc, true);
   }
   else
     _itemloc->clear();
@@ -376,6 +378,7 @@ void itemAvailabilityWorkbench::sFillListItemloc()
 
 void itemAvailabilityWorkbench::sFillListInvhist()
 {
+  XSqlQuery itemFillListInvhist;
   _invhist->clear();
 
   if (!_dates->startDate().isValid())
@@ -402,11 +405,11 @@ void itemAvailabilityWorkbench::sFillListInvhist()
     params.append("transType", _transType->id());
     _invhistWarehouse->appendValue(params);
     MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
-    q = mql.toQuery(params);
-    _invhist->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
+    itemFillListInvhist = mql.toQuery(params);
+    _invhist->populate(itemFillListInvhist, true);
+    if (itemFillListInvhist.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemFillListInvhist.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -414,6 +417,7 @@ void itemAvailabilityWorkbench::sFillListInvhist()
 
 void itemAvailabilityWorkbench::sFillListCosted()
 {
+  XSqlQuery itemFillListCosted;
   if (! _item->isValid() || _item->itemType() == "R")
     return;
 
@@ -447,11 +451,11 @@ void itemAvailabilityWorkbench::sFillListCosted()
   ParameterList params;
   if (! setParamsCosted(params))
     return;
-  q = mql.toQuery(params);
-  _bomitem->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  itemFillListCosted = mql.toQuery(params);
+  _bomitem->populate(itemFillListCosted, true);
+  if (itemFillListCosted.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemFillListCosted.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -459,7 +463,7 @@ void itemAvailabilityWorkbench::sFillListCosted()
   {
     _bomitem->showColumn(8);
     _bomitem->showColumn(9);
-    q.prepare("SELECT formatCost(SUM(bomdata_actextendedcost)) AS actextendedcost,"
+    itemFillListCosted.prepare("SELECT formatCost(SUM(bomdata_actextendedcost)) AS actextendedcost,"
               "       formatCost(SUM(bomdata_stdextendedcost)) AS stdextendedcost,"
               "       formatCost(actcost(:item_id)) AS actual,"
               "       formatCost(stdcost(:item_id)) AS standard "
@@ -467,28 +471,28 @@ void itemAvailabilityWorkbench::sFillListCosted()
               "                 getActiveRevId('BOM',:item_id),0,0)"
               "WHERE (bomdata_bomwork_level=1) "
               "GROUP BY actual, standard;" );
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (q.first())
+    itemFillListCosted.bindValue(":item_id", _item->id());
+    itemFillListCosted.exec();
+    if (itemFillListCosted.first())
     {
       XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1);
       last->setText(0, tr("Total Cost"));
       if(_useStandardCosts->isChecked())
-        last->setText(9, q.value("stdextendedcost").toString());
+        last->setText(9, itemFillListCosted.value("stdextendedcost").toString());
       else
-        last->setText(9, q.value("actextendedcost").toString());
+        last->setText(9, itemFillListCosted.value("actextendedcost").toString());
 
       last = new XTreeWidgetItem( _bomitem, -1, -1);
       last->setText(0, tr("Actual Cost"));
-      last->setText(9, q.value("actual").toString());
+      last->setText(9, itemFillListCosted.value("actual").toString());
 
       last = new XTreeWidgetItem( _bomitem, -1, -1);
       last->setText(0, tr("Standard Cost"));
-      last->setText(9, q.value("standard").toString());
+      last->setText(9, itemFillListCosted.value("standard").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (itemFillListCosted.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemFillListCosted.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -502,11 +506,12 @@ void itemAvailabilityWorkbench::sFillListCosted()
 
 void itemAvailabilityWorkbench::sFillListRunning()
 {
+  XSqlQuery itemFillListRunning;
   _availability->clear();
 
   if (_item->isValid())
   {
-    q.prepare( "SELECT item_type, item_sold,"
+    itemFillListRunning.prepare( "SELECT item_type, item_sold,"
                "       itemsite_id, itemsite_qtyonhand,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty ELSE 0.0 END AS ordertoqty,"
@@ -515,30 +520,30 @@ void itemAvailabilityWorkbench::sFillListRunning()
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=:warehous_id)"
                " AND (item_id=:item_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
-    if (q.first())
+    itemFillListRunning.bindValue(":item_id", _item->id());
+    itemFillListRunning.bindValue(":warehous_id", _warehouse->id());
+    itemFillListRunning.exec();
+    if (itemFillListRunning.first())
     {
-      _qoh->setDouble(q.value("itemsite_qtyonhand").toDouble());
-      _reorderLevel->setDouble(q.value("reorderlevel").toDouble());
-      _orderMultiple->setDouble(q.value("multorderqty").toDouble());
-      _orderToQty->setDouble(q.value("ordertoqty").toDouble());
+      _qoh->setDouble(itemFillListRunning.value("itemsite_qtyonhand").toDouble());
+      _reorderLevel->setDouble(itemFillListRunning.value("reorderlevel").toDouble());
+      _orderMultiple->setDouble(itemFillListRunning.value("multorderqty").toDouble());
+      _orderToQty->setDouble(itemFillListRunning.value("ordertoqty").toDouble());
 
-      QString itemType            = q.value("item_type").toString();
+      QString itemType            = itemFillListRunning.value("item_type").toString();
       QString sql;
 
       MetaSQLQuery mql = mqlLoad("runningAvailability", "detail");
       ParameterList params;
       setParams(params);
-      params.append("qoh",          q.value("itemsite_qtyonhand").toDouble());
+      params.append("qoh",          itemFillListRunning.value("itemsite_qtyonhand").toDouble());
 
-      q = mql.toQuery(params);
-      _availability->populate(q, true);
+      itemFillListRunning = mql.toQuery(params);
+      _availability->populate(itemFillListRunning, true);
       sHandleResort();
-      if (q.lastError().type() != QSqlError::NoError)
+      if (itemFillListRunning.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, itemFillListRunning.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -576,6 +581,7 @@ void itemAvailabilityWorkbench::sHandleShowReorder( bool pValue )
 
 void itemAvailabilityWorkbench::sFillListAvail()
 {
+  XSqlQuery itemFillListAvail;
   _invAvailability->clear();
 
   if ((_byDate->isChecked()) && (!_date->isValid()))
@@ -660,16 +666,16 @@ void itemAvailabilityWorkbench::sFillListAvail()
 
   sql += "ORDER BY warehous_code DESC;";
 
-  q.prepare(sql);
-  q.bindValue(":days", _days->value());
-  q.bindValue(":date", _date->date());
-  q.bindValue(":startDate", _startDate->date());
-  q.bindValue(":endDate", _endDate->date());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":byLeadtime",QVariant(_leadTime->isChecked()));
-  _invWarehouse->bindValue(q);
-  q.exec();
-  _invAvailability->populate(q,TRUE);
+  itemFillListAvail.prepare(sql);
+  itemFillListAvail.bindValue(":days", _days->value());
+  itemFillListAvail.bindValue(":date", _date->date());
+  itemFillListAvail.bindValue(":startDate", _startDate->date());
+  itemFillListAvail.bindValue(":endDate", _endDate->date());
+  itemFillListAvail.bindValue(":item_id", _item->id());
+  itemFillListAvail.bindValue(":byLeadtime",QVariant(_leadTime->isChecked()));
+  _invWarehouse->bindValue(itemFillListAvail);
+  itemFillListAvail.exec();
+  _invAvailability->populate(itemFillListAvail,TRUE);
 }
 
 void itemAvailabilityWorkbench::sPrintRunning()
@@ -786,13 +792,14 @@ bool itemAvailabilityWorkbench::setParamsCosted(ParameterList &params)
 
 void itemAvailabilityWorkbench::sPrintCosted()
 {
-  q.prepare("SELECT indentedBOM(:item_id) AS result;");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery itemPrintCosted;
+  itemPrintCosted.prepare("SELECT indentedBOM(:item_id) AS result;");
+  itemPrintCosted.bindValue(":item_id", _item->id());
+  itemPrintCosted.exec();
+  if (itemPrintCosted.first())
   {
     ParameterList params;
-    params.append("bomworkset_id", q.value("result").toInt());
+    params.append("bomworkset_id", itemPrintCosted.value("result").toInt());
     if (! setParamsCosted(params))
       return;
 
@@ -803,12 +810,12 @@ void itemAvailabilityWorkbench::sPrintCosted()
     else
       report.reportError(this);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (itemPrintCosted.lastError().type() != QSqlError::NoError)
   {
     systemError(this,
                 tr("<p>Could not collect the Indented BOM information to write "
                    "write the report.</p><pre>%1</pre>")
-                  .arg(q.lastError().databaseText()),
+                  .arg(itemPrintCosted.lastError().databaseText()),
                 __FILE__, __LINE__);
 
     return;
@@ -1158,11 +1165,12 @@ void itemAvailabilityWorkbench::sViewSubstituteAvailability()
 
 void itemAvailabilityWorkbench::sSoftenOrder()
 {
-  q.prepare( "UPDATE planord "
+  XSqlQuery itemSoftenOrder;
+  itemSoftenOrder.prepare( "UPDATE planord "
              "SET planord_firm=FALSE "
              "WHERE (planord_id=:planord_id);" );
-  q.bindValue(":planord_id", _availability->id());
-  q.exec();
+  itemSoftenOrder.bindValue(":planord_id", _availability->id());
+  itemSoftenOrder.exec();
 
   sFillListRunning();
 }
@@ -1214,9 +1222,10 @@ void itemAvailabilityWorkbench::sReleaseOrder()
 
 void itemAvailabilityWorkbench::sDeleteOrder()
 {
-  q.prepare( "SELECT deletePlannedOrder(:planord_id, FALSE);" );
-  q.bindValue(":planord_id", _availability->id());
-  q.exec();
+  XSqlQuery itemDeleteOrder;
+  itemDeleteOrder.prepare( "SELECT deletePlannedOrder(:planord_id, FALSE);" );
+  itemDeleteOrder.bindValue(":planord_id", _availability->id());
+  itemDeleteOrder.exec();
 
   sFillListRunning();
 }
@@ -1307,23 +1316,24 @@ void itemAvailabilityWorkbench::sEditTransInfo()
 
 void itemAvailabilityWorkbench::sViewWOInfo()
 {
+  XSqlQuery itemViewWOInfo;
   QString orderNumber = _availability->currentItem()->text(1);
   int sep1            = orderNumber.indexOf('-');
   int mainNumber      = orderNumber.left(sep1).toInt();
   int subNumber       = orderNumber.right(orderNumber.length() - sep1 - 1).toInt();
 
-  q.prepare( "SELECT wo_id "
+  itemViewWOInfo.prepare( "SELECT wo_id "
              "FROM wo "
              "WHERE ( (wo_number=:wo_number)"
              " AND (wo_subnumber=:wo_subnumber) );" );
-  q.bindValue(":wo_number", mainNumber);
-  q.bindValue(":wo_subnumber", subNumber);
-  q.exec();
-  if (q.first())
+  itemViewWOInfo.bindValue(":wo_number", mainNumber);
+  itemViewWOInfo.bindValue(":wo_subnumber", subNumber);
+  itemViewWOInfo.exec();
+  if (itemViewWOInfo.first())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("wo_id", q.value("wo_id"));
+    params.append("wo_id", itemViewWOInfo.value("wo_id"));
 
     workOrder *newdlg = new workOrder();
     newdlg->set(params);
@@ -1333,24 +1343,25 @@ void itemAvailabilityWorkbench::sViewWOInfo()
 
 void itemAvailabilityWorkbench::sViewWOInfoHistory()
 {
+  XSqlQuery itemViewWOInfoHistory;
   QString orderNumber = _invhist->currentItem()->text(4);
   int sep1            = orderNumber.indexOf('-');
   int sep2            = orderNumber.indexOf('-', (sep1 + 1));
   int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
   int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
 
-  q.prepare( "SELECT wo_id "
+  itemViewWOInfoHistory.prepare( "SELECT wo_id "
              "FROM wo "
              "WHERE ( (wo_number=:wo_number)"
              " AND (wo_subnumber=:wo_subnumber) );" );
-  q.bindValue(":wo_number", mainNumber);
-  q.bindValue(":wo_subnumber", subNumber);
-  q.exec();
-  if (q.first())
+  itemViewWOInfoHistory.bindValue(":wo_number", mainNumber);
+  itemViewWOInfoHistory.bindValue(":wo_subnumber", subNumber);
+  itemViewWOInfoHistory.exec();
+  if (itemViewWOInfoHistory.first())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("wo_id", q.value("wo_id"));
+    params.append("wo_id", itemViewWOInfoHistory.value("wo_id"));
 
     workOrder *newdlg = new workOrder();
     newdlg->set(params);

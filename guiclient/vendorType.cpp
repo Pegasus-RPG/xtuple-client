@@ -77,17 +77,18 @@ enum SetResponse vendorType::set(const ParameterList &pParams)
 
 void vendorType::sCheck()
 {
+  XSqlQuery vendorCheck;
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
-    q.prepare( "SELECT vendtype_id "
+    vendorCheck.prepare( "SELECT vendtype_id "
                "FROM vendtype "
                "WHERE (UPPER(vendtype_code)=UPPER(:venttype_code));" );
-    q.bindValue(":vendtype_code", _code->text());
-    q.exec();
-    if (q.first())
+    vendorCheck.bindValue(":vendtype_code", _code->text());
+    vendorCheck.exec();
+    if (vendorCheck.first())
     {
-      _vendtypeid = q.value("vendtype_id").toInt();
+      _vendtypeid = vendorCheck.value("vendtype_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -98,6 +99,7 @@ void vendorType::sCheck()
 
 void vendorType::sSave()
 {
+  XSqlQuery vendorSave;
   if (_code->text().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Vendor Type Code"),
@@ -106,14 +108,14 @@ void vendorType::sSave()
     return;
   }
 
-  q.prepare("SELECT vendtype_id"
+  vendorSave.prepare("SELECT vendtype_id"
             "  FROM vendtype"
             " WHERE((vendtype_id != :vendtype_id)"
             "   AND (vendtype_code=:vendtype_code))");
-  q.bindValue(":vendtype_id", _vendtypeid);
-  q.bindValue(":vendtype_code", _code->text().trimmed());
-  q.exec();
-  if(q.first())
+  vendorSave.bindValue(":vendtype_id", _vendtypeid);
+  vendorSave.bindValue(":vendtype_code", _code->text().trimmed());
+  vendorSave.exec();
+  if(vendorSave.first())
   {
     QMessageBox::critical( this, tr("Duplicate Entry"),
       tr("The Code you have entered for this Vendor Type is already in the system.") );
@@ -122,9 +124,9 @@ void vendorType::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('vendtype_vendtype_id_seq') AS _vendtype_id;");
-    if (q.first())
-      _vendtypeid = q.value("_vendtype_id").toInt();
+    vendorSave.exec("SELECT NEXTVAL('vendtype_vendtype_id_seq') AS _vendtype_id;");
+    if (vendorSave.first())
+      _vendtypeid = vendorSave.value("_vendtype_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -133,35 +135,36 @@ void vendorType::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO vendtype "
+    vendorSave.prepare( "INSERT INTO vendtype "
                "(vendtype_id, vendtype_code, vendtype_descrip) "
                "VALUES "
                "(:vendtype_id, :vendtype_code, :vendtype_descrip);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE vendtype "
+    vendorSave.prepare( "UPDATE vendtype "
                "SET vendtype_code=:vendtype_code,"
                "    vendtype_descrip=:vendtype_descrip "
                "WHERE (vendtype_id=:vendtype_id);" );
 
-  q.bindValue(":vendtype_id", _vendtypeid);
-  q.bindValue(":vendtype_code", _code->text().trimmed());
-  q.bindValue(":vendtype_descrip", _description->text().trimmed());
-  q.exec();
+  vendorSave.bindValue(":vendtype_id", _vendtypeid);
+  vendorSave.bindValue(":vendtype_code", _code->text().trimmed());
+  vendorSave.bindValue(":vendtype_descrip", _description->text().trimmed());
+  vendorSave.exec();
 
   done(_vendtypeid);
 }
 
 void vendorType::populate()
 {
-  q.prepare( "SELECT vendtype_code, vendtype_descrip "
+  XSqlQuery vendorpopulate;
+  vendorpopulate.prepare( "SELECT vendtype_code, vendtype_descrip "
              "FROM vendtype "
              "WHERE (vendtype_id=:vendtype_id);" );
-  q.bindValue(":vendtype_id", _vendtypeid);
-  q.exec();
-  if (q.first())
+  vendorpopulate.bindValue(":vendtype_id", _vendtypeid);
+  vendorpopulate.exec();
+  if (vendorpopulate.first())
   {
-    _code->setText(q.value("vendtype_code"));
-    _description->setText(q.value("vendtype_descrip"));
+    _code->setText(vendorpopulate.value("vendtype_code"));
+    _description->setText(vendorpopulate.value("vendtype_descrip"));
   }
 }

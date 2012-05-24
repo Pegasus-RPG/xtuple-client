@@ -91,17 +91,18 @@ enum SetResponse opportunityStage::set(const ParameterList &pParams)
 
 void opportunityStage::sCheck()
 {
+  XSqlQuery opportunityCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
-    q.prepare( "SELECT opstage_id "
+    opportunityCheck.prepare( "SELECT opstage_id "
                "FROM opstage "
                "WHERE (UPPER(opstage_name)=UPPER(:opstage_name));" );
-    q.bindValue(":opstage_name", _name->text());
-    q.exec();
-    if (q.first())
+    opportunityCheck.bindValue(":opstage_name", _name->text());
+    opportunityCheck.exec();
+    if (opportunityCheck.first())
     {
-      _opstageid = q.value("opstage_id").toInt();
+      _opstageid = opportunityCheck.value("opstage_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -112,6 +113,7 @@ void opportunityStage::sCheck()
 
 void opportunityStage::sSave()
 {
+  XSqlQuery opportunitySave;
   _name->setText(_name->text().trimmed().toUpper());
   if (_name->text().length() == 0)
   {
@@ -123,9 +125,9 @@ void opportunityStage::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('opstage_opstage_id_seq') AS opstage_id");
-    if (q.first())
-      _opstageid = q.value("opstage_id").toInt();
+    opportunitySave.exec("SELECT NEXTVAL('opstage_opstage_id_seq') AS opstage_id");
+    if (opportunitySave.first())
+      _opstageid = opportunitySave.value("opstage_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -134,39 +136,40 @@ void opportunityStage::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO opstage "
+    opportunitySave.prepare( "INSERT INTO opstage "
                "( opstage_id, opstage_name, opstage_descrip, opstage_opinactive)"
                "VALUES "
                "( :opstage_id, :opstage_name, :opstage_descrip, :opstage_opinactive );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE opstage "
+    opportunitySave.prepare( "UPDATE opstage "
                "   SET opstage_name=:opstage_name,"
                "       opstage_descrip=:opstage_descrip,"
 			   "       opstage_opinactive=:opstage_opinactive "
                " WHERE(opstage_id=:opstage_id);" );
 
-  q.bindValue(":opstage_id", _opstageid);
-  q.bindValue(":opstage_name", _name->text());
-  q.bindValue(":opstage_descrip", _description->text().trimmed());
-  q.bindValue(":opstage_opinactive", QVariant(_opInactive->isChecked()));
-  q.exec();
+  opportunitySave.bindValue(":opstage_id", _opstageid);
+  opportunitySave.bindValue(":opstage_name", _name->text());
+  opportunitySave.bindValue(":opstage_descrip", _description->text().trimmed());
+  opportunitySave.bindValue(":opstage_opinactive", QVariant(_opInactive->isChecked()));
+  opportunitySave.exec();
 
   done(_opstageid);
 }
 
 void opportunityStage::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery opportunitypopulate;
+  opportunitypopulate.prepare( "SELECT * "
              "  FROM opstage "
              " WHERE(opstage_id=:opstage_id);" );
-  q.bindValue(":opstage_id", _opstageid);
-  q.exec();
-  if (q.first())
+  opportunitypopulate.bindValue(":opstage_id", _opstageid);
+  opportunitypopulate.exec();
+  if (opportunitypopulate.first())
   {
-    _name->setText(q.value("opstage_name"));
-    _description->setText(q.value("opstage_descrip"));
-    _opInactive->setChecked(q.value("opstage_opinactive").toBool());
+    _name->setText(opportunitypopulate.value("opstage_name"));
+    _description->setText(opportunitypopulate.value("opstage_descrip"));
+    _opInactive->setChecked(opportunitypopulate.value("opstage_opinactive").toBool());
   }
 } 
 

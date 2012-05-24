@@ -97,13 +97,14 @@ void reasonCodes::sView()
 
 void reasonCodes::sDelete()
 {
-  q.prepare( "SELECT cmhead_id "
+  XSqlQuery reasonDelete;
+  reasonDelete.prepare( "SELECT cmhead_id "
              "FROM cmhead "
              "WHERE (cmhead_rsncode_id=:rsncode_id) "
              "LIMIT 1;" );
-  q.bindValue(":rsncode_id", _rsncode->id());
-  q.exec();
-  if (q.first())
+  reasonDelete.bindValue(":rsncode_id", _rsncode->id());
+  reasonDelete.exec();
+  if (reasonDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Reason Code"),
                            tr( "You may not delete the selected Reason Code as there are Credit Memo records that refer it.\n"
@@ -111,13 +112,13 @@ void reasonCodes::sDelete()
     return;
   }
 
-  q.prepare( "SELECT aropen_id "
+  reasonDelete.prepare( "SELECT aropen_id "
              "FROM aropen "
              "WHERE (aropen_rsncode_id=:rsncode_id) "
              "LIMIT 1;" );
-  q.bindValue(":rsncode_id", _rsncode->id());
-  q.exec();
-  if (q.first())
+  reasonDelete.bindValue(":rsncode_id", _rsncode->id());
+  reasonDelete.exec();
+  if (reasonDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Reason Code"),
                            tr( "You may not delete the selected Reason Code as there are A/R Open Item records that refer it.\n"
@@ -125,10 +126,10 @@ void reasonCodes::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM rsncode "
+  reasonDelete.prepare( "DELETE FROM rsncode "
              "WHERE (rsncode_id=:rsncode_id);" );
-  q.bindValue(":rsncode_id", _rsncode->id());
-  q.exec();
+  reasonDelete.bindValue(":rsncode_id", _rsncode->id());
+  reasonDelete.exec();
 
   sFillList();
 }

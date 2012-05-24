@@ -42,6 +42,7 @@ void itemGroup::languageChange()
 
 enum SetResponse itemGroup::set(const ParameterList &pParams)
 {
+  XSqlQuery itemet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -60,9 +61,9 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('itemgrp_itemgrp_id_seq') AS itemgrp_id;");
-      if (q.first())
-        _itemgrpid = q.value("itemgrp_id").toInt();
+      itemet.exec("SELECT NEXTVAL('itemgrp_itemgrp_id_seq') AS itemgrp_id;");
+      if (itemet.first())
+        _itemgrpid = itemet.value("itemgrp_id").toInt();
 //  ToDo
 
       connect(_itemgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -94,17 +95,18 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
 
 void itemGroup::sCheck()
 {
+  XSqlQuery itemCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
-    q.prepare( "SELECT itemgrp_id "
+    itemCheck.prepare( "SELECT itemgrp_id "
                "FROM itemgrp "
                "WHERE (UPPER(itemgrp_name)=UPPER(:itemgrp_name));" );
-    q.bindValue(":itemgrp_name", _name->text());
-    q.exec();
-    if (q.first())
+    itemCheck.bindValue(":itemgrp_name", _name->text());
+    itemCheck.exec();
+    if (itemCheck.first())
     {
-      _itemgrpid = q.value("itemgrp_id").toInt();
+      _itemgrpid = itemCheck.value("itemgrp_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -115,15 +117,16 @@ void itemGroup::sCheck()
 
 void itemGroup::sClose()
 {
+  XSqlQuery itemClose;
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM itemgrpitem "
+    itemClose.prepare( "DELETE FROM itemgrpitem "
                "WHERE (itemgrpitem_itemgrp_id=:itemgrp_id);"
 
                 "DELETE FROM itemgrp "
                 "WHERE (itemgrp_id=:itemgrp_id);" );
-    q.bindValue(":itemgrp_id", _itemgrpid);
-    q.exec();
+    itemClose.bindValue(":itemgrp_id", _itemgrpid);
+    itemClose.exec();
   }
 
   close();
@@ -131,6 +134,7 @@ void itemGroup::sClose()
 
 void itemGroup::sSave()
 {
+  XSqlQuery itemSave;
   if (_name->text().trimmed().length() == 0)
   {
     QMessageBox::warning( this, tr("Cannot Save Item Group"),
@@ -140,19 +144,19 @@ void itemGroup::sSave()
   }
 
   if (_mode == cNew)
-    q.prepare( "INSERT INTO itemgrp "
+    itemSave.prepare( "INSERT INTO itemgrp "
                "(itemgrp_id, itemgrp_name, itemgrp_descrip) "
                "VALUES "
                "(:itemgrp_id, :itemgrp_name, :itemgrp_descrip);" );
   else
-    q.prepare( "UPDATE itemgrp "
+    itemSave.prepare( "UPDATE itemgrp "
                "SET itemgrp_name=:itemgrp_name, itemgrp_descrip=:itemgrp_descrip "
                "WHERE (itemgrp_id=:itemgrp_id);" );
 
-  q.bindValue(":itemgrp_id", _itemgrpid);
-  q.bindValue(":itemgrp_name", _name->text());
-  q.bindValue(":itemgrp_descrip", _descrip->text());
-  q.exec();
+  itemSave.bindValue(":itemgrp_id", _itemgrpid);
+  itemSave.bindValue(":itemgrp_name", _name->text());
+  itemSave.bindValue(":itemgrp_descrip", _descrip->text());
+  itemSave.exec();
 
   omfgThis->sItemGroupsUpdated(_itemgrpid, TRUE);
 
@@ -161,16 +165,18 @@ void itemGroup::sSave()
 
 void itemGroup::sDelete()
 {
-  q.prepare( "DELETE FROM itemgrpitem "
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM itemgrpitem "
              "WHERE (itemgrpitem_id=:itemgrpitem_id);" );
-  q.bindValue(":itemgrpitem_id", _itemgrpitem->id());
-  q.exec();
+  itemDelete.bindValue(":itemgrpitem_id", _itemgrpitem->id());
+  itemDelete.exec();
 
   sFillList();
 }
 
 void itemGroup::sNew()
 {
+  XSqlQuery itemNew;
   ParameterList params;
   itemList* newdlg = new itemList(this);
   newdlg->set(params);
@@ -178,27 +184,27 @@ void itemGroup::sNew()
   int itemid = newdlg->exec();
   if (itemid != -1)
   {
-    q.prepare( "SELECT itemgrpitem_id "
+    itemNew.prepare( "SELECT itemgrpitem_id "
                "FROM itemgrpitem "
                "WHERE ( (itemgrpitem_itemgrp_id=:itemgrp_id)"
                " AND (itemgrpitem_item_id=:item_id) );" );
-    q.bindValue(":itemgrp_id", _itemgrpid);
-    q.bindValue(":item_id", itemid);
-    q.exec();
-    if (q.first())
+    itemNew.bindValue(":itemgrp_id", _itemgrpid);
+    itemNew.bindValue(":item_id", itemid);
+    itemNew.exec();
+    if (itemNew.first())
     {
       QMessageBox::warning( this, tr("Cannot Add Item to Item Group"),
                             tr("The selected Item is already a member of this Item Group") );
       return;
     }
 
-    q.prepare( "INSERT INTO itemgrpitem "
+    itemNew.prepare( "INSERT INTO itemgrpitem "
                "(itemgrpitem_itemgrp_id, itemgrpitem_item_id) "
                "VALUES "
                "(:itemgrpitem_itemgrp_id, :itemgrpitem_item_id);" );
-    q.bindValue(":itemgrpitem_itemgrp_id", _itemgrpid);
-    q.bindValue(":itemgrpitem_item_id", itemid);
-    q.exec();
+    itemNew.bindValue(":itemgrpitem_itemgrp_id", _itemgrpid);
+    itemNew.bindValue(":itemgrpitem_item_id", itemid);
+    itemNew.exec();
 
     sFillList();
   }
@@ -206,27 +212,29 @@ void itemGroup::sNew()
 
 void itemGroup::sFillList()
 {
-  q.prepare( "SELECT itemgrpitem_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS item_descrip "
+  XSqlQuery itemFillList;
+  itemFillList.prepare( "SELECT itemgrpitem_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS item_descrip "
              "FROM itemgrpitem, item "
              "WHERE ( (itemgrpitem_item_id=item_id) "
              " AND (itemgrpitem_itemgrp_id=:itemgrp_id) ) "
              "ORDER BY item_number;" );
-  q.bindValue(":itemgrp_id", _itemgrpid);
-  q.exec();
-  _itemgrpitem->populate(q);
+  itemFillList.bindValue(":itemgrp_id", _itemgrpid);
+  itemFillList.exec();
+  _itemgrpitem->populate(itemFillList);
 }
 
 void itemGroup::populate()
 {
-  q.prepare( "SELECT itemgrp_name, itemgrp_descrip "
+  XSqlQuery itempopulate;
+  itempopulate.prepare( "SELECT itemgrp_name, itemgrp_descrip "
              "FROM itemgrp "
              "WHERE (itemgrp_id=:itemgrp_id);" );
-  q.bindValue(":itemgrp_id", _itemgrpid);
-  q.exec();
-  if (q.first())
+  itempopulate.bindValue(":itemgrp_id", _itemgrpid);
+  itempopulate.exec();
+  if (itempopulate.first())
   {
-    _name->setText(q.value("itemgrp_name").toString());
-    _descrip->setText(q.value("itemgrp_descrip").toString());
+    _name->setText(itempopulate.value("itemgrp_name").toString());
+    _descrip->setText(itempopulate.value("itemgrp_descrip").toString());
 
     sFillList();
   }

@@ -77,6 +77,7 @@ void project::languageChange()
 
 enum SetResponse project::set(const ParameterList &pParams)
 {
+  XSqlQuery projectet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -118,12 +119,12 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
 
-      q.exec("SELECT NEXTVAL('prj_prj_id_seq') AS prj_id;");
-      if (q.first())
-        _prjid = q.value("prj_id").toInt();
-      else if (q.lastError().type() == QSqlError::NoError)
+      projectet.exec("SELECT NEXTVAL('prj_prj_id_seq') AS prj_id;");
+      if (projectet.first())
+        _prjid = projectet.value("prj_id").toInt();
+      else if (projectet.lastError().type() == QSqlError::NoError)
       {
-        systemError(this, q.lastError().text(), __FILE__, __LINE__);
+        systemError(this, projectet.lastError().text(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -178,36 +179,37 @@ enum SetResponse project::set(const ParameterList &pParams)
 
 void project::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery projectpopulate;
+  projectpopulate.prepare( "SELECT * "
              "FROM prj "
              "WHERE (prj_id=:prj_id);" );
-  q.bindValue(":prj_id", _prjid);
-  q.exec();
-  if (q.first())
+  projectpopulate.bindValue(":prj_id", _prjid);
+  projectpopulate.exec();
+  if (projectpopulate.first())
   {
     _saved = true;
-    _owner->setUsername(q.value("prj_owner_username").toString());
-    _number->setText(q.value("prj_number").toString());
-    _name->setText(q.value("prj_name").toString());
-    _descrip->setText(q.value("prj_descrip").toString());
-    _so->setChecked(q.value("prj_so").toBool());
-    _wo->setChecked(q.value("prj_wo").toBool());
-    _po->setChecked(q.value("prj_po").toBool());
-    _assignedTo->setUsername(q.value("prj_username").toString());
-    _cntct->setId(q.value("prj_cntct_id").toInt());
-    _crmacct->setId(q.value("prj_crmacct_id").toInt());
-    _started->setDate(q.value("prj_start_date").toDate());
-    _assigned->setDate(q.value("prj_assigned_date").toDate());
-    _due->setDate(q.value("prj_due_date").toDate());
-    _completed->setDate(q.value("prj_completed_date").toDate());
+    _owner->setUsername(projectpopulate.value("prj_owner_username").toString());
+    _number->setText(projectpopulate.value("prj_number").toString());
+    _name->setText(projectpopulate.value("prj_name").toString());
+    _descrip->setText(projectpopulate.value("prj_descrip").toString());
+    _so->setChecked(projectpopulate.value("prj_so").toBool());
+    _wo->setChecked(projectpopulate.value("prj_wo").toBool());
+    _po->setChecked(projectpopulate.value("prj_po").toBool());
+    _assignedTo->setUsername(projectpopulate.value("prj_username").toString());
+    _cntct->setId(projectpopulate.value("prj_cntct_id").toInt());
+    _crmacct->setId(projectpopulate.value("prj_crmacct_id").toInt());
+    _started->setDate(projectpopulate.value("prj_start_date").toDate());
+    _assigned->setDate(projectpopulate.value("prj_assigned_date").toDate());
+    _due->setDate(projectpopulate.value("prj_due_date").toDate());
+    _completed->setDate(projectpopulate.value("prj_completed_date").toDate());
     for (int counter = 0; counter < _status->count(); counter++)
     {
-      if (QString(q.value("prj_status").toString()[0]) == _projectStatuses[counter])
+      if (QString(projectpopulate.value("prj_status").toString()[0]) == _projectStatuses[counter])
         _status->setCurrentIndex(counter);
     }
 
-    _recurring->setParent(q.value("prj_recurring_prj_id").isNull() ?
-                            _prjid : q.value("prj_recurring_prj_id").toInt(),
+    _recurring->setParent(projectpopulate.value("prj_recurring_prj_id").isNull() ?
+                            _prjid : projectpopulate.value("prj_recurring_prj_id").toInt(),
                           "J");
   }
 
@@ -251,11 +253,12 @@ void project::sCRMAcctChanged(const int newid)
 
 void project::sClose()
 {
+  XSqlQuery projectClose;
   if (_mode == cNew)
   {
-    q.prepare( "SELECT deleteproject(:prj_id);" );
-    q.bindValue(":prj_id", _prjid);
-    q.exec();
+    projectClose.prepare( "SELECT deleteproject(:prj_id);" );
+    projectClose.bindValue(":prj_id", _prjid);
+    projectClose.exec();
   }
 
   reject();
@@ -263,6 +266,7 @@ void project::sClose()
 
 bool project::sSave(bool partial)
 {
+  XSqlQuery projectSave;
   QList<GuiErrorCheck> errors;
   errors<< GuiErrorCheck(_number->text().isEmpty(), _number,
                          tr("No Project Number was specified. You must specify a project number "
@@ -283,7 +287,7 @@ bool project::sSave(bool partial)
   XSqlQuery begin("BEGIN;");
 
   if (!_saved)
-    q.prepare( "INSERT INTO prj "
+    projectSave.prepare( "INSERT INTO prj "
                "( prj_id, prj_number, prj_name, prj_descrip,"
                "  prj_so, prj_wo, prj_po, prj_status, prj_owner_username, "
                "  prj_start_date, prj_due_date, prj_assigned_date,"
@@ -296,7 +300,7 @@ bool project::sSave(bool partial)
                "  :prj_completed_date, :username, :prj_recurring_prj_id,"
                "  :prj_crmacct_id, :prj_cntct_id);" );
   else
-    q.prepare( "UPDATE prj "
+    projectSave.prepare( "UPDATE prj "
                "SET prj_number=:prj_number, prj_name=:prj_name, prj_descrip=:prj_descrip,"
                "    prj_so=:prj_so, prj_wo=:prj_wo, prj_po=:prj_po, prj_status=:prj_status, "
                "    prj_owner_username=:prj_owner_username, prj_start_date=:prj_start_date, "
@@ -308,32 +312,32 @@ bool project::sSave(bool partial)
                "    prj_cntct_id=:prj_cntct_id "
                "WHERE (prj_id=:prj_id);" );
 
-  q.bindValue(":prj_id", _prjid);
-  q.bindValue(":prj_number", _number->text().trimmed().toUpper());
-  q.bindValue(":prj_name", _name->text());
-  q.bindValue(":prj_descrip", _descrip->toPlainText());
-  q.bindValue(":prj_status", _projectStatuses[_status->currentIndex()]);
-  q.bindValue(":prj_so", QVariant(_so->isChecked()));
-  q.bindValue(":prj_wo", QVariant(_wo->isChecked()));
-  q.bindValue(":prj_po", QVariant(_po->isChecked()));
-  q.bindValue(":prj_owner_username", _owner->username());
-  q.bindValue(":username", _assignedTo->username());
+  projectSave.bindValue(":prj_id", _prjid);
+  projectSave.bindValue(":prj_number", _number->text().trimmed().toUpper());
+  projectSave.bindValue(":prj_name", _name->text());
+  projectSave.bindValue(":prj_descrip", _descrip->toPlainText());
+  projectSave.bindValue(":prj_status", _projectStatuses[_status->currentIndex()]);
+  projectSave.bindValue(":prj_so", QVariant(_so->isChecked()));
+  projectSave.bindValue(":prj_wo", QVariant(_wo->isChecked()));
+  projectSave.bindValue(":prj_po", QVariant(_po->isChecked()));
+  projectSave.bindValue(":prj_owner_username", _owner->username());
+  projectSave.bindValue(":username", _assignedTo->username());
   if (_crmacct->id() > 0)
-    q.bindValue(":prj_crmacct_id", _crmacct->id());
+    projectSave.bindValue(":prj_crmacct_id", _crmacct->id());
   if (_cntct->id() > 0)
-    q.bindValue(":prj_cntct_id", _cntct->id());
-  q.bindValue(":prj_start_date", _started->date());
-  q.bindValue(":prj_due_date",	_due->date());
-  q.bindValue(":prj_assigned_date", _assigned->date());
-  q.bindValue(":prj_completed_date", _completed->date());
+    projectSave.bindValue(":prj_cntct_id", _cntct->id());
+  projectSave.bindValue(":prj_start_date", _started->date());
+  projectSave.bindValue(":prj_due_date",	_due->date());
+  projectSave.bindValue(":prj_assigned_date", _assigned->date());
+  projectSave.bindValue(":prj_completed_date", _completed->date());
   if (_recurring->isRecurring())
-    q.bindValue(":prj_recurring_prj_id", _recurring->parentId());
+    projectSave.bindValue(":prj_recurring_prj_id", _recurring->parentId());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  projectSave.exec();
+  if (projectSave.lastError().type() != QSqlError::NoError)
   {
     rollbackq.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, projectSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -346,7 +350,7 @@ bool project::sSave(bool partial)
     return false;
   }
 
-  q.exec("COMMIT;");
+  projectSave.exec("COMMIT;");
   emit saved(_prjid);
 
   if (!partial)
@@ -418,12 +422,13 @@ void project::sViewTask()
 
 void project::sDeleteTask()
 {
-  q.prepare("SELECT deleteProjectTask(:prjtask_id) AS result; ");
-  q.bindValue(":prjtask_id", _prjtask->id());
-  q.exec();
-  if(q.first())
+  XSqlQuery projectDeleteTask;
+  projectDeleteTask.prepare("SELECT deleteProjectTask(:prjtask_id) AS result; ");
+  projectDeleteTask.bindValue(":prjtask_id", _prjtask->id());
+  projectDeleteTask.exec();
+  if(projectDeleteTask.first())
   {
-    int result = q.value("result").toInt();
+    int result = projectDeleteTask.value("result").toInt();
     if(result < 0)
     {
       QString errmsg;
@@ -477,19 +482,20 @@ void project::sFillTaskList()
 
 void project::sNumberChanged()
 {
+  XSqlQuery projectNumberChanged;
   if((cNew == _mode) && (_number->text().length()))
   {
     _number->setText(_number->text().trimmed().toUpper());
 
-    q.prepare( "SELECT prj_id"
+    projectNumberChanged.prepare( "SELECT prj_id"
                "  FROM prj"
                " WHERE (prj_number=:prj_number);" );
-    q.bindValue(":prj_number", _number->text());
-    q.exec();
-    if(q.first())
+    projectNumberChanged.bindValue(":prj_number", _number->text());
+    projectNumberChanged.exec();
+    if(projectNumberChanged.first())
     {
       _number->setEnabled(FALSE);
-      _prjid = q.value("prj_id").toInt();
+      _prjid = projectNumberChanged.value("prj_id").toInt();
       _mode = cEdit;
       populate();
     }

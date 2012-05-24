@@ -148,67 +148,73 @@ void maintainItemCosts::sViewDetail()
 
 void maintainItemCosts::sUpdateDetail()
 {
+  XSqlQuery maintainUpdateDetail;
   QString cost = _itemcost->currentItem()->text(0);
 
-  q.prepare("SELECT updateCost(:item_id, :cost, TRUE, lowerCost(:item_id, :cost));");
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":cost", cost);
-  q.exec();
+  maintainUpdateDetail.prepare("SELECT updateCost(:item_id, :cost, TRUE, lowerCost(:item_id, :cost));");
+  maintainUpdateDetail.bindValue(":item_id", _item->id());
+  maintainUpdateDetail.bindValue(":cost", cost);
+  maintainUpdateDetail.exec();
 
   sFillList();
 }
 
 void maintainItemCosts::sUpdateDirectLabor()
 {
-  q.prepare("SELECT updateCost(:item_id, 'Direct Labor', FALSE, directLaborCost(:item_id));");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
+  XSqlQuery maintainUpdateDirectLabor;
+  maintainUpdateDirectLabor.prepare("SELECT updateCost(:item_id, 'Direct Labor', FALSE, directLaborCost(:item_id));");
+  maintainUpdateDirectLabor.bindValue(":item_id", _item->id());
+  maintainUpdateDirectLabor.exec();
 
   sFillList();
 }
 
 void maintainItemCosts::sUpdateOverhead()
 {
-  q.prepare("SELECT updateCost(:item_id, 'Overhead', FALSE, overheadCost(:item_id));");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
+  XSqlQuery maintainUpdateOverhead;
+  maintainUpdateOverhead.prepare("SELECT updateCost(:item_id, 'Overhead', FALSE, overheadCost(:item_id));");
+  maintainUpdateOverhead.bindValue(":item_id", _item->id());
+  maintainUpdateOverhead.exec();
 
   sFillList();
 }
 
 void maintainItemCosts::sUpdateMachineOverhead()
 {
-  q.prepare("SELECT updateCost(:item_id, 'Machine Overhead', FALSE, machineOverheadCost(:item_id));");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
+  XSqlQuery maintainUpdateMachineOverhead;
+  maintainUpdateMachineOverhead.prepare("SELECT updateCost(:item_id, 'Machine Overhead', FALSE, machineOverheadCost(:item_id));");
+  maintainUpdateMachineOverhead.bindValue(":item_id", _item->id());
+  maintainUpdateMachineOverhead.exec();
 
   sFillList();
 }
 
 void maintainItemCosts::sPost()
 {
-  q.prepare("SELECT postCost(:item_id);");
-  q.bindValue(":item_id", _itemcost->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  XSqlQuery maintainPost;
+  maintainPost.prepare("SELECT postCost(:item_id);");
+  maintainPost.bindValue(":item_id", _itemcost->id());
+  maintainPost.exec();
+  if (maintainPost.lastError().type() != QSqlError::NoError)
+      systemError(this, maintainPost.lastError().databaseText(), __FILE__, __LINE__);
 
   sFillList();
 }
 
 void maintainItemCosts::sDelete()
 {
+  XSqlQuery maintainDelete;
   double stdCost = 0.0;
-  q.prepare( "SELECT itemcost_stdcost "
+  maintainDelete.prepare( "SELECT itemcost_stdcost "
 	     "FROM itemcost "
 	     "WHERE (itemcost_id=:itemcost_id);" );
-  q.bindValue(":itemcost_id", _itemcost->id());
-  q.exec();
-  if (q.first())
-    stdCost = q.value("itemcost_stdcost").toDouble();
-  else if (q.lastError().type() != QSqlError::NoError)
+  maintainDelete.bindValue(":itemcost_id", _itemcost->id());
+  maintainDelete.exec();
+  if (maintainDelete.first())
+    stdCost = maintainDelete.value("itemcost_stdcost").toDouble();
+  else if (maintainDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, maintainDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -224,16 +230,16 @@ void maintainItemCosts::sDelete()
 			     QMessageBox::Ok | QMessageBox::Default,
 			     QMessageBox::Cancel) == QMessageBox::Cancel)
       return;
-    q.prepare("SELECT updateCost(:itemcost_id, 0);");
+    maintainDelete.prepare("SELECT updateCost(:itemcost_id, 0);");
   }
   else
   {
-    q.prepare( "DELETE FROM itemcost WHERE (itemcost_id=:itemcost_id);" );
+    maintainDelete.prepare( "DELETE FROM itemcost WHERE (itemcost_id=:itemcost_id);" );
   }
-  q.bindValue(":itemcost_id", _itemcost->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  maintainDelete.bindValue(":itemcost_id", _itemcost->id());
+  maintainDelete.exec();
+  if (maintainDelete.lastError().type() != QSqlError::NoError)
+    systemError(this, maintainDelete.lastError().databaseText(), __FILE__, __LINE__);
 
   sFillList();
 }

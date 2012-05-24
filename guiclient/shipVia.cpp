@@ -81,17 +81,18 @@ enum SetResponse shipVia::set(const ParameterList &pParams)
 
 void shipVia::sCheck()
 {
+  XSqlQuery shipCheck;
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().trimmed().length()))
   {
-    q.prepare( "SELECT shipvia_id "
+    shipCheck.prepare( "SELECT shipvia_id "
                "FROM shipvia "
                "WHERE (UPPER(shipvia_code)=UPPER(:shipvia_code));" );
-    q.bindValue(":shipvia_code", _code->text());
-    q.exec();
-    if (q.first())
+    shipCheck.bindValue(":shipvia_code", _code->text());
+    shipCheck.exec();
+    if (shipCheck.first())
     {
-      _shipviaid = q.value("shipvia_id").toInt();
+      _shipviaid = shipCheck.value("shipvia_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -102,6 +103,7 @@ void shipVia::sCheck()
 
 void shipVia::sSave()
 {
+  XSqlQuery shipSave;
   if (_code->text().length() == 0)
   {
       QMessageBox::warning( this, tr("Cannot Save Ship Via"),
@@ -109,14 +111,14 @@ void shipVia::sSave()
       return;
   }
   
-  q.prepare( "SELECT shipvia_id"
+  shipSave.prepare( "SELECT shipvia_id"
              "  FROM shipvia"
              " WHERE((shipvia_id<>:shipvia_id)"
              "   AND (UPPER(shipvia_code)=UPPER(:shipvia_code)) );" );
-  q.bindValue(":shipvia_id", _shipviaid);
-  q.bindValue(":shipvia_code", _code->text());
-  q.exec();
-  if (q.first())
+  shipSave.bindValue(":shipvia_id", _shipviaid);
+  shipSave.bindValue(":shipvia_code", _code->text());
+  shipSave.exec();
+  if (shipSave.first())
   {
     QMessageBox::critical( this, tr("Cannot Save Ship Via"),
                            tr( "The new Ship Via information cannot be saved as the new Ship Via Code that you\n"
@@ -127,40 +129,41 @@ void shipVia::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('shipvia_shipvia_id_seq') AS _shipvia_id;");
-    if (q.first())
-      _shipviaid = q.value("_shipvia_id").toInt();
+    shipSave.exec("SELECT NEXTVAL('shipvia_shipvia_id_seq') AS _shipvia_id;");
+    if (shipSave.first())
+      _shipviaid = shipSave.value("_shipvia_id").toInt();
 
-    q.prepare( "INSERT INTO shipvia "
+    shipSave.prepare( "INSERT INTO shipvia "
                "(shipvia_id, shipvia_code, shipvia_descrip) "
                "VALUES "
                "(:shipvia_id, :shipvia_code, :shipvia_descrip);" );
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "UPDATE shipvia "
+    shipSave.prepare( "UPDATE shipvia "
                "SET shipvia_code=:shipvia_code, shipvia_descrip=:shipvia_descrip "
                "WHERE (shipvia_id=:shipvia_id);" );
   }
 
-  q.bindValue(":shipvia_id", _shipviaid);
-  q.bindValue(":shipvia_code", _code->text().trimmed());
-  q.bindValue(":shipvia_descrip", _description->text().trimmed());
-  q.exec();
+  shipSave.bindValue(":shipvia_id", _shipviaid);
+  shipSave.bindValue(":shipvia_code", _code->text().trimmed());
+  shipSave.bindValue(":shipvia_descrip", _description->text().trimmed());
+  shipSave.exec();
 
   done(_shipviaid);
 }
 
 void shipVia::populate()
 {
-  q.prepare( "SELECT shipvia_code, shipvia_descrip "
+  XSqlQuery shippopulate;
+  shippopulate.prepare( "SELECT shipvia_code, shipvia_descrip "
              "FROM shipvia "
              "WHERE (shipvia_id=:shipvia_id);" );
-  q.bindValue(":shipvia_id", _shipviaid);
-  q.exec();
-  if (q.first()) 
+  shippopulate.bindValue(":shipvia_id", _shipviaid);
+  shippopulate.exec();
+  if (shippopulate.first()) 
   {
-    _code->setText(q.value("shipvia_code").toString());
-    _description->setText(q.value("shipvia_descrip").toString());
+    _code->setText(shippopulate.value("shipvia_code").toString());
+    _description->setText(shippopulate.value("shipvia_descrip").toString());
   }
 }

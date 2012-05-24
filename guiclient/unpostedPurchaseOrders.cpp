@@ -132,13 +132,14 @@ void unpostedPurchaseOrders::sView()
 
 void unpostedPurchaseOrders::sDelete()
 {
+  XSqlQuery unpostedDelete;
   if ( QMessageBox::question(this, tr("Delete Selected Purchase Orders"),
                              tr("<p>Are you sure that you want to delete the "
 			        "selected Purchase Orders?" ),
                              QMessageBox::Yes,
                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare("SELECT deletePo(:pohead_id) AS result;");
+    unpostedDelete.prepare("SELECT deletePo(:pohead_id) AS result;");
 
     QList<XTreeWidgetItem*> selected = list()->selectedItems();
     bool done = false;
@@ -161,16 +162,16 @@ void unpostedPurchaseOrders::sDelete()
                                       QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
 			  continue;
 		  }
-          q.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-          q.exec();
-          if (q.first() && ! q.value("result").toBool())
+          unpostedDelete.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+          unpostedDelete.exec();
+          if (unpostedDelete.first() && ! unpostedDelete.value("result").toBool())
               systemError(this, tr("<p>Only Unposted Purchase Orders may be "
                                    "deleted. Check the status of Purchase Order "
                                    "%1. If it is 'U' then contact your system "
                                    "Administrator.").arg(selected[i]->text(0)),
                           __FILE__, __LINE__);
-          else if (q.lastError().type() != QSqlError::NoError)
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          else if (unpostedDelete.lastError().type() != QSqlError::NoError)
+            systemError(this, unpostedDelete.lastError().databaseText(), __FILE__, __LINE__);
           else
             done = true;
         }
@@ -207,7 +208,8 @@ void unpostedPurchaseOrders::sPrint()
 
 void unpostedPurchaseOrders::sRelease()
 {
-  q.prepare("SELECT releasePurchaseOrder(:pohead_id) AS result;");
+  XSqlQuery unpostedRelease;
+  unpostedRelease.prepare("SELECT releasePurchaseOrder(:pohead_id) AS result;");
 
   QList<XTreeWidgetItem*> selected = list()->selectedItems();
   bool done = false;
@@ -217,19 +219,19 @@ void unpostedPurchaseOrders::sRelease()
       && (_privileges->check("ReleasePurchaseOrders"))
       && (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id())))
       {
-      q.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      q.exec();
-      if (q.first())
+      unpostedRelease.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      unpostedRelease.exec();
+      if (unpostedRelease.first())
       {
-        int result = q.value("result").toInt();
+        int result = unpostedRelease.value("result").toInt();
         if (result < 0)
           systemError(this, storedProcErrorLookup("releasePurchaseOrder", result),
                       __FILE__, __LINE__);
         else
           done = true;
       }
-      else if (q.lastError().type() != QSqlError::NoError)
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      else if (unpostedRelease.lastError().type() != QSqlError::NoError)
+        systemError(this, unpostedRelease.lastError().databaseText(), __FILE__, __LINE__);
     }
   }
   if (done)

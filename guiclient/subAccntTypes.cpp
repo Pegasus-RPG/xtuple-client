@@ -84,12 +84,13 @@ void subAccntTypes::sEdit()
 
 void subAccntTypes::sDelete()
 {
-  q.prepare("SELECT deleteSubAccountType(:subaccnttype_id) AS result;");
-  q.bindValue(":subaccnttype_id", _subaccnttypes->id());
-  q.exec();
-  if(q.first())
+  XSqlQuery subDelete;
+  subDelete.prepare("SELECT deleteSubAccountType(:subaccnttype_id) AS result;");
+  subDelete.bindValue(":subaccnttype_id", _subaccnttypes->id());
+  subDelete.exec();
+  if(subDelete.first())
   {
-    switch(q.value("result").toInt())
+    switch(subDelete.value("result").toInt())
     {
     case -1:
       QMessageBox::critical( this, tr("Cannot Delete G/L Subaccount Type"),
@@ -104,7 +105,8 @@ void subAccntTypes::sDelete()
 
 void subAccntTypes::sFillList()
 {
-  q.prepare(
+  XSqlQuery subFillList;
+  subFillList.prepare(
       "SELECT subaccnttype_id, subaccnttype_code,"
       "       CASE WHEN(subaccnttype_accnt_type='A') THEN :asset"
       "            WHEN(subaccnttype_accnt_type='L') THEN :liability"
@@ -115,13 +117,13 @@ void subAccntTypes::sFillList()
       "       END AS type, subaccnttype_descrip "
       "FROM subaccnttype "
       "ORDER BY subaccnttype_code; " );
-  q.bindValue(":asset", tr("Asset"));
-  q.bindValue(":liability", tr("Liability"));
-  q.bindValue(":expense", tr("Expense"));
-  q.bindValue(":revenue", tr("Revenue"));
-  q.bindValue(":equity", tr("Equity"));
-  q.bindValue(":error", tr("ERROR"));
-  q.exec();
-  _subaccnttypes->populate(q);
+  subFillList.bindValue(":asset", tr("Asset"));
+  subFillList.bindValue(":liability", tr("Liability"));
+  subFillList.bindValue(":expense", tr("Expense"));
+  subFillList.bindValue(":revenue", tr("Revenue"));
+  subFillList.bindValue(":equity", tr("Equity"));
+  subFillList.bindValue(":error", tr("ERROR"));
+  subFillList.exec();
+  _subaccnttypes->populate(subFillList);
 }
 

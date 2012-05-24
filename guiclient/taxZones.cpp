@@ -79,13 +79,14 @@ void taxZones::languageChange()
 
 void taxZones::sDelete()
 {
-  q.prepare("SELECT deletetaxzone(:tax_zone_id) AS result;");
-  q.bindValue(":tax_zone_id", _taxZone->id());
-  q.exec();
+  XSqlQuery taxDelete;
+  taxDelete.prepare("SELECT deletetaxzone(:tax_zone_id) AS result;");
+  taxDelete.bindValue(":tax_zone_id", _taxZone->id());
+  taxDelete.exec();
 
-  if (q.first())
+  if (taxDelete.first())
   {
-    int returnVal = q.value("result").toInt();
+    int returnVal = taxDelete.value("result").toInt();
     if (returnVal < 0)
     {
       systemError(this, storedProcErrorLookup("deleteTaxZone", returnVal), __FILE__, __LINE__);
@@ -93,9 +94,9 @@ void taxZones::sDelete()
     }
 	sFillList(-1);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (taxDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

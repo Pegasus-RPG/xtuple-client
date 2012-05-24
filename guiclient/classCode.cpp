@@ -80,6 +80,7 @@ enum SetResponse classCode::set(const ParameterList &pParams)
 
 void classCode::sSave()
 {
+  XSqlQuery classSave;
   if (_classCode->text().length() == 0)
   {
     QMessageBox::information( this, tr("No Class Code Entered"),
@@ -89,14 +90,14 @@ void classCode::sSave()
   }
 
   if (_mode == cEdit)
-    q.prepare( "UPDATE classcode "
+    classSave.prepare( "UPDATE classcode "
                "SET classcode_code=:classcode_code, classcode_descrip=:classcode_descrip "
                "WHERE (classcode_id=:classcode_id);" );
   else if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('classcode_classcode_id_seq') AS classcode_id");
-    if (q.first())
-      _classcodeid = q.value("classcode_id").toInt();
+    classSave.exec("SELECT NEXTVAL('classcode_classcode_id_seq') AS classcode_id");
+    if (classSave.first())
+      _classcodeid = classSave.value("classcode_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -105,33 +106,34 @@ void classCode::sSave()
       return;
     }
  
-    q.prepare( "INSERT INTO classcode "
+    classSave.prepare( "INSERT INTO classcode "
                "( classcode_id, classcode_code, classcode_descrip ) "
                "VALUES "
                "( :classcode_id, :classcode_code, :classcode_descrip );" );
   }
 
-  q.bindValue(":classcode_id", _classcodeid);
-  q.bindValue(":classcode_code", _classCode->text());
-  q.bindValue(":classcode_descrip", _description->text());
-  q.exec();
+  classSave.bindValue(":classcode_id", _classcodeid);
+  classSave.bindValue(":classcode_code", _classCode->text());
+  classSave.bindValue(":classcode_descrip", _description->text());
+  classSave.exec();
 
   done(_classcodeid);
 }
 
 void classCode::sCheck()
 {
+  XSqlQuery classCheck;
   _classCode->setText(_classCode->text().trimmed());
   if ( (_mode == cNew) && (_classCode->text().length()) )
   {
-    q.prepare( "SELECT classcode_id "
+    classCheck.prepare( "SELECT classcode_id "
                "FROM classcode "
                "WHERE (UPPER(classcode_code)=UPPER(:classcode_code));" );
-    q.bindValue(":classcode_code", _classCode->text());
-    q.exec();
-    if (q.first())
+    classCheck.bindValue(":classcode_code", _classCode->text());
+    classCheck.exec();
+    if (classCheck.first())
     {
-      _classcodeid = q.value("classcode_id").toInt();
+      _classcodeid = classCheck.value("classcode_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -142,15 +144,16 @@ void classCode::sCheck()
 
 void classCode::populate()
 {
-  q.prepare( "SELECT classcode_code, classcode_descrip "
+  XSqlQuery classpopulate;
+  classpopulate.prepare( "SELECT classcode_code, classcode_descrip "
              "FROM classcode "
              "WHERE (classcode_id=:classcode_id);" );
-  q.bindValue(":classcode_id", _classcodeid);
-  q.exec();
-  if (q.first())
+  classpopulate.bindValue(":classcode_id", _classcodeid);
+  classpopulate.exec();
+  if (classpopulate.first())
   {
-    _classCode->setText(q.value("classcode_code"));
-    _description->setText(q.value("classcode_descrip"));
+    _classCode->setText(classpopulate.value("classcode_code"));
+    _description->setText(classpopulate.value("classcode_descrip"));
   }
 }
 

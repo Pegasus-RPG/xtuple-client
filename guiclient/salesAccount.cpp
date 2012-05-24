@@ -107,6 +107,7 @@ enum SetResponse salesAccount::set(const ParameterList &pParams)
 
 void salesAccount::sSave()
 {
+  XSqlQuery salesSave;
   QList<GuiErrorCheck> errors;
 
   if (_metrics->boolean("InterfaceARToGL"))
@@ -126,7 +127,7 @@ void salesAccount::sSave()
            ;
   }
 
-  q.prepare("SELECT salesaccnt_id"
+  salesSave.prepare("SELECT salesaccnt_id"
             "  FROM salesaccnt"
             " WHERE((salesaccnt_warehous_id=:salesaccnt_warehous_id)"
             "   AND (salesaccnt_custtype=:salesaccnt_custtype)"
@@ -134,42 +135,42 @@ void salesAccount::sSave()
             "   AND (salesaccnt_prodcat=:salesaccnt_prodcat)"
             "   AND (salesaccnt_prodcat_id=:salesaccnt_prodcat_id)"
             "   AND (salesaccnt_id != :salesaccnt_id))");
-  q.bindValue(":salesaccnt_id", _salesaccntid);
-  q.bindValue(":salesaccnt_warehous_id", _warehouse->id());
+  salesSave.bindValue(":salesaccnt_id", _salesaccntid);
+  salesSave.bindValue(":salesaccnt_warehous_id", _warehouse->id());
 
   if (_customerTypes->isAll())
   {
-    q.bindValue(":salesaccnt_custtype", ".*");
-    q.bindValue(":salesaccnt_custtype_id", -1);
+    salesSave.bindValue(":salesaccnt_custtype", ".*");
+    salesSave.bindValue(":salesaccnt_custtype_id", -1);
   }
   else if (_customerTypes->isSelected())
   {
-    q.bindValue(":salesaccnt_custtype", "[^a-zA-Z0-9_]");
-    q.bindValue(":salesaccnt_custtype_id", _customerTypes->id());
+    salesSave.bindValue(":salesaccnt_custtype", "[^a-zA-Z0-9_]");
+    salesSave.bindValue(":salesaccnt_custtype_id", _customerTypes->id());
   }
   else
   {
-    q.bindValue(":salesaccnt_custtype", _customerTypes->pattern());
-    q.bindValue(":salesaccnt_custtype_id", -1);
+    salesSave.bindValue(":salesaccnt_custtype", _customerTypes->pattern());
+    salesSave.bindValue(":salesaccnt_custtype_id", -1);
   }
 
   if (_productCategories->isAll())
   {
-    q.bindValue(":salesaccnt_prodcat", ".*");
-    q.bindValue(":salesaccnt_prodcat_id", -1);
+    salesSave.bindValue(":salesaccnt_prodcat", ".*");
+    salesSave.bindValue(":salesaccnt_prodcat_id", -1);
   }
   else if (_productCategories->isSelected())
   {
-    q.bindValue(":salesaccnt_prodcat", "[^a-zA-Z0-9_]");
-    q.bindValue(":salesaccnt_prodcat_id", _productCategories->id());
+    salesSave.bindValue(":salesaccnt_prodcat", "[^a-zA-Z0-9_]");
+    salesSave.bindValue(":salesaccnt_prodcat_id", _productCategories->id());
   }
   else
   {
-    q.bindValue(":salesaccnt_prodcat", _productCategories->pattern());
-    q.bindValue(":salesaccnt_prodcat_id", -1);
+    salesSave.bindValue(":salesaccnt_prodcat", _productCategories->pattern());
+    salesSave.bindValue(":salesaccnt_prodcat_id", -1);
   }
-  q.exec();
-  if(q.first())
+  salesSave.exec();
+  if(salesSave.first())
   {
     errors << GuiErrorCheck(true, _warehouse,
                            tr("<p>You cannot specify a duplicate Warehouse/Customer Type/Product Category for the Sales Account Assignment."));
@@ -180,16 +181,16 @@ void salesAccount::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('salesaccnt_salesaccnt_id_seq') AS salesaccnt_id;");
-    if (q.first())
-      _salesaccntid = q.value("salesaccnt_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    salesSave.exec("SELECT NEXTVAL('salesaccnt_salesaccnt_id_seq') AS salesaccnt_id;");
+    if (salesSave.first())
+      _salesaccntid = salesSave.value("salesaccnt_id").toInt();
+    else if (salesSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO salesaccnt "
+    salesSave.prepare( "INSERT INTO salesaccnt "
                "( salesaccnt_warehous_id,"
                "  salesaccnt_custtype, salesaccnt_custtype_id,"
                "  salesaccnt_prodcat, salesaccnt_prodcat_id,"
@@ -211,7 +212,7 @@ void salesAccount::sSave()
 	       "  :salesaccnt_cow_accnt_id);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE salesaccnt "
+    salesSave.prepare( "UPDATE salesaccnt "
                "SET salesaccnt_warehous_id=:salesaccnt_warehous_id,"
                "    salesaccnt_custtype=:salesaccnt_custtype,"
                "    salesaccnt_custtype_id=:salesaccnt_custtype_id,"
@@ -225,59 +226,60 @@ void salesAccount::sSave()
                "    salesaccnt_cow_accnt_id=:salesaccnt_cow_accnt_id "
                "WHERE (salesaccnt_id=:salesaccnt_id);" );
 
-  q.bindValue(":salesaccnt_id", _salesaccntid);
-  q.bindValue(":salesaccnt_sales_accnt_id", _sales->id());
-  q.bindValue(":salesaccnt_credit_accnt_id", _credit->id());
-  q.bindValue(":salesaccnt_cos_accnt_id", _cos->id());
+  salesSave.bindValue(":salesaccnt_id", _salesaccntid);
+  salesSave.bindValue(":salesaccnt_sales_accnt_id", _sales->id());
+  salesSave.bindValue(":salesaccnt_credit_accnt_id", _credit->id());
+  salesSave.bindValue(":salesaccnt_cos_accnt_id", _cos->id());
   if (_returns->isValid())
-    q.bindValue(":salesaccnt_returns_accnt_id",	_returns->id());
+    salesSave.bindValue(":salesaccnt_returns_accnt_id",	_returns->id());
   if (_cor->isValid())
-    q.bindValue(":salesaccnt_cor_accnt_id",	_cor->id());
+    salesSave.bindValue(":salesaccnt_cor_accnt_id",	_cor->id());
   if (_cow->isValid())
-    q.bindValue(":salesaccnt_cow_accnt_id",	_cow->id());
+    salesSave.bindValue(":salesaccnt_cow_accnt_id",	_cow->id());
 
-  q.bindValue(":salesaccnt_warehous_id", _warehouse->id());
+  salesSave.bindValue(":salesaccnt_warehous_id", _warehouse->id());
 
   if (_customerTypes->isAll())
   {
-    q.bindValue(":salesaccnt_custtype", ".*");
-    q.bindValue(":salesaccnt_custtype_id", -1);
+    salesSave.bindValue(":salesaccnt_custtype", ".*");
+    salesSave.bindValue(":salesaccnt_custtype_id", -1);
   }
   else if (_customerTypes->isSelected())
   {
-    q.bindValue(":salesaccnt_custtype", "[^a-zA-Z0-9_]");
-    q.bindValue(":salesaccnt_custtype_id", _customerTypes->id());
+    salesSave.bindValue(":salesaccnt_custtype", "[^a-zA-Z0-9_]");
+    salesSave.bindValue(":salesaccnt_custtype_id", _customerTypes->id());
   }
   else
   {
-    q.bindValue(":salesaccnt_custtype", _customerTypes->pattern());
-    q.bindValue(":salesaccnt_custtype_id", -1);
+    salesSave.bindValue(":salesaccnt_custtype", _customerTypes->pattern());
+    salesSave.bindValue(":salesaccnt_custtype_id", -1);
   }
 
   if (_productCategories->isAll())
   {
-    q.bindValue(":salesaccnt_prodcat", ".*");
-    q.bindValue(":salesaccnt_prodcat_id", -1);
+    salesSave.bindValue(":salesaccnt_prodcat", ".*");
+    salesSave.bindValue(":salesaccnt_prodcat_id", -1);
   }
   else if (_productCategories->isSelected())
   {
-    q.bindValue(":salesaccnt_prodcat", "[^a-zA-Z0-9_]");
-    q.bindValue(":salesaccnt_prodcat_id", _productCategories->id());
+    salesSave.bindValue(":salesaccnt_prodcat", "[^a-zA-Z0-9_]");
+    salesSave.bindValue(":salesaccnt_prodcat_id", _productCategories->id());
   }
   else
   {
-    q.bindValue(":salesaccnt_prodcat", _productCategories->pattern());
-    q.bindValue(":salesaccnt_prodcat_id", -1);
+    salesSave.bindValue(":salesaccnt_prodcat", _productCategories->pattern());
+    salesSave.bindValue(":salesaccnt_prodcat_id", -1);
   }
 
-  q.exec();
+  salesSave.exec();
 
   done(_salesaccntid);
 }
 
 void salesAccount::populate()
 {
-  q.prepare( "SELECT salesaccnt_warehous_id,"
+  XSqlQuery salespopulate;
+  salespopulate.prepare( "SELECT salesaccnt_warehous_id,"
              "       salesaccnt_custtype, salesaccnt_custtype_id,"
              "       salesaccnt_prodcat, salesaccnt_prodcat_id,"
              "       salesaccnt_sales_accnt_id, salesaccnt_credit_accnt_id,"
@@ -287,36 +289,36 @@ void salesAccount::populate()
              "       salesaccnt_cow_accnt_id "
              "FROM salesaccnt "
              "WHERE (salesaccnt_id=:salesaccnt_id);" );
-  q.bindValue(":salesaccnt_id", _salesaccntid);
-  q.exec();
-  if (q.first())
+  salespopulate.bindValue(":salesaccnt_id", _salesaccntid);
+  salespopulate.exec();
+  if (salespopulate.first())
   {
-    _warehouse->setId(q.value("salesaccnt_warehous_id").toInt());
+    _warehouse->setId(salespopulate.value("salesaccnt_warehous_id").toInt());
 
-    if (q.value("salesaccnt_custtype_id").toInt() != -1)
-      _customerTypes->setId(q.value("salesaccnt_custtype_id").toInt());
-    else if (q.value("salesaccnt_custtype").toString() != ".*")
-      _customerTypes->setPattern(q.value("salesaccnt_custtype").toString());
+    if (salespopulate.value("salesaccnt_custtype_id").toInt() != -1)
+      _customerTypes->setId(salespopulate.value("salesaccnt_custtype_id").toInt());
+    else if (salespopulate.value("salesaccnt_custtype").toString() != ".*")
+      _customerTypes->setPattern(salespopulate.value("salesaccnt_custtype").toString());
   
-    if (q.value("salesaccnt_prodcat_id").toInt() != -1)
-      _productCategories->setId(q.value("salesaccnt_prodcat_id").toInt());
-    else if (q.value("salesaccnt_prodcat").toString() != ".*")
-      _productCategories->setPattern(q.value("salesaccnt_prodcat").toString());
+    if (salespopulate.value("salesaccnt_prodcat_id").toInt() != -1)
+      _productCategories->setId(salespopulate.value("salesaccnt_prodcat_id").toInt());
+    else if (salespopulate.value("salesaccnt_prodcat").toString() != ".*")
+      _productCategories->setPattern(salespopulate.value("salesaccnt_prodcat").toString());
   
-    _sales->setId(q.value("salesaccnt_sales_accnt_id").toInt());
-    _credit->setId(q.value("salesaccnt_credit_accnt_id").toInt());
-    _cos->setId(q.value("salesaccnt_cos_accnt_id").toInt());
+    _sales->setId(salespopulate.value("salesaccnt_sales_accnt_id").toInt());
+    _credit->setId(salespopulate.value("salesaccnt_credit_accnt_id").toInt());
+    _cos->setId(salespopulate.value("salesaccnt_cos_accnt_id").toInt());
 
-    if (!q.value("salesaccnt_returns_accnt_id").isNull())
-      _returns->setId(q.value("salesaccnt_returns_accnt_id").toInt());
-    if (!q.value("salesaccnt_cor_accnt_id").isNull())
-      _cor->setId(q.value("salesaccnt_cor_accnt_id").toInt());
-    if (!q.value("salesaccnt_cow_accnt_id").isNull())
-      _cow->setId(q.value("salesaccnt_cow_accnt_id").toInt());
+    if (!salespopulate.value("salesaccnt_returns_accnt_id").isNull())
+      _returns->setId(salespopulate.value("salesaccnt_returns_accnt_id").toInt());
+    if (!salespopulate.value("salesaccnt_cor_accnt_id").isNull())
+      _cor->setId(salespopulate.value("salesaccnt_cor_accnt_id").toInt());
+    if (!salespopulate.value("salesaccnt_cow_accnt_id").isNull())
+      _cow->setId(salespopulate.value("salesaccnt_cow_accnt_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (salespopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, salespopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

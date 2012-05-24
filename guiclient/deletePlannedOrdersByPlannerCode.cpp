@@ -40,6 +40,7 @@ void deletePlannedOrdersByPlannerCode::languageChange()
 
 void deletePlannedOrdersByPlannerCode::sDelete()
 {
+  XSqlQuery deleteDelete;
   if (!_cutoffDate->isValid())
   {
     QMessageBox::critical( this, tr("Enter Cut Off Date"),
@@ -79,12 +80,12 @@ void deletePlannedOrdersByPlannerCode::sDelete()
   
   sql += ");";
 
-  q.prepare(sql);
-  q.bindValue(":deleteChildren", QVariant(_deleteChildren->isChecked()));
-  q.bindValue(":cutOffDate", _cutoffDate->date());
-  _warehouse->bindValue(q);
-  _plannerCode->bindValue(q);
-  q.exec();
+  deleteDelete.prepare(sql);
+  deleteDelete.bindValue(":deleteChildren", QVariant(_deleteChildren->isChecked()));
+  deleteDelete.bindValue(":cutOffDate", _cutoffDate->date());
+  _warehouse->bindValue(deleteDelete);
+  _plannerCode->bindValue(deleteDelete);
+  deleteDelete.exec();
 
   accept();
 }

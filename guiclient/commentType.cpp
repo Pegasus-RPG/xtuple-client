@@ -19,6 +19,7 @@
 commentType::commentType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery commentcommentType;
   setupUi(this);
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
@@ -34,11 +35,11 @@ commentType::commentType(QWidget* parent, const char* name, bool modal, Qt::WFla
   _available->addColumn("Available Sources", -1, Qt::AlignLeft);
   _granted->addColumn("Granted Sources", -1, Qt::AlignLeft);
   
-  q.exec( "SELECT DISTINCT source_module "
+  commentcommentType.exec( "SELECT DISTINCT source_module "
           "FROM source "
           "ORDER BY source_module;" );
-  for (int i = 0; q.next(); i++)
-    _module->insertItem(i, q.value("source_module").toString());
+  for (int i = 0; commentcommentType.next(); i++)
+    _module->insertItem(i, commentcommentType.value("source_module").toString());
 }
 
 commentType::~commentType()
@@ -53,6 +54,7 @@ void commentType::languageChange()
 
 enum SetResponse commentType::set(const ParameterList &pParams)
 {
+  XSqlQuery commentet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -70,9 +72,9 @@ enum SetResponse commentType::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      q.exec("SELECT NEXTVAL('cmnttype_cmnttype_id_seq') AS cmnttype_id");
-      if (q.first())
-        _cmnttypeid = q.value("cmnttype_id").toInt();
+      commentet.exec("SELECT NEXTVAL('cmnttype_cmnttype_id_seq') AS cmnttype_id");
+      if (commentet.first())
+        _cmnttypeid = commentet.value("cmnttype_id").toInt();
       else
       {
         systemError(this, tr("A System Error occurred at %1::%2.")
@@ -108,6 +110,7 @@ enum SetResponse commentType::set(const ParameterList &pParams)
 
 void commentType::sSave()
 {
+  XSqlQuery commentSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::information( this, tr("Cannot Save Comment Type"),
@@ -118,42 +121,43 @@ void commentType::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare( "INSERT INTO cmnttype "
+    commentSave.prepare( "INSERT INTO cmnttype "
                "( cmnttype_id, cmnttype_name, cmnttype_descrip, cmnttype_editable, cmnttype_order ) "
                "VALUES "
                "( :cmnttype_id, :cmnttype_name, :cmnttype_descrip, :cmnttype_editable, :cmnttype_order );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE cmnttype "
+    commentSave.prepare( "UPDATE cmnttype "
                "SET cmnttype_name=:cmnttype_name,"
                "    cmnttype_descrip=:cmnttype_descrip,"
                "    cmnttype_editable=:cmnttype_editable,"
                "    cmnttype_order=:cmnttype_order "
                "WHERE (cmnttype_id=:cmnttype_id);" );
 
-  q.bindValue(":cmnttype_id", _cmnttypeid);
-  q.bindValue(":cmnttype_name", _name->text());
-  q.bindValue(":cmnttype_descrip", _description->text());
-  q.bindValue(":cmnttype_editable", _editable->isChecked());
-  q.bindValue(":cmnttype_order", _order->value());
-  q.exec();
+  commentSave.bindValue(":cmnttype_id", _cmnttypeid);
+  commentSave.bindValue(":cmnttype_name", _name->text());
+  commentSave.bindValue(":cmnttype_descrip", _description->text());
+  commentSave.bindValue(":cmnttype_editable", _editable->isChecked());
+  commentSave.bindValue(":cmnttype_order", _order->value());
+  commentSave.exec();
 
   done(_cmnttypeid);
 }
 
 void commentType::sCheck()
 {
+  XSqlQuery commentCheck;
   _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT cmnttype_id "
+    commentCheck.prepare( "SELECT cmnttype_id "
                "FROM cmnttype "
                "WHERE (UPPER(cmnttype_name)=UPPER(:cmnttype_name));" );
-    q.bindValue(":cmnttype_name", _name->text());
-    q.exec();
-    if (q.first())
+    commentCheck.bindValue(":cmnttype_name", _name->text());
+    commentCheck.exec();
+    if (commentCheck.first())
     {
-      _cmnttypeid = q.value("cmnttype_id").toInt();
+      _cmnttypeid = commentCheck.value("cmnttype_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -164,37 +168,38 @@ void commentType::sCheck()
 
 void commentType::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery commentpopulate;
+  commentpopulate.prepare( "SELECT * "
              "FROM cmnttype "
              "WHERE (cmnttype_id=:cmnttype_id);" );
-  q.bindValue(":cmnttype_id", _cmnttypeid);
-  q.exec();
-  if (q.first())
+  commentpopulate.bindValue(":cmnttype_id", _cmnttypeid);
+  commentpopulate.exec();
+  if (commentpopulate.first())
   {
-    _name->setText(q.value("cmnttype_name"));
-    _description->setText(q.value("cmnttype_descrip"));
-    _editable->setChecked(q.value("cmnttype_editable").toBool());
-    _order->setValue(q.value("cmnttype_order").toInt());
-    if(q.value("cmnttype_sys").toBool())
+    _name->setText(commentpopulate.value("cmnttype_name"));
+    _description->setText(commentpopulate.value("cmnttype_descrip"));
+    _editable->setChecked(commentpopulate.value("cmnttype_editable").toBool());
+    _order->setValue(commentpopulate.value("cmnttype_order").toInt());
+    if(commentpopulate.value("cmnttype_sys").toBool())
     {
       _name->setEnabled(false);
       if(_name->text() == "ChangeLog")
         _editable->setEnabled(false);
     }
     
-    q.prepare( "SELECT source_module "
+    commentpopulate.prepare( "SELECT source_module "
                "FROM cmnttypesource, source "
                "WHERE ( (cmnttypesource_source_id=source_id)"
                " AND (cmnttypesource_cmnttype_id=:cmnttype_id) ) "
                "ORDER BY source_module "
                "LIMIT 1;" );
-    q.bindValue(":cmnttype_id", _cmnttypeid);
-    q.exec();
-    if (q.first())
+    commentpopulate.bindValue(":cmnttype_id", _cmnttypeid);
+    commentpopulate.exec();
+    if (commentpopulate.first())
     {
       for (int counter = 0; counter < _module->count(); counter++)
       {
-        if (_module->itemText(counter) == q.value("source_module").toString())
+        if (_module->itemText(counter) == commentpopulate.value("source_module").toString())
         {
           _module->setCurrentIndex(counter);
           sModuleSelected(_module->itemText(counter));
@@ -255,14 +260,15 @@ void commentType::sModuleSelected(const QString &pModule)
 
 void commentType::sAdd()
 {
-  q.prepare("SELECT grantCmnttypeSource(:cmnttype_id, :source_id) AS result;");
-  q.bindValue(":cmnttype_id", _cmnttypeid);
-  q.bindValue(":source_id", _available->id());
-  q.exec();
+  XSqlQuery commentAdd;
+  commentAdd.prepare("SELECT grantCmnttypeSource(:cmnttype_id, :source_id) AS result;");
+  commentAdd.bindValue(":cmnttype_id", _cmnttypeid);
+  commentAdd.bindValue(":source_id", _available->id());
+  commentAdd.exec();
   // no storedProcErrorLookup because the function returns bool, not int
-  if (q.lastError().type() != QSqlError::NoError)
+  if (commentAdd.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, commentAdd.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -271,13 +277,14 @@ void commentType::sAdd()
 
 void commentType::sAddAll()
 {
-  q.prepare("SELECT grantAllModuleCmnttypeSource(:cmnttype_id, :module) AS result;");
-  q.bindValue(":cmnttype_id", _cmnttypeid);
-  q.bindValue(":module", _module->currentText());
-  q.exec();
-  if (q.first())
+  XSqlQuery commentAddAll;
+  commentAddAll.prepare("SELECT grantAllModuleCmnttypeSource(:cmnttype_id, :module) AS result;");
+  commentAddAll.bindValue(":cmnttype_id", _cmnttypeid);
+  commentAddAll.bindValue(":module", _module->currentText());
+  commentAddAll.exec();
+  if (commentAddAll.first())
   {
-    int result = q.value("result").toInt();
+    int result = commentAddAll.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("grantAllModuleCmnttypeSource", result),
@@ -285,9 +292,9 @@ void commentType::sAddAll()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (commentAddAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, commentAddAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -296,14 +303,15 @@ void commentType::sAddAll()
 
 void commentType::sRevoke()
 {
-  q.prepare("SELECT revokeCmnttypeSource(:cmnttype_id, :source_id) AS result;");
-  q.bindValue(":cmnttype_id", _cmnttypeid);
-  q.bindValue(":source_id", _granted->id());
-  q.exec();
+  XSqlQuery commentRevoke;
+  commentRevoke.prepare("SELECT revokeCmnttypeSource(:cmnttype_id, :source_id) AS result;");
+  commentRevoke.bindValue(":cmnttype_id", _cmnttypeid);
+  commentRevoke.bindValue(":source_id", _granted->id());
+  commentRevoke.exec();
   // no storedProcErrorLookup because the function returns bool, not int
-  if (q.lastError().type() != QSqlError::NoError)
+  if (commentRevoke.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, commentRevoke.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -312,13 +320,14 @@ void commentType::sRevoke()
 
 void commentType::sRevokeAll()
 {
-  q.prepare("SELECT revokeAllModuleCmnttypeSource(:cmnttype_id, :module) AS result;");
-  q.bindValue(":cmnttype_id", _cmnttypeid);
-  q.bindValue(":module", _module->currentText());
-  q.exec();
-  if (q.first())
+  XSqlQuery commentRevokeAll;
+  commentRevokeAll.prepare("SELECT revokeAllModuleCmnttypeSource(:cmnttype_id, :module) AS result;");
+  commentRevokeAll.bindValue(":cmnttype_id", _cmnttypeid);
+  commentRevokeAll.bindValue(":module", _module->currentText());
+  commentRevokeAll.exec();
+  if (commentRevokeAll.first())
   {
-    int result = q.value("result").toInt();
+    int result = commentRevokeAll.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("revokeAllModuleCmnttypeSource", result),
@@ -326,9 +335,9 @@ void commentType::sRevokeAll()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (commentRevokeAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, commentRevokeAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

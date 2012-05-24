@@ -99,13 +99,14 @@ void customerFormAssignments::sView()
 
 void customerFormAssignments::sDelete()
 {
-  q.prepare( "DELETE FROM custform "
+  XSqlQuery customerDelete;
+  customerDelete.prepare( "DELETE FROM custform "
              "WHERE (custform_id=:custform_id);" );
-  q.bindValue(":custform_id", _custform->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  customerDelete.bindValue(":custform_id", _custform->id());
+  customerDelete.exec();
+  if (customerDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -113,7 +114,8 @@ void customerFormAssignments::sDelete()
 
 void customerFormAssignments::sFillList()
 {
-  q.prepare( "SELECT custform_id,"
+  XSqlQuery customerFillList;
+  customerFillList.prepare( "SELECT custform_id,"
              "       CASE WHEN custform_custtype_id=-1 THEN custform_custtype"
              "            ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=custform_custtype_id))"
              "       END AS custtypecode,"
@@ -125,12 +127,12 @@ void customerFormAssignments::sFillList()
              "       COALESCE(custform_sopicklist_report_name, :default) AS sopicklist "
              "FROM custform "
              "ORDER BY custtypecode;" );
-  q.bindValue(":default", tr("Default"));
-  q.exec();
-  _custform->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  customerFillList.bindValue(":default", tr("Default"));
+  customerFillList.exec();
+  _custform->populate(customerFillList);
+  if (customerFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

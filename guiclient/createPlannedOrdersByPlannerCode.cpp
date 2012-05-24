@@ -41,6 +41,7 @@ void createPlannedOrdersByPlannerCode::languageChange()
 
 void createPlannedOrdersByPlannerCode::sCreate()
 {
+  XSqlQuery createCreate;
   ParameterList params;
   if (! setParams(params))
     return;
@@ -50,30 +51,31 @@ void createPlannedOrdersByPlannerCode::sCreate()
 
 void createPlannedOrdersByPlannerCode::sCreate(ParameterList params)
 {
+  XSqlQuery createCreate;
   QProgressDialog progress;
   progress.setWindowModality(Qt::ApplicationModal);
 
   MetaSQLQuery mql = mqlLoad("schedule", "load");
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  createCreate = mql.toQuery(params);
+  if (createCreate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, createCreate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   int count=0;
-  progress.setMaximum(q.size());
+  progress.setMaximum(createCreate.size());
   XSqlQuery create;
-  while (q.next())
+  while (createCreate.next())
   {
     progress.setLabelText(tr("Site: %1\n"
                              "Item: %2 - %3")
-                          .arg(q.value("warehous_code").toString())
-                          .arg(q.value("item_number").toString())
-                          .arg(q.value("item_descrip1").toString()));
+                          .arg(createCreate.value("warehous_code").toString())
+                          .arg(createCreate.value("item_number").toString())
+                          .arg(createCreate.value("item_descrip1").toString()));
 
     ParameterList rparams = params;
-    rparams.append("itemsite_id", q.value("itemsite_id"));
+    rparams.append("itemsite_id", createCreate.value("itemsite_id"));
     MetaSQLQuery mql2 = mqlLoad("schedule", "create");
     create = mql2.toQuery(rparams);
     if (create.lastError().type() != QSqlError::NoError)

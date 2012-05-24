@@ -76,6 +76,7 @@ enum SetResponse labelForm::set(const ParameterList &pParams)
 
 void labelForm::sSave()
 {
+  XSqlQuery labelSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::warning( this, tr("Format Name is Invalid"),
@@ -94,53 +95,53 @@ void labelForm::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare( "SELECT labelform_id "
+    labelSave.prepare( "SELECT labelform_id "
          	     "FROM labelform "
                "WHERE (labelform_name=:labelform_name);" );
-    q.bindValue(":labelform_name", _name->text());
-    q.exec();
-    if (q.first())
+    labelSave.bindValue(":labelform_name", _name->text());
+    labelSave.exec();
+    if (labelSave.first())
     {
       QMessageBox::warning( this, tr("Format Name is Invalid"),
                             tr("<p>This Label Form Name already exists.") );
       _name->setFocus();
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (labelSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, labelSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.exec("SELECT NEXTVAL('labelform_labelform_id_seq') AS _labelform_id");
-    if (q.first())
-      _labelformid = q.value("_labelform_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    labelSave.exec("SELECT NEXTVAL('labelform_labelform_id_seq') AS _labelform_id");
+    if (labelSave.first())
+      _labelformid = labelSave.value("_labelform_id").toInt();
+    else if (labelSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, labelSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO labelform "
+    labelSave.prepare( "INSERT INTO labelform "
                "(labelform_id, labelform_name, labelform_report_name, labelform_perpage) "
                "VALUES "
                "(:labelform_id, :labelform_name, :labelform_report_name, :labelform_perpage);" );
 
   }
   if (_mode == cEdit)
-    q.prepare( "UPDATE labelform "
+    labelSave.prepare( "UPDATE labelform "
                "SET labelform_name=:labelform_name, labelform_report_name=:labelform_report_name,"
                "    labelform_perpage=:labelform_perpage "
                "WHERE (labelform_id=:labelform_id);" );
 
-  q.bindValue(":labelform_id", _labelformid);
-  q.bindValue(":labelform_name", _name->text());
-  q.bindValue(":labelform_report_name", _report->code());
-  q.bindValue(":labelform_perpage", _labelsPerPage->value());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  labelSave.bindValue(":labelform_id", _labelformid);
+  labelSave.bindValue(":labelform_name", _name->text());
+  labelSave.bindValue(":labelform_report_name", _report->code());
+  labelSave.bindValue(":labelform_perpage", _labelsPerPage->value());
+  labelSave.exec();
+  if (labelSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, labelSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -149,20 +150,21 @@ void labelForm::sSave()
 
 void labelForm::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery labelpopulate;
+  labelpopulate.prepare( "SELECT * "
        	     "FROM labelform "
 	     "WHERE (labelform_id=:labelform_id);" );
-  q.bindValue(":labelform_id", _labelformid);
-  q.exec();
-  if (q.first())
+  labelpopulate.bindValue(":labelform_id", _labelformid);
+  labelpopulate.exec();
+  if (labelpopulate.first())
   {
-    _name->setText(q.value("labelform_name").toString());
-    _report->setCode(q.value("labelform_report_name").toString());
-    _labelsPerPage->setValue(q.value("labelform_perpage").toInt());
+    _name->setText(labelpopulate.value("labelform_name").toString());
+    _report->setCode(labelpopulate.value("labelform_report_name").toString());
+    _labelsPerPage->setValue(labelpopulate.value("labelform_perpage").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (labelpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, labelpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

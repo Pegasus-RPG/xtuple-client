@@ -76,6 +76,7 @@ void copyItem::sHandleItemType(const QString &pItemType)
 
 bool copyItem::okToSave()
 {
+  XSqlQuery copyokToSave;
   _targetItemNumber->setText(_targetItemNumber->text().trimmed().toUpper());
 
   if (_targetItemNumber->text().length() == 0)
@@ -86,12 +87,12 @@ bool copyItem::okToSave()
     return false;
   }
 
-  q.prepare( "SELECT item_number "
+  copyokToSave.prepare( "SELECT item_number "
              "FROM item "
              "WHERE item_number=:item_number;" );
-  q.bindValue(":item_number", _targetItemNumber->text());
-  q.exec();
-  if (q.first())
+  copyokToSave.bindValue(":item_number", _targetItemNumber->text());
+  copyokToSave.exec();
+  if (copyokToSave.first())
   {
     QMessageBox::critical(this, tr("Item Number Exists"),
                           tr("<p>An Item with the item number '%1' already "
@@ -125,20 +126,21 @@ void copyItem::createItemSites(int pItemid)
 
 void copyItem::sCopy()
 {
+  XSqlQuery copyCopy;
   if (! okToSave())
     return;
 
   int itemid = -1;
 
-  q.prepare("SELECT copyItem(:source_item_id, :newItemNumber, :copyBOM, :copyItemCosts) AS itemid;");
-  q.bindValue(":source_item_id", _source->id());
-  q.bindValue(":newItemNumber", _targetItemNumber->text());
-  q.bindValue(":copyBOM",       QVariant(_copyBOM->isChecked()));
-  q.bindValue(":copyItemCosts", QVariant(_copyCosts->isChecked()));
-  q.exec();
-  if (q.first())
+  copyCopy.prepare("SELECT copyItem(:source_item_id, :newItemNumber, :copyBOM, :copyItemCosts) AS itemid;");
+  copyCopy.bindValue(":source_item_id", _source->id());
+  copyCopy.bindValue(":newItemNumber", _targetItemNumber->text());
+  copyCopy.bindValue(":copyBOM",       QVariant(_copyBOM->isChecked()));
+  copyCopy.bindValue(":copyItemCosts", QVariant(_copyCosts->isChecked()));
+  copyCopy.exec();
+  if (copyCopy.first())
   {
-    itemid = q.value("itemid").toInt();
+    itemid = copyCopy.value("itemid").toInt();
     if (itemid < 0)
     {
       systemError(this, storedProcErrorLookup("copyItem", itemid),
@@ -154,9 +156,9 @@ void copyItem::sCopy()
     createItemSites(itemid);
 
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (copyCopy.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

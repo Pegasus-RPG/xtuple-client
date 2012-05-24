@@ -47,6 +47,7 @@ void invoiceList::languageChange()
 
 enum SetResponse invoiceList::set(const ParameterList &pParams)
 {
+  XSqlQuery invoiceet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -62,15 +63,15 @@ enum SetResponse invoiceList::set(const ParameterList &pParams)
     _cust->setId(param.toInt());
   else if (! _invoiceNumber.isEmpty())
   {
-    q.prepare( "SELECT invchead_id, invchead_cust_id "
+    invoiceet.prepare( "SELECT invchead_id, invchead_cust_id "
                "FROM invchead "
                "WHERE (invchead_invcnumber=:invoiceNumber) ;" );
-    q.bindValue(":invoiceNumber", _invoiceNumber);
-    q.exec();
-    if (q.first())
+    invoiceet.bindValue(":invoiceNumber", _invoiceNumber);
+    invoiceet.exec();
+    if (invoiceet.first())
     {
-      _invoiceid = q.value("invchead_id").toInt();
-      _cust->setId(q.value("invchead_cust_id").toInt());
+      _invoiceid = invoiceet.value("invchead_id").toInt();
+      _cust->setId(invoiceet.value("invchead_cust_id").toInt());
     }
   }
 
@@ -89,7 +90,8 @@ void invoiceList::sSelect()
 
 void invoiceList::sFillList()
 {
-  q.prepare( "SELECT DISTINCT invchead_id, invchead_invcnumber, invchead_invcdate,"
+  XSqlQuery invoiceFillList;
+  invoiceFillList.prepare( "SELECT DISTINCT invchead_id, invchead_invcnumber, invchead_invcdate,"
              "                invchead_ordernumber, invchead_shipdate,"
              "                COALESCE(invchead_ponumber, '') AS invchead_ponumber "
              "FROM invchead "
@@ -97,9 +99,9 @@ void invoiceList::sFillList()
              "  AND   (invchead_invcdate BETWEEN :startDate AND :endDate)"
              " AND (invchead_cust_id=:cust_id) ) "
              "ORDER BY invchead_invcnumber DESC;" );
-  q.bindValue(":cust_id", _cust->id());
-  _dates->bindValue(q);
-  q.exec();
-  _invoice->populate(q, _invoiceid);
+  invoiceFillList.bindValue(":cust_id", _cust->id());
+  _dates->bindValue(invoiceFillList);
+  invoiceFillList.exec();
+  _invoice->populate(invoiceFillList, _invoiceid);
 }
 

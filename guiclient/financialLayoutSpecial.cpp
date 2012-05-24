@@ -93,10 +93,11 @@ void financialLayoutSpecial::sCheck()
 
 void financialLayoutSpecial::sSave()
 {
+  XSqlQuery financialSave;
   int order = 1;
   if (_mode == cNew)
   {
-    q.prepare("SELECT COALESCE(MAX(ord),0) + 1 AS neworder"
+    financialSave.prepare("SELECT COALESCE(MAX(ord),0) + 1 AS neworder"
               "  FROM (SELECT flgrp_order AS ord"
               "          FROM flgrp"
               "         WHERE ((flgrp_flgrp_id=:flgrp_id)"
@@ -111,21 +112,21 @@ void financialLayoutSpecial::sSave()
               "          FROM flspec"
               "         WHERE ((flspec_flgrp_id=:flgrp_id)"
               "           AND  (flspec_flhead_id=:flhead_id)) ) AS data;" );
-    q.bindValue(":flgrp_id", _flgrpid);
-    q.bindValue(":flhead_id", _flheadid);
-    q.exec();
+    financialSave.bindValue(":flgrp_id", _flgrpid);
+    financialSave.bindValue(":flhead_id", _flheadid);
+    financialSave.exec();
 
-    if(q.first())
-      order = q.value("neworder").toInt();
+    if(financialSave.first())
+      order = financialSave.value("neworder").toInt();
   }
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('flspec_flspec_id_seq') AS flspec_id;");
-    if (q.first())
-      _flspecid = q.value("flspec_id").toInt();
+    financialSave.exec("SELECT NEXTVAL('flspec_flspec_id_seq') AS flspec_id;");
+    if (financialSave.first())
+      _flspecid = financialSave.value("flspec_id").toInt();
     
-    q.prepare( "INSERT INTO flspec "
+    financialSave.prepare( "INSERT INTO flspec "
                "( flspec_id, flspec_flhead_id, flspec_flgrp_id, flspec_order,"
                "  flspec_name, flspec_type, flspec_showstart, flspec_showend, flspec_showdelta,"
                "  flspec_showbudget, flspec_showdiff, flspec_showcustom,"
@@ -141,7 +142,7 @@ void financialLayoutSpecial::sSave()
                "  :flspec_prcnt_flgrp_id, :flspec_custom_source);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE flspec "
+    financialSave.prepare( "UPDATE flspec "
                "SET flspec_name=:flspec_name, flspec_type=:flspec_type,"
                "    flspec_showstart=:flspec_showstart,"
                "    flspec_showend=:flspec_showend, flspec_showdelta=:flspec_showdelta,"
@@ -153,78 +154,79 @@ void financialLayoutSpecial::sSave()
                "    flspec_prcnt_flgrp_id=:flspec_prcnt_flgrp_id, flspec_custom_source=:flspec_custom_source "
                "WHERE (flspec_id=:flspec_id);" );
   
-  q.bindValue(":flspec_flhead_id", _flheadid);
-  q.bindValue(":flspec_flgrp_id", _flgrpid);
-  q.bindValue(":flspec_order", order);
-  q.bindValue(":flspec_name", _name->text());
-  q.bindValue(":flspec_showstart", QVariant(_showBeginning->isChecked()));
-  q.bindValue(":flspec_showend", QVariant(_showEnding->isChecked()));
-  q.bindValue(":flspec_showdelta", QVariant(_showDB->isChecked()));
-  q.bindValue(":flspec_showbudget", QVariant(_showBudget->isChecked()));
-  q.bindValue(":flspec_showdiff", QVariant(_showDiff->isChecked()));
-  q.bindValue(":flspec_showcustom", QVariant(_showCustom->isChecked()));
-  q.bindValue(":flspec_subtract", QVariant(_subtract->isChecked()));
-  q.bindValue(":flspec_showstartprcnt", QVariant(_showBeginning->isChecked() && _showBeginningPrcnt->isChecked()));
-  q.bindValue(":flspec_showendprcnt", QVariant(_showEnding->isChecked() && _showEndingPrcnt->isChecked()));
-  q.bindValue(":flspec_showdeltaprcnt", QVariant(_showDB->isChecked() && _showDBPrcnt->isChecked()));
-  q.bindValue(":flspec_showbudgetprcnt", QVariant(_showBudget->isChecked() && _showBudgetPrcnt->isChecked()));
-  q.bindValue(":flspec_showdiffprcnt", QVariant(_showDiff->isChecked() && _showDiffPrcnt->isChecked()));
-  q.bindValue(":flspec_showcustomprcnt", QVariant(_showCustom->isChecked() && _showCustomPrcnt->isChecked()));
-  q.bindValue(":flspec_prcnt_flgrp_id", _group->id());
-  q.bindValue(":flspec_id", _flspecid);
+  financialSave.bindValue(":flspec_flhead_id", _flheadid);
+  financialSave.bindValue(":flspec_flgrp_id", _flgrpid);
+  financialSave.bindValue(":flspec_order", order);
+  financialSave.bindValue(":flspec_name", _name->text());
+  financialSave.bindValue(":flspec_showstart", QVariant(_showBeginning->isChecked()));
+  financialSave.bindValue(":flspec_showend", QVariant(_showEnding->isChecked()));
+  financialSave.bindValue(":flspec_showdelta", QVariant(_showDB->isChecked()));
+  financialSave.bindValue(":flspec_showbudget", QVariant(_showBudget->isChecked()));
+  financialSave.bindValue(":flspec_showdiff", QVariant(_showDiff->isChecked()));
+  financialSave.bindValue(":flspec_showcustom", QVariant(_showCustom->isChecked()));
+  financialSave.bindValue(":flspec_subtract", QVariant(_subtract->isChecked()));
+  financialSave.bindValue(":flspec_showstartprcnt", QVariant(_showBeginning->isChecked() && _showBeginningPrcnt->isChecked()));
+  financialSave.bindValue(":flspec_showendprcnt", QVariant(_showEnding->isChecked() && _showEndingPrcnt->isChecked()));
+  financialSave.bindValue(":flspec_showdeltaprcnt", QVariant(_showDB->isChecked() && _showDBPrcnt->isChecked()));
+  financialSave.bindValue(":flspec_showbudgetprcnt", QVariant(_showBudget->isChecked() && _showBudgetPrcnt->isChecked()));
+  financialSave.bindValue(":flspec_showdiffprcnt", QVariant(_showDiff->isChecked() && _showDiffPrcnt->isChecked()));
+  financialSave.bindValue(":flspec_showcustomprcnt", QVariant(_showCustom->isChecked() && _showCustomPrcnt->isChecked()));
+  financialSave.bindValue(":flspec_prcnt_flgrp_id", _group->id());
+  financialSave.bindValue(":flspec_id", _flspecid);
 
   if(_customUseBeginning->isChecked())
-    q.bindValue(":flspec_custom_source", "S");
+    financialSave.bindValue(":flspec_custom_source", "S");
   else if(_customUseEnding->isChecked())
-    q.bindValue(":flspec_custom_source", "E");
+    financialSave.bindValue(":flspec_custom_source", "E");
   else if(_customUseDebits->isChecked())
-    q.bindValue(":flspec_custom_source", "D");
+    financialSave.bindValue(":flspec_custom_source", "D");
   else if(_customUseCredits->isChecked())
-    q.bindValue(":flspec_custom_source", "C");
+    financialSave.bindValue(":flspec_custom_source", "C");
   else if(_customUseBudget->isChecked())
-    q.bindValue(":flspec_custom_source", "B");
+    financialSave.bindValue(":flspec_custom_source", "B");
   else if(_customUseDiff->isChecked())
-    q.bindValue(":flspec_custom_source", "F");
+    financialSave.bindValue(":flspec_custom_source", "F");
 
   switch(_type->currentIndex())
   {
     case 1:
-      q.bindValue(":flspec_type", "OpenAP");
+      financialSave.bindValue(":flspec_type", "OpenAP");
       break;
     case 0:
     default:
-      q.bindValue(":flspec_type", "OpenAR");
+      financialSave.bindValue(":flspec_type", "OpenAR");
   }
 
-  q.exec();
+  financialSave.exec();
   
   done(_flspecid);
 }
 
 void financialLayoutSpecial::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery financialpopulate;
+  financialpopulate.prepare( "SELECT * "
              "FROM flspec "
              "WHERE (flspec_id=:flspec_id);" );
-  q.bindValue(":flspec_id", _flspecid);
-  q.exec();
-  if (q.first())
+  financialpopulate.bindValue(":flspec_id", _flspecid);
+  financialpopulate.exec();
+  if (financialpopulate.first())
   {
-    _name->setText(q.value("flspec_name").toString());
-    _showBeginning->setChecked(q.value("flspec_showstart").toBool());
-    _showEnding->setChecked(q.value("flspec_showend").toBool());
-    _showDB->setChecked(q.value("flspec_showdelta").toBool());
-    _showBudget->setChecked(q.value("flspec_showbudget").toBool());
-    _showDiff->setChecked(q.value("flspec_showdiff").toBool());
-    _showCustom->setChecked(q.value("flspec_showcustom").toBool());
-    _showBeginningPrcnt->setChecked(q.value("flspec_showstartprcnt").toBool());
-    _showEndingPrcnt->setChecked(q.value("flspec_showendprcnt").toBool());
-    _showDBPrcnt->setChecked(q.value("flspec_showdeltaprcnt").toBool());
-    _showBudgetPrcnt->setChecked(q.value("flspec_showbudgetprcnt").toBool());
-    _showDiffPrcnt->setChecked(q.value("flspec_showdiffprcnt").toBool());
-    _showCustomPrcnt->setChecked(q.value("flspec_showcustomprcnt").toBool());
+    _name->setText(financialpopulate.value("flspec_name").toString());
+    _showBeginning->setChecked(financialpopulate.value("flspec_showstart").toBool());
+    _showEnding->setChecked(financialpopulate.value("flspec_showend").toBool());
+    _showDB->setChecked(financialpopulate.value("flspec_showdelta").toBool());
+    _showBudget->setChecked(financialpopulate.value("flspec_showbudget").toBool());
+    _showDiff->setChecked(financialpopulate.value("flspec_showdiff").toBool());
+    _showCustom->setChecked(financialpopulate.value("flspec_showcustom").toBool());
+    _showBeginningPrcnt->setChecked(financialpopulate.value("flspec_showstartprcnt").toBool());
+    _showEndingPrcnt->setChecked(financialpopulate.value("flspec_showendprcnt").toBool());
+    _showDBPrcnt->setChecked(financialpopulate.value("flspec_showdeltaprcnt").toBool());
+    _showBudgetPrcnt->setChecked(financialpopulate.value("flspec_showbudgetprcnt").toBool());
+    _showDiffPrcnt->setChecked(financialpopulate.value("flspec_showdiffprcnt").toBool());
+    _showCustomPrcnt->setChecked(financialpopulate.value("flspec_showcustomprcnt").toBool());
 
-    QString src = q.value("flspec_custom_source").toString();
+    QString src = financialpopulate.value("flspec_custom_source").toString();
     if("S" == src)
       _customUseBeginning->setChecked(true);
     else if("E" == src)
@@ -238,19 +240,19 @@ void financialLayoutSpecial::populate()
     else if("F" == src)
       _customUseDiff->setChecked(true);
 
-    if(q.value("flspec_subtract").toBool())
+    if(financialpopulate.value("flspec_subtract").toBool())
       _subtract->setChecked(true);
     else
       _add->setChecked(true);
 
-    if(q.value("flspec_type").toString() == "OpenAP")
+    if(financialpopulate.value("flspec_type").toString() == "OpenAP")
       _type->setCurrentIndex(1);
-    else //if(q.value("flspec_type").toString() == "OpenAR")
+    else //if(financialpopulate.value("flspec_type").toString() == "OpenAR")
       _type->setCurrentIndex(0);
 
-    _flheadid = q.value("flspec_flhead_id").toInt();
+    _flheadid = financialpopulate.value("flspec_flhead_id").toInt();
 
-    int grpid = q.value("flspec_prcnt_flgrp_id").toInt();
+    int grpid = financialpopulate.value("flspec_prcnt_flgrp_id").toInt();
     sFillGroupList();
     _group->setId(grpid);
   }
@@ -258,15 +260,16 @@ void financialLayoutSpecial::populate()
 
 void financialLayoutSpecial::sFillGroupList()
 {
+  XSqlQuery financialFillGroupList;
   _group->clear();
-  q.prepare("SELECT flgrp_id, flgrp_name"
+  financialFillGroupList.prepare("SELECT flgrp_id, flgrp_name"
             "  FROM flgrp"
             " WHERE (flgrp_flhead_id=:flhead_id)"
             " ORDER BY flgrp_name;");
-  q.bindValue(":flhead_id", _flheadid);
-  q.exec();
+  financialFillGroupList.bindValue(":flhead_id", _flheadid);
+  financialFillGroupList.exec();
   _group->append(-1, tr("Parent"));
-  while(q.next())
-    _group->append(q.value("flgrp_id").toInt(), q.value("flgrp_name").toString());
+  while(financialFillGroupList.next())
+    _group->append(financialFillGroupList.value("flgrp_id").toInt(), financialFillGroupList.value("flgrp_name").toString());
 }
 

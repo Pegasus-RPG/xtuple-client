@@ -40,25 +40,26 @@ void postCreditMemos::languageChange()
 
 void postCreditMemos::sPost()
 {
-  q.exec( "SELECT cmhead_printed, COUNT(*) AS number "
+  XSqlQuery postPost;
+  postPost.exec( "SELECT cmhead_printed, COUNT(*) AS number "
           "FROM ( SELECT cmhead_id, cmhead_printed "
           "       FROM cmhead "
           "       WHERE (NOT cmhead_posted) ) AS data "
           "WHERE (checkCreditMemoSitePrivs(cmhead_id)) "
           "GROUP BY cmhead_printed;" );
-  if (q.first())
+  if (postPost.first())
   {
     int printed   = 0;
     int unprinted = 0;
 
     do
     {
-      if (q.value("cmhead_printed").toBool())
-        printed = q.value("number").toInt();
+      if (postPost.value("cmhead_printed").toBool())
+        printed = postPost.value("number").toInt();
       else
-        unprinted = q.value("number").toInt();
+        unprinted = postPost.value("number").toInt();
     }
-    while (q.next());
+    while (postPost.next());
 
     if ( ( (unprinted) && (!printed) ) && (!_postUnprinted->isChecked()) )
     {
@@ -78,8 +79,8 @@ void postCreditMemos::sPost()
     return;
   }
 
-  q.exec("SELECT fetchJournalNumber('AR-CM') AS result");
-  if (!q.first())
+  postPost.exec("SELECT fetchJournalNumber('AR-CM') AS result");
+  if (!postPost.first())
   {
     systemError(this, tr("A System Error occurred at %1::%2.")
                       .arg(__FILE__)
@@ -87,19 +88,19 @@ void postCreditMemos::sPost()
     return;
   }
 
-  int journalNumber = q.value("result").toInt();
+  int journalNumber = postPost.value("result").toInt();
   
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  q.prepare("SELECT postCreditMemos(:postUnprinted, :journalNumber) AS result;");
-  q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
-  q.bindValue(":journalNumber", journalNumber);
-  q.exec();
-  if (q.first())
+  postPost.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  postPost.prepare("SELECT postCreditMemos(:postUnprinted, :journalNumber) AS result;");
+  postPost.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
+  postPost.bindValue(":journalNumber", journalNumber);
+  postPost.exec();
+  if (postPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = postPost.value("result").toInt();
 
     if (result == -5)
     {
@@ -116,17 +117,17 @@ void postCreditMemos::sPost()
       rollback.exec();
       systemError( this, tr("A System Error occurred at postCreditMemos::%1, Error #%2.")
                          .arg(__LINE__)
-                         .arg(q.value("result").toInt()) );
+                         .arg(postPost.value("result").toInt()) );
       return;
     }
-    else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    else if (distributeInventory::SeriesAdjust(postPost.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
       QMessageBox::information( this, tr("Post Credit Memos"), tr("Transaction Canceled") );
       return;
     }
 
-    q.exec("COMMIT;");
+    postPost.exec("COMMIT;");
 
     if (_printJournal->isChecked())
     {

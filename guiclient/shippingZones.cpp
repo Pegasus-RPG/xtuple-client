@@ -63,12 +63,13 @@ void shippingZones::languageChange()
 
 void shippingZones::sDelete()
 {
-  q.prepare( "SELECT shipto_id "
+  XSqlQuery shippingDelete;
+  shippingDelete.prepare( "SELECT shipto_id "
              "FROM shiptoinfo "
              "WHERE (shipto_shipzone_id=:shipzone_id);" );
-  q.bindValue(":shipzone_id", _shipzone->id());
-  q.exec();
-  if (q.first())
+  shippingDelete.bindValue(":shipzone_id", _shipzone->id());
+  shippingDelete.exec();
+  if (shippingDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Shipping Zone"),
                            tr( "The selected Shipping Zone cannot be deleted as there are one or more Ship-Tos assigned to it.\n"
@@ -76,10 +77,10 @@ void shippingZones::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM shipzone "
+  shippingDelete.prepare( "DELETE FROM shipzone "
              "WHERE (shipzone_id=:shipzone_id);" );
-  q.bindValue(":shipzone_id", _shipzone->id());
-  q.exec();
+  shippingDelete.bindValue(":shipzone_id", _shipzone->id());
+  shippingDelete.exec();
 
   sFillList();
 }

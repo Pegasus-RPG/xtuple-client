@@ -84,6 +84,7 @@ enum SetResponse userCostingElement::set(const ParameterList &pParams)
 
 void userCostingElement::sSave()
 {
+  XSqlQuery userSave;
   if (_name->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Costing Element"),
@@ -102,9 +103,9 @@ void userCostingElement::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('costelem_costelem_id_seq') AS _costelem_id");
-    if (q.first())
-      _costelemid = q.value("_costelem_id").toInt();
+    userSave.exec("SELECT NEXTVAL('costelem_costelem_id_seq') AS _costelem_id");
+    if (userSave.first())
+      _costelemid = userSave.value("_costelem_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -113,7 +114,7 @@ void userCostingElement::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO costelem "
+    userSave.prepare( "INSERT INTO costelem "
                "( costelem_id, costelem_type, costelem_active,"
                "  costelem_sys, costelem_po, costelem_cost_item_id, costelem_exp_accnt_id ) "
                "VALUES "
@@ -122,14 +123,14 @@ void userCostingElement::sSave()
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT costelem_id "
+    userSave.prepare( "SELECT costelem_id "
                "FROM costelem "
                "WHERE ( (costelem_id <> :costelem_id)"
                "AND (costelem_type=:costelem_type) );" );
-    q.bindValue(":costelem_id", _costelemid);
-    q.bindValue(":costelem_type", _name->text().trimmed());
-    q.exec();
-    if (q.first())
+    userSave.bindValue(":costelem_id", _costelemid);
+    userSave.bindValue(":costelem_type", _name->text().trimmed());
+    userSave.exec();
+    if (userSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Save Costing Element"),
                              tr( "A Costing Elements with the entered code already exists.\n"
@@ -138,7 +139,7 @@ void userCostingElement::sSave()
       return;
     }
 
-    q.prepare( "UPDATE costelem "
+    userSave.prepare( "UPDATE costelem "
                "SET costelem_type=:costelem_type,"
                "    costelem_active=:costelem_active, costelem_po=:costelem_po,"
                "    costelem_cost_item_id=:costelem_cost_item_id,"
@@ -146,45 +147,46 @@ void userCostingElement::sSave()
                "WHERE (costelem_id=:costelem_id);" );
   }
 
-  q.bindValue(":costelem_id", _costelemid);
-  q.bindValue(":costelem_type", _name->text().trimmed());
-  q.bindValue(":costelem_active", QVariant(_active->isChecked()));
-  q.bindValue(":costelem_po", QVariant(_acceptPO->isChecked()));
+  userSave.bindValue(":costelem_id", _costelemid);
+  userSave.bindValue(":costelem_type", _name->text().trimmed());
+  userSave.bindValue(":costelem_active", QVariant(_active->isChecked()));
+  userSave.bindValue(":costelem_po", QVariant(_acceptPO->isChecked()));
   if (_expense->isEnabled() && _expense->isValid())
-    q.bindValue(":costelem_exp_accnt_id",_expense->id());
+    userSave.bindValue(":costelem_exp_accnt_id",_expense->id());
 
   if (_useCostItem->isChecked())
-    q.bindValue(":costelem_cost_item_id", _item->id());
+    userSave.bindValue(":costelem_cost_item_id", _item->id());
   else
-    q.bindValue(":costelem_cost_item_id", -1);
+    userSave.bindValue(":costelem_cost_item_id", -1);
 
-  q.exec();
+  userSave.exec();
 
   done(_costelemid);
 }
 
 void userCostingElement::populate()
 {
-  q.prepare( "SELECT costelem_type, costelem_active,"
+  XSqlQuery userpopulate;
+  userpopulate.prepare( "SELECT costelem_type, costelem_active,"
              "       costelem_po, costelem_cost_item_id, costelem_exp_accnt_id "
              "FROM costelem "
              "WHERE (costelem_id=:costelem_id);" );
-  q.bindValue(":costelem_id", _costelemid);
-  q.exec();
-  if (q.first())
+  userpopulate.bindValue(":costelem_id", _costelemid);
+  userpopulate.exec();
+  if (userpopulate.first())
   {
-    _name->setText(q.value("costelem_type").toString());
-    _expense->setId(q.value("costelem_exp_accnt_id").toInt());
-    _active->setChecked(q.value("costelem_active").toBool());
+    _name->setText(userpopulate.value("costelem_type").toString());
+    _expense->setId(userpopulate.value("costelem_exp_accnt_id").toInt());
+    _active->setChecked(userpopulate.value("costelem_active").toBool());
 
-    if (q.value("costelem_po").toBool())
+    if (userpopulate.value("costelem_po").toBool())
       _acceptPO->setChecked(TRUE);
     else
     {
-      if (q.value("costelem_cost_item_id").toInt() != -1)
+      if (userpopulate.value("costelem_cost_item_id").toInt() != -1)
       {
         _useCostItem->setChecked(TRUE);
-        _item->setId(q.value("costelem_cost_item_id").toInt());
+        _item->setId(userpopulate.value("costelem_cost_item_id").toInt());
       }
     }
   }
@@ -192,17 +194,18 @@ void userCostingElement::populate()
 
 bool userCostingElement::sCheck()
 {
+  XSqlQuery userCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
-    q.prepare( "SELECT costelem_id "
+    userCheck.prepare( "SELECT costelem_id "
                "FROM costelem "
                "WHERE (UPPER(costelem_type)= UPPER(:costelem_type));" );
-    q.bindValue(":costelem_type", _name->text());
-    q.exec();
-    if (q.first())
+    userCheck.bindValue(":costelem_type", _name->text());
+    userCheck.exec();
+    if (userCheck.first())
     {
-      _costelemid = q.value("costelem_id").toInt();
+      _costelemid = userCheck.value("costelem_id").toInt();
       _mode = cEdit;
       populate();
       return TRUE;

@@ -76,10 +76,11 @@ void sales::sEdit()
 
 void sales::sDelete()
 {
-  q.prepare( "DELETE FROM sale "
+  XSqlQuery salesDelete;
+  salesDelete.prepare( "DELETE FROM sale "
              "WHERE (sale_id=:sale_id);" );
-  q.bindValue(":sale_id", _sale->id());
-  q.exec();
+  salesDelete.bindValue(":sale_id", _sale->id());
+  salesDelete.exec();
 
   sFillList();
 }

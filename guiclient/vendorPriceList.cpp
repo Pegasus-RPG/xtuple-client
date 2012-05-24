@@ -17,7 +17,7 @@ vendorPriceList::vendorPriceList(QWidget* parent, const char* name, bool modal, 
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-
+  XSqlQuery vendorPrice;
 
   // signals and slots connections
   connect(_price, SIGNAL(clicked(QModelIndex)), this, SLOT(sQtyUpdate()));
@@ -28,9 +28,9 @@ vendorPriceList::vendorPriceList(QWidget* parent, const char* name, bool modal, 
   connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sQtyEntered()));
 
   QString base;
-  q.exec("SELECT currConcat(baseCurrID()) AS base;");
-  if (q.first())
-    base = q.value("base").toString();
+  vendorPrice.exec("SELECT currConcat(baseCurrID()) AS base;");
+  if (vendorPrice.first())
+    base = vendorPrice.value("base").toString();
   else
     base = tr("Base");
 
@@ -80,15 +80,16 @@ enum SetResponse vendorPriceList::set(const ParameterList &pParams)
 
 void vendorPriceList::sQtyUpdate()
 {
-  q.prepare( "SELECT itemsrcp_qtybreak "
+  XSqlQuery vendorQtyUpdate;
+  vendorQtyUpdate.prepare( "SELECT itemsrcp_qtybreak "
              "FROM itemsrcp "
              "WHERE (itemsrcp_id=:itemsrcp_id) "
              "ORDER BY itemsrcp_qtybreak;" );
 
-  q.bindValue(":itemsrcp_id", _price->id());
-  q.exec();
-  if (q.first())
-    _qty->setDouble(q.value("itemsrcp_qtybreak").toDouble());
+  vendorQtyUpdate.bindValue(":itemsrcp_id", _price->id());
+  vendorQtyUpdate.exec();
+  if (vendorQtyUpdate.first())
+    _qty->setDouble(vendorQtyUpdate.value("itemsrcp_qtybreak").toDouble());
   else
   {
     _qty->setDouble(0);
@@ -112,20 +113,21 @@ void vendorPriceList::sQtyEntered()
 
 void vendorPriceList::sPopulatePricing()
 {
-   q.prepare( "SELECT currToCurr(itemsrcp_curr_id, :curr_id, itemsrcp_price, :effective) "
+  XSqlQuery vendorPopulatePricing;
+   vendorPopulatePricing.prepare( "SELECT currToCurr(itemsrcp_curr_id, :curr_id, itemsrcp_price, :effective) "
 		      "AS new_itemsrcp_price "
                "FROM itemsrcp "
                "WHERE ( (itemsrcp_itemsrc_id=:itemsrc_id)"
                " AND (itemsrcp_qtybreak <= :qty) ) "
                "ORDER BY itemsrcp_qtybreak DESC "
                "LIMIT 1;" );
-    q.bindValue(":itemsrc_id", _itemsrcid);
-    q.bindValue(":qty", _qty->toDouble());
-    q.bindValue(":curr_id", _unitPrice->id());
-    q.bindValue(":effective", _unitPrice->effective());
-    q.exec();
-    if (q.first())
-      _unitPrice->setLocalValue(q.value("new_itemsrcp_price").toDouble());
+    vendorPopulatePricing.bindValue(":itemsrc_id", _itemsrcid);
+    vendorPopulatePricing.bindValue(":qty", _qty->toDouble());
+    vendorPopulatePricing.bindValue(":curr_id", _unitPrice->id());
+    vendorPopulatePricing.bindValue(":effective", _unitPrice->effective());
+    vendorPopulatePricing.exec();
+    if (vendorPopulatePricing.first())
+      _unitPrice->setLocalValue(vendorPopulatePricing.value("new_itemsrcp_price").toDouble());
     else
 	_unitPrice->clear();
 

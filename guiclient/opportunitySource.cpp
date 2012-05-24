@@ -90,17 +90,18 @@ enum SetResponse opportunitySource::set(const ParameterList &pParams)
 
 void opportunitySource::sCheck()
 {
+  XSqlQuery opportunityCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
-    q.prepare( "SELECT opsource_id "
+    opportunityCheck.prepare( "SELECT opsource_id "
                "FROM opsource "
                "WHERE (UPPER(opsource_name)=UPPER(:opsource_name));" );
-    q.bindValue(":opsource_name", _name->text());
-    q.exec();
-    if (q.first())
+    opportunityCheck.bindValue(":opsource_name", _name->text());
+    opportunityCheck.exec();
+    if (opportunityCheck.first())
     {
-      _opsourceid = q.value("opsource_id").toInt();
+      _opsourceid = opportunityCheck.value("opsource_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -111,6 +112,7 @@ void opportunitySource::sCheck()
 
 void opportunitySource::sSave()
 {
+  XSqlQuery opportunitySave;
   _name->setText(_name->text().trimmed().toUpper());
   if (_name->text().length() == 0)
   {
@@ -122,9 +124,9 @@ void opportunitySource::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('opsource_opsource_id_seq') AS opsource_id");
-    if (q.first())
-      _opsourceid = q.value("opsource_id").toInt();
+    opportunitySave.exec("SELECT NEXTVAL('opsource_opsource_id_seq') AS opsource_id");
+    if (opportunitySave.first())
+      _opsourceid = opportunitySave.value("opsource_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -133,36 +135,37 @@ void opportunitySource::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO opsource "
+    opportunitySave.prepare( "INSERT INTO opsource "
                "( opsource_id, opsource_name, opsource_descrip)"
                "VALUES "
                "( :opsource_id, :opsource_name, :opsource_descrip );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE opsource "
+    opportunitySave.prepare( "UPDATE opsource "
                "   SET opsource_name=:opsource_name,"
                "       opsource_descrip=:opsource_descrip "
                " WHERE(opsource_id=:opsource_id);" );
 
-  q.bindValue(":opsource_id", _opsourceid);
-  q.bindValue(":opsource_name", _name->text());
-  q.bindValue(":opsource_descrip", _description->text().trimmed());
-  q.exec();
+  opportunitySave.bindValue(":opsource_id", _opsourceid);
+  opportunitySave.bindValue(":opsource_name", _name->text());
+  opportunitySave.bindValue(":opsource_descrip", _description->text().trimmed());
+  opportunitySave.exec();
 
   done(_opsourceid);
 }
 
 void opportunitySource::populate()
 {
-  q.prepare( "SELECT opsource_name, opsource_descrip "
+  XSqlQuery opportunitypopulate;
+  opportunitypopulate.prepare( "SELECT opsource_name, opsource_descrip "
              "  FROM opsource "
              " WHERE(opsource_id=:opsource_id);" );
-  q.bindValue(":opsource_id", _opsourceid);
-  q.exec();
-  if (q.first())
+  opportunitypopulate.bindValue(":opsource_id", _opsourceid);
+  opportunitypopulate.exec();
+  if (opportunitypopulate.first())
   {
-    _name->setText(q.value("opsource_name"));
-    _description->setText(q.value("opsource_descrip"));
+    _name->setText(opportunitypopulate.value("opsource_name"));
+    _description->setText(opportunitypopulate.value("opsource_descrip"));
   }
 } 
 

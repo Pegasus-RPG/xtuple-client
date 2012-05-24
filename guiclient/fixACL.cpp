@@ -43,13 +43,14 @@ void fixACL::languageChange()
 
 void fixACL::sFix()
 {
+  XSqlQuery fixFix;
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-  q.prepare("SELECT fixACL() AS result;");
-  q.exec();
+  fixFix.prepare("SELECT fixACL() AS result;");
+  fixFix.exec();
   QApplication::restoreOverrideCursor();
-  if (q.first())
+  if (fixFix.first())
   {
-    int result = q.value("result").toInt();
+    int result = fixFix.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("fixACL", result),
@@ -58,9 +59,9 @@ void fixACL::sFix()
     }
 //    statusBar()->showMessage(tr("Done. %1 entities examined.").arg(result));
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (fixFix.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, fixFix.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -55,7 +55,6 @@ class XMainWindow;
 class QMainWindow;
 class XWidget;
 
-#define q omfgThis->_q
 
 #define cNew                  1
 #define cEdit                 2
@@ -220,8 +219,7 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void tabifyDockWidget ( QDockWidget * first, QDockWidget * second );
     Q_INVOKABLE void setCentralWidget(QWidget * widget);
 
-    XSqlQuery        _q;
-    TimeoutHandler   *_timeoutHandler;
+	TimeoutHandler   *_timeoutHandler;
     ReportHandler    *_reportHandler;
 
     QMap<const QObject*,int> _customCommands;

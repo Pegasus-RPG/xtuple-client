@@ -61,19 +61,20 @@ enum SetResponse massExpireComponent::set(const ParameterList &pParams)
 
 void massExpireComponent::sExpire()
 {
+  XSqlQuery massExpire;
   if ( (_original->isValid()) && (_expireAsOf->isValid()) )
   {
     if (_metrics->boolean("RevControl"))
     {
-      q.prepare("SELECT * "
+      massExpire.prepare("SELECT * "
 	  	      "FROM bomitem, rev "
 	 		  "WHERE ( (bomitem_rev_id=rev_id) "
 			  "AND (rev_status='P') "
 			  "AND (bomitem_item_id=:item_id) ) "
 			  "LIMIT 1;");
-	  q.bindValue(":item_id", _original->id());
-	  q.exec();
-	  if (q.first())
+	  massExpire.bindValue(":item_id", _original->id());
+	  massExpire.exec();
+	  if (massExpire.first())
         QMessageBox::information( this, tr("Mass Expire"),
                           tr("<p>This process will only affect active revisions. "
 						  "Items on pending revisions must be expired manually.")  );

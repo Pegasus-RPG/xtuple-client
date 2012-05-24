@@ -64,6 +64,7 @@ bool releaseWorkOrdersByPlannerCode::setParams(ParameterList &pParams)
 
 void releaseWorkOrdersByPlannerCode::sRelease()
 {
+  XSqlQuery releaseRelease;
   /* we're going to use essentially the same query twice:
      1 - to print the paperwork
      2 - to release the work orders
@@ -104,11 +105,11 @@ void releaseWorkOrdersByPlannerCode::sRelease()
     wop.append("paperwork");
 
     MetaSQLQuery wom(sql);
-    q = wom.toQuery(wop);
+    releaseRelease = wom.toQuery(wop);
 
-    if (q.lastError().type() != QSqlError::NoError)
+    if (releaseRelease.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, releaseRelease.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -116,7 +117,7 @@ void releaseWorkOrdersByPlannerCode::sRelease()
     bool      setupPrinter = TRUE;
     bool      userCanceled = false;
 
-    while (q.next())
+    while (releaseRelease.next())
     {
       if (setupPrinter &&
 	  orReport::beginMultiPrint(&printer, userCanceled) == false)
@@ -128,8 +129,8 @@ void releaseWorkOrdersByPlannerCode::sRelease()
       }
 
       ParameterList params;
-      params.append("wo_id",   q.value("wo_id"));
-      params.append("labelTo", q.value("wo_qtyord_int"));
+      params.append("wo_id",   releaseRelease.value("wo_id"));
+      params.append("labelTo", releaseRelease.value("wo_qtyord_int"));
 
       if (_pickList->isChecked())
       {
@@ -181,7 +182,7 @@ void releaseWorkOrdersByPlannerCode::sRelease()
 		       " AND (wo_ordid=coitem_id)"
 		       " AND (wo_ordtype='S')"
 		       " AND (wo_id=:wo_id) );" );
-	query.bindValue(":wo_id", q.value("wo_id"));	// from outer loop query
+	query.bindValue(":wo_id", releaseRelease.value("wo_id"));	// from outer loop query
 	query.exec();
 	if (query.first())
 	{
@@ -226,10 +227,10 @@ void releaseWorkOrdersByPlannerCode::sRelease()
     return;
 
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  releaseRelease = mql.toQuery(params);
+  if (releaseRelease.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, releaseRelease.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

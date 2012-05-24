@@ -180,10 +180,11 @@ void financialLayoutGroup::sCheck()
 
 void financialLayoutGroup::sSave()
 {
+  XSqlQuery financialSave;
   int order = 1;
   if (_mode == cNew)
   {
-    q.prepare("SELECT COALESCE(MAX(ord),0) + 1 AS neworder"
+    financialSave.prepare("SELECT COALESCE(MAX(ord),0) + 1 AS neworder"
               "  FROM (SELECT flgrp_order AS ord"
               "          FROM flgrp"
               "         WHERE ((flgrp_flgrp_id=:flgrp_id)"
@@ -198,21 +199,21 @@ void financialLayoutGroup::sSave()
               "          FROM flspec"
               "         WHERE ((flspec_flgrp_id=:flgrp_id)"
               "           AND  (flspec_flhead_id=:flhead_id)) ) AS data;" );
-    q.bindValue(":flgrp_id", _flgrp_flgrpid);
-    q.bindValue(":flhead_id", _flheadid);
-    q.exec();
+    financialSave.bindValue(":flgrp_id", _flgrp_flgrpid);
+    financialSave.bindValue(":flhead_id", _flheadid);
+    financialSave.exec();
 
-    if(q.first())
-      order = q.value("neworder").toInt();
+    if(financialSave.first())
+      order = financialSave.value("neworder").toInt();
   }
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('flgrp_flgrp_id_seq') AS flgrp_id;");
-    if (q.first())
-      _flgrpid = q.value("flgrp_id").toInt();
+    financialSave.exec("SELECT NEXTVAL('flgrp_flgrp_id_seq') AS flgrp_id;");
+    if (financialSave.first())
+      _flgrpid = financialSave.value("flgrp_id").toInt();
     
-    q.prepare( "INSERT INTO flgrp "
+    financialSave.prepare( "INSERT INTO flgrp "
                "( flgrp_id, flgrp_flhead_id, flgrp_flgrp_id, flgrp_name, flgrp_descrip, flgrp_order, flgrp_subtotal,"
                "  flgrp_summarize, flgrp_subtract, flgrp_showstart, flgrp_showend, flgrp_showdelta, flgrp_showbudget, flgrp_showdiff, flgrp_showcustom,"
                "  flgrp_showstartprcnt, flgrp_showendprcnt, flgrp_showdeltaprcnt, flgrp_showbudgetprcnt, flgrp_showdiffprcnt, flgrp_showcustomprcnt,"
@@ -224,7 +225,7 @@ void financialLayoutGroup::sSave()
                "  :flgrp_prcnt_flgrp_id, :flgrp_usealtsubtotal, :flgrp_altsubtotal );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE flgrp "
+    financialSave.prepare( "UPDATE flgrp "
                "SET flgrp_name=:flgrp_name, flgrp_descrip=:flgrp_descrip,"
                "    flgrp_subtotal=:flgrp_subtotal,"
                "    flgrp_summarize=:flgrp_summarize,"
@@ -246,39 +247,40 @@ void financialLayoutGroup::sSave()
                "    flgrp_altsubtotal=:flgrp_altsubtotal "
                "WHERE (flgrp_id=:flgrp_id);" );
     
-  q.bindValue(":flgrp_id", _flgrpid);
-  q.bindValue(":flgrp_flgrp_id", _flgrp_flgrpid);
-  q.bindValue(":flgrp_flhead_id", _flheadid);
-  q.bindValue(":flgrp_name", _name->text());
-  q.bindValue(":flgrp_descrip", _description->text());
-  q.bindValue(":flgrp_order", order);
-  q.bindValue(":flgrp_subtotal",  QVariant(_showSubtotal->isChecked()));
-  q.bindValue(":flgrp_summarize", QVariant(_summarize->isChecked()));
-  q.bindValue(":flgrp_subtract",  QVariant(_subtract->isChecked()));
-  q.bindValue(":flgrp_showstart", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showStart->isChecked())));
-  q.bindValue(":flgrp_showend",   QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showEnd->isChecked())));
-  q.bindValue(":flgrp_showdelta", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showDelta->isChecked())));
-  q.bindValue(":flgrp_showbudget", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showBudget->isChecked())));
-  q.bindValue(":flgrp_showdiff",  QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showDiff->isChecked())));
-  q.bindValue(":flgrp_showcustom", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showCustom->isChecked())));
-  q.bindValue(":flgrp_showstartprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showStart->isChecked() && _showStartPrcnt->isChecked())));
-  q.bindValue(":flgrp_showendprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showEnd->isChecked() && _showEndPrcnt->isChecked())));
-  q.bindValue(":flgrp_showdeltaprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showDelta->isChecked() && _showDeltaPrcnt->isChecked())));
-  q.bindValue(":flgrp_showbudgetprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showBudget->isChecked() && _showBudgetPrcnt->isChecked())));
-  q.bindValue(":flgrp_showdiffprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showDiff->isChecked() && _showDiffPrcnt->isChecked())));
-  q.bindValue(":flgrp_showcustomprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showCustom->isChecked() && _showCustomPrcnt->isChecked())));
-  q.bindValue(":flgrp_prcnt_flgrp_id", _group->id());
-  q.bindValue(":flgrp_usealtsubtotal", QVariant(_altSubtotal->isChecked()));
-  q.bindValue(":flgrp_altsubtotal", _altSubtotalLabel->text());
+  financialSave.bindValue(":flgrp_id", _flgrpid);
+  financialSave.bindValue(":flgrp_flgrp_id", _flgrp_flgrpid);
+  financialSave.bindValue(":flgrp_flhead_id", _flheadid);
+  financialSave.bindValue(":flgrp_name", _name->text());
+  financialSave.bindValue(":flgrp_descrip", _description->text());
+  financialSave.bindValue(":flgrp_order", order);
+  financialSave.bindValue(":flgrp_subtotal",  QVariant(_showSubtotal->isChecked()));
+  financialSave.bindValue(":flgrp_summarize", QVariant(_summarize->isChecked()));
+  financialSave.bindValue(":flgrp_subtract",  QVariant(_subtract->isChecked()));
+  financialSave.bindValue(":flgrp_showstart", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showStart->isChecked())));
+  financialSave.bindValue(":flgrp_showend",   QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showEnd->isChecked())));
+  financialSave.bindValue(":flgrp_showdelta", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showDelta->isChecked())));
+  financialSave.bindValue(":flgrp_showbudget", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showBudget->isChecked())));
+  financialSave.bindValue(":flgrp_showdiff",  QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showDiff->isChecked())));
+  financialSave.bindValue(":flgrp_showcustom", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showCustom->isChecked())));
+  financialSave.bindValue(":flgrp_showstartprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showStart->isChecked() && _showStartPrcnt->isChecked())));
+  financialSave.bindValue(":flgrp_showendprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showEnd->isChecked() && _showEndPrcnt->isChecked())));
+  financialSave.bindValue(":flgrp_showdeltaprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showDelta->isChecked() && _showDeltaPrcnt->isChecked())));
+  financialSave.bindValue(":flgrp_showbudgetprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showBudget->isChecked() && _showBudgetPrcnt->isChecked())));
+  financialSave.bindValue(":flgrp_showdiffprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showDiff->isChecked() && _showDiffPrcnt->isChecked())));
+  financialSave.bindValue(":flgrp_showcustomprcnt", QVariant(((_showSubtotal->isChecked() || _summarize->isChecked()) && _showCustom->isChecked() && _showCustomPrcnt->isChecked())));
+  financialSave.bindValue(":flgrp_prcnt_flgrp_id", _group->id());
+  financialSave.bindValue(":flgrp_usealtsubtotal", QVariant(_altSubtotal->isChecked()));
+  financialSave.bindValue(":flgrp_altsubtotal", _altSubtotalLabel->text());
 
-  q.exec();
+  financialSave.exec();
   
   done(_flgrpid);
 }
 
 void financialLayoutGroup::populate()
 {
-  q.prepare( "SELECT flgrp_name, flgrp_descrip, flgrp_subtotal,"
+  XSqlQuery financialpopulate;
+  financialpopulate.prepare( "SELECT flgrp_name, flgrp_descrip, flgrp_subtotal,"
              "       flgrp_summarize, flgrp_subtract,"
              "       flgrp_showstart, flgrp_showend,"
              "       flgrp_showdelta, flgrp_showbudget, flgrp_showdiff, flgrp_showcustom,"
@@ -287,36 +289,36 @@ void financialLayoutGroup::populate()
              "       flgrp_flhead_id, flgrp_prcnt_flgrp_id, flgrp_usealtsubtotal, flgrp_altsubtotal "
              "FROM flgrp "
              "WHERE (flgrp_id=:flgrp_id);" );
-  q.bindValue(":flgrp_id", _flgrpid);
-  q.exec();
-  if (q.first())
+  financialpopulate.bindValue(":flgrp_id", _flgrpid);
+  financialpopulate.exec();
+  if (financialpopulate.first())
   {
-    _flheadid = q.value("flgrp_flhead_id").toInt();
+    _flheadid = financialpopulate.value("flgrp_flhead_id").toInt();
 
-    _name->setText(q.value("flgrp_name").toString());
-    _description->setText(q.value("flgrp_descrip").toString());
-    _showSubtotal->setChecked(q.value("flgrp_subtotal").toBool());
-    _summarize->setChecked(q.value("flgrp_summarize").toBool());
-    _altSubtotal->setChecked(q.value("flgrp_usealtsubtotal").toBool());
-    _altSubtotalLabel->setText(q.value("flgrp_altsubtotal").toString());
+    _name->setText(financialpopulate.value("flgrp_name").toString());
+    _description->setText(financialpopulate.value("flgrp_descrip").toString());
+    _showSubtotal->setChecked(financialpopulate.value("flgrp_subtotal").toBool());
+    _summarize->setChecked(financialpopulate.value("flgrp_summarize").toBool());
+    _altSubtotal->setChecked(financialpopulate.value("flgrp_usealtsubtotal").toBool());
+    _altSubtotalLabel->setText(financialpopulate.value("flgrp_altsubtotal").toString());
 
     if(_summarize->isChecked() || _showSubtotal->isChecked())
     {
-      _showStart->setChecked(q.value("flgrp_showstart").toBool());
-      _showEnd->setChecked(q.value("flgrp_showend").toBool());
-      _showDelta->setChecked(q.value("flgrp_showdelta").toBool());
-      _showBudget->setChecked(q.value("flgrp_showbudget").toBool());
-      _showDiff->setChecked(q.value("flgrp_showdiff").toBool());
-      _showCustom->setChecked(q.value("flgrp_showcustom").toBool());
-      _showStartPrcnt->setChecked(q.value("flgrp_showstartprcnt").toBool());
-      _showEndPrcnt->setChecked(q.value("flgrp_showendprcnt").toBool());
-      _showDeltaPrcnt->setChecked(q.value("flgrp_showdeltaprcnt").toBool());
-      _showBudgetPrcnt->setChecked(q.value("flgrp_showbudgetprcnt").toBool());
-      _showDiffPrcnt->setChecked(q.value("flgrp_showdiffprcnt").toBool());
-      _showCustomPrcnt->setChecked(q.value("flgrp_showcustomprcnt").toBool());
+      _showStart->setChecked(financialpopulate.value("flgrp_showstart").toBool());
+      _showEnd->setChecked(financialpopulate.value("flgrp_showend").toBool());
+      _showDelta->setChecked(financialpopulate.value("flgrp_showdelta").toBool());
+      _showBudget->setChecked(financialpopulate.value("flgrp_showbudget").toBool());
+      _showDiff->setChecked(financialpopulate.value("flgrp_showdiff").toBool());
+      _showCustom->setChecked(financialpopulate.value("flgrp_showcustom").toBool());
+      _showStartPrcnt->setChecked(financialpopulate.value("flgrp_showstartprcnt").toBool());
+      _showEndPrcnt->setChecked(financialpopulate.value("flgrp_showendprcnt").toBool());
+      _showDeltaPrcnt->setChecked(financialpopulate.value("flgrp_showdeltaprcnt").toBool());
+      _showBudgetPrcnt->setChecked(financialpopulate.value("flgrp_showbudgetprcnt").toBool());
+      _showDiffPrcnt->setChecked(financialpopulate.value("flgrp_showdiffprcnt").toBool());
+      _showCustomPrcnt->setChecked(financialpopulate.value("flgrp_showcustomprcnt").toBool());
     }
 
-    if(q.value("flgrp_subtract").toBool())
+    if(financialpopulate.value("flgrp_subtract").toBool())
       _subtract->setChecked(true);
     else
       _add->setChecked(true);
@@ -324,7 +326,7 @@ void financialLayoutGroup::populate()
   if ((_rpttype != cAdHoc) && ((_showEndPrcnt->isChecked()) || (_showDiffPrcnt->isChecked())))
     _showPrcnt->setChecked(TRUE);
 
-    int grpid = q.value("flgrp_prcnt_flgrp_id").toInt();
+    int grpid = financialpopulate.value("flgrp_prcnt_flgrp_id").toInt();
     sFillGroupList();
     _group->setId(grpid);
   }
@@ -401,15 +403,16 @@ void financialLayoutGroup::sToggleShowPrcnt()
 
 void financialLayoutGroup::sFillGroupList()
 {
+  XSqlQuery financialFillGroupList;
   _group->clear();
-  q.prepare("SELECT flgrp_id, flgrp_name"
+  financialFillGroupList.prepare("SELECT flgrp_id, flgrp_name"
             "  FROM flgrp"
             " WHERE (flgrp_flhead_id=:flhead_id)"
             " ORDER BY flgrp_name;");
-  q.bindValue(":flhead_id", _flheadid);
-  q.exec();
+  financialFillGroupList.bindValue(":flhead_id", _flheadid);
+  financialFillGroupList.exec();
   _group->append(-1, tr("Parent"));
-  while(q.next())
-    _group->append(q.value("flgrp_id").toInt(), q.value("flgrp_name").toString());
+  while(financialFillGroupList.next())
+    _group->append(financialFillGroupList.value("flgrp_id").toInt(), financialFillGroupList.value("flgrp_name").toString());
 }
 

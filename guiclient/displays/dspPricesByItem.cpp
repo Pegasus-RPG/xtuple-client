@@ -71,6 +71,7 @@ void dspPricesByItem::sHandleCosts(bool pShowCosts)
 
 bool dspPricesByItem::setParams(ParameterList & params)
 {
+  XSqlQuery dspetParams;
   double cost = 0.0;
 
   if(!_item->isValid())
@@ -84,23 +85,23 @@ bool dspPricesByItem::setParams(ParameterList & params)
   {
     if (_useStandardCosts->isChecked())
     {
-      q.prepare( "SELECT (stdCost(item_id) * iteminvpricerat(item_id)) AS cost "
+      dspetParams.prepare( "SELECT (stdCost(item_id) * iteminvpricerat(item_id)) AS cost "
                  "FROM item "
                  "WHERE (item_id=:item_id);");
       params.append("standardCosts"); // report only?
     }
     else if (_useActualCosts->isChecked())
     {
-      q.prepare( "SELECT (actCost(item_id) * iteminvpricerat(item_id)) AS cost "
+      dspetParams.prepare( "SELECT (actCost(item_id) * iteminvpricerat(item_id)) AS cost "
                  "FROM item "
                  "WHERE (item_id=:item_id);");
       params.append("actualCosts"); // report only?
     }
 
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (q.first())
-      cost = q.value("cost").toDouble();
+    dspetParams.bindValue(":item_id", _item->id());
+    dspetParams.exec();
+    if (dspetParams.first())
+      cost = dspetParams.value("cost").toDouble();
     else
       return false;
   }

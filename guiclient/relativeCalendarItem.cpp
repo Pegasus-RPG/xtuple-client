@@ -39,6 +39,7 @@ void relativeCalendarItem::languageChange()
 
 enum SetResponse relativeCalendarItem::set(const ParameterList &pParams)
 {
+  XSqlQuery relativeet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -54,13 +55,13 @@ enum SetResponse relativeCalendarItem::set(const ParameterList &pParams)
     _calendarName->setText(param.toString());
   else if (_calheadid != -1)
   {
-    q.prepare( "SELECT calhead_name "
+    relativeet.prepare( "SELECT calhead_name "
                "FROM calhead "
                "WHERE (calhead_id=:calhead_id);" );
-    q.bindValue(":calhead_id", _calheadid);
-    q.exec();
-    if (q.first())
-      _calendarName->setText(q.value("calhead_name").toString());
+    relativeet.bindValue(":calhead_id", _calheadid);
+    relativeet.exec();
+    if (relativeet.first())
+      _calendarName->setText(relativeet.value("calhead_name").toString());
   }
 
   param = pParams.value("calitem_id", &valid);
@@ -90,47 +91,48 @@ enum SetResponse relativeCalendarItem::set(const ParameterList &pParams)
 
 void relativeCalendarItem::populate()
 {
-  q.prepare( "SELECT calhead_id, calhead_name "
+  XSqlQuery relativepopulate;
+  relativepopulate.prepare( "SELECT calhead_id, calhead_name "
              "FROM calhead, rcalitem "
              "WHERE ( (rcalitem_calhead_id=calhead_id)"
              " AND (rcalitem_id=:rcalitem_id) );" );
-  q.bindValue(":rcalitem_id", _calitemid);
-  q.exec();
-  if (q.first())
+  relativepopulate.bindValue(":rcalitem_id", _calitemid);
+  relativepopulate.exec();
+  if (relativepopulate.first())
   {
-    _calheadid = q.value("calhead_id").toInt();
-    _calendarName->setText(q.value("calhead_name").toString());
+    _calheadid = relativepopulate.value("calhead_id").toInt();
+    _calendarName->setText(relativepopulate.value("calhead_name").toString());
   }
 
-  q.prepare( "SELECT rcalitem_name,"
+  relativepopulate.prepare( "SELECT rcalitem_name,"
              "       rcalitem_offsettype, rcalitem_offsetcount,"
              "       rcalitem_periodtype, rcalitem_periodcount "
              "FROM rcalitem "
              "WHERE (rcalitem_id=:rcalitem_id);" );
-  q.bindValue(":rcalitem_id", _calitemid);
-  q.exec();
-  if (q.first())
+  relativepopulate.bindValue(":rcalitem_id", _calitemid);
+  relativepopulate.exec();
+  if (relativepopulate.first())
   {
     int counter;
 
-    _name->setText(q.value("rcalitem_name").toString());
+    _name->setText(relativepopulate.value("rcalitem_name").toString());
 
-    _offsetCount->setValue(q.value("rcalitem_offsetcount").toInt());
+    _offsetCount->setValue(relativepopulate.value("rcalitem_offsetcount").toInt());
 
     for (counter = 0; counter < _offsetType->count(); counter++)
     {
-      if (q.value("rcalitem_offsettype").toString() == offsetTypes[counter])
+      if (relativepopulate.value("rcalitem_offsettype").toString() == offsetTypes[counter])
       {
         _offsetType->setCurrentIndex(counter);
         break;
       }
     }
 
-    _periodCount->setValue(q.value("rcalitem_periodcount").toInt());
+    _periodCount->setValue(relativepopulate.value("rcalitem_periodcount").toInt());
 
     for (counter = 0; counter < _offsetType->count(); counter++)
     {
-      if (q.value("rcalitem_periodtype").toString() == offsetTypes[counter])
+      if (relativepopulate.value("rcalitem_periodtype").toString() == offsetTypes[counter])
       {
         _periodType->setCurrentIndex(counter);
         break;
@@ -149,8 +151,9 @@ void relativeCalendarItem::sHandleNewOffsetType(int pOffsetType)
 
 void relativeCalendarItem::sSave()
 {
+  XSqlQuery relativeSave;
   if (_mode == cNew)
-    q.prepare( "SELECT rcalitem_id "
+    relativeSave.prepare( "SELECT rcalitem_id "
                "FROM rcalitem "
                "WHERE ( (rcalitem_calhead_id=:calhead_id)"
                " AND (rcalitem_offsettype=:offsetType)"
@@ -158,7 +161,7 @@ void relativeCalendarItem::sSave()
                " AND (rcalitem_periodtype=:periodType)"
                " AND (rcalitem_periodcount=:periodCount) );" );
   else if (_mode == cEdit)
-    q.prepare( "SELECT rcalitem_id "
+    relativeSave.prepare( "SELECT rcalitem_id "
                "FROM rcalitem "
                "WHERE ( (rcalitem_calhead_id=:calhead_id)"
                " AND (rcalitem_offsettype=:offsetType)"
@@ -167,14 +170,14 @@ void relativeCalendarItem::sSave()
                " AND (rcalitem_periodcount=:periodCount)"
                " AND (rcalitem_id<>:rcalitem_id) );" );
 
-  q.bindValue(":rcalitem_id", _calitemid);
-  q.bindValue(":calhead_id", _calheadid);
-  q.bindValue(":offsetType", offsetTypes[_offsetType->currentIndex()]);
-  q.bindValue(":offsetCount", _offsetCount->value());
-  q.bindValue(":periodType", offsetTypes[_periodType->currentIndex()]);
-  q.bindValue(":periodCount", _periodCount->value());
-  q.exec();
-  if (q.first())
+  relativeSave.bindValue(":rcalitem_id", _calitemid);
+  relativeSave.bindValue(":calhead_id", _calheadid);
+  relativeSave.bindValue(":offsetType", offsetTypes[_offsetType->currentIndex()]);
+  relativeSave.bindValue(":offsetCount", _offsetCount->value());
+  relativeSave.bindValue(":periodType", offsetTypes[_periodType->currentIndex()]);
+  relativeSave.bindValue(":periodCount", _periodCount->value());
+  relativeSave.exec();
+  if (relativeSave.first())
   {
     QMessageBox::critical( this, tr("Cannon Create Duplicate Calendar Item"),
                            tr( "A Relative Calendar Item for the selected Calendar exists that has the save Offset and Period as this Calendar Item.\n"
@@ -184,11 +187,11 @@ void relativeCalendarItem::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('xcalitem_xcalitem_id_seq') AS _calitem_id;");
-    if (q.first())
-      _calitemid = q.value("_calitem_id").toInt();
+    relativeSave.exec("SELECT NEXTVAL('xcalitem_xcalitem_id_seq') AS _calitem_id;");
+    if (relativeSave.first())
+      _calitemid = relativeSave.value("_calitem_id").toInt();
 
-    q.prepare( "INSERT INTO rcalitem "
+    relativeSave.prepare( "INSERT INTO rcalitem "
                "( rcalitem_id, rcalitem_calhead_id, rcalitem_name,"
                "  rcalitem_offsettype, rcalitem_offsetcount,"
                "  rcalitem_periodtype, rcalitem_periodcount ) "
@@ -198,20 +201,20 @@ void relativeCalendarItem::sSave()
                "  :rcalitem_periodtype, :rcalitem_periodcount );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE rcalitem "
+    relativeSave.prepare( "UPDATE rcalitem "
                "SET rcalitem_name=:rcalitem_name,"
                "    rcalitem_offsettype=:rcalitem_offsettype, rcalitem_offsetcount=:rcalitem_offsetcount,"
                "    rcalitem_periodtype=:rcalitem_periodtype, rcalitem_periodcount=:rcalitem_periodcount "
                "WHERE (rcalitem_id=:rcalitem_id);" );
 
-  q.bindValue(":rcalitem_id", _calitemid);
-  q.bindValue(":rcalitem_calhead_id", _calheadid);
-  q.bindValue(":rcalitem_name", _name->text());
-  q.bindValue(":rcalitem_offsettype", offsetTypes[_offsetType->currentIndex()]);
-  q.bindValue(":rcalitem_offsetcount", _offsetCount->value());
-  q.bindValue(":rcalitem_periodtype", offsetTypes[_periodType->currentIndex()]);
-  q.bindValue(":rcalitem_periodcount", _periodCount->value());
-  q.exec();
+  relativeSave.bindValue(":rcalitem_id", _calitemid);
+  relativeSave.bindValue(":rcalitem_calhead_id", _calheadid);
+  relativeSave.bindValue(":rcalitem_name", _name->text());
+  relativeSave.bindValue(":rcalitem_offsettype", offsetTypes[_offsetType->currentIndex()]);
+  relativeSave.bindValue(":rcalitem_offsetcount", _offsetCount->value());
+  relativeSave.bindValue(":rcalitem_periodtype", offsetTypes[_periodType->currentIndex()]);
+  relativeSave.bindValue(":rcalitem_periodcount", _periodCount->value());
+  relativeSave.exec();
 
   done(_calitemid);
 }

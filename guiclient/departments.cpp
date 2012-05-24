@@ -113,14 +113,15 @@ void departments::sView()
 
 void departments::sDelete()
 {
-    q.prepare("DELETE FROM dept WHERE dept_id = :dept_id;");
-    q.bindValue(":dept_id", _deptList->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery departmentsDelete;
+    departmentsDelete.prepare("DELETE FROM dept WHERE dept_id = :dept_id;");
+    departmentsDelete.bindValue(":dept_id", _deptList->id());
+    departmentsDelete.exec();
+    if (departmentsDelete.lastError().type() != QSqlError::NoError)
 	systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
 			    .arg(__FILE__)
 			    .arg(__LINE__)
-			    .arg(q.lastError().databaseText()));
+			    .arg(departmentsDelete.lastError().databaseText()));
     sFillList();
 }
 

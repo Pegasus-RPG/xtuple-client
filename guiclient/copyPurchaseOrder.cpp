@@ -74,30 +74,31 @@ enum SetResponse copyPurchaseOrder::set(const ParameterList &pParams)
 
 void copyPurchaseOrder::sPopulatePoInfo(int)
 {
+  XSqlQuery copyPopulatePoInfo;
   if (_po->id() != -1)
   {
-    q.prepare( "SELECT pohead_orderdate,"
+    copyPopulatePoInfo.prepare( "SELECT pohead_orderdate,"
               "        vend_id, cntct_phone, pohead_curr_id "
               "FROM pohead, vendinfo "
               "LEFT OUTER JOIN cntct ON (vendinfo.vend_cntct1_id = c1.cntct_id) "
               "WHERE ( (pohead_vend_id=vend_id)"
               " AND (pohead_id=:pohead_id) );" );
-    q.bindValue(":pohead_id", _po->id());
-    q.exec();
-    if (q.first())
+    copyPopulatePoInfo.bindValue(":pohead_id", _po->id());
+    copyPopulatePoInfo.exec();
+    if (copyPopulatePoInfo.first())
     {
-      _orderDate->setDate(q.value("pohead_orderdate").toDate());
-      _vend->setId(q.value("vend_id").toInt());
-      _vendPhone->setText(q.value("cntct_phone").toString());
-      _currency->setId(q.value("pohead_curr_id").toInt());
+      _orderDate->setDate(copyPopulatePoInfo.value("pohead_orderdate").toDate());
+      _vend->setId(copyPopulatePoInfo.value("vend_id").toInt());
+      _vendPhone->setText(copyPopulatePoInfo.value("cntct_phone").toString());
+      _currency->setId(copyPopulatePoInfo.value("pohead_curr_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (copyPopulatePoInfo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, copyPopulatePoInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "SELECT poitem.*,"
+    copyPopulatePoInfo.prepare( "SELECT poitem.*,"
                "       COALESCE(item_number,poitem_vend_item_number) AS item_number,"
                "       COALESCE((item_descrip1 || ' ' || item_descrip2),poitem_vend_item_descrip) AS item_descrip,"
                "       warehous_code,"
@@ -111,12 +112,12 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
                "      ON (poitem_itemsite_id=itemsite_id) "
                "WHERE (poitem_pohead_id=:pohead_id) "
                "ORDER BY poitem_linenumber;" );
-    q.bindValue(":pohead_id", _po->id());
-    q.exec();
-    _poitem->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
+    copyPopulatePoInfo.bindValue(":pohead_id", _po->id());
+    copyPopulatePoInfo.exec();
+    _poitem->populate(copyPopulatePoInfo);
+    if (copyPopulatePoInfo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, copyPopulatePoInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -131,23 +132,24 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
 
 void copyPurchaseOrder::sCopy()
 {
-  q.prepare("SELECT copyPo(:pohead_id, :vend_id, :scheddate, :recheck) AS pohead_id;");
-  q.bindValue(":pohead_id",     _po->id());
-  q.bindValue(":vend_id",       _vend->id());
+  XSqlQuery copyCopy;
+  copyCopy.prepare("SELECT copyPo(:pohead_id, :vend_id, :scheddate, :recheck) AS pohead_id;");
+  copyCopy.bindValue(":pohead_id",     _po->id());
+  copyCopy.bindValue(":vend_id",       _vend->id());
 
   if (_reschedule->isChecked())
-    q.bindValue(":scheddate", _scheduleDate->date());
+    copyCopy.bindValue(":scheddate", _scheduleDate->date());
   else
-    q.bindValue(":scheddate", QDate::currentDate());
+    copyCopy.bindValue(":scheddate", QDate::currentDate());
 
-  q.bindValue(":recheck", QVariant(_recheck->isChecked()));
+  copyCopy.bindValue(":recheck", QVariant(_recheck->isChecked()));
 
   int poheadid = 0;
 
-  q.exec();
-  if (q.first())
+  copyCopy.exec();
+  if (copyCopy.first())
   {
-    poheadid = q.value("pohead_id").toInt();
+    poheadid = copyCopy.value("pohead_id").toInt();
     if (poheadid < 0)
     {
       QMessageBox::critical(this, tr("Could Not Copy Purchase Order"),
@@ -155,9 +157,9 @@ void copyPurchaseOrder::sCopy()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (copyCopy.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

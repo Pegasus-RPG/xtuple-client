@@ -20,6 +20,7 @@
 configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  XSqlQuery configureconfigureGL;
   setupUi(this);
 
   if (name)
@@ -31,9 +32,9 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   // AP
   _nextAPMemoNumber->setValidator(omfgThis->orderVal());
-  q.exec("SELECT currentAPMemoNumber() AS result;");
-  if (q.first())
-    _nextAPMemoNumber->setText(q.value("result"));
+  configureconfigureGL.exec("SELECT currentAPMemoNumber() AS result;");
+  if (configureconfigureGL.first())
+    _nextAPMemoNumber->setText(configureconfigureGL.value("result"));
 
   _achGroup->setVisible(_metrics->boolean("ACHSupported"));
   if (_metrics->boolean("ACHSupported"))
@@ -87,9 +88,9 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
         _eftCustomSuffix->setCurrentIndex(suffixidx);
     }
 
-    q.exec("SELECT currentNumber('ACHBatch') AS result;");
-    if (q.first())
-      _nextACHBatchNumber->setText(q.value("result"));
+    configureconfigureGL.exec("SELECT currentNumber('ACHBatch') AS result;");
+    if (configureconfigureGL.first())
+      _nextACHBatchNumber->setText(configureconfigureGL.value("result"));
   }
   _reqInvoiceReg->setChecked(_metrics->boolean("ReqInvRegVoucher"));
   _reqInvoiceMisc->setChecked(_metrics->boolean("ReqInvMiscVoucher"));
@@ -99,17 +100,17 @@ configureGL::configureGL(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _nextARMemoNumber->setValidator(omfgThis->orderVal());
   _nextCashRcptNumber->setValidator(omfgThis->orderVal());
 
-  q.exec("SELECT currentARMemoNumber() AS result;");
-  if (q.first())
-    _nextARMemoNumber->setText(q.value("result"));
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  configureconfigureGL.exec("SELECT currentARMemoNumber() AS result;");
+  if (configureconfigureGL.first())
+    _nextARMemoNumber->setText(configureconfigureGL.value("result"));
+  else if (configureconfigureGL.lastError().type() != QSqlError::NoError)
+    systemError(this, configureconfigureGL.lastError().databaseText(), __FILE__, __LINE__);
 
-  q.exec("SELECT currentCashRcptNumber() AS result;");
-  if (q.first())
-    _nextCashRcptNumber->setText(q.value("result"));
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  configureconfigureGL.exec("SELECT currentCashRcptNumber() AS result;");
+  if (configureconfigureGL.first())
+    _nextCashRcptNumber->setText(configureconfigureGL.value("result"));
+  else if (configureconfigureGL.lastError().type() != QSqlError::NoError)
+    systemError(this, configureconfigureGL.lastError().databaseText(), __FILE__, __LINE__);
 
   _hideApplyto->setChecked(_metrics->boolean("HideApplyToBalance"));
   _customerDeposits->setChecked(_metrics->boolean("EnableCustomerDeposits"));
@@ -252,11 +253,12 @@ void configureGL::languageChange()
 
 bool configureGL::sSave()
 {
+  XSqlQuery configureSave;
   emit saving();
 
   if (!_cacheint2gl && _int2gl->isChecked())
   {
-    q.exec("SELECT costcat_id "
+    configureSave.exec("SELECT costcat_id "
            "FROM costcat "
            "WHERE (costcat_asset_accnt_id IS NULL) "
            "   OR (costcat_liability_accnt_id IS NULL) "
@@ -281,7 +283,7 @@ bool configureGL::sSave()
            "   OR (costcat_freight_accnt_id = -1) "
            "   OR (costcat_exp_accnt_id = -1) "
            "LIMIT 1;");
-    if (q.first())
+    if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                             "You must assign G/L Accounts to all Cost Categories");
@@ -289,12 +291,12 @@ bool configureGL::sSave()
     }
     if (_metrics->boolean("MultiWhs") && _metrics->boolean("Transforms"))
     {
-      q.exec("SELECT costcat_id "
+      configureSave.exec("SELECT costcat_id "
              "FROM costcat "
              "WHERE (costcat_transform_accnt_id IS NULL) "
              "   OR (costcat_transform_accnt_id = -1) "
              "LIMIT 1;");
-      if (q.first())
+      if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                               "You must assign a Transform Clearing G/L Account to all Cost Categories");
@@ -303,12 +305,12 @@ bool configureGL::sSave()
     }
     if (_metrics->boolean("MultiWhs"))
     {
-      q.exec("SELECT costcat_id "
+      configureSave.exec("SELECT costcat_id "
              "FROM costcat "
              "WHERE (costcat_toliability_accnt_id IS NULL) "
              "   OR (costcat_toliability_accnt_id = -1) "
              "LIMIT 1;");
-      if (q.first())
+      if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                               "You must assign a Transfer Order Liability Clearing G/L Account to all Cost Categories");
@@ -317,12 +319,12 @@ bool configureGL::sSave()
     }
     if (_metrics->boolean("Routings"))
     {
-      q.exec("SELECT costcat_id "
+      configureSave.exec("SELECT costcat_id "
              "FROM costcat "
              "WHERE (costcat_laboroverhead_accnt_id IS NULL) "
              "   OR (costcat_laboroverhead_accnt_id = -1) "
              "LIMIT 1;");
-      if (q.first())
+      if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                               "You must assign a Labor and Overhead Costs G/L Account to all Cost Categories");
@@ -333,7 +335,7 @@ bool configureGL::sSave()
 
   if (!_cacheintap2gl && _intap2gl->isChecked())
   {
-    q.exec("SELECT expcat_id "
+    configureSave.exec("SELECT expcat_id "
            "FROM expcat "
            "WHERE (expcat_exp_accnt_id IS NULL) "
            "   OR (expcat_liability_accnt_id IS NULL) "
@@ -344,13 +346,13 @@ bool configureGL::sSave()
            "   OR (expcat_freight_accnt_id = -1) "
            "   OR (expcat_purchprice_accnt_id = -1) "
            "LIMIT 1;");
-    if (q.first())
+    if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                             "You must assign G/L Accounts to all Expense Categories");
       return false;
     }
-    q.exec("SELECT apaccnt_id "
+    configureSave.exec("SELECT apaccnt_id "
            "FROM apaccnt "
            "WHERE (apaccnt_ap_accnt_id IS NULL) "
            "   OR (apaccnt_prepaid_accnt_id IS NULL) "
@@ -359,7 +361,7 @@ bool configureGL::sSave()
            "   OR (apaccnt_prepaid_accnt_id = -1) "
            "   OR (apaccnt_discount_accnt_id = -1) "
            "LIMIT 1;");
-    if (q.first())
+    if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                             "You must assign G/L Accounts to all Payables Assignments");
@@ -369,7 +371,7 @@ bool configureGL::sSave()
 
   if (!_cacheintar2gl && _intar2gl->isChecked())
   {
-    q.exec("SELECT araccnt_id "
+    configureSave.exec("SELECT araccnt_id "
            "FROM araccnt "
            "WHERE (araccnt_ar_accnt_id IS NULL) "
            "   OR (araccnt_prepaid_accnt_id IS NULL) "
@@ -380,7 +382,7 @@ bool configureGL::sSave()
            "   OR (araccnt_discount_accnt_id = -1) "
            "   OR (araccnt_freight_accnt_id = -1) "
            "LIMIT 1;");
-    if (q.first())
+    if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                             "You must assign G/L Accounts to all Receivables Assignments");
@@ -388,19 +390,19 @@ bool configureGL::sSave()
     }
     if (_metrics->boolean("EnableCustomerDeposits"))
     {
-      q.exec("SELECT araccnt_id "
+      configureSave.exec("SELECT araccnt_id "
              "FROM araccnt "
              "WHERE (araccnt_deferred_accnt_id IS NULL) "
              "   OR (araccnt_deferred_accnt_id = -1) "
              "LIMIT 1;");
-      if (q.first())
+      if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                               "You must assign a Deferred Revenue G/L Account to all Receivables Assignments");
         return false;
       }
     }
-    q.exec("SELECT salesaccnt_id "
+    configureSave.exec("SELECT salesaccnt_id "
            "FROM salesaccnt "
            "WHERE (salesaccnt_sales_accnt_id IS NULL) "
            "   OR (salesaccnt_credit_accnt_id IS NULL) "
@@ -413,7 +415,7 @@ bool configureGL::sSave()
            "   OR (salesaccnt_cor_accnt_id = -1) "
            "   OR (salesaccnt_cow_accnt_id = -1) "
            "LIMIT 1;");
-    if (q.first())
+    if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                             "You must assign G/L Accounts to all Sales Assignments");
@@ -421,19 +423,19 @@ bool configureGL::sSave()
     }
     if (_metrics->boolean("EnableReturnAuth"))
     {
-      q.exec("SELECT salesaccnt_id "
+      configureSave.exec("SELECT salesaccnt_id "
              "FROM salesaccnt "
              "WHERE (salesaccnt_returns_accnt_id IS NULL) "
              "   OR (salesaccnt_returns_accnt_id = -1) "
              "LIMIT 1;");
-      if (q.first())
+      if (configureSave.first())
       {
         QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                               "You must assign a Returns G/L Account to all Sales Assignments");
         return false;
       }
     }
-    q.exec("SELECT salescat_id "
+    configureSave.exec("SELECT salescat_id "
            "FROM salescat "
            "WHERE (salescat_sales_accnt_id IS NULL) "
            "   OR (salescat_prepaid_accnt_id IS NULL) "
@@ -442,7 +444,7 @@ bool configureGL::sSave()
            "   OR (salescat_prepaid_accnt_id = -1) "
            "   OR (salescat_ar_accnt_id = -1) "
            "LIMIT 1;");
-    if (q.first())
+    if (configureSave.first())
     {
       QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
                             "You must assign G/L Accounts to all Sales Categories");
@@ -593,9 +595,9 @@ bool configureGL::sSave()
   }
 
   // AP
-  q.prepare("SELECT setNextAPMemoNumber(:armemo_number) AS result;");
-  q.bindValue(":armemo_number", _nextAPMemoNumber->text().toInt());
-  q.exec();
+  configureSave.prepare("SELECT setNextAPMemoNumber(:armemo_number) AS result;");
+  configureSave.bindValue(":armemo_number", _nextAPMemoNumber->text().toInt());
+  configureSave.exec();
 
   if (_metrics->boolean("ACHSupported"))
   {
@@ -636,9 +638,9 @@ bool configureGL::sSave()
         _metrics->set("EFTFunction",      _eftCustomFunction->text().trimmed());
       }
 
-      q.prepare("SELECT setNextNumber('ACHBatch', :number) AS result;");
-      q.bindValue(":number", _nextACHBatchNumber->text().toInt());
-      q.exec();
+      configureSave.prepare("SELECT setNextNumber('ACHBatch', :number) AS result;");
+      configureSave.bindValue(":number", _nextACHBatchNumber->text().toInt());
+      configureSave.exec();
     }
   }
   _metrics->set("ReqInvRegVoucher", _reqInvoiceReg->isChecked());
@@ -646,22 +648,22 @@ bool configureGL::sSave()
   _metrics->set("RecurringVoucherBuffer", _recurringVoucherBuffer->value());
 
   // AR
-  q.prepare("SELECT setNextARMemoNumber(:armemo_number) AS result;");
-  q.bindValue(":armemo_number", _nextARMemoNumber->text().toInt());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  configureSave.prepare("SELECT setNextARMemoNumber(:armemo_number) AS result;");
+  configureSave.bindValue(":armemo_number", _nextARMemoNumber->text().toInt());
+  configureSave.exec();
+  if (configureSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
     _nextARMemoNumber->setFocus();
     return false;
   }
 
-  q.prepare("SELECT setNextCashRcptNumber(:cashrcpt_number) AS result;");
-  q.bindValue(":cashrcpt_number", _nextCashRcptNumber->text().toInt());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  configureSave.prepare("SELECT setNextCashRcptNumber(:cashrcpt_number) AS result;");
+  configureSave.bindValue(":cashrcpt_number", _nextCashRcptNumber->text().toInt());
+  configureSave.exec();
+  if (configureSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
     _nextCashRcptNumber->setFocus();
     return false;
   }

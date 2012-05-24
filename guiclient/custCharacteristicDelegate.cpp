@@ -45,7 +45,7 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
   if (chartype == characteristic::Text ||
       chartype == characteristic::List)
   {
-    q.prepare("SELECT charass_value "
+    qry.prepare("SELECT charass_value "
               "FROM char, charass "
               "  LEFT OUTER JOIN charopt ON ((charopt_char_id=charass_char_id) "
               "                          AND (charopt_value=charass_value)) "
@@ -54,9 +54,9 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
               "  AND  (charass_target_id=:custtype_id)"
               "  AND  (char_id=:char_id) ) "
               "ORDER BY COALESCE(charopt_order,0), charass_value;");
-    q.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
-    q.bindValue(":custtype_id", index.model()->data(index, Xt::IdRole));
-    q.exec();
+    qry.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
+    qry.bindValue(":custtype_id", index.model()->data(index, Xt::IdRole));
+    qry.exec();
 
     QComboBox *editor = new QComboBox(parent);
     editor->setEditable(chartype == characteristic::Text);
@@ -68,8 +68,8 @@ QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
     editor->setFont(boxfont);
 #endif
 
-    while(q.next())
-      editor->addItem(q.value("charass_value").toString());
+    while(qry.next())
+      editor->addItem(qry.value("charass_value").toString());
     editor->installEventFilter(const_cast<CustCharacteristicDelegate*>(this));
 
     return editor;

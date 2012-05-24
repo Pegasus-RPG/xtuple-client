@@ -69,12 +69,13 @@ void budgets::languageChange()
 
 void budgets::sDelete()
 {
-  q.prepare( "SELECT deleteBudget(:budghead_id) AS result;");
-  q.bindValue(":budghead_id", _budget->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery budgetsDelete;
+  budgetsDelete.prepare( "SELECT deleteBudget(:budghead_id) AS result;");
+  budgetsDelete.bindValue(":budghead_id", _budget->id());
+  budgetsDelete.exec();
+  if (budgetsDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = budgetsDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteBudget", result),
@@ -82,9 +83,9 @@ void budgets::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (budgetsDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, budgetsDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -117,7 +118,8 @@ void budgets::sView()
 
 void budgets::sFillList()
 {
-  q.prepare("SELECT budghead_id, "
+  XSqlQuery budgetsFillList;
+  budgetsFillList.prepare("SELECT budghead_id, "
             "       MIN(period_start) AS startdate,"
 	    "       MAX(period_end) AS enddate,"
             "       budghead_name, budghead_descrip "
@@ -126,11 +128,11 @@ void budgets::sFillList()
             "       ON (budgitem_budghead_id=budghead_id) "
             " GROUP BY budghead_id, budghead_name, budghead_descrip "
 	    " ORDER BY startdate DESC, budghead_name;" );
-  q.exec();
-  _budget->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  budgetsFillList.exec();
+  _budget->populate(budgetsFillList);
+  if (budgetsFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, budgetsFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

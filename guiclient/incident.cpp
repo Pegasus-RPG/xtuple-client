@@ -114,6 +114,7 @@ void incident::languageChange()
 
 enum SetResponse incident::set(const ParameterList &pParams)
 {
+  XSqlQuery incidentet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -133,12 +134,12 @@ enum SetResponse incident::set(const ParameterList &pParams)
 
     if (param.toString() == "new")
     {
-      q.exec("SELECT nextval('incdt_incdt_id_seq') AS incdt_id, "
+      incidentet.exec("SELECT nextval('incdt_incdt_id_seq') AS incdt_id, "
              "fetchIncidentNumber() AS number;");
-      if(q.first())
+      if(incidentet.first())
       {
-        _incdtid=q.value("incdt_id").toInt();
-        _number->setText(q.value("number").toString());
+        _incdtid=incidentet.value("incdt_id").toInt();
+        _number->setText(incidentet.value("number").toString());
         _comments->setId(_incdtid);
         _documents->setId(_incdtid);
         _alarms->setId(_incdtid);
@@ -149,7 +150,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
       {
         QMessageBox::critical( omfgThis, tr("Database Error"),
                                tr( "A Database Error occured in incident::New:"
-                                   "\n%1" ).arg(q.lastError().text()));
+                                   "\n%1" ).arg(incidentet.lastError().text()));
         reject();
       }
     }
@@ -210,7 +211,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
   if (valid)
   {
     _aropenid = param.toInt();
-    q.prepare("SELECT aropen_doctype, aropen_docnumber, "
+    incidentet.prepare("SELECT aropen_doctype, aropen_docnumber, "
               "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
               "            WHEN (aropen_doctype='D') THEN :debitMemo"
               "            WHEN (aropen_doctype='I') THEN :invoice"
@@ -218,20 +219,20 @@ enum SetResponse incident::set(const ParameterList &pParams)
               "            ELSE '' END AS docType "
               "FROM aropen "
               "WHERE (aropen_id=:aropen_id);");
-    q.bindValue(":aropen_id", _aropenid);
-    q.bindValue(":creditMemo", tr("Credit Memo"));
-    q.bindValue(":debitMemo", tr("Debit Memo"));
-    q.bindValue(":invoice", tr("Invoice"));
-    q.bindValue(":cashdeposit", tr("Customer Deposit"));
-    q.exec();
-    if (q.first())
+    incidentet.bindValue(":aropen_id", _aropenid);
+    incidentet.bindValue(":creditMemo", tr("Credit Memo"));
+    incidentet.bindValue(":debitMemo", tr("Debit Memo"));
+    incidentet.bindValue(":invoice", tr("Invoice"));
+    incidentet.bindValue(":cashdeposit", tr("Customer Deposit"));
+    incidentet.exec();
+    if (incidentet.first())
     {
       if (_metrics->value("DefaultARIncidentStatus").toInt())
         _category->setId(_metrics->value("DefaultARIncidentStatus").toInt());
-      _ardoctype=q.value("aropen_doctype").toString();
-      _docType->setText(q.value("docType").toString());
-      _docNumber->setText(q.value("aropen_docnumber").toString());
-      _description->setText(QString("%1 #%2").arg(q.value("docType").toString()).arg(q.value("aropen_docnumber").toString()));
+      _ardoctype=incidentet.value("aropen_doctype").toString();
+      _docType->setText(incidentet.value("docType").toString());
+      _docNumber->setText(incidentet.value("aropen_docnumber").toString());
+      _description->setText(QString("%1 #%2").arg(incidentet.value("docType").toString()).arg(incidentet.value("aropen_docnumber").toString()));
     }
   }
 
@@ -261,14 +262,15 @@ QString incident::arDoctype() const
 
 void incident::sCancel()
 {
+  XSqlQuery incidentCancel;
   if (cNew == _mode)
   {
-    q.prepare("SELECT releaseNumber('IncidentNumber', :number) AS result;");
-    q.bindValue(":number", _number->text());
-    q.exec();
-    if (q.first())
+    incidentCancel.prepare("SELECT releaseNumber('IncidentNumber', :number) AS result;");
+    incidentCancel.bindValue(":number", _number->text());
+    incidentCancel.exec();
+    if (incidentCancel.first())
     {
-      int result = q.value("result").toInt();
+      int result = incidentCancel.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("releaseNumber", result),
@@ -276,18 +278,18 @@ void incident::sCancel()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (incidentCancel.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, incidentCancel.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare("SELECT deleteIncident(:incdt_id) AS result;");
-    q.bindValue(":incdt_id", _incdtid);
-    q.exec();
-    if (q.first())
+    incidentCancel.prepare("SELECT deleteIncident(:incdt_id) AS result;");
+    incidentCancel.bindValue(":incdt_id", _incdtid);
+    incidentCancel.exec();
+    if (incidentCancel.first())
     {
-      int result = q.value("result").toInt();
+      int result = incidentCancel.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("deleteIncident", result),
@@ -295,9 +297,9 @@ void incident::sCancel()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (incidentCancel.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, incidentCancel.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -316,6 +318,7 @@ void incident::sSave()
 
 bool incident::save(bool partial)
 {
+  XSqlQuery incidentave;
   if (! partial)
   {
     if(_crmacct->id() == -1)
@@ -356,14 +359,14 @@ bool incident::save(bool partial)
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  if (!q.exec("BEGIN"))
+  if (!incidentave.exec("BEGIN"))
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
   if (cNew == _mode && !_saved)
-    q.prepare("INSERT INTO incdt"
+    incidentave.prepare("INSERT INTO incdt"
               "      (incdt_id, incdt_number, incdt_crmacct_id, incdt_cntct_id,"
               "       incdt_summary, incdt_descrip, incdt_item_id,"
               "       incdt_status, incdt_assigned_username,"
@@ -381,7 +384,7 @@ bool incident::save(bool partial)
               "       :incdt_prj_id, :incdt_public,"
               "       :incdt_recurring_incdt_id);" );
   else if (cEdit == _mode || _saved)
-    q.prepare("UPDATE incdt"
+    incidentave.prepare("UPDATE incdt"
               "   SET incdt_cntct_id=:incdt_cntct_id,"
               "       incdt_crmacct_id=:incdt_crmacct_id,"
               "       incdt_summary=:incdt_description,"
@@ -400,41 +403,41 @@ bool incident::save(bool partial)
               "       incdt_recurring_incdt_id=:incdt_recurring_incdt_id"
               " WHERE (incdt_id=:incdt_id); ");
 
-  q.bindValue(":incdt_id", _incdtid);
-  q.bindValue(":incdt_number", _number->text());
-  q.bindValue(":incdt_owner_username", _owner->username());
+  incidentave.bindValue(":incdt_id", _incdtid);
+  incidentave.bindValue(":incdt_number", _number->text());
+  incidentave.bindValue(":incdt_owner_username", _owner->username());
   if (_crmacct->id() > 0)
-    q.bindValue(":incdt_crmacct_id", _crmacct->id());
+    incidentave.bindValue(":incdt_crmacct_id", _crmacct->id());
   if (_cntct->id() > 0)
-    q.bindValue(":incdt_cntct_id", _cntct->id());
-  q.bindValue(":incdt_description", _description->text().trimmed());
-  q.bindValue(":incdt_notes", _notes->toPlainText().trimmed());
+    incidentave.bindValue(":incdt_cntct_id", _cntct->id());
+  incidentave.bindValue(":incdt_description", _description->text().trimmed());
+  incidentave.bindValue(":incdt_notes", _notes->toPlainText().trimmed());
   if(-1 != _item->id())
-    q.bindValue(":incdt_item_id", _item->id());
-  q.bindValue(":incdt_assigned_username", _assignedTo->username());
-  q.bindValue(":incdt_status", _statusCodes.at(_status->currentIndex()));
+    incidentave.bindValue(":incdt_item_id", _item->id());
+  incidentave.bindValue(":incdt_assigned_username", _assignedTo->username());
+  incidentave.bindValue(":incdt_status", _statusCodes.at(_status->currentIndex()));
   if(_category->isValid())
-    q.bindValue(":incdt_incdtcat_id", _category->id());
+    incidentave.bindValue(":incdt_incdtcat_id", _category->id());
   if(_severity->isValid())
-    q.bindValue(":incdt_incdtseverity_id", _severity->id());
+    incidentave.bindValue(":incdt_incdtseverity_id", _severity->id());
   if(_priority->isValid())
-    q.bindValue(":incdt_incdtpriority_id", _priority->id());
+    incidentave.bindValue(":incdt_incdtpriority_id", _priority->id());
   if(_resolution->isValid())
-    q.bindValue(":incdt_incdtresolution_id", _resolution->id());
+    incidentave.bindValue(":incdt_incdtresolution_id", _resolution->id());
   if ((_item->id() != -1) && (_lotserial->id() != -1))
-    q.bindValue(":incdt_ls_id", _lotserial->id());
+    incidentave.bindValue(":incdt_ls_id", _lotserial->id());
   if (_aropenid > 0)
-    q.bindValue(":incdt_aropen_id", _aropenid);
+    incidentave.bindValue(":incdt_aropen_id", _aropenid);
   if (_recurring->isRecurring())
-    q.bindValue(":incdt_recurring_incdt_id", _recurring->parentId());
+    incidentave.bindValue(":incdt_recurring_incdt_id", _recurring->parentId());
   if (_project->id() > 0)
-    q.bindValue(":incdt_prj_id", _project->id());
-  q.bindValue(":incdt_public", _public->isChecked());
+    incidentave.bindValue(":incdt_prj_id", _project->id());
+  incidentave.bindValue(":incdt_public", _public->isChecked());
 
-  if(!q.exec() && q.lastError().type() != QSqlError::NoError)
+  if(!incidentave.exec() && incidentave.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -446,11 +449,11 @@ bool incident::save(bool partial)
     return false;
   }
 
-  q.exec("COMMIT;");
-  if(q.lastError().type() != QSqlError::NoError)
+  incidentave.exec("COMMIT;");
+  if(incidentave.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -460,32 +463,34 @@ bool incident::save(bool partial)
 
 void incident::sFillHistoryList()
 {
-  q.prepare("SELECT * "
+  XSqlQuery incidentFillHistoryList;
+  incidentFillHistoryList.prepare("SELECT * "
             "  FROM incdthist"
             " WHERE (incdthist_incdt_id=:incdt_id)"
             " ORDER BY incdthist_timestamp; ");
-  q.bindValue(":incdt_id", _incdtid);
-  q.bindValue(":new", tr("New Incident"));
-  q.bindValue(":status", tr("Status"));
-  q.bindValue(":category", tr("Category"));
-  q.bindValue(":severity", tr("Severity"));
-  q.bindValue(":priority", tr("Priority"));
-  q.bindValue(":resolution", tr("Resolution"));
-  q.bindValue(":assignedto", tr("Assigned To"));
-  q.bindValue(":notes", tr("Comment"));
-  q.bindValue(":contact", tr("Contact"));
-  q.exec();
-  _incdthist->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  incidentFillHistoryList.bindValue(":incdt_id", _incdtid);
+  incidentFillHistoryList.bindValue(":new", tr("New Incident"));
+  incidentFillHistoryList.bindValue(":status", tr("Status"));
+  incidentFillHistoryList.bindValue(":category", tr("Category"));
+  incidentFillHistoryList.bindValue(":severity", tr("Severity"));
+  incidentFillHistoryList.bindValue(":priority", tr("Priority"));
+  incidentFillHistoryList.bindValue(":resolution", tr("Resolution"));
+  incidentFillHistoryList.bindValue(":assignedto", tr("Assigned To"));
+  incidentFillHistoryList.bindValue(":notes", tr("Comment"));
+  incidentFillHistoryList.bindValue(":contact", tr("Contact"));
+  incidentFillHistoryList.exec();
+  _incdthist->populate(incidentFillHistoryList);
+  if (incidentFillHistoryList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentFillHistoryList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void incident::populate()
 {
-  q.prepare("SELECT incdt_number,"
+  XSqlQuery incidentpopulate;
+  incidentpopulate.prepare("SELECT incdt_number,"
             "       incdt_crmacct_id,"
             "       COALESCE(incdt_cntct_id,-1) AS incdt_cntct_id,"
             "       (cntct_first_name || ' ' || cntct_last_name) AS cntct_name,"
@@ -509,59 +514,59 @@ void incident::populate()
             "FROM incdt LEFT OUTER JOIN cntct ON (incdt_cntct_id=cntct_id)"
             "           LEFT OUTER JOIN aropen ON (incdt_aropen_id=aropen_id) "
             "WHERE (incdt_id=:incdt_id); ");
-  q.bindValue(":incdt_id", _incdtid);
-  q.bindValue(":creditMemo", tr("Credit Memo"));
-  q.bindValue(":debitMemo", tr("Debit Memo"));
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":cashdeposit", tr("Customer Deposit"));
-  q.exec();
-  if(q.first())
+  incidentpopulate.bindValue(":incdt_id", _incdtid);
+  incidentpopulate.bindValue(":creditMemo", tr("Credit Memo"));
+  incidentpopulate.bindValue(":debitMemo", tr("Debit Memo"));
+  incidentpopulate.bindValue(":invoice", tr("Invoice"));
+  incidentpopulate.bindValue(":cashdeposit", tr("Customer Deposit"));
+  incidentpopulate.exec();
+  if(incidentpopulate.first())
   {
-    _cntct->setId(q.value("incdt_cntct_id").toInt());
-    _crmacct->setId(q.value("incdt_crmacct_id").toInt());
-    _owner->setUsername(q.value("incdt_owner_username").toString());
-    _number->setText(q.value("incdt_number").toString());
-    _assignedTo->setUsername(q.value("incdt_assigned_username").toString());
+    _cntct->setId(incidentpopulate.value("incdt_cntct_id").toInt());
+    _crmacct->setId(incidentpopulate.value("incdt_crmacct_id").toInt());
+    _owner->setUsername(incidentpopulate.value("incdt_owner_username").toString());
+    _number->setText(incidentpopulate.value("incdt_number").toString());
+    _assignedTo->setUsername(incidentpopulate.value("incdt_assigned_username").toString());
     _category->setNull();
-    if(!q.value("incdt_incdtcat_id").toString().isEmpty())
-      _category->setId(q.value("incdt_incdtcat_id").toInt());
-    _status->setCurrentIndex(_statusCodes.indexOf(q.value("incdt_status").toString()));
+    if(!incidentpopulate.value("incdt_incdtcat_id").toString().isEmpty())
+      _category->setId(incidentpopulate.value("incdt_incdtcat_id").toInt());
+    _status->setCurrentIndex(_statusCodes.indexOf(incidentpopulate.value("incdt_status").toString()));
     _severity->setNull();
-    if(!q.value("incdt_incdtseverity_id").toString().isEmpty())
-      _severity->setId(q.value("incdt_incdtseverity_id").toInt());
+    if(!incidentpopulate.value("incdt_incdtseverity_id").toString().isEmpty())
+      _severity->setId(incidentpopulate.value("incdt_incdtseverity_id").toInt());
     _priority->setNull();
-    if(!q.value("incdt_incdtpriority_id").toString().isEmpty())
-      _priority->setId(q.value("incdt_incdtpriority_id").toInt());
+    if(!incidentpopulate.value("incdt_incdtpriority_id").toString().isEmpty())
+      _priority->setId(incidentpopulate.value("incdt_incdtpriority_id").toInt());
     _resolution->setNull();
-    if(!q.value("incdt_incdtresolution_id").toString().isEmpty())
-      _resolution->setId(q.value("incdt_incdtresolution_id").toInt());
-    if(!q.value("incdt_item_id").toString().isEmpty())
-      _item->setId(q.value("incdt_item_id").toInt());
+    if(!incidentpopulate.value("incdt_incdtresolution_id").toString().isEmpty())
+      _resolution->setId(incidentpopulate.value("incdt_incdtresolution_id").toInt());
+    if(!incidentpopulate.value("incdt_item_id").toString().isEmpty())
+      _item->setId(incidentpopulate.value("incdt_item_id").toInt());
     else
       _item->setId(-1);
-    if(!q.value("incdt_ls_id").toString().isEmpty())
-      _lotserial->setId(q.value("incdt_ls_id").toInt());
+    if(!incidentpopulate.value("incdt_ls_id").toString().isEmpty())
+      _lotserial->setId(incidentpopulate.value("incdt_ls_id").toInt());
     else
       _lotserial->setId(-1);
-    _description->setText(q.value("incdt_summary").toString());
-    _notes->setText(q.value("incdt_descrip").toString());
+    _description->setText(incidentpopulate.value("incdt_summary").toString());
+    _notes->setText(incidentpopulate.value("incdt_descrip").toString());
 
     _comments->setId(_incdtid);
     _documents->setId(_incdtid);
     _alarms->setId(_incdtid);
 
-    _project->setId(q.value("incdt_prj_id").toInt());
-    _public->setChecked(q.value("incdt_public").toBool());
+    _project->setId(incidentpopulate.value("incdt_prj_id").toInt());
+    _public->setChecked(incidentpopulate.value("incdt_public").toBool());
         
-    _docType->setText(q.value("docType").toString());
-    _docNumber->setText(q.value("docNumber").toString());
-    _aropenid = q.value("docId").toInt();
-    _ardoctype = q.value("aropen_doctype").toString();
+    _docType->setText(incidentpopulate.value("docType").toString());
+    _docNumber->setText(incidentpopulate.value("docNumber").toString());
+    _aropenid = incidentpopulate.value("docId").toInt();
+    _ardoctype = incidentpopulate.value("aropen_doctype").toString();
     if (_aropenid > 0)
       _viewAR->setEnabled(true);
 
-    _recurring->setParent(q.value("incdt_recurring_incdt_id").isNull() ?
-                          _incdtid : q.value("incdt_recurring_incdt_id").toInt(),
+    _recurring->setParent(incidentpopulate.value("incdt_recurring_incdt_id").isNull() ?
+                          _incdtid : incidentpopulate.value("incdt_recurring_incdt_id").toInt(),
                           "INCDT");
 
     sFillCharacteristicsList();
@@ -618,12 +623,13 @@ void incident::sViewTodoItem()
 
 void incident::sDeleteTodoItem()
 {
-  q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
-  q.bindValue(":todoitem_id", _todoList->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery incidentDeleteTodoItem;
+  incidentDeleteTodoItem.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
+  incidentDeleteTodoItem.bindValue(":todoitem_id", _todoList->id());
+  incidentDeleteTodoItem.exec();
+  if (incidentDeleteTodoItem.first())
   {
-    int result = q.value("result").toInt();
+    int result = incidentDeleteTodoItem.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteTodoItem", result));
@@ -632,16 +638,17 @@ void incident::sDeleteTodoItem()
     else
       sFillTodoList();
     }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (incidentDeleteTodoItem.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentDeleteTodoItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void incident::sFillTodoList()
 {
-  q.prepare("SELECT todoitem_id, *, "
+  XSqlQuery incidentFillTodoList;
+  incidentFillTodoList.prepare("SELECT todoitem_id, *, "
             "       firstLine(todoitem_notes) AS todoitem_notes, "
             "       CASE WHEN (todoitem_status != 'C' AND"
             "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
@@ -654,12 +661,12 @@ void incident::sFillTodoList()
             "  AND   (todoitem_active) ) "
             "ORDER BY todoitem_due_date, todoitem_username;");
 
-  q.bindValue(":incdt_id", _incdtid);
-  q.exec();
-  _todoList->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  incidentFillTodoList.bindValue(":incdt_id", _incdtid);
+  incidentFillTodoList.exec();
+  _todoList->populate(incidentFillTodoList);
+  if (incidentFillTodoList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentFillTodoList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -740,17 +747,18 @@ void incident::sHandleTodoPrivs()
 
 void incident::sReturn()
 {
+  XSqlQuery incidentReturn;
   if (! save(true))
     return;
 
   ParameterList params;
-  q.prepare("SELECT rahead_id FROM rahead WHERE rahead_incdt_id=:incdt_id");
-  q.bindValue(":incdt_id", _incdtid);
-  q.exec();
-  if(q.first())
+  incidentReturn.prepare("SELECT rahead_id FROM rahead WHERE rahead_incdt_id=:incdt_id");
+  incidentReturn.bindValue(":incdt_id", _incdtid);
+  incidentReturn.exec();
+  if(incidentReturn.first())
   {
     params.append("mode", "edit");
-    params.append("rahead_id", q.value("rahead_id").toInt());
+    params.append("rahead_id", incidentReturn.value("rahead_id").toInt());
   }
   else
   {
@@ -831,10 +839,11 @@ void incident::sEditCharacteristic()
 
 void incident::sDeleteCharacteristic()
 {
-  q.prepare( "DELETE FROM charass "
+  XSqlQuery incidentDeleteCharacteristic;
+  incidentDeleteCharacteristic.prepare( "DELETE FROM charass "
              "WHERE (charass_id=:charass_id);" );
-  q.bindValue(":charass_id", _charass->id());
-  q.exec();
+  incidentDeleteCharacteristic.bindValue(":charass_id", _charass->id());
+  incidentDeleteCharacteristic.exec();
 
   sFillCharacteristicsList();
 }

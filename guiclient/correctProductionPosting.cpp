@@ -132,26 +132,27 @@ void correctProductionPosting::clear()
 
 void correctProductionPosting::sCorrect()
 {
+  XSqlQuery correctCorrect;
   if (! okToPost())
     return;
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// handle cancel of lot, serial, or loc distribution
-  q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, 0, :date)"
+  correctCorrect.exec("BEGIN;");	// handle cancel of lot, serial, or loc distribution
+  correctCorrect.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, 0, :date)"
             "        AS result;");
-  q.bindValue(":wo_id", _wo->id());
+  correctCorrect.bindValue(":wo_id", _wo->id());
   if (_wo->method() == "A")
-    q.bindValue(":qty", _qty->toDouble());
+    correctCorrect.bindValue(":qty", _qty->toDouble());
   else
-    q.bindValue(":qty", _qty->toDouble() * -1);
-  q.bindValue(":backflushMaterials",  QVariant(_backFlush->isChecked()));
-  q.bindValue(":date",  _transDate->date());
-  q.exec();
-  if (q.first())
+    correctCorrect.bindValue(":qty", _qty->toDouble() * -1);
+  correctCorrect.bindValue(":backflushMaterials",  QVariant(_backFlush->isChecked()));
+  correctCorrect.bindValue(":date",  _transDate->date());
+  correctCorrect.exec();
+  if (correctCorrect.first())
   {
-    int result = q.value("result").toInt();
+    int result = correctCorrect.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -167,13 +168,13 @@ void correctProductionPosting::sCorrect()
       return;
     }
 
-    q.exec("COMMIT;");
+    correctCorrect.exec("COMMIT;");
     omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (correctCorrect.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, correctCorrect.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

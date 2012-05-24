@@ -115,24 +115,25 @@ void allocateARCreditMemo::sCancel()
 
 void allocateARCreditMemo::sPopulate()
 {
+  XSqlQuery populateCM;
   if (_coheadid == -1)
   {
     // get the cohead_id associated with the invoice
-    q.prepare("SELECT cohead_id "
+    populateCM.prepare("SELECT cohead_id "
               "  FROM invchead JOIN cohead ON (cohead_number=invchead_ordernumber)"
               " WHERE (invchead_id=:invchead_id);");
-    q.bindValue(":invchead_id", _invcheadid);
-    q.exec();
-    if (q.first())
-      _coheadid = q.value("cohead_id").toInt();
-    if (q.lastError().type() != QSqlError::NoError)
+    populateCM.bindValue(":invchead_id", _invcheadid);
+    populateCM.exec();
+    if (populateCM.first())
+      _coheadid = populateCM.value("cohead_id").toInt();
+    if (populateCM.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, populateCM.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
   // Get the list of Unallocated CM's with amount
-  q.prepare("SELECT aropen_id, "
+  populateCM.prepare("SELECT aropen_id, "
             "       docnumber, doctype, docdate, duedate,"
             "       amount, paid, balance, allocated, totalallocated, "
             "       CASE WHEN (doctype='C') THEN :creditmemo"
@@ -189,22 +190,22 @@ void allocateARCreditMemo::sPopulate()
             "   AND   (aropen_open) )"
             " ) AS data "
             " ORDER BY aropen_id, indent, duedate;");
-  q.bindValue(":cohead_id", _coheadid);
-  q.bindValue(":invchead_id", _invcheadid);
-  q.bindValue(":cust_id", _custid);
-  q.bindValue(":curr_id",   _total->id());
-  q.bindValue(":effective", _total->effective());
-  q.bindValue(":creditmemo", tr("Credit Memo"));
-  q.bindValue(":cashdeposit", tr("Customer Deposit"));
-  q.bindValue(":salesorder", tr("Sales Order"));
-  q.bindValue(":invoice", tr("Invoice"));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  populateCM.bindValue(":cohead_id", _coheadid);
+  populateCM.bindValue(":invchead_id", _invcheadid);
+  populateCM.bindValue(":cust_id", _custid);
+  populateCM.bindValue(":curr_id",   _total->id());
+  populateCM.bindValue(":effective", _total->effective());
+  populateCM.bindValue(":creditmemo", tr("Credit Memo"));
+  populateCM.bindValue(":cashdeposit", tr("Customer Deposit"));
+  populateCM.bindValue(":salesorder", tr("Sales Order"));
+  populateCM.bindValue(":invoice", tr("Invoice"));
+  populateCM.exec();
+  if (populateCM.lastError().type() != QSqlError::NoError)
   {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, populateCM.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _aropen->populate(q, false);
+  _aropen->populate(populateCM, false);
 }
 
 void allocateARCreditMemo::sAllocate()

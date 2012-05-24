@@ -36,6 +36,7 @@ void submitAction::languageChange()
 
 enum SetResponse submitAction::set(const ParameterList &pParams)
 {
+  XSqlQuery submitet;
   XDialog::set(pParams);
   _params = pParams;
 
@@ -51,12 +52,12 @@ enum SetResponse submitAction::set(const ParameterList &pParams)
     _email->setText(param.toString());
   else
   {
-    q.prepare( "SELECT usr_email "
+    submitet.prepare( "SELECT usr_email "
                "FROM report, usr "
                "WHERE (usr_username=getEffectiveXtUser());" );
-    q.exec();
-    if (q.first())
-      _email->setText(q.value("usr_email").toString());
+    submitet.exec();
+    if (submitet.first())
+      _email->setText(submitet.value("usr_email").toString());
   }
 
   return NoError;
@@ -64,6 +65,7 @@ enum SetResponse submitAction::set(const ParameterList &pParams)
 
 void submitAction::sSubmit()
 {
+  XSqlQuery submitSubmit;
   if (_email->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Submit Action"),
@@ -80,27 +82,27 @@ void submitAction::sSubmit()
   }
 
   if (_asap->isChecked())
-    q.prepare("SELECT xtbatch.submitActionToBatch(:action, :emailAddress, "
+    submitSubmit.prepare("SELECT xtbatch.submitActionToBatch(:action, :emailAddress, "
               "CURRENT_TIMESTAMP) AS batch_id;");
   else
   {
-    q.prepare("SELECT xtbatch.submitActionToBatch(:action, :emailAddress, :scheduled) AS batch_id;");
+    submitSubmit.prepare("SELECT xtbatch.submitActionToBatch(:action, :emailAddress, :scheduled) AS batch_id;");
 
     QDateTime scheduled;
     scheduled.setDate(_date->date());
     scheduled.setTime(_time->time());
-    q.bindValue(":scheduled", scheduled);
+    submitSubmit.bindValue(":scheduled", scheduled);
   }
 
-  q.bindValue(":action", _action->text());
-  q.bindValue(":emailAddress", _email->text());
-  q.exec();
+  submitSubmit.bindValue(":action", _action->text());
+  submitSubmit.bindValue(":emailAddress", _email->text());
+  submitSubmit.exec();
 
-  if (q.first())
+  if (submitSubmit.first())
   {
-    int batchid = q.value("batch_id").toInt();
+    int batchid = submitSubmit.value("batch_id").toInt();
 
-    q.prepare( "INSERT INTO xtbatch.batchparam "
+    submitSubmit.prepare( "INSERT INTO xtbatch.batchparam "
                "( batchparam_batch_id, batchparam_order,"
                "  batchparam_name, batchparam_type, batchparam_value ) "
                "VALUES "
@@ -108,17 +110,17 @@ void submitAction::sSubmit()
                "  :batchparam_name, :batchparam_type, :batchparam_value );" );
     for (int counter = 0; counter < _params.count(); counter++)
     {
-      q.bindValue(":batchparam_batch_id", batchid);
-      q.bindValue(":batchparam_order", (counter + 1));
-      q.bindValue(":batchparam_name", _params.name(counter));
+      submitSubmit.bindValue(":batchparam_batch_id", batchid);
+      submitSubmit.bindValue(":batchparam_order", (counter + 1));
+      submitSubmit.bindValue(":batchparam_name", _params.name(counter));
       QVariant v = _params.value(counter);
-      q.bindValue(":batchparam_type", QVariant::typeToName(v.type()));
-      q.bindValue(":batchparam_value", _params.value(counter).toString());
-      q.exec();
+      submitSubmit.bindValue(":batchparam_type", QVariant::typeToName(v.type()));
+      submitSubmit.bindValue(":batchparam_value", _params.value(counter).toString());
+      submitSubmit.exec();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (submitSubmit.lastError().type() != QSqlError::NoError)
+    systemError(this, submitSubmit.lastError().databaseText(), __FILE__, __LINE__);
 
   accept();
 }

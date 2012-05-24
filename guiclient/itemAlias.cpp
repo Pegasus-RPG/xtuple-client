@@ -52,6 +52,7 @@ void itemAlias::languageChange()
 
 enum SetResponse itemAlias::set(const ParameterList &pParams)
 {
+  XSqlQuery itemet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -60,11 +61,11 @@ enum SetResponse itemAlias::set(const ParameterList &pParams)
   if (valid)
   {
     _itemid = param.toInt();
-    q.prepare("SELECT item_number FROM item WHERE (item_id=:item_id);");
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if(q.first())
-      _item->setText(q.value("item_number").toString());
+    itemet.prepare("SELECT item_number FROM item WHERE (item_id=:item_id);");
+    itemet.bindValue(":item_id", _itemid);
+    itemet.exec();
+    if(itemet.first())
+      _item->setText(itemet.value("item_number").toString());
   }
 
   param = pParams.value("itemalias_id", &valid);
@@ -115,16 +116,17 @@ enum SetResponse itemAlias::set(const ParameterList &pParams)
 
 void itemAlias::sSave()
 {
+  XSqlQuery itemSave;
   if (_mode == cNew)
   {
-    q.prepare( "SELECT itemalias_id "
+    itemSave.prepare( "SELECT itemalias_id "
                "FROM itemalias "
                "WHERE ( (itemalias_item_id=:item_id)"
                " AND (itemalias_number=:itemalias_number) );" );
-    q.bindValue(":item_id", _itemid);
-    q.bindValue(":itemalias_number", _number->text());
-    q.exec();
-    if (q.first())
+    itemSave.bindValue(":item_id", _itemid);
+    itemSave.bindValue(":itemalias_number", _number->text());
+    itemSave.exec();
+    if (itemSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Item Alias"),
                              tr( "An Item Alias for the selected Item Number has already been defined with the selected Alias Item Number.\n"
@@ -133,11 +135,11 @@ void itemAlias::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('itemalias_itemalias_id_seq') AS _itemalias_id;");
-    if (q.first())
-      _itemaliasid = q.value("_itemalias_id").toInt();
+    itemSave.exec("SELECT NEXTVAL('itemalias_itemalias_id_seq') AS _itemalias_id;");
+    if (itemSave.first())
+      _itemaliasid = itemSave.value("_itemalias_id").toInt();
 
-    q.prepare( "INSERT INTO itemalias "
+    itemSave.prepare( "INSERT INTO itemalias "
                "( itemalias_id, itemalias_item_id, itemalias_number,"
                "  itemalias_usedescrip, itemalias_descrip1, itemalias_descrip2,"
                "  itemalias_comments ) "
@@ -147,45 +149,46 @@ void itemAlias::sSave()
                "  :itemalias_comments );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE itemalias "
+    itemSave.prepare( "UPDATE itemalias "
                "SET itemalias_number=:itemalias_number, itemalias_comments=:itemalias_comments,"
                "    itemalias_usedescrip=:itemalias_usedescrip,"
                "    itemalias_descrip1=:itemalias_descrip1, itemalias_descrip2=:itemalias_descrip2 "
                "WHERE (itemalias_id=:itemalias_id);" );
 
-  q.bindValue(":itemalias_id", _itemaliasid);
-  q.bindValue(":itemalias_item_id", _itemid);
-  q.bindValue(":itemalias_number", _number->text().trimmed());
-  q.bindValue(":itemalias_descrip1", _descrip1->text().trimmed());
-  q.bindValue(":itemalias_descrip2", _descrip2->text().trimmed());
-  q.bindValue(":itemalias_comments", _comments->toPlainText());
-  q.bindValue(":itemalias_usedescrip", QVariant(_useDescription->isChecked()));
-  q.exec();
+  itemSave.bindValue(":itemalias_id", _itemaliasid);
+  itemSave.bindValue(":itemalias_item_id", _itemid);
+  itemSave.bindValue(":itemalias_number", _number->text().trimmed());
+  itemSave.bindValue(":itemalias_descrip1", _descrip1->text().trimmed());
+  itemSave.bindValue(":itemalias_descrip2", _descrip2->text().trimmed());
+  itemSave.bindValue(":itemalias_comments", _comments->toPlainText());
+  itemSave.bindValue(":itemalias_usedescrip", QVariant(_useDescription->isChecked()));
+  itemSave.exec();
 
   done(_itemaliasid);
 }
 
 void itemAlias::populate()
 {
-  q.prepare( "SELECT itemalias_item_id, itemalias_number,"
+  XSqlQuery itempopulate;
+  itempopulate.prepare( "SELECT itemalias_item_id, itemalias_number,"
              "       itemalias_usedescrip, itemalias_descrip1, itemalias_descrip2,"
              "       itemalias_comments, item_number "
              "FROM itemalias LEFT OUTER JOIN item ON (itemalias_item_id=item_id) "
              "WHERE (itemalias_id=:itemalias_id);" );
-  q.bindValue(":itemalias_id", _itemaliasid);
-  q.exec();
-  if (q.first())
+  itempopulate.bindValue(":itemalias_id", _itemaliasid);
+  itempopulate.exec();
+  if (itempopulate.first())
   {
-    _itemid = q.value("itemalias_item_id").toInt();
-    _item->setText(q.value("item_number").toString());
-    _number->setText(q.value("itemalias_number").toString());
+    _itemid = itempopulate.value("itemalias_item_id").toInt();
+    _item->setText(itempopulate.value("item_number").toString());
+    _number->setText(itempopulate.value("itemalias_number").toString());
 
-    if (q.value("itemalias_usedescrip").toBool())
+    if (itempopulate.value("itemalias_usedescrip").toBool())
     {
       _useDescription->setChecked(TRUE);
       _descriptionGroup->setEnabled(TRUE);
-      _descrip1->setText(q.value("itemalias_descrip1").toString());
-      _descrip2->setText(q.value("itemalias_descrip2").toString());
+      _descrip1->setText(itempopulate.value("itemalias_descrip1").toString());
+      _descrip2->setText(itempopulate.value("itemalias_descrip2").toString());
     }
     else
     {
@@ -193,7 +196,7 @@ void itemAlias::populate()
       _descriptionGroup->setEnabled(FALSE);
     }
 
-    _comments->setText(q.value("itemalias_comments").toString());
+    _comments->setText(itempopulate.value("itemalias_comments").toString());
   }
 }
 

@@ -61,6 +61,7 @@ void substituteList::languageChange()
 
 enum SetResponse substituteList::set(const ParameterList &pParams)
 {
+  XSqlQuery substituteet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -68,7 +69,7 @@ enum SetResponse substituteList::set(const ParameterList &pParams)
   param = pParams.value("womatl_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT womatl_itemsite_id,"
+    substituteet.prepare( "SELECT womatl_itemsite_id,"
                "       bomitem_id, COALESCE(bomitem_subtype, 'I') AS subtype,"
                "       COALESCE(wo_id, 0) AS wo_id "
                "FROM womatl LEFT OUTER JOIN bomitem ON (bomitem_id=womatl_bomitem_id) "
@@ -76,24 +77,24 @@ enum SetResponse substituteList::set(const ParameterList &pParams)
                "                                    (wo_ordid=womatl_wo_id) AND"
                "                                    (wo_itemsite_id=womatl_itemsite_id) ) "
                "WHERE (womatl_id=:womatl_id);" );
-    q.bindValue(":womatl_id", param.toInt());
-    q.exec();
-    if (q.first())
+    substituteet.bindValue(":womatl_id", param.toInt());
+    substituteet.exec();
+    if (substituteet.first())
     {
-      if (q.value("wo_id").toInt() > 0)
+      if (substituteet.value("wo_id").toInt() > 0)
       {
         QMessageBox::warning(this, tr("Child Work Order"),
             tr("A child Work Order exists for this Material \n"
                "Requirement.  You should delete this \n"
                "child Work Order before substituting.") );
       }
-      _item->setItemsiteid(q.value("womatl_itemsite_id").toInt());
+      _item->setItemsiteid(substituteet.value("womatl_itemsite_id").toInt());
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
       
-      _bomitemid = q.value("bomitem_id").toInt();
-      _itemsiteid = q.value("womatl_itemsite_id").toInt();
-      _source = q.value("subtype").toString();
+      _bomitemid = substituteet.value("bomitem_id").toInt();
+      _itemsiteid = substituteet.value("womatl_itemsite_id").toInt();
+      _source = substituteet.value("subtype").toString();
 
       sFillList();
     }

@@ -79,20 +79,22 @@ void packages::languageChange()
 
 void packages::sFillList()
 {
-  q.prepare( "SELECT *, packageIsEnabled(pkghead_name) AS enabled "
+  XSqlQuery packagesFillList;
+  packagesFillList.prepare( "SELECT *, packageIsEnabled(pkghead_name) AS enabled "
              "FROM pkghead "
              "ORDER BY pkghead_name, pkghead_version DESC;" );
-  q.exec();
-  _package->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  packagesFillList.exec();
+  _package->populate(packagesFillList);
+  if (packagesFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packagesFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void packages::sDelete()
 {
+  XSqlQuery packagesDelete;
   if (QMessageBox::question(this, tr("Delete Package?"),
                             tr("<p>Are you sure you want to delete the package "
                                "%1?<br>If you answer 'Yes' then you should "
@@ -102,12 +104,12 @@ void packages::sDelete()
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  q.prepare( "SELECT deletePackage(:pkghead_id) AS result;" );
-  q.bindValue(":pkghead_id", _package->id());
-  q.exec();
-  if (q.first())
+  packagesDelete.prepare( "SELECT deletePackage(:pkghead_id) AS result;" );
+  packagesDelete.bindValue(":pkghead_id", _package->id());
+  packagesDelete.exec();
+  if (packagesDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = packagesDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deletePackage", result),
@@ -115,9 +117,9 @@ void packages::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (packagesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packagesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

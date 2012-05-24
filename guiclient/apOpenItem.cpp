@@ -88,17 +88,18 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
   }
 
   param = pParams.value("mode", &valid);
+  XSqlQuery setOpenItem;
   if (valid)
   {
     if (param.toString() == "new")
     {
       _mode = cNew;
 
-      q.exec("SELECT fetchAPMemoNumber() AS number;");
-      if (q.first())
+      setOpenItem.exec("SELECT fetchAPMemoNumber() AS number;");
+      if (setOpenItem.first())
       {
-        _docNumber->setText(q.value("number").toString());
-        _seqiss = q.value("number").toInt();
+        _docNumber->setText(setOpenItem.value("number").toString());
+        _seqiss = setOpenItem.value("number").toInt();
       }
 
       _paid->clear();
@@ -159,6 +160,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
 
 void apOpenItem::sSave()
 {
+  XSqlQuery saveOpenItem;
   if (_mode == cNew)
   {
     if (!_docDate->isValid())
@@ -225,9 +227,10 @@ void apOpenItem::sSave()
 	       ", :apopen_docnumber, :apopen_ponumber, :apopen_docdate,"
 	       "  :apopen_amount, :apopen_notes, :apopen_accnt_id,"
 	       "  :apopen_duedate, :apopen_terms_id, :curr_id ) AS result;";
-    q.prepare(queryStr);
-    q.bindValue(":vend_id", _vend->id());
-    q.bindValue(":apopen_docdate", _docDate->date());
+	
+    saveOpenItem.prepare(queryStr);
+    saveOpenItem.bindValue(":vend_id", _vend->id());
+    saveOpenItem.bindValue(":apopen_docdate", _docDate->date());
   }
   else if (_mode == cEdit)
   {
@@ -243,7 +246,7 @@ void apOpenItem::sSave()
                                  tr("Yes"), tr("No"), QString::null ) == 1 )
         return;
 
-    q.prepare( "UPDATE apopen "
+    saveOpenItem.prepare( "UPDATE apopen "
 	       "SET apopen_doctype=:apopen_doctype,"
                "    apopen_ponumber=:apopen_ponumber, apopen_docnumber=:apopen_docnumber,"
                "    apopen_amount=:apopen_amount,"
@@ -255,46 +258,46 @@ void apOpenItem::sSave()
   }
 
   if (_apopenid != -1)
-    q.bindValue(":apopen_id", _apopenid);
-  q.bindValue(":apopen_docnumber", _docNumber->text());
-  q.bindValue(":apopen_duedate", _dueDate->date());
-  q.bindValue(":apopen_ponumber", _poNumber->text());
-  q.bindValue(":apopen_amount", _amount->localValue());
-  q.bindValue(":apopen_notes",   _notes->toPlainText());
-  q.bindValue(":curr_id", _amount->id());
-  q.bindValue(":apopen_terms_id", _terms->id());
+    saveOpenItem.bindValue(":apopen_id", _apopenid);
+  saveOpenItem.bindValue(":apopen_docnumber", _docNumber->text());
+  saveOpenItem.bindValue(":apopen_duedate", _dueDate->date());
+  saveOpenItem.bindValue(":apopen_ponumber", _poNumber->text());
+  saveOpenItem.bindValue(":apopen_amount", _amount->localValue());
+  saveOpenItem.bindValue(":apopen_notes",   _notes->toPlainText());
+  saveOpenItem.bindValue(":curr_id", _amount->id());
+  saveOpenItem.bindValue(":apopen_terms_id", _terms->id());
   QString temp;
   if (_status->id() == 1)
     temp = "O" ;
   else
 	temp = "H" ;
-  q.bindValue(":apopen_status", temp);
+  saveOpenItem.bindValue(":apopen_status", temp);
   if(_useAltPrepaid->isChecked())
-    q.bindValue(":apopen_accnt_id", _altAccntid->id());
+    saveOpenItem.bindValue(":apopen_accnt_id", _altAccntid->id());
   else
-    q.bindValue(":apopen_accnt_id", -1);
+    saveOpenItem.bindValue(":apopen_accnt_id", -1);
 
   switch (_docType->currentIndex())
   {
     case 0:
-      q.bindValue(":apopen_doctype", "C");
+      saveOpenItem.bindValue(":apopen_doctype", "C");
       break;
 
     case 1:
-      q.bindValue(":apopen_doctype", "D");
+      saveOpenItem.bindValue(":apopen_doctype", "D");
       break;
 
     case 2:
-      q.bindValue(":apopen_doctype", "V");
+      saveOpenItem.bindValue(":apopen_doctype", "V");
       break;
   }
 
-  q.exec();
-  if (q.first())
+  saveOpenItem.exec();
+  if (saveOpenItem.first())
   {
     if (_mode == cNew)
     {
-      if (q.value("result").toInt() == -1)
+      if (saveOpenItem.value("result").toInt() == -1)
       {
         QMessageBox::critical( this, tr("Cannot Create A/P Memo"),
                                tr( "<p>The A/P Memo cannot be created as there "
@@ -307,16 +310,16 @@ void apOpenItem::sSave()
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (saveOpenItem.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, saveOpenItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_mode == cEdit)
     done(_apopenid);
   else
-    done(q.value("result").toInt());
+    done(saveOpenItem.value("result").toInt());
 }
 
 void apOpenItem::sClose()
@@ -329,18 +332,20 @@ void apOpenItem::sClose()
 
 void apOpenItem::sReleaseNumber()
 {
+  XSqlQuery releaseOpenItem;
   if(_seqiss)
   {
-    q.prepare("SELECT releaseAPMemoNumber(:docNumber);");
-    q.bindValue(":docNumber", _seqiss);
-    q.exec();
+    releaseOpenItem.prepare("SELECT releaseAPMemoNumber(:docNumber);");
+    releaseOpenItem.bindValue(":docNumber", _seqiss);
+    releaseOpenItem.exec();
   }
 }
 
 void apOpenItem::populate()
 {
   populateStatus();
-  q.prepare( "SELECT apopen_vend_id, apopen_docdate, apopen_duedate,"
+  XSqlQuery populateOpenItem;
+  populateOpenItem.prepare( "SELECT apopen_vend_id, apopen_docdate, apopen_duedate,"
              "       apopen_doctype, apopen_docnumber,"
              "       apopen_ponumber, apopen_journalnumber,"
              "       apopen_amount,   apopen_paid, "
@@ -360,22 +365,22 @@ void apOpenItem::populate()
              "FROM apopen "
              "WHERE ( (apopen_id=:apopen_id)"
              "  AND   (apopen_void = FALSE) );" );
-  q.bindValue(":apopen_id", _apopenid);
-  q.exec();
-  if (q.first())
+  populateOpenItem.bindValue(":apopen_id", _apopenid);
+  populateOpenItem.exec();
+  if (populateOpenItem.first())
   {
-    _vend->setId(q.value("apopen_vend_id").toInt());
-    _docDate->setDate(q.value("apopen_docdate").toDate(), true);
-    _dueDate->setDate(q.value("apopen_duedate").toDate());
-    _docNumber->setText(q.value("apopen_docnumber").toString());
-    _poNumber->setText(q.value("apopen_ponumber").toString());
-    _journalNumber->setText(q.value("apopen_journalnumber").toString());
-    _amount->setId(q.value("apopen_curr_id").toInt());
-    _amount->setLocalValue(q.value("apopen_amount").toDouble());
-    _paid->setLocalValue(q.value("apopen_paid").toDouble());
-    _balance->setLocalValue(q.value("f_balance").toDouble());
-    _terms->setId(q.value("apopen_terms_id").toInt());
-	if (q.value("apopen_status").toString() == "C")
+    _vend->setId(populateOpenItem.value("apopen_vend_id").toInt());
+    _docDate->setDate(populateOpenItem.value("apopen_docdate").toDate(), true);
+    _dueDate->setDate(populateOpenItem.value("apopen_duedate").toDate());
+    _docNumber->setText(populateOpenItem.value("apopen_docnumber").toString());
+    _poNumber->setText(populateOpenItem.value("apopen_ponumber").toString());
+    _journalNumber->setText(populateOpenItem.value("apopen_journalnumber").toString());
+    _amount->setId(populateOpenItem.value("apopen_curr_id").toInt());
+    _amount->setLocalValue(populateOpenItem.value("apopen_amount").toDouble());
+    _paid->setLocalValue(populateOpenItem.value("apopen_paid").toDouble());
+    _balance->setLocalValue(populateOpenItem.value("f_balance").toDouble());
+    _terms->setId(populateOpenItem.value("apopen_terms_id").toInt());
+	if (populateOpenItem.value("apopen_status").toString() == "C")
 	{
       QString status;
       status = " SELECT DISTINCT "
@@ -390,7 +395,7 @@ void apOpenItem::populate()
 	  _status->populate(status, -1);
 	  _status->setEnabled(FALSE);
 	}
-	_status->setId(q.value("status_id").toInt());
+	_status->setId(populateOpenItem.value("status_id").toInt());
 	
 	XSqlQuery selectpayment;
     selectpayment.prepare("SELECT * FROM apselect WHERE apselect_apopen_id = :apopen_id;");
@@ -398,22 +403,22 @@ void apOpenItem::populate()
     selectpayment.exec();
     if (selectpayment.first())
       _status->setEnabled(FALSE);
-    _notes->setText(q.value("apopen_notes").toString());
-    if (q.value("showTax").toBool())
-      _tax->setLocalValue(q.value("tax").toDouble());
+    _notes->setText(populateOpenItem.value("apopen_notes").toString());
+    if (populateOpenItem.value("showTax").toBool())
+      _tax->setLocalValue(populateOpenItem.value("tax").toDouble());
     else
     {
       _taxLit->hide();
       _tax->hide();
     }
 
-    if(!q.value("apopen_accnt_id").isNull() && q.value("apopen_accnt_id").toInt() != -1)
+    if(!populateOpenItem.value("apopen_accnt_id").isNull() && populateOpenItem.value("apopen_accnt_id").toInt() != -1)
     {
       _useAltPrepaid->setChecked(true);
-      _altAccntid->setId(q.value("apopen_accnt_id").toInt());
+      _altAccntid->setId(populateOpenItem.value("apopen_accnt_id").toInt());
     }
 
-    QString docType = q.value("apopen_doctype").toString();
+    QString docType = populateOpenItem.value("apopen_doctype").toString();
     if (docType == "C")
       _docType->setCurrentIndex(0);
     else if (docType == "D")
@@ -425,7 +430,7 @@ void apOpenItem::populate()
 
     if ( (docType == "V") || (docType == "D") )
     {
-      q.prepare( "SELECT apapply_id, apapply_source_apopen_id,"
+      populateOpenItem.prepare( "SELECT apapply_id, apapply_source_apopen_id,"
                  "       CASE WHEN (apapply_source_doctype='C') THEN :creditMemo"
                  "            WHEN (apapply_source_doctype='K') THEN :check"
                  "            ELSE :other"
@@ -438,12 +443,12 @@ void apOpenItem::populate()
                  "WHERE (apapply_target_apopen_id=:apopen_id) "
                  "ORDER BY apapply_postdate;" );
 
-      q.bindValue(":creditMemo", tr("Credit Memo"));
-      q.bindValue(":check", tr("Check"));
+      populateOpenItem.bindValue(":creditMemo", tr("Credit Memo"));
+      populateOpenItem.bindValue(":check", tr("Check"));
     }
     else if (docType == "C")
     {
-      q.prepare( "SELECT apapply_id, apapply_target_apopen_id,"
+      populateOpenItem.prepare( "SELECT apapply_id, apapply_target_apopen_id,"
                  "       CASE WHEN (apapply_target_doctype='V') THEN :voucher"
                  "            WHEN (apapply_target_doctype='D') THEN :debitMemo"
                  "            ELSE :other"
@@ -456,19 +461,19 @@ void apOpenItem::populate()
                  "WHERE (apapply_source_apopen_id=:apopen_id) "
                  "ORDER BY apapply_postdate;" );
 
-      q.bindValue(":voucher", tr("Voucher"));
-      q.bindValue(":debitMemo", tr("Debit Memo"));
+      populateOpenItem.bindValue(":voucher", tr("Voucher"));
+      populateOpenItem.bindValue(":debitMemo", tr("Debit Memo"));
     }
 
-    q.bindValue(":apopen_id", _apopenid);
-    q.bindValue(":other", tr("Other"));
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    _apapply->populate(q, TRUE);
-    if (q.lastError().type() != QSqlError::NoError)
+    populateOpenItem.bindValue(":apopen_id", _apopenid);
+    populateOpenItem.bindValue(":other", tr("Other"));
+    populateOpenItem.exec();
+    if (populateOpenItem.lastError().type() != QSqlError::NoError)
+	systemError(this, populateOpenItem.lastError().databaseText(), __FILE__, __LINE__);
+    _apapply->populate(populateOpenItem, TRUE);
+    if (populateOpenItem.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, populateOpenItem.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -511,7 +516,8 @@ void apOpenItem::sPopulateDueDate()
 }
 
 void apOpenItem::sTaxDetail()
-{ 
+{
+  XSqlQuery ap;
   if (_apopenid == -1)
   {
     if (!_docDate->isValid() || !_dueDate->isValid())
@@ -522,14 +528,13 @@ void apOpenItem::sTaxDetail()
       return;
     }
     
-    XSqlQuery ap;
     ap.prepare("SELECT nextval('apopen_apopen_id_seq') AS result;");
     ap.exec();
     if (ap.first())
       _apopenid = ap.value("result").toInt();
     else if (ap.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, ap.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -552,8 +557,8 @@ void apOpenItem::sTaxDetail()
     ap.exec();
     if (ap.lastError().type() != QSqlError::NoError)
     {
-      q.exec("ROLLBACK;");
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      ap.exec("ROLLBACK;");
+      systemError(this, ap.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -566,9 +571,9 @@ void apOpenItem::sTaxDetail()
   if (_mode != cNew)
     params.append("readOnly");
 
-  q.exec("SELECT getadjustmenttaxtypeid() as taxtype;");
-  if(q.first())
-    params.append("taxtype_id", q.value("taxtype").toInt());  
+  ap.exec("SELECT getadjustmenttaxtypeid() as taxtype;");
+  if(ap.first())
+    params.append("taxtype_id", ap.value("taxtype").toInt());  
    
   params.append("order_type", "AP");
   params.append("order_id", _apopenid);

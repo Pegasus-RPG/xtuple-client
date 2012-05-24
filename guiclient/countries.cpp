@@ -100,6 +100,7 @@ void countries::sView()
 
 void countries::sDelete()
 {
+  XSqlQuery countriesDelete;
   int answer = QMessageBox::question(this,
 				     tr("Confirm Delete"),
 				     tr("<p>This is a master table used for "
@@ -112,11 +113,11 @@ void countries::sDelete()
 				      QMessageBox::No | QMessageBox::Default);
   if (QMessageBox::Yes == answer)
   {
-    q.prepare("DELETE FROM country WHERE country_id = :country_id;");
-    q.bindValue(":country_id", _countries->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    countriesDelete.prepare("DELETE FROM country WHERE country_id = :country_id;");
+    countriesDelete.bindValue(":country_id", _countries->id());
+    countriesDelete.exec();
+    if (countriesDelete.lastError().type() != QSqlError::NoError)
+      systemError(this, countriesDelete.lastError().databaseText(), __FILE__, __LINE__);
   
     sFillList();
   }
@@ -124,16 +125,17 @@ void countries::sDelete()
 
 void countries::sFillList()
 {
-  q.prepare( "SELECT country_id, country_abbr, country_name,"
+  XSqlQuery countriesFillList;
+  countriesFillList.prepare( "SELECT country_id, country_abbr, country_name,"
              "       country_curr_abbr, country_curr_name, "
              "       country_curr_symbol "
              "FROM country "
              "ORDER BY country_name;" );
-  q.exec();
-  _countries->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  countriesFillList.exec();
+  _countries->populate(countriesFillList);
+  if (countriesFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, countriesFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

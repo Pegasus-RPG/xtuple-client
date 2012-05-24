@@ -57,6 +57,7 @@ void dspReservations::languageChange()
 
 enum SetResponse dspReservations::set(const ParameterList &pParams)
 {
+  XSqlQuery dspet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -64,13 +65,13 @@ enum SetResponse dspReservations::set(const ParameterList &pParams)
   param = pParams.value("soitem_id", &valid);
   if (valid)
   {
-    q.prepare("SELECT coitem_itemsite_id"
+    dspet.prepare("SELECT coitem_itemsite_id"
               "  FROM coitem"
               " WHERE(coitem_id=:soitem_id);");
-    q.bindValue(":soitem_id", param.toInt());
-    q.exec();
-    if(q.first())
-      _item->setItemsiteid(q.value("coitem_itemsite_id").toInt());
+    dspet.bindValue(":soitem_id", param.toInt());
+    dspet.exec();
+    if(dspet.first())
+      _item->setItemsiteid(dspet.value("coitem_itemsite_id").toInt());
   }
 
   param = pParams.value("itemsite_id", &valid);
@@ -115,16 +116,17 @@ void dspReservations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, in
 
 void dspReservations::sViewWorkOrder()
 {
-  q.prepare( "SELECT womatl_wo_id "
+  XSqlQuery dspViewWorkOrder;
+  dspViewWorkOrder.prepare( "SELECT womatl_wo_id "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", list()->id());
-  q.exec();
-  if (q.first())
+  dspViewWorkOrder.bindValue(":womatl_id", list()->id());
+  dspViewWorkOrder.exec();
+  if (dspViewWorkOrder.first())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("wo_id", q.value("womatl_wo_id").toInt());
+    params.append("wo_id", dspViewWorkOrder.value("womatl_wo_id").toInt());
   
     workOrder *newdlg = new workOrder();
     newdlg->set(params);
@@ -134,46 +136,50 @@ void dspReservations::sViewWorkOrder()
 
 void dspReservations::sViewCustomerOrder()
 {
-  q.prepare( "SELECT coitem_cohead_id "
+  XSqlQuery dspViewCustomerOrder;
+  dspViewCustomerOrder.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", list()->id());
-  q.exec();
-  if (q.first())
-    salesOrder::viewSalesOrder(q.value("coitem_cohead_id").toInt());
+  dspViewCustomerOrder.bindValue(":coitem_id", list()->id());
+  dspViewCustomerOrder.exec();
+  if (dspViewCustomerOrder.first())
+    salesOrder::viewSalesOrder(dspViewCustomerOrder.value("coitem_cohead_id").toInt());
 }
 
 void dspReservations::sEditCustomerOrder()
 {
-  q.prepare( "SELECT coitem_cohead_id "
+  XSqlQuery dspEditCustomerOrder;
+  dspEditCustomerOrder.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", list()->id());
-  q.exec();
-  if (q.first())
-    salesOrder::editSalesOrder(q.value("coitem_cohead_id").toInt(), false);
+  dspEditCustomerOrder.bindValue(":coitem_id", list()->id());
+  dspEditCustomerOrder.exec();
+  if (dspEditCustomerOrder.first())
+    salesOrder::editSalesOrder(dspEditCustomerOrder.value("coitem_cohead_id").toInt(), false);
 }
 
 void dspReservations::sViewTransferOrder()
 {
-  q.prepare( "SELECT toitem_tohead_id "
+  XSqlQuery dspViewTransferOrder;
+  dspViewTransferOrder.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:toitem_id);" );
-  q.bindValue(":toitem_id", list()->id());
-  q.exec();
-  if (q.first())
-    transferOrder::viewTransferOrder(q.value("toitem_tohead_id").toInt());
+  dspViewTransferOrder.bindValue(":toitem_id", list()->id());
+  dspViewTransferOrder.exec();
+  if (dspViewTransferOrder.first())
+    transferOrder::viewTransferOrder(dspViewTransferOrder.value("toitem_tohead_id").toInt());
 }
 
 void dspReservations::sEditTransferOrder()
 {
-  q.prepare( "SELECT toitem_tohead_id "
+  XSqlQuery dspEditTransferOrder;
+  dspEditTransferOrder.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:toitem_id);" );
-  q.bindValue(":toitem_id", list()->id());
-  q.exec();
-  if (q.first())
-    transferOrder::editTransferOrder(q.value("toitem_tohead_id").toInt(), false);
+  dspEditTransferOrder.bindValue(":toitem_id", list()->id());
+  dspEditTransferOrder.exec();
+  if (dspEditTransferOrder.first())
+    transferOrder::editTransferOrder(dspEditTransferOrder.value("toitem_tohead_id").toInt(), false);
 }
 
 bool dspReservations::setParams(ParameterList &params)
@@ -193,6 +199,7 @@ bool dspReservations::setParams(ParameterList &params)
 
 void dspReservations::sFillList()
 {
+  XSqlQuery dspFillList;
   ParameterList params;
   if(setParams(params))
   {
@@ -204,15 +211,15 @@ void dspReservations::sFillList()
                    "WHERE ((itemsite_item_id=<? value(\"item_id\") ?>)"
                    "  AND  (itemsite_warehous_id=<? value(\"warehous_id\") ?>));");
     MetaSQLQuery availm(avails);
-    q = availm.toQuery(params);
-    if (q.first())
+    dspFillList = availm.toQuery(params);
+    if (dspFillList.first())
     {
-      _qoh->setDouble(q.value("itemsite_qtyonhand").toDouble());
-      _available->setDouble(q.value("unreserved").toDouble());
+      _qoh->setDouble(dspFillList.value("itemsite_qtyonhand").toDouble());
+      _available->setDouble(dspFillList.value("unreserved").toDouble());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (dspFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

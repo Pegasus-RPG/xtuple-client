@@ -46,18 +46,19 @@ enum SetResponse absoluteCalendarItem::set(const ParameterList &pParams)
   else
     _calheadid = -1;
 
+  XSqlQuery setCalendarItem;
   param = pParams.value("calendarName", &valid);
   if (valid)
     _calendarName->setText(param.toString());
   else if (_calheadid != -1)
   {
-    q.prepare( "SELECT calhead_name "
+    setCalendarItem.prepare( "SELECT calhead_name "
                "FROM calhead "
                "WHERE (calhead_id=:calhead_id);" );
-    q.bindValue(":calhead_id", _calheadid);
-    q.exec();
-    if (q.first())
-      _calendarName->setText(q.value("calhead_name").toString());
+    setCalendarItem.bindValue(":calhead_id", _calheadid);
+    setCalendarItem.exec();
+    if (setCalendarItem.first())
+      _calendarName->setText(setCalendarItem.value("calhead_name").toString());
   }
 
   param = pParams.value("calitem_id", &valid);
@@ -87,14 +88,15 @@ enum SetResponse absoluteCalendarItem::set(const ParameterList &pParams)
 
 void absoluteCalendarItem::sSave()
 {
+  XSqlQuery saveCalendarItem;
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('xcalitem_xcalitem_id_seq') AS _calitem_id");
-    if (q.first())
-      _calitemid = q.value("_calitem_id").toInt();
+    saveCalendarItem.exec("SELECT NEXTVAL('xcalitem_xcalitem_id_seq') AS _calitem_id");
+    if (saveCalendarItem.first())
+      _calitemid = saveCalendarItem.value("_calitem_id").toInt();
 //  ToDo
 
-    q.prepare( "INSERT INTO acalitem "
+    saveCalendarItem.prepare( "INSERT INTO acalitem "
                "( acalitem_id, acalitem_calhead_id, acalitem_name,"
                "  acalitem_periodstart, acalitem_periodlength )"
                "VALUES "
@@ -102,46 +104,47 @@ void absoluteCalendarItem::sSave()
                "  :acalitem_periodstart, :acalitem_periodlength )" );
   }
   else
-    q.prepare( "UPDATE acalitem "
+    saveCalendarItem.prepare( "UPDATE acalitem "
                "SET acalitem_name=:acalitem_name,"
                "    acalitem_periodstart=:acalitem_periodstart, acalitem_periodlength=:acalitem_periodlength "
                "WHERE (acalitem_id=:acalitem_id);" );
 
-  q.bindValue(":acalitem_id", _calitemid);
-  q.bindValue(":acalitem_calhead_id", _calheadid);
-  q.bindValue(":acalitem_name", _name->text());
-  q.bindValue(":acalitem_periodstart", _startDate->date());
-  q.bindValue(":acalitem_periodlength", _periodLength->value());
-  q.exec();
+  saveCalendarItem.bindValue(":acalitem_id", _calitemid);
+  saveCalendarItem.bindValue(":acalitem_calhead_id", _calheadid);
+  saveCalendarItem.bindValue(":acalitem_name", _name->text());
+  saveCalendarItem.bindValue(":acalitem_periodstart", _startDate->date());
+  saveCalendarItem.bindValue(":acalitem_periodlength", _periodLength->value());
+  saveCalendarItem.exec();
 
   done (_calitemid);
 }
 
 void absoluteCalendarItem::populate()
 {
-  q.prepare( "SELECT calhead_id, calhead_name "
+  XSqlQuery populateCalendarItem;
+  populateCalendarItem.prepare( "SELECT calhead_id, calhead_name "
              "FROM calhead, acalitem "
              "WHERE ( (acalitem_calhead_id=calhead_id)"
              " AND (acalitem_id=:acalitem_id));" );
-  q.bindValue(":acalitem_id", _calitemid);
-  q.exec();
-  if (q.first())
+  populateCalendarItem.bindValue(":acalitem_id", _calitemid);
+  populateCalendarItem.exec();
+  if (populateCalendarItem.first())
   {
-    _calheadid = q.value("calhead_id").toInt();
-    _calendarName->setText(q.value("calhead_name").toString());
+    _calheadid = populateCalendarItem.value("calhead_id").toInt();
+    _calendarName->setText(populateCalendarItem.value("calhead_name").toString());
   }
 
-  q.prepare( "SELECT acalitem_name,"
+  populateCalendarItem.prepare( "SELECT acalitem_name,"
              "       acalitem_periodstart, acalitem_periodlength "
              "FROM acalitem "
              "WHERE (acalitem_id=:acalitem_id);" );
-  q.bindValue(":acalitem_id", _calitemid);
-  q.exec();
-  if (q.first())
+  populateCalendarItem.bindValue(":acalitem_id", _calitemid);
+  populateCalendarItem.exec();
+  if (populateCalendarItem.first())
   {
-    _name->setText(q.value("acalitem_name").toString());
-    _startDate->setDate(q.value("acalitem_periodstart").toDate());
-    _periodLength->setValue(q.value("acalitem_periodlength").toInt());
+    _name->setText(populateCalendarItem.value("acalitem_name").toString());
+    _startDate->setDate(populateCalendarItem.value("acalitem_periodstart").toDate());
+    _periodLength->setValue(populateCalendarItem.value("acalitem_periodlength").toInt());
   }
 //  ToDo
 }

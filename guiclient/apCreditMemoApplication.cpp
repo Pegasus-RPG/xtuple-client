@@ -61,17 +61,18 @@ enum SetResponse apCreditMemoApplication::set(const ParameterList &pParams)
 
 void apCreditMemoApplication::sSave()
 {
-  q.prepare("SELECT createAPCreditMemoApplication(:source, :target, "
+  XSqlQuery saveCMA;
+  saveCMA.prepare("SELECT createAPCreditMemoApplication(:source, :target, "
 	    "                                   :amount, :curr_id) AS result;");
-  q.bindValue(":source",  _sourceApopenid);
-  q.bindValue(":target",  _targetApopenid);
-  q.bindValue(":amount",  _amountToApply->localValue());
-  q.bindValue(":curr_id", _amountToApply->id());
+  saveCMA.bindValue(":source",  _sourceApopenid);
+  saveCMA.bindValue(":target",  _targetApopenid);
+  saveCMA.bindValue(":amount",  _amountToApply->localValue());
+  saveCMA.bindValue(":curr_id", _amountToApply->id());
 
-  q.exec();
-  if (q.first())
+  saveCMA.exec();
+  if (saveCMA.first())
   {
-    int result = q.value("result").toInt();
+    int result = saveCMA.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("createApCreditMemoApplication",
@@ -79,9 +80,9 @@ void apCreditMemoApplication::sSave()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (saveCMA.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, saveCMA.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -90,7 +91,8 @@ void apCreditMemoApplication::sSave()
 
 void apCreditMemoApplication::populate()
 {
-  q.prepare( "SELECT apopen_vend_id, apopen_docnumber, apopen_doctype,"
+  XSqlQuery populateCMA;
+  populateCMA.prepare( "SELECT apopen_vend_id, apopen_docnumber, apopen_doctype,"
              "       apopen_docdate, apopen_duedate,"
              "       apopen_amount,"
              "       apopen_paid,"
@@ -113,25 +115,25 @@ void apCreditMemoApplication::populate()
              "                         GROUP BY apopen_id) AS sub2"
              "         ON (prepared_apopen_id=apopen_id)"
              " WHERE (apopen_id=:apopen_id);" );
-  q.bindValue(":apopen_id", _targetApopenid);
-  q.exec();
-  if (q.first())
+  populateCMA.bindValue(":apopen_id", _targetApopenid);
+  populateCMA.exec();
+  if (populateCMA.first())
   {
-    _vend->setId(q.value("apopen_vend_id").toInt());
-    _docNumber->setText(q.value("apopen_docnumber").toString());
-    _docType->setText(q.value("apopen_doctype").toString());
-    _docDate->setDate(q.value("apopen_docdate").toDate(), true);
-    _dueDate->setDate(q.value("apopen_duedate").toDate());
-    _targetAmount->set(q.value("apopen_amount").toDouble(), 
-		       q.value("apopen_curr_id").toInt(),
-		       q.value("apopen_docdate").toDate(), false);
-    _targetPaid->setLocalValue(q.value("apopen_paid").toDouble());
-    _targetBalance->setLocalValue(q.value("f_balance").toDouble());
+    _vend->setId(populateCMA.value("apopen_vend_id").toInt());
+    _docNumber->setText(populateCMA.value("apopen_docnumber").toString());
+    _docType->setText(populateCMA.value("apopen_doctype").toString());
+    _docDate->setDate(populateCMA.value("apopen_docdate").toDate(), true);
+    _dueDate->setDate(populateCMA.value("apopen_duedate").toDate());
+    _targetAmount->set(populateCMA.value("apopen_amount").toDouble(), 
+		       populateCMA.value("apopen_curr_id").toInt(),
+		       populateCMA.value("apopen_docdate").toDate(), false);
+    _targetPaid->setLocalValue(populateCMA.value("apopen_paid").toDouble());
+    _targetBalance->setLocalValue(populateCMA.value("f_balance").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (populateCMA.lastError().type() != QSqlError::NoError)
+    systemError(this, populateCMA.lastError().databaseText(), __FILE__, __LINE__);
 
-  q.prepare( "SELECT COALESCE(apcreditapply_curr_id,apopen_curr_id) AS curr_id,"
+  populateCMA.prepare( "SELECT COALESCE(apcreditapply_curr_id,apopen_curr_id) AS curr_id,"
 	     "       currToCurr(apopen_curr_id,"
 	     "		        COALESCE(apcreditapply_curr_id,apopen_curr_id),"
 	     "		        apopen_amount - apopen_paid, apopen_docdate) -"
@@ -141,29 +143,29 @@ void apCreditMemoApplication::populate()
              "WHERE (apopen_id=:apopen_id) "
              "GROUP BY apopen_amount, apopen_paid, apopen_docdate,"
 	     "         apcreditapply_curr_id, apopen_curr_id;" );
-  q.bindValue(":apopen_id", _sourceApopenid);
-  q.exec();
-  if (q.first())
+  populateCMA.bindValue(":apopen_id", _sourceApopenid);
+  populateCMA.exec();
+  if (populateCMA.first())
   {
-    _availableToApply->set(q.value("available").toDouble(), 
-		           q.value("curr_id").toInt(),
-		           q.value("apopen_docdate").toDate(), false);
+    _availableToApply->set(populateCMA.value("available").toDouble(), 
+		           populateCMA.value("curr_id").toInt(),
+		           populateCMA.value("apopen_docdate").toDate(), false);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (populateCMA.lastError().type() != QSqlError::NoError)
+    systemError(this, populateCMA.lastError().databaseText(), __FILE__, __LINE__);
 
-  q.prepare( "SELECT currToCurr(apcreditapply_curr_id, :curr_id, "
+  populateCMA.prepare( "SELECT currToCurr(apcreditapply_curr_id, :curr_id, "
 	     "                  apcreditapply_amount, :effective) AS apcreditapply_amount "
              "FROM apcreditapply "
              "WHERE ( (apcreditapply_source_apopen_id=:source_apopen_id)"
              " AND (apcreditapply_target_apopen_id=:target_apopen_id) );" );
-  q.bindValue(":source_apopen_id", _sourceApopenid);
-  q.bindValue(":target_apopen_id", _targetApopenid);
-  q.bindValue(":curr_id", _amountToApply->id());
-  q.bindValue(":effective", _amountToApply->effective());
-  q.exec();
-  if (q.first())
-    _amountToApply->setLocalValue(q.value("apcreditapply_amount").toDouble());
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  populateCMA.bindValue(":source_apopen_id", _sourceApopenid);
+  populateCMA.bindValue(":target_apopen_id", _targetApopenid);
+  populateCMA.bindValue(":curr_id", _amountToApply->id());
+  populateCMA.bindValue(":effective", _amountToApply->effective());
+  populateCMA.exec();
+  if (populateCMA.first())
+    _amountToApply->setLocalValue(populateCMA.value("apcreditapply_amount").toDouble());
+  else if (populateCMA.lastError().type() != QSqlError::NoError)
+    systemError(this, populateCMA.lastError().databaseText(), __FILE__, __LINE__);
 }

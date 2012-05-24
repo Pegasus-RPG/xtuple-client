@@ -32,22 +32,23 @@ void zeroUncountedCountTagsByWarehouse::languageChange()
 
 void zeroUncountedCountTagsByWarehouse::sZero()
 {
+  XSqlQuery zeroZero;
   if (_warehouse->isSelected())
   {
-    q.prepare( "SELECT enterCount(invcnt_id, 0, :comments) "
+    zeroZero.prepare( "SELECT enterCount(invcnt_id, 0, :comments) "
                "FROM invcnt, itemsite "
                "WHERE ( (invcnt_itemsite_id=itemsite_id)"
                " AND (invcnt_qoh_after IS NULL)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":warehous_id", _warehouse->id());
+    zeroZero.bindValue(":warehous_id", _warehouse->id());
   }
   else
-    q.prepare( "SELECT enterCount(invcnt_id, 0, :comments) "
+    zeroZero.prepare( "SELECT enterCount(invcnt_id, 0, :comments) "
                "FROM invcnt "
                "WHERE (invcnt_qoh_after IS NULL);" );
 
-  q.bindValue(":comments", _comments->toPlainText());
-  q.exec();
+  zeroZero.bindValue(":comments", _comments->toPlainText());
+  zeroZero.exec();
 
   accept();
 }

@@ -80,6 +80,7 @@ enum SetResponse department::set(const ParameterList& pParams)
 
 void department::sSave()
 {
+  XSqlQuery departmentSave;
   QString number = _number->text().trimmed().toUpper();
 
   if (number.isEmpty())
@@ -97,14 +98,14 @@ void department::sSave()
     return;
   }
 
-  q.prepare("SELECT dept_id"
+  departmentSave.prepare("SELECT dept_id"
             "  FROM dept"
             " WHERE((dept_id != :dept_id)"
             "   AND (dept_number=:dept_number));");
-  q.bindValue(":dept_id", _deptid);
-  q.bindValue(":dept_number", number);
-  q.exec();
-  if(q.first())
+  departmentSave.bindValue(":dept_id", _deptid);
+  departmentSave.bindValue(":dept_number", number);
+  departmentSave.exec();
+  if(departmentSave.first())
   {
     QMessageBox::critical(this, tr("Cannot Save Department"),
                           tr("The Number you entered already exists. Please choose a different Number."));
@@ -113,39 +114,39 @@ void department::sSave()
   
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('dept_dept_id_seq') AS dept_id;");
-    if (q.first())
-      _deptid =  q.value("dept_id").toInt();
+    departmentSave.exec("SELECT NEXTVAL('dept_dept_id_seq') AS dept_id;");
+    if (departmentSave.first())
+      _deptid =  departmentSave.value("dept_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
                           .arg(__FILE__)
                           .arg(__LINE__)
-                          .arg(q.lastError().databaseText()));
+                          .arg(departmentSave.lastError().databaseText()));
       return;
     }
-    q.prepare("INSERT INTO dept ( dept_id,  dept_number,  dept_name ) "
+    departmentSave.prepare("INSERT INTO dept ( dept_id,  dept_number,  dept_name ) "
               "       VALUES    (:dept_id, :dept_number, :dept_name );");
   }
   else if (_mode == cEdit)
   {
-    q.prepare("UPDATE dept "
+    departmentSave.prepare("UPDATE dept "
               "SET dept_id=:dept_id, "
               "    dept_number=:dept_number, "
               "    dept_name=:dept_name "
               "WHERE (dept_id=:dept_id);");
   }
-  q.bindValue(":dept_id",        _deptid);
-  q.bindValue(":dept_number",        number);
-  q.bindValue(":dept_name",        _name->text().trimmed());
+  departmentSave.bindValue(":dept_id",        _deptid);
+  departmentSave.bindValue(":dept_number",        number);
+  departmentSave.bindValue(":dept_name",        _name->text().trimmed());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  departmentSave.exec();
+  if (departmentSave.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
                         .arg(__FILE__)
                         .arg(__LINE__)
-                        .arg(q.lastError().databaseText()));
+                        .arg(departmentSave.lastError().databaseText()));
     return;
   }
 
@@ -159,20 +160,21 @@ void department::sClose()
 
 void department::populate()
 {
-  q.prepare("SELECT dept_number, dept_name "
+  XSqlQuery departmentpopulate;
+  departmentpopulate.prepare("SELECT dept_number, dept_name "
             "FROM dept "
             "WHERE (dept_id=:dept_id);");
-  q.bindValue(":dept_id", _deptid);
-  q.exec();
-  if (q.first())
+  departmentpopulate.bindValue(":dept_id", _deptid);
+  departmentpopulate.exec();
+  if (departmentpopulate.first())
   {
-    _number->setText(q.value("dept_number"));
-    _name->setText(q.value("dept_name"));
+    _number->setText(departmentpopulate.value("dept_number"));
+    _name->setText(departmentpopulate.value("dept_name"));
   }
   else
     systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
                         .arg(__FILE__)
                         .arg(__LINE__)
-                        .arg(q.lastError().databaseText()));
+                        .arg(departmentpopulate.lastError().databaseText()));
 }
 

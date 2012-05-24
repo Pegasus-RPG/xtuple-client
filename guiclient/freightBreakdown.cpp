@@ -47,6 +47,7 @@ void freightBreakdown::languageChange()
 
 SetResponse freightBreakdown::set(const ParameterList& pParams)
 {
+  XSqlQuery freightet;
   XDialog::set(pParams);
   QVariant param;
   bool	   valid;
@@ -129,11 +130,11 @@ SetResponse freightBreakdown::set(const ParameterList& pParams)
                 "                   <? value(\"curr_id\") ?>);";
 
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  _freight->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  freightet = mql.toQuery(params);
+  _freight->populate(freightet);
+  if (freightet.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, freightet.lastError().databaseText(), __FILE__, __LINE__);
     return UndefinedError;
   }
 

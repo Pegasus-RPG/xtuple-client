@@ -83,7 +83,8 @@ enum SetResponse dspInvoiceInformation::set(const ParameterList &pParams)
 
 void dspInvoiceInformation::sParseInvoiceNumber()
 {
-  q.prepare( "SELECT invchead_id, invchead_cust_id, invchead_ponumber,"
+  XSqlQuery dspParseInvoiceNumber;
+  dspParseInvoiceNumber.prepare( "SELECT invchead_id, invchead_cust_id, invchead_ponumber,"
              "       invchead_shipdate, invchead_invcdate,"
              "       invoiceTotal(invchead_id) AS amount,"
              "       invchead_billto_name, invchead_billto_address1,"
@@ -108,51 +109,51 @@ void dspInvoiceInformation::sParseInvoiceNumber()
              "         invchead_shipto_address2, invchead_shipto_address3,"
              "         invchead_shipto_city, invchead_shipto_state, invchead_shipto_zipcode,"
              "         invchead_notes;" );
-  q.bindValue(":invoiceNumber", _invoiceNumber->invoiceNumber());
-  q.exec();
-  if (q.first())
+  dspParseInvoiceNumber.bindValue(":invoiceNumber", _invoiceNumber->invoiceNumber());
+  dspParseInvoiceNumber.exec();
+  if (dspParseInvoiceNumber.first())
   {
     _print->setEnabled(TRUE);
     _view->setEnabled(TRUE);
 
-    _invcheadid = q.value("invchead_id").toInt();
+    _invcheadid = dspParseInvoiceNumber.value("invchead_id").toInt();
 
-    _custPoNumber->setText(q.value("invchead_ponumber").toString());
-    _cust->setId(q.value("invchead_cust_id").toInt());
-    _invoiceDate->setDate(q.value("invchead_invcdate").toDate());
-    _shipDate->setDate(q.value("invchead_shipdate").toDate());
-    _invoiceAmount->setDouble(q.value("amount").toDouble());
+    _custPoNumber->setText(dspParseInvoiceNumber.value("invchead_ponumber").toString());
+    _cust->setId(dspParseInvoiceNumber.value("invchead_cust_id").toInt());
+    _invoiceDate->setDate(dspParseInvoiceNumber.value("invchead_invcdate").toDate());
+    _shipDate->setDate(dspParseInvoiceNumber.value("invchead_shipdate").toDate());
+    _invoiceAmount->setDouble(dspParseInvoiceNumber.value("amount").toDouble());
 
-    _billToName->setText(q.value("invchead_billto_name"));
-    _billToAddress1->setText(q.value("invchead_billto_address1"));
-    _billToAddress2->setText(q.value("invchead_billto_address2"));
-    _billToAddress3->setText(q.value("invchead_billto_address3"));
-    _billToCity->setText(q.value("invchead_billto_city"));
-    _billToState->setText(q.value("invchead_billto_state"));
-    _billToZip->setText(q.value("invchead_billto_zipcode"));
+    _billToName->setText(dspParseInvoiceNumber.value("invchead_billto_name"));
+    _billToAddress1->setText(dspParseInvoiceNumber.value("invchead_billto_address1"));
+    _billToAddress2->setText(dspParseInvoiceNumber.value("invchead_billto_address2"));
+    _billToAddress3->setText(dspParseInvoiceNumber.value("invchead_billto_address3"));
+    _billToCity->setText(dspParseInvoiceNumber.value("invchead_billto_city"));
+    _billToState->setText(dspParseInvoiceNumber.value("invchead_billto_state"));
+    _billToZip->setText(dspParseInvoiceNumber.value("invchead_billto_zipcode"));
 
-    _shipToName->setText(q.value("invchead_shipto_name"));
-    _shipToAddress1->setText(q.value("invchead_shipto_address1"));
-    _shipToAddress2->setText(q.value("invchead_shipto_address2"));
-    _shipToAddress3->setText(q.value("invchead_shipto_address3"));
-    _shipToCity->setText(q.value("invchead_shipto_city"));
-    _shipToState->setText(q.value("invchead_shipto_state"));
-    _shipToZip->setText(q.value("invchead_shipto_zipcode"));
+    _shipToName->setText(dspParseInvoiceNumber.value("invchead_shipto_name"));
+    _shipToAddress1->setText(dspParseInvoiceNumber.value("invchead_shipto_address1"));
+    _shipToAddress2->setText(dspParseInvoiceNumber.value("invchead_shipto_address2"));
+    _shipToAddress3->setText(dspParseInvoiceNumber.value("invchead_shipto_address3"));
+    _shipToCity->setText(dspParseInvoiceNumber.value("invchead_shipto_city"));
+    _shipToState->setText(dspParseInvoiceNumber.value("invchead_shipto_state"));
+    _shipToZip->setText(dspParseInvoiceNumber.value("invchead_shipto_zipcode"));
 
-    _notes->setText(q.value("invchead_notes").toString());
+    _notes->setText(dspParseInvoiceNumber.value("invchead_notes").toString());
 
     MetaSQLQuery mql = mqlLoad("invoiceInformation", "detail");
     ParameterList params;
     if (! setParams(params))
       return;
 
-    q = mql.toQuery(params);
-    _arapply->populate(q);
+    dspParseInvoiceNumber = mql.toQuery(params);
+    _arapply->populate(dspParseInvoiceNumber);
   }
   else
   {
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    if (dspParseInvoiceNumber.lastError().type() != QSqlError::NoError)
+      systemError(this, dspParseInvoiceNumber.lastError().databaseText(), __FILE__, __LINE__);
     _print->setEnabled(FALSE);
     _view->setEnabled(FALSE);
     _invoiceNumber->clear();

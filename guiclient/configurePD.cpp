@@ -19,6 +19,7 @@
 configurePD::configurePD(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  XSqlQuery configureconfigurePD;
   setupUi(this);
 
   if (name)
@@ -44,8 +45,8 @@ configurePD::configurePD(QWidget* parent, const char* name, bool /*modal*/, Qt::
   }
   else
   {
-    q.exec("SELECT * FROM itemtrans LIMIT 1;");
-    if (q.first())
+    configureconfigurePD.exec("SELECT * FROM itemtrans LIMIT 1;");
+    if (configureconfigurePD.first())
     {
       _transforms->setChecked(TRUE);
       _transforms->setEnabled(FALSE);
@@ -53,8 +54,8 @@ configurePD::configurePD(QWidget* parent, const char* name, bool /*modal*/, Qt::
     else 
       _transforms->setChecked(_metrics->boolean("Transforms"));
 
-    q.exec("SELECT * FROM rev LIMIT 1;");
-    if (q.first())
+    configureconfigurePD.exec("SELECT * FROM rev LIMIT 1;");
+    if (configureconfigurePD.first())
     {
       _revControl->setChecked(TRUE);
       _revControl->setEnabled(FALSE);
@@ -80,6 +81,7 @@ void configurePD::languageChange()
 
 bool configurePD::sSave()
 {
+  XSqlQuery configureSave;
   emit saving();
 
   if (!_metrics->boolean("RevControl") && (_revControl->isChecked()))
@@ -103,20 +105,20 @@ bool configurePD::sSave()
                 "  FROM boohead "
                 " WHERE((COALESCE(boohead_revision,'') <> '') "
                 "   AND (boohead_rev_id=-1));";
-      q.exec(rsql);
-      if (q.first() && (q.value("result").toInt() < 0))
+      configureSave.exec(rsql);
+      if (configureSave.first() && (configureSave.value("result").toInt() < 0))
       {
-        systemError(this, storedProcErrorLookup("CreateRevision", q.value("result").toInt()),
+        systemError(this, storedProcErrorLookup("CreateRevision", configureSave.value("result").toInt()),
             __FILE__, __LINE__);
         _metrics->set("RevControl", FALSE);
         return false;
       }
-      if (q.lastError().type() != QSqlError::NoError)
+      if (configureSave.lastError().type() != QSqlError::NoError)
       {
         QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
           .arg(__FILE__)
           .arg(__LINE__),
-          q.lastError().databaseText());
+          configureSave.lastError().databaseText());
         _metrics->set("RevControl", FALSE);
         return false;
       }

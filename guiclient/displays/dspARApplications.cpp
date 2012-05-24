@@ -61,10 +61,11 @@ void dspARApplications::languageChange()
 
 void dspARApplications::sViewCreditMemo()
 {
+  XSqlQuery dspViewCreditMemo;
   ParameterList params;
   params.append("mode", "view");
 
-  q.prepare("SELECT 1 AS type, cmhead_id AS id "
+  dspViewCreditMemo.prepare("SELECT 1 AS type, cmhead_id AS id "
 	    "FROM cmhead "
 	    "WHERE (cmhead_number=:docnum) "
 	    "UNION "
@@ -73,29 +74,29 @@ void dspARApplications::sViewCreditMemo()
 	    "WHERE ((aropen_docnumber=:docnum)"
 	    "  AND (aropen_doctype IN ('C', 'R')) "
 	    ") ORDER BY type LIMIT 1;");
-  q.bindValue(":docnum", list()->currentItem()->text(6));
-  q.exec();
-  if (q.first())
+  dspViewCreditMemo.bindValue(":docnum", list()->currentItem()->text(6));
+  dspViewCreditMemo.exec();
+  if (dspViewCreditMemo.first())
   {
-    if (q.value("type").toInt() == 1)
+    if (dspViewCreditMemo.value("type").toInt() == 1)
     {
-      params.append("cmhead_id", q.value("id"));
+      params.append("cmhead_id", dspViewCreditMemo.value("id"));
       creditMemo* newdlg = new creditMemo();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
     }
-    else if (q.value("type").toInt() == 2)
+    else if (dspViewCreditMemo.value("type").toInt() == 2)
     {
-      params.append("aropen_id", q.value("id"));
+      params.append("aropen_id", dspViewCreditMemo.value("id"));
       params.append("docType", "creditMemo");
       arOpenItem newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspViewCreditMemo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspViewCreditMemo.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -109,25 +110,26 @@ void dspARApplications::sViewCreditMemo()
 
 void dspARApplications::sViewDebitMemo()
 {
+  XSqlQuery dspViewDebitMemo;
   ParameterList params;
 
   params.append("mode", "view");
-  q.prepare("SELECT aropen_id "
+  dspViewDebitMemo.prepare("SELECT aropen_id "
 	    "FROM aropen "
 	    "WHERE ((aropen_docnumber=:docnum) AND (aropen_doctype='D'));");
-  q.bindValue(":docnum", list()->currentItem()->text(9));
-  q.exec();
-  if (q.first())
+  dspViewDebitMemo.bindValue(":docnum", list()->currentItem()->text(9));
+  dspViewDebitMemo.exec();
+  if (dspViewDebitMemo.first())
   {
-    params.append("aropen_id", q.value("aropen_id"));
+    params.append("aropen_id", dspViewDebitMemo.value("aropen_id"));
     params.append("docType", "debitMemo");
     arOpenItem newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspViewDebitMemo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspViewDebitMemo.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

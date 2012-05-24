@@ -68,17 +68,18 @@ enum SetResponse enterMiscCount::set(const ParameterList &pParams)
 
 void enterMiscCount::sPost()
 {
-  q.prepare( "SELECT ( (itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl) ) AS detailed,"
+  XSqlQuery enterPost;
+  enterPost.prepare( "SELECT ( (itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl) ) AS detailed,"
              "       COALESCE(invcnt_id, -1) AS cnttagid "
              "FROM itemsite LEFT OUTER JOIN invcnt ON ( (invcnt_itemsite_id=itemsite_id) AND (NOT invcnt_posted) ) "
              "WHERE ( (itemsite_warehous_id=:warehous_id)"
              " AND (itemsite_item_id=:item_id) );" );
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
+  enterPost.bindValue(":warehous_id", _warehouse->id());
+  enterPost.bindValue(":item_id", _item->id());
+  enterPost.exec();
+  if (enterPost.first())
   {
-    if (q.value("detailed").toBool())
+    if (enterPost.value("detailed").toBool())
     {
       QMessageBox::warning( this, tr("Cannot Enter Misc. Count"),
                             tr("<p>The selected Item Site is controlled via a "
@@ -89,7 +90,7 @@ void enterMiscCount::sPost()
       return;
     }
 
-    if (q.value("cnttagid") != -1)
+    if (enterPost.value("cnttagid") != -1)
     {
       QMessageBox::warning(this, tr("Count Tag Previously Created"),
                            tr("<p>An unposted Count Tag already exists for "
@@ -98,24 +99,24 @@ void enterMiscCount::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare( "SELECT postMiscCount(itemsite_id, :qty, :comments) AS cnttag_id "
+  enterPost.prepare( "SELECT postMiscCount(itemsite_id, :qty, :comments) AS cnttag_id "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":qty", _qty->toDouble());
-  q.bindValue(":comments", _comments->toPlainText());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if (q.first())
+  enterPost.bindValue(":qty", _qty->toDouble());
+  enterPost.bindValue(":comments", _comments->toPlainText());
+  enterPost.bindValue(":item_id", _item->id());
+  enterPost.bindValue(":warehous_id", _warehouse->id());
+  enterPost.exec();
+  if (enterPost.first())
   {
-    int result = q.value("cnttag_id").toInt();
+    int result = enterPost.value("cnttag_id").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("postMiscCount", result),
@@ -123,14 +124,14 @@ void enterMiscCount::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_captive)
-    done(q.value("cnttag_id").toInt());
+    done(enterPost.value("cnttag_id").toInt());
   else
   {
     _item->setId(-1);

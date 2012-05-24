@@ -97,18 +97,19 @@ enum SetResponse issueWoMaterialItem::set(const ParameterList &pParams)
 
 void issueWoMaterialItem::sCatchItemid(int pItemid)
 {
+  XSqlQuery issueCatchItemid;
   if (_wo->isValid())
   {
-    q.prepare( "SELECT womatl_id "
+    issueCatchItemid.prepare( "SELECT womatl_id "
                "FROM womatl, itemsite "
                "WHERE ( (womatl_itemsite_id=itemsite_id)"
                " AND (womatl_wo_id=:wo_id)"
                " AND (itemsite_item_id=:item_id) );" );
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":item_id", pItemid);
-    q.exec();
-    if (q.first())
-      _womatl->setId(q.value("womatl_id").toInt());
+    issueCatchItemid.bindValue(":wo_id", _wo->id());
+    issueCatchItemid.bindValue(":item_id", pItemid);
+    issueCatchItemid.exec();
+    if (issueCatchItemid.first())
+      _womatl->setId(issueCatchItemid.value("womatl_id").toInt());
     else
       audioReject();
   }
@@ -118,17 +119,18 @@ void issueWoMaterialItem::sCatchItemid(int pItemid)
 
 void issueWoMaterialItem::sCatchItemsiteid(int pItemsiteid)
 {
+  XSqlQuery issueCatchItemsiteid;
   if (_wo->isValid())
   {
-    q.prepare( "SELECT womatl_id "
+    issueCatchItemsiteid.prepare( "SELECT womatl_id "
                "FROM womatl "
                "WHERE ((womatl_itemsite_id=:itemsite_id)"
 	       "  AND  (womatl_wo_id=:wo_id));" );
-    q.bindValue(":itemsite_id", pItemsiteid);
-    q.bindValue(":wo_id", _wo->id());
-    q.exec();
-    if (q.first())
-      _womatl->setId(q.value("womatl_id").toInt());
+    issueCatchItemsiteid.bindValue(":itemsite_id", pItemsiteid);
+    issueCatchItemsiteid.bindValue(":wo_id", _wo->id());
+    issueCatchItemsiteid.exec();
+    if (issueCatchItemsiteid.first())
+      _womatl->setId(issueCatchItemsiteid.value("womatl_id").toInt());
     else
       audioReject();
   }
@@ -138,6 +140,7 @@ void issueWoMaterialItem::sCatchItemsiteid(int pItemsiteid)
 
 void issueWoMaterialItem::sIssue()
 {
+  XSqlQuery issueIssue;
   if (!_transDate->isValid())
   {
     QMessageBox::critical(this, tr("Invalid date"),
@@ -146,7 +149,7 @@ void issueWoMaterialItem::sIssue()
     return;
   }
   
-  q.prepare("SELECT itemsite_id, item_number, warehous_code, "
+  issueIssue.prepare("SELECT itemsite_id, item_number, warehous_code, "
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
             "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty))) AS isqtyavail "
@@ -157,20 +160,20 @@ void issueWoMaterialItem::sIssue()
             "   AND (NOT ((item_type = 'R') OR (itemsite_controlmethod = 'N'))) "
             "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)) "
             "   AND (womatl_id=:womatl_id)); ");
-  q.bindValue(":womatl_id", _womatl->id());
-  q.bindValue(":qty", _qtyToIssue->toDouble());
-  q.exec();
-  while(q.next())
+  issueIssue.bindValue(":womatl_id", _womatl->id());
+  issueIssue.bindValue(":qty", _qtyToIssue->toDouble());
+  issueIssue.exec();
+  while(issueIssue.next())
   {
-    if(!(q.value("isqtyavail").toBool()))
+    if(!(issueIssue.value("isqtyavail").toBool()))
     {
       QMessageBox::critical(this, tr("Insufficient Inventory"),
         tr("Item Number %1 in Site %2 is a Multiple Location or\n"
            "Lot/Serial controlled Item which is short on Inventory.\n"
            "This transaction cannot be completed as is. Please make\n"
            "sure there is sufficient Quantity on Hand before proceeding.")
-          .arg(q.value("item_number").toString())
-          .arg(q.value("warehous_code").toString()));
+          .arg(issueIssue.value("item_number").toString())
+          .arg(issueIssue.value("warehous_code").toString()));
       return;
     }
   }
@@ -178,31 +181,31 @@ void issueWoMaterialItem::sIssue()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  q.prepare("SELECT issueWoMaterial(:womatl_id, :qty, TRUE, :date) AS result;");
-  q.bindValue(":womatl_id", _womatl->id());
-  q.bindValue(":qty", _qtyToIssue->toDouble());
-  q.bindValue(":date",  _transDate->date());
-  q.exec();
-  if (q.first())
+  issueIssue.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  issueIssue.prepare("SELECT issueWoMaterial(:womatl_id, :qty, TRUE, :date) AS result;");
+  issueIssue.bindValue(":womatl_id", _womatl->id());
+  issueIssue.bindValue(":qty", _qtyToIssue->toDouble());
+  issueIssue.bindValue(":date",  _transDate->date());
+  issueIssue.exec();
+  if (issueIssue.first())
   {
-    if (q.value("result").toInt() < 0)
+    if (issueIssue.value("result").toInt() < 0)
     {
       rollback.exec();
       systemError( this, tr("A System Error occurred at issueWoMaterialItem::%1, Work Order ID #%2, Error #%3.")
                          .arg(__LINE__)
                          .arg(_wo->id())
-                         .arg(q.value("result").toInt()) );
+                         .arg(issueIssue.value("result").toInt()) );
       return;
     }
-    else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    else if (distributeInventory::SeriesAdjust(issueIssue.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
       QMessageBox::information( this, tr("Material Issue"), tr("Transaction Canceled") );
       return;
     }
 
-    q.exec("COMMIT;");
+    issueIssue.exec("COMMIT;");
   }
   else
   {

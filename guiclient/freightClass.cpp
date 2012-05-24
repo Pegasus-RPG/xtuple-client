@@ -83,6 +83,7 @@ enum SetResponse freightClass::set(const ParameterList &pParams)
 
 void freightClass::sSave()
 {
+  XSqlQuery freightSave;
   if (_freightClass->text().length() == 0)
   {
     QMessageBox::information( this, tr("No Freight Class Entered"),
@@ -92,14 +93,14 @@ void freightClass::sSave()
   }
 
   if (_mode == cEdit)
-    q.prepare( "UPDATE freightclass "
+    freightSave.prepare( "UPDATE freightclass "
                "SET freightclass_code=:freightclass_code, freightclass_descrip=:freightclass_descrip "
                "WHERE (freightclass_id=:freightclass_id);" );
   else if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('freightclass_freightclass_id_seq') AS freightclass_id");
-    if (q.first())
-      _freightclassid = q.value("freightclass_id").toInt();
+    freightSave.exec("SELECT NEXTVAL('freightclass_freightclass_id_seq') AS freightclass_id");
+    if (freightSave.first())
+      _freightclassid = freightSave.value("freightclass_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -108,19 +109,19 @@ void freightClass::sSave()
       return;
     }
  
-    q.prepare( "INSERT INTO freightclass "
+    freightSave.prepare( "INSERT INTO freightclass "
                "( freightclass_id, freightclass_code, freightclass_descrip ) "
                "VALUES "
                "( :freightclass_id, :freightclass_code, :freightclass_descrip );" );
   }
 
-  q.bindValue(":freightclass_id", _freightclassid);
-  q.bindValue(":freightclass_code", _freightClass->text());
-  q.bindValue(":freightclass_descrip", _description->text());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  freightSave.bindValue(":freightclass_id", _freightclassid);
+  freightSave.bindValue(":freightclass_code", _freightClass->text());
+  freightSave.bindValue(":freightclass_descrip", _description->text());
+  freightSave.exec();
+  if (freightSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, freightSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -129,17 +130,18 @@ void freightClass::sSave()
 
 void freightClass::sCheck()
 {
+  XSqlQuery freightCheck;
   _freightClass->setText(_freightClass->text().trimmed());
   if ( (_mode == cNew) && (_freightClass->text().length()) )
   {
-    q.prepare( "SELECT freightclass_id "
+    freightCheck.prepare( "SELECT freightclass_id "
                "FROM freightclass "
                "WHERE (UPPER(freightclass_code)=UPPER(:freightclass_code));" );
-    q.bindValue(":freightclass_code", _freightClass->text());
-    q.exec();
-    if (q.first())
+    freightCheck.bindValue(":freightclass_code", _freightClass->text());
+    freightCheck.exec();
+    if (freightCheck.first())
     {
-      _freightclassid = q.value("freightclass_id").toInt();
+      _freightclassid = freightCheck.value("freightclass_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -152,15 +154,16 @@ void freightClass::sCheck()
 
 void freightClass::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery freightpopulate;
+  freightpopulate.prepare( "SELECT * "
              "FROM freightclass "
              "WHERE (freightclass_id=:freightclass_id);" );
-  q.bindValue(":freightclass_id", _freightclassid);
-  q.exec();
-  if (q.first())
+  freightpopulate.bindValue(":freightclass_id", _freightclassid);
+  freightpopulate.exec();
+  if (freightpopulate.first())
   {
-    _freightClass->setText(q.value("freightclass_code"));
-    _description->setText(q.value("freightclass_descrip"));
+    _freightClass->setText(freightpopulate.value("freightclass_code"));
+    _description->setText(freightpopulate.value("freightclass_descrip"));
   }
 }
 

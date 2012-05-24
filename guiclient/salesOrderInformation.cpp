@@ -33,6 +33,7 @@ void salesOrderInformation::languageChange()
 
 enum SetResponse salesOrderInformation::set(const ParameterList &pParams)
 {
+  XSqlQuery saleset;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -41,19 +42,19 @@ enum SetResponse salesOrderInformation::set(const ParameterList &pParams)
   if (valid)
   {
     _soitemid = param.toInt();
-    q.prepare( "SELECT coitem_cohead_id "
+    saleset.prepare( "SELECT coitem_cohead_id "
                "FROM coitem "
                "WHERE (coitem_id=:soitem_id);" );
-    q.bindValue(":soitem_id", _soitemid);
-    q.exec();
-    if (q.first())
+    saleset.bindValue(":soitem_id", _soitemid);
+    saleset.exec();
+    if (saleset.first())
     {
-      _soheadid = q.value("coitem_cohead_id").toInt();
+      _soheadid = saleset.value("coitem_cohead_id").toInt();
       populate();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (saleset.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, saleset.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -70,7 +71,8 @@ enum SetResponse salesOrderInformation::set(const ParameterList &pParams)
 
 void salesOrderInformation::populate()
 {
-  q.prepare( "SELECT cohead_number, warehous_code,"
+  XSqlQuery salespopulate;
+  salespopulate.prepare( "SELECT cohead_number, warehous_code,"
              "       formatDate(cohead_orderdate) AS f_orderdate,"
              "       formatDate(MIN(coitem_scheddate)) AS f_shipdate,"
              "       formatDate(cohead_packdate) AS f_packdate,"
@@ -101,39 +103,39 @@ void salesOrderInformation::populate()
              "         cohead_shiptoname,"
              "         cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3,"
              "         cohead_shiptocity, cohead_shiptostate, cohead_shiptozipcode;" );
-  q.bindValue(":none",   tr("None"));
-  q.bindValue(":credit", tr("Credit"));
-  q.bindValue(":ship",   tr("Ship"));
-  q.bindValue(":pack",   tr("Pack"));
-  q.bindValue(":return", tr("Return"));
-  q.bindValue(":other",  tr("Other"));
-  q.bindValue(":sohead_id", _soheadid);
-  q.bindValue(":soitem_id", _soitemid);
-  q.exec();
-  if (q.first())
+  salespopulate.bindValue(":none",   tr("None"));
+  salespopulate.bindValue(":credit", tr("Credit"));
+  salespopulate.bindValue(":ship",   tr("Ship"));
+  salespopulate.bindValue(":pack",   tr("Pack"));
+  salespopulate.bindValue(":return", tr("Return"));
+  salespopulate.bindValue(":other",  tr("Other"));
+  salespopulate.bindValue(":sohead_id", _soheadid);
+  salespopulate.bindValue(":soitem_id", _soitemid);
+  salespopulate.exec();
+  if (salespopulate.first())
   {
-    _orderNumber->setText(q.value("cohead_number").toString());
-    _warehouse->setText(q.value("warehous_code").toString());
-    _orderDate->setText(q.value("f_orderdate").toString());
-    _shipDate->setText(q.value("f_shipdate").toString());
-    _packDate->setText(q.value("f_packdate").toString());
-    _shipVia->setText(q.value("cohead_shipvia").toString());
-    _holdType->setText(q.value("f_holdtype").toString());
+    _orderNumber->setText(salespopulate.value("cohead_number").toString());
+    _warehouse->setText(salespopulate.value("warehous_code").toString());
+    _orderDate->setText(salespopulate.value("f_orderdate").toString());
+    _shipDate->setText(salespopulate.value("f_shipdate").toString());
+    _packDate->setText(salespopulate.value("f_packdate").toString());
+    _shipVia->setText(salespopulate.value("cohead_shipvia").toString());
+    _holdType->setText(salespopulate.value("f_holdtype").toString());
 
-    _billtoName->setText(q.value("cohead_billtoname").toString());
-    _billtoAddress1->setText(q.value("cohead_billtoaddress1").toString());
-    _billtoAddress2->setText(q.value("cohead_billtoaddress2").toString());
-    _billtoAddress3->setText(q.value("cohead_billtoaddress3").toString());
-    _billtoCity->setText(q.value("cohead_billtocity").toString());
-    _billtoState->setText(q.value("cohead_billtostate").toString());
-    _billtoZipCode->setText(q.value("cohead_billtozipcode").toString());
+    _billtoName->setText(salespopulate.value("cohead_billtoname").toString());
+    _billtoAddress1->setText(salespopulate.value("cohead_billtoaddress1").toString());
+    _billtoAddress2->setText(salespopulate.value("cohead_billtoaddress2").toString());
+    _billtoAddress3->setText(salespopulate.value("cohead_billtoaddress3").toString());
+    _billtoCity->setText(salespopulate.value("cohead_billtocity").toString());
+    _billtoState->setText(salespopulate.value("cohead_billtostate").toString());
+    _billtoZipCode->setText(salespopulate.value("cohead_billtozipcode").toString());
 
-    _shiptoName->setText(q.value("cohead_shiptoname").toString());
-    _shiptoAddress1->setText(q.value("cohead_shiptoaddress1").toString());
-    _shiptoAddress2->setText(q.value("cohead_shiptoaddress2").toString());
-    _shiptoAddress3->setText(q.value("cohead_shiptoaddress3").toString());
-    _shiptoCity->setText(q.value("cohead_shiptocity").toString());
-    _shiptoState->setText(q.value("cohead_shiptostate").toString());
-    _shiptoZipCode->setText(q.value("cohead_shiptozipcode").toString());
+    _shiptoName->setText(salespopulate.value("cohead_shiptoname").toString());
+    _shiptoAddress1->setText(salespopulate.value("cohead_shiptoaddress1").toString());
+    _shiptoAddress2->setText(salespopulate.value("cohead_shiptoaddress2").toString());
+    _shiptoAddress3->setText(salespopulate.value("cohead_shiptoaddress3").toString());
+    _shiptoCity->setText(salespopulate.value("cohead_shiptocity").toString());
+    _shiptoState->setText(salespopulate.value("cohead_shiptostate").toString());
+    _shiptoZipCode->setText(salespopulate.value("cohead_shiptozipcode").toString());
   }
 }

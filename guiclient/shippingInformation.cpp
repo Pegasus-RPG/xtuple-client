@@ -61,6 +61,7 @@ void shippingInformation::languageChange()
 
 enum SetResponse shippingInformation::set(const ParameterList &pParams)
 {
+  XSqlQuery shippinget;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -71,23 +72,23 @@ enum SetResponse shippingInformation::set(const ParameterList &pParams)
 
   if (_shipment->isValid())
   {
-    q.prepare( "SELECT shiphead_order_id, shiphead_order_type "
+    shippinget.prepare( "SELECT shiphead_order_id, shiphead_order_type "
                "FROM shiphead "
                "WHERE (shiphead_id=:shiphead_id);" );
-    q.bindValue(":shiphead_id", _shipment->id());
-    q.exec();
-    if (q.first())
+    shippinget.bindValue(":shiphead_id", _shipment->id());
+    shippinget.exec();
+    if (shippinget.first())
     {
       _captive = TRUE;
 
-      _order->setId(q.value("shiphead_order_id").toInt(),
-                    q.value("shiphead_order_type").toString());
+      _order->setId(shippinget.value("shiphead_order_id").toInt(),
+                    shippinget.value("shiphead_order_type").toString());
 
       _shipDate->setFocus();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (shippinget.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, shippinget.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -97,6 +98,7 @@ enum SetResponse shippingInformation::set(const ParameterList &pParams)
 
 void shippingInformation::sSave()
 {
+  XSqlQuery shippingSave;
   if (!_shipDate->isValid())
   {
     QMessageBox::information( this, tr("No Ship Date Entered"),
@@ -109,17 +111,17 @@ void shippingInformation::sSave()
 
   if (_shipment->id() > 0)
   {
-    q.prepare( "UPDATE shiphead "
+    shippingSave.prepare( "UPDATE shiphead "
                "SET shiphead_freight=:shiphead_freight,"
 	       "    shiphead_freight_curr_id=:shiphead_freight_curr_id,"
 	       "    shiphead_notes=:shiphead_notes,"
                "    shiphead_shipdate=:shiphead_shipdate, shiphead_shipvia=:shiphead_shipvia,"
                "    shiphead_shipchrg_id=:shiphead_shipchrg_id, shiphead_shipform_id=:shiphead_shipform_id "
                "WHERE (shiphead_id=:shiphead_id);" );
-    q.bindValue(":shiphead_id", _shipment->id());
+    shippingSave.bindValue(":shiphead_id", _shipment->id());
   }
   else
-    q.prepare( "INSERT INTO shiphead "
+    shippingSave.prepare( "INSERT INTO shiphead "
                "( shiphead_order_id, shiphead_order_type, shiphead_freight,"
 	       "  shiphead_freight_curr_id, shiphead_notes,"
                "  shiphead_shipdate, shiphead_shipvia, shiphead_number,"
@@ -130,19 +132,19 @@ void shippingInformation::sSave()
                "  :shiphead_shipdate, :shiphead_shipvia, fetchShipmentNumber(),"
                "  :shiphead_shipchrg_id, :shiphead_shipform_id, FALSE );" );
 
-  q.bindValue(":shiphead_order_id",		_order->id());
-  q.bindValue(":shiphead_order_type",           _order->type());
-  q.bindValue(":shiphead_freight",		_freight->localValue());
-  q.bindValue(":shiphead_freight_curr_id",	_freight->id());
-  q.bindValue(":shiphead_notes", _notes->toPlainText());
-  q.bindValue(":shiphead_shipdate", _shipDate->date());
-  q.bindValue(":shiphead_shipvia", _shipVia->currentText());
-  q.bindValue(":shiphead_shipchrg_id", _shippingCharges->id());
-  q.bindValue(":shiphead_shipform_id", _shippingForm->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  shippingSave.bindValue(":shiphead_order_id",		_order->id());
+  shippingSave.bindValue(":shiphead_order_type",           _order->type());
+  shippingSave.bindValue(":shiphead_freight",		_freight->localValue());
+  shippingSave.bindValue(":shiphead_freight_curr_id",	_freight->id());
+  shippingSave.bindValue(":shiphead_notes", _notes->toPlainText());
+  shippingSave.bindValue(":shiphead_shipdate", _shipDate->date());
+  shippingSave.bindValue(":shiphead_shipvia", _shipVia->currentText());
+  shippingSave.bindValue(":shiphead_shipchrg_id", _shippingCharges->id());
+  shippingSave.bindValue(":shiphead_shipform_id", _shippingForm->id());
+  shippingSave.exec();
+  if (shippingSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shippingSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -176,23 +178,24 @@ void shippingInformation::sIssueStock()
 
 void shippingInformation::sReturnAllLineStock()
 {
-  q.prepare("SELECT returnItemShipments(:ordertype, :lineitemid,"
+  XSqlQuery shippingReturnAllLineStock;
+  shippingReturnAllLineStock.prepare("SELECT returnItemShipments(:ordertype, :lineitemid,"
 	    "                           0, CURRENT_TIMESTAMP) AS result;");
-  q.bindValue(":ordertype", _order->type());
-  q.bindValue(":lineitemid", _item->id());
-  q.exec();
-  if (q.first())
+  shippingReturnAllLineStock.bindValue(":ordertype", _order->type());
+  shippingReturnAllLineStock.bindValue(":lineitemid", _item->id());
+  shippingReturnAllLineStock.exec();
+  if (shippingReturnAllLineStock.first())
   {
-    int result = q.value("result").toInt();
+    int result = shippingReturnAllLineStock.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("returnItemShipments", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (shippingReturnAllLineStock.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shippingReturnAllLineStock.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -223,6 +226,7 @@ void shippingInformation::sViewLine()
 
 void shippingInformation::sFillList()
 {
+  XSqlQuery shippingFillList;
   QString shs( "SELECT shiphead_notes, shiphead_shipvia,"
                "       shiphead_shipchrg_id, shiphead_shipform_id,"
                "       shiphead_freight, shiphead_freight_curr_id,"
@@ -255,33 +259,33 @@ void shippingInformation::sFillList()
   }
 
   MetaSQLQuery shm(shs);
-  q = shm.toQuery(shp);
+  shippingFillList = shm.toQuery(shp);
   bool fetchFromHead = TRUE;
 
-  if (q.first())
+  if (shippingFillList.first())
   {
-    if (q.value("validdata").toBool())
+    if (shippingFillList.value("validdata").toBool())
     {
       fetchFromHead = FALSE;
 
-      _shipDate->setDate(q.value("shiphead_shipdate").toDate());
-      _shipVia->setText(q.value("shiphead_shipvia").toString());
-      _shippingCharges->setId(q.value("shiphead_shipchrg_id").toInt());
-      _shippingForm->setId(q.value("shiphead_shipform_id").toInt());
-      _freight->setId(q.value("shiphead_freight_curr_id").toInt());
-      _freight->setLocalValue(q.value("shiphead_freight").toDouble());
-      _notes->setText(q.value("shiphead_notes").toString());
+      _shipDate->setDate(shippingFillList.value("shiphead_shipdate").toDate());
+      _shipVia->setText(shippingFillList.value("shiphead_shipvia").toString());
+      _shippingCharges->setId(shippingFillList.value("shiphead_shipchrg_id").toInt());
+      _shippingForm->setId(shippingFillList.value("shiphead_shipform_id").toInt());
+      _freight->setId(shippingFillList.value("shiphead_freight_curr_id").toInt());
+      _freight->setLocalValue(shippingFillList.value("shiphead_freight").toDouble());
+      _notes->setText(shippingFillList.value("shiphead_notes").toString());
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (shippingFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shippingFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_order->isValid() && _order->type() == "SO")
   {
-    q.prepare( "SELECT cohead_orderdate AS orderdate,"
+    shippingFillList.prepare( "SELECT cohead_orderdate AS orderdate,"
 	       "       cohead_holdtype AS holdtype,"
                "       cohead_custponumber AS ponumber,"
                "       cust_name AS name, cntct_phone AS phone,"
@@ -294,11 +298,11 @@ void shippingInformation::sFillList()
                "LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)"
                "WHERE ((cohead_cust_id=cust_id)"
                " AND (cohead_id=:cohead_id));" );
-    q.bindValue(":cohead_id", _order->id());
+    shippingFillList.bindValue(":cohead_id", _order->id());
   }
   else if (_order->isValid() && _order->type() == "TO")
   {
-    q.prepare( "SELECT tohead_orderdate AS orderdate,"
+    shippingFillList.prepare( "SELECT tohead_orderdate AS orderdate,"
 	       "       'N' AS holdtype,"
 	       "       :to AS ponumber,"
 	       "       tohead_destname AS name, tohead_destphone AS phone,"
@@ -309,23 +313,23 @@ void shippingInformation::sFillList()
                "       tohead_destname AS shiptoname "
 	       "FROM tohead "
 	       "WHERE (tohead_id=:tohead_id);" );
-    q.bindValue(":tohead_id", _order->id());
+    shippingFillList.bindValue(":tohead_id", _order->id());
   }
-  q.exec();
-  if (q.first())
+  shippingFillList.exec();
+  if (shippingFillList.first())
   {
-    _orderDate->setDate(q.value("orderdate").toDate());
-    _poNumber->setText(q.value("ponumber").toString());
-    _custName->setText(q.value("name").toString());
-    _custPhone->setText(q.value("phone").toString());
-    _shipToName->setText(q.value("shiptoname").toString());
+    _orderDate->setDate(shippingFillList.value("orderdate").toDate());
+    _poNumber->setText(shippingFillList.value("ponumber").toString());
+    _custName->setText(shippingFillList.value("name").toString());
+    _custPhone->setText(shippingFillList.value("phone").toString());
+    _shipToName->setText(shippingFillList.value("shiptoname").toString());
 
     QString msg;
-    if (q.value("head_holdtype").toString() == "C")
+    if (shippingFillList.value("head_holdtype").toString() == "C")
       msg = storedProcErrorLookup("issuetoshipping", -12);
-    else if (q.value("head_holdtype").toString() == "P")
+    else if (shippingFillList.value("head_holdtype").toString() == "P")
       msg = storedProcErrorLookup("issuetoshipping", -13);
-    else if (q.value("head_holdtype").toString() == "R")
+    else if (shippingFillList.value("head_holdtype").toString() == "R")
       msg = storedProcErrorLookup("issuetoshipping", -14);
 
     if (! msg.isEmpty())
@@ -340,15 +344,15 @@ void shippingInformation::sFillList()
     {
       _shipDate->setDate(omfgThis->dbDate());
 
-      _shippingCharges->setId(q.value("shipchrg_id").toInt());
-      _shippingForm->setId(q.value("shipform_id").toInt());
-      _notes->setText(q.value("shipcomments").toString());
-      _shipVia->setText(q.value("shipvia").toString());
+      _shippingCharges->setId(shippingFillList.value("shipchrg_id").toInt());
+      _shippingForm->setId(shippingFillList.value("shipform_id").toInt());
+      _notes->setText(shippingFillList.value("shipcomments").toString());
+      _shipVia->setText(shippingFillList.value("shipvia").toString());
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (shippingFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shippingFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -394,9 +398,9 @@ void shippingInformation::sFillList()
   XSqlQuery qry = mql.toQuery(params);
   _item->populate(qry, true);
 
-  if (q.lastError().type() != QSqlError::NoError)
+  if (shippingFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shippingFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

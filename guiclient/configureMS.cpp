@@ -16,6 +16,7 @@
 configureMS::configureMS(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  XSqlQuery configureconfigureMS;
   setupUi(this);
 
   if (name)
@@ -23,9 +24,9 @@ configureMS::configureMS(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   _nextPlanNumber->setValidator(omfgThis->orderVal());
 
-  q.exec("SELECT currentPlanNumber() AS result;");
-  if (q.first())
-    _nextPlanNumber->setText(q.value("result").toString());
+  configureconfigureMS.exec("SELECT currentPlanNumber() AS result;");
+  if (configureconfigureMS.first())
+    _nextPlanNumber->setText(configureconfigureMS.value("result").toString());
 
   int cid = _metrics->value("DefaultMSCalendar").toInt();
   if(cid > 0)

@@ -58,6 +58,7 @@ void reassignLotSerial::languageChange()
 
 enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
 {
+  XSqlQuery reassignet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -74,16 +75,16 @@ enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
   param = pParams.value("itemloc_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT itemloc_itemsite_id "
+    reassignet.prepare( "SELECT itemloc_itemsite_id "
                "FROM itemloc "
                "WHERE (itemloc_id=:itemloc_id);" );
-    q.bindValue(":itemloc_id", param.toInt());
-    q.exec();
-    if (q.first())
+    reassignet.bindValue(":itemloc_id", param.toInt());
+    reassignet.exec();
+    if (reassignet.first())
     {
       _captive = TRUE;
 
-      _item->setItemsiteid(q.value("itemloc_itemsite_id").toInt());
+      _item->setItemsiteid(reassignet.value("itemloc_itemsite_id").toInt());
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
 
@@ -93,9 +94,9 @@ enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
           _source->setCurrentItem(_source->topLevelItem(i));
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (reassignet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, reassignet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -105,6 +106,7 @@ enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
 
 void reassignLotSerial::sReassign()
 {
+  XSqlQuery reassignReassign;
   if (_expirationDate->isEnabled())
   {
     if (!_expirationDate->isValid() || _expirationDate->isNull())
@@ -141,25 +143,25 @@ void reassignLotSerial::sReassign()
   }
 
   QDoubleValidator* qtyVal = (QDoubleValidator*)(_qty->validator());
-  q.prepare("SELECT reassignLotSerial(:source, CAST (:qty AS NUMERIC(100,:decimals)), "
+  reassignReassign.prepare("SELECT reassignLotSerial(:source, CAST (:qty AS NUMERIC(100,:decimals)), "
 	    "                         :lotNumber, :expirationDate, :warrantyDate) AS result;");
-  q.bindValue(":source", _source->id());
-  q.bindValue(":qty", _qty->toDouble());
-  q.bindValue(":decimals", qtyVal->decimals());
-  q.bindValue(":lotNumber", _lotNumber->text());
+  reassignReassign.bindValue(":source", _source->id());
+  reassignReassign.bindValue(":qty", _qty->toDouble());
+  reassignReassign.bindValue(":decimals", qtyVal->decimals());
+  reassignReassign.bindValue(":lotNumber", _lotNumber->text());
 
   if (_expirationDate->isEnabled())
-    q.bindValue(":expirationDate", _expirationDate->date());
+    reassignReassign.bindValue(":expirationDate", _expirationDate->date());
   else
-    q.bindValue(":expirationDate", omfgThis->endOfTime());
+    reassignReassign.bindValue(":expirationDate", omfgThis->endOfTime());
 
   if (_warrantyDate->isEnabled())
-    q.bindValue(":warrantyDate", _warrantyDate->date());
+    reassignReassign.bindValue(":warrantyDate", _warrantyDate->date());
 
-  q.exec();
-  if (q.first())
+  reassignReassign.exec();
+  if (reassignReassign.first())
   {
-    int result = q.value("result").toInt();
+    int result = reassignReassign.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("reassignLotSerial", result),
@@ -167,9 +169,9 @@ void reassignLotSerial::sReassign()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (reassignReassign.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, reassignReassign.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -193,23 +195,24 @@ void reassignLotSerial::sReassign()
 
 void reassignLotSerial::sFillList()
 {
+  XSqlQuery reassignFillList;
   if (_item->isValid())
   {
-    q.prepare( "SELECT itemsite_id, itemsite_perishable, itemsite_controlmethod, itemsite_warrpurc "
+    reassignFillList.prepare( "SELECT itemsite_id, itemsite_perishable, itemsite_controlmethod, itemsite_warrpurc "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
-    if (q.first())
+    reassignFillList.bindValue(":item_id", _item->id());
+    reassignFillList.bindValue(":warehous_id", _warehouse->id());
+    reassignFillList.exec();
+    if (reassignFillList.first())
     {
-      if (q.value("itemsite_controlmethod").toString() == "S")
+      if (reassignFillList.value("itemsite_controlmethod").toString() == "S")
       {
         _qty->setEnabled(FALSE);
         _qty->setDouble(1.0);
       }
-      else if (q.value("itemsite_controlmethod").toString() == "L")
+      else if (reassignFillList.value("itemsite_controlmethod").toString() == "L")
         _qty->setEnabled(TRUE);
       else
       {
@@ -217,11 +220,11 @@ void reassignLotSerial::sFillList()
         return;
       }
 
-      int itemsiteid = q.value("itemsite_id").toInt();
-      _expirationDate->setEnabled(q.value("itemsite_perishable").toBool());
-      _warrantyDate->setEnabled(q.value("itemsite_warrpurc").toBool());
+      int itemsiteid = reassignFillList.value("itemsite_id").toInt();
+      _expirationDate->setEnabled(reassignFillList.value("itemsite_perishable").toBool());
+      _warrantyDate->setEnabled(reassignFillList.value("itemsite_warrpurc").toBool());
 
-      q.prepare( "SELECT itemloc_id, formatLocationName(itemloc_location_id) AS locationname, ls_number,"
+      reassignFillList.prepare( "SELECT itemloc_id, formatLocationName(itemloc_location_id) AS locationname, ls_number,"
                  "       itemloc_expiration, itemloc_warrpurc, itemloc_qty, "
                  "       'qty' AS itemloc_qty_xtnumericrole "
                  "FROM itemloc "
@@ -229,14 +232,14 @@ void reassignLotSerial::sFillList()
                  "WHERE ( (itemloc_itemsite_id=itemsite_id)"
                  " AND (itemsite_id=:itemsite_id) ) "
                  "ORDER BY locationname;" );
-      q.bindValue(":never", tr("Never"));
-      q.bindValue(":itemsite_id", itemsiteid);
-      q.exec();
-      _source->populate(q);
+      reassignFillList.bindValue(":never", tr("Never"));
+      reassignFillList.bindValue(":itemsite_id", itemsiteid);
+      reassignFillList.exec();
+      _source->populate(reassignFillList);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (reassignFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, reassignFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

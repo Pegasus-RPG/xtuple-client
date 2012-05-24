@@ -67,6 +67,7 @@ enum SetResponse createPlannedOrdersByItem::set(const ParameterList &pParams)
 
 void createPlannedOrdersByItem::sCreate()
 {
+  XSqlQuery createCreate;
   if (!_cutOffDate->isValid())
   {
     QMessageBox::warning( this, tr("Enter Cut Off Date"),
@@ -78,37 +79,37 @@ void createPlannedOrdersByItem::sCreate()
 
   if(!_explodeChildren->isChecked())
   {
-    q.prepare( "SELECT createPlannedOrders(itemsite_id, :cutOffDate, :deleteFirmed, FALSE) "
+    createCreate.prepare( "SELECT createPlannedOrders(itemsite_id, :cutOffDate, :deleteFirmed, FALSE) "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_active)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":cutOffDate", _cutOffDate->date());
-    q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked()));
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    createCreate.bindValue(":cutOffDate", _cutOffDate->date());
+    createCreate.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked()));
+    createCreate.bindValue(":item_id", _item->id());
+    createCreate.bindValue(":warehous_id", _warehouse->id());
+    createCreate.exec();
+    if (createCreate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, createCreate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
   else
   {
-    q.prepare( "SELECT createAndExplodePlannedOrders(itemsite_id, :cutOffDate, :deleteFirmed, false)"
+    createCreate.prepare( "SELECT createAndExplodePlannedOrders(itemsite_id, :cutOffDate, :deleteFirmed, false)"
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_active)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":cutOffDate", _cutOffDate->date());
-    q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked()));
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    createCreate.bindValue(":cutOffDate", _cutOffDate->date());
+    createCreate.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked()));
+    createCreate.bindValue(":item_id", _item->id());
+    createCreate.bindValue(":warehous_id", _warehouse->id());
+    createCreate.exec();
+    if (createCreate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, createCreate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }   

@@ -36,6 +36,7 @@ void purgeCreditMemos::languageChange()
 
 void purgeCreditMemos::sPurge()
 {
+  XSqlQuery purgePurge;
   if (!_cutOffDate->isValid())
   {
     QMessageBox::warning( this, tr("Enter Cutoff Date"),
@@ -48,9 +49,9 @@ void purgeCreditMemos::sPurge()
                                  "Are you sure that you want to delete the selected Credit Memos?" ),
                              tr("Yes"), tr("No"), QString::null, 0, 1) == 0)
   {
-    q.prepare("SELECT purgeCreditMemos(:cutOffDate) AS result;");
-    q.bindValue(":cutOffDate", _cutOffDate->date());
-    q.exec();
+    purgePurge.prepare("SELECT purgeCreditMemos(:cutOffDate) AS result;");
+    purgePurge.bindValue(":cutOffDate", _cutOffDate->date());
+    purgePurge.exec();
 
     accept();
   }

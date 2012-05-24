@@ -66,28 +66,30 @@ void incidentResolutions::languageChange()
 
 void incidentResolutions::sFillList()
 {
-  q.prepare( "SELECT incdtresolution_id, incdtresolution_order, "
+  XSqlQuery incidentFillList;
+  incidentFillList.prepare( "SELECT incdtresolution_id, incdtresolution_order, "
 	     "       incdtresolution_name, firstLine(incdtresolution_descrip) AS incdtresolution_descrip "
              "FROM incdtresolution "
              "ORDER BY incdtresolution_order, incdtresolution_name;" );
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  incidentFillList.exec();
+  if (incidentFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _incidentResolutions->populate(q);
+  _incidentResolutions->populate(incidentFillList);
 }
 
 void incidentResolutions::sDelete()
 {
-  q.prepare( "DELETE FROM incdtresolution "
+  XSqlQuery incidentDelete;
+  incidentDelete.prepare( "DELETE FROM incdtresolution "
              "WHERE (incdtresolution_id=:incdtresolution_id);" );
-  q.bindValue(":incdtresolution_id", _incidentResolutions->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  incidentDelete.bindValue(":incdtresolution_id", _incidentResolutions->id());
+  incidentDelete.exec();
+  if (incidentDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

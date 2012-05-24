@@ -77,13 +77,14 @@ void bomList::sCopy()
 
 void bomList::sDelete()
 {
+  XSqlQuery bomDelete;
   if (QMessageBox::critical( this, tr("Delete Bill of Materials"),
                              tr( "Are you sure that you want to delete the selected Bill of Materials?"),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
   {
-    q.prepare( "SELECT deletebom(:item_id);" );
-    q.bindValue(":item_id", _bom->id());
-    q.exec();
+    bomDelete.prepare( "SELECT deletebom(:item_id);" );
+    bomDelete.bindValue(":item_id", _bom->id());
+    bomDelete.exec();
 
     omfgThis->sBOMsUpdated(-1, TRUE);
   }

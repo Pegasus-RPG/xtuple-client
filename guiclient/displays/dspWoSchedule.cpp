@@ -195,18 +195,20 @@ void dspWoSchedule::sCorrectProductionPosting()
 
 void dspWoSchedule::sReleaseWO()
 {
-  q.prepare("SELECT releaseWo(:wo_id, false);");
-  q.bindValue(":wo_id", list()->id());
-  q.exec();
+  XSqlQuery dspReleaseWO;
+  dspReleaseWO.prepare("SELECT releaseWo(:wo_id, false);");
+  dspReleaseWO.bindValue(":wo_id", list()->id());
+  dspReleaseWO.exec();
 
   omfgThis->sWorkOrdersUpdated(list()->id(), true);
 }
 
 void dspWoSchedule::sRecallWO()
 {
-  q.prepare("SELECT recallWo(:wo_id, false);");
-  q.bindValue(":wo_id", list()->id());
-  q.exec();
+  XSqlQuery dspRecallWO;
+  dspRecallWO.prepare("SELECT recallWo(:wo_id, false);");
+  dspRecallWO.bindValue(":wo_id", list()->id());
+  dspRecallWO.exec();
 
   omfgThis->sWorkOrdersUpdated(list()->id(), true);
 }
@@ -233,22 +235,23 @@ void dspWoSchedule::sImplodeWO()
 
 void dspWoSchedule::sDeleteWO()
 {
-  q.prepare( "SELECT wo_ordtype "
+  XSqlQuery dspDeleteWO;
+  dspDeleteWO.prepare( "SELECT wo_ordtype "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
-  q.bindValue(":wo_id", list()->id());
-  q.exec();
-  if (q.first())
+  dspDeleteWO.bindValue(":wo_id", list()->id());
+  dspDeleteWO.exec();
+  if (dspDeleteWO.first())
   {
     QString question;
-    if (q.value("wo_ordtype") == "W")
+    if (dspDeleteWO.value("wo_ordtype") == "W")
       question = tr("<p>The Work Order that you selected to delete is a child "
 		    "of another Work Order.  If you delete the selected Work "
 		    "Order then the Work Order Materials Requirements for the "
 		    "Component Item will remain but the Work Order to relieve "
 		    "that demand will not. Are you sure that you want to "
 		    "delete the selected Work Order?" );
-    else if (q.value("wo_ordtype") == "S")
+    else if (dspDeleteWO.value("wo_ordtype") == "S")
       question = tr("<p>The Work Order that you selected to delete was created "
 		    "to satisfy Sales Order demand. If you delete the selected "
 		    "Work Order then the Sales Order demand will remain but "
@@ -265,27 +268,27 @@ void dspWoSchedule::sDeleteWO()
       return;
     }
 
-    q.prepare("SELECT deleteWo(:wo_id, true) AS returnVal;");
-    q.bindValue(":wo_id", list()->id());
-    q.exec();
+    dspDeleteWO.prepare("SELECT deleteWo(:wo_id, true) AS returnVal;");
+    dspDeleteWO.bindValue(":wo_id", list()->id());
+    dspDeleteWO.exec();
 
-    if (q.first())
+    if (dspDeleteWO.first())
     {
-      int result = q.value("returnVal").toInt();
+      int result = dspDeleteWO.value("returnVal").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("deleteWo", result));
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    else if (dspDeleteWO.lastError().type() != QSqlError::NoError)
+      systemError(this, dspDeleteWO.lastError().databaseText(), __FILE__, __LINE__);
 
     omfgThis->sWorkOrdersUpdated(-1, true);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspDeleteWO.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspDeleteWO.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -504,47 +507,49 @@ void dspWoSchedule::sIssueWoMaterialItem()
 
 void dspWoSchedule::sDspRunningAvailability()
 {
-  q.prepare("SELECT wo_itemsite_id FROM wo WHERE (wo_id=:id);");
-  q.bindValue(":id", list()->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery dspDspRunningAvailability;
+  dspDspRunningAvailability.prepare("SELECT wo_itemsite_id FROM wo WHERE (wo_id=:id);");
+  dspDspRunningAvailability.bindValue(":id", list()->id());
+  dspDspRunningAvailability.exec();
+  if (dspDspRunningAvailability.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("wo_itemsite_id"));
+    params.append("itemsite_id", dspDspRunningAvailability.value("wo_itemsite_id"));
     params.append("run");
 
     dspRunningAvailability *newdlg = new dspRunningAvailability();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspDspRunningAvailability.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspDspRunningAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void dspWoSchedule::sViewBOM()
 {
-  q.prepare("SELECT itemsite_item_id "
+  XSqlQuery dspViewBOM;
+  dspViewBOM.prepare("SELECT itemsite_item_id "
 	    "FROM wo, itemsite "
 	    "WHERE ((wo_itemsite_id=itemsite_id)"
 	    "  AND  (wo_id=:id));");
-  q.bindValue(":id", list()->id());
-  q.exec();
-  if (q.first())
+  dspViewBOM.bindValue(":id", list()->id());
+  dspViewBOM.exec();
+  if (dspViewBOM.first())
   {
     ParameterList params;
-    params.append("item_id", q.value("itemsite_item_id"));
+    params.append("item_id", dspViewBOM.value("itemsite_item_id"));
     params.append("mode", "view");
 
     BOM *newdlg = new BOM();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspViewBOM.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspViewBOM.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

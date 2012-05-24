@@ -242,6 +242,7 @@ void vendorWorkBench::sCRMAccount()
 
 void vendorWorkBench::sPopulate()
 {
+  XSqlQuery vendorPopulate;
   ParameterList params;
   if (! setParams(params))
   {
@@ -266,25 +267,25 @@ void vendorWorkBench::sPopulate()
                    "         vend_shipvia,   vend_active,      vend_cntct1_id,"
                    "         vend_cntct2_id, crmacct_id,       crmacct_owner_username;");
 
-  q = mql.toQuery(params);
-  if (q.first())
+  vendorPopulate = mql.toQuery(params);
+  if (vendorPopulate.first())
   {
-    _name->setText(q.value("vend_name").toString());
-    _vendType->setId(q.value("vend_vendtype_id").toInt());
-    _terms->setId(q.value("vend_terms_id").toInt());
-    _shipvia->setText(q.value("vend_shipvia").toString());
-    _active->setChecked(q.value("vend_active").toBool());
-    _primaryContact->setId(q.value("vend_cntct1_id").toInt());
-    _secondaryContact->setId(q.value("vend_cntct2_id").toInt());
-    _crmacctId = q.value("crmacct_id").toInt();
-    _crmowner = q.value("crmacct_owner_username").toString();
-    _firstPurchase->setDate(q.value("minpodate").toDate());
-    _lastPurchase->setDate(q.value("maxpodate").toDate());
-    _backlog->setDouble(q.value("backlog").toDouble());
+    _name->setText(vendorPopulate.value("vend_name").toString());
+    _vendType->setId(vendorPopulate.value("vend_vendtype_id").toInt());
+    _terms->setId(vendorPopulate.value("vend_terms_id").toInt());
+    _shipvia->setText(vendorPopulate.value("vend_shipvia").toString());
+    _active->setChecked(vendorPopulate.value("vend_active").toBool());
+    _primaryContact->setId(vendorPopulate.value("vend_cntct1_id").toInt());
+    _secondaryContact->setId(vendorPopulate.value("vend_cntct2_id").toInt());
+    _crmacctId = vendorPopulate.value("crmacct_id").toInt();
+    _crmowner = vendorPopulate.value("crmacct_owner_username").toString();
+    _firstPurchase->setDate(vendorPopulate.value("minpodate").toDate());
+    _lastPurchase->setDate(vendorPopulate.value("maxpodate").toDate());
+    _backlog->setDouble(vendorPopulate.value("backlog").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (vendorPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, vendorPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -299,12 +300,12 @@ void vendorWorkBench::sPopulate()
                            "  AND (vohead_vend_id=<? value(\"vend_id\") ?>));");
   params.append("older",   "DATE_TRUNC('year', CURRENT_DATE) - INTERVAL '1 year'");
   params.append("younger", "DATE_TRUNC('year', CURRENT_DATE) - INTERVAL '1 day'");
-  q = purchbydate.toQuery(params);
-  if (q.first())
-    _lastYearsPurchases->setDouble(q.value("purchases").toDouble());
-  else if (q.lastError().type() != QSqlError::NoError)
+  vendorPopulate = purchbydate.toQuery(params);
+  if (vendorPopulate.first())
+    _lastYearsPurchases->setDouble(vendorPopulate.value("purchases").toDouble());
+  else if (vendorPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, vendorPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -312,12 +313,12 @@ void vendorWorkBench::sPopulate()
   ytdparams.append("vend_id", _vend->id());
   ytdparams.append("older",   "DATE_TRUNC('year', CURRENT_DATE)");
   ytdparams.append("younger", "CURRENT_DATE - INTERVAL '1 day'");
-  q = purchbydate.toQuery(ytdparams);
-  if (q.first())
-    _ytdPurchases->setDouble(q.value("purchases").toDouble());
-  else if (q.lastError().type() != QSqlError::NoError)
+  vendorPopulate = purchbydate.toQuery(ytdparams);
+  if (vendorPopulate.first())
+    _ytdPurchases->setDouble(vendorPopulate.value("purchases").toDouble());
+  else if (vendorPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, vendorPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -326,12 +327,12 @@ void vendorWorkBench::sPopulate()
                     "FROM apopen "
                     "WHERE ((apopen_open)"
                     "   AND (apopen_vend_id=<? value(\"vend_id\") ?>));");
-  q = balm.toQuery(params);
-  if (q.first())
-    _openBalance->setDouble(q.value("balance").toDouble());
-  else if (q.lastError().type() != QSqlError::NoError)
+  vendorPopulate = balm.toQuery(params);
+  if (vendorPopulate.first())
+    _openBalance->setDouble(vendorPopulate.value("balance").toDouble());
+  else if (vendorPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, vendorPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

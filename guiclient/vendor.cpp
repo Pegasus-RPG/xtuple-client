@@ -266,6 +266,7 @@ int vendor::id() const
 
 void vendor::sSave()
 {
+  XSqlQuery vendorSave;
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(_number->text().trimmed().isEmpty(), _number,
                           tr("Please enter a Number for this new Vendor."))
@@ -321,7 +322,7 @@ void vendor::sSave()
 			    tr("<p>The newly entered Vendor Number cannot be "
                                "used as it is already used by the Vendor '%1'. "
                                "Please correct or enter a new Vendor Number." )
-			     .arg(q.value("vend_name").toString()) );
+			     .arg(vendorSave.value("vend_name").toString()) );
   }
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Vendor"), errors))
@@ -545,7 +546,7 @@ void vendor::sSave()
   {
     rollback.exec();
     ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Vendor"),
-                         q, __FILE__, __LINE__);
+                         vendorSave, __FILE__, __LINE__);
     return;
   }
 
@@ -943,21 +944,22 @@ void vendor::sDeleteTaxreg()
 
 void vendor::sNext()
 {
+  XSqlQuery vendorNext;
   // Find Next
-  q.prepare("SELECT vend_id "
+  vendorNext.prepare("SELECT vend_id "
             "  FROM vendinfo"
             " WHERE (:number < vend_number)"
             " ORDER BY vend_number"
             " LIMIT 1;");
-  q.bindValue(":number", _number->text());
-  q.exec();
-  if(!q.first())
+  vendorNext.bindValue(":number", _number->text());
+  vendorNext.exec();
+  if(!vendorNext.first())
   {
     QMessageBox::information(this, tr("At Last Record"),
        tr("You are already on the last record.") );
     return;
   }
-  int newid = q.value("vend_id").toInt();
+  int newid = vendorNext.value("vend_id").toInt();
 
   if(!sCheckSave())
     return;

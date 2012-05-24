@@ -58,12 +58,13 @@ void empGroups::languageChange()
 
 void empGroups::sDelete()
 {
-  q.prepare( "SELECT deleteEmpgrp(:grpid) AS result;");
-  q.bindValue(":grpid", _empgrp->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery empDelete;
+  empDelete.prepare( "SELECT deleteEmpgrp(:grpid) AS result;");
+  empDelete.bindValue(":grpid", _empgrp->id());
+  empDelete.exec();
+  if (empDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = empDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteEmpgrp", result),
@@ -71,9 +72,9 @@ void empGroups::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (empDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, empDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -116,12 +117,13 @@ void empGroups::sView()
 
 void empGroups::sFillList()
 {
-  q.prepare("SELECT * FROM empgrp ORDER BY empgrp_name;" );
-  q.exec();
-  _empgrp->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery empFillList;
+  empFillList.prepare("SELECT * FROM empgrp ORDER BY empgrp_name;" );
+  empFillList.exec();
+  _empgrp->populate(empFillList);
+  if (empFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, empFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

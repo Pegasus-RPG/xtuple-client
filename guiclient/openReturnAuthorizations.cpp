@@ -155,6 +155,7 @@ void openReturnAuthorizations::sView()
 
 void openReturnAuthorizations::sDelete()
 {
+  XSqlQuery openDelete;
   if (!checkSitePrivs(_ra->id()))
     return;
 
@@ -176,12 +177,12 @@ void openReturnAuthorizations::sDelete()
                                   "completely delete the selected Return Authorization?"),
                                tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
     {
-      q.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
-      q.bindValue(":rahead_id", _ra->id());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      openDelete.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
+      openDelete.bindValue(":rahead_id", _ra->id());
+      openDelete.exec();
+      if (openDelete.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, openDelete.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
   }
@@ -195,12 +196,12 @@ void openReturnAuthorizations::sDelete()
                                tr("Are you sure that you want to completely delete the selected Return Authorization?"),
                                tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
     {
-      q.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
-      q.bindValue(":rahead_id", _ra->id());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      openDelete.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
+      openDelete.bindValue(":rahead_id", _ra->id());
+      openDelete.exec();
+      if (openDelete.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, openDelete.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
   }
@@ -228,14 +229,15 @@ void openReturnAuthorizations::sPopulateMenu(QMenu *pMenu)
 
 void openReturnAuthorizations::sFillList()
 {
+  XSqlQuery openFillList;
   MetaSQLQuery mql = mqlLoad("returnAuthorizations", "detail");
   ParameterList params;
   setParams(params);
-  q = mql.toQuery(params);
-  _ra->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  openFillList = mql.toQuery(params);
+  _ra->populate(openFillList);
+  if (openFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, openFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _ra->setDragString("raheadid=");

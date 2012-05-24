@@ -62,40 +62,42 @@ enum SetResponse splitReceipt::set(const ParameterList &pParams)
 
 void splitReceipt::populate()
 {
+  XSqlQuery splitpopulate;
   ParameterList params;
 
   MetaSQLQuery popm = mqlLoad("itemReceipt", "populateEdit");
   params.append("recv_id", _recvid);
-  q = popm.toQuery(params);
+  splitpopulate = popm.toQuery(params);
 
-  if (q.first())
+  if (splitpopulate.first())
   {
-    _orderNumber->setText(q.value("order_number").toString());
-    _lineNumber->setText(q.value("orderitem_linenumber").toString());
-    _received->setText(formatQty(q.value("qtyreceived").toDouble()));
-    _receiptDate->setDate(q.value("effective").toDate());
-    _freight->setId(q.value("curr_id").toInt());
-    _freight->setLocalValue(q.value("recv_freight").toDouble());
+    _orderNumber->setText(splitpopulate.value("order_number").toString());
+    _lineNumber->setText(splitpopulate.value("orderitem_linenumber").toString());
+    _received->setText(formatQty(splitpopulate.value("qtyreceived").toDouble()));
+    _receiptDate->setDate(splitpopulate.value("effective").toDate());
+    _freight->setId(splitpopulate.value("curr_id").toInt());
+    _freight->setLocalValue(splitpopulate.value("recv_freight").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (splitpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, splitpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void splitReceipt::sSplit()
 {
+  XSqlQuery splitSplit;
   int result = 0;
 
-  q.prepare("SELECT splitReceipt(:recvid, :qty, :freight) AS result;");
-  q.bindValue(":recvid",	_recvid);
-  q.bindValue(":qty",		_toSplit->toDouble());
-  q.bindValue(":freight",	_freight->localValue());
-  q.exec();
-  if (q.first())
+  splitSplit.prepare("SELECT splitReceipt(:recvid, :qty, :freight) AS result;");
+  splitSplit.bindValue(":recvid",	_recvid);
+  splitSplit.bindValue(":qty",		_toSplit->toDouble());
+  splitSplit.bindValue(":freight",	_freight->localValue());
+  splitSplit.exec();
+  if (splitSplit.first())
   {
-    result = q.value("result").toInt();
+    result = splitSplit.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup(QString("splitReceipt"), result),
@@ -103,9 +105,9 @@ void splitReceipt::sSplit()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (splitSplit.lastError().type() != QSqlError::NoError)
   {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, splitSplit.lastError().databaseText(), __FILE__, __LINE__);
       return;
   }
 

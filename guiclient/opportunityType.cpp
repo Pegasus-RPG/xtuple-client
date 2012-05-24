@@ -90,17 +90,18 @@ enum SetResponse opportunityType::set(const ParameterList &pParams)
 
 void opportunityType::sCheck()
 {
+  XSqlQuery opportunityCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
-    q.prepare( "SELECT optype_id "
+    opportunityCheck.prepare( "SELECT optype_id "
                "FROM optype "
                "WHERE (UPPER(optype_name)=UPPER(:optype_name));" );
-    q.bindValue(":optype_name", _name->text());
-    q.exec();
-    if (q.first())
+    opportunityCheck.bindValue(":optype_name", _name->text());
+    opportunityCheck.exec();
+    if (opportunityCheck.first())
     {
-      _optypeid = q.value("optype_id").toInt();
+      _optypeid = opportunityCheck.value("optype_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -111,6 +112,7 @@ void opportunityType::sCheck()
 
 void opportunityType::sSave()
 {
+  XSqlQuery opportunitySave;
   _name->setText(_name->text().trimmed().toUpper());
   if (_name->text().length() == 0)
   {
@@ -122,9 +124,9 @@ void opportunityType::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('optype_optype_id_seq') AS optype_id");
-    if (q.first())
-      _optypeid = q.value("optype_id").toInt();
+    opportunitySave.exec("SELECT NEXTVAL('optype_optype_id_seq') AS optype_id");
+    if (opportunitySave.first())
+      _optypeid = opportunitySave.value("optype_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -133,36 +135,37 @@ void opportunityType::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO optype "
+    opportunitySave.prepare( "INSERT INTO optype "
                "( optype_id, optype_name, optype_descrip)"
                "VALUES "
                "( :optype_id, :optype_name, :optype_descrip );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE optype "
+    opportunitySave.prepare( "UPDATE optype "
                "   SET optype_name=:optype_name,"
                "       optype_descrip=:optype_descrip "
                " WHERE(optype_id=:optype_id);" );
 
-  q.bindValue(":optype_id", _optypeid);
-  q.bindValue(":optype_name", _name->text());
-  q.bindValue(":optype_descrip", _description->text().trimmed());
-  q.exec();
+  opportunitySave.bindValue(":optype_id", _optypeid);
+  opportunitySave.bindValue(":optype_name", _name->text());
+  opportunitySave.bindValue(":optype_descrip", _description->text().trimmed());
+  opportunitySave.exec();
 
   done(_optypeid);
 }
 
 void opportunityType::populate()
 {
-  q.prepare( "SELECT optype_name, optype_descrip "
+  XSqlQuery opportunitypopulate;
+  opportunitypopulate.prepare( "SELECT optype_name, optype_descrip "
              "  FROM optype "
              " WHERE(optype_id=:optype_id);" );
-  q.bindValue(":optype_id", _optypeid);
-  q.exec();
-  if (q.first())
+  opportunitypopulate.bindValue(":optype_id", _optypeid);
+  opportunitypopulate.exec();
+  if (opportunitypopulate.first())
   {
-    _name->setText(q.value("optype_name"));
-    _description->setText(q.value("optype_descrip"));
+    _name->setText(opportunitypopulate.value("optype_name"));
+    _description->setText(opportunitypopulate.value("optype_descrip"));
   }
 } 
 

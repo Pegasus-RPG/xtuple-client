@@ -128,17 +128,19 @@ void bankAdjustmentEditList::sView()
 
 void bankAdjustmentEditList::sDelete()
 {
-  q.prepare( "DELETE FROM bankadj "
+  XSqlQuery bankDelete;
+  bankDelete.prepare( "DELETE FROM bankadj "
              "WHERE ( (bankadj_id=:bankadj_id)"
              " AND (NOT bankadj_posted) ); ");
-  q.bindValue(":bankadj_id", _adjustments->id());
-  q.exec();
+  bankDelete.bindValue(":bankadj_id", _adjustments->id());
+  bankDelete.exec();
   sFillList();
 }
 
 void bankAdjustmentEditList::sFillList()
 {
-  q.prepare( "SELECT *,"
+  XSqlQuery bankFillList;
+  bankFillList.prepare( "SELECT *,"
 	     "       (bankaccnt_name || '-' || bankaccnt_descrip) AS f_bank,"
              "       'curr' AS bankadj_amount_xtnumericrole, "
 	     "       currConcat(bankadj_curr_id) AS currabbr "
@@ -146,12 +148,12 @@ void bankAdjustmentEditList::sFillList()
              "                       LEFT OUTER JOIN bankadjtype ON (bankadj_bankadjtype_id=bankadjtype_id) "
              "WHERE ( (NOT bankadj_posted)"
              " AND (bankadj_bankaccnt_id=:bankaccnt_id) ); ");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  _adjustments->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  bankFillList.bindValue(":bankaccnt_id", _bankaccnt->id());
+  bankFillList.exec();
+  _adjustments->populate(bankFillList);
+  if (bankFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bankFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -178,12 +180,13 @@ void bankAdjustmentEditList::sPopulateMenu( QMenu * pMenu )
 
 void bankAdjustmentEditList::sPost()
 {
-  q.prepare("SELECT postBankAdjustment(:bankadjid) AS result;");
-  q.bindValue(":bankadjid", _adjustments->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery bankPost;
+  bankPost.prepare("SELECT postBankAdjustment(:bankadjid) AS result;");
+  bankPost.bindValue(":bankadjid", _adjustments->id());
+  bankPost.exec();
+  if (bankPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = bankPost.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("postBankAdjustment", result),
@@ -192,9 +195,9 @@ void bankAdjustmentEditList::sPost()
     }
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (bankPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bankPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -85,6 +85,7 @@ void packingListBatch::languageChange()
 
 void packingListBatch::sPrintBatch()
 {
+  XSqlQuery packingPrintBatch;
   XSqlQuery updateq;
   updateq.prepare("UPDATE pack "
 		  "SET pack_printed=TRUE "
@@ -94,10 +95,10 @@ void packingListBatch::sPrintBatch()
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   MetaSQLQuery mql = mqlLoad("packingListBatch", "print");
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  packingPrintBatch = mql.toQuery(params);
+  if (packingPrintBatch.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packingPrintBatch.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -111,18 +112,18 @@ void packingListBatch::sPrintBatch()
     return;
   }
 
-  while (q.next())
+  while (packingPrintBatch.next())
   {
-    int osmiscid = q.value("pack_shiphead_id").toInt();
+    int osmiscid = packingPrintBatch.value("pack_shiphead_id").toInt();
 
     // set sohead_id, tohead_id, and shiphead_id for customer and 3rd-party use
     ParameterList params;
-    params.append("head_id",   q.value("pack_head_id").toInt());
-    params.append("head_type", q.value("pack_head_type").toString());
-    if (q.value("pack_head_type").toString() == "SO")
-      params.append("sohead_id", q.value("pack_head_id").toInt());
-    else if (q.value("pack_head_type").toString() == "TO")
-      params.append("tohead_id", q.value("pack_head_id").toInt());
+    params.append("head_id",   packingPrintBatch.value("pack_head_id").toInt());
+    params.append("head_type", packingPrintBatch.value("pack_head_type").toString());
+    if (packingPrintBatch.value("pack_head_type").toString() == "SO")
+      params.append("sohead_id", packingPrintBatch.value("pack_head_id").toInt());
+    else if (packingPrintBatch.value("pack_head_type").toString() == "TO")
+      params.append("tohead_id", packingPrintBatch.value("pack_head_id").toInt());
     if (osmiscid > 0)
     {
       params.append("shiphead_id",  osmiscid);
@@ -130,7 +131,7 @@ void packingListBatch::sPrintBatch()
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
 
-    orReport report(q.value(osmiscid > 0 ? "packform" : "pickform").toString(), params);
+    orReport report(packingPrintBatch.value(osmiscid > 0 ? "packform" : "pickform").toString(), params);
     if (! report.isValid())
     {
       report.reportError(this);
@@ -138,7 +139,7 @@ void packingListBatch::sPrintBatch()
     else if (report.print(&printer, setupPrinter))
     {
       setupPrinter = FALSE;
-      updateq.bindValue(":packid", q.value("pack_id").toInt());
+      updateq.bindValue(":packid", packingPrintBatch.value("pack_id").toInt());
       updateq.exec();
       if (updateq.lastError().type() != QSqlError::NoError)
       {
@@ -146,9 +147,9 @@ void packingListBatch::sPrintBatch()
         orReport::endMultiPrint(&printer);
         return;
       }
-      emit finishedPrinting(q.value("pack_head_id").toInt(),
-                            q.value("pack_head_type").toString(),
-                            q.value("pack_shiphead_id").toInt());
+      emit finishedPrinting(packingPrintBatch.value("pack_head_id").toInt(),
+                            packingPrintBatch.value("pack_head_type").toString(),
+                            packingPrintBatch.value("pack_shiphead_id").toInt());
     }
     else
     {
@@ -196,22 +197,23 @@ void packingListBatch::sPrintEditList()
 
 void packingListBatch::sClearPrinted()
 {
-  q.exec( "DELETE FROM pack "
+  XSqlQuery packingClearPrinted;
+  packingClearPrinted.exec( "DELETE FROM pack "
           "WHERE ( (pack_printed)"
 		  "  AND   (pack_head_type='SO')"
 		  "  AND   (checkSOSitePrivs(pack_head_id)) );" );
-  if (q.lastError().type() != QSqlError::NoError)
+  if (packingClearPrinted.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packingClearPrinted.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.exec( "DELETE FROM pack "
+  packingClearPrinted.exec( "DELETE FROM pack "
           "WHERE ( (pack_printed)"
 		  "  AND   (pack_head_type='TO') );" );
-  if (q.lastError().type() != QSqlError::NoError)
+  if (packingClearPrinted.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packingClearPrinted.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -246,6 +248,7 @@ void packingListBatch::sViewTransferOrder()
 
 void packingListBatch::sAddSO()
 {
+  XSqlQuery packingAddSO;
   ParameterList params;
   params.append("soType", cSoOpen);
   
@@ -255,14 +258,14 @@ void packingListBatch::sAddSO()
   int soid;
   if ((soid = newdlg.exec()) != QDialog::Rejected)
   {
-    q.prepare("SELECT addToPackingListBatch('SO', :sohead_id) AS result;");
-    q.bindValue(":sohead_id", soid);
-    q.exec();
-    if (q.first())
+    packingAddSO.prepare("SELECT addToPackingListBatch('SO', :sohead_id) AS result;");
+    packingAddSO.bindValue(":sohead_id", soid);
+    packingAddSO.exec();
+    if (packingAddSO.first())
       sFillList();
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (packingAddSO.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, packingAddSO.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -270,6 +273,7 @@ void packingListBatch::sAddSO()
 
 void packingListBatch::sAddTO()
 {
+  XSqlQuery packingAddTO;
   ParameterList params;
   params.append("toType", cToOpen);
   
@@ -279,14 +283,14 @@ void packingListBatch::sAddTO()
   int toid;
   if ((toid = newdlg.exec()) != QSqlError::NoError)
   {
-    q.prepare("SELECT addToPackingListBatch('TO', :tohead_id) AS result;");
-    q.bindValue(":tohead_id", toid);
-    q.exec();
-    if (q.first())
+    packingAddTO.prepare("SELECT addToPackingListBatch('TO', :tohead_id) AS result;");
+    packingAddTO.bindValue(":tohead_id", toid);
+    packingAddTO.exec();
+    if (packingAddTO.first())
       sFillList();
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (packingAddTO.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, packingAddTO.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -294,6 +298,7 @@ void packingListBatch::sAddTO()
 
 void packingListBatch::sDelete()
 {
+  XSqlQuery packingDelete;
   QString sql( "DELETE FROM pack "
 	       "WHERE ((pack_head_id=<? value(\"head_id\") ?>)"
 	       "  AND  (pack_head_type=<? value(\"head_type\") ?>)"
@@ -311,10 +316,10 @@ void packingListBatch::sDelete()
     params.append("shiphead_id", _pack->altId());
 
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  packingDelete = mql.toQuery(params);
+  if (packingDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packingDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -323,6 +328,7 @@ void packingListBatch::sDelete()
 
 void packingListBatch::sPrintPackingList()
 {
+  XSqlQuery packingPrintPackingList;
   if (_pack->altId() == -1)
   {
     QMessageBox::critical(this, tr("Shipment Number Required"),
@@ -369,10 +375,10 @@ void packingListBatch::sPrintPackingList()
       params.append("shiphead_id", _pack->altId());
 
     MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    if (q.lastError().type() != QSqlError::NoError)
+    packingPrintPackingList = mql.toQuery(params);
+    if (packingPrintPackingList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, packingPrintPackingList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -382,16 +388,17 @@ void packingListBatch::sPrintPackingList()
 
 void packingListBatch::sFillList()
 {
+  XSqlQuery packingFillList;
   ParameterList params;
   setParams(params);
   MetaSQLQuery mql = mqlLoad("packingListBatch", "detail");
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  packingFillList = mql.toQuery(params);
+  if (packingFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packingFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _pack->populate(q, true);
+  _pack->populate(packingFillList, true);
 }
 
 void packingListBatch::sHandleAutoUpdate(bool pAutoUpdate)

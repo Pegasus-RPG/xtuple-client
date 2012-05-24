@@ -57,6 +57,7 @@ void enterPoitemReturn::languageChange()
 
 enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
 {
+  XSqlQuery enteret;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -66,39 +67,39 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
   {
     _poitemid = param.toInt();
 
-    q.prepare("	SELECT recv_id, recv_date, recv_agent_username, recv_gldistdate,"
+    enteret.prepare("	SELECT recv_id, recv_date, recv_agent_username, recv_gldistdate,"
               "        recv_qty-COALESCE(SUM(poreject_qty),0) AS returnable, recv_purchcost "
               "	FROM recv LEFT OUTER JOIN poreject ON (recv_id = poreject_recv_id) "
               " WHERE recv_orderitem_id=:poitem_id AND recv_order_type='PO' "
               " GROUP BY recv_id, recv_date, recv_agent_username, recv_gldistdate, recv_purchcost, recv_qty;");
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    enteret.bindValue(":poitem_id", _poitemid);
+    enteret.exec();
+    if (enteret.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
     _receipts->clear();
-    _receipts->populate(q);
+    _receipts->populate(enteret);
 
-    q.prepare(	"SELECT CASE WHEN itemsite_costmethod='A' THEN TRUE ELSE FALSE END AS costmethod_average "
+    enteret.prepare(	"SELECT CASE WHEN itemsite_costmethod='A' THEN TRUE ELSE FALSE END AS costmethod_average "
                 "FROM poitem LEFT OUTER JOIN itemsite ON (poitem_itemsite_id = itemsite_id) "
                 "WHERE poitem_id = :poitem_id;");
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    enteret.bindValue(":poitem_id", _poitemid);
+    enteret.exec();
+    if (enteret.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
-    if (q.first())
+    if (enteret.first())
     {
-      _receipts->setVisible(q.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
-      _receiptsLit->setVisible(q.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
-      _receiptsLine->setVisible(q.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
+      _receipts->setVisible(enteret.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
+      _receiptsLit->setVisible(enteret.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
+      _receiptsLine->setVisible(enteret.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
     }
 
-    q.prepare( "SELECT pohead_number, poitem_linenumber,"
+    enteret.prepare( "SELECT pohead_number, poitem_linenumber,"
                "       COALESCE(itemsite_id, -1) AS itemsiteid,"
                "       noNeg(poitem_qty_received - poitem_qty_returned) AS returnable,"
                "       poitem_vend_item_number, poitem_vend_uom, poitem_vend_item_descrip,"
@@ -111,41 +112,41 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
                "             ) ON (poitem_itemsite_id=itemsite_id) "
                "WHERE ( (poitem_pohead_id=pohead_id)"
                " AND (poitem_id=:poitem_id) );" );
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
-    if (q.first())
+    enteret.bindValue(":poitem_id", _poitemid);
+    enteret.exec();
+    if (enteret.first())
     {
-      _poNumber->setText(q.value("pohead_number").toString());
-      _lineNumber->setText(q.value("poitem_linenumber").toString());
-      _vendorItemNumber->setText(q.value("poitem_vend_item_number").toString());
-      _vendorDescrip->setText(q.value("poitem_vend_item_descrip").toString());
-      _vendorUOM->setText(q.value("poitem_vend_uom").toString());
-      _ordered->setDouble(q.value("poitem_qty_ordered").toDouble());
-      _received->setDouble(q.value("returnableqty").toDouble());
-      _invVendorUOMRatio->setDouble(q.value("poitem_invvenduomratio").toDouble());
+      _poNumber->setText(enteret.value("pohead_number").toString());
+      _lineNumber->setText(enteret.value("poitem_linenumber").toString());
+      _vendorItemNumber->setText(enteret.value("poitem_vend_item_number").toString());
+      _vendorDescrip->setText(enteret.value("poitem_vend_item_descrip").toString());
+      _vendorUOM->setText(enteret.value("poitem_vend_uom").toString());
+      _ordered->setDouble(enteret.value("poitem_qty_ordered").toDouble());
+      _received->setDouble(enteret.value("returnableqty").toDouble());
+      _invVendorUOMRatio->setDouble(enteret.value("poitem_invvenduomratio").toDouble());
 
-      if (q.value("itemsiteid").toInt() != -1)
-        _item->setItemsiteid(q.value("itemsiteid").toInt());
+      if (enteret.value("itemsiteid").toInt() != -1)
+        _item->setItemsiteid(enteret.value("itemsiteid").toInt());
 
-      _cachedReceived = q.value("returnable").toDouble();
+      _cachedReceived = enteret.value("returnable").toDouble();
 
-      q.prepare( "SELECT COALESCE(SUM(poreject_qty), 0) AS qtytoreturn "
+      enteret.prepare( "SELECT COALESCE(SUM(poreject_qty), 0) AS qtytoreturn "
                  "FROM poreject "
                  "WHERE ( (poreject_poitem_id=:poitem_id)"
                  " AND (NOT poreject_posted) );" );
-      q.bindValue(":poitem_id", _poitemid);
-      q.exec();
-      if (q.first())
-        _toReturn->setText(q.value("qtytoreturn").toString());
-      else if (q.lastError().type() != QSqlError::NoError)
+      enteret.bindValue(":poitem_id", _poitemid);
+      enteret.exec();
+      if (enteret.first())
+        _toReturn->setText(enteret.value("qtytoreturn").toString());
+      else if (enteret.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
     }
-    if (q.lastError().type() != QSqlError::NoError)
+    if (enteret.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -155,6 +156,7 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
 
 void enterPoitemReturn::sReturn()
 {
+  XSqlQuery enterReturn;
   if (_rejectCode->id() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Enter Return"),
@@ -199,16 +201,16 @@ void enterPoitemReturn::sReturn()
     }
   }
 
-  q.prepare("SELECT enterPoReturn(:poitem_id, :qty, :rjctcode_id, :recv_id) AS result;");
-  q.bindValue(":poitem_id", _poitemid);
-  q.bindValue(":qty", _toReturn->toDouble());
-  q.bindValue(":rjctcode_id", _rejectCode->id());
+  enterReturn.prepare("SELECT enterPoReturn(:poitem_id, :qty, :rjctcode_id, :recv_id) AS result;");
+  enterReturn.bindValue(":poitem_id", _poitemid);
+  enterReturn.bindValue(":qty", _toReturn->toDouble());
+  enterReturn.bindValue(":rjctcode_id", _rejectCode->id());
   if (_receipts->id() != -1)
-    q.bindValue(":recv_id", _receipts->id());
-  q.exec();
-  if (q.first())
+    enterReturn.bindValue(":recv_id", _receipts->id());
+  enterReturn.exec();
+  if (enterReturn.first())
   {
-    int result = q.value("result").toInt();
+    int result = enterReturn.value("result").toInt();
     if (result < 0)
     {
       QMessageBox::critical(this, tr("Cannot Enter Return"),
@@ -216,9 +218,9 @@ void enterPoitemReturn::sReturn()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterReturn.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterReturn.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

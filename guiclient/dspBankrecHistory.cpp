@@ -99,7 +99,8 @@ void dspBankrecHistory::sBankaccntChanged()
 
 void dspBankrecHistory::sFillList()
 {
-  q.prepare( "SELECT bankrec_username, "
+  XSqlQuery dspFillList;
+  dspFillList.prepare( "SELECT bankrec_username, "
              "       bankrec_posted,"
              "       bankrec_postdate,"
              "       bankrec_opendate,"
@@ -108,12 +109,12 @@ void dspBankrecHistory::sFillList()
              "       bankrec_endbal "
              "FROM bankrec "
              "WHERE (bankrec_id=:bankrecid);" );
-  q.bindValue(":bankrecid", _bankrec->id());
-  q.exec();
-  if(q.first())
+  dspFillList.bindValue(":bankrecid", _bankrec->id());
+  dspFillList.exec();
+  if(dspFillList.first())
   {
-    _poster->setText(q.value("bankrec_username").toString());
-    _postdate->setDate(q.value("bankrec_postdate").toDate());
+    _poster->setText(dspFillList.value("bankrec_username").toString());
+    _postdate->setDate(dspFillList.value("bankrec_postdate").toDate());
     
     ParameterList params;
     params.append("treeView", true);
@@ -121,11 +122,11 @@ void dspBankrecHistory::sFillList()
       return;
     
     MetaSQLQuery mql = mqlLoad("bankrecHistory", "reconciled");
-    q = mql.toQuery(params);
-    _rec->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
+    dspFillList = mql.toQuery(params);
+    _rec->populate(dspFillList, true);
+    if (dspFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -139,11 +140,11 @@ void dspBankrecHistory::sFillList()
         return;
       
       MetaSQLQuery mql2 = mqlLoad("bankrecHistory", "unreconciled");
-      q = mql2.toQuery(params2);
-      _unrec->populate(q, true);
-      if (q.lastError().type() != QSqlError::NoError)
+      dspFillList = mql2.toQuery(params2);
+      _unrec->populate(dspFillList, true);
+      if (dspFillList.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
       else

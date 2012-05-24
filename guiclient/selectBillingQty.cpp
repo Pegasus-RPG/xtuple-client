@@ -208,6 +208,7 @@ void selectBillingQty::sSave()
 
 void selectBillingQty::sHandleItem()
 {
+  XSqlQuery selectHandleItem;
   XSqlQuery itemq;
   itemq.prepare("SELECT getItemTaxType(:item_id, :taxzone) AS result;");
   itemq.bindValue(":item_id", _item->id());
@@ -227,7 +228,7 @@ void selectBillingQty::sHandleItem()
   }
   else if (itemq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectHandleItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else

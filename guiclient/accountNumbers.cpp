@@ -57,12 +57,13 @@ void accountNumbers::languageChange()
 
 void accountNumbers::sDelete()
 {
-  q.prepare("SELECT deleteAccount(:accnt_id) AS result;");
-  q.bindValue(":accnt_id", _account->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery deleteAccount;
+  deleteAccount.prepare("SELECT deleteAccount(:accnt_id) AS result;");
+  deleteAccount.bindValue(":accnt_id", _account->id());
+  deleteAccount.exec();
+  if (deleteAccount.first())
   {
-    int result = q.value("result").toInt();
+    int result = deleteAccount.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteAccount", result), __FILE__, __LINE__);
@@ -70,9 +71,9 @@ void accountNumbers::sDelete()
     }
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (deleteAccount.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, deleteAccount.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -139,6 +140,7 @@ void accountNumbers::sPrint()
 
 void accountNumbers::sFillList()
 {
+  XSqlQuery accountFillList;
   ParameterList params;
   if (! setParams(params))
     return;
@@ -151,12 +153,12 @@ void accountNumbers::sFillList()
     systemError(this, errorString, __FILE__, __LINE__);
     return;
   }
-  q = mql.toQuery(params);
+  accountFillList = mql.toQuery(params);
 
-  _account->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _account->populate(accountFillList);
+  if (accountFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, accountFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -69,6 +69,7 @@ void itemUOM::languageChange()
 
 enum SetResponse itemUOM::set(const ParameterList &pParams)
 {
+  XSqlQuery itemet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -77,14 +78,14 @@ enum SetResponse itemUOM::set(const ParameterList &pParams)
   if (valid)
   {
     _itemid = param.toInt();
-    q.prepare("SELECT item_inv_uom_id"
+    itemet.prepare("SELECT item_inv_uom_id"
               "  FROM item"
               " WHERE(item_id=:item_id);");
-    q.bindValue(":item_id", _itemid);
-    q.exec();
-    if(q.first())
+    itemet.bindValue(":item_id", _itemid);
+    itemet.exec();
+    if(itemet.first())
     {
-      _uomidFrom = q.value("item_inv_uom_id").toInt();
+      _uomidFrom = itemet.value("item_inv_uom_id").toInt();
       _ignoreSignals = true;
       _uomFrom->setId(_uomidFrom);
       _uomTo->setId(_uomidFrom);
@@ -146,6 +147,7 @@ enum SetResponse itemUOM::set(const ParameterList &pParams)
 
 void itemUOM::sSave()
 {
+  XSqlQuery itemSave;
   if(_fromValue->toDouble() <= 0.0)
   {
     QMessageBox::warning(this, tr("Invalid Ratio"),
@@ -169,22 +171,23 @@ void itemUOM::sSave()
     return;
   }
 
-  q.prepare("UPDATE itemuomconv"
+  itemSave.prepare("UPDATE itemuomconv"
             "   SET itemuomconv_to_value=:tovalue,"
             "       itemuomconv_from_value=:fromvalue,"
             "       itemuomconv_fractional=:fractional "
             " WHERE(itemuomconv_id=:itemuomconv_id);");
-  q.bindValue(":itemuomconv_id", _itemuomconvid);
-  q.bindValue(":tovalue", _toValue->toDouble());
-  q.bindValue(":fromvalue", _fromValue->toDouble());
-  q.bindValue(":fractional", QVariant(_fractional->isChecked()));
-  if(q.exec())
+  itemSave.bindValue(":itemuomconv_id", _itemuomconvid);
+  itemSave.bindValue(":tovalue", _toValue->toDouble());
+  itemSave.bindValue(":fromvalue", _fromValue->toDouble());
+  itemSave.bindValue(":fractional", QVariant(_fractional->isChecked()));
+  if(itemSave.exec())
     accept();
 }
 
 void itemUOM::populate()
 {
-  q.prepare("SELECT itemuomconv_item_id, item_inv_uom_id,"
+  XSqlQuery itempopulate;
+  itempopulate.prepare("SELECT itemuomconv_item_id, item_inv_uom_id,"
             "       itemuomconv_from_uom_id, itemuomconv_to_uom_id,"
             "       itemuomconv_from_value, itemuomconv_to_value, itemuomconv_fractional,"
             "       (uomconv_id IS NOT NULL) AS global"
@@ -194,19 +197,19 @@ void itemUOM::populate()
             "    ON ((uomconv_from_uom_id=itemuomconv_from_uom_id AND uomconv_to_uom_id=itemuomconv_to_uom_id)"
             "     OR (uomconv_to_uom_id=itemuomconv_from_uom_id AND uomconv_from_uom_id=itemuomconv_to_uom_id))"
             " WHERE((itemuomconv_id=:itemuomconv_id));");
-  q.bindValue(":itemuomconv_id", _itemuomconvid);
-  q.exec();
-  if(q.first())
+  itempopulate.bindValue(":itemuomconv_id", _itemuomconvid);
+  itempopulate.exec();
+  if(itempopulate.first())
   {
-    _itemid = q.value("itemuomconv_item_id").toInt();
-    _uomidFrom = q.value("item_inv_uom_id").toInt();
-    _uomFrom->setId(q.value("itemuomconv_from_uom_id").toInt());
-    _uomTo->setId(q.value("itemuomconv_to_uom_id").toInt());
-    _fromValue->setDouble(q.value("itemuomconv_from_value").toDouble());
-    _toValue->setDouble(q.value("itemuomconv_to_value").toDouble());
-    _fractional->setChecked(q.value("itemuomconv_fractional").toBool());
-    _toValue->setEnabled(!q.value("global").toBool());
-    _fromValue->setEnabled(!q.value("global").toBool());
+    _itemid = itempopulate.value("itemuomconv_item_id").toInt();
+    _uomidFrom = itempopulate.value("item_inv_uom_id").toInt();
+    _uomFrom->setId(itempopulate.value("itemuomconv_from_uom_id").toInt());
+    _uomTo->setId(itempopulate.value("itemuomconv_to_uom_id").toInt());
+    _fromValue->setDouble(itempopulate.value("itemuomconv_from_value").toDouble());
+    _toValue->setDouble(itempopulate.value("itemuomconv_to_value").toDouble());
+    _fractional->setChecked(itempopulate.value("itemuomconv_fractional").toBool());
+    _toValue->setEnabled(!itempopulate.value("global").toBool());
+    _fromValue->setEnabled(!itempopulate.value("global").toBool());
 
     sFillList();
   }
@@ -214,9 +217,10 @@ void itemUOM::populate()
 
 void itemUOM::sFillList()
 {
+  XSqlQuery itemFillList;
   _available->clear();
   _selected->clear();
-  q.prepare("SELECT uomtype_id, uomtype_name,"
+  itemFillList.prepare("SELECT uomtype_id, uomtype_name,"
             "       uomtype_descrip, (itemuom_id IS NOT NULL) AS selected"
             "  FROM uomtype"
             "  LEFT OUTER JOIN itemuom ON ((itemuom_uomtype_id=uomtype_id)"
@@ -230,16 +234,16 @@ void itemUOM::sFillList()
             "            AND (itemuomconv_id != :itemuomconv_id)"
             "            AND (uomtype_multiple=false))))"
             " ORDER BY uomtype_name;");
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":itemuomconv_id", _itemuomconvid);
-  q.exec();
-  while(q.next())
+  itemFillList.bindValue(":item_id", _itemid);
+  itemFillList.bindValue(":itemuomconv_id", _itemuomconvid);
+  itemFillList.exec();
+  while(itemFillList.next())
   {
-    QListWidgetItem *item = new QListWidgetItem(q.value("uomtype_name").toString());
-    item->setToolTip(q.value("uomtype_descrip").toString());
-    item->setData(Qt::UserRole, q.value("uomtype_id").toInt());
+    QListWidgetItem *item = new QListWidgetItem(itemFillList.value("uomtype_name").toString());
+    item->setToolTip(itemFillList.value("uomtype_descrip").toString());
+    item->setData(Qt::UserRole, itemFillList.value("uomtype_id").toInt());
 
-    if(q.value("selected").toBool())
+    if(itemFillList.value("selected").toBool())
       _selected->addItem(item);
     else
       _available->addItem(item);
@@ -250,35 +254,37 @@ void itemUOM::sFillList()
 
 void itemUOM::sAdd()
 {
+  XSqlQuery itemAdd;
   QList<QListWidgetItem*> items = _available->selectedItems();
   QListWidgetItem * item;
   for(int i = 0; i < items.size(); i++)
   {
     item = items.at(i);
-    q.prepare("INSERT INTO itemuom"
+    itemAdd.prepare("INSERT INTO itemuom"
               "      (itemuom_itemuomconv_id, itemuom_uomtype_id) "
               "VALUES(:itemuomconv_id, :uomtype_id);");
-    q.bindValue(":itemuomconv_id", _itemuomconvid);
-    q.bindValue(":uomtype_id", item->data(Qt::UserRole));
-    q.exec();
+    itemAdd.bindValue(":itemuomconv_id", _itemuomconvid);
+    itemAdd.bindValue(":uomtype_id", item->data(Qt::UserRole));
+    itemAdd.exec();
   }
   sFillList();
 }
 
 void itemUOM::sRemove()
 {
+  XSqlQuery itemRemove;
   QList<QListWidgetItem*> items = _selected->selectedItems();
   QListWidgetItem * item;
   for(int i = 0; i < items.size(); i++)
   {
     item = items.at(i);
-    q.prepare("SELECT deleteItemuom(itemuom_id) AS result"
+    itemRemove.prepare("SELECT deleteItemuom(itemuom_id) AS result"
               "  FROM itemuom"
               " WHERE((itemuom_itemuomconv_id=:itemuomconv_id)"
               "   AND (itemuom_uomtype_id=:uomtype_id));");
-    q.bindValue(":itemuomconv_id", _itemuomconvid);
-    q.bindValue(":uomtype_id", item->data(Qt::UserRole));
-    q.exec();
+    itemRemove.bindValue(":itemuomconv_id", _itemuomconvid);
+    itemRemove.bindValue(":uomtype_id", item->data(Qt::UserRole));
+    itemRemove.exec();
     // TODO: add in some addtional error checking
   }
   sFillList();
@@ -286,6 +292,7 @@ void itemUOM::sRemove()
 
 void itemUOM::sCheck()
 {
+  XSqlQuery itemCheck;
   if(cNew != _mode || _ignoreSignals)
     return;
 
@@ -294,40 +301,40 @@ void itemUOM::sCheck()
   _uomFrom->setEnabled(false);
   _uomTo->setEnabled(false);
 
-  q.prepare("SELECT itemuomconv_id"
+  itemCheck.prepare("SELECT itemuomconv_id"
             "  FROM itemuomconv"
             " WHERE((itemuomconv_item_id=:item_id)"
             "   AND (((itemuomconv_from_uom_id=:from_uom_id) AND (itemuomconv_to_uom_id=:to_uom_id))"
             "     OR ((itemuomconv_from_uom_id=:to_uom_id) AND (itemuomconv_to_uom_id=:from_uom_id))));");
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":from_uom_id", _uomFrom->id());
-  q.bindValue(":to_uom_id", _uomTo->id());
-  q.exec();
-  if(q.first())
+  itemCheck.bindValue(":item_id", _itemid);
+  itemCheck.bindValue(":from_uom_id", _uomFrom->id());
+  itemCheck.bindValue(":to_uom_id", _uomTo->id());
+  itemCheck.exec();
+  if(itemCheck.first())
   {
-    _itemuomconvid = q.value("itemuomconv_id").toInt();
+    _itemuomconvid = itemCheck.value("itemuomconv_id").toInt();
     _mode = cEdit;
     populate();
     _ignoreSignals = false;
     return;
   }
 
-  q.prepare("SELECT uomconv_from_uom_id, uomconv_from_value,"
+  itemCheck.prepare("SELECT uomconv_from_uom_id, uomconv_from_value,"
             "       uomconv_to_uom_id, uomconv_to_value,"
             "       uomconv_fractional"
             "  FROM uomconv"
             " WHERE(((uomconv_from_uom_id=:from_uom_id) AND (uomconv_to_uom_id=:to_uom_id))"
             "    OR ((uomconv_from_uom_id=:to_uom_id) AND (uomconv_to_uom_id=:from_uom_id)));");
-  q.bindValue(":from_uom_id", _uomFrom->id());
-  q.bindValue(":to_uom_id", _uomTo->id());
-  q.exec();
-  if(q.first())
+  itemCheck.bindValue(":from_uom_id", _uomFrom->id());
+  itemCheck.bindValue(":to_uom_id", _uomTo->id());
+  itemCheck.exec();
+  if(itemCheck.first())
   {
-    _uomFrom->setId(q.value("uomconv_from_uom_id").toInt());
-    _uomTo->setId(q.value("uomconv_to_uom_id").toInt());
-    _fromValue->setDouble(q.value("uomconv_from_value").toDouble());
-    _toValue->setDouble(q.value("uomconv_to_value").toDouble());
-    _fractional->setChecked(q.value("uomconv_fractional").toBool());
+    _uomFrom->setId(itemCheck.value("uomconv_from_uom_id").toInt());
+    _uomTo->setId(itemCheck.value("uomconv_to_uom_id").toInt());
+    _fromValue->setDouble(itemCheck.value("uomconv_from_value").toDouble());
+    _toValue->setDouble(itemCheck.value("uomconv_to_value").toDouble());
+    _fractional->setChecked(itemCheck.value("uomconv_fractional").toBool());
     _fromValue->setEnabled(false);
     _toValue->setEnabled(false);
   }
@@ -337,22 +344,22 @@ void itemUOM::sCheck()
     _toValue->setEnabled(true);
   }
 
-  q.exec("SELECT nextval('itemuomconv_itemuomconv_id_seq') AS result;");
-  q.first();
-  _itemuomconvid = q.value("result").toInt();
+  itemCheck.exec("SELECT nextval('itemuomconv_itemuomconv_id_seq') AS result;");
+  itemCheck.first();
+  _itemuomconvid = itemCheck.value("result").toInt();
 
-  q.prepare("INSERT INTO itemuomconv"
+  itemCheck.prepare("INSERT INTO itemuomconv"
             "      (itemuomconv_id, itemuomconv_item_id, itemuomconv_from_uom_id, itemuomconv_to_uom_id,"
             "       itemuomconv_from_value, itemuomconv_to_value, itemuomconv_fractional) "
             "VALUES(:id, :item_id, :from_uom_id, :to_uom_id, :fromvalue, :tovalue, :fractional);");
-  q.bindValue(":id", _itemuomconvid);
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":from_uom_id", _uomFrom->id());
-  q.bindValue(":to_uom_id", _uomTo->id());
-  q.bindValue(":fromvalue", _fromValue->toDouble());
-  q.bindValue(":tovalue", _toValue->toDouble());
-  q.bindValue(":fractional", QVariant(_fractional->isChecked()));
-  q.exec();
+  itemCheck.bindValue(":id", _itemuomconvid);
+  itemCheck.bindValue(":item_id", _itemid);
+  itemCheck.bindValue(":from_uom_id", _uomFrom->id());
+  itemCheck.bindValue(":to_uom_id", _uomTo->id());
+  itemCheck.bindValue(":fromvalue", _fromValue->toDouble());
+  itemCheck.bindValue(":tovalue", _toValue->toDouble());
+  itemCheck.bindValue(":fractional", QVariant(_fractional->isChecked()));
+  itemCheck.exec();
 
   sFillList();
 
@@ -361,12 +368,13 @@ void itemUOM::sCheck()
 
 void itemUOM::reject()
 {
+  XSqlQuery itemreject;
   if(cNew == _mode)
   {
-    q.prepare("DELETE FROM itemuom WHERE itemuom_itemuomconv_id=:itemuomconv_id;"
+    itemreject.prepare("DELETE FROM itemuom WHERE itemuom_itemuomconv_id=:itemuomconv_id;"
               "DELETE FROM itemuomconv WHERE itemuomconv_id=:itemuomconv_id;");
-    q.bindValue(":itemuomconv_id", _itemuomconvid);
-    q.exec();
+    itemreject.bindValue(":itemuomconv_id", _itemuomconvid);
+    itemreject.exec();
   }
 
   XDialog::reject();

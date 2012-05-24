@@ -63,6 +63,7 @@ void priceList::languageChange()
 
 enum SetResponse priceList::set(const ParameterList &pParams)
 {
+  XSqlQuery priceet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -91,13 +92,13 @@ enum SetResponse priceList::set(const ParameterList &pParams)
     _curr_id = param.toInt();
     if (! omfgThis->singleCurrency())
     {
-      q.prepare("SELECT currConcat(:curr_id) AS currConcat;");
-      q.bindValue(":curr_id", _curr_id);
-      q.exec();
-      if (q.first())
+      priceet.prepare("SELECT currConcat(:curr_id) AS currConcat;");
+      priceet.bindValue(":curr_id", _curr_id);
+      priceet.exec();
+      if (priceet.first())
         _price->headerItem()->setText(_price->column("price"),
                                       tr("Price\n(in %1)")
-                                        .arg(q.value("currConcat").toString()));
+                                        .arg(priceet.value("currConcat").toString()));
     }
   }
 
@@ -142,6 +143,7 @@ void priceList::sNewItem()
 
 void priceList::sSelect()
 {
+  XSqlQuery priceSelect;
   switch (_price->id())
   {
     case 1:
@@ -149,11 +151,11 @@ void priceList::sSelect()
     case 3:
     case 4:
     case 6:
-      q.prepare( "SELECT currToCurr(ipshead_curr_id, :curr_id, ipsitem_price, "
+      priceSelect.prepare( "SELECT currToCurr(ipshead_curr_id, :curr_id, ipsitem_price, "
                  "                  :effective) AS price "
                  "FROM ipsitem JOIN ipshead ON (ipsitem_ipshead_id = ipshead_id) "
                  "WHERE (ipsitem_id=:ipsitem_id);" );
-      q.bindValue(":ipsitem_id", _price->altId());
+      priceSelect.bindValue(":ipsitem_id", _price->altId());
 
       break;
 
@@ -162,40 +164,40 @@ void priceList::sSelect()
     case 13:
     case 14:
     case 16:
-      q.prepare( "SELECT currToLocal(:curr_id,"
+      priceSelect.prepare( "SELECT currToLocal(:curr_id,"
                  "       noneg(item_listprice - (item_listprice * ipsprodcat_discntprcnt) - ipsprodcat_fixedamtdiscount),"
                  "       :effective) AS price "
                  "  FROM ipsprodcat JOIN item ON (ipsprodcat_prodcat_id=item_prodcat_id AND item_id=:item_id) "
                  " WHERE (ipsprodcat_id=:ipsprodcat_id);" );
-      q.bindValue(":item_id", _item->id());
-      q.bindValue(":ipsprodcat_id", _price->altId());
+      priceSelect.bindValue(":item_id", _item->id());
+      priceSelect.bindValue(":ipsprodcat_id", _price->altId());
 
       break;
 
     case 5:
-      q.prepare( "SELECT currToLocal(:curr_id, "
+      priceSelect.prepare( "SELECT currToLocal(:curr_id, "
                  "        item_listprice - (item_listprice * cust_discntprcnt),"
                  "        :effective) AS price "
                  "FROM custinfo, item "
                  "WHERE ( (cust_id=:cust_id)"
                  " AND (item_id=:item_id) );" );
-      q.bindValue(":cust_id", _cust->id());
-      q.bindValue(":item_id", _item->id());
+      priceSelect.bindValue(":cust_id", _cust->id());
+      priceSelect.bindValue(":item_id", _item->id());
 
       break;
 
     default:
-      q.prepare( "SELECT 0 AS price;" );
+      priceSelect.prepare( "SELECT 0 AS price;" );
   }
 
-  q.bindValue(":curr_id", _curr_id);
-  q.bindValue(":effective", _effective);
-  q.exec();
-  if (q.first())
-    _selectedPrice = q.value("price").toDouble();
+  priceSelect.bindValue(":curr_id", _curr_id);
+  priceSelect.bindValue(":effective", _effective);
+  priceSelect.exec();
+  if (priceSelect.first())
+    _selectedPrice = priceSelect.value("price").toDouble();
   else
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, priceSelect.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

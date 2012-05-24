@@ -115,6 +115,7 @@ void selectPayments::sPrint()
 
 void selectPayments::sSelectDue()
 {
+  XSqlQuery selectSelectDue;
   ParameterList params;
   params.append("type", "P");
 
@@ -149,10 +150,10 @@ void selectPayments::sSelectDue()
     if (! setParams(params))
         return;
     params.append("bankaccnt_id", bankaccntid);
-    q = mql.toQuery(params);
-    if (q.first())
+    selectSelectDue = mql.toQuery(params);
+    if (selectSelectDue.first())
     {
-      int result = q.value("result").toInt();
+      int result = selectSelectDue.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("selectDueItemsForPayment", result),
@@ -160,9 +161,9 @@ void selectPayments::sSelectDue()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (selectSelectDue.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, selectSelectDue.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -172,6 +173,7 @@ void selectPayments::sSelectDue()
 
 void selectPayments::sSelectDiscount()
 {
+  XSqlQuery selectSelectDiscount;
   ParameterList params;
   params.append("type", "P");
 
@@ -206,10 +208,10 @@ void selectPayments::sSelectDiscount()
     if (! setParams(params))
         return;
     params.append("bankaccnt_id", bankaccntid);
-    q = mql.toQuery(params);
-    if (q.first())
+    selectSelectDiscount = mql.toQuery(params);
+    if (selectSelectDiscount.first())
     {
-      int result = q.value("result").toInt();
+      int result = selectSelectDiscount.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("selectDiscountItemsForPayment", result),
@@ -217,9 +219,9 @@ void selectPayments::sSelectDiscount()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (selectSelectDiscount.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, selectSelectDiscount.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     omfgThis->sPaymentsUpdated(-1, -1, TRUE);
@@ -228,25 +230,26 @@ void selectPayments::sSelectDiscount()
 
 void selectPayments::sClearAll()
 {
+  XSqlQuery selectClearAll;
   switch (_vendorgroup->state())
   {
     case VendorGroup::All:
-      q.prepare( "SELECT clearPayment(apselect_id) AS result "
+      selectClearAll.prepare( "SELECT clearPayment(apselect_id) AS result "
                  "FROM apselect;" );
         break;
     case VendorGroup::Selected:
-      q.prepare( "SELECT clearPayment(apselect_id) AS result "
+      selectClearAll.prepare( "SELECT clearPayment(apselect_id) AS result "
                  "FROM apopen JOIN apselect ON (apselect_apopen_id=apopen_id) "
                  "WHERE (apopen_vend_id=:vend_id);" );
       break;
     case VendorGroup::SelectedType:
-      q.prepare( "SELECT clearPayment(apselect_id) AS result "
+      selectClearAll.prepare( "SELECT clearPayment(apselect_id) AS result "
                  "FROM vendinfo JOIN apopen ON (apopen_vend_id=vend_id) "
                  "              JOIN apselect ON (apselect_apopen_id=apopen_id) "
                  "WHERE (vend_vendtype_id=:vendtype_id) ;" );
       break;
     case VendorGroup::TypePattern:
-      q.prepare( "SELECT clearPayment(apselect_id) AS result "
+      selectClearAll.prepare( "SELECT clearPayment(apselect_id) AS result "
                  "FROM vendinfo JOIN apopen ON (apopen_vend_id=vend_id) "
                  "              JOIN apselect ON (apselect_apopen_id=apopen_id) "
                  "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
@@ -255,11 +258,11 @@ void selectPayments::sClearAll()
         break;
     }
 
-  _vendorgroup->bindValue(q);
-  q.exec();
-  if (q.first())
+  _vendorgroup->bindValue(selectClearAll);
+  selectClearAll.exec();
+  if (selectClearAll.first())
   {
-    int result = q.value("result").toInt();
+    int result = selectClearAll.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("clearPayment", result),
@@ -267,9 +270,9 @@ void selectPayments::sClearAll()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (selectClearAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectClearAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -322,6 +325,7 @@ void selectPayments::sSelect()
 }
 void selectPayments::sSelectLine()
 {
+  XSqlQuery selectSelectLine;
   ParameterList params;
   params.append("type", "P");
 
@@ -338,24 +342,24 @@ void selectPayments::sSelectLine()
     bool update = FALSE;
     QList<XTreeWidgetItem*> list = _apopen->selectedItems();
     XTreeWidgetItem * cursor = 0;
-    q.prepare("SELECT selectPayment(:apopen_id, :bankaccnt_id) AS result;");
+    selectSelectLine.prepare("SELECT selectPayment(:apopen_id, :bankaccnt_id) AS result;");
     XSqlQuery slctln;
     slctln.prepare( "SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
     for(int i = 0; i < list.size(); i++)
     {
       cursor = (XTreeWidgetItem*)list.at(i);
-      q.bindValue(":apopen_id", cursor->id());
-      q.bindValue(":bankaccnt_id", bankaccntid);
+      selectSelectLine.bindValue(":apopen_id", cursor->id());
+      selectSelectLine.bindValue(":bankaccnt_id", bankaccntid);
           slctln.bindValue(":apopen_id", cursor->id());
       slctln.exec();
       if (slctln.first())
       {
         if (slctln.value("apopen_status").toString() != "H")
             {
-      q.exec();
-      if (q.first())
+      selectSelectLine.exec();
+      if (selectSelectLine.first())
       {
-        int result = q.value("result").toInt();
+        int result = selectSelectLine.value("result").toInt();
         if (result < 0)
         {
           systemError(this, cursor->text(0) + " " + cursor->text(2) + "\n" +
@@ -364,9 +368,9 @@ void selectPayments::sSelectLine()
           return;
         }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (selectSelectLine.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, selectSelectLine.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
                 }
@@ -380,18 +384,19 @@ void selectPayments::sSelectLine()
 
 void selectPayments::sClear()
 {
+  XSqlQuery selectClear;
   bool update = FALSE;
   QList<XTreeWidgetItem*> list = _apopen->selectedItems();
   XTreeWidgetItem * cursor = 0;
-  q.prepare("SELECT clearPayment(:apopen_id) AS result;");
+  selectClear.prepare("SELECT clearPayment(:apopen_id) AS result;");
   for(int i = 0; i < list.size(); i++)
   {
     cursor = (XTreeWidgetItem*)list.at(i);
-    q.bindValue(":apopen_id", cursor->altId());
-    q.exec();
-    if (q.first())
+    selectClear.bindValue(":apopen_id", cursor->altId());
+    selectClear.exec();
+    if (selectClear.first())
     {
-      int result = q.value("result").toInt();
+      int result = selectClear.value("result").toInt();
       if (result < 0)
       {
         systemError(this, cursor->text(0) + " " + cursor->text(2) + "\n" +
@@ -400,9 +405,9 @@ void selectPayments::sClear()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (selectClear.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, selectClear.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     update = TRUE;
@@ -414,22 +419,24 @@ void selectPayments::sClear()
 
 void selectPayments::sApplyAllCredits()
 {
+  XSqlQuery selectApplyAllCredits;
   MetaSQLQuery mql = mqlLoad("selectPayments", "applyallcredits");
   ParameterList params;
   if (! setParams(params))
     return;
-  q = mql.toQuery(params);
-  if (q.first())
+  selectApplyAllCredits = mql.toQuery(params);
+  if (selectApplyAllCredits.first())
     sFillList();
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (selectApplyAllCredits.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectApplyAllCredits.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void selectPayments::sFillList()
 {
+  XSqlQuery selectFillList;
   if(_ignoreUpdates)
     return;
 
@@ -445,13 +452,13 @@ void selectPayments::sFillList()
   int _currid = -1;
   if (_bankaccnt->isValid())
   {
-    q.prepare( "SELECT bankaccnt_curr_id "
+    selectFillList.prepare( "SELECT bankaccnt_curr_id "
                "FROM bankaccnt "
                "WHERE (bankaccnt_id=:bankaccnt_id);" );
-    q.bindValue(":bankaccnt_id", _bankaccnt->id());
-    q.exec();
-    if (q.first())
-      _currid = q.value("bankaccnt_curr_id").toInt();
+    selectFillList.bindValue(":bankaccnt_id", _bankaccnt->id());
+    selectFillList.exec();
+    if (selectFillList.first())
+      _currid = selectFillList.value("bankaccnt_curr_id").toInt();
   }
 
   ParameterList params;
@@ -470,11 +477,11 @@ void selectPayments::sFillList()
     params.append("curr_id", _currid);
 
   MetaSQLQuery mql = mqlLoad("apOpenItems", "selectpayments");
-  q = mql.toQuery(params);
-  _apopen->populate(q,true);
-  if (q.lastError().type() != QSqlError::NoError)
+  selectFillList = mql.toQuery(params);
+  _apopen->populate(selectFillList,true);
+  if (selectFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

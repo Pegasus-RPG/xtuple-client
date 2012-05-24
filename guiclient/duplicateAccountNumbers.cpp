@@ -53,6 +53,7 @@ void duplicateAccountNumbers::languageChange()
 
 void duplicateAccountNumbers::sDuplicate()
 {
+  XSqlQuery duplicateDuplicate;
   if(!(_changeCompany->isChecked() || _changeProfit->isChecked() || _changeSub->isChecked()))
   {
     QMessageBox::warning( this, tr("No Segments Selected for Change"),
@@ -88,30 +89,30 @@ void duplicateAccountNumbers::sDuplicate()
   sql +=       "  FROM accnt"
                " WHERE (accnt_id=:accnt_id);";
 
-  q.exec("BEGIN;");
-  q.prepare(sql);
+  duplicateDuplicate.exec("BEGIN;");
+  duplicateDuplicate.prepare(sql);
 
   QList<XTreeWidgetItem*> selected = _account->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    q.bindValue(":company",	_company->currentText());
-    q.bindValue(":profit",	_profit->currentText());
-    q.bindValue(":sub",		_sub->currentText());
-    q.bindValue(":accnt_id",	((XTreeWidgetItem*)selected[i])->id());
-    q.bindValue(":descrip",	_descrip->text());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    duplicateDuplicate.bindValue(":company",	_company->currentText());
+    duplicateDuplicate.bindValue(":profit",	_profit->currentText());
+    duplicateDuplicate.bindValue(":sub",		_sub->currentText());
+    duplicateDuplicate.bindValue(":accnt_id",	((XTreeWidgetItem*)selected[i])->id());
+    duplicateDuplicate.bindValue(":descrip",	_descrip->text());
+    duplicateDuplicate.exec();
+    if (duplicateDuplicate.lastError().type() != QSqlError::NoError)
     {
       systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
                           .arg(__FILE__)
                           .arg(__LINE__)
-                          .arg(q.lastError().databaseText()));
-      q.exec("ROLLBACK;");
+                          .arg(duplicateDuplicate.lastError().databaseText()));
+      duplicateDuplicate.exec("ROLLBACK;");
       return;
     }
   }
 
-  q.exec("COMMIT;");
+  duplicateDuplicate.exec("COMMIT;");
   close();
 }
 

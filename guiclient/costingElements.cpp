@@ -69,13 +69,14 @@ void costingElements::sEdit()
 
 void costingElements::sDelete()
 {
-  q.prepare( "SELECT itemcost_id "
+  XSqlQuery costingDelete;
+  costingDelete.prepare( "SELECT itemcost_id "
              "FROM itemcost "
              "WHERE (itemcost_costelem_id=:costelem_id) "
              "LIMIT 1;" );
-  q.bindValue(":costelem_id", _costelem->id());
-  q.exec();
-  if (q.first())
+  costingDelete.bindValue(":costelem_id", _costelem->id());
+  costingDelete.exec();
+  if (costingDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Selected User Costing Element"),
                            tr( "<p>The selected User Costing Element cannot be "
@@ -86,13 +87,13 @@ void costingElements::sDelete()
     return;
   }
 
-  q.prepare( "SELECT costhist_id "
+  costingDelete.prepare( "SELECT costhist_id "
              "FROM costhist "
              "WHERE (costhist_costelem_id=:costelem_id) "
              "LIMIT 1;" );
-  q.bindValue(":costelem_id", _costelem->id());
-  q.exec();
-  if (q.first())
+  costingDelete.bindValue(":costelem_id", _costelem->id());
+  costingDelete.exec();
+  if (costingDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Selected User Costing Element"),
                            tr( "<p>The selected User Costing Element cannot be "
@@ -102,10 +103,10 @@ void costingElements::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM costelem "
+  costingDelete.prepare( "DELETE FROM costelem "
              "WHERE (costelem_id=:costelem_id);" );
-  q.bindValue(":costelem_id", _costelem->id());
-  q.exec();
+  costingDelete.bindValue(":costelem_id", _costelem->id());
+  costingDelete.exec();
 
   sFillList();
 }

@@ -82,10 +82,11 @@ void dspBillingSelections::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 
 void dspBillingSelections::sFillList()
 {
+  XSqlQuery dspFillList;
   MetaSQLQuery mql = mqlLoad("billingSelections", "detail");
   ParameterList params;
-  q = mql.toQuery(params);
-  _cobill->populate(q);
+  dspFillList = mql.toQuery(params);
+  _cobill->populate(dspFillList);
 }
 
 void dspBillingSelections::sPostAll()
@@ -96,28 +97,29 @@ void dspBillingSelections::sPostAll()
 
 void dspBillingSelections::sPost()
 {
+  XSqlQuery dspPost;
   int soheadid = -1;
-  q.prepare("SELECT cobmisc_cohead_id AS sohead_id "
+  dspPost.prepare("SELECT cobmisc_cohead_id AS sohead_id "
             "FROM cobmisc "
             "WHERE (cobmisc_id = :cobmisc_id)");
-  q.bindValue(":cobmisc_id", _cobill->id());
-  q.exec();
-  if (q.first())
+  dspPost.bindValue(":cobmisc_id", _cobill->id());
+  dspPost.exec();
+  if (dspPost.first())
   {
-    soheadid = q.value("sohead_id").toInt();
+    soheadid = dspPost.value("sohead_id").toInt();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT createInvoice(:cobmisc_id) AS result;");
-  q.bindValue(":cobmisc_id", _cobill->id());
-  q.exec();
-  if (q.first())
+  dspPost.prepare("SELECT createInvoice(:cobmisc_id) AS result;");
+  dspPost.bindValue(":cobmisc_id", _cobill->id());
+  dspPost.exec();
+  if (dspPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = dspPost.value("result").toInt();
 
     if (result == -5)
       QMessageBox::critical( this, tr("Cannot Create one or more Invoices"),
@@ -128,7 +130,7 @@ void dspBillingSelections::sPost()
       systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
                          .arg(__FILE__)
                          .arg(__LINE__)
-                         .arg(q.value("result").toInt()) );
+                         .arg(dspPost.value("result").toInt()) );
 
     omfgThis->sInvoicesUpdated(result, TRUE);
     omfgThis->sSalesOrdersUpdated(soheadid);
@@ -136,9 +138,9 @@ void dspBillingSelections::sPost()
 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -155,22 +157,23 @@ void dspBillingSelections::sNew()
 
 void dspBillingSelections::sEdit()
 {
+  XSqlQuery dspEdit;
   ParameterList params;
   params.append("mode", "edit");
 
-  q.prepare("SELECT cobmisc_cohead_id AS sohead_id "
+  dspEdit.prepare("SELECT cobmisc_cohead_id AS sohead_id "
             "FROM cobmisc "
             "WHERE (cobmisc_id = :cobmisc_id)");
-  q.bindValue(":cobmisc_id", _cobill->id());
-  q.exec();
-  if (q.first())
+  dspEdit.bindValue(":cobmisc_id", _cobill->id());
+  dspEdit.exec();
+  if (dspEdit.first())
   {
-    int sohead_id = q.value("sohead_id").toInt();
+    int sohead_id = dspEdit.value("sohead_id").toInt();
     params.append("sohead_id", sohead_id);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspEdit.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspEdit.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -182,15 +185,16 @@ void dspBillingSelections::sEdit()
 
 void dspBillingSelections::sCancel()
 {
+  XSqlQuery dspCancel;
   if ( QMessageBox::critical( this, tr("Cancel Billing"),
                               tr("Are you sure that you want to cancel billing for the selected order?"),
                               tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
   {
-    q.prepare( "SELECT cancelBillingSelection(cobmisc_id) AS result "
+    dspCancel.prepare( "SELECT cancelBillingSelection(cobmisc_id) AS result "
                "FROM cobmisc "
                "WHERE (cobmisc_id=:cobmisc_id);" );
-    q.bindValue(":cobmisc_id", _cobill->id());
-    q.exec();
+    dspCancel.bindValue(":cobmisc_id", _cobill->id());
+    dspCancel.exec();
 
     sFillList();
   }

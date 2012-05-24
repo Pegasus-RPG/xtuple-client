@@ -62,12 +62,13 @@ enum SetResponse postChecks::set(const ParameterList & pParams )
 
 void postChecks::sPost()
 {
-  q.prepare("SELECT postChecks(:bankaccnt_id) AS result;");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery postPost;
+  postPost.prepare("SELECT postChecks(:bankaccnt_id) AS result;");
+  postPost.bindValue(":bankaccnt_id", _bankaccnt->id());
+  postPost.exec();
+  if (postPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = postPost.value("result").toInt();
     if (result < 0)
       systemError(this, storedProcErrorLookup("postChecks", result), __FILE__, __LINE__);
 
@@ -101,28 +102,29 @@ void postChecks::sPost()
 
     accept();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (postPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, postPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void postChecks::sHandleBankAccount(int pBankaccntid)
 {
-  q.prepare( "SELECT COUNT(*) AS numofchecks "
+  XSqlQuery postHandleBankAccount;
+  postHandleBankAccount.prepare( "SELECT COUNT(*) AS numofchecks "
              "FROM checkhead "
              "WHERE ( (NOT checkhead_void)"
              " AND (NOT checkhead_posted)"
              " AND (checkhead_printed)"
              " AND (checkhead_bankaccnt_id=:bankaccnt_id) );" );
-  q.bindValue(":bankaccnt_id", pBankaccntid);
-  q.exec();
-  if (q.first())
-    _numberOfChecks->setDouble(q.value("numofchecks").toDouble());
-  else if (q.lastError().type() != QSqlError::NoError)
+  postHandleBankAccount.bindValue(":bankaccnt_id", pBankaccntid);
+  postHandleBankAccount.exec();
+  if (postHandleBankAccount.first())
+    _numberOfChecks->setDouble(postHandleBankAccount.value("numofchecks").toDouble());
+  else if (postHandleBankAccount.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, postHandleBankAccount.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

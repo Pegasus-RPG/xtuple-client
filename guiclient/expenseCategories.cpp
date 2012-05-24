@@ -71,23 +71,24 @@ void expenseCategories::languageChange()
 
 void expenseCategories::sDelete()
 {
-  q.prepare( "SELECT poitem_status, COUNT(*) "
+  XSqlQuery expenseDelete;
+  expenseDelete.prepare( "SELECT poitem_status, COUNT(*) "
              "FROM poitem "
              "WHERE (poitem_expcat_id=:expcat_id) "
              "GROUP BY poitem_status;" );
-  q.bindValue(":expcat_id", _expcat->id());
-  q.exec();
-  if (q.first())
+  expenseDelete.bindValue(":expcat_id", _expcat->id());
+  expenseDelete.exec();
+  if (expenseDelete.first())
   {
-    if (q.findFirst("poitem_status", "U") != -1)
+    if (expenseDelete.findFirst("poitem_status", "U") != -1)
       QMessageBox::warning( this, tr("Cannot Delete Expense Category"),
                             tr( "<p>The selected Expense Category cannot be deleted as there are unposted P/O Lines assigned to it. "
                                 "You must reassign these P/O Lines before you may delete the selected Expense Category.</p>" ) );
-    else if (q.findFirst("poitem_status", "O") != -1)
+    else if (expenseDelete.findFirst("poitem_status", "O") != -1)
       QMessageBox::warning( this, tr("Cannot Delete Expense Category"),
                             tr( "<p>The selected Expense Category cannot be deleted as there are open P/O Lines assigned to it. "
                                 "You must close these P/O Lines before you may delete the selected Expense Category.</p>" ) );
-    else if (q.findFirst("poitem_status", "C") != -1)
+    else if (expenseDelete.findFirst("poitem_status", "C") != -1)
     {
       int result = QMessageBox::warning( this, tr("Cannot Delete Expense Category"),
                                          tr( "<p>The selected Expense Category cannot be deleted as there are closed P/O Lines assigned to it. "
@@ -95,27 +96,27 @@ void expenseCategories::sDelete()
                                          tr("&Yes"), tr("&No"), QString::null );
       if (result == 0)
       {
-        q.prepare( "UPDATE expcat "
+        expenseDelete.prepare( "UPDATE expcat "
                    "SET expcat_active=FALSE "
                    "WHERE (expcat_id=:expcat_id);" );
-        q.bindValue(":expcat_id", _expcat->id());
-        q.exec();
+        expenseDelete.bindValue(":expcat_id", _expcat->id());
+        expenseDelete.exec();
 	sFillList();
       }
     }
   }
   else
   {
-    q.prepare( "SELECT checkhead_id AS id"
+    expenseDelete.prepare( "SELECT checkhead_id AS id"
                "  FROM checkhead"
                " WHERE(checkhead_expcat_id=:expcat_id)"
                " UNION "
                "SELECT vodist_id AS id"
                "  FROM vodist"
                " WHERE(vodist_expcat_id=:expcat_id)");
-    q.bindValue(":expcat_id", _expcat->id());
-    q.exec();
-    if(q.first())
+    expenseDelete.bindValue(":expcat_id", _expcat->id());
+    expenseDelete.exec();
+    if(expenseDelete.first())
     {
       QMessageBox::warning( this, tr("Cannot Delete Expense Category"),
         tr( "<p>The selected Expense Category cannot be deleted as there are Checks and Voucher Distributions assigned to it. "
@@ -123,10 +124,10 @@ void expenseCategories::sDelete()
     }
     else
     {
-      q.prepare( "DELETE FROM expcat "
+      expenseDelete.prepare( "DELETE FROM expcat "
                  "WHERE (expcat_id=:expcat_id); ");
-      q.bindValue(":expcat_id", _expcat->id());
-      q.exec();
+      expenseDelete.bindValue(":expcat_id", _expcat->id());
+      expenseDelete.exec();
       sFillList();
     }
   }

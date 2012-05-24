@@ -65,28 +65,30 @@ void incidentPriorities::languageChange()
 
 void incidentPriorities::sFillList()
 {
-  q.prepare( "SELECT incdtpriority_id, incdtpriority_order, "
+  XSqlQuery incidentFillList;
+  incidentFillList.prepare( "SELECT incdtpriority_id, incdtpriority_order, "
 	     "       incdtpriority_name, firstLine(incdtpriority_descrip) AS incdtpriority_descrip "
              "FROM incdtpriority "
              "ORDER BY incdtpriority_order, incdtpriority_name;" );
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  incidentFillList.exec();
+  if (incidentFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _incidentPriorities->populate(q);
+  _incidentPriorities->populate(incidentFillList);
 }
 
 void incidentPriorities::sDelete()
 {
-  q.prepare( "DELETE FROM incdtpriority "
+  XSqlQuery incidentDelete;
+  incidentDelete.prepare( "DELETE FROM incdtpriority "
              "WHERE (incdtpriority_id=:incdtpriorityid);" );
-  q.bindValue(":incdtpriorityid", _incidentPriorities->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  incidentDelete.bindValue(":incdtpriorityid", _incidentPriorities->id());
+  incidentDelete.exec();
+  if (incidentDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

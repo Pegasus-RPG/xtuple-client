@@ -80,6 +80,7 @@ enum SetResponse customerFormAssignment::set(const ParameterList &pParams)
 
 void customerFormAssignment::sSave()
 {
+  XSqlQuery customerSave;
   int custtypeid   = -1;
   QString custtype = ""; 
 
@@ -88,16 +89,16 @@ void customerFormAssignment::sSave()
   else if (_customerTypePattern->isChecked())
     custtype = _customerType->text().trimmed();
 
-  q.prepare("SELECT custform_id"
+  customerSave.prepare("SELECT custform_id"
             "  FROM custform"
             " WHERE((custform_id != :custform_id)"
             "   AND (custform_custtype = :custform_custtype)"
             "   AND (custform_custtype_id=:custform_custtype_id))");
-  q.bindValue(":custform_id", _custformid);
-  q.bindValue(":custform_custtype", custtype);
-  q.bindValue(":custform_custtype_id", custtypeid);
-  q.exec();
-  if(q.first())
+  customerSave.bindValue(":custform_id", _custformid);
+  customerSave.bindValue(":custform_custtype", custtype);
+  customerSave.bindValue(":custform_custtype_id", custtypeid);
+  customerSave.exec();
+  if(customerSave.first())
   {
     QMessageBox::critical(this, tr("Duplicate Entry"),
       tr("The Customer Type specified is already in the database.") );
@@ -106,16 +107,16 @@ void customerFormAssignment::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('custform_custform_id_seq') AS _custformid");
-    if (q.first())
-      _custformid = q.value("_custformid").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    customerSave.exec("SELECT NEXTVAL('custform_custform_id_seq') AS _custformid");
+    if (customerSave.first())
+      _custformid = customerSave.value("_custformid").toInt();
+    else if (customerSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, customerSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO custform "
+    customerSave.prepare( "INSERT INTO custform "
                "( custform_id, custform_custtype, custform_custtype_id,"
                "  custform_invoice_report_name, custform_creditmemo_report_name,"
                "  custform_statement_report_name, custform_quote_report_name,"
@@ -127,7 +128,7 @@ void customerFormAssignment::sSave()
                "  :custform_packinglist_report_name, :custform_sopicklist_report_name );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE custform "
+    customerSave.prepare( "UPDATE custform "
                "SET custform_custtype=:custform_custtype, custform_custtype_id=:custform_custtype_id,"
                "    custform_invoice_report_name=:custform_invoice_report_name,"
                "    custform_creditmemo_report_name=:custform_creditmemo_report_name,"
@@ -137,19 +138,19 @@ void customerFormAssignment::sSave()
 	       "    custform_sopicklist_report_name=:custform_sopicklist_report_name "
                "WHERE (custform_id=:custform_id);" );
 
-  q.bindValue(":custform_id", _custformid);
-  q.bindValue(":custform_custtype", custtype);
-  q.bindValue(":custform_custtype_id", custtypeid);
-  q.bindValue(":custform_invoice_report_name", _invoiceForm->code());
-  q.bindValue(":custform_creditmemo_report_name", _creditMemoForm->code());
-  q.bindValue(":custform_statement_report_name", _statementForm->code());
-  q.bindValue(":custform_quote_report_name", _quoteForm->code());
-  q.bindValue(":custform_packinglist_report_name", _packingListForm->code());
-  q.bindValue(":custform_sopicklist_report_name", _soPickListForm->code());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  customerSave.bindValue(":custform_id", _custformid);
+  customerSave.bindValue(":custform_custtype", custtype);
+  customerSave.bindValue(":custform_custtype_id", custtypeid);
+  customerSave.bindValue(":custform_invoice_report_name", _invoiceForm->code());
+  customerSave.bindValue(":custform_creditmemo_report_name", _creditMemoForm->code());
+  customerSave.bindValue(":custform_statement_report_name", _statementForm->code());
+  customerSave.bindValue(":custform_quote_report_name", _quoteForm->code());
+  customerSave.bindValue(":custform_packinglist_report_name", _packingListForm->code());
+  customerSave.bindValue(":custform_sopicklist_report_name", _soPickListForm->code());
+  customerSave.exec();
+  if (customerSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -158,37 +159,38 @@ void customerFormAssignment::sSave()
 
 void customerFormAssignment::populate()
 {
-  q.prepare( "SELECT custform_custtype_id, custform_custtype,"
+  XSqlQuery customerpopulate;
+  customerpopulate.prepare( "SELECT custform_custtype_id, custform_custtype,"
              "       custform_invoice_report_name, custform_creditmemo_report_name,"
              "       custform_statement_report_name, custform_quote_report_name,"
              "       custform_packinglist_report_name, custform_sopicklist_report_name "
              "FROM custform "
              "WHERE (custform_id=:custform_id);" );
-  q.bindValue(":custform_id", _custformid);
-  q.exec();
-  if (q.first())
+  customerpopulate.bindValue(":custform_id", _custformid);
+  customerpopulate.exec();
+  if (customerpopulate.first())
   {
-    if (q.value("custform_custtype_id").toInt() == -1)
+    if (customerpopulate.value("custform_custtype_id").toInt() == -1)
     {
       _customerTypePattern->setChecked(TRUE);
-      _customerType->setText(q.value("custform_custtype").toString());
+      _customerType->setText(customerpopulate.value("custform_custtype").toString());
     }
     else
     {
       _selectedCustomerType->setChecked(TRUE);
-      _customerTypes->setId(q.value("custform_custtype_id").toInt());
+      _customerTypes->setId(customerpopulate.value("custform_custtype_id").toInt());
     }
 
-    _invoiceForm->setCode(q.value("custform_invoice_report_name").toString());
-    _creditMemoForm->setCode(q.value("custform_creditmemo_report_name").toString());
-    _statementForm->setCode(q.value("custform_statement_report_name").toString());
-    _quoteForm->setCode(q.value("custform_quote_report_name").toString());
-    _packingListForm->setCode(q.value("custform_packinglist_report_name").toString());
-    _soPickListForm->setCode(q.value("custform_sopicklist_report_name").toString());
+    _invoiceForm->setCode(customerpopulate.value("custform_invoice_report_name").toString());
+    _creditMemoForm->setCode(customerpopulate.value("custform_creditmemo_report_name").toString());
+    _statementForm->setCode(customerpopulate.value("custform_statement_report_name").toString());
+    _quoteForm->setCode(customerpopulate.value("custform_quote_report_name").toString());
+    _packingListForm->setCode(customerpopulate.value("custform_packinglist_report_name").toString());
+    _soPickListForm->setCode(customerpopulate.value("custform_sopicklist_report_name").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (customerpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

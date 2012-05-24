@@ -81,6 +81,7 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 
 void taxBreakdown::sAdjTaxDetail()
 {
+  XSqlQuery taxAdjTaxDetail;
   taxDetail newdlg(this, "", true);
   ParameterList params;
 
@@ -89,9 +90,9 @@ void taxBreakdown::sAdjTaxDetail()
   if (cView == _mode)
     params.append("readOnly");
 
-  q.exec("SELECT getadjustmenttaxtypeid() as taxtype;");
-	if(q.first())
-	 params.append("taxtype_id", q.value("taxtype").toInt());  
+  taxAdjTaxDetail.exec("SELECT getadjustmenttaxtypeid() as taxtype;");
+	if(taxAdjTaxDetail.first())
+	 params.append("taxtype_id", taxAdjTaxDetail.value("taxtype").toInt());  
    
   params.append("order_type", _ordertype);
   params.append("order_id", _orderid);
@@ -107,6 +108,7 @@ void taxBreakdown::sAdjTaxDetail()
 
 void taxBreakdown::sFreightTaxDetail()
 {
+  XSqlQuery taxFreightTaxDetail;
   taxDetail newdlg(this, "", true);
   ParameterList params;
 
@@ -122,9 +124,9 @@ void taxBreakdown::sFreightTaxDetail()
   {
    params.append("taxzone_id",  _taxzone->id());
 
-   q.exec("SELECT getfreighttaxtypeid() as taxtype;");
-	 if(q.first())
-		params.append("taxtype_id", q.value("taxtype").toInt());  
+   taxFreightTaxDetail.exec("SELECT getfreighttaxtypeid() as taxtype;");
+	 if(taxFreightTaxDetail.first())
+		params.append("taxtype_id", taxFreightTaxDetail.value("taxtype").toInt());  
   
    params.append("date",    _freight->effective());
   
@@ -135,9 +137,9 @@ void taxBreakdown::sFreightTaxDetail()
  }
  else if (_ordertype == "I" || _ordertype == "B" || _ordertype == "CM" || _ordertype == "TO")
  {
-   q.exec("SELECT getfreighttaxtypeid() as taxtype;");
-	 if(q.first())
-	   params.append("taxtype_id", q.value("taxtype").toInt());  
+   taxFreightTaxDetail.exec("SELECT getfreighttaxtypeid() as taxtype;");
+	 if(taxFreightTaxDetail.first())
+	   params.append("taxtype_id", taxFreightTaxDetail.value("taxtype").toInt());  
    params.append("order_type", _ordertype);
    params.append("order_id", _orderid);
    params.append("display_type", "F");
@@ -190,6 +192,7 @@ void taxBreakdown::sTotalTaxDetail()
 
 void taxBreakdown::sPopulate()
 {
+  XSqlQuery taxPopulate;
   ParameterList params;
   if (_ordertype == "I")
   {
@@ -287,26 +290,26 @@ void taxBreakdown::sPopulate()
 
 
   MetaSQLQuery mql = mqlLoad("taxBreakdown", "detail");
-  q = mql.toQuery(params);
-  if (q.first())
+  taxPopulate = mql.toQuery(params);
+  if (taxPopulate.first())
   {
     // do dates and currencies first because of signal/slot cascades
-    _total->setEffective(q.value("date").toDate());
-    _currency->setId(q.value("curr_id").toInt());
-    _taxcurrency->setId(q.value("tax_curr_id").toInt());
+    _total->setEffective(taxPopulate.value("date").toDate());
+    _currency->setId(taxPopulate.value("curr_id").toInt());
+    _taxcurrency->setId(taxPopulate.value("tax_curr_id").toInt());
 
     // now the rest
-    _document->setText(q.value("number").toString());
-    _taxzone->setId(q.value("taxzone_id").toInt());
-    _line->setLocalValue(q.value("line").toDouble());
-    _lineTax->setLocalValue(q.value("total_tax").toDouble());
-    _freight->setLocalValue(q.value("freight").toDouble());
-    _freightTax->setLocalValue(q.value("freighttaxamt").toDouble());
-    _adjTax->setLocalValue(q.value("adjtaxamt").toDouble());
+    _document->setText(taxPopulate.value("number").toString());
+    _taxzone->setId(taxPopulate.value("taxzone_id").toInt());
+    _line->setLocalValue(taxPopulate.value("line").toDouble());
+    _lineTax->setLocalValue(taxPopulate.value("total_tax").toDouble());
+    _freight->setLocalValue(taxPopulate.value("freight").toDouble());
+    _freightTax->setLocalValue(taxPopulate.value("freighttaxamt").toDouble());
+    _adjTax->setLocalValue(taxPopulate.value("adjtaxamt").toDouble());
     _pretax->setLocalValue(_line->localValue() + _freight->localValue());
     _totalTax->setLocalValue(_lineTax->localValue() + _freightTax->localValue() + _adjTax->localValue());
     _total->setLocalValue(_pretax->localValue() + _totalTax->localValue());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (taxPopulate.lastError().type() != QSqlError::NoError)
+    systemError(this, taxPopulate.lastError().databaseText(), __FILE__, __LINE__);
 }

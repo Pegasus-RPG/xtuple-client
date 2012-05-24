@@ -64,6 +64,7 @@ enum SetResponse glTransactionDetail::set( const ParameterList & pParams )
 
 void glTransactionDetail::populate()
 {
+  XSqlQuery glpopulate;
   QString sql("SELECT <? literal(\"table\") ?>_date AS transdate, "
             "<? literal(\"table\") ?>_source AS source, "
             "<? literal(\"table\") ?>_journalnumber AS journalnumber, "
@@ -81,18 +82,18 @@ void glTransactionDetail::populate()
   params.append("gltrans_id", _gltransid);
   params.append("table", _table);
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if(q.first())
+  glpopulate = mql.toQuery(params);
+  if(glpopulate.first())
   {
-    _date->setDate(q.value("transdate").toDate());
-    _source->setText(q.value("source").toString());
-    _document->setText(q.value("f_document").toString());
-    _journalnumber->setText(q.value("journalnumber").toString());
-    _accnt->setText(q.value("f_accnt").toString());
-    _amount->setDouble(q.value("amount").toDouble());
-    _username->setText(q.value("username").toString());
-    _created->setDate(q.value("created").toDate());
-    _posted->setText(q.value("posted").toBool() ? tr("Yes") : tr("No"));
-    _notes->setText(q.value("notes").toString());
+    _date->setDate(glpopulate.value("transdate").toDate());
+    _source->setText(glpopulate.value("source").toString());
+    _document->setText(glpopulate.value("f_document").toString());
+    _journalnumber->setText(glpopulate.value("journalnumber").toString());
+    _accnt->setText(glpopulate.value("f_accnt").toString());
+    _amount->setDouble(glpopulate.value("amount").toDouble());
+    _username->setText(glpopulate.value("username").toString());
+    _created->setDate(glpopulate.value("created").toDate());
+    _posted->setText(glpopulate.value("posted").toBool() ? tr("Yes") : tr("No"));
+    _notes->setText(glpopulate.value("notes").toString());
   }
 }

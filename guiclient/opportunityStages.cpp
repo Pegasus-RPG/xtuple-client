@@ -79,12 +79,13 @@ void opportunityStages::languageChange()
 
 void opportunityStages::sDelete()
 {
-  q.prepare( "SELECT ophead_id "
+  XSqlQuery opportunityDelete;
+  opportunityDelete.prepare( "SELECT ophead_id "
              "FROM ophead "
              "WHERE (ophead_opstage_id=:opstage_id);" );
-  q.bindValue(":opstage_id", _oplist->id());
-  q.exec();
-  if (q.first())
+  opportunityDelete.bindValue(":opstage_id", _oplist->id());
+  opportunityDelete.exec();
+  if (opportunityDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Opportunity Stage"),
                            tr( "The selected Opportunity Stage cannot be deleted as there are one or more Opportunities currently assigned to it.\n"
@@ -92,10 +93,10 @@ void opportunityStages::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM opstage "
+  opportunityDelete.prepare( "DELETE FROM opstage "
              "WHERE (opstage_id=:opstage_id);" );
-  q.bindValue(":opstage_id", _oplist->id());
-  q.exec();
+  opportunityDelete.bindValue(":opstage_id", _oplist->id());
+  opportunityDelete.exec();
 
   sFillList();
 }

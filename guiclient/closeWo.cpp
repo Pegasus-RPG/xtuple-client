@@ -70,6 +70,7 @@ enum SetResponse closeWo::set(const ParameterList &pParams)
 
 bool closeWo::okToSave()
 {
+  XSqlQuery closeokToSave;
   if (!_transDate->isValid())
   {
     QMessageBox::critical(this, tr("Invalid date"),
@@ -121,17 +122,17 @@ bool closeWo::okToSave()
     }
     else
     {
-      q.prepare("SELECT wo_qtyrcv, womatl_issuemethod, womatl_qtyiss "
+      closeokToSave.prepare("SELECT wo_qtyrcv, womatl_issuemethod, womatl_qtyiss "
                 "  FROM wo "
                 "  JOIN womatl ON (womatl_wo_id = wo_id) "
                 "  JOIN itemsite ON (womatl_itemsite_id = itemsite_id) "
                 "  JOIN item ON ((itemsite_item_id = item_id) AND (NOT item_type = 'T')) "
                 " WHERE (wo_id=:wo_id);" );
-      q.bindValue(":wo_id", _wo->id());
-      q.exec();
-      if (q.first())
+      closeokToSave.bindValue(":wo_id", _wo->id());
+      closeokToSave.exec();
+      if (closeokToSave.first())
       {
-        if (q.value("wo_qtyrcv").toDouble() == 0.0)
+        if (closeokToSave.value("wo_qtyrcv").toDouble() == 0.0)
           QMessageBox::warning(this, tr("No Production Posted"),
                                tr("<p>There has not been any Production "
                                   "received from this Work Order. This "
@@ -143,8 +144,8 @@ bool closeWo::okToSave()
         do
         {
           if (! unissuedMaterial &&
-              (q.value("womatl_issuemethod") == "S") &&
-              (q.value("womatl_qtyiss").toDouble() == 0.0) )
+              (closeokToSave.value("womatl_issuemethod") == "S") &&
+              (closeokToSave.value("womatl_qtyiss").toDouble() == 0.0) )
           {
             QMessageBox::warning(this, tr("Unissued Push Items"),
                                  tr("<p>The selected Work Order has Material "
@@ -155,9 +156,9 @@ bool closeWo::okToSave()
             unissuedMaterial = TRUE;
           }
           else if (! unpushedMaterial &&
-                   ( (q.value("womatl_issuemethod") == "L") ||
-                     (q.value("womatl_issuemethod") == "M") ) &&
-                   (q.value("womatl_qtyiss").toDouble() == 0.0) )
+                   ( (closeokToSave.value("womatl_issuemethod") == "L") ||
+                     (closeokToSave.value("womatl_issuemethod") == "M") ) &&
+                   (closeokToSave.value("womatl_qtyiss").toDouble() == 0.0) )
           {
             QMessageBox::warning(this, tr("Unissued Pull Items"),
                                  tr("<p>The selected Work Order has Material "
@@ -171,11 +172,11 @@ bool closeWo::okToSave()
             unpushedMaterial = TRUE;
           }
         }
-        while (q.next());
+        while (closeokToSave.next());
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (closeokToSave.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, closeokToSave.lastError().databaseText(), __FILE__, __LINE__);
         return false;
       }
 
@@ -201,20 +202,21 @@ bool closeWo::okToSave()
 
 void closeWo::sCloseWo()
 {
+  XSqlQuery closeCloseWo;
   if (okToSave() &&
       QMessageBox::question(this, tr("Close Work Order"),
                             tr("<p>Are you sure you want to close this "
                                "Work Order?"),
                             QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
   {
-    q.prepare("SELECT closeWo(:wo_id, :postMatVar, :date);");
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":postMatVar",   QVariant(_postMaterialVariance->isChecked()));
-    q.bindValue(":date",  _transDate->date());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    closeCloseWo.prepare("SELECT closeWo(:wo_id, :postMatVar, :date);");
+    closeCloseWo.bindValue(":wo_id", _wo->id());
+    closeCloseWo.bindValue(":postMatVar",   QVariant(_postMaterialVariance->isChecked()));
+    closeCloseWo.bindValue(":date",  _transDate->date());
+    closeCloseWo.exec();
+    if (closeCloseWo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, closeCloseWo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 

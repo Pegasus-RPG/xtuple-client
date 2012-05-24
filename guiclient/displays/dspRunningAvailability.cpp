@@ -195,14 +195,15 @@ void dspRunningAvailability::sFirmOrder()
 
 void dspRunningAvailability::sSoftenOrder()
 {
-  q.prepare( "UPDATE planord "
+  XSqlQuery dspSoftenOrder;
+  dspSoftenOrder.prepare( "UPDATE planord "
              "SET planord_firm=false "
              "WHERE (planord_id=:planord_id);" );
-  q.bindValue(":planord_id", list()->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  dspSoftenOrder.bindValue(":planord_id", list()->id());
+  dspSoftenOrder.exec();
+  if (dspSoftenOrder.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspSoftenOrder.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -247,13 +248,14 @@ void dspRunningAvailability::sReleaseOrder()
 
 void dspRunningAvailability::sDeleteOrder()
 {
-  q.prepare( "SELECT deletePlannedOrder(:planord_id, false) AS result;" );
-  q.bindValue(":planord_id", list()->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery dspDeleteOrder;
+  dspDeleteOrder.prepare( "SELECT deletePlannedOrder(:planord_id, false) AS result;" );
+  dspDeleteOrder.bindValue(":planord_id", list()->id());
+  dspDeleteOrder.exec();
+  if (dspDeleteOrder.first())
   {
     /* TODO: uncomment when deletePlannedOrder returns INTEGER instead of BOOLEAN
-    int result = q.value("result").toInt();
+    int result = dspDeleteOrder.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deletePlannedOrder", result), __FILE__, __LINE__);
@@ -261,9 +263,9 @@ void dspRunningAvailability::sDeleteOrder()
     }
     */
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspDeleteOrder.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspDeleteOrder.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -306,10 +308,11 @@ void dspRunningAvailability::sViewPo()
 
 void dspRunningAvailability::sFillList()
 {
+  XSqlQuery dspFillList;
   ParameterList params;
   if (setParams(params) && _ready)
   {
-    q.prepare( "SELECT itemsite_qtyonhand,"
+    dspFillList.prepare( "SELECT itemsite_qtyonhand,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty   ELSE 0.0 END AS ordertoqty,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_multordqty   ELSE 0.0 END AS multorderqty "
@@ -317,21 +320,21 @@ void dspRunningAvailability::sFillList()
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=:warehous_id)"
                " AND (item_id=:item_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
-    if (q.first())
+    dspFillList.bindValue(":item_id", _item->id());
+    dspFillList.bindValue(":warehous_id", _warehouse->id());
+    dspFillList.exec();
+    if (dspFillList.first())
     {
-      _qoh->setDouble(q.value("itemsite_qtyonhand").toDouble());
-      _reorderLevel->setDouble(q.value("reorderlevel").toDouble());
-      _orderMultiple->setDouble(q.value("multorderqty").toDouble());
-      _orderToQty->setDouble(q.value("ordertoqty").toDouble());
+      _qoh->setDouble(dspFillList.value("itemsite_qtyonhand").toDouble());
+      _reorderLevel->setDouble(dspFillList.value("reorderlevel").toDouble());
+      _orderMultiple->setDouble(dspFillList.value("multorderqty").toDouble());
+      _orderToQty->setDouble(dspFillList.value("ordertoqty").toDouble());
 
       display::sFillList();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (dspFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

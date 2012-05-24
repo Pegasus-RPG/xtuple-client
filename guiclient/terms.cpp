@@ -88,17 +88,18 @@ enum SetResponse terms::set(const ParameterList &pParams)
 
 bool terms::sCheck()
 {
+  XSqlQuery termsCheck;
   _code->setText(_code->text().trimmed());
   if ( (_mode == cNew) && (_code->text().length()) )
   {
-    q.prepare( "SELECT terms_id "
+    termsCheck.prepare( "SELECT terms_id "
                "FROM terms "
                "WHERE (UPPER(terms_code)=UPPER(:terms_code));" );
-    q.bindValue(":terms_code", _code->text());
-    q.exec();
-    if (q.first())
+    termsCheck.bindValue(":terms_code", _code->text());
+    termsCheck.exec();
+    if (termsCheck.first())
     {
-      _termsid = q.value("terms_id").toInt();
+      _termsid = termsCheck.value("terms_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -111,6 +112,7 @@ bool terms::sCheck()
 
 void terms::sSave()
 {
+  XSqlQuery termsSave;
   if(_code->text().trimmed().isEmpty())
   {
     QMessageBox::warning(this, tr("Cannot Save Terms"),
@@ -128,9 +130,9 @@ void terms::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('terms_terms_id_seq') AS _terms_id");
-    if (q.first())
-      _termsid = q.value("_terms_id").toInt();
+    termsSave.exec("SELECT NEXTVAL('terms_terms_id_seq') AS _terms_id");
+    if (termsSave.first())
+      _termsid = termsSave.value("_terms_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -139,7 +141,7 @@ void terms::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO terms "
+    termsSave.prepare( "INSERT INTO terms "
                "( terms_id, terms_code, terms_descrip, terms_type,"
                "  terms_ap, terms_ar,"
                "  terms_duedays, terms_discdays, terms_discprcnt, terms_cutoffday ) "
@@ -150,21 +152,21 @@ void terms::sSave()
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT terms_id "
+    termsSave.prepare( "SELECT terms_id "
                "FROM terms "
                "WHERE ( (UPPER(terms_code)=UPPER(:terms_code))"
                " AND (terms_id<>:terms_id) );" );
-    q.bindValue(":terms_id", _termsid);
-    q.bindValue(":terms_code", _code->text().trimmed());
-    q.exec();
-    if (q.first())
+    termsSave.bindValue(":terms_id", _termsid);
+    termsSave.bindValue(":terms_code", _code->text().trimmed());
+    termsSave.exec();
+    if (termsSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Terms"),
                             tr("You may not rename this Terms code with the entered name as it is in use by another Terms code.") );
       return;
     }
 
-    q.prepare( "UPDATE terms "
+    termsSave.prepare( "UPDATE terms "
                "SET terms_code=:terms_code, terms_descrip=:terms_descrip, terms_type=:terms_type,"
                "    terms_ap=:terms_ap, terms_ar=:terms_ar,"
                "    terms_duedays=:terms_duedays, terms_discdays=:terms_discdays,"
@@ -173,20 +175,20 @@ void terms::sSave()
   }
 
   if (_days->isChecked())
-    q.bindValue(":terms_type", "D");
+    termsSave.bindValue(":terms_type", "D");
   else
-    q.bindValue(":terms_type", "P");
+    termsSave.bindValue(":terms_type", "P");
 
-  q.bindValue(":terms_id", _termsid);
-  q.bindValue(":terms_code", _code->text().trimmed());
-  q.bindValue(":terms_descrip", _description->text().trimmed());
-  q.bindValue(":terms_ap", QVariant(_ap->isChecked()));
-  q.bindValue(":terms_ar", QVariant(_ar->isChecked()));
-  q.bindValue(":terms_duedays", _dueDays->value());
-  q.bindValue(":terms_discdays", _discountDays->value());
-  q.bindValue(":terms_discprcnt", (_discountPercent->toDouble() / 100.0));
-  q.bindValue(":terms_cutoffday", _cutOffDay->value());
-  q.exec();
+  termsSave.bindValue(":terms_id", _termsid);
+  termsSave.bindValue(":terms_code", _code->text().trimmed());
+  termsSave.bindValue(":terms_descrip", _description->text().trimmed());
+  termsSave.bindValue(":terms_ap", QVariant(_ap->isChecked()));
+  termsSave.bindValue(":terms_ar", QVariant(_ar->isChecked()));
+  termsSave.bindValue(":terms_duedays", _dueDays->value());
+  termsSave.bindValue(":terms_discdays", _discountDays->value());
+  termsSave.bindValue(":terms_discprcnt", (_discountPercent->toDouble() / 100.0));
+  termsSave.bindValue(":terms_cutoffday", _cutOffDay->value());
+  termsSave.exec();
 
   done(_termsid);
 }
@@ -218,34 +220,35 @@ void terms::sTypeChanged()
 
 void terms::populate()
 {
-  q.prepare( "SELECT terms_code, terms_descrip, terms_type,"
+  XSqlQuery termspopulate;
+  termspopulate.prepare( "SELECT terms_code, terms_descrip, terms_type,"
              "       terms_ap, terms_ar,"
              "       terms_duedays, terms_discdays, terms_cutoffday,"
              "       terms_discprcnt "
              "FROM terms "
              "WHERE (terms_id=:terms_id);" );
-  q.bindValue(":terms_id", _termsid);
-  q.exec();
-  if (q.first())
+  termspopulate.bindValue(":terms_id", _termsid);
+  termspopulate.exec();
+  if (termspopulate.first())
   {
-    _code->setText(q.value("terms_code").toString());
-    _description->setText(q.value("terms_descrip").toString());
-    _ap->setChecked(q.value("terms_ap").toBool());
-    _ar->setChecked(q.value("terms_ar").toBool());
-    _dueDays->setValue(q.value("terms_duedays").toInt());
-    _discountPercent->setText(q.value("terms_discprcnt").toDouble() * 100);
-    _discountDays->setValue(q.value("terms_discdays").toInt());
+    _code->setText(termspopulate.value("terms_code").toString());
+    _description->setText(termspopulate.value("terms_descrip").toString());
+    _ap->setChecked(termspopulate.value("terms_ap").toBool());
+    _ar->setChecked(termspopulate.value("terms_ar").toBool());
+    _dueDays->setValue(termspopulate.value("terms_duedays").toInt());
+    _discountPercent->setText(termspopulate.value("terms_discprcnt").toDouble() * 100);
+    _discountDays->setValue(termspopulate.value("terms_discdays").toInt());
 
-    if (q.value("terms_type").toString() == "D")
+    if (termspopulate.value("terms_type").toString() == "D")
     {
       _days->setChecked(TRUE);
       if (_mode == cEdit)
         _cutOffDay->setEnabled(FALSE);
     }
-    else if (q.value("terms_type").toString() == "P")
+    else if (termspopulate.value("terms_type").toString() == "P")
     {
       _proximo->setChecked(TRUE);
-      _cutOffDay->setValue(q.value("terms_cutoffday").toInt());
+      _cutOffDay->setValue(termspopulate.value("terms_cutoffday").toInt());
     }
   }
 }

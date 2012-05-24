@@ -89,6 +89,7 @@ enum SetResponse glSeriesItem::set(const ParameterList &pParams)
 
 void glSeriesItem::sSave()
 {
+  XSqlQuery glSave;
   if (! _amount->isBase() &&
       QMessageBox::question(this, tr("G/L Transaction Not In Base Currency"),
 		          tr("G/L transactions are recorded in the base currency.\n"
@@ -132,24 +133,24 @@ void glSeriesItem::sSave()
     amount *= -1;
 
   if (_mode == cNew)
-    q.prepare("SELECT insertIntoGLSeries(:glsequence, 'G/L', :doctype, :docnumber, :accnt_id, :amount, :distdate) AS result;");
+    glSave.prepare("SELECT insertIntoGLSeries(:glsequence, 'G/L', :doctype, :docnumber, :accnt_id, :amount, :distdate) AS result;");
   else if (_mode == cEdit)
-    q.prepare( "UPDATE glseries "
+    glSave.prepare( "UPDATE glseries "
                "SET glseries_accnt_id=:accnt_id,"
 	       "    glseries_amount=:amount "
                "WHERE (glseries_id=:glseries_id);" );
 
-  q.bindValue(":glseries_id",	_glseriesid);
-  q.bindValue(":glsequence",	_glsequence);
-  q.bindValue(":doctype",       _doctype);
-  q.bindValue(":docnumber",     _docnumber);
-  q.bindValue(":accnt_id",	_account->id());
-  q.bindValue(":amount",	amount);
-  q.bindValue(":distdate",	_amount->effective());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  glSave.bindValue(":glseries_id",	_glseriesid);
+  glSave.bindValue(":glsequence",	_glsequence);
+  glSave.bindValue(":doctype",       _doctype);
+  glSave.bindValue(":docnumber",     _docnumber);
+  glSave.bindValue(":accnt_id",	_account->id());
+  glSave.bindValue(":amount",	amount);
+  glSave.bindValue(":distdate",	_amount->effective());
+  glSave.exec();
+  if (glSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -158,29 +159,30 @@ void glSeriesItem::sSave()
 
 void glSeriesItem::populate()
 {
-  q.prepare( "SELECT glseries_amount, glseries_accnt_id "
+  XSqlQuery glpopulate;
+  glpopulate.prepare( "SELECT glseries_amount, glseries_accnt_id "
              "FROM glseries "
              "WHERE (glseries_id=:glseries_id);" );
-  q.bindValue(":glseries_id", _glseriesid);
-  q.exec();
-  if (q.first())
+  glpopulate.bindValue(":glseries_id", _glseriesid);
+  glpopulate.exec();
+  if (glpopulate.first())
   {
-    if (q.value("glseries_amount").toDouble() < 0)
+    if (glpopulate.value("glseries_amount").toDouble() < 0)
     {
       _debit->setChecked(TRUE);
-      _amount->setBaseValue(fabs(q.value("glseries_amount").toDouble()));
+      _amount->setBaseValue(fabs(glpopulate.value("glseries_amount").toDouble()));
     }
     else
     {
       _credit->setChecked(TRUE);
-      _amount->setBaseValue(q.value("glseries_amount").toDouble());
+      _amount->setBaseValue(glpopulate.value("glseries_amount").toDouble());
     }
 
-    _account->setId(q.value("glseries_accnt_id").toInt());
+    _account->setId(glpopulate.value("glseries_accnt_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (glpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

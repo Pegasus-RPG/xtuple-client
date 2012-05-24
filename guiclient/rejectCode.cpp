@@ -77,6 +77,7 @@ enum SetResponse rejectCode::set(const ParameterList &pParams)
 
 void rejectCode::sSave()
 {
+  XSqlQuery rejectSave;
   if (_code->text().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Reject Code"),
@@ -94,56 +95,57 @@ void rejectCode::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('rjctcode_rjctcode_id_seq') AS rjctcode_id");
-    if (q.first())
-      _rjctcodeid = q.value("rjctcode_id").toInt();
+    rejectSave.exec("SELECT NEXTVAL('rjctcode_rjctcode_id_seq') AS rjctcode_id");
+    if (rejectSave.first())
+      _rjctcodeid = rejectSave.value("rjctcode_id").toInt();
 
-    q.prepare( "INSERT INTO rjctcode "
+    rejectSave.prepare( "INSERT INTO rjctcode "
                "(rjctcode_id, rjctcode_code, rjctcode_descrip) "
                "VALUES "
                "(:rjctcode_id, :rjctcode_code, :rjctcode_descrip);" );
   }
   else if (_mode == cEdit)
-    q.prepare("SELECT rjctcode_id"
+    rejectSave.prepare("SELECT rjctcode_id"
               "  FROM rjctcode"
               " WHERE((rjctcode_id != :rjctcode_id)"
               " AND (rjctcode_code = :rjctcode_code));");
-    q.bindValue(":rjctcode_id", _rjctcodeid); 
-    q.bindValue(":rjctcode_code", _code->text());
-    q.exec();
-    if (q.first())
+    rejectSave.bindValue(":rjctcode_id", _rjctcodeid); 
+    rejectSave.bindValue(":rjctcode_code", _code->text());
+    rejectSave.exec();
+    if (rejectSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Reject Code"),
                             tr("You may not rename this Reject code with the entered name as it is in use by another Reject code.") );
       return;
     }
 
-    q.prepare( "UPDATE rjctcode "
+    rejectSave.prepare( "UPDATE rjctcode "
                "SET rjctcode_code=:rjctcode_code,"
                "    rjctcode_descrip=:rjctcode_descrip "
                "WHERE (rjctcode_id=:rjctcode_id);" );
 
-  q.bindValue(":rjctcode_id", _rjctcodeid);
-  q.bindValue(":rjctcode_code", _code->text());
-  q.bindValue(":rjctcode_descrip", _description->text().trimmed());
-  q.exec();
+  rejectSave.bindValue(":rjctcode_id", _rjctcodeid);
+  rejectSave.bindValue(":rjctcode_code", _code->text());
+  rejectSave.bindValue(":rjctcode_descrip", _description->text().trimmed());
+  rejectSave.exec();
 
   done(_rjctcodeid);
 }
 
 bool rejectCode::sCheck()
 {
+  XSqlQuery rejectCheck;
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
-    q.prepare( "SELECT rjctcode_id "
+    rejectCheck.prepare( "SELECT rjctcode_id "
                "FROM rjctcode "
                "WHERE (UPPER(rjctcode_code)=UPPER(:rjctcode_code));" );
-    q.bindValue(":rjctcode_code", _code->text());
-    q.exec();
-    if (q.first())
+    rejectCheck.bindValue(":rjctcode_code", _code->text());
+    rejectCheck.exec();
+    if (rejectCheck.first())
     {
-      _rjctcodeid = q.value("rjctcode_id").toInt();
+      _rjctcodeid = rejectCheck.value("rjctcode_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -156,14 +158,15 @@ bool rejectCode::sCheck()
 
 void rejectCode::populate()
 {
-  q.prepare( "SELECT rjctcode_code, rjctcode_descrip "
+  XSqlQuery rejectpopulate;
+  rejectpopulate.prepare( "SELECT rjctcode_code, rjctcode_descrip "
              "FROM rjctcode "
              "WHERE (rjctcode_id=:rjctcode_id);" );
-  q.bindValue(":rjctcode_id", _rjctcodeid);
-  q.exec();
-  if (q.first())
+  rejectpopulate.bindValue(":rjctcode_id", _rjctcodeid);
+  rejectpopulate.exec();
+  if (rejectpopulate.first())
   {
-    _code->setText(q.value("rjctcode_code").toString());
-    _description->setText(q.value("rjctcode_descrip").toString());
+    _code->setText(rejectpopulate.value("rjctcode_code").toString());
+    _description->setText(rejectpopulate.value("rjctcode_descrip").toString());
   }
 } 

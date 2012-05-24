@@ -107,6 +107,7 @@ void listRecurringInvoices::sPopulateMenu(QMenu *pMenu)
 
 void listRecurringInvoices::sFillList()
 {
+  XSqlQuery listFillList;
   _invchead->clear();
 
   MetaSQLQuery mql = mqlLoad("invoices", "detail");
@@ -119,11 +120,11 @@ void listRecurringInvoices::sFillList()
   params.append("month", tr("Month"));
   params.append("year", tr("Year"));
   params.append("none", tr("None"));
-  q = mql.toQuery(params);
-  _invchead->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  listFillList = mql.toQuery(params);
+  _invchead->populate(listFillList);
+  if (listFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, listFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

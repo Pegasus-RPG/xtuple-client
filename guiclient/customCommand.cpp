@@ -89,16 +89,17 @@ enum SetResponse customCommand::set( const ParameterList & pParams )
 
 void customCommand::setMode(const int pmode)
 {
+  XSqlQuery custometMode;
   switch (pmode)
   {
     case cNew:
-      q.prepare("SELECT nextval('cmd_cmd_id_seq') AS result;");
-      q.exec();
-      if(q.first())
-        _cmdid = q.value("result").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      custometMode.prepare("SELECT nextval('cmd_cmd_id_seq') AS result;");
+      custometMode.exec();
+      if(custometMode.first())
+        _cmdid = custometMode.value("result").toInt();
+      else if (custometMode.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, custometMode.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
       /* fallthru */
@@ -137,14 +138,15 @@ void customCommand::setMode(const int pmode)
 
 void customCommand::sSave()
 {
+  XSqlQuery customSave;
   if(!save())
     return;
 
   // make sure the custom privs get updated
-  q.exec("SELECT updateCustomPrivs();");
-  if (q.lastError().type() != QSqlError::NoError)
+  customSave.exec("SELECT updateCustomPrivs();");
+  if (customSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -152,6 +154,7 @@ void customCommand::sSave()
 }
 bool customCommand::save()
 {
+  XSqlQuery customave;
   if(_title->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Cannot Save"),
@@ -174,13 +177,13 @@ bool customCommand::save()
   }
 
   if((cNew == _mode) && !_saved)
-    q.prepare("INSERT INTO cmd"
+    customave.prepare("INSERT INTO cmd"
               "      (cmd_id, cmd_module, cmd_title, cmd_privname,"
               "       cmd_name, cmd_descrip, cmd_executable) "
               "VALUES(:cmd_id, :cmd_module, :cmd_title, :cmd_privname,"
               "       :cmd_name, :cmd_descrip, :cmd_executable);");
   else if(cEdit == _mode || ((cNew == _mode) && _saved))
-    q.prepare("UPDATE cmd"
+    customave.prepare("UPDATE cmd"
               "   SET cmd_module=:cmd_module,"
               "       cmd_title=:cmd_title,"
               "       cmd_privname=:cmd_privname,"
@@ -189,18 +192,18 @@ bool customCommand::save()
               "       cmd_executable=:cmd_executable "
               " WHERE (cmd_id=:cmd_id);");
 
-  q.bindValue(":cmd_id", _cmdid);
-  q.bindValue(":cmd_module", _module->code());
-  q.bindValue(":cmd_title", _title->text());
-  q.bindValue(":cmd_privname", _privname->text().trimmed());
+  customave.bindValue(":cmd_id", _cmdid);
+  customave.bindValue(":cmd_module", _module->code());
+  customave.bindValue(":cmd_title", _title->text());
+  customave.bindValue(":cmd_privname", _privname->text().trimmed());
   if(!_name->text().isEmpty())
-    q.bindValue(":cmd_name", _name->text());
-  q.bindValue(":cmd_descrip", _description->toPlainText());
-  q.bindValue(":cmd_executable", _executable->text());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    customave.bindValue(":cmd_name", _name->text());
+  customave.bindValue(":cmd_descrip", _description->toPlainText());
+  customave.bindValue(":cmd_executable", _executable->text());
+  customave.exec();
+  if (customave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   _saved = true;
@@ -262,65 +265,68 @@ void customCommand::sEdit()
 
 void customCommand::sDelete()
 {
-  q.prepare("DELETE FROM cmdarg WHERE (cmdarg_id=:cmdarg_id);");
-  q.bindValue(":cmdarg_id", _arguments->id());
-  if(q.exec())
+  XSqlQuery customDelete;
+  customDelete.prepare("DELETE FROM cmdarg WHERE (cmdarg_id=:cmdarg_id);");
+  customDelete.bindValue(":cmdarg_id", _arguments->id());
+  if(customDelete.exec())
     sFillList();
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (customDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void customCommand::populate()
 {
-  q.prepare("SELECT cmd.*, COALESCE(pkghead_indev,true) AS editable "
+  XSqlQuery custompopulate;
+  custompopulate.prepare("SELECT cmd.*, COALESCE(pkghead_indev,true) AS editable "
             "  FROM cmd, pg_class, pg_namespace "
             "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
             " WHERE ((cmd.tableoid=pg_class.oid)"
             "   AND (relnamespace=pg_namespace.oid) "
             "   AND  (cmd_id=:cmd_id));");
-  q.bindValue(":cmd_id", _cmdid);
-  q.exec();
-  if(q.first())
+  custompopulate.bindValue(":cmd_id", _cmdid);
+  custompopulate.exec();
+  if(custompopulate.first())
   {
-    _module->setCode(q.value("cmd_module").toString());
+    _module->setCode(custompopulate.value("cmd_module").toString());
     if (_module->id() < 0)
     {
-      _module->append(_module->count(), q.value("cmd_module").toString());
-      _module->setCode(q.value("cmd_module").toString());
+      _module->append(_module->count(), custompopulate.value("cmd_module").toString());
+      _module->setCode(custompopulate.value("cmd_module").toString());
     }
-    _title->setText(q.value("cmd_title").toString());
-    _oldPrivname = q.value("cmd_privname").toString();
-    _privname->setText(q.value("cmd_privname").toString());
-    _name->setText(q.value("cmd_name").toString());
-    _executable->setText(q.value("cmd_executable").toString());
-    _description->setText(q.value("cmd_descrip").toString());
-    if (!q.value("editable").toBool())
+    _title->setText(custompopulate.value("cmd_title").toString());
+    _oldPrivname = custompopulate.value("cmd_privname").toString();
+    _privname->setText(custompopulate.value("cmd_privname").toString());
+    _name->setText(custompopulate.value("cmd_name").toString());
+    _executable->setText(custompopulate.value("cmd_executable").toString());
+    _description->setText(custompopulate.value("cmd_descrip").toString());
+    if (!custompopulate.value("editable").toBool())
       setMode(cView);
 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (custompopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, custompopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void customCommand::sFillList()
 {
-  q.prepare("SELECT cmdarg_id, cmdarg_order, cmdarg_arg"
+  XSqlQuery customFillList;
+  customFillList.prepare("SELECT cmdarg_id, cmdarg_order, cmdarg_arg"
             "  FROM cmdarg"
             " WHERE (cmdarg_cmd_id=:cmd_id)"
             " ORDER BY cmdarg_order, cmdarg_id;");
-  q.bindValue(":cmd_id", _cmdid);
-  q.exec();
-  _arguments->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  customFillList.bindValue(":cmd_id", _cmdid);
+  customFillList.exec();
+  _arguments->populate(customFillList);
+  if (customFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

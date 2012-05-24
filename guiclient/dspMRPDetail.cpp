@@ -63,6 +63,7 @@ void dspMRPDetail::languageChange()
 
 void dspMRPDetail::sPrint()
 {
+  XSqlQuery dspPrint;
   if ( (_periods->isPeriodSelected()) && (_itemsite->id() != -1) )
   {
     XSqlQuery wsq ( QString( "SELECT mrpReport(%1, '%2') as worksetid;")
@@ -97,9 +98,9 @@ void dspMRPDetail::sPrint()
                       .arg(wsq.value("worksetid").toInt()) );
 
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (dspPrint.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspPrint.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -216,6 +217,7 @@ void dspMRPDetail::sIssueWO()
 
 void dspMRPDetail::sFillItemsites()
 {
+  XSqlQuery dspFillItemsites;
   ParameterList params;
 
   if (! setParams(params))
@@ -223,12 +225,13 @@ void dspMRPDetail::sFillItemsites()
 
   MetaSQLQuery mql = mqlLoad("mrpDetail", "item");
 
-  q = mql.toQuery(params);
-  _itemsite->populate(q, true);
+  dspFillItemsites = mql.toQuery(params);
+  _itemsite->populate(dspFillItemsites, true);
 }
 
 void dspMRPDetail::sFillMRPDetail()
 {
+  XSqlQuery dspFillMRPDetail;
   _mrp->clear();
 
   _mrp->setColumnCount(1);
@@ -261,40 +264,40 @@ void dspMRPDetail::sFillMRPDetail()
     params.append("itemsite_id", _itemsite->id());
 
     MetaSQLQuery mql = mqlLoad("mrpDetail", "detail");
-    q = mql.toQuery(params);
-    if (q.first())
+    dspFillMRPDetail = mql.toQuery(params);
+    if (dspFillMRPDetail.first())
     {
       if (counter == 1)
       {
-        runningFirmed = q.value("firmedorders1").toDouble();
-        runningAvailability = (q.value("itemsite_qtyonhand").toDouble() - q.value("allocations1").toDouble() + q.value("orders1").toDouble());
+        runningFirmed = dspFillMRPDetail.value("firmedorders1").toDouble();
+        runningAvailability = (dspFillMRPDetail.value("itemsite_qtyonhand").toDouble() - dspFillMRPDetail.value("allocations1").toDouble() + dspFillMRPDetail.value("orders1").toDouble());
 
-        qoh                = new XTreeWidgetItem(_mrp, 0, QVariant(tr("Projected QOH")), q.value("f_qoh"));
-        allocations        = new XTreeWidgetItem(_mrp, qoh, 0, QVariant(tr("Allocations")), formatQty(q.value("allocations1").toDouble()));
-        orders             = new XTreeWidgetItem(_mrp, allocations,  0, QVariant(tr("Orders")), formatQty(q.value("orders1").toDouble()));
+        qoh                = new XTreeWidgetItem(_mrp, 0, QVariant(tr("Projected QOH")), dspFillMRPDetail.value("f_qoh"));
+        allocations        = new XTreeWidgetItem(_mrp, qoh, 0, QVariant(tr("Allocations")), formatQty(dspFillMRPDetail.value("allocations1").toDouble()));
+        orders             = new XTreeWidgetItem(_mrp, allocations,  0, QVariant(tr("Orders")), formatQty(dspFillMRPDetail.value("orders1").toDouble()));
         availability       = new XTreeWidgetItem(_mrp, orders, 0, QVariant(tr("Availability")), formatQty(runningAvailability));
-        firmedAllocations  = new XTreeWidgetItem(_mrp, availability, 0, QVariant(tr("Firmed Allocations")), formatQty(q.value("firmedallocations1").toDouble()));
+        firmedAllocations  = new XTreeWidgetItem(_mrp, availability, 0, QVariant(tr("Firmed Allocations")), formatQty(dspFillMRPDetail.value("firmedallocations1").toDouble()));
         firmedOrders       = new XTreeWidgetItem(_mrp, firmedAllocations, 0, QVariant(tr("Firmed Orders")), formatQty(runningFirmed));
         firmedAvailability = new XTreeWidgetItem(_mrp, firmedOrders, 0, QVariant(tr("Firmed Availability")), formatQty( runningAvailability -
-                                                                                                            q.value("firmedallocations1").toDouble() +
+                                                                                                            dspFillMRPDetail.value("firmedallocations1").toDouble() +
                                                                                                             runningFirmed ) );
       }
       else
       {
         qoh->setText(counter, formatQty(runningAvailability));
-        allocations->setText(counter, formatQty(q.value(QString("allocations%1").arg(counter)).toDouble()));
-        orders->setText(counter, formatQty(q.value(QString("orders%1").arg(counter)).toDouble()));
+        allocations->setText(counter, formatQty(dspFillMRPDetail.value(QString("allocations%1").arg(counter)).toDouble()));
+        orders->setText(counter, formatQty(dspFillMRPDetail.value(QString("orders%1").arg(counter)).toDouble()));
 
-        runningAvailability =  ( runningAvailability - q.value(QString("allocations%1").arg(counter)).toDouble() +
-                                                       q.value(QString("orders%1").arg(counter)).toDouble() );
+        runningAvailability =  ( runningAvailability - dspFillMRPDetail.value(QString("allocations%1").arg(counter)).toDouble() +
+                                                       dspFillMRPDetail.value(QString("orders%1").arg(counter)).toDouble() );
         availability->setText(counter, formatQty(runningAvailability));
 
-        firmedAllocations->setText(counter, formatQty(q.value(QString("firmedallocations%1").arg(counter)).toDouble()));
+        firmedAllocations->setText(counter, formatQty(dspFillMRPDetail.value(QString("firmedallocations%1").arg(counter)).toDouble()));
 
-        runningFirmed += q.value(QString("firmedorders%1").arg(counter)).toDouble();
+        runningFirmed += dspFillMRPDetail.value(QString("firmedorders%1").arg(counter)).toDouble();
         firmedOrders->setText(counter, formatQty(runningFirmed));
         firmedAvailability->setText(counter, formatQty( runningAvailability -
-                                                              q.value(QString("firmedallocations%1").arg(counter)).toDouble() +
+                                                              dspFillMRPDetail.value(QString("firmedallocations%1").arg(counter)).toDouble() +
                                                               runningFirmed ) );
       }
     }

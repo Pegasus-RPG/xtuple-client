@@ -82,16 +82,17 @@ enum SetResponse subAccntType::set( const ParameterList & pParams )
 
 void subAccntType::sSave()
 {
+  XSqlQuery subSave;
   if (_mode == cEdit)
   {
-    q.prepare( "SELECT subaccnttype_id "
+    subSave.prepare( "SELECT subaccnttype_id "
                "FROM subaccnttype "
                "WHERE ( (subaccnttype_id<>:subaccnttype_id)"
                " AND (subaccnttype_code=:subaccnttype_code) );");
-    q.bindValue(":subaccnttype_id", _subaccnttypeid);
-    q.bindValue(":subaccnttype_code", _code->text());
-    q.exec();
-    if (q.first())
+    subSave.bindValue(":subaccnttype_id", _subaccnttypeid);
+    subSave.bindValue(":subaccnttype_code", _code->text());
+    subSave.exec();
+    if (subSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Subaccount Type"),
                              tr( "A Subaccount Type with the entered code already exists."
@@ -100,34 +101,34 @@ void subAccntType::sSave()
       return;
     }
 
-    q.prepare( "UPDATE subaccnttype "
+    subSave.prepare( "UPDATE subaccnttype "
                "SET subaccnttype_code=:subaccnttype_code,"
                "       subaccnttype_descrip=:subaccnttype_descrip,"
                "       subaccnttype_accnt_type=:subaccnttype_accnt_type "
                "WHERE (subaccnttype_id=:subaccnttype_id);" );
-    q.bindValue(":subaccnttype_id", _subaccnttypeid);
-    q.bindValue(":subaccnttype_code", _code->text());
-    q.bindValue(":subaccnttype_descrip", _description->text());
+    subSave.bindValue(":subaccnttype_id", _subaccnttypeid);
+    subSave.bindValue(":subaccnttype_code", _code->text());
+    subSave.bindValue(":subaccnttype_descrip", _description->text());
     if (_type->currentIndex() == 0)
-      q.bindValue(":subaccnttype_accnt_type", "A");
+      subSave.bindValue(":subaccnttype_accnt_type", "A");
     else if (_type->currentIndex() == 1)
-      q.bindValue(":subaccnttype_accnt_type", "L");
+      subSave.bindValue(":subaccnttype_accnt_type", "L");
     else if (_type->currentIndex() == 2)
-      q.bindValue(":subaccnttype_accnt_type", "E");
+      subSave.bindValue(":subaccnttype_accnt_type", "E");
     else if (_type->currentIndex() == 3)
-      q.bindValue(":subaccnttype_accnt_type", "R");
+      subSave.bindValue(":subaccnttype_accnt_type", "R");
     else if (_type->currentIndex() == 4)
-      q.bindValue(":subaccnttype_accnt_type", "Q");
-    q.exec();
+      subSave.bindValue(":subaccnttype_accnt_type", "Q");
+    subSave.exec();
   }
   else if (_mode == cNew)
   {
-    q.prepare( "SELECT subaccnttype_id "
+    subSave.prepare( "SELECT subaccnttype_id "
                "FROM subaccnttype "
                "WHERE (subaccnttype_code=:subaccnttype_code);");
-    q.bindValue(":subaccnttype_code", _code->text().trimmed());
-    q.exec();
-    if (q.first())
+    subSave.bindValue(":subaccnttype_code", _code->text().trimmed());
+    subSave.exec();
+    if (subSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Subaccount Type"),
                              tr( "A Subaccount Type with the entered code already exists.\n"
@@ -136,9 +137,9 @@ void subAccntType::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('subaccnttype_subaccnttype_id_seq') AS subaccnttype_id;");
-    if (q.first())
-      _subaccnttypeid = q.value("subaccnttype_id").toInt();
+    subSave.exec("SELECT NEXTVAL('subaccnttype_subaccnttype_id_seq') AS subaccnttype_id;");
+    if (subSave.first())
+      _subaccnttypeid = subSave.value("subaccnttype_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -147,25 +148,25 @@ void subAccntType::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO subaccnttype "
+    subSave.prepare( "INSERT INTO subaccnttype "
                "( subaccnttype_id, subaccnttype_code,"
                "  subaccnttype_descrip, subaccnttype_accnt_type ) "
                "VALUES "
                "( :subaccnttype_id, :subaccnttype_code, :subaccnttype_descrip, :subaccnttype_accnt_type );" );
-    q.bindValue(":subaccnttype_id", _subaccnttypeid);
-    q.bindValue(":subaccnttype_code", _code->text());
-    q.bindValue(":subaccnttype_descrip", _description->text());
+    subSave.bindValue(":subaccnttype_id", _subaccnttypeid);
+    subSave.bindValue(":subaccnttype_code", _code->text());
+    subSave.bindValue(":subaccnttype_descrip", _description->text());
     if (_type->currentIndex() == 0)
-      q.bindValue(":subaccnttype_accnt_type", "A");
+      subSave.bindValue(":subaccnttype_accnt_type", "A");
     else if (_type->currentIndex() == 1)
-      q.bindValue(":subaccnttype_accnt_type", "L");
+      subSave.bindValue(":subaccnttype_accnt_type", "L");
     else if (_type->currentIndex() == 2)
-      q.bindValue(":subaccnttype_accnt_type", "E");
+      subSave.bindValue(":subaccnttype_accnt_type", "E");
     else if (_type->currentIndex() == 3)
-      q.bindValue(":subaccnttype_accnt_type", "R");
+      subSave.bindValue(":subaccnttype_accnt_type", "R");
     else if (_type->currentIndex() == 4)
-      q.bindValue(":subaccnttype_accnt_type", "Q");
-    q.exec();
+      subSave.bindValue(":subaccnttype_accnt_type", "Q");
+    subSave.exec();
   }
 
   done(_subaccnttypeid);
@@ -173,18 +174,19 @@ void subAccntType::sSave()
 
 void subAccntType::sCheck()
 {
+  XSqlQuery subCheck;
   _code->setText(_code->text().trimmed());
 //  if ( (_mode == cNew) && (_code->text().length()) )
   if (_code->text().length())
   {
-    q.prepare( "SELECT subaccnttype_id "
+    subCheck.prepare( "SELECT subaccnttype_id "
                "FROM subaccnttype "
                "WHERE (subaccnttype_code=:subaccnttype_code);" );
-    q.bindValue(":subaccnttype_code", _code->text());
-    q.exec();
-    if (q.first())
+    subCheck.bindValue(":subaccnttype_code", _code->text());
+    subCheck.exec();
+    if (subCheck.first())
     {
-      _subaccnttypeid = q.value("subaccnttype_id").toInt();
+      _subaccnttypeid = subCheck.value("subaccnttype_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -195,25 +197,26 @@ void subAccntType::sCheck()
 
 void subAccntType::populate()
 {
-  q.prepare( "SELECT subaccnttype_code, subaccnttype_accnt_type, subaccnttype_descrip "
+  XSqlQuery subpopulate;
+  subpopulate.prepare( "SELECT subaccnttype_code, subaccnttype_accnt_type, subaccnttype_descrip "
              "FROM subaccnttype "
              "WHERE (subaccnttype_id=:subaccnttype_id);" );
-  q.bindValue(":subaccnttype_id", _subaccnttypeid);
-  q.exec();
-  if (q.first())
+  subpopulate.bindValue(":subaccnttype_id", _subaccnttypeid);
+  subpopulate.exec();
+  if (subpopulate.first())
   {
-    _code->setText(q.value("subaccnttype_code").toString());
-    _description->setText(q.value("subaccnttype_descrip").toString());
+    _code->setText(subpopulate.value("subaccnttype_code").toString());
+    _description->setText(subpopulate.value("subaccnttype_descrip").toString());
     
-    if (q.value("subaccnttype_accnt_type").toString() == "A")
+    if (subpopulate.value("subaccnttype_accnt_type").toString() == "A")
       _type->setCurrentIndex(0);
-    else if (q.value("subaccnttype_accnt_type").toString() == "L")
+    else if (subpopulate.value("subaccnttype_accnt_type").toString() == "L")
       _type->setCurrentIndex(1);
-    else if (q.value("subaccnttype_accnt_type").toString() == "E")
+    else if (subpopulate.value("subaccnttype_accnt_type").toString() == "E")
       _type->setCurrentIndex(2);
-    else if (q.value("subaccnttype_accnt_type").toString() == "R")
+    else if (subpopulate.value("subaccnttype_accnt_type").toString() == "R")
       _type->setCurrentIndex(3);
-    else if (q.value("subaccnttype_accnt_type").toString() == "Q")
+    else if (subpopulate.value("subaccnttype_accnt_type").toString() == "Q")
       _type->setCurrentIndex(4);
   }
 }

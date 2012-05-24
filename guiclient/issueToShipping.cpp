@@ -132,21 +132,22 @@ void issueToShipping::sCatchSoheadid(int pSoheadid)
 
 void issueToShipping::sCatchSoitemid(int pSoitemid)
 {
-  q.prepare( "SELECT coitem_cohead_id "
+  XSqlQuery issueCatchSoitemid;
+  issueCatchSoitemid.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:sohead_id);" );
-  q.bindValue(":sohead_id", pSoitemid);
-  q.exec();
-  if (q.first())
+  issueCatchSoitemid.bindValue(":sohead_id", pSoitemid);
+  issueCatchSoitemid.exec();
+  if (issueCatchSoitemid.first())
   {
-    _order->setId(q.value("coitem_cohead_id").toInt(), "SO");
+    _order->setId(issueCatchSoitemid.value("coitem_cohead_id").toInt(), "SO");
     _soitem->clearSelection();
     _soitem->setId(pSoitemid);
     sIssueStock();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (issueCatchSoitemid.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, issueCatchSoitemid.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -159,40 +160,42 @@ void issueToShipping::sCatchToheadid(int pToheadid)
 
 void issueToShipping::sCatchToitemid(int porderitemid)
 {
-  q.prepare( "SELECT toitem_tohead_id "
+  XSqlQuery issueCatchToitemid;
+  issueCatchToitemid.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:tohead_id);" );
-  q.bindValue(":tohead_id", porderitemid);
-  q.exec();
-  if (q.first())
+  issueCatchToitemid.bindValue(":tohead_id", porderitemid);
+  issueCatchToitemid.exec();
+  if (issueCatchToitemid.first())
   {
-    _order->setId(q.value("toitem_tohead_id").toInt(), "TO");
+    _order->setId(issueCatchToitemid.value("toitem_tohead_id").toInt(), "TO");
     _soitem->clearSelection();
     _soitem->setId(porderitemid);
     sIssueStock();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (issueCatchToitemid.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, issueCatchToitemid.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void issueToShipping::sCatchItemsiteid(int pItemsiteid)
 {
-  q.prepare("SELECT orderitem_id "
+  XSqlQuery issueCatchItemsiteid;
+  issueCatchItemsiteid.prepare("SELECT orderitem_id "
             "FROM orderitem "
             "WHERE ((orderitem_itemsite_id=:itemsite) "
             "   AND (orderitem_orderhead_type=:ordertype) "
             "   AND (orderitem_orderhead_id=:orderid));");
-  q.bindValue(":itemsite",  pItemsiteid);
-  q.bindValue(":ordertype", _order->type());
-  q.bindValue(":orderid",   _order->id());
-  q.exec();
-  if (q.first())
+  issueCatchItemsiteid.bindValue(":itemsite",  pItemsiteid);
+  issueCatchItemsiteid.bindValue(":ordertype", _order->type());
+  issueCatchItemsiteid.bindValue(":orderid",   _order->id());
+  issueCatchItemsiteid.exec();
+  if (issueCatchItemsiteid.first())
   {
     _soitem->clearSelection();
-    _soitem->setId(q.value("orderitem_id").toInt());
+    _soitem->setId(issueCatchItemsiteid.value("orderitem_id").toInt());
     sIssueStock();
   }
   else
@@ -201,20 +204,21 @@ void issueToShipping::sCatchItemsiteid(int pItemsiteid)
 
 void issueToShipping::sCatchItemid(int pItemid)
 {
-  q.prepare( "SELECT orderitem_id "
+  XSqlQuery issueCatchItemid;
+  issueCatchItemid.prepare( "SELECT orderitem_id "
              "FROM orderitem, itemsite "
              "WHERE ((orderitem_itemsite_id=itemsite_id)"
              "  AND  (itemsite_item_id=:item_id)"
              "   AND  (orderitem_orderhead_type=:ordertype) "
              "   AND  (orderitem_orderhead_id=:orderid));");
-  q.bindValue(":item_id",   pItemid);
-  q.bindValue(":ordertype", _order->type());
-  q.bindValue(":orderid",   _order->id());
-  q.exec();
-  if (q.first())
+  issueCatchItemid.bindValue(":item_id",   pItemid);
+  issueCatchItemid.bindValue(":ordertype", _order->type());
+  issueCatchItemid.bindValue(":orderid",   _order->id());
+  issueCatchItemid.exec();
+  if (issueCatchItemid.first())
   {
     _soitem->clearSelection();
-    _soitem->setId(q.value("orderitem_id").toInt());
+    _soitem->setId(issueCatchItemid.value("orderitem_id").toInt());
     sIssueStock();
   }
   else
@@ -223,25 +227,26 @@ void issueToShipping::sCatchItemid(int pItemid)
 
 void issueToShipping::sCatchWoid(int pWoid)
 {
+  XSqlQuery issueCatchWoid;
   if (_order->isSO())
   {
-    q.prepare( " SELECT coitem_cohead_id, coitem_id"
+    issueCatchWoid.prepare( " SELECT coitem_cohead_id, coitem_id"
                "  FROM coitem"
                " WHERE ((coitem_order_id=:wo_id)"
                "   AND  (coitem_cohead_id=:sohead_id));" );
-    q.bindValue(":wo_id",     pWoid);
-    q.bindValue(":sohead_id", _order->id());
-    q.exec();
-    if (q.first())
+    issueCatchWoid.bindValue(":wo_id",     pWoid);
+    issueCatchWoid.bindValue(":sohead_id", _order->id());
+    issueCatchWoid.exec();
+    if (issueCatchWoid.first())
     {
-      _order->setId(q.value("coitem_cohead_id").toInt());
+      _order->setId(issueCatchWoid.value("coitem_cohead_id").toInt());
       _soitem->clearSelection();
-      _soitem->setId(q.value("coitem_id").toInt());
+      _soitem->setId(issueCatchWoid.value("coitem_id").toInt());
       sIssueStock();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (issueCatchWoid.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, issueCatchWoid.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -274,16 +279,17 @@ void issueToShipping::sIssueStock()
 
 bool issueToShipping::sufficientItemInventory(int porderitemid)
 {
+  XSqlQuery issueufficientItemInventory;
   if(_requireInventory->isChecked() ||
      (_order->isSO() && _metrics->boolean("EnableSOReservations")))
   {
-    q.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :itemid) AS result;");
-    q.bindValue(":itemid", porderitemid);
-    q.bindValue(":ordertype", _order->type());
-    q.exec();
-    if (q.first())
+    issueufficientItemInventory.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :itemid) AS result;");
+    issueufficientItemInventory.bindValue(":itemid", porderitemid);
+    issueufficientItemInventory.bindValue(":ordertype", _order->type());
+    issueufficientItemInventory.exec();
+    if (issueufficientItemInventory.first())
     {
-      int result = q.value("result").toInt();
+      int result = issueufficientItemInventory.value("result").toInt();
       if (result < 0)
       {
         ParameterList errp;
@@ -307,20 +313,20 @@ bool issueToShipping::sufficientItemInventory(int porderitemid)
                        "   AND  (toitem_id=<? value(\"toitem_id\") ?>));"
                        "<? endif ?>" ;
         MetaSQLQuery errm(errs);
-        q = errm.toQuery(errp);
-        if (! q.first() && q.lastError().type() != QSqlError::NoError)
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        issueufficientItemInventory = errm.toQuery(errp);
+        if (! issueufficientItemInventory.first() && issueufficientItemInventory.lastError().type() != QSqlError::NoError)
+          systemError(this, issueufficientItemInventory.lastError().databaseText(), __FILE__, __LINE__);
         systemError(this,
                     storedProcErrorLookup("sufficientInventoryToShipItem",
                                           result)
-                    .arg(q.value("item_number").toString())
-                    .arg(q.value("warehous_code").toString()), __FILE__, __LINE__);
+                    .arg(issueufficientItemInventory.value("item_number").toString())
+                    .arg(issueufficientItemInventory.value("warehous_code").toString()), __FILE__, __LINE__);
         return false;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (issueufficientItemInventory.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, issueufficientItemInventory.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
@@ -330,25 +336,26 @@ bool issueToShipping::sufficientItemInventory(int porderitemid)
 
 bool issueToShipping::sufficientInventory(int porderheadid)
 {
+  XSqlQuery issueufficientInventory;
   if (_requireInventory->isChecked() ||
       (_order->isSO() && _metrics->boolean("EnableSOReservations")))
   {
-    q.prepare("SELECT sufficientInventoryToShipOrder(:ordertype, :orderid) AS result;");
-    q.bindValue(":orderid", porderheadid);
-    q.bindValue(":ordertype", _order->type());
-    q.exec();
-    if (q.first())
+    issueufficientInventory.prepare("SELECT sufficientInventoryToShipOrder(:ordertype, :orderid) AS result;");
+    issueufficientInventory.bindValue(":orderid", porderheadid);
+    issueufficientInventory.bindValue(":ordertype", _order->type());
+    issueufficientInventory.exec();
+    if (issueufficientInventory.first())
     {
-      int result = q.value("result").toInt();
+      int result = issueufficientInventory.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("sufficientInventoryToShipOrder", result), __FILE__, __LINE__);
         return false;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (issueufficientInventory.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, issueufficientInventory.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
@@ -518,6 +525,7 @@ void issueToShipping::sIssueAllBalance()
 
 void issueToShipping::sReturnStock()
 {
+  XSqlQuery issueReturnStock;
   QList<XTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
@@ -526,15 +534,15 @@ void issueToShipping::sReturnStock()
     XSqlQuery rollback;
     rollback.prepare("ROLLBACK;");
 
-    q.exec("BEGIN");
-    q.prepare("SELECT returnItemShipments(:ordertype, :soitem_id, 0, :ts) AS result;");
-    q.bindValue(":ordertype", _order->type());
-    q.bindValue(":soitem_id", cursor->id());
-    q.bindValue(":ts",        _transDate->date());
-    q.exec();
-    if (q.first())
+    issueReturnStock.exec("BEGIN");
+    issueReturnStock.prepare("SELECT returnItemShipments(:ordertype, :soitem_id, 0, :ts) AS result;");
+    issueReturnStock.bindValue(":ordertype", _order->type());
+    issueReturnStock.bindValue(":soitem_id", cursor->id());
+    issueReturnStock.bindValue(":ts",        _transDate->date());
+    issueReturnStock.exec();
+    if (issueReturnStock.first())
     {
-      int result = q.value("result").toInt();
+      int result = issueReturnStock.value("result").toInt();
       if (result < 0)
       {
         rollback.exec();
@@ -548,12 +556,12 @@ void issueToShipping::sReturnStock()
         QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
         return;
       }      
-      q.exec("COMMIT;"); 
+      issueReturnStock.exec("COMMIT;"); 
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (issueReturnStock.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, issueReturnStock.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -563,17 +571,18 @@ void issueToShipping::sReturnStock()
 
 void issueToShipping::sShip()
 {
-  q.prepare( "SELECT shiphead_id "
+  XSqlQuery issueShip;
+  issueShip.prepare( "SELECT shiphead_id "
              "FROM shiphead JOIN shipitem ON (shipitem_shiphead_id=shiphead_id) "
              "WHERE ((NOT shiphead_shipped)"
              "  AND  (shiphead_order_type=:ordertype)"
              "  AND  (shiphead_order_id=:order_id) ) "
              "LIMIT 1;" );
-  q.bindValue(":order_id",  _order->id());
-  q.bindValue(":ordertype", _order->type());
+  issueShip.bindValue(":order_id",  _order->id());
+  issueShip.bindValue(":ordertype", _order->type());
 
-  q.exec();
-  if (q.first())
+  issueShip.exec();
+  if (issueShip.first())
   {
     // Reset _order so that lock is released prior to shipping and potentially auto receiving
     // to avoid locking conflicts
@@ -582,7 +591,7 @@ void issueToShipping::sShip()
     _order->setFocus();
 
     ParameterList params;
-    params.append("shiphead_id", q.value("shiphead_id").toInt());
+    params.append("shiphead_id", issueShip.value("shiphead_id").toInt());
 
     shipOrder newdlg(this, "", TRUE);
     if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
@@ -592,9 +601,9 @@ void issueToShipping::sShip()
       //_order->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (issueShip.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, issueShip.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -605,6 +614,7 @@ void issueToShipping::sShip()
 
 void issueToShipping::sFillList()
 {
+  XSqlQuery issueFillList;
   ParameterList listp;
   if (_order->id() < 0)
   {
@@ -614,28 +624,28 @@ void issueToShipping::sFillList()
   }
   else if (_order->isSO())
   {
-    q.prepare( "SELECT cohead_holdtype "
+    issueFillList.prepare( "SELECT cohead_holdtype "
                "FROM cohead "
                "WHERE (cohead_id=:sohead_id);" );
-    q.bindValue(":sohead_id", _order->id());
-    q.exec();
-    if (q.first())
+    issueFillList.bindValue(":sohead_id", _order->id());
+    issueFillList.exec();
+    if (issueFillList.first())
     {
-      if (q.value("cohead_holdtype").toString() == "C")
+      if (issueFillList.value("cohead_holdtype").toString() == "C")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
                                storedProcErrorLookup("issuetoshipping", -12));
         _order->setId(-1);
         _order->setFocus();
       }
-      else if (q.value("cohead_holdtype").toString() == "P")
+      else if (issueFillList.value("cohead_holdtype").toString() == "P")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
                                storedProcErrorLookup("issuetoshipping", -13));
         _order->setId(-1);
         _order->setFocus();
       }
-      else if (q.value("cohead_holdtype").toString() == "R")
+      else if (issueFillList.value("cohead_holdtype").toString() == "R")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
                                storedProcErrorLookup("issuetoshipping", -14));
@@ -643,9 +653,9 @@ void issueToShipping::sFillList()
         _order->setFocus();
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (issueFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, issueFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -783,6 +793,7 @@ void issueToShipping::sFillList()
 
 void issueToShipping::sBcFind()
 {
+  XSqlQuery issueBcFind;
   if (_bc->text().isEmpty())
   {
     QMessageBox::warning(this, tr("No Bar Code scanned"),
@@ -837,13 +848,13 @@ void issueToShipping::sBcFind()
   findp.append("bc",          _bc->text());
 
   MetaSQLQuery findm(sql);
-  q = findm.toQuery(findp);
+  issueBcFind = findm.toQuery(findp);
 
-  if(!q.first())
+  if(!issueBcFind.first())
   {
-    if (q.lastError().type() != QSqlError::NoError)
+    if (issueBcFind.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, issueBcFind.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     XMessageBox::message(this, QMessageBox::Warning, tr("No Match Found"),
@@ -852,9 +863,9 @@ void issueToShipping::sBcFind()
     return;
   }
 
-  int coitemid = q.value("lineitem_id").toInt();
-  while(q.value("balance").toDouble() == 0 && q.next())
-    coitemid = q.value("lineitem_id").toInt();
+  int coitemid = issueBcFind.value("lineitem_id").toInt();
+  while(issueBcFind.value("balance").toDouble() == 0 && issueBcFind.next())
+    coitemid = issueBcFind.value("lineitem_id").toInt();
 
   ParameterList params;
   if (_order->isSO())
@@ -916,14 +927,14 @@ void issueToShipping::sBcFind()
   fullp.append("bc",          _bc->text());
 
   MetaSQLQuery fullm(sql);
-  q = fullm.toQuery(fullp);
+  issueBcFind = fullm.toQuery(fullp);
 
   // If there are no records then the order is complete
-  if(!q.first())
+  if(!issueBcFind.first())
   {
-    if (q.lastError().type() != QSqlError::NoError)
+    if (issueBcFind.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, issueBcFind.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     XMessageBox::message( this, QMessageBox::Information, tr("Order Complete"),

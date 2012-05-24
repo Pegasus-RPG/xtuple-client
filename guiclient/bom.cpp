@@ -155,6 +155,7 @@ enum SetResponse BOM::set(const ParameterList &pParams)
 
 bool BOM::sSave()
 {
+  XSqlQuery BSave;
   if(_item->id() == -1)
   {
     QMessageBox::warning( this, tr("Item Number Required"),
@@ -174,28 +175,28 @@ bool BOM::sSave()
   if(!sCheckRequiredQtyPer())
     return false;
   
-  q.prepare( "SELECT bomhead_id "
+  BSave.prepare( "SELECT bomhead_id "
              "FROM bomhead "
              "WHERE ((bomhead_item_id=:item_id) "
 			 "AND (bomhead_rev_id=:bomhead_rev_id));" );
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":bomhead_rev_id", _revision->id());
-  q.exec();
-  if (q.first())
+  BSave.bindValue(":item_id", _item->id());
+  BSave.bindValue(":bomhead_rev_id", _revision->id());
+  BSave.exec();
+  if (BSave.first())
   {   
-    q.prepare( "UPDATE bomhead "
+    BSave.prepare( "UPDATE bomhead "
                "SET bomhead_docnum=:bomhead_docnum,"
                "    bomhead_revision=:bomhead_revision, bomhead_revisiondate=:bomhead_revisiondate,"
                "    bomhead_batchsize=:bomhead_batchsize,"
                "    bomhead_requiredqtyper=:bomhead_requiredqtyper "
                "WHERE ((bomhead_item_id=:bomhead_item_id) "
 			   "AND (bomhead_rev_id=:bomhead_rev_id));" );
-    q.bindValue(":bomhead_item_id", _item->id());
-    q.bindValue(":bomhead_rev_id", _revision->id());
+    BSave.bindValue(":bomhead_item_id", _item->id());
+    BSave.bindValue(":bomhead_rev_id", _revision->id());
   }
   else
   {
-    q.prepare( "INSERT INTO bomhead "
+    BSave.prepare( "INSERT INTO bomhead "
                "( bomhead_item_id, bomhead_docnum,"
                "  bomhead_revision, bomhead_revisiondate,"
                "  bomhead_batchsize, bomhead_requiredqtyper ) "
@@ -203,16 +204,16 @@ bool BOM::sSave()
                "( :bomhead_item_id, :bomhead_docnum,"
                "  :bomhead_revision, :bomhead_revisiondate, "
                "  :bomhead_batchsize, :bomhead_requiredqtyper ) " );
-    q.bindValue(":bomhead_item_id", _item->id());
+    BSave.bindValue(":bomhead_item_id", _item->id());
   }
   
-  q.bindValue(":bomhead_docnum", _documentNum->text());
-  q.bindValue(":bomhead_revision", _revision->number());
-  q.bindValue(":bomhead_revisiondate", _revisionDate->date());
-  q.bindValue(":bomhead_batchsize", _batchSize->toDouble());
+  BSave.bindValue(":bomhead_docnum", _documentNum->text());
+  BSave.bindValue(":bomhead_revision", _revision->number());
+  BSave.bindValue(":bomhead_revisiondate", _revisionDate->date());
+  BSave.bindValue(":bomhead_batchsize", _batchSize->toDouble());
   if(_doRequireQtyPer->isChecked())
-    q.bindValue(":bomhead_requiredqtyper", _requiredQtyPer->text().toDouble());
-  q.exec();
+    BSave.bindValue(":bomhead_requiredqtyper", _requiredQtyPer->text().toDouble());
+  BSave.exec();
   
   close();
 
@@ -332,27 +333,29 @@ void BOM::sView()
 
 void BOM::sExpire()
 {
-  q.prepare( "UPDATE bomitem "
+  XSqlQuery BExpire;
+  BExpire.prepare( "UPDATE bomitem "
              "SET bomitem_expires=CURRENT_DATE "
              "WHERE (bomitem_id=:bomitem_id);" );
-  q.bindValue(":bomitem_id", _bomitem->id());
-  q.exec();
+  BExpire.bindValue(":bomitem_id", _bomitem->id());
+  BExpire.exec();
   
   omfgThis->sBOMsUpdated(_item->id(), TRUE);
 }
 
 void BOM::sDelete()
 {
+  XSqlQuery BDelete;
   if (QMessageBox::question(this, tr("Delete Item?"),
                             tr("<p>This action can not be undone. "
                                "Are you sure you want to delete this Item?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare( "DELETE FROM bomitem "
+    BDelete.prepare( "DELETE FROM bomitem "
                "WHERE (bomitem_id=:bomitem_id);" );
-    q.bindValue(":bomitem_id", _bomitem->id());
-    q.exec();
+    BDelete.bindValue(":bomitem_id", _bomitem->id());
+    BDelete.exec();
 
     omfgThis->sBOMsUpdated(_item->id(), TRUE);
   }
@@ -372,49 +375,53 @@ void BOM::sReplace()
 
 void BOM::sMoveUp()
 {
-  q.prepare("SELECT moveBomitemUp(:bomitem_id) AS result;");
-  q.bindValue(":bomitem_id", _bomitem->id());
-  q.exec();
+  XSqlQuery BMoveUp;
+  BMoveUp.prepare("SELECT moveBomitemUp(:bomitem_id) AS result;");
+  BMoveUp.bindValue(":bomitem_id", _bomitem->id());
+  BMoveUp.exec();
   
   omfgThis->sBOMsUpdated(_item->id(), TRUE);
 }
 
 void BOM::sMoveDown()
 {
-  q.prepare("SELECT moveBomitemDown(:bomitem_id) AS result;");
-  q.bindValue(":bomitem_id", _bomitem->id());
-  q.exec();
+  XSqlQuery BMoveDown;
+  BMoveDown.prepare("SELECT moveBomitemDown(:bomitem_id) AS result;");
+  BMoveDown.bindValue(":bomitem_id", _bomitem->id());
+  BMoveDown.exec();
   
   omfgThis->sBOMsUpdated(_item->id(), TRUE);
 }
 
 void BOM::sFillList()
 {
+  XSqlQuery BFillList;
   sFillList(_item->id(), TRUE);
 }
 
 void BOM::sFillList(int pItemid, bool)
 {
+  XSqlQuery BFillList;
   if (_item->isValid() && (pItemid == _item->id()))
   {
-    q.prepare( "SELECT * "
+    BFillList.prepare( "SELECT * "
                "FROM bomhead "
                "WHERE ( (bomhead_item_id=:item_id) "
                "AND (bomhead_rev_id=:revision_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":revision_id", _revision->id());
-    q.exec();
-    if (q.first())
+    BFillList.bindValue(":item_id", _item->id());
+    BFillList.bindValue(":revision_id", _revision->id());
+    BFillList.exec();
+    if (BFillList.first())
     {
-      _documentNum->setText(q.value("bomhead_docnum"));
-      _revisionDate->setDate(q.value("bomhead_revisiondate").toDate());
-      _batchSize->setDouble(q.value("bomhead_batchsize").toDouble());
-      if(q.value("bomhead_requiredqtyper").toDouble()!=0)
+      _documentNum->setText(BFillList.value("bomhead_docnum"));
+      _revisionDate->setDate(BFillList.value("bomhead_revisiondate").toDate());
+      _batchSize->setDouble(BFillList.value("bomhead_batchsize").toDouble());
+      if(BFillList.value("bomhead_requiredqtyper").toDouble()!=0)
       {
         _doRequireQtyPer->setChecked(true);
-        _requiredQtyPer->setDouble(q.value("bomhead_requiredqtyper").toDouble());
+        _requiredQtyPer->setDouble(BFillList.value("bomhead_requiredqtyper").toDouble());
       }
-      _revision->setNumber(q.value("bomhead_revision").toString());
+      _revision->setNumber(BFillList.value("bomhead_revision").toString());
       if ( (_revision->description() == "Inactive") || (_mode == cView) )
       {
         _save->setEnabled(FALSE);
@@ -478,11 +485,11 @@ void BOM::sFillList(int pItemid, bool)
     setParams(params);
     
     MetaSQLQuery mql = mqlLoad("bomItems", "detail");
-    q = mql.toQuery(params);
-    _bomitem->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
+    BFillList = mql.toQuery(params);
+    _bomitem->populate(BFillList);
+    if (BFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, BFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
@@ -500,33 +507,33 @@ void BOM::sFillList(int pItemid, bool)
           "<? endif ?>"
           " ) "
           "GROUP BY item_picklist;");
-    q = picklistmql.toQuery(params);
+    BFillList = picklistmql.toQuery(params);
     
     bool   foundPick    = FALSE;
     bool   foundNonPick = FALSE;
     int    totalNumber  = 0;
     double totalQtyPer  = 0.0;
-    while (q.next())
+    while (BFillList.next())
     {
-      totalNumber += q.value("total").toInt();
-      totalQtyPer += q.value("qtyper").toDouble();
+      totalNumber += BFillList.value("total").toInt();
+      totalQtyPer += BFillList.value("qtyper").toDouble();
       
-      if (q.value("item_picklist").toBool())
+      if (BFillList.value("item_picklist").toBool())
       {
         foundPick = TRUE;
-        _pickNumber->setDouble(q.value("total").toDouble());
-        _pickQtyPer->setDouble(q.value("qtyper").toDouble());
+        _pickNumber->setDouble(BFillList.value("total").toDouble());
+        _pickQtyPer->setDouble(BFillList.value("qtyper").toDouble());
       }
       else
       {
         foundNonPick = TRUE;
-        _nonPickNumber->setDouble(q.value("total").toDouble());
-        _nonPickQtyPer->setDouble(q.value("qtyper").toDouble());
+        _nonPickNumber->setDouble(BFillList.value("total").toDouble());
+        _nonPickQtyPer->setDouble(BFillList.value("qtyper").toDouble());
       }
     }
-    if (q.lastError().type() != QSqlError::NoError)
+    if (BFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, BFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
@@ -563,16 +570,16 @@ void BOM::sFillList(int pItemid, bool)
             "<? endif ?>"
             " ) "
             "GROUP BY p.item_maxcost;");
-      q = costsmql.toQuery(params);
-      if (q.first())
+      BFillList = costsmql.toQuery(params);
+      if (BFillList.first())
       {
-        _currentStdCost->setDouble(q.value("stdcost").toDouble());
-        _currentActCost->setDouble(q.value("actcost").toDouble());
-        _maxCost->setDouble(q.value("item_maxcost").toDouble());
+        _currentStdCost->setDouble(BFillList.value("stdcost").toDouble());
+        _currentActCost->setDouble(BFillList.value("actcost").toDouble());
+        _maxCost->setDouble(BFillList.value("item_maxcost").toDouble());
       }
-      if (q.lastError().type() != QSqlError::NoError)
+      if (BFillList.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, BFillList.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }

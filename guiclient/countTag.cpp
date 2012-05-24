@@ -59,6 +59,7 @@ void countTag::languageChange()
 
 enum SetResponse countTag::set(const ParameterList &pParams)
 {
+  XSqlQuery countet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -79,14 +80,14 @@ enum SetResponse countTag::set(const ParameterList &pParams)
   {
     _captive = TRUE;
 
-    q.prepare( "SELECT invcnt_id "
+    countet.prepare( "SELECT invcnt_id "
                "FROM invcnt "
                "WHERE (invcnt_invhist_id=:invhist_id);" );
-    q.bindValue(":invhist_id", param.toInt());
-    q.exec();
-    if (q.first())
+    countet.bindValue(":invhist_id", param.toInt());
+    countet.exec();
+    if (countet.first())
     {
-      _cnttagid = q.value("invcnt_id").toInt();
+      _cnttagid = countet.value("invcnt_id").toInt();
       populate();
     }
 //  ToDo
@@ -146,16 +147,17 @@ void countTag::sCatchCounttagid(int pCnttagid)
 
 void countTag::sEnter()
 {
+  XSqlQuery countEnter;
   if (_mode == cEdit)
   {
-    q.prepare("SELECT enterCount(:cnttagid, :qty, :comments);");
-    q.bindValue(":cnttagid", _cnttagid);
-    q.bindValue(":qty", _qty->toDouble());
-    q.bindValue(":comments", _newComments->toPlainText());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    countEnter.prepare("SELECT enterCount(:cnttagid, :qty, :comments);");
+    countEnter.bindValue(":cnttagid", _cnttagid);
+    countEnter.bindValue(":qty", _qty->toDouble());
+    countEnter.bindValue(":comments", _newComments->toPlainText());
+    countEnter.exec();
+    if (countEnter.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, countEnter.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -164,14 +166,14 @@ void countTag::sEnter()
   {
 
 //  Make sure that there aren't any unposted Slips for this Tag
-    q.prepare( "SELECT cntslip_id "
+    countEnter.prepare( "SELECT cntslip_id "
                "FROM cntslip "
                "WHERE ( (NOT cntslip_posted)"
                " AND (cntslip_cnttag_id=:cnttag_id) ) "
                "LIMIT 1;" );
-    q.bindValue(":cnttag_id", _cnttagid);
-    q.exec();
-    if (q.first())
+    countEnter.bindValue(":cnttag_id", _cnttagid);
+    countEnter.exec();
+    if (countEnter.first())
     {
       QMessageBox::critical( this, tr("Cannot Post Count Tag"),
                              tr( "There are unposted Count Slips for this Count Tag.\n"
@@ -179,19 +181,19 @@ void countTag::sEnter()
 
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (countEnter.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, countEnter.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare("SELECT postCountTag(:cnttag_id, :thaw) AS result;");
-    q.bindValue(":cnttag_id", _cnttagid);
-    q.bindValue(":thaw", QVariant(_thaw->isChecked()));
-    q.exec();
-    if (q.first())
+    countEnter.prepare("SELECT postCountTag(:cnttag_id, :thaw) AS result;");
+    countEnter.bindValue(":cnttag_id", _cnttagid);
+    countEnter.bindValue(":thaw", QVariant(_thaw->isChecked()));
+    countEnter.exec();
+    if (countEnter.first())
     {
-      switch (q.value("result").toInt())
+      switch (countEnter.value("result").toInt())
       {
         case -1:
           QMessageBox::critical(this, tr("Cannot Post Count Tag"),
@@ -238,9 +240,9 @@ void countTag::sEnter()
           break;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (countEnter.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, countEnter.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -268,6 +270,7 @@ void countTag::sCountTagList()
 
 void countTag::sParseCountTagNumber()
 {
+  XSqlQuery countParseCountTagNumber;
   QString sql( "SELECT invcnt_id "
              "FROM invcnt "
              "JOIN itemsite ON (invcnt_itemsite_id=itemsite_id) "
@@ -279,15 +282,15 @@ void countTag::sParseCountTagNumber()
   ctp.append("cnttag_tagnumber", _countTagNumber->text().trimmed());
       
   MetaSQLQuery ctq(sql);
-  q = ctq.toQuery(ctp);
-  if (q.first())
+  countParseCountTagNumber = ctq.toQuery(ctp);
+  if (countParseCountTagNumber.first())
   {
-    _cnttagid = q.value("invcnt_id").toInt();
+    _cnttagid = countParseCountTagNumber.value("invcnt_id").toInt();
     populate();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (countParseCountTagNumber.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, countParseCountTagNumber.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -296,7 +299,8 @@ void countTag::sParseCountTagNumber()
 
 void countTag::populate()
 {
-  q.prepare( "SELECT invcnt_tagnumber, invcnt_itemsite_id,"
+  XSqlQuery countpopulate;
+  countpopulate.prepare( "SELECT invcnt_tagnumber, invcnt_itemsite_id,"
              "       invcnt_comments, itemsite_freeze,"
              "       warehous_useslips,"
              "       invcnt_qoh_after,"
@@ -309,26 +313,26 @@ void countTag::populate()
              "WHERE ( (invcnt_itemsite_id=itemsite_id)"
              " AND (itemsite_warehous_id=warehous_id)"
              " AND (invcnt_id=:cnttag_id) );" );
-  q.bindValue(":cnttag_id", _cnttagid);
-  q.bindValue(":na", tr("N/A"));
-  q.exec();
-  if (q.first())
+  countpopulate.bindValue(":cnttag_id", _cnttagid);
+  countpopulate.bindValue(":na", tr("N/A"));
+  countpopulate.exec();
+  if (countpopulate.first())
   {
-    if ((_mode == cView) && (q.value("invcnt_tagnumber").toString() == "") )
+    if ((_mode == cView) && (countpopulate.value("invcnt_tagnumber").toString() == "") )
       _countTagNumber->setText("Misc.");
     else
-      _countTagNumber->setText(q.value("invcnt_tagnumber").toString());
+      _countTagNumber->setText(countpopulate.value("invcnt_tagnumber").toString());
 
-    _item->setItemsiteid(q.value("invcnt_itemsite_id").toInt());
-    _qty->setDouble(q.value("invcnt_qoh_after").toDouble());
-    _qty->setEnabled(!q.value("warehous_useslips").toBool());
-    _thaw->setChecked(q.value("itemsite_freeze").toBool());
-    _currentComments->setText(q.value("invcnt_comments").toString());
-    _location->setText(q.value("f_location").toString());
+    _item->setItemsiteid(countpopulate.value("invcnt_itemsite_id").toInt());
+    _qty->setDouble(countpopulate.value("invcnt_qoh_after").toDouble());
+    _qty->setEnabled(!countpopulate.value("warehous_useslips").toBool());
+    _thaw->setChecked(countpopulate.value("itemsite_freeze").toBool());
+    _currentComments->setText(countpopulate.value("invcnt_comments").toString());
+    _location->setText(countpopulate.value("f_location").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (countpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, countpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else

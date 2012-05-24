@@ -60,6 +60,7 @@ enum SetResponse reprioritizeWo::set(const ParameterList &pParams)
 
 void reprioritizeWo::sReprioritize()
 {
+  XSqlQuery reprioritizeReprioritize;
   if (_wo->status() == 'R')
   {
     QMessageBox::warning( this, tr("Cannot Reschedule Released W/O"),
@@ -68,11 +69,11 @@ void reprioritizeWo::sReprioritize()
     return;
   }
 
-  q.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
-  q.bindValue(":wo_id", _wo->id());
-  q.bindValue(":newPriority", _new->value());
-  q.bindValue(":reprioritizeChildren", QVariant(_changeChildren->isChecked()));
-  q.exec();
+  reprioritizeReprioritize.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
+  reprioritizeReprioritize.bindValue(":wo_id", _wo->id());
+  reprioritizeReprioritize.bindValue(":newPriority", _new->value());
+  reprioritizeReprioritize.bindValue(":reprioritizeChildren", QVariant(_changeChildren->isChecked()));
+  reprioritizeReprioritize.exec();
 
   omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
 
@@ -89,17 +90,18 @@ void reprioritizeWo::sReprioritize()
 
 void reprioritizeWo::sPopulateWoInfo(int pWoid)
 {
+  XSqlQuery reprioritizePopulateWoInfo;
   if (pWoid != -1)
   {
-    q.prepare( "SELECT wo_priority "
+    reprioritizePopulateWoInfo.prepare( "SELECT wo_priority "
                "FROM wo "
                "WHERE (wo_id=:wo_id);" );
-    q.bindValue(":wo_id", pWoid);
-    q.exec();
-    if (q.first())
+    reprioritizePopulateWoInfo.bindValue(":wo_id", pWoid);
+    reprioritizePopulateWoInfo.exec();
+    if (reprioritizePopulateWoInfo.first())
     {
-      _current->setText(q.value("wo_priority").toString());
-      _new->setValue(q.value("wo_priority").toInt());
+      _current->setText(reprioritizePopulateWoInfo.value("wo_priority").toString());
+      _new->setValue(reprioritizePopulateWoInfo.value("wo_priority").toInt());
       return;
     }
     else

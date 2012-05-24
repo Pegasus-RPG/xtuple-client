@@ -51,6 +51,7 @@ void itemtax::languageChange()
 
 enum SetResponse itemtax::set(const ParameterList & pParams)
 {
+  XSqlQuery itemtaxet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -63,18 +64,18 @@ enum SetResponse itemtax::set(const ParameterList & pParams)
   if (valid)
   {
     _itemtaxid = param.toInt();
-    q.prepare("SELECT itemtax_item_id,"
+    itemtaxet.prepare("SELECT itemtax_item_id,"
               "       COALESCE(itemtax_taxzone_id,-1) AS taxzone_id,"
               "       itemtax_taxtype_id"
               "  FROM itemtax"
               " WHERE (itemtax_id=:itemtax_id);");
-    q.bindValue(":itemtax_id", _itemtaxid);
-    q.exec();
-    if(q.first())
+    itemtaxet.bindValue(":itemtax_id", _itemtaxid);
+    itemtaxet.exec();
+    if(itemtaxet.first())
     {
-      _itemid = q.value("itemtax_item_id").toInt();
-      _taxzone->setId(q.value("taxzone_id").toInt());
-      _taxtype->setId(q.value("itemtax_taxtype_id").toInt());
+      _itemid = itemtaxet.value("itemtax_item_id").toInt();
+      _taxzone->setId(itemtaxet.value("taxzone_id").toInt());
+      _taxtype->setId(itemtaxet.value("itemtax_taxtype_id").toInt());
     }
     // TODO: catch any possible errors
   }
@@ -100,17 +101,18 @@ enum SetResponse itemtax::set(const ParameterList & pParams)
 
 void itemtax::sSave()
 {
-  q.prepare("SELECT itemtax_id"
+  XSqlQuery itemtaxSave;
+  itemtaxSave.prepare("SELECT itemtax_id"
             "  FROM itemtax"
             " WHERE ((itemtax_taxzone_id=:taxzone_id)"
             "   AND  (itemtax_item_id=:item_id)"
             "   AND  (itemtax_id != :itemtax_id))");
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":itemtax_id", _itemtaxid);
+  itemtaxSave.bindValue(":item_id", _itemid);
+  itemtaxSave.bindValue(":itemtax_id", _itemtaxid);
   if(_taxzone->isValid())
-    q.bindValue(":taxzone_id", _taxzone->id());
-  q.exec();
-  if(q.first())
+    itemtaxSave.bindValue(":taxzone_id", _taxzone->id());
+  itemtaxSave.exec();
+  if(itemtaxSave.first())
   {
     QMessageBox::warning(this, tr("Tax Zone Already Exists"),
                       tr("The Tax Zone you have choosen already exists for this item."));
@@ -118,21 +120,21 @@ void itemtax::sSave()
   }
 
   if(cNew == _mode)
-    q.prepare("INSERT INTO itemtax"
+    itemtaxSave.prepare("INSERT INTO itemtax"
               "      (itemtax_item_id, itemtax_taxzone_id, itemtax_taxtype_id) "
               "VALUES(:item_id, :taxzone_id, :taxtype_id)");
   else if(cEdit == _mode)
-    q.prepare("UPDATE itemtax"
+    itemtaxSave.prepare("UPDATE itemtax"
               "   SET itemtax_taxzone_id=:taxzone_id,"
               "       itemtax_taxtype_id=:taxtype_id"
               " WHERE (itemtax_id=:itemtax_id);");
 
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":itemtax_id", _itemtaxid);
+  itemtaxSave.bindValue(":item_id", _itemid);
+  itemtaxSave.bindValue(":itemtax_id", _itemtaxid);
   if(_taxzone->isValid())
-    q.bindValue(":taxzone_id", _taxzone->id());
-  q.bindValue(":taxtype_id", _taxtype->id());
-  q.exec();
+    itemtaxSave.bindValue(":taxzone_id", _taxzone->id());
+  itemtaxSave.bindValue(":taxtype_id", _taxtype->id());
+  itemtaxSave.exec();
 
   accept();
 }

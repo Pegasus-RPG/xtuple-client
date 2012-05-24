@@ -109,12 +109,13 @@ void projects::sView()
 
 void projects::sDelete()
 {
-  q.prepare("SELECT deleteProject(:prj_id) AS result");
-  q.bindValue(":prj_id", list()->id());
-  q.exec();
-  if(q.first())
+  XSqlQuery projectsDelete;
+  projectsDelete.prepare("SELECT deleteProject(:prj_id) AS result");
+  projectsDelete.bindValue(":prj_id", list()->id());
+  projectsDelete.exec();
+  if(projectsDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = projectsDelete.value("result").toInt();
     if(result < 0)
     {
       QString errmsg;
@@ -145,9 +146,9 @@ void projects::sDelete()
         tr("Could not delete the project for one or more reasons.\n") + errmsg);
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (projectsDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, projectsDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -156,6 +157,7 @@ void projects::sDelete()
 
 void projects::sCopy()
 {
+  XSqlQuery projectsCopy;
   bool ok;
   QString newNumber = QInputDialog::getText(this, tr("Project Number"),
                                             tr("Project Number for the new Project:"),
@@ -168,14 +170,14 @@ void projects::sCopy()
   if ( !ok )
     return;
 
-  q.prepare("SELECT copyProject(:prj_id, :newNumber, :newDueOffset) AS result");
-  q.bindValue(":prj_id", list()->id());
-  q.bindValue(":newNumber", newNumber);
-  q.bindValue(":newDueOffset", newDueOffset);
-  q.exec();
-  if(q.first())
+  projectsCopy.prepare("SELECT copyProject(:prj_id, :newNumber, :newDueOffset) AS result");
+  projectsCopy.bindValue(":prj_id", list()->id());
+  projectsCopy.bindValue(":newNumber", newNumber);
+  projectsCopy.bindValue(":newDueOffset", newDueOffset);
+  projectsCopy.exec();
+  if(projectsCopy.first())
   {
-    int result = q.value("result").toInt();
+    int result = projectsCopy.value("result").toInt();
     if(result < 0)
     {
       QString errmsg;
@@ -197,9 +199,9 @@ void projects::sCopy()
         tr("Could not copy the project for one or more reasons.\n") + errmsg);
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (projectsCopy.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, projectsCopy.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

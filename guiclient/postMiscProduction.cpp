@@ -88,13 +88,14 @@ enum SetResponse postMiscProduction::set(const ParameterList &pParams)
 
 void postMiscProduction::sPost()
 {
+  XSqlQuery postPost;
   if (!okToPost())
     return;
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  postPost.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
 
   if (_qty > 0)
   {
@@ -150,7 +151,7 @@ void postMiscProduction::sPost()
     }
   }
 
-  q.exec("COMMIT;");
+  postPost.exec("COMMIT;");
   if (_captive)
     accept();
   else
@@ -324,17 +325,18 @@ bool postMiscProduction::closewo()
 
 bool postMiscProduction::transfer()
 {
-  q.prepare( "SELECT interWarehouseTransfer( :item_id, :from_warehous_id, :to_warehous_id,"
+  XSqlQuery posttransfer;
+  posttransfer.prepare( "SELECT interWarehouseTransfer( :item_id, :from_warehous_id, :to_warehous_id,"
              "                               :qty, 'W', :documentNumber, 'Transfer from Misc. Production Posting' ) AS result;" );
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":from_warehous_id", _warehouse->id());
-  q.bindValue(":to_warehous_id", _transferWarehouse->id());
-  q.bindValue(":qty", _qty * _sense);
-  q.bindValue(":documentNumber", _documentNum->text().trimmed());
-  q.exec();
-  if (q.first())
+  posttransfer.bindValue(":item_id", _item->id());
+  posttransfer.bindValue(":from_warehous_id", _warehouse->id());
+  posttransfer.bindValue(":to_warehous_id", _transferWarehouse->id());
+  posttransfer.bindValue(":qty", _qty * _sense);
+  posttransfer.bindValue(":documentNumber", _documentNum->text().trimmed());
+  posttransfer.exec();
+  if (posttransfer.first())
   {
-    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    if (distributeInventory::SeriesAdjust(posttransfer.value("result").toInt(), this) == XDialog::Rejected)
     {
       QMessageBox::information( this, tr("Post Misc. Production"), tr("Transaction Canceled") );
       return false;

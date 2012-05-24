@@ -307,6 +307,7 @@ void dspInventoryHistory::sViewWOInfo()
 
 void dspInventoryHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
 {
+  XSqlQuery dspPopulateMenu;
   QAction *menuItem;
 
   menuItem = pMenu->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
@@ -323,14 +324,14 @@ void dspInventoryHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, in
 
     if ( (mainNumber) && (subNumber) )
     {
-      q.prepare( "SELECT wo_id "
+      dspPopulateMenu.prepare( "SELECT wo_id "
                  "FROM wo "
                  "WHERE ( (wo_number=:wo_number)"
                  " AND (wo_subnumber=:wo_subnumber) );" );
-      q.bindValue(":wo_number", mainNumber);
-      q.bindValue(":wo_subnumber", subNumber);
-      q.exec();
-      if (q.first())
+      dspPopulateMenu.bindValue(":wo_number", mainNumber);
+      dspPopulateMenu.bindValue(":wo_subnumber", subNumber);
+      dspPopulateMenu.exec();
+      if (dspPopulateMenu.first())
       {
         menuItem = pMenu->addAction(tr("View Work Order Information..."), this, SLOT(sViewWOInfo()));
         menuItem->setEnabled(_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders"));

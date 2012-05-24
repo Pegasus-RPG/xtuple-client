@@ -47,19 +47,20 @@ void allocateReservations::sAllocate()
     return;
   }
 
-  q.prepare("SELECT reserveAllSo(:addpackinglist, :startDate, :endDate, :cust_id, :shipto_id, :custtype_id, :custtype_pattern) AS result;");
-  q.bindValue(":addpackinglist", _addPackingList->isChecked());
-  _dates->bindValue(q);
+  XSqlQuery allocateRes;
+  allocateRes.prepare("SELECT reserveAllSo(:addpackinglist, :startDate, :endDate, :cust_id, :shipto_id, :custtype_id, :custtype_pattern) AS result;");
+  allocateRes.bindValue(":addpackinglist", _addPackingList->isChecked());
+  _dates->bindValue(allocateRes);
   if (_selectedCustomer->isChecked())
-    q.bindValue(":cust_id", _cust->id());
+    allocateRes.bindValue(":cust_id", _cust->id());
   if (_selectedCustomerShipto->isChecked())
-    q.bindValue(":shipto_id", _customerShipto->id());
+    allocateRes.bindValue(":shipto_id", _customerShipto->id());
   if (_selectedCustomerType->isChecked())
-    q.bindValue(":custtype_id", _customerTypes->id());
+    allocateRes.bindValue(":custtype_id", _customerTypes->id());
   if (_customerTypePattern->isChecked())
-    q.bindValue(":custtype_pattern", _customerType->text());
+    allocateRes.bindValue(":custtype_pattern", _customerType->text());
 
-  q.exec();
+  allocateRes.exec();
 
   accept();
 }
@@ -96,12 +97,13 @@ void allocateReservations::sSubmit()
 
 void allocateReservations::sCustomerSelected()
 {
+  XSqlQuery selectedRes;
   _customerShipto->clear();
-  q.prepare("SELECT shipto_id, shipto_num"
+  selectedRes.prepare("SELECT shipto_id, shipto_num"
             "  FROM shiptoinfo"
             " WHERE (shipto_cust_id=:cust_id); ");
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
-  _customerShipto->populate(q);
+  selectedRes.bindValue(":cust_id", _cust->id());
+  selectedRes.exec();
+  _customerShipto->populate(selectedRes);
 }
 

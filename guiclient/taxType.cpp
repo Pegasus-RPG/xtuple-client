@@ -80,17 +80,18 @@ enum SetResponse taxType::set(const ParameterList &pParams)
 
 void taxType::sCheck()
 {
+  XSqlQuery taxCheck;
   _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT taxtype_id "
+    taxCheck.prepare( "SELECT taxtype_id "
                "FROM taxtype "
                "WHERE (UPPER(taxtype_name)=UPPER(:taxtype_name));" );
-    q.bindValue(":taxtype_name", _name->text());
-    q.exec();
-    if (q.first())
+    taxCheck.bindValue(":taxtype_name", _name->text());
+    taxCheck.exec();
+    if (taxCheck.first())
     {
-      _taxtypeid = q.value("taxtype_id").toInt();
+      _taxtypeid = taxCheck.value("taxtype_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -101,6 +102,7 @@ void taxType::sCheck()
 
 void taxType::sSave()
 {
+  XSqlQuery taxSave;
   if (_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical(this, tr("Missing Name"),
@@ -111,14 +113,14 @@ void taxType::sSave()
 
   if (_mode == cEdit)
   {
-    q.prepare( "SELECT taxtype_id "
+    taxSave.prepare( "SELECT taxtype_id "
                "FROM taxtype "
                "WHERE ( (taxtype_id<>:taxtype_id)"
                " AND (UPPER(taxtype_name)=UPPER(:taxtype_name)) );");
-    q.bindValue(":taxtype_id", _taxtypeid);
-    q.bindValue(":taxtype_name", _name->text().trimmed());
-    q.exec();
-    if (q.first())
+    taxSave.bindValue(":taxtype_id", _taxtypeid);
+    taxSave.bindValue(":taxtype_name", _name->text().trimmed());
+    taxSave.exec();
+    if (taxSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Tax Type"),
                              tr( "A Tax Type with the entered name already exists."
@@ -127,23 +129,23 @@ void taxType::sSave()
       return;
     }
 
-    q.prepare( "UPDATE taxtype "
+    taxSave.prepare( "UPDATE taxtype "
                "SET taxtype_name=:taxtype_name,"
                "    taxtype_descrip=:taxtype_descrip "
                "WHERE (taxtype_id=:taxtype_id);" );
-    q.bindValue(":taxtype_id", _taxtypeid);
-    q.bindValue(":taxtype_name", _name->text().trimmed());
-    q.bindValue(":taxtype_descrip", _description->text());
-    q.exec();
+    taxSave.bindValue(":taxtype_id", _taxtypeid);
+    taxSave.bindValue(":taxtype_name", _name->text().trimmed());
+    taxSave.bindValue(":taxtype_descrip", _description->text());
+    taxSave.exec();
   }
   else if (_mode == cNew)
   {
-    q.prepare( "SELECT taxtype_id "
+    taxSave.prepare( "SELECT taxtype_id "
                "FROM taxtype "
                "WHERE (UPPER(taxtype_name)=UPPER(:taxtype_name));");
-    q.bindValue(":taxtype_name", _name->text().trimmed());
-    q.exec();
-    if (q.first())
+    taxSave.bindValue(":taxtype_name", _name->text().trimmed());
+    taxSave.exec();
+    if (taxSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Tax Type"),
                              tr( "A Tax Type with the entered name already exists.\n"
@@ -152,9 +154,9 @@ void taxType::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('taxtype_taxtype_id_seq') AS taxtype_id;");
-    if (q.first())
-      _taxtypeid = q.value("taxtype_id").toInt();
+    taxSave.exec("SELECT NEXTVAL('taxtype_taxtype_id_seq') AS taxtype_id;");
+    if (taxSave.first())
+      _taxtypeid = taxSave.value("taxtype_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -163,14 +165,14 @@ void taxType::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO taxtype "
+    taxSave.prepare( "INSERT INTO taxtype "
                "( taxtype_id, taxtype_name, taxtype_descrip ) "
                "VALUES "
                "( :taxtype_id, :taxtype_name, :taxtype_descrip );" );
-    q.bindValue(":taxtype_id", _taxtypeid);
-    q.bindValue(":taxtype_name", _name->text().trimmed());
-    q.bindValue(":taxtype_descrip", _description->text());
-    q.exec();
+    taxSave.bindValue(":taxtype_id", _taxtypeid);
+    taxSave.bindValue(":taxtype_name", _name->text().trimmed());
+    taxSave.bindValue(":taxtype_descrip", _description->text());
+    taxSave.exec();
   }
 
   done(_taxtypeid);
@@ -178,17 +180,18 @@ void taxType::sSave()
 
 void taxType::populate()
 {
-  q.prepare( "SELECT taxtype_name, taxtype_descrip, taxtype_sys "
+  XSqlQuery taxpopulate;
+  taxpopulate.prepare( "SELECT taxtype_name, taxtype_descrip, taxtype_sys "
              "FROM taxtype "
              "WHERE (taxtype_id=:taxtype_id);" );
-  q.bindValue(":taxtype_id", _taxtypeid);
-  q.exec();
-  if (q.first())
+  taxpopulate.bindValue(":taxtype_id", _taxtypeid);
+  taxpopulate.exec();
+  if (taxpopulate.first())
   {
-    _name->setText(q.value("taxtype_name").toString());
-    if(q.value("taxtype_sys").toBool())
+    _name->setText(taxpopulate.value("taxtype_name").toString());
+    if(taxpopulate.value("taxtype_sys").toBool())
       _name->setEnabled(false);
-    _description->setText(q.value("taxtype_descrip").toString());
+    _description->setText(taxpopulate.value("taxtype_descrip").toString());
   }
 }
 

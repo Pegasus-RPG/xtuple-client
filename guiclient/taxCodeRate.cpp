@@ -38,6 +38,7 @@ void taxCodeRate::languageChange()
 
 enum SetResponse taxCodeRate::set( const ParameterList & pParams )
 {
+  XSqlQuery taxet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -56,12 +57,12 @@ enum SetResponse taxCodeRate::set( const ParameterList & pParams )
     if (param.toString() == "new")
     {
       _mode = cNew;
-	  q.prepare(" (SELECT taxrate_id "
+	  taxet.prepare(" (SELECT taxrate_id "
                 " FROM taxrate "
                 " WHERE taxrate_tax_id = :taxrate_tax_id); ");
-	  q.bindValue(":taxrate_tax_id", _taxId);
-	  q.exec();
-	  if(q.first())
+	  taxet.bindValue(":taxrate_tax_id", _taxId);
+	  taxet.exec();
+	  if(taxet.first())
       {
 	    XSqlQuery maxdate;
 		maxdate.prepare(" (SELECT (MAX(taxrate_expires) + 1) AS max_expires"
@@ -81,12 +82,12 @@ enum SetResponse taxCodeRate::set( const ParameterList & pParams )
 	  }
 	  _dates->setFocus();
       
-      q.exec("SELECT NEXTVAL('taxrate_taxrate_id_seq') AS taxrate_id");
-      if (q.first())
-        _taxrateid = q.value("taxrate_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      taxet.exec("SELECT NEXTVAL('taxrate_taxrate_id_seq') AS taxrate_id");
+      if (taxet.first())
+        _taxrateid = taxet.value("taxrate_id").toInt();
+      else if (taxet.lastError().type() != QSqlError::NoError)
       {
-	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	    systemError(this, taxet.lastError().databaseText(), __FILE__, __LINE__);
 		return UndefinedError;
       }
 	}
@@ -117,6 +118,7 @@ enum SetResponse taxCodeRate::set( const ParameterList & pParams )
 
 void taxCodeRate::sSave()
 { 
+  XSqlQuery taxSave;
   // Check if start date is greater than end date
   if( _dates->startDate() > _dates->endDate()) 
   {
@@ -126,18 +128,18 @@ void taxCodeRate::sSave()
 	return;
   }
   // Check for overlapping dates
-  q.prepare("SELECT taxrate_id,taxrate_tax_id,taxrate_effective,taxrate_expires "
+  taxSave.prepare("SELECT taxrate_id,taxrate_tax_id,taxrate_effective,taxrate_expires "
             "  FROM taxrate "
             " WHERE (taxrate_id != :taxrate_id) "
 			"   AND (taxrate_tax_id = :taxrate_tax_id) "
 			"   AND (taxrate_effective < :taxrate_expires) "
 			"   AND (taxrate_expires > :taxrate_effective ) ");
-  q.bindValue(":taxrate_id", _taxrateid);
-  q.bindValue(":taxrate_tax_id", _taxId);
-  q.bindValue(":taxrate_effective", _dates->startDate());
-  q.bindValue(":taxrate_expires", _dates->endDate());
-  q.exec();
-  if(q.first())
+  taxSave.bindValue(":taxrate_id", _taxrateid);
+  taxSave.bindValue(":taxrate_tax_id", _taxId);
+  taxSave.bindValue(":taxrate_effective", _dates->startDate());
+  taxSave.bindValue(":taxrate_expires", _dates->endDate());
+  taxSave.exec();
+  if(taxSave.first())
   {
     QMessageBox::critical(this, tr("Invalid Date Range"),
       tr("A Tax Rate already exists within the specified Date Range.") );
@@ -148,7 +150,7 @@ void taxCodeRate::sSave()
   // Save the values in the database
   if (cNew == _mode) 
   {
-    q.prepare("INSERT INTO taxrate (taxrate_id, "
+    taxSave.prepare("INSERT INTO taxrate (taxrate_id, "
 	      "    taxrate_tax_id, taxrate_percent, "
 	      "    taxrate_curr_id, taxrate_amount, "
 		  "    taxrate_effective, taxrate_expires) "
@@ -159,7 +161,7 @@ void taxCodeRate::sSave()
   }
   else 
   {
-    q.prepare("UPDATE taxrate SET "
+    taxSave.prepare("UPDATE taxrate SET "
 	      "    taxrate_tax_id=:taxrate_tax_id, "
 	      "    taxrate_percent=:taxrate_percent, "
 	      "    taxrate_curr_id=:taxrate_curr_id, "
@@ -168,26 +170,26 @@ void taxCodeRate::sSave()
 		  "	   taxrate_expires=:taxrate_expires "
 		  "WHERE (taxrate_id=:taxrate_id);");
   }
-  q.bindValue(":taxrate_id", _taxrateid);
-  q.bindValue(":taxrate_tax_id", _taxId);
+  taxSave.bindValue(":taxrate_id", _taxrateid);
+  taxSave.bindValue(":taxrate_tax_id", _taxId);
 
   if(_percent->isValid())
-    q.bindValue(":taxrate_percent", (_percent->toDouble() / 100));
+    taxSave.bindValue(":taxrate_percent", (_percent->toDouble() / 100));
   else
-    q.bindValue(":taxrate_percent", 0.0);
+    taxSave.bindValue(":taxrate_percent", 0.0);
 
-  q.bindValue(":taxrate_curr_id", _flat->id());
+  taxSave.bindValue(":taxrate_curr_id", _flat->id());
   if(_flat->isEmpty())
-    q.bindValue(":taxrate_amount", 0.0);
+    taxSave.bindValue(":taxrate_amount", 0.0);
   else
-    q.bindValue(":taxrate_amount", _flat->localValue());
-  q.bindValue(":taxrate_effective", _dates->startDate());
-  q.bindValue(":taxrate_expires", _dates->endDate()); 
+    taxSave.bindValue(":taxrate_amount", _flat->localValue());
+  taxSave.bindValue(":taxrate_effective", _dates->startDate());
+  taxSave.bindValue(":taxrate_expires", _dates->endDate()); 
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  taxSave.exec();
+  if (taxSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -196,21 +198,22 @@ void taxCodeRate::sSave()
 
 void taxCodeRate::sPopulate()
 {
-  q.prepare("SELECT * FROM taxrate WHERE (taxrate_id=:taxrate_id);");
-  q.bindValue(":taxrate_id", _taxrateid);
-  q.exec();
-  if (q.first())
+  XSqlQuery taxPopulate;
+  taxPopulate.prepare("SELECT * FROM taxrate WHERE (taxrate_id=:taxrate_id);");
+  taxPopulate.bindValue(":taxrate_id", _taxrateid);
+  taxPopulate.exec();
+  if (taxPopulate.first())
   { 
-    _taxrateid	= q.value("taxrate_id").toInt();
-	_dates->setStartDate(q.value("taxrate_effective").toDate()); 
-	_dates->setEndDate(q.value("taxrate_expires").toDate());
-	_percent->setText(q.value("taxrate_percent").toDouble() * 100);
-	_flat->setId(q.value("taxrate_curr_id").toInt());
-	_flat->setLocalValue(q.value("taxrate_amount").toDouble());
+    _taxrateid	= taxPopulate.value("taxrate_id").toInt();
+	_dates->setStartDate(taxPopulate.value("taxrate_effective").toDate()); 
+	_dates->setEndDate(taxPopulate.value("taxrate_expires").toDate());
+	_percent->setText(taxPopulate.value("taxrate_percent").toDouble() * 100);
+	_flat->setId(taxPopulate.value("taxrate_curr_id").toInt());
+	_flat->setLocalValue(taxPopulate.value("taxrate_amount").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (taxPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

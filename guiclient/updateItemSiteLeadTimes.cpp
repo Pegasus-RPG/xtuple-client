@@ -34,6 +34,7 @@ void updateItemSiteLeadTimes::languageChange()
 
 void updateItemSiteLeadTimes::sUpdate()
 {
+  XSqlQuery updateUpdate;
   QString sql( "SELECT updateItemSiteLeadTime(itemsite_id, :leadTimePad) AS result "
                "FROM itemsite, item "
                "WHERE ((itemsite_item_id=item_id)" );
@@ -48,11 +49,11 @@ void updateItemSiteLeadTimes::sUpdate()
 
   sql += ");";
 
-  q.prepare(sql);
-  q.bindValue(":leadTimePad", _leadTimePad->value());
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  q.exec();
+  updateUpdate.prepare(sql);
+  updateUpdate.bindValue(":leadTimePad", _leadTimePad->value());
+  _warehouse->bindValue(updateUpdate);
+  _classCode->bindValue(updateUpdate);
+  updateUpdate.exec();
 
   accept();
 }

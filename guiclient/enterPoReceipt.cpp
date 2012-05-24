@@ -211,6 +211,7 @@ void enterPoReceipt::post(const QString pType, const int pId)
 
 void enterPoReceipt::sPost()
 {
+  XSqlQuery enterPost;
   ParameterList params;	// shared by several queries
   setParams(params);
 
@@ -222,10 +223,10 @@ void enterPoReceipt::sPost()
                    "  AND  (orderitem_orderhead_type=<? value(\"ordertype\") ?>)"
 		   "  AND  (orderitem_orderhead_id=<? value(\"orderid\") ?>));";
   MetaSQLQuery checkm(checks);
-  q = checkm.toQuery(params);
-  if (q.first())
+  enterPost = checkm.toQuery(params);
+  if (enterPost.first())
   {
-    if (q.value("qtyToRecv").toDouble() <= 0)
+    if (enterPost.value("qtyToRecv").toDouble() <= 0)
     {
       QMessageBox::critical(this, tr("Nothing selected for Receipt"),
 			    tr("<p>No Line Items have been selected "
@@ -234,9 +235,9 @@ void enterPoReceipt::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -245,7 +246,7 @@ void enterPoReceipt::sPost()
   QDate warrdate;
   bool gotlot = false;
 
-  q.exec("BEGIN;");	// because of possible insertgltransaction failures
+  enterPost.exec("BEGIN;");	// because of possible insertgltransaction failures
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -465,7 +466,7 @@ void enterPoReceipt::sPost()
 
   _soheadid = -1;
 
-  q.exec("COMMIT;");
+  enterPost.exec("COMMIT;");
 
   // TODO: update this to sReceiptsUpdated?
   omfgThis->sPurchaseOrderReceiptsUpdated();
@@ -505,18 +506,19 @@ void enterPoReceipt::sEnter()
 
 void enterPoReceipt::sFillList()
 {
+  XSqlQuery enterFillList;
   _orderitem->clear();
 
   if (_order->isRA())
   {
-    q.prepare( "SELECT (rahead_expiredate < CURRENT_DATE) AS expired "
+    enterFillList.prepare( "SELECT (rahead_expiredate < CURRENT_DATE) AS expired "
                "FROM rahead "
                "WHERE (rahead_id=:rahead_id);" );
-    q.bindValue(":rahead_id", _order->id());
-    q.exec();
-    if (q.first())
+    enterFillList.bindValue(":rahead_id", _order->id());
+    enterFillList.exec();
+    if (enterFillList.first())
     {
-      if (q.value("expired").toBool())
+      if (enterFillList.value("expired").toBool())
       {
         QMessageBox::warning(this, tr("RMA Expired"),
                              tr("<p>The selected Return Authorization "
@@ -525,9 +527,9 @@ void enterPoReceipt::sFillList()
         _order->setFocus();
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (enterFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enterFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -556,11 +558,11 @@ void enterPoReceipt::sFillList()
     ParameterList params;
     setParams(params);
     MetaSQLQuery fillm = mqlLoad("receipt", "detail");
-    q = fillm.toQuery(params);
-    _orderitem->populate(q,true);
-    if (q.lastError().type() != QSqlError::NoError)
+    enterFillList = fillm.toQuery(params);
+    _orderitem->populate(enterFillList,true);
+    if (enterFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enterFillList.lastError().databaseText(), __FILE__, __LINE__);
       connect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
       return;
     }
@@ -570,6 +572,7 @@ void enterPoReceipt::sFillList()
 
 void enterPoReceipt::close()
 {
+  XSqlQuery enterclose;
   QList<XTreeWidgetItem*> zeroItems = _orderitem->findItems("^[0.]*$", Qt::MatchRegExp, 9);
   if (_order->isValid() &&
       zeroItems.size() != _orderitem->topLevelItemCount())
@@ -585,19 +588,19 @@ void enterPoReceipt::close()
       QString dels = "SELECT deleteRecvForOrder(<? value (\"ordertype\") ?>,"
 		     "                   <? value(\"orderid\") ?>) AS result;" ;
       MetaSQLQuery delm(dels);
-      q = delm.toQuery(params);
-      if (q.first())
+      enterclose = delm.toQuery(params);
+      if (enterclose.first())
       {
-	int result = q.value("result").toInt();
+	int result = enterclose.value("result").toInt();
 	if (result < 0)
 	{
 	  systemError(this, storedProcErrorLookup("deleteRecvForOrder", result), __FILE__, __LINE__);
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (enterclose.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, enterclose.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
       omfgThis->sPurchaseOrderReceiptsUpdated();
@@ -613,16 +616,17 @@ void enterPoReceipt::close()
 
 void enterPoReceipt::sReceiveAll()
 {
+  XSqlQuery enterReceiveAll;
   ParameterList params;
   setParams(params);
   if (_metrics->boolean("EnableReturnAuth"))
     params.append("EnableReturnAuth", TRUE);
   MetaSQLQuery recvm = mqlLoad("receipt", "receiveAll");
-  q = recvm.toQuery(params);
+  enterReceiveAll = recvm.toQuery(params);
 
-  while (q.next())
+  while (enterReceiveAll.next())
   {
-    int result = q.value("result").toInt();
+    int result = enterReceiveAll.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("enterReceipt", result),
@@ -630,9 +634,9 @@ void enterPoReceipt::sReceiveAll()
       return;
     }
   }
-  if (q.lastError().type() != QSqlError::NoError)
+  if (enterReceiveAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterReceiveAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -650,6 +654,7 @@ void enterPoReceipt::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem * /*selected*/
 
 void enterPoReceipt::sBcFind()
 {
+  XSqlQuery enterBcFind;
   if (!_order->isValid())
   {
     QMessageBox::warning(this, tr("Invalid Order"),
@@ -677,14 +682,14 @@ void enterPoReceipt::sBcFind()
   setParams(findbc);
   findbc.append("bc", _bc->text());
   MetaSQLQuery fillm = mqlLoad("receipt", "detail");
-  q = fillm.toQuery(findbc);
-  if(q.first())
-    qtytoreceive = q.value("qty_toreceive").toDouble();
+  enterBcFind = fillm.toQuery(findbc);
+  if(enterBcFind.first())
+    qtytoreceive = enterBcFind.value("qty_toreceive").toDouble();
   else
   {
-    if (q.lastError().type() != QSqlError::NoError)
+    if (enterBcFind.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enterBcFind.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     XMessageBox::message(this, QMessageBox::Warning, tr("No Match Found"),
@@ -694,7 +699,7 @@ void enterPoReceipt::sBcFind()
   }
 
   ParameterList params;
-  params.append("lineitem_id", q.value("orderitem_id").toInt());
+  params.append("lineitem_id", enterBcFind.value("orderitem_id").toInt());
   params.append("order_type", _order->type());
   params.append("mode", "new");
   params.append("qty", _bcQty->toDouble() + qtytoreceive);
@@ -725,21 +730,22 @@ void enterPoReceipt::sCatchPoheadid(int pPoheadid)
 
 void enterPoReceipt::sCatchPoitemid(int pPoitemid)
 {
-  q.prepare( "SELECT poitem_pohead_id "
+  XSqlQuery enterCatchPoitemid;
+  enterCatchPoitemid.prepare( "SELECT poitem_pohead_id "
              "FROM poitem "
              "WHERE (poitem_id=:poitem_id);" );
-  q.bindValue(":poitem_id", pPoitemid);
-  q.exec();
-  if (q.first())
+  enterCatchPoitemid.bindValue(":poitem_id", pPoitemid);
+  enterCatchPoitemid.exec();
+  if (enterCatchPoitemid.first())
   {
-    _order->setId(q.value("poitem_pohead_id").toInt(), "PO");
+    _order->setId(enterCatchPoitemid.value("poitem_pohead_id").toInt(), "PO");
     _orderitem->clearSelection();
     _orderitem->setId(pPoitemid);
     sEnter();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterCatchPoitemid.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterCatchPoitemid.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -752,40 +758,42 @@ void enterPoReceipt::sCatchToheadid(int pToheadid)
 
 void enterPoReceipt::sCatchToitemid(int porderitemid)
 {
-  q.prepare( "SELECT toitem_tohead_id "
+  XSqlQuery enterCatchToitemid;
+  enterCatchToitemid.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:tohead_id);" );
-  q.bindValue(":tohead_id", porderitemid);
-  q.exec();
-  if (q.first())
+  enterCatchToitemid.bindValue(":tohead_id", porderitemid);
+  enterCatchToitemid.exec();
+  if (enterCatchToitemid.first())
   {
-    _order->setId(q.value("toitem_tohead_id").toInt(), "TO");
+    _order->setId(enterCatchToitemid.value("toitem_tohead_id").toInt(), "TO");
     _orderitem->clearSelection();
     _orderitem->setId(porderitemid);
     sEnter();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterCatchToitemid.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterCatchToitemid.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void enterPoReceipt::sCatchItemsiteid(int pItemsiteid)
 {
-  q.prepare("SELECT orderitem_id "
+  XSqlQuery enterCatchItemsiteid;
+  enterCatchItemsiteid.prepare("SELECT orderitem_id "
             "FROM orderitem "
             "WHERE ((orderitem_itemsite_id=:itemsite) "
             "   AND (orderitem_orderhead_type=:ordertype) "
             "   AND (orderitem_orderhead_id=:orderid));");
-  q.bindValue(":itemsite",  pItemsiteid);
-  q.bindValue(":ordertype", _order->type());
-  q.bindValue(":orderid",   _order->id());
-  q.exec();
-  if (q.first())
+  enterCatchItemsiteid.bindValue(":itemsite",  pItemsiteid);
+  enterCatchItemsiteid.bindValue(":ordertype", _order->type());
+  enterCatchItemsiteid.bindValue(":orderid",   _order->id());
+  enterCatchItemsiteid.exec();
+  if (enterCatchItemsiteid.first())
   {
     _orderitem->clearSelection();
-    _orderitem->setId(q.value("orderitem_id").toInt());
+    _orderitem->setId(enterCatchItemsiteid.value("orderitem_id").toInt());
     sEnter();
   }
   else
@@ -794,20 +802,21 @@ void enterPoReceipt::sCatchItemsiteid(int pItemsiteid)
 
 void enterPoReceipt::sCatchItemid(int pItemid)
 {
-  q.prepare( "SELECT orderitem_id "
+  XSqlQuery enterCatchItemid;
+  enterCatchItemid.prepare( "SELECT orderitem_id "
              "FROM orderitem, itemsite "
              "WHERE ((orderitem_itemsite_id=itemsite_id)"
              "  AND  (itemsite_item_id=:item_id)"
              "   AND  (orderitem_orderhead_type=:ordertype) "
              "   AND  (orderitem_orderhead_id=:orderid));");
-  q.bindValue(":item_id",   pItemid);
-  q.bindValue(":ordertype", _order->type());
-  q.bindValue(":orderid",   _order->id());
-  q.exec();
-  if (q.first())
+  enterCatchItemid.bindValue(":item_id",   pItemid);
+  enterCatchItemid.bindValue(":ordertype", _order->type());
+  enterCatchItemid.bindValue(":orderid",   _order->id());
+  enterCatchItemid.exec();
+  if (enterCatchItemid.first())
   {
     _orderitem->clearSelection();
-    _orderitem->setId(q.value("orderitem_id").toInt());
+    _orderitem->setId(enterCatchItemid.value("orderitem_id").toInt());
     sEnter();
   }
   else

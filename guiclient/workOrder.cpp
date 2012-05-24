@@ -46,6 +46,7 @@
 workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
+  XSqlQuery workOrder;
   setupUi(this);
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
@@ -172,6 +173,7 @@ void workOrder::languageChange()
 
 enum SetResponse workOrder::set(const ParameterList &pParams)
 {
+  XSqlQuery setWork;
   XWidget::set(pParams);
   _captive = TRUE;
 
@@ -329,7 +331,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _mode = cRelease;
       //_tabs->removePage(_tabs->page(3));
 
-      q.prepare( "SELECT planord_itemsite_id, planord_duedate,"
+      setWork.prepare( "SELECT planord_itemsite_id, planord_duedate,"
                  "       CASE WHEN(planord_mps) THEN 'P'"
                  "            ELSE 'M'"
                  "       END AS sourcetype,"
@@ -339,18 +341,18 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                  "       formatQty(planord_qty) AS qty "
                  "FROM planord "
                  "WHERE (planord_id=:planord_id);" );
-      q.bindValue(":planord_id", _planordid);
-      q.exec();
-      if (q.first())
+      setWork.bindValue(":planord_id", _planordid);
+      setWork.exec();
+      if (setWork.first())
       {
         _item->setReadOnly(TRUE);
         _warehouse->setEnabled(FALSE);
 
-        _planordtype=q.value("sourcetype").toString();
-        _sourceid=q.value("sourceid").toInt();
-        _qty->setText(q.value("qty").toString());
-        _dueDate->setDate(q.value("planord_duedate").toDate());
-        _item->setItemsiteid(q.value("planord_itemsite_id").toInt());
+        _planordtype=setWork.value("sourcetype").toString();
+        _sourceid=setWork.value("sourceid").toInt();
+        _qty->setText(setWork.value("qty").toString());
+        _dueDate->setDate(setWork.value("planord_duedate").toDate());
+        _item->setItemsiteid(setWork.value("planord_itemsite_id").toInt());
 
         sUpdateStartDate();
         populateWoNumber();
@@ -383,20 +385,21 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
 
 void workOrder::sCreate()
 {
+  XSqlQuery workCreate;
   if (_woNumber->text().length() &&
       _item->isValid() &&
       _warehouse->id() != -1 &&
       _qty->text().length() &&
       _dueDate->isValid())
   {
-    q.prepare( "SELECT itemsite_id, itemsite_costmethod "
+    workCreate.prepare( "SELECT itemsite_id, itemsite_costmethod "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
-    if (!q.first())
+    workCreate.bindValue(":item_id", _item->id());
+    workCreate.bindValue(":warehous_id", _warehouse->id());
+    workCreate.exec();
+    if (!workCreate.first())
     {
       QMessageBox::warning(this, tr("Invalid Site"),
           tr("<p>The selected Site for this Work Order is not "
@@ -407,8 +410,8 @@ void workOrder::sCreate()
     else
     {
       if (DEBUG)
-      qDebug("cost %s", qPrintable(q.value("itemsite_costmethod").toString()));
-      if (q.value("itemsite_costmethod").toString() == "J")
+      qDebug("cost %s", qPrintable(workCreate.value("itemsite_costmethod").toString()));
+      if (workCreate.value("itemsite_costmethod").toString() == "J")
       {
         QMessageBox::critical(this,tr("Invalid Item"),
                               tr("Item %1 is set to Job Costing on Item Site %2.  "
@@ -421,21 +424,21 @@ void workOrder::sCreate()
         return;
       }
 
-      if (q.value("itemsite_costmethod").toString() != "J" &&
-          q.value("itemsite_costmethod").toString() != "A")
+      if (workCreate.value("itemsite_costmethod").toString() != "J" &&
+          workCreate.value("itemsite_costmethod").toString() != "A")
         _jobCosGroup->setEnabled(false);
     }
   
-    int itemsiteid = q.value("itemsite_id").toInt();
+    int itemsiteid = workCreate.value("itemsite_id").toInt();
     double orderQty = _qty->toDouble();
   
     if (_assembly->isChecked())
     {
-      q.prepare("SELECT validateOrderQty(:itemsite_id, :qty, TRUE) AS qty;");
-      q.bindValue(":itemsite_id", itemsiteid);
-      q.bindValue(":qty", _qty->toDouble());
-      q.exec();
-      if (!q.first())
+      workCreate.prepare("SELECT validateOrderQty(:itemsite_id, :qty, TRUE) AS qty;");
+      workCreate.bindValue(":itemsite_id", itemsiteid);
+      workCreate.bindValue(":qty", _qty->toDouble());
+      workCreate.exec();
+      if (!workCreate.first())
       {
         systemError(this, tr("A System Error occurred at %1::%2.")
                           .arg(__FILE__)
@@ -443,7 +446,7 @@ void workOrder::sCreate()
         return;
       }
   
-      orderQty = q.value("qty").toDouble();
+      orderQty = workCreate.value("qty").toDouble();
       if (orderQty != _qty->toDouble())
       {
         if ( QMessageBox::warning( this, tr("Invalid Order Quantitiy"),
@@ -461,46 +464,46 @@ void workOrder::sCreate()
       }
     }
   
-    q.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty * :sense,"
+    workCreate.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty * :sense,"
                "                 COALESCE(:startDate, date(:dueDate) - :leadTime), :dueDate, "
                "                 :productionNotes, :ordtype, :ordid, :prj_id,"
                "                 :bom_rev_id, :boo_rev_id, :wo_cosmethod) AS result;" );
-    q.bindValue(":woNumber", _woNumber->text().toInt());
-    q.bindValue(":itemsite_id", itemsiteid);
-    q.bindValue(":priority", _priority->value());
-    q.bindValue(":orderQty", orderQty);
-    q.bindValue(":sense", _sense);
-    q.bindValue(":leadTime", _leadTime->value());
-    q.bindValue(":dueDate", _dueDate->date());
+    workCreate.bindValue(":woNumber", _woNumber->text().toInt());
+    workCreate.bindValue(":itemsite_id", itemsiteid);
+    workCreate.bindValue(":priority", _priority->value());
+    workCreate.bindValue(":orderQty", orderQty);
+    workCreate.bindValue(":sense", _sense);
+    workCreate.bindValue(":leadTime", _leadTime->value());
+    workCreate.bindValue(":dueDate", _dueDate->date());
     if (_startDate->isValid())
-      q.bindValue(":startDate", _startDate->date());
-    q.bindValue(":productionNotes", _productionNotes->toPlainText());
-    q.bindValue(":prj_id", _project->id());
-    q.bindValue(":bom_rev_id", _bomRevision->id());
-    q.bindValue(":boo_rev_id", _booRevision->id());
+      workCreate.bindValue(":startDate", _startDate->date());
+    workCreate.bindValue(":productionNotes", _productionNotes->toPlainText());
+    workCreate.bindValue(":prj_id", _project->id());
+    workCreate.bindValue(":bom_rev_id", _bomRevision->id());
+    workCreate.bindValue(":boo_rev_id", _booRevision->id());
     if (_todate->isChecked() && _jobCosGroup->isEnabled())
-      q.bindValue(":wo_cosmethod",QString("D"));
+      workCreate.bindValue(":wo_cosmethod",QString("D"));
     else if (_proportional->isChecked() && _jobCosGroup->isEnabled())
-      q.bindValue(":wo_cosmethod",QString("P"));
+      workCreate.bindValue(":wo_cosmethod",QString("P"));
 
     if(cRelease == _mode)
     {
-      q.bindValue(":ordtype", _planordtype);
-      q.bindValue(":ordid", _sourceid);
+      workCreate.bindValue(":ordtype", _planordtype);
+      workCreate.bindValue(":ordid", _sourceid);
     }
     else
     {
-      q.bindValue(":ordtype", QString(""));
-      q.bindValue(":ordid", -1);
+      workCreate.bindValue(":ordtype", QString(""));
+      workCreate.bindValue(":ordid", -1);
     }
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    workCreate.exec();
+    if (workCreate.lastError().type() != QSqlError::NoError)
     {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, workCreate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    if (!q.first())
+    if (!workCreate.first())
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
                         .arg(__FILE__)
@@ -508,19 +511,19 @@ void workOrder::sCreate()
       return;
     }
   
-    _woid = q.value("result").toInt();
+    _woid = workCreate.value("result").toInt();
   
-    q.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");
+    workCreate.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");
   
     QModelIndex idx1, idx2;
     for(int i = 0; i < _itemchar->rowCount(); i++)
     {
       idx1 = _itemchar->index(i, 0);
       idx2 = _itemchar->index(i, 1);
-      q.bindValue(":target_id", _woid);
-      q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
-      q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
-      q.exec();
+      workCreate.bindValue(":target_id", _woid);
+      workCreate.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+      workCreate.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+      workCreate.exec();
     }
   
     if (_woid == -1)
@@ -564,6 +567,7 @@ void workOrder::sCreate()
 
 void workOrder::sSave()
 {
+  XSqlQuery workSave;
   if ((!_qty->text().length()) || (_qty->toDouble() == 0.0))
   {
     QMessageBox::information( this, tr("Cannot Save Work Order"),
@@ -591,41 +595,41 @@ void workOrder::sSave()
     return;
   }
 
-  q.prepare("UPDATE wo"
+  workSave.prepare("UPDATE wo"
             "   SET wo_prodnotes=:productionNotes,"
             "       wo_prj_id=:prj_id,"
             "       wo_bom_rev_id=:bom_rev_id,"
             "       wo_boo_rev_id=:boo_rev_id,"
             "       wo_cosmethod=:wo_cosmethod"
             " WHERE (wo_id=:wo_id); ");
-  q.bindValue(":wo_id", _woid);
-  q.bindValue(":productionNotes", _productionNotes->toPlainText());
-  q.bindValue(":prj_id", _project->id());
-  q.bindValue(":bom_rev_id", _bomRevision->id());
-  q.bindValue(":boo_rev_id", _booRevision->id());
+  workSave.bindValue(":wo_id", _woid);
+  workSave.bindValue(":productionNotes", _productionNotes->toPlainText());
+  workSave.bindValue(":prj_id", _project->id());
+  workSave.bindValue(":bom_rev_id", _bomRevision->id());
+  workSave.bindValue(":boo_rev_id", _booRevision->id());
   if (_todate->isChecked() && _jobCosGroup->isEnabled())
-    q.bindValue(":wo_cosmethod",QString("D"));
+    workSave.bindValue(":wo_cosmethod",QString("D"));
   else if (_proportional->isChecked() && _jobCosGroup->isEnabled())
-    q.bindValue(":wo_cosmethod",QString("P"));
-  q.exec();
+    workSave.bindValue(":wo_cosmethod",QString("P"));
+  workSave.exec();
 
-  q.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");
+  workSave.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");
   QModelIndex idx1, idx2;
   for(int i = 0; i < _itemchar->rowCount(); i++)
   {
     idx1 = _itemchar->index(i, 0);
     idx2 = _itemchar->index(i, 1);
-    q.bindValue(":target_id", _woid);
-    q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
-    q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
-    q.exec();
+    workSave.bindValue(":target_id", _woid);
+    workSave.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+    workSave.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+    workSave.exec();
   }
   
   if (_mode == cRelease)
   {
-    q.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
-    q.bindValue(":planord_id", _planordid);
-    q.exec();
+    workSave.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
+    workSave.bindValue(":planord_id", _planordid);
+    workSave.exec();
   }
   
   omfgThis->sWorkOrdersUpdated(_woid, TRUE);
@@ -687,10 +691,11 @@ void workOrder::sUpdateStartDate()
 
 void workOrder::sPopulateItemChar( int pItemid )
 {
+  XSqlQuery workPopulateItemChar;
   _itemchar->removeRows(0, _itemchar->rowCount());
   if (pItemid != -1)
   {
-    q.prepare( "SELECT DISTINCT char_id, char_name,"
+    workPopulateItemChar.prepare( "SELECT DISTINCT char_id, char_name,"
                "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='I') AND (c.charass_target_id=:item_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
                "  FROM charass a, char "
                "    LEFT OUTER JOIN charass b"
@@ -701,19 +706,19 @@ void workOrder::sPopulateItemChar( int pItemid )
                "   AND   (a.charass_target_type='I')"
                "   AND   (a.charass_target_id=:item_id) ) "
                " ORDER BY char_name;" );
-    q.bindValue(":item_id", pItemid);
-    q.bindValue(":wo_id", _woid);
-    q.exec();
+    workPopulateItemChar.bindValue(":item_id", pItemid);
+    workPopulateItemChar.bindValue(":wo_id", _woid);
+    workPopulateItemChar.exec();
     int row = 0;
     QModelIndex idx;
-    while(q.next())
+    while(workPopulateItemChar.next())
     {
       _itemchar->insertRow(_itemchar->rowCount());
       idx = _itemchar->index(row, 0);
-      _itemchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
-      _itemchar->setData(idx, q.value("char_id"), Qt::UserRole);
+      _itemchar->setData(idx, workPopulateItemChar.value("char_name"), Qt::DisplayRole);
+      _itemchar->setData(idx, workPopulateItemChar.value("char_id"), Qt::UserRole);
       idx = _itemchar->index(row, 1);
-      _itemchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
+      _itemchar->setData(idx, workPopulateItemChar.value("charass_value"), Qt::DisplayRole);
       _itemchar->setData(idx, pItemid, Xt::IdRole);
       _itemchar->setData(idx, pItemid, Qt::UserRole);
       row++;
@@ -723,27 +728,28 @@ void workOrder::sPopulateItemChar( int pItemid )
 
 void workOrder::sPopulateLeadTime(int pWarehousid)
 {
+  XSqlQuery workPopulateLeadTime;
   if (pWarehousid < 0 || ! _item->isValid() ||
-      (_lastWarehousid==pWarehousid && _lastItemid==_item->id()))
+		(_lastWarehousid==pWarehousid && _lastItemid==_item->id()))
     return;
 
   _lastItemid = _item->id();
   _lastWarehousid = pWarehousid;
 
-  q.prepare( "SELECT itemsite_leadtime, itemsite_cosdefault "
+  workPopulateLeadTime.prepare( "SELECT itemsite_leadtime, itemsite_cosdefault "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", pWarehousid);
-  q.exec();
+  workPopulateLeadTime.bindValue(":item_id", _item->id());
+  workPopulateLeadTime.bindValue(":warehous_id", pWarehousid);
+  workPopulateLeadTime.exec();
 
-  if (q.first())
+  if (workPopulateLeadTime.first())
   {
-    _leadTime->setValue(q.value("itemsite_leadtime").toInt());
-    if (q.value("itemsite_cosdefault").toString() == "D")
+    _leadTime->setValue(workPopulateLeadTime.value("itemsite_leadtime").toInt());
+    if (workPopulateLeadTime.value("itemsite_cosdefault").toString() == "D")
 	  _todate->setChecked(TRUE);
-    if (q.value("itemsite_cosdefault").toString() == "P")
+    if (workPopulateLeadTime.value("itemsite_cosdefault").toString() == "P")
 	  _proportional->setChecked(TRUE);
   }
   else
@@ -758,15 +764,16 @@ void workOrder::sPopulateLeadTime(int pWarehousid)
 
 void workOrder::populateWoNumber()
 {
+  XSqlQuery workpopulateWoNumber;
   QString generationMethod = _metrics->value("WONumberGeneration");
 
   if ((generationMethod == "A") || (generationMethod == "O"))
   {
-    q.exec("SELECT fetchWoNumber() AS woNumber;");
-    if (q.first())
+    workpopulateWoNumber.exec("SELECT fetchWoNumber() AS woNumber;");
+    if (workpopulateWoNumber.first())
     {
-      _woNumber->setText(q.value("woNumber").toString());
-      _wonumber = q.value("woNumber").toInt();
+      _woNumber->setText(workpopulateWoNumber.value("woNumber").toString());
+      _wonumber = workpopulateWoNumber.value("woNumber").toInt();
     }
     else
     {
@@ -796,13 +803,14 @@ void workOrder::populateWoNumber()
 
 void workOrder::sClose()
 {
+  XSqlQuery workClose;
   if (_woid > 0)
   {
     if ((_mode == cNew) || (_mode == cRelease))
     {
-      q.prepare("SELECT deleteWo(:wo_id,true);");
-      q.bindValue(":wo_id", _woid);
-      q.exec();
+      workClose.prepare("SELECT deleteWo(:wo_id,true);");
+      workClose.bindValue(":wo_id", _woid);
+      workClose.exec();
       omfgThis->sWorkOrdersUpdated(_woid, TRUE);
     }
   }
@@ -811,9 +819,9 @@ void workOrder::sClose()
     if ( ( (_mode == cNew) || (_mode == cRelease)) &&
         ((_metrics->value("WONumberGeneration") == "A") || (_metrics->value("WONumberGeneration") == "O")) )
     {
-      q.prepare("SELECT releaseWoNumber(:woNumber);");
-      q.bindValue(":woNumber", _wonumber);
-      q.exec();
+      workClose.prepare("SELECT releaseWoNumber(:woNumber);");
+      workClose.bindValue(":woNumber", _wonumber);
+      workClose.exec();
     }
   }
 
@@ -822,11 +830,12 @@ void workOrder::sClose()
 
 void workOrder::sNumberChanged()
 {
+  XSqlQuery workNumberChanged;
   if(_wonumber != -1 && _wonumber != _woNumber->text().toInt())
   {
-    q.prepare("SELECT releaseWoNumber(:woNumber);");
-    q.bindValue(":woNumber", _wonumber);
-    q.exec();
+    workNumberChanged.prepare("SELECT releaseWoNumber(:woNumber);");
+    workNumberChanged.bindValue(":woNumber", _wonumber);
+    workNumberChanged.exec();
   }
 }
 
@@ -840,6 +849,7 @@ void workOrder::sHandleButtons()
 
 void workOrder::sFillList()
 {
+  XSqlQuery workFillList;
    //The wodata_id_type column is used to indicate the source of the wodata_id
    //there are three different tables used wo, womatl and womatlvar
    //wodata_id_type = 1 = wo_id
@@ -903,17 +913,17 @@ void workOrder::sFillList()
     "           'scrap' AS scrap_xtnumericrole, "
     "           wodata_level AS xtindentrole "
     "    FROM indentedwo(:wo_id, :showops, :showmatl, :showindent) ");
-  q.prepare(sql);
-  q.bindValue(":wo_id", _woid);
-  q.bindValue(":showops", QVariant(_showOperations->isVisible() && _showOperations->isChecked()));
-  q.bindValue(":showmatl", QVariant(_showMaterials->isChecked()));
-  q.bindValue(":showindent", QVariant(_indented->isChecked()));
-  q.exec();
-  _woIndentedList->populate(q, true);
+  workFillList.prepare(sql);
+  workFillList.bindValue(":wo_id", _woid);
+  workFillList.bindValue(":showops", QVariant(_showOperations->isVisible() && _showOperations->isChecked()));
+  workFillList.bindValue(":showmatl", QVariant(_showMaterials->isChecked()));
+  workFillList.bindValue(":showindent", QVariant(_indented->isChecked()));
+  workFillList.exec();
+  _woIndentedList->populate(workFillList, true);
   _woIndentedList->expandAll();
-  if (q.lastError().type() != QSqlError::NoError)
+  if (workFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -949,9 +959,10 @@ void workOrder::sCorrectProductionPosting()
 
 void workOrder::sReleaseWO()
 {
-  q.prepare("SELECT releaseWo(:wo_id, FALSE);");
-  q.bindValue(":wo_id", _woIndentedList->id());
-  q.exec();
+  XSqlQuery workReleaseWO;
+  workReleaseWO.prepare("SELECT releaseWo(:wo_id, FALSE);");
+  workReleaseWO.bindValue(":wo_id", _woIndentedList->id());
+  workReleaseWO.exec();
 
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
@@ -962,9 +973,10 @@ void workOrder::sReleaseWO()
 
 void workOrder::sRecallWO()
 {
-  q.prepare("SELECT recallWo(:wo_id, FALSE);");
-  q.bindValue(":wo_id", _woIndentedList->id());
-  q.exec();
+  XSqlQuery workRecallWO;
+  workRecallWO.prepare("SELECT recallWo(:wo_id, FALSE);");
+  workRecallWO.bindValue(":wo_id", _woIndentedList->id());
+  workRecallWO.exec();
 
   int currentId = _woIndentedList->id();
   int currentAltId = _woIndentedList->altId();
@@ -1005,22 +1017,23 @@ void workOrder::sImplodeWO()
 
 void workOrder::sDeleteWO()
 {
-  q.prepare( "SELECT wo_ordtype "
+  XSqlQuery workDeleteWO;
+  workDeleteWO.prepare( "SELECT wo_ordtype "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
-  q.bindValue(":wo_id", _woIndentedList->id());
-  q.exec();
-  if (q.first())
+  workDeleteWO.bindValue(":wo_id", _woIndentedList->id());
+  workDeleteWO.exec();
+  if (workDeleteWO.first())
   {
     QString question;
-    if (q.value("wo_ordtype") == "W")
+    if (workDeleteWO.value("wo_ordtype") == "W")
       question = tr("<p>The Work Order that you selected to delete is a child "
 		    "of another Work Order.  If you delete the selected Work "
 		    "Order then the Work Order Materials Requirements for the "
 		    "Component Item will remain but the Work Order to relieve "
 		    "that demand will not. Are you sure that you want to "
 		    "delete the selected Work Order?" );
-    else if (q.value("wo_ordtype") == "S")
+    else if (workDeleteWO.value("wo_ordtype") == "S")
       question = tr("<p>The Work Order that you selected to delete was created "
 		    "to satisfy Sales Order demand. If you delete the selected "
 		    "Work Order then the Sales Order demand will remain but "
@@ -1037,13 +1050,13 @@ void workOrder::sDeleteWO()
       return;
     }
 
-    q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
-    q.bindValue(":wo_id", _woIndentedList->id());
-    q.exec();
+    workDeleteWO.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
+    workDeleteWO.bindValue(":wo_id", _woIndentedList->id());
+    workDeleteWO.exec();
 
-    if (q.first())
+    if (workDeleteWO.first())
     {
-      int result = q.value("returnVal").toInt();
+      int result = workDeleteWO.value("returnVal").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("deleteWo", result));
@@ -1051,13 +1064,13 @@ void workOrder::sDeleteWO()
       }
       omfgThis->sWorkOrdersUpdated(-1, TRUE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    else if (workDeleteWO.lastError().type() != QSqlError::NoError)
+      systemError(this, workDeleteWO.lastError().databaseText(), __FILE__, __LINE__);
 
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workDeleteWO.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workDeleteWO.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   populate();
@@ -1106,6 +1119,7 @@ void workOrder::sInventoryAvailabilityByWorkOrder()
 
 void workOrder::sReprioritizeParent()
 {
+  XSqlQuery workReprioritizeParent;
   if(_priority->value() != _oldPriority)
   {
     if ( QMessageBox::warning( this, tr("Change Priority"),
@@ -1119,14 +1133,14 @@ void workOrder::sReprioritizeParent()
       return;
     }
   
-    q.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
-    q.bindValue(":wo_id", _woid);
-    q.bindValue(":newPriority", _priority->value());
-    q.bindValue(":reprioritizeChildren", true);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    workReprioritizeParent.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
+    workReprioritizeParent.bindValue(":wo_id", _woid);
+    workReprioritizeParent.bindValue(":newPriority", _priority->value());
+    workReprioritizeParent.bindValue(":reprioritizeChildren", true);
+    workReprioritizeParent.exec();
+    if (workReprioritizeParent.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, workReprioritizeParent.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -1138,6 +1152,7 @@ void workOrder::sReprioritizeParent()
 
 void workOrder::sRescheduleParent()
 {
+  XSqlQuery workRescheduleParent;
   if(_startDate->date() != _oldStartDate || _dueDate->date() != _oldDueDate)
   {
     if ( QMessageBox::warning( this, tr("Change Date"),
@@ -1153,15 +1168,15 @@ void workOrder::sRescheduleParent()
       return;
     }
   
-    q.prepare("SELECT changeWoDates(:wo_id, :startDate, :dueDate, :rescheduleChildren);");
-    q.bindValue(":wo_id", _woid);
-    q.bindValue(":startDate", _startDate->date());
-    q.bindValue(":dueDate", _dueDate->date());
-    q.bindValue(":rescheduleChildren", true);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    workRescheduleParent.prepare("SELECT changeWoDates(:wo_id, :startDate, :dueDate, :rescheduleChildren);");
+    workRescheduleParent.bindValue(":wo_id", _woid);
+    workRescheduleParent.bindValue(":startDate", _startDate->date());
+    workRescheduleParent.bindValue(":dueDate", _dueDate->date());
+    workRescheduleParent.bindValue(":rescheduleChildren", true);
+    workRescheduleParent.exec();
+    if (workRescheduleParent.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, workRescheduleParent.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -1176,31 +1191,32 @@ void workOrder::sRescheduleParent()
 
 void workOrder::sChangeParentQty()
 {
+  XSqlQuery workChangeParentQty;
   if(_qty->text().toDouble() != _oldQty)
   {
     double newQty = _qty->toDouble();
-    q.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "
+    workChangeParentQty.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "
                "FROM wo "
                "WHERE (wo_id=:wo_id);" );
-    q.bindValue(":wo_id", _woid);
-    q.bindValue(":qty", newQty);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    workChangeParentQty.bindValue(":wo_id", _woid);
+    workChangeParentQty.bindValue(":qty", newQty);
+    workChangeParentQty.exec();
+    if (workChangeParentQty.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, workChangeParentQty.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    else if (q.first())
+    else if (workChangeParentQty.first())
     {
-      if (q.value("qty").toDouble() != newQty)
+      if (workChangeParentQty.value("qty").toDouble() != newQty)
       {
         if ( QMessageBox::warning( this, tr("Invalid Order Qty"),
                                    tr( "The new Order Quantity that you have entered does not meet the Order Parameters set "
                                        "for the parent Item Site for this Work Order.  In order to meet the Item Site Order "
                                        "Parameters the new Order Quantity must be increased to %1. "
                                        "Do you want to change the Order Quantity for this Work Order to %2?" )
-                                   .arg(formatQty(q.value("qty").toDouble()))
-                                   .arg(formatQty(q.value("qty").toDouble())),
+                                   .arg(formatQty(workChangeParentQty.value("qty").toDouble()))
+                                   .arg(formatQty(workChangeParentQty.value("qty").toDouble())),
                                    tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 1 )
           {
             _qty->setText(_oldQty);
@@ -1208,7 +1224,7 @@ void workOrder::sChangeParentQty()
             return;
           }
           else
-            newQty = q.value("qty").toDouble();
+            newQty = workChangeParentQty.value("qty").toDouble();
       }
       else if ( QMessageBox::warning( this, tr("Change Qty"),
                                  tr( "A quantity change from %1 to %2 will update all work order requirements.  "
@@ -1221,14 +1237,14 @@ void workOrder::sChangeParentQty()
         return;
       }
 
-      q.prepare("SELECT changeWoQty(:wo_id, :qty * :sense, TRUE);");
-      q.bindValue(":wo_id", _woid);
-      q.bindValue(":qty", newQty);
-      q.bindValue(":sense", _sense);
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      workChangeParentQty.prepare("SELECT changeWoQty(:wo_id, :qty * :sense, TRUE);");
+      workChangeParentQty.bindValue(":wo_id", _woid);
+      workChangeParentQty.bindValue(":qty", newQty);
+      workChangeParentQty.bindValue(":sense", _sense);
+      workChangeParentQty.exec();
+      if (workChangeParentQty.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, workChangeParentQty.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
       else
@@ -1277,36 +1293,38 @@ void workOrder::sChangeWOQty()
 
 void workOrder::sDspRunningAvailability()
 {
-  q.prepare("SELECT wo_itemsite_id FROM wo WHERE (wo_id=:id);");
-  q.bindValue(":id", _woIndentedList->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery workDspRunningAvailability;
+  workDspRunningAvailability.prepare("SELECT wo_itemsite_id FROM wo WHERE (wo_id=:id);");
+  workDspRunningAvailability.bindValue(":id", _woIndentedList->id());
+  workDspRunningAvailability.exec();
+  if (workDspRunningAvailability.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("wo_itemsite_id"));
+    params.append("itemsite_id", workDspRunningAvailability.value("wo_itemsite_id"));
     params.append("run");
 
     dspRunningAvailability *newdlg = new dspRunningAvailability(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workDspRunningAvailability.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workDspRunningAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void workOrder::sReturnMatlBatch()
 {
-   q.prepare( "SELECT wo_qtyrcv "
+  XSqlQuery workReturnMatlBatch;
+   workReturnMatlBatch.prepare( "SELECT wo_qtyrcv "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
-  q.bindValue(":wo_id", _woIndentedList->id());
-  q.exec();
-  if (q.first())
+  workReturnMatlBatch.bindValue(":wo_id", _woIndentedList->id());
+  workReturnMatlBatch.exec();
+  if (workReturnMatlBatch.first())
   {
-    if (q.value("wo_qtyrcv").toDouble() != 0)
+    if (workReturnMatlBatch.value("wo_qtyrcv").toDouble() != 0)
     {
       QMessageBox::warning( this, tr("Cannot return Work Order Material"),
                             tr( "This Work Order has had material received against it\n"
@@ -1318,29 +1336,29 @@ void workOrder::sReturnMatlBatch()
       XSqlQuery rollback;
       rollback.prepare("ROLLBACK;");
 
-      q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-      q.prepare("SELECT returnWoMaterialBatch(:wo_id) AS result;");
-      q.bindValue(":wo_id", _woIndentedList->id());
-      q.exec();
-      if (q.first())
+      workReturnMatlBatch.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+      workReturnMatlBatch.prepare("SELECT returnWoMaterialBatch(:wo_id) AS result;");
+      workReturnMatlBatch.bindValue(":wo_id", _woIndentedList->id());
+      workReturnMatlBatch.exec();
+      if (workReturnMatlBatch.first())
       {
-        if (q.value("result").toInt() < 0)
+        if (workReturnMatlBatch.value("result").toInt() < 0)
         {
           rollback.exec();
           systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2, Error #%3.")
                              .arg(__LINE__)
                              .arg(_woIndentedList->id())
-                             .arg(q.value("result").toInt()) );
+                             .arg(workReturnMatlBatch.value("result").toInt()) );
           return;
         }
-        else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+        else if (distributeInventory::SeriesAdjust(workReturnMatlBatch.value("result").toInt(), this) == XDialog::Rejected)
         {
           rollback.exec();
           QMessageBox::information( this, tr("Material Return"), tr("Transaction Canceled") );
           return;
         }
 
-        q.exec("COMMIT;");
+        workReturnMatlBatch.exec("COMMIT;");
         omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
       }
       else
@@ -1436,14 +1454,15 @@ void workOrder::sIssueMatlBatch()
 
 void workOrder::sIssueMatl()
 {
+  XSqlQuery workIssueMatl;
   issueWoMaterialItem newdlg(this);
   ParameterList params;
-  q.prepare("SELECT womatl_wo_id AS wo_id FROM womatl "
+  workIssueMatl.prepare("SELECT womatl_wo_id AS wo_id FROM womatl "
             " WHERE (womatl_id=:womatl_id) ");
-        q.bindValue(":womatl_id", _woIndentedList->id());
-        q.exec();
-        if (q.first())
-            params.append("wo_id", q.value("wo_id").toInt());
+        workIssueMatl.bindValue(":womatl_id", _woIndentedList->id());
+        workIssueMatl.exec();
+        if (workIssueMatl.first())
+            params.append("wo_id", workIssueMatl.value("wo_id").toInt());
   params.append("womatl_id", _woIndentedList->id());
   if (newdlg.set(params) == NoError)
     newdlg.exec();
@@ -1526,6 +1545,7 @@ void workOrder::sViewMatl()
 
 void workOrder::sDeleteMatl()
 {
+  XSqlQuery workDeleteMatl;
   int womatlid = _woIndentedList->id();
   if (_woIndentedList->currentItem()->data(7, Qt::UserRole).toMap().value("raw").toDouble() > 0)
   {
@@ -1550,12 +1570,12 @@ void workOrder::sDeleteMatl()
         newdlg.exec();
         populate();
 
-        q.prepare("SELECT womatl_qtyiss AS qtyissued "
+        workDeleteMatl.prepare("SELECT womatl_qtyiss AS qtyissued "
                   "FROM womatl "
                   "WHERE (womatl_id=:womatl_id) ");
-        q.bindValue(":womatl_id", womatlid);
-        q.exec();
-        if (!q.first() || q.value("qtyissued").toInt() != 0)
+        workDeleteMatl.bindValue(":womatl_id", womatlid);
+        workDeleteMatl.exec();
+        if (!workDeleteMatl.first() || workDeleteMatl.value("qtyissued").toInt() != 0)
           return;
       }
       else
@@ -1572,30 +1592,30 @@ void workOrder::sDeleteMatl()
     }
   }
 
-  q.prepare("SELECT deleteWoMaterial(:womatl_id);");
-  q.bindValue(":womatl_id", womatlid);
-  q.exec();
-  if (q.first())
+  workDeleteMatl.prepare("SELECT deleteWoMaterial(:womatl_id);");
+  workDeleteMatl.bindValue(":womatl_id", womatlid);
+  workDeleteMatl.exec();
+  if (workDeleteMatl.first())
   {
-    int result = q.value("result").toInt();
+    int result = workDeleteMatl.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteWoMaterial", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workDeleteMatl.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workDeleteMatl.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  q.prepare("SELECT womatl_wo_id AS woid "
+  workDeleteMatl.prepare("SELECT womatl_wo_id AS woid "
                   "FROM womatl "
                   "WHERE (womatl_id=:womatl_id) ");
-  q.bindValue(":womatl_id", womatlid);
-  q.exec();
-  if (q.first())
-     omfgThis->sWorkOrderMaterialsUpdated(q.value("woid").toInt(), womatlid, TRUE);
+  workDeleteMatl.bindValue(":womatl_id", womatlid);
+  workDeleteMatl.exec();
+  if (workDeleteMatl.first())
+     omfgThis->sWorkOrderMaterialsUpdated(workDeleteMatl.value("woid").toInt(), womatlid, TRUE);
            
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
   populate();
@@ -1603,56 +1623,59 @@ void workOrder::sDeleteMatl()
 
 void workOrder::sViewMatlAvailability()
 {
-  q.prepare( "SELECT womatl_itemsite_id, womatl_duedate "
+  XSqlQuery workViewMatlAvailability;
+  workViewMatlAvailability.prepare( "SELECT womatl_itemsite_id, womatl_duedate "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _woIndentedList->id());
-  q.exec();
-  if (q.first())
+  workViewMatlAvailability.bindValue(":womatl_id", _woIndentedList->id());
+  workViewMatlAvailability.exec();
+  if (workViewMatlAvailability.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("womatl_itemsite_id"));
-    params.append("byDate", q.value("womatl_duedate"));
+    params.append("itemsite_id", workViewMatlAvailability.value("womatl_itemsite_id"));
+    params.append("byDate", workViewMatlAvailability.value("womatl_duedate"));
     params.append("run");
 
     dspInventoryAvailability *newdlg = new dspInventoryAvailability();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workViewMatlAvailability.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workViewMatlAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void workOrder::sViewMatlSubstituteAvailability()
 {
-  q.prepare( "SELECT womatl_itemsite_id, womatl_duedate "
+  XSqlQuery workViewMatlSubstituteAvailability;
+  workViewMatlSubstituteAvailability.prepare( "SELECT womatl_itemsite_id, womatl_duedate "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _woIndentedList->id());
-  q.exec();
-  if (q.first())
+  workViewMatlSubstituteAvailability.bindValue(":womatl_id", _woIndentedList->id());
+  workViewMatlSubstituteAvailability.exec();
+  if (workViewMatlSubstituteAvailability.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("womatl_itemsite_id"));
-    params.append("byDate", q.value("womatl_duedate"));
+    params.append("itemsite_id", workViewMatlSubstituteAvailability.value("womatl_itemsite_id"));
+    params.append("byDate", workViewMatlSubstituteAvailability.value("womatl_duedate"));
     params.append("run");
 
     dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem(this);
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workViewMatlSubstituteAvailability.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workViewMatlSubstituteAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void workOrder::sSubstituteMatl()
 {
+  XSqlQuery workSubstituteMatl;
   int womatlid = _woIndentedList->id();
 
   XSqlQuery sub;
@@ -1698,24 +1721,24 @@ void workOrder::sSubstituteMatl()
       newdlg.set(params);
       if (newdlg.exec() != XDialog::Rejected)
       {
-        q.prepare( "DELETE FROM womatl "
+        workSubstituteMatl.prepare( "DELETE FROM womatl "
                    "WHERE (womatl_id=:womatl_id);" );
-        q.bindValue(":womatl_id", womatlid);
-        q.exec();
+        workSubstituteMatl.bindValue(":womatl_id", womatlid);
+        workSubstituteMatl.exec();
 
-        q.prepare("SELECT womatl_wo_id AS woid "
+        workSubstituteMatl.prepare("SELECT womatl_wo_id AS woid "
                   "FROM womatl "
                   "WHERE (womatl_id=:womatl_id) ");
-        q.bindValue(":womatl_id", womatlid);
-        q.exec();
-        if (q.first())
-           omfgThis->sWorkOrderMaterialsUpdated(q.value("woid").toInt(), womatlid, TRUE);
+        workSubstituteMatl.bindValue(":womatl_id", womatlid);
+        workSubstituteMatl.exec();
+        if (workSubstituteMatl.first())
+           omfgThis->sWorkOrderMaterialsUpdated(workSubstituteMatl.value("woid").toInt(), womatlid, TRUE);
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workSubstituteMatl.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workSubstituteMatl.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   omfgThis->sWorkOrdersUpdated(_woIndentedList->id(), TRUE);
@@ -1911,6 +1934,7 @@ void workOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 
 void workOrder::populate()
 {
+  XSqlQuery workpopulate;
   XSqlQuery wo;
   wo.prepare( "SELECT wo_itemsite_id, wo_priority, wo_status,"
               "       formatWoNumber(wo_id) AS f_wonumber,"
@@ -1984,9 +2008,9 @@ void workOrder::populate()
     {
       if (_mode == cRelease)
       {
-        q.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
-        q.bindValue(":planord_id", _planordid);
-        q.exec();
+        workpopulate.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
+        workpopulate.bindValue(":planord_id", _planordid);
+        workpopulate.exec();
       }
       _mode = cEdit;
     }

@@ -95,13 +95,14 @@ void taxRegistrations::sView()
 
 void taxRegistrations::sDelete()
 {
-  q.prepare("DELETE FROM taxreg"
+  XSqlQuery taxDelete;
+  taxDelete.prepare("DELETE FROM taxreg"
             " WHERE (taxreg_id=:taxreg_id);");
-  q.bindValue(":taxreg_id", _taxreg->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  taxDelete.bindValue(":taxreg_id", _taxreg->id());
+  taxDelete.exec();
+  if (taxDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -109,7 +110,8 @@ void taxRegistrations::sDelete()
 
 void taxRegistrations::sFillList()
 {
-  q.prepare("SELECT taxreg_id, taxreg_taxzone_id, taxreg_taxauth_id, "
+  XSqlQuery taxFillList;
+  taxFillList.prepare("SELECT taxreg_id, taxreg_taxzone_id, taxreg_taxauth_id, "
             "       CASE WHEN taxreg_taxzone_id ISNULL THEN '~Any~' "
 			"		ELSE taxzone_code "
 			"		END AS taxzone_code, "
@@ -119,11 +121,11 @@ void taxRegistrations::sFillList()
 			"		LEFT OUTER JOIN taxzone ON (taxreg_taxzone_id = taxzone_id)"
             " WHERE (taxreg_rel_type IS NULL)"
 			" ORDER BY taxzone_code, taxauth_code, taxreg_number;");
-  q.exec();
-  _taxreg->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  taxFillList.exec();
+  _taxreg->populate(taxFillList, true);
+  if (taxFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

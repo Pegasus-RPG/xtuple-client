@@ -34,19 +34,20 @@ void updateCreditStatusByCustomer::languageChange()
 
 void updateCreditStatusByCustomer::sUpdate()
 {
-  q.prepare( "UPDATE custinfo "
+  XSqlQuery updateUpdate;
+  updateUpdate.prepare( "UPDATE custinfo "
              "SET cust_creditstatus=:cust_creditstatus "
              "WHERE (cust_id=:cust_id);" );
-  q.bindValue(":cust_id", _cust->id());
+  updateUpdate.bindValue(":cust_id", _cust->id());
 
   if (_inGoodStanding->isChecked())
-    q.bindValue(":cust_creditstatus", "G");
+    updateUpdate.bindValue(":cust_creditstatus", "G");
   else if (_onCreditWarning->isChecked())
-    q.bindValue(":cust_creditstatus", "W");
+    updateUpdate.bindValue(":cust_creditstatus", "W");
   if (_onCreditHold->isChecked())
-    q.bindValue(":cust_creditstatus", "H");
+    updateUpdate.bindValue(":cust_creditstatus", "H");
 
-  q.exec();
+  updateUpdate.exec();
 
   accept();
 }
@@ -54,26 +55,27 @@ void updateCreditStatusByCustomer::sUpdate()
 
 void updateCreditStatusByCustomer::sPopulate( int /*pCustid*/ )
 {
-  q.prepare( "SELECT cust_creditstatus "
+  XSqlQuery updatePopulate;
+  updatePopulate.prepare( "SELECT cust_creditstatus "
              "FROM custinfo "
              "WHERE (cust_id=:cust_id);" );
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
-  if (q.first())
+  updatePopulate.bindValue(":cust_id", _cust->id());
+  updatePopulate.exec();
+  if (updatePopulate.first())
   {
     QString stylesheet;
-    if (q.value("cust_creditstatus").toString() == "G")
+    if (updatePopulate.value("cust_creditstatus").toString() == "G")
     {
       _inGoodStanding->setChecked(TRUE);
       _currentStatus->setText(tr("In Good Standing"));
     }
-    else if (q.value("cust_creditstatus").toString() == "W")
+    else if (updatePopulate.value("cust_creditstatus").toString() == "W")
     {
       _onCreditWarning->setChecked(TRUE);
       _currentStatus->setText(tr("On Credit Warning"));
       stylesheet = QString("* { color: %1; }").arg(namedColor("warning").name());
     }
-    else if (q.value("cust_creditstatus").toString() == "H")
+    else if (updatePopulate.value("cust_creditstatus").toString() == "H")
     {
       _onCreditHold->setChecked(TRUE);
       _currentStatus->setText(tr("On Credit Hold"));

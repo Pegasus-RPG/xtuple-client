@@ -59,6 +59,7 @@ void dspPoItemsByItem::languageChange()
 
 enum SetResponse dspPoItemsByItem::set(const ParameterList &pParams)
 {
+  XSqlQuery dspet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -70,16 +71,16 @@ enum SetResponse dspPoItemsByItem::set(const ParameterList &pParams)
   param = pParams.value("itemsrc_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT itemsrc_item_id "
+    dspet.prepare( "SELECT itemsrc_item_id "
                "FROM itemsrc "
                "WHERE (itemsrc_id=:itemsrc_id);" );
-    q.bindValue(":itemsrc_id", param.toInt());
-    q.exec();
-    if (q.first())
-      _item->setId(q.value("itemsrc_item_id").toInt());
-    else if (q.lastError().type() != QSqlError::NoError)
+    dspet.bindValue(":itemsrc_id", param.toInt());
+    dspet.exec();
+    if (dspet.first())
+      _item->setId(dspet.value("itemsrc_item_id").toInt());
+    else if (dspet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -182,24 +183,25 @@ void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, i
 
 void dspPoItemsByItem::sRunningAvailability()
 {
-  q.prepare("SELECT poitem_itemsite_id "
+  XSqlQuery dspRA;
+  dspRA.prepare("SELECT poitem_itemsite_id "
             "FROM poitem "
             "WHERE (poitem_id=:poitemid); ");
-  q.bindValue(":poitemid", list()->altId());
-  q.exec();
-  if (q.first())
+  dspRA.bindValue(":poitemid", list()->altId());
+  dspRA.exec();
+  if (dspRA.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("poitem_itemsite_id").toInt());
+    params.append("itemsite_id", dspRA.value("poitem_itemsite_id").toInt());
     params.append("run");
 
     dspRunningAvailability *newdlg = new dspRunningAvailability();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspRA.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspRA.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -272,14 +274,15 @@ void dspPoItemsByItem::sChangeQty()
 
 void dspPoItemsByItem::sCloseItem()
 {
-  q.prepare( "UPDATE poitem "
+  XSqlQuery dspCloseItem;
+  dspCloseItem.prepare( "UPDATE poitem "
              "SET poitem_status='C' "
              "WHERE (poitem_id=:poitem_id);" );
-  q.bindValue(":poitem_id", list()->altId());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  dspCloseItem.bindValue(":poitem_id", list()->altId());
+  dspCloseItem.exec();
+  if (dspCloseItem.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspCloseItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -287,14 +290,15 @@ void dspPoItemsByItem::sCloseItem()
 
 void dspPoItemsByItem::sOpenItem()
 {
-  q.prepare( "UPDATE poitem "
+  XSqlQuery dspOpenItem;
+  dspOpenItem.prepare( "UPDATE poitem "
              "SET poitem_status='O' "
              "WHERE (poitem_id=:poitem_id);" );
-  q.bindValue(":poitem_id", list()->altId());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  dspOpenItem.bindValue(":poitem_id", list()->altId());
+  dspOpenItem.exec();
+  if (dspOpenItem.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspOpenItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();

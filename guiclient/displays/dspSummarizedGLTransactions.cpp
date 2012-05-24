@@ -105,6 +105,7 @@ void dspSummarizedGLTransactions::sViewTrans()
 
 void dspSummarizedGLTransactions::sViewDocument()
 {
+  XSqlQuery dspViewDocument;
   QTreeWidgetItem * item = list()->currentItem();
   if(0 == item)
     return;
@@ -112,18 +113,18 @@ void dspSummarizedGLTransactions::sViewDocument()
   ParameterList params;
   if(item->text(4) == "VO")
   {
-    q.prepare("SELECT vohead_id, vohead_misc "
+    dspViewDocument.prepare("SELECT vohead_id, vohead_misc "
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
-    q.bindValue(":vohead_number", item->text(5));
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":vohead_number", item->text(5));
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    params.append("vohead_id", q.value("vohead_id").toInt());
+    params.append("vohead_id", dspViewDocument.value("vohead_id").toInt());
     params.append("mode", "view");
 
-    if(q.value("vohead_misc").toBool())
+    if(dspViewDocument.value("vohead_misc").toBool())
     {
       miscVoucher *newdlg = new miscVoucher();
       newdlg->set(params);
@@ -138,27 +139,27 @@ void dspSummarizedGLTransactions::sViewDocument()
   }
   else if(item->text(4) == "IN")
   {
-    q.prepare("SELECT invchead_id"
+    dspViewDocument.prepare("SELECT invchead_id"
               "  FROM invchead"
               " WHERE (invchead_invcnumber=:invchead_invcnumber)");
-    q.bindValue(":invchead_invcnumber", item->text(5));
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":invchead_invcnumber", item->text(5));
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    invoice::viewInvoice(q.value("invchead_id").toInt());
+    invoice::viewInvoice(dspViewDocument.value("invchead_id").toInt());
   }
   else if(item->text(4) == "PO")
   {
-    q.prepare("SELECT pohead_id"
+    dspViewDocument.prepare("SELECT pohead_id"
               "  FROM pohead"
               " WHERE (pohead_number=:pohead_number)");
-    q.bindValue(":pohead_number", item->text(5));
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":pohead_number", item->text(5));
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    params.append("pohead_id", q.value("pohead_id").toInt());
+    params.append("pohead_id", dspViewDocument.value("pohead_id").toInt());
     params.append("mode", "view");
 
     purchaseOrder *newdlg = new purchaseOrder();

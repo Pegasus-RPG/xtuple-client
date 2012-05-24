@@ -126,15 +126,16 @@ void itemSources::sCopy()
 
 void itemSources::sDelete()
 {
-  q.prepare("SELECT poitem_id, itemsrc_active "
+  XSqlQuery itemDelete;
+  itemDelete.prepare("SELECT poitem_id, itemsrc_active "
             "FROM poitem, itemsrc "
             "WHERE ((poitem_itemsrc_id=:itemsrc_id) "
             "AND (itemsrc_id=:itemsrc_id)); ");
-  q.bindValue(":itemsrc_id", list()->id());
-  q.exec();
-  if (q.first())
+  itemDelete.bindValue(":itemsrc_id", list()->id());
+  itemDelete.exec();
+  if (itemDelete.first())
   {
-    if (q.value("itemsrc_active").toBool())
+    if (itemDelete.value("itemsrc_active").toBool())
     {
       if (QMessageBox::question(this, tr("Delete Item Source"),
                                 tr("<p>This item source is used by existing "
@@ -143,11 +144,11 @@ void itemSources::sDelete()
                                    "instead?"),
                                 QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
       {
-        q.prepare( "UPDATE itemsrc SET "
+        itemDelete.prepare( "UPDATE itemsrc SET "
                    "  itemsrc_active=false "
                    "WHERE (itemsrc_id=:itemsrc_id);" );
-        q.bindValue(":itemsrc_id", list()->id());
-        q.exec();
+        itemDelete.bindValue(":itemsrc_id", list()->id());
+        itemDelete.exec();
 
         sFillList();
       }
@@ -159,27 +160,27 @@ void itemSources::sDelete()
     return;
   }
 
-  q.prepare( "SELECT item_number "
+  itemDelete.prepare( "SELECT item_number "
              "FROM itemsrc, item "
              "WHERE ( (itemsrc_item_id=item_id)"
              " AND (itemsrc_id=:itemsrc_id) );" );
-  q.bindValue(":itemsrc_id", list()->id());
-  q.exec();
-  if (q.first())
+  itemDelete.bindValue(":itemsrc_id", list()->id());
+  itemDelete.exec();
+  if (itemDelete.first())
   {
     if (QMessageBox::question(this, tr("Delete Item Source"),
                               tr( "Are you sure that you want to delete the "
                                  "Item Source for %1?")
-                                  .arg(q.value("item_number").toString()),
+                                  .arg(itemDelete.value("item_number").toString()),
                                   QMessageBox::Yes | QMessageBox::No,
                                   QMessageBox::No) == QMessageBox::Yes)
     {
-      q.prepare( "DELETE FROM itemsrc "
+      itemDelete.prepare( "DELETE FROM itemsrc "
                  "WHERE (itemsrc_id=:itemsrc_id);"
                  "DELETE FROM itemsrcp "
                  "WHERE (itemsrcp_itemsrc_id=:itemsrc_id);" );
-      q.bindValue(":itemsrc_id", list()->id());
-      q.exec();
+      itemDelete.bindValue(":itemsrc_id", list()->id());
+      itemDelete.exec();
 
       sFillList();
     }

@@ -64,18 +64,19 @@ enum SetResponse printItemLabelsByClassCode::set(const ParameterList &pParams)
 
 void printItemLabelsByClassCode::sPrint()
 {
-  q.prepare( "SELECT labelform_report_name AS report_name "
+  XSqlQuery printPrint;
+  printPrint.prepare( "SELECT labelform_report_name AS report_name "
              "FROM labelform "
              "WHERE ( (labelform_id=:labelform_id) );");
-  q.bindValue(":labelform_id", _report->id());
-  q.exec();
-  if (q.first())
+  printPrint.bindValue(":labelform_id", _report->id());
+  printPrint.exec();
+  if (printPrint.first())
   {
     ParameterList params;
     _warehouse->appendValue(params);
     _classCode->appendValue(params);
 
-    orReport report(q.value("report_name").toString(), params);
+    orReport report(printPrint.value("report_name").toString(), params);
     if (report.isValid())
       report.print();
     else

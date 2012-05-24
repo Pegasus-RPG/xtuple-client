@@ -193,6 +193,7 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
 
 void characteristicAssignment::sSave()
 {
+  XSqlQuery characteristicSave;
   if (_char->model()->data(_char->model()->index(_char->currentIndex(), 0)) == -1)
   {
     QMessageBox::information( this, tr("No Characteristic Selected"),
@@ -204,16 +205,16 @@ void characteristicAssignment::sSave()
       _template &&
       _stackedWidget->currentIndex() == characteristic::Date)
   {
-    q.prepare("SELECT charass_id "
+    characteristicSave.prepare("SELECT charass_id "
               "FROM charass "
               "WHERE ((charass_char_id=:charass_char_id) "
               "  AND (charass_target_id=:charass_target_id) "
               "  AND (charass_target_type=:charass_target_type));");
-    q.bindValue(":charass_target_id", _targetId);
-    q.bindValue(":charass_target_type", _targetType);
-    q.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
-    q.exec();
-    if (q.first())
+    characteristicSave.bindValue(":charass_target_id", _targetId);
+    characteristicSave.bindValue(":charass_target_type", _targetType);
+    characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
+    characteristicSave.exec();
+    if (characteristicSave.first())
     {
       QMessageBox::critical(this, tr("Error"), tr("You can not use the same characteristic "
                                                   "for date type characteristics more than "
@@ -224,56 +225,57 @@ void characteristicAssignment::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('charass_charass_id_seq') AS charass_id;");
-    if (q.first())
+    characteristicSave.exec("SELECT NEXTVAL('charass_charass_id_seq') AS charass_id;");
+    if (characteristicSave.first())
     {
-      _charassid = q.value("charass_id").toInt();
+      _charassid = characteristicSave.value("charass_id").toInt();
 
-      q.prepare( "INSERT INTO charass "
+      characteristicSave.prepare( "INSERT INTO charass "
                  "( charass_id, charass_target_id, charass_target_type, charass_char_id, charass_value, charass_price, charass_default ) "
                  "VALUES "
                  "( :charass_id, :charass_target_id, :charass_target_type, :charass_char_id, :charass_value, :charass_price, :charass_default );" );
     }
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE charass "
+    characteristicSave.prepare( "UPDATE charass "
                "SET charass_char_id=:charass_char_id, charass_value=:charass_value, "
                "charass_price=:charass_price, charass_default=:charass_default "
                "WHERE (charass_id=:charass_id);" );
 
-  q.bindValue(":charass_id", _charassid);
-  q.bindValue(":charass_target_id", _targetId);
-  q.bindValue(":charass_target_type", _targetType);
-  q.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
+  characteristicSave.bindValue(":charass_id", _charassid);
+  characteristicSave.bindValue(":charass_target_id", _targetId);
+  characteristicSave.bindValue(":charass_target_type", _targetType);
+  characteristicSave.bindValue(":charass_char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
   if (_stackedWidget->currentIndex() == characteristic::Text)
-    q.bindValue(":charass_value", _value->text());
+    characteristicSave.bindValue(":charass_value", _value->text());
   else if (_stackedWidget->currentIndex() == characteristic::List)
-    q.bindValue(":charass_value", _listValue->currentText());
+    characteristicSave.bindValue(":charass_value", _listValue->currentText());
   else if (_stackedWidget->currentIndex() == characteristic::Date)
-    q.bindValue(":charass_value", _dateValue->date());
-  q.bindValue(":charass_price", _listprice->toDouble());
-  q.bindValue(":charass_default", QVariant(_default->isChecked()));
-  q.exec();
+    characteristicSave.bindValue(":charass_value", _dateValue->date());
+  characteristicSave.bindValue(":charass_price", _listprice->toDouble());
+  characteristicSave.bindValue(":charass_default", QVariant(_default->isChecked()));
+  characteristicSave.exec();
 
   done(_charassid);
 }
 
 void characteristicAssignment::sCheck()
 {
+  XSqlQuery characteristicCheck;
   if ((_mode == cNew) || (_char->model()->data(_char->model()->index(_char->currentIndex(), 0)) == -1))
   {
-    q.prepare( "SELECT charass_id "
+    characteristicCheck.prepare( "SELECT charass_id "
                "FROM charass "
                "WHERE ( (charass_target_type=:charass_target_id)"
                " AND (charass_target_id=:charass_target_id)"
                " AND (charass_char_id=:char_id) );" );
-    q.bindValue(":charass_target_type", _targetType);
-    q.bindValue(":charass_target_id", _targetId);
-    q.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
-    q.exec();
-    if (q.first())
+    characteristicCheck.bindValue(":charass_target_type", _targetType);
+    characteristicCheck.bindValue(":charass_target_id", _targetId);
+    characteristicCheck.bindValue(":char_id", _char->model()->data(_char->model()->index(_char->currentIndex(), 0)));
+    characteristicCheck.exec();
+    if (characteristicCheck.first())
     {
-      _charassid = q.value("charass_id").toInt();
+      _charassid = characteristicCheck.value("charass_id").toInt();
       _mode = cEdit;
       populate();
     }
@@ -282,40 +284,41 @@ void characteristicAssignment::sCheck()
 
 void characteristicAssignment::populate()
 {
-  q.prepare( "SELECT charass.*, char_type "
+  XSqlQuery characteristicpopulate;
+  characteristicpopulate.prepare( "SELECT charass.*, char_type "
              "FROM charass "
              " JOIN char ON (charass_char_id=char_id) "
              "WHERE (charass_id=:charass_id);" );
-  q.bindValue(":charass_id", _charassid);
-  q.exec();
-  if (q.first())
+  characteristicpopulate.bindValue(":charass_id", _charassid);
+  characteristicpopulate.exec();
+  if (characteristicpopulate.first())
   {
-    _targetId = q.value("charass_target_id").toInt();
-    _targetType = q.value("charass_target_type").toString();
+    _targetId = characteristicpopulate.value("charass_target_id").toInt();
+    _targetType = characteristicpopulate.value("charass_target_type").toString();
     handleTargetType();
 
     for (int i = 0; i < _char->model()->rowCount(); i++)
     {
       QModelIndex idx = _char->model()->index(i, 0);
-      if (_char->model()->data(idx) == q.value("charass_char_id").toInt())
+      if (_char->model()->data(idx) == characteristicpopulate.value("charass_char_id").toInt())
         _char->setCurrentIndex(i);
     }
-    _listprice->setDouble(q.value("charass_price").toDouble());
-    _default->setChecked(q.value("charass_default").toBool());
+    _listprice->setDouble(characteristicpopulate.value("charass_price").toDouble());
+    _default->setChecked(characteristicpopulate.value("charass_default").toBool());
     int chartype = _char->model()->data(_char->model()->index(_char->currentIndex(),16)).toInt();
     if (chartype == characteristic::Text)
-      _value->setText(q.value("charass_value").toString());
+      _value->setText(characteristicpopulate.value("charass_value").toString());
     else if (chartype == characteristic::List)
     {
-      int idx = _listValue->findText(q.value("charass_value").toString());
+      int idx = _listValue->findText(characteristicpopulate.value("charass_value").toString());
       _listValue->setCurrentIndex(idx);
     }
     else if (chartype == characteristic::Date)
-      _dateValue->setDate(q.value("charass_value").toDate());
+      _dateValue->setDate(characteristicpopulate.value("charass_value").toDate());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (characteristicpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, characteristicpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

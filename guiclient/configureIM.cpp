@@ -21,6 +21,7 @@
 configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  XSqlQuery configureconfigureIM;
   setupUi(this);
 
   if (name)
@@ -32,9 +33,9 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _multiWhs->hide();
   else
   {
-    q.exec("SELECT * "
+    configureconfigureIM.exec("SELECT * "
 	   "FROM whsinfo");
-    if (q.size() > 1)
+    if (configureconfigureIM.size() > 1)
     {
       _multiWhs->setCheckable(FALSE);
       _multiWhs->setTitle("Multiple Sites");
@@ -50,13 +51,13 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
       _toNumGeneration->setCurrentIndex(2);
 
     _toNextNum->setValidator(omfgThis->orderVal());
-    q.exec( "SELECT orderseq_number AS tonumber "
+    configureconfigureIM.exec( "SELECT orderseq_number AS tonumber "
 	    "FROM orderseq "
 	    "WHERE (orderseq_name='ToNumber');" );
-    if (q.first())
-      _toNextNum->setText(q.value("tonumber").toString());
-    else if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    if (configureconfigureIM.first())
+      _toNextNum->setText(configureconfigureIM.value("tonumber").toString());
+    else if (configureconfigureIM.lastError().type() != QSqlError::NoError)
+      systemError(this, configureconfigureIM.lastError().databaseText(), __FILE__, __LINE__);
 
     _enableToShipping->setChecked(_metrics->boolean("EnableTOShipping"));
     _transferOrderChangeLog->setChecked(_metrics->boolean("TransferOrderChangeLog"));
@@ -100,10 +101,10 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
     
   if(_metrics->value("Application") != "PostBooks")
   {
-    q.exec("SELECT DISTINCT itemsite_controlmethod "
+    configureconfigureIM.exec("SELECT DISTINCT itemsite_controlmethod "
 	      "FROM itemsite "
 	      "WHERE (itemsite_controlmethod IN ('L','S'));");
-    if (q.first())
+    if (configureconfigureIM.first())
     {
       _lotSerial->setChecked(TRUE);
       _lotSerial->setEnabled(FALSE);
@@ -121,12 +122,12 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _shipmentNumGeneration->setCurrentIndex(0);
 
   _nextShipmentNum->setValidator(omfgThis->orderVal());
-  q.exec("SELECT setval('shipment_number_seq', nextval('shipment_number_seq') -1); "
+  configureconfigureIM.exec("SELECT setval('shipment_number_seq', nextval('shipment_number_seq') -1); "
          "SELECT currval('shipment_number_seq') AS shipment_number;");
-  if (q.first())
-    _nextShipmentNum->setText(q.value("shipment_number"));
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  if (configureconfigureIM.first())
+    _nextShipmentNum->setText(configureconfigureIM.value("shipment_number"));
+  else if (configureconfigureIM.lastError().type() != QSqlError::NoError)
+    systemError(this, configureconfigureIM.lastError().databaseText(), __FILE__, __LINE__);
 
   _kitInheritCOS->setChecked(_metrics->boolean("KitComponentInheritCOS"));
   _disallowReceiptExcess->setChecked(_metrics->boolean("DisallowReceiptExcessQty"));
@@ -140,17 +141,17 @@ configureIM::configureIM(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _costStd->setChecked(_metrics->boolean("AllowStdCostMethod"));
   _costJob->setChecked(_metrics->boolean("AllowJobCostMethod"));
 
-  q.prepare("SELECT count(*) AS result FROM itemsite WHERE(itemsite_costmethod='A');");
-  q.exec();
-  if(q.first() && q.value("result").toInt() > 0)
+  configureconfigureIM.prepare("SELECT count(*) AS result FROM itemsite WHERE(itemsite_costmethod='A');");
+  configureconfigureIM.exec();
+  if(configureconfigureIM.first() && configureconfigureIM.value("result").toInt() > 0)
   {
     _costAvg->setChecked(true);
     _costAvg->setEnabled(false);
   }
 
-  q.prepare("SELECT count(*) AS result FROM itemsite WHERE(itemsite_costmethod='S');");
-  q.exec();
-  if(q.first() && q.value("result").toInt() > 0)
+  configureconfigureIM.prepare("SELECT count(*) AS result FROM itemsite WHERE(itemsite_costmethod='S');");
+  configureconfigureIM.exec();
+  if(configureconfigureIM.first() && configureconfigureIM.value("result").toInt() > 0)
   {
     _costStd->setChecked(true);
     _costStd->setEnabled(false);
@@ -191,6 +192,7 @@ void configureIM::languageChange()
 
 bool configureIM::sSave()
 {
+  XSqlQuery configureSave;
   emit saving();
 
   if(!_costAvg->isChecked() && !_costStd->isChecked())
@@ -223,12 +225,12 @@ bool configureIM::sSave()
 
   if (_metrics->boolean("MultiWhs"))
   {
-    q.prepare("SELECT setNextNumber('ToNumber', :next) AS result;");
-    q.bindValue(":next", _toNextNum->text());
-    q.exec();
-    if (q.first())
+    configureSave.prepare("SELECT setNextNumber('ToNumber', :next) AS result;");
+    configureSave.bindValue(":next", _toNextNum->text());
+    configureSave.exec();
+    if (configureSave.first())
     {
-      int result = q.value("result").toInt();
+      int result = configureSave.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("setNextNumber", result), __FILE__, __LINE__);
@@ -236,9 +238,9 @@ bool configureIM::sSave()
         return false;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (configureSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
       _toNextNum->setFocus();
       return false;
     }
@@ -280,12 +282,12 @@ bool configureIM::sSave()
   _metrics->set("ReceiptQtyTolerancePct", _tolerance->text());
   _metrics->set("RecordPPVonReceipt", _recordPpvOnReceipt->isChecked());
 
-  q.prepare("SELECT setval('shipment_number_seq', :shipmentnumber);");
-  q.bindValue(":shipmentnumber", _nextShipmentNum->text().toInt());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  configureSave.prepare("SELECT setval('shipment_number_seq', :shipmentnumber);");
+  configureSave.bindValue(":shipmentnumber", _nextShipmentNum->text().toInt());
+  configureSave.exec();
+  if (configureSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
     _nextShipmentNum->setFocus();
     return false;
   }

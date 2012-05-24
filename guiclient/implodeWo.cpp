@@ -62,13 +62,14 @@ enum SetResponse implodeWo::set(const ParameterList &pParams)
 
 void implodeWo::sImplode()
 {
-  q.prepare( "SELECT wo_adhoc "
+  XSqlQuery implodeImplode;
+  implodeImplode.prepare( "SELECT wo_adhoc "
              "FROM wo "
              "WHERE ( (wo_adhoc)"
              " AND (wo_id=:wo_id) );" );
-  q.bindValue(":wo_id", _wo->id());
-  q.exec();
-  if (q.first())
+  implodeImplode.bindValue(":wo_id", _wo->id());
+  implodeImplode.exec();
+  if (implodeImplode.first())
   {
     if ( QMessageBox::warning( this, tr("Adhoc Work Order"),
                                tr( "The Work Order you have selected to Implode is adhoc, meaning\n"
@@ -80,23 +81,23 @@ void implodeWo::sImplode()
       return;
   }
 
-  q.prepare("SELECT implodeWo(:wo_id, TRUE) AS result;");
-  q.bindValue(":wo_id", _wo->id());
-  q.exec();
-  if (q.first() && q.value("result").toInt() < 0)
+  implodeImplode.prepare("SELECT implodeWo(:wo_id, TRUE) AS result;");
+  implodeImplode.bindValue(":wo_id", _wo->id());
+  implodeImplode.exec();
+  if (implodeImplode.first() && implodeImplode.value("result").toInt() < 0)
   {
     QString msg;
-    if (q.value("result").toInt() == -1)
+    if (implodeImplode.value("result").toInt() == -1)
       msg = tr("The Work Order could not be imploded because time clock "
 	       "entries exist for it.");
     else
       msg = tr("The Work Order could not be imploded (reason %1).")
-	    .arg(q.value("result").toString());
+	    .arg(implodeImplode.value("result").toString());
     QMessageBox::information(this, tr("Work Order Not Imploded"), msg);
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (implodeImplode.lastError().type() != QSqlError::NoError)
+    systemError(this, implodeImplode.lastError().databaseText(), __FILE__, __LINE__);
 
   omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
 

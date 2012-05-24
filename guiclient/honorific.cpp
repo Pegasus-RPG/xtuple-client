@@ -93,17 +93,18 @@ enum SetResponse honorific::set(const ParameterList &pParams)
 
 void honorific::sCheck()
 {
+  XSqlQuery honorificCheck;
   _code->setText(_code->text().trimmed());
   if ( (_mode == cNew) && (_code->text().length()) )
   {
-    q.prepare( "SELECT hnfc_id "
+    honorificCheck.prepare( "SELECT hnfc_id "
                "FROM hnfc "
                "WHERE (UPPER(hnfc_code)=UPPER(:hnfc_code));" );
-    q.bindValue(":hnfc_code", _code->text());
-    q.exec();
-    if (q.first())
+    honorificCheck.bindValue(":hnfc_code", _code->text());
+    honorificCheck.exec();
+    if (honorificCheck.first())
     {
-      _honorificid = q.value("hnfc_id").toInt();
+      _honorificid = honorificCheck.value("hnfc_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -114,6 +115,7 @@ void honorific::sCheck()
 
 void honorific::sSave()
 {
+  XSqlQuery honorificSave;
   if (_code->text().length() == 0)
   {
       QMessageBox::warning( this, tr("Cannot Save Title"),
@@ -123,21 +125,21 @@ void honorific::sSave()
   
   if (_mode == cEdit)
   {
-    q.prepare( "SELECT hnfc_id "
+    honorificSave.prepare( "SELECT hnfc_id "
                "FROM hnfc "
                "WHERE ( (hnfc_id<>:hnfc_id)"
                " AND (UPPER(hnfc_code)=UPPER(:hnfc_code)) );");
-    q.bindValue(":hnfc_id", _honorificid);
+    honorificSave.bindValue(":hnfc_id", _honorificid);
   }
   else
   {
-    q.prepare( "SELECT hnfc_id "
+    honorificSave.prepare( "SELECT hnfc_id "
                "FROM hnfc "
                "WHERE (hnfc_code=:hnfc_code);");
   }
-  q.bindValue(":hnfc_code", _code->text().trimmed());
-  q.exec();
-  if (q.first())
+  honorificSave.bindValue(":hnfc_code", _code->text().trimmed());
+  honorificSave.exec();
+  if (honorificSave.first())
   {
     QMessageBox::critical( this, tr("Cannot Create Title"),
 			   tr( "A Title with the entered code already exists."
@@ -145,60 +147,60 @@ void honorific::sSave()
     _code->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (honorificSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, honorificSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('hnfc_hnfc_id_seq') AS _hnfc_id");
-    if (q.first())
-      _honorificid = q.value("_hnfc_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    honorificSave.exec("SELECT NEXTVAL('hnfc_hnfc_id_seq') AS _hnfc_id");
+    if (honorificSave.first())
+      _honorificid = honorificSave.value("_hnfc_id").toInt();
+    else if (honorificSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, honorificSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO hnfc "
+    honorificSave.prepare( "INSERT INTO hnfc "
                "( hnfc_id, hnfc_code ) "
                "VALUES "
                "( :hnfc_id, :hnfc_code );" );
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT hnfc_id "
+    honorificSave.prepare( "SELECT hnfc_id "
                "FROM hnfc "
                "WHERE ( (UPPER(hnfc_code)=UPPER(:hnfc_code))"
                " AND (hnfc_id<>:hnfc_id) );" );
-    q.bindValue(":hnfc_id", _honorificid);
-    q.bindValue(":hnfc_code", _code->text());
-    q.exec();
-    if (q.first())
+    honorificSave.bindValue(":hnfc_id", _honorificid);
+    honorificSave.bindValue(":hnfc_code", _code->text());
+    honorificSave.exec();
+    if (honorificSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Title"),
                             tr("You may not rename this Title with the entered value as it is in use by another Title.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (honorificSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, honorificSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "UPDATE hnfc "
+    honorificSave.prepare( "UPDATE hnfc "
                "SET hnfc_code=:hnfc_code "
                "WHERE (hnfc_id=:hnfc_id);" );
   }
 
-  q.bindValue(":hnfc_id", _honorificid);
-  q.bindValue(":hnfc_code", _code->text());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  honorificSave.bindValue(":hnfc_id", _honorificid);
+  honorificSave.bindValue(":hnfc_code", _code->text());
+  honorificSave.exec();
+  if (honorificSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, honorificSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -207,18 +209,19 @@ void honorific::sSave()
 
 void honorific::populate()
 {
-  q.prepare( "SELECT hnfc_code "
+  XSqlQuery honorificpopulate;
+  honorificpopulate.prepare( "SELECT hnfc_code "
              "FROM hnfc "
              "WHERE (hnfc_id=:hnfc_id);" );
-  q.bindValue(":hnfc_id", _honorificid);
-  q.exec();
-  if (q.first())
+  honorificpopulate.bindValue(":hnfc_id", _honorificid);
+  honorificpopulate.exec();
+  if (honorificpopulate.first())
   {
-    _code->setText(q.value("hnfc_code").toString());
+    _code->setText(honorificpopulate.value("hnfc_code").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (honorificpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, honorificpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

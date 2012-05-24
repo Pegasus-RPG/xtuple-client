@@ -99,6 +99,7 @@ enum SetResponse state::set(const ParameterList &pParams)
 
 void state::sSave()
 {
+  XSqlQuery stateSave;
   _abbr->setText(_abbr->text().trimmed());
   _name->setText(_name->text().trimmed());
 
@@ -153,29 +154,29 @@ void state::sSave()
   }
 
   if (_mode == cNew)
-    q.prepare("INSERT INTO state ("
+    stateSave.prepare("INSERT INTO state ("
               "  state_id, state_abbr, state_name, state_country_id"
               ") VALUES ("
               "  DEFAULT, :state_abbr, :state_name, :country_id"
               ") RETURNING state_id;");
   else if (_mode == cEdit)
   {
-    q.prepare("UPDATE state "
+    stateSave.prepare("UPDATE state "
               "SET state_abbr=:state_abbr, state_name=:state_name,"
               "    state_country_id=:country_id "
               "WHERE (state_id=:state_id) RETURNING state_id;" );
-    q.bindValue(":state_id", _stateid);
+    stateSave.bindValue(":state_id", _stateid);
   }
 
-  q.bindValue(":state_abbr", _abbr->text().trimmed());
-  q.bindValue(":state_name", _name->text().trimmed());
-  q.bindValue(":country_id", _country->id());
-  q.exec();
-  if (q.first())
-    _stateid = q.value("state_id").toInt();
-  else if (q.lastError().type() != QSqlError::NoError)
+  stateSave.bindValue(":state_abbr", _abbr->text().trimmed());
+  stateSave.bindValue(":state_name", _name->text().trimmed());
+  stateSave.bindValue(":country_id", _country->id());
+  stateSave.exec();
+  if (stateSave.first())
+    _stateid = stateSave.value("state_id").toInt();
+  else if (stateSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, stateSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -196,20 +197,21 @@ void state::reject()
 
 void state::populate()
 {
-  q.prepare("SELECT state_abbr, state_name, state_country_id"
+  XSqlQuery statepopulate;
+  statepopulate.prepare("SELECT state_abbr, state_name, state_country_id"
             "  FROM state"
             " WHERE (state_id=:state_id);");
-  q.bindValue(":state_id", _stateid);
-  q.exec();
-  if (q.first())
+  statepopulate.bindValue(":state_id", _stateid);
+  statepopulate.exec();
+  if (statepopulate.first())
   {
-    _abbr->setText(q.value("state_abbr").toString());
-    _name->setText(q.value("state_name").toString());
-    _country->setId(q.value("state_country_id").toInt());
+    _abbr->setText(statepopulate.value("state_abbr").toString());
+    _name->setText(statepopulate.value("state_name").toString());
+    _country->setId(statepopulate.value("state_country_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (statepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, statepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -106,6 +106,7 @@ enum SetResponse company::set(const ParameterList &pParams)
 
 void company::sSave()
 {
+  XSqlQuery companySave;
   if (_number->text().length() == 0)
   {
       QMessageBox::warning( this, tr("Cannot Save Company"),
@@ -145,14 +146,14 @@ void company::sSave()
     return;
   }
 
-  q.prepare("SELECT company_id"
+  companySave.prepare("SELECT company_id"
             "  FROM company"
             " WHERE((company_id != :company_id)"
             "   AND (company_number=:company_number))");
-  q.bindValue(":company_id",       _companyid);
-  q.bindValue(":company_number",   _number->text());
-  q.exec();
-  if(q.first())
+  companySave.bindValue(":company_id",       _companyid);
+  companySave.bindValue(":company_number",   _number->text());
+  companySave.exec();
+  if(companySave.first())
   {
     QMessageBox::critical(this, tr("Duplicate Company Number"),
       tr("A Company Number already exists for the one specified.") );
@@ -198,16 +199,16 @@ void company::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('company_company_id_seq') AS company_id;");
-    if (q.first())
-      _companyid = q.value("company_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    companySave.exec("SELECT NEXTVAL('company_company_id_seq') AS company_id;");
+    if (companySave.first())
+      _companyid = companySave.value("company_id").toInt();
+    else if (companySave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, companySave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
-    q.prepare( "INSERT INTO company "
+    companySave.prepare( "INSERT INTO company "
                "( company_id, company_number, company_descrip,"
                "  company_external, company_server, company_port,"
                "  company_database, company_curr_id, company_yearend_accnt_id, "
@@ -252,7 +253,7 @@ void company::sSave()
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
 
-    q.prepare( "UPDATE company "
+    companySave.prepare( "UPDATE company "
                "SET company_number=:company_number,"
                "    company_descrip=:company_descrip,"
                "    company_external=:company_external,"
@@ -267,29 +268,29 @@ void company::sSave()
                "WHERE (company_id=:company_id);" );
   }
   
-  q.bindValue(":company_id",       _companyid);
-  q.bindValue(":company_number",   _number->text());
-  q.bindValue(":company_descrip",  _descrip->toPlainText());
-  q.bindValue(":company_external", _external->isChecked());
-  q.bindValue(":company_server",   _extServer->text());
-  q.bindValue(":company_port",     _extPort->cleanText());
-  q.bindValue(":company_database", _extDB->text());
+  companySave.bindValue(":company_id",       _companyid);
+  companySave.bindValue(":company_number",   _number->text());
+  companySave.bindValue(":company_descrip",  _descrip->toPlainText());
+  companySave.bindValue(":company_external", _external->isChecked());
+  companySave.bindValue(":company_server",   _extServer->text());
+  companySave.bindValue(":company_port",     _extPort->cleanText());
+  companySave.bindValue(":company_database", _extDB->text());
   if (_gainloss->isValid())
-    q.bindValue(":company_gainloss_accnt_id", _gainloss->id());
+    companySave.bindValue(":company_gainloss_accnt_id", _gainloss->id());
   if (_discrepancy->isValid())
-    q.bindValue(":company_dscrp_accnt_id", _discrepancy->id());
+    companySave.bindValue(":company_dscrp_accnt_id", _discrepancy->id());
   if (_yearend->isValid())
-    q.bindValue(":company_yearend_accnt_id", _yearend->id());
+    companySave.bindValue(":company_yearend_accnt_id", _yearend->id());
   if (_external->isChecked())
   {
-    q.bindValue(":company_curr_id", _currency->id());
+    companySave.bindValue(":company_curr_id", _currency->id());
     if (_unrlzgainloss->isValid())
-      q.bindValue(":company_unrlzgainloss_accnt_id", _unrlzgainloss->id());
+      companySave.bindValue(":company_unrlzgainloss_accnt_id", _unrlzgainloss->id());
   }
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  companySave.exec();
+  if (companySave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, companySave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -311,47 +312,48 @@ void company::sSave()
 
 void company::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery companypopulate;
+  companypopulate.prepare( "SELECT * "
              "FROM company "
              "WHERE (company_id=:company_id);" );
-  q.bindValue(":company_id", _companyid);
-  q.exec();
-  if (q.first())
+  companypopulate.bindValue(":company_id", _companyid);
+  companypopulate.exec();
+  if (companypopulate.first())
   {
-    _number->setText(q.value("company_number").toString());
-    _descrip->setText(q.value("company_descrip").toString());
-    _external->setChecked(q.value("company_external").toBool());
-    _extServer->setText(q.value("company_server").toString());
-    _extPort->setValue(q.value("company_port").toInt());
-    _extDB->setText(q.value("company_database").toString());
-    _yearend->setId(q.value("company_yearend_accnt_id").toInt());
-    _gainloss->setId(q.value("company_gainloss_accnt_id").toInt());
-    _discrepancy->setId(q.value("company_dscrp_accnt_id").toInt());
+    _number->setText(companypopulate.value("company_number").toString());
+    _descrip->setText(companypopulate.value("company_descrip").toString());
+    _external->setChecked(companypopulate.value("company_external").toBool());
+    _extServer->setText(companypopulate.value("company_server").toString());
+    _extPort->setValue(companypopulate.value("company_port").toInt());
+    _extDB->setText(companypopulate.value("company_database").toString());
+    _yearend->setId(companypopulate.value("company_yearend_accnt_id").toInt());
+    _gainloss->setId(companypopulate.value("company_gainloss_accnt_id").toInt());
+    _discrepancy->setId(companypopulate.value("company_dscrp_accnt_id").toInt());
     if (_external->isChecked())
     {
-      _cachedCurrid = q.value("company_curr_id").toInt();
-      _currency->setId(q.value("company_curr_id").toInt());
-      _unrlzgainloss->setId(q.value("company_unrlzgainloss_accnt_id").toInt());
+      _cachedCurrid = companypopulate.value("company_curr_id").toInt();
+      _currency->setId(companypopulate.value("company_curr_id").toInt());
+      _unrlzgainloss->setId(companypopulate.value("company_unrlzgainloss_accnt_id").toInt());
     }
 
-    _cachedNumber = q.value("company_number").toString();
+    _cachedNumber = companypopulate.value("company_number").toString();
 
-    q.prepare("SELECT COUNT(*) AS result "
+    companypopulate.prepare("SELECT COUNT(*) AS result "
               "FROM accnt "
               "WHERE (accnt_company=:number);");
-    q.bindValue(":number", _cachedNumber);
-    q.exec();
-    if (q.first())
-      _external->setEnabled(q.value("result").toInt() == 0);
-    else if (q.lastError().type() != QSqlError::NoError)
+    companypopulate.bindValue(":number", _cachedNumber);
+    companypopulate.exec();
+    if (companypopulate.first())
+      _external->setEnabled(companypopulate.value("result").toInt() == 0);
+    else if (companypopulate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, companypopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (companypopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, companypopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sHandleTest();
@@ -366,6 +368,7 @@ void company::sHandleTest()
 
 void company::sTest()
 {
+  XSqlQuery companyTest;
   if (DEBUG)
     qDebug("company::sTest()");
 
@@ -430,17 +433,17 @@ void company::sTest()
     rmq.exec("SELECT * FROM curr_symbol WHERE curr_base;");
     if (_external->isChecked())
     {
-      q.prepare("SELECT * FROM curr_symbol WHERE curr_id=:curr_id;");
-      q.bindValue(":curr_id", _currency->id());
-      q.exec();
+      companyTest.prepare("SELECT * FROM curr_symbol WHERE curr_id=:curr_id;");
+      companyTest.bindValue(":curr_id", _currency->id());
+      companyTest.exec();
     }
     else
-      q.exec("SELECT * FROM curr_symbol WHERE curr_base;");
+      companyTest.exec("SELECT * FROM curr_symbol WHERE curr_base;");
 
-    if (q.first() && rmq.first())
+    if (companyTest.first() && rmq.first())
     {
-      if (rmq.value("curr_symbol").toString() != q.value("curr_symbol").toString() &&
-          rmq.value("curr_abbr").toString() != q.value("curr_abbr").toString())
+      if (rmq.value("curr_symbol").toString() != companyTest.value("curr_symbol").toString() &&
+          rmq.value("curr_abbr").toString() != companyTest.value("curr_abbr").toString())
       {
         QMessageBox::warning(this, tr("Currencies Incompatible"),
                              tr("<p>The currency of the child database does "
@@ -450,9 +453,9 @@ void company::sTest()
                              .arg(rmq.value("curr_name").toString())
                              .arg(rmq.value("curr_symbol").toString())
                              .arg(rmq.value("curr_abbr").toString())
-                             .arg(q.value("curr_name").toString())
-                             .arg(q.value("curr_symbol").toString())
-                             .arg(q.value("curr_abbr").toString()));
+                             .arg(companyTest.value("curr_name").toString())
+                             .arg(companyTest.value("curr_symbol").toString())
+                             .arg(companyTest.value("curr_abbr").toString()));
         return;
       }
     }
@@ -461,9 +464,9 @@ void company::sTest()
       systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (companyTest.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, companyTest.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else if (!rmq.first())
@@ -474,7 +477,7 @@ void company::sTest()
                               "be synchronized."));
       return;
     }
-    else if (!q.first())
+    else if (!companyTest.first())
     {
       QMessageBox::warning(this, tr("No Base Currency"),
                            tr("<p>The parent database does not appear to have "

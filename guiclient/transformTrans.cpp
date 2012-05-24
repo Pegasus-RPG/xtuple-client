@@ -75,6 +75,7 @@ void transformTrans::languageChange()
 
 enum SetResponse transformTrans::set(const ParameterList &pParams)
 {
+  XSqlQuery transformet;
   XWidget::set(pParams);
   _captive = TRUE;
 
@@ -120,7 +121,7 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
       _close->setFocus();
       _post->hide();
 
-      q.prepare( "SELECT invhist.*, "
+      transformet.prepare( "SELECT invhist.*, "
                  "       abs(invhist_invqty) AS transqty,"
                  "       CASE WHEN (invhist_invqty > 0) THEN invhist_qoh_before"
                  "            ELSE NULL"
@@ -140,21 +141,21 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
                  "  FROM invhist, itemsite"
                  " WHERE ((invhist_itemsite_id=itemsite_id)"
                  "   AND  (invhist_id=:invhist_id)); " );
-      q.bindValue(":invhist_id", invhistid);
-      q.exec();
-      if (q.first())
+      transformet.bindValue(":invhist_id", invhistid);
+      transformet.exec();
+      if (transformet.first())
       {
-        _transDate->setDate(q.value("invhist_transdate").toDate());
-        _username->setText(q.value("invhist_user").toString());
-        _qty->setDouble(q.value("transqty").toDouble());
-        _fromBeforeQty->setDouble(q.value("fromqohbefore").toDouble());
-        _fromAfterQty->setDouble(q.value("fromqohafter").toDouble());
-        _toBeforeQty->setDouble(q.value("qohbefore").toDouble());
-        _toAfterQty->setDouble(q.value("qohafter").toDouble());
-        _documentNum->setText(q.value("invhist_docnumber").toString());
-        _notes->setText(q.value("invhist_comments").toString());
-        _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
-        _warehouse->setId(q.value("warehous_id").toInt());
+        _transDate->setDate(transformet.value("invhist_transdate").toDate());
+        _username->setText(transformet.value("invhist_user").toString());
+        _qty->setDouble(transformet.value("transqty").toDouble());
+        _fromBeforeQty->setDouble(transformet.value("fromqohbefore").toDouble());
+        _fromAfterQty->setDouble(transformet.value("fromqohafter").toDouble());
+        _toBeforeQty->setDouble(transformet.value("qohbefore").toDouble());
+        _toAfterQty->setDouble(transformet.value("qohafter").toDouble());
+        _documentNum->setText(transformet.value("invhist_docnumber").toString());
+        _notes->setText(transformet.value("invhist_comments").toString());
+        _item->setItemsiteid(transformet.value("invhist_itemsite_id").toInt());
+        _warehouse->setId(transformet.value("warehous_id").toInt());
       }
 
       _close->setFocus();
@@ -166,6 +167,7 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
 
 void transformTrans::sPost()
 {
+  XSqlQuery transformPost;
   struct {
     bool        condition;
     QString     msg;
@@ -199,8 +201,8 @@ void transformTrans::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible distribution cancelations
-  q.prepare( "SELECT postTransformTrans(s.itemsite_id, t.itemsite_id,"
+  transformPost.exec("BEGIN;");	// because of possible distribution cancelations
+  transformPost.prepare( "SELECT postTransformTrans(s.itemsite_id, t.itemsite_id,"
              "                          :itemloc_id, :qty, :docnumber,"
               "                          :comments, :date) AS result "
              "FROM itemsite AS s, itemsite AS t "
@@ -208,18 +210,18 @@ void transformTrans::sPost()
              " AND (s.itemsite_warehous_id=:warehous_id)"
              " AND (s.itemsite_item_id=:sourceItemid)"
              " AND (t.itemsite_item_id=:targetItemid) );" );
-  q.bindValue(":warehous_id",  _warehouse->id());
-  q.bindValue(":sourceItemid", _item->id());
-  q.bindValue(":targetItemid", _target->id());
-  q.bindValue(":itemloc_id",   _source->altId());
-  q.bindValue(":qty",          _qty->toDouble());
-  q.bindValue(":comments",     _notes->toPlainText());
-  q.bindValue(":docnumber",    _documentNum->text());
-  q.bindValue(":date",         _transDate->date());
-  q.exec();
-  if (q.first())
+  transformPost.bindValue(":warehous_id",  _warehouse->id());
+  transformPost.bindValue(":sourceItemid", _item->id());
+  transformPost.bindValue(":targetItemid", _target->id());
+  transformPost.bindValue(":itemloc_id",   _source->altId());
+  transformPost.bindValue(":qty",          _qty->toDouble());
+  transformPost.bindValue(":comments",     _notes->toPlainText());
+  transformPost.bindValue(":docnumber",    _documentNum->text());
+  transformPost.bindValue(":date",         _transDate->date());
+  transformPost.exec();
+  if (transformPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = transformPost.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -227,14 +229,14 @@ void transformTrans::sPost()
                   __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (transformPost.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transformPost.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    if (distributeInventory::SeriesAdjust(transformPost.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
       QMessageBox::information(this, tr("Transform Transaction"),
@@ -242,12 +244,12 @@ void transformTrans::sPost()
       return;
     }
 
-    q.exec("COMMIT;");
+    transformPost.exec("COMMIT;");
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (transformPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transformPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -282,31 +284,32 @@ void transformTrans::sPost()
 
 void transformTrans::sPopulateTarget(int /*pItemid*/)
 {
+  XSqlQuery transformPopulateTarget;
   if (!_item->isValid())
     return;
 	
-  q.prepare( "SELECT item_descrip1, item_descrip2, itemsite_qtyonhand "
+  transformPopulateTarget.prepare( "SELECT item_descrip1, item_descrip2, itemsite_qtyonhand "
              "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
              "WHERE ( (itemsite_item_id=:item_id) "
              "  AND   (itemsite_warehous_id=:warehous_id) "
              "  AND   (itemsite_active) "
              "  AND   (itemsite_controlmethod <> 'N') );" );
-  q.bindValue(":item_id",     _target->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if (q.first())
+  transformPopulateTarget.bindValue(":item_id",     _target->id());
+  transformPopulateTarget.bindValue(":warehous_id", _warehouse->id());
+  transformPopulateTarget.exec();
+  if (transformPopulateTarget.first())
   {
-    _descrip1->setText(q.value("item_descrip1").toString());
-    _descrip2->setText(q.value("item_descrip2").toString());
-    _toBeforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
+    _descrip1->setText(transformPopulateTarget.value("item_descrip1").toString());
+    _descrip2->setText(transformPopulateTarget.value("item_descrip2").toString());
+    _toBeforeQty->setDouble(transformPopulateTarget.value("itemsite_qtyonhand").toDouble());
     sRecalculateAfter();
     _targetIsValid = true;
 
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (transformPopulateTarget.lastError().type() != QSqlError::NoError)
   {
     _targetIsValid = false;
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transformPopulateTarget.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -323,23 +326,24 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
 
 void transformTrans::sFillList()
 {
+  XSqlQuery transformFillList;
   if (!_item->isValid())
     return;
     
   _source->clear();
   _target->clear();
 
-  q.prepare( "SELECT item_id, item_number "
+  transformFillList.prepare( "SELECT item_id, item_number "
              "FROM itemtrans JOIN item ON (item_id=itemtrans_target_item_id) "
              "WHERE (itemtrans_source_item_id=:item_id) "
              "ORDER BY item_number;" );
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
-    _target->populate(q);
-  else if (q.lastError().type() != QSqlError::NoError)
+  transformFillList.bindValue(":item_id", _item->id());
+  transformFillList.exec();
+  if (transformFillList.first())
+    _target->populate(transformFillList);
+  else if (transformFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transformFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -353,21 +357,21 @@ void transformTrans::sFillList()
     return;
   }
 
-  q.prepare( "SELECT itemsite_id,"
+  transformFillList.prepare( "SELECT itemsite_id,"
              "       ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) ) AS detail "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if (q.first())
+  transformFillList.bindValue(":item_id", _item->id());
+  transformFillList.bindValue(":warehous_id", _warehouse->id());
+  transformFillList.exec();
+  if (transformFillList.first())
   {
-    int itemsiteid = q.value("itemsite_id").toInt();
-    _controlled = q.value("detail").toBool();
+    int itemsiteid = transformFillList.value("itemsite_id").toInt();
+    _controlled = transformFillList.value("detail").toBool();
 
     if (_controlled)
-      q.prepare( "SELECT itemloc_itemsite_id AS itemsiteid, itemloc_id AS itemlocid,"
+      transformFillList.prepare( "SELECT itemloc_itemsite_id AS itemsiteid, itemloc_id AS itemlocid,"
                  "       CASE WHEN (location_id IS NULL) THEN :na"
                  "            ELSE formatLocationName(location_id)"
                  "       END AS locationname,"
@@ -379,7 +383,7 @@ void transformTrans::sFillList()
                  "WHERE ( (itemloc_qty > 0)"
                  " AND (itemloc_itemsite_id=:itemsite_id) );" );
     else
-      q.prepare( "SELECT itemsite_id AS itemsiteid, -1 AS itemlocid,"
+      transformFillList.prepare( "SELECT itemsite_id AS itemsiteid, -1 AS itemlocid,"
                  "       TEXT(:na) AS locationname,"
                  "       TEXT(:na) AS lotserial,"
                  "       itemsite_qtyonhand AS qty, 'qty' AS qty_xtnumericrole "
@@ -387,25 +391,26 @@ void transformTrans::sFillList()
                  "WHERE ( (itemsite_qtyonhand > 0)"
                  " AND (itemsite_id=:itemsite_id) );" );
 
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":itemsite_id", itemsiteid);
-    q.exec();
-    _source->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
+    transformFillList.bindValue(":na", tr("N/A"));
+    transformFillList.bindValue(":itemsite_id", itemsiteid);
+    transformFillList.exec();
+    _source->populate(transformFillList, true);
+    if (transformFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transformFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (transformFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transformFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void  transformTrans::sPopulateQOH()
 {
+  XSqlQuery transformPopulateQOH;
   if (_source->id() > -1)
   {
     _fromBeforeQty->setDouble(_source->currentItem()->rawValue("qty").toDouble());
@@ -413,22 +418,22 @@ void  transformTrans::sPopulateQOH()
   }
   else
   {
-    q.prepare( "SELECT itemsite_qtyonhand "
+    transformPopulateQOH.prepare( "SELECT itemsite_qtyonhand "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id));" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
-    if (q.first())
+    transformPopulateQOH.bindValue(":item_id", _item->id());
+    transformPopulateQOH.bindValue(":warehous_id", _warehouse->id());
+    transformPopulateQOH.exec();
+    if (transformPopulateQOH.first())
     {
-      _fromBeforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
+      _fromBeforeQty->setDouble(transformPopulateQOH.value("itemsite_qtyonhand").toDouble());
       sRecalculateAfter();
 
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (transformPopulateQOH.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transformPopulateQOH.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

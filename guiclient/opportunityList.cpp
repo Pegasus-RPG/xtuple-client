@@ -169,12 +169,13 @@ void opportunityList::sView()
 
 void opportunityList::sDelete()
 {
-  q.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
-  q.bindValue(":ophead_id", list()->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery opportunityDelete;
+  opportunityDelete.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
+  opportunityDelete.bindValue(":ophead_id", list()->id());
+  opportunityDelete.exec();
+  if (opportunityDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = opportunityDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteOpportunity", result));
@@ -183,9 +184,9 @@ void opportunityList::sDelete()
     else
       sFillList();
     }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (opportunityDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, opportunityDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -193,22 +194,24 @@ void opportunityList::sDelete()
 
 void opportunityList::sDeactivate()
 {
-  q.prepare("UPDATE ophead SET ophead_active=false WHERE ophead_id=:ophead_id;");
-  q.bindValue(":ophead_id", list()->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  XSqlQuery opportunityDeactivate;
+  opportunityDeactivate.prepare("UPDATE ophead SET ophead_active=false WHERE ophead_id=:ophead_id;");
+  opportunityDeactivate.bindValue(":ophead_id", list()->id());
+  opportunityDeactivate.exec();
+  if (opportunityDeactivate.lastError().type() != QSqlError::NoError)
+    systemError(this, opportunityDeactivate.lastError().databaseText(), __FILE__, __LINE__);
   else
     sFillList();
 }
 
 void opportunityList::sActivate()
 {
-  q.prepare("UPDATE ophead SET ophead_active=true WHERE ophead_id=:ophead_id;");
-  q.bindValue(":ophead_id", list()->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  XSqlQuery opportunityActivate;
+  opportunityActivate.prepare("UPDATE ophead SET ophead_active=true WHERE ophead_id=:ophead_id;");
+  opportunityActivate.bindValue(":ophead_id", list()->id());
+  opportunityActivate.exec();
+  if (opportunityActivate.lastError().type() != QSqlError::NoError)
+    systemError(this, opportunityActivate.lastError().databaseText(), __FILE__, __LINE__);
   else
     sFillList();
 }

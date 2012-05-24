@@ -161,15 +161,16 @@ void dspBacklog::sPrintPackingList()
 
 void dspBacklog::sAddToPackingListBatch()
 {
+  XSqlQuery dspAddToPackingListBatch;
   QList<XTreeWidgetItem*> selected = list()->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
-    q.bindValue(":sohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    dspAddToPackingListBatch.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
+    dspAddToPackingListBatch.bindValue(":sohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    dspAddToPackingListBatch.exec();
+    if (dspAddToPackingListBatch.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspAddToPackingListBatch.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

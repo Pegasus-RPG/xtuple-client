@@ -56,6 +56,7 @@ void unpostedGLTransactions::languageChange()
 
 enum SetResponse unpostedGLTransactions::set(const ParameterList &pParams)
 {
+  XSqlQuery unpostedet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -64,16 +65,16 @@ enum SetResponse unpostedGLTransactions::set(const ParameterList &pParams)
   if (valid)
   {
     _periodid = param.toInt();
-    q.prepare( "SELECT period_name, period_start, period_end "
+    unpostedet.prepare( "SELECT period_name, period_start, period_end "
                "FROM period "
                "WHERE (period_id=:period_id);" );
-    q.bindValue(":period_id", _periodid);
-    q.exec();
-    if (q.first())
+    unpostedet.bindValue(":period_id", _periodid);
+    unpostedet.exec();
+    if (unpostedet.first())
     {
-      _period->setText(q.value("period_name").toString());
-      _dates->setStartDate(q.value("period_start").toDate());
-      _dates->setEndDate(q.value("period_end").toDate());
+      _period->setText(unpostedet.value("period_name").toString());
+      _dates->setStartDate(unpostedet.value("period_start").toDate());
+      _dates->setEndDate(unpostedet.value("period_end").toDate());
     }
   }
 
@@ -112,6 +113,7 @@ void unpostedGLTransactions::sPrint()
 
 void unpostedGLTransactions::sFillList()
 {
+  XSqlQuery unpostedFillList;
   QString sql( "SELECT gltrans_id, formatDate(gltrans_date), gltrans_source, gltrans_doctype,"
                "       CASE WHEN(gltrans_docnumber='Misc.' AND invhist_docnumber IS NOT NULL) THEN"
                "              (gltrans_docnumber || ' - ' || invhist_docnumber)"
@@ -139,13 +141,13 @@ void unpostedGLTransactions::sFillList()
 	       "  AND  (period_id=:period_id)) "
 	       "ORDER BY gltrans_created, gltrans_sequence, gltrans_amount;");
 
-  q.prepare(sql);
-  q.bindValue(":period_id", _periodid);
-  q.exec();
-  _gltrans->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  unpostedFillList.prepare(sql);
+  unpostedFillList.bindValue(":period_id", _periodid);
+  unpostedFillList.exec();
+  _gltrans->populate(unpostedFillList);
+  if (unpostedFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, unpostedFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -163,6 +165,7 @@ void unpostedGLTransactions::sViewTrans()
 
 void unpostedGLTransactions::sViewDocument()
 {
+  XSqlQuery unpostedViewDocument;
   QTreeWidgetItem * item = (XTreeWidgetItem*)_gltrans->currentItem();
   if(0 == item)
     return;
@@ -170,18 +173,18 @@ void unpostedGLTransactions::sViewDocument()
   ParameterList params;
   if(item->text(2) == "VO")
   {
-    q.prepare("SELECT vohead_id, vohead_misc"
+    unpostedViewDocument.prepare("SELECT vohead_id, vohead_misc"
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
-    q.bindValue(":vohead_number", item->text(3));
-    q.exec();
-    if(!q.first())
+    unpostedViewDocument.bindValue(":vohead_number", item->text(3));
+    unpostedViewDocument.exec();
+    if(!unpostedViewDocument.first())
       return;
 
-    params.append("vohead_id", q.value("vohead_id").toInt());
+    params.append("vohead_id", unpostedViewDocument.value("vohead_id").toInt());
     params.append("mode", "view");
 
-    if(q.value("vohead_misc").toBool())
+    if(unpostedViewDocument.value("vohead_misc").toBool())
     {
       miscVoucher *newdlg = new miscVoucher();
       newdlg->set(params);
@@ -196,27 +199,27 @@ void unpostedGLTransactions::sViewDocument()
   }
   else if(item->text(2) == "IN")
   {
-    q.prepare("SELECT invchead_id"
+    unpostedViewDocument.prepare("SELECT invchead_id"
               "  FROM invchead"
               " WHERE (invchead_invcnumber=:invchead_invcnumber)");
-    q.bindValue(":invchead_invcnumber", item->text(3));
-    q.exec();
-    if(!q.first())
+    unpostedViewDocument.bindValue(":invchead_invcnumber", item->text(3));
+    unpostedViewDocument.exec();
+    if(!unpostedViewDocument.first())
       return;
 
-    invoice::viewInvoice(q.value("invchead_id").toInt());
+    invoice::viewInvoice(unpostedViewDocument.value("invchead_id").toInt());
   }
   else if(item->text(2) == "PO")
   {
-    q.prepare("SELECT pohead_id"
+    unpostedViewDocument.prepare("SELECT pohead_id"
               "  FROM pohead"
               " WHERE (pohead_number=:pohead_number)");
-    q.bindValue(":pohead_number", item->text(3));
-    q.exec();
-    if(!q.first())
+    unpostedViewDocument.bindValue(":pohead_number", item->text(3));
+    unpostedViewDocument.exec();
+    if(!unpostedViewDocument.first())
       return;
 
-    params.append("pohead_id", q.value("pohead_id").toInt());
+    params.append("pohead_id", unpostedViewDocument.value("pohead_id").toInt());
     params.append("mode", "view");
 
     purchaseOrder *newdlg = new purchaseOrder();

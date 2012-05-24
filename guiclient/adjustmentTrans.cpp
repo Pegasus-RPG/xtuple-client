@@ -105,6 +105,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
     invhistid = param.toInt();
 
   param = pParams.value("mode", &valid);
+  XSqlQuery setAdjustment;
   if (valid)
   {
     if (param.toString() == "new")
@@ -129,25 +130,25 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
       _post->hide();
       _close->setText(tr("&Close"));
 
-      q.prepare( "SELECT * "
+      setAdjustment.prepare( "SELECT * "
                  "FROM invhist "
                  "WHERE (invhist_id=:invhist_id);" );
-      q.bindValue(":invhist_id", invhistid);
-      q.exec();
-      if (q.first())
+      setAdjustment.bindValue(":invhist_id", invhistid);
+      setAdjustment.exec();
+      if (setAdjustment.first())
       {
-        _transDate->setDate(q.value("invhist_transdate").toDate());
-        _username->setText(q.value("invhist_user").toString());
-        _qty->setDouble(q.value("invhist_invqty").toDouble());
-        _beforeQty->setDouble(q.value("invhist_qoh_before").toDouble());
-        _afterQty->setDouble(q.value("invhist_qoh_after").toDouble());
-        _documentNum->setText(q.value("invhist_ordnumber"));
-        _notes->setText(q.value("invhist_comments").toString());
-        _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
+        _transDate->setDate(setAdjustment.value("invhist_transdate").toDate());
+        _username->setText(setAdjustment.value("invhist_user").toString());
+        _qty->setDouble(setAdjustment.value("invhist_invqty").toDouble());
+        _beforeQty->setDouble(setAdjustment.value("invhist_qoh_before").toDouble());
+        _afterQty->setDouble(setAdjustment.value("invhist_qoh_after").toDouble());
+        _documentNum->setText(setAdjustment.value("invhist_ordnumber"));
+        _notes->setText(setAdjustment.value("invhist_comments").toString());
+        _item->setItemsiteid(setAdjustment.value("invhist_itemsite_id").toInt());
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (setAdjustment.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, setAdjustment.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
 
@@ -159,6 +160,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 
 void adjustmentTrans::sPost()
 {
+  XSqlQuery adjustmentPost;
   double qty = 0.0;
   double cost = _cost->toDouble();
 
@@ -200,39 +202,39 @@ void adjustmentTrans::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible distribution cancelations
-  q.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber,"
+  adjustmentPost.exec("BEGIN;");	// because of possible distribution cancelations
+  adjustmentPost.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber,"
              "                     :comments, :date, :cost) AS result "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":qty", qty);
-  q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments",    _notes->toPlainText());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":date",        _transDate->date());
+  adjustmentPost.bindValue(":qty", qty);
+  adjustmentPost.bindValue(":docNumber", _documentNum->text());
+  adjustmentPost.bindValue(":comments",    _notes->toPlainText());
+  adjustmentPost.bindValue(":item_id", _item->id());
+  adjustmentPost.bindValue(":warehous_id", _warehouse->id());
+  adjustmentPost.bindValue(":date",        _transDate->date());
   if(!_costAdjust->isChecked())
-    q.bindValue(":cost", 0.0);
+    adjustmentPost.bindValue(":cost", 0.0);
   else if(_costManual->isChecked())
-    q.bindValue(":cost", cost);
-  q.exec();
-  if (q.first())
+    adjustmentPost.bindValue(":cost", cost);
+  adjustmentPost.exec();
+  if (adjustmentPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = adjustmentPost.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
       systemError(this, storedProcErrorLookup("invAdjustment", result),
                   __FILE__, __LINE__);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (adjustmentPost.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, adjustmentPost.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    if (distributeInventory::SeriesAdjust(adjustmentPost.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
       QMessageBox::information(this, tr("Inventory Adjustment"),
@@ -240,7 +242,7 @@ void adjustmentTrans::sPost()
       return;
     }
 
-    q.exec("COMMIT;");
+    adjustmentPost.exec("COMMIT;");
     if (_captive)
       close();
     else
@@ -256,10 +258,10 @@ void adjustmentTrans::sPost()
       _item->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (adjustmentPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, adjustmentPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -274,34 +276,35 @@ void adjustmentTrans::sPost()
 
 void adjustmentTrans::sPopulateQOH()
 {
+  XSqlQuery populateAdjustment;
   if (_mode != cView)
   {
-    q.prepare( "SELECT itemsite_freeze, itemsite_qtyonhand, itemsite_costmethod "
+    populateAdjustment.prepare( "SELECT itemsite_freeze, itemsite_qtyonhand, itemsite_costmethod "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id));" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
+    populateAdjustment.bindValue(":item_id", _item->id());
+    populateAdjustment.bindValue(":warehous_id", _warehouse->id());
+    populateAdjustment.exec();
 
     _absolute->setStyleSheet("");
-    if (q.first())
+    if (populateAdjustment.first())
     {
-      _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
+      _cachedQOH = populateAdjustment.value("itemsite_qtyonhand").toDouble();
       if(_cachedQOH == 0.0)
         _costManual->setChecked(true);
-      _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
+      _beforeQty->setDouble(populateAdjustment.value("itemsite_qtyonhand").toDouble());
       _costAdjust->setChecked(true);
-      _costAdjust->setEnabled(q.value("itemsite_costmethod").toString() == "A");
-      _costMethod = q.value("itemsite_costmethod").toString();
+      _costAdjust->setEnabled(populateAdjustment.value("itemsite_costmethod").toString() == "A");
+      _costMethod = populateAdjustment.value("itemsite_costmethod").toString();
 
-      if (q.value("itemsite_freeze").toBool())
+      if (populateAdjustment.value("itemsite_freeze").toBool())
         _absolute->setStyleSheet(QString("* { color: %1; }")
                                  .arg(namedColor("error").name()));
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (populateAdjustment.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, populateAdjustment.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 

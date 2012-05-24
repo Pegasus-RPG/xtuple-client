@@ -18,6 +18,7 @@
 returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery returnreturnWoMaterialBatch;
   setupUi(this);
 
 
@@ -29,7 +30,7 @@ returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, 
   _captive = FALSE;
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
-  q.bindValue(":date",  _transDate->date());
+  returnreturnWoMaterialBatch.bindValue(":date",  _transDate->date());
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
@@ -69,6 +70,7 @@ enum SetResponse returnWoMaterialBatch::set(const ParameterList &pParams)
 
 void returnWoMaterialBatch::sReturn()
 {
+  XSqlQuery returnReturn;
   if (!_transDate->isValid())
   {
     QMessageBox::critical(this, tr("Invalid date"),
@@ -77,14 +79,14 @@ void returnWoMaterialBatch::sReturn()
     return;
   }
   
-  q.prepare( "SELECT wo_qtyrcv, wo_status "
+  returnReturn.prepare( "SELECT wo_qtyrcv, wo_status "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
-  q.bindValue(":wo_id", _wo->id());
-  q.exec();
-  if (q.first())
+  returnReturn.bindValue(":wo_id", _wo->id());
+  returnReturn.exec();
+  if (returnReturn.first())
   {
-    if (_wo->method() == "A" && q.value("wo_qtyrcv").toDouble() != 0)
+    if (_wo->method() == "A" && returnReturn.value("wo_qtyrcv").toDouble() != 0)
     {
       QMessageBox::warning( this, tr("Cannot return Work Order Material"),
                             tr( "This Work Order has had material received against it\n"
@@ -95,9 +97,9 @@ void returnWoMaterialBatch::sReturn()
     }
     else
     {
-      if(q.value("wo_status").toString() == "E" || 
-         q.value("wo_status").toString() == "R" ||
-         q.value("wo_status").toString() == "I")
+      if(returnReturn.value("wo_status").toString() == "E" || 
+         returnReturn.value("wo_status").toString() == "R" ||
+         returnReturn.value("wo_status").toString() == "I")
       {
         XSqlQuery rollback;
         rollback.prepare("ROLLBACK;");
@@ -121,24 +123,24 @@ void returnWoMaterialBatch::sReturn()
           if(items.value("qty").toDouble() == 0.0)
             continue;
 
-          q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-          q.prepare("SELECT returnWoMaterial(:womatl_id, :qty, 0, :date) AS result;");
-          q.bindValue(":womatl_id", items.value("womatl_id").toInt());
-          q.bindValue(":qty", items.value("qty").toDouble());
-          q.bindValue(":date",  _transDate->date());
-          q.exec();
-          if (q.first())
+          returnReturn.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+          returnReturn.prepare("SELECT returnWoMaterial(:womatl_id, :qty, 0, :date) AS result;");
+          returnReturn.bindValue(":womatl_id", items.value("womatl_id").toInt());
+          returnReturn.bindValue(":qty", items.value("qty").toDouble());
+          returnReturn.bindValue(":date",  _transDate->date());
+          returnReturn.exec();
+          if (returnReturn.first())
           {
-            if (q.value("result").toInt() < 0)
+            if (returnReturn.value("result").toInt() < 0)
             {
               rollback.exec();
               systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2, Error #%3.")
                                  .arg(__LINE__)
                                  .arg(_wo->id())
-                                 .arg(q.value("result").toInt()) );
+                                 .arg(returnReturn.value("result").toInt()) );
               return;
             }
-            if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+            if (distributeInventory::SeriesAdjust(returnReturn.value("result").toInt(), this) == XDialog::Rejected)
             {
               rollback.exec();
               QMessageBox::information( this, tr("Material Return"), tr("Transaction Canceled") );
@@ -153,7 +155,7 @@ void returnWoMaterialBatch::sReturn()
                                .arg(_wo->id()) );
             return;
           }
-          q.exec("COMMIT;");
+          returnReturn.exec("COMMIT;");
         }
       }
     }

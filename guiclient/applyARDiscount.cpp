@@ -69,7 +69,8 @@ void applyARDiscount::sApply()
 
 void applyARDiscount::populate()
 {
-  q.prepare("SELECT cust_name, aropen_docnumber, aropen_docdate,"
+  XSqlQuery applypopulate;
+  applypopulate.prepare("SELECT cust_name, aropen_docnumber, aropen_docdate,"
             "       CASE WHEN (aropen_doctype='I') THEN :invoice "
             "            WHEN (aropen_doctype='C') THEN :creditmemo "
             "            ELSE aropen_doctype "
@@ -87,23 +88,23 @@ void applyARDiscount::populate()
             "         AND  (arapply_source_aropen_id=aropen_id) "
             "         AND  (aropen_discount)) ) AS data "
             "WHERE (aropen_id=:aropen_id);");
-  q.bindValue(":aropen_id", _aropenid);
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":creditmemo", tr("Credit Memo"));
-  q.exec();
+  applypopulate.bindValue(":aropen_id", _aropenid);
+  applypopulate.bindValue(":invoice", tr("Invoice"));
+  applypopulate.bindValue(":creditmemo", tr("Credit Memo"));
+  applypopulate.exec();
 
-  if(q.first())
+  if(applypopulate.first())
   {
-    _cust->setText(q.value("cust_name").toString());
+    _cust->setText(applypopulate.value("cust_name").toString());
 
-    _doctype->setText(q.value("f_doctype").toString());
-    _docnum->setText(q.value("aropen_docnumber").toString());
-    _docdate->setDate(q.value("aropen_docdate").toDate());
+    _doctype->setText(applypopulate.value("f_doctype").toString());
+    _docnum->setText(applypopulate.value("aropen_docnumber").toString());
+    _docdate->setDate(applypopulate.value("aropen_docdate").toDate());
 
-    _terms->setText(q.value("f_terms").toString());
-    _discdate->setDate(q.value("discdate").toDate());
+    _terms->setText(applypopulate.value("f_terms").toString());
+    _discdate->setDate(applypopulate.value("discdate").toDate());
 
-    if(q.value("past").toBool())
+    if(applypopulate.value("past").toBool())
     {
       QPalette tmpPalette = _discdate->palette();
       tmpPalette.setColor(QPalette::HighlightedText, namedColor("error"));
@@ -113,12 +114,12 @@ void applyARDiscount::populate()
       _discdateLit->setForegroundRole(QPalette::HighlightedText);
     }
 
-    _discprcnt->setDouble(q.value("terms_discprcnt").toDouble() * 100);
+    _discprcnt->setDouble(applypopulate.value("terms_discprcnt").toDouble() * 100);
 
-    _owed->setLocalValue(q.value("aropen_amount").toDouble());
-    _applieddiscounts->setLocalValue(q.value("applied").toDouble());
+    _owed->setLocalValue(applypopulate.value("aropen_amount").toDouble());
+    _applieddiscounts->setLocalValue(applypopulate.value("applied").toDouble());
   }
 
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (applypopulate.lastError().type() != QSqlError::NoError)
+    systemError(this, applypopulate.lastError().databaseText(), __FILE__, __LINE__);
 }

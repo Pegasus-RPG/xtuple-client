@@ -110,12 +110,13 @@ void addresses::sView()
 
 void addresses::sDelete()
 {
-  q.prepare("SELECT deleteAddress(:addr_id) AS result;");
-  q.bindValue(":addr_id", list()->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery deleteAddress;
+  deleteAddress.prepare("SELECT deleteAddress(:addr_id) AS result;");
+  deleteAddress.bindValue(":addr_id", list()->id());
+  deleteAddress.exec();
+  if (deleteAddress.first())
   {
-    int result = q.value("result").toInt();
+    int result = deleteAddress.value("result").toInt();
     if (result < 0)
     {
       QMessageBox::warning(this, tr("Cannot Delete Selected Address"),
@@ -125,9 +126,9 @@ void addresses::sDelete()
     else
       sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (deleteAddress.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, deleteAddress.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

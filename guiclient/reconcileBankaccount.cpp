@@ -99,14 +99,15 @@ void reconcileBankaccount::languageChange()
 
 void reconcileBankaccount::sCancel()
 {
+  XSqlQuery reconcileCancel;
   if(_bankrecid != -1)
   {
-    q.prepare("SELECT count(*) AS num"
+    reconcileCancel.prepare("SELECT count(*) AS num"
 	      "  FROM bankrec"
 	      " WHERE (bankrec_id=:bankrecid); ");
-    q.bindValue(":bankrecid", _bankrecid);
-    q.exec();
-    if (q.first() && q.value("num").toInt() > 0)
+    reconcileCancel.bindValue(":bankrecid", _bankrecid);
+    reconcileCancel.exec();
+    if (reconcileCancel.first() && reconcileCancel.value("num").toInt() > 0)
     {
       if (QMessageBox::question(this, tr("Cancel Bank Reconciliation?"),
 				tr("<p>Are you sure you want to Cancel this Bank "
@@ -118,12 +119,12 @@ void reconcileBankaccount::sCancel()
 	return;
       }
 
-      q.prepare( "SELECT deleteBankReconciliation(:bankrecid) AS result;" );
-      q.bindValue(":bankrecid", _bankrecid);
-      q.exec();
-      if (q.first())
+      reconcileCancel.prepare( "SELECT deleteBankReconciliation(:bankrecid) AS result;" );
+      reconcileCancel.bindValue(":bankrecid", _bankrecid);
+      reconcileCancel.exec();
+      if (reconcileCancel.first())
       {
-	int result = q.value("result").toInt();
+	int result = reconcileCancel.value("result").toInt();
 	if (result < 0)
 	{
 	  systemError(this, storedProcErrorLookup("deleteBankReconciliation", result),
@@ -131,9 +132,9 @@ void reconcileBankaccount::sCancel()
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (reconcileCancel.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, reconcileCancel.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }
@@ -143,21 +144,22 @@ void reconcileBankaccount::sCancel()
 
 bool reconcileBankaccount::sSave(bool closeWhenDone)
 {
-  q.prepare("SELECT count(*) AS num"
+  XSqlQuery reconcileSave;
+  reconcileSave.prepare("SELECT count(*) AS num"
             "  FROM bankrec"
             " WHERE (bankrec_id=:bankrecid); ");
-  q.bindValue(":bankrecid", _bankrecid);
-  q.exec();
-  if (q.first() && q.value("num").toInt() > 0)
-    q.prepare("UPDATE bankrec"
+  reconcileSave.bindValue(":bankrecid", _bankrecid);
+  reconcileSave.exec();
+  if (reconcileSave.first() && reconcileSave.value("num").toInt() > 0)
+    reconcileSave.prepare("UPDATE bankrec"
               "   SET bankrec_bankaccnt_id=:bankaccntid,"
               "       bankrec_opendate=:startDate,"
               "       bankrec_enddate=:endDate,"
               "       bankrec_openbal=:openbal,"
               "       bankrec_endbal=:endbal "
               " WHERE (bankrec_id=:bankrecid); ");
-  else if (q.value("num").toInt() == 0)
-    q.prepare("INSERT INTO bankrec "
+  else if (reconcileSave.value("num").toInt() == 0)
+    reconcileSave.prepare("INSERT INTO bankrec "
               "(bankrec_id, bankrec_bankaccnt_id,"
               " bankrec_opendate, bankrec_enddate,"
               " bankrec_openbal, bankrec_endbal) "
@@ -165,24 +167,24 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
               "(:bankrecid, :bankaccntid,"
               " :startDate, :endDate,"
               " :openbal, :endbal); ");
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (reconcileSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, reconcileSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
-  q.bindValue(":bankrecid", _bankrecid);
-  q.bindValue(":bankaccntid", _bankaccntid);
-  q.bindValue(":startDate", _startDate->date());
-  q.bindValue(":endDate", _endDate->date());
-  q.bindValue(":openbal", _openBal->localValue());
-  q.bindValue(":endbal", _endBal->localValue());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  reconcileSave.bindValue(":bankrecid", _bankrecid);
+  reconcileSave.bindValue(":bankaccntid", _bankaccntid);
+  reconcileSave.bindValue(":startDate", _startDate->date());
+  reconcileSave.bindValue(":endDate", _endDate->date());
+  reconcileSave.bindValue(":openbal", _openBal->localValue());
+  reconcileSave.bindValue(":endbal", _endBal->localValue());
+  reconcileSave.exec();
+  if (reconcileSave.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("<p>There was an error creating records to reconcile "
 			 "this account: <br><pre>%1</pre>")
-			.arg(q.lastError().databaseText()), __FILE__, __LINE__);
+			.arg(reconcileSave.lastError().databaseText()), __FILE__, __LINE__);
     return false;
   }
 
@@ -194,6 +196,7 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
 
 void reconcileBankaccount::sReconcile()
 {
+  XSqlQuery reconcileReconcile;
   if(_bankrecid == -1)
   {
     QMessageBox::critical( this, tr("Cannot Reconcile Account"),
@@ -269,12 +272,12 @@ void reconcileBankaccount::sReconcile()
   if (! sSave(false))
     return;
 
-  q.prepare("SELECT postBankReconciliation(:bankrecid) AS result;");
-  q.bindValue(":bankrecid", _bankrecid);
-  q.exec();
-  if (q.first())
+  reconcileReconcile.prepare("SELECT postBankReconciliation(:bankrecid) AS result;");
+  reconcileReconcile.bindValue(":bankrecid", _bankrecid);
+  reconcileReconcile.exec();
+  if (reconcileReconcile.first())
   {
-    int result = q.value("result").toInt();
+    int result = reconcileReconcile.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("postBankReconciliation", result),
@@ -284,9 +287,9 @@ void reconcileBankaccount::sReconcile()
     _bankrecid = -1;
     close();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (reconcileReconcile.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, reconcileReconcile.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -485,6 +488,7 @@ void reconcileBankaccount::sAddAdjustment()
 
 void reconcileBankaccount::sReceiptsToggleCleared()
 {
+  XSqlQuery reconcileReceiptsToggleCleared;
   XTreeWidgetItem *item = (XTreeWidgetItem*)_receipts->currentItem();
   XTreeWidgetItem *child = 0;
   bool setto = true;
@@ -517,23 +521,23 @@ void reconcileBankaccount::sReceiptsToggleCleared()
           amount = rate * baseamount;
         }
 
-        q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
-        q.bindValue(":bankrecid", _bankrecid);
-        q.bindValue(":sourceid", child->id());
+        reconcileReceiptsToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
+        reconcileReceiptsToggleCleared.bindValue(":bankrecid", _bankrecid);
+        reconcileReceiptsToggleCleared.bindValue(":sourceid", child->id());
         if(child->altId()==1)
-          q.bindValue(":source", "GL");
+          reconcileReceiptsToggleCleared.bindValue(":source", "GL");
         else if(child->altId()==2)
-          q.bindValue(":source", "SL");
+          reconcileReceiptsToggleCleared.bindValue(":source", "SL");
         else if(child->altId()==3)
-          q.bindValue(":source", "AD");
-        q.bindValue(":currrate", rate);
-        q.bindValue(":amount", amount);
-        q.exec();
-        if(q.first())
-          child->setText(0, (q.value("cleared").toBool() ? tr("Yes") : tr("No") ));
-	else if (q.lastError().type() != QSqlError::NoError)
+          reconcileReceiptsToggleCleared.bindValue(":source", "AD");
+        reconcileReceiptsToggleCleared.bindValue(":currrate", rate);
+        reconcileReceiptsToggleCleared.bindValue(":amount", amount);
+        reconcileReceiptsToggleCleared.exec();
+        if(reconcileReceiptsToggleCleared.first())
+          child->setText(0, (reconcileReceiptsToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
+	else if (reconcileReceiptsToggleCleared.lastError().type() != QSqlError::NoError)
 	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  systemError(this, reconcileReceiptsToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
       }
@@ -557,21 +561,21 @@ void reconcileBankaccount::sReceiptsToggleCleared()
       amount = rate * baseamount;
     }
 
-    q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
-    q.bindValue(":bankrecid", _bankrecid);
-    q.bindValue(":sourceid", item->id());
+    reconcileReceiptsToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
+    reconcileReceiptsToggleCleared.bindValue(":bankrecid", _bankrecid);
+    reconcileReceiptsToggleCleared.bindValue(":sourceid", item->id());
     if(item->altId()==1)
-      q.bindValue(":source", "GL");
+      reconcileReceiptsToggleCleared.bindValue(":source", "GL");
     else if(item->altId()==2)
-      q.bindValue(":source", "SL");
+      reconcileReceiptsToggleCleared.bindValue(":source", "SL");
     else if(item->altId()==3)
-      q.bindValue(":source", "AD");
-    q.bindValue(":currrate", rate);
-    q.bindValue(":amount", amount);
-    q.exec();
-    if(q.first())
+      reconcileReceiptsToggleCleared.bindValue(":source", "AD");
+    reconcileReceiptsToggleCleared.bindValue(":currrate", rate);
+    reconcileReceiptsToggleCleared.bindValue(":amount", amount);
+    reconcileReceiptsToggleCleared.exec();
+    if(reconcileReceiptsToggleCleared.first())
     {
-      item->setText(0, (q.value("cleared").toBool() ? tr("Yes") : tr("No") ));
+      item->setText(0, (reconcileReceiptsToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
 
       item = (XTreeWidgetItem*)item->QTreeWidgetItem::parent();
       if(item != 0 && item->altId() == 9)
@@ -587,9 +591,9 @@ void reconcileBankaccount::sReceiptsToggleCleared()
     else
     {
       populate();
-      if (q.lastError().type() != QSqlError::NoError)
+      if (reconcileReceiptsToggleCleared.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, reconcileReceiptsToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }
@@ -598,6 +602,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
 
 void reconcileBankaccount::sChecksToggleCleared()
 {
+  XSqlQuery reconcileChecksToggleCleared;
   XTreeWidgetItem *item = (XTreeWidgetItem*)_checks->currentItem();
 
   if(0 == item)
@@ -620,26 +625,26 @@ void reconcileBankaccount::sChecksToggleCleared()
     amount = rate * baseamount;
   }
 
-  q.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
-  q.bindValue(":bankrecid", _bankrecid);
-  q.bindValue(":sourceid", item->id());
+  reconcileChecksToggleCleared.prepare("SELECT toggleBankrecCleared(:bankrecid, :source, :sourceid, :currrate, :amount) AS cleared");
+  reconcileChecksToggleCleared.bindValue(":bankrecid", _bankrecid);
+  reconcileChecksToggleCleared.bindValue(":sourceid", item->id());
   if(item->altId()==1)
-    q.bindValue(":source", "GL");
+    reconcileChecksToggleCleared.bindValue(":source", "GL");
   else if(item->altId()==2)
-    q.bindValue(":source", "SL");
+    reconcileChecksToggleCleared.bindValue(":source", "SL");
   else if(item->altId()==3)
-    q.bindValue(":source", "AD");
-  q.bindValue(":currrate", rate);
-  q.bindValue(":amount", amount);
-  q.exec();
-  if(q.first())
-    item->setText(0, (q.value("cleared").toBool() ? tr("Yes") : tr("No") ));
+    reconcileChecksToggleCleared.bindValue(":source", "AD");
+  reconcileChecksToggleCleared.bindValue(":currrate", rate);
+  reconcileChecksToggleCleared.bindValue(":amount", amount);
+  reconcileChecksToggleCleared.exec();
+  if(reconcileChecksToggleCleared.first())
+    item->setText(0, (reconcileChecksToggleCleared.value("cleared").toBool() ? tr("Yes") : tr("No") ));
   else
   {
     populate();
-    if (q.lastError().type() != QSqlError::NoError)
+    if (reconcileChecksToggleCleared.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, reconcileChecksToggleCleared.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -647,14 +652,15 @@ void reconcileBankaccount::sChecksToggleCleared()
 
 void reconcileBankaccount::sBankaccntChanged()
 {
+  XSqlQuery reconcileBankaccntChanged;
   if(_bankrecid != -1)
   {
-    q.prepare("SELECT count(*) AS num"
+    reconcileBankaccntChanged.prepare("SELECT count(*) AS num"
 	          "  FROM bankrecitem"
 	          " WHERE (bankrecitem_bankrec_id=:bankrecid); ");
-    q.bindValue(":bankrecid", _bankrecid);
-    q.exec();
-    if (q.first() && q.value("num").toInt() > 0)
+    reconcileBankaccntChanged.bindValue(":bankrecid", _bankrecid);
+    reconcileBankaccntChanged.exec();
+    if (reconcileBankaccntChanged.first() && reconcileBankaccntChanged.value("num").toInt() > 0)
     {
       if (QMessageBox::question(this, tr("Save Bank Reconciliation?"),
 				                      tr("<p>Do you want to save this Bank Reconciliation?"),
@@ -665,12 +671,12 @@ void reconcileBankaccount::sBankaccntChanged()
       }
       else
 	  {
-        q.prepare( "SELECT deleteBankReconciliation(:bankrecid) AS result;" );
-        q.bindValue(":bankrecid", _bankrecid);
-        q.exec();
-        if (q.first())
+        reconcileBankaccntChanged.prepare( "SELECT deleteBankReconciliation(:bankrecid) AS result;" );
+        reconcileBankaccntChanged.bindValue(":bankrecid", _bankrecid);
+        reconcileBankaccntChanged.exec();
+        if (reconcileBankaccntChanged.first())
         {
-	      int result = q.value("result").toInt();
+	      int result = reconcileBankaccntChanged.value("result").toInt();
 	      if (result < 0)
 	      {
 	        systemError(this, storedProcErrorLookup("deleteBankReconciliation", result),
@@ -678,9 +684,9 @@ void reconcileBankaccount::sBankaccntChanged()
 	        return;
 	      }
         }
-        else if (q.lastError().type() != QSqlError::NoError)
+        else if (reconcileBankaccntChanged.lastError().type() != QSqlError::NoError)
         {
-	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	      systemError(this, reconcileBankaccntChanged.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
         }
       }
@@ -761,19 +767,20 @@ void reconcileBankaccount::sBankaccntChanged()
 
 void reconcileBankaccount::sDateChanged()
 {
-  q.prepare("SELECT TRUE AS reconciled "
+  XSqlQuery reconcileDateChanged;
+  reconcileDateChanged.prepare("SELECT TRUE AS reconciled "
             "FROM bankrec "
             "WHERE ((bankrec_bankaccnt_id = :bankaccnt_id) "
             "AND (bankrec_posted) "
             "AND (bankrec_opendate <= :end_date) "
             "AND (bankrec_enddate >= :start_date)) "
             "GROUP BY bankrec_bankaccnt_id");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":end_date", _endDate->date().toString(Qt::ISODate));
-  q.bindValue(":start_date", _startDate->date().toString(Qt::ISODate));
+  reconcileDateChanged.bindValue(":bankaccnt_id", _bankaccnt->id());
+  reconcileDateChanged.bindValue(":end_date", _endDate->date().toString(Qt::ISODate));
+  reconcileDateChanged.bindValue(":start_date", _startDate->date().toString(Qt::ISODate));
 
-  q.exec();
-  if(q.first())
+  reconcileDateChanged.exec();
+  if(reconcileDateChanged.first())
   {
     QMessageBox::critical( this, tr("Dates already reconciled"),
 	        tr("The date range you have entered already has "
@@ -783,9 +790,9 @@ void reconcileBankaccount::sDateChanged()
     _datesAreOK = false;
     return;
   }
-  else if(q.lastError().type() != QSqlError::NoError)
+  else if(reconcileDateChanged.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, reconcileDateChanged.lastError().databaseText(), __FILE__, __LINE__);
     _datesAreOK = false;
 	return;
   }

@@ -200,6 +200,7 @@ void arWorkBench::sClear()
 
 void arWorkBench::sFillCashrcptList()
 {
+  XSqlQuery arFillCashrcptList;
   MetaSQLQuery mql = mqlLoad("unpostedCashReceipts", "detail");
   ParameterList params;
   setParams(params);
@@ -213,8 +214,8 @@ void arWorkBench::sFillCashrcptList()
   params.append("cash", tr("Cash"));
   params.append("wireTransfer", tr("Wire Transfer"));
   params.append("other", tr("Other"));
-  q = mql.toQuery(params);
-  _cashrcpt->populate(q);
+  arFillCashrcptList = mql.toQuery(params);
+  _cashrcpt->populate(arFillCashrcptList);
 }
 
 void arWorkBench::sNewCashrcpt()
@@ -253,21 +254,22 @@ void arWorkBench::sViewCashrcpt()
 
 void arWorkBench::sDeleteCashrcpt()
 {
-  q.prepare("SELECT deleteCashrcpt(:cashrcpt_id) AS result;");
-  q.bindValue(":cashrcpt_id", _cashrcpt->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery arDeleteCashrcpt;
+  arDeleteCashrcpt.prepare("SELECT deleteCashrcpt(:cashrcpt_id) AS result;");
+  arDeleteCashrcpt.bindValue(":cashrcpt_id", _cashrcpt->id());
+  arDeleteCashrcpt.exec();
+  if (arDeleteCashrcpt.first())
   {
-    int result = q.value("result").toInt();
+    int result = arDeleteCashrcpt.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteCashrcpt", result));
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (arDeleteCashrcpt.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, arDeleteCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillCashrcptList();
@@ -275,45 +277,45 @@ void arWorkBench::sDeleteCashrcpt()
 
 void arWorkBench::sPostCashrcpt()
 {
+  XSqlQuery arPostCashrcpt;
   int journalNumber = -1;
 
-  XSqlQuery tx;
-  tx.exec("BEGIN;");
-  q.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
-  if (q.first())
-    journalNumber = q.value("journalnumber").toInt();
-  else if (q.lastError().type() != QSqlError::NoError)
+  arPostCashrcpt.exec("BEGIN;");
+  arPostCashrcpt.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
+  if (arPostCashrcpt.first())
+    journalNumber = arPostCashrcpt.value("journalnumber").toInt();
+  else if (arPostCashrcpt.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, arPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   QList<XTreeWidgetItem*> selected = _cashrcpt->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
-    q.bindValue(":cashrcpt_id", ((XTreeWidgetItem*)(selected[i]))->id());
-    q.bindValue(":journalNumber", journalNumber);
-    q.exec();
-    if (q.first())
+    arPostCashrcpt.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
+    arPostCashrcpt.bindValue(":cashrcpt_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    arPostCashrcpt.bindValue(":journalNumber", journalNumber);
+    arPostCashrcpt.exec();
+    if (arPostCashrcpt.first())
     {
-      int result = q.value("result").toInt();
+      int result = arPostCashrcpt.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("postCashReceipt", result),
                     __FILE__, __LINE__);
-        tx.exec("ROLLBACK;");
+        arPostCashrcpt.exec("ROLLBACK;");
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (arPostCashrcpt.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      tx.exec("ROLLBACK;");
+      systemError(this, arPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
+      arPostCashrcpt.exec("ROLLBACK;");
       return;
     }
   }
-  tx.exec("COMMIT;");
+  arPostCashrcpt.exec("COMMIT;");
   sFillList();
 }
 

@@ -165,6 +165,7 @@ void unpostedCreditMemos::sPrint()
 
 void unpostedCreditMemos::sPost()
 {
+  XSqlQuery unpostedPost;
   bool changeDate = false;
   QDate newDate = QDate::currentDate();
 
@@ -245,7 +246,7 @@ void unpostedCreditMemos::sPost()
               return;
             }
 
-            q.exec("COMMIT;");
+            unpostedPost.exec("COMMIT;");
           }
         }
         // contains() string is hard-coded in stored procedure

@@ -223,6 +223,7 @@ bool searchForEmp::setParams(ParameterList &pParams)
 
 void searchForEmp::sFillList()
 {
+  XSqlQuery searchFillList;
   QString sql("SELECT e.emp_id, m.emp_id, warehous_code, e.emp_code, e.emp_number,"
               "       cntct_first_name, cntct_last_name, "
               "       m.emp_code AS mgr_code, dept_number, shift_number "
@@ -268,11 +269,11 @@ void searchForEmp::sFillList()
   ParameterList params;
   if (! setParams(params))
     return;
-  q = mql.toQuery(params);
-  _emp->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  searchFillList = mql.toQuery(params);
+  _emp->populate(searchFillList, true);
+  if (searchFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, searchFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

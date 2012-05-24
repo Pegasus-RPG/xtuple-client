@@ -123,22 +123,23 @@ void unpostedPoReceipts::sEdit()
 
 void unpostedPoReceipts::sDelete()
 {
+  XSqlQuery unpostedDelete;
   if (QMessageBox::question(this, tr("Cancel Receipts?"),
 			    tr("<p>Are you sure you want to delete these "
 			       "unposted Receipts?"),
 			    QMessageBox::Yes,
 			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare( "DELETE FROM recv "
+    unpostedDelete.prepare( "DELETE FROM recv "
 	       "WHERE (recv_id IN (:id));" );
     QList<XTreeWidgetItem*>selected = _recv->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
-      q.bindValue(":id", ((XTreeWidgetItem*)(selected[i]))->id() );
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      unpostedDelete.bindValue(":id", ((XTreeWidgetItem*)(selected[i]))->id() );
+      unpostedDelete.exec();
+      if (unpostedDelete.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, unpostedDelete.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }
@@ -177,6 +178,7 @@ void unpostedPoReceipts::sViewOrderItem()
 
 void unpostedPoReceipts::sPost()
 {
+  XSqlQuery unpostedPost;
   bool changeDate = false;
   QDate newDate = QDate::currentDate();
 
@@ -231,7 +233,7 @@ void unpostedPoReceipts::sPost()
 
   bool tryagain = false;
   do {
-    q.exec("BEGIN;");
+    unpostedPost.exec("BEGIN;");
 
     for (int i = 0; i < selected.size(); i++)
     {
@@ -374,7 +376,7 @@ void unpostedPoReceipts::sPost()
       _soheadid.takeFirst();
     }
 
-    q.exec("COMMIT;");
+    unpostedPost.exec("COMMIT;");
 
     if (triedToClosed.size() > 0)
     {

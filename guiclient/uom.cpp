@@ -106,6 +106,7 @@ enum SetResponse uom::set(const ParameterList &pParams)
 
 void uom::sSave()
 {
+  XSqlQuery uomSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::information( this, tr("No UOM Name Entered"),
@@ -117,14 +118,14 @@ void uom::sSave()
   if (_weightUom->isChecked())
   {
     if (_mode == cNew)
-      q.exec("SELECT uom_id FROM uom WHERE (uom_item_weight);");
+      uomSave.exec("SELECT uom_id FROM uom WHERE (uom_item_weight);");
     else
     {
-      q.prepare("SELECT uom_id FROM uom WHERE ((uom_item_weight) AND (uom_id<>:uom_id));");
-      q.bindValue(":uom_id", _uomid);
-      q.exec();
+      uomSave.prepare("SELECT uom_id FROM uom WHERE ((uom_item_weight) AND (uom_id<>:uom_id));");
+      uomSave.bindValue(":uom_id", _uomid);
+      uomSave.exec();
     }
-    if (q.first())
+    if (uomSave.first())
     {
       int response = QMessageBox::warning (this, tr("Set Item Weight?"),
                                                  tr("The Item Weight UOM has already been set. "
@@ -134,7 +135,7 @@ void uom::sSave()
                                           QMessageBox::Yes | QMessageBox::Escape,
                                           QMessageBox::No | QMessageBox::Default);
       if (response == QMessageBox::Yes)
-        q.exec("UPDATE uom SET uom_item_weight=FALSE;");
+        uomSave.exec("UPDATE uom SET uom_item_weight=FALSE;");
       else
         return;
     }
@@ -142,9 +143,9 @@ void uom::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('uom_uom_id_seq') AS uom_id;");
-    if (q.first())
-      _uomid = q.value("uom_id").toInt();
+    uomSave.exec("SELECT NEXTVAL('uom_uom_id_seq') AS uom_id;");
+    if (uomSave.first())
+      _uomid = uomSave.value("uom_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -153,39 +154,40 @@ void uom::sSave()
       return;
     }
  
-    q.prepare( "INSERT INTO uom "
+    uomSave.prepare( "INSERT INTO uom "
                "( uom_id, uom_name, uom_descrip, uom_item_weight ) "
                "VALUES "
                "( :uom_id, :uom_name, :uom_descrip, :uom_item_weight );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE uom "
+    uomSave.prepare( "UPDATE uom "
                "SET uom_name=:uom_name, uom_descrip=:uom_descrip,"
                "    uom_item_weight=:uom_item_weight "
                "WHERE (uom_id=:uom_id);" );
 
-  q.bindValue(":uom_id", _uomid);
-  q.bindValue(":uom_name", _name->text());
-  q.bindValue(":uom_descrip", _description->text());
-  q.bindValue(":uom_item_weight", QVariant(_weightUom->isChecked()));
-  q.exec();
+  uomSave.bindValue(":uom_id", _uomid);
+  uomSave.bindValue(":uom_name", _name->text());
+  uomSave.bindValue(":uom_descrip", _description->text());
+  uomSave.bindValue(":uom_item_weight", QVariant(_weightUom->isChecked()));
+  uomSave.exec();
 
   done(_uomid);
 }
 
 void uom::sCheck()
 {
+  XSqlQuery uomCheck;
   _name->setText(_name->text().trimmed().toUpper());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT uom_id "
+    uomCheck.prepare( "SELECT uom_id "
                "FROM uom "
                "WHERE (UPPER(uom_name)=UPPER(:uom_name));" );
-    q.bindValue(":uom_name", _name->text());
-    q.exec();
-    if (q.first())
+    uomCheck.bindValue(":uom_name", _name->text());
+    uomCheck.exec();
+    if (uomCheck.first())
     {
-      _uomid = q.value("uom_id").toInt();
+      _uomid = uomCheck.value("uom_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -196,16 +198,17 @@ void uom::sCheck()
 
 void uom::populate()
 {
-  q.prepare( "SELECT uom_name, uom_descrip, uom_item_weight "
+  XSqlQuery uompopulate;
+  uompopulate.prepare( "SELECT uom_name, uom_descrip, uom_item_weight "
              "  FROM uom "
              " WHERE(uom_id=:uom_id);" );
-  q.bindValue(":uom_id", _uomid);
-  q.exec();
-  if (q.first())
+  uompopulate.bindValue(":uom_id", _uomid);
+  uompopulate.exec();
+  if (uompopulate.first())
   {
-    _name->setText(q.value("uom_name").toString());
-    _description->setText(q.value("uom_descrip").toString());
-    _weightUom->setChecked(q.value("uom_item_weight").toBool());
+    _name->setText(uompopulate.value("uom_name").toString());
+    _description->setText(uompopulate.value("uom_descrip").toString());
+    _weightUom->setChecked(uompopulate.value("uom_item_weight").toBool());
 
     sFillList();
   }
@@ -213,7 +216,8 @@ void uom::populate()
 
 void uom::sFillList()
 {
-  q.prepare("SELECT uomconv_id,"
+  XSqlQuery uomFillList;
+  uomFillList.prepare("SELECT uomconv_id,"
             "       (nuom.uom_name||'/'||duom.uom_name) AS uomuom,"
             "       uomconv_from_value, uomconv_to_value,"
             "       uomconv_fractional,"
@@ -224,9 +228,9 @@ void uom::sFillList()
             "  JOIN uom AS duom ON (uomconv_to_uom_id=duom.uom_id)"
             " WHERE((uomconv_from_uom_id=:uom_id)"
             "    OR (uomconv_to_uom_id=:uom_id));");
-  q.bindValue(":uom_id", _uomid);
-  q.exec();
-  _uomconv->populate(q);
+  uomFillList.bindValue(":uom_id", _uomid);
+  uomFillList.exec();
+  _uomconv->populate(uomFillList);
 }
 
 void uom::sSelected()
@@ -273,21 +277,22 @@ void uom::sEdit()
 
 void uom::sDelete()
 {
-  q.prepare( "SELECT deleteUOMConv(:uomconv_id) AS result;" );
-  q.bindValue(":uomconv_id", _uomconv->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery uomDelete;
+  uomDelete.prepare( "SELECT deleteUOMConv(:uomconv_id) AS result;" );
+  uomDelete.bindValue(":uomconv_id", _uomconv->id());
+  uomDelete.exec();
+  if (uomDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = uomDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteUOMConv", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (uomDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, uomDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

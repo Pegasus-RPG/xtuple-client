@@ -79,12 +79,13 @@ void opportunityTypes::languageChange()
 
 void opportunityTypes::sDelete()
 {
-  q.prepare( "SELECT ophead_id "
+  XSqlQuery opportunityDelete;
+  opportunityDelete.prepare( "SELECT ophead_id "
              "FROM ophead "
              "WHERE (ophead_optype_id=:optype_id);" );
-  q.bindValue(":optype_id", _oplist->id());
-  q.exec();
-  if (q.first())
+  opportunityDelete.bindValue(":optype_id", _oplist->id());
+  opportunityDelete.exec();
+  if (opportunityDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Opportunity Type"),
                            tr( "The selected Opportunity Type cannot be deleted as there are one or more Opportunities currently assigned to it.\n"
@@ -92,10 +93,10 @@ void opportunityTypes::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM optype "
+  opportunityDelete.prepare( "DELETE FROM optype "
              "WHERE (optype_id=:optype_id);" );
-  q.bindValue(":optype_id", _oplist->id());
-  q.exec();
+  opportunityDelete.bindValue(":optype_id", _oplist->id());
+  opportunityDelete.exec();
 
   sFillList();
 }

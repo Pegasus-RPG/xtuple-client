@@ -72,48 +72,50 @@ void viewCheckRun::languageChange()
 
 void viewCheckRun::sVoid()
 {
-  q.prepare( "SELECT checkhead_bankaccnt_id, voidCheck(checkhead_id) AS result "
+  XSqlQuery viewVoid;
+  viewVoid.prepare( "SELECT checkhead_bankaccnt_id, voidCheck(checkhead_id) AS result "
              "FROM checkhead "
              "WHERE (checkhead_id=:checkhead_id);" );
-  q.bindValue(":checkhead_id", _check->id());
-  q.exec();
-  if (q.first())
+  viewVoid.bindValue(":checkhead_id", _check->id());
+  viewVoid.exec();
+  if (viewVoid.first())
   {
-    int result = q.value("result").toInt();
+    int result = viewVoid.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("voidCheck", result), __FILE__, __LINE__);
       return;
     }
-    omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
+    omfgThis->sChecksUpdated(viewVoid.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (viewVoid.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, viewVoid.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void viewCheckRun::sDelete()
 {
-  q.prepare( "SELECT checkhead_bankaccnt_id, deleteCheck(checkhead_id) AS result "
+  XSqlQuery viewDelete;
+  viewDelete.prepare( "SELECT checkhead_bankaccnt_id, deleteCheck(checkhead_id) AS result "
              "FROM checkhead "
              "WHERE (checkhead_id=:checkhead_id);" );
-  q.bindValue(":checkhead_id", _check->id());
-  q.exec();
-  if (q.first())
+  viewDelete.bindValue(":checkhead_id", _check->id());
+  viewDelete.exec();
+  if (viewDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = viewDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteCheck", result), __FILE__, __LINE__);
       return;
     }
-    omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
+    omfgThis->sChecksUpdated(viewDelete.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (viewDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, viewDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -144,37 +146,39 @@ void viewCheckRun::sEdit()
 
 void viewCheckRun::sReplace()
 {
-  q.prepare( "SELECT checkhead_bankaccnt_id, replaceVoidedCheck(:check_id) AS result "
+  XSqlQuery viewReplace;
+  viewReplace.prepare( "SELECT checkhead_bankaccnt_id, replaceVoidedCheck(:check_id) AS result "
              "FROM checkhead "
              "WHERE (checkhead_id=:check_id);" );
-  q.bindValue(":check_id", _check->id());
-  q.exec();
-  if (q.first())
+  viewReplace.bindValue(":check_id", _check->id());
+  viewReplace.exec();
+  if (viewReplace.first())
   {
-    int result = q.value("result").toInt();
+    int result = viewReplace.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("replaceVoidedCheck", result), __FILE__, __LINE__);
       return;
     }
-    omfgThis->sChecksUpdated( q.value("checkhead_bankaccnt_id").toInt(),
-                                q.value("result").toInt(), TRUE);
+    omfgThis->sChecksUpdated( viewReplace.value("checkhead_bankaccnt_id").toInt(),
+                                viewReplace.value("result").toInt(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (viewReplace.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, viewReplace.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void viewCheckRun::sReplaceAll()
 {
-  q.prepare("SELECT replaceAllVoidedChecks(:bankaccnt_id) AS result;");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery viewReplaceAll;
+  viewReplaceAll.prepare("SELECT replaceAllVoidedChecks(:bankaccnt_id) AS result;");
+  viewReplaceAll.bindValue(":bankaccnt_id", _bankaccnt->id());
+  viewReplaceAll.exec();
+  if (viewReplaceAll.first())
   {
-    int result = q.value("result").toInt();
+    int result = viewReplaceAll.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("replaceAllVoidedChecks", result), __FILE__, __LINE__);
@@ -182,9 +186,9 @@ void viewCheckRun::sReplaceAll()
     }
     omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (viewReplaceAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, viewReplaceAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -269,12 +273,14 @@ void viewCheckRun::sHandleItemSelection()
 
 void viewCheckRun::sFillList(int pBankaccntid)
 {
+  XSqlQuery viewFillList;
   if (pBankaccntid == _bankaccnt->id())
     sFillList();
 }
 
 void viewCheckRun::sFillList()
 {
+  XSqlQuery viewFillList;
   QMenu * printMenu = new QMenu;
   if (_vendorgroup->isAll())
     printMenu->addAction(tr("Check Run..."), this, SLOT(sPrintCheckRun()));
@@ -293,11 +299,11 @@ void viewCheckRun::sFillList()
   params.append("newOnly");
   params.append("showDetail");
   _vendorgroup->appendValue(params);
-  q = mql.toQuery(params);
-  _check->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  viewFillList = mql.toQuery(params);
+  _check->populate(viewFillList);
+  if (viewFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, viewFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

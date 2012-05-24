@@ -58,6 +58,7 @@ void sysLocale::languageChange()
 
 enum SetResponse sysLocale::set(const ParameterList &pParams)
 {
+  XSqlQuery syset;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -77,12 +78,12 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
       _mode = cNew;
       _code->setFocus();
 
-      q.exec("SELECT NEXTVAL('locale_locale_id_seq') AS _locale_id");
-      if (q.first())
-        _localeid = q.value("_locale_id").toInt();
+      syset.exec("SELECT NEXTVAL('locale_locale_id_seq') AS _locale_id");
+      if (syset.first())
+        _localeid = syset.value("_locale_id").toInt();
       else
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, syset.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
     }
@@ -95,17 +96,17 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
     {
       _mode = cCopy;
 
-      q.prepare("SELECT copyLocale(:locale_id) AS _locale_id;");
-      q.bindValue(":locale_id", _localeid);
-      q.exec();
-      if (q.first())
+      syset.prepare("SELECT copyLocale(:locale_id) AS _locale_id;");
+      syset.bindValue(":locale_id", _localeid);
+      syset.exec();
+      if (syset.first())
       {
-        _localeid = q.value("_locale_id").toInt();
+        _localeid = syset.value("_locale_id").toInt();
 	populate();
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (syset.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, syset.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -139,6 +140,7 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
 
 void sysLocale::sSave()
 {
+  XSqlQuery sysSave;
   if (_code->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Locale"),
@@ -148,14 +150,14 @@ void sysLocale::sSave()
     return;
   }
 
-  q.prepare( "SELECT locale_id "
+  sysSave.prepare( "SELECT locale_id "
              "FROM locale "
              "WHERE ( (locale_id<>:locale_id)"
              " AND (UPPER(locale_code)=UPPER(:locale_code)) );");
-  q.bindValue(":locale_id", _localeid);
-  q.bindValue(":locale_code", _code->text().trimmed());
-  q.exec();
-  if (q.first())
+  sysSave.bindValue(":locale_id", _localeid);
+  sysSave.bindValue(":locale_code", _code->text().trimmed());
+  sysSave.exec();
+  if (sysSave.first())
   {
     QMessageBox::critical( this, tr("Cannot Create Locale"),
 			   tr( "A Locale with the entered code already exists."
@@ -163,9 +165,9 @@ void sysLocale::sSave()
     _code->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (sysSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, sysSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -173,7 +175,7 @@ void sysLocale::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare( "INSERT INTO locale "
+    sysSave.prepare( "INSERT INTO locale "
                "( locale_id, locale_code, locale_descrip,"
                "  locale_lang_id, locale_country_id, "
                "  locale_dateformat, locale_timeformat, locale_timestampformat,"
@@ -203,7 +205,7 @@ void sysLocale::sSave()
                "  :locale_expired_color, :locale_future_color);" );
   }
   else if ( (_mode == cEdit) || (_mode == cCopy) )
-    q.prepare( "UPDATE locale "
+    sysSave.prepare( "UPDATE locale "
                 "SET locale_code=:locale_code,"
                 "    locale_descrip=:locale_descrip,"
                 "    locale_lang_id=:locale_lang_id,"
@@ -232,44 +234,44 @@ void sysLocale::sSave()
                 "    locale_future_color=:locale_future_color "
                 "WHERE (locale_id=:locale_id);" );
 
-  q.bindValue(":locale_id",                _localeid);
-  q.bindValue(":locale_code",              _code->text());
-  q.bindValue(":locale_descrip",           _description->text());
-  q.bindValue(":locale_lang_id",           _language->id());
-  q.bindValue(":locale_country_id",        _country->id());
-  q.bindValue(":locale_curr_scale",        _currencyScale->text());
-  q.bindValue(":locale_salesprice_scale",  _salesPriceScale->text());
-  q.bindValue(":locale_purchprice_scale",  _purchPriceScale->text());
-  q.bindValue(":locale_extprice_scale",    _extPriceScale->text());
-  q.bindValue(":locale_cost_scale",        _costScale->text());
-  q.bindValue(":locale_qty_scale",         _qtyScale->text());
-  q.bindValue(":locale_qtyper_scale",      _qtyPerScale->text());
-  q.bindValue(":locale_weight_scale",      _weightScale->text());
-  q.bindValue(":locale_uomratio_scale",    _uomRatioScale->text());
-  q.bindValue(":locale_percent_scale",     _percentScale->text());
-  q.bindValue(":locale_comments",          _comments->toPlainText());
-  q.bindValue(":locale_error_color",       _error->text());
-  q.bindValue(":locale_warning_color",     _warning->text());
-  q.bindValue(":locale_emphasis_color",    _emphasis->text());
-  q.bindValue(":locale_altemphasis_color", _alternate->text());
-  q.bindValue(":locale_expired_color",     _expired->text());
-  q.bindValue(":locale_future_color",      _future->text());
-  q.bindValue(":locale_dateformat",     convert(sampleLocale.dateFormat(QLocale::ShortFormat)));
-  q.bindValue(":locale_timeformat",     convert(sampleLocale.timeFormat(QLocale::ShortFormat)));
-  q.bindValue(":locale_timestampformat",convert(sampleLocale.dateFormat(QLocale::ShortFormat)) +
+  sysSave.bindValue(":locale_id",                _localeid);
+  sysSave.bindValue(":locale_code",              _code->text());
+  sysSave.bindValue(":locale_descrip",           _description->text());
+  sysSave.bindValue(":locale_lang_id",           _language->id());
+  sysSave.bindValue(":locale_country_id",        _country->id());
+  sysSave.bindValue(":locale_curr_scale",        _currencyScale->text());
+  sysSave.bindValue(":locale_salesprice_scale",  _salesPriceScale->text());
+  sysSave.bindValue(":locale_purchprice_scale",  _purchPriceScale->text());
+  sysSave.bindValue(":locale_extprice_scale",    _extPriceScale->text());
+  sysSave.bindValue(":locale_cost_scale",        _costScale->text());
+  sysSave.bindValue(":locale_qty_scale",         _qtyScale->text());
+  sysSave.bindValue(":locale_qtyper_scale",      _qtyPerScale->text());
+  sysSave.bindValue(":locale_weight_scale",      _weightScale->text());
+  sysSave.bindValue(":locale_uomratio_scale",    _uomRatioScale->text());
+  sysSave.bindValue(":locale_percent_scale",     _percentScale->text());
+  sysSave.bindValue(":locale_comments",          _comments->toPlainText());
+  sysSave.bindValue(":locale_error_color",       _error->text());
+  sysSave.bindValue(":locale_warning_color",     _warning->text());
+  sysSave.bindValue(":locale_emphasis_color",    _emphasis->text());
+  sysSave.bindValue(":locale_altemphasis_color", _alternate->text());
+  sysSave.bindValue(":locale_expired_color",     _expired->text());
+  sysSave.bindValue(":locale_future_color",      _future->text());
+  sysSave.bindValue(":locale_dateformat",     convert(sampleLocale.dateFormat(QLocale::ShortFormat)));
+  sysSave.bindValue(":locale_timeformat",     convert(sampleLocale.timeFormat(QLocale::ShortFormat)));
+  sysSave.bindValue(":locale_timestampformat",convert(sampleLocale.dateFormat(QLocale::ShortFormat)) +
                                   " " + convert(sampleLocale.timeFormat(QLocale::ShortFormat)));
   {
     QString intervalfmt = convert(sampleLocale.timeFormat(QLocale::ShortFormat).remove("ap", Qt::CaseInsensitive));
     intervalfmt.insert(intervalfmt.indexOf("HH") + 2, "24");
-    q.bindValue(":locale_intervalformat", intervalfmt);
+    sysSave.bindValue(":locale_intervalformat", intervalfmt);
   }
-  q.bindValue(":locale_qtyformat",      QString(sampleLocale.decimalPoint()) +
+  sysSave.bindValue(":locale_qtyformat",      QString(sampleLocale.decimalPoint()) +
                                         QString(sampleLocale.negativeSign()) +
                                         QString(sampleLocale.groupSeparator()));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  sysSave.exec();
+  if (sysSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, sysSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -278,16 +280,17 @@ void sysLocale::sSave()
 
 void sysLocale::close()
 {
+  XSqlQuery sysclose;
   qDebug("sysLocale::close()");
   if (_mode == cCopy && _localeid > 0)
   {
-    q.prepare( "DELETE FROM locale "
+    sysclose.prepare( "DELETE FROM locale "
                "WHERE (locale_id=:locale_id);" );
-    q.bindValue(":locale_id", _localeid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    sysclose.bindValue(":locale_id", _localeid);
+    sysclose.exec();
+    if (sysclose.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, sysclose.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -297,20 +300,21 @@ void sysLocale::close()
  
 void sysLocale::sUpdateCountries()
 {
+  XSqlQuery sysUpdateCountries;
   QLocale::Language localeLang = QLocale::C;
 
   if (_language->id() > 0)
   {
-    q.prepare("SELECT lang_qt_number FROM lang WHERE (lang_id=:langid);");
-    q.bindValue(":langid", _language->id());
-    q.exec();
-    if (q.first())
+    sysUpdateCountries.prepare("SELECT lang_qt_number FROM lang WHERE (lang_id=:langid);");
+    sysUpdateCountries.bindValue(":langid", _language->id());
+    sysUpdateCountries.exec();
+    if (sysUpdateCountries.first())
     {
-      localeLang = QLocale::Language(q.value("lang_qt_number").toInt());
+      localeLang = QLocale::Language(sysUpdateCountries.value("lang_qt_number").toInt());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (sysUpdateCountries.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, sysUpdateCountries.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -341,36 +345,37 @@ void sysLocale::sUpdateCountries()
 
 void sysLocale::sUpdateSamples()
 {
+  XSqlQuery sysUpdateSamples;
   QLocale sampleLocale = generateLocale();
 
-  q.prepare("SELECT CURRENT_DATE AS dateSample, CURRENT_TIME AS timeSample,"
+  sysUpdateSamples.prepare("SELECT CURRENT_DATE AS dateSample, CURRENT_TIME AS timeSample,"
             "       CURRENT_TIMESTAMP AS timestampSample,"
             "       CURRENT_TIMESTAMP - CURRENT_DATE AS intervalSample,"
             "       987654321.987654321 AS doubleSample;");
-  q.exec();
-  if (q.first())
+  sysUpdateSamples.exec();
+  if (sysUpdateSamples.first())
   {
-    _dateSample->setText(sampleLocale.toString(q.value("dateSample").toDate(), QLocale::ShortFormat));
-    _timeSample->setText(sampleLocale.toString(q.value("timeSample").toTime(), QLocale::ShortFormat));
-    _timestampSample->setText(sampleLocale.toString(q.value("timestampSample").toDate(), QLocale::ShortFormat) +
+    _dateSample->setText(sampleLocale.toString(sysUpdateSamples.value("dateSample").toDate(), QLocale::ShortFormat));
+    _timeSample->setText(sampleLocale.toString(sysUpdateSamples.value("timeSample").toTime(), QLocale::ShortFormat));
+    _timestampSample->setText(sampleLocale.toString(sysUpdateSamples.value("timestampSample").toDate(), QLocale::ShortFormat) +
                               " " +
-                              sampleLocale.toString(q.value("timestampSample").toTime(), QLocale::ShortFormat));
-    _intervalSample->setText(sampleLocale.toString(q.value("intervalSample").toTime(), QLocale::ShortFormat));
+                              sampleLocale.toString(sysUpdateSamples.value("timestampSample").toTime(), QLocale::ShortFormat));
+    _intervalSample->setText(sampleLocale.toString(sysUpdateSamples.value("intervalSample").toTime(), QLocale::ShortFormat));
 
-    _currencySample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _currencyScale->value()));
-    _salesPriceSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _salesPriceScale->value()));
-    _purchPriceSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _purchPriceScale->value()));
-    _extPriceSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _extPriceScale->value()));
-    _costSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _costScale->value()));
-    _qtySample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _qtyScale->value()));
-    _qtyPerSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _qtyPerScale->value()));
-    _weightSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _weightScale->value()));
-    _uomRatioSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _uomRatioScale->value()));
-    _percentSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _percentScale->value()));
+    _currencySample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _currencyScale->value()));
+    _salesPriceSample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _salesPriceScale->value()));
+    _purchPriceSample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _purchPriceScale->value()));
+    _extPriceSample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _extPriceScale->value()));
+    _costSample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _costScale->value()));
+    _qtySample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _qtyScale->value()));
+    _qtyPerSample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _qtyPerScale->value()));
+    _weightSample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _weightScale->value()));
+    _uomRatioSample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _uomRatioScale->value()));
+    _percentSample->setText(sampleLocale.toString(sysUpdateSamples.value("doubleSample").toDouble(), 'f', _percentScale->value()));
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (sysUpdateSamples.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, sysUpdateSamples.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -630,39 +635,40 @@ QString sysLocale::convert(const QString &input)
 
 QLocale sysLocale::generateLocale()
 {
+  XSqlQuery sysgenerateLocale;
   QLocale::Language localeLang = QLocale::C;
   QLocale::Country  localeCountry = QLocale::AnyCountry;
 
   if (_language->id() > 0)
   {
-    q.prepare("SELECT lang_qt_number FROM lang WHERE (lang_id=:langid);");
-    q.bindValue(":langid", _language->id());
-    q.exec();
-    if (q.first())
+    sysgenerateLocale.prepare("SELECT lang_qt_number FROM lang WHERE (lang_id=:langid);");
+    sysgenerateLocale.bindValue(":langid", _language->id());
+    sysgenerateLocale.exec();
+    if (sysgenerateLocale.first())
     {
-      localeLang = QLocale::Language(q.value("lang_qt_number").toInt());
+      localeLang = QLocale::Language(sysgenerateLocale.value("lang_qt_number").toInt());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (sysgenerateLocale.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, sysgenerateLocale.lastError().databaseText(), __FILE__, __LINE__);
       return QLocale("C");
     }
   }
 
   if (_country->id() > 0)
   {
-    q.prepare("SELECT country_qt_number "
+    sysgenerateLocale.prepare("SELECT country_qt_number "
               "FROM country "
               "WHERE (country_id=:countryid);");
-    q.bindValue(":countryid", _country->id());
-    q.exec();
-    if (q.first())
+    sysgenerateLocale.bindValue(":countryid", _country->id());
+    sysgenerateLocale.exec();
+    if (sysgenerateLocale.first())
     {
-      localeCountry = QLocale::Country(q.value("country_qt_number").toInt());
+      localeCountry = QLocale::Country(sysgenerateLocale.value("country_qt_number").toInt());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (sysgenerateLocale.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, sysgenerateLocale.lastError().databaseText(), __FILE__, __LINE__);
       return QLocale("C");
     }
   }

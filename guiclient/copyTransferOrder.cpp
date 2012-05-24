@@ -68,6 +68,7 @@ enum SetResponse copyTransferOrder::set(const ParameterList &pParams)
 
 void copyTransferOrder::populate()
 {
+  XSqlQuery copypopulate;
   _item->clear();
   if (_to->id() == -1)
     _orderDate->clear();
@@ -75,7 +76,7 @@ void copyTransferOrder::populate()
   {
     _orderDate->setDate(omfgThis->dbDate(), true);
 
-    q.prepare("SELECT toitem.*,"
+    copypopulate.prepare("SELECT toitem.*,"
 	      "       item_number,"
 	      "       (item_descrip1 || ' ' || item_descrip2) AS description,"
 	      "       'qty' AS toitem_qty_ordered_xtnumericrole "
@@ -83,12 +84,12 @@ void copyTransferOrder::populate()
 	      "WHERE ((toitem_status <> 'X')"
 	      "  AND  (toitem_tohead_id=:tohead_id)) "
 	      "ORDER BY toitem_linenumber;" );
-    q.bindValue(":tohead_id", _to->id());
-    q.exec();
-    _item->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
+    copypopulate.bindValue(":tohead_id", _to->id());
+    copypopulate.exec();
+    _item->populate(copypopulate);
+    if (copypopulate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, copypopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -96,20 +97,21 @@ void copyTransferOrder::populate()
 
 void copyTransferOrder::sCopy()
 {
-  q.prepare("SELECT copyTransferOrder(:tohead_id, :scheddate) AS result;");
-  q.bindValue(":tohead_id",	_to->id());
+  XSqlQuery copyCopy;
+  copyCopy.prepare("SELECT copyTransferOrder(:tohead_id, :scheddate) AS result;");
+  copyCopy.bindValue(":tohead_id",	_to->id());
 
   if (_reschedule->isChecked())
-    q.bindValue(":scheddate", _scheduleDate->date());
+    copyCopy.bindValue(":scheddate", _scheduleDate->date());
   else
-    q.bindValue(":scheddate", QDate::currentDate());
+    copyCopy.bindValue(":scheddate", QDate::currentDate());
 
   int toheadid = 0;
 
-  q.exec();
-  if (q.first())
+  copyCopy.exec();
+  if (copyCopy.first())
   {
-    toheadid = q.value("result").toInt();
+    toheadid = copyCopy.value("result").toInt();
     if (toheadid < 0)
     {
       QMessageBox::critical(this, tr("Could Not Copy Transfer Order"),
@@ -118,9 +120,9 @@ void copyTransferOrder::sCopy()
     }
     transferOrder::editTransferOrder(toheadid, true);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (copyCopy.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

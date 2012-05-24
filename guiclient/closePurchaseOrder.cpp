@@ -77,15 +77,16 @@ enum SetResponse closePurchaseOrder::set(const ParameterList &pParams)
 
 void closePurchaseOrder::sClosePo()
 {
-  q.prepare("SELECT closePo(:pohead_id) AS result;");
+  XSqlQuery closeClosePo;
+  closeClosePo.prepare("SELECT closePo(:pohead_id) AS result;");
 
   QList<XTreeWidgetItem*>selected = _po->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
     {
-      q.bindValue(":pohead_id", ((XTreeWidgetItem*)selected[i])->id());
-      q.exec();
+      closeClosePo.bindValue(":pohead_id", ((XTreeWidgetItem*)selected[i])->id());
+      closeClosePo.exec();
 	}
   }
 

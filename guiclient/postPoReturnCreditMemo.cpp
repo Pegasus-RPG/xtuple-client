@@ -55,6 +55,7 @@ void postPoReturnCreditMemo::languageChange()
 
 enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
 {
+  XSqlQuery postet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -63,7 +64,7 @@ enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
   if(valid)
   {
     _porejectid = param.toInt();
-    q.prepare("SELECT pohead_curr_id,"
+    postet.prepare("SELECT pohead_curr_id,"
               "       COALESCE(item_number, poitem_vend_item_number) AS itemnumber,"
               "       poreject_qty,"
               "       (COALESCE(recv_purchcost, poitem_unitprice) * poreject_qty) AS itemAmount"
@@ -73,13 +74,13 @@ enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
               "                LEFT OUTER JOIN item ON (itemsite_item_id=item_id)"
               "                LEFT OUTER JOIN recv ON (recv_id=poreject_recv_id) "
               " WHERE (poreject_id=:poreject_id);");
-    q.bindValue(":poreject_id", _porejectid);
-    q.exec();
-    if(q.first())
+    postet.bindValue(":poreject_id", _porejectid);
+    postet.exec();
+    if(postet.first())
     {
-      _item->setText(q.value("itemNumber").toString());
-      _qty->setDouble(q.value("poreject_qty").toDouble());
-      _amount->set(q.value("itemAmount").toDouble(), q.value("pohead_curr_id").toInt(), QDate::currentDate(), FALSE);
+      _item->setText(postet.value("itemNumber").toString());
+      _qty->setDouble(postet.value("poreject_qty").toDouble());
+      _amount->set(postet.value("itemAmount").toDouble(), postet.value("pohead_curr_id").toInt(), QDate::currentDate(), FALSE);
     }
   }
 
@@ -88,10 +89,11 @@ enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
 
 void postPoReturnCreditMemo::sPost()
 {
-  q.prepare("SELECT postPoReturnCreditMemo(:poreject_id, :amount) AS result;");
-  q.bindValue(":poreject_id", _porejectid);
-  q.bindValue(":amount", _amount->localValue());
-  if(!q.exec())
+  XSqlQuery postPost;
+  postPost.prepare("SELECT postPoReturnCreditMemo(:poreject_id, :amount) AS result;");
+  postPost.bindValue(":poreject_id", _porejectid);
+  postPost.bindValue(":amount", _amount->localValue());
+  if(!postPost.exec())
   {
     systemError( this, tr("A System Error occurred at postPoReturnCreditMemo::%1.")
                        .arg(__LINE__) );

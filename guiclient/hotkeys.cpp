@@ -186,6 +186,7 @@ void hotkeys::sEdit()
 
 void hotkeys::sDelete()
 {
+  XSqlQuery hotkeysDelete;
   if (_currentUser)
   {
     _preferences->remove(_hotkey->currentItem()->text(2));
@@ -193,10 +194,10 @@ void hotkeys::sDelete()
   }
   else
   {
-    q.prepare("SELECT deleteUserPreference(:username, :name) AS _result;");
-    q.bindValue(":username", _username->text());
-    q.bindValue(":name", _hotkey->currentItem()->text(2));
-    q.exec();
+    hotkeysDelete.prepare("SELECT deleteUserPreference(:username, :name) AS _result;");
+    hotkeysDelete.bindValue(":username", _username->text());
+    hotkeysDelete.bindValue(":name", _hotkey->currentItem()->text(2));
+    hotkeysDelete.exec();
   }
 
   _dirty = TRUE;

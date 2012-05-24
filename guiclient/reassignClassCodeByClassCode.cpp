@@ -39,6 +39,7 @@ void reassignClassCodeByClassCode::languageChange()
 
 void reassignClassCodeByClassCode::sReassign()
 {
+  XSqlQuery reassignReassign;
   if ( (_classCodePattern->isChecked()) && (_classCode->text().length() == 0) )
   {
     QMessageBox::warning(this, tr("Missing Class Code Pattern"),
@@ -55,11 +56,11 @@ void reassignClassCodeByClassCode::sReassign()
   else if (_classCodePattern->isChecked())
     sql += "WHERE (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :old_classcode_code)));";
 
-  q.prepare(sql);
-  q.bindValue(":new_classcode_id", _newClassCode->id());
-  q.bindValue(":old_classcode_id", _classCodes->id());
-  q.bindValue(":old_classcode_code", _classCode->text());
-  q.exec();
+  reassignReassign.prepare(sql);
+  reassignReassign.bindValue(":new_classcode_id", _newClassCode->id());
+  reassignReassign.bindValue(":old_classcode_id", _classCodes->id());
+  reassignReassign.bindValue(":old_classcode_code", _classCode->text());
+  reassignReassign.exec();
 
   accept();
 }

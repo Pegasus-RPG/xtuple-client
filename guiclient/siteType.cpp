@@ -81,19 +81,20 @@ enum SetResponse siteType::set(const ParameterList &pParams)
 
 void siteType::sCheck()
 {
+  XSqlQuery siteCheck;
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().trimmed().length()))
   {
-    q.prepare( "SELECT sitetype_id"
+    siteCheck.prepare( "SELECT sitetype_id"
                "  FROM sitetype"
                " WHERE((UPPER(sitetype_name)=UPPER(:sitetype_name))"
                "   AND (sitetype_id != :sitetype_id));" );
-    q.bindValue(":sitetype_name", _code->text());
-    q.bindValue(":sitetype_id", _sitetypeid);
-    q.exec();
-    if (q.first())
+    siteCheck.bindValue(":sitetype_name", _code->text());
+    siteCheck.bindValue(":sitetype_id", _sitetypeid);
+    siteCheck.exec();
+    if (siteCheck.first())
     {
-      _sitetypeid = q.value("sitetype_id").toInt();
+      _sitetypeid = siteCheck.value("sitetype_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -104,6 +105,7 @@ void siteType::sCheck()
 
 void siteType::sSave()
 {
+  XSqlQuery siteSave;
   if (_code->text().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Site Type"),
@@ -113,14 +115,14 @@ void siteType::sSave()
     return;
   }
   
-  q.prepare( "SELECT sitetype_id"
+  siteSave.prepare( "SELECT sitetype_id"
              "  FROM sitetype"
              " WHERE((UPPER(sitetype_name)=UPPER(:sitetype_name))"
              "   AND (sitetype_id != :sitetype_id));" );
-  q.bindValue(":sitetype_name", _code->text());
-  q.bindValue(":sitetype_id", _sitetypeid);
-  q.exec();
-  if (q.first())
+  siteSave.bindValue(":sitetype_name", _code->text());
+  siteSave.bindValue(":sitetype_id", _sitetypeid);
+  siteSave.exec();
+  if (siteSave.first())
   {
     QMessageBox::critical( this, tr("Cannot Save Site Type"),
                            tr( "The new Site Type information cannot be saved as the new Site Type Name that you\n"
@@ -133,40 +135,41 @@ void siteType::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('sitetype_sitetype_id_seq') AS _sitetype_id;");
-    if (q.first())
-      _sitetypeid = q.value("_sitetype_id").toInt();
+    siteSave.exec("SELECT NEXTVAL('sitetype_sitetype_id_seq') AS _sitetype_id;");
+    if (siteSave.first())
+      _sitetypeid = siteSave.value("_sitetype_id").toInt();
 
-    q.prepare( "INSERT INTO sitetype "
+    siteSave.prepare( "INSERT INTO sitetype "
                "(sitetype_id, sitetype_name, sitetype_descrip) "
                "VALUES "
                "(:sitetype_id, :sitetype_name, :sitetype_descrip);" );
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "UPDATE sitetype "
+    siteSave.prepare( "UPDATE sitetype "
                "SET sitetype_name=:sitetype_name, sitetype_descrip=:sitetype_descrip "
                "WHERE (sitetype_id=:sitetype_id);" );
   }
 
-  q.bindValue(":sitetype_id", _sitetypeid);
-  q.bindValue(":sitetype_name", _code->text().trimmed());
-  q.bindValue(":sitetype_descrip", _description->text().trimmed());
-  q.exec();
+  siteSave.bindValue(":sitetype_id", _sitetypeid);
+  siteSave.bindValue(":sitetype_name", _code->text().trimmed());
+  siteSave.bindValue(":sitetype_descrip", _description->text().trimmed());
+  siteSave.exec();
 
   done(_sitetypeid);
 }
 
 void siteType::populate()
 {
-  q.prepare( "SELECT sitetype_name, sitetype_descrip "
+  XSqlQuery sitepopulate;
+  sitepopulate.prepare( "SELECT sitetype_name, sitetype_descrip "
              "FROM sitetype "
              "WHERE (sitetype_id=:sitetype_id);" );
-  q.bindValue(":sitetype_id", _sitetypeid);
-  q.exec();
-  if (q.first()) 
+  sitepopulate.bindValue(":sitetype_id", _sitetypeid);
+  sitepopulate.exec();
+  if (sitepopulate.first()) 
   {
-    _code->setText(q.value("sitetype_name").toString());
-    _description->setText(q.value("sitetype_descrip").toString());
+    _code->setText(sitepopulate.value("sitetype_name").toString());
+    _description->setText(sitepopulate.value("sitetype_descrip").toString());
   }
 }

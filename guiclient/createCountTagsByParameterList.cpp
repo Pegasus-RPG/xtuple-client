@@ -123,15 +123,16 @@ void createCountTagsByParameterList::sCreate()
 
 void createCountTagsByParameterList::sPopulateLocations()
 {
-  q.prepare( "SELECT location_id, "
+  XSqlQuery createPopulateLocations;
+  createPopulateLocations.prepare( "SELECT location_id, "
              "       CASE WHEN (LENGTH(location_descrip) > 0) THEN (formatLocationName(location_id) || '-' || location_descrip)"
              "            ELSE formatLocationName(location_id)"
              "       END AS locationname "
              "FROM location "
              "WHERE (location_warehous_id=:warehous_id) "
              "ORDER BY locationname;" );
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  _location->populate(q);
+  createPopulateLocations.bindValue(":warehous_id", _warehouse->id());
+  createPopulateLocations.exec();
+  _location->populate(createPopulateLocations);
 }
 

@@ -102,6 +102,7 @@ SetResponse bankAdjustment::set( const ParameterList & pParams )
 
 void bankAdjustment::sSave()
 {
+  XSqlQuery bankSave;
   if (!_date->isValid())
   {
     QMessageBox::information( this, tr("Cannot Post Bank Adjustment"),
@@ -119,7 +120,7 @@ void bankAdjustment::sSave()
   }
 
   if (_mode == cNew)
-    q.prepare( "INSERT INTO bankadj "
+    bankSave.prepare( "INSERT INTO bankadj "
                    "(bankadj_bankaccnt_id, bankadj_bankadjtype_id,"
                    " bankadj_date, bankadj_docnumber, bankadj_amount, "
 		   " bankadj_notes, bankadj_curr_id ) "
@@ -128,7 +129,7 @@ void bankAdjustment::sSave()
                    " :date, :docnumber, :amount, :notes, :curr_id);" );
   else if (_mode == cEdit)
   {
-    q.prepare ( "UPDATE bankadj "
+    bankSave.prepare ( "UPDATE bankadj "
                     "SET bankadj_bankaccnt_id=:bankaccnt_id,"
                     " bankadj_bankadjtype_id=:bankadjtype_id,"
                     " bankadj_date=:date,"
@@ -138,18 +139,18 @@ void bankAdjustment::sSave()
                     " bankadj_curr_id=:curr_id "
                     "WHERE ((bankadj_id=:bankadj_id)"
                     " AND (NOT bankadj_posted) ); ");
-    q.bindValue(":bankadj_id", _bankadjid);
+    bankSave.bindValue(":bankadj_id", _bankadjid);
   }
     
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":bankadjtype_id", _bankadjtype->id());
-  q.bindValue(":date", _date->date());
-  q.bindValue(":docnumber", _docNumber->text());
-  q.bindValue(":amount", _amount->localValue());
-  q.bindValue(":notes",   _notes->toPlainText());
-  q.bindValue(":curr_id", _amount->id());
+  bankSave.bindValue(":bankaccnt_id", _bankaccnt->id());
+  bankSave.bindValue(":bankadjtype_id", _bankadjtype->id());
+  bankSave.bindValue(":date", _date->date());
+  bankSave.bindValue(":docnumber", _docNumber->text());
+  bankSave.bindValue(":amount", _amount->localValue());
+  bankSave.bindValue(":notes",   _notes->toPlainText());
+  bankSave.bindValue(":curr_id", _amount->id());
   
-  if(!q.exec())
+  if(!bankSave.exec())
   {
     systemError(this, tr("A System Error occurred at %1::%2.")
                       .arg(__FILE__)
@@ -164,23 +165,24 @@ void bankAdjustment::sSave()
 
 void bankAdjustment::populate()
 {
-  q.prepare( "SELECT bankadj_bankaccnt_id, bankadj_bankadjtype_id,"
+  XSqlQuery bankpopulate;
+  bankpopulate.prepare( "SELECT bankadj_bankaccnt_id, bankadj_bankadjtype_id,"
              "       bankadj_date, bankadj_docnumber, bankadj_amount,"
              "       bankadj_notes, bankadj_curr_id "
              "FROM bankadj "
              "WHERE (bankadj_id=:bankadj_id);" );
-  q.bindValue(":bankadj_id", _bankadjid);
-  q.exec();
-  if(q.first())
+  bankpopulate.bindValue(":bankadj_id", _bankadjid);
+  bankpopulate.exec();
+  if(bankpopulate.first())
   {
-    _bankaccnt->setId(q.value("bankadj_bankaccnt_id").toInt());
-    _bankadjtype->setId(q.value("bankadj_bankadjtype_id").toInt());
-    _date->setDate(q.value("bankadj_date").toDate());
-    _docNumber->setText(q.value("bankadj_docnumber").toString());
-    _amount->set(q.value("bankadj_amount").toDouble(),
-		 q.value("bankadj_curr_id").toInt(),
-		 q.value("bankadj_date").toDate(), false);
-    _notes->setText(q.value("bankadj_notes").toString());
+    _bankaccnt->setId(bankpopulate.value("bankadj_bankaccnt_id").toInt());
+    _bankadjtype->setId(bankpopulate.value("bankadj_bankadjtype_id").toInt());
+    _date->setDate(bankpopulate.value("bankadj_date").toDate());
+    _docNumber->setText(bankpopulate.value("bankadj_docnumber").toString());
+    _amount->set(bankpopulate.value("bankadj_amount").toDouble(),
+		 bankpopulate.value("bankadj_curr_id").toInt(),
+		 bankpopulate.value("bankadj_date").toDate(), false);
+    _notes->setText(bankpopulate.value("bankadj_notes").toString());
   }
 }
 
@@ -197,5 +199,5 @@ void bankAdjustment::sBankAccount(int accountId)
 	QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
 			      .arg(__FILE__)
 			      .arg(__LINE__),
-                              bankQ.lastError().databaseText());
+	bankQ.lastError().databaseText());
 }

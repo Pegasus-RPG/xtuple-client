@@ -85,6 +85,7 @@ enum SetResponse itemSourceSearch::set(const ParameterList & pParams)
 
 void itemSourceSearch::sFillList()
 {
+  XSqlQuery itemFillList;
   _itemsrc->clear();
   
   bool first = true;
@@ -221,13 +222,13 @@ void itemSourceSearch::sFillList()
 
   sql +=       "    ) )"
                " ORDER BY item_number, vend_name;";
-  q.prepare(sql);
-  q.bindValue(":searchString", _search->text());
-  q.bindValue(":vend_id", _vendid);
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":non", tr("Non-Inventory"));
-  q.exec();
-  _itemsrc->populate(q, TRUE);
+  itemFillList.prepare(sql);
+  itemFillList.bindValue(":searchString", _search->text());
+  itemFillList.bindValue(":vend_id", _vendid);
+  itemFillList.bindValue(":item_id", _itemid);
+  itemFillList.bindValue(":non", tr("Non-Inventory"));
+  itemFillList.exec();
+  _itemsrc->populate(itemFillList, TRUE);
 }
 
 int itemSourceSearch::itemsrcId()

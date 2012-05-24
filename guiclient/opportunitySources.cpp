@@ -79,12 +79,13 @@ void opportunitySources::languageChange()
 
 void opportunitySources::sDelete()
 {
-  q.prepare( "SELECT ophead_id "
+  XSqlQuery opportunityDelete;
+  opportunityDelete.prepare( "SELECT ophead_id "
              "FROM ophead "
              "WHERE (ophead_opsource_id=:opsource_id);" );
-  q.bindValue(":opsource_id", _oplist->id());
-  q.exec();
-  if (q.first())
+  opportunityDelete.bindValue(":opsource_id", _oplist->id());
+  opportunityDelete.exec();
+  if (opportunityDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Opportunity Source"),
                            tr( "The selected Opportunity Source cannot be deleted as there are one or more Opportunities currently assigned to it.\n"
@@ -92,10 +93,10 @@ void opportunitySources::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM opsource "
+  opportunityDelete.prepare( "DELETE FROM opsource "
              "WHERE (opsource_id=:opsource_id);" );
-  q.bindValue(":opsource_id", _oplist->id());
-  q.exec();
+  opportunityDelete.bindValue(":opsource_id", _oplist->id());
+  opportunityDelete.exec();
 
   sFillList();
 }

@@ -69,27 +69,29 @@ void honorifics::languageChange()
 
 void honorifics::sFillList()
 {
-  q.prepare( "SELECT hnfc_id, hnfc_code "
+  XSqlQuery honorificsFillList;
+  honorificsFillList.prepare( "SELECT hnfc_id, hnfc_code "
              "FROM hnfc "
              "ORDER BY hnfc_code;" );
-  q.exec();
-  _honorifics->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  honorificsFillList.exec();
+  _honorifics->populate(honorificsFillList);
+  if (honorificsFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, honorificsFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void honorifics::sDelete()
 {
-  q.prepare( "DELETE FROM hnfc "
+  XSqlQuery honorificsDelete;
+  honorificsDelete.prepare( "DELETE FROM hnfc "
              "WHERE (hnfc_id=:hnfc_id);" );
-  q.bindValue(":hnfc_id", _honorifics->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  honorificsDelete.bindValue(":hnfc_id", _honorifics->id());
+  honorificsDelete.exec();
+  if (honorificsDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, honorificsDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

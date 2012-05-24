@@ -94,12 +94,13 @@ void shippingForms::sView()
 
 void shippingForms::sDelete()
 {
-  q.prepare( "SELECT cust_id "
+  XSqlQuery shippingDelete;
+  shippingDelete.prepare( "SELECT cust_id "
              "FROM custinfo "
              "WHERE (cust_shipform_id=:shipform_id);" );
-  q.bindValue(":shipform_id", _bolformat->id());
-  q.exec();
-  if (q.first())
+  shippingDelete.bindValue(":shipform_id", _bolformat->id());
+  shippingDelete.exec();
+  if (shippingDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Shipping Form"),
                            tr( "The selected Shipping Form cannot be deleted as there are one or more Customers assigned to use it.\n"
@@ -107,12 +108,12 @@ void shippingForms::sDelete()
     return;
   }
 
-  q.prepare( "SELECT shipto_id "
+  shippingDelete.prepare( "SELECT shipto_id "
              "FROM shiptoinfo "
              "WHERE (shipto_shipform_id=:shipform_id);" );
-  q.bindValue(":shipform_id", _bolformat->id());
-  q.exec();
-  if (q.first())
+  shippingDelete.bindValue(":shipform_id", _bolformat->id());
+  shippingDelete.exec();
+  if (shippingDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Shipping Form"),
                            tr( "The selected Shipping Form cannot be deleted as there are one or more Ship-Tos assigned to use it.\n"
@@ -120,10 +121,10 @@ void shippingForms::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM shipform "
+  shippingDelete.prepare( "DELETE FROM shipform "
              "WHERE (shipform_id=:shipform_id);" );
-  q.bindValue(":shipform_id", _bolformat->id());
-  q.exec();
+  shippingDelete.bindValue(":shipform_id", _bolformat->id());
+  shippingDelete.exec();
 
   sFillList();
 }

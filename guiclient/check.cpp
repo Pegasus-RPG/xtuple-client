@@ -67,6 +67,7 @@ enum SetResponse check::set(const ParameterList &pParams)
 
 void check::sPopulate()
 {
+  XSqlQuery checkPopulate;
   MetaSQLQuery mql("SELECT * "
                    "FROM checkhead"
                    "     JOIN checkrecip ON (checkhead_recip_id=checkrecip_id"
@@ -74,32 +75,32 @@ void check::sPopulate()
                    "WHERE (checkhead_id=<? value(\"checkid\")?>);");
   ParameterList params;
   params.append("checkid", _checkid);
-  q = mql.toQuery(params);
-  if (q.first())
+  checkPopulate = mql.toQuery(params);
+  if (checkPopulate.first())
   {
-    _checkNumber->setText(q.value("checkhead_number").toString());
-    _bankaccnt->setId(q.value("checkhead_bankaccnt_id").toInt());
-    _recipNumber->setText(q.value("checkrecip_number").toString());
-    _recipName->setText(q.value("checkrecip_name").toString());
-    _amount->set(q.value("checkhead_amount").toDouble(),
-                 q.value("checkhead_curr_id").toInt(),
-                 q.value("checkhead_checkdate").toDate());
-    _checkdate->setDate(q.value("checkhead_checkdate").toDate());
-    _achBatchNumber->setText(q.value("checkhead_ach_batch").toString());
-    _recipType->setText(q.value("checkrecip_type").toString());
-    _void->setChecked(q.value("checkhead_void").toBool());
-    _replaced->setChecked(q.value("checkhead_replaced").toBool());
-    _deleted->setChecked(q.value("checkhead_deleted").toBool());
-    _posted->setChecked(q.value("checkhead_posted").toBool());
-    _misc->setChecked(q.value("checkhead_misc").toBool());
-    _expcat->setId(q.value("checkhead_expcat_id").toInt());
-    _for->setText(q.value("checkhead_for").toString());
-    _notes->setPlainText(q.value("checkhead_notes").toString());
+    _checkNumber->setText(checkPopulate.value("checkhead_number").toString());
+    _bankaccnt->setId(checkPopulate.value("checkhead_bankaccnt_id").toInt());
+    _recipNumber->setText(checkPopulate.value("checkrecip_number").toString());
+    _recipName->setText(checkPopulate.value("checkrecip_name").toString());
+    _amount->set(checkPopulate.value("checkhead_amount").toDouble(),
+                 checkPopulate.value("checkhead_curr_id").toInt(),
+                 checkPopulate.value("checkhead_checkdate").toDate());
+    _checkdate->setDate(checkPopulate.value("checkhead_checkdate").toDate());
+    _achBatchNumber->setText(checkPopulate.value("checkhead_ach_batch").toString());
+    _recipType->setText(checkPopulate.value("checkrecip_type").toString());
+    _void->setChecked(checkPopulate.value("checkhead_void").toBool());
+    _replaced->setChecked(checkPopulate.value("checkhead_replaced").toBool());
+    _deleted->setChecked(checkPopulate.value("checkhead_deleted").toBool());
+    _posted->setChecked(checkPopulate.value("checkhead_posted").toBool());
+    _misc->setChecked(checkPopulate.value("checkhead_misc").toBool());
+    _expcat->setId(checkPopulate.value("checkhead_expcat_id").toInt());
+    _for->setText(checkPopulate.value("checkhead_for").toString());
+    _notes->setPlainText(checkPopulate.value("checkhead_notes").toString());
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (checkPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, checkPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -128,6 +129,7 @@ void check::clear()
 
 void check::sFillList()
 {
+  XSqlQuery checkFillList;
   if (_misc->isChecked())
     _items->clear();
   else
@@ -146,11 +148,11 @@ void check::sFillList()
     ParameterList params;
     params.append("checkid", _checkid);
     params.append("curr_id", _amount->id());
-    q = mql.toQuery(params);
-    _items->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
+    checkFillList = mql.toQuery(params);
+    _items->populate(checkFillList, true);
+    if (checkFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, checkFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

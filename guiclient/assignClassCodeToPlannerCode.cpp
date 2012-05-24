@@ -40,6 +40,7 @@ void assignClassCodeToPlannerCode::languageChange()
 
 void assignClassCodeToPlannerCode::sAssign()
 {
+  XSqlQuery assignAssign;
   if(!_planCode->isValid())
   {
     QMessageBox::warning(this, tr("No Planner Code Selected"),
@@ -62,12 +63,12 @@ void assignClassCodeToPlannerCode::sAssign()
 
   sql += ");";
 
-  q.prepare(sql);
-  q.bindValue(":plancode_id", _planCode->id());
-  q.bindValue(":classcode_id", _classCode->id());
-  q.bindValue(":classcode_pattern", _classCode->pattern());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
+  assignAssign.prepare(sql);
+  assignAssign.bindValue(":plancode_id", _planCode->id());
+  assignAssign.bindValue(":classcode_id", _classCode->id());
+  assignAssign.bindValue(":classcode_pattern", _classCode->pattern());
+  assignAssign.bindValue(":warehous_id", _warehouse->id());
+  assignAssign.exec();
 
   accept();
 }

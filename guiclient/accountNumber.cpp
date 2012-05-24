@@ -119,6 +119,7 @@ enum SetResponse accountNumber::set(const ParameterList &pParams)
 
 void accountNumber::sSave()
 {
+  XSqlQuery accountSave;
   if (_mode == cEdit && _wasActive && !_active->isChecked())
   {
     QString glsum("SELECT trialbal_ending AS bal"
@@ -131,8 +132,8 @@ void accountNumber::sSave()
     ParameterList pl;
     pl.append("accnt_id", _accntid);
     MetaSQLQuery mm(glsum);
-    q = mm.toQuery(pl);
-    if(q.first() && q.value("bal").toInt() != 0)
+    accountSave = mm.toQuery(pl);
+    if(accountSave.first() && accountSave.value("bal").toInt() != 0)
     {
       if(QMessageBox::warning(this, tr("Account has Balance"),
                             tr("<p>This Account has a balance. "
@@ -177,17 +178,17 @@ void accountNumber::sSave()
     params.append("accnt_id", _accntid);
 
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.first())
+  accountSave = mql.toQuery(params);
+  if (accountSave.first())
   {
     QMessageBox::warning( this, tr("Cannot Save Account"),
                           tr("<p>This Account cannot be saved as an Account "
 			     "with the same number already exists.") );
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (accountSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, accountSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -201,16 +202,16 @@ void accountNumber::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('accnt_accnt_id_seq') AS _accnt_id;");
-    if (q.first())
-      _accntid = q.value("_accnt_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    accountSave.exec("SELECT NEXTVAL('accnt_accnt_id_seq') AS _accnt_id;");
+    if (accountSave.first())
+      _accntid = accountSave.value("_accnt_id").toInt();
+    else if (accountSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, accountSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO accnt "
+    accountSave.prepare( "INSERT INTO accnt "
                "( accnt_id,"
                "  accnt_company, accnt_profit, accnt_number, accnt_sub,"
                "  accnt_forwardupdate, accnt_active,"
@@ -225,7 +226,7 @@ void accountNumber::sSave()
 	       "  :accnt_curr_id );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE accnt "
+    accountSave.prepare( "UPDATE accnt "
                "SET accnt_company=:accnt_company, accnt_profit=:accnt_profit,"
                "    accnt_number=:accnt_number, accnt_sub=:accnt_sub,"
                "    accnt_forwardupdate=:accnt_forwardupdate,"
@@ -236,34 +237,34 @@ void accountNumber::sSave()
 	       "    accnt_curr_id=:accnt_curr_id "
                "WHERE (accnt_id=:accnt_id);" );
 
-  q.bindValue(":accnt_id", _accntid);
-  q.bindValue(":accnt_company", _company->currentText());
-  q.bindValue(":accnt_profit", _profit->currentText());
-  q.bindValue(":accnt_number", _number->text());
-  q.bindValue(":accnt_sub", _sub->currentText());
-  q.bindValue(":accnt_descrip", _description->text());
-  q.bindValue(":accnt_extref", _extReference->text());
-  q.bindValue(":accnt_forwardupdate", QVariant(_forwardUpdate->isChecked()));
-  q.bindValue(":accnt_active", QVariant(_active->isChecked()));
-  q.bindValue(":accnt_comments", _comments->toPlainText());
-  q.bindValue(":accnt_curr_id", _currency->id());
-  q.bindValue(":accnt_subaccnttype_id", _subType->id());
+  accountSave.bindValue(":accnt_id", _accntid);
+  accountSave.bindValue(":accnt_company", _company->currentText());
+  accountSave.bindValue(":accnt_profit", _profit->currentText());
+  accountSave.bindValue(":accnt_number", _number->text());
+  accountSave.bindValue(":accnt_sub", _sub->currentText());
+  accountSave.bindValue(":accnt_descrip", _description->text());
+  accountSave.bindValue(":accnt_extref", _extReference->text());
+  accountSave.bindValue(":accnt_forwardupdate", QVariant(_forwardUpdate->isChecked()));
+  accountSave.bindValue(":accnt_active", QVariant(_active->isChecked()));
+  accountSave.bindValue(":accnt_comments", _comments->toPlainText());
+  accountSave.bindValue(":accnt_curr_id", _currency->id());
+  accountSave.bindValue(":accnt_subaccnttype_id", _subType->id());
 
   if (_type->currentIndex() == 0)
-    q.bindValue(":accnt_type", "A");
+    accountSave.bindValue(":accnt_type", "A");
   else if (_type->currentIndex() == 1)
-    q.bindValue(":accnt_type", "L");
+    accountSave.bindValue(":accnt_type", "L");
   else if (_type->currentIndex() == 2)
-    q.bindValue(":accnt_type", "E");
+    accountSave.bindValue(":accnt_type", "E");
   else if (_type->currentIndex() == 3)
-    q.bindValue(":accnt_type", "R");
+    accountSave.bindValue(":accnt_type", "R");
   else if (_type->currentIndex() == 4)
-    q.bindValue(":accnt_type", "Q");
+    accountSave.bindValue(":accnt_type", "Q");
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  accountSave.exec();
+  if (accountSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, accountSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -272,54 +273,55 @@ void accountNumber::sSave()
 
 void accountNumber::populate()
 {
-  q.prepare( "SELECT accnt.*, subaccnttype_id, "
+  XSqlQuery populateAccount;
+  populateAccount.prepare( "SELECT accnt.*, subaccnttype_id, "
              "       CASE WHEN (gltrans_id IS NULL) THEN false ELSE true END AS used "
              "FROM accnt "
              "  LEFT OUTER JOIN subaccnttype ON (subaccnttype_code=accnt_subaccnttype_code) "
              "  LEFT OUTER JOIN gltrans ON (accnt_id=gltrans_accnt_id) "
              "WHERE (accnt_id=:accnt_id)"
              "LIMIT 1" );
-  q.bindValue(":accnt_id", _accntid);
-  q.exec();
-  if (q.first())
+  populateAccount.bindValue(":accnt_id", _accntid);
+  populateAccount.exec();
+  if (populateAccount.first())
   {
     if (_metrics->value("GLCompanySize").toInt())
-      _company->setText(q.value("accnt_company"));
+      _company->setText(populateAccount.value("accnt_company"));
 
     if (_metrics->value("GLProfitSize").toInt())
-      _profit->setText(q.value("accnt_profit"));
+      _profit->setText(populateAccount.value("accnt_profit"));
 
     if (_metrics->value("GLSubaccountSize").toInt())
-      _sub->setText(q.value("accnt_sub"));
+      _sub->setText(populateAccount.value("accnt_sub"));
 
-    _number->setText(q.value("accnt_number"));
-    _description->setText(q.value("accnt_descrip"));
-    _extReference->setText(q.value("accnt_extref"));
-    _forwardUpdate->setChecked(q.value("accnt_forwardupdate").toBool());
-    _active->setChecked(q.value("accnt_active").toBool());
+    _number->setText(populateAccount.value("accnt_number"));
+    _description->setText(populateAccount.value("accnt_descrip"));
+    _extReference->setText(populateAccount.value("accnt_extref"));
+    _forwardUpdate->setChecked(populateAccount.value("accnt_forwardupdate").toBool());
+    _active->setChecked(populateAccount.value("accnt_active").toBool());
     _wasActive = _active->isChecked();
-    _comments->setText(q.value("accnt_comments").toString());
-    _currency->setId(q.value("accnt_curr_id").toInt());
+    _comments->setText(populateAccount.value("accnt_comments").toString());
+    _currency->setId(populateAccount.value("accnt_curr_id").toInt());
 
-    if (q.value("accnt_type").toString() == "A")
+    if (populateAccount.value("accnt_type").toString() == "A")
       _type->setCurrentIndex(0);
-    else if (q.value("accnt_type").toString() == "L")
+    else if (populateAccount.value("accnt_type").toString() == "L")
       _type->setCurrentIndex(1);
-    else if (q.value("accnt_type").toString() == "E")
+    else if (populateAccount.value("accnt_type").toString() == "E")
       _type->setCurrentIndex(2);
-    else if (q.value("accnt_type").toString() == "R")
+    else if (populateAccount.value("accnt_type").toString() == "R")
       _type->setCurrentIndex(3);
-    else if (q.value("accnt_type").toString() == "Q")
+    else if (populateAccount.value("accnt_type").toString() == "Q")
       _type->setCurrentIndex(4);
 
-    _type->setDisabled(q.value("used").toBool());
+    _type->setDisabled(populateAccount.value("used").toBool());
 
     populateSubTypes();
-    _subType->setId(q.value("subaccnttype_id").toInt());
+    _subType->setId(populateAccount.value("subaccnttype_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (populateAccount.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, populateAccount.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

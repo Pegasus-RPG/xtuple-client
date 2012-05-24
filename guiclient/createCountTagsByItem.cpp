@@ -77,23 +77,24 @@ enum SetResponse createCountTagsByItem::set(const ParameterList &pParams)
 
 void createCountTagsByItem::sCreate()
 {
+  XSqlQuery createCreate;
   int invcnt_id = 0;
-  q.prepare( "SELECT createCountTag(itemsite_id, :comments, :priority,"
+  createCreate.prepare( "SELECT createCountTag(itemsite_id, :comments, :priority,"
              "                      :freeze, :location_id) AS invcnt_id "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":comments", _comments->toPlainText());
-  q.bindValue(":priority", QVariant(_priority->isChecked()));
-  q.bindValue(":freeze",   QVariant(_freeze->isChecked()));
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
+  createCreate.bindValue(":comments", _comments->toPlainText());
+  createCreate.bindValue(":priority", QVariant(_priority->isChecked()));
+  createCreate.bindValue(":freeze",   QVariant(_freeze->isChecked()));
+  createCreate.bindValue(":item_id", _item->id());
+  createCreate.bindValue(":warehous_id", _warehouse->id());
   if(_byLocation->isChecked())
-    q.bindValue(":location_id", _location->id());
-  q.exec();
-  if (q.first())
+    createCreate.bindValue(":location_id", _location->id());
+  createCreate.exec();
+  if (createCreate.first())
   {
-    invcnt_id = q.value("invcnt_id").toInt();
+    invcnt_id = createCreate.value("invcnt_id").toInt();
     if (invcnt_id == 0)
       QMessageBox::information(this, tr("No Count Tags Created"),
                                tr("No Count Tags were created. Likely causes "
@@ -101,9 +102,9 @@ void createCountTagsByItem::sCreate()
                                   "or the Item is not a countable Type."));
 
   }
-  if (q.lastError().type() != QSqlError::NoError)
+  if (createCreate.lastError().type() != QSqlError::NoError)
     QMessageBox::critical(this, tr("Error Creating Count Tags"),
-                          q.lastError().text());
+                          createCreate.lastError().text());
 
   if (_captive)
     done(invcnt_id);
@@ -118,26 +119,27 @@ void createCountTagsByItem::sCreate()
 
 void createCountTagsByItem::sPopulateLocations()
 {
-  q.prepare("SELECT itemsite_loccntrl"
+  XSqlQuery createPopulateLocations;
+  createPopulateLocations.prepare("SELECT itemsite_loccntrl"
             "  FROM itemsite"
             " WHERE ((itemsite_item_id=:item_id)"
             "   AND  (itemsite_warehous_id=:warehous_id));");
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if(q.first() && q.value("itemsite_loccntrl").toBool())
+  createPopulateLocations.bindValue(":item_id", _item->id());
+  createPopulateLocations.bindValue(":warehous_id", _warehouse->id());
+  createPopulateLocations.exec();
+  if(createPopulateLocations.first() && createPopulateLocations.value("itemsite_loccntrl").toBool())
   {
-    q.prepare( "SELECT location_id,"
+    createPopulateLocations.prepare( "SELECT location_id,"
                "       formatLocationName(location_id) AS locationname"
                "  FROM location, itemsite"
                " WHERE ((validLocation(location_id, itemsite_id))"
                "   AND  (itemsite_warehous_id=:warehous_id)"
                "   AND  (itemsite_item_id=:item_id)) "
                " ORDER BY locationname;");
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.exec();
-    _location->populate(q);  
+    createPopulateLocations.bindValue(":item_id", _item->id());
+    createPopulateLocations.bindValue(":warehous_id", _warehouse->id());
+    createPopulateLocations.exec();
+    _location->populate(createPopulateLocations);  
     _byLocation->setEnabled(true);
   }
   else

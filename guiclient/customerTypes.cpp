@@ -105,12 +105,13 @@ void customerTypes::sFillList()
 
 void customerTypes::sDelete()
 {
-  q.prepare("SELECT deleteCustomerType(:custtype_id) AS result;");
-  q.bindValue(":custtype_id", _custtype->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery customerDelete;
+  customerDelete.prepare("SELECT deleteCustomerType(:custtype_id) AS result;");
+  customerDelete.bindValue(":custtype_id", _custtype->id());
+  customerDelete.exec();
+  if (customerDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = customerDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteCustomerType", result),
@@ -118,9 +119,9 @@ void customerTypes::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (customerDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();

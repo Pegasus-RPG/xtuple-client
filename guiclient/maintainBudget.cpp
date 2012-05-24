@@ -21,6 +21,7 @@
 maintainBudget::maintainBudget(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
+  XSqlQuery maintainmaintainBudget;
   setupUi(this);
 
   connect(_accountsAdd,    SIGNAL(clicked()), this, SLOT(sAccountsAdd()));
@@ -39,12 +40,12 @@ maintainBudget::maintainBudget(QWidget* parent, const char* name, Qt::WFlags fl)
   _budgheadid = -1;
   _mode = cNew;
   
-  q.exec("SELECT period_id, (formatDate(period_start) || '-' || formatDate(period_end)) AS f_name "
+  maintainmaintainBudget.exec("SELECT period_id, (formatDate(period_start) || '-' || formatDate(period_end)) AS f_name "
          "  FROM period "
          "ORDER BY period_start DESC;" );
-  while(q.next())
+  while(maintainmaintainBudget.next())
   {
-    XListBoxText *item = new XListBoxText(q.value("f_name").toString(), q.value("period_id").toInt());
+    XListBoxText *item = new XListBoxText(maintainmaintainBudget.value("f_name").toString(), maintainmaintainBudget.value("period_id").toInt());
     _periods->addItem(dynamic_cast<QListWidgetItem*>(item));
   }
 }
@@ -105,6 +106,7 @@ enum SetResponse maintainBudget::set(const ParameterList & pParams)
 
 void maintainBudget::sSave()
 {
+  XSqlQuery maintainSave;
   if(_name->text().trimmed().isEmpty())
   {
     QMessageBox::warning(this, tr("Cannot Save Budget"),
@@ -132,46 +134,46 @@ void maintainBudget::sSave()
   _save->setFocus();
 
   if(cEdit == _mode)
-    q.prepare("UPDATE budghead "
+    maintainSave.prepare("UPDATE budghead "
               "   SET budghead_name=:name,"
               "       budghead_descrip=:descrip "
               " WHERE(budghead_id=:budghead_id);");
   else if(cNew == _mode)
   {
-    q.prepare("SELECT nextval('budghead_budghead_id_seq') AS result;");
-    q.exec();
-    if(q.first())
-      _budgheadid = q.value("result").toInt();
+    maintainSave.prepare("SELECT nextval('budghead_budghead_id_seq') AS result;");
+    maintainSave.exec();
+    if(maintainSave.first())
+      _budgheadid = maintainSave.value("result").toInt();
     else
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, maintainSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare("INSERT INTO budghead"
+    maintainSave.prepare("INSERT INTO budghead"
               "      (budghead_id, budghead_name, budghead_descrip) "
               "VALUES(:budghead_id, :name, :descrip);");
   }
 
-  q.bindValue(":budghead_id", _budgheadid);
-  q.bindValue(":name", _name->text());
-  q.bindValue(":descrip", _descrip->text());
-  if(!q.exec())
+  maintainSave.bindValue(":budghead_id", _budgheadid);
+  maintainSave.bindValue(":name", _name->text());
+  maintainSave.bindValue(":descrip", _descrip->text());
+  if(!maintainSave.exec())
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, maintainSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   // Delete the Budget Items and regenerate from table
-  q.prepare("SELECT deleteBudgetItems(:budghead_id) AS result;");
-  q.bindValue(":budghead_id", _budgheadid);
-  if(!q.exec())
+  maintainSave.prepare("SELECT deleteBudgetItems(:budghead_id) AS result;");
+  maintainSave.bindValue(":budghead_id", _budgheadid);
+  if(!maintainSave.exec())
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, maintainSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT setBudget(:budghead_id, :period_id, :accnt_id, :amount) AS result;");
+  maintainSave.prepare("SELECT setBudget(:budghead_id, :period_id, :accnt_id, :amount) AS result;");
 
   for(int r = 0; r < _table->rowCount(); r++)
   {
@@ -183,19 +185,19 @@ void maintainBudget::sSave()
         QString amount = _table->item(r, c)->text();
         if(amount.isEmpty())
           amount = "0.0";
-        q.bindValue(":budghead_id", _budgheadid);
-        q.bindValue(":period_id", _periodsRef.at(c));
-        q.bindValue(":accnt_id", accountid);
-        q.bindValue(":amount", amount.toDouble());
-        q.exec();
+        maintainSave.bindValue(":budghead_id", _budgheadid);
+        maintainSave.bindValue(":period_id", _periodsRef.at(c));
+        maintainSave.bindValue(":accnt_id", accountid);
+        maintainSave.bindValue(":amount", amount.toDouble());
+        maintainSave.exec();
       }
       else
       {
-        q.bindValue(":budghead_id", _budgheadid);
-        q.bindValue(":period_id", _periodsRef.at(c));
-        q.bindValue(":accnt_id", accountid);
-        q.bindValue(":amount", 0.0);
-        q.exec();
+        maintainSave.bindValue(":budghead_id", _budgheadid);
+        maintainSave.bindValue(":period_id", _periodsRef.at(c));
+        maintainSave.bindValue(":accnt_id", accountid);
+        maintainSave.bindValue(":amount", 0.0);
+        maintainSave.exec();
       }
     }
   }
@@ -251,6 +253,7 @@ void maintainBudget::closeEvent( QCloseEvent * e )
 
 void maintainBudget::sAccountsAdd()
 {
+  XSqlQuery maintainAccountsAdd;
   ParameterList params;
   params.append("type", (GLCluster::cAsset | GLCluster::cLiability | GLCluster::cExpense | GLCluster::cRevenue | GLCluster::cEquity));
 
@@ -272,25 +275,25 @@ void maintainBudget::sAccountsAdd()
 
     if (_prjid != -1)
     {
-      q.prepare("SELECT getPrjAccntId(:prj_id,:accnt_id) AS accnt_id");
-      q.bindValue(":prj_id", _prjid);
-      q.bindValue(":accnt_id", accntid);
-      q.exec();
-      if (q.first())
-        accntid = q.value("accnt_id").toInt();
+      maintainAccountsAdd.prepare("SELECT getPrjAccntId(:prj_id,:accnt_id) AS accnt_id");
+      maintainAccountsAdd.bindValue(":prj_id", _prjid);
+      maintainAccountsAdd.bindValue(":accnt_id", accntid);
+      maintainAccountsAdd.exec();
+      if (maintainAccountsAdd.first())
+        accntid = maintainAccountsAdd.value("accnt_id").toInt();
     }
 
     if (_accountsRef.contains(accntid))
       continue;
 
-    q.prepare("SELECT formatGLAccountLong(:accnt_id) AS result;");
-    q.bindValue(":accnt_id", accntid);
-    q.exec();
-    if(q.first())
+    maintainAccountsAdd.prepare("SELECT formatGLAccountLong(:accnt_id) AS result;");
+    maintainAccountsAdd.bindValue(":accnt_id", accntid);
+    maintainAccountsAdd.exec();
+    if(maintainAccountsAdd.first())
     {
       new XTreeWidgetItem(_accounts,
                           accntid,
-                          q.value("result"));
+                          maintainAccountsAdd.value("result"));
       _accountsRef.append(accntid);
     }
   }
@@ -324,6 +327,7 @@ void maintainBudget::sValueChanged(QTableWidgetItem * /* item */)
 
 void maintainBudget::sGenerateTable()
 {
+  XSqlQuery maintainGenerateTable;
   _generate->setFocus();
   if(_dirty)
   {
@@ -397,7 +401,7 @@ void maintainBudget::sGenerateTable()
                 " WHERE ((budgitem_accnt_id=:accnt_id)"
                 "   AND  (budgitem_budghead_id=:budghead_id)"
                 "   AND  (budgitem_period_id IN (" + periods.join(",") + ")) ); ";
-  q.prepare(sql);
+  maintainGenerateTable.prepare(sql);
 
   _table->setRowCount(_accountsRef.count());
   _table->setColumnCount(periods.size() + 1);   // + 1 to hold account number
@@ -408,13 +412,13 @@ void maintainBudget::sGenerateTable()
     _table->setItem(i, 0, item);
     item->setText(accounts.at(i));
 
-    q.bindValue(":accnt_id", _accountsRef.at(i));
-    q.bindValue(":budghead_id", _budgheadid);
-    q.exec();
-    while(q.next())
+    maintainGenerateTable.bindValue(":accnt_id", _accountsRef.at(i));
+    maintainGenerateTable.bindValue(":budghead_id", _budgheadid);
+    maintainGenerateTable.exec();
+    while(maintainGenerateTable.next())
     {
-      item = new QTableWidgetItem(q.value("budgitem_amount").toString());
-      _table->setItem(i, _periodsRef.indexOf(q.value("budgitem_period_id").toInt()), item);
+      item = new QTableWidgetItem(maintainGenerateTable.value("budgitem_amount").toString());
+      _table->setItem(i, _periodsRef.indexOf(maintainGenerateTable.value("budgitem_period_id").toInt()), item);
     }
     _table->item(i, 0)->setFlags(_table->item(i, 0)->flags() & (~Qt::ItemIsEditable));
   }
@@ -424,40 +428,41 @@ void maintainBudget::sGenerateTable()
 
 void maintainBudget::populate()
 {
-  q.prepare("SELECT budghead_name, budghead_descrip"
+  XSqlQuery maintainpopulate;
+  maintainpopulate.prepare("SELECT budghead_name, budghead_descrip"
             "  FROM budghead"
             " WHERE(budghead_id=:budghead_id);");
-  q.bindValue(":budghead_id", _budgheadid);
-  q.exec();
-  if(q.first())
+  maintainpopulate.bindValue(":budghead_id", _budgheadid);
+  maintainpopulate.exec();
+  if(maintainpopulate.first())
   {
-    _name->setText(q.value("budghead_name").toString());
-    _descrip->setText(q.value("budghead_descrip").toString());
+    _name->setText(maintainpopulate.value("budghead_name").toString());
+    _descrip->setText(maintainpopulate.value("budghead_descrip").toString());
 
-    q.prepare("SELECT DISTINCT budgitem_accnt_id, formatGLAccountLong(budgitem_accnt_id) AS result"
+    maintainpopulate.prepare("SELECT DISTINCT budgitem_accnt_id, formatGLAccountLong(budgitem_accnt_id) AS result"
               "  FROM budgitem JOIN accnt ON (accnt_id=budgitem_accnt_id)"
               " WHERE(budgitem_budghead_id=:budghead_id)"
               " ORDER BY result;");
-    q.bindValue(":budghead_id", _budgheadid);
-    q.exec();
-    while(q.next())
+    maintainpopulate.bindValue(":budghead_id", _budgheadid);
+    maintainpopulate.exec();
+    while(maintainpopulate.next())
       /*XTreeWidgetItem *item =*/ new XTreeWidgetItem(_accounts,
-                                                  q.value("budgitem_accnt_id").toInt(),
-                                                  q.value("result"));
+                                                  maintainpopulate.value("budgitem_accnt_id").toInt(),
+                                                  maintainpopulate.value("result"));
 
 
-    q.prepare("SELECT DISTINCT budgitem_period_id"
+    maintainpopulate.prepare("SELECT DISTINCT budgitem_period_id"
               "  FROM budgitem"
               " WHERE(budgitem_budghead_id=:budghead_id)"
               " ORDER BY budgitem_period_id;");
-    q.bindValue(":budghead_id", _budgheadid);
-    q.exec();
-    while(q.next())
+    maintainpopulate.bindValue(":budghead_id", _budgheadid);
+    maintainpopulate.exec();
+    while(maintainpopulate.next())
     {
       for (int row = 0; _periods->item(row); row++)
       {
         XListBoxText* item = (XListBoxText*)_periods->item(row);
-        if(item->id() == q.value("budgitem_period_id").toInt())
+        if(item->id() == maintainpopulate.value("budgitem_period_id").toInt())
         {
           _periods->setCurrentItem(item, QItemSelectionModel::Select);
           break;

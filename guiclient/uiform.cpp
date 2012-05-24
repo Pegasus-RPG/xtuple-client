@@ -158,6 +158,7 @@ void uiform::close()
 
 void uiform::sSave()
 {
+  XSqlQuery uiformSave;
   if (_name->text().isEmpty())
   {
     QMessageBox::warning( this, tr("UI Form Name is Invalid"),
@@ -175,39 +176,39 @@ void uiform::sSave()
 
   if (_mode == cNew && _uiformid == -1)
   {
-    q.exec("SELECT NEXTVAL('uiform_uiform_id_seq') AS _uiform_id");
-    if (q.first())
-      _uiformid = q.value("_uiform_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    uiformSave.exec("SELECT NEXTVAL('uiform_uiform_id_seq') AS _uiform_id");
+    if (uiformSave.first())
+      _uiformid = uiformSave.value("_uiform_id").toInt();
+    else if (uiformSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, uiformSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO uiform "
+    uiformSave.prepare( "INSERT INTO uiform "
                "(uiform_id, uiform_name, uiform_notes, uiform_order, uiform_enabled, uiform_source) "
                "VALUES "
                "(:uiform_id, :uiform_name, :uiform_notes, :uiform_order, :uiform_enabled, :uiform_source);" );
 
   }
   else if (_mode != cView)
-    q.prepare( "UPDATE uiform "
+    uiformSave.prepare( "UPDATE uiform "
                "SET uiform_name=:uiform_name, uiform_notes=:uiform_notes,"
                "    uiform_order=:uiform_order, uiform_enabled=:uiform_enabled,"
                "    uiform_source=:uiform_source "
                "WHERE (uiform_id=:uiform_id);" );
 
-  q.bindValue(":uiform_id", _uiformid);
-  q.bindValue(":uiform_name", _name->text());
-  q.bindValue(":uiform_order", _grade->value());
-  q.bindValue(":uiform_enabled", QVariant(_enabled->isChecked()));
-  q.bindValue(":uiform_source", _source);
-  q.bindValue(":uiform_notes", _notes->text());
+  uiformSave.bindValue(":uiform_id", _uiformid);
+  uiformSave.bindValue(":uiform_name", _name->text());
+  uiformSave.bindValue(":uiform_order", _grade->value());
+  uiformSave.bindValue(":uiform_enabled", QVariant(_enabled->isChecked()));
+  uiformSave.bindValue(":uiform_source", _source);
+  uiformSave.bindValue(":uiform_notes", _notes->text());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  uiformSave.exec();
+  if (uiformSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, uiformSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -217,15 +218,15 @@ void uiform::sSave()
                                "to the %1 package?").arg(_package->code()),
                             QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
   {
-    q.prepare("SELECT moveuiform(:formid, :oldpkgid,"
+    uiformSave.prepare("SELECT moveuiform(:formid, :oldpkgid,"
               "                  :newpkgid) AS result;");
-    q.bindValue(":formid",   _uiformid);
-    q.bindValue(":oldpkgid", _pkgheadidOrig);
-    q.bindValue(":newpkgid", _package->id());
-    q.exec();
-    if (q.first())
+    uiformSave.bindValue(":formid",   _uiformid);
+    uiformSave.bindValue(":oldpkgid", _pkgheadidOrig);
+    uiformSave.bindValue(":newpkgid", _package->id());
+    uiformSave.exec();
+    if (uiformSave.first())
     {
-      int result = q.value("result").toInt();
+      int result = uiformSave.value("result").toInt();
       if (result >= 0)
         _pkgheadidOrig = _package->id();
       else
@@ -237,12 +238,12 @@ void uiform::sSave()
                     __FILE__, __LINE__);
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (uiformSave.lastError().type() != QSqlError::NoError)
     {
       systemError(this,
                   tr("<p>The screen was saved to its original location but "
                      "could not be moved: <pre>%1</pre>")
-                  .arg(q.lastError().databaseText()), __FILE__, __LINE__);
+                  .arg(uiformSave.lastError().databaseText()), __FILE__, __LINE__);
     }
   }
 
@@ -252,33 +253,34 @@ void uiform::sSave()
 
 void uiform::populate()
 {
-  q.prepare( "SELECT uiform.*, COALESCE(pkghead_id, -1) AS pkghead_id,"
+  XSqlQuery uiformpopulate;
+  uiformpopulate.prepare( "SELECT uiform.*, COALESCE(pkghead_id, -1) AS pkghead_id,"
              "       COALESCE(pkghead_indev,true) AS editable "
       	     "  FROM uiform, pg_class, pg_namespace "
              "  LEFT OUTER JOIN pkghead ON (nspname=pkghead_name) "
              " WHERE ((uiform.tableoid=pg_class.oid)"
              "   AND (relnamespace=pg_namespace.oid) "
              "   AND  (uiform_id=:uiform_id));" );
-  q.bindValue(":uiform_id", _uiformid);
-  q.exec();
-  if (q.first())
+  uiformpopulate.bindValue(":uiform_id", _uiformid);
+  uiformpopulate.exec();
+  if (uiformpopulate.first())
   {
-    _name->setText(q.value("uiform_name").toString());
-    _grade->setValue(q.value("uiform_order").toInt());
-    _enabled->setChecked(q.value("uiform_enabled").toBool());
-    _source = q.value("uiform_source").toString();
-    _notes->setText(q.value("uiform_notes").toString());
-    _pkgheadidOrig = q.value("pkghead_id").toInt();
+    _name->setText(uiformpopulate.value("uiform_name").toString());
+    _grade->setValue(uiformpopulate.value("uiform_order").toInt());
+    _enabled->setChecked(uiformpopulate.value("uiform_enabled").toBool());
+    _source = uiformpopulate.value("uiform_source").toString();
+    _notes->setText(uiformpopulate.value("uiform_notes").toString());
+    _pkgheadidOrig = uiformpopulate.value("pkghead_id").toInt();
     _package->setId(_pkgheadidOrig);
 
-    if (!q.value("editable").toBool())
+    if (!uiformpopulate.value("editable").toBool())
       setMode(cView);
 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (uiformpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, uiformpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -425,16 +427,17 @@ void uiform::sScriptEdit()
 
 void uiform::sScriptDelete()
 {
+  XSqlQuery uiformScriptDelete;
   if ( QMessageBox::warning(this, tr("Delete Script?"),
                             tr("<p>Are you sure that you want to completely "
 			       "delete the selected script?"),
 			    QMessageBox::Yes,
 			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare( "DELETE FROM script "
+    uiformScriptDelete.prepare( "DELETE FROM script "
                "WHERE (script_id=:script_id);" );
-    q.bindValue(":script_id", _script->id());
-    q.exec();
+    uiformScriptDelete.bindValue(":script_id", _script->id());
+    uiformScriptDelete.exec();
   }
 
   sFillList();
@@ -465,19 +468,20 @@ void uiform::sCmdEdit()
 
 void uiform::sCmdDelete()
 {
+  XSqlQuery uiformCmdDelete;
   if ( QMessageBox::warning(this, tr("Delete Command?"),
                             tr("<p>Are you sure that you want to completely "
 			       "delete the selected command?"),
 			    QMessageBox::Yes,
 			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare("BEGIN; "
+    uiformCmdDelete.prepare("BEGIN; "
               "DELETE FROM cmdarg WHERE (cmdarg_cmd_id=:cmd_id); "
               "DELETE FROM cmd WHERE (cmd_id=:cmd_id); "
               "SELECT updateCustomPrivs(); "
               "COMMIT; ");
-    q.bindValue(":cmd_id", _commands->id());
-    if(q.exec())
+    uiformCmdDelete.bindValue(":cmd_id", _commands->id());
+    if(uiformCmdDelete.exec())
       sFillList();
     else
       systemError( this, tr("A System Error occurred at customCommands::%1")
@@ -487,7 +491,8 @@ void uiform::sCmdDelete()
 
 void uiform::sFillList()
 {
-  q.prepare( "SELECT script_id, script_name, script_notes,"
+  XSqlQuery uiformFillList;
+  uiformFillList.prepare( "SELECT script_id, script_name, script_notes,"
              "       script_order, script_enabled,"
              "       CASE WHEN nspname = 'public' THEN ''"
              "            ELSE nspname END AS nspname"
@@ -496,16 +501,16 @@ void uiform::sFillList()
              "   AND  (relnamespace=pg_namespace.oid)"
              "   AND  (script_name=:name))"
              " ORDER BY script_name, script_order, script_id;" );
-  q.bindValue(":name", _name->text());
-  q.exec();
-  _script->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  uiformFillList.bindValue(":name", _name->text());
+  uiformFillList.exec();
+  _script->populate(uiformFillList);
+  if (uiformFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, uiformFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT DISTINCT cmd_id, cmd_module, cmd_title,"
+  uiformFillList.prepare("SELECT DISTINCT cmd_id, cmd_module, cmd_title,"
             "       CASE WHEN nspname = 'public' THEN ''"
             "            ELSE nspname END AS nspname"
             "  FROM cmd JOIN cmdarg ON (cmdarg_cmd_id=cmd_id), pg_class, pg_namespace"
@@ -515,12 +520,12 @@ void uiform::sFillList()
             "                        'Manufacture','CRM','Sales','Accounting','System'))"
             "    AND (cmdarg_arg='uiform='||:name)) "
             " ORDER BY cmd_module, cmd_title;");
-  q.bindValue(":name", _name->text());
-  q.exec();
-  _commands->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  uiformFillList.bindValue(":name", _name->text());
+  uiformFillList.exec();
+  _commands->populate(uiformFillList);
+  if (uiformFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, uiformFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

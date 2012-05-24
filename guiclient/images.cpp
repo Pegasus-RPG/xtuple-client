@@ -90,13 +90,14 @@ void images::sView()
 
 void images::sDelete()
 {
-  q.prepare( "DELETE FROM image "
+  XSqlQuery imagesDelete;
+  imagesDelete.prepare( "DELETE FROM image "
              "WHERE (image_id=:image_id);" );
-  q.bindValue(":image_id", _image->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  imagesDelete.bindValue(":image_id", _image->id());
+  imagesDelete.exec();
+  if (imagesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, imagesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -105,18 +106,19 @@ void images::sDelete()
 
 void images::sFillList()
 {
+  XSqlQuery imagesFillList;
   // Do not select image_data into the list
-  q.exec("SELECT image_id, image_name, image_descrip, LENGTH(image_data) AS image_size, "
+  imagesFillList.exec("SELECT image_id, image_name, image_descrip, LENGTH(image_data) AS image_size, "
          "       CASE WHEN nspname='public' THEN ''"
          "            ELSE nspname END AS nspname"
          "  FROM image, pg_class, pg_namespace "
          " WHERE ((image.tableoid=pg_class.oid)"
          "   AND  (relnamespace=pg_namespace.oid))"
          "ORDER BY image_name;" );
-  _image->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _image->populate(imagesFillList);
+  if (imagesFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, imagesFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

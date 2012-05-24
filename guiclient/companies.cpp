@@ -95,12 +95,13 @@ void companies::sView()
 
 void companies::sDelete()
 {
-  q.prepare("SELECT deleteCompany(:id) AS result;");
-  q.bindValue(":id", _company->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery companiesDelete;
+  companiesDelete.prepare("SELECT deleteCompany(:id) AS result;");
+  companiesDelete.bindValue(":id", _company->id());
+  companiesDelete.exec();
+  if (companiesDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = companiesDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteCompany", result),
@@ -108,9 +109,9 @@ void companies::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (companiesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, companiesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -132,14 +133,15 @@ void companies::sPopulateMenu(QMenu *pMenu)
 
 void companies::sFillList()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery companiesFillList;
+  companiesFillList.prepare( "SELECT * "
              "FROM company "
              "ORDER BY company_number;" );
-  q.exec();
-  _company->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  companiesFillList.exec();
+  _company->populate(companiesFillList);
+  if (companiesFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, companiesFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

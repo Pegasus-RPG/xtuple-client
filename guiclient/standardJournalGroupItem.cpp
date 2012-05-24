@@ -96,6 +96,7 @@ enum SetResponse standardJournalGroupItem::set(const ParameterList &pParams)
 
 void standardJournalGroupItem::sSave()
 {
+  XSqlQuery standardSave;
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Effective Date"),
@@ -122,12 +123,12 @@ void standardJournalGroupItem::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('stdjrnlgrpitem_stdjrnlgrpitem_id_seq') AS stdjrnlgrpitem_id;");
-    if (q.first())
-      _stdjrnlgrpitemid = q.value("stdjrnlgrpitem_id").toInt();
+    standardSave.exec("SELECT NEXTVAL('stdjrnlgrpitem_stdjrnlgrpitem_id_seq') AS stdjrnlgrpitem_id;");
+    if (standardSave.first())
+      _stdjrnlgrpitemid = standardSave.value("stdjrnlgrpitem_id").toInt();
 //  ToDo
 
-    q.prepare( "INSERT INTO stdjrnlgrpitem "
+    standardSave.prepare( "INSERT INTO stdjrnlgrpitem "
                "( stdjrnlgrpitem_id, stdjrnlgrpitem_stdjrnlgrp_id, stdjrnlgrpitem_stdjrnl_id,"
                "  stdjrnlgrpitem_toapply, stdjrnlgrpitem_applied,"
                "  stdjrnlgrpitem_effective, stdjrnlgrpitem_expires )"
@@ -137,18 +138,18 @@ void standardJournalGroupItem::sSave()
                "  :stdjrnlgrpitem_effective, :stdjrnlgrpitem_expires );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE stdjrnlgrpitem "
+    standardSave.prepare( "UPDATE stdjrnlgrpitem "
                "SET stdjrnlgrpitem_toapply=:stdjrnlgrpitem_toapply,"
                "    stdjrnlgrpitem_effective=:stdjrnlgrpitem_effective, stdjrnlgrpitem_expires=:stdjrnlgrpitem_expires "
                "WHERE (stdjrnlgrpitem_id=:stdjrnlgrpitem_id);" );
 
-  q.bindValue(":stdjrnlgrpitem_id", _stdjrnlgrpitemid);
-  q.bindValue(":stdjrnlgrpitem_stdjrnlgrp_id", _stdjrnlgrpid);
-  q.bindValue(":stdjrnlgrpitem_stdjrnl_id", _stdjrnl->id());
-  q.bindValue(":stdjrnlgrpitem_toapply", ((_limited->isChecked()) ? _toApply->value() : -1));
-  q.bindValue(":stdjrnlgrpitem_effective", _dates->startDate());
-  q.bindValue(":stdjrnlgrpitem_expires", _dates->endDate());
-  q.exec();
+  standardSave.bindValue(":stdjrnlgrpitem_id", _stdjrnlgrpitemid);
+  standardSave.bindValue(":stdjrnlgrpitem_stdjrnlgrp_id", _stdjrnlgrpid);
+  standardSave.bindValue(":stdjrnlgrpitem_stdjrnl_id", _stdjrnl->id());
+  standardSave.bindValue(":stdjrnlgrpitem_toapply", ((_limited->isChecked()) ? _toApply->value() : -1));
+  standardSave.bindValue(":stdjrnlgrpitem_effective", _dates->startDate());
+  standardSave.bindValue(":stdjrnlgrpitem_expires", _dates->endDate());
+  standardSave.exec();
 
   done(_stdjrnlgrpitemid);
 }
@@ -159,24 +160,25 @@ void standardJournalGroupItem::sCheck()
 
 void standardJournalGroupItem::populate()
 {
-  q.prepare( "SELECT stdjrnlgrpitem_stdjrnl_id, stdjrnlgrpitem_toapply,"
+  XSqlQuery standardpopulate;
+  standardpopulate.prepare( "SELECT stdjrnlgrpitem_stdjrnl_id, stdjrnlgrpitem_toapply,"
              "       stdjrnlgrpitem_effective, stdjrnlgrpitem_expires "
              "FROM stdjrnlgrpitem "
              "WHERE (stdjrnlgrpitem_id=:stdjrnlgrpitem_id);" );
-  q.bindValue(":stdjrnlgrpitem_id", _stdjrnlgrpitemid);
-  q.exec();
-  if (q.first())
+  standardpopulate.bindValue(":stdjrnlgrpitem_id", _stdjrnlgrpitemid);
+  standardpopulate.exec();
+  if (standardpopulate.first())
   {
-    _stdjrnl->setId(q.value("stdjrnlgrpitem_stdjrnl_id").toInt());
-    _dates->setStartDate(q.value("stdjrnlgrpitem_effective").toDate());
-    _dates->setEndDate(q.value("stdjrnlgrpitem_expires").toDate());
+    _stdjrnl->setId(standardpopulate.value("stdjrnlgrpitem_stdjrnl_id").toInt());
+    _dates->setStartDate(standardpopulate.value("stdjrnlgrpitem_effective").toDate());
+    _dates->setEndDate(standardpopulate.value("stdjrnlgrpitem_expires").toDate());
 
-    if (q.value("stdjrnlgrpitem_toapply").toInt() == -1)
+    if (standardpopulate.value("stdjrnlgrpitem_toapply").toInt() == -1)
       _unlimited->setChecked(TRUE);
     else
     {
       _limited->setChecked(TRUE);
-      _toApply->setValue(q.value("stdjrnlgrpitem_toapply").toInt());
+      _toApply->setValue(standardpopulate.value("stdjrnlgrpitem_toapply").toInt());
     }
   }
 }

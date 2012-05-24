@@ -122,6 +122,7 @@ void transferOrderItem::languageChange()
 
 enum SetResponse transferOrderItem::set(const ParameterList &pParams)
 {
+  XSqlQuery transferet;
   XDialog::set(pParams);
   QVariant  param;
   bool      valid;
@@ -191,16 +192,16 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
       if (valid)
         _qtyOrdered->setDouble(param.toDouble());
 
-      q.prepare("SELECT count(*) AS cnt"
+      transferet.prepare("SELECT count(*) AS cnt"
                 "  FROM toitem"
                 " WHERE (toitem_tohead_id=:tohead_id);");
-      q.bindValue(":tohead_id", _toheadid);
-      q.exec();
-      if(!q.first() || q.value("cnt").toInt() == 0)
+      transferet.bindValue(":tohead_id", _toheadid);
+      transferet.exec();
+      if(!transferet.first() || transferet.value("cnt").toInt() == 0)
         _prev->setEnabled(false);
-      if (q.lastError().type() != QSqlError::NoError)
+      if (transferet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, transferet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
     }
@@ -237,40 +238,40 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
   {
     _toitemid = param.toInt();
 
-    q.prepare("SELECT a.toitem_id AS id"
+    transferet.prepare("SELECT a.toitem_id AS id"
 	      "  FROM toitem AS a, toitem AS b"
 	      " WHERE ((a.toitem_tohead_id=b.toitem_tohead_id)"
 	      "   AND  (b.toitem_id=:id))"
 	      " ORDER BY a.toitem_linenumber "
 	      " LIMIT 1;");
-    q.bindValue(":id", _toitemid);
-    q.exec();
-    if(!q.first() || q.value("id").toInt() == _toitemid)
+    transferet.bindValue(":id", _toitemid);
+    transferet.exec();
+    if(!transferet.first() || transferet.value("id").toInt() == _toitemid)
       _prev->setEnabled(false);
-    if (q.lastError().type() != QSqlError::NoError)
+    if (transferet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
 
-    q.prepare("SELECT a.toitem_id AS id"
+    transferet.prepare("SELECT a.toitem_id AS id"
 	      "  FROM toitem AS a, toitem AS b"
 	      " WHERE ((a.toitem_tohead_id=b.toitem_tohead_id)"
 	      "   AND  (b.toitem_id=:id))"
 	      " ORDER BY a.toitem_linenumber DESC"
 	      " LIMIT 1;");
-    q.bindValue(":id", _toitemid);
-    q.exec();
-    if(q.first() && q.value("id").toInt() == _toitemid)
+    transferet.bindValue(":id", _toitemid);
+    transferet.exec();
+    if(transferet.first() && transferet.value("id").toInt() == _toitemid)
     {
       if(cView == _mode)
         _next->setEnabled(false);
       else
         _next->setText(tr("New"));
     }
-    if (q.lastError().type() != QSqlError::NoError)
+    if (transferet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -291,31 +292,32 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
 
 void transferOrderItem::prepare()
 {
+  XSqlQuery transferprepare;
   if (_mode == cNew)
   {
-    q.prepare( "SELECT (COALESCE(MAX(toitem_linenumber), 0) + 1) AS _linenumber "
+    transferprepare.prepare( "SELECT (COALESCE(MAX(toitem_linenumber), 0) + 1) AS _linenumber "
                "FROM toitem "
                "WHERE (toitem_tohead_id=:toitem_id)" );
-    q.bindValue(":toitem_id", _toheadid);
-    q.exec();
-    if (q.first())
-      _lineNumber->setText(q.value("_linenumber").toString());
-    else if (q.lastError().type() != QSqlError::NoError)
+    transferprepare.bindValue(":toitem_id", _toheadid);
+    transferprepare.exec();
+    if (transferprepare.first())
+      _lineNumber->setText(transferprepare.value("_linenumber").toString());
+    else if (transferprepare.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferprepare.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "SELECT MIN(toitem_schedshipdate) AS scheddate "
+    transferprepare.prepare( "SELECT MIN(toitem_schedshipdate) AS scheddate "
                "FROM toitem "
                "WHERE (toitem_tohead_id=:tohead_id);" );
-    q.bindValue(":tohead_id", _toheadid);
-    q.exec();
-    if (q.first())
-      _scheduledDate->setDate(q.value("scheddate").toDate());
-    else if (q.lastError().type() != QSqlError::NoError)
+    transferprepare.bindValue(":tohead_id", _toheadid);
+    transferprepare.exec();
+    if (transferprepare.first())
+      _scheduledDate->setDate(transferprepare.value("scheddate").toDate());
+    else if (transferprepare.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferprepare.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -346,6 +348,7 @@ void transferOrderItem::clear()
 
 void transferOrderItem::sSave()
 {
+  XSqlQuery transferSave;
   _save->setFocus();
 
   _error = true;
@@ -403,12 +406,12 @@ void transferOrderItem::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('toitem_toitem_id_seq') AS toitem_id");
-    if (q.first())
-      _toitemid = q.value("toitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    transferSave.exec("SELECT NEXTVAL('toitem_toitem_id_seq') AS toitem_id");
+    if (transferSave.first())
+      _toitemid = transferSave.value("toitem_id").toInt();
+    else if (transferSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -417,7 +420,7 @@ void transferOrderItem::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO toitem "
+    transferSave.prepare( "INSERT INTO toitem "
                "( toitem_id, toitem_tohead_id, toitem_linenumber,"
                "  toitem_item_id, toitem_status, toitem_duedate,"
                "  toitem_schedshipdate, toitem_schedrecvdate,"
@@ -435,7 +438,7 @@ void transferOrderItem::sSave()
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "UPDATE toitem SET"
+    transferSave.prepare( "UPDATE toitem SET"
                "  toitem_duedate=:toitem_duedate,"
 	             "  toitem_schedshipdate=:toitem_schedshipdate,"
 	             "  toitem_schedrecvdate=:toitem_schedrecvdate,"
@@ -448,24 +451,24 @@ void transferOrderItem::sSave()
                "WHERE (toitem_id=:toitem_id);" );
   }
 
-  q.bindValue(":toitem_id",		  _toitemid);
-  q.bindValue(":toitem_tohead_id",	  _toheadid);
-  q.bindValue(":toitem_linenumber",	  _lineNumber->text().toInt());
-  q.bindValue(":toitem_item_id",	  _item->id());
-  q.bindValue(":toitem_duedate",	  _scheduledDate->date());
-  q.bindValue(":toitem_schedshipdate",    _scheduledDate->date()); // ??
-  q.bindValue(":toitem_schedrecvdate",    promiseDate);
-  q.bindValue(":toitem_qty_ordered",	  _qtyOrdered->toDouble());
-  q.bindValue(":toitem_notes",		  _notes->toPlainText());
-  q.bindValue(":toitem_uom",		  _item->uom());
-  // TODO: q.bindValue(":toitem_prj_id",		);
-  q.bindValue(":toitem_freight",	  _freight->localValue());
-  q.bindValue(":toitem_freight_curr_id",  _freight->id());
+  transferSave.bindValue(":toitem_id",		  _toitemid);
+  transferSave.bindValue(":toitem_tohead_id",	  _toheadid);
+  transferSave.bindValue(":toitem_linenumber",	  _lineNumber->text().toInt());
+  transferSave.bindValue(":toitem_item_id",	  _item->id());
+  transferSave.bindValue(":toitem_duedate",	  _scheduledDate->date());
+  transferSave.bindValue(":toitem_schedshipdate",    _scheduledDate->date()); // ??
+  transferSave.bindValue(":toitem_schedrecvdate",    promiseDate);
+  transferSave.bindValue(":toitem_qty_ordered",	  _qtyOrdered->toDouble());
+  transferSave.bindValue(":toitem_notes",		  _notes->toPlainText());
+  transferSave.bindValue(":toitem_uom",		  _item->uom());
+  // TODO: transferSave.bindValue(":toitem_prj_id",		);
+  transferSave.bindValue(":toitem_freight",	  _freight->localValue());
+  transferSave.bindValue(":toitem_freight_curr_id",  _freight->id());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  transferSave.exec();
+  if (transferSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transferSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -473,21 +476,21 @@ void transferOrderItem::sSave()
   {
     QString type = "TI";
 
-    q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
+    transferSave.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
 
     QModelIndex idx1, idx2;
     for(int i = 0; i < _itemchar->rowCount(); i++)
     {
       idx1 = _itemchar->index(i, 0);
       idx2 = _itemchar->index(i, 1);
-      q.bindValue(":target_type", type);
-      q.bindValue(":target_id", _toitemid);
-      q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
-      q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
-      q.exec();
-      if (q.first())
+      transferSave.bindValue(":target_type", type);
+      transferSave.bindValue(":target_id", _toitemid);
+      transferSave.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+      transferSave.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+      transferSave.exec();
+      if (transferSave.first())
       {
-	      int result = q.value("result").toInt();
+	      int result = transferSave.value("result").toInt();
 	      if (result < 0)
 	      {
 	        systemError(this, storedProcErrorLookup("updateCharAssignment", result),
@@ -495,9 +498,9 @@ void transferOrderItem::sSave()
 	        return;
 	      }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (transferSave.lastError().type() != QSqlError::NoError)
       {
-	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	      systemError(this, transferSave.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
       }
     }
@@ -519,28 +522,29 @@ void transferOrderItem::sSave()
 
 void transferOrderItem::sPopulateItemInfo(int pItemid)
 {
+  XSqlQuery transferPopulateItemInfo;
   _itemchar->removeRows(0, _itemchar->rowCount());
   if (pItemid != -1)
   {
-    q.prepare("SELECT stdcost(:item_id) AS stdcost, itemsite_id "
+    transferPopulateItemInfo.prepare("SELECT stdcost(:item_id) AS stdcost, itemsite_id "
 	      "FROM itemsite "
 	      "WHERE ((itemsite_item_id=:item_id)"
 	      "  AND  (itemsite_warehous_id=:whsid));");
-    q.bindValue(":item_id", pItemid);
-    q.bindValue(":whsid", _warehouse->id());
-    q.exec();
-    if (q.first())
+    transferPopulateItemInfo.bindValue(":item_id", pItemid);
+    transferPopulateItemInfo.bindValue(":whsid", _warehouse->id());
+    transferPopulateItemInfo.exec();
+    if (transferPopulateItemInfo.first())
     {
-      _stdcost->setBaseValue(q.value("stdcost").toDouble());
-      _itemsiteid = q.value("itemsite_id").toInt();
+      _stdcost->setBaseValue(transferPopulateItemInfo.value("stdcost").toDouble());
+      _itemsiteid = transferPopulateItemInfo.value("itemsite_id").toInt();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (transferPopulateItemInfo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferPopulateItemInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
-    q.prepare( "SELECT DISTINCT char_id, char_name,"
+    transferPopulateItemInfo.prepare( "SELECT DISTINCT char_id, char_name,"
                "       COALESCE(b.charass_value,"
 	       "               (SELECT c.charass_value"
 	       "                FROM charass c"
@@ -557,27 +561,27 @@ void transferOrderItem::sPopulateItemInfo(int pItemid)
                "   AND   (a.charass_target_type='I')"
                "   AND   (a.charass_target_id=:item_id) ) "
                " ORDER BY char_name;" );
-    q.bindValue(":item_id", pItemid);
-    q.bindValue(":totype", "TI");
-    q.bindValue(":toitem_id", _toitemid);
-    q.exec();
+    transferPopulateItemInfo.bindValue(":item_id", pItemid);
+    transferPopulateItemInfo.bindValue(":totype", "TI");
+    transferPopulateItemInfo.bindValue(":toitem_id", _toitemid);
+    transferPopulateItemInfo.exec();
     int row = 0;
     QModelIndex idx;
-    while(q.next())
+    while(transferPopulateItemInfo.next())
     {
       _itemchar->insertRow(_itemchar->rowCount());
       idx = _itemchar->index(row, 0);
-      _itemchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
-      _itemchar->setData(idx, q.value("char_id"), Qt::UserRole);
+      _itemchar->setData(idx, transferPopulateItemInfo.value("char_name"), Qt::DisplayRole);
+      _itemchar->setData(idx, transferPopulateItemInfo.value("char_id"), Qt::UserRole);
       idx = _itemchar->index(row, 1);
-      _itemchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
+      _itemchar->setData(idx, transferPopulateItemInfo.value("charass_value"), Qt::DisplayRole);
       _itemchar->setData(idx, pItemid, Xt::IdRole);
       _itemchar->setData(idx, pItemid, Qt::UserRole);
       row++;
     }
-    if (q.lastError().type() != QSqlError::NoError)
+    if (transferPopulateItemInfo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferPopulateItemInfo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -879,6 +883,7 @@ void transferOrderItem::populate()
 
 void transferOrderItem::sNext()
 {
+  XSqlQuery transferNext;
   if(_modified)
   {
     switch( QMessageBox::question( this, tr("Unsaved Changed"),
@@ -910,19 +915,19 @@ void transferOrderItem::sNext()
     return;
   }
 
-  q.prepare("SELECT a.toitem_id AS id"
+  transferNext.prepare("SELECT a.toitem_id AS id"
 	    "  FROM toitem AS a, toitem AS b"
 	    " WHERE ((a.toitem_tohead_id=b.toitem_tohead_id)"
 	    "   AND  (a.toitem_linenumber > b.toitem_linenumber)"
 	    "   AND  (b.toitem_id=:id))"
 	    " ORDER BY a.toitem_linenumber"
 	    " LIMIT 1;");
-  q.bindValue(":id", _toitemid);
-  q.exec();
-  if(q.first())
+  transferNext.bindValue(":id", _toitemid);
+  transferNext.exec();
+  if(transferNext.first())
   {
     ParameterList params;
-    params.append("toitem_id", q.value("id").toInt());
+    params.append("toitem_id", transferNext.value("id").toInt());
 
     if(cNew == _mode || cEdit == _mode)
       params.append("mode", "edit");
@@ -931,9 +936,9 @@ void transferOrderItem::sNext()
 
     set(params);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (transferNext.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transferNext.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else if (cView != _mode)
@@ -948,6 +953,7 @@ void transferOrderItem::sNext()
 
 void transferOrderItem::sPrev()
 {
+  XSqlQuery transferPrev;
   if(_modified)
   {
     switch( QMessageBox::question( this, tr("Unsaved Changed"),
@@ -975,13 +981,13 @@ void transferOrderItem::sPrev()
 
 
   if(cNew == _mode)
-    q.prepare("SELECT toitem_id AS id"
+    transferPrev.prepare("SELECT toitem_id AS id"
 	      "  FROM toitem"
 	      " WHERE (toitem_tohead_id=:tohead_id)"
 	      " ORDER BY toitem_linenumber DESC"
 	      " LIMIT 1;");
   else
-    q.prepare("SELECT a.toitem_id AS id"
+    transferPrev.prepare("SELECT a.toitem_id AS id"
 	      "  FROM toitem AS a, toitem AS b"
 	      " WHERE ((a.toitem_tohead_id=b.toitem_tohead_id)"
 	      "   AND  (a.toitem_linenumber < b.toitem_linenumber)"
@@ -989,13 +995,13 @@ void transferOrderItem::sPrev()
 	      " ORDER BY a.toitem_linenumber DESC"
 	      " LIMIT 1;");
 
-  q.bindValue(":id", _toitemid);
-  q.bindValue(":tohead_id", _toheadid);
-  q.exec();
-  if(q.first())
+  transferPrev.bindValue(":id", _toitemid);
+  transferPrev.bindValue(":tohead_id", _toheadid);
+  transferPrev.exec();
+  if(transferPrev.first())
   {
     ParameterList params;
-    params.append("toitem_id", q.value("id").toInt());
+    params.append("toitem_id", transferPrev.value("id").toInt());
 
     if(cNew == _mode || cEdit == _mode)
       params.append("mode", "edit");
@@ -1004,9 +1010,9 @@ void transferOrderItem::sPrev()
 
     set(params);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (transferPrev.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transferPrev.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -1043,18 +1049,19 @@ void transferOrderItem::reject()
 
 void transferOrderItem::sCancel()
 {
+  XSqlQuery transferCancel;
   _canceling = true;
   
   sSave();
   if(_error) 
     return;
 
-  q.prepare("UPDATE toitem SET toitem_status='X' WHERE (toitem_id=:toitem_id);");
-  q.bindValue(":toitem_id", _toitemid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  transferCancel.prepare("UPDATE toitem SET toitem_status='X' WHERE (toitem_id=:toitem_id);");
+  transferCancel.bindValue(":toitem_id", _toitemid);
+  transferCancel.exec();
+  if (transferCancel.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transferCancel.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

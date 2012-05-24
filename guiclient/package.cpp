@@ -159,17 +159,18 @@ enum SetResponse package::set(const ParameterList &pParams)
 
 void package::sCheck()
 {
+  XSqlQuery packageCheck;
   _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT pkghead_id "
+    packageCheck.prepare( "SELECT pkghead_id "
                "FROM pkghead "
                "WHERE (UPPER(pkghead_name)=UPPER(:pkghead_name));" );
-    q.bindValue(":pkghead_code", _name->text());
-    q.exec();
-    if (q.first())
+    packageCheck.bindValue(":pkghead_code", _name->text());
+    packageCheck.exec();
+    if (packageCheck.first())
     {
-      _pkgheadid = q.value("pkghead_id").toInt();
+      _pkgheadid = packageCheck.value("pkghead_id").toInt();
       _mode = cEdit;
       populate();
     }
@@ -178,18 +179,19 @@ void package::sCheck()
 
 void package::sSave()
 {
+  XSqlQuery packageSave;
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('pkghead_pkghead_id_seq') AS _pkghead_id");
-    if (q.first())
-      _pkgheadid = q.value("_pkghead_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    packageSave.exec("SELECT NEXTVAL('pkghead_pkghead_id_seq') AS _pkghead_id");
+    if (packageSave.first())
+      _pkgheadid = packageSave.value("_pkghead_id").toInt();
+    else if (packageSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, packageSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO pkghead ("
+    packageSave.prepare( "INSERT INTO pkghead ("
                "  pkghead_id, pkghead_name, pkghead_descrip,"
                "  pkghead_version, pkghead_developer, pkghead_notes,"
                "  pkghead_indev"
@@ -200,14 +202,14 @@ void package::sSave()
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT pkghead_id "
+    packageSave.prepare( "SELECT pkghead_id "
                "FROM pkghead "
                "WHERE ( (UPPER(pkghead_name)=UPPER(:pkghead_name))"
                " AND (pkghead_id<>:pkghead_id) );" );
-    q.bindValue(":pkghead_id",   _pkgheadid);
-    q.bindValue(":pkghead_name", _name->text());
-    q.exec();
-    if (q.first())
+    packageSave.bindValue(":pkghead_id",   _pkgheadid);
+    packageSave.bindValue(":pkghead_name", _name->text());
+    packageSave.exec();
+    if (packageSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Package"),
                             tr("<p>You may not rename this Package to %1 as "
@@ -215,7 +217,7 @@ void package::sSave()
       return;
     }
 
-    q.prepare( "UPDATE pkghead "
+    packageSave.prepare( "UPDATE pkghead "
                "SET pkghead_name=:pkghead_name,"
                "    pkghead_descrip=:pkghead_descrip,"
                "    pkghead_version=:pkghead_version,"
@@ -225,17 +227,17 @@ void package::sSave()
                "WHERE (pkghead_id=:pkghead_id);" );
   }
 
-  q.bindValue(":pkghead_id",       _pkgheadid);
-  q.bindValue(":pkghead_name",     _name->text());
-  q.bindValue(":pkghead_descrip",  _description->text());
-  q.bindValue(":pkghead_version",  _version->text());
-  q.bindValue(":pkghead_developer",_developer->text());
-  q.bindValue(":pkghead_notes",    _notes->toPlainText());
-  q.bindValue(":pkghead_indev",    _indev->isChecked());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  packageSave.bindValue(":pkghead_id",       _pkgheadid);
+  packageSave.bindValue(":pkghead_name",     _name->text());
+  packageSave.bindValue(":pkghead_descrip",  _description->text());
+  packageSave.bindValue(":pkghead_version",  _version->text());
+  packageSave.bindValue(":pkghead_developer",_developer->text());
+  packageSave.bindValue(":pkghead_notes",    _notes->toPlainText());
+  packageSave.bindValue(":pkghead_indev",    _indev->isChecked());
+  packageSave.exec();
+  if (packageSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packageSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -279,29 +281,30 @@ void package::sSave()
 
 void package::populate()
 {
+  XSqlQuery packagepopulate;
   if (DEBUG)    qDebug("package::populate() entered");
 
-  q.prepare("SELECT *, packageIsEnabled(pkghead_name) AS enabled "
+  packagepopulate.prepare("SELECT *, packageIsEnabled(pkghead_name) AS enabled "
             "FROM pkghead WHERE (pkghead_id=:pkghead_id);");
-  q.bindValue(":pkghead_id", _pkgheadid);
-  q.exec();
-  if (q.first())
+  packagepopulate.bindValue(":pkghead_id", _pkgheadid);
+  packagepopulate.exec();
+  if (packagepopulate.first())
   {
     if (DEBUG)    qDebug("package::populate() select pkghead succeeded");
-    _name->setText(q.value("pkghead_name").toString());
-    _description->setText(q.value("pkghead_descrip").toString());
+    _name->setText(packagepopulate.value("pkghead_name").toString());
+    _description->setText(packagepopulate.value("pkghead_descrip").toString());
     if (DEBUG)    qDebug("package::populate() select pkghead half done");
-    _version->setText(q.value("pkghead_version").toString());
-    _developer->setText(q.value("pkghead_developer").toString());
-    _notes->setText(q.value("pkghead_notes").toString());
-    _enabled->setChecked(q.value("enabled").toBool());
+    _version->setText(packagepopulate.value("pkghead_version").toString());
+    _developer->setText(packagepopulate.value("pkghead_developer").toString());
+    _notes->setText(packagepopulate.value("pkghead_notes").toString());
+    _enabled->setChecked(packagepopulate.value("enabled").toBool());
     _priorEnabledState = _enabled->isChecked();
-    _indev->setChecked(q.value("pkghead_indev").toBool());
+    _indev->setChecked(packagepopulate.value("pkghead_indev").toBool());
     if (DEBUG)    qDebug("package::populate() select pkghead complete");
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (packagepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packagepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -325,47 +328,47 @@ void package::populate()
     params.append("showsystemdetails");
 
   MetaSQLQuery itemmql = mqlLoad("package", "items");
-  q = itemmql.toQuery(params);
+  packagepopulate = itemmql.toQuery(params);
 
-  q.exec();
+  packagepopulate.exec();
   if (DEBUG)    qDebug("package::populate() select pkgitem exec'ed");
-  _rec->populate(q);
+  _rec->populate(packagepopulate);
   if (DEBUG)    qDebug("package::populate() populate pkgitem done");
-  if (q.lastError().type() != QSqlError::NoError)
+  if (packagepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packagepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   // TODO: make this recursive?
-  q.prepare("SELECT * "
+  packagepopulate.prepare("SELECT * "
             "FROM pkgdep, pkghead "
             "WHERE ((pkgdep_pkghead_id=pkghead_id)"
             "  AND  (pkgdep_parent_pkghead_id=:pkghead_id));");
-  q.bindValue(":pkghead_id", _pkgheadid);
-  q.exec();
+  packagepopulate.bindValue(":pkghead_id", _pkgheadid);
+  packagepopulate.exec();
   if (DEBUG)    qDebug("package::populate() select pkgdep exec'ed");
-  _dep->populate(q);
+  _dep->populate(packagepopulate);
   if (DEBUG)    qDebug("package::populate() populate pkgdep done");
-  if (q.lastError().type() != QSqlError::NoError)
+  if (packagepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packagepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   // TODO: make this recursive?
-  q.prepare("SELECT * "
+  packagepopulate.prepare("SELECT * "
             "FROM pkgdep, pkghead "
             "WHERE ((pkgdep_parent_pkghead_id=pkghead_id)"
             "  AND  (pkgdep_pkghead_id=:pkghead_id));");
-  q.bindValue(":pkghead_id", _pkgheadid);
-  q.exec();
+  packagepopulate.bindValue(":pkghead_id", _pkgheadid);
+  packagepopulate.exec();
   if (DEBUG)    qDebug("package::populate() select pkgdep exec'ed");
-  _req->populate(q);
+  _req->populate(packagepopulate);
   if (DEBUG)    qDebug("package::populate() populate pkgdep done");
-  if (q.lastError().type() != QSqlError::NoError)
+  if (packagepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, packagepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

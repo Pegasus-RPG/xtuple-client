@@ -48,6 +48,7 @@ void updateOUTLevels::languageChange()
 
 void updateOUTLevels::sUpdate()
 {
+  XSqlQuery updateUpdate;
   if (_periods->topLevelItemCount() > 0)
   {
     QString sql;
@@ -74,12 +75,12 @@ void updateOUTLevels::sUpdate()
 
     sql += ");";
 
-    q.prepare(sql);
-    q.bindValue(":leadTimePad", _leadTimePad->value());
-    q.bindValue(":days", _days->value());
-    _warehouse->bindValue(q);
-    _plannerCode->bindValue(q);
-    q.exec();
+    updateUpdate.prepare(sql);
+    updateUpdate.bindValue(":leadTimePad", _leadTimePad->value());
+    updateUpdate.bindValue(":days", _days->value());
+    _warehouse->bindValue(updateUpdate);
+    _plannerCode->bindValue(updateUpdate);
+    updateUpdate.exec();
 
     accept();
   }

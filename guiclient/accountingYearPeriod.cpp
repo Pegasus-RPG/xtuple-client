@@ -100,24 +100,25 @@ enum SetResponse accountingYearPeriod::set(const ParameterList &pParams)
 
 void accountingYearPeriod::sSave()
 {
+  XSqlQuery saveAccountingYear;
   if (_mode == cNew)
   {
-    q.prepare("SELECT createAccountingYearPeriod(:startDate, :endDate) AS _period_id;");
-    q.bindValue(":startDate", _startDate->date());
-    q.bindValue(":endDate", _endDate->date());
-    q.exec();
-    if (q.first())
+    saveAccountingYear.prepare("SELECT createAccountingYearPeriod(:startDate, :endDate) AS _period_id;");
+    saveAccountingYear.bindValue(":startDate", _startDate->date());
+    saveAccountingYear.bindValue(":endDate", _endDate->date());
+    saveAccountingYear.exec();
+    if (saveAccountingYear.first())
     {
-      _periodid = q.value("_period_id").toInt();
+      _periodid = saveAccountingYear.value("_period_id").toInt();
       if (_periodid < 0)
       {
 	systemError(this, storedProcErrorLookup("createAccountingYearPeriod", _periodid), __FILE__, __LINE__);
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (saveAccountingYear.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, saveAccountingYear.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -126,21 +127,21 @@ void accountingYearPeriod::sSave()
 
     if ( (_cachedClosed) && (!_closed->isChecked()) )
     {
-      q.prepare("SELECT openAccountingYearPeriod(:period_id) AS result;");
-      q.bindValue(":period_id", _periodid);
-      q.exec();
-      if (q.first())
+      saveAccountingYear.prepare("SELECT openAccountingYearPeriod(:period_id) AS result;");
+      saveAccountingYear.bindValue(":period_id", _periodid);
+      saveAccountingYear.exec();
+      if (saveAccountingYear.first())
       {
-	int result = q.value("result").toInt();
+	int result = saveAccountingYear.value("result").toInt();
 	if (result < 0)
 	{
 	  systemError(this, storedProcErrorLookup("openAccountingYearPeriod", result), __FILE__, __LINE__);
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (saveAccountingYear.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, saveAccountingYear.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }
@@ -148,44 +149,44 @@ void accountingYearPeriod::sSave()
     if ( (_cachedStartDate != _startDate->date()) ||
          (_cachedEndDate != _endDate->date()) )
     {
-      q.prepare("SELECT changeAccountingYearPeriodDates(:period_id, :startDate, :endDate) AS result;");
-      q.bindValue(":period_id", _periodid);
-      q.bindValue(":startDate", _startDate->date());
-      q.bindValue(":endDate", _endDate->date());
-      q.exec();
-      if (q.first())
+      saveAccountingYear.prepare("SELECT changeAccountingYearPeriodDates(:period_id, :startDate, :endDate) AS result;");
+      saveAccountingYear.bindValue(":period_id", _periodid);
+      saveAccountingYear.bindValue(":startDate", _startDate->date());
+      saveAccountingYear.bindValue(":endDate", _endDate->date());
+      saveAccountingYear.exec();
+      if (saveAccountingYear.first())
       {
-	int result = q.value("result").toInt();
+	int result = saveAccountingYear.value("result").toInt();
 	if (result < 0)
 	{
 	  systemError(this, storedProcErrorLookup("createAccountingYearPeriod", result), __FILE__, __LINE__);
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (saveAccountingYear.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, saveAccountingYear.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }
 
     if ( (!_cachedClosed) && (_closed->isChecked()) )
     {
-      q.prepare("SELECT closeAccountingYearPeriod(:period_id) AS result;");
-      q.bindValue(":period_id", _periodid);
-      q.exec();
-      if (q.first())
+      saveAccountingYear.prepare("SELECT closeAccountingYearPeriod(:period_id) AS result;");
+      saveAccountingYear.bindValue(":period_id", _periodid);
+      saveAccountingYear.exec();
+      if (saveAccountingYear.first())
       {
-	int result = q.value("result").toInt();
+	int result = saveAccountingYear.value("result").toInt();
 	if (result < 0)
 	{
 	  systemError(this, storedProcErrorLookup("closeAccountingYearPeriod", result), __FILE__, __LINE__);
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (saveAccountingYear.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, saveAccountingYear.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }
@@ -196,36 +197,37 @@ void accountingYearPeriod::sSave()
 
 void accountingYearPeriod::populate()
 {
-  q.exec( "SELECT FIRST(yearperiod_id) AS first_yearperiod_id, "
+  XSqlQuery populateAccountingYear;
+  populateAccountingYear.exec( "SELECT FIRST(yearperiod_id) AS first_yearperiod_id, "
             "  LAST(yearperiod_id) AS last_yearperiod_id "
             "FROM (SELECT yearperiod_id FROM yearperiod "
             "      ORDER BY yearperiod_start) AS data; ");
-  if (q.first())
+  if (populateAccountingYear.first())
   {
-    if (q.value("first_yearperiod_id").toInt() != _periodid)
+    if (populateAccountingYear.value("first_yearperiod_id").toInt() != _periodid)
       _startDate->setEnabled(false);
-    if (q.value("last_yearperiod_id").toInt() != _periodid)
+    if (populateAccountingYear.value("last_yearperiod_id").toInt() != _periodid)
       _endDate->setEnabled(false);
   }
 
-  q.prepare( "SELECT yearperiod_start, yearperiod_end, yearperiod_closed "
+  populateAccountingYear.prepare( "SELECT yearperiod_start, yearperiod_end, yearperiod_closed "
              "FROM yearperiod "
              "WHERE (yearperiod_id=:period_id);" );
-  q.bindValue(":period_id", _periodid);
-  q.exec();
-  if (q.first())
+  populateAccountingYear.bindValue(":period_id", _periodid);
+  populateAccountingYear.exec();
+  if (populateAccountingYear.first())
   {
-    _cachedStartDate = q.value("yearperiod_start").toDate();
-    _cachedEndDate = q.value("yearperiod_end").toDate();
-    _cachedClosed = q.value("yearperiod_closed").toBool();
+    _cachedStartDate = populateAccountingYear.value("yearperiod_start").toDate();
+    _cachedEndDate = populateAccountingYear.value("yearperiod_end").toDate();
+    _cachedClosed = populateAccountingYear.value("yearperiod_closed").toBool();
 
-    _startDate->setDate(q.value("yearperiod_start").toDate());
-    _endDate->setDate(q.value("yearperiod_end").toDate());
-    _closed->setChecked(q.value("yearperiod_closed").toBool());
+    _startDate->setDate(populateAccountingYear.value("yearperiod_start").toDate());
+    _endDate->setDate(populateAccountingYear.value("yearperiod_end").toDate());
+    _closed->setChecked(populateAccountingYear.value("yearperiod_closed").toBool());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (populateAccountingYear.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, populateAccountingYear.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

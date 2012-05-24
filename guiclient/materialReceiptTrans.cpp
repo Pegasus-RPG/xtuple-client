@@ -141,6 +141,7 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
 
 void materialReceiptTrans::sPost()
 {
+  XSqlQuery materialPost;
   double cost = _cost->toDouble();
 
   struct {
@@ -173,26 +174,26 @@ void materialReceiptTrans::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible distribution cancelations
-  q.prepare( "SELECT invReceipt(itemsite_id, :qty, '', :docNumber,"
+  materialPost.exec("BEGIN;");	// because of possible distribution cancelations
+  materialPost.prepare( "SELECT invReceipt(itemsite_id, :qty, '', :docNumber,"
              "                  :comments, :date, :cost) AS result "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":qty", _qty->toDouble());
-  q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->toPlainText());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":date",        _transDate->date());
+  materialPost.bindValue(":qty", _qty->toDouble());
+  materialPost.bindValue(":docNumber", _documentNum->text());
+  materialPost.bindValue(":comments", _notes->toPlainText());
+  materialPost.bindValue(":item_id", _item->id());
+  materialPost.bindValue(":warehous_id", _warehouse->id());
+  materialPost.bindValue(":date",        _transDate->date());
   if(!_costAdjust->isChecked())
-    q.bindValue(":cost", 0.0);
+    materialPost.bindValue(":cost", 0.0);
   else if(_costManual->isChecked())
-    q.bindValue(":cost", cost);
-  q.exec();
-  if (q.first())
+    materialPost.bindValue(":cost", cost);
+  materialPost.exec();
+  if (materialPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = materialPost.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -200,14 +201,14 @@ void materialReceiptTrans::sPost()
                   __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (materialPost.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, materialPost.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    if (distributeInventory::SeriesAdjust(materialPost.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
       QMessageBox::information(this, tr("Enter Receipt"),
@@ -215,12 +216,12 @@ void materialReceiptTrans::sPost()
       return;
     }
 
-    q.exec("COMMIT;");
+    materialPost.exec("COMMIT;");
   } 
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (materialPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, materialPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -235,26 +236,26 @@ void materialReceiptTrans::sPost()
 
   if (_issueToWo->isChecked())
   {
-    q.prepare( "SELECT womatl_id, womatl_issuemethod "
+    materialPost.prepare( "SELECT womatl_id, womatl_issuemethod "
                "FROM womatl, wo, itemsite "
                "WHERE ( ( womatl_itemsite_id=itemsite_id)"
                " AND (womatl_wo_id=wo_id)"
                " AND (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id)"
                " AND (wo_id=:wo_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.bindValue(":wo_id", _wo->id());
-    q.exec();
-    if (q.first())
+    materialPost.bindValue(":item_id", _item->id());
+    materialPost.bindValue(":warehous_id", _warehouse->id());
+    materialPost.bindValue(":wo_id", _wo->id());
+    materialPost.exec();
+    if (materialPost.first())
     {
-      if ( (q.value("womatl_issuemethod").toString() == "S") ||
-           (q.value("womatl_issuemethod").toString() == "M") )
+      if ( (materialPost.value("womatl_issuemethod").toString() == "S") ||
+           (materialPost.value("womatl_issuemethod").toString() == "M") )
       {
         issueWoMaterialItem newdlg(this);
         ParameterList params;
         params.append("wo_id", _wo->id());
-        params.append("womatl_id", q.value("womatl_id").toInt());
+        params.append("womatl_id", materialPost.value("womatl_id").toInt());
         params.append("qty", _qty->toDouble());
         if (newdlg.set(params) == NoError)
           newdlg.exec();
@@ -282,30 +283,31 @@ void materialReceiptTrans::sPost()
 
 void materialReceiptTrans::sPopulateQty()
 {
-  q.prepare( "SELECT itemsite_qtyonhand, itemsite_costmethod "
+  XSqlQuery materialPopulateQty;
+  materialPopulateQty.prepare( "SELECT itemsite_qtyonhand, itemsite_costmethod "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if (q.first())
+  materialPopulateQty.bindValue(":item_id", _item->id());
+  materialPopulateQty.bindValue(":warehous_id", _warehouse->id());
+  materialPopulateQty.exec();
+  if (materialPopulateQty.first())
   {
-    _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
+    _cachedQOH = materialPopulateQty.value("itemsite_qtyonhand").toDouble();
     if(_cachedQOH == 0.0)
       _costManual->setChecked(true);
-    _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
+    _beforeQty->setDouble(materialPopulateQty.value("itemsite_qtyonhand").toDouble());
     _costAdjust->setChecked(true);
-    _costAdjust->setEnabled(q.value("itemsite_costmethod").toString() == "A");
+    _costAdjust->setEnabled(materialPopulateQty.value("itemsite_costmethod").toString() == "A");
 
     if (_issueToWo->isChecked())
-      _afterQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
+      _afterQty->setDouble(materialPopulateQty.value("itemsite_qtyonhand").toDouble());
     else if (_qty->toDouble() != 0)
       _afterQty->setDouble(_cachedQOH + _qty->toDouble());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (materialPopulateQty.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, materialPopulateQty.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

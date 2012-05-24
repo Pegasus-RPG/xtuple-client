@@ -117,19 +117,20 @@ void userPreferences::languageChange()
 
 void userPreferences::setBackgroundImage(int pImageid)
 {
-  q.prepare( "SELECT image_id, (image_name || ' - ' || image_descrip) AS description "
+  XSqlQuery useretBackgroundImage;
+  useretBackgroundImage.prepare( "SELECT image_id, (image_name || ' - ' || image_descrip) AS description "
              "FROM image "
              "WHERE (image_id=:image_id);" );
-  q.bindValue(":image_id", pImageid);
-  q.exec();
-  if (q.first())
+  useretBackgroundImage.bindValue(":image_id", pImageid);
+  useretBackgroundImage.exec();
+  if (useretBackgroundImage.first())
   {
-    _backgroundImageid = q.value("image_id").toInt();
-    _background->setText(q.value("description").toString());
+    _backgroundImageid = useretBackgroundImage.value("image_id").toInt();
+    _background->setText(useretBackgroundImage.value("description").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (useretBackgroundImage.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, useretBackgroundImage.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -356,6 +357,7 @@ void userPreferences::sSave(bool close)
 
 bool userPreferences::save()
 {
+  XSqlQuery userave;
   
   if (_currentpassword->text().length() == 0)
   {
@@ -399,28 +401,28 @@ bool userPreferences::save()
 
   if (_newpassword->text() != "        ")
   {
-    q.prepare( "SELECT usrpref_value "
+    userave.prepare( "SELECT usrpref_value "
                 "  FROM usrpref "
                 " WHERE ( (usrpref_name = 'UseEnhancedAuthentication') "
                 "   AND (usrpref_username=:username) ); ");
-    q.bindValue(":username", _username->text().trimmed().toLower());         
-    q.exec();
-    if(q.first())
+    userave.bindValue(":username", _username->text().trimmed().toLower());         
+    userave.exec();
+    if(userave.first())
     {
-      if (q.value("usrpref_value").toString()=="t")
+      if (userave.value("usrpref_value").toString()=="t")
       {
         passwd = passwd + "xTuple" + _username->text();
         passwd = QMd5(passwd);
       }
     }
 
-    q.prepare( QString( "ALTER USER %1 WITH PASSWORD :password;")
+    userave.prepare( QString( "ALTER USER %1 WITH PASSWORD :password;")
            .arg(_username->text()) );
-    q.bindValue(":password", passwd);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    userave.bindValue(":password", passwd);
+    userave.exec();
+    if (userave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, userave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
@@ -543,6 +545,7 @@ void userPreferences::sEdit()
 
 void userPreferences::sDelete()
 {
+  XSqlQuery userDelete;
   if (_currentUser->isChecked())
   {
     _preferences->remove(_hotkey->currentItem()->text(2));
@@ -550,13 +553,13 @@ void userPreferences::sDelete()
   }
   else
   {
-    q.prepare("SELECT deleteUserPreference(:username, :name) AS _result;");
+    userDelete.prepare("SELECT deleteUserPreference(:username, :name) AS _result;");
     if (_currentUser->isChecked())
-      q.bindValue(":username", omfgThis->username());
+      userDelete.bindValue(":username", omfgThis->username());
     else
-      q.bindValue(":username", _user->currentText());
-    q.bindValue(":name", _hotkey->currentItem()->text(2));
-    q.exec();
+      userDelete.bindValue(":username", _user->currentText());
+    userDelete.bindValue(":name", _hotkey->currentItem()->text(2));
+    userDelete.exec();
   }
 
   _dirty = TRUE;
@@ -565,15 +568,16 @@ void userPreferences::sDelete()
 
 void userPreferences::sAllWarehousesToggled(int pEvnttypeid)
 {
+  XSqlQuery userAllWarehousesToggled;
   if(!(_warehouses->topLevelItemCount() > 0))
     return;
 
   if (_warehouses->topLevelItem(0)->text(0) == tr("Yes"))
-    q.prepare( "DELETE FROM evntnot "
+    userAllWarehousesToggled.prepare( "DELETE FROM evntnot "
                "WHERE ( (evntnot_username=:username)"
                " AND (evntnot_evnttype_id=:evnttype_id) );" );
   else
-    q.prepare( "DELETE FROM evntnot "
+    userAllWarehousesToggled.prepare( "DELETE FROM evntnot "
                "WHERE ( (evntnot_username=:username)"
                " AND (evntnot_evnttype_id=:evnttype_id) ); "
                "INSERT INTO evntnot "
@@ -582,14 +586,14 @@ void userPreferences::sAllWarehousesToggled(int pEvnttypeid)
                "FROM whsinfo;" );
 
   if (_currentUser->isChecked())
-	q.bindValue(":username", omfgThis->username());
+	userAllWarehousesToggled.bindValue(":username", omfgThis->username());
   else
-    q.bindValue(":username", _user->currentText());
-  q.bindValue(":evnttype_id", pEvnttypeid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    userAllWarehousesToggled.bindValue(":username", _user->currentText());
+  userAllWarehousesToggled.bindValue(":evnttype_id", pEvnttypeid);
+  userAllWarehousesToggled.exec();
+  if (userAllWarehousesToggled.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, userAllWarehousesToggled.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -598,30 +602,31 @@ void userPreferences::sAllWarehousesToggled(int pEvnttypeid)
 
 void userPreferences::sWarehouseToggled(QTreeWidgetItem *selected)
 {
+  XSqlQuery userWarehouseToggled;
   if(!selected)
     return;
 
   if (selected->text(0) == tr("Yes"))
-    q.prepare( "DELETE FROM evntnot "
+    userWarehouseToggled.prepare( "DELETE FROM evntnot "
                "WHERE ( (evntnot_username=:username)"
                " AND (evntnot_evnttype_id=:evnttype_id)"
                " AND (evntnot_warehous_id=:warehous_id) );" );
   else
-    q.prepare( "INSERT INTO evntnot "
+    userWarehouseToggled.prepare( "INSERT INTO evntnot "
                "(evntnot_username, evntnot_evnttype_id, evntnot_warehous_id) "
                "VALUES "
                "(:username, :evnttype_id, :warehous_id);" );
 
   if (_currentUser->isChecked())
-	q.bindValue(":username", omfgThis->username());
+	userWarehouseToggled.bindValue(":username", omfgThis->username());
   else
-    q.bindValue(":username", _user->currentText());
-  q.bindValue(":evnttype_id", _event->id());
-  q.bindValue(":warehous_id", ((XTreeWidgetItem *)selected)->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    userWarehouseToggled.bindValue(":username", _user->currentText());
+  userWarehouseToggled.bindValue(":evnttype_id", _event->id());
+  userWarehouseToggled.bindValue(":warehous_id", ((XTreeWidgetItem *)selected)->id());
+  userWarehouseToggled.exec();
+  if (userWarehouseToggled.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, userWarehouseToggled.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -630,27 +635,28 @@ void userPreferences::sWarehouseToggled(QTreeWidgetItem *selected)
 
 void userPreferences::sFillWarehouseList()
 {
+  XSqlQuery userFillWarehouseList;
   for (int i = 0; i < _warehouses->topLevelItemCount(); i++)
   {
-    q.prepare( "SELECT evntnot_id "
+    userFillWarehouseList.prepare( "SELECT evntnot_id "
                "FROM evntnot "
                "WHERE ( (evntnot_username=:username)"
                " AND (evntnot_warehous_id=:warehous_id)"
                " AND (evntnot_evnttype_id=:evnttype_id) );" );
     if (_currentUser->isChecked())
-	  q.bindValue(":username", omfgThis->username());
+	  userFillWarehouseList.bindValue(":username", omfgThis->username());
     else
-      q.bindValue(":username", _user->currentText());
-    q.bindValue(":warehous_id", ((XTreeWidgetItem *)(_warehouses->topLevelItem(i)))->id());
-    q.bindValue(":evnttype_id", _event->id());
-    q.exec();
-    if (q.first())
+      userFillWarehouseList.bindValue(":username", _user->currentText());
+    userFillWarehouseList.bindValue(":warehous_id", ((XTreeWidgetItem *)(_warehouses->topLevelItem(i)))->id());
+    userFillWarehouseList.bindValue(":evnttype_id", _event->id());
+    userFillWarehouseList.exec();
+    if (userFillWarehouseList.first())
       _warehouses->topLevelItem(i)->setText(0, tr("Yes"));
     else
       _warehouses->topLevelItem(i)->setText(0, tr("No"));
-    if (q.lastError().type() != QSqlError::NoError)
+    if (userFillWarehouseList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, userFillWarehouseList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

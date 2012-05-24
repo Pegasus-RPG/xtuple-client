@@ -49,6 +49,7 @@ void salesRep::languageChange()
 
 enum SetResponse salesRep::set(const ParameterList &pParams)
 {
+  XSqlQuery saleset;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -72,12 +73,12 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
     {
       _mode = cNew;
       
-      q.exec("SELECT NEXTVAL('salesrep_salesrep_id_seq') AS salesrep_id;");
-      if (q.first())
-        _salesrepid = q.value("salesrep_id").toInt();
-      else if (q.lastError().type() == QSqlError::NoError)
+      saleset.exec("SELECT NEXTVAL('salesrep_salesrep_id_seq') AS salesrep_id;");
+      if (saleset.first())
+        _salesrepid = saleset.value("salesrep_id").toInt();
+      else if (saleset.lastError().type() == QSqlError::NoError)
       {
-        systemError(this, q.lastError().text(), __FILE__, __LINE__);
+        systemError(this, saleset.lastError().text(), __FILE__, __LINE__);
         return UndefinedError;
       }
 

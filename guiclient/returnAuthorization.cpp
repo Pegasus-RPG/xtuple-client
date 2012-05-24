@@ -171,6 +171,7 @@ void returnAuthorization::languageChange()
 
 enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 {
+  XSqlQuery returnet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -183,16 +184,16 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
     if (param.toString() == "new")
     {
-      q.prepare("SELECT NEXTVAL('rahead_rahead_id_seq') AS rahead_id;");
-      q.exec();
-      if (q.first())
+      returnet.prepare("SELECT NEXTVAL('rahead_rahead_id_seq') AS rahead_id;");
+      returnet.exec();
+      if (returnet.first())
       {
-        _raheadid = q.value("rahead_id").toInt();
+        _raheadid = returnet.value("rahead_id").toInt();
         _comments->setId(_raheadid);
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (returnet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, returnet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
       // Tabbed windows has a problem with this
@@ -202,18 +203,18 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _authDate->setDate(omfgThis->dbDate(), true);
       _calcfreight = _metrics->boolean("CalculateFreight");
 
-      q.prepare("INSERT INTO rahead ("
+      returnet.prepare("INSERT INTO rahead ("
                 "    rahead_id, rahead_number, rahead_authdate"
                 ") VALUES ("
                 "    :rahead_id, COALESCE(:rahead_number,0), :rahead_authdate"
                 ");");
-      q.bindValue(":rahead_id", _raheadid);
+      returnet.bindValue(":rahead_id", _raheadid);
       if (!_authNumber->text().isEmpty())
-        q.bindValue(":rahead_number", _authNumber->text());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+        returnet.bindValue(":rahead_number", _authNumber->text());
+      returnet.exec();
+      if (returnet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, returnet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -347,21 +348,22 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
 void returnAuthorization::setNumber()
 {
+  XSqlQuery returnetNumber;
   if ( (_metrics->value("RANumberGeneration") == "A") ||
        (_metrics->value("RANumberGeneration") == "O")   )
   {
-    q.prepare("SELECT fetchRaNumber() AS ranumber;");
-    q.exec();
-    if (q.first())
+    returnetNumber.prepare("SELECT fetchRaNumber() AS ranumber;");
+    returnetNumber.exec();
+    if (returnetNumber.first())
     {
-      _authNumber->setText(q.value("ranumber").toString());
+      _authNumber->setText(returnetNumber.value("ranumber").toString());
 
       if (_metrics->value("RANumberGeneration") == "A")
         _authNumber->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (returnetNumber.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, returnetNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -371,6 +373,7 @@ void returnAuthorization::setNumber()
 
 bool returnAuthorization::sSave(bool partial)
 {
+  XSqlQuery returnSave;
   const char *dispositionTypes[] = { "C", "R", "P", "V", "M", "" };
   const char *timingTypes[] = { "I", "R", "" };
   const char *creditMethods[] = { "N", "M", "K", "C", "" };
@@ -472,7 +475,7 @@ bool returnAuthorization::sSave(bool partial)
   _billToAddr->save(AddressCluster::CHANGEONE);
   _shipToAddr->save(AddressCluster::CHANGEONE);
 
-  q.prepare( "UPDATE rahead "
+  returnSave.prepare( "UPDATE rahead "
              "   SET rahead_cust_id=:rahead_cust_id,rahead_number=:rahead_number,"
              "       rahead_authdate=:rahead_authdate,rahead_expiredate=:rahead_expiredate,"
              "       rahead_salesrep_id=:rahead_salesrep_id, rahead_commission=:rahead_commission,"
@@ -497,67 +500,67 @@ bool returnAuthorization::sSave(bool partial)
              "       rahead_warehous_id=:rahead_warehous_id, rahead_cohead_warehous_id=:rahead_cohead_warehous_id "
              " WHERE(rahead_id=:rahead_id);" );
 
-  q.bindValue(":rahead_id", _raheadid);
-  q.bindValue(":rahead_number", _authNumber->text().toInt());
-  q.bindValue(":rahead_authdate", _authDate->date());
-  q.bindValue(":rahead_expiredate", _expireDate->date());
+  returnSave.bindValue(":rahead_id", _raheadid);
+  returnSave.bindValue(":rahead_number", _authNumber->text().toInt());
+  returnSave.bindValue(":rahead_authdate", _authDate->date());
+  returnSave.bindValue(":rahead_expiredate", _expireDate->date());
   if (_salesRep->isValid() && _cust->isValid())
-    q.bindValue(":rahead_salesrep_id", _salesRep->id());
-  q.bindValue(":rahead_commission", (_commission->toDouble() / 100));
+    returnSave.bindValue(":rahead_salesrep_id", _salesRep->id());
+  returnSave.bindValue(":rahead_commission", (_commission->toDouble() / 100));
   if (_taxzone->isValid())
-    q.bindValue(":rahead_taxzone_id", _taxzone->id());
+    returnSave.bindValue(":rahead_taxzone_id", _taxzone->id());
   if (_rsnCode->id() > 0)
-    q.bindValue(":rahead_rsncode_id", _rsnCode->id());
+    returnSave.bindValue(":rahead_rsncode_id", _rsnCode->id());
   if (!disposition.isEmpty())
-    q.bindValue(":rahead_disposition", disposition);
+    returnSave.bindValue(":rahead_disposition", disposition);
   if (!timing.isEmpty())
-    q.bindValue(":rahead_timing", timing);
+    returnSave.bindValue(":rahead_timing", timing);
   if (!creditBy.isEmpty())
-    q.bindValue(":rahead_creditmethod", creditBy);
+    returnSave.bindValue(":rahead_creditmethod", creditBy);
   if (_origso->isValid())
-    q.bindValue(":rahead_orig_cohead_id", _origso->id());
+    returnSave.bindValue(":rahead_orig_cohead_id", _origso->id());
   if (_newso->isValid())
-    q.bindValue(":rahead_new_cohead_id", _newso->id());
+    returnSave.bindValue(":rahead_new_cohead_id", _newso->id());
   if (_incident->isValid())
-    q.bindValue(":rahead_incdt_id", _incident->id());
+    returnSave.bindValue(":rahead_incdt_id", _incident->id());
   if (_project->isValid())
-    q.bindValue(":rahead_prj_id", _project->id());
+    returnSave.bindValue(":rahead_prj_id", _project->id());
   if (_cust->isValid())
-    q.bindValue(":rahead_cust_id", _cust->id());
-  q.bindValue(":rahead_billtoname", _billToName->text().trimmed());
-  q.bindValue(":rahead_billtoaddress1", _billToAddr->line1());
-  q.bindValue(":rahead_billtoaddress2", _billToAddr->line2());
-  q.bindValue(":rahead_billtoaddress3", _billToAddr->line3());
-  q.bindValue(":rahead_billtocity",     _billToAddr->city());
-  q.bindValue(":rahead_billtostate",    _billToAddr->state());
-  q.bindValue(":rahead_billtozip",      _billToAddr->postalCode());
-  q.bindValue(":rahead_billtocountry",  _billToAddr->country());
+    returnSave.bindValue(":rahead_cust_id", _cust->id());
+  returnSave.bindValue(":rahead_billtoname", _billToName->text().trimmed());
+  returnSave.bindValue(":rahead_billtoaddress1", _billToAddr->line1());
+  returnSave.bindValue(":rahead_billtoaddress2", _billToAddr->line2());
+  returnSave.bindValue(":rahead_billtoaddress3", _billToAddr->line3());
+  returnSave.bindValue(":rahead_billtocity",     _billToAddr->city());
+  returnSave.bindValue(":rahead_billtostate",    _billToAddr->state());
+  returnSave.bindValue(":rahead_billtozip",      _billToAddr->postalCode());
+  returnSave.bindValue(":rahead_billtocountry",  _billToAddr->country());
   if (_shipTo->id() > 0)
-    q.bindValue(":rahead_shipto_id",    _shipTo->id());
-  q.bindValue(":rahead_shipto_name", _shipToName->text().trimmed());
-  q.bindValue(":rahead_shipto_address1", _shipToAddr->line1());
-  q.bindValue(":rahead_shipto_address2", _shipToAddr->line2());
-  q.bindValue(":rahead_shipto_address3", _shipToAddr->line3());
-  q.bindValue(":rahead_shipto_city",     _shipToAddr->city());
-  q.bindValue(":rahead_shipto_state",    _shipToAddr->state());
-  q.bindValue(":rahead_shipto_zipcode",  _shipToAddr->postalCode());
-  q.bindValue(":rahead_shipto_country",  _shipToAddr->country());
-  q.bindValue(":rahead_custponumber", _customerPO->text().trimmed());
-  q.bindValue(":rahead_notes", _notes->toPlainText());
-  q.bindValue(":rahead_misc", _miscCharge->localValue());
+    returnSave.bindValue(":rahead_shipto_id",    _shipTo->id());
+  returnSave.bindValue(":rahead_shipto_name", _shipToName->text().trimmed());
+  returnSave.bindValue(":rahead_shipto_address1", _shipToAddr->line1());
+  returnSave.bindValue(":rahead_shipto_address2", _shipToAddr->line2());
+  returnSave.bindValue(":rahead_shipto_address3", _shipToAddr->line3());
+  returnSave.bindValue(":rahead_shipto_city",     _shipToAddr->city());
+  returnSave.bindValue(":rahead_shipto_state",    _shipToAddr->state());
+  returnSave.bindValue(":rahead_shipto_zipcode",  _shipToAddr->postalCode());
+  returnSave.bindValue(":rahead_shipto_country",  _shipToAddr->country());
+  returnSave.bindValue(":rahead_custponumber", _customerPO->text().trimmed());
+  returnSave.bindValue(":rahead_notes", _notes->toPlainText());
+  returnSave.bindValue(":rahead_misc", _miscCharge->localValue());
   if (_miscChargeAccount->id() != -1)
-    q.bindValue(":rahead_misc_accnt_id", _miscChargeAccount->id());
-  q.bindValue(":rahead_misc_descrip", _miscChargeDescription->text());
-  q.bindValue(":rahead_curr_id", _currency->id());
-  q.bindValue(":rahead_freight", _freight->localValue());
-  q.bindValue(":rahead_calcfreight", _calcfreight);
-  q.bindValue(":rahead_warehous_id", _warehouse->id());
-  q.bindValue(":rahead_cohead_warehous_id", _shipWhs->id());
+    returnSave.bindValue(":rahead_misc_accnt_id", _miscChargeAccount->id());
+  returnSave.bindValue(":rahead_misc_descrip", _miscChargeDescription->text());
+  returnSave.bindValue(":rahead_curr_id", _currency->id());
+  returnSave.bindValue(":rahead_freight", _freight->localValue());
+  returnSave.bindValue(":rahead_calcfreight", _calcfreight);
+  returnSave.bindValue(":rahead_warehous_id", _warehouse->id());
+  returnSave.bindValue(":rahead_cohead_warehous_id", _shipWhs->id());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  returnSave.exec();
+  if (returnSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -615,6 +618,7 @@ void returnAuthorization::sSaveClick()
 
 void returnAuthorization::sOrigSoChanged()
 {
+  XSqlQuery returnOrigSoChanged;
   if (_origso->isValid())
   {
     _authorizeLine->show();
@@ -629,19 +633,19 @@ void returnAuthorization::sOrigSoChanged()
   }
   if (_origso->isValid())
   {
-    q.prepare("SELECT rahead_number FROM rahead,raitem "
+    returnOrigSoChanged.prepare("SELECT rahead_number FROM rahead,raitem "
               " WHERE((rahead_orig_cohead_id=:cohead_id) "
               "   AND (rahead_id != :rahead_id) "
               "   AND (raitem_rahead_id=rahead_id) "
               "   AND (raitem_status = 'O') "
               "   AND (raitem_qtyauthorized > 0)); ");
-    q.bindValue(":cohead_id",_origso->id());
-    q.bindValue(":rahead_id",_raheadid);
-    q.exec();
-    if (q.first())
+    returnOrigSoChanged.bindValue(":cohead_id",_origso->id());
+    returnOrigSoChanged.bindValue(":rahead_id",_raheadid);
+    returnOrigSoChanged.exec();
+    if (returnOrigSoChanged.first())
     {
       QMessageBox::critical(this, tr("Invalid Sales Order"),
-          tr("This sales order is already linked to open return authorization %1.").arg(q.value("rahead_number").toString())  );
+          tr("This sales order is already linked to open return authorization %1.").arg(returnOrigSoChanged.value("rahead_number").toString())  );
       _origso->setId(-1);
       if (_cust->isValid())
         _origso->setCustId(_cust->id());
@@ -1006,6 +1010,7 @@ void returnAuthorization::sView()
 
 void returnAuthorization::sDelete()
 {
+  XSqlQuery returnDelete;
   if (QMessageBox::question(this, "Delete current Line Item?",
                             tr("<p>Are you sure that you want to delete the "
                                "the selected Line Item(s)?"),
@@ -1046,13 +1051,13 @@ void returnAuthorization::sDelete()
         systemError(this, checkwo.lastError().databaseText(), __FILE__, __LINE__);
       }
 
-      q.prepare( "DELETE FROM raitem "
+      returnDelete.prepare( "DELETE FROM raitem "
                  "WHERE (raitem_id=:raitem_id);" );
-      q.bindValue(":raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      returnDelete.bindValue(":raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      returnDelete.exec();
+      if (returnDelete.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, returnDelete.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -1062,7 +1067,8 @@ void returnAuthorization::sDelete()
 
 void returnAuthorization::sFillList()
 {
-  q.prepare( "SELECT raitem_id, "
+  XSqlQuery returnFillList;
+  returnFillList.prepare( "SELECT raitem_id, "
              "       CASE WHEN (raitem_status='C')     THEN -1"
              "            WHEN (raitem_disposition='C') THEN 0"
              "            WHEN (raitem_disposition='R') THEN 1"
@@ -1124,22 +1130,22 @@ void returnAuthorization::sFillList()
              " AND (raitem_rahead_id=:rahead_id) "
              " AND (raitem_qty_uom_id=uom_id) ) "
              "ORDER BY raitem_linenumber, raitem_subnumber;" );
-  q.bindValue(":rahead_id", _raheadid);
-  q.bindValue(":credit", tr("Credit"));
-  q.bindValue(":return", tr("Return"));
-  q.bindValue(":replace", tr("Replace"));
-  q.bindValue(":service", tr("Service"));
-  q.bindValue(":ship", tr("Ship"));
-  q.bindValue(":na", tr("N/A"));
-  q.exec();
-  _raitem->populate(q, true);
-  if ((q.first()) && (_mode == cEdit))
+  returnFillList.bindValue(":rahead_id", _raheadid);
+  returnFillList.bindValue(":credit", tr("Credit"));
+  returnFillList.bindValue(":return", tr("Return"));
+  returnFillList.bindValue(":replace", tr("Replace"));
+  returnFillList.bindValue(":service", tr("Service"));
+  returnFillList.bindValue(":ship", tr("Ship"));
+  returnFillList.bindValue(":na", tr("N/A"));
+  returnFillList.exec();
+  _raitem->populate(returnFillList, true);
+  if ((returnFillList.first()) && (_mode == cEdit))
   {
     _cust->setDisabled(_cust->isValid());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (returnFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -1147,25 +1153,25 @@ void returnAuthorization::sFillList()
 
   if (_creditBy->currentIndex() != 0 && _calcfreight)
   {
-    q.prepare("SELECT SUM(freightdata_total) AS freight "
+    returnFillList.prepare("SELECT SUM(freightdata_total) AS freight "
               "FROM freightDetail('RA', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
-    q.bindValue(":head_id", _raheadid);
-    q.bindValue(":cust_id", _cust->id());
-    q.bindValue(":shipto_id", _shipTo->id());
-    q.bindValue(":orderdate", _authDate->date());
-    q.bindValue(":shipvia", "");
-    q.bindValue(":curr_id", _currency->id());
-    q.exec();
-    if (q.first())
+    returnFillList.bindValue(":head_id", _raheadid);
+    returnFillList.bindValue(":cust_id", _cust->id());
+    returnFillList.bindValue(":shipto_id", _shipTo->id());
+    returnFillList.bindValue(":orderdate", _authDate->date());
+    returnFillList.bindValue(":shipvia", "");
+    returnFillList.bindValue(":curr_id", _currency->id());
+    returnFillList.exec();
+    if (returnFillList.first())
     {
-      _freightCache = q.value("freight").toDouble();
+      _freightCache = returnFillList.value("freight").toDouble();
       disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
       _freight->setLocalValue(_freightCache);
       connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (returnFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, returnFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -1178,25 +1184,25 @@ void returnAuthorization::sFillList()
   _currency->setEnabled((_raitem->topLevelItemCount() == 0) && (_mode == cEdit));
 
   //Disable order changes if any order qty authorized
-  q.prepare("SELECT raitem_id "
+  returnFillList.prepare("SELECT raitem_id "
             "FROM raitem "
             "WHERE ( (raitem_rahead_id=:rahead_id) "
             "AND (raitem_orig_coitem_id IS NOT NULL) "
             "AND (raitem_qtyauthorized > 0) );");
-  q.bindValue(":rahead_id", _raheadid);
-  q.exec();
-  _origso->setEnabled((!q.first()) && (_mode == cEdit || _mode == cNew));
+  returnFillList.bindValue(":rahead_id", _raheadid);
+  returnFillList.exec();
+  _origso->setEnabled((!returnFillList.first()) && (_mode == cEdit || _mode == cNew));
 
   //Disable changes if any transactions
-  q.prepare("SELECT raitem_id "
+  returnFillList.prepare("SELECT raitem_id "
             "FROM raitem "
             "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
             "WHERE ( (raitem_rahead_id=:rahead_id) "
             "AND (((raitem_qtyreceived + COALESCE(coitem_qtyshipped,0) + "
             " raitem_amtcredited) > 0 OR raitem_status = 'C')) );");
-  q.bindValue(":rahead_id", _raheadid);
-  q.exec();
-  if (q.first())
+  returnFillList.bindValue(":rahead_id", _raheadid);
+  returnFillList.exec();
+  if (returnFillList.first())
   {
     _salesRep->setEnabled(false);
     _commission->setEnabled(false);
@@ -1399,18 +1405,19 @@ void returnAuthorization::populate()
 
 void returnAuthorization::closeEvent(QCloseEvent *pEvent)
 {
+  XSqlQuery returncloseEvent;
   if ( (_mode == cNew) && (_raheadid != -1) )
   {
-    q.prepare( "UPDATE raitem SET raitem_qtyauthorized=0 "
+    returncloseEvent.prepare( "UPDATE raitem SET raitem_qtyauthorized=0 "
                "WHERE (raitem_rahead_id=:rahead_id); "
                "SELECT importcoitemstora(:rahead_id,NULL);"
                "DELETE FROM rahead "
                "WHERE (rahead_id=:rahead_id);" );
-    q.bindValue(":rahead_id", _raheadid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    returncloseEvent.bindValue(":rahead_id", _raheadid);
+    returncloseEvent.exec();
+    if (returncloseEvent.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, returncloseEvent.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -1422,12 +1429,12 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
     if ( (_metrics->value("RANumberGeneration") == "A") ||
          (_metrics->value("RANumberGeneration") == "O")   )
     {
-      q.prepare("SELECT releaseRaNumber(:number) AS result;");
-      q.bindValue(":number", _authNumber->text());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      returncloseEvent.prepare("SELECT releaseRaNumber(:number) AS result;");
+      returncloseEvent.bindValue(":number", _authNumber->text());
+      returncloseEvent.exec();
+      if (returncloseEvent.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, returncloseEvent.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
@@ -1584,16 +1591,17 @@ void returnAuthorization::sCreditByChanged()
 
 void returnAuthorization::sAuthorizeLine()
 {
+  XSqlQuery returnAuthorizeLine;
   QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     QString sql ( "SELECT authReturnItem(:raitem_id) AS result;" );
-    q.prepare(sql);
-    q.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    returnAuthorizeLine.prepare(sql);
+    returnAuthorizeLine.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
+    returnAuthorizeLine.exec();
+    if (returnAuthorizeLine.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, returnAuthorizeLine.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -1606,15 +1614,16 @@ void returnAuthorization::sAuthorizeLine()
 
 void returnAuthorization::sClearAuthorization()
 {
+  XSqlQuery returnClearAuthorization;
   QList<XTreeWidgetItem*> selected = _raitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-        q.prepare ( "SELECT clearReturnItem(:raitem_id) AS result;" );
-        q.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
-        q.exec();
-        if (q.lastError().type() != QSqlError::NoError)
+        returnClearAuthorization.prepare ( "SELECT clearReturnItem(:raitem_id) AS result;" );
+        returnClearAuthorization.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
+        returnClearAuthorization.exec();
+        if (returnClearAuthorization.lastError().type() != QSqlError::NoError)
         {
-           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+           systemError(this, returnClearAuthorization.lastError().databaseText(), __FILE__, __LINE__);
            return;
         }
   }
@@ -1627,15 +1636,16 @@ void returnAuthorization::sClearAuthorization()
 
 void returnAuthorization::sAuthorizeAll()
 {
+  XSqlQuery returnAuthorizeAll;
   QString sql ( "SELECT authReturnItem(raitem_id) AS result "
                 "FROM raitem "
                 "WHERE (raitem_rahead_id=:raitem_rahead_id);" );
-  q.prepare(sql);
-  q.bindValue(":raitem_rahead_id",  _raheadid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  returnAuthorizeAll.prepare(sql);
+  returnAuthorizeAll.bindValue(":raitem_rahead_id",  _raheadid);
+  returnAuthorizeAll.exec();
+  if (returnAuthorizeAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnAuthorizeAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -1647,22 +1657,23 @@ void returnAuthorization::sAuthorizeAll()
 
 void returnAuthorization::sEnterReceipt()
 {
+  XSqlQuery returnEnterReceipt;
   ParameterList params;
-  q.prepare("SELECT * "
+  returnEnterReceipt.prepare("SELECT * "
             "FROM recv "
             "WHERE ((recv_orderitem_id=:id)"
             "  AND  (recv_order_type = 'RA')"
             "  AND  (NOT recv_posted));");
-  q.bindValue(":id", _raitem->id());
-  q.exec();
-  if (q.first())
+  returnEnterReceipt.bindValue(":id", _raitem->id());
+  returnEnterReceipt.exec();
+  if (returnEnterReceipt.first())
   {
-    params.append("recv_id", q.value("recv_id"));
+    params.append("recv_id", returnEnterReceipt.value("recv_id"));
     params.append("mode", "edit");
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (returnEnterReceipt.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnEnterReceipt.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -1681,6 +1692,7 @@ void returnAuthorization::sEnterReceipt()
 
 void returnAuthorization::sReceiveAll()
 {
+  XSqlQuery returnReceiveAll;
   ParameterList params;
   params.append("orderid",   _raheadid);
   params.append("ordertype", "RA");
@@ -1690,11 +1702,11 @@ void returnAuthorization::sReceiveAll()
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   MetaSQLQuery recvm = mqlLoad("receipt", "receiveAll");
-  q = recvm.toQuery(params);
+  returnReceiveAll = recvm.toQuery(params);
 
-  while (q.next())
+  while (returnReceiveAll.next())
   {
-    int result = q.value("result").toInt();
+    int result = returnReceiveAll.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("enterReceipt", result),
@@ -1703,9 +1715,9 @@ void returnAuthorization::sReceiveAll()
     }
     omfgThis->sPurchaseOrderReceiptsUpdated();
   }
-  if (q.lastError().type() != QSqlError::NoError)
+  if (returnReceiveAll.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnReceiveAll.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -1744,18 +1756,19 @@ void returnAuthorization::sHandleAction()
 
 void returnAuthorization::sAction()
 {
-  q.prepare("UPDATE raitem SET "
+  XSqlQuery returnAction;
+  returnAction.prepare("UPDATE raitem SET "
             "raitem_status = :status "
             "WHERE (raitem_id=:raitem_id); ");
-  q.bindValue(":raitem_id", _raitem->id());
+  returnAction.bindValue(":raitem_id", _raitem->id());
   if (_raitem->altId() == -1)
-    q.bindValue(":status",QString("O"));
+    returnAction.bindValue(":status",QString("O"));
   else
-    q.bindValue(":status",QString("C"));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    returnAction.bindValue(":status",QString("C"));
+  returnAction.exec();
+  if (returnAction.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnAction.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -1945,22 +1958,23 @@ void returnAuthorization::sViewNewOrder()
 
 void returnAuthorization::sEditNewOrderLine()
 {
-  q.prepare("SELECT coitem_id, cohead_number, "
+  XSqlQuery returnEditNewOrderLine;
+  returnEditNewOrderLine.prepare("SELECT coitem_id, cohead_number, "
             "  cohead_curr_id, cohead_orderdate "
             "FROM raitem, cohead, coitem "
             "WHERE ((raitem_id=:raitem_id) "
             "AND (raitem_new_coitem_id=coitem_id) "
             "AND (coitem_cohead_id=cohead_id));");
-  q.bindValue(":raitem_id", _raitem->id());
-  q.exec();
-  if (q.first())
+  returnEditNewOrderLine.bindValue(":raitem_id", _raitem->id());
+  returnEditNewOrderLine.exec();
+  if (returnEditNewOrderLine.first())
   {
     ParameterList params;
-    params.append("soitem_id", q.value("coitem_id").toInt());
+    params.append("soitem_id", returnEditNewOrderLine.value("coitem_id").toInt());
     params.append("cust_id", _cust->id());
-    params.append("orderNumber", q.value("cohead_number").toString());
-    params.append("curr_id", q.value("cohead_curr_id").toInt());
-    params.append("orderDate", q.value("cohead_orderdate").toDate());
+    params.append("orderNumber", returnEditNewOrderLine.value("cohead_number").toString());
+    params.append("curr_id", returnEditNewOrderLine.value("cohead_curr_id").toInt());
+    params.append("orderDate", returnEditNewOrderLine.value("cohead_orderdate").toDate());
     params.append("mode", "edit");
 
     salesOrderItem newdlg(this);
@@ -1971,22 +1985,23 @@ void returnAuthorization::sEditNewOrderLine()
 
 void returnAuthorization::sViewNewOrderLine()
 {
-  q.prepare("SELECT coitem_id, cohead_number, "
+  XSqlQuery returnViewNewOrderLine;
+  returnViewNewOrderLine.prepare("SELECT coitem_id, cohead_number, "
             "  cohead_curr_id, cohead_orderdate "
             "FROM raitem, cohead, coitem "
             "WHERE ((raitem_id=:raitem_id) "
             "AND (raitem_new_coitem_id=coitem_id) "
             "AND (coitem_cohead_id=cohead_id));");
-  q.bindValue(":raitem_id", _raitem->id());
-  q.exec();
-  if (q.first())
+  returnViewNewOrderLine.bindValue(":raitem_id", _raitem->id());
+  returnViewNewOrderLine.exec();
+  if (returnViewNewOrderLine.first())
   {
     ParameterList params;
-    params.append("soitem_id", q.value("coitem_id").toInt());
+    params.append("soitem_id", returnViewNewOrderLine.value("coitem_id").toInt());
     params.append("cust_id", _cust->id());
-    params.append("orderNumber", q.value("cohead_number").toString());
-    params.append("curr_id", q.value("cohead_curr_id").toInt());
-    params.append("orderDate", q.value("cohead_orderdate").toDate());
+    params.append("orderNumber", returnViewNewOrderLine.value("cohead_number").toString());
+    params.append("curr_id", returnViewNewOrderLine.value("cohead_curr_id").toInt());
+    params.append("orderDate", returnViewNewOrderLine.value("cohead_orderdate").toDate());
     params.append("mode", "view");
 
     salesOrderItem newdlg(this);
@@ -2018,22 +2033,23 @@ void returnAuthorization::sShipment()
 
 void returnAuthorization::sCheckNumber()
 {
-  q.prepare( "SELECT rahead_id "
+  XSqlQuery returnCheckNumber;
+  returnCheckNumber.prepare( "SELECT rahead_id "
                  "FROM rahead "
                  "WHERE (rahead_number=:rahead_number);" );
-  q.bindValue(":rahead_number", _authNumber->text());
-  q.exec();
-  if (q.first())
+  returnCheckNumber.bindValue(":rahead_number", _authNumber->text());
+  returnCheckNumber.exec();
+  if (returnCheckNumber.first())
   {
     _mode = cEdit;
-    _raheadid = q.value("rahead_id").toInt();
+    _raheadid = returnCheckNumber.value("rahead_id").toInt();
     populate();
     _authNumber->setEnabled(FALSE);
     _cust->setReadOnly(TRUE);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (returnCheckNumber.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnCheckNumber.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sSave(true);

@@ -54,6 +54,7 @@ void location::languageChange()
 
 enum SetResponse location::set(const ParameterList &pParams)
 {
+  XSqlQuery locationet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -72,9 +73,9 @@ enum SetResponse location::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('location_location_id_seq') AS location_id;");
-      if (q.first())
-        _locationid = q.value("location_id").toInt();
+      locationet.exec("SELECT NEXTVAL('location_location_id_seq') AS location_id;");
+      if (locationet.first())
+        _locationid = locationet.value("location_id").toInt();
       else
       {
         systemError(this, tr("A System Error occurred at %1::%2.")
@@ -129,21 +130,22 @@ enum SetResponse location::set(const ParameterList &pParams)
 
 void location::sCheck()
 {
+  XSqlQuery locationCheck;
   _location->setText(_location->text().trimmed());
   if ( (_mode == cNew) &&
        (_warehouse->isEnabled()) &&
        (_location->text().length()) )
   {
-    q.prepare( "SELECT location_id "
+    locationCheck.prepare( "SELECT location_id "
                "FROM location "
                "WHERE ( (location_warehous_id=:location_warehous_id)"
                " AND (UPPER(location_name)=UPPER(:location_name)) );" );
-    q.bindValue(":warehous_id", _warehouse->id());
-    q.bindValue(":location_name", _location->text());
-    q.exec();
-    if (q.first())
+    locationCheck.bindValue(":warehous_id", _warehouse->id());
+    locationCheck.bindValue(":location_name", _location->text());
+    locationCheck.exec();
+    if (locationCheck.first())
     {
-      _locationid = q.value("location_id").toInt();
+      _locationid = locationCheck.value("location_id").toInt();
       _mode = cEdit;
       _warehouse->setEnabled(FALSE);
       _location->setEnabled(FALSE);
@@ -155,6 +157,7 @@ void location::sCheck()
 
 void location::sSave()
 {
+  XSqlQuery locationSave;
   if (_warehouse->id() == -1)
   {
     QMessageBox::critical( this, tr("Select a Site"),
@@ -176,7 +179,7 @@ void location::sSave()
     return;
   }
 
-  q.prepare("SELECT location_id"
+  locationSave.prepare("SELECT location_id"
             "  FROM location"
             " WHERE((location_id != :location_id)"
             "   AND (location_warehous_id=:location_warehous_id)"
@@ -184,14 +187,14 @@ void location::sSave()
             "   AND (location_rack=:location_rack)"
             "   AND (location_bin=:location_bin)"
             "   AND (location_name=:location_name))");
-  q.bindValue(":location_id", _locationid);
-  q.bindValue(":location_warehous_id", _warehouse->id());
-  q.bindValue(":location_aisle", _aisle->text());
-  q.bindValue(":location_rack", _rack->text());
-  q.bindValue(":location_bin", _bin->text());
-  q.bindValue(":location_name", _location->text());
-  q.exec();
-  if(q.first())
+  locationSave.bindValue(":location_id", _locationid);
+  locationSave.bindValue(":location_warehous_id", _warehouse->id());
+  locationSave.bindValue(":location_aisle", _aisle->text());
+  locationSave.bindValue(":location_rack", _rack->text());
+  locationSave.bindValue(":location_bin", _bin->text());
+  locationSave.bindValue(":location_name", _location->text());
+  locationSave.exec();
+  if(locationSave.first())
   {
     QMessageBox::critical( this, tr("Duplicate Location Name"),
                            tr("<p>You must enter a unique name to identify "
@@ -202,7 +205,7 @@ void location::sSave()
   
 
   if (_mode == cNew)
-    q.prepare( "INSERT INTO location "
+    locationSave.prepare( "INSERT INTO location "
                "( location_id, location_warehous_id,"
                "  location_aisle, location_rack, location_bin,  location_name,"
                "  location_whsezone_id, location_descrip,"
@@ -213,7 +216,7 @@ void location::sSave()
                "  :location_whsezone_id, :location_descrip,"
                "  :location_netable, :location_restrict );" );
   else if (_mode == cEdit)
-    q.prepare( "UPDATE location "
+    locationSave.prepare( "UPDATE location "
                "SET location_warehous_id=:location_warehous_id,"
                "    location_aisle=:location_aisle, location_rack=:location_rack,"
                "    location_bin=:location_bin, location_name=:location_name,"
@@ -221,29 +224,30 @@ void location::sSave()
                "    location_netable=:location_netable, location_restrict=:location_restrict "
                "WHERE (location_id=:location_id);" );
 
-  q.bindValue(":location_id", _locationid);
-  q.bindValue(":location_warehous_id", _warehouse->id());
-  q.bindValue(":location_aisle", _aisle->text());
-  q.bindValue(":location_rack", _rack->text());
-  q.bindValue(":location_bin", _bin->text());
-  q.bindValue(":location_name", _location->text());
-  q.bindValue(":location_whsezone_id", _whsezone->id());
-  q.bindValue(":location_descrip", _description->toPlainText().trimmed());
-  q.bindValue(":location_netable", QVariant(_netable->isChecked()));
-  q.bindValue(":location_restrict", QVariant(_restricted->isChecked()));
-  q.exec();
+  locationSave.bindValue(":location_id", _locationid);
+  locationSave.bindValue(":location_warehous_id", _warehouse->id());
+  locationSave.bindValue(":location_aisle", _aisle->text());
+  locationSave.bindValue(":location_rack", _rack->text());
+  locationSave.bindValue(":location_bin", _bin->text());
+  locationSave.bindValue(":location_name", _location->text());
+  locationSave.bindValue(":location_whsezone_id", _whsezone->id());
+  locationSave.bindValue(":location_descrip", _description->toPlainText().trimmed());
+  locationSave.bindValue(":location_netable", QVariant(_netable->isChecked()));
+  locationSave.bindValue(":location_restrict", QVariant(_restricted->isChecked()));
+  locationSave.exec();
 
   done(_locationid);
 }
 
 void location::sClose()
 {
+  XSqlQuery locationClose;
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM locitem "
+    locationClose.prepare( "DELETE FROM locitem "
                 "WHERE (locitem_location_id=:location_id);" );
-    q.bindValue(":location_id", _locationid);
-    q.exec();
+    locationClose.bindValue(":location_id", _locationid);
+    locationClose.exec();
   }
 
   reject();
@@ -251,33 +255,34 @@ void location::sClose()
 
 void location::sHandleWarehouse(int pWarehousid)
 {
-  q.prepare( "SELECT warehous_enforcearbl, warehous_usezones,"
+  XSqlQuery locationHandleWarehouse;
+  locationHandleWarehouse.prepare( "SELECT warehous_enforcearbl, warehous_usezones,"
              "       warehous_aislesize, warehous_aislealpha,"
              "       warehous_racksize, warehous_rackalpha,"
              "       warehous_binsize, warehous_binalpha,"
              "       warehous_locationsize, warehous_locationalpha "
              "FROM whsinfo "
              "WHERE (warehous_id=:warehous_id);" );
-  q.bindValue(":warehous_id", pWarehousid);
-  q.exec();
-  if (q.first())
+  locationHandleWarehouse.bindValue(":warehous_id", pWarehousid);
+  locationHandleWarehouse.exec();
+  if (locationHandleWarehouse.first())
   {
-    if (q.value("warehous_enforcearbl").toBool())
+    if (locationHandleWarehouse.value("warehous_enforcearbl").toBool())
     {
       QString regex;
 
-      if (q.value("warehous_aislesize").toInt() > 0)
+      if (locationHandleWarehouse.value("warehous_aislesize").toInt() > 0)
       {
         _aisleLit->show();
         _aisle->show();
 
-        if (q.value("warehous_aislealpha").toBool())
-          regex = QString("\\w{1%1}").arg(q.value("warehous_aislesize").toInt());
+        if (locationHandleWarehouse.value("warehous_aislealpha").toBool())
+          regex = QString("\\w{1%1}").arg(locationHandleWarehouse.value("warehous_aislesize").toInt());
         else
-          regex = QString("\\d{1%1}").arg(q.value("warehous_aislesize").toInt());
+          regex = QString("\\d{1%1}").arg(locationHandleWarehouse.value("warehous_aislesize").toInt());
 
         _aisle->setValidator(new QRegExpValidator(QRegExp(regex), this));
-        _aisle->setMaxLength(q.value("warehous_aislesize").toInt());
+        _aisle->setMaxLength(locationHandleWarehouse.value("warehous_aislesize").toInt());
       }
       else
       {
@@ -285,18 +290,18 @@ void location::sHandleWarehouse(int pWarehousid)
         _aisle->hide();
       }
 
-      if (q.value("warehous_racksize").toInt() > 0)
+      if (locationHandleWarehouse.value("warehous_racksize").toInt() > 0)
       {
         _rackLit->show();
         _rack->show();
 
-        if (q.value("warehous_rackalpha").toBool())
-          regex = QString("\\w{1%1}").arg(q.value("warehous_racksize").toInt());
+        if (locationHandleWarehouse.value("warehous_rackalpha").toBool())
+          regex = QString("\\w{1%1}").arg(locationHandleWarehouse.value("warehous_racksize").toInt());
         else
-          regex = QString("\\d{1%1}").arg(q.value("warehous_racksize").toInt());
+          regex = QString("\\d{1%1}").arg(locationHandleWarehouse.value("warehous_racksize").toInt());
 
         _rack->setValidator(new QRegExpValidator(QRegExp(regex), this));
-        _rack->setMaxLength(q.value("warehous_racksize").toInt());
+        _rack->setMaxLength(locationHandleWarehouse.value("warehous_racksize").toInt());
       }
       else
       {
@@ -304,18 +309,18 @@ void location::sHandleWarehouse(int pWarehousid)
         _rack->hide();
       }
 
-      if (q.value("warehous_binsize").toInt() > 0)
+      if (locationHandleWarehouse.value("warehous_binsize").toInt() > 0)
       {
         _binLit->show();
         _bin->show();
 
-        if (q.value("warehous_binalpha").toBool())
-          regex = QString("\\w{1%1}").arg(q.value("warehous_binsize").toInt());
+        if (locationHandleWarehouse.value("warehous_binalpha").toBool())
+          regex = QString("\\w{1%1}").arg(locationHandleWarehouse.value("warehous_binsize").toInt());
         else
-          regex = QString("\\d{1%1}").arg(q.value("warehous_binsize").toInt());
+          regex = QString("\\d{1%1}").arg(locationHandleWarehouse.value("warehous_binsize").toInt());
 
         _bin->setValidator(new QRegExpValidator(QRegExp(regex), this));
-        _bin->setMaxLength(q.value("warehous_binsize").toInt());
+        _bin->setMaxLength(locationHandleWarehouse.value("warehous_binsize").toInt());
       }
       else
       {
@@ -323,18 +328,18 @@ void location::sHandleWarehouse(int pWarehousid)
         _bin->hide();
       }
 
-      if (q.value("warehous_locationsize").toInt() > 0)
+      if (locationHandleWarehouse.value("warehous_locationsize").toInt() > 0)
       {
         _locationLit->show();
         _location->show();
 
-        if (q.value("warehous_locationalpha").toBool())
-          regex = QString("\\w{1%1}").arg(q.value("warehous_locationsize").toInt());
+        if (locationHandleWarehouse.value("warehous_locationalpha").toBool())
+          regex = QString("\\w{1%1}").arg(locationHandleWarehouse.value("warehous_locationsize").toInt());
         else
-          regex = QString("\\d{1%1}").arg(q.value("warehous_locationsize").toInt());
+          regex = QString("\\d{1%1}").arg(locationHandleWarehouse.value("warehous_locationsize").toInt());
 
         _location->setValidator(new QRegExpValidator(QRegExp(regex), this));
-        _location->setMaxLength(q.value("warehous_locationsize").toInt());
+        _location->setMaxLength(locationHandleWarehouse.value("warehous_locationsize").toInt());
       }
       else
       {
@@ -354,14 +359,14 @@ void location::sHandleWarehouse(int pWarehousid)
       _location->show();
     }
 
-    _whsezone->setAllowNull(!q.value("warehous_usezones").toBool());
-    q.prepare( "SELECT whsezone_id, whsezone_name "
+    _whsezone->setAllowNull(!locationHandleWarehouse.value("warehous_usezones").toBool());
+    locationHandleWarehouse.prepare( "SELECT whsezone_id, whsezone_name "
                "FROM whsezone "
                "WHERE (whsezone_warehous_id=:warehous_id) "
                "ORDER BY whsezone_name;" );
-    q.bindValue(":warehous_id", pWarehousid);
-    q.exec();
-    _whsezone->populate(q);
+    locationHandleWarehouse.bindValue(":warehous_id", pWarehousid);
+    locationHandleWarehouse.exec();
+    _whsezone->populate(locationHandleWarehouse);
     if (!_whsezone->count())
       _whsezone->setEnabled(FALSE);
   }
@@ -369,6 +374,7 @@ void location::sHandleWarehouse(int pWarehousid)
 
 void location::sNew()
 {
+  XSqlQuery locationNew;
   ParameterList params;
   itemList* newdlg = new itemList(this);
   newdlg->set(params);
@@ -378,14 +384,14 @@ void location::sNew()
   {
 //  Make sure that a locitem does not already exist for this
 //  location and the selected item
-    q.prepare( "SELECT locitem_id "
+    locationNew.prepare( "SELECT locitem_id "
                "FROM locitem "
                "WHERE ( (locitem_location_id=:location_id)"
                " AND (locitem_item_id=:item_id) );" );
-    q.bindValue(":location_id", _locationid);
-    q.bindValue(":item_id", itemid);
-    q.exec();
-    if (q.first())
+    locationNew.bindValue(":location_id", _locationid);
+    locationNew.bindValue(":item_id", itemid);
+    locationNew.exec();
+    if (locationNew.first())
 //  Tell the user that a locitem already exists for this location/item
       QMessageBox::information( this, tr("Location/Item Exists"),
                                 tr( "<p>An Item record already exists in the "
@@ -393,13 +399,13 @@ void location::sNew()
 				    "for the same Item") );
     else
     {
-      q.prepare( "INSERT INTO locitem "
+      locationNew.prepare( "INSERT INTO locitem "
                  "(locitem_location_id, locitem_item_id) "
                  "VALUES "
                  "(:location_id, :item_id);" );
-      q.bindValue(":location_id", _locationid);
-      q.bindValue(":item_id", itemid);
-      q.exec();
+      locationNew.bindValue(":location_id", _locationid);
+      locationNew.bindValue(":item_id", itemid);
+      locationNew.exec();
 
       sFillList();
     }
@@ -408,46 +414,49 @@ void location::sNew()
 
 void location::sDelete()
 {
+  XSqlQuery locationDelete;
 //  ToDo - add a check to make sure that am itemloc does not exist for the selected locitem pair?
-  q.prepare( "DELETE FROM locitem "
+  locationDelete.prepare( "DELETE FROM locitem "
              "WHERE (locitem_id=:locitem_id);" );
-  q.bindValue(":locitem_id", _locitem->id());
-  q.exec();
+  locationDelete.bindValue(":locitem_id", _locitem->id());
+  locationDelete.exec();
 
   sFillList();
 }
 
 void location::sFillList()
 {
-  q.prepare( "SELECT locitem_id, item_number,"
+  XSqlQuery locationFillList;
+  locationFillList.prepare( "SELECT locitem_id, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip  "
              "FROM locitem, item "
              "WHERE ( (locitem_item_id=item_id)"
              " AND (locitem_location_id=:location_id) );" );
-  q.bindValue(":location_id", _locationid);
-  q.exec();
-  _locitem->populate(q);
+  locationFillList.bindValue(":location_id", _locationid);
+  locationFillList.exec();
+  _locitem->populate(locationFillList);
 }
 
 void location::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery locationpopulate;
+  locationpopulate.prepare( "SELECT * "
              "FROM location "
              "WHERE (location_id=:location_id);" );
-  q.bindValue(":location_id", _locationid);
-  q.exec();
-  if (q.first())
+  locationpopulate.bindValue(":location_id", _locationid);
+  locationpopulate.exec();
+  if (locationpopulate.first())
   {
-    _aisle->setText(q.value("location_aisle").toString());
-    _rack->setText(q.value("location_rack").toString());
-    _bin->setText(q.value("location_bin").toString());
-    _location->setText(q.value("location_name").toString());
-    _description->setText(q.value("location_descrip").toString());
-    _netable->setChecked(q.value("location_netable").toBool());
-    _restricted->setChecked(q.value("location_restrict").toBool());
+    _aisle->setText(locationpopulate.value("location_aisle").toString());
+    _rack->setText(locationpopulate.value("location_rack").toString());
+    _bin->setText(locationpopulate.value("location_bin").toString());
+    _location->setText(locationpopulate.value("location_name").toString());
+    _description->setText(locationpopulate.value("location_descrip").toString());
+    _netable->setChecked(locationpopulate.value("location_netable").toBool());
+    _restricted->setChecked(locationpopulate.value("location_restrict").toBool());
 
-    int whsezoneid = q.value("location_whsezone_id").toInt();
-    _warehouse->setId(q.value("location_warehous_id").toInt());
+    int whsezoneid = locationpopulate.value("location_whsezone_id").toInt();
+    _warehouse->setId(locationpopulate.value("location_warehous_id").toInt());
     sHandleWarehouse(_warehouse->id());
 
     _whsezone->setId(whsezoneid);

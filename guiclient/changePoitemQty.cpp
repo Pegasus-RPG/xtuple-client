@@ -55,6 +55,7 @@ void changePoitemQty::languageChange()
 
 enum SetResponse changePoitemQty::set(const ParameterList &pParams)
 {
+  XSqlQuery changeet;
   XDialog::set(pParams);
   _captive = TRUE;
 
@@ -72,14 +73,14 @@ enum SetResponse changePoitemQty::set(const ParameterList &pParams)
   param = pParams.value("poitem_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT poitem_pohead_id "
+    changeet.prepare( "SELECT poitem_pohead_id "
                "FROM poitem "
                "WHERE (poitem_id=:poitem_id);" );
-    q.bindValue(":poitem_id", param.toInt());
-    q.exec();
-    if (q.first())
+    changeet.bindValue(":poitem_id", param.toInt());
+    changeet.exec();
+    if (changeet.first())
     {
-      _po->setId(q.value("poitem_pohead_id").toInt());
+      _po->setId(changeet.value("poitem_pohead_id").toInt());
       _po->setReadOnly(true);
       _poitem->setId(param.toInt());
     }
@@ -96,7 +97,8 @@ enum SetResponse changePoitemQty::set(const ParameterList &pParams)
 
 void changePoitemQty::sPopulatePoitem(int pPoheadid)
 {
-  q.prepare( "SELECT poitem_id,"
+  XSqlQuery changePopulatePoitem;
+  changePopulatePoitem.prepare( "SELECT poitem_id,"
              "       ( poitem_linenumber || '-' ||"
              "         COALESCE(item_number, poitem_vend_item_number) || ' (' ||"
              "         COALESCE(item_descrip1, firstLine(poitem_vend_item_descrip)) || ')' ) "
@@ -107,13 +109,14 @@ void changePoitemQty::sPopulatePoitem(int pPoheadid)
              "WHERE ( (poitem_status <> 'C')"
              " AND (poitem_pohead_id=:pohead_id) ) "
              "ORDER BY poitem_linenumber;" );
-  q.bindValue(":pohead_id", pPoheadid);
-  q.exec();
-  _poitem->populate(q);
+  changePopulatePoitem.bindValue(":pohead_id", pPoheadid);
+  changePopulatePoitem.exec();
+  _poitem->populate(changePopulatePoitem);
 }
 
 void changePoitemQty::sPopulate(int pPoitemid)
 {
+  XSqlQuery changePopulate;
   if (pPoitemid == -1)
   {
     _currentQtyReceived->clear();
@@ -126,24 +129,24 @@ void changePoitemQty::sPopulate(int pPoitemid)
   }
   else
   {
-    q.prepare( "SELECT poitem_qty_ordered, poitem_qty_received,"
+    changePopulate.prepare( "SELECT poitem_qty_ordered, poitem_qty_received,"
                "        poitem_qty_returned, poitem_freight, pohead_curr_id,"
                "        CURRENT_DATE AS date "
                "FROM poitem, pohead "
                "WHERE ((poitem_pohead_id=pohead_id)"
                "  AND  (poitem_id=:poitem_id));" );
-    q.bindValue(":poitem_id", pPoitemid);
-    q.exec();
-    if (q.first())
+    changePopulate.bindValue(":poitem_id", pPoitemid);
+    changePopulate.exec();
+    if (changePopulate.first())
     {
-      _currentQtyOrdered->setDouble(q.value("poitem_qty_ordered").toDouble());
-      _currentQtyReceived->setDouble(q.value("poitem_qty_received").toDouble());
-      _currentQtyBalance->setDouble(q.value("poitem_qty_ordered").toDouble() - q.value("poitem_qty_received").toDouble());
-      _newQtyReceived->setDouble(q.value("poitem_qty_received").toDouble());
-      _cacheFreight = q.value("poitem_freight").toDouble();
-      _freight->set(q.value("poitem_freight").toDouble(),
-                    q.value("pohead_curr_id").toInt(),
-                    q.value("date").toDate());
+      _currentQtyOrdered->setDouble(changePopulate.value("poitem_qty_ordered").toDouble());
+      _currentQtyReceived->setDouble(changePopulate.value("poitem_qty_received").toDouble());
+      _currentQtyBalance->setDouble(changePopulate.value("poitem_qty_ordered").toDouble() - changePopulate.value("poitem_qty_received").toDouble());
+      _newQtyReceived->setDouble(changePopulate.value("poitem_qty_received").toDouble());
+      _cacheFreight = changePopulate.value("poitem_freight").toDouble();
+      _freight->set(changePopulate.value("poitem_freight").toDouble(),
+                    changePopulate.value("pohead_curr_id").toInt(),
+                    changePopulate.value("date").toDate());
       sQtyChanged();
     }
   }
@@ -151,6 +154,7 @@ void changePoitemQty::sPopulate(int pPoitemid)
 
 void changePoitemQty::sChangeQty()
 {
+  XSqlQuery changeChangeQty;
   if (_newQty->toDouble() <= 0 &&
       QMessageBox::question(this, tr("Quantity 0?"),
 			    tr("<p>You have changed the quantity to 0 or less. "
@@ -159,58 +163,58 @@ void changePoitemQty::sChangeQty()
 			    QMessageBox::Yes) == QMessageBox::No)
     return;
 
-  q.prepare("SELECT changePoitemQty(:poitem_id, :qty) AS result;");
-  q.bindValue(":poitem_id", _poitem->id());
-  q.bindValue(":qty", _newQty->toDouble());
-  q.exec();
-  if (q.first())
+  changeChangeQty.prepare("SELECT changePoitemQty(:poitem_id, :qty) AS result;");
+  changeChangeQty.bindValue(":poitem_id", _poitem->id());
+  changeChangeQty.bindValue(":qty", _newQty->toDouble());
+  changeChangeQty.exec();
+  if (changeChangeQty.first())
   {
-    int result = q.value("result").toInt();
+    int result = changeChangeQty.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("changePoitemQty", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (changeChangeQty.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, changeChangeQty.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_postComment->isChecked())
   {
-    q.prepare("SELECT postComment(:cmnttype_id, 'PI', :poitem_id, :comment) AS result");
-    q.bindValue(":cmnttype_id", _cmnttype->id());
-    q.bindValue(":poitem_id", _poitem->id());
-    q.bindValue(":comment", _comment->toPlainText());
-    q.exec();
-    if (q.first())
+    changeChangeQty.prepare("SELECT postComment(:cmnttype_id, 'PI', :poitem_id, :comment) AS result");
+    changeChangeQty.bindValue(":cmnttype_id", _cmnttype->id());
+    changeChangeQty.bindValue(":poitem_id", _poitem->id());
+    changeChangeQty.bindValue(":comment", _comment->toPlainText());
+    changeChangeQty.exec();
+    if (changeChangeQty.first())
     {
-      int result = q.value("result").toInt();
+      int result = changeChangeQty.value("result").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("postcomment", result), __FILE__, __LINE__);
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (changeChangeQty.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, changeChangeQty.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
 
   if (_freight->localValue() != _cacheFreight)
   {
-    q.prepare("UPDATE poitem SET poitem_freight=:poitem_freight"
+    changeChangeQty.prepare("UPDATE poitem SET poitem_freight=:poitem_freight"
               " WHERE (poitem_id=:poitem_id); ");
-    q.bindValue(":poitem_id", _poitem->id());
-    q.bindValue(":poitem_freight", _freight->localValue());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    changeChangeQty.bindValue(":poitem_id", _poitem->id());
+    changeChangeQty.bindValue(":poitem_freight", _freight->localValue());
+    changeChangeQty.exec();
+    if (changeChangeQty.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, changeChangeQty.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

@@ -62,6 +62,7 @@ void scrapTrans::languageChange()
 
 enum SetResponse scrapTrans::set(const ParameterList &pParams)
 {
+  XSqlQuery scrapet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -97,25 +98,25 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
       _post->hide();
       _close->setText(tr("&Close"));
 
-      q.prepare( "SELECT * "
+      scrapet.prepare( "SELECT * "
                  "FROM invhist "
                  "WHERE (invhist_id=:invhist_id);" );
-      q.bindValue(":invhist_id", invhistid);
-      q.exec();
-      if (q.first())
+      scrapet.bindValue(":invhist_id", invhistid);
+      scrapet.exec();
+      if (scrapet.first())
       {
-        _transDate->setDate(q.value("invhist_transdate").toDate());
-        _username->setText(q.value("invhist_user").toString());
-        _qty->setDouble(q.value("invhist_invqty").toDouble());
-        _beforeQty->setDouble(q.value("invhist_qoh_before").toDouble());
-        _afterQty->setDouble(q.value("invhist_qoh_after").toDouble());
-        _documentNum->setText(q.value("invhist_ordnumber"));
-        _notes->setText(q.value("invhist_comments").toString());
-        _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
+        _transDate->setDate(scrapet.value("invhist_transdate").toDate());
+        _username->setText(scrapet.value("invhist_user").toString());
+        _qty->setDouble(scrapet.value("invhist_invqty").toDouble());
+        _beforeQty->setDouble(scrapet.value("invhist_qoh_before").toDouble());
+        _afterQty->setDouble(scrapet.value("invhist_qoh_after").toDouble());
+        _documentNum->setText(scrapet.value("invhist_ordnumber"));
+        _notes->setText(scrapet.value("invhist_comments").toString());
+        _item->setItemsiteid(scrapet.value("invhist_itemsite_id").toInt());
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (scrapet.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, scrapet.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
 
@@ -127,6 +128,7 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
 
 void scrapTrans::sPost()
 {
+  XSqlQuery scrapPost;
   struct {
     bool        condition;
     QString     msg;
@@ -154,22 +156,22 @@ void scrapTrans::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible distribution cancelations
-  q.prepare( "SELECT invScrap(itemsite_id, :qty, :docNumber,"
+  scrapPost.exec("BEGIN;");	// because of possible distribution cancelations
+  scrapPost.prepare( "SELECT invScrap(itemsite_id, :qty, :docNumber,"
              "                :comments, :date) AS result "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":qty", _qty->toDouble());
-  q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->toPlainText());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":date",        _transDate->date());
-  q.exec();
-  if (q.first())
+  scrapPost.bindValue(":qty", _qty->toDouble());
+  scrapPost.bindValue(":docNumber", _documentNum->text());
+  scrapPost.bindValue(":comments", _notes->toPlainText());
+  scrapPost.bindValue(":item_id", _item->id());
+  scrapPost.bindValue(":warehous_id", _warehouse->id());
+  scrapPost.bindValue(":date",        _transDate->date());
+  scrapPost.exec();
+  if (scrapPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = scrapPost.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -177,14 +179,14 @@ void scrapTrans::sPost()
                   __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (scrapPost.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, scrapPost.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    if (distributeInventory::SeriesAdjust(scrapPost.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
       QMessageBox::information(this, tr("Scrap Transaction"),
@@ -192,7 +194,7 @@ void scrapTrans::sPost()
       return;
     }
 
-    q.exec("COMMIT;");
+    scrapPost.exec("COMMIT;");
 
     if (_captive)
       close();
@@ -210,10 +212,10 @@ void scrapTrans::sPost()
       _item->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (scrapPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, scrapPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -228,24 +230,25 @@ void scrapTrans::sPost()
 
 void scrapTrans::sPopulateQOH(int pWarehousid)
 {
+  XSqlQuery scrapPopulateQOH;
   if (_mode != cView)
   {
-    q.prepare( "SELECT itemsite_qtyonhand "
+    scrapPopulateQOH.prepare( "SELECT itemsite_qtyonhand "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", pWarehousid);
-    q.exec();
-    if (q.first())
+    scrapPopulateQOH.bindValue(":item_id", _item->id());
+    scrapPopulateQOH.bindValue(":warehous_id", pWarehousid);
+    scrapPopulateQOH.exec();
+    if (scrapPopulateQOH.first())
     {
-      _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
-      _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
+      _cachedQOH = scrapPopulateQOH.value("itemsite_qtyonhand").toDouble();
+      _beforeQty->setDouble(scrapPopulateQOH.value("itemsite_qtyonhand").toDouble());
       sPopulateQty();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (scrapPopulateQOH.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, scrapPopulateQOH.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

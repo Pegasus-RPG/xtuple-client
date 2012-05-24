@@ -83,6 +83,7 @@ void financialLayout::languageChange()
 
 enum SetResponse financialLayout::set(const ParameterList &pParams)
 {
+  XSqlQuery financialet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -101,14 +102,14 @@ enum SetResponse financialLayout::set(const ParameterList &pParams)
     {
       _mode = cNew;
       
-      q.prepare("SELECT NEXTVAL('flhead_flhead_id_seq') AS flhead_id;");
-      q.exec();
-      if (q.first())
+      financialet.prepare("SELECT NEXTVAL('flhead_flhead_id_seq') AS flhead_id;");
+      financialet.exec();
+      if (financialet.first())
       {
-        _flheadid = q.value("flhead_id").toInt();
-        q.prepare("INSERT INTO flhead (flhead_id) values(:flhead_id);");
-        q.bindValue(":flhead_id", _flheadid);
-        q.exec();
+        _flheadid = financialet.value("flhead_id").toInt();
+        financialet.prepare("INSERT INTO flhead (flhead_id) values(:flhead_id);");
+        financialet.bindValue(":flhead_id", _flheadid);
+        financialet.exec();
       }
       
       sSetType();
@@ -152,18 +153,19 @@ enum SetResponse financialLayout::set(const ParameterList &pParams)
 
 void financialLayout::sCheck()
 {
+  XSqlQuery financialCheck;
 
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) || (_name->text().length()))
   {
-    q.prepare( "SELECT flhead_id "
+    financialCheck.prepare( "SELECT flhead_id "
                "FROM flhead "
                "WHERE (UPPER(flhead_name)=UPPER(:flhead_name));" );
-    q.bindValue(":flhead_name", _name->text());
-    q.exec();
-    if (q.first())
+    financialCheck.bindValue(":flhead_name", _name->text());
+    financialCheck.exec();
+    if (financialCheck.first())
     {
-      _flheadid = q.value("flhead_id").toInt();
+      _flheadid = financialCheck.value("flhead_id").toInt();
       _mode = cEdit;
       _layout->setColumnCount(1);
       populate();
@@ -175,6 +177,7 @@ void financialLayout::sCheck()
 
 void financialLayout::sSave()
 {
+  XSqlQuery financialSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::warning( this, tr("Layout Name is Invalid"),
@@ -183,7 +186,7 @@ void financialLayout::sSave()
     return;
   }
   
-  q.prepare( "UPDATE flhead "
+  financialSave.prepare( "UPDATE flhead "
              "SET flhead_name=:flhead_name, flhead_descrip=:flhead_descrip,"
              "    flhead_showtotal=:showtotal,"
              "    flhead_showstart=:flhead_showstart,"
@@ -212,54 +215,55 @@ void financialLayout::sSave()
              "    flhead_notes=:flhead_notes"
              " WHERE (flhead_id=:flhead_id);" );
 
-  q.bindValue(":flhead_name", _name->text());
-  q.bindValue(":flhead_descrip", _descrip->text());
-  q.bindValue(":showtotal", QVariant((_showTotal->isChecked()) || (_showGrandTotal->isChecked())));
-  q.bindValue(":flhead_showstart", QVariant((_showTotal->isChecked() && _showStart->isChecked())));
-  q.bindValue(":flhead_showend", QVariant((_showTotal->isChecked() && _showEnd->isChecked()) ||
+  financialSave.bindValue(":flhead_name", _name->text());
+  financialSave.bindValue(":flhead_descrip", _descrip->text());
+  financialSave.bindValue(":showtotal", QVariant((_showTotal->isChecked()) || (_showGrandTotal->isChecked())));
+  financialSave.bindValue(":flhead_showstart", QVariant((_showTotal->isChecked() && _showStart->isChecked())));
+  financialSave.bindValue(":flhead_showend", QVariant((_showTotal->isChecked() && _showEnd->isChecked()) ||
     ((_showGrandTotal->isChecked()) && (_balance->isChecked()))));
-  q.bindValue(":flhead_showdelta", QVariant((_showTotal->isChecked() && _showDelta->isChecked()) ||
+  financialSave.bindValue(":flhead_showdelta", QVariant((_showTotal->isChecked() && _showDelta->isChecked()) ||
      ((_showGrandTotal->isChecked()) && (_cash->isChecked()))));
-  q.bindValue(":flhead_showbudget", QVariant((_showTotal->isChecked() && _showBudget->isChecked()) ||
+  financialSave.bindValue(":flhead_showbudget", QVariant((_showTotal->isChecked() && _showBudget->isChecked()) ||
      ((_showGrandTotal->isChecked()) && (!_adHoc->isChecked()))));
-  q.bindValue(":flhead_showdiff", QVariant((_showTotal->isChecked() && _showDiff->isChecked()) ||
+  financialSave.bindValue(":flhead_showdiff", QVariant((_showTotal->isChecked() && _showDiff->isChecked()) ||
      ((_showGrandTotal->isChecked()) && (((_income->isChecked())) || (_cash->isChecked())))));
-  q.bindValue(":flhead_showcustom", QVariant((_showTotal->isChecked() && _showCustom->isChecked())));
+  financialSave.bindValue(":flhead_showcustom", QVariant((_showTotal->isChecked() && _showCustom->isChecked())));
   if ( _income->isChecked() )
-    q.bindValue(":flhead_type","I");
+    financialSave.bindValue(":flhead_type","I");
   else if ( _balance->isChecked() )
-    q.bindValue(":flhead_type","B");
+    financialSave.bindValue(":flhead_type","B");
   else if ( _cash->isChecked() )
-    q.bindValue(":flhead_type","C");
+    financialSave.bindValue(":flhead_type","C");
   else if ( _adHoc->isChecked() )
-    q.bindValue(":flhead_type","A");
-  q.bindValue(":flhead_active", QVariant(_active->isChecked()));
-  q.bindValue(":flhead_id", _flheadid);
-  q.bindValue(":flhead_custom_label", _customText->text());
-  q.bindValue(":flhead_usealttotal", QVariant(_altTotal->isChecked()));
-  q.bindValue(":flhead_alttotal", _altTotalText->text());
-  q.bindValue(":flhead_usealtbegin", QVariant(_altBegin->isChecked()));
-  q.bindValue(":flhead_altbegin", _altBeginText->text());
-  q.bindValue(":flhead_usealtend", QVariant(_altEnd->isChecked()));
-  q.bindValue(":flhead_altend", _altEndText->text());
-  q.bindValue(":flhead_usealtdebits", QVariant(_altDebits->isChecked()));
-  q.bindValue(":flhead_altdebits", _altDebitsText->text());
-  q.bindValue(":flhead_usealtcredits", QVariant(_altCredits->isChecked()));
-  q.bindValue(":flhead_altcredits", _altCreditsText->text());
-  q.bindValue(":flhead_usealtbudget", QVariant(_altBudget->isChecked()));
-  q.bindValue(":flhead_altbudget", _altBudgetText->text());
-  q.bindValue(":flhead_usealtdiff", QVariant(_altDiff->isChecked()));
-  q.bindValue(":flhead_altdiff", _altDiffText->text());
-  q.bindValue(":flhead_id", _flheadid);
-  q.bindValue(":flhead_notes", _notes->toPlainText());
-  q.exec();
+    financialSave.bindValue(":flhead_type","A");
+  financialSave.bindValue(":flhead_active", QVariant(_active->isChecked()));
+  financialSave.bindValue(":flhead_id", _flheadid);
+  financialSave.bindValue(":flhead_custom_label", _customText->text());
+  financialSave.bindValue(":flhead_usealttotal", QVariant(_altTotal->isChecked()));
+  financialSave.bindValue(":flhead_alttotal", _altTotalText->text());
+  financialSave.bindValue(":flhead_usealtbegin", QVariant(_altBegin->isChecked()));
+  financialSave.bindValue(":flhead_altbegin", _altBeginText->text());
+  financialSave.bindValue(":flhead_usealtend", QVariant(_altEnd->isChecked()));
+  financialSave.bindValue(":flhead_altend", _altEndText->text());
+  financialSave.bindValue(":flhead_usealtdebits", QVariant(_altDebits->isChecked()));
+  financialSave.bindValue(":flhead_altdebits", _altDebitsText->text());
+  financialSave.bindValue(":flhead_usealtcredits", QVariant(_altCredits->isChecked()));
+  financialSave.bindValue(":flhead_altcredits", _altCreditsText->text());
+  financialSave.bindValue(":flhead_usealtbudget", QVariant(_altBudget->isChecked()));
+  financialSave.bindValue(":flhead_altbudget", _altBudgetText->text());
+  financialSave.bindValue(":flhead_usealtdiff", QVariant(_altDiff->isChecked()));
+  financialSave.bindValue(":flhead_altdiff", _altDiffText->text());
+  financialSave.bindValue(":flhead_id", _flheadid);
+  financialSave.bindValue(":flhead_notes", _notes->toPlainText());
+  financialSave.exec();
   
   done(_flheadid);
 }
 
 void financialLayout::populate()
 {
-  q.prepare( "SELECT flhead_name, flhead_descrip, flhead_showtotal,"
+  XSqlQuery financialpopulate;
+  financialpopulate.prepare( "SELECT flhead_name, flhead_descrip, flhead_showtotal,"
              "       flhead_showstart, flhead_showend,"
              "       flhead_showdelta, flhead_showbudget, flhead_showdiff,"
              "       flhead_showcustom, flhead_type, flhead_active, "
@@ -274,66 +278,66 @@ void financialLayout::populate()
              "       flhead_notes "
              "FROM flhead "
              "WHERE (flhead_id=:flhead_id);" );
-  q.bindValue(":flhead_id", _flheadid);
-  q.exec();
-  if (q.first())
+  financialpopulate.bindValue(":flhead_id", _flheadid);
+  financialpopulate.exec();
+  if (financialpopulate.first())
   {
-    _name->setText(q.value("flhead_name").toString());
-    _descrip->setText(q.value("flhead_descrip").toString());
-    _notes->setPlainText(q.value("flhead_notes").toString());
+    _name->setText(financialpopulate.value("flhead_name").toString());
+    _descrip->setText(financialpopulate.value("flhead_descrip").toString());
+    _notes->setPlainText(financialpopulate.value("flhead_notes").toString());
     if(_showTotal->isChecked())
     {
-      _showStart->setChecked(q.value("flhead_showstart").toBool());
-      _showEnd->setChecked(q.value("flhead_showend").toBool());
-      _showDelta->setChecked(q.value("flhead_showdelta").toBool());
-      _showBudget->setChecked(q.value("flhead_showbudget").toBool());
-      _showDiff->setChecked(q.value("flhead_showdiff").toBool());
-      _showCustom->setChecked(q.value("flhead_showcustom").toBool());
+      _showStart->setChecked(financialpopulate.value("flhead_showstart").toBool());
+      _showEnd->setChecked(financialpopulate.value("flhead_showend").toBool());
+      _showDelta->setChecked(financialpopulate.value("flhead_showdelta").toBool());
+      _showBudget->setChecked(financialpopulate.value("flhead_showbudget").toBool());
+      _showDiff->setChecked(financialpopulate.value("flhead_showdiff").toBool());
+      _showCustom->setChecked(financialpopulate.value("flhead_showcustom").toBool());
     }
-    if ( q.value("flhead_type").toString() == "I" )
+    if ( financialpopulate.value("flhead_type").toString() == "I" )
     {
-      _showGrandTotal->setChecked(q.value("flhead_showtotal").toBool());
+      _showGrandTotal->setChecked(financialpopulate.value("flhead_showtotal").toBool());
       _cachedType = cIncome;
       _income->setChecked(true);
     }
-    else if ( q.value("flhead_type").toString() == "B" )
+    else if ( financialpopulate.value("flhead_type").toString() == "B" )
     {
-      _showGrandTotal->setChecked(q.value("flhead_showtotal").toBool());
+      _showGrandTotal->setChecked(financialpopulate.value("flhead_showtotal").toBool());
       _cachedType = cBalance;
       _balance->setChecked(true);
     }
-    else if ( q.value("flhead_type").toString() == "C" )
+    else if ( financialpopulate.value("flhead_type").toString() == "C" )
     {
-      _showGrandTotal->setChecked(q.value("flhead_showtotal").toBool());
+      _showGrandTotal->setChecked(financialpopulate.value("flhead_showtotal").toBool());
       _cachedType = cCash;
       _cash->setChecked(true);
     }
-    else if ( q.value("flhead_type").toString() == "A" )
+    else if ( financialpopulate.value("flhead_type").toString() == "A" )
     {
-      _showTotal->setChecked(q.value("flhead_showtotal").toBool());
+      _showTotal->setChecked(financialpopulate.value("flhead_showtotal").toBool());
       _cachedType = cAdHoc;
       _adHoc->setChecked(true);
     }
-    _active->setChecked(q.value("flhead_active").toBool());
-    _customText->setText(q.value("flhead_custom_label").toString());
-    _altTotal->setChecked(q.value("flhead_usealttotal").toBool());
-    _altTotalText->setText(q.value("flhead_alttotal").toString());
-    _altBegin->setChecked(q.value("flhead_usealtbegin").toBool());
-    _altBeginText->setText(q.value("flhead_altbegin").toString());
-    _altEnd->setChecked(q.value("flhead_usealtend").toBool());
-    _altEndText->setText(q.value("flhead_altend").toString());
-    _altDebits->setChecked(q.value("flhead_usealtdebits").toBool());
-    _altDebitsText->setText(q.value("flhead_altdebits").toString());
-    _altCredits->setChecked(q.value("flhead_usealtcredits").toBool());
-    _altCreditsText->setText(q.value("flhead_altcredits").toString());
-    _altBudget->setChecked(q.value("flhead_usealtbudget").toBool());
-    _altBudgetText->setText(q.value("flhead_altbudget").toString());
-    _altDiff->setChecked(q.value("flhead_usealtdiff").toBool());
-    _altDiffText->setText(q.value("flhead_altdiff").toString());
+    _active->setChecked(financialpopulate.value("flhead_active").toBool());
+    _customText->setText(financialpopulate.value("flhead_custom_label").toString());
+    _altTotal->setChecked(financialpopulate.value("flhead_usealttotal").toBool());
+    _altTotalText->setText(financialpopulate.value("flhead_alttotal").toString());
+    _altBegin->setChecked(financialpopulate.value("flhead_usealtbegin").toBool());
+    _altBeginText->setText(financialpopulate.value("flhead_altbegin").toString());
+    _altEnd->setChecked(financialpopulate.value("flhead_usealtend").toBool());
+    _altEndText->setText(financialpopulate.value("flhead_altend").toString());
+    _altDebits->setChecked(financialpopulate.value("flhead_usealtdebits").toBool());
+    _altDebitsText->setText(financialpopulate.value("flhead_altdebits").toString());
+    _altCredits->setChecked(financialpopulate.value("flhead_usealtcredits").toBool());
+    _altCreditsText->setText(financialpopulate.value("flhead_altcredits").toString());
+    _altBudget->setChecked(financialpopulate.value("flhead_usealtbudget").toBool());
+    _altBudgetText->setText(financialpopulate.value("flhead_altbudget").toString());
+    _altDiff->setChecked(financialpopulate.value("flhead_usealtdiff").toBool());
+    _altDiffText->setText(financialpopulate.value("flhead_altdiff").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (financialpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, financialpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -342,6 +346,7 @@ void financialLayout::populate()
 
 void financialLayout::sFillList()
 {
+  XSqlQuery financialFillList;
   int pId = -1, pType = -1;
 
   XTreeWidgetItem * item = (XTreeWidgetItem*)(_layout->currentItem());
@@ -368,16 +373,16 @@ void financialLayout::sFillList()
   if(0 != item)
     _layout->scrollToItem(item);
 
-  q.prepare ("SELECT flcol_id, flcol_name, flcol_descrip "
+  financialFillList.prepare ("SELECT flcol_id, flcol_name, flcol_descrip "
              " FROM flcol "
              " WHERE flcol_flhead_id=:flhead_id "
              " ORDER BY flcol_name, flcol_descrip; ");
-  q.bindValue(":flhead_id", _flheadid);
-  q.exec();
-  _layouts->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  financialFillList.bindValue(":flhead_id", _flheadid);
+  financialFillList.exec();
+  _layouts->populate(financialFillList);
+  if (financialFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, financialFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -806,15 +811,16 @@ void financialLayout::sEdit()
 
 void financialLayout::sDelete()
 {
+  XSqlQuery financialDelete;
   if(_layout->altId() == cFlGroup)
-    q.prepare("SELECT deleteFlgrp(:item_id) AS result;");
+    financialDelete.prepare("SELECT deleteFlgrp(:item_id) AS result;");
   else if(_layout->altId() == cFlItem)
-    q.prepare( "DELETE FROM flitem WHERE (flitem_id=:item_id);" );
+    financialDelete.prepare( "DELETE FROM flitem WHERE (flitem_id=:item_id);" );
   else if(_layout->altId() == cFlSpec)
-    q.prepare( "DELETE FROM flspec WHERE (flspec_id=:item_id);" );
+    financialDelete.prepare( "DELETE FROM flspec WHERE (flspec_id=:item_id);" );
 
-  q.bindValue(":item_id", _layout->id());
-  q.exec();
+  financialDelete.bindValue(":item_id", _layout->id());
+  financialDelete.exec();
 
   XTreeWidgetItem *item = _layout->currentItem();
   if (0 != item)
@@ -824,46 +830,49 @@ void financialLayout::sDelete()
 
 void financialLayout::sMoveUp()
 {
+  XSqlQuery financialMoveUp;
   if (_layout->altId() == cFlGroup)
-    q.prepare("SELECT moveFlGroupUp(:item_id) AS result;");
+    financialMoveUp.prepare("SELECT moveFlGroupUp(:item_id) AS result;");
   else if (_layout->altId() == cFlItem)
-    q.prepare("SELECT moveFlItemUp(:item_id) AS result;");
+    financialMoveUp.prepare("SELECT moveFlItemUp(:item_id) AS result;");
   else if (_layout->altId() == cFlSpec)
-    q.prepare("SELECT moveFlSpecUp(:item_id) AS result;");
+    financialMoveUp.prepare("SELECT moveFlSpecUp(:item_id) AS result;");
 
-  q.bindValue(":item_id", _layout->id());
-  q.exec();
+  financialMoveUp.bindValue(":item_id", _layout->id());
+  financialMoveUp.exec();
 
   sFillList();
 }
 
 void financialLayout::sMoveDown()
 {
+  XSqlQuery financialMoveDown;
   if (_layout->altId() == cFlGroup)
-    q.prepare("SELECT moveFlGroupDown(:item_id) AS result;");
+    financialMoveDown.prepare("SELECT moveFlGroupDown(:item_id) AS result;");
   else if (_layout->altId() == cFlItem)
-    q.prepare("SELECT moveFlItemDown(:item_id) AS result;");
+    financialMoveDown.prepare("SELECT moveFlItemDown(:item_id) AS result;");
   else if (_layout->altId() == cFlSpec)
-    q.prepare("SELECT moveFlSpecDown(:item_id) AS result;");
+    financialMoveDown.prepare("SELECT moveFlSpecDown(:item_id) AS result;");
 
-  q.bindValue(":item_id", _layout->id());
-  q.exec();
+  financialMoveDown.bindValue(":item_id", _layout->id());
+  financialMoveDown.exec();
 
   sFillList();
 }
 
 void financialLayout::sSetType()
 {
+  XSqlQuery financialSetType;
   //Check for column layout definitions and respond
   if ((_income->isChecked()  && _cachedType != cIncome)  || 
       (_balance->isChecked() && _cachedType != cBalance) ||
       (_cash->isChecked()    && _cachedType != cCash)    ||
       (_adHoc->isChecked()   && _cachedType != cAdHoc))
   {
-    q.prepare(  "SELECT flcol_id FROM flcol WHERE (flcol_flhead_id=:flheadid); ");
-    q.bindValue(":flheadid",_flheadid);
-    q.exec();
-    if (q.first())
+    financialSetType.prepare(  "SELECT flcol_id FROM flcol WHERE (flcol_flhead_id=:flheadid); ");
+    financialSetType.bindValue(":flheadid",_flheadid);
+    financialSetType.exec();
+    if (financialSetType.first())
     {
         QMessageBox::critical( this, tr("Cannot Change Type"),
               tr("All column layouts must be deleted before changing the type.") );
@@ -884,15 +893,15 @@ void financialLayout::sSetType()
       (_balance->isChecked() && _cachedType != cBalance) ||
       (_cash->isChecked()    && _cachedType != cCash))
   {    
-    q.prepare(  "SELECT flgrp_id FROM flgrp WHERE (flgrp_flhead_id=:flheadid) "
+    financialSetType.prepare(  "SELECT flgrp_id FROM flgrp WHERE (flgrp_flhead_id=:flheadid) "
           "UNION "
           "SELECT flitem_id FROM flitem WHERE (flitem_flhead_id=:flheadid) "
           "UNION "
           "SELECT flhead_id FROM flhead WHERE (flhead_id=:flheadid);");
-    q.bindValue(":flheadid",_flheadid);
-    q.exec();
+    financialSetType.bindValue(":flheadid",_flheadid);
+    financialSetType.exec();
 
-    if (q.first())
+    if (financialSetType.first())
     {
       if ( QMessageBox::warning( this, tr("Report type changed"),
           tr( "Existing row definitions will be changed.\n"
@@ -914,7 +923,7 @@ void financialLayout::sSetType()
       {
         _showTotal->setChecked(FALSE);
           
-        q.prepare("UPDATE flgrp "
+        financialSetType.prepare("UPDATE flgrp "
               " SET flgrp_showstart=false,flgrp_showend=:showend,flgrp_showdelta=:showdelta,"
               "     flgrp_showbudget=true,flgrp_showdiff=:showdiff,flgrp_showcustom=false,"
               "     flgrp_showstartprcnt=false,flgrp_showendprcnt=false,flgrp_showdeltaprcnt=false,"
@@ -939,30 +948,30 @@ void financialLayout::sSetType()
         
         if (_income->isChecked())
         {
-          q.bindValue(":showend","false");
-          q.bindValue(":showdelta","false");
-          q.bindValue(":showdiff","true");
-          q.bindValue(":type","I");  
+          financialSetType.bindValue(":showend","false");
+          financialSetType.bindValue(":showdelta","false");
+          financialSetType.bindValue(":showdiff","true");
+          financialSetType.bindValue(":type","I");  
           _cachedType=cIncome;  
         }
         else if (_balance->isChecked())
         {
-          q.bindValue(":showend","true");
-          q.bindValue(":showdelta","false");
-          q.bindValue(":showdiff","false");
-          q.bindValue(":type","B");
+          financialSetType.bindValue(":showend","true");
+          financialSetType.bindValue(":showdelta","false");
+          financialSetType.bindValue(":showdiff","false");
+          financialSetType.bindValue(":type","B");
           _cachedType=cBalance;
         }
         if (_cash->isChecked())
         {
-          q.bindValue(":showend","false");
-          q.bindValue(":showdelta","true");
-          q.bindValue(":showdiff","true");
-          q.bindValue(":type","C");
+          financialSetType.bindValue(":showend","false");
+          financialSetType.bindValue(":showdelta","true");
+          financialSetType.bindValue(":showdiff","true");
+          financialSetType.bindValue(":type","C");
           _cachedType=cCash;
         }
-        q.bindValue(":flhead_id",_flheadid);
-        q.exec();
+        financialSetType.bindValue(":flhead_id",_flheadid);
+        financialSetType.exec();
       }
     } 
   }
@@ -1084,10 +1093,11 @@ void financialLayout::sEditCol()
 
 void financialLayout::sDeleteCol()
 {
-  q.prepare( "DELETE FROM flcol WHERE (flcol_id=:flcol_id);" );
+  XSqlQuery financialDeleteCol;
+  financialDeleteCol.prepare( "DELETE FROM flcol WHERE (flcol_id=:flcol_id);" );
 
-  q.bindValue(":flcol_id", _layouts->id());
-  q.exec();
+  financialDeleteCol.bindValue(":flcol_id", _layouts->id());
+  financialDeleteCol.exec();
 
   XTreeWidgetItem *item = _layout->currentItem();
   if(0 != item)
@@ -1103,14 +1113,15 @@ void financialLayout::sUncheckAltGrandTotal()
 
 void financialLayout::reject()
 {
+  XSqlQuery financialreject;
   if(cNew == _mode)
   {
-    q.prepare("DELETE FROM flspec WHERE flspec_flhead_id=:flhead_id;"
+    financialreject.prepare("DELETE FROM flspec WHERE flspec_flhead_id=:flhead_id;"
               "DELETE FROM flitem WHERE flitem_flhead_id=:flhead_id;"
               "DELETE FROM flgrp  WHERE flgrp_flhead_id=:flhead_id;"
               "DELETE FROM flhead WHERE flhead_id=:flhead_id;");
-    q.bindValue(":flhead_id", _flheadid);
-    q.exec();
+    financialreject.bindValue(":flhead_id", _flheadid);
+    financialreject.exec();
   }
 
   XDialog::reject();

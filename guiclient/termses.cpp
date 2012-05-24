@@ -64,7 +64,8 @@ void termses::languageChange()
 
 void termses::sFillList()
 {
-  q.prepare( "SELECT terms_id, terms_code, terms_descrip,"
+  XSqlQuery termsesFillList;
+  termsesFillList.prepare( "SELECT terms_id, terms_code, terms_descrip,"
              "       CASE WHEN (terms_type = 'D') THEN :days"
              "            WHEN (terms_type = 'P') THEN :proximo"
              "            ELSE '?'"
@@ -72,20 +73,21 @@ void termses::sFillList()
              "       terms_ap, terms_ar "
              "FROM terms "
              "ORDER BY terms_code;" );
-  q.bindValue(":days", tr("Days"));
-  q.bindValue(":proximo", tr("Proximo"));
-  q.exec();
-  _terms->populate(q);
+  termsesFillList.bindValue(":days", tr("Days"));
+  termsesFillList.bindValue(":proximo", tr("Proximo"));
+  termsesFillList.exec();
+  _terms->populate(termsesFillList);
 }
 
 void termses::sDelete()
 {
-  q.prepare( "SELECT cust_id "
+  XSqlQuery termsesDelete;
+  termsesDelete.prepare( "SELECT cust_id "
              "FROM custinfo "
              "WHERE (cust_terms_id=:terms_id);" );
-  q.bindValue(":terms_id", _terms->id());
-  q.exec();
-  if (q.first())
+  termsesDelete.bindValue(":terms_id", _terms->id());
+  termsesDelete.exec();
+  if (termsesDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Terms Code"),
                            tr("<p>You may not delete the selected Terms Code "
@@ -94,18 +96,18 @@ void termses::sDelete()
                               "you may delete the selected Terms Code." ) );
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (termsesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, termsesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare( "SELECT vend_id "
+  termsesDelete.prepare( "SELECT vend_id "
              "FROM vendinfo "
              "WHERE (vend_terms_id=:terms_id);" );
-  q.bindValue(":terms_id", _terms->id());
-  q.exec();
-  if (q.first())
+  termsesDelete.bindValue(":terms_id", _terms->id());
+  termsesDelete.exec();
+  if (termsesDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Terms Code"),
                            tr("<p>You may not delete the selected Terms Code "
@@ -114,16 +116,16 @@ void termses::sDelete()
                               "may delete the selected Terms Code." ) );
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (termsesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, termsesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare( "DELETE FROM terms "
+  termsesDelete.prepare( "DELETE FROM terms "
              "WHERE (terms_id=:terms_id);" );
-  q.bindValue(":terms_id", _terms->id());
-  q.exec();
+  termsesDelete.bindValue(":terms_id", _terms->id());
+  termsesDelete.exec();
 
   sFillList();
 }

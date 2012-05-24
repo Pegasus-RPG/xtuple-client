@@ -60,6 +60,7 @@ void transferTrans::languageChange()
 
 enum SetResponse transferTrans::set(const ParameterList &pParams)
 {
+  XSqlQuery transferet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -113,7 +114,7 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _post->hide();
 
-      q.prepare( "SELECT invhist.*, "
+      transferet.prepare( "SELECT invhist.*, "
                  "       ABS(invhist_invqty) AS transqty,"
                  "       CASE WHEN (invhist_invqty > 0) THEN invhist_qoh_before"
                  "            ELSE NULL"
@@ -136,22 +137,22 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
                  "  FROM invhist, itemsite"
                  " WHERE ((invhist_itemsite_id=itemsite_id)"
                  "   AND  (invhist_id=:invhist_id)); " );
-      q.bindValue(":invhist_id", invhistid);
-      q.exec();
-      if (q.first())
+      transferet.bindValue(":invhist_id", invhistid);
+      transferet.exec();
+      if (transferet.first())
       {
-        _transDate->setDate(q.value("invhist_transdate").toDate());
-        _username->setText(q.value("invhist_user").toString());
-        _qty->setText(formatQty(q.value("transqty").toDouble()));
-        _fromBeforeQty->setText(formatQty(q.value("fromqohbefore").toDouble()));
-        _fromAfterQty->setText(formatQty(q.value("fromqohafter").toDouble()));
-        _toBeforeQty->setText(formatQty(q.value("qohbefore").toDouble()));
-        _toAfterQty->setText(formatQty(q.value("qohafter").toDouble()));
-        _documentNum->setText(q.value("invhist_docnumber"));
-        _notes->setText(q.value("invhist_comments").toString());
-        _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
-        _toWarehouse->setId(q.value("toWarehouse").toInt());
-        _fromWarehouse->setId(q.value("fromWarehouse").toInt());
+        _transDate->setDate(transferet.value("invhist_transdate").toDate());
+        _username->setText(transferet.value("invhist_user").toString());
+        _qty->setText(formatQty(transferet.value("transqty").toDouble()));
+        _fromBeforeQty->setText(formatQty(transferet.value("fromqohbefore").toDouble()));
+        _fromAfterQty->setText(formatQty(transferet.value("fromqohafter").toDouble()));
+        _toBeforeQty->setText(formatQty(transferet.value("qohbefore").toDouble()));
+        _toAfterQty->setText(formatQty(transferet.value("qohafter").toDouble()));
+        _documentNum->setText(transferet.value("invhist_docnumber"));
+        _notes->setText(transferet.value("invhist_comments").toString());
+        _item->setItemsiteid(transferet.value("invhist_itemsite_id").toInt());
+        _toWarehouse->setId(transferet.value("toWarehouse").toInt());
+        _fromWarehouse->setId(transferet.value("fromWarehouse").toInt());
       }
 
     }
@@ -162,6 +163,7 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
 
 void transferTrans::sPost()
 {
+  XSqlQuery transferPost;
   struct {
     bool        condition;
     QString     msg;
@@ -193,21 +195,21 @@ void transferTrans::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible distribution cancelations
-  q.prepare( "SELECT interWarehouseTransfer(:item_id, :from_warehous_id,"
+  transferPost.exec("BEGIN;");	// because of possible distribution cancelations
+  transferPost.prepare( "SELECT interWarehouseTransfer(:item_id, :from_warehous_id,"
              "                              :to_warehous_id, :qty, 'Misc', "
              "                              :docNumber, :comments, 0, :date ) AS result;");
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":from_warehous_id", _fromWarehouse->id());
-  q.bindValue(":to_warehous_id",   _toWarehouse->id());
-  q.bindValue(":qty",              _qty->toDouble());
-  q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->toPlainText());
-  q.bindValue(":date",        _transDate->date());
-  q.exec();
-  if (q.first())
+  transferPost.bindValue(":item_id", _item->id());
+  transferPost.bindValue(":from_warehous_id", _fromWarehouse->id());
+  transferPost.bindValue(":to_warehous_id",   _toWarehouse->id());
+  transferPost.bindValue(":qty",              _qty->toDouble());
+  transferPost.bindValue(":docNumber", _documentNum->text());
+  transferPost.bindValue(":comments", _notes->toPlainText());
+  transferPost.bindValue(":date",        _transDate->date());
+  transferPost.exec();
+  if (transferPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = transferPost.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -215,14 +217,14 @@ void transferTrans::sPost()
                   __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (transferPost.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferPost.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    if (distributeInventory::SeriesAdjust(transferPost.value("result").toInt(), this) == XDialog::Rejected)
     {
       rollback.exec();
       QMessageBox::information(this, tr("Transfer Transaction"),
@@ -230,7 +232,7 @@ void transferTrans::sPost()
       return;
     }
 
-    q.exec("COMMIT;");
+    transferPost.exec("COMMIT;");
 
     if (_captive)
       close();
@@ -263,26 +265,27 @@ void transferTrans::sPost()
 
 void transferTrans::sPopulateFromQty(int pWarehousid)
 {
+  XSqlQuery transferPopulateFromQty;
   if (_mode != cView)
   {
-    q.prepare( "SELECT itemsite_qtyonhand "
+    transferPopulateFromQty.prepare( "SELECT itemsite_qtyonhand "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", pWarehousid);
-    q.exec();
-    if (q.first())
+    transferPopulateFromQty.bindValue(":item_id", _item->id());
+    transferPopulateFromQty.bindValue(":warehous_id", pWarehousid);
+    transferPopulateFromQty.exec();
+    if (transferPopulateFromQty.first())
     {
-      _cachedFromBeforeQty = q.value("itemsite_qtyonhand").toDouble();
-      _fromBeforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+      _cachedFromBeforeQty = transferPopulateFromQty.value("itemsite_qtyonhand").toDouble();
+      _fromBeforeQty->setText(formatQty(transferPopulateFromQty.value("itemsite_qtyonhand").toDouble()));
 
       if (_qty->text().length())
-        _fromAfterQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble() - _qty->toDouble()));
+        _fromAfterQty->setText(formatQty(transferPopulateFromQty.value("itemsite_qtyonhand").toDouble() - _qty->toDouble()));
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (transferPopulateFromQty.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferPopulateFromQty.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -290,22 +293,23 @@ void transferTrans::sPopulateFromQty(int pWarehousid)
 
 void transferTrans::sPopulateToQty(int pWarehousid)
 {
+  XSqlQuery transferPopulateToQty;
   if (_mode != cView)
   {
-    q.prepare( "SELECT itemsite_qtyonhand "
+    transferPopulateToQty.prepare( "SELECT itemsite_qtyonhand "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":warehous_id", pWarehousid);
-    q.exec();
-    if (q.first())
+    transferPopulateToQty.bindValue(":item_id", _item->id());
+    transferPopulateToQty.bindValue(":warehous_id", pWarehousid);
+    transferPopulateToQty.exec();
+    if (transferPopulateToQty.first())
     {
-      _cachedToBeforeQty = q.value("itemsite_qtyonhand").toDouble();
-      _toBeforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+      _cachedToBeforeQty = transferPopulateToQty.value("itemsite_qtyonhand").toDouble();
+      _toBeforeQty->setText(formatQty(transferPopulateToQty.value("itemsite_qtyonhand").toDouble()));
 
       if (_qty->text().length())
-        _toAfterQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble() + _qty->toDouble()));
+        _toAfterQty->setText(formatQty(transferPopulateToQty.value("itemsite_qtyonhand").toDouble() + _qty->toDouble()));
     }
   }
 }

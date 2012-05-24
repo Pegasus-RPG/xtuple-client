@@ -36,6 +36,7 @@ void postCountSlips::languageChange()
 
 void postCountSlips::sPost()
 {
+  XSqlQuery postPost;
   QString sql( "SELECT postCountSlip(cntslip_id) "
                "FROM cntslip, invcnt, itemsite "
                "WHERE ((NOT cntslip_posted)"
@@ -47,11 +48,11 @@ void postCountSlips::sPost()
 
   sql += ");";
 
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  q.exec();
+  postPost.prepare(sql);
+  _warehouse->bindValue(postPost);
+  postPost.exec();
 
-  if(!q.first())
+  if(!postPost.first())
     QMessageBox::information(this, tr("No Count Slips Posted"),
       tr("No count slips were posted! Either there were no count slips available to\n"
          "be posted or an error occurred trying to post the count slips.") );

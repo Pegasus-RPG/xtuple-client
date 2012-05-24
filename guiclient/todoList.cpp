@@ -309,6 +309,7 @@ void todoList::sView()
 
 void todoList::sDelete()
 {
+  XSqlQuery todoDelete;
   QString recurstr;
   QString recurtype;
   if (list()->altId() == 1)
@@ -370,23 +371,23 @@ void todoList::sDelete()
   if (deleteAll)
   {
     procname = "deleteOpenRecurringItems";
-    q.prepare("SELECT deleteOpenRecurringItems(:id, :type, NULL, TRUE)"
+    todoDelete.prepare("SELECT deleteOpenRecurringItems(:id, :type, NULL, TRUE)"
               "       AS result;");
-    q.bindValue(":id",   list()->id());
-    q.bindValue(":type", recurtype);
-    q.exec();
-    if (q.first())
-      procresult = q.value("result").toInt();
+    todoDelete.bindValue(":id",   list()->id());
+    todoDelete.bindValue(":type", recurtype);
+    todoDelete.exec();
+    if (todoDelete.first())
+      procresult = todoDelete.value("result").toInt();
   }
   if (procresult >= 0 && createMore)
   {
     procname = "createRecurringItems";
-    q.prepare("SELECT createRecurringItems(:id, :type) AS result;");
-    q.bindValue(":id",   list()->id());
-    q.bindValue(":type", recurtype);
-    q.exec();
-    if (q.first())
-      procresult = q.value("result").toInt();
+    todoDelete.prepare("SELECT createRecurringItems(:id, :type) AS result;");
+    todoDelete.bindValue(":id",   list()->id());
+    todoDelete.bindValue(":type", recurtype);
+    todoDelete.exec();
+    if (todoDelete.first())
+      procresult = todoDelete.value("result").toInt();
   }
 
   // not elseif - error handling for 1 or 2 queries
@@ -395,35 +396,35 @@ void todoList::sDelete()
     systemError(this, storedProcErrorLookup(procname, procresult));
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (todoDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, todoDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (list()->altId() == 1)
-    q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
+    todoDelete.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
   else if (list()->altId() == 3)
-    q.prepare("DELETE FROM prjtask"
+    todoDelete.prepare("DELETE FROM prjtask"
               " WHERE (prjtask_id=:todoitem_id); ");
   else if (list()->altId() == 4)
-    q.prepare("SELECT deleteProject(:todoitem_id) AS result");
+    todoDelete.prepare("SELECT deleteProject(:todoitem_id) AS result");
   else
     return;
-  q.bindValue(":todoitem_id", list()->id());
-  q.exec();
-  if (q.first())
+  todoDelete.bindValue(":todoitem_id", list()->id());
+  todoDelete.exec();
+  if (todoDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = todoDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteTodoItem", result));
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (todoDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, todoDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();

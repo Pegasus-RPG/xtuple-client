@@ -101,12 +101,13 @@ void selectedPayments::sEdit()
 
 void selectedPayments::sClear()
 {
-  q.prepare("SELECT clearPayment(:apselect_id) AS result;");
-  q.bindValue(":apselect_id", _apselect->altId());
-  q.exec();
-  if (q.first())
+  XSqlQuery selectedClear;
+  selectedClear.prepare("SELECT clearPayment(:apselect_id) AS result;");
+  selectedClear.bindValue(":apselect_id", _apselect->altId());
+  selectedClear.exec();
+  if (selectedClear.first())
   {
-    int result = q.value("result").toInt();
+    int result = selectedClear.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("clearPayment", result),
@@ -114,9 +115,9 @@ void selectedPayments::sClear()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (selectedClear.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectedClear.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -125,21 +126,23 @@ void selectedPayments::sClear()
 
 void selectedPayments::sFillList(int pBankaccntid)
 {
+  XSqlQuery selectedFillList;
   if ( (pBankaccntid == -1) || (pBankaccntid == _bankaccnt->id()) )
     sFillList();
 }
 
 void selectedPayments::sFillList()
 {
+  XSqlQuery selectedFillList;
   ParameterList params;
   if (! setParams(params))
     return;
   MetaSQLQuery mql = mqlLoad("apOpenItems", "selectedpayments");
-  q = mql.toQuery(params);
-  _apselect->populate(q,true);
-  if (q.lastError().type() != QSqlError::NoError)
+  selectedFillList = mql.toQuery(params);
+  _apselect->populate(selectedFillList,true);
+  if (selectedFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectedFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

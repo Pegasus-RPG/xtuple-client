@@ -45,6 +45,7 @@ void releasePlannedOrdersByPlannerCode::languageChange()
 
 void releasePlannedOrdersByPlannerCode::sRelease()
 {
+  XSqlQuery releaseRelease;
   if (!_cutoffDate->isValid())
   {
     QMessageBox::critical( this, tr("Enter Cutoff Date"),
@@ -71,19 +72,20 @@ void releasePlannedOrdersByPlannerCode::sRelease()
 
   sql += ");";
 
-  q.prepare(sql);
-  q.bindValue(":cutOffDate", _cutoffDate->date());
-//  q.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
-  q.bindValue(":appendTransferOrder",	true);
-  _warehouse->bindValue(q);
-  _plannerCode->bindValue(q);
-  q.exec();
+  releaseRelease.prepare(sql);
+  releaseRelease.bindValue(":cutOffDate", _cutoffDate->date());
+//  releaseRelease.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
+  releaseRelease.bindValue(":appendTransferOrder",	true);
+  _warehouse->bindValue(releaseRelease);
+  _plannerCode->bindValue(releaseRelease);
+  releaseRelease.exec();
 
   accept();
 }
 
 void releasePlannedOrdersByPlannerCode::sSubmit()
 {
+  XSqlQuery releaseSubmit;
   if (!_cutoffDate->isValid())
   {
     QMessageBox::warning( this, tr("Enter Cut Off Date"),
@@ -104,8 +106,8 @@ void releasePlannedOrdersByPlannerCode::sSubmit()
     params.append("firmedOnly", true);
 
   params.append("cutoff_offset", QDate::currentDate().daysTo(_cutoffDate->date()));
-//  q.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
-  q.bindValue(":appendTransferOrder",	true);
+//  releaseSubmit.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
+  releaseSubmit.bindValue(":appendTransferOrder",	true);
 
   submitAction newdlg(this, "", TRUE);
   newdlg.set(params);

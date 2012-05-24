@@ -102,12 +102,13 @@ void freightClasses::sView()
 
 void freightClasses::sDelete()
 {
-  q.prepare("SELECT deleteFreightClass(:freightclass_id) AS result;");
-  q.bindValue(":freightclass_id", _freightClass->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery freightDelete;
+  freightDelete.prepare("SELECT deleteFreightClass(:freightclass_id) AS result;");
+  freightDelete.bindValue(":freightclass_id", _freightClass->id());
+  freightDelete.exec();
+  if (freightDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = freightDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteFreightClass", result),
@@ -115,9 +116,9 @@ void freightClasses::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (freightDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, freightDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList(-1);
@@ -134,16 +135,17 @@ void freightClasses::sPrint()
 
 void freightClasses::sDeleteUnused()
 {
+  XSqlQuery freightDeleteUnused;
   if ( QMessageBox::warning( this, tr("Delete Unused Freight Classes"),
                              tr("<p>Are you sure that you wish to delete all "
                                 "unused Freight Classes?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.exec("SELECT deleteUnusedFreightClasses() AS result;");
-    if (q.first())
+    freightDeleteUnused.exec("SELECT deleteUnusedFreightClasses() AS result;");
+    if (freightDeleteUnused.first())
     {
-      int result = q.value("result").toInt();
+      int result = freightDeleteUnused.value("result").toInt();
       if (result < 0)
       {
         systemError(this,
@@ -152,9 +154,9 @@ void freightClasses::sDeleteUnused()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (freightDeleteUnused.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, freightDeleteUnused.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList(-1);

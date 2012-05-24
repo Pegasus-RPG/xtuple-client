@@ -235,6 +235,7 @@ void miscCheck::sSave()
 
 void miscCheck::sPopulateBankInfo(int pBankaccntid)
 {
+  XSqlQuery miscPopulateBankInfo;
   if ( pBankaccntid != -1 )
   {
     XSqlQuery checkNumber;
@@ -247,7 +248,7 @@ void miscCheck::sPopulateBankInfo(int pBankaccntid)
     {
       _amount->setId(checkNumber.value("bankaccnt_curr_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (miscPopulateBankInfo.lastError().type() != QSqlError::NoError)
     {
       systemError(this, checkNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -260,7 +261,8 @@ void miscCheck::sPopulateBankInfo(int pBankaccntid)
 
 void miscCheck::populate()
 {
-  q.prepare( "SELECT checkhead_recip_type, checkhead_recip_id,"
+  XSqlQuery miscpopulate;
+  miscpopulate.prepare( "SELECT checkhead_recip_type, checkhead_recip_id,"
 	     "       checkhead_bankaccnt_id, checkhead_number,"
              "       checkhead_checkdate, checkhead_expcat_id,"
              "       checkhead_for, checkhead_notes,"
@@ -271,49 +273,49 @@ void miscCheck::populate()
              "  LEFT OUTER JOIN aropen ON (checkitem_aropen_id=aropen_id) "
              "                         AND (aropen_doctype = 'C') "
              "WHERE checkhead_id=:check_id;");
-  q.bindValue(":check_id", _checkid);
-  q.exec();
-  if (q.first())
+  miscpopulate.bindValue(":check_id", _checkid);
+  miscpopulate.exec();
+  if (miscpopulate.first())
   {
-    if (q.value("checkhead_recip_type").toString() == "V")
+    if (miscpopulate.value("checkhead_recip_type").toString() == "V")
     {
       _vendRB->setChecked(true);
-      _vend->setId(q.value("checkhead_recip_id").toInt());
+      _vend->setId(miscpopulate.value("checkhead_recip_id").toInt());
     }
-    else if (q.value("checkhead_recip_type").toString() == "C")
+    else if (miscpopulate.value("checkhead_recip_type").toString() == "C")
     {
       _custRB->setChecked(true);
-      _cust->setId(q.value("checkhead_recip_id").toInt());
+      _cust->setId(miscpopulate.value("checkhead_recip_id").toInt());
     }
-    else if (q.value("checkhead_recip_type").toString() == "T")
+    else if (miscpopulate.value("checkhead_recip_type").toString() == "T")
     {
       _taxauthRB->setChecked(true);
-      _taxauth->setId(q.value("checkhead_recip_id").toInt());
+      _taxauth->setId(miscpopulate.value("checkhead_recip_id").toInt());
     }
     // bank accnt must be set before check number and currency
-    _bankaccnt->setId(q.value("checkhead_bankaccnt_id").toInt());
-    _date->setDate(q.value("checkhead_checkdate").toDate(), true);
-    _amount->set(q.value("checkhead_amount").toDouble(),
-		 q.value("checkhead_curr_id").toInt(),
-		 q.value("checkhead_checkdate").toDate(), false);
-    _for->setText(q.value("checkhead_for"));
-    _notes->setText(q.value("checkhead_notes").toString());
+    _bankaccnt->setId(miscpopulate.value("checkhead_bankaccnt_id").toInt());
+    _date->setDate(miscpopulate.value("checkhead_checkdate").toDate(), true);
+    _amount->set(miscpopulate.value("checkhead_amount").toDouble(),
+		 miscpopulate.value("checkhead_curr_id").toInt(),
+		 miscpopulate.value("checkhead_checkdate").toDate(), false);
+    _for->setText(miscpopulate.value("checkhead_for"));
+    _notes->setText(miscpopulate.value("checkhead_notes").toString());
 
-    if (!q.value("checkhead_cmhead_id").isNull())
+    if (!miscpopulate.value("checkhead_cmhead_id").isNull())
     {
       _applytocm->setChecked(TRUE);
-      _cmCluster->setId(q.value("checkhead_cmhead_id").toInt());
+      _cmCluster->setId(miscpopulate.value("checkhead_cmhead_id").toInt());
     }
-    else if (q.value("checkhead_expcat_id").isNull() ||
-	q.value("checkhead_expcat_id").toInt() == -1)
+    else if (miscpopulate.value("checkhead_expcat_id").isNull() ||
+	miscpopulate.value("checkhead_expcat_id").toInt() == -1)
       _memo->setChecked(TRUE);
     else
     {
       _expense->setChecked(TRUE);
-      _expcat->setId(q.value("checkhead_expcat_id").toInt());
+      _expcat->setId(miscpopulate.value("checkhead_expcat_id").toInt());
     }
 
-    if (!q.value("checkhead_cmhead_id").isNull())
+    if (!miscpopulate.value("checkhead_cmhead_id").isNull())
     {
       _recipGroup->setEnabled(FALSE);
       _chargeToGroup->setEnabled(FALSE);
@@ -355,11 +357,12 @@ void miscCheck::sCustomerSelected()
 
 void miscCheck::sCreditMemoSelected()
 {
+  XSqlQuery miscCreditMemoSelected;
   if (_cmCluster->id() != -1) 
   {  
 	if(!_date->isValid())
 	  _date->setDate(QDate::currentDate());
-	q.prepare("SELECT aropen_curr_id, "
+	miscCreditMemoSelected.prepare("SELECT aropen_curr_id, "
 			  "       round((aropen_amount-aropen_paid- "
 			  //Subtract amount for existing checks
 			  "(SELECT COALESCE(SUM(checkhead_amount),0) "
@@ -373,20 +376,20 @@ void miscCheck::sCreditMemoSelected()
 			  ") * aropen_curr_rate / currRate(:curr_id,aropen_docdate),2) AS amount "
               "  FROM aropen "
               " WHERE (aropen_id=:aropen_id); ");
-    q.bindValue(":aropen_id", _cmCluster->id());
-    q.bindValue(":curr_id", _amount->id());
-    q.bindValue(":date", _date->date());
-    q.bindValue(":check_id", _checkid);
-    q.exec();
-    if (q.first())
+    miscCreditMemoSelected.bindValue(":aropen_id", _cmCluster->id());
+    miscCreditMemoSelected.bindValue(":curr_id", _amount->id());
+    miscCreditMemoSelected.bindValue(":date", _date->date());
+    miscCreditMemoSelected.bindValue(":check_id", _checkid);
+    miscCreditMemoSelected.exec();
+    if (miscCreditMemoSelected.first())
     {
-      _aropenamt=q.value("amount").toDouble();
+      _aropenamt=miscCreditMemoSelected.value("amount").toDouble();
       if (_mode == cNew)
-        _amount->setLocalValue(q.value("amount").toDouble());
+        _amount->setLocalValue(miscCreditMemoSelected.value("amount").toDouble());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (miscCreditMemoSelected.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, miscCreditMemoSelected.lastError().databaseText(), __FILE__, __LINE__);
       return;
     } 
   }

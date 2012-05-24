@@ -222,16 +222,17 @@ void dspCountTagEditList::sCountSlipEditList()
 
 void dspCountTagEditList::sViewInventoryHistory()
 {
-  q.prepare( "SELECT invcnt_itemsite_id, invcnt_tagdate "
+  XSqlQuery dspViewInventoryHistory;
+  dspViewInventoryHistory.prepare( "SELECT invcnt_itemsite_id, invcnt_tagdate "
                  "FROM invcnt "
                  "WHERE (invcnt_id=:invcnt_id);" );
-  q.bindValue(":invcnt_id", _cnttag->id());
-  q.exec();
-  if (q.first())
+  dspViewInventoryHistory.bindValue(":invcnt_id", _cnttag->id());
+  dspViewInventoryHistory.exec();
+  if (dspViewInventoryHistory.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("invcnt_itemsite_id").toInt());
-    params.append("startDate", q.value("invcnt_tagdate").toDate());
+    params.append("itemsite_id", dspViewInventoryHistory.value("invcnt_itemsite_id").toInt());
+    params.append("startDate", dspViewInventoryHistory.value("invcnt_tagdate").toDate());
     params.append("endDate", omfgThis->dbDate());
     params.append("run");
 
@@ -239,9 +240,9 @@ void dspCountTagEditList::sViewInventoryHistory()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspViewInventoryHistory.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspViewInventoryHistory.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -302,6 +303,7 @@ void dspCountTagEditList::sEditSlip()
 
 void dspCountTagEditList::sDelete()
 {
+  XSqlQuery dspDelete;
   if ( (_showSlips->isChecked()) &&
       (((XTreeWidgetItem *)_cnttag->currentItem())->altId() == -1) )
     sDeleteTag();
@@ -314,11 +316,11 @@ void dspCountTagEditList::sDelete()
     {
       int itemsiteid = -1;
 
-      q.prepare( "SELECT cntslip_id FROM cntslip "
+      dspDelete.prepare( "SELECT cntslip_id FROM cntslip "
 		 "WHERE (cntslip_cnttag_id=:cnttag_id);" );
-      q.bindValue(":cnttag_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      q.exec();
-      if (q.first())
+      dspDelete.bindValue(":cnttag_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      dspDelete.exec();
+      if (dspDelete.first())
       {
 	QMessageBox::critical( this, tr("Cannot Delete Count tag"),
 			      tr("<p>There are Count Slips entered for this "
@@ -326,32 +328,32 @@ void dspCountTagEditList::sDelete()
 				 "the Count Tag before you may delete this Tag.") );
 	continue;
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (dspDelete.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, dspDelete.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
-      q.prepare("SELECT itemsite_id"
+      dspDelete.prepare("SELECT itemsite_id"
 	        "  FROM invcnt JOIN itemsite ON (invcnt_itemsite_id=itemsite_id AND itemsite_freeze) "
 		" WHERE (invcnt_id=:cnttag_id); ");
-      q.bindValue(":cnttag_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      if(q.exec() && q.first())
-	itemsiteid = q.value("itemsite_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      dspDelete.bindValue(":cnttag_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      if(dspDelete.exec() && dspDelete.first())
+	itemsiteid = dspDelete.value("itemsite_id").toInt();
+      else if (dspDelete.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, dspDelete.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
 
-      q.prepare( "DELETE FROM cntslip "
+      dspDelete.prepare( "DELETE FROM cntslip "
 	     "WHERE (cntslip_cnttag_id=:cnttag_id); "
 	     "DELETE FROM invcnt "
 	     "WHERE (invcnt_id=:cnttag_id); " );
-      q.bindValue(":cnttag_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      dspDelete.bindValue(":cnttag_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      dspDelete.exec();
+      if (dspDelete.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, dspDelete.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
 
@@ -364,21 +366,21 @@ void dspCountTagEditList::sDelete()
 				  QMessageBox::Yes | QMessageBox::Default,
 				  QMessageBox::No | QMessageBox::Escape ) == QMessageBox::Yes )
 	{
-	  q.prepare("SELECT thawItemsite(:itemsite_id) AS result;");
-	  q.bindValue(":itemsite_id", itemsiteid);
-	  q.exec();
-	  if (q.first())
+	  dspDelete.prepare("SELECT thawItemsite(:itemsite_id) AS result;");
+	  dspDelete.bindValue(":itemsite_id", itemsiteid);
+	  dspDelete.exec();
+	  if (dspDelete.first())
 	  {
-	    int result = q.value("result").toInt();
+	    int result = dspDelete.value("result").toInt();
 	    if (result < 0)
 	    {
 	      systemError(this, storedProcErrorLookup("thawItemsite", result),
 			  __FILE__, __LINE__);
 	      continue;
 	    }
-	    else if (q.lastError().type() != QSqlError::NoError)
+	    else if (dspDelete.lastError().type() != QSqlError::NoError)
 	    {
-	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	      systemError(this, dspDelete.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
 	    }
 	  }
@@ -391,12 +393,13 @@ void dspCountTagEditList::sDelete()
 
 void dspCountTagEditList::sDeleteTag()
 {
+  XSqlQuery dspDeleteTag;
   int itemsiteid = -1;
-  q.prepare( "SELECT cntslip_id FROM cntslip "
+  dspDeleteTag.prepare( "SELECT cntslip_id FROM cntslip "
                  "WHERE (cntslip_cnttag_id=:cnttag_id);" );
-  q.bindValue(":cnttag_id", _cnttag->id());
-  q.exec();
-  if (q.first())
+  dspDeleteTag.bindValue(":cnttag_id", _cnttag->id());
+  dspDeleteTag.exec();
+  if (dspDeleteTag.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Count tag"),
                            tr("<p>There are Count Slips entered for this count "
@@ -404,25 +407,25 @@ void dspCountTagEditList::sDeleteTag()
 			      "Tag before you may delete this Tag.") );
     return;
   }
-  q.prepare( "SELECT itemsite_id"
+  dspDeleteTag.prepare( "SELECT itemsite_id"
              "  FROM invcnt JOIN itemsite ON (invcnt_itemsite_id=itemsite_id AND itemsite_freeze) "
              " WHERE (invcnt_id=:cnttag_id); ");
-  q.bindValue(":cnttag_id", _cnttag->id());
-  if (q.exec() && q.first())
-    itemsiteid = q.value("itemsite_id").toInt();
-  else if (q.lastError().type() != QSqlError::NoError)
+  dspDeleteTag.bindValue(":cnttag_id", _cnttag->id());
+  if (dspDeleteTag.exec() && dspDeleteTag.first())
+    itemsiteid = dspDeleteTag.value("itemsite_id").toInt();
+  else if (dspDeleteTag.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspDeleteTag.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
-  q.prepare( "DELETE FROM invcnt "
+  dspDeleteTag.prepare( "DELETE FROM invcnt "
 	     "WHERE (invcnt_id=:cnttag_id);" );
-  q.bindValue(":cnttag_id", _cnttag->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  dspDeleteTag.bindValue(":cnttag_id", _cnttag->id());
+  dspDeleteTag.exec();
+  if (dspDeleteTag.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspDeleteTag.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -435,27 +438,27 @@ void dspCountTagEditList::sDeleteTag()
 			      QMessageBox::Yes | QMessageBox::Default,
 			      QMessageBox::No | QMessageBox::Escape ) == QMessageBox::Yes )
     {
-      q.prepare("SELECT thawItemsite(:itemsite_id) AS result;");
-      q.bindValue(":itemsite_id", itemsiteid);
-      q.exec();
-      if (q.first())
+      dspDeleteTag.prepare("SELECT thawItemsite(:itemsite_id) AS result;");
+      dspDeleteTag.bindValue(":itemsite_id", itemsiteid);
+      dspDeleteTag.exec();
+      if (dspDeleteTag.first())
       {
-	int result = q.value("result").toInt();
+	int result = dspDeleteTag.value("result").toInt();
 	if (result < 0)
 	{
 	  systemError(this, storedProcErrorLookup("thawItemsite", result),
 		      __FILE__, __LINE__);
 	  return;
 	}
-	else if (q.lastError().type() != QSqlError::NoError)
+	else if (dspDeleteTag.lastError().type() != QSqlError::NoError)
 	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  systemError(this, dspDeleteTag.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (dspDeleteTag.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, dspDeleteTag.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }
@@ -466,13 +469,14 @@ void dspCountTagEditList::sDeleteTag()
 
 void dspCountTagEditList::sDeleteSlip()
 {
-  q.prepare( "DELETE FROM cntslip "
+  XSqlQuery dspDeleteSlip;
+  dspDeleteSlip.prepare( "DELETE FROM cntslip "
                  "WHERE (cntslip_id=:cntslip_id);" );
-  q.bindValue(":cntslip_id", _cnttag->altId());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  dspDeleteSlip.bindValue(":cntslip_id", _cnttag->altId());
+  dspDeleteSlip.exec();
+  if (dspDeleteSlip.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspDeleteSlip.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -550,15 +554,16 @@ void dspCountTagEditList::sSearch(const QString &pTarget)
 
 void dspCountTagEditList::sFillList()
 {
+  XSqlQuery dspFillList;
   MetaSQLQuery mql = mqlLoad("countTag", "detail");
   ParameterList params;
   setParams(params);
 
-  q = mql.toQuery(params);
-  _cnttag->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  dspFillList = mql.toQuery(params);
+  _cnttag->populate(dspFillList, true);
+  if (dspFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   

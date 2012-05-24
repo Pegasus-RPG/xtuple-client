@@ -117,7 +117,8 @@ enum SetResponse salesHistoryInformation::set(const ParameterList &pParams)
 
 void salesHistoryInformation::sSave()
 {
-  q.prepare( "UPDATE cohist "
+  XSqlQuery salesSave;
+  salesSave.prepare( "UPDATE cohist "
              "SET cohist_ordernumber=:cohist_ordernumber, cohist_invcnumber=:cohist_invcnumber,"
              "    cohist_orderdate=:cohist_orderdate, cohist_invcdate=:cohist_invcdate,"
              "    cohist_billtoname=:cohist_billtoname, cohist_billtoaddress1=:cohist_billtoaddress1,"
@@ -138,41 +139,42 @@ void salesHistoryInformation::sSave()
              " AND (itemsite_warehous_id=:warehous_id)"
              " AND (cohist_id=:cohist_id) );" );
 
-  q.bindValue(":cohist_id", _sohistid);
-  q.bindValue(":cohist_ordernumber", _orderNumber->text().toInt());
-  q.bindValue(":cohist_invcnumber", _invoiceNumber->text().toInt());
-  q.bindValue(":cohist_orderdate", _orderDate->date());
-  q.bindValue(":cohist_invcdate", _invoiceDate->date());
-  q.bindValue(":cohist_billtoname", _billtoName->text().trimmed());
-  q.bindValue(":cohist_billtoaddress1", _billtoAddress1->text().trimmed());
-  q.bindValue(":cohist_billtoaddress2", _billtoAddress2->text().trimmed());
-  q.bindValue(":cohist_billtoaddress3", _billtoAddress3->text().trimmed());
-  q.bindValue(":cohist_billtocity", _billtoCity->text().trimmed());
-  q.bindValue(":cohist_billtostate", _billtoState->text().trimmed());
-  q.bindValue(":cohist_billtozip", _billtoZip->text().trimmed());
-  q.bindValue(":cohist_shiptoname", _shiptoName->text().trimmed());
-  q.bindValue(":cohist_shiptoaddress1", _shiptoAddress1->text().trimmed());
-  q.bindValue(":cohist_shiptoaddress2", _shiptoAddress2->text().trimmed());
-  q.bindValue(":cohist_shiptoaddress3", _shiptoAddress3->text().trimmed());
-  q.bindValue(":cohist_shiptocity", _shiptoCity->text().trimmed());
-  q.bindValue(":cohist_shiptostate", _shiptoState->text().trimmed());
-  q.bindValue(":cohist_shiptozip", _shiptoZip->text().trimmed());
-  q.bindValue(":cohist_qtyshipped", _shipped->toDouble());
-  q.bindValue(":cohist_unitprice", _unitPrice->toDouble());
-  q.bindValue(":cohist_unitcost", _unitCost->toDouble());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":cohist_salesrep_id", _salesrep->id());
-  q.bindValue(":cohist_commission", _commission->toDouble());
-  q.bindValue(":cohist_commissionpaid", QVariant(_commissionPaid->isChecked()));
-  q.exec();
+  salesSave.bindValue(":cohist_id", _sohistid);
+  salesSave.bindValue(":cohist_ordernumber", _orderNumber->text().toInt());
+  salesSave.bindValue(":cohist_invcnumber", _invoiceNumber->text().toInt());
+  salesSave.bindValue(":cohist_orderdate", _orderDate->date());
+  salesSave.bindValue(":cohist_invcdate", _invoiceDate->date());
+  salesSave.bindValue(":cohist_billtoname", _billtoName->text().trimmed());
+  salesSave.bindValue(":cohist_billtoaddress1", _billtoAddress1->text().trimmed());
+  salesSave.bindValue(":cohist_billtoaddress2", _billtoAddress2->text().trimmed());
+  salesSave.bindValue(":cohist_billtoaddress3", _billtoAddress3->text().trimmed());
+  salesSave.bindValue(":cohist_billtocity", _billtoCity->text().trimmed());
+  salesSave.bindValue(":cohist_billtostate", _billtoState->text().trimmed());
+  salesSave.bindValue(":cohist_billtozip", _billtoZip->text().trimmed());
+  salesSave.bindValue(":cohist_shiptoname", _shiptoName->text().trimmed());
+  salesSave.bindValue(":cohist_shiptoaddress1", _shiptoAddress1->text().trimmed());
+  salesSave.bindValue(":cohist_shiptoaddress2", _shiptoAddress2->text().trimmed());
+  salesSave.bindValue(":cohist_shiptoaddress3", _shiptoAddress3->text().trimmed());
+  salesSave.bindValue(":cohist_shiptocity", _shiptoCity->text().trimmed());
+  salesSave.bindValue(":cohist_shiptostate", _shiptoState->text().trimmed());
+  salesSave.bindValue(":cohist_shiptozip", _shiptoZip->text().trimmed());
+  salesSave.bindValue(":cohist_qtyshipped", _shipped->toDouble());
+  salesSave.bindValue(":cohist_unitprice", _unitPrice->toDouble());
+  salesSave.bindValue(":cohist_unitcost", _unitCost->toDouble());
+  salesSave.bindValue(":item_id", _item->id());
+  salesSave.bindValue(":warehous_id", _warehouse->id());
+  salesSave.bindValue(":cohist_salesrep_id", _salesrep->id());
+  salesSave.bindValue(":cohist_commission", _commission->toDouble());
+  salesSave.bindValue(":cohist_commissionpaid", QVariant(_commissionPaid->isChecked()));
+  salesSave.exec();
 
   done(_sohistid);
 }
 
 void salesHistoryInformation::populate()
 {
-  q.prepare( "SELECT cohist_ordernumber, cohist_invcnumber,"
+  XSqlQuery salespopulate;
+  salespopulate.prepare( "SELECT cohist_ordernumber, cohist_invcnumber,"
              "       cohist_orderdate, cohist_invcdate,"
              "       cohist_billtoname, cohist_billtoaddress1,"
              "       cohist_billtoaddress2, cohist_billtoaddress3,"
@@ -187,38 +189,38 @@ void salesHistoryInformation::populate()
              "       cohist_commission "
              "FROM cohist "
              "WHERE (cohist_id=:sohist_id);" );
-  q.bindValue(":sohist_id", _sohistid);
-  q.exec();
-  if (q.first())
+  salespopulate.bindValue(":sohist_id", _sohistid);
+  salespopulate.exec();
+  if (salespopulate.first())
   {
-    _orderNumber->setText(q.value("cohist_ordernumber"));
-    _invoiceNumber->setText(q.value("cohist_invcnumber"));
-    _orderDate->setDate(q.value("cohist_orderdate").toDate());
-    _invoiceDate->setDate(q.value("cohist_invcdate").toDate());
-    _billtoName->setText(q.value("cohist_billtoname"));
-    _billtoAddress1->setText(q.value("cohist_billtoaddress1"));
-    _billtoAddress2->setText(q.value("cohist_billtoaddress2"));
-    _billtoAddress3->setText(q.value("cohist_billtoaddress3"));
-    _billtoCity->setText(q.value("cohist_billtocity"));
-    _billtoState->setText(q.value("cohist_billtostate"));
-    _billtoZip->setText(q.value("cohist_billtozip"));
-    _shiptoName->setText(q.value("cohist_shiptoname"));
-    _shiptoAddress1->setText(q.value("cohist_shiptoaddress1"));
-    _shiptoAddress2->setText(q.value("cohist_shiptoaddress2"));
-    _shiptoAddress3->setText(q.value("cohist_shiptoaddress3"));
-    _shiptoCity->setText(q.value("cohist_shiptocity"));
-    _shiptoState->setText(q.value("cohist_shiptostate"));
-    _shiptoZip->setText(q.value("cohist_shiptozip"));
+    _orderNumber->setText(salespopulate.value("cohist_ordernumber"));
+    _invoiceNumber->setText(salespopulate.value("cohist_invcnumber"));
+    _orderDate->setDate(salespopulate.value("cohist_orderdate").toDate());
+    _invoiceDate->setDate(salespopulate.value("cohist_invcdate").toDate());
+    _billtoName->setText(salespopulate.value("cohist_billtoname"));
+    _billtoAddress1->setText(salespopulate.value("cohist_billtoaddress1"));
+    _billtoAddress2->setText(salespopulate.value("cohist_billtoaddress2"));
+    _billtoAddress3->setText(salespopulate.value("cohist_billtoaddress3"));
+    _billtoCity->setText(salespopulate.value("cohist_billtocity"));
+    _billtoState->setText(salespopulate.value("cohist_billtostate"));
+    _billtoZip->setText(salespopulate.value("cohist_billtozip"));
+    _shiptoName->setText(salespopulate.value("cohist_shiptoname"));
+    _shiptoAddress1->setText(salespopulate.value("cohist_shiptoaddress1"));
+    _shiptoAddress2->setText(salespopulate.value("cohist_shiptoaddress2"));
+    _shiptoAddress3->setText(salespopulate.value("cohist_shiptoaddress3"));
+    _shiptoCity->setText(salespopulate.value("cohist_shiptocity"));
+    _shiptoState->setText(salespopulate.value("cohist_shiptostate"));
+    _shiptoZip->setText(salespopulate.value("cohist_shiptozip"));
 
-    _item->setItemsiteid(q.value("cohist_itemsite_id").toInt());
-    _shipped->setDouble(q.value("cohist_qtyshipped").toDouble());
-    _unitPrice->setDouble(q.value("cohist_unitprice").toDouble());
-    _unitCost->setDouble(q.value("cohist_unitcost").toDouble());
-    _extendedPrice->setDouble(q.value("extprice").toDouble());
-    _extendedCost->setDouble(q.value("extcost").toDouble());
-    _salesrep->setId(q.value("cohist_salesrep_id").toInt());
-    _commission->setDouble(q.value("cohist_commission").toDouble());
-    _commissionPaid->setChecked(q.value("cohist_commissionpaid").toBool());
+    _item->setItemsiteid(salespopulate.value("cohist_itemsite_id").toInt());
+    _shipped->setDouble(salespopulate.value("cohist_qtyshipped").toDouble());
+    _unitPrice->setDouble(salespopulate.value("cohist_unitprice").toDouble());
+    _unitCost->setDouble(salespopulate.value("cohist_unitcost").toDouble());
+    _extendedPrice->setDouble(salespopulate.value("extprice").toDouble());
+    _extendedCost->setDouble(salespopulate.value("extcost").toDouble());
+    _salesrep->setId(salespopulate.value("cohist_salesrep_id").toInt());
+    _commission->setDouble(salespopulate.value("cohist_commission").toDouble());
+    _commissionPaid->setChecked(salespopulate.value("cohist_commissionpaid").toBool());
   }
 }
 

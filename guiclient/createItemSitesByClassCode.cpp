@@ -139,6 +139,7 @@ void createItemSitesByClassCode::languageChange()
 
 void createItemSitesByClassCode::sSave()
 {
+  XSqlQuery createSave;
   if (_warehouse->id() == -1)
   {
     QMessageBox::critical( this, tr("Select a Site"),
@@ -292,84 +293,84 @@ void createItemSitesByClassCode::sSave()
 
   sql += ");";
 
-  q.prepare(sql);
-  q.bindValue(":itemsite_reorderlevel", _reorderLevel->toDouble());
-  q.bindValue(":itemsite_ordertoqty", _orderUpToQty->toDouble());
-  q.bindValue(":itemsite_minordqty", _minimumOrder->toDouble());
-  q.bindValue(":itemsite_maxordqty", _maximumOrder->toDouble());
-  q.bindValue(":itemsite_multordqty", _orderMultiple->toDouble());
-  q.bindValue(":itemsite_safetystock", _safetyStock->toDouble());
-  q.bindValue(":itemsite_cyclecountfreq", _cycleCountFreq->value());
-  q.bindValue(":itemsite_leadtime", _leadTime->value());
-  q.bindValue(":itemsite_eventfence", _eventFence->value());
-  q.bindValue(":itemsite_plancode_id", _plannerCode->id());
-  q.bindValue(":itemsite_costcat_id", _costcat->id());
+  createSave.prepare(sql);
+  createSave.bindValue(":itemsite_reorderlevel", _reorderLevel->toDouble());
+  createSave.bindValue(":itemsite_ordertoqty", _orderUpToQty->toDouble());
+  createSave.bindValue(":itemsite_minordqty", _minimumOrder->toDouble());
+  createSave.bindValue(":itemsite_maxordqty", _maximumOrder->toDouble());
+  createSave.bindValue(":itemsite_multordqty", _orderMultiple->toDouble());
+  createSave.bindValue(":itemsite_safetystock", _safetyStock->toDouble());
+  createSave.bindValue(":itemsite_cyclecountfreq", _cycleCountFreq->value());
+  createSave.bindValue(":itemsite_leadtime", _leadTime->value());
+  createSave.bindValue(":itemsite_eventfence", _eventFence->value());
+  createSave.bindValue(":itemsite_plancode_id", _plannerCode->id());
+  createSave.bindValue(":itemsite_costcat_id", _costcat->id());
 
   if (_createPlannedTransfers->isChecked())
-    q.bindValue(":supplywhsid", _suppliedFromSite->id());
+    createSave.bindValue(":supplywhsid", _suppliedFromSite->id());
 
-  q.bindValue(":itemsite_useparams",     QVariant(_useParameters->isChecked()));
-  q.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked()));
-  q.bindValue(":itemsite_posupply",        QVariant(_poSupply->isChecked()));
-  q.bindValue(":itemsite_wosupply",        QVariant(_woSupply->isChecked()));
-//  q.bindValue(":itemsite_createpr",      QVariant(_createPr->isChecked()));
-  q.bindValue(":itemsite_createwo",      QVariant(_createWo->isChecked()));
-  q.bindValue(":itemsite_sold",          QVariant(_sold->isChecked()));
-  q.bindValue(":itemsite_stocked",       QVariant(_stocked->isChecked()));
-  q.bindValue(":itemsite_loccntrl",      QVariant(_locationControl->isChecked()));
-  q.bindValue(":itemsite_disallowblankwip", QVariant((_locationControl->isChecked() && _disallowBlankWIP->isChecked())));
-  q.bindValue(":itemsite_perishable",    QVariant(_perishable->isChecked()));
-  q.bindValue(":itemsite_soldranking", _soldRanking->value());
-  q.bindValue(":itemsite_location_comments", _locationComments->text().trimmed());
-  q.bindValue(":itemsite_abcclass", _abcClass->currentText());
+  createSave.bindValue(":itemsite_useparams",     QVariant(_useParameters->isChecked()));
+  createSave.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked()));
+  createSave.bindValue(":itemsite_posupply",        QVariant(_poSupply->isChecked()));
+  createSave.bindValue(":itemsite_wosupply",        QVariant(_woSupply->isChecked()));
+//  createSave.bindValue(":itemsite_createpr",      QVariant(_createPr->isChecked()));
+  createSave.bindValue(":itemsite_createwo",      QVariant(_createWo->isChecked()));
+  createSave.bindValue(":itemsite_sold",          QVariant(_sold->isChecked()));
+  createSave.bindValue(":itemsite_stocked",       QVariant(_stocked->isChecked()));
+  createSave.bindValue(":itemsite_loccntrl",      QVariant(_locationControl->isChecked()));
+  createSave.bindValue(":itemsite_disallowblankwip", QVariant((_locationControl->isChecked() && _disallowBlankWIP->isChecked())));
+  createSave.bindValue(":itemsite_perishable",    QVariant(_perishable->isChecked()));
+  createSave.bindValue(":itemsite_soldranking", _soldRanking->value());
+  createSave.bindValue(":itemsite_location_comments", _locationComments->text().trimmed());
+  createSave.bindValue(":itemsite_abcclass", _abcClass->currentText());
 
-  q.bindValue(":itemsite_planning_type", _planningType->code());
-  q.bindValue(":itemsite_ordergroup", _orderGroup->value());
-  q.bindValue(":itemsite_ordergroup_first", QVariant(_orderGroupFirst->isChecked()));
-  q.bindValue(":itemsite_mps_timefence", _mpsTimeFence->value());
+  createSave.bindValue(":itemsite_planning_type", _planningType->code());
+  createSave.bindValue(":itemsite_ordergroup", _orderGroup->value());
+  createSave.bindValue(":itemsite_ordergroup_first", QVariant(_orderGroupFirst->isChecked()));
+  createSave.bindValue(":itemsite_mps_timefence", _mpsTimeFence->value());
 
   if (_useDefaultLocation->isChecked())
   {
     if (_location->isChecked())
     {
-      q.bindValue(":itemsite_location", "");
-      q.bindValue(":itemsite_location_id", _locations->id());
+      createSave.bindValue(":itemsite_location", "");
+      createSave.bindValue(":itemsite_location_id", _locations->id());
     }
     else if (_miscLocation->isChecked())
     {
-      q.bindValue(":itemsite_location", _miscLocationName->text().trimmed());
-      q.bindValue(":itemsite_location_id", -1);
+      createSave.bindValue(":itemsite_location", _miscLocationName->text().trimmed());
+      createSave.bindValue(":itemsite_location_id", -1);
     }
   }
   else
   {
-    q.bindValue(":itemsite_location", "");
-    q.bindValue(":itemsite_location_id", -1);
+    createSave.bindValue(":itemsite_location", "");
+    createSave.bindValue(":itemsite_location_id", -1);
   }
 
-  q.bindValue(":itemsite_controlmethod", _controlMethod->code());
+  createSave.bindValue(":itemsite_controlmethod", _controlMethod->code());
 
   if(_costNone->isChecked())
-    q.bindValue(":itemsite_costmethod", "N");
+    createSave.bindValue(":itemsite_costmethod", "N");
   else if(_costAvg->isChecked())
-    q.bindValue(":itemsite_costmethod", "A");
+    createSave.bindValue(":itemsite_costmethod", "A");
   else if(_costStd->isChecked())
-    q.bindValue(":itemsite_costmethod", "S");
+    createSave.bindValue(":itemsite_costmethod", "S");
 
   if (_woCostGroup->isChecked())
   {    
     if (_todate->isChecked())
-	  q.bindValue(":itemsite_cosdefault", QString("D"));
+	  createSave.bindValue(":itemsite_cosdefault", QString("D"));
     else 
-      q.bindValue(":itemsite_cosdefault", QString("P"));
+      createSave.bindValue(":itemsite_cosdefault", QString("P"));
   }
   
   if (_sequence->isValid())
-    q.bindValue(":itemsite_lsseq_id", _sequence->id());
+    createSave.bindValue(":itemsite_lsseq_id", _sequence->id());
   
-  q.bindValue(":warehous_id", _warehouse->id());
-  _classCode->bindValue(q);
-  q.exec();
+  createSave.bindValue(":warehous_id", _warehouse->id());
+  _classCode->bindValue(createSave);
+  createSave.exec();
 
   omfgThis->sItemsitesUpdated();
 
@@ -456,14 +457,15 @@ void createItemSitesByClassCode::sHandlePlanningType()
 
 void createItemSitesByClassCode::populateLocations()
 {
-  q.prepare( "SELECT location_id, formatLocationName(location_id) AS locationname "
+  XSqlQuery createpopulateLocations;
+  createpopulateLocations.prepare( "SELECT location_id, formatLocationName(location_id) AS locationname "
              "FROM location "
              "WHERE ( (location_warehous_id=:warehous_id)"
              " AND (NOT location_restrict) ) "
              "ORDER BY locationname;" );
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  _locations->populate(q);
+  createpopulateLocations.bindValue(":warehous_id", _warehouse->id());
+  createpopulateLocations.exec();
+  _locations->populate(createpopulateLocations);
 
   if (_locations->count())
   {

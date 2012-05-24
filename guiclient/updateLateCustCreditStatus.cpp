@@ -53,7 +53,8 @@ void updateLateCustCreditStatus::languageChange()
 
 void updateLateCustCreditStatus::sUpdate()
 {
-  q.exec("UPDATE custinfo"
+  XSqlQuery updateUpdate;
+  updateUpdate.exec("UPDATE custinfo"
          "   SET cust_creditstatus = 'W'"
          " WHERE(((SELECT count(aropen_id)"
          "           FROM aropen"

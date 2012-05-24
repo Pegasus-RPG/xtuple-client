@@ -80,6 +80,7 @@ void postCostsByClassCode::sSelectAll()
 
 void postCostsByClassCode::sPost()
 {
+  XSqlQuery postPost;
   QString sql = "SELECT doPostCosts(item_id, TRUE, :material, :lowMaterial, "
                 "       :directLabor, :lowDirectLabor, :overhead, :lowOverhead, "
                 "       :machOverhead, :lowMachOverhead, :user, :lowUser, :rollUp) "
@@ -95,24 +96,24 @@ void postCostsByClassCode::sPost()
           "    :directLabor, :lowDirectLabor, :overhead, :lowOverhead, "
           "    :machOverhead, :lowMachOverhead, :user, :lowUser, :rollUp);";
 
-  q.prepare(sql);
-  q.bindValue(":material",        _material->isChecked()          ? "t" : "f");
-  q.bindValue(":lowMaterial",     _lowerMaterial->isChecked()     ? "t" : "f");
-  q.bindValue(":directLabor",     _directLabor->isChecked()       ? "t" : "f");
-  q.bindValue(":lowDirectLabor",  _lowerDirectLabor->isChecked()  ? "t" : "f");
-  q.bindValue(":overhead",        _overhead->isChecked()          ? "t" : "f");
-  q.bindValue(":lowOverhead",     _lowerOverhead->isChecked()     ? "t" : "f");
-  q.bindValue(":machOverhead",    _machOverhead->isChecked()      ? "t" : "f");
-  q.bindValue(":lowMachOverhead", _lowerMachOverhead->isChecked() ? "t" : "f");
-  q.bindValue(":user",            _user->isChecked()              ? "t" : "f");
-  q.bindValue(":lowUser",         _lowerUser->isChecked()         ? "t" : "f");
-  q.bindValue(":rollUp",          _rollUp->isChecked()            ? "t" : "f");
+  postPost.prepare(sql);
+  postPost.bindValue(":material",        _material->isChecked()          ? "t" : "f");
+  postPost.bindValue(":lowMaterial",     _lowerMaterial->isChecked()     ? "t" : "f");
+  postPost.bindValue(":directLabor",     _directLabor->isChecked()       ? "t" : "f");
+  postPost.bindValue(":lowDirectLabor",  _lowerDirectLabor->isChecked()  ? "t" : "f");
+  postPost.bindValue(":overhead",        _overhead->isChecked()          ? "t" : "f");
+  postPost.bindValue(":lowOverhead",     _lowerOverhead->isChecked()     ? "t" : "f");
+  postPost.bindValue(":machOverhead",    _machOverhead->isChecked()      ? "t" : "f");
+  postPost.bindValue(":lowMachOverhead", _lowerMachOverhead->isChecked() ? "t" : "f");
+  postPost.bindValue(":user",            _user->isChecked()              ? "t" : "f");
+  postPost.bindValue(":lowUser",         _lowerUser->isChecked()         ? "t" : "f");
+  postPost.bindValue(":rollUp",          _rollUp->isChecked()            ? "t" : "f");
 
-  _classCode->bindValue(q);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  _classCode->bindValue(postPost);
+  postPost.exec();
+  if (postPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, postPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

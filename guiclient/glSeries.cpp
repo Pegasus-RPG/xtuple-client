@@ -80,6 +80,7 @@ void glSeries::languageChange()
 
 enum SetResponse glSeries::set(const ParameterList &pParams)
 {
+  XSqlQuery glet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -94,27 +95,27 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
   if (valid)
   {
     _glsequence = param.toInt();
-    q.prepare("SELECT DISTINCT glseries_distdate, glseries_source,"
+    glet.prepare("SELECT DISTINCT glseries_distdate, glseries_source,"
 	      "                glseries_doctype,  glseries_docnumber,"
 	      "                glseries_notes"
               "  FROM glseries"
               " WHERE (glseries_sequence=:glseries_sequence);" );
-    q.bindValue(":glseries_sequence", _glsequence);
-    q.exec();
-    if(q.first())
+    glet.bindValue(":glseries_sequence", _glsequence);
+    glet.exec();
+    if(glet.first())
     {
-      _date->setDate(q.value("glseries_distdate").toDate());
-      _source->setText(q.value("glseries_source").toString());
-      int idx = _doctype->findText(q.value("glseries_doctype").toString());
+      _date->setDate(glet.value("glseries_distdate").toDate());
+      _source->setText(glet.value("glseries_source").toString());
+      int idx = _doctype->findText(glet.value("glseries_doctype").toString());
       if(idx < 0)
-        _doctype->addItem(q.value("glseries_doctype").toString());
-      _doctype->setCurrentIndex(_doctype->findText(q.value("glseries_doctype").toString()));
-      _docnumber->setText(q.value("glseries_docnumber").toString());
-      _notes->setText(q.value("glseries_notes").toString());
+        _doctype->addItem(glet.value("glseries_doctype").toString());
+      _doctype->setCurrentIndex(_doctype->findText(glet.value("glseries_doctype").toString()));
+      _docnumber->setText(glet.value("glseries_docnumber").toString());
+      _notes->setText(glet.value("glseries_notes").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (glet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, glet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
     sFillList();
@@ -137,12 +138,12 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT fetchGLSequence() AS glsequence;");
-      if (q.first())
-        _glsequence = q.value("glsequence").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      glet.exec("SELECT fetchGLSequence() AS glsequence;");
+      if (glet.first())
+        _glsequence = glet.value("glsequence").toInt();
+      else if (glet.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, glet.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
     }
@@ -161,21 +162,21 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
       _date->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
 
-      q.prepare( "SELECT DISTINCT glseries_docnumber, stdjrnl_notes "
+      glet.prepare( "SELECT DISTINCT glseries_docnumber, stdjrnl_notes "
                  "  FROM glseries, stdjrnl "
                  " WHERE ( (stdjrnl_name=glseries_docnumber) "
                  "   AND   (stdjrnl_notes IS NOT NULL) "
                  "   AND   (stdjrnl_notes != '') "
                  "   AND   (glseries_sequence=:glsequence) ); ");
-      q.bindValue(":glsequence", _glsequence);
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      glet.bindValue(":glsequence", _glsequence);
+      glet.exec();
+      if (glet.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, glet.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
-      while(q.next())
-        _notes->append(q.value("glseries_docnumber").toString() + ": " + q.value("stdjrnl_notes").toString() + "\n\n");
+      while(glet.next())
+        _notes->append(glet.value("glseries_docnumber").toString() + ": " + glet.value("stdjrnl_notes").toString() + "\n\n");
 
       _post->setFocus();
     }
@@ -258,13 +259,14 @@ void glSeries::sEdit()
 
 void glSeries::sDelete()
 {
-  q.prepare( "DELETE FROM glseries "
+  XSqlQuery glDelete;
+  glDelete.prepare( "DELETE FROM glseries "
              "WHERE (glseries_id=:glseries_id);" );
-  q.bindValue(":glseries_id", _glseries->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  glDelete.bindValue(":glseries_id", _glseries->id());
+  glDelete.exec();
+  if (glDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -273,6 +275,7 @@ void glSeries::sDelete()
 
 bool glSeries::update()
 {
+  XSqlQuery glupdate;
   if(!_date->isValid())
   {
     QMessageBox::information( this, tr("Cannot Post G/L Series"),
@@ -291,41 +294,41 @@ bool glSeries::update()
 
 // Do not save notes when posting std journal
   if (_mode == cPostStandardJournal)
-    q.prepare( "UPDATE glseries "
+    glupdate.prepare( "UPDATE glseries "
                "SET glseries_source=:source,"
                "    glseries_doctype=:doctype,"
                "    glseries_docnumber=:docnumber,"
                "    glseries_distdate=:glseries_distdate "
                "WHERE (glseries_sequence=:glseries_sequence);" );
   else
-    q.prepare( "UPDATE glseries "
+    glupdate.prepare( "UPDATE glseries "
                "SET glseries_notes=:glseries_notes, "
                "    glseries_source=:source,"
                "    glseries_doctype=:doctype,"
                "    glseries_docnumber=:docnumber,"
                "    glseries_distdate=:glseries_distdate "
                "WHERE (glseries_sequence=:glseries_sequence);" );
-  q.bindValue(":glseries_notes", _notes->toPlainText());
-  q.bindValue(":source",	_source->text());
-  q.bindValue(":doctype",	_doctype->currentText());
-  q.bindValue(":docnumber",	_docnumber->text());
-  q.bindValue(":glseries_sequence", _glsequence);
-  q.bindValue(":glseries_distdate", _date->date());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  glupdate.bindValue(":glseries_notes", _notes->toPlainText());
+  glupdate.bindValue(":source",	_source->text());
+  glupdate.bindValue(":doctype",	_doctype->currentText());
+  glupdate.bindValue(":docnumber",	_docnumber->text());
+  glupdate.bindValue(":glseries_sequence", _glsequence);
+  glupdate.bindValue(":glseries_distdate", _date->date());
+  glupdate.exec();
+  if (glupdate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glupdate.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
-  q.prepare("SELECT SUM(glseries_amount) AS result "
+  glupdate.prepare("SELECT SUM(glseries_amount) AS result "
             "  FROM glseries "
             " WHERE (glseries_sequence=:glseries_sequence); ");
-  q.bindValue(":glseries_sequence", _glsequence);
-  q.exec();
-  if(q.first())
+  glupdate.bindValue(":glseries_sequence", _glsequence);
+  glupdate.exec();
+  if(glupdate.first())
   {
-    double result = q.value("result").toDouble();
+    double result = glupdate.value("result").toDouble();
     if(result != 0)
     {
       QMessageBox::critical( this, tr("Cannot Post G/L Series"),
@@ -333,9 +336,9 @@ bool glSeries::update()
       return false;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (glupdate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glupdate.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -352,6 +355,7 @@ void glSeries::sSave()
 
 void glSeries::sPost()
 {
+  XSqlQuery glPost;
   if (! update())
     return;
 
@@ -372,14 +376,14 @@ void glSeries::sPost()
   }
   else
   {
-    q.prepare("SELECT postGLSeriesNoSumm(:glseries_sequence,COALESCE(:journal,fetchJournalNumber('G/L'))) AS return;");
-    q.bindValue(":glseries_sequence", _glsequence);
+    glPost.prepare("SELECT postGLSeriesNoSumm(:glseries_sequence,COALESCE(:journal,fetchJournalNumber('G/L'))) AS return;");
+    glPost.bindValue(":glseries_sequence", _glsequence);
     if (_journal)
-      q.bindValue(":journal", _journal);
-    q.exec();
-    if (q.first())
+      glPost.bindValue(":journal", _journal);
+    glPost.exec();
+    if (glPost.first())
     {
-      int returnVal = q.value("return").toInt();
+      int returnVal = glPost.value("return").toInt();
       if (returnVal < 0)
       {
         systemError(this, storedProcErrorLookup("postGLSeriesNoSumm", returnVal),
@@ -387,9 +391,9 @@ void glSeries::sPost()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (glPost.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, glPost.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -417,6 +421,7 @@ void glSeries::sPost()
 
 void glSeries::reject()
 {
+  XSqlQuery glreject;
   if (DEBUG)
     qDebug("glSeries::reject() entered with _mode %d, topLevelItemCount %d",
            _mode, _glseries->topLevelItemCount());
@@ -429,11 +434,11 @@ void glSeries::reject()
                               QMessageBox::Yes | QMessageBox::No,
                               QMessageBox::No) == QMessageBox::Yes)
     {
-      q.prepare("SELECT deleteGLSeries(:glsequence);");
-      q.bindValue(":glsequence", _glsequence);
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      glreject.prepare("SELECT deleteGLSeries(:glsequence);");
+      glreject.bindValue(":glsequence", _glsequence);
+      glreject.exec();
+      if (glreject.lastError().type() != QSqlError::NoError)
+        systemError(this, glreject.lastError().databaseText(), __FILE__, __LINE__);
     }
     else
       return;
@@ -446,7 +451,8 @@ void glSeries::reject()
 
 void glSeries::sFillList()
 {
-  q.prepare( "SELECT glseries_id, (formatGLAccount(accnt_id) || '-' || accnt_descrip) AS account,"
+  XSqlQuery glFillList;
+  glFillList.prepare( "SELECT glseries_id, (formatGLAccount(accnt_id) || '-' || accnt_descrip) AS account,"
              "       CASE WHEN (glseries_amount < 0) THEN (glseries_amount * -1)"
              "            ELSE 0"
              "       END AS debit,"
@@ -458,21 +464,21 @@ void glSeries::sFillList()
              "FROM glseries, accnt "
              "WHERE ( (glseries_accnt_id=accnt_id)"
              " AND (glseries_sequence=:glseries_sequence) );" );
-  q.bindValue(":glseries_sequence", _glsequence);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  glFillList.bindValue(":glseries_sequence", _glsequence);
+  glFillList.exec();
+  if (glFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _glseries->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _glseries->populate(glFillList);
+  if (glFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT SUM(CASE WHEN (glseries_amount < 0) THEN (glseries_amount * -1)"
+  glFillList.prepare("SELECT SUM(CASE WHEN (glseries_amount < 0) THEN (glseries_amount * -1)"
             "                              ELSE 0"
             "                         END) AS debit,"
             "       SUM(CASE WHEN (glseries_amount > 0) THEN glseries_amount"
@@ -482,25 +488,25 @@ void glSeries::sFillList()
             "       (SUM(glseries_amount) <> 0) AS oob "
             "FROM glseries "
             "WHERE (glseries_sequence=:glseries_sequence);" );
-  q.bindValue(":glseries_sequence", _glsequence);
-  q.exec();
-  if (q.first())
+  glFillList.bindValue(":glseries_sequence", _glsequence);
+  glFillList.exec();
+  if (glFillList.first())
   {
-    _debits->setDouble(q.value("debit").toDouble());
-    _credits->setDouble(q.value("credit").toDouble());
-    _diff->setDouble(q.value("diff").toDouble());
+    _debits->setDouble(glFillList.value("debit").toDouble());
+    _credits->setDouble(glFillList.value("credit").toDouble());
+    _diff->setDouble(glFillList.value("diff").toDouble());
 
     QString stylesheet;
-    if (q.value("oob").toBool())
+    if (glFillList.value("oob").toBool())
         stylesheet = QString("* { color: %1; }").arg(namedColor("error").name());
 
     _debits->setStyleSheet(stylesheet);
     _credits->setStyleSheet(stylesheet);
     _diff->setStyleSheet(stylesheet);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (glFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

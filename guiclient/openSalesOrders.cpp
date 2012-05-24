@@ -168,24 +168,25 @@ void openSalesOrders::sPrintPackingList()
 
 void openSalesOrders::sAddToPackingListBatch()
 {
+  XSqlQuery openAddToPackingListBatch;
   if (!checkSitePrivs())
     return;
     
-  q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
-  q.bindValue(":sohead_id", list()->id());
-  q.exec();
-  if (q.first())
+  openAddToPackingListBatch.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
+  openAddToPackingListBatch.bindValue(":sohead_id", list()->id());
+  openAddToPackingListBatch.exec();
+  if (openAddToPackingListBatch.first())
   {
-    int result = q.value("result").toInt();
+    int result = openAddToPackingListBatch.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("addToPackingListBatch", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (openAddToPackingListBatch.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, openAddToPackingListBatch.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

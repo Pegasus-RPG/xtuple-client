@@ -503,7 +503,7 @@ int CreditCardProcessor::authorize(const int pccardid, const QString &pcvv, cons
 	cashq.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
 	if (cashq.first())
 	  prefid = cashq.value("cashrcpt_id").toInt();
-	else if (q.lastError().type() != QSqlError::NoError)
+	else if (cashq.lastError().type() != QSqlError::NoError)
 	{
 	  _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
 	  // TODO: log an event?
@@ -1517,6 +1517,7 @@ QString CreditCardProcessor::errorMsg(const int pcode)
   */
 int CreditCardProcessor::checkCreditCard(const int pccid, const QString &pcvv, QString &pccard_x)
 {
+  XSqlQuery checkCredit;
   if (DEBUG)
     qDebug("CCP:checkCreditCard(%d, pcvv)", pccid);
   reset();
@@ -1527,7 +1528,7 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const QString &pcvv, Q
     return -5;
   }
 
-  q.prepare( "SELECT ccard_active, ccard_cust_id, "
+ checkCredit.prepare( "SELECT ccard_active, ccard_cust_id, "
              "       formatbytea(decrypt(setbytea(ccard_month_expired),"
 	     "               setbytea(:key), 'bf')) AS ccard_month_expired,"
              "       formatbytea(decrypt(setbytea(ccard_year_expired),"
@@ -1538,32 +1539,32 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const QString &pcvv, Q
              "  FROM ccard"
              "     LEFT OUTER JOIN ccbank ON (ccard_type=ccbank_ccard_type)"
              " WHERE (ccard_id=:ccardid);");
-  q.bindValue(":ccardid", pccid);
-  q.bindValue(":key",     omfgThis->_key);
-  q.exec();
-  if (q.first())
+ checkCredit.bindValue(":ccardid", pccid);
+ checkCredit.bindValue(":key",     omfgThis->_key);
+ checkCredit.exec();
+  if (checkCredit.first())
   {
-    pccard_x = q.value("ccard_number_x").toString();
+    pccard_x = checkCredit.value("ccard_number_x").toString();
 
-    if (!q.value("ccard_active").toBool())
+    if (!checkCredit.value("ccard_active").toBool())
     {
       _errorMsg = errorMsg(-10).arg(pccard_x);
       return -10;
     }
 
-    if (q.value("ccbank_bankaccnt_id").isNull())
+    if (checkCredit.value("ccbank_bankaccnt_id").isNull())
     {
-      _errorMsg = errorMsg(-94).arg(q.value("ccard_type").toString());
+      _errorMsg = errorMsg(-94).arg(checkCredit.value("ccard_type").toString());
       return -94;
     }
 
-    if (q.value("ccard_year_expired").toInt() < QDate::currentDate().year()
-	 || ((q.value("ccard_year_expired").toInt() == QDate::currentDate().year())
-           && q.value("ccard_month_expired").toInt() < QDate::currentDate().month()))
+    if (checkCredit.value("ccard_year_expired").toInt() < QDate::currentDate().year()
+	 || ((checkCredit.value("ccard_year_expired").toInt() == QDate::currentDate().year())
+           && checkCredit.value("ccard_month_expired").toInt() < QDate::currentDate().month()))
     {
       XSqlQuery xpq;
       xpq.prepare("SELECT expireCreditCard(:custid, setbytea(:key)) AS result;");
-      xpq.bindValue(":custid", q.value("ccard_cust_id"));
+      xpq.bindValue(":custid", xpq.value("ccard_cust_id"));
       xpq.bindValue(":key", omfgThis->_key);
       xpq.exec();
       // ignore errors from expirecreditcard()

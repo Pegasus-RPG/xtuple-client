@@ -122,21 +122,22 @@ void uoms::sView()
 
 void uoms::sDelete()
 {
-  q.prepare( "SELECT deleteUOM(:uom_id) AS result;" );
-  q.bindValue(":uom_id", _uoms->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery uomsDelete;
+  uomsDelete.prepare( "SELECT deleteUOM(:uom_id) AS result;" );
+  uomsDelete.bindValue(":uom_id", _uoms->id());
+  uomsDelete.exec();
+  if (uomsDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = uomsDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteUOM", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (uomsDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, uomsDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

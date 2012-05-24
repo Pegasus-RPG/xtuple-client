@@ -51,6 +51,7 @@ void itemCost::languageChange()
 
 enum SetResponse itemCost::set(const ParameterList &pParams)
 {
+  XSqlQuery itemet;
   XDialog::set(pParams);
   _captive = true;
 
@@ -62,14 +63,14 @@ enum SetResponse itemCost::set(const ParameterList &pParams)
   {
     _type = cBOMItemCost;
     _bomitemid = param.toInt();
-    q.prepare( "SELECT bomitem_item_id "
+    itemet.prepare( "SELECT bomitem_item_id "
                "FROM bomitem "
                "WHERE (bomitem_id=:bomitem_id);" );
-    q.bindValue(":bomitem_id", _bomitemid);
-    q.exec();
-    if (q.first())
+    itemet.bindValue(":bomitem_id", _bomitemid);
+    itemet.exec();
+    if (itemet.first())
     {
-      _item->setId(q.value("bomitem_item_id").toInt());
+      _item->setId(itemet.value("bomitem_item_id").toInt());
       _item->setReadOnly(TRUE);
     }
   }
@@ -89,25 +90,25 @@ enum SetResponse itemCost::set(const ParameterList &pParams)
     _itemcostid = param.toInt();
     _item->setReadOnly(TRUE);
 
-    q.prepare( "SELECT bomitem_item_id, formatBoolYN(bomitemcost_lowlevel) AS lowlevel,"
+    itemet.prepare( "SELECT bomitem_item_id, formatBoolYN(bomitemcost_lowlevel) AS lowlevel,"
                "       bomitemcost_actcost, bomitemcost_curr_id, bomitemcost_updated "
                "FROM bomitem, bomitemcost "
                "WHERE ( (bomitemcost_bomitem_id=bomitem_id)"
                " AND    (bomitemcost_id=:bomitemcost_id) );" );
-    q.bindValue(":bomitemcost_id", _itemcostid);
-    q.exec();
-    if (q.first())
+    itemet.bindValue(":bomitemcost_id", _itemcostid);
+    itemet.exec();
+    if (itemet.first())
     {
-      _item->setId(q.value("bomitem_item_id").toInt());
-      _lowerLevel->setText(q.value("lowlevel").toString());
-      _actualCost->set(q.value("bomitemcost_actcost").toDouble(),
-                       q.value("bomitemcost_curr_id").toInt(),
+      _item->setId(itemet.value("bomitem_item_id").toInt());
+      _lowerLevel->setText(itemet.value("lowlevel").toString());
+      _actualCost->set(itemet.value("bomitemcost_actcost").toDouble(),
+                       itemet.value("bomitemcost_curr_id").toInt(),
                        QDate::currentDate(),
                        false);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (itemet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -130,25 +131,25 @@ enum SetResponse itemCost::set(const ParameterList &pParams)
     _itemcostid = param.toInt();
     _item->setReadOnly(TRUE);
 
-    q.prepare( "SELECT item_id, formatBoolYN(itemcost_lowlevel) AS lowlevel,"
+    itemet.prepare( "SELECT item_id, formatBoolYN(itemcost_lowlevel) AS lowlevel,"
                "       itemcost_actcost, itemcost_curr_id, itemcost_updated "
                "FROM item, itemcost "
                "WHERE ( (itemcost_item_id=item_id)"
                " AND    (itemcost_id=:itemcost_id) );" );
-    q.bindValue(":itemcost_id", _itemcostid);
-    q.exec();
-    if (q.first())
+    itemet.bindValue(":itemcost_id", _itemcostid);
+    itemet.exec();
+    if (itemet.first())
     {
-      _item->setId(q.value("item_id").toInt());
-      _lowerLevel->setText(q.value("lowlevel").toString());
-      _actualCost->set(q.value("itemcost_actcost").toDouble(),
-		       q.value("itemcost_curr_id").toInt(),
+      _item->setId(itemet.value("item_id").toInt());
+      _lowerLevel->setText(itemet.value("lowlevel").toString());
+      _actualCost->set(itemet.value("itemcost_actcost").toDouble(),
+		       itemet.value("itemcost_curr_id").toInt(),
 		       QDate::currentDate(),
 		       false);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (itemet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -193,6 +194,7 @@ enum SetResponse itemCost::set(const ParameterList &pParams)
 
 void itemCost::sSave()
 {
+  XSqlQuery itemSave;
   if (_mode != cNew && _mode != cEdit)
     done(_itemcostid);
 
@@ -207,12 +209,12 @@ void itemCost::sSave()
   {
     if (_mode == cNew)
     {
-      q.exec("SELECT NEXTVAL('itemcost_itemcost_id_seq') AS itemcost_id;");
-      if (q.first())
+      itemSave.exec("SELECT NEXTVAL('itemcost_itemcost_id_seq') AS itemcost_id;");
+      if (itemSave.first())
       {
-        _itemcostid = q.value("itemcost_id").toInt();
+        _itemcostid = itemSave.value("itemcost_id").toInt();
 
-        q.prepare( "INSERT INTO itemcost "
+        itemSave.prepare( "INSERT INTO itemcost "
                    "( itemcost_id, itemcost_item_id,"
                    "  itemcost_costelem_id, itemcost_lowlevel,"
                    "  itemcost_stdcost, itemcost_posted,"
@@ -224,30 +226,30 @@ void itemCost::sSave()
                    "  0, startOfTime(),"
                    "  :itemcost_actcost, CURRENT_DATE, "
                    "  :itemcost_curr_id );" );
-        q.bindValue(":itemcost_item_id", _item->id());
-        q.bindValue(":itemcost_costelem_id", _costelem->id());
+        itemSave.bindValue(":itemcost_item_id", _item->id());
+        itemSave.bindValue(":itemcost_costelem_id", _costelem->id());
       }
     }
     else if (_mode == cEdit)
     {
-        q.prepare( "UPDATE itemcost SET"
+        itemSave.prepare( "UPDATE itemcost SET"
                    " itemcost_actcost=:itemcost_actcost,"
                    " itemcost_curr_id=:itemcost_curr_id, "
                    " itemcost_updated=CURRENT_DATE "
                    "WHERE (itemcost_id=:itemcost_id);");
     }
-    q.bindValue(":itemcost_id", _itemcostid);
-    q.bindValue(":itemcost_actcost", _actualCost->localValue());
-    q.bindValue(":itemcost_curr_id", _actualCost->id());
+    itemSave.bindValue(":itemcost_id", _itemcostid);
+    itemSave.bindValue(":itemcost_actcost", _actualCost->localValue());
+    itemSave.bindValue(":itemcost_curr_id", _actualCost->id());
 
-    if (q.exec() && _postCost->isChecked())
+    if (itemSave.exec() && _postCost->isChecked())
     {
-      q.prepare("SELECT postCost(:itemcost_id) AS result;");
-      q.bindValue(":itemcost_id", _itemcostid);
-      q.exec();
-      if (q.first())
+      itemSave.prepare("SELECT postCost(:itemcost_id) AS result;");
+      itemSave.bindValue(":itemcost_id", _itemcostid);
+      itemSave.exec();
+      if (itemSave.first())
       {
-        int result = q.value("result").toInt();
+        int result = itemSave.value("result").toInt();
         if (result < 0)
         {
           systemError(this, storedProcErrorLookup("postCost", result),
@@ -257,9 +259,9 @@ void itemCost::sSave()
       }
     }
 
-    if (q.lastError().type() != QSqlError::NoError)  // if EITHER q.exec() failed
+    if (itemSave.lastError().type() != QSqlError::NoError)  // if EITHER itemSave.exec() failed
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -267,12 +269,12 @@ void itemCost::sSave()
   {
     if (_mode == cNew)
     {
-      q.exec("SELECT NEXTVAL('bomitemcost_bomitemcost_id_seq') AS itemcost_id;");
-      if (q.first())
+      itemSave.exec("SELECT NEXTVAL('bomitemcost_bomitemcost_id_seq') AS itemcost_id;");
+      if (itemSave.first())
       {
-        _itemcostid = q.value("itemcost_id").toInt();
+        _itemcostid = itemSave.value("itemcost_id").toInt();
 
-        q.prepare( "INSERT INTO bomitemcost "
+        itemSave.prepare( "INSERT INTO bomitemcost "
                    "( bomitemcost_id, bomitemcost_bomitem_id,"
                    "  bomitemcost_costelem_id, bomitemcost_lowlevel,"
                    "  bomitemcost_stdcost, bomitemcost_posted,"
@@ -284,34 +286,34 @@ void itemCost::sSave()
                    "  0, startOfTime(),"
                    "  :bomitemcost_actcost, CURRENT_DATE, "
                    "  :bomitemcost_curr_id );" );
-        q.bindValue(":bomitemcost_bomitem_id", _bomitemid);
-        q.bindValue(":bomitemcost_costelem_id", _costelem->id());
+        itemSave.bindValue(":bomitemcost_bomitem_id", _bomitemid);
+        itemSave.bindValue(":bomitemcost_costelem_id", _costelem->id());
       }
     }
     else if (_mode == cEdit)
     {
-      q.prepare( "UPDATE bomitemcost SET"
+      itemSave.prepare( "UPDATE bomitemcost SET"
                  " bomitemcost_actcost=:bomitemcost_actcost,"
                  " bomitemcost_curr_id=:bomitemcost_curr_id, "
                  " bomitemcost_updated=CURRENT_DATE "
                  "WHERE (bomitemcost_id=:bomitemcost_id);");
     }
-    q.bindValue(":bomitemcost_id", _itemcostid);
-    q.bindValue(":bomitemcost_actcost", _actualCost->localValue());
-    q.bindValue(":bomitemcost_curr_id", _actualCost->id());
+    itemSave.bindValue(":bomitemcost_id", _itemcostid);
+    itemSave.bindValue(":bomitemcost_actcost", _actualCost->localValue());
+    itemSave.bindValue(":bomitemcost_curr_id", _actualCost->id());
 
-    if (q.exec() && _postCost->isChecked())
+    if (itemSave.exec() && _postCost->isChecked())
     {
-      q.prepare("UPDATE bomitemcost SET bomitemcost_stdcost=round(currToBase(bomitemcost_curr_id, bomitemcost_actcost, CURRENT_DATE),6), "
+      itemSave.prepare("UPDATE bomitemcost SET bomitemcost_stdcost=round(currToBase(bomitemcost_curr_id, bomitemcost_actcost, CURRENT_DATE),6), "
                 "                       bomitemcost_posted=CURRENT_DATE "
                 "WHERE bomitemcost_id=:bomitemcost_id;");
-      q.bindValue(":bomitemcost_id", _itemcostid);
-      q.exec();
+      itemSave.bindValue(":bomitemcost_id", _itemcostid);
+      itemSave.exec();
     }
 
-    if (q.lastError().type() != QSqlError::NoError)  // if EITHER q.exec() failed
+    if (itemSave.lastError().type() != QSqlError::NoError)  // if EITHER itemSave.exec() failed
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -321,6 +323,7 @@ void itemCost::sSave()
 
 void itemCost::sPopulateCostelem()
 {
+  XSqlQuery itemPopulateCostelem;
   if (_type == cItemCost)
   {
     if (_mode == cNew)
@@ -329,9 +332,9 @@ void itemCost::sPopulateCostelem()
       params.append("item_id", _item->id());
       params.append("itemtype", _item->itemType());
 
-      q = mqlLoad("costelem", "unusedbyitem").toQuery(params);
-      _costelem->populate(q);
-      if (q.size() <= 0)
+      itemPopulateCostelem = mqlLoad("costelem", "unusedbyitem").toQuery(params);
+      _costelem->populate(itemPopulateCostelem);
+      if (itemPopulateCostelem.size() <= 0)
       {
         QMessageBox::warning(this, tr("No Costing Elements Remaining"),
                              tr("<p>Item %1 already has all available costing "
@@ -348,10 +351,10 @@ void itemCost::sPopulateCostelem()
                    "FROM costelem, itemcost "
                    "WHERE ((costelem_id=itemcost_costelem_id)"
                    "  AND  (itemcost_id=:itemcost_id));");
-      q.prepare(sql);
-      q.bindValue(":itemcost_id", _itemcostid);
-      q.exec();
-      _costelem->populate(q);
+      itemPopulateCostelem.prepare(sql);
+      itemPopulateCostelem.bindValue(":itemcost_id", _itemcostid);
+      itemPopulateCostelem.exec();
+      _costelem->populate(itemPopulateCostelem);
     }
   }
   if (_type == cBOMItemCost)
@@ -362,9 +365,9 @@ void itemCost::sPopulateCostelem()
       params.append("bomitem_id", _bomitemid);
       params.append("itemtype", _item->itemType());
 
-      q = mqlLoad("costelem", "unusedbyitem").toQuery(params);
-      _costelem->populate(q);
-      if (q.size() <= 0)
+      itemPopulateCostelem = mqlLoad("costelem", "unusedbyitem").toQuery(params);
+      _costelem->populate(itemPopulateCostelem);
+      if (itemPopulateCostelem.size() <= 0)
       {
         QMessageBox::warning(this, tr("No Costing Elements Remaining"),
                              tr("<p>BOM Item %1 already has all available costing "
@@ -381,10 +384,10 @@ void itemCost::sPopulateCostelem()
                    "FROM costelem, bomitemcost "
                    "WHERE ((costelem_id=bomitemcost_costelem_id)"
                    "  AND  (bomitemcost_id=:itemcost_id));");
-      q.prepare(sql);
-      q.bindValue(":itemcost_id", _itemcostid);
-      q.exec();
-      _costelem->populate(q);
+      itemPopulateCostelem.prepare(sql);
+      itemPopulateCostelem.bindValue(":itemcost_id", _itemcostid);
+      itemPopulateCostelem.exec();
+      _costelem->populate(itemPopulateCostelem);
     }
   }
 }

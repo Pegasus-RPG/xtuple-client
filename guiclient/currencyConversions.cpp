@@ -167,13 +167,14 @@ void currencyConversions::sClose()
 
 void currencyConversions::sDelete()
 {
-    q.prepare("DELETE FROM curr_rate "
+  XSqlQuery currencyDelete;
+    currencyDelete.prepare("DELETE FROM curr_rate "
 	      "WHERE curr_rate_id = :curr_rate_id");
-    q.bindValue(":curr_rate_id", _conversionRates->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    currencyDelete.bindValue(":curr_rate_id", _conversionRates->id());
+    currencyDelete.exec();
+    if (currencyDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, currencyDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList();
@@ -203,15 +204,16 @@ bool currencyConversions::setParams(ParameterList &params)
 
 void currencyConversions::sFillList()
 {
+  XSqlQuery currencyFillList;
   MetaSQLQuery mql = mqlLoad("currencyConversions", "detail");
   ParameterList params;
   if (! setParams(params))
     return;
-  q = mql.toQuery(params);
-  _conversionRates->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  currencyFillList = mql.toQuery(params);
+  _conversionRates->populate(currencyFillList);
+  if (currencyFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, currencyFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -231,19 +233,20 @@ void currencyConversions::sPopulateMenu( QMenu* pMenu)
 
 void currencyConversions::setBaseCurrency()
 {
-    q.prepare("SELECT currConcat(curr_abbr, curr_symbol) AS baseCurrency "
+  XSqlQuery currencyetBaseCurrency;
+    currencyetBaseCurrency.prepare("SELECT currConcat(curr_abbr, curr_symbol) AS baseCurrency "
 	      "FROM curr_symbol "
 	      "WHERE curr_base = TRUE");
-    q.exec();
-    if (q.first())
+    currencyetBaseCurrency.exec();
+    if (currencyetBaseCurrency.first())
     {
-	_baseCurrency->setText(q.value("baseCurrency").toString());
+	_baseCurrency->setText(currencyetBaseCurrency.value("baseCurrency").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (currencyetBaseCurrency.lastError().type() != QSqlError::NoError)
     {
 	QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
 			      .arg(__FILE__)
 			      .arg(__LINE__),
-			      q.lastError().databaseText());
+			      currencyetBaseCurrency.lastError().databaseText());
     }
 }

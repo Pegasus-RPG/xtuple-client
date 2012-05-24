@@ -133,6 +133,7 @@ extern void xTupleMessageOutput(QtMsgType type, const char *msg);
 
 int main(int argc, char *argv[])
 {
+  XSqlQuery main;
   Q_INIT_RESOURCE(guiclient);
 
   QString username;
@@ -761,7 +762,7 @@ int main(int argc, char *argv[])
      _metrics->value("GLCompanySize").toInt() == 0)
   {
     // Check for the gain/loss and discrep accounts
-    q.prepare("SELECT COALESCE((SELECT TRUE"
+    main.prepare("SELECT COALESCE((SELECT TRUE"
               "                   FROM accnt, metric"
               "                  WHERE ((CAST(accnt_id AS text)=metric_value)"
               "                    AND  (metric_name='CurrencyGainLossAccount'))), FALSE)"
@@ -769,8 +770,8 @@ int main(int argc, char *argv[])
               "                   FROM accnt, metric"
               "                  WHERE ((CAST(accnt_id AS text)=metric_value)"
               "                    AND  (metric_name='GLSeriesDiscrepancyAccount'))), FALSE) AS result; ");
-    q.exec();
-    if(q.first() && q.value("result").toBool() != true)
+    main.exec();
+    if(main.first() && main.value("result").toBool() != true)
       QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
         QObject::tr("<p>Your system is configured to use multiple Currencies, "
                     "but the Currency Gain/Loss Account and/or the G/L Series "

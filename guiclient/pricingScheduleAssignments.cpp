@@ -125,10 +125,11 @@ void pricingScheduleAssignments::sView()
 
 void pricingScheduleAssignments::sDelete()
 {
-  q.prepare( "DELETE FROM ipsass "
+  XSqlQuery pricingDelete;
+  pricingDelete.prepare( "DELETE FROM ipsass "
              "WHERE (ipsass_id=:ipsass_id);" );
-  q.bindValue(":ipsass_id", _ipsass->id());
-  q.exec();
+  pricingDelete.bindValue(":ipsass_id", _ipsass->id());
+  pricingDelete.exec();
 
   sFillList();
 }

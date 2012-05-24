@@ -96,12 +96,13 @@ void subaccounts::sView()
 
 void subaccounts::sDelete()
 {
-  q.prepare( "SELECT deleteSubaccount(:id) AS result;");
-  q.bindValue(":id", _subaccnt->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery subaccountsDelete;
+  subaccountsDelete.prepare( "SELECT deleteSubaccount(:id) AS result;");
+  subaccountsDelete.bindValue(":id", _subaccnt->id());
+  subaccountsDelete.exec();
+  if (subaccountsDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = subaccountsDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteSubaccount", result),
@@ -109,9 +110,9 @@ void subaccounts::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (subaccountsDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, subaccountsDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -133,14 +134,15 @@ void subaccounts::sPopulateMenu(QMenu *pMenu)
 
 void subaccounts::sFillList()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery subaccountsFillList;
+  subaccountsFillList.prepare( "SELECT * "
              "FROM subaccnt "
              "ORDER BY subaccnt_number;" );
-  q.exec();
-  _subaccnt->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  subaccountsFillList.exec();
+  _subaccnt->populate(subaccountsFillList);
+  if (subaccountsFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, subaccountsFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

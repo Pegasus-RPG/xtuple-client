@@ -164,6 +164,7 @@ void selectOrderForBilling::clear()
 
 void selectOrderForBilling::sSave()
 {
+  XSqlQuery selectSave;
   if (!_shipDate->isValid())
   {
     QMessageBox::information(this, tr("No Ship Date Entered"),
@@ -187,7 +188,7 @@ void selectOrderForBilling::sSave()
   
   if (_cobmiscid != -1)
   {
-    q.prepare( "UPDATE cobmisc "
+    selectSave.prepare( "UPDATE cobmisc "
                "SET cobmisc_freight=:cobmisc_freight,"
                "    cobmisc_payment=:cobmisc_payment,"
 	       "    cobmisc_taxzone_id=:cobmisc_taxzone_id,"
@@ -198,26 +199,26 @@ void selectOrderForBilling::sSave()
                "    cobmisc_misc_descrip=:cobmisc_misc_descrip, "
 	       "    cobmisc_curr_id=:cobmisc_curr_id "
                "WHERE (cobmisc_id=:cobmisc_id);" );
-    q.bindValue(":cobmisc_id", _cobmiscid);
-    q.bindValue(":cobmisc_freight", _freight->localValue());
-    q.bindValue(":cobmisc_payment", _payment->localValue());
+    selectSave.bindValue(":cobmisc_id", _cobmiscid);
+    selectSave.bindValue(":cobmisc_freight", _freight->localValue());
+    selectSave.bindValue(":cobmisc_payment", _payment->localValue());
 
     if (_taxZone->isValid())
-      q.bindValue(":cobmisc_taxzone_id", _taxZone->id());
+      selectSave.bindValue(":cobmisc_taxzone_id", _taxZone->id());
 
-    q.bindValue(":cobmisc_notes", _comments->toPlainText());
-    q.bindValue(":cobmisc_shipdate", _shipDate->date());
-    q.bindValue(":cobmisc_invcdate", _invoiceDate->date());
-    q.bindValue(":cobmisc_shipvia", _shipvia->text());
-    q.bindValue(":cobmisc_closeorder", QVariant(_closeOpenItems->isChecked()));
-    q.bindValue(":cobmisc_misc", _miscCharge->localValue());
-    q.bindValue(":cobmisc_misc_accnt_id", _miscChargeAccount->id());
-    q.bindValue(":cobmisc_misc_descrip", _miscChargeDescription->text().trimmed());
-    q.bindValue(":cobmisc_curr_id",	_custCurrency->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    selectSave.bindValue(":cobmisc_notes", _comments->toPlainText());
+    selectSave.bindValue(":cobmisc_shipdate", _shipDate->date());
+    selectSave.bindValue(":cobmisc_invcdate", _invoiceDate->date());
+    selectSave.bindValue(":cobmisc_shipvia", _shipvia->text());
+    selectSave.bindValue(":cobmisc_closeorder", QVariant(_closeOpenItems->isChecked()));
+    selectSave.bindValue(":cobmisc_misc", _miscCharge->localValue());
+    selectSave.bindValue(":cobmisc_misc_accnt_id", _miscChargeAccount->id());
+    selectSave.bindValue(":cobmisc_misc_descrip", _miscChargeDescription->text().trimmed());
+    selectSave.bindValue(":cobmisc_curr_id",	_custCurrency->id());
+    selectSave.exec();
+    if (selectSave.lastError().type() != QSqlError::NoError)
     {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, selectSave.lastError().databaseText(), __FILE__, __LINE__);
 	return;
     }
   }
@@ -253,14 +254,15 @@ void selectOrderForBilling::sSoList()
 
 void selectOrderForBilling::sPopulate(int pSoheadid)
 {
+  XSqlQuery selectPopulate;
   if (_so->isValid())
   {
-    q.prepare("SELECT createBillingHeader(:sohead_id) AS cobmisc_id;");
-    q.bindValue(":sohead_id", pSoheadid);
-    q.exec();
-    if (q.first())
+    selectPopulate.prepare("SELECT createBillingHeader(:sohead_id) AS cobmisc_id;");
+    selectPopulate.bindValue(":sohead_id", pSoheadid);
+    selectPopulate.exec();
+    if (selectPopulate.first())
     {
-      _cobmiscid = q.value("cobmisc_id").toInt();
+      _cobmiscid = selectPopulate.value("cobmisc_id").toInt();
       if (_cobmiscid < 0)
       {
 	systemError(this, storedProcErrorLookup("createBillingHeader", _cobmiscid),
@@ -268,9 +270,9 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (selectPopulate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, selectPopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -333,9 +335,9 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
         _freight->clear();
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (selectPopulate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, selectPopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -370,25 +372,27 @@ void selectOrderForBilling::sEditSelection()
 
 void selectOrderForBilling::sCancelSelection()
 {
-  q.prepare( "DELETE FROM cobill "
+  XSqlQuery selectCancelSelection;
+  selectCancelSelection.prepare( "DELETE FROM cobill "
              "WHERE ((cobill_coitem_id=:coitem_id)"
              " AND (SELECT NOT cobmisc_posted"
              "      FROM cobmisc"
              "      WHERE (cobill_cobmisc_id=cobmisc_id) ) ) ");
-  q.bindValue(":coitem_id", _soitem->id());
-  q.exec();
+  selectCancelSelection.bindValue(":coitem_id", _soitem->id());
+  selectCancelSelection.exec();
 
   sFillList();
 }
 
 void selectOrderForBilling::sSelectBalance()
 {
-  q.prepare("SELECT selectBalanceForBilling(:sohead_id) AS result;");
-  q.bindValue(":sohead_id", _so->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery selectSelectBalance;
+  selectSelectBalance.prepare("SELECT selectBalanceForBilling(:sohead_id) AS result;");
+  selectSelectBalance.bindValue(":sohead_id", _so->id());
+  selectSelectBalance.exec();
+  if (selectSelectBalance.first())
   {
-    int result = q.value("result").toInt();
+    int result = selectSelectBalance.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("selectBalanceForBilling", result),
@@ -396,9 +400,9 @@ void selectOrderForBilling::sSelectBalance()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (selectSelectBalance.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectSelectBalance.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -436,6 +440,7 @@ void selectOrderForBilling::sUpdateTotal()
 
 void selectOrderForBilling::sFillList()
 {
+  XSqlQuery selectFillList;
   _soitem->clear();
 
   if (_so->isValid())
@@ -493,20 +498,20 @@ void selectOrderForBilling::sFillList()
       params.append("showOpenOnly");
     params.append("sohead_id", _so->id());
     MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    _soitem->populate(q);
-    if (q.first())
+    selectFillList = mql.toQuery(params);
+    _soitem->populate(selectFillList);
+    if (selectFillList.first())
     {
       double subtotal = 0.0;
       do
-        subtotal += q.value("extended").toDouble();
-      while (q.next());
+        subtotal += selectFillList.value("extended").toDouble();
+      while (selectFillList.next());
       _subtotal->setLocalValue(subtotal);
     }
     else
     {
-      if (q.lastError().type() != QSqlError::NoError)
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      if (selectFillList.lastError().type() != QSqlError::NoError)
+	systemError(this, selectFillList.lastError().databaseText(), __FILE__, __LINE__);
       _subtotal->clear();
     }
 
@@ -573,18 +578,19 @@ void selectOrderForBilling::sTaxDetail()
 
 void selectOrderForBilling::closeEvent(QCloseEvent * pEvent)
 {
-  q.prepare("SELECT releaseUnusedBillingHeader(:cobmisc_id) AS result;");
-  q.bindValue(":cobmisc_id", _cobmiscid);
-  q.exec();
-  if (q.first())
+  XSqlQuery selectcloseEvent;
+  selectcloseEvent.prepare("SELECT releaseUnusedBillingHeader(:cobmisc_id) AS result;");
+  selectcloseEvent.bindValue(":cobmisc_id", _cobmiscid);
+  selectcloseEvent.exec();
+  if (selectcloseEvent.first())
   {
-    int result = q.value("result").toInt();
+    int result = selectcloseEvent.value("result").toInt();
     if (result < -2) // don't bother the user with -1:posted or -2:has-lines
       systemError(this, storedProcErrorLookup("releaseUnusedBillingHeader", result),
 		  __FILE__, __LINE__);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (selectcloseEvent.lastError().type() != QSqlError::NoError)
+    systemError(this, selectcloseEvent.lastError().databaseText(), __FILE__, __LINE__);
 
   XWidget::closeEvent(pEvent);
 }

@@ -135,6 +135,7 @@ void currencyConversion::_sClose()
 
 void currencyConversion::_sSave()
 {
+  XSqlQuery currency_sSave;
   if (! _currency->isValid())
   {
       QMessageBox::warning(this, tr("Missing Currency"),
@@ -176,7 +177,7 @@ void currencyConversion::_sSave()
       return;
   }
   
-  q.prepare( "SELECT count(*) AS numberOfOverlaps "
+  currency_sSave.prepare( "SELECT count(*) AS numberOfOverlaps "
              "FROM curr_rate "
              "WHERE curr_id = :curr_id"
              "  AND curr_rate_id != :curr_rate_id"
@@ -184,14 +185,14 @@ void currencyConversion::_sSave()
              "         curr_expires BETWEEN :curr_effective AND :curr_expires)"
              "   OR   (curr_effective <= :curr_effective AND"
              "         curr_expires   >= :curr_expires) );" );
-  q.bindValue(":curr_rate_id", _curr_rate_id);
-  q.bindValue(":curr_id", _currency->id());
-  q.bindValue(":curr_effective", _dateCluster->startDate());
-  q.bindValue(":curr_expires", _dateCluster->endDate());
-  q.exec();
-  if (q.first())
+  currency_sSave.bindValue(":curr_rate_id", _curr_rate_id);
+  currency_sSave.bindValue(":curr_id", _currency->id());
+  currency_sSave.bindValue(":curr_effective", _dateCluster->startDate());
+  currency_sSave.bindValue(":curr_expires", _dateCluster->endDate());
+  currency_sSave.exec();
+  if (currency_sSave.first())
   {
-    if (q.value("numberOfOverlaps").toInt() > 0)
+    if (currency_sSave.value("numberOfOverlaps").toInt() > 0)
     {
       QMessageBox::warning(this, tr("Invalid Date Range"),
                           tr("The date range overlaps with  "
@@ -224,21 +225,21 @@ void currencyConversion::_sSave()
                     .arg(inverter);
 
 
-  q.prepare(sql);
-  q.bindValue(":curr_rate_id", _curr_rate_id);
-  q.bindValue(":curr_id", _currency->id());
-  q.bindValue(":curr_rate", _rate->toDouble());
-  q.bindValue(":curr_effective", _dateCluster->startDate());
-  q.bindValue(":curr_expires", _dateCluster->endDate());
+  currency_sSave.prepare(sql);
+  currency_sSave.bindValue(":curr_rate_id", _curr_rate_id);
+  currency_sSave.bindValue(":curr_id", _currency->id());
+  currency_sSave.bindValue(":curr_rate", _rate->toDouble());
+  currency_sSave.bindValue(":curr_effective", _dateCluster->startDate());
+  currency_sSave.bindValue(":curr_expires", _dateCluster->endDate());
   
-  q.exec();
+  currency_sSave.exec();
 
-  if (q.lastError().type() != QSqlError::NoError)
+  if (currency_sSave.lastError().type() != QSqlError::NoError)
   {
       QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
                             .arg(__FILE__)
                             .arg(__LINE__),
-                            q.lastError().databaseText());
+                            currency_sSave.lastError().databaseText());
       return;
   }
 
@@ -247,6 +248,7 @@ void currencyConversion::_sSave()
 
 void currencyConversion::populate()
 {
+  XSqlQuery currencypopulate;
   QString rateString;
 
   if (_curr_rate_id)
@@ -259,16 +261,16 @@ void currencyConversion::populate()
                             "FROM curr_rate "
                             "WHERE curr_rate_id = :curr_rate_id;")
                             .arg(inverter);
-      q.prepare(sql);
-      q.bindValue(":curr_rate_id", _curr_rate_id);
-      q.exec();
+      currencypopulate.prepare(sql);
+      currencypopulate.bindValue(":curr_rate_id", _curr_rate_id);
+      currencypopulate.exec();
       {
-          if (q.first())
+          if (currencypopulate.first())
           {
-              _currency->setId(q.value("curr_id").toInt());
-              _dateCluster->setStartDate(q.value("curr_effective").toDate());
-              _dateCluster->setEndDate(q.value("curr_expires").toDate());
-              _rate->setText(rateString.setNum(q.value("curr_rate").toDouble(), 'f', 5));
+              _currency->setId(currencypopulate.value("curr_id").toInt());
+              _dateCluster->setStartDate(currencypopulate.value("curr_effective").toDate());
+              _dateCluster->setEndDate(currencypopulate.value("curr_expires").toDate());
+              _rate->setText(rateString.setNum(currencypopulate.value("curr_rate").toDouble(), 'f', 5));
           }
       }
   }

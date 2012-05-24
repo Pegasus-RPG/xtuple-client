@@ -104,14 +104,15 @@ void taxAssignments::sView()
 
 void taxAssignments::sDelete()
 {
-  q.prepare("DELETE FROM taxass WHERE ((COALESCE(taxass_taxzone_id, -1) = :taxzone_id) "
+  XSqlQuery taxDelete;
+  taxDelete.prepare("DELETE FROM taxass WHERE ((COALESCE(taxass_taxzone_id, -1) = :taxzone_id) "
             "AND (COALESCE(taxass_taxtype_id, -1) = :taxtype_id));");
-  q.bindValue(":taxzone_id", _taxass->id());
-  q.bindValue(":taxtype_id", _taxass->altId());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  taxDelete.bindValue(":taxzone_id", _taxass->id());
+  taxDelete.bindValue(":taxtype_id", _taxass->altId());
+  taxDelete.exec();
+  if (taxDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

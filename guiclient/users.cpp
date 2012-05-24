@@ -20,6 +20,7 @@
 users::users(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
+  XSqlQuery usersusers;
   setupUi(this);
 
   connect(_close,             SIGNAL(clicked()), this,  SLOT(close()));
@@ -35,9 +36,9 @@ users::users(QWidget* parent, const char* name, Qt::WFlags fl)
   _usr->addColumn(tr("Proper Name"), -1, Qt::AlignLeft,   true, "usr_propername");
   _usr->addColumn(tr("Status"),      50, Qt::AlignCenter, true, "status");
 
-  q.exec("SELECT userCanCreateUsers(getEffectiveXtUser()) AS cancreate;");
-  if (q.first())
-    _new->setEnabled(q.value("cancreate").toBool());
+  usersusers.exec("SELECT userCanCreateUsers(getEffectiveXtUser()) AS cancreate;");
+  if (usersusers.first())
+    _new->setEnabled(usersusers.value("cancreate").toBool());
   else
     systemError(this, tr("A System Error occurred at %1::%2.")
                       .arg(__FILE__)

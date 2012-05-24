@@ -180,6 +180,7 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
 
 void woMaterialItem::sSave()
 {
+  XSqlQuery woSave;
   QString issueMethod;
 
   switch (_issueMethod->currentIndex())
@@ -199,16 +200,16 @@ void woMaterialItem::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare( "SELECT component.itemsite_id AS itemsiteid "
+    woSave.prepare( "SELECT component.itemsite_id AS itemsiteid "
                "FROM wo, itemsite AS parent, itemsite AS component "
                "WHERE ( (parent.itemsite_warehous_id=component.itemsite_warehous_id)"
                " AND (parent.itemsite_id=wo_itemsite_id)"
                " AND (component.itemsite_item_id=:item_id)"
                " AND (wo_id=:wo_id) );" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":wo_id", _wo->id());
-    q.exec();
-    if (!q.first())
+    woSave.bindValue(":item_id", _item->id());
+    woSave.bindValue(":wo_id", _wo->id());
+    woSave.exec();
+    if (!woSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Create W/O Material Requirement"),
                             tr( "A W/O Material Requirement cannot be created for the selected\n"
@@ -219,36 +220,36 @@ void woMaterialItem::sSave()
       return;
     }
 
-    int itemsiteid = q.value("itemsiteid").toInt();
+    int itemsiteid = woSave.value("itemsiteid").toInt();
 
-    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyFxd, :qtyPer, :scrap, :bomitem_id, :notes, :ref) AS womatlid;");
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":itemsite_id", itemsiteid);
-    q.bindValue(":issueMethod", issueMethod);
-    q.bindValue(":qtyFxd", _qtyFxd->toDouble());
-    q.bindValue(":qtyPer", _qtyPer->toDouble());
-    q.bindValue(":uom_id", _uom->id());
-    q.bindValue(":scrap", (_scrap->toDouble() / 100));
-    q.bindValue(":bomitem_id", _bomitemid);
-    q.bindValue(":notes", _notes->toPlainText());
-    q.bindValue(":ref",   _ref->toPlainText());
-    q.bindValue(":wooper_id", _wooperid);
-    q.exec();
-    if (q.first())
+    woSave.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyFxd, :qtyPer, :scrap, :bomitem_id, :notes, :ref) AS womatlid;");
+    woSave.bindValue(":wo_id", _wo->id());
+    woSave.bindValue(":itemsite_id", itemsiteid);
+    woSave.bindValue(":issueMethod", issueMethod);
+    woSave.bindValue(":qtyFxd", _qtyFxd->toDouble());
+    woSave.bindValue(":qtyPer", _qtyPer->toDouble());
+    woSave.bindValue(":uom_id", _uom->id());
+    woSave.bindValue(":scrap", (_scrap->toDouble() / 100));
+    woSave.bindValue(":bomitem_id", _bomitemid);
+    woSave.bindValue(":notes", _notes->toPlainText());
+    woSave.bindValue(":ref",   _ref->toPlainText());
+    woSave.bindValue(":wooper_id", _wooperid);
+    woSave.exec();
+    if (woSave.first())
     {
-      _womatlid = q.value("womatlid").toInt();
+      _womatlid = woSave.value("womatlid").toInt();
       
-      q.prepare("UPDATE womatl SET womatl_wooper_id=:wooper_id WHERE womatl_id=:womatl_id");
-      q.bindValue(":wooper_id",_wooperid);
-      q.bindValue(":womatl_id",_womatlid);
-      q.exec();
+      woSave.prepare("UPDATE womatl SET womatl_wooper_id=:wooper_id WHERE womatl_id=:womatl_id");
+      woSave.bindValue(":wooper_id",_wooperid);
+      woSave.bindValue(":womatl_id",_womatlid);
+      woSave.exec();
     }
     
 //  ToDo
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "UPDATE womatl "
+    woSave.prepare( "UPDATE womatl "
                "SET womatl_qtyfxd=:qtyFxd, womatl_qtyper=:qtyPer, "
 			   "    womatl_scrap=:scrap, womatl_issuemethod=:issueMethod,"
                "    womatl_uom_id=:uom_id,"
@@ -256,16 +257,16 @@ void woMaterialItem::sSave()
                "FROM wo "
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_id=:womatl_id) );" );
-    q.bindValue(":womatl_id", _womatlid);
-    q.bindValue(":issueMethod", issueMethod);
-    q.bindValue(":qtyFxd", _qtyFxd->toDouble());
-    q.bindValue(":qtyPer", _qtyPer->toDouble());
-    q.bindValue(":qtyReq", _qtyRequired->toDouble());
-    q.bindValue(":uom_id", _uom->id());
-    q.bindValue(":scrap", (_scrap->toDouble() / 100));
-    q.bindValue(":notes", _notes->toPlainText());
-    q.bindValue(":ref",   _ref->toPlainText());
-    q.exec();
+    woSave.bindValue(":womatl_id", _womatlid);
+    woSave.bindValue(":issueMethod", issueMethod);
+    woSave.bindValue(":qtyFxd", _qtyFxd->toDouble());
+    woSave.bindValue(":qtyPer", _qtyPer->toDouble());
+    woSave.bindValue(":qtyReq", _qtyRequired->toDouble());
+    woSave.bindValue(":uom_id", _uom->id());
+    woSave.bindValue(":scrap", (_scrap->toDouble() / 100));
+    woSave.bindValue(":notes", _notes->toPlainText());
+    woSave.bindValue(":ref",   _ref->toPlainText());
+    woSave.exec();
   }
 
   omfgThis->sWorkOrderMaterialsUpdated(_wo->id(), _womatlid, TRUE);
@@ -303,7 +304,8 @@ void woMaterialItem::sUpdateQtyRequired()
 
 void woMaterialItem::populate()
 {
-  q.prepare( "SELECT womatl_wo_id, itemsite_item_id,"
+  XSqlQuery wopopulate;
+  wopopulate.prepare( "SELECT womatl_wo_id, itemsite_item_id,"
              "       womatl_qtyfxd AS qtyfxd,"
              "       womatl_qtyper AS qtyper,"
              "       womatl_uom_id,"
@@ -312,24 +314,24 @@ void woMaterialItem::populate()
              "FROM womatl, itemsite "
              "WHERE ( (womatl_itemsite_id=itemsite_id)"
              " AND (womatl_id=:womatl_id) );" );
-  q.bindValue(":womatl_id", _womatlid);
-  q.exec();
-  if (q.first())
+  wopopulate.bindValue(":womatl_id", _womatlid);
+  wopopulate.exec();
+  if (wopopulate.first())
   {
-    _wo->setId(q.value("womatl_wo_id").toInt());
-    _item->setId(q.value("itemsite_item_id").toInt());
-    _qtyFxd->setDouble(q.value("qtyfxd").toDouble());
-    _qtyPer->setDouble(q.value("qtyper").toDouble());
-    _uom->setId(q.value("womatl_uom_id").toInt());
-    _scrap->setDouble(q.value("scrap").toDouble());
-    _notes->setText(q.value("womatl_notes").toString());
-    _ref->setText(q.value("womatl_ref").toString());
+    _wo->setId(wopopulate.value("womatl_wo_id").toInt());
+    _item->setId(wopopulate.value("itemsite_item_id").toInt());
+    _qtyFxd->setDouble(wopopulate.value("qtyfxd").toDouble());
+    _qtyPer->setDouble(wopopulate.value("qtyper").toDouble());
+    _uom->setId(wopopulate.value("womatl_uom_id").toInt());
+    _scrap->setDouble(wopopulate.value("scrap").toDouble());
+    _notes->setText(wopopulate.value("womatl_notes").toString());
+    _ref->setText(wopopulate.value("womatl_ref").toString());
 
-    if (q.value("womatl_issuemethod").toString() == "S")
+    if (wopopulate.value("womatl_issuemethod").toString() == "S")
       _issueMethod->setCurrentIndex(0);
-    else if (q.value("womatl_issuemethod").toString() == "L")
+    else if (wopopulate.value("womatl_issuemethod").toString() == "L")
       _issueMethod->setCurrentIndex(1);
-    else if (q.value("womatl_issuemethod").toString() == "M")
+    else if (wopopulate.value("womatl_issuemethod").toString() == "M")
       _issueMethod->setCurrentIndex(2);
   }
 }

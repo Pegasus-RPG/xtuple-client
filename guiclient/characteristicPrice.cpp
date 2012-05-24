@@ -106,6 +106,7 @@ enum SetResponse characteristicPrice::set(const ParameterList &pParams)
 
 void characteristicPrice::sSave()
 {
+  XSqlQuery characteristicSave;
   if (_char->id() == -1)
   {
     QMessageBox::information( this, tr("No Characteristic Selected"),
@@ -115,28 +116,28 @@ void characteristicPrice::sSave()
   }
   if (_mode == cNew)
   {
-    q.exec("SELECT nextval('ipsitemchar_ipsitemchar_id_seq') AS result;");
-    if (q.first())
-      _ipsitemcharid=q.value("result").toInt();
-    q.prepare( "INSERT INTO ipsitemchar "
+    characteristicSave.exec("SELECT nextval('ipsitemchar_ipsitemchar_id_seq') AS result;");
+    if (characteristicSave.first())
+      _ipsitemcharid=characteristicSave.value("result").toInt();
+    characteristicSave.prepare( "INSERT INTO ipsitemchar "
                "( ipsitemchar_id, ipsitemchar_ipsitem_id, ipsitemchar_char_id, ipsitemchar_value, ipsitemchar_price ) "
                "VALUES "
                "( :ipsitemchar_id, :ipsitem_id, :ipsitemchar_char_id, :ipsitemchar_value, :ipsitemchar_price );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE ipsitemchar "
+    characteristicSave.prepare( "UPDATE ipsitemchar "
                "SET ipsitemchar_char_id=:ipsitemchar_char_id, ipsitemchar_value=:ipsitemchar_value, ipsitemchar_price=:ipsitemchar_price "
                "WHERE (ipsitemchar_id=:ipsitemchar_id);" );
 
-  q.bindValue(":ipsitem_id", _ipsitemid);
-  q.bindValue(":ipsitemchar_id", _ipsitemcharid);
-  q.bindValue(":ipsitemchar_char_id", _char->id());
-  q.bindValue(":ipsitemchar_value", _value->currentText());
-  q.bindValue(":ipsitemchar_price", _price->localValue());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  characteristicSave.bindValue(":ipsitem_id", _ipsitemid);
+  characteristicSave.bindValue(":ipsitemchar_id", _ipsitemcharid);
+  characteristicSave.bindValue(":ipsitemchar_char_id", _char->id());
+  characteristicSave.bindValue(":ipsitemchar_value", _value->currentText());
+  characteristicSave.bindValue(":ipsitemchar_price", _price->localValue());
+  characteristicSave.exec();
+  if (characteristicSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+    systemError(this, _rejectedMsg.arg(characteristicSave.lastError().databaseText()),
                   __FILE__, __LINE__);
     done(-1);
   }
@@ -146,24 +147,25 @@ void characteristicPrice::sSave()
 
 void characteristicPrice::sCheck()
 {
-  q.prepare( "SELECT ipsitemchar_id "
+  XSqlQuery characteristicCheck;
+  characteristicCheck.prepare( "SELECT ipsitemchar_id "
              "FROM ipsitemchar "
              "WHERE ( (ipsitemchar_char_id=:char_id)"
              " AND (ipsitemchar_value=:ipsitemchar_value) "
              " AND (ipsitemchar_ipsitem_id=:ipsitem_id));" );
-  q.bindValue(":ipsitem_id", _ipsitemid);
-  q.bindValue(":char_id", _char->id());
-  q.bindValue(":ipsitemchar_value", _value->currentText());
-  q.exec();
-  if (q.first())
+  characteristicCheck.bindValue(":ipsitem_id", _ipsitemid);
+  characteristicCheck.bindValue(":char_id", _char->id());
+  characteristicCheck.bindValue(":ipsitemchar_value", _value->currentText());
+  characteristicCheck.exec();
+  if (characteristicCheck.first())
   {
-    _ipsitemcharid = q.value("ipsitemchar_id").toInt();
+    _ipsitemcharid = characteristicCheck.value("ipsitemchar_id").toInt();
     _mode = cEdit;
     populate();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (characteristicCheck.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+    systemError(this, _rejectedMsg.arg(characteristicCheck.lastError().databaseText()),
                   __FILE__, __LINE__);
     done(-1);
   }
@@ -174,22 +176,23 @@ void characteristicPrice::sCheck()
 
 void characteristicPrice::populate()
 {
+  XSqlQuery characteristicpopulate;
   disconnect(_char, SIGNAL(newID(int)), this, SLOT(sCheck()));
   disconnect(_value, SIGNAL(activated(int)), this, SLOT(sCheck()));
-  q.prepare( "SELECT ipsitemchar_char_id, ipsitemchar_value, ipsitemchar_price  "
+  characteristicpopulate.prepare( "SELECT ipsitemchar_char_id, ipsitemchar_value, ipsitemchar_price  "
              "FROM ipsitemchar "
              "WHERE (ipsitemchar_id=:ipsitemchar_id);" );
-  q.bindValue(":ipsitemchar_id", _ipsitemcharid);
-  q.exec();
-  if (q.first())
+  characteristicpopulate.bindValue(":ipsitemchar_id", _ipsitemcharid);
+  characteristicpopulate.exec();
+  if (characteristicpopulate.first())
   {
-    _char->setId(q.value("ipsitemchar_char_id").toInt());
-    _value->setText(q.value("ipsitemchar_value").toString());
-    _price->setLocalValue(q.value("ipsitemchar_price").toDouble());
+    _char->setId(characteristicpopulate.value("ipsitemchar_char_id").toInt());
+    _value->setText(characteristicpopulate.value("ipsitemchar_value").toString());
+    _price->setLocalValue(characteristicpopulate.value("ipsitemchar_price").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (characteristicpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+    systemError(this, _rejectedMsg.arg(characteristicpopulate.lastError().databaseText()),
                   __FILE__, __LINE__);
     done(-1);
   }
@@ -199,21 +202,22 @@ void characteristicPrice::populate()
 
 void characteristicPrice::populateItemcharInfo()
 {
-  q.prepare("SELECT charass_price "
+  XSqlQuery characteristicpopulateItemcharInfo;
+  characteristicpopulateItemcharInfo.prepare("SELECT charass_price "
             "FROM charass "
             "WHERE ((charass_target_type='I') "
             "AND (charass_target_id=:item_id) "
             "AND (charass_char_id=:char_id) "
             "AND (charass_value=:value)) ");
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":char_id", _char->id());
-  q.bindValue(":value", _value->currentText());
-  q.exec();
-  if (q.first())
-    _listPrice->setLocalValue(q.value("charass_price").toDouble());
-  else if (q.lastError().type() != QSqlError::NoError)
+  characteristicpopulateItemcharInfo.bindValue(":item_id", _itemid);
+  characteristicpopulateItemcharInfo.bindValue(":char_id", _char->id());
+  characteristicpopulateItemcharInfo.bindValue(":value", _value->currentText());
+  characteristicpopulateItemcharInfo.exec();
+  if (characteristicpopulateItemcharInfo.first())
+    _listPrice->setLocalValue(characteristicpopulateItemcharInfo.value("charass_price").toDouble());
+  else if (characteristicpopulateItemcharInfo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+    systemError(this, _rejectedMsg.arg(characteristicpopulateItemcharInfo.lastError().databaseText()),
                   __FILE__, __LINE__);
     done(-1);
   }
@@ -223,6 +227,7 @@ void characteristicPrice::populateItemcharInfo()
 
 void characteristicPrice::sCharIdChanged()
 {
+  XSqlQuery characteristicCharIdChanged;
   XSqlQuery charass;
   charass.prepare("SELECT charass_id, charass_value "
             "FROM charass "
@@ -233,9 +238,9 @@ void characteristicPrice::sCharIdChanged()
   charass.bindValue(":item_id", _itemid);
   charass.bindValue(":char_id", _char->id());
   charass.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  if (characteristicCharIdChanged.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+    systemError(this, _rejectedMsg.arg(characteristicCharIdChanged.lastError().databaseText()),
                   __FILE__, __LINE__);
     done(-1);
   }

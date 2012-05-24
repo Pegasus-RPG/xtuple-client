@@ -38,6 +38,7 @@ void purgeInvoices::languageChange()
 
 void purgeInvoices::sPurge()
 {
+  XSqlQuery purgePurge;
   if (!_cutOffDate->isValid())
   {
     QMessageBox::warning( this, tr("Enter Cutoff Date"),
@@ -93,16 +94,16 @@ void purgeInvoices::sPurge()
     invoices.exec();
     while (invoices.next())
     {
-      q.prepare("SELECT purgeInvoiceRecord(:cutOffDate, :invchead_id) AS result;");
-      q.bindValue(":cutOffDate", _cutOffDate->date());
-      q.bindValue(":invchead_id", invoices.value("invchead_id").toInt());
-      q.exec();
-      if (q.first())
+      purgePurge.prepare("SELECT purgeInvoiceRecord(:cutOffDate, :invchead_id) AS result;");
+      purgePurge.bindValue(":cutOffDate", _cutOffDate->date());
+      purgePurge.bindValue(":invchead_id", invoices.value("invchead_id").toInt());
+      purgePurge.exec();
+      if (purgePurge.first())
       {
         QString logmessage = "Invoice ";
         logmessage += invoices.value("invchead_invcnumber").toString();
         logmessage += ", result=";
-        logmessage += q.value("result").toString();
+        logmessage += purgePurge.value("result").toString();
         logfile.write(logmessage.toAscii());
         logfile.write("\n");
       }
@@ -114,9 +115,9 @@ void purgeInvoices::sPurge()
     _progress.setValue(_invoices);
     
     // Purge T/O shipments that aren't invoiced
-    q.prepare("SELECT purgeShipments(:cutOffDate) AS result;");
-    q.bindValue(":cutOffDate", _cutOffDate->date());
-    q.exec();
+    purgePurge.prepare("SELECT purgeShipments(:cutOffDate) AS result;");
+    purgePurge.bindValue(":cutOffDate", _cutOffDate->date());
+    purgePurge.exec();
 
     accept();
   }

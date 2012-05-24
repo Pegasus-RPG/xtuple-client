@@ -83,13 +83,14 @@ void vendorTypes::sFillList()
 
 void vendorTypes::sDelete()
 {
-  q.prepare( "SELECT vend_id "
+  XSqlQuery vendorDelete;
+  vendorDelete.prepare( "SELECT vend_id "
              "FROM vendinfo "
              "WHERE (vend_vendtype_id=:vendtype_id) "
              "LIMIT 1;" );
-  q.bindValue(":vendtype_id", _vendtype->id());
-  q.exec();
-  if (q.first())
+  vendorDelete.bindValue(":vendtype_id", _vendtype->id());
+  vendorDelete.exec();
+  if (vendorDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Vendor Type"),
                            tr( "The selected Vendor Type cannot be deleted as there are one or more Vendors assigned to it.\n"
@@ -97,13 +98,13 @@ void vendorTypes::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM vendtype "
+  vendorDelete.prepare( "DELETE FROM vendtype "
              "WHERE (vendtype_id=:vendtype_id);"
 
              "DELETE FROM apaccnt "
              "WHERE (apaccnt_vendtype_id=:vendtype_id);" );
-  q.bindValue(":vendtype_id", _vendtype->id());
-  q.exec();
+  vendorDelete.bindValue(":vendtype_id", _vendtype->id());
+  vendorDelete.exec();
   sFillList();
 }
 

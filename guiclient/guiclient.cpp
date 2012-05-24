@@ -309,8 +309,6 @@ class xTupleGuiClientInterface : public GuiClientInterface
    return omfgThis->findChild<QAction*>(pname);
   }
 
-  const XSqlQuery* globalQ() const { return &omfgThis->_q; };
-
   void addDocumentWatch(QString path, int id)
   {
     omfgThis->addDocumentWatch(path, id);
@@ -350,6 +348,7 @@ class xTupleGuiClientInterface : public GuiClientInterface
 GUIClient *omfgThis;
 GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
+  XSqlQuery _GGUIClient;
   _menuBar = 0;
   _activeWindow = 0;
   _shown = false;
@@ -366,11 +365,11 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   if(_preferences->value("InterfaceWindowOption") == "TopLevel")
     _showTopLevel = true;
 
-  _q.exec("SELECT startOfTime() AS sot, endOfTime() AS eot;");
-  if (_q.first())
+  _GGUIClient.exec("SELECT startOfTime() AS sot, endOfTime() AS eot;");
+  if (_GGUIClient.first())
   {
-    _startOfTime = _q.value("sot").toDate();
-    _endOfTime = _q.value("eot").toDate();
+    _startOfTime = _GGUIClient.value("sot").toDate();
+    _endOfTime = _GGUIClient.value("eot").toDate();
   }
   else
     systemError( this, tr( "A Critical Error occurred at %1::%2.\n"
@@ -455,16 +454,16 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   if (_preferences->value("BackgroundImageid").toInt() > 0)
   {
-    _q.prepare( "SELECT image_data "
+    _GGUIClient.prepare( "SELECT image_data "
                 "FROM image "
                 "WHERE (image_id=:image_id);" );
-    _q.bindValue(":image_id", _preferences->value("BackgroundImageid").toInt());
-    _q.exec();
-    if (_q.first())
+    _GGUIClient.bindValue(":image_id", _preferences->value("BackgroundImageid").toInt());
+    _GGUIClient.exec();
+    if (_GGUIClient.first())
     {
       QImage background;
 
-      background.loadFromData(QUUDecode(_q.value("image_data").toString()));
+      background.loadFromData(QUUDecode(_GGUIClient.value("image_data").toString()));
       _workspace->setBackground(QBrush(QPixmap::fromImage(background)));
       //_workspace->setBackgroundMode(Qt::FixedPixmap);
     }
@@ -595,20 +594,21 @@ bool GUIClient::singleCurrency()
 
 void GUIClient::setWindowTitle()
 {
+  XSqlQuery _GetWindowTitle;
   QString name;
 
   _splash->showMessage(tr("Loading Database Information"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
 
-  _q.exec( "SELECT metric_value, getEffectiveXtUser() AS username "
+  _GetWindowTitle.exec( "SELECT metric_value, getEffectiveXtUser() AS username "
            "FROM metric "
            "WHERE (metric_name='DatabaseName')" );
-  if (_q.first())
+  if (_GetWindowTitle.first())
   {
-    if (_q.value("metric_value").toString().isEmpty())
+    if (_GetWindowTitle.value("metric_value").toString().isEmpty())
       name = tr("Unnamed Database");
     else
-      name = _q.value("metric_value").toString();
+      name = _GetWindowTitle.value("metric_value").toString();
 
     QString server;
     QString protocol;
@@ -620,7 +620,7 @@ void GUIClient::setWindowTitle()
       QMainWindow::setWindowTitle( tr("%1 Evaluation %2 - Logged on as %3")
                                .arg(_Name)
                                .arg(_Version)
-                               .arg(_q.value("username").toString()) );
+                               .arg(_GetWindowTitle.value("username").toString()) );
     else
       QMainWindow::setWindowTitle( tr("%1 %2 - %3 on %4/%5 AS %6")
                                .arg(_Name)
@@ -628,7 +628,7 @@ void GUIClient::setWindowTitle()
                                .arg(name)
                                .arg(server)
                                .arg(database)
-                               .arg(_q.value("username").toString()) );
+                               .arg(_GetWindowTitle.value("username").toString()) );
   }
   else
     QMainWindow::setWindowTitle(_Name);
@@ -1420,33 +1420,34 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
 
 void GUIClient::sCustomCommand()
 {
+  XSqlQuery GCustomCommand;
   const QObject * obj = sender();
   QMap<const QObject*,int>::const_iterator it;
   it = _customCommands.find(obj);
   if(it != _customCommands.end())
   {
-    q.prepare("SELECT cmd_executable"
+    GCustomCommand.prepare("SELECT cmd_executable"
               "  FROM cmd"
               " WHERE(cmd_id=:cmd_id);");
-    q.bindValue(":cmd_id", it.value());
-    q.exec();
-    q.first();
-    QString cmd = q.value("cmd_executable").toString();
+    GCustomCommand.bindValue(":cmd_id", it.value());
+    GCustomCommand.exec();
+    GCustomCommand.first();
+    QString cmd = GCustomCommand.value("cmd_executable").toString();
     if(cmd.toLower() == "!customuiform")
     {
       bool haveParams = false;
       ParameterList params;
       bool asDialog = false;
       QString asName;
-      q.prepare("SELECT cmdarg_arg AS argument"
+      GCustomCommand.prepare("SELECT cmdarg_arg AS argument"
                 "  FROM cmdarg"
                 " WHERE (cmdarg_cmd_id=:cmd_id)"
                 " ORDER BY cmdarg_order; ");
-      q.bindValue(":cmd_id", it.value());
-      q.exec();
-      while(q.next())
+      GCustomCommand.bindValue(":cmd_id", it.value());
+      GCustomCommand.exec();
+      while(GCustomCommand.next())
       {
-        cmd = q.value("argument").toString();
+        cmd = GCustomCommand.value("argument").toString();
         if(cmd.startsWith("uiformtype=", Qt::CaseInsensitive))
           asDialog = (cmd.right(cmd.length() - 11).toLower() == "dialog");
         else if(cmd.startsWith("uiform=", Qt::CaseInsensitive))
@@ -1494,15 +1495,15 @@ void GUIClient::sCustomCommand()
       }
       if(asName.isEmpty())
         return;
-      q.prepare("SELECT *"
+      GCustomCommand.prepare("SELECT *"
                 "  FROM uiform"
                 " WHERE((uiform_name=:uiform_name)"
                 "   AND (uiform_enabled))"
                 " ORDER BY uiform_order DESC"
                 " LIMIT 1;");
-      q.bindValue(":uiform_name", asName);
-      q.exec();
-      if(!q.first())
+      GCustomCommand.bindValue(":uiform_name", asName);
+      GCustomCommand.exec();
+      if(!GCustomCommand.first())
       {
         QMessageBox::critical(this, tr("Could Not Create Form"),
                               tr("<p>Could not create the '%1' form. Either an "
@@ -1512,7 +1513,7 @@ void GUIClient::sCustomCommand()
       }
 
       XUiLoader loader;
-      QByteArray ba = q.value("uiform_source").toString().toUtf8(); 
+      QByteArray ba = GCustomCommand.value("uiform_source").toString().toUtf8(); 
       QBuffer uiFile(&ba);
       if(!uiFile.open(QIODevice::ReadOnly))
       {
@@ -1527,7 +1528,7 @@ void GUIClient::sCustomCommand()
       if(asDialog)
       {
         XDialog dlg(this);
-        dlg.setObjectName(q.value("uiform_name").toString());
+        dlg.setObjectName(GCustomCommand.value("uiform_name").toString());
         QVBoxLayout *layout = new QVBoxLayout;
         layout->addWidget(ui);
         dlg.setLayout(layout);
@@ -1538,7 +1539,7 @@ void GUIClient::sCustomCommand()
       else
       {
         XMainWindow * wnd = new XMainWindow();
-        wnd->setObjectName(q.value("uiform_name").toString());
+        wnd->setObjectName(GCustomCommand.value("uiform_name").toString());
         wnd->setCentralWidget(ui);
         wnd->setWindowTitle(ui->windowTitle());
         wnd->resize(size);
@@ -1560,15 +1561,15 @@ void GUIClient::sCustomCommand()
         QDesktopServices::openUrl(url);
       }
       // end of deprecated usage
-      q.prepare("SELECT cmdarg_arg "
+      GCustomCommand.prepare("SELECT cmdarg_arg "
                 "FROM cmdarg "
                 "WHERE (cmdarg_cmd_id=:cmd_id) "
                 "ORDER BY cmdarg_order;");
-      q.bindValue(":cmd_id", it.value());
-      q.exec();
-      while (q.next())
+      GCustomCommand.bindValue(":cmd_id", it.value());
+      GCustomCommand.exec();
+      while (GCustomCommand.next())
       {
-        QUrl url(q.value("cmdarg_arg").toString());
+        QUrl url(GCustomCommand.value("cmdarg_arg").toString());
         if (url.scheme().isEmpty())
           url.setScheme("file");
         QDesktopServices::openUrl(url);
@@ -1580,7 +1581,7 @@ void GUIClient::sCustomCommand()
       QString command;
       QStringList args;
       connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
-      q.prepare("SELECT 1 AS base,"
+      GCustomCommand.prepare("SELECT 1 AS base,"
                 "       0 AS ord,"
                 "       cmd_executable AS argument"
                 "  FROM cmd"
@@ -1592,13 +1593,13 @@ void GUIClient::sCustomCommand()
                 "  FROM cmdarg"
                 " WHERE (cmdarg_cmd_id=:cmd_id)"
                 " ORDER BY base, ord; ");
-      q.bindValue(":cmd_id", it.value());
-      q.exec();
-      if (q.first())
+      GCustomCommand.bindValue(":cmd_id", it.value());
+      GCustomCommand.exec();
+      if (GCustomCommand.first())
       {
-        command = q.value("argument").toString();
-        while(q.next())
-          args.append(q.value("argument").toString());
+        command = GCustomCommand.value("argument").toString();
+        while(GCustomCommand.next())
+          args.append(GCustomCommand.value("argument").toString());
         proc->start(command, args);
       }
     }

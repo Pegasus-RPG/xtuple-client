@@ -72,19 +72,21 @@ enum SetResponse itemListPrice::set(const ParameterList &pParams)
 
 void itemListPrice::sSave()
 {
-  q.prepare( "UPDATE item "
+  XSqlQuery itemSave;
+  itemSave.prepare( "UPDATE item "
              "SET item_listprice=:item_listprice "
              "WHERE (item_id=:item_id);" );
-  q.bindValue(":item_listprice", _listPrice->toDouble());
-  q.bindValue(":item_id", _item->id());
-  q.exec();
+  itemSave.bindValue(":item_listprice", _listPrice->toDouble());
+  itemSave.bindValue(":item_id", _item->id());
+  itemSave.exec();
 
   accept();
 }
 
 void itemListPrice::sPopulate()
 {
-  q.prepare( "SELECT uom_name, iteminvpricerat(item_id) AS invpriceratio,"
+  XSqlQuery itemPopulate;
+  itemPopulate.prepare( "SELECT uom_name, iteminvpricerat(item_id) AS invpriceratio,"
              "       item_listprice,"
              "       (item_listprice / iteminvpricerat(item_id)) AS extprice,"
              "       stdCost(item_id) AS standardcost,"
@@ -93,23 +95,23 @@ void itemListPrice::sPopulate()
              "       (actCost(item_id) * iteminvpricerat(item_id)) AS extactualcost "
              "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
              "WHERE (item_id=:item_id);" );
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
+  itemPopulate.bindValue(":item_id", _item->id());
+  itemPopulate.exec();
+  if (itemPopulate.first())
   {
-    _cachedRatio = q.value("invpriceratio").toDouble();
-    _cachedStdCost = q.value("standardcost").toDouble();
-    _cachedActCost = q.value("actualcost").toDouble();
+    _cachedRatio = itemPopulate.value("invpriceratio").toDouble();
+    _cachedStdCost = itemPopulate.value("standardcost").toDouble();
+    _cachedActCost = itemPopulate.value("actualcost").toDouble();
 
-    _listPrice->setDouble(q.value("item_listprice").toDouble());
-    _priceUOM->setText(q.value("uom_name").toString());
-    _pricingRatio->setDouble(q.value("invpriceratio").toDouble());
-    _extPrice->setDouble(q.value("extprice").toDouble());
+    _listPrice->setDouble(itemPopulate.value("item_listprice").toDouble());
+    _priceUOM->setText(itemPopulate.value("uom_name").toString());
+    _pricingRatio->setDouble(itemPopulate.value("invpriceratio").toDouble());
+    _extPrice->setDouble(itemPopulate.value("extprice").toDouble());
 
-    _stdCost->setDouble(q.value("standardcost").toDouble());
-    _actCost->setDouble(q.value("actualcost").toDouble());
-    _extStdCost->setDouble(q.value("extstandardcost").toDouble());
-    _extActCost->setDouble(q.value("extactualcost").toDouble());
+    _stdCost->setDouble(itemPopulate.value("standardcost").toDouble());
+    _actCost->setDouble(itemPopulate.value("actualcost").toDouble());
+    _extStdCost->setDouble(itemPopulate.value("extstandardcost").toDouble());
+    _extActCost->setDouble(itemPopulate.value("extactualcost").toDouble());
   }
 
   sUpdateMargins();

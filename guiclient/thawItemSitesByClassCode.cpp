@@ -41,6 +41,7 @@ void thawItemSitesByClassCode::languageChange()
 
 void thawItemSitesByClassCode::sThaw()
 {
+  XSqlQuery thawThaw;
   QString sql( "SELECT thawItemsite(itemsite_id) "
                "FROM itemsite, item "
                "WHERE ( (itemsite_freeze)"
@@ -54,10 +55,10 @@ void thawItemSitesByClassCode::sThaw()
 
   sql += ");";
 
-  q.prepare(sql);
-  q.bindValue(":warehous_id", _warehouse->id());
-  _classCode->bindValue(q);
-  q.exec();
+  thawThaw.prepare(sql);
+  thawThaw.bindValue(":warehous_id", _warehouse->id());
+  _classCode->bindValue(thawThaw);
+  thawThaw.exec();
 
   accept();
 }

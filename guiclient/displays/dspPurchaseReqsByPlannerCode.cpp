@@ -119,9 +119,10 @@ void dspPurchaseReqsByPlannerCode::sRelease()
 
 void dspPurchaseReqsByPlannerCode::sDelete()
 {
-  q.prepare("SELECT deletePr(:pr_id) AS _result;");
-  q.bindValue(":pr_id", list()->id());
-  q.exec();
+  XSqlQuery dspDelete;
+  dspDelete.prepare("SELECT deletePr(:pr_id) AS _result;");
+  dspDelete.bindValue(":pr_id", list()->id());
+  dspDelete.exec();
 
   sFillList();
   omfgThis->sPurchaseRequestsUpdated();

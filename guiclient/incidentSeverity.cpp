@@ -86,17 +86,18 @@ enum SetResponse incidentSeverity::set(const ParameterList &pParams)
 
 void incidentSeverity::sCheck()
 {
+  XSqlQuery incidentCheck;
   _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT incdtseverity_id "
+    incidentCheck.prepare( "SELECT incdtseverity_id "
                "FROM incdtseverity "
                "WHERE (UPPER(incdtseverity_name)=UPPER(:incdtseverity_name));" );
-    q.bindValue(":incdtseverity_name", _name->text());
-    q.exec();
-    if (q.first())
+    incidentCheck.bindValue(":incdtseverity_name", _name->text());
+    incidentCheck.exec();
+    if (incidentCheck.first())
     {
-      _incdtseverityId = q.value("incdtseverity_id").toInt();
+      _incdtseverityId = incidentCheck.value("incdtseverity_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -107,6 +108,7 @@ void incidentSeverity::sCheck()
 
 void incidentSeverity::sSave()
 {
+  XSqlQuery incidentSave;
   if(_name->text().length() == 0)
   {
     QMessageBox::critical(this, tr("Severity Name Required"),
@@ -117,30 +119,30 @@ void incidentSeverity::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('incdtseverity_incdtseverity_id_seq') AS _incdtseverity_id");
-    if (q.first())
-      _incdtseverityId = q.value("_incdtseverity_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    incidentSave.exec("SELECT NEXTVAL('incdtseverity_incdtseverity_id_seq') AS _incdtseverity_id");
+    if (incidentSave.first())
+      _incdtseverityId = incidentSave.value("_incdtseverity_id").toInt();
+    else if (incidentSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO incdtseverity "
+    incidentSave.prepare( "INSERT INTO incdtseverity "
                "(incdtseverity_id, incdtseverity_name, incdtseverity_order, incdtseverity_descrip)"
                " VALUES "
                "(:incdtseverity_id, :incdtseverity_name, :incdtseverity_order, :incdtseverity_descrip);" );
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT incdtseverity_id "
+    incidentSave.prepare( "SELECT incdtseverity_id "
                "FROM incdtseverity "
                "WHERE ( (UPPER(incdtseverity_name)=UPPER(:incdtseverity_name))"
                " AND (incdtseverity_id<>:incdtseverity_id) );" );
-    q.bindValue(":incdtseverity_id", _incdtseverityId);
-    q.bindValue(":incdtseverity_name", _name->text());
-    q.exec();
-    if (q.first())
+    incidentSave.bindValue(":incdtseverity_id", _incdtseverityId);
+    incidentSave.bindValue(":incdtseverity_name", _name->text());
+    incidentSave.exec();
+    if (incidentSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Incident Severity"),
                             tr("You may not rename this Incident Severity with "
@@ -148,27 +150,27 @@ void incidentSeverity::sSave()
 			       "Incident Severity.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (incidentSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "UPDATE incdtseverity "
+    incidentSave.prepare( "UPDATE incdtseverity "
                "SET incdtseverity_name=:incdtseverity_name, "
 	       "    incdtseverity_order=:incdtseverity_order, "
 	       "    incdtseverity_descrip=:incdtseverity_descrip "
                "WHERE (incdtseverity_id=:incdtseverity_id);" );
   }
 
-  q.bindValue(":incdtseverity_id", _incdtseverityId);
-  q.bindValue(":incdtseverity_name", _name->text());
-  q.bindValue(":incdtseverity_order", _order->value());
-  q.bindValue(":incdtseverity_descrip", _descrip->toPlainText());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  incidentSave.bindValue(":incdtseverity_id", _incdtseverityId);
+  incidentSave.bindValue(":incdtseverity_name", _name->text());
+  incidentSave.bindValue(":incdtseverity_order", _order->value());
+  incidentSave.bindValue(":incdtseverity_descrip", _descrip->toPlainText());
+  incidentSave.exec();
+  if (incidentSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -177,20 +179,21 @@ void incidentSeverity::sSave()
 
 void incidentSeverity::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery incidentpopulate;
+  incidentpopulate.prepare( "SELECT * "
              "FROM incdtseverity "
              "WHERE (incdtseverity_id=:incdtseverity_id);" );
-  q.bindValue(":incdtseverity_id", _incdtseverityId);
-  q.exec();
-  if (q.first())
+  incidentpopulate.bindValue(":incdtseverity_id", _incdtseverityId);
+  incidentpopulate.exec();
+  if (incidentpopulate.first())
   {
-    _name->setText(q.value("incdtseverity_name").toString());
-    _order->setValue(q.value("incdtseverity_order").toInt());
-    _descrip->setText(q.value("incdtseverity_descrip").toString());
+    _name->setText(incidentpopulate.value("incdtseverity_name").toString());
+    _order->setValue(incidentpopulate.value("incdtseverity_order").toInt());
+    _descrip->setText(incidentpopulate.value("incdtseverity_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (incidentpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

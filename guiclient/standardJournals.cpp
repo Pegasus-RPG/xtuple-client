@@ -110,9 +110,10 @@ void standardJournals::sPost()
 
 void standardJournals::sDelete()
 {
-  q.prepare("SELECT deleteStandardJournal(:stdjrnl_id);");
-  q.bindValue(":stdjrnl_id", _stdjrnl->id());
-  q.exec();
+  XSqlQuery standardDelete;
+  standardDelete.prepare("SELECT deleteStandardJournal(:stdjrnl_id);");
+  standardDelete.bindValue(":stdjrnl_id", _stdjrnl->id());
+  standardDelete.exec();
 
   sFillList();
 }

@@ -47,6 +47,7 @@ void todoItem::languageChange()
 
 enum SetResponse todoItem::set(const ParameterList &pParams)
 {
+  XSqlQuery todoet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -62,10 +63,10 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('todoitem_todoitem_id_seq') AS todoitem_id");
-      if (q.first())
+      todoet.exec("SELECT NEXTVAL('todoitem_todoitem_id_seq') AS todoitem_id");
+      if (todoet.first())
       {
-        _todoitemid = q.value("todoitem_id").toInt();
+        _todoitemid = todoet.value("todoitem_id").toInt();
         _alarms->setId(_todoitemid);
 	_comments->setId(_todoitemid);
         _documents->setId(_todoitemid);
@@ -154,6 +155,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
 
 void todoItem::sSave()
 {
+  XSqlQuery todoSave;
   RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
   if (cp == RecurrenceWidget::NoPolicy)
     return;
@@ -164,40 +166,40 @@ void todoItem::sSave()
   rollbackq.prepare("ROLLBACK;");
   if (_mode == cNew)
   {
-    q.prepare( "SELECT createTodoItem(:todoitem_id, :username, :name, :description, "
+    todoSave.prepare( "SELECT createTodoItem(:todoitem_id, :username, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
                "  :assigned, :completed, :priority, :notes, :owner, :cntct_id) AS result;");
     storedProc = "createTodoItem";
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT updateTodoItem(:todoitem_id, "
+    todoSave.prepare( "SELECT updateTodoItem(:todoitem_id, "
 	       "  :username, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
                "  :assigned, :completed, :priority, :notes, :active, :owner, :cntct_id) AS result;");
     storedProc = "updateTodoItem";
   }
-  q.bindValue(":todoitem_id", _todoitemid);
-  q.bindValue(":owner", _owner->username());
-  q.bindValue(":username",   _assignedTo->username());
+  todoSave.bindValue(":todoitem_id", _todoitemid);
+  todoSave.bindValue(":owner", _owner->username());
+  todoSave.bindValue(":username",   _assignedTo->username());
   if(_assigned->date().isValid())
-    q.bindValue(":assigned", _assigned->date());
-  q.bindValue(":name",		_name->text());
-  q.bindValue(":description",	_description->text());
+    todoSave.bindValue(":assigned", _assigned->date());
+  todoSave.bindValue(":name",		_name->text());
+  todoSave.bindValue(":description",	_description->text());
   if (_incident->id() > 0)
-    q.bindValue(":incdt_id",	_incident->id());	// else NULL
+    todoSave.bindValue(":incdt_id",	_incident->id());	// else NULL
   if (_crmacct->id() > 0)
-    q.bindValue(":crmacct_id",	_crmacct->id());	// else NULL
-  q.bindValue(":started",	_started->date());
-  q.bindValue(":due",		_due->date());
-  q.bindValue(":assigned",	_assigned->date());
-  q.bindValue(":completed",	_completed->date());
+    todoSave.bindValue(":crmacct_id",	_crmacct->id());	// else NULL
+  todoSave.bindValue(":started",	_started->date());
+  todoSave.bindValue(":due",		_due->date());
+  todoSave.bindValue(":assigned",	_assigned->date());
+  todoSave.bindValue(":completed",	_completed->date());
   if(_priority->isValid())
-    q.bindValue(":priority", _priority->id());
-  q.bindValue(":notes",		_notes->toPlainText());
-  q.bindValue(":active",	QVariant(_active->isChecked()));
+    todoSave.bindValue(":priority", _priority->id());
+  todoSave.bindValue(":notes",		_notes->toPlainText());
+  todoSave.bindValue(":active",	QVariant(_active->isChecked()));
   if(_ophead->id() > 0)
-    q.bindValue(":ophead_id", _ophead->id());
+    todoSave.bindValue(":ophead_id", _ophead->id());
 
   QString status;
   if (_completed->date().isValid())
@@ -210,15 +212,15 @@ void todoItem::sSave()
     status = "I";
   else
     status = "N";
-  q.bindValue(":status", status);
+  todoSave.bindValue(":status", status);
 
   if (_cntct->isValid())
-    q.bindValue(":cntct_id", _cntct->id());
+    todoSave.bindValue(":cntct_id", _cntct->id());
 
-  q.exec();
-  if (q.first())
+  todoSave.exec();
+  if (todoSave.first())
   {
-    int result = q.value("result").toInt();
+    int result = todoSave.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup(storedProc, result), __FILE__, __LINE__);
@@ -226,10 +228,10 @@ void todoItem::sSave()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (todoSave.lastError().type() != QSqlError::NoError)
   {
     rollbackq.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, todoSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -279,40 +281,41 @@ void todoItem::sSave()
 
 void todoItem::sPopulate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery todoPopulate;
+  todoPopulate.prepare( "SELECT * "
              "FROM todoitem "
              "WHERE (todoitem_id=:todoitem_id);" );
-  q.bindValue(":todoitem_id", _todoitemid);
-  q.exec();
-  if (q.first())
+  todoPopulate.bindValue(":todoitem_id", _todoitemid);
+  todoPopulate.exec();
+  if (todoPopulate.first())
   {
-    _owner->setUsername(q.value("todoitem_owner_username").toString());
-    _assignedTo->setUsername(q.value("todoitem_username").toString());
-    _name->setText(q.value("todoitem_name").toString());
+    _owner->setUsername(todoPopulate.value("todoitem_owner_username").toString());
+    _assignedTo->setUsername(todoPopulate.value("todoitem_username").toString());
+    _name->setText(todoPopulate.value("todoitem_name").toString());
     _priority->setNull();
-    if(!q.value("todoitem_priority_id").toString().isEmpty())
-      _priority->setId(q.value("todoitem_priority_id").toInt());
-    _incident->setId(q.value("todoitem_incdt_id").toInt());
-    _ophead->setId(q.value("todoitem_ophead_id").toInt());
-    _started->setDate(q.value("todoitem_start_date").toDate());
-    _assigned->setDate(q.value("todoitem_assigned_date").toDate());
-    _due->setDate(q.value("todoitem_due_date").toDate(), true);
-    _completed->setDate(q.value("todoitem_completed_date").toDate());
-    _description->setText(q.value("todoitem_description").toString());
-    _notes->setText(q.value("todoitem_notes").toString());
-    _crmacct->setId(q.value("todoitem_crmacct_id").toInt());
-    _cntct->setId(q.value("todoitem_cntct_id").toInt());
-    _active->setChecked(q.value("todoitem_active").toBool());
+    if(!todoPopulate.value("todoitem_priority_id").toString().isEmpty())
+      _priority->setId(todoPopulate.value("todoitem_priority_id").toInt());
+    _incident->setId(todoPopulate.value("todoitem_incdt_id").toInt());
+    _ophead->setId(todoPopulate.value("todoitem_ophead_id").toInt());
+    _started->setDate(todoPopulate.value("todoitem_start_date").toDate());
+    _assigned->setDate(todoPopulate.value("todoitem_assigned_date").toDate());
+    _due->setDate(todoPopulate.value("todoitem_due_date").toDate(), true);
+    _completed->setDate(todoPopulate.value("todoitem_completed_date").toDate());
+    _description->setText(todoPopulate.value("todoitem_description").toString());
+    _notes->setText(todoPopulate.value("todoitem_notes").toString());
+    _crmacct->setId(todoPopulate.value("todoitem_crmacct_id").toInt());
+    _cntct->setId(todoPopulate.value("todoitem_cntct_id").toInt());
+    _active->setChecked(todoPopulate.value("todoitem_active").toBool());
 
-    if (q.value("todoitem_status").toString() == "P")
+    if (todoPopulate.value("todoitem_status").toString() == "P")
       _pending->setChecked(true);
-    else if (q.value("todoitem_status").toString() == "D")
+    else if (todoPopulate.value("todoitem_status").toString() == "D")
       _deferred->setChecked(true);
     else
       _neither->setChecked(true);
 
     if (cEdit == _mode && 
-	(omfgThis->username()==q.value("todoitem_creator_username").toString() ||
+	(omfgThis->username()==todoPopulate.value("todoitem_creator_username").toString() ||
          _privileges->check("MaintainAllToDoItems")))
     {
       _name->setEnabled(true);
@@ -326,14 +329,14 @@ void todoItem::sPopulate()
     _alarms->setId(_todoitemid);
     _comments->setId(_todoitemid);
     _documents->setId(_todoitemid);
-    _recurring->setParent(q.value("todoitem_recurring_todoitem_id").isNull() ?
-                          _todoitemid : q.value("todoitem_recurring_todoitem_id").toInt(),
+    _recurring->setParent(todoPopulate.value("todoitem_recurring_todoitem_id").isNull() ?
+                          _todoitemid : todoPopulate.value("todoitem_recurring_todoitem_id").toInt(),
                           "TODO");
-    _cntct->setId(q.value("todoitem_cntct_id").toInt());
+    _cntct->setId(todoPopulate.value("todoitem_cntct_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (todoPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, todoPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

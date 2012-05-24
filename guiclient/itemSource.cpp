@@ -27,6 +27,7 @@
 itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery itemitemSource;
   setupUi(this);
 
   connect(_add,                SIGNAL(clicked()), this, SLOT(sAdd()));
@@ -52,9 +53,9 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _new = false;
   
   QString base;
-  q.exec("SELECT currConcat(baseCurrID()) AS base;");
-  if (q.first())
-    base = q.value("base").toString();
+  itemitemSource.exec("SELECT currConcat(baseCurrID()) AS base;");
+  if (itemitemSource.first())
+    base = itemitemSource.value("base").toString();
   else
     base = tr("Base");
 
@@ -77,8 +78,8 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _vendorCurrency->setType(XComboBox::Currencies);
   _vendorCurrency->setLabel(_vendorCurrencyLit);
   
-  q.exec("SELECT MAX(itemsrc_id),itemsrc_manuf_name, itemsrc_manuf_name FROM itemsrc GROUP BY itemsrc_manuf_name;");
-  _manufName->populate(q);
+  itemitemSource.exec("SELECT MAX(itemsrc_id),itemsrc_manuf_name, itemsrc_manuf_name FROM itemsrc GROUP BY itemsrc_manuf_name;");
+  _manufName->populate(itemitemSource);
   _manufName->setCurrentIndex(0);
 }
 
@@ -94,6 +95,7 @@ void itemSource::languageChange()
 
 enum SetResponse itemSource::set(const ParameterList &pParams)
 {
+  XSqlQuery itemet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -120,12 +122,12 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       _mode = cNew;
       _new = true;
 
-      q.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
-      if (q.first())
-        _itemsrcid = q.value("_itemsrc_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      itemet.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
+      if (itemet.first())
+        _itemsrcid = itemet.value("_itemsrc_id").toInt();
+      else if (itemet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, itemet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
       _captive = true;
@@ -181,12 +183,12 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       _captive = true;
       int itemsrcidold = _itemsrcid;
 
-      q.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
-      if (q.first())
-        _itemsrcid = q.value("_itemsrc_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      itemet.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
+      if (itemet.first())
+        _itemsrcid = itemet.value("_itemsrc_id").toInt();
+      else if (itemet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, itemet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
       
@@ -199,16 +201,16 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       
       if (sSave())
       {
-        q.prepare("INSERT INTO itemsrcp ( "
+        itemet.prepare("INSERT INTO itemsrcp ( "
                   "itemsrcp_itemsrc_id, itemsrcp_qtybreak, "
                   "itemsrcp_price, itemsrcp_updated, itemsrcp_curr_id) "
                   "SELECT :itemsrcid, itemsrcp_qtybreak, "
                   "itemsrcp_price, current_date, itemsrcp_curr_id "
                   "FROM itemsrcp "
                   "WHERE (itemsrcp_itemsrc_id=:itemsrcidold); ");
-        q.bindValue(":itemsrcid", _itemsrcid);
-        q.bindValue(":itemsrcidold", itemsrcidold);
-        q.exec();
+        itemet.bindValue(":itemsrcid", _itemsrcid);
+        itemet.bindValue(":itemsrcidold", itemsrcidold);
+        itemet.exec();
         sFillPriceList();
       }
     }
@@ -225,6 +227,7 @@ void itemSource::sSaveClicked()
 
 bool itemSource::sSave()
 {
+  XSqlQuery itemSave;
   if (!_item->isValid())
   {
     QMessageBox::critical( this, tr("Cannot Save Item Source"),
@@ -245,28 +248,28 @@ bool itemSource::sSave()
 
   if(_mode == cNew || _mode == cCopy)
   {
-    q.prepare( "SELECT itemsrc_id "
+    itemSave.prepare( "SELECT itemsrc_id "
                "  FROM itemsrc "
                " WHERE ((itemsrc_item_id=:item_id) "
                "   AND (itemsrc_vend_id=:vend_id) "
                "   AND (itemsrc_vend_item_number=:itemsrc_vend_item_number) "
                "   AND (UPPER(itemsrc_manuf_name)=UPPER(:itemsrc_manuf_name)) "
                "   AND (UPPER(itemsrc_manuf_item_number)=UPPER(:itemsrc_manuf_item_number)) ) ");
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":vend_id", _vendor->id());
-    q.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
-    q.bindValue(":itemsrc_manuf_name", _manufName->currentText());
-    q.bindValue(":itemsrc_manuf_item_number", _manufItemNumber->text());
-    q.exec();
-    if(q.first())
+    itemSave.bindValue(":item_id", _item->id());
+    itemSave.bindValue(":vend_id", _vendor->id());
+    itemSave.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
+    itemSave.bindValue(":itemsrc_manuf_name", _manufName->currentText());
+    itemSave.bindValue(":itemsrc_manuf_item_number", _manufItemNumber->text());
+    itemSave.exec();
+    if(itemSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Save Item Source"),
                             tr("An Item Source already exists for the Item Number, Vendor, Vendor Item, Manfacturer Name and Manufacturer Item Number you have specified.\n"));
       return false;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (itemSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }
@@ -291,14 +294,14 @@ bool itemSource::sSave()
 
   if(_active->isChecked())
   {
-    q.prepare("SELECT item_id "
+    itemSave.prepare("SELECT item_id "
               "FROM item "
               "WHERE ((item_id=:item_id)"
               "  AND  (item_active)) "
               "LIMIT 1; ");
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (!q.first())         
+    itemSave.bindValue(":item_id", _item->id());
+    itemSave.exec();
+    if (!itemSave.first())         
     { 
       QMessageBox::warning( this, tr("Cannot Save Item Source"),
         tr("This Item Source refers to an inactive Item and must be marked as inactive.") );
@@ -307,7 +310,7 @@ bool itemSource::sSave()
   }
     
   if (_mode == cNew || _mode == cCopy)
-    q.prepare( "INSERT INTO itemsrc "
+    itemSave.prepare( "INSERT INTO itemsrc "
                "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_default, itemsrc_vend_id,"
                "  itemsrc_vend_item_number, itemsrc_vend_item_descrip,"
                "  itemsrc_vend_uom, itemsrc_invvendoruomratio,"
@@ -324,7 +327,7 @@ bool itemSource::sSave()
                "  :itemsrc_comments, :itemsrc_manuf_name, "
                "  :itemsrc_manuf_item_number, :itemsrc_manuf_item_descrip );" );
   if (_mode == cEdit)
-    q.prepare( "UPDATE itemsrc "
+    itemSave.prepare( "UPDATE itemsrc "
                "SET itemsrc_active=:itemsrc_active,"
 			   "    itemsrc_default=:itemsrc_default,"
                "    itemsrc_vend_id=:itemsrc_vend_id,"
@@ -340,28 +343,28 @@ bool itemSource::sSave()
                "    itemsrc_manuf_item_descrip=:itemsrc_manuf_item_descrip "
                "WHERE (itemsrc_id=:itemsrc_id);" );
 
-  q.bindValue(":itemsrc_id", _itemsrcid);
-  q.bindValue(":itemsrc_item_id", _item->id());
-  q.bindValue(":itemsrc_active", QVariant(_active->isChecked()));
-  q.bindValue(":itemsrc_default", QVariant(_default->isChecked()));
-  q.bindValue(":itemsrc_vend_id", _vendor->id());
-  q.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
-  q.bindValue(":itemsrc_vend_item_descrip", _vendorItemDescrip->toPlainText());
-  q.bindValue(":itemsrc_vend_uom", _vendorUOM->currentText());
-  q.bindValue(":itemsrc_invvendoruomratio", _invVendorUOMRatio->toDouble());
-  q.bindValue(":itemsrc_upccode", _upcCode->text());
-  q.bindValue(":itemsrc_minordqty", _minOrderQty->toDouble());
-  q.bindValue(":itemsrc_multordqty", _multOrderQty->toDouble());
-  q.bindValue(":itemsrc_leadtime", _leadTime->text().toInt());
-  q.bindValue(":itemsrc_ranking", _vendorRanking->value());
-  q.bindValue(":itemsrc_comments", _notes->toPlainText().trimmed());
-  q.bindValue(":itemsrc_manuf_name", _manufName->currentText());
-  q.bindValue(":itemsrc_manuf_item_number", _manufItemNumber->text());
-  q.bindValue(":itemsrc_manuf_item_descrip", _manufItemDescrip->toPlainText());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  itemSave.bindValue(":itemsrc_id", _itemsrcid);
+  itemSave.bindValue(":itemsrc_item_id", _item->id());
+  itemSave.bindValue(":itemsrc_active", QVariant(_active->isChecked()));
+  itemSave.bindValue(":itemsrc_default", QVariant(_default->isChecked()));
+  itemSave.bindValue(":itemsrc_vend_id", _vendor->id());
+  itemSave.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
+  itemSave.bindValue(":itemsrc_vend_item_descrip", _vendorItemDescrip->toPlainText());
+  itemSave.bindValue(":itemsrc_vend_uom", _vendorUOM->currentText());
+  itemSave.bindValue(":itemsrc_invvendoruomratio", _invVendorUOMRatio->toDouble());
+  itemSave.bindValue(":itemsrc_upccode", _upcCode->text());
+  itemSave.bindValue(":itemsrc_minordqty", _minOrderQty->toDouble());
+  itemSave.bindValue(":itemsrc_multordqty", _multOrderQty->toDouble());
+  itemSave.bindValue(":itemsrc_leadtime", _leadTime->text().toInt());
+  itemSave.bindValue(":itemsrc_ranking", _vendorRanking->value());
+  itemSave.bindValue(":itemsrc_comments", _notes->toPlainText().trimmed());
+  itemSave.bindValue(":itemsrc_manuf_name", _manufName->currentText());
+  itemSave.bindValue(":itemsrc_manuf_item_number", _manufItemNumber->text());
+  itemSave.bindValue(":itemsrc_manuf_item_descrip", _manufItemDescrip->toPlainText());
+  itemSave.exec();
+  if (itemSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -416,18 +419,19 @@ void itemSource::sEdit()
 
 void itemSource::sDelete()
 {
+  XSqlQuery itemDelete;
 //  Make sure the user is sure
   if (  QMessageBox::warning( this, tr("Delete Item Source Price"),
                               tr("Are you sure you want to delete this Item Source price?"),
                               tr("&Delete"), tr("&Cancel"), 0, 0, 1)  == 0  )
   {
-    q.prepare( "DELETE FROM itemsrcp "
+    itemDelete.prepare( "DELETE FROM itemsrcp "
                "WHERE (itemsrcp_id=:itemsrcp_id);" );
-    q.bindValue(":itemsrcp_id", _itemsrcp->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    itemDelete.bindValue(":itemsrcp_id", _itemsrcp->id());
+    itemDelete.exec();
+    if (itemDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -509,15 +513,16 @@ void itemSource::populate()
 
 void itemSource::sRejected()
 {
+  XSqlQuery itemRejected;
   if (_new)
   {
-    q.prepare( "DELETE FROM itemsrc "
+    itemRejected.prepare( "DELETE FROM itemsrc "
                "WHERE (itemsrc_id=:itemsrc_id);" );
-    q.bindValue(":itemsrc_id", _itemsrcid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    itemRejected.bindValue(":itemsrc_id", _itemsrcid);
+    itemRejected.exec();
+    if (itemRejected.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemRejected.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -525,14 +530,15 @@ void itemSource::sRejected()
 
 void itemSource::sVendorChanged( int pId )
 {
-    q.prepare("SELECT vend_curr_id FROM vendinfo WHERE vend_id = :vend_id;");
-    q.bindValue(":vend_id", pId);
-    q.exec();
-    if (q.first())
-	_vendorCurrency->setId(q.value("vend_curr_id").toInt());
-    else if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery itemVendorChanged;
+    itemVendorChanged.prepare("SELECT vend_curr_id FROM vendinfo WHERE vend_id = :vend_id;");
+    itemVendorChanged.bindValue(":vend_id", pId);
+    itemVendorChanged.exec();
+    if (itemVendorChanged.first())
+	_vendorCurrency->setId(itemVendorChanged.value("vend_curr_id").toInt());
+    else if (itemVendorChanged.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, itemVendorChanged.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 }

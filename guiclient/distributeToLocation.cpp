@@ -97,6 +97,7 @@ enum SetResponse distributeToLocation::set(const ParameterList &pParams)
 
 void distributeToLocation::sDistribute()
 {
+  XSqlQuery distributeDistribute;
   double qty = _locationQty->toDouble();
 
   if ((_balance < 0) && (qty < _balance))
@@ -145,59 +146,59 @@ void distributeToLocation::sDistribute()
   {
     if (_mode == cLocation)
     {
-      q.prepare( "DELETE FROM itemlocdist "
+      distributeDistribute.prepare( "DELETE FROM itemlocdist "
                  "WHERE ( (itemlocdist_itemlocdist_id=:itemlocdist_id)"
                  " AND (itemlocdist_source_type='L')"
                  " AND (itemlocdist_source_id=:location_id) );" );
-      q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
-      q.bindValue(":location_id", _locationid);
-      q.exec();
+      distributeDistribute.bindValue(":itemlocdist_id", _sourceItemlocdistid);
+      distributeDistribute.bindValue(":location_id", _locationid);
+      distributeDistribute.exec();
     }
     else if (_mode == cItemloc)
     {
-      q.prepare( "DELETE FROM itemlocdist "
+      distributeDistribute.prepare( "DELETE FROM itemlocdist "
                  "WHERE ( (itemlocdist_itemlocdist_id=:itemlocdist_id)"
                  " AND (itemlocdist_source_type='I')"
                  " AND (itemlocdist_source_id=:itemloc_id));" );
-      q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
-      q.bindValue(":itemloc_id", _itemlocdistid);
-      q.exec();
+      distributeDistribute.bindValue(":itemlocdist_id", _sourceItemlocdistid);
+      distributeDistribute.bindValue(":itemloc_id", _itemlocdistid);
+      distributeDistribute.exec();
     }
   }
   else if (_mode == cLocation)
   {
     if (_metrics->boolean("LotSerialControl"))
-      q.prepare( "SELECT itemlocdist_id "
+      distributeDistribute.prepare( "SELECT itemlocdist_id "
                  "FROM itemlocdist "
                  "WHERE ( (itemlocdist_itemlocdist_id=:itemlocdist_id)"
                  " AND (itemlocdist_source_type='L')"
                  " AND (itemlocdist_source_id=:location_id)"
                  " AND (formatlotserialnumber(itemlocdist_ls_id)=:lotSerial) );" );
     else
-      q.prepare( "SELECT itemlocdist_id "
+      distributeDistribute.prepare( "SELECT itemlocdist_id "
                  "FROM itemlocdist "
                  "WHERE ( (itemlocdist_itemlocdist_id=:itemlocdist_id)"
                  " AND (itemlocdist_source_type='L')"
                  " AND (itemlocdist_source_id=:location_id)"
                  "  );" );
-    q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
-    q.bindValue(":location_id", _locationid);
-    q.bindValue(":lotSerial", _lotSerial);
-    q.exec();
-    if (q.first())
+    distributeDistribute.bindValue(":itemlocdist_id", _sourceItemlocdistid);
+    distributeDistribute.bindValue(":location_id", _locationid);
+    distributeDistribute.bindValue(":lotSerial", _lotSerial);
+    distributeDistribute.exec();
+    if (distributeDistribute.first())
     {
-      int itemlocdistid = q.value("itemlocdist_id").toInt();
+      int itemlocdistid = distributeDistribute.value("itemlocdist_id").toInt();
 
-      q.prepare( "UPDATE itemlocdist "
+      distributeDistribute.prepare( "UPDATE itemlocdist "
                  "SET itemlocdist_qty=:qty "
                  "WHERE (itemlocdist_id=:itemlocdist_id);" );
-      q.bindValue(":qty", qty);
-      q.bindValue(":itemlocdist_id", itemlocdistid);
-      q.exec();
+      distributeDistribute.bindValue(":qty", qty);
+      distributeDistribute.bindValue(":itemlocdist_id", itemlocdistid);
+      distributeDistribute.exec();
     }
     else
     {
-      q.prepare( "INSERT INTO itemlocdist "
+      distributeDistribute.prepare( "INSERT INTO itemlocdist "
                  "( itemlocdist_itemlocdist_id,"
                  "  itemlocdist_source_type, itemlocdist_source_id,"
                  "  itemlocdist_qty, itemlocdist_ls_id, itemlocdist_expiration ) "
@@ -206,37 +207,37 @@ void distributeToLocation::sDistribute()
                  "       :qty, itemlocdist_ls_id, endOfTime() "
                  "FROM itemlocdist "
                  "WHERE (itemlocdist_id=:itemlocdist_id);" );
-      q.bindValue(":location_id", _locationid);
-      q.bindValue(":qty", qty);
-      q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
-      q.exec();
+      distributeDistribute.bindValue(":location_id", _locationid);
+      distributeDistribute.bindValue(":qty", qty);
+      distributeDistribute.bindValue(":itemlocdist_id", _sourceItemlocdistid);
+      distributeDistribute.exec();
     }
   }
 
   else if (_mode == cItemloc)
   {
-    q.prepare( "SELECT itemlocdist_id "
+    distributeDistribute.prepare( "SELECT itemlocdist_id "
                "FROM itemlocdist, itemloc "
                "WHERE ( (itemlocdist_itemlocdist_id=:sItemlocdist_id)"
                " AND (itemlocdist_source_type='I')"
                " AND (itemlocdist_source_id=:itemlocdist_id) );" );
-    q.bindValue(":sItemlocdist_id", _sourceItemlocdistid);
-    q.bindValue(":itemlocdist_id", _itemlocdistid);
-    q.exec();
-    if (q.first())
+    distributeDistribute.bindValue(":sItemlocdist_id", _sourceItemlocdistid);
+    distributeDistribute.bindValue(":itemlocdist_id", _itemlocdistid);
+    distributeDistribute.exec();
+    if (distributeDistribute.first())
     {
-      int itemlocdistid = q.value("itemlocdist_id").toInt();
+      int itemlocdistid = distributeDistribute.value("itemlocdist_id").toInt();
 
-      q.prepare( "UPDATE itemlocdist "
+      distributeDistribute.prepare( "UPDATE itemlocdist "
                  "SET itemlocdist_qty=:qty "
                  "WHERE (itemlocdist_id=:itemlocdist_id);" );
-      q.bindValue(":qty", qty);
-      q.bindValue(":itemlocdist_id", itemlocdistid);
-      q.exec();
+      distributeDistribute.bindValue(":qty", qty);
+      distributeDistribute.bindValue(":itemlocdist_id", itemlocdistid);
+      distributeDistribute.exec();
     }
     else
     {
-      q.prepare( "INSERT INTO itemlocdist "
+      distributeDistribute.prepare( "INSERT INTO itemlocdist "
                  "( itemlocdist_itemlocdist_id,"
                  "  itemlocdist_source_type, itemlocdist_source_id,"
                  "  itemlocdist_qty, itemlocdist_expiration ) "
@@ -244,10 +245,10 @@ void distributeToLocation::sDistribute()
                  "( :sItemlocdist_id,"
                  "  'I',  :itemlocdist_id,"
                  "  :qty, endOfTime() );" );
-      q.bindValue(":sItemlocdist_id", _sourceItemlocdistid);
-      q.bindValue(":itemlocdist_id", _itemlocdistid);
-      q.bindValue(":qty", qty);
-      q.exec();
+      distributeDistribute.bindValue(":sItemlocdist_id", _sourceItemlocdistid);
+      distributeDistribute.bindValue(":itemlocdist_id", _itemlocdistid);
+      distributeDistribute.bindValue(":qty", qty);
+      distributeDistribute.exec();
     }
   }
 
@@ -256,9 +257,10 @@ void distributeToLocation::sDistribute()
 
 void distributeToLocation::populate()
 {
+  XSqlQuery distributepopulate;
   if (_mode == cLocation)
   {
-    q.prepare( "SELECT formatLocationName(location_id) AS locationname, COALESCE(subild.itemlocdist_qty, 0) AS qty, "
+    distributepopulate.prepare( "SELECT formatLocationName(location_id) AS locationname, COALESCE(subild.itemlocdist_qty, 0) AS qty, "
                "       qtyLocation(location_id, NULL, NULL, NULL, topild.itemlocdist_itemsite_id, topild.itemlocdist_order_type, topild.itemlocdist_order_id, topild.itemlocdist_id) AS availqty "
                "FROM location LEFT OUTER JOIN itemlocdist AS subild"
                "               ON ( (subild.itemlocdist_source_type='L')"
@@ -267,12 +269,12 @@ void distributeToLocation::populate()
                "     LEFT OUTER JOIN itemlocdist AS topild"
                "               ON (topild.itemlocdist_id=:itemlocdist_id) "
                "WHERE (location_id=:location_id);" );
-    q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
-    q.bindValue(":location_id", _locationid);
+    distributepopulate.bindValue(":itemlocdist_id", _sourceItemlocdistid);
+    distributepopulate.bindValue(":location_id", _locationid);
   }
   else if (_mode == cItemloc)
   {
-    q.prepare( "SELECT formatLocationName(location_id) AS locationname,"
+    distributepopulate.prepare( "SELECT formatLocationName(location_id) AS locationname,"
 	       "       COALESCE(itemlocdist_qty, 0) AS qty, "
 	       "       itemloc_qty AS availqty "
                "FROM itemloc LEFT OUTER JOIN"
@@ -281,19 +283,19 @@ void distributeToLocation::populate()
                "                 AND (itemlocdist_source_id=itemloc_id)"
                "                 AND (itemlocdist_itemlocdist_id=:itemlocdist_id) ) "
                "WHERE (itemloc_id=:itemloc_id);" );
-    q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
-    q.bindValue(":itemloc_id", _itemlocdistid);
+    distributepopulate.bindValue(":itemlocdist_id", _sourceItemlocdistid);
+    distributepopulate.bindValue(":itemloc_id", _itemlocdistid);
   }
 
-  q.exec();
-  if (q.first())
+  distributepopulate.exec();
+  if (distributepopulate.first())
   {
-    _locationQty->setDouble(q.value("qty").toDouble());
-    _location->setText(q.value("locationname").toString());
-    _availToDistribute = q.value("availqty").toDouble();
+    _locationQty->setDouble(distributepopulate.value("qty").toDouble());
+    _location->setText(distributepopulate.value("locationname").toString());
+    _availToDistribute = distributepopulate.value("availqty").toDouble();
   }
 
-  q.prepare( "SELECT parent.lotserial AS lotserial,"
+  distributepopulate.prepare( "SELECT parent.lotserial AS lotserial,"
              "       qtydistrib,"
              "       qtytagged,"
              "       (qtydistrib - qtytagged) AS qtybalance "
@@ -303,16 +305,16 @@ void distributeToLocation::populate()
              "     ( SELECT COALESCE(SUM(itemlocdist_qty), 0) AS qtytagged"
              "       FROM itemlocdist"
              "       WHERE (itemlocdist_itemlocdist_id=:itemlocdist_id) ) AS child;" );
-  q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
-  q.exec();
-  if (q.first())
+  distributepopulate.bindValue(":itemlocdist_id", _sourceItemlocdistid);
+  distributepopulate.exec();
+  if (distributepopulate.first())
   {
-    _lotSerial = q.value("lotserial").toString();
+    _lotSerial = distributepopulate.value("lotserial").toString();
 
-    _qtyToDistribute->setDouble(q.value("qtydistrib").toDouble());
-    _qtyTagged->setDouble(q.value("qtytagged").toDouble());
-    _qtyBalance->setDouble(q.value("qtybalance").toDouble());
-//    _balance = (double)qRound(q.value("qtybalance").toDouble() * pow(10.0, decimalPlaces("qty"))) / pow(10.0, decimalPlaces("qty"));
+    _qtyToDistribute->setDouble(distributepopulate.value("qtydistrib").toDouble());
+    _qtyTagged->setDouble(distributepopulate.value("qtytagged").toDouble());
+    _qtyBalance->setDouble(distributepopulate.value("qtybalance").toDouble());
+//    _balance = (double)qRound(distributepopulate.value("qtybalance").toDouble() * pow(10.0, decimalPlaces("qty"))) / pow(10.0, decimalPlaces("qty"));
     _balance = _qtyBalance->toDouble();
 
     double locQty = _balance;
@@ -327,9 +329,9 @@ void distributeToLocation::populate()
     }
     _locationQty->setDouble(locQty);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (distributepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, distributepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

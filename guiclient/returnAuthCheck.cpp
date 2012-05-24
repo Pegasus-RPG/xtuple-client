@@ -63,6 +63,7 @@ enum SetResponse returnAuthCheck::set(const ParameterList &pParams)
 
 void returnAuthCheck::sSave()
 {
+  XSqlQuery returnSave;
   if (!_date->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
@@ -88,42 +89,42 @@ void returnAuthCheck::sSave()
 
   else
   {
-    q.prepare("SELECT createCheck(:bankaccnt_id, 'C', :recipid,"
+    returnSave.prepare("SELECT createCheck(:bankaccnt_id, 'C', :recipid,"
 	      "                   :checkDate, :amount, :curr_id, NULL,"
 	      "                   NULL, :for, :notes, TRUE, :aropen_id) AS result; ");
-    q.bindValue(":bankaccnt_id", _bankaccnt->id());
-    q.bindValue(":recipid",	_custid);
-    q.bindValue(":checkDate", _date->date());
-    q.bindValue(":amount",	_amount->localValue());
-    q.bindValue(":curr_id",	_amount->id());
-    q.bindValue(":for",	_for->text().trimmed());
-    q.bindValue(":notes", _notes->toPlainText().trimmed());
-	q.bindValue(":aropen_id", _aropenid);
-	q.exec();
-    if (q.first())
+    returnSave.bindValue(":bankaccnt_id", _bankaccnt->id());
+    returnSave.bindValue(":recipid",	_custid);
+    returnSave.bindValue(":checkDate", _date->date());
+    returnSave.bindValue(":amount",	_amount->localValue());
+    returnSave.bindValue(":curr_id",	_amount->id());
+    returnSave.bindValue(":for",	_for->text().trimmed());
+    returnSave.bindValue(":notes", _notes->toPlainText().trimmed());
+	returnSave.bindValue(":aropen_id", _aropenid);
+	returnSave.exec();
+    if (returnSave.first())
     {
-      _checkid = q.value("result").toInt();
+      _checkid = returnSave.value("result").toInt();
       if (_checkid < 0)
       {
         systemError(this, storedProcErrorLookup("createCheck", _checkid),
 		    __FILE__, __LINE__);
         return;
       }
-      q.prepare( "SELECT checkhead_number "
+      returnSave.prepare( "SELECT checkhead_number "
                "FROM checkhead "
                "WHERE (checkhead_id=:check_id);" );
-      q.bindValue(":check_id", _checkid);
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      returnSave.bindValue(":check_id", _checkid);
+      returnSave.exec();
+      if (returnSave.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
 	  done(TRUE);
 	}
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (returnSave.lastError().type() != QSqlError::NoError)
     {
-     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+     systemError(this, returnSave.lastError().databaseText(), __FILE__, __LINE__);
         return;
     }
   }
@@ -136,6 +137,7 @@ void returnAuthCheck::sClose()
 
 void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
 {
+  XSqlQuery returnPopulateBankInfo;
   if ( pBankaccntid == -1 )
   {
     _amount->setId(_cmheadcurrid);
@@ -164,7 +166,7 @@ void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
       _checkNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
       _amount->setId(checkNumber.value("bankaccnt_curr_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (returnPopulateBankInfo.lastError().type() != QSqlError::NoError)
     {
       systemError(this, checkNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -174,7 +176,8 @@ void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
 
 void returnAuthCheck::populate()
 {
-  q.prepare("SELECT cust_id,cust_name,cmhead_number,cmhead_curr_id, "
+  XSqlQuery returnpopulate;
+  returnpopulate.prepare("SELECT cust_id,cust_name,cmhead_number,cmhead_curr_id, "
 	        "'Return Authorization ' || rahead_number::text AS memo, "
 			"'Applied Against Credit Memo ' || cmhead_number::text AS note, "
 			"aropen_id,aropen_amount "
@@ -184,38 +187,38 @@ void returnAuthCheck::populate()
 			"AND (cmhead_id=:cmhead_id) "
 			"AND (aropen_doctype='C') "
 			"AND (aropen_docnumber=cmhead_number));");
-  q.bindValue(":cmhead_id",_cmheadid);
-  q.exec();
-  if (q.first())
+  returnpopulate.bindValue(":cmhead_id",_cmheadid);
+  returnpopulate.exec();
+  if (returnpopulate.first())
   {
-    _custid=q.value("cust_id").toInt();
-	_aropenid=q.value("aropen_id").toInt();
-    _custName->setText(q.value("cust_name").toString());
-	_creditmemo->setText(q.value("cmhead_number").toString());
-	_cmheadcurrid = q.value("cmhead_curr_id").toInt();
-	_amount->setId(q.value("cmhead_curr_id").toInt());
-	_amount->setLocalValue(q.value("aropen_amount").toDouble());
-	_for->setText(q.value("memo").toString());
-	_notes->setText(q.value("note").toString());
+    _custid=returnpopulate.value("cust_id").toInt();
+	_aropenid=returnpopulate.value("aropen_id").toInt();
+    _custName->setText(returnpopulate.value("cust_name").toString());
+	_creditmemo->setText(returnpopulate.value("cmhead_number").toString());
+	_cmheadcurrid = returnpopulate.value("cmhead_curr_id").toInt();
+	_amount->setId(returnpopulate.value("cmhead_curr_id").toInt());
+	_amount->setLocalValue(returnpopulate.value("aropen_amount").toDouble());
+	_for->setText(returnpopulate.value("memo").toString());
+	_notes->setText(returnpopulate.value("note").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (returnpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT bankaccnt_id "
+  returnpopulate.prepare("SELECT bankaccnt_id "
 	    "FROM bankaccnt "
 	    "WHERE (bankaccnt_ap"
 	    "  AND  (bankaccnt_type='K')"
 	    "  AND  (bankaccnt_curr_id=:cmcurrid));");
-  q.bindValue(":cmcurrid", _cmheadcurrid);
-  q.exec();
-  if (q.first())
-    _bankaccnt->setId(q.value("bankaccnt_id").toInt());
-  else if (q.lastError().type() != QSqlError::NoError)
+  returnpopulate.bindValue(":cmcurrid", _cmheadcurrid);
+  returnpopulate.exec();
+  if (returnpopulate.first())
+    _bankaccnt->setId(returnpopulate.value("bankaccnt_id").toInt());
+  else if (returnpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else

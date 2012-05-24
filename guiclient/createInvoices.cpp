@@ -42,19 +42,20 @@ void createInvoices::languageChange()
 
 void createInvoices::sPost()
 {
+  XSqlQuery createPost;
   QString sql("SELECT createInvoices(custtype_id, :consolidate) AS result"
               " FROM custtype" );
   if (_customerType->isSelected())
     sql += " WHERE (custtype_id=:custtype_id)";
   else if (_customerType->isPattern())
     sql += " WHERE (custtype_code ~ :custtype_pattern)";
-  q.prepare(sql);
-  _customerType->bindValue(q);
-  q.bindValue(":consolidate", _consolidate->isChecked());
-  q.exec();
-  if (q.first())
+  createPost.prepare(sql);
+  _customerType->bindValue(createPost);
+  createPost.bindValue(":consolidate", _consolidate->isChecked());
+  createPost.exec();
+  if (createPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = createPost.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("createInvoices", result),
@@ -65,9 +66,9 @@ void createInvoices::sPost()
     omfgThis->sBillingSelectionUpdated(-1, TRUE);
     omfgThis->sSalesOrdersUpdated(-1);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (createPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, createPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

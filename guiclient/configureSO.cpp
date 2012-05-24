@@ -16,6 +16,7 @@
 configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  XSqlQuery configureconfigureSO;
   setupUi(this);
 
   if (name)
@@ -45,7 +46,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   else
     _invcCurrdate->setChecked(true);
 
-  q.exec( "SELECT sonumber.orderseq_number AS sonumber,"
+  configureconfigureSO.exec( "SELECT sonumber.orderseq_number AS sonumber,"
           "       qunumber.orderseq_number AS qunumber,"
           "       cmnumber.orderseq_number AS cmnumber,"
           "       innumber.orderseq_number AS innumber "
@@ -57,16 +58,16 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
           " AND (qunumber.orderseq_name='QuNumber')"
           " AND (cmnumber.orderseq_name='CmNumber')"
           " AND (innumber.orderseq_name='InvcNumber') );" );
-  if (q.first())
+  if (configureconfigureSO.first())
   {
-    _nextSoNumber->setText(q.value("sonumber"));
-    _nextQuNumber->setText(q.value("qunumber"));
-    _nextCmNumber->setText(q.value("cmnumber"));
-    _nextInNumber->setText(q.value("innumber"));
+    _nextSoNumber->setText(configureconfigureSO.value("sonumber"));
+    _nextQuNumber->setText(configureconfigureSO.value("qunumber"));
+    _nextCmNumber->setText(configureconfigureSO.value("cmnumber"));
+    _nextInNumber->setText(configureconfigureSO.value("innumber"));
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (configureconfigureSO.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, configureconfigureSO.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -141,18 +142,18 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   }
   else
   {
-    q.exec("SELECT rahead_id FROM rahead LIMIT 1;");
-    if (q.first())
+    configureconfigureSO.exec("SELECT rahead_id FROM rahead LIMIT 1;");
+    if (configureconfigureSO.first())
       _enableReturns->setCheckable(false);
     else
       _enableReturns->setChecked(_metrics->boolean("EnableReturnAuth"));
 
-    q.exec( "SELECT ranumber.orderseq_number AS ranumber "
+    configureconfigureSO.exec( "SELECT ranumber.orderseq_number AS ranumber "
             "FROM orderseq AS ranumber "
             "WHERE (ranumber.orderseq_name='RaNumber');" );
-    if (q.first())
+    if (configureconfigureSO.first())
     {
-      _nextRaNumber->setText(q.value("ranumber"));
+      _nextRaNumber->setText(configureconfigureSO.value("ranumber"));
     }
     else
       _nextRaNumber->setText("10000");
@@ -227,6 +228,7 @@ void configureSO::languageChange()
 
 bool configureSO::sSave()
 {
+  XSqlQuery configureSave;
   emit saving();
 
   const char *dispositionTypes[] = { "C", "R", "P", "V", "M", "" };
@@ -244,9 +246,9 @@ bool configureSO::sSave()
     }
     else
     {
-      q.prepare("DELETE FROM itemlocrsrv "
+      configureSave.prepare("DELETE FROM itemlocrsrv "
                 " WHERE (itemlocrsrv_source='SO');");
-      q.exec();
+      configureSave.exec();
     }	
   }
 
@@ -339,16 +341,16 @@ bool configureSO::sSave()
     break;
   }
 
-  q.prepare( "SELECT setNextSoNumber(:sonumber), setNextQuNumber(:qunumber),"
+  configureSave.prepare( "SELECT setNextSoNumber(:sonumber), setNextQuNumber(:qunumber),"
              "       setNextCmNumber(:cmnumber), setNextInvcNumber(:innumber);" );
-  q.bindValue(":sonumber", _nextSoNumber->text().toInt());
-  q.bindValue(":qunumber", _nextQuNumber->text().toInt());
-  q.bindValue(":cmnumber", _nextCmNumber->text().toInt());
-  q.bindValue(":innumber", _nextInNumber->text().toInt());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  configureSave.bindValue(":sonumber", _nextSoNumber->text().toInt());
+  configureSave.bindValue(":qunumber", _nextQuNumber->text().toInt());
+  configureSave.bindValue(":cmnumber", _nextCmNumber->text().toInt());
+  configureSave.bindValue(":innumber", _nextInNumber->text().toInt());
+  configureSave.exec();
+  if (configureSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -361,12 +363,12 @@ bool configureSO::sSave()
     _metrics->set("DefaultPrintRAOnSave", _printRA->isChecked());
     _metrics->set("RANumberGeneration", _returnAuthorizationNumGeneration->methodCode());
 
-    q.prepare( "SELECT setNextRaNumber(:ranumber);" );
-    q.bindValue(":ranumber", _nextRaNumber->text().toInt());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    configureSave.prepare( "SELECT setNextRaNumber(:ranumber);" );
+    configureSave.bindValue(":ranumber", _nextRaNumber->text().toInt());
+    configureSave.exec();
+    if (configureSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, configureSave.lastError().databaseText(), __FILE__, __LINE__);
       return false;
     }
   }

@@ -98,22 +98,23 @@ void locales::sView()
 
 void locales::sDelete()
 {
-  q.prepare( "SELECT usr_username "
+  XSqlQuery localesDelete;
+  localesDelete.prepare( "SELECT usr_username "
              "FROM usr "
              "WHERE (usr_locale_id=:locale_id) "
              "LIMIT 1;" );
-  q.bindValue(":locale_id", _locale->id());
-  q.exec();
-  if (q.first())
+  localesDelete.bindValue(":locale_id", _locale->id());
+  localesDelete.exec();
+  if (localesDelete.first())
     QMessageBox::critical( this, tr("Cannot Delete Selected Locale"),
                            tr( "The selected Locale cannot be deleted as it has been assigned to one or more Users.\n"
                                "You must reassign the Locales for these Users before you may delete the selected Locale." ) );
   else
   {
-    q.prepare( "DELETE FROM locale "
+    localesDelete.prepare( "DELETE FROM locale "
                "WHERE (locale_id=:locale_id);" );
-    q.bindValue(":locale_id", _locale->id());
-    q.exec();
+    localesDelete.bindValue(":locale_id", _locale->id());
+    localesDelete.exec();
 
     sFillList();
   }

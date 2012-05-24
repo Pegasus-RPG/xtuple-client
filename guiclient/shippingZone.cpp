@@ -78,6 +78,7 @@ enum SetResponse shippingZone::set(const ParameterList &pParams)
 
 void shippingZone::sSave()
 {
+  XSqlQuery shippingSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::information( this, tr("No Name Entered"),
@@ -86,14 +87,14 @@ void shippingZone::sSave()
     return;
   }
 
-  q.prepare("SELECT shipzone_id"
+  shippingSave.prepare("SELECT shipzone_id"
             "  FROM shipzone"
             " WHERE((shipzone_id != :shipzone_id)"
             "   AND (shipzone_name=:shipzone_name))");
-  q.bindValue(":shipzone_id", _shipzoneid);
-  q.bindValue(":shipzone_name", _name->text().trimmed());
-  q.exec();
-  if(q.first())
+  shippingSave.bindValue(":shipzone_id", _shipzoneid);
+  shippingSave.bindValue(":shipzone_name", _name->text().trimmed());
+  shippingSave.exec();
+  if(shippingSave.first())
   {
     QMessageBox::critical(this, tr("Cannot Save Shipping Zone"),
                           tr("You have entered a duplicate Name for this Shipping Zone. "
@@ -104,9 +105,9 @@ void shippingZone::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('shipzone_shipzone_id_seq') AS shipzone_id");
-    if (q.first())
-      _shipzoneid = q.value("shipzone_id").toInt();
+    shippingSave.exec("SELECT NEXTVAL('shipzone_shipzone_id_seq') AS shipzone_id");
+    if (shippingSave.first())
+      _shipzoneid = shippingSave.value("shipzone_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -115,37 +116,38 @@ void shippingZone::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO shipzone "
+    shippingSave.prepare( "INSERT INTO shipzone "
                "(shipzone_id, shipzone_name, shipzone_descrip) "
                "VALUES "
                "(:shipzone_id, :shipzone_name, :shipzone_descrip);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE shipzone "
+    shippingSave.prepare( "UPDATE shipzone "
                "SET shipzone_name=:shipzone_name, shipzone_descrip=:shipzone_descrip "
                "WHERE (shipzone_id=:shipzone_id);" );
 
-  q.bindValue(":shipzone_id", _shipzoneid);
-  q.bindValue(":shipzone_name", _name->text());
-  q.bindValue(":shipzone_descrip", _description->text());
-  q.exec();
+  shippingSave.bindValue(":shipzone_id", _shipzoneid);
+  shippingSave.bindValue(":shipzone_name", _name->text());
+  shippingSave.bindValue(":shipzone_descrip", _description->text());
+  shippingSave.exec();
 
   done(_shipzoneid);
 }
 
 void shippingZone::sCheck()
 {
+  XSqlQuery shippingCheck;
   _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT shipzone_id "
+    shippingCheck.prepare( "SELECT shipzone_id "
                "FROM shipzone "
                "WHERE (UPPER(shipzone_name)=UPPER(:shipzone_name));" );
-    q.bindValue(":shipzone_name", _name->text());
-    q.exec();
-    if (q.first())
+    shippingCheck.bindValue(":shipzone_name", _name->text());
+    shippingCheck.exec();
+    if (shippingCheck.first())
     {
-      _shipzoneid = q.value("shipzone_id").toInt();
+      _shipzoneid = shippingCheck.value("shipzone_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -156,15 +158,16 @@ void shippingZone::sCheck()
 
 void shippingZone::populate()
 {
-  q.prepare( "SELECT shipzone_name, shipzone_descrip "
+  XSqlQuery shippingpopulate;
+  shippingpopulate.prepare( "SELECT shipzone_name, shipzone_descrip "
              "FROM shipzone "
              "WHERE (shipzone_id=:shipzone_id);" );
-  q.bindValue(":shipzone_id", _shipzoneid);
-  q.exec();
-  if (q.first())
+  shippingpopulate.bindValue(":shipzone_id", _shipzoneid);
+  shippingpopulate.exec();
+  if (shippingpopulate.first())
   {
-    _name->setText(q.value("shipzone_name").toString());
-    _description->setText(q.value("shipzone_descrip").toString());
+    _name->setText(shippingpopulate.value("shipzone_name").toString());
+    _description->setText(shippingpopulate.value("shipzone_descrip").toString());
   }
 }
 

@@ -399,12 +399,13 @@ bool employee::sSave(const bool pClose)
 
 void employee::sReleaseNumber()
 {
-  q.prepare("SELECT releaseCRMAccountNumber(:number);");
-  q.bindValue(":number", _NumberGen);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery employeeReleaseNumber;
+  employeeReleaseNumber.prepare("SELECT releaseCRMAccountNumber(:number);");
+  employeeReleaseNumber.bindValue(":number", _NumberGen);
+  employeeReleaseNumber.exec();
+  if (employeeReleaseNumber.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, employeeReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

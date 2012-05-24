@@ -18,6 +18,7 @@
 bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery bankbankAccount;
   setupUi(this);
 
   connect(_bankName,SIGNAL(textChanged(QString)), this, SLOT(sNameChanged(QString)));
@@ -46,16 +47,16 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
   {
-    q.prepare("SELECT fetchMetricText('ACHCompanyName') AS name,"
+    bankbankAccount.prepare("SELECT fetchMetricText('ACHCompanyName') AS name,"
               "       formatACHCompanyId() AS number;");
-    q.exec();
-    if (q.first())
+    bankbankAccount.exec();
+    if (bankbankAccount.first())
     {
-      _useCompanyIdOrigin->setText(q.value("name").toString());
-      _defaultOrigin->setText(q.value("number").toString());
+      _useCompanyIdOrigin->setText(bankbankAccount.value("name").toString());
+      _defaultOrigin->setText(bankbankAccount.value("number").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    else if (bankbankAccount.lastError().type() != QSqlError::NoError)
+      systemError(this, bankbankAccount.lastError().databaseText(), __FILE__, __LINE__);
 
     if (omfgThis->_key.isEmpty())
       _transmitTab->setEnabled(false);
@@ -130,25 +131,26 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
 
 void bankAccount::sCheck()
 {
+  XSqlQuery bankCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
-    q.exec( "SELECT bankaccnt_id "
+    bankCheck.exec( "SELECT bankaccnt_id "
             "FROM bankaccnt "
             "WHERE (UPPER(bankaccnt_name)=UPPER(:bankaccnt_name));" );
-    q.bindValue(":bankaccnt_name", _name->text());
-    q.exec();
-    if (q.first())
+    bankCheck.bindValue(":bankaccnt_name", _name->text());
+    bankCheck.exec();
+    if (bankCheck.first())
     {
-      _bankaccntid = q.value("bankaccnt_id").toInt();
+      _bankaccntid = bankCheck.value("bankaccnt_id").toInt();
       _mode = cEdit;
       populate();
 
       _name->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (bankCheck.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, bankCheck.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -156,6 +158,7 @@ void bankAccount::sCheck()
 
 void bankAccount::sSave()
 {
+  XSqlQuery bankSave;
   struct {
     bool        condition;
     QString     msg;
@@ -268,13 +271,13 @@ void bankAccount::sSave()
     }
   }
 
-  q.prepare( "SELECT bankaccnt_id FROM bankaccnt "
+  bankSave.prepare( "SELECT bankaccnt_id FROM bankaccnt "
              "WHERE ((bankaccnt_name = :bankaccnt_name) "
              "AND (bankaccnt_id != :bankaccnt_id));");
-  q.bindValue(":bankaccnt_name", _name->text());
-  q.bindValue(":bankaccnt_id",   _bankaccntid);
-  q.exec();
-  if (q.first())
+  bankSave.bindValue(":bankaccnt_name", _name->text());
+  bankSave.bindValue(":bankaccnt_id",   _bankaccntid);
+  bankSave.exec();
+  if (bankSave.first())
   {
     QMessageBox::critical( this, tr("Cannot Save Bank Account"),
                            tr("<p>Bank Account name is already in use. Please "
@@ -286,11 +289,11 @@ void bankAccount::sSave()
   
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('bankaccnt_bankaccnt_id_seq') AS _bankaccnt_id");
-    if (q.first())
-      _bankaccntid = q.value("_bankaccnt_id").toInt();
+    bankSave.exec("SELECT NEXTVAL('bankaccnt_bankaccnt_id_seq') AS _bankaccnt_id");
+    if (bankSave.first())
+      _bankaccntid = bankSave.value("_bankaccnt_id").toInt();
 
-    q.prepare( "INSERT INTO bankaccnt "
+    bankSave.prepare( "INSERT INTO bankaccnt "
                "( bankaccnt_id, bankaccnt_name, bankaccnt_descrip,"
                "  bankaccnt_bankname, bankaccnt_accntnumber,"
                "  bankaccnt_type, bankaccnt_ap, bankaccnt_ar,"
@@ -316,7 +319,7 @@ void bankAccount::sSave()
                "  :bankaccnt_ach_genchecknum, :bankaccnt_ach_leadtime);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE bankaccnt "
+    bankSave.prepare( "UPDATE bankaccnt "
                "SET bankaccnt_name=:bankaccnt_name,"
                "    bankaccnt_descrip=:bankaccnt_descrip,"
                "    bankaccnt_bankname=:bankaccnt_bankname,"
@@ -342,54 +345,54 @@ void bankAccount::sSave()
                "    bankaccnt_ach_leadtime=:bankaccnt_ach_leadtime "
                "WHERE (bankaccnt_id=:bankaccnt_id);" );
   
-  q.bindValue(":bankaccnt_id",          _bankaccntid);
-  q.bindValue(":bankaccnt_name",        _name->text());
-  q.bindValue(":bankaccnt_descrip",     _description->text().trimmed());
-  q.bindValue(":bankaccnt_bankname",    _bankName->text());
-  q.bindValue(":bankaccnt_accntnumber", _accountNumber->text());
-  q.bindValue(":bankaccnt_ap",          QVariant(_ap->isChecked()));
-  q.bindValue(":bankaccnt_ar",          QVariant(_ar->isChecked()));
-  q.bindValue(":bankaccnt_accnt_id",    _assetAccount->id());
-  q.bindValue(":bankaccnt_curr_id",     _currency->id());
-  q.bindValue(":bankaccnt_notes",       _notes->toPlainText().trimmed());
-  q.bindValue(":bankaccnt_ach_enabled", _transmitGroup->isChecked());
-  q.bindValue(":bankaccnt_routing",     _routing->text());
+  bankSave.bindValue(":bankaccnt_id",          _bankaccntid);
+  bankSave.bindValue(":bankaccnt_name",        _name->text());
+  bankSave.bindValue(":bankaccnt_descrip",     _description->text().trimmed());
+  bankSave.bindValue(":bankaccnt_bankname",    _bankName->text());
+  bankSave.bindValue(":bankaccnt_accntnumber", _accountNumber->text());
+  bankSave.bindValue(":bankaccnt_ap",          QVariant(_ap->isChecked()));
+  bankSave.bindValue(":bankaccnt_ar",          QVariant(_ar->isChecked()));
+  bankSave.bindValue(":bankaccnt_accnt_id",    _assetAccount->id());
+  bankSave.bindValue(":bankaccnt_curr_id",     _currency->id());
+  bankSave.bindValue(":bankaccnt_notes",       _notes->toPlainText().trimmed());
+  bankSave.bindValue(":bankaccnt_ach_enabled", _transmitGroup->isChecked());
+  bankSave.bindValue(":bankaccnt_routing",     _routing->text());
 
   if (_useCompanyIdOrigin->isChecked())
-    q.bindValue(":bankaccnt_ach_origintype",  "I");
+    bankSave.bindValue(":bankaccnt_ach_origintype",  "I");
   else if (_useRoutingNumberOrigin->isChecked())
-    q.bindValue(":bankaccnt_ach_origintype",  "B");
+    bankSave.bindValue(":bankaccnt_ach_origintype",  "B");
   else if (_useOtherOrigin->isChecked())
-    q.bindValue(":bankaccnt_ach_origintype",  "O");
-  q.bindValue(":bankaccnt_ach_originname",    _otherOriginName->text());
-  q.bindValue(":bankaccnt_ach_origin",        _otherOrigin->text());
-  q.bindValue(":bankaccnt_ach_genchecknum",   _genCheckNumber->isChecked());
-  q.bindValue(":bankaccnt_ach_leadtime",      _settlementLeadtime->value());
+    bankSave.bindValue(":bankaccnt_ach_origintype",  "O");
+  bankSave.bindValue(":bankaccnt_ach_originname",    _otherOriginName->text());
+  bankSave.bindValue(":bankaccnt_ach_origin",        _otherOrigin->text());
+  bankSave.bindValue(":bankaccnt_ach_genchecknum",   _genCheckNumber->isChecked());
+  bankSave.bindValue(":bankaccnt_ach_leadtime",      _settlementLeadtime->value());
 
   if (_useRoutingNumberDest->isChecked())
-    q.bindValue(":bankaccnt_ach_desttype",    "B");
+    bankSave.bindValue(":bankaccnt_ach_desttype",    "B");
   else if (_useFederalReserveDest->isChecked())
-    q.bindValue(":bankaccnt_ach_desttype",    "F");
+    bankSave.bindValue(":bankaccnt_ach_desttype",    "F");
   else if (_useOtherDest->isChecked())
-    q.bindValue(":bankaccnt_ach_desttype",    "O");
-  q.bindValue(":bankaccnt_ach_fed_dest",      _federalReserveDest->text());
-  q.bindValue(":bankaccnt_ach_destname",      _otherDestName->text());
-  q.bindValue(":bankaccnt_ach_dest",          _otherDest->text());
+    bankSave.bindValue(":bankaccnt_ach_desttype",    "O");
+  bankSave.bindValue(":bankaccnt_ach_fed_dest",      _federalReserveDest->text());
+  bankSave.bindValue(":bankaccnt_ach_destname",      _otherDestName->text());
+  bankSave.bindValue(":bankaccnt_ach_dest",          _otherDest->text());
 
-  q.bindValue(":bankaccnt_nextchknum",    _nextCheckNum->text().toInt());
-  q.bindValue(":bankaccnt_check_form_id", _form->id());
+  bankSave.bindValue(":bankaccnt_nextchknum",    _nextCheckNum->text().toInt());
+  bankSave.bindValue(":bankaccnt_check_form_id", _form->id());
 
   if (_type->currentIndex() == 0)
-    q.bindValue(":bankaccnt_type", "K");
+    bankSave.bindValue(":bankaccnt_type", "K");
   else if (_type->currentIndex() == 1)
-    q.bindValue(":bankaccnt_type", "C");
+    bankSave.bindValue(":bankaccnt_type", "C");
   else if (_type->currentIndex() == 2)
-    q.bindValue(":bankaccnt_type", "R");
+    bankSave.bindValue(":bankaccnt_type", "R");
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  bankSave.exec();
+  if (bankSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bankSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -399,61 +402,62 @@ void bankAccount::sSave()
 
 void bankAccount::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery bankpopulate;
+  bankpopulate.prepare( "SELECT * "
              "FROM bankaccnt "
              "WHERE (bankaccnt_id=:bankaccnt_id);" );
-  q.bindValue(":bankaccnt_id", _bankaccntid);
-  q.exec();
-  if (q.first())
+  bankpopulate.bindValue(":bankaccnt_id", _bankaccntid);
+  bankpopulate.exec();
+  if (bankpopulate.first())
   {
-    _name->setText(q.value("bankaccnt_name"));
-    _description->setText(q.value("bankaccnt_descrip"));
-    _bankName->setText(q.value("bankaccnt_bankname"));
-    _accountNumber->setText(q.value("bankaccnt_accntnumber"));
-    _ap->setChecked(q.value("bankaccnt_ap").toBool());
-    _ar->setChecked(q.value("bankaccnt_ar").toBool());
-    _nextCheckNum->setText(q.value("bankaccnt_nextchknum"));
-    _form->setId(q.value("bankaccnt_check_form_id").toInt());
+    _name->setText(bankpopulate.value("bankaccnt_name"));
+    _description->setText(bankpopulate.value("bankaccnt_descrip"));
+    _bankName->setText(bankpopulate.value("bankaccnt_bankname"));
+    _accountNumber->setText(bankpopulate.value("bankaccnt_accntnumber"));
+    _ap->setChecked(bankpopulate.value("bankaccnt_ap").toBool());
+    _ar->setChecked(bankpopulate.value("bankaccnt_ar").toBool());
+    _nextCheckNum->setText(bankpopulate.value("bankaccnt_nextchknum"));
+    _form->setId(bankpopulate.value("bankaccnt_check_form_id").toInt());
 
-    _assetAccount->setId(q.value("bankaccnt_accnt_id").toInt());
-    _currency->setId(q.value("bankaccnt_curr_id").toInt());
-    _notes->setText(q.value("bankaccnt_notes").toString());
+    _assetAccount->setId(bankpopulate.value("bankaccnt_accnt_id").toInt());
+    _currency->setId(bankpopulate.value("bankaccnt_curr_id").toInt());
+    _notes->setText(bankpopulate.value("bankaccnt_notes").toString());
 
-    _transmitGroup->setChecked(q.value("bankaccnt_ach_enabled").toBool());   
+    _transmitGroup->setChecked(bankpopulate.value("bankaccnt_ach_enabled").toBool());   
 
-    _routing->setText(q.value("bankaccnt_routing").toString());      
-    _genCheckNumber->setChecked(q.value("bankaccnt_ach_genchecknum").toBool());
-    _settlementLeadtime->setValue(q.value("bankaccnt_ach_leadtime").toInt());
+    _routing->setText(bankpopulate.value("bankaccnt_routing").toString());      
+    _genCheckNumber->setChecked(bankpopulate.value("bankaccnt_ach_genchecknum").toBool());
+    _settlementLeadtime->setValue(bankpopulate.value("bankaccnt_ach_leadtime").toInt());
 
-    if (q.value("bankaccnt_ach_origintype").toString() == "I")   
+    if (bankpopulate.value("bankaccnt_ach_origintype").toString() == "I")   
       _useCompanyIdOrigin->setChecked(true);
-    else if (q.value("bankaccnt_ach_origintype").toString() == "B")   
+    else if (bankpopulate.value("bankaccnt_ach_origintype").toString() == "B")   
       _useRoutingNumberOrigin->setChecked(true);
-    else if (q.value("bankaccnt_ach_origintype").toString() == "O")   
+    else if (bankpopulate.value("bankaccnt_ach_origintype").toString() == "O")   
       _useOtherOrigin->setChecked(true);
-    _otherOriginName->setText(q.value("bankaccnt_ach_originname").toString());
-    _otherOrigin->setText(q.value("bankaccnt_ach_origin").toString());    
+    _otherOriginName->setText(bankpopulate.value("bankaccnt_ach_originname").toString());
+    _otherOrigin->setText(bankpopulate.value("bankaccnt_ach_origin").toString());    
 
-    if (q.value("bankaccnt_ach_desttype").toString() == "B")   
+    if (bankpopulate.value("bankaccnt_ach_desttype").toString() == "B")   
       _useRoutingNumberDest->setChecked(true);
-    else if (q.value("bankaccnt_ach_desttype").toString() == "F")   
+    else if (bankpopulate.value("bankaccnt_ach_desttype").toString() == "F")   
       _useFederalReserveDest->setChecked(true);
-    else if (q.value("bankaccnt_ach_desttype").toString() == "O")   
+    else if (bankpopulate.value("bankaccnt_ach_desttype").toString() == "O")   
       _useOtherDest->setChecked(true);
-    _federalReserveDest->setText(q.value("bankaccnt_ach_fed_dest").toString());
-    _otherDestName->setText(q.value("bankaccnt_ach_destname").toString());
-    _otherDest->setText(q.value("bankaccnt_ach_dest").toString());
+    _federalReserveDest->setText(bankpopulate.value("bankaccnt_ach_fed_dest").toString());
+    _otherDestName->setText(bankpopulate.value("bankaccnt_ach_destname").toString());
+    _otherDest->setText(bankpopulate.value("bankaccnt_ach_dest").toString());
 
-    if (q.value("bankaccnt_type").toString() == "K")
+    if (bankpopulate.value("bankaccnt_type").toString() == "K")
       _type->setCurrentIndex(0);
-    else if (q.value("bankaccnt_type").toString() == "C")
+    else if (bankpopulate.value("bankaccnt_type").toString() == "C")
       _type->setCurrentIndex(1);
-    else if (q.value("bankaccnt_type").toString() == "R")
+    else if (bankpopulate.value("bankaccnt_type").toString() == "R")
       _type->setCurrentIndex(2);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (bankpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bankpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

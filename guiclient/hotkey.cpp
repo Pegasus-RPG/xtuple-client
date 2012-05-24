@@ -105,6 +105,7 @@ void hotkey::languageChange()
 
 enum SetResponse hotkey::set(const ParameterList &pParams)
 {
+  XSqlQuery hotkeyet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -141,15 +142,15 @@ enum SetResponse hotkey::set(const ParameterList &pParams)
       value = _preferences->value(param.toString());
     else
     {
-      q.prepare( "SELECT usrpref_value "
+      hotkeyet.prepare( "SELECT usrpref_value "
                  "FROM usrpref "
                  "WHERE ( (usrpref_username=:username)"
                  " AND (usrpref_name=:name) );" );
-      q.bindValue(":username", _username);
-      q.bindValue(":name", param.toString());
-      q.exec();
-      if (q.first())
-        value = q.value("usrpref_value").toString();
+      hotkeyet.bindValue(":username", _username);
+      hotkeyet.bindValue(":name", param.toString());
+      hotkeyet.exec();
+      if (hotkeyet.first())
+        value = hotkeyet.value("usrpref_value").toString();
 //  ToDo
     }
 
@@ -178,6 +179,7 @@ enum SetResponse hotkey::set(const ParameterList &pParams)
 
 void hotkey::sSave()
 {
+  XSqlQuery hotkeySave;
   QString keyValue;
 
   if(_action->currentItem() == 0)
@@ -199,11 +201,11 @@ void hotkey::sSave()
   }
   else
   {
-    q.prepare("SELECT setUserPreference(:username, :name, :value);");
-    q.bindValue(":username", _username);
-    q.bindValue(":name", keyValue);
-    q.bindValue(":value", _action->currentItem()->text(0));
-    q.exec();
+    hotkeySave.prepare("SELECT setUserPreference(:username, :name, :value);");
+    hotkeySave.bindValue(":username", _username);
+    hotkeySave.bindValue(":name", keyValue);
+    hotkeySave.bindValue(":value", _action->currentItem()->text(0));
+    hotkeySave.exec();
   }
 
   accept();

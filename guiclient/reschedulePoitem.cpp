@@ -38,6 +38,7 @@ void reschedulePoitem::languageChange()
 
 enum SetResponse reschedulePoitem::set(const ParameterList &pParams)
 {
+  XSqlQuery rescheduleet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -53,16 +54,16 @@ enum SetResponse reschedulePoitem::set(const ParameterList &pParams)
   param = pParams.value("poitem_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT pohead_id "
+    rescheduleet.prepare( "SELECT pohead_id "
                "FROM pohead, poitem "
                "WHERE ((poitem_pohead_id=pohead_id)"
                "  AND (pohead_status='O')"
                "  AND (poitem_id=:poitem_id));" );
-    q.bindValue(":poitem_id", param.toInt());
-    q.exec();
-    if (q.first())
+    rescheduleet.bindValue(":poitem_id", param.toInt());
+    rescheduleet.exec();
+    if (rescheduleet.first())
     {
-      _po->setId(q.value("pohead_id").toInt());
+      _po->setId(rescheduleet.value("pohead_id").toInt());
       _po->setReadOnly(true);
       _poitem->setId(param.toInt());
     }
@@ -82,7 +83,8 @@ enum SetResponse reschedulePoitem::set(const ParameterList &pParams)
 
 void reschedulePoitem::sPopulatePoitem(int pPoheadid)
 {
-  q.prepare( "SELECT poitem_id,"
+  XSqlQuery reschedulePopulatePoitem;
+  reschedulePopulatePoitem.prepare( "SELECT poitem_id,"
              "       ( poitem_linenumber || '-' ||"
              "         COALESCE(item_number, poitem_vend_item_number) || ' (' ||"
              "         COALESCE(item_descrip1, firstLine(poitem_vend_item_descrip)) || ')' ) "
@@ -93,13 +95,14 @@ void reschedulePoitem::sPopulatePoitem(int pPoheadid)
              "WHERE ( (poitem_status <> 'C')"
              " AND (poitem_pohead_id=:pohead_id) ) "
              "ORDER BY poitem_linenumber;" );
-  q.bindValue(":pohead_id", pPoheadid);
-  q.exec();
-  _poitem->populate(q);
+  reschedulePopulatePoitem.bindValue(":pohead_id", pPoheadid);
+  reschedulePopulatePoitem.exec();
+  _poitem->populate(reschedulePopulatePoitem);
 }
 
 void reschedulePoitem::sPopulate(int pPoitemid)
 {
+  XSqlQuery reschedulePopulate;
   if (pPoitemid == -1)
   {
     _current->clear();
@@ -107,20 +110,21 @@ void reschedulePoitem::sPopulate(int pPoitemid)
   }
   else
   {
-    q.prepare( "SELECT poitem_duedate "
+    reschedulePopulate.prepare( "SELECT poitem_duedate "
                "FROM poitem "
                "WHERE (poitem_id=:poitem_id);" );
-    q.bindValue(":poitem_id", pPoitemid);
-    q.exec();
-    if (q.first())
+    reschedulePopulate.bindValue(":poitem_id", pPoitemid);
+    reschedulePopulate.exec();
+    if (reschedulePopulate.first())
     {
-      _current->setDate(q.value("poitem_duedate").toDate());
+      _current->setDate(reschedulePopulate.value("poitem_duedate").toDate());
     }
   }
 }
 
 void reschedulePoitem::sReschedule()
 {
+  XSqlQuery rescheduleReschedule;
   if (!_new->isValid())
   {
     QMessageBox::critical( this, tr("Invalid Reschedule Date"),
@@ -130,10 +134,10 @@ void reschedulePoitem::sReschedule()
     return;
   }
 
-  q.prepare("SELECT changePoitemDueDate(:poitem_id, :dueDate);");
-  q.bindValue(":poitem_id", _poitem->id());
-  q.bindValue(":dueDate", _new->date());
-  q.exec();
+  rescheduleReschedule.prepare("SELECT changePoitemDueDate(:poitem_id, :dueDate);");
+  rescheduleReschedule.bindValue(":poitem_id", _poitem->id());
+  rescheduleReschedule.bindValue(":dueDate", _new->date());
+  rescheduleReschedule.exec();
 
   omfgThis->sPurchaseOrdersUpdated(_po->id(), true);
 

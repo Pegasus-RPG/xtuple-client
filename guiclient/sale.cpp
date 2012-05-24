@@ -85,6 +85,7 @@ enum SetResponse sale::set(const ParameterList &pParams)
 
 void sale::sSave()
 {
+  XSqlQuery saleSave;
   _name->setText(_name->text().trimmed());
 
   if (_name->text().length() == 0)
@@ -95,14 +96,14 @@ void sale::sSave()
     return;
   }
 
-  q.prepare("SELECT sale_id"
+  saleSave.prepare("SELECT sale_id"
             "  FROM sale"
             " WHERE((sale_name=:sale_name)"
             "   AND (sale_id != :sale_id))");
-  q.bindValue(":sale_id", _saleid);
-  q.bindValue(":sale_name", _name->text().trimmed());
-  q.exec();
-  if(q.first())
+  saleSave.bindValue(":sale_id", _saleid);
+  saleSave.bindValue(":sale_name", _name->text().trimmed());
+  saleSave.exec();
+  if(saleSave.first())
   {
     QMessageBox::critical( this, tr("Cannot Save Sale"),
                            tr("You cannot enter a duplicate name for this Sale before saving it.") );
@@ -136,9 +137,9 @@ void sale::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('sale_sale_id_seq') AS _sale_id;");
-    if (q.first())
-      _saleid = q.value("_sale_id").toInt();
+    saleSave.exec("SELECT NEXTVAL('sale_sale_id_seq') AS _sale_id;");
+    if (saleSave.first())
+      _saleid = saleSave.value("_sale_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -147,7 +148,7 @@ void sale::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO sale "
+    saleSave.prepare( "INSERT INTO sale "
                "( sale_id, sale_name, sale_descrip,"
                "  sale_ipshead_id, sale_startdate, sale_enddate ) "
                "VALUES "
@@ -155,38 +156,39 @@ void sale::sSave()
                "  :sale_ipshead_id, :sale_startdate, :sale_enddate );" );
   }
   else
-    q.prepare( "UPDATE sale "
+    saleSave.prepare( "UPDATE sale "
                "SET sale_name=:sale_name, sale_descrip=:sale_descrip,"
                "    sale_ipshead_id=:sale_ipshead_id,"
                "    sale_startdate=:sale_startdate, sale_enddate=:sale_enddate "
                "WHERE (sale_id=:sale_id);" );
 
-  q.bindValue(":sale_id", _saleid);
-  q.bindValue(":sale_name", _name->text());
-  q.bindValue(":sale_descrip", _description->text());
-  q.bindValue(":sale_ipshead_id", _ipshead->id());
-  q.bindValue(":sale_startdate", _dates->startDate());
-  q.bindValue(":sale_enddate", _dates->endDate());
-  q.exec();
+  saleSave.bindValue(":sale_id", _saleid);
+  saleSave.bindValue(":sale_name", _name->text());
+  saleSave.bindValue(":sale_descrip", _description->text());
+  saleSave.bindValue(":sale_ipshead_id", _ipshead->id());
+  saleSave.bindValue(":sale_startdate", _dates->startDate());
+  saleSave.bindValue(":sale_enddate", _dates->endDate());
+  saleSave.exec();
 
   done(_saleid);
 }
 
 void sale::populate()
 {
-  q.prepare( "SELECT sale_name, sale_descrip, sale_ipshead_id,"
+  XSqlQuery salepopulate;
+  salepopulate.prepare( "SELECT sale_name, sale_descrip, sale_ipshead_id,"
              "       sale_startdate, sale_enddate "
              "FROM sale "
              "WHERE (sale_id=:sale_id);" );
-  q.bindValue(":sale_id", _saleid);
-  q.exec();
-  if (q.first())
+  salepopulate.bindValue(":sale_id", _saleid);
+  salepopulate.exec();
+  if (salepopulate.first())
   {
-    _name->setText(q.value("sale_name").toString());
-    _description->setText(q.value("sale_descrip").toString());
-    _dates->setStartDate(q.value("sale_startdate").toDate());
-    _dates->setEndDate(q.value("sale_enddate").toDate());
-    _ipshead->setId(q.value("sale_ipshead_id").toInt());
+    _name->setText(salepopulate.value("sale_name").toString());
+    _description->setText(salepopulate.value("sale_descrip").toString());
+    _dates->setStartDate(salepopulate.value("sale_startdate").toDate());
+    _dates->setEndDate(salepopulate.value("sale_enddate").toDate());
+    _ipshead->setId(salepopulate.value("sale_ipshead_id").toInt());
   }
 }
 

@@ -104,7 +104,8 @@ void bankAccounts::sView()
 
 void bankAccounts::sFillList()
 {
-  q.prepare( "SELECT bankaccnt_id, bankaccnt_name, bankaccnt_descrip,"
+  XSqlQuery bankFillList;
+  bankFillList.prepare( "SELECT bankaccnt_id, bankaccnt_name, bankaccnt_descrip,"
              "       CASE WHEN (bankaccnt_type='K') THEN :checking"
              "            WHEN (bankaccnt_type='C') THEN :cash"
              "            WHEN (bankaccnt_type='R') THEN :creditcard"
@@ -114,28 +115,29 @@ void bankAccounts::sFillList()
 	     "       currConcat(bankaccnt_curr_id) AS currabbr "
              "FROM bankaccnt "
              "ORDER BY bankaccnt_name;" );
-  q.bindValue(":checking", tr("Checking"));
-  q.bindValue(":cash", tr("Cash"));
-  q.bindValue(":creditcard", tr("Credit Card"));
-  q.exec();
-  _bankaccnt->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  bankFillList.bindValue(":checking", tr("Checking"));
+  bankFillList.bindValue(":cash", tr("Cash"));
+  bankFillList.bindValue(":creditcard", tr("Credit Card"));
+  bankFillList.exec();
+  _bankaccnt->populate(bankFillList);
+  if (bankFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bankFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void bankAccounts::sDelete()
 {
+  XSqlQuery bankDelete;
   // TODO: put all of this into a stored proc
-  q.prepare( "SELECT cashrcpt_id "
+  bankDelete.prepare( "SELECT cashrcpt_id "
              "FROM cashrcpt "
              "WHERE (cashrcpt_bankaccnt_id=:bankaccnt_id) "
              "LIMIT 1;" );
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  if (q.first())
+  bankDelete.bindValue(":bankaccnt_id", _bankaccnt->id());
+  bankDelete.exec();
+  if (bankDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Bank Account"),
                            tr("<p>The selected Bank Account cannot be deleted "
@@ -143,13 +145,13 @@ void bankAccounts::sDelete()
     return;
   }
 
-  q.prepare( "SELECT checkhead_id "
+  bankDelete.prepare( "SELECT checkhead_id "
              "FROM checkhead "
              "WHERE (checkhead_bankaccnt_id=:bankaccnt_id) "
              "LIMIT 1;" );
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  if (q.first())
+  bankDelete.bindValue(":bankaccnt_id", _bankaccnt->id());
+  bankDelete.exec();
+  if (bankDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Bank Account"),
                            tr("<p>The selected Bank Account cannot be delete "
@@ -157,13 +159,13 @@ void bankAccounts::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM bankaccnt "
+  bankDelete.prepare( "DELETE FROM bankaccnt "
              "WHERE (bankaccnt_id=:bankaccnt_id);" );
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  bankDelete.bindValue(":bankaccnt_id", _bankaccnt->id());
+  bankDelete.exec();
+  if (bankDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, bankDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();

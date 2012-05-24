@@ -108,27 +108,28 @@ void siteTypes::sView()
 
 void siteTypes::sDelete()
 {
+  XSqlQuery siteDelete;
   if ( QMessageBox::information( this, tr("Delete Site Type"),
                                  tr("Are you sure that you want to delete the selected Site Type?"),
                                  tr("&Delete"), tr("&Cancel"), 0, 0, 1 ) == 0 )
   {
-    q.prepare( "SELECT warehous_id "
+    siteDelete.prepare( "SELECT warehous_id "
                "FROM whsinfo "
                "WHERE (warehous_sitetype_id=:sitetype_id) "
                "LIMIT 1;" );
-    q.bindValue(":sitetype_id", _sitetype->id());
-    q.exec();
-    if (q.first())
+    siteDelete.bindValue(":sitetype_id", _sitetype->id());
+    siteDelete.exec();
+    if (siteDelete.first())
       QMessageBox::information( this, tr("Site Type in Use"),
                                 tr( "The selected Site Type cannot be deleted as it still contains Sites.\n"
                                     "You must reassign these Sites before deleting this Site Type.") );
 
     else
     {
-      q.prepare( "DELETE FROM sitetype "
+      siteDelete.prepare( "DELETE FROM sitetype "
                  "WHERE (sitetype_id=:sitetype_id);" );
-      q.bindValue(":sitetype_id", _sitetype->id());
-      q.exec();
+      siteDelete.bindValue(":sitetype_id", _sitetype->id());
+      siteDelete.exec();
       sFillList();
     }
   }

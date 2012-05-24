@@ -58,10 +58,11 @@ enum SetResponse deletePlannedOrder::set(const ParameterList &pParams)
 
 void deletePlannedOrder::sDelete()
 {
-  q.prepare( "SELECT deletePlannedOrder(:planord_id, :deleteChildren);" );
-  q.bindValue(":planord_id", _planord->id());
-  q.bindValue(":deleteChildren", QVariant(_deleteChildren->isChecked()));
-  q.exec();
+  XSqlQuery deleteDelete;
+  deleteDelete.prepare( "SELECT deletePlannedOrder(:planord_id, :deleteChildren);" );
+  deleteDelete.bindValue(":planord_id", _planord->id());
+  deleteDelete.bindValue(":deleteChildren", QVariant(_deleteChildren->isChecked()));
+  deleteDelete.exec();
 
   if (_captive)
     accept();

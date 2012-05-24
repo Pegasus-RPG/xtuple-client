@@ -166,16 +166,17 @@ void address::internalSave(AddressCluster::SaveFlags flag)
 
 void address::reject()
 {
+  XSqlQuery rejectAddress;
   if (cNew == _mode)
   {
-    q.prepare("SELECT deleteAddress(:addr_id) AS result;"
+    rejectAddress.prepare("SELECT deleteAddress(:addr_id) AS result;"
               "SELECT releaseNumber('AddressNumber', :number); ");
-    q.bindValue(":addr_id", _addr->id());
-    q.bindValue(":number", _addr->number().toInt());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    rejectAddress.bindValue(":addr_id", _addr->id());
+    rejectAddress.bindValue(":number", _addr->number().toInt());
+    rejectAddress.exec();
+    if (rejectAddress.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, rejectAddress.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -217,17 +218,19 @@ void address::sDeleteCharacteristic()
 {
   internalSave();
 
-  q.prepare( "DELETE FROM charass "
+  XSqlQuery deleteAddress;
+  deleteAddress.prepare( "DELETE FROM charass "
              "WHERE (charass_id=:charass_id);" );
-  q.bindValue(":charass_id", _charass->id());
-  q.exec();
+  deleteAddress.bindValue(":charass_id", _charass->id());
+  deleteAddress.exec();
 
   sGetCharacteristics();
 }
 
 void address::sGetCharacteristics()
 {
-  q.prepare( "SELECT charass_id, char_name, "
+  XSqlQuery getAddress;
+  getAddress.prepare( "SELECT charass_id, char_name, "
              " CASE WHEN char_type < 2 THEN "
              "   charass_value "
              " ELSE "
@@ -238,9 +241,9 @@ void address::sGetCharacteristics()
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:addr_id) ) "
              "ORDER BY char_order, char_name;" );
-  q.bindValue(":addr_id", _addr->id());
-  q.exec();
-  _charass->populate(q);
+  getAddress.bindValue(":addr_id", _addr->id());
+  getAddress.exec();
+  _charass->populate(getAddress);
 }
 
 void address::sPopulate()

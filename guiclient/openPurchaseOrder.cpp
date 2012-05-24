@@ -63,14 +63,15 @@ enum SetResponse openPurchaseOrder::set(const ParameterList &pParams)
 
 void openPurchaseOrder::sFillList()
 {
+  XSqlQuery openFillList;
   
-  q.prepare( "SELECT pohead_id, pohead_number, pohead_orderdate, pohead_agent_username from pohead where pohead_vend_id = :vend_id and pohead_status = 'U' order by pohead_id desc ;" );
-  q.bindValue(":vend_id", vendor_id);
-  q.exec();
-  _po->populate(q,TRUE);
-  if (q.lastError().type() != QSqlError::NoError)
+  openFillList.prepare( "SELECT pohead_id, pohead_number, pohead_orderdate, pohead_agent_username from pohead where pohead_vend_id = :vend_id and pohead_status = 'U' order by pohead_id desc ;" );
+  openFillList.bindValue(":vend_id", vendor_id);
+  openFillList.exec();
+  _po->populate(openFillList,TRUE);
+  if (openFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, openFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

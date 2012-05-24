@@ -66,17 +66,18 @@ enum SetResponse printRaForm::set(const ParameterList &pParams)
 
 void printRaForm::sPrint()
 {
-  q.prepare( "SELECT form_report_name AS report_name "
+  XSqlQuery printPrint;
+  printPrint.prepare( "SELECT form_report_name AS report_name "
              "  FROM form "
              " WHERE ( (form_id=:form_id) );");
-  q.bindValue(":form_id", _report->id());
-  q.exec();
-  if (q.first())
+  printPrint.bindValue(":form_id", _report->id());
+  printPrint.exec();
+  if (printPrint.first())
   {
     ParameterList params;
     params.append("rahead_id", _ra->id());
 
-    orReport report(q.value("report_name").toString(), params);
+    orReport report(printPrint.value("report_name").toString(), params);
     if (report.isValid())
       report.print();
     else

@@ -403,16 +403,17 @@ void distributeInventory::closeEvent(QCloseEvent *pEvent)
 
 void distributeInventory::populate()
 {
-  q.prepare("SELECT itemsite_controlmethod "
+  XSqlQuery distributepopulate;
+  distributepopulate.prepare("SELECT itemsite_controlmethod "
 	    "FROM itemsite, itemlocdist "
 	    "WHERE ((itemlocdist_itemsite_id=itemsite_id)"
 	    "  AND  (itemlocdist_id=:itemlocdist_id));");
 
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
-  q.exec();
-  if (q.first())
+  distributepopulate.bindValue(":itemlocdist_id", _itemlocdistid);
+  distributepopulate.exec();
+  if (distributepopulate.first())
   {
-    _controlMethod = q.value("itemsite_controlmethod").toString();
+    _controlMethod = distributepopulate.value("itemsite_controlmethod").toString();
     _bc->setEnabled(_controlMethod == "L" || _controlMethod == "S");
     _bcQty->setEnabled(_controlMethod == "L");
     _bcDistribute->setEnabled(_controlMethod == "L" || _controlMethod == "S");
@@ -421,18 +422,18 @@ void distributeInventory::populate()
     else
       _bcQty->clear();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (distributepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, distributepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
 //  Auto distribute location reservations
   if ( (_metrics->boolean("EnableSOReservationsByLocation")) && (_mode == cIncludeLotSerial) )
   {
-    q.prepare("SELECT distributeToReservedItemLoc(:itemlocdist_id) AS result;");
-    q.bindValue(":itemlocdist_id", _itemlocdistid);
-    q.exec();
+    distributepopulate.prepare("SELECT distributeToReservedItemLoc(:itemlocdist_id) AS result;");
+    distributepopulate.bindValue(":itemlocdist_id", _itemlocdistid);
+    distributepopulate.exec();
   }
 
   sFillList();
@@ -474,28 +475,29 @@ void distributeInventory::sPost()
 
 bool distributeInventory::sDefault()
 {
+  XSqlQuery distributeDefault;
    bool distribOk = true;
    double qty = 0.0;
    double availToDistribute = 0.0;
    int defaultlocid = 0;
 
-   q.prepare("SELECT itemsite_location_id, itemsite_recvlocation_id, itemsite_issuelocation_id "
+   distributeDefault.prepare("SELECT itemsite_location_id, itemsite_recvlocation_id, itemsite_issuelocation_id "
              "   FROM   itemlocdist, itemsite "
              "  WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
              "    AND (itemlocdist_id=:itemlocdist_id) ) ");
-   q.bindValue(":itemlocdist_id", _itemlocdistid);
-   q.exec();
-   if (q.first())
+   distributeDefault.bindValue(":itemlocdist_id", _itemlocdistid);
+   distributeDefault.exec();
+   if (distributeDefault.first())
    {
      if (_transtype == "R")
-       defaultlocid = q.value("itemsite_recvlocation_id").toInt();
+       defaultlocid = distributeDefault.value("itemsite_recvlocation_id").toInt();
      else if (_transtype == "I")
-       defaultlocid = q.value("itemsite_issuelocation_id").toInt();
+       defaultlocid = distributeDefault.value("itemsite_issuelocation_id").toInt();
      else
-       defaultlocid = q.value("itemsite_location_id").toInt();
+       defaultlocid = distributeDefault.value("itemsite_location_id").toInt();
    }
 
-   q.prepare("SELECT   itemlocdist_qty AS qty, "
+   distributeDefault.prepare("SELECT   itemlocdist_qty AS qty, "
              "         qtyLocation(location_id, NULL, NULL, NULL, itemsite_id, itemlocdist_order_type, itemlocdist_order_id, itemlocdist_id) AS availToDistribute "
              "   FROM   itemlocdist, location, itemsite "
              "  WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
@@ -503,13 +505,13 @@ bool distributeInventory::sDefault()
              "    AND (itemsite_warehous_id=location_warehous_id)"
              "    AND (location_id=:defaultlocid) "
              "    AND (itemlocdist_id=:itemlocdist_id) ) ");
-   q.bindValue(":itemlocdist_id", _itemlocdistid);
-   q.bindValue(":defaultlocid", defaultlocid);
-   q.exec();
-   if (q.first())
+   distributeDefault.bindValue(":itemlocdist_id", _itemlocdistid);
+   distributeDefault.bindValue(":defaultlocid", defaultlocid);
+   distributeDefault.exec();
+   if (distributeDefault.first())
    {
-       qty = q.value("qty").toDouble();
-       availToDistribute = q.value("availToDistribute").toDouble();
+       qty = distributeDefault.value("qty").toDouble();
+       availToDistribute = distributeDefault.value("availToDistribute").toDouble();
    }
 
    if(qty < 0 && availToDistribute < qAbs(qty))
@@ -526,15 +528,15 @@ bool distributeInventory::sDefault()
    if(distribOk)
    {
       if(_mode == cIncludeLotSerial)
-        q.prepare("SELECT distributeToDefaultItemLoc(:itemlocdist_id, :transtype) AS result;");
+        distributeDefault.prepare("SELECT distributeToDefaultItemLoc(:itemlocdist_id, :transtype) AS result;");
       else
-        q.prepare("SELECT distributeToDefault(:itemlocdist_id, :transtype) AS result;");
-      q.bindValue(":itemlocdist_id", _itemlocdistid);
-      q.bindValue(":transtype", _transtype);
-      q.exec();
-      if (q.first())
+        distributeDefault.prepare("SELECT distributeToDefault(:itemlocdist_id, :transtype) AS result;");
+      distributeDefault.bindValue(":itemlocdist_id", _itemlocdistid);
+      distributeDefault.bindValue(":transtype", _transtype);
+      distributeDefault.exec();
+      if (distributeDefault.first())
       {
-        int result = q.value("result").toInt();
+        int result = distributeDefault.value("result").toInt();
         if (result < 0)
         {
           QMessageBox::warning( 0, tr("Inventory Distribution"),
@@ -542,9 +544,9 @@ bool distributeInventory::sDefault()
           return false;
         }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (distributeDefault.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, distributeDefault.lastError().databaseText(), __FILE__, __LINE__);
         return false;
       }
       sFillList();
@@ -571,7 +573,8 @@ bool distributeInventory::sDefaultAndPost()
 
 void distributeInventory::sFillList()
 {
-  q.prepare( "SELECT itemsite_id, "
+  XSqlQuery distributeFillList;
+  distributeFillList.prepare( "SELECT itemsite_id, "
              "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
              "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
              "       (itemlocdist_order_type || ' ' || formatSoItemNumber(itemlocdist_order_id)) AS order,"
@@ -586,19 +589,19 @@ void distributeInventory::sFillList()
              "FROM itemsite, itemlocdist AS parent "
              "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
              " AND (itemlocdist_id=:itemlocdist_id) );" );
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
-  q.exec();
-  if (q.first())
+  distributeFillList.bindValue(":itemlocdist_id", _itemlocdistid);
+  distributeFillList.exec();
+  if (distributeFillList.first())
   {
-    _item->setItemsiteid(q.value("itemsite_id").toInt());
-    _lotSerial->setText(q.value("lotserial").toString());
-    _order->setText(q.value("order").toString());
-    _qtyToDistribute->setDouble(q.value("qtytodistribute").toDouble());
-    _qtyTagged->setDouble(q.value("qtytagged").toDouble());
-    _qtyRemaining->setDouble(q.value("qtybalance").toDouble());
+    _item->setItemsiteid(distributeFillList.value("itemsite_id").toInt());
+    _lotSerial->setText(distributeFillList.value("lotserial").toString());
+    _order->setText(distributeFillList.value("order").toString());
+    _qtyToDistribute->setDouble(distributeFillList.value("qtytodistribute").toDouble());
+    _qtyTagged->setDouble(distributeFillList.value("qtytagged").toDouble());
+    _qtyRemaining->setDouble(distributeFillList.value("qtybalance").toDouble());
 
-    if ( (q.value("itemsite_location_id").toInt() != -1) &&
-         ( (_mode == cNoIncludeLotSerial) || ( (_mode == cIncludeLotSerial) && (!q.value("lscontrol").toBool()) ) ) )
+    if ( (distributeFillList.value("itemsite_location_id").toInt() != -1) &&
+         ( (_mode == cNoIncludeLotSerial) || ( (_mode == cIncludeLotSerial) && (!distributeFillList.value("lscontrol").toBool()) ) ) )
     {
       _default->setEnabled(TRUE);
       _defaultAndPost->setEnabled(TRUE);
@@ -629,28 +632,29 @@ void distributeInventory::sFillList()
     params.append("na",             tr("N/A"));
     params.append("undefined",      tr("Undefined"));
     params.append("itemlocdist_id", _itemlocdistid);
-    params.append("itemsite_id",    q.value("itemsite_id").toInt());
+    params.append("itemsite_id",    distributeFillList.value("itemsite_id").toInt());
     params.append("transtype",      _transtype);
 
     MetaSQLQuery mql = mqlLoad("distributeInventory", "locations");
-    q = mql.toQuery(params);
+    distributeFillList = mql.toQuery(params);
 
-    _itemloc->populate(q, true);
-    if (q.lastError().type() != QSqlError::NoError)
+    _itemloc->populate(distributeFillList, true);
+    if (distributeFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, distributeFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (distributeFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, distributeFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void distributeInventory::sBcDistribute()
 {
+  XSqlQuery distributeBcDistribute;
   if (_bc->text().isEmpty())
   {
     QMessageBox::warning(this, tr("No Bar Code scanned"),
@@ -660,7 +664,7 @@ void distributeInventory::sBcDistribute()
     return;
   }
 
-  q.prepare( "SELECT itemloc_id "
+  distributeBcDistribute.prepare( "SELECT itemloc_id "
 	     "FROM  itemlocdist, itemloc, itemsite, ls "
 	     "WHERE ((itemlocdist_itemsite_id=itemloc_itemsite_id)"
 	     "  AND  (itemloc_itemsite_id=itemsite_id)"
@@ -671,16 +675,16 @@ void distributeInventory::sBcDistribute()
 	     "  AND  (ls_number=:lotserial)"
 	     "  AND  (itemlocdist_id=:itemlocdist_id));");
 
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
-  q.bindValue(":lotserial",      _bc->text());
-  q.bindValue(":warehous_id",    _warehouse->id());
-  q.exec();
+  distributeBcDistribute.bindValue(":itemlocdist_id", _itemlocdistid);
+  distributeBcDistribute.bindValue(":lotserial",      _bc->text());
+  distributeBcDistribute.bindValue(":warehous_id",    _warehouse->id());
+  distributeBcDistribute.exec();
 
-  if(!q.first())
+  if(!distributeBcDistribute.first())
   {
-    if (q.lastError().type() != QSqlError::NoError)
+    if (distributeBcDistribute.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, distributeBcDistribute.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     QMessageBox::warning(this, tr("No Match Found"),
@@ -690,7 +694,7 @@ void distributeInventory::sBcDistribute()
   }
 
   ParameterList params;
-  params.append("itemlocdist_id",        q.value("itemloc_id"));
+  params.append("itemlocdist_id",        distributeBcDistribute.value("itemloc_id"));
   params.append("source_itemlocdist_id", _itemlocdistid);
   params.append("qty",                   _bcQty->text());
   params.append("distribute");

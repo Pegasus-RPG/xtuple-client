@@ -61,6 +61,7 @@ enum SetResponse rescheduleWo::set(const ParameterList &pParams)
 
 void rescheduleWo::sReschedule()
 {
+  XSqlQuery rescheduleReschedule;
   if ((_newStartDate->isValid()) && (_newDueDate->isValid()))
   {
     if (_wo->status() == 'R')
@@ -71,20 +72,20 @@ void rescheduleWo::sReschedule()
       return;
     }
 
-    q.prepare("SELECT changeWoDates(:wo_id, :startDate, :dueDate, :rescheduleChildren);");
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":startDate", _newStartDate->date());
-    q.bindValue(":dueDate", _newDueDate->date());
-    q.bindValue(":rescheduleChildren", QVariant(_changeChildren->isChecked()));
-    q.exec();
+    rescheduleReschedule.prepare("SELECT changeWoDates(:wo_id, :startDate, :dueDate, :rescheduleChildren);");
+    rescheduleReschedule.bindValue(":wo_id", _wo->id());
+    rescheduleReschedule.bindValue(":startDate", _newStartDate->date());
+    rescheduleReschedule.bindValue(":dueDate", _newDueDate->date());
+    rescheduleReschedule.bindValue(":rescheduleChildren", QVariant(_changeChildren->isChecked()));
+    rescheduleReschedule.exec();
 
     if (_postComment->isChecked())
     {
-      q.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS _result");
-      q.bindValue(":cmnttype_id", _cmnttype->id());
-      q.bindValue(":wo_id", _wo->id());
-      q.bindValue(":comment", _comment->toPlainText());
-      q.exec();
+      rescheduleReschedule.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS _result");
+      rescheduleReschedule.bindValue(":cmnttype_id", _cmnttype->id());
+      rescheduleReschedule.bindValue(":wo_id", _wo->id());
+      rescheduleReschedule.bindValue(":comment", _comment->toPlainText());
+      rescheduleReschedule.exec();
     }
 
     omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);

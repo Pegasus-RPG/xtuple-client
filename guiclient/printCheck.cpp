@@ -80,26 +80,27 @@ enum SetResponse printCheck::set(const ParameterList &pParams)
 
 void printCheck::sPrint()
 {
+  XSqlQuery printPrint;
   if(_setCheckNumber != -1 && _setCheckNumber != _nextCheckNum->text().toInt())
   {
-    q.prepare("SELECT checkhead_id "
+    printPrint.prepare("SELECT checkhead_id "
               "FROM checkhead "
               "WHERE ( (checkhead_bankaccnt_id=:bankaccnt_id) "
               "  AND   (checkhead_id <> :checkhead_id) "
               "  AND   (checkhead_number=:nextCheckNumber));");
-    q.bindValue(":bankaccnt_id", _bankaccnt->id());
-    q.bindValue(":checkhead_id", _check->id());
-    q.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
-    q.exec();
-    if (q.first())
+    printPrint.bindValue(":bankaccnt_id", _bankaccnt->id());
+    printPrint.bindValue(":checkhead_id", _check->id());
+    printPrint.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
+    printPrint.exec();
+    if (printPrint.first())
     {
       QMessageBox::information( this, tr("Check Number Already Used"),
                     tr("<p>The selected Check Number has already been used.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (printPrint.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -115,22 +116,22 @@ void printCheck::sPrint()
                             QMessageBox::Yes | QMessageBox::Default,
                             QMessageBox::No) == QMessageBox::No)
     return;
-  q.prepare( "SELECT checkhead_printed, form_report_name AS report_name, bankaccnt_id "
+  printPrint.prepare( "SELECT checkhead_printed, form_report_name AS report_name, bankaccnt_id "
              "FROM checkhead, bankaccnt, form "
              "WHERE ((checkhead_bankaccnt_id=bankaccnt_id)"
              "  AND  (bankaccnt_check_form_id=form_id)"
              "  AND  (checkhead_id=:checkhead_id) );" );
-  q.bindValue(":checkhead_id", _check->id());
-  q.exec();
-  if (q.first())
+  printPrint.bindValue(":checkhead_id", _check->id());
+  printPrint.exec();
+  if (printPrint.first())
   {
-    if(q.value("checkhead_printed").toBool())
+    if(printPrint.value("checkhead_printed").toBool())
     {
       QMessageBox::information( this, tr("Check Already Printed"),
 		    tr("<p>The selected Check has already been printed.") );
       return;
     }
-    QString reportname = q.value("report_name").toString();
+    QString reportname = printPrint.value("report_name").toString();
 
 // get the report definition out of the database
 // this should somehow be condensed into a common code call or something
@@ -164,13 +165,13 @@ void printCheck::sPrint()
 
     if(_setCheckNumber != -1 && _setCheckNumber != _nextCheckNum->text().toInt())
     {
-      q.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
-      q.bindValue(":bankaccnt_id", _bankaccnt->id());
-      q.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
-      q.exec();
-      if (q.first())
+      printPrint.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
+      printPrint.bindValue(":bankaccnt_id", _bankaccnt->id());
+      printPrint.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
+      printPrint.exec();
+      if (printPrint.first())
       {
-        int result = q.value("result").toInt();
+        int result = printPrint.value("result").toInt();
         if (result < 0)
         {
           systemError(this, storedProcErrorLookup("setNextCheckNumber", result),
@@ -178,20 +179,20 @@ void printCheck::sPrint()
           return;
         }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (printPrint.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
 
-    q.prepare("UPDATE checkhead SET checkhead_number=fetchNextCheckNumber(checkhead_bankaccnt_id)"
+    printPrint.prepare("UPDATE checkhead SET checkhead_number=fetchNextCheckNumber(checkhead_bankaccnt_id)"
               " WHERE(checkhead_id=:checkhead_id);");
-    q.bindValue(":checkhead_id", _check->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    printPrint.bindValue(":checkhead_id", _check->id());
+    printPrint.exec();
+    if (printPrint.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -251,9 +252,9 @@ void printCheck::sPrint()
 
     omfgThis->sChecksUpdated(_bankaccnt->id(), _check->id(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (printPrint.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else // join failed
@@ -279,12 +280,12 @@ void printCheck::sPrint()
 				   QMessageBox::Yes,
 				   QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare("SELECT voidCheck(:checkhead_id) AS result;");
-    q.bindValue(":checkhead_id", _check->id());
-    q.exec();
-    if (q.first())
+    printPrint.prepare("SELECT voidCheck(:checkhead_id) AS result;");
+    printPrint.bindValue(":checkhead_id", _check->id());
+    printPrint.exec();
+    if (printPrint.first())
     {
-      int result = q.value("result").toInt();
+      int result = printPrint.value("result").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("voidCheck", result),
@@ -292,36 +293,36 @@ void printCheck::sPrint()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (printPrint.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "SELECT checkhead_bankaccnt_id,"
+    printPrint.prepare( "SELECT checkhead_bankaccnt_id,"
 	       "       replaceVoidedCheck(checkhead_id) AS result "
                "FROM checkhead "
                "WHERE (checkhead_id=:checkhead_id);" );
-    q.bindValue(":checkhead_id", _check->id());
-    q.exec();
-    if (q.first())
+    printPrint.bindValue(":checkhead_id", _check->id());
+    printPrint.exec();
+    if (printPrint.first())
     {
-      int result = q.value("result").toInt();
+      int result = printPrint.value("result").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("replaceVoidedCheck", result),
 		    __FILE__, __LINE__);
 	return;
       }
-      omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(),
+      omfgThis->sChecksUpdated(printPrint.value("checkhead_bankaccnt_id").toInt(),
 			       _check->id(), TRUE);
 
       sHandleBankAccount(_bankaccnt->id());
       _print->setFocus();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (printPrint.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -329,6 +330,7 @@ void printCheck::sPrint()
 
 void printCheck::sHandleBankAccount(int pBankaccntid)
 {
+  XSqlQuery printHandleBankAccount;
   if (_bankaccnt->id() != -1)
   {
     XSqlQuery checkNumber;
@@ -343,9 +345,9 @@ void printCheck::sHandleBankAccount(int pBankaccntid)
       _createEFT->setEnabled(checkNumber.value("bankaccnt_ach_enabled").toBool());
       _nextCheckNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (printHandleBankAccount.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printHandleBankAccount.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -355,7 +357,7 @@ void printCheck::sHandleBankAccount(int pBankaccntid)
     _nextCheckNum->clear();
   }
 
-  q.prepare( "SELECT checkhead_id,"
+  printHandleBankAccount.prepare( "SELECT checkhead_id,"
 	     "       (CASE WHEN(checkhead_number=-1) THEN TEXT('Unspecified')"
              "             ELSE TEXT(checkhead_number)"
              "        END || '-' || checkrecip_name) "
@@ -367,38 +369,40 @@ void printCheck::sHandleBankAccount(int pBankaccntid)
              "  AND  (NOT checkhead_posted)"
              "  AND  (checkhead_bankaccnt_id=:bankaccnt_id) ) "
              "ORDER BY checkhead_number;" );
-  q.bindValue(":bankaccnt_id", pBankaccntid);
-  q.exec();
-  _check->populate(q);
+  printHandleBankAccount.bindValue(":bankaccnt_id", pBankaccntid);
+  printHandleBankAccount.exec();
+  _check->populate(printHandleBankAccount);
   _check->setNull();
-  if (q.lastError().type() != QSqlError::NoError)
+  if (printHandleBankAccount.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, printHandleBankAccount.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void printCheck::populate(int pcheckid)
 {
-  q.prepare( "SELECT checkhead_bankaccnt_id "
+  XSqlQuery printpopulate;
+  printpopulate.prepare( "SELECT checkhead_bankaccnt_id "
              "FROM checkhead "
              "WHERE (checkhead_id=:checkhead_id);" );
-  q.bindValue(":checkhead_id", pcheckid);
-  q.exec();
-  if (q.first())
+  printpopulate.bindValue(":checkhead_id", pcheckid);
+  printpopulate.exec();
+  if (printpopulate.first())
   {
-    _bankaccnt->setId(q.value("checkhead_bankaccnt_id").toInt());
+    _bankaccnt->setId(printpopulate.value("checkhead_bankaccnt_id").toInt());
     _check->setId(pcheckid);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (printpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, printpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void printCheck::sCreateEFT()
 {
+  XSqlQuery printCreateEFT;
   XSqlQuery releasenum;
   releasenum.prepare("SELECT releaseNumber('ACHBatch', :batch);");
 
@@ -412,10 +416,10 @@ void printCheck::sCreateEFT()
   params.append("bank", _bankaccnt->id());
   params.append("check",_check->id());
   params.append("key",  omfgThis->_key);
-  q = mql.toQuery(params);
-  if (q.first())
+  printCreateEFT = mql.toQuery(params);
+  if (printCreateEFT.first())
   {
-    batch = q.value("achline_batch").toString();
+    batch = printCreateEFT.value("achline_batch").toString();
     releasenum.bindValue(":batch", batch);
     if (eftFileDir.isEmpty())
     {
@@ -446,15 +450,15 @@ void printCheck::sCreateEFT()
     }
     do
     {
-      eftfile.write(q.value("achline_value").toString().toAscii());
+      eftfile.write(printCreateEFT.value("achline_value").toString().toAscii());
       eftfile.write("\n");
-    } while (q.next());
+    } while (printCreateEFT.next());
     eftfile.close();
-    if (q.lastError().type() != QSqlError::NoError)
+    if (printCreateEFT.lastError().type() != QSqlError::NoError)
     {
       releasenum.exec();
       eftfile.remove();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printCreateEFT.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -477,9 +481,9 @@ void printCheck::sCreateEFT()
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (printCreateEFT.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, printCreateEFT.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -487,24 +491,25 @@ void printCheck::sCreateEFT()
 
 void printCheck::sEnableCreateEFT()
 {
+  XSqlQuery printEnableCreateEFT;
   if (_bankaccnt->isValid() && _check->isValid() &&
       _metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
   {
-    q.prepare("SELECT bankaccnt_ach_enabled AND vend_ach_enabled AS eftenabled "
+    printEnableCreateEFT.prepare("SELECT bankaccnt_ach_enabled AND vend_ach_enabled AS eftenabled "
               "FROM bankaccnt"
               "      JOIN checkhead ON (checkhead_bankaccnt_id=bankaccnt_id)"
               "      JOIN vendinfo ON (checkhead_recip_id=vend_id"
               "                    AND checkhead_recip_type='V') "
               "WHERE ((bankaccnt_id=:bankaccnt_id)"
               "  AND  (checkhead_id=:checkhead_id));");
-    q.bindValue(":bankaccnt_id", _bankaccnt->id());
-    q.bindValue(":checkhead_id", _check->id());
-    q.exec();
-    if (q.first())
-      _createEFT->setEnabled(q.value("eftenabled").toBool());
-    else if (q.lastError().type() != QSqlError::NoError)
+    printEnableCreateEFT.bindValue(":bankaccnt_id", _bankaccnt->id());
+    printEnableCreateEFT.bindValue(":checkhead_id", _check->id());
+    printEnableCreateEFT.exec();
+    if (printEnableCreateEFT.first())
+      _createEFT->setEnabled(printEnableCreateEFT.value("eftenabled").toBool());
+    else if (printEnableCreateEFT.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printEnableCreateEFT.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else // not found

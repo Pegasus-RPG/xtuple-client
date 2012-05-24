@@ -76,6 +76,7 @@ enum SetResponse form::set(const ParameterList &pParams)
 
 void form::sSave()
 {
+  XSqlQuery formSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::warning( this, tr("Form Name is Invalid"),
@@ -94,59 +95,59 @@ void form::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('form_form_id_seq') AS _form_id");
-    if (q.first())
-      _formid = q.value("_form_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    formSave.exec("SELECT NEXTVAL('form_form_id_seq') AS _form_id");
+    if (formSave.first())
+      _formid = formSave.value("_form_id").toInt();
+    else if (formSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, formSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO form "
+    formSave.prepare( "INSERT INTO form "
                "(form_id, form_name, form_descrip, form_report_name, form_key) "
                "VALUES "
                "(:form_id, :form_name, :form_descrip, :form_report_name, :form_key);" );
 
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE form "
+    formSave.prepare( "UPDATE form "
                "SET form_name=:form_name, form_descrip=:form_descrip,"
                "    form_report_name=:form_report_name, form_key=:form_key "
                "WHERE (form_id=:form_id);" );
 
-  q.bindValue(":form_id", _formid);
-  q.bindValue(":form_name", _name->text());
-  q.bindValue(":form_descrip", _descrip->text());
-  q.bindValue(":form_report_name", _report->code());
+  formSave.bindValue(":form_id", _formid);
+  formSave.bindValue(":form_name", _name->text());
+  formSave.bindValue(":form_descrip", _descrip->text());
+  formSave.bindValue(":form_report_name", _report->code());
 
   if (_key->currentIndex() == 0)
-    q.bindValue(":form_key", "Cust");
+    formSave.bindValue(":form_key", "Cust");
   else if (_key->currentIndex() == 1)
-    q.bindValue(":form_key", "Item");
+    formSave.bindValue(":form_key", "Item");
   else if (_key->currentIndex() == 2)
-    q.bindValue(":form_key", "ItSt");
+    formSave.bindValue(":form_key", "ItSt");
   else if (_key->currentIndex() == 3)
-    q.bindValue(":form_key", "PO");
+    formSave.bindValue(":form_key", "PO");
   else if (_key->currentIndex() == 4)
-    q.bindValue(":form_key", "SO");
+    formSave.bindValue(":form_key", "SO");
   else if (_key->currentIndex() == 5)
-    q.bindValue(":form_key", "Vend");
+    formSave.bindValue(":form_key", "Vend");
   else if (_key->currentIndex() == 6)
-    q.bindValue(":form_key", "WO");
+    formSave.bindValue(":form_key", "WO");
   else if (_key->currentIndex() == 7)
-    q.bindValue(":form_key", "SASC");
+    formSave.bindValue(":form_key", "SASC");
   else if (_key->currentIndex() == 8)
-    q.bindValue(":form_key", "PES");
+    formSave.bindValue(":form_key", "PES");
   else if (_key->currentIndex() == 9)
-    q.bindValue(":form_key", "RA");
+    formSave.bindValue(":form_key", "RA");
   else
-    q.bindValue(":form_key", "");
+    formSave.bindValue(":form_key", "");
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  formSave.exec();
+  if (formSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, formSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -155,43 +156,44 @@ void form::sSave()
 
 void form::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery formpopulate;
+  formpopulate.prepare( "SELECT * "
       	     "FROM form "
              "WHERE (form_id=:form_id);" );
-  q.bindValue(":form_id", _formid);
-  q.exec();
-  if (q.first())
+  formpopulate.bindValue(":form_id", _formid);
+  formpopulate.exec();
+  if (formpopulate.first())
   {
-    _name->setText(q.value("form_name").toString());
-    _descrip->setText(q.value("form_descrip").toString());
-    _report->setCode(q.value("form_report_name").toString());
+    _name->setText(formpopulate.value("form_name").toString());
+    _descrip->setText(formpopulate.value("form_descrip").toString());
+    _report->setCode(formpopulate.value("form_report_name").toString());
   
-    if (q.value("form_key").toString() == "Cust")
+    if (formpopulate.value("form_key").toString() == "Cust")
       _key->setCurrentIndex(0);
-    else if (q.value("form_key").toString() == "Item")
+    else if (formpopulate.value("form_key").toString() == "Item")
       _key->setCurrentIndex(1);
-    else if (q.value("form_key").toString() == "ItSt")
+    else if (formpopulate.value("form_key").toString() == "ItSt")
       _key->setCurrentIndex(2);
-    else if (q.value("form_key").toString() == "PO")
+    else if (formpopulate.value("form_key").toString() == "PO")
       _key->setCurrentIndex(3);
-    else if (q.value("form_key").toString() == "SO")
+    else if (formpopulate.value("form_key").toString() == "SO")
       _key->setCurrentIndex(4);
-    else if (q.value("form_key").toString() == "Vend")
+    else if (formpopulate.value("form_key").toString() == "Vend")
       _key->setCurrentIndex(5);
-    else if (q.value("form_key").toString() == "WO")
+    else if (formpopulate.value("form_key").toString() == "WO")
       _key->setCurrentIndex(6);
-    else if (q.value("form_key").toString() == "SASC")
+    else if (formpopulate.value("form_key").toString() == "SASC")
       _key->setCurrentIndex(7);
-    else if (q.value("form_key").toString() == "PES")
+    else if (formpopulate.value("form_key").toString() == "PES")
       _key->setCurrentIndex(8);
-    else if (q.value("form_key").toString() == "RA")
+    else if (formpopulate.value("form_key").toString() == "RA")
       _key->setCurrentIndex(9);
     else
       _key->setCurrentIndex(-1);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (formpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, formpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

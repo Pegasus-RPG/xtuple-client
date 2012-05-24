@@ -32,12 +32,13 @@ void purgePostedCounts::languageChange()
 
 void purgePostedCounts::sPurge()
 {
+  XSqlQuery purgePurge;
   if (_cutOffDate->isValid())
   {
-    q.prepare("SELECT purgePostedCountTags(:cutOffDate, :warehous_id) AS _result;");
-    q.bindValue(":cutOffDate", _cutOffDate->date());
-    q.bindValue(":warehous_id", ((_warehouse->isSelected()) ? _warehouse->id() : -1));
-    q.exec();
+    purgePurge.prepare("SELECT purgePostedCountTags(:cutOffDate, :warehous_id) AS _result;");
+    purgePurge.bindValue(":cutOffDate", _cutOffDate->date());
+    purgePurge.bindValue(":warehous_id", ((_warehouse->isSelected()) ? _warehouse->id() : -1));
+    purgePurge.exec();
 
     _cutOffDate->clear();
     _cutOffDate->setFocus();

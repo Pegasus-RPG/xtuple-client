@@ -35,6 +35,7 @@ void releaseTransferOrdersByAgent::languageChange()
 
 void releaseTransferOrdersByAgent::sRelease()
 {
+  XSqlQuery releaseRelease;
   static bool run = false;
   if (run)
     return;
@@ -51,14 +52,14 @@ void releaseTransferOrdersByAgent::sRelease()
   if(_selectedAgent->isChecked())
     sql +=    "   AND   (tohead_agent_username=:username)";
   sql += ")";
-  q.prepare(sql);
-  q.bindValue(":username", _agent->currentText());
-  q.exec();
-  if (q.first())
+  releaseRelease.prepare(sql);
+  releaseRelease.bindValue(":username", _agent->currentText());
+  releaseRelease.exec();
+  if (releaseRelease.first())
   {
     QMessageBox::information( this, tr("Transfer Orders Released"),
                               tr("%1 Transfer Orders have been released.")
-                              .arg(q.value("result").toString()) );
+                              .arg(releaseRelease.value("result").toString()) );
 
     omfgThis->sTransferOrdersUpdated(-1);
   }

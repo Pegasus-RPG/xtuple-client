@@ -659,7 +659,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     anq.exec();
     if (anq.first())
       expected_hash = anq.value("expected").toString();
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (anq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = errorMsg(-1).arg(anq.lastError().databaseText());
       returnValue = -1;

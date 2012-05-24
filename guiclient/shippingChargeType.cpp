@@ -82,17 +82,18 @@ enum SetResponse shippingChargeType::set(const ParameterList &pParams)
 
 void shippingChargeType::sCheck()
 {
+  XSqlQuery shippingCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().trimmed().length()))
   {
-    q.prepare( "SELECT shipchrg_id "
+    shippingCheck.prepare( "SELECT shipchrg_id "
                "FROM shipchrg "
                "WHERE (UPPER(shipchrg_name)=UPPER(:shipchrg_name));" );
-    q.bindValue(":shipchrg_name", _name->text());
-    q.exec();
-    if (q.first())
+    shippingCheck.bindValue(":shipchrg_name", _name->text());
+    shippingCheck.exec();
+    if (shippingCheck.first())
     {
-      _shipchrgid = q.value("shipchrg_id").toInt();
+      _shipchrgid = shippingCheck.value("shipchrg_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -103,6 +104,7 @@ void shippingChargeType::sCheck()
 
 void shippingChargeType::sSave()
 {
+  XSqlQuery shippingSave;
   if (_name->text().length() == 0)
   {
       QMessageBox::warning( this, tr("Cannot Save Shipping Charge"),
@@ -110,14 +112,14 @@ void shippingChargeType::sSave()
       return;
   }
 
-  q.prepare( "SELECT shipchrg_id "
+  shippingSave.prepare( "SELECT shipchrg_id "
              "FROM shipchrg "
              "WHERE ( (shipchrg_id<>:shipchrg_id)"
              " AND (UPPER(shipchrg_name)=UPPER(:shipchrg_name)) );" );
-  q.bindValue(":shipchrg_id", _shipchrgid);
-  q.bindValue(":shipchrg_name", _name->text());
-  q.exec();
-  if (q.first())
+  shippingSave.bindValue(":shipchrg_id", _shipchrgid);
+  shippingSave.bindValue(":shipchrg_name", _name->text());
+  shippingSave.exec();
+  if (shippingSave.first())
   {
     QMessageBox::critical( this, tr("Cannot Save Shipping Charge Type"),
                            tr( "The new Shipping Charge Type information cannot be saved as the new Shipping Charge Type that you\n"
@@ -128,43 +130,44 @@ void shippingChargeType::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('shipchrg_shipchrg_id_seq') AS shipchrg_id;");
-    if (q.first())
-      _shipchrgid = q.value("shipchrg_id").toInt();
+    shippingSave.exec("SELECT NEXTVAL('shipchrg_shipchrg_id_seq') AS shipchrg_id;");
+    if (shippingSave.first())
+      _shipchrgid = shippingSave.value("shipchrg_id").toInt();
 
-    q.prepare( "INSERT INTO shipchrg "
+    shippingSave.prepare( "INSERT INTO shipchrg "
                "(shipchrg_id, shipchrg_name, shipchrg_descrip, shipchrg_custfreight) "
                "VALUES "
                "(:shipchrg_id, :shipchrg_name, :shipchrg_descrip, :shipchrg_custfreight);" );
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "UPDATE shipchrg "
+    shippingSave.prepare( "UPDATE shipchrg "
                "SET shipchrg_name=:shipchrg_name, shipchrg_descrip=:shipchrg_descrip,"
                "    shipchrg_custfreight=:shipchrg_custfreight "
                "WHERE (shipchrg_id=:shipchrg_id);" );
   }
 
-  q.bindValue(":shipchrg_id", _shipchrgid);
-  q.bindValue(":shipchrg_name", _name->text().trimmed());
-  q.bindValue(":shipchrg_descrip", _description->text().trimmed());
-  q.bindValue(":shipchrg_custfreight", QVariant(_customerFreight->isChecked()));
-  q.exec();
+  shippingSave.bindValue(":shipchrg_id", _shipchrgid);
+  shippingSave.bindValue(":shipchrg_name", _name->text().trimmed());
+  shippingSave.bindValue(":shipchrg_descrip", _description->text().trimmed());
+  shippingSave.bindValue(":shipchrg_custfreight", QVariant(_customerFreight->isChecked()));
+  shippingSave.exec();
 
   done(_shipchrgid);
 }
 
 void shippingChargeType::populate()
 {
-  q.prepare( "SELECT shipchrg_name, shipchrg_descrip, shipchrg_custfreight "
+  XSqlQuery shippingpopulate;
+  shippingpopulate.prepare( "SELECT shipchrg_name, shipchrg_descrip, shipchrg_custfreight "
              "FROM shipchrg "
              "WHERE (shipchrg_id=:shipchrg_id);" );
-  q.bindValue(":shipchrg_id", _shipchrgid);
-  q.exec();
-  if (q.first()) 
+  shippingpopulate.bindValue(":shipchrg_id", _shipchrgid);
+  shippingpopulate.exec();
+  if (shippingpopulate.first()) 
   {
-    _name->setText(q.value("shipchrg_name").toString());
-    _description->setText(q.value("shipchrg_descrip").toString());
-    _customerFreight->setChecked(q.value("shipchrg_custfreight").toBool());
+    _name->setText(shippingpopulate.value("shipchrg_name").toString());
+    _description->setText(shippingpopulate.value("shipchrg_descrip").toString());
+    _customerFreight->setChecked(shippingpopulate.value("shipchrg_custfreight").toBool());
   }
 }

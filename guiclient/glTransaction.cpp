@@ -97,6 +97,7 @@ enum SetResponse glTransaction::set(const ParameterList &pParams)
 
 void glTransaction::sPost()
 {
+  XSqlQuery glPost;
   struct {
     bool	condition;
     QString	msg;
@@ -142,20 +143,20 @@ void glTransaction::sPost()
 	return;
   }
 
-  q.prepare( "SELECT insertGLTransaction( fetchJournalNumber('GL-MISC'), 'G/L', :docType, :docNumber, :notes,"
+  glPost.prepare( "SELECT insertGLTransaction( fetchJournalNumber('GL-MISC'), 'G/L', :docType, :docNumber, :notes,"
              "                            :creditAccntid, :debitAccntid, -1, :amount, :distDate, true, false ) AS result;" );
-  q.bindValue(":distDate", _distDate->date());
-  q.bindValue(":docType", _docType->text().trimmed());
-  q.bindValue(":docNumber", _docNumber->text().trimmed());
-  q.bindValue(":notes", _notes->toPlainText().trimmed());
-  q.bindValue(":creditAccntid", _credit->id());
-  q.bindValue(":debitAccntid", _debit->id());
-  q.bindValue(":amount", _amount->baseValue());
-  q.exec();
-  if (q.first())
+  glPost.bindValue(":distDate", _distDate->date());
+  glPost.bindValue(":docType", _docType->text().trimmed());
+  glPost.bindValue(":docNumber", _docNumber->text().trimmed());
+  glPost.bindValue(":notes", _notes->toPlainText().trimmed());
+  glPost.bindValue(":creditAccntid", _credit->id());
+  glPost.bindValue(":debitAccntid", _debit->id());
+  glPost.bindValue(":amount", _amount->baseValue());
+  glPost.exec();
+  if (glPost.first())
   {
     if (_captive)
-      done(q.value("result").toInt());
+      done(glPost.value("result").toInt());
     else
     {
       clear();
@@ -167,9 +168,9 @@ void glTransaction::sPost()
       _amount->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (glPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, glPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

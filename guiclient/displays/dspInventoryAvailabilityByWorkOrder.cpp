@@ -116,6 +116,7 @@ bool dspInventoryAvailabilityByWorkOrder::setParams(ParameterList &params)
 
 void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int)
 {
+  XSqlQuery dspPopulateMenu;
       XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
       QAction *menuItem;
 
@@ -137,14 +138,14 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
 
       pMenu->addSeparator();
       
-	  q.prepare( "SELECT itemsite_posupply as result "
+	  dspPopulateMenu.prepare( "SELECT itemsite_posupply as result "
 				 "FROM itemsite "
 				 "WHERE (itemsite_id=:womatl_id);" );
-	  q.bindValue(":womatl_id", list()->id());
-	  q.exec();
-	  if (q.first())
+	  dspPopulateMenu.bindValue(":womatl_id", list()->id());
+	  dspPopulateMenu.exec();
+	  if (dspPopulateMenu.first())
 	  {
-		  if (q.value("result").toBool())
+		  if (dspPopulateMenu.value("result").toBool())
 		  {
 			menuItem = pMenu->addAction(tr("Create P/R..."), this, SLOT(sCreatePR()));
 			if (!_privileges->check("MaintainPurchaseRequests"))
@@ -157,14 +158,14 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
 			pMenu->addSeparator();
 		  }
 	  }
-	  q.prepare( "SELECT itemsite_wosupply as result "
+	  dspPopulateMenu.prepare( "SELECT itemsite_wosupply as result "
 				 "FROM itemsite "
 				 "WHERE (itemsite_id=:womatl_id);" );
-	  q.bindValue(":womatl_id", list()->id());
-	  q.exec();
-	  if (q.first())
+	  dspPopulateMenu.bindValue(":womatl_id", list()->id());
+	  dspPopulateMenu.exec();
+	  if (dspPopulateMenu.first())
 	  {
-		  if (q.value("result").toBool())
+		  if (dspPopulateMenu.value("result").toBool())
 		  {
 			if(list()->altId() != -1)
 			{
@@ -207,16 +208,17 @@ void dspInventoryAvailabilityByWorkOrder::sViewHistory()
 
 void dspInventoryAvailabilityByWorkOrder::sViewAllocations()
 {
-  q.prepare( "SELECT womatl_duedate "
+  XSqlQuery dspViewAllocations;
+  dspViewAllocations.prepare( "SELECT womatl_duedate "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", list()->altId());
-  q.exec();
-  if (q.first())
+  dspViewAllocations.bindValue(":womatl_id", list()->altId());
+  dspViewAllocations.exec();
+  if (dspViewAllocations.first())
   {
     ParameterList params;
     params.append("itemsite_id", list()->id());
-    params.append("byDate", q.value("womatl_duedate"));
+    params.append("byDate", dspViewAllocations.value("womatl_duedate"));
     params.append("run");
 
     dspAllocations *newdlg = new dspAllocations();
@@ -227,16 +229,17 @@ void dspInventoryAvailabilityByWorkOrder::sViewAllocations()
 
 void dspInventoryAvailabilityByWorkOrder::sViewOrders()
 {
-  q.prepare( "SELECT womatl_duedate "
+  XSqlQuery dspViewOrders;
+  dspViewOrders.prepare( "SELECT womatl_duedate "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", list()->altId());
-  q.exec();
-  if (q.first())
+  dspViewOrders.bindValue(":womatl_id", list()->altId());
+  dspViewOrders.exec();
+  if (dspViewOrders.first())
   {
     ParameterList params;
     params.append("itemsite_id", list()->id());
-    params.append("byDate", q.value("womatl_duedate"));
+    params.append("byDate", dspViewOrders.value("womatl_duedate"));
     params.append("run");
 
     dspOrders *newdlg = new dspOrders();
@@ -258,16 +261,17 @@ void dspInventoryAvailabilityByWorkOrder::sRunningAvailability()
 
 void dspInventoryAvailabilityByWorkOrder::sViewSubstituteAvailability()
 {
-  q.prepare( "SELECT womatl_duedate "
+  XSqlQuery dspViewSubstituteAvailability;
+  dspViewSubstituteAvailability.prepare( "SELECT womatl_duedate "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", list()->altId());
-  q.exec();
-  if (q.first())
+  dspViewSubstituteAvailability.bindValue(":womatl_id", list()->altId());
+  dspViewSubstituteAvailability.exec();
+  if (dspViewSubstituteAvailability.first())
   {
     ParameterList params;
     params.append("itemsite_id", list()->id());
-    params.append("byDate", q.value("womatl_duedate"));
+    params.append("byDate", dspViewSubstituteAvailability.value("womatl_duedate"));
     params.append("run");
 
     dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem();

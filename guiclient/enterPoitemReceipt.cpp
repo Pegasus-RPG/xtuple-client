@@ -63,16 +63,17 @@ void enterPoitemReceipt::languageChange()
 
 bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
 {
+  XSqlQuery entercorrectReceipt;
   //Validate - Drop Ship receipts may not be corrected
-  q.prepare("SELECT (count(*) > 0) AS result "
+  entercorrectReceipt.prepare("SELECT (count(*) > 0) AS result "
             "FROM recv JOIN pohead ON ((recv_order_type='PO') AND (recv_order_number=pohead_number)) "
             "WHERE ((recv_id=:recvid) "
             "  AND  (COALESCE(pohead_dropship, false))); ");
-  q.bindValue(":recvid", pRecvid);
-  q.exec();
-  if (q.first())
+  entercorrectReceipt.bindValue(":recvid", pRecvid);
+  entercorrectReceipt.exec();
+  if (entercorrectReceipt.first())
   {
-    if (q.value("result").toBool())
+    if (entercorrectReceipt.value("result").toBool())
     {
       QMessageBox::warning(pParent, tr("Cannot Correct"),
                             tr("<p>Receipt is a Drop Shipment.  The received quantity may not be changed.  "
@@ -82,16 +83,16 @@ bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
   }
   
   //Validate - Split receipts may not be corrected
-  q.prepare("SELECT (count(*) > 0) AS result "
+  entercorrectReceipt.prepare("SELECT (count(*) > 0) AS result "
             "FROM recv "
             "WHERE (((recv_id=:recvid) "
             "  AND (recv_splitfrom_id IS NOT NULL)) "
             "  OR (recv_splitfrom_id=:recvid)); ");
-  q.bindValue(":recvid", pRecvid);
-  q.exec();
-  if (q.first())
+  entercorrectReceipt.bindValue(":recvid", pRecvid);
+  entercorrectReceipt.exec();
+  if (entercorrectReceipt.first())
   {
-    if (q.value("result").toBool())
+    if (entercorrectReceipt.value("result").toBool())
     {
       QMessageBox::warning(pParent, tr("Cannot Correct"),
                            tr("<p>Receipt has been split.  The received quantity may not be changed."));
@@ -167,6 +168,7 @@ enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
 
 void enterPoitemReceipt::populate()
 {
+  XSqlQuery enterpopulate;
   ParameterList params;
 
   if (_metrics->boolean("MultiWhs"))
@@ -182,13 +184,13 @@ void enterPoitemReceipt::populate()
     params.append("ordertype",    _ordertype);
     params.append("orderitem_id", _orderitemid);
 
-    q = popm.toQuery(params);
+    enterpopulate = popm.toQuery(params);
   }
   else if (_mode == cEdit)
   {
     MetaSQLQuery popm = mqlLoad("itemReceipt", "populateEdit");
     params.append("recv_id", _recvid);
-    q = popm.toQuery(params);
+    enterpopulate = popm.toQuery(params);
   }
   else
   {
@@ -200,26 +202,26 @@ void enterPoitemReceipt::populate()
     return;
   }
 
-  if (q.first())
+  if (enterpopulate.first())
   {
-    _orderNumber->setText(q.value("order_number").toString());
-    _lineNumber->setText(q.value("orderitem_linenumber").toString());
-    _vendorItemNumber->setText(q.value("vend_item_number").toString());
-    _vendorDescrip->setText(q.value("vend_item_descrip").toString());
-    _vendorUOM->setText(q.value("vend_uom").toString());
-    _invVendorUOMRatio->setDouble(q.value("orderitem_qty_invuomratio").toDouble());
-    _dueDate->setDate(q.value("duedate").toDate());
-    _ordered->setDouble(q.value("orderitem_qty_ordered").toDouble());
-    _received->setDouble(q.value("qtyreceived").toDouble());
-    _returned->setDouble(q.value("qtyreturned").toDouble());
-    _receivable = q.value("receivable").toDouble();
-    _notes->setText(q.value("notes").toString());
-    _receiptDate->setDate(q.value("effective").toDate());
-    _freight->setId(q.value("curr_id").toInt());
-    _freight->setLocalValue(q.value("recv_freight").toDouble());
+    _orderNumber->setText(enterpopulate.value("order_number").toString());
+    _lineNumber->setText(enterpopulate.value("orderitem_linenumber").toString());
+    _vendorItemNumber->setText(enterpopulate.value("vend_item_number").toString());
+    _vendorDescrip->setText(enterpopulate.value("vend_item_descrip").toString());
+    _vendorUOM->setText(enterpopulate.value("vend_uom").toString());
+    _invVendorUOMRatio->setDouble(enterpopulate.value("orderitem_qty_invuomratio").toDouble());
+    _dueDate->setDate(enterpopulate.value("duedate").toDate());
+    _ordered->setDouble(enterpopulate.value("orderitem_qty_ordered").toDouble());
+    _received->setDouble(enterpopulate.value("qtyreceived").toDouble());
+    _returned->setDouble(enterpopulate.value("qtyreturned").toDouble());
+    _receivable = enterpopulate.value("receivable").toDouble();
+    _notes->setText(enterpopulate.value("notes").toString());
+    _receiptDate->setDate(enterpopulate.value("effective").toDate());
+    _freight->setId(enterpopulate.value("curr_id").toInt());
+    _freight->setLocalValue(enterpopulate.value("recv_freight").toDouble());
 
     if (_ordertype.isEmpty())
-      _ordertype = q.value("recv_order_type").toString();
+      _ordertype = enterpopulate.value("recv_order_type").toString();
     if (_ordertype == "PO")
       _orderType->setText(tr("P/O"));
     else if (_ordertype == "TO")
@@ -230,18 +232,18 @@ void enterPoitemReceipt::populate()
     else if (_ordertype == "RA")
       _orderType->setText(tr("R/A"));
 
-    int itemsiteid = q.value("itemsiteid").toInt();
+    int itemsiteid = enterpopulate.value("itemsiteid").toInt();
     if (itemsiteid > 0)
       _item->setItemsiteid(itemsiteid);
     _item->setEnabled(false);
 
-    _purchCost->setId(q.value("recv_purchcost_curr_id").toInt());
-    _purchCost->setLocalValue(q.value("recv_purchcost").toDouble());
-    _purchCost->setEnabled(q.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
+    _purchCost->setId(enterpopulate.value("recv_purchcost_curr_id").toInt());
+    _purchCost->setLocalValue(enterpopulate.value("recv_purchcost").toDouble());
+    _purchCost->setEnabled(enterpopulate.value("costmethod_average").toBool() && _metrics->boolean("AllowReceiptCostOverride"));
 
-    _extendedCost->setId(q.value("recv_purchcost_curr_id").toInt());
+    _extendedCost->setId(enterpopulate.value("recv_purchcost_curr_id").toInt());
 
-    if (q.value("inventoryitem").toBool() && itemsiteid <= 0)
+    if (enterpopulate.value("inventoryitem").toBool() && itemsiteid <= 0)
     {
       MetaSQLQuery ism = mqlLoad("itemReceipt", "sourceItemSite");
       XSqlQuery isq = ism.toQuery(params);
@@ -262,15 +264,16 @@ void enterPoitemReceipt::populate()
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void enterPoitemReceipt::sReceive()
 {
+  XSqlQuery enterReceive;
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
     
@@ -306,42 +309,42 @@ void enterPoitemReceipt::sReceive()
   QString storedProc;
   if (_mode == cNew)
   {
-    q.prepare("SELECT enterReceipt(:ordertype, :poitem_id, :qty, :freight, :notes, "
+    enterReceive.prepare("SELECT enterReceipt(:ordertype, :poitem_id, :qty, :freight, :notes, "
               ":curr_id, :effective, :purchcost) AS result;");
-    q.bindValue(":poitem_id",	_orderitemid);
-    q.bindValue(":ordertype",	_ordertype);
+    enterReceive.bindValue(":poitem_id",	_orderitemid);
+    enterReceive.bindValue(":ordertype",	_ordertype);
     storedProc = "enterReceipt";
   }
   else if (_mode == cEdit)
   {
-    q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-    q.prepare("UPDATE recv SET recv_notes = :notes WHERE (recv_id=:recv_id);" );
-    q.bindValue(":notes",	_notes->toPlainText());
-    q.bindValue(":recv_id",	_recvid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    enterReceive.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+    enterReceive.prepare("UPDATE recv SET recv_notes = :notes WHERE (recv_id=:recv_id);" );
+    enterReceive.bindValue(":notes",	_notes->toPlainText());
+    enterReceive.bindValue(":recv_id",	_recvid);
+    enterReceive.exec();
+    if (enterReceive.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enterReceive.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
-    q.prepare("SELECT correctReceipt(:recv_id, :qty, :freight, 0, "
+    enterReceive.prepare("SELECT correctReceipt(:recv_id, :qty, :freight, 0, "
               ":curr_id, :effective, :purchcost) AS result;");
-    q.bindValue(":recv_id", _recvid);
+    enterReceive.bindValue(":recv_id", _recvid);
     storedProc = "correctReceipt";
   }
 
-  q.bindValue(":qty",		_toReceive->toDouble());
-  q.bindValue(":freight",	_freight->localValue());
-  q.bindValue(":notes",		_notes->toPlainText());
-  q.bindValue(":curr_id",	_freight->id());
-  q.bindValue(":effective",	_receiptDate->date());
-  q.bindValue(":purchcost",     _purchCost->localValue());
-  q.exec();
-  if (q.first())
+  enterReceive.bindValue(":qty",		_toReceive->toDouble());
+  enterReceive.bindValue(":freight",	_freight->localValue());
+  enterReceive.bindValue(":notes",		_notes->toPlainText());
+  enterReceive.bindValue(":curr_id",	_freight->id());
+  enterReceive.bindValue(":effective",	_receiptDate->date());
+  enterReceive.bindValue(":purchcost",     _purchCost->localValue());
+  enterReceive.exec();
+  if (enterReceive.first())
   {
-    result = q.value("result").toInt();
+    result = enterReceive.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -350,10 +353,10 @@ void enterPoitemReceipt::sReceive()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterReceive.lastError().type() != QSqlError::NoError)
   {
       rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enterReceive.lastError().databaseText(), __FILE__, __LINE__);
       return;
   }
 
@@ -368,7 +371,7 @@ void enterPoitemReceipt::sReceive()
       return;
     }
 
-    q.exec("COMMIT;");
+    enterReceive.exec("COMMIT;");
   }
 
   omfgThis->sPurchaseOrderReceiptsUpdated();

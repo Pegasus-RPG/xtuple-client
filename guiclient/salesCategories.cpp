@@ -62,12 +62,13 @@ void salesCategories::languageChange()
 
 void salesCategories::sDelete()
 {
-  q.prepare("SELECT deleteSalesCategory(:salescat_id) AS result;");
-  q.bindValue(":salescat_id", _salescat->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery salesDelete;
+  salesDelete.prepare("SELECT deleteSalesCategory(:salescat_id) AS result;");
+  salesDelete.bindValue(":salescat_id", _salescat->id());
+  salesDelete.exec();
+  if (salesDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = salesDelete.value("result").toInt();
     switch (result)
     {
       case -1:
@@ -83,11 +84,11 @@ void salesCategories::sDelete()
                                        tr("&Yes"), tr("&No"), QString::null );
         if (result == 0)
         {
-          q.prepare( "UPDATE salescat "
+          salesDelete.prepare( "UPDATE salescat "
                      "SET salescat_active=FALSE "
                      "WHERE (salescat_id=:salescat_id);" );
-          q.bindValue(":salescat_id", _salescat->id());
-          q.exec();
+          salesDelete.bindValue(":salescat_id", _salescat->id());
+          salesDelete.exec();
           sFillList();
         }
         break;
@@ -99,11 +100,11 @@ void salesCategories::sDelete()
                                        tr("&Yes"), tr("&No"), QString::null );
         if (result == 0)
         {
-          q.prepare( "UPDATE salescat "
+          salesDelete.prepare( "UPDATE salescat "
                      "SET salescat_active=FALSE "
                      "WHERE (salescat_id=:salescat_id);" );
-          q.bindValue(":salescat_id", _salescat->id());
-          q.exec();
+          salesDelete.bindValue(":salescat_id", _salescat->id());
+          salesDelete.exec();
           sFillList();
         }
         break;

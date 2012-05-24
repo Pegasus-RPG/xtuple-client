@@ -98,17 +98,18 @@ enum SetResponse expenseCategory::set(const ParameterList &pParams)
 
 void expenseCategory::sCheck()
 {
+  XSqlQuery expenseCheck;
   _category->setText(_category->text().trimmed().toUpper());
   if ( ((_mode == cNew) || (_mode == cCopy)) && (_category->text().length() != 0) )
   {
-    q.prepare( "SELECT expcat_id "
+    expenseCheck.prepare( "SELECT expcat_id "
                "FROM expcat "
                "WHERE (UPPER(expcat_code)=:expcat_code);" );
-    q.bindValue(":expcat_code", _category->text().trimmed());
-    q.exec();
-    if (q.first())
+    expenseCheck.bindValue(":expcat_code", _category->text().trimmed());
+    expenseCheck.exec();
+    if (expenseCheck.first())
     {
-      _expcatid = q.value("expcat_id").toInt();
+      _expcatid = expenseCheck.value("expcat_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -119,6 +120,7 @@ void expenseCategory::sCheck()
 
 void expenseCategory::sSave()
 {
+  XSqlQuery expenseSave;
   QList<GuiErrorCheck> errors;
 
   errors << GuiErrorCheck(_category->text().trimmed().isEmpty(), _category,
@@ -126,14 +128,14 @@ void expenseCategory::sSave()
 
   if (_mode == cEdit)
   {
-    q.prepare( "SELECT expcat_id "
+    expenseSave.prepare( "SELECT expcat_id "
                "  FROM expcat "
                " WHERE((UPPER(expcat_code)=UPPER(:expcat_code))"
                "   AND (expcat_id != :expcat_id));" );
-    q.bindValue(":expcat_id", _expcatid);
-    q.bindValue(":expcat_code", _category->text().trimmed());
-    q.exec();
-    if (q.first())
+    expenseSave.bindValue(":expcat_id", _expcatid);
+    expenseSave.bindValue(":expcat_code", _category->text().trimmed());
+    expenseSave.exec();
+    if (expenseSave.first())
     {
       errors << GuiErrorCheck(true, _category,
                              tr("<p>The name you have specified is already in use."));
@@ -158,11 +160,11 @@ void expenseCategory::sSave()
 
   if ( (_mode == cNew) || (_mode == cCopy) )
   {
-    q.exec("SELECT NEXTVAL('expcat_expcat_id_seq') AS expcat_id");
-    if (q.first())
-      _expcatid = q.value("expcat_id").toInt();
+    expenseSave.exec("SELECT NEXTVAL('expcat_expcat_id_seq') AS expcat_id");
+    if (expenseSave.first())
+      _expcatid = expenseSave.value("expcat_id").toInt();
 
-    q.prepare( "INSERT INTO expcat"
+    expenseSave.prepare( "INSERT INTO expcat"
                "( expcat_id, expcat_code, expcat_active, expcat_descrip,"
                "  expcat_exp_accnt_id, expcat_purchprice_accnt_id,"
                "  expcat_liability_accnt_id, expcat_freight_accnt_id ) "
@@ -172,7 +174,7 @@ void expenseCategory::sSave()
                "  :expcat_liability_accnt_id, :expcat_freight_accnt_id );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE expcat "
+    expenseSave.prepare( "UPDATE expcat "
                "SET expcat_code=:expcat_code, expcat_active=:expcat_active,"
                "    expcat_descrip=:expcat_descrip,"
                "    expcat_exp_accnt_id=:expcat_exp_accnt_id,"
@@ -181,41 +183,42 @@ void expenseCategory::sSave()
                "    expcat_freight_accnt_id=:expcat_freight_accnt_id "
                "WHERE (expcat_id=:expcat_id);" );
 
-  q.bindValue(":expcat_id", _expcatid);
-  q.bindValue(":expcat_code", _category->text().trimmed());
-  q.bindValue(":expcat_active", QVariant(_active->isChecked()));
-  q.bindValue(":expcat_descrip", _description->text().trimmed());
-  q.bindValue(":expcat_exp_accnt_id", _expense->id());
-  q.bindValue(":expcat_purchprice_accnt_id", _purchasePrice->id());
-  q.bindValue(":expcat_liability_accnt_id", _liability->id());
-  q.bindValue(":expcat_freight_accnt_id", _freight->id());
-  q.exec();
+  expenseSave.bindValue(":expcat_id", _expcatid);
+  expenseSave.bindValue(":expcat_code", _category->text().trimmed());
+  expenseSave.bindValue(":expcat_active", QVariant(_active->isChecked()));
+  expenseSave.bindValue(":expcat_descrip", _description->text().trimmed());
+  expenseSave.bindValue(":expcat_exp_accnt_id", _expense->id());
+  expenseSave.bindValue(":expcat_purchprice_accnt_id", _purchasePrice->id());
+  expenseSave.bindValue(":expcat_liability_accnt_id", _liability->id());
+  expenseSave.bindValue(":expcat_freight_accnt_id", _freight->id());
+  expenseSave.exec();
 
   done(_expcatid);
 }
 
 void expenseCategory::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery expensepopulate;
+  expensepopulate.prepare( "SELECT * "
              "FROM expcat "
              "WHERE (expcat_id=:expcat_id);" );
-  q.bindValue(":expcat_id", _expcatid);
-  q.exec();
-  if (q.first())
+  expensepopulate.bindValue(":expcat_id", _expcatid);
+  expensepopulate.exec();
+  if (expensepopulate.first())
   {
     if (_mode != cCopy)
     {
-      _category->setText(q.value("expcat_code").toString());
-      _description->setText(q.value("expcat_descrip").toString());
-      _active->setChecked(q.value("expcat_active").toBool());
+      _category->setText(expensepopulate.value("expcat_code").toString());
+      _description->setText(expensepopulate.value("expcat_descrip").toString());
+      _active->setChecked(expensepopulate.value("expcat_active").toBool());
     }
     else
       _active->setChecked(TRUE);
 
-    _expense->setId(q.value("expcat_exp_accnt_id").toInt());
-    _purchasePrice->setId(q.value("expcat_purchprice_accnt_id").toInt());
-    _liability->setId(q.value("expcat_liability_accnt_id").toInt());
-    _freight->setId(q.value("expcat_freight_accnt_id").toInt());
+    _expense->setId(expensepopulate.value("expcat_exp_accnt_id").toInt());
+    _purchasePrice->setId(expensepopulate.value("expcat_purchprice_accnt_id").toInt());
+    _liability->setId(expensepopulate.value("expcat_liability_accnt_id").toInt());
+    _freight->setId(expensepopulate.value("expcat_freight_accnt_id").toInt());
   }
 }
  

@@ -70,24 +70,26 @@ void customCommands::sEdit()
 
 void customCommands::sDelete()
 {
-  q.prepare("BEGIN; "
+  XSqlQuery customDelete;
+  customDelete.prepare("BEGIN; "
             "DELETE FROM cmdarg WHERE (cmdarg_cmd_id=:cmd_id); "
             "DELETE FROM cmd WHERE (cmd_id=:cmd_id); "
             "SELECT updateCustomPrivs(); "
             "COMMIT; ");
-  q.bindValue(":cmd_id", _commands->id());
-  if(q.exec())
+  customDelete.bindValue(":cmd_id", _commands->id());
+  if(customDelete.exec())
     sFillList();
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (customDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void customCommands::sFillList()
 {
-  q.exec("SELECT cmd.*,"
+  XSqlQuery customFillList;
+  customFillList.exec("SELECT cmd.*,"
          "       CASE WHEN nspname='public' THEN ''"
          "            ELSE nspname END AS nspname"
          "  FROM cmd, pg_class, pg_namespace"
@@ -97,10 +99,10 @@ void customCommands::sFillList()
          "        'Products','Inventory','Schedule','Purchase', "
          "        'Manufacture','CRM','Sales','Accounting','System'))) "
          " ORDER BY cmd_module, cmd_title;");
-  _commands->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _commands->populate(customFillList);
+  if (customFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

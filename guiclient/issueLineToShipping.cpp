@@ -118,6 +118,7 @@ enum SetResponse issueLineToShipping::set(const ParameterList &pParams)
 
 void issueLineToShipping::sIssue()
 {
+  XSqlQuery issueIssue;
   if (_qtyToIssue->toDouble() <= 0)
   {
     XMessageBox::message( (isVisible() ? this : parentWidget()), QMessageBox::Warning, tr("Invalid Quantity to Issue to Shipping"),
@@ -130,14 +131,14 @@ void issueLineToShipping::sIssue()
 
   if(_requireInventory || ("SO" == _ordertype && _metrics->boolean("EnableSOReservations")))
   {
-    q.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :orderitemid, :orderqty) AS result;");
-    q.bindValue(":ordertype",   _ordertype);
-    q.bindValue(":orderitemid", _itemid);
-    q.bindValue(":orderqty",  _qtyToIssue->toDouble());
-    q.exec();
-    if (q.first())
+    issueIssue.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :orderitemid, :orderqty) AS result;");
+    issueIssue.bindValue(":ordertype",   _ordertype);
+    issueIssue.bindValue(":orderitemid", _itemid);
+    issueIssue.bindValue(":orderqty",  _qtyToIssue->toDouble());
+    issueIssue.exec();
+    if (issueIssue.first())
     {
-      int result = q.value("result").toInt();
+      int result = issueIssue.value("result").toInt();
       if (result < 0)
       {
         ParameterList errp;
@@ -161,20 +162,20 @@ void issueLineToShipping::sIssue()
             "   AND  (toitem_id=<? value(\"toitem_id\") ?>));"
             "<? endif ?>" ;
         MetaSQLQuery errm(errs);
-        q = errm.toQuery(errp);
-        if (! q.first() && q.lastError().type() != QSqlError::NoError)
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        issueIssue = errm.toQuery(errp);
+        if (! issueIssue.first() && issueIssue.lastError().type() != QSqlError::NoError)
+            systemError(this, issueIssue.lastError().databaseText(), __FILE__, __LINE__);
         systemError(this,
               storedProcErrorLookup("sufficientInventoryToShipItem",
                   result)
-              .arg(q.value("item_number").toString())
-              .arg(q.value("warehous_code").toString()), __FILE__, __LINE__);
+              .arg(issueIssue.value("item_number").toString())
+              .arg(issueIssue.value("warehous_code").toString()), __FILE__, __LINE__);
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (issueIssue.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, issueIssue.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -211,17 +212,17 @@ void issueLineToShipping::sIssue()
                 " GROUP BY toitem_qty_ordered, toitem_qty_shipped;"
                 "<? endif ?>";
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.next() && q.value("overship").toBool())
+  issueIssue = mql.toQuery(params);
+  if (issueIssue.next() && issueIssue.value("overship").toBool())
   {
     if(XMessageBox::message( (isVisible() ? this : parentWidget()) , QMessageBox::Question, tr("Inventory Overshipped"),
         tr("<p>You have selected to ship more inventory than required. Do you want to continue?"),
         tr("Yes"), tr("No"), _snooze, 0, 1) == 1)
       return;
   }
-  if (q.lastError().type() != QSqlError::NoError)
+  if (issueIssue.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, issueIssue.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -235,7 +236,7 @@ void issueLineToShipping::sIssue()
   issue.exec("BEGIN;");
 
   // If this is a lot/serial controlled job item, we need to post production first
-  if (q.value("itemsite_costmethod").toString() == "J")
+  if (issueIssue.value("itemsite_costmethod").toString() == "J")
   {
     XSqlQuery prod;
     prod.prepare("SELECT postSoItemProduction(:soitem_id, :qty, :ts) AS result;");

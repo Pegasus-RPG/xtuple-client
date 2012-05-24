@@ -170,6 +170,7 @@ void workOrderMaterials::sView()
 
 void workOrderMaterials::sDelete()
 {
+  XSqlQuery workDelete;
   int womatlid = _womatl->id();
   if (_womatl->currentItem()->rawValue("womatl_qtyiss").toDouble() > 0)
   {
@@ -194,12 +195,12 @@ void workOrderMaterials::sDelete()
         newdlg.exec();
         sFillList();
 
-        q.prepare("SELECT womatl_qtyiss AS qtyissued "
+        workDelete.prepare("SELECT womatl_qtyiss AS qtyissued "
                   "FROM womatl "
                   "WHERE (womatl_id=:womatl_id) ");
-        q.bindValue(":womatl_id", womatlid);
-        q.exec();
-        if (!q.first() || q.value("qtyissued").toInt() != 0)
+        workDelete.bindValue(":womatl_id", womatlid);
+        workDelete.exec();
+        if (!workDelete.first() || workDelete.value("qtyissued").toInt() != 0)
           return;
       }
       else
@@ -216,21 +217,21 @@ void workOrderMaterials::sDelete()
     }
   }
 
-  q.prepare("SELECT deleteWoMaterial(:womatl_id);");
-  q.bindValue(":womatl_id", womatlid);
-  q.exec();
-  if (q.first())
+  workDelete.prepare("SELECT deleteWoMaterial(:womatl_id);");
+  workDelete.bindValue(":womatl_id", womatlid);
+  workDelete.exec();
+  if (workDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = workDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteWoMaterial", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -239,56 +240,59 @@ void workOrderMaterials::sDelete()
 
 void workOrderMaterials::sViewAvailability()
 {
-  q.prepare( "SELECT womatl_itemsite_id, womatl_duedate "
+  XSqlQuery workViewAvailability;
+  workViewAvailability.prepare( "SELECT womatl_itemsite_id, womatl_duedate "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _womatl->id());
-  q.exec();
-  if (q.first())
+  workViewAvailability.bindValue(":womatl_id", _womatl->id());
+  workViewAvailability.exec();
+  if (workViewAvailability.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("womatl_itemsite_id"));
-    params.append("byDate", q.value("womatl_duedate"));
+    params.append("itemsite_id", workViewAvailability.value("womatl_itemsite_id"));
+    params.append("byDate", workViewAvailability.value("womatl_duedate"));
     params.append("run");
 
     dspInventoryAvailability *newdlg = new dspInventoryAvailability();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workViewAvailability.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workViewAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void workOrderMaterials::sViewSubstituteAvailability()
 {
-  q.prepare( "SELECT womatl_itemsite_id, womatl_duedate "
+  XSqlQuery workViewSubstituteAvailability;
+  workViewSubstituteAvailability.prepare( "SELECT womatl_itemsite_id, womatl_duedate "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", _womatl->id());
-  q.exec();
-  if (q.first())
+  workViewSubstituteAvailability.bindValue(":womatl_id", _womatl->id());
+  workViewSubstituteAvailability.exec();
+  if (workViewSubstituteAvailability.first())
   {
     ParameterList params;
-    params.append("itemsite_id", q.value("womatl_itemsite_id"));
-    params.append("byDate", q.value("womatl_duedate"));
+    params.append("itemsite_id", workViewSubstituteAvailability.value("womatl_itemsite_id"));
+    params.append("byDate", workViewSubstituteAvailability.value("womatl_duedate"));
     params.append("run");
 
     dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workViewSubstituteAvailability.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workViewSubstituteAvailability.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void workOrderMaterials::sSubstitute()
 {
+  XSqlQuery workSubstitute;
   int womatlid = _womatl->id();
 
   XSqlQuery sub;
@@ -336,18 +340,18 @@ void workOrderMaterials::sSubstitute()
       newdlg.set(params);
       if (newdlg.exec() != XDialog::Rejected)
       {
-        q.prepare( "DELETE FROM womatl "
+        workSubstitute.prepare( "DELETE FROM womatl "
                    "WHERE (womatl_id=:womatl_id);" );
-        q.bindValue(":womatl_id", womatlid);
-        q.exec();
+        workSubstitute.bindValue(":womatl_id", womatlid);
+        workSubstitute.exec();
 
         omfgThis->sWorkOrderMaterialsUpdated(_wo->id(), _womatl->id(), TRUE);
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (workSubstitute.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, workSubstitute.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -360,9 +364,10 @@ void workOrderMaterials::sCatchMaterialsUpdated(int pWoid, int, bool)
 
 void workOrderMaterials::sFillList()
 {
+  XSqlQuery workFillList;
   if (_wo->isValid())
   {
-    q.prepare( "SELECT womatl_id, *,"
+    workFillList.prepare( "SELECT womatl_id, *,"
                "       (item_descrip1 || ' ' || item_descrip2) AS description,"
                "       CASE WHEN (womatl_issuemethod = 'S') THEN :push"
                "            WHEN (womatl_issuemethod = 'L') THEN :pull"
@@ -386,20 +391,20 @@ void workOrderMaterials::sFillList()
                " AND (itemsite_item_id=item_id)"
                " AND (wo_id=:wo_id) ) "
                "ORDER BY item_number;" );
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":push",  tr("Push"));
-    q.bindValue(":pull",  tr("Pull"));
-    q.bindValue(":mixed", tr("Mixed"));
-    q.bindValue(":error", tr("Error"));
-    q.exec();
-    _womatl->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
+    workFillList.bindValue(":wo_id", _wo->id());
+    workFillList.bindValue(":push",  tr("Push"));
+    workFillList.bindValue(":pull",  tr("Pull"));
+    workFillList.bindValue(":mixed", tr("Mixed"));
+    workFillList.bindValue(":error", tr("Error"));
+    workFillList.exec();
+    _womatl->populate(workFillList);
+    if (workFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, workFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "SELECT item_picklist,"
+    workFillList.prepare( "SELECT item_picklist,"
                "       COUNT(*) AS total,"
                "       COALESCE(SUM(womatl_qtyper * (1 + womatl_scrap))) AS qtyper "
                "FROM womatl, itemsite, item "
@@ -407,33 +412,33 @@ void workOrderMaterials::sFillList()
                " AND (itemsite_item_id=item_id)"
                " AND (womatl_wo_id=:wo_id) ) "
                "GROUP BY item_picklist;" );
-    q.bindValue(":wo_id", _wo->id());
-    q.exec();
+    workFillList.bindValue(":wo_id", _wo->id());
+    workFillList.exec();
     bool   foundPick    = FALSE;
     bool   foundNonPick = FALSE;
     int    totalNumber  = 0;
     double totalQtyPer  = 0.0;
-    while (q.next())
+    while (workFillList.next())
     {
-      totalNumber += q.value("total").toInt();
-      totalQtyPer += q.value("qtyper").toDouble();
+      totalNumber += workFillList.value("total").toInt();
+      totalQtyPer += workFillList.value("qtyper").toDouble();
 
-      if (q.value("item_picklist").toBool())
+      if (workFillList.value("item_picklist").toBool())
       {
         foundPick = TRUE;
-        _pickNumber->setText(q.value("total").toDouble());
-        _pickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
+        _pickNumber->setText(workFillList.value("total").toDouble());
+        _pickQtyPer->setText(formatQtyPer(workFillList.value("qtyper").toDouble()));
       }
       else
       {
         foundNonPick = TRUE;
-        _nonPickNumber->setText(q.value("total").toDouble());
-        _nonPickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
+        _nonPickNumber->setText(workFillList.value("total").toDouble());
+        _nonPickQtyPer->setText(formatQtyPer(workFillList.value("qtyper").toDouble()));
       }
     }
-    if (q.lastError().type() != QSqlError::NoError)
+    if (workFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, workFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -454,7 +459,7 @@ void workOrderMaterials::sFillList()
 
     if (_privileges->check("ViewCosts"))
     {
-      q.prepare( "SELECT p.item_maxcost AS f_maxcost,"
+      workFillList.prepare( "SELECT p.item_maxcost AS f_maxcost,"
                  "       COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, (womatl_qtyfxd + womatl_qtyper) * (1 + womatl_scrap)) * stdCost(c.item_id))) AS f_stdcost,"
                  "       COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, (womatl_qtyfxd + womatl_qtyper) * (1 + womatl_scrap)) * actCost(c.item_id))) AS f_actcost "
                  "FROM wo, womatl, itemsite AS ci, itemsite AS pi, item AS c, item AS p "
@@ -465,17 +470,17 @@ void workOrderMaterials::sFillList()
                  " AND (pi.itemsite_item_id=p.item_id)"
                  " AND (wo_id=:wo_id) ) "
                  "GROUP BY p.item_maxcost;" );
-      q.bindValue(":wo_id", _wo->id());
-      q.exec();
-      if (q.first())
+      workFillList.bindValue(":wo_id", _wo->id());
+      workFillList.exec();
+      if (workFillList.first())
       {
-        _currentStdCost->setText(q.value("f_stdcost").toDouble());
-        _currentActCost->setText(q.value("f_actcost").toDouble());
-        _maxCost->setText(q.value("f_maxcost").toDouble());
+        _currentStdCost->setText(workFillList.value("f_stdcost").toDouble());
+        _currentActCost->setText(workFillList.value("f_actcost").toDouble());
+        _maxCost->setText(workFillList.value("f_maxcost").toDouble());
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (workFillList.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, workFillList.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }

@@ -140,17 +140,18 @@ void dspCheckRegister::sPrint()
 
 void dspCheckRegister::sFillList()
 {
+  XSqlQuery dspFillList;
   MetaSQLQuery mql = mqlLoad("checkRegister", "detail");
 
   ParameterList params;
   if (!setParams(params))
     return;
   
-  q = mql.toQuery(params);
-  _check->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  dspFillList = mql.toQuery(params);
+  _check->populate(dspFillList, true);
+  if (dspFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -187,15 +188,15 @@ void dspCheckRegister::sFillList()
                " WHERE(bankaccnt_id=<? value(\"bankaccnt_id\") ?>)  "
                "GROUP BY bankaccnt_curr_id;" );
   MetaSQLQuery totm(tots);
-  q = totm.toQuery(params);	// reused from above
-  if(q.first())
+  dspFillList = totm.toQuery(params);	// reused from above
+  if(dspFillList.first())
   {
-    _total->setDouble(q.value("amount").toDouble());
-    _totalCurr->setText(q.value("currAbbr").toString());
+    _total->setDouble(dspFillList.value("amount").toDouble());
+    _totalCurr->setText(dspFillList.value("currAbbr").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -213,6 +214,7 @@ void dspCheckRegister::sPopulateMenu( QMenu * pMenu )
 
 void dspCheckRegister::sVoidPosted()
 {
+  XSqlQuery dspVoidPosted;
   ParameterList params;
 
   XDateInputDialog newdlg(this, "", TRUE);
@@ -222,14 +224,14 @@ void dspCheckRegister::sVoidPosted()
   if (returnVal == XDialog::Accepted)
   {
     QDate voidDate = newdlg.getDate();
-    q.prepare("SELECT voidPostedCheck(:check_id, fetchJournalNumber('AP-CK'),"
+    dspVoidPosted.prepare("SELECT voidPostedCheck(:check_id, fetchJournalNumber('AP-CK'),"
 	      "                         DATE :voidDate) AS result;");
-    q.bindValue(":check_id", _check->id());
-    q.bindValue(":voidDate", voidDate);
-    q.exec();
-    if (q.first())
+    dspVoidPosted.bindValue(":check_id", _check->id());
+    dspVoidPosted.bindValue(":voidDate", voidDate);
+    dspVoidPosted.exec();
+    if (dspVoidPosted.first())
     {
-      int result = q.value("result").toInt();
+      int result = dspVoidPosted.value("result").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("voidPostedCheck", result),
@@ -237,9 +239,9 @@ void dspCheckRegister::sVoidPosted()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (dspVoidPosted.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspVoidPosted.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

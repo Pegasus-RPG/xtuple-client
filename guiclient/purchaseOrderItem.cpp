@@ -25,6 +25,7 @@
 purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery purchasepurchaseOrderItem;
   setupUi(this);
 
 #ifndef Q_WS_MAC
@@ -82,9 +83,9 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _received->setValidator(omfgThis->qtyVal());
   _invVendorUOMRatio->setValidator(omfgThis->ratioVal());
 
-  q.exec("SELECT DISTINCT itemsrc_manuf_name FROM itemsrc ORDER BY 1;");
-  for (int i = 0; q.next(); i++)
-    _manufName->append(i, q.value("itemsrc_manuf_name").toString());
+  purchasepurchaseOrderItem.exec("SELECT DISTINCT itemsrc_manuf_name FROM itemsrc ORDER BY 1;");
+  for (int i = 0; purchasepurchaseOrderItem.next(); i++)
+    _manufName->append(i, purchasepurchaseOrderItem.value("itemsrc_manuf_name").toString());
   _manufName->setId(-1);
 
   //If not multi-warehouse hide whs control
@@ -122,6 +123,7 @@ void purchaseOrderItem::languageChange()
 
 enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 {
+  XSqlQuery purchaseet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -154,24 +156,24 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   {
     _poheadid = param.toInt();
 
-    q.prepare( "SELECT pohead_taxzone_id, pohead_number, pohead_orderdate, pohead_status, " // pohead_taxzone_id added
+    purchaseet.prepare( "SELECT pohead_taxzone_id, pohead_number, pohead_orderdate, pohead_status, " // pohead_taxzone_id added
                "       vend_id, vend_restrictpurch, pohead_curr_id "
                "FROM pohead, vendinfo "
                "WHERE ( (pohead_vend_id=vend_id)"
                " AND (pohead_id=:pohead_id) );" );
-    q.bindValue(":pohead_id", param.toInt());
-    q.exec();
-    if (q.first())
+    purchaseet.bindValue(":pohead_id", param.toInt());
+    purchaseet.exec();
+    if (purchaseet.first())
     {
-      _poNumber->setText(q.value("pohead_number").toString());
-      _poStatus = q.value("pohead_status").toString();
-      _unitPrice->setEffective(q.value("pohead_orderdate").toDate());
-      _unitPrice->setId(q.value("pohead_curr_id").toInt());
-	  _taxzoneid=q.value("pohead_taxzone_id").toInt();   // added  to pick up tax zone id.
-	  _tax->setEffective(q.value("pohead_orderdate").toDate());
-      _tax->setId(q.value("pohead_curr_id").toInt());
+      _poNumber->setText(purchaseet.value("pohead_number").toString());
+      _poStatus = purchaseet.value("pohead_status").toString();
+      _unitPrice->setEffective(purchaseet.value("pohead_orderdate").toDate());
+      _unitPrice->setId(purchaseet.value("pohead_curr_id").toInt());
+	  _taxzoneid=purchaseet.value("pohead_taxzone_id").toInt();   // added  to pick up tax zone id.
+	  _tax->setEffective(purchaseet.value("pohead_orderdate").toDate());
+      _tax->setId(purchaseet.value("pohead_curr_id").toInt());
 
-      if (q.value("vend_restrictpurch").toBool())
+      if (purchaseet.value("vend_restrictpurch").toBool())
       {
         _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                                   "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
@@ -185,7 +187,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
                                   " AND (itemsrc_active)"
                                   " AND (itemsrc_vend_id=%1) ) "
                                   "ORDER BY item_number" )
-                         .arg(q.value("vend_id").toInt()) );
+                         .arg(purchaseet.value("vend_id").toInt()) );
         _item->setValidationQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                                             "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                                             "                uom_name, item_type, item_config, item_active, item_upccode "
@@ -198,7 +200,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
                                             " AND (itemsrc_active)"
                                             " AND (itemsrc_vend_id=%1) "
                                             " AND (itemsite_item_id=:item_id) ) ")
-                                   .arg(q.value("vend_id").toInt()) );
+                                   .arg(purchaseet.value("vend_id").toInt()) );
       }
       else
       {
@@ -221,16 +223,16 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   {
     _poitemid = param.toInt();
 
-    q.prepare( "SELECT pohead_number, pohead_id "
+    purchaseet.prepare( "SELECT pohead_number, pohead_id "
                "FROM pohead, poitem "
                "WHERE ( (pohead_id=poitem_pohead_id) "
                " AND (poitem_id=:poitem_id) );" );
-    q.bindValue(":poitem_id", param.toInt());
-    q.exec();
-    if (q.first())
+    purchaseet.bindValue(":poitem_id", param.toInt());
+    purchaseet.exec();
+    if (purchaseet.first())
     {
-      _poNumber->setText(q.value("pohead_number").toString());
-	  _poheadid = q.value("pohead_id").toInt();
+      _poNumber->setText(purchaseet.value("pohead_number").toString());
+	  _poheadid = purchaseet.value("pohead_id").toInt();
     }
 
     populate();
@@ -247,9 +249,9 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       _mode = cNew;
       _save->setEnabled(false);
 
-      q.exec("SELECT NEXTVAL('poitem_poitem_id_seq') AS poitem_id;");
-      if (q.first())
-        _poitemid = q.value("poitem_id").toInt();
+      purchaseet.exec("SELECT NEXTVAL('poitem_poitem_id_seq') AS poitem_id;");
+      if (purchaseet.first())
+        _poitemid = purchaseet.value("poitem_id").toInt();
       else
       {
         systemError(this, tr("A System Error occurred at %1::%2.")
@@ -260,25 +262,25 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
       if(_parentso != -1)
       {
-        q.prepare( "INSERT INTO charass"
+        purchaseet.prepare( "INSERT INTO charass"
                    "      (charass_target_type, charass_target_id,"
                    "       charass_char_id, charass_value) "
                    "SELECT 'PI', :orderid, charass_char_id, charass_value"
                    "  FROM charass"
                    " WHERE ((charass_target_type='SI')"
                    "   AND  (charass_target_id=:soitem_id));");
-        q.bindValue(":orderid", _poitemid);
-        q.bindValue(":soitem_id", _parentso);
-        q.exec();
+        purchaseet.bindValue(":orderid", _poitemid);
+        purchaseet.bindValue(":soitem_id", _parentso);
+        purchaseet.exec();
       }
 
-      q.prepare( "SELECT (COALESCE(MAX(poitem_linenumber), 0) + 1) AS _linenumber "
+      purchaseet.prepare( "SELECT (COALESCE(MAX(poitem_linenumber), 0) + 1) AS _linenumber "
                  "FROM poitem "
                  "WHERE (poitem_pohead_id=:pohead_id);" );
-      q.bindValue(":pohead_id", _poheadid);
-      q.exec();
-      if (q.first())
-        _lineNumber->setText(q.value("_linenumber").toString());
+      purchaseet.bindValue(":pohead_id", _poheadid);
+      purchaseet.exec();
+      if (purchaseet.first())
+        _lineNumber->setText(purchaseet.value("_linenumber").toString());
       else
       {
         systemError(this, tr("A System Error occurred at %1::%2.")
@@ -372,17 +374,17 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
   if(_parentso != -1)
   {
-    q.prepare("SELECT coitem_prcost"
+    purchaseet.prepare("SELECT coitem_prcost"
               "  FROM coitem"
               " WHERE (coitem_id=:parentso); ");
-    q.bindValue(":parentso", _parentso);
-    q.exec();
-    if(q.first())
+    purchaseet.bindValue(":parentso", _parentso);
+    purchaseet.exec();
+    if(purchaseet.first())
     {
-      if(q.value("coitem_prcost").toDouble() > 0)
+      if(purchaseet.value("coitem_prcost").toDouble() > 0)
       {
         _overriddenUnitPrice = true;
-        _unitPrice->setLocalValue(q.value("coitem_prcost").toDouble());
+        _unitPrice->setLocalValue(purchaseet.value("coitem_prcost").toDouble());
         sPopulateExtPrice();
       }
     }
@@ -393,91 +395,92 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
 void purchaseOrderItem::populate()
 {
+  XSqlQuery purchasepopulate;
   MetaSQLQuery mql = mqlLoad("purchaseOrderItems", "detail");
 
   ParameterList params;
   params.append("poitem_id", _poitemid);
   params.append("sonum",     tr("Sales Order #")),
   params.append("wonum",     tr("Work Order #")),
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  purchasepopulate = mql.toQuery(params);
+  if (purchasepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, purchasepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  if (q.first())
+  if (purchasepopulate.first())
   {
-    _poNumber->setText(q.value("pohead_number").toString());
-    _lineNumber->setText(q.value("poitem_linenumber").toString());
-    _taxzoneid=q.value("pohead_taxzone_id").toInt();   // added  to pick up tax zone id.
-    _dueDate->setDate(q.value("poitem_duedate").toDate());
-    _ordered->setDouble(q.value("poitem_qty_ordered").toDouble());
+    _poNumber->setText(purchasepopulate.value("pohead_number").toString());
+    _lineNumber->setText(purchasepopulate.value("poitem_linenumber").toString());
+    _taxzoneid=purchasepopulate.value("pohead_taxzone_id").toInt();   // added  to pick up tax zone id.
+    _dueDate->setDate(purchasepopulate.value("poitem_duedate").toDate());
+    _ordered->setDouble(purchasepopulate.value("poitem_qty_ordered").toDouble());
     _orderQtyCache = _ordered->toDouble();
-    _received->setDouble(q.value("poitem_qty_received").toDouble());
-    _unitPrice->set(q.value("poitem_unitprice").toDouble(),
-		    q.value("pohead_curr_id").toInt(),
-		    q.value("pohead_orderdate").toDate(), false);
-    _freight->setLocalValue(q.value("poitem_freight").toDouble());
-    _extendedPrice->setLocalValue(q.value("extended_price").toDouble());
-    _taxtype->setId(q.value("poitem_taxtype_id").toInt());
-    _taxRecoverable->setChecked(q.value("poitem_tax_recoverable").toBool());
-    _notes->setText(q.value("poitem_comments").toString());
-    _project->setId(q.value("poitem_prj_id").toInt());
-    if(q.value("override_cost").toDouble() > 0)
+    _received->setDouble(purchasepopulate.value("poitem_qty_received").toDouble());
+    _unitPrice->set(purchasepopulate.value("poitem_unitprice").toDouble(),
+		    purchasepopulate.value("pohead_curr_id").toInt(),
+		    purchasepopulate.value("pohead_orderdate").toDate(), false);
+    _freight->setLocalValue(purchasepopulate.value("poitem_freight").toDouble());
+    _extendedPrice->setLocalValue(purchasepopulate.value("extended_price").toDouble());
+    _taxtype->setId(purchasepopulate.value("poitem_taxtype_id").toInt());
+    _taxRecoverable->setChecked(purchasepopulate.value("poitem_tax_recoverable").toBool());
+    _notes->setText(purchasepopulate.value("poitem_comments").toString());
+    _project->setId(purchasepopulate.value("poitem_prj_id").toInt());
+    if(purchasepopulate.value("override_cost").toDouble() > 0)
       _overriddenUnitPrice = true;
 
-    if(q.value("poitem_order_id") != -1)
+    if(purchasepopulate.value("poitem_order_id") != -1)
     {
       _ordered->setEnabled(FALSE);
       _dueDate->setEnabled(FALSE);
-      _soLit->setText(q.value("demand_type").toString());
-      _so->setText(q.value("order_number").toString());
-//      _soLine->setText(q.value("orderline_number").toString());
+      _soLit->setText(purchasepopulate.value("demand_type").toString());
+      _so->setText(purchasepopulate.value("order_number").toString());
+//      _soLine->setText(purchasepopulate.value("orderline_number").toString());
     }
     else
       _tab->setTabEnabled(_tab->indexOf(_demandTab), FALSE);
 
-    if (q.value("poitem_itemsite_id").toInt() == -1)
+    if (purchasepopulate.value("poitem_itemsite_id").toInt() == -1)
     {
       _nonInventoryItem->setChecked(TRUE);
-      _expcat->setId(q.value("poitem_expcat_id").toInt());
+      _expcat->setId(purchasepopulate.value("poitem_expcat_id").toInt());
       sPopulateItemSourceInfo(-1);
 
-      _vendorItemNumber->setText(q.value("poitem_vend_item_number").toString());
-      _vendorDescrip->setText(q.value("poitem_vend_item_descrip").toString());
-      _vendorUOM->setText(q.value("poitem_vend_uom").toString());
-      _uom->setText(q.value("poitem_vend_uom").toString());
+      _vendorItemNumber->setText(purchasepopulate.value("poitem_vend_item_number").toString());
+      _vendorDescrip->setText(purchasepopulate.value("poitem_vend_item_descrip").toString());
+      _vendorUOM->setText(purchasepopulate.value("poitem_vend_uom").toString());
+      _uom->setText(purchasepopulate.value("poitem_vend_uom").toString());
     }
     else
     {
       _inventoryItem->setChecked(TRUE);
-      _item->setItemsiteid(q.value("poitem_itemsite_id").toInt());
+      _item->setItemsiteid(purchasepopulate.value("poitem_itemsite_id").toInt());
       sPopulateItemSourceInfo(_item->id());
       if (_metrics->boolean("RevControl"))
       {
-        _bomRevision->setId(q.value("poitem_bom_rev_id").toInt());
-        _booRevision->setId(q.value("poitem_boo_rev_id").toInt());
-        _bomRevision->setEnabled(q.value("poitem_status").toString() == "U" && _privileges->boolean("UseInactiveRevisions"));
-        _booRevision->setEnabled(q.value("poitem_status").toString() == "U" && _privileges->boolean("UseInactiveRevisions"));
+        _bomRevision->setId(purchasepopulate.value("poitem_bom_rev_id").toInt());
+        _booRevision->setId(purchasepopulate.value("poitem_boo_rev_id").toInt());
+        _bomRevision->setEnabled(purchasepopulate.value("poitem_status").toString() == "U" && _privileges->boolean("UseInactiveRevisions"));
+        _booRevision->setEnabled(purchasepopulate.value("poitem_status").toString() == "U" && _privileges->boolean("UseInactiveRevisions"));
       }
     }
 
-    _itemsrcid = q.value("poitem_itemsrc_id").toInt();
-    _vendorItemNumber->setText(q.value("poitem_vend_item_number").toString());
-    _vendorDescrip->setText(q.value("poitem_vend_item_descrip").toString());
-    _vendorUOM->setText(q.value("poitem_vend_uom").toString());
-    _uom->setText(q.value("poitem_vend_uom").toString());
-    _invVendorUOMRatio->setDouble(q.value("poitem_invvenduomratio").toDouble());
-    _invVendUOMRatio = q.value("poitem_invvenduomratio").toDouble();
-    _manufName->setText(q.value("poitem_manuf_name").toString());
+    _itemsrcid = purchasepopulate.value("poitem_itemsrc_id").toInt();
+    _vendorItemNumber->setText(purchasepopulate.value("poitem_vend_item_number").toString());
+    _vendorDescrip->setText(purchasepopulate.value("poitem_vend_item_descrip").toString());
+    _vendorUOM->setText(purchasepopulate.value("poitem_vend_uom").toString());
+    _uom->setText(purchasepopulate.value("poitem_vend_uom").toString());
+    _invVendorUOMRatio->setDouble(purchasepopulate.value("poitem_invvenduomratio").toDouble());
+    _invVendUOMRatio = purchasepopulate.value("poitem_invvenduomratio").toDouble();
+    _manufName->setText(purchasepopulate.value("poitem_manuf_name").toString());
     if (_manufName->id() < 0)
     {
       _manufName->append(_manufName->count(),
-                         q.value("poitem_manuf_name").toString());
-      _manufName->setText(q.value("poitem_manuf_name").toString());
+                         purchasepopulate.value("poitem_manuf_name").toString());
+      _manufName->setText(purchasepopulate.value("poitem_manuf_name").toString());
     }
-    _manufItemNumber->setText(q.value("poitem_manuf_item_number").toString());
-    _manufItemDescrip->setText(q.value("poitem_manuf_item_descrip").toString());
+    _manufItemNumber->setText(purchasepopulate.value("poitem_manuf_item_number").toString());
+    _manufItemDescrip->setText(purchasepopulate.value("poitem_manuf_item_descrip").toString());
 
     if (!_itemsrcid == -1)
     {
@@ -487,24 +490,24 @@ void purchaseOrderItem::populate()
       _manufItemDescrip->setEnabled(FALSE);
 
       if(_vendorItemNumber->text().isEmpty())
-        _vendorItemNumber->setText(q.value("itemsrc_vend_item_number").toString());
+        _vendorItemNumber->setText(purchasepopulate.value("itemsrc_vend_item_number").toString());
       if(_vendorDescrip->toPlainText().isEmpty())
-        _vendorDescrip->setText(q.value("itemsrc_vend_item_descrip").toString());
-      _minOrderQty->setDouble(q.value("itemsrc_minordqty").toDouble());
-      _orderQtyMult->setDouble(q.value("itemsrc_multordqty").toDouble());
+        _vendorDescrip->setText(purchasepopulate.value("itemsrc_vend_item_descrip").toString());
+      _minOrderQty->setDouble(purchasepopulate.value("itemsrc_minordqty").toDouble());
+      _orderQtyMult->setDouble(purchasepopulate.value("itemsrc_multordqty").toDouble());
 
-      _minimumOrder = q.value("itemsrc_minordqty").toDouble();
-      _orderMultiple = q.value("itemsrc_multordqty").toDouble();
+      _minimumOrder = purchasepopulate.value("itemsrc_minordqty").toDouble();
+      _orderMultiple = purchasepopulate.value("itemsrc_multordqty").toDouble();
 
       if(_manufName->currentText().isEmpty())
-        _manufName->setText(q.value("itemsrc_manuf_name").toString());
+        _manufName->setText(purchasepopulate.value("itemsrc_manuf_name").toString());
       if(_manufItemNumber->text().isEmpty())
-        _manufItemNumber->setText(q.value("itemsrc_manuf_item_number").toString());
+        _manufItemNumber->setText(purchasepopulate.value("itemsrc_manuf_item_number").toString());
       if(_manufItemDescrip->toPlainText().isEmpty())
-        _manufItemDescrip->setText(q.value("itemsrc_manuf_item_descrip").toString());
+        _manufItemDescrip->setText(purchasepopulate.value("itemsrc_manuf_item_descrip").toString());
     }
 
-    q.prepare( "SELECT DISTINCT char_id, char_name,"
+    purchasepopulate.prepare( "SELECT DISTINCT char_id, char_name,"
                "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='I') AND (c.charass_target_id=:item_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
                "  FROM charass a, char "
                "    LEFT OUTER JOIN charass b"
@@ -515,19 +518,19 @@ void purchaseOrderItem::populate()
                "   AND   (a.charass_target_type='I')"
                "   AND   (a.charass_target_id=:item_id) ) "
                " ORDER BY char_name;" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
+    purchasepopulate.bindValue(":item_id", _item->id());
+    purchasepopulate.bindValue(":poitem_id", _poitemid);
+    purchasepopulate.exec();
     int row = 0;
     QModelIndex idx;
-    while(q.next())
+    while(purchasepopulate.next())
     {
       _itemchar->insertRow(_itemchar->rowCount());
       idx = _itemchar->index(row, 0);
-      _itemchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
-      _itemchar->setData(idx, q.value("char_id"), Qt::UserRole);
+      _itemchar->setData(idx, purchasepopulate.value("char_name"), Qt::DisplayRole);
+      _itemchar->setData(idx, purchasepopulate.value("char_id"), Qt::UserRole);
       idx = _itemchar->index(row, 1);
-      _itemchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
+      _itemchar->setData(idx, purchasepopulate.value("charass_value"), Qt::DisplayRole);
       _itemchar->setData(idx, _item->id(), Xt::IdRole);
       _itemchar->setData(idx, _item->id(), Qt::UserRole);
       row++;
@@ -539,6 +542,7 @@ void purchaseOrderItem::populate()
 
 void purchaseOrderItem::sSave()
 {
+  XSqlQuery purchaseSave;
   if (!_inventoryItem->isChecked() && _expcat->id() == -1)
   {
     QMessageBox::critical( this, tr("Expense Category Required"),
@@ -637,7 +641,7 @@ void purchaseOrderItem::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare( "INSERT INTO poitem "
+    purchaseSave.prepare( "INSERT INTO poitem "
                "( poitem_id, poitem_pohead_id, poitem_status, poitem_linenumber,"
                "  poitem_taxtype_id, poitem_tax_recoverable,"
                "  poitem_itemsite_id, poitem_expcat_id,"
@@ -660,8 +664,8 @@ void purchaseOrderItem::sSave()
                "  :poitem_comments, :poitem_prj_id, stdcost(:item_id), :poitem_manuf_name, "
                "  :poitem_manuf_item_number, :poitem_manuf_item_descrip, :poitem_duedate) ;" );
 
-    q.bindValue(":status", _poStatus);
-    q.bindValue(":item_id", _item->id());
+    purchaseSave.bindValue(":status", _poStatus);
+    purchaseSave.bindValue(":item_id", _item->id());
 
     if (_inventoryItem->isChecked())
     {
@@ -674,7 +678,7 @@ void purchaseOrderItem::sSave()
       itemsiteid.bindValue(":warehous_id", _warehouse->id());
       itemsiteid.exec();
       if (itemsiteid.first())
-        q.bindValue(":poitem_itemsite_id", itemsiteid.value("itemsite_id").toInt());
+        purchaseSave.bindValue(":poitem_itemsite_id", itemsiteid.value("itemsite_id").toInt());
       else
       {
         QMessageBox::critical( this, tr("Invalid Item/Site"),
@@ -686,11 +690,11 @@ void purchaseOrderItem::sSave()
     }
     else
     {
-      q.bindValue(":poitem_expcat_id", _expcat->id());
+      purchaseSave.bindValue(":poitem_expcat_id", _expcat->id());
     }
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE poitem "
+    purchaseSave.prepare( "UPDATE poitem "
                "SET poitem_itemsrc_id=:poitem_itemsrc_id,"   
                "    poitem_taxtype_id=:poitem_taxtype_id,"
                "    poitem_tax_recoverable=:poitem_tax_recoverable,"
@@ -708,73 +712,73 @@ void purchaseOrderItem::sSave()
                "    poitem_manuf_item_descrip=:poitem_manuf_item_descrip "
                "WHERE (poitem_id=:poitem_id);" );
 
-  q.bindValue(":poitem_id", _poitemid);
+  purchaseSave.bindValue(":poitem_id", _poitemid);
   if (_taxtype->id() != -1)
-    q.bindValue(":poitem_taxtype_id", _taxtype->id());
-  q.bindValue(":poitem_tax_recoverable", QVariant(_taxRecoverable->isChecked()));
-  q.bindValue(":poitem_pohead_id", _poheadid);
-  q.bindValue(":poitem_linenumber", _lineNumber->text().toInt());
+    purchaseSave.bindValue(":poitem_taxtype_id", _taxtype->id());
+  purchaseSave.bindValue(":poitem_tax_recoverable", QVariant(_taxRecoverable->isChecked()));
+  purchaseSave.bindValue(":poitem_pohead_id", _poheadid);
+  purchaseSave.bindValue(":poitem_linenumber", _lineNumber->text().toInt());
   if (_itemsrcid != -1)
-    q.bindValue(":poitem_itemsrc_id", _itemsrcid);
-  q.bindValue(":poitem_vend_item_number", _vendorItemNumber->text());
-  q.bindValue(":poitem_vend_item_descrip", _vendorDescrip->toPlainText());
-  q.bindValue(":poitem_vend_uom", _vendorUOM->text());
-  q.bindValue(":poitem_invvenduomratio", _invVendorUOMRatio->toDouble());
-  q.bindValue(":poitem_qty_ordered", _ordered->toDouble());
-  q.bindValue(":poitem_unitprice", _unitPrice->localValue());
-  q.bindValue(":poitem_freight", _freight->localValue());
-  q.bindValue(":poitem_duedate", _dueDate->date());
-  q.bindValue(":poitem_manuf_name", _manufName->currentText());
-  q.bindValue(":poitem_manuf_item_number", _manufItemNumber->text());
-  q.bindValue(":poitem_manuf_item_descrip", _manufItemDescrip->toPlainText());
-  q.bindValue(":poitem_comments", _notes->toPlainText());
+    purchaseSave.bindValue(":poitem_itemsrc_id", _itemsrcid);
+  purchaseSave.bindValue(":poitem_vend_item_number", _vendorItemNumber->text());
+  purchaseSave.bindValue(":poitem_vend_item_descrip", _vendorDescrip->toPlainText());
+  purchaseSave.bindValue(":poitem_vend_uom", _vendorUOM->text());
+  purchaseSave.bindValue(":poitem_invvenduomratio", _invVendorUOMRatio->toDouble());
+  purchaseSave.bindValue(":poitem_qty_ordered", _ordered->toDouble());
+  purchaseSave.bindValue(":poitem_unitprice", _unitPrice->localValue());
+  purchaseSave.bindValue(":poitem_freight", _freight->localValue());
+  purchaseSave.bindValue(":poitem_duedate", _dueDate->date());
+  purchaseSave.bindValue(":poitem_manuf_name", _manufName->currentText());
+  purchaseSave.bindValue(":poitem_manuf_item_number", _manufItemNumber->text());
+  purchaseSave.bindValue(":poitem_manuf_item_descrip", _manufItemDescrip->toPlainText());
+  purchaseSave.bindValue(":poitem_comments", _notes->toPlainText());
   if (_project->isValid())
-    q.bindValue(":poitem_prj_id", _project->id());
+    purchaseSave.bindValue(":poitem_prj_id", _project->id());
   if (_metrics->boolean("RevControl"))
   {
-    q.bindValue(":poitem_bom_rev_id", _bomRevision->id());
-    q.bindValue(":poitem_boo_rev_id", _booRevision->id());
+    purchaseSave.bindValue(":poitem_bom_rev_id", _bomRevision->id());
+    purchaseSave.bindValue(":poitem_boo_rev_id", _booRevision->id());
   }
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  purchaseSave.exec();
+  if (purchaseSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, purchaseSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_parentwo != -1)
   {
-    q.prepare("UPDATE poitem SET poitem_order_id=:parentwo, poitem_order_type='W' WHERE (poitem_id=:poitem_id);");
-    q.bindValue(":parentwo", _parentwo);
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
+    purchaseSave.prepare("UPDATE poitem SET poitem_order_id=:parentwo, poitem_order_type='W' WHERE (poitem_id=:poitem_id);");
+    purchaseSave.bindValue(":parentwo", _parentwo);
+    purchaseSave.bindValue(":poitem_id", _poitemid);
+    purchaseSave.exec();
   }
 
   if (_parentso != -1)
   {
-    q.prepare("UPDATE poitem SET poitem_order_id=:parentso, poitem_order_type='S' WHERE (poitem_id=:poitem_id);");
-    q.bindValue(":parentso", _parentso);
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
-    q.prepare("UPDATE coitem SET coitem_order_id=:poitem_id, coitem_order_type='P' WHERE (coitem_id=:parentso);");
-    q.bindValue(":parentso", _parentso);
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
+    purchaseSave.prepare("UPDATE poitem SET poitem_order_id=:parentso, poitem_order_type='S' WHERE (poitem_id=:poitem_id);");
+    purchaseSave.bindValue(":parentso", _parentso);
+    purchaseSave.bindValue(":poitem_id", _poitemid);
+    purchaseSave.exec();
+    purchaseSave.prepare("UPDATE coitem SET coitem_order_id=:poitem_id, coitem_order_type='P' WHERE (coitem_id=:parentso);");
+    purchaseSave.bindValue(":parentso", _parentso);
+    purchaseSave.bindValue(":poitem_id", _poitemid);
+    purchaseSave.exec();
   }
 
   if ( _mode != cView )
   {
-    q.prepare("SELECT updateCharAssignment('PI', :target_id, :char_id, :char_value);");
+    purchaseSave.prepare("SELECT updateCharAssignment('PI', :target_id, :char_id, :char_value);");
 
     QModelIndex idx1, idx2;
     for(int i = 0; i < _itemchar->rowCount(); i++)
     {
       idx1 = _itemchar->index(i, 0);
       idx2 = _itemchar->index(i, 1);
-      q.bindValue(":target_id", _poitemid);
-      q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
-      q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
-      q.exec();
+      purchaseSave.bindValue(":target_id", _poitemid);
+      purchaseSave.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+      purchaseSave.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+      purchaseSave.exec();
     }
   }
 
@@ -993,6 +997,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
 
 void purchaseOrderItem::sDeterminePrice()
 {
+  XSqlQuery purchaseDeterminePrice;
   if ((_orderQtyCache != -1) &&
       (_orderQtyCache != _ordered->toDouble()))
   {
@@ -1011,20 +1016,20 @@ void purchaseOrderItem::sDeterminePrice()
       (_ordered->toDouble() != 0.0) &&
       (_orderQtyCache != _ordered->toDouble()))
   {
-    q.prepare( "SELECT currToCurr(itemsrcp_curr_id, :curr_id, itemsrcp_price, :effective) "
+    purchaseDeterminePrice.prepare( "SELECT currToCurr(itemsrcp_curr_id, :curr_id, itemsrcp_price, :effective) "
        	       "AS new_itemsrcp_price "
                "FROM itemsrcp "
                "WHERE ( (itemsrcp_itemsrc_id=:itemsrc_id)"
                " AND (itemsrcp_qtybreak <= :qty) ) "
                "ORDER BY itemsrcp_qtybreak DESC "
                "LIMIT 1;" );
-    q.bindValue(":itemsrc_id", _itemsrcid);
-    q.bindValue(":qty", _ordered->toDouble());
-    q.bindValue(":curr_id", _unitPrice->id());
-    q.bindValue(":effective", _unitPrice->effective());
-    q.exec();
-    if (q.first())
-      _unitPrice->setLocalValue(q.value("new_itemsrcp_price").toDouble());
+    purchaseDeterminePrice.bindValue(":itemsrc_id", _itemsrcid);
+    purchaseDeterminePrice.bindValue(":qty", _ordered->toDouble());
+    purchaseDeterminePrice.bindValue(":curr_id", _unitPrice->id());
+    purchaseDeterminePrice.bindValue(":effective", _unitPrice->effective());
+    purchaseDeterminePrice.exec();
+    if (purchaseDeterminePrice.first())
+      _unitPrice->setLocalValue(purchaseDeterminePrice.value("new_itemsrcp_price").toDouble());
     else
       _unitPrice->clear();
   }
@@ -1044,16 +1049,17 @@ void purchaseOrderItem::sInventoryItemToggled( bool yes )
 
 void purchaseOrderItem::sVendorItemNumberList()
 {
+  XSqlQuery purchaseVendorItemNumberList;
   ParameterList params;
 
-  q.prepare( "SELECT vend_id"
+  purchaseVendorItemNumberList.prepare( "SELECT vend_id"
              "  FROM pohead, vendinfo "
              " WHERE((pohead_vend_id=vend_id)"
              "   AND (pohead_id=:pohead_id));" );
-  q.bindValue(":pohead_id", _poheadid);
-  q.exec();
-  if (q.first())
-    params.append("vend_id", q.value("vend_id").toInt());
+  purchaseVendorItemNumberList.bindValue(":pohead_id", _poheadid);
+  purchaseVendorItemNumberList.exec();
+  if (purchaseVendorItemNumberList.first())
+    params.append("vend_id", purchaseVendorItemNumberList.value("vend_id").toInt());
   if (!_vendorItemNumber->text().isEmpty())
     params.append("search", _vendorItemNumber->text());
   else if (_item->id() != -1)

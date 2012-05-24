@@ -54,9 +54,10 @@ enum SetResponse postPurchaseOrder::set(const ParameterList &pParams)
 
 void postPurchaseOrder::sRelease()
 {
-  q.prepare("SELECT releasePurchaseOrder(:pohead_id) AS result;");
-  q.bindValue(":pohead_id", _po->id());
-  q.exec();
+  XSqlQuery postRelease;
+  postRelease.prepare("SELECT releasePurchaseOrder(:pohead_id) AS result;");
+  postRelease.bindValue(":pohead_id", _po->id());
+  postRelease.exec();
 
   omfgThis->sPurchaseOrdersUpdated(_po->id(), true);
 

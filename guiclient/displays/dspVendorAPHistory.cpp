@@ -213,40 +213,42 @@ void dspVendorAPHistory::sSearchInvoiceNum()
 
 void dspVendorAPHistory::sVoidVoucher()
 {
-  q.prepare("SELECT voidApopenVoucher(:apopen_id) AS result;");
-  q.bindValue(":apopen_id", list()->id());
-  q.exec();
+  XSqlQuery dspVoidVoucher;
+  dspVoidVoucher.prepare("SELECT voidApopenVoucher(:apopen_id) AS result;");
+  dspVoidVoucher.bindValue(":apopen_id", list()->id());
+  dspVoidVoucher.exec();
 
-  if(q.first())
+  if(dspVoidVoucher.first())
   {
-    if(q.value("result").toInt() < 0)
+    if(dspVoidVoucher.value("result").toInt() < 0)
       systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
                          .arg(__FILE__)
                          .arg(__LINE__)
-                         .arg(q.value("result").toInt()) );
+                         .arg(dspVoidVoucher.value("result").toInt()) );
     else
       sFillList();
   }
   else
-    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError( this, dspVoidVoucher.lastError().databaseText(), __FILE__, __LINE__);
 
 }
 
 void dspVendorAPHistory::sViewVoucher()
 {
-  q.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id"
+  XSqlQuery dspViewVoucher;
+  dspViewVoucher.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id"
             "  FROM apopen, vohead LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id)"
             " WHERE((vohead_number=apopen_docnumber)"
             "   AND (apopen_id=:apopen_id));");
-  q.bindValue(":apopen_id", list()->id());
-  q.exec();
-  if(q.first())
+  dspViewVoucher.bindValue(":apopen_id", list()->id());
+  dspViewVoucher.exec();
+  if(dspViewVoucher.first())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("vohead_id", q.value("vohead_id").toInt());
+    params.append("vohead_id", dspViewVoucher.value("vohead_id").toInt());
   
-    if (q.value("pohead_id").toInt() == -1)
+    if (dspViewVoucher.value("pohead_id").toInt() == -1)
     {
       miscVoucher *newdlg = new miscVoucher();
       newdlg->set(params);
@@ -260,28 +262,29 @@ void dspVendorAPHistory::sViewVoucher()
     }
   }
   else
-    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError( this, dspViewVoucher.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void dspVendorAPHistory::sViewGLSeries()
 {
-  q.prepare("SELECT apopen_docdate, apopen_journalnumber"
+  XSqlQuery dspViewGLSeries;
+  dspViewGLSeries.prepare("SELECT apopen_docdate, apopen_journalnumber"
             "  FROM apopen"
             " WHERE(apopen_id=:apopen_id);");
-  q.bindValue(":apopen_id", list()->id());
-  q.exec();
-  if(q.first())
+  dspViewGLSeries.bindValue(":apopen_id", list()->id());
+  dspViewGLSeries.exec();
+  if(dspViewGLSeries.first())
   {
     ParameterList params;
-    params.append("startDate", q.value("apopen_docdate").toDate());
-    params.append("endDate", q.value("apopen_docdate").toDate());
-    params.append("journalnumber", q.value("apopen_journalnumber").toInt());
+    params.append("startDate", dspViewGLSeries.value("apopen_docdate").toDate());
+    params.append("endDate", dspViewGLSeries.value("apopen_docdate").toDate());
+    params.append("journalnumber", dspViewGLSeries.value("apopen_journalnumber").toInt());
   
     dspGLSeries *newdlg = new dspGLSeries();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
   else
-    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError( this, dspViewGLSeries.lastError().databaseText(), __FILE__, __LINE__);
 }
 

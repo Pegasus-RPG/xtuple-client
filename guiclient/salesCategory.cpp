@@ -96,17 +96,18 @@ enum SetResponse salesCategory::set(const ParameterList &pParams)
 
 void salesCategory::sCheck()
 {
+  XSqlQuery salesCheck;
   _category->setText(_category->text().trimmed().toUpper());
   if ((_mode == cNew) && (_category->text().length() != 0))
   {
-    q.prepare( "SELECT salescat_id "
+    salesCheck.prepare( "SELECT salescat_id "
                "FROM salescat "
                "WHERE (UPPER(salescat_name)=:salescat_name);" );
-    q.bindValue(":salescat_name", _category->text().trimmed());
-    q.exec();
-    if (q.first())
+    salesCheck.bindValue(":salescat_name", _category->text().trimmed());
+    salesCheck.exec();
+    if (salesCheck.first())
     {
-      _salescatid = q.value("salescat_id").toInt();
+      _salescatid = salesCheck.value("salescat_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -117,19 +118,20 @@ void salesCategory::sCheck()
 
 void salesCategory::sSave()
 {
+  XSqlQuery salesSave;
   QList<GuiErrorCheck> errors;
 
   errors << GuiErrorCheck(_category->text().trimmed().isEmpty(), _category,
                           tr("<p>You must specify a name for the Sales Category."));
 
-  q.prepare("SELECT salescat_id"
+  salesSave.prepare("SELECT salescat_id"
             "  FROM salescat"
             " WHERE((salescat_name=:salescat_name)"
             "   AND (salescat_id != :salescat_id))");
-  q.bindValue(":salescat_id", _salescatid);
-  q.bindValue(":salescat_name", _category->text().trimmed());
-  q.exec();
-  if(q.first())
+  salesSave.bindValue(":salescat_id", _salescatid);
+  salesSave.bindValue(":salescat_name", _category->text().trimmed());
+  salesSave.exec();
+  if(salesSave.first())
   {
     errors << GuiErrorCheck(true, _category,
                             tr("<p>You cannot specify a duplicate name for the Sales Category."));
@@ -151,11 +153,11 @@ void salesCategory::sSave()
 
   if ( (_mode == cNew) || (_mode == cCopy) )
   {
-    q.exec("SELECT NEXTVAL('salescat_salescat_id_seq') AS salescat_id");
-    if (q.first())
-      _salescatid = q.value("salescat_id").toInt();
+    salesSave.exec("SELECT NEXTVAL('salescat_salescat_id_seq') AS salescat_id");
+    if (salesSave.first())
+      _salescatid = salesSave.value("salescat_id").toInt();
 
-    q.prepare( "INSERT INTO salescat"
+    salesSave.prepare( "INSERT INTO salescat"
                "( salescat_id, salescat_name, salescat_active, salescat_descrip,"
                "  salescat_sales_accnt_id, salescat_prepaid_accnt_id, salescat_ar_accnt_id ) "
                "VALUES "
@@ -163,7 +165,7 @@ void salesCategory::sSave()
                "  :salescat_sales_accnt_id, :salescat_prepaid_accnt_id, :salescat_ar_accnt_id );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE salescat "
+    salesSave.prepare( "UPDATE salescat "
                "SET salescat_name=:salescat_name, salescat_active=:salescat_active,"
                "    salescat_descrip=:salescat_descrip,"
                "    salescat_sales_accnt_id=:salescat_sales_accnt_id,"
@@ -171,39 +173,40 @@ void salesCategory::sSave()
                "    salescat_ar_accnt_id=:salescat_ar_accnt_id "
                "WHERE (salescat_id=:salescat_id);" );
 
-  q.bindValue(":salescat_id", _salescatid);
-  q.bindValue(":salescat_name", _category->text().trimmed());
-  q.bindValue(":salescat_active", QVariant(_active->isChecked()));
-  q.bindValue(":salescat_descrip", _description->text().trimmed());
-  q.bindValue(":salescat_sales_accnt_id", _sales->id());
-  q.bindValue(":salescat_prepaid_accnt_id", _prepaid->id());
-  q.bindValue(":salescat_ar_accnt_id", _araccnt->id());
-  q.exec();
+  salesSave.bindValue(":salescat_id", _salescatid);
+  salesSave.bindValue(":salescat_name", _category->text().trimmed());
+  salesSave.bindValue(":salescat_active", QVariant(_active->isChecked()));
+  salesSave.bindValue(":salescat_descrip", _description->text().trimmed());
+  salesSave.bindValue(":salescat_sales_accnt_id", _sales->id());
+  salesSave.bindValue(":salescat_prepaid_accnt_id", _prepaid->id());
+  salesSave.bindValue(":salescat_ar_accnt_id", _araccnt->id());
+  salesSave.exec();
 
   done(_salescatid);
 }
 
 void salesCategory::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery salespopulate;
+  salespopulate.prepare( "SELECT * "
              "FROM salescat "
              "WHERE (salescat_id=:salescat_id);" );
-  q.bindValue(":salescat_id", _salescatid);
-  q.exec();
-  if (q.first())
+  salespopulate.bindValue(":salescat_id", _salescatid);
+  salespopulate.exec();
+  if (salespopulate.first())
   {
     if (_mode != cCopy)
     {
-      _category->setText(q.value("salescat_name").toString());
-      _description->setText(q.value("salescat_descrip").toString());
-      _active->setChecked(q.value("salescat_active").toBool());
+      _category->setText(salespopulate.value("salescat_name").toString());
+      _description->setText(salespopulate.value("salescat_descrip").toString());
+      _active->setChecked(salespopulate.value("salescat_active").toBool());
     }
     else
       _active->setChecked(TRUE);
 
-    _sales->setId(q.value("salescat_sales_accnt_id").toInt());
-    _prepaid->setId(q.value("salescat_prepaid_accnt_id").toInt());
-    _araccnt->setId(q.value("salescat_ar_accnt_id").toInt());
+    _sales->setId(salespopulate.value("salescat_sales_accnt_id").toInt());
+    _prepaid->setId(salespopulate.value("salescat_prepaid_accnt_id").toInt());
+    _araccnt->setId(salespopulate.value("salescat_ar_accnt_id").toInt());
   }
 }
  

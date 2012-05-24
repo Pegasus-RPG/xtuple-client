@@ -91,55 +91,56 @@ enum SetResponse createCycleCountTags::set(const ParameterList &pParams)
 
 void createCycleCountTags::sCreate()
 {
+  XSqlQuery createCreate;
   QString fname;
   if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isSelected())
   {
-    q.prepare("SELECT createCycleCountsByWarehouseByClassCode(:warehous_id, :classcode_id, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
+    createCreate.prepare("SELECT createCycleCountsByWarehouseByClassCode(:warehous_id, :classcode_id, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouseByClassCode";
   }
   else if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isPattern())
   {
-    q.prepare("SELECT createCycleCountsByWarehouseByClassCode(:warehous_id, :classcode_pattern, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
+    createCreate.prepare("SELECT createCycleCountsByWarehouseByClassCode(:warehous_id, :classcode_pattern, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouseByClassCode";
   }
   else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isSelected())
   {
-    q.prepare("SELECT createCycleCountsByWarehouseByPlannerCode(:warehous_id, :plancode_id, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
+    createCreate.prepare("SELECT createCycleCountsByWarehouseByPlannerCode(:warehous_id, :plancode_id, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouseByPlannerCode";
   }
   else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isPattern())
   {
-    q.prepare("SELECT createCycleCountsByWarehouseByPlannerCode(:warehous_id, :plancode_pattern, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
+    createCreate.prepare("SELECT createCycleCountsByWarehouseByPlannerCode(:warehous_id, :plancode_pattern, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouseByPlannerCode";
   }
   else //if (_parameter->isAll())
   {
-    q.prepare("SELECT createCycleCountsByWarehouse(:warehous_id, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
+    createCreate.prepare("SELECT createCycleCountsByWarehouse(:warehous_id, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouse";
   }
 
-  _parameter->bindValue(q);
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":maxTags", _maxTags->value());
-  q.bindValue(":comments", _comments->toPlainText());
-  q.bindValue(":priority", QVariant(_priority->isChecked()));
-  q.bindValue(":freeze",   QVariant(_freeze->isChecked()));
-  q.bindValue(":ignore",   QVariant(_ignoreZeroBalance->isChecked()));
+  _parameter->bindValue(createCreate);
+  createCreate.bindValue(":warehous_id", _warehouse->id());
+  createCreate.bindValue(":maxTags", _maxTags->value());
+  createCreate.bindValue(":comments", _comments->toPlainText());
+  createCreate.bindValue(":priority", QVariant(_priority->isChecked()));
+  createCreate.bindValue(":freeze",   QVariant(_freeze->isChecked()));
+  createCreate.bindValue(":ignore",   QVariant(_ignoreZeroBalance->isChecked()));
   if(_byLocation->isChecked())
-    q.bindValue(":location_id", _location->id());
-  q.exec();
-  if (q.first())
+    createCreate.bindValue(":location_id", _location->id());
+  createCreate.exec();
+  if (createCreate.first())
   {
-    int result = q.value("result").toInt();
+    int result = createCreate.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup(fname, result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (createCreate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, createCreate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -148,19 +149,20 @@ void createCycleCountTags::sCreate()
 
 void createCycleCountTags::sPopulateLocations()
 {
-  q.prepare( "SELECT location_id, "
+  XSqlQuery createPopulateLocations;
+  createPopulateLocations.prepare( "SELECT location_id, "
              "       CASE WHEN (LENGTH(location_descrip) > 0) THEN (formatLocationName(location_id) || '-' || location_descrip)"
              "            ELSE formatLocationName(location_id)"
              "       END AS locationname "
              "FROM location "
              "WHERE (location_warehous_id=:warehous_id) "
              "ORDER BY locationname;" );
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  _location->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  createPopulateLocations.bindValue(":warehous_id", _warehouse->id());
+  createPopulateLocations.exec();
+  _location->populate(createPopulateLocations);
+  if (createPopulateLocations.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, createPopulateLocations.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

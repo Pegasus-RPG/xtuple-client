@@ -340,6 +340,7 @@ void dspAROpenItems::sApplyAropenCM()
 
 void dspAROpenItems::sCCRefundCM()
 {
+  XSqlQuery dspCCRefundCM;
   if (list()->id("ccard_number") < 0)
   {
     QMessageBox::warning(this, tr("Cannot Refund by Credit Card"),
@@ -359,26 +360,26 @@ void dspAROpenItems::sCCRefundCM()
   QString refnum;
   int     ccpayid = list()->currentItem()->id("ccard_number");
 
-  q.prepare("SELECT ccpay_ccard_id, aropen_amount - aropen_paid AS balance, "
+  dspCCRefundCM.prepare("SELECT ccpay_ccard_id, aropen_amount - aropen_paid AS balance, "
 	    "       aropen_curr_id, aropen_docnumber "
             "FROM aropen "
             "     JOIN payaropen ON (aropen_id=payaropen_aropen_id) "
             "     JOIN ccpay ON (payaropen_ccpay_id=ccpay_id) "
             "WHERE ((aropen_id=:aropen_id)"
             "  AND  (ccpay_id=:ccpay_id));");
-  q.bindValue(":aropen_id", list()->id());
-  q.bindValue(":ccpay_id",  ccpayid);
-  q.exec();
-  if (q.first())
+  dspCCRefundCM.bindValue(":aropen_id", list()->id());
+  dspCCRefundCM.bindValue(":ccpay_id",  ccpayid);
+  dspCCRefundCM.exec();
+  if (dspCCRefundCM.first())
   {
-    ccardid = q.value("ccpay_ccard_id").toInt();
-    total   = q.value("balance").toDouble();
-    currid  = q.value("aropen_curr_id").toInt();
-    docnum  = q.value("aropen_docnumber").toString();
+    ccardid = dspCCRefundCM.value("ccpay_ccard_id").toInt();
+    total   = dspCCRefundCM.value("balance").toDouble();
+    currid  = dspCCRefundCM.value("aropen_curr_id").toInt();
+    docnum  = dspCCRefundCM.value("aropen_docnumber").toString();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspCCRefundCM.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspCCRefundCM.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
@@ -445,30 +446,31 @@ void dspAROpenItems::sDeleteCreditMemo()
 
 void dspAROpenItems::sDeleteInvoice()
 {
+  XSqlQuery dspDeleteInvoice;
   if ( QMessageBox::warning( this, tr("Delete Selected Invoices"),
                              tr("<p>Are you sure that you want to delete the "
 			        "selected Invoices?"),
                              tr("Delete"), tr("Cancel"), QString::null, 1, 1 ) == 0)
   {
-    q.prepare("SELECT deleteInvoice(:invchead_id) AS result;");
+    dspDeleteInvoice.prepare("SELECT deleteInvoice(:invchead_id) AS result;");
 
     if (checkInvoiceSitePrivs(list()->currentItem()->id("docnumber")))
     {
-      q.bindValue(":invchead_id", list()->currentItem()->id("docnumber"));
-      q.exec();
-      if (q.first())
+      dspDeleteInvoice.bindValue(":invchead_id", list()->currentItem()->id("docnumber"));
+      dspDeleteInvoice.exec();
+      if (dspDeleteInvoice.first())
       {
-            int result = q.value("result").toInt();
+            int result = dspDeleteInvoice.value("result").toInt();
             if (result < 0)
             {
               systemError(this, storedProcErrorLookup("deleteInvoice", result),
                           __FILE__, __LINE__);
             }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (dspDeleteInvoice.lastError().type() != QSqlError::NoError)
             systemError(this,
                         tr("Error deleting Invoice %1\n").arg(list()->currentItem()->text("docnumber")) +
-                        q.lastError().databaseText(), __FILE__, __LINE__);
+                        dspDeleteInvoice.lastError().databaseText(), __FILE__, __LINE__);
     }
 
     omfgThis->sInvoicesUpdated(-1, TRUE);
@@ -582,6 +584,7 @@ void dspAROpenItems::sViewCreditMemo()
 
 void dspAROpenItems::sVoidCreditMemo()
 {
+  XSqlQuery dspVoidCreditMemo;
   XTreeWidgetItem *pItem = list()->currentItem();
   if(pItem->rawValue("posted") != 0 &&
       QMessageBox::question(this, tr("Void Posted Credit Memo?"),
@@ -599,7 +602,7 @@ void dspAROpenItems::sVoidCreditMemo()
   XSqlQuery post;
   post.prepare("SELECT voidCreditMemo(:cmhead_id) AS result;");
 
-  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  dspVoidCreditMemo.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   post.bindValue(":cmhead_id", list()->currentItem()->id("docnumber"));
   post.exec();
   if (post.first())
@@ -619,7 +622,7 @@ void dspAROpenItems::sVoidCreditMemo()
       return;
     }
 
-    q.exec("COMMIT;");
+    dspVoidCreditMemo.exec("COMMIT;");
     sFillList();
   }
   else if (post.lastError().type() != QSqlError::NoError)
@@ -666,16 +669,17 @@ void dspAROpenItems::sCreateInvoice()
 
 void dspAROpenItems::sNewCashrcpt()
 {
+  XSqlQuery dspNewCashrcpt;
   ParameterList params;
   params.append("mode", "new");
   if (list()->id() > -1)
   {
-    q.prepare("SELECT aropen_cust_id FROM aropen WHERE aropen_id=:aropen_id;");
-    q.bindValue(":aropen_id", list()->id());
-    q.exec();
-    if (q.first())
+    dspNewCashrcpt.prepare("SELECT aropen_cust_id FROM aropen WHERE aropen_id=:aropen_id;");
+    dspNewCashrcpt.bindValue(":aropen_id", list()->id());
+    dspNewCashrcpt.exec();
+    if (dspNewCashrcpt.first())
     {
-      params.append("cust_id", q.value("aropen_cust_id").toInt());
+      params.append("cust_id", dspNewCashrcpt.value("aropen_cust_id").toInt());
       params.append("docnumber", list()->currentItem()->text("docnumber"));
     }
   }
@@ -734,6 +738,7 @@ void dspAROpenItems::sEditInvoiceDetails()
 
 void dspAROpenItems::sVoidInvoiceDetails()
 {
+  XSqlQuery dspVoidInvoiceDetails;
   XTreeWidgetItem *pItem = list()->currentItem();
   if(pItem->rawValue("posted") != 0 &&
       QMessageBox::question(this, tr("Void Posted Invoice?"),
@@ -751,7 +756,7 @@ void dspAROpenItems::sVoidInvoiceDetails()
   XSqlQuery post;
   post.prepare("SELECT voidInvoice(:invchead_id) AS result;");
 
-  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  dspVoidInvoiceDetails.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   post.bindValue(":invchead_id", list()->currentItem()->id("docnumber"));
   post.exec();
   if (post.first())
@@ -771,7 +776,7 @@ void dspAROpenItems::sVoidInvoiceDetails()
       return;
     }
 
-    q.exec("COMMIT;");
+    dspVoidInvoiceDetails.exec("COMMIT;");
     sFillList();
   }
   else if (post.lastError().type() != QSqlError::NoError)
@@ -795,19 +800,20 @@ void dspAROpenItems::sViewInvoiceDetails()
 
 void dspAROpenItems::sIncident()
 {
-  q.prepare("SELECT crmacct_id, crmacct_cntct_id_1 "
+  XSqlQuery dspIncident;
+  dspIncident.prepare("SELECT crmacct_id, crmacct_cntct_id_1 "
             "FROM crmacct, aropen "
             "WHERE ((aropen_id=:aropen_id) "
             "AND (crmacct_cust_id=aropen_cust_id));");
-  q.bindValue(":aropen_id", list()->id());
-  q.exec();
-  if (q.first())
+  dspIncident.bindValue(":aropen_id", list()->id());
+  dspIncident.exec();
+  if (dspIncident.first())
   {
     ParameterList params;
     params.append("mode", "new");
     params.append("aropen_id", list()->id());
-    params.append("crmacct_id", q.value("crmacct_id"));
-    params.append("cntct_id", q.value("crmacct_cntct_id_1"));
+    params.append("crmacct_id", dspIncident.value("crmacct_id"));
+    params.append("cntct_id", dspIncident.value("crmacct_cntct_id_1"));
     incident newdlg(this, 0, TRUE);
     newdlg.set(params);
 
@@ -956,6 +962,7 @@ void dspAROpenItems::sPost()
 
 void dspAROpenItems::sPostCreditMemo()
 {
+  XSqlQuery dspPostCreditMemo;
   if (list()->altId() != 1 || list()->id() > 0)
     return;
 
@@ -1025,7 +1032,7 @@ void dspAROpenItems::sPostCreditMemo()
         return;
       }
 
-      q.exec("COMMIT;");
+      dspPostCreditMemo.exec("COMMIT;");
     }
   }
   // contains() string is hard-coded in stored procedure
@@ -1050,6 +1057,7 @@ void dspAROpenItems::sPostCreditMemo()
 
 void dspAROpenItems::sPostInvoice()
 {
+  XSqlQuery dspPostInvoice;
   if (list()->altId() != 0 || list()->id() > 0)
     return;
     
@@ -1073,19 +1081,19 @@ void dspAROpenItems::sPostInvoice()
   }
 
   int journal = -1;
-  q.exec("SELECT fetchJournalNumber('AR-IN') AS result;");
-  if (q.first())
+  dspPostInvoice.exec("SELECT fetchJournalNumber('AR-IN') AS result;");
+  if (dspPostInvoice.first())
   {
-    journal = q.value("result").toInt();
+    journal = dspPostInvoice.value("result").toInt();
     if (journal < 0)
     {
       systemError(this, storedProcErrorLookup("fetchJournalNumber", journal), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspPostInvoice.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspPostInvoice.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -1183,7 +1191,7 @@ void dspAROpenItems::sPostInvoice()
         return;
       }
 
-      q.exec("COMMIT;");
+      dspPostInvoice.exec("COMMIT;");
     }
   }
   // contains() string is hard-coded in stored procedure

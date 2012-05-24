@@ -74,10 +74,11 @@ void forms::sEdit()
 
 void forms::sDelete()
 {
-  q.prepare( "DELETE FROM form "
+  XSqlQuery formsDelete;
+  formsDelete.prepare( "DELETE FROM form "
              "WHERE (form_id=:form_id);" );
-  q.bindValue(":form_id", _form->id());
-  q.exec();
+  formsDelete.bindValue(":form_id", _form->id());
+  formsDelete.exec();
 
   sFillList();
 }

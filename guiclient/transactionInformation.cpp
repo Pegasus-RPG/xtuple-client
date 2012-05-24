@@ -46,6 +46,7 @@ void transactionInformation::languageChange()
 
 enum SetResponse transactionInformation::set(const ParameterList &pParams)
 {
+  XSqlQuery transactionet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -55,30 +56,30 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
   {
     _invhistid = param.toInt();
 
-    q.prepare( "SELECT *, "
+    transactionet.prepare( "SELECT *, "
                "       CASE WHEN (invhist_transtype IN ('EX', 'IM', 'SH', 'SI')) THEN (invhist_invqty * -1.0)"
                "            ELSE invhist_invqty"
                "       END AS adjinvqty "
                "FROM invhist "
                "WHERE (invhist_id=:invhist_id);" );
-    q.bindValue(":invhist_id", _invhistid);
-    q.exec();
-    if (q.first())
+    transactionet.bindValue(":invhist_id", _invhistid);
+    transactionet.exec();
+    if (transactionet.first())
     {
-      _analyze->setChecked(q.value("invhist_analyze").toBool());
-      _transactionType->setText(q.value("invhist_transtype").toString());
-      _transactionDate->setDate(q.value("invhist_transdate").toDate());
-      _createdDate->setDate(q.value("invhist_created").toDate());
-      _username->setText(q.value("invhist_user").toString());
-      _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
-      _transactionQty->setText(formatQty(q.value("adjinvqty").toDouble()));
-      _qohBefore->setText(formatQty(q.value("invhist_qoh_before").toDouble()));
-      _qohAfter->setText(formatQty(q.value("invhist_qoh_after").toDouble()));
-      _notes->setText(q.value("invhist_comments").toString());
+      _analyze->setChecked(transactionet.value("invhist_analyze").toBool());
+      _transactionType->setText(transactionet.value("invhist_transtype").toString());
+      _transactionDate->setDate(transactionet.value("invhist_transdate").toDate());
+      _createdDate->setDate(transactionet.value("invhist_created").toDate());
+      _username->setText(transactionet.value("invhist_user").toString());
+      _item->setItemsiteid(transactionet.value("invhist_itemsite_id").toInt());
+      _transactionQty->setText(formatQty(transactionet.value("adjinvqty").toDouble()));
+      _qohBefore->setText(formatQty(transactionet.value("invhist_qoh_before").toDouble()));
+      _qohAfter->setText(formatQty(transactionet.value("invhist_qoh_after").toDouble()));
+      _notes->setText(transactionet.value("invhist_comments").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (transactionet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transactionet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -105,15 +106,16 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
 
 void transactionInformation::sSave()
 {
-  q.prepare( "UPDATE invhist "
+  XSqlQuery transactionSave;
+  transactionSave.prepare( "UPDATE invhist "
              "SET invhist_analyze=:invhist_analyze "
              "WHERE (invhist_id=:invhist_id);" );
-  q.bindValue(":invhist_analyze", QVariant(_analyze->isChecked()));
-  q.bindValue(":invhist_id", _invhistid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  transactionSave.bindValue(":invhist_analyze", QVariant(_analyze->isChecked()));
+  transactionSave.bindValue(":invhist_id", _invhistid);
+  transactionSave.exec();
+  if (transactionSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transactionSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

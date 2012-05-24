@@ -108,6 +108,7 @@ void taxAssignment::sPopulate()
 
 void taxAssignment::sPopulateTaxCode()
 {
+  XSqlQuery taxPopulateTaxCode;
   ParameterList params;
   params.append("taxzone_id", _taxZone->id());
   params.append("taxtype_id", _taxType->id());
@@ -130,13 +131,13 @@ void taxAssignment::sPopulateTaxCode()
 			  "AND COALESCE(tax_basis_tax_id, -1) < 0;");
 
   MetaSQLQuery mqlTaxOption(sqlTaxOption);
-  q = mqlTaxOption.toQuery(params);
+  taxPopulateTaxCode = mqlTaxOption.toQuery(params);
 
   _taxCodeOption->clear();
-  _taxCodeOption->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _taxCodeOption->populate(taxPopulateTaxCode);
+  if (taxPopulateTaxCode.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxPopulateTaxCode.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -158,25 +159,26 @@ void taxAssignment::sPopulateTaxCode()
 			  "AND COALESCE(tax_basis_tax_id, -1) < 0;");
 
   MetaSQLQuery mqlTaxSelected(sqlTaxSelected);
-  q = mqlTaxSelected.toQuery(params);
+  taxPopulateTaxCode = mqlTaxSelected.toQuery(params);
 
   _taxCodeSelected->clear();
-  _taxCodeSelected->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _taxCodeSelected->populate(taxPopulateTaxCode);
+  if (taxPopulateTaxCode.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxPopulateTaxCode.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void taxAssignment::sAdd()
 {
-  q.prepare("SELECT * FROM getSubTax(:tax_id, 1);");
-  q.bindValue(":tax_id", _taxCodeOption->id());
-  q.exec();
-  if(q.first())
+  XSqlQuery taxAdd;
+  taxAdd.prepare("SELECT * FROM getSubTax(:tax_id, 1);");
+  taxAdd.bindValue(":tax_id", _taxCodeOption->id());
+  taxAdd.exec();
+  if(taxAdd.first())
   {
-	q.prepare("SELECT DISTINCT tax_id "
+	taxAdd.prepare("SELECT DISTINCT tax_id "
 	          "FROM tax JOIN taxass ON (tax_id = taxass_tax_id) "
 			  "LEFT OUTER JOIN taxclass ON (tax_taxclass_id = taxclass_id) "
 			  "WHERE COALESCE(taxass_taxzone_id, -1) = :taxass_taxzone_id "
@@ -186,17 +188,17 @@ void taxAssignment::sAdd()
 			  "FROM taxclass RIGHT OUTER JOIN tax "
 			  "ON (taxclass_id = tax_taxclass_id) "
 			  "AND tax_id = :tax_id);");
-    q.bindValue(":tax_id", _taxCodeOption->id());
+    taxAdd.bindValue(":tax_id", _taxCodeOption->id());
 	if(_taxZone->isValid())
-	  q.bindValue(":taxass_taxzone_id", _taxZone->id());
+	  taxAdd.bindValue(":taxass_taxzone_id", _taxZone->id());
 	else
-	  q.bindValue(":taxass_taxzone_id", -1);
+	  taxAdd.bindValue(":taxass_taxzone_id", -1);
     if(_taxType->isValid())
-      q.bindValue(":taxass_taxtype_id", _taxType->id());
+      taxAdd.bindValue(":taxass_taxtype_id", _taxType->id());
 	else
-	  q.bindValue(":taxass_taxtype_id", -1);
-    q.exec();
-    if(q.first())
+	  taxAdd.bindValue(":taxass_taxtype_id", -1);
+    taxAdd.exec();
+    if(taxAdd.first())
 	{
 	  QMessageBox::critical(this, tr("Incorrect Tax Code"), tr("Tax codes with same group sequence as this "
 	  "tax code are already assigned to this Tax Zone / Tax Type pair. \nYou first "
@@ -206,7 +208,7 @@ void taxAssignment::sAdd()
   }
   else
   {
-	q.prepare("SELECT DISTINCT A.tax_id, A.tax_code, A.tax_taxclass_id "
+	taxAdd.prepare("SELECT DISTINCT A.tax_id, A.tax_code, A.tax_taxclass_id "
 	          "FROM tax A JOIN taxass ON (A.tax_id = taxass_tax_id) "
 			  "LEFT OUTER JOIN taxclass ON (A.tax_taxclass_id = taxclass_id), tax B "
 			  "WHERE A.tax_id = B.tax_basis_tax_id "
@@ -218,17 +220,17 @@ void taxAssignment::sAdd()
 			  "FROM taxclass RIGHT OUTER JOIN tax "
 			  "ON (taxclass_id = tax_taxclass_id) "
 			  "AND tax_id = :tax_id);");
-    q.bindValue(":tax_id", _taxCodeOption->id());
+    taxAdd.bindValue(":tax_id", _taxCodeOption->id());
 	if(_taxZone->isValid())
-	  q.bindValue(":taxass_taxzone_id", _taxZone->id());
+	  taxAdd.bindValue(":taxass_taxzone_id", _taxZone->id());
     else
-	  q.bindValue(":taxass_taxzone_id", -1);
+	  taxAdd.bindValue(":taxass_taxzone_id", -1);
     if(_taxType->isValid())
-      q.bindValue(":taxass_taxtype_id", _taxType->id());
+      taxAdd.bindValue(":taxass_taxtype_id", _taxType->id());
 	else
-	  q.bindValue(":taxass_taxtype_id", -1);
-    q.exec();
-    if(q.first())
+	  taxAdd.bindValue(":taxass_taxtype_id", -1);
+    taxAdd.exec();
+    if(taxAdd.first())
 	{
 	  QMessageBox::critical(this, tr("Incorrect Tax Code"), tr("Tax codes with same group sequence as this "
 	  "tax code and which have subordinate taxes are already assigned to this Tax Zone / Tax Type pair. \nYou first "
@@ -241,51 +243,52 @@ void taxAssignment::sAdd()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");
-  q.exec("SELECT NEXTVAL('taxass_taxass_id_seq') AS _taxass_id;");
-  if (q.first())
-    _taxassId = q.value("_taxass_id").toInt();
-  else if (q.lastError().type() != QSqlError::NoError)
+  taxAdd.exec("BEGIN;");
+  taxAdd.exec("SELECT NEXTVAL('taxass_taxass_id_seq') AS _taxass_id;");
+  if (taxAdd.first())
+    _taxassId = taxAdd.value("_taxass_id").toInt();
+  else if (taxAdd.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxAdd.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
-  q.prepare("INSERT INTO taxass(taxass_id, taxass_taxzone_id, "
+  taxAdd.prepare("INSERT INTO taxass(taxass_id, taxass_taxzone_id, "
          "taxass_taxtype_id, taxass_tax_id) "
          "VALUES (:taxass_id, :taxass_taxzone_id, "
 		 ":taxass_taxtype_id, :taxass_tax_id);");
-  q.bindValue(":taxass_id", _taxassId);
+  taxAdd.bindValue(":taxass_id", _taxassId);
   if(_taxZone->isValid())
-	q.bindValue(":taxass_taxzone_id", _taxZone->id());
+	taxAdd.bindValue(":taxass_taxzone_id", _taxZone->id());
   if(_taxType->isValid())
-    q.bindValue(":taxass_taxtype_id", _taxType->id());
-  q.bindValue(":taxass_tax_id", _taxCodeOption->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    taxAdd.bindValue(":taxass_taxtype_id", _taxType->id());
+  taxAdd.bindValue(":taxass_tax_id", _taxCodeOption->id());
+  taxAdd.exec();
+  if (taxAdd.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxAdd.lastError().databaseText(), __FILE__, __LINE__);
 	return;
   }
-  q.exec("COMMIT;");
+  taxAdd.exec("COMMIT;");
   sPopulateTaxCode();
 }
 
 void taxAssignment::sRevoke()
 {
-  q.prepare("DELETE FROM taxass "
+  XSqlQuery taxRevoke;
+  taxRevoke.prepare("DELETE FROM taxass "
             "WHERE ((taxass_tax_id = :taxass_tax_id) "
 			"AND (COALESCE(taxass_taxzone_id, -1) = :taxass_taxzone_id) "
 			"AND (COALESCE(taxass_taxtype_id, -1) = :taxass_taxtype_id));");
-  q.bindValue(":taxass_tax_id", _taxCodeSelected->id());
-  q.bindValue(":taxass_taxzone_id", _taxZone->id());
-  q.bindValue(":taxass_taxtype_id", _taxType->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  taxRevoke.bindValue(":taxass_tax_id", _taxCodeSelected->id());
+  taxRevoke.bindValue(":taxass_taxzone_id", _taxZone->id());
+  taxRevoke.bindValue(":taxass_taxtype_id", _taxType->id());
+  taxRevoke.exec();
+  if (taxRevoke.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taxRevoke.lastError().databaseText(), __FILE__, __LINE__);
 	return;
   }
   sPopulateTaxCode();

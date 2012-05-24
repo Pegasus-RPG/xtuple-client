@@ -163,6 +163,7 @@ int shipTo::id() const
 
 void shipTo::sSave()
 {
+  XSqlQuery shipSave;
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(_name->text().length() == 0, _name,
                           tr("You must enter a valid Name."))
@@ -173,9 +174,9 @@ void shipTo::sSave()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  if (! q.exec("BEGIN"))
+  if (! shipSave.exec("BEGIN"))
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, shipSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -250,7 +251,7 @@ void shipTo::sSave()
     return;
   }
 
-  q.exec("COMMIT;");
+  shipSave.exec("COMMIT;");
 
   if (_mode == cNew)
     emit newId(_shiptoid);

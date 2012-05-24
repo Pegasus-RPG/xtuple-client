@@ -75,6 +75,7 @@ enum SetResponse changeWoQty::set(const ParameterList &pParams)
 
 void changeWoQty::sChangeQty()
 {
+  XSqlQuery changeChangeQty;
   if (_wo->status() == 'R')
   {
     QMessageBox::warning( this, tr("Cannot Reschedule Released W/O"),
@@ -94,15 +95,15 @@ void changeWoQty::sChangeQty()
 
   if (newQty > 0.0)
   {
-    q.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "
+    changeChangeQty.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "
                "FROM wo "
                "WHERE (wo_id=:wo_id);" );
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":qty", _newQtyOrdered->toDouble());
-    q.exec();
-    if (q.first())
+    changeChangeQty.bindValue(":wo_id", _wo->id());
+    changeChangeQty.bindValue(":qty", _newQtyOrdered->toDouble());
+    changeChangeQty.exec();
+    if (changeChangeQty.first())
     {
-      if (q.value("qty").toDouble() != newQty)
+      if (changeChangeQty.value("qty").toDouble() != newQty)
       {
         if ( QMessageBox::warning( this, tr("Invalid Order Qty"),
                                    tr("<p>The new Order Quantity that you have "
@@ -113,36 +114,36 @@ void changeWoQty::sChangeQty()
                                    "must be increased to %1. Do you want to "
                                    "change the Order Quantity for this Work "
                                    "Order to %2?" )
-                                   .arg(formatQty(q.value("qty").toDouble()))
-                                   .arg(formatQty(q.value("qty").toDouble())),
+                                   .arg(formatQty(changeChangeQty.value("qty").toDouble()))
+                                   .arg(formatQty(changeChangeQty.value("qty").toDouble())),
                                    tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 1 )
           return;
         else
-          newQty = q.value("qty").toDouble();
+          newQty = changeChangeQty.value("qty").toDouble();
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (changeChangeQty.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, changeChangeQty.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
 
-  q.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE);");
-  q.bindValue(":wo_id", _wo->id());
-  q.bindValue(":qty", newQty);
-  q.exec();
+  changeChangeQty.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE);");
+  changeChangeQty.bindValue(":wo_id", _wo->id());
+  changeChangeQty.bindValue(":qty", newQty);
+  changeChangeQty.exec();
 
   if (_postComment->isChecked())
   {
-    q.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS result");
-    q.bindValue(":cmnttype_id", _cmnttype->id());
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":comment", _comment->toPlainText());
-    q.exec();
-    if (q.first())
+    changeChangeQty.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS result");
+    changeChangeQty.bindValue(":cmnttype_id", _cmnttype->id());
+    changeChangeQty.bindValue(":wo_id", _wo->id());
+    changeChangeQty.bindValue(":comment", _comment->toPlainText());
+    changeChangeQty.exec();
+    if (changeChangeQty.first())
     {
-      int result = q.value("result").toInt();
+      int result = changeChangeQty.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("postComment", result),
@@ -150,9 +151,9 @@ void changeWoQty::sChangeQty()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (changeChangeQty.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, changeChangeQty.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

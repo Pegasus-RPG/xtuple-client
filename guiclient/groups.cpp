@@ -79,12 +79,13 @@ void groups::languageChange()
 
 void groups::sDelete()
 {
-  q.prepare( "SELECT usrgrp_id "
+  XSqlQuery groupsDelete;
+  groupsDelete.prepare( "SELECT usrgrp_id "
              "FROM usrgrp "
              "WHERE (usrgrp_grp_id=:grp_id);" );
-  q.bindValue(":grp_id", _list->id());
-  q.exec();
-  if (q.first())
+  groupsDelete.bindValue(":grp_id", _list->id());
+  groupsDelete.exec();
+  if (groupsDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Group"),
                            tr( "The selected Group cannot be deleted as there are one or more Users currently assigned to it.\n"
@@ -92,12 +93,12 @@ void groups::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM grppriv"
+  groupsDelete.prepare( "DELETE FROM grppriv"
              " WHERE (grppriv_grp_id=:grp_id);"
              "DELETE FROM grp "
              " WHERE (grp_id=:grp_id);" );
-  q.bindValue(":grp_id", _list->id());
-  q.exec();
+  groupsDelete.bindValue(":grp_id", _list->id());
+  groupsDelete.exec();
 
   sFillList();
 }

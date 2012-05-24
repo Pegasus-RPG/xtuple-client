@@ -70,14 +70,15 @@ void dspUninvoicedReceivings::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 
 void dspUninvoicedReceivings::sMarkAsInvoiced()
 {
+  XSqlQuery dspMarkAsInvoiced;
   bool update = true;
   
-  q.prepare("SELECT * FROM recv "
+  dspMarkAsInvoiced.prepare("SELECT * FROM recv "
             "WHERE ((recv_value <> 0) "
             "AND (recv_id=:recv_id));");
-  q.bindValue(":recv_id",list()->id());
-  q.exec();
-  if (q.first())
+  dspMarkAsInvoiced.bindValue(":recv_id",list()->id());
+  dspMarkAsInvoiced.exec();
+  if (dspMarkAsInvoiced.first())
   {
     ParameterList params;
     params.append("recv_id", list()->id());
@@ -86,21 +87,21 @@ void dspUninvoicedReceivings::sMarkAsInvoiced()
     if (newdlg.exec() == XDialog::Rejected)
       update = false;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspMarkAsInvoiced.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspMarkAsInvoiced.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   if (update)
   {
-    q.prepare("UPDATE recv "
+    dspMarkAsInvoiced.prepare("UPDATE recv "
 	      "SET recv_invoiced=true "
           "WHERE (recv_id=:recv_id); ");
-    q.bindValue(":recv_id",list()->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    dspMarkAsInvoiced.bindValue(":recv_id",list()->id());
+    dspMarkAsInvoiced.exec();
+    if (dspMarkAsInvoiced.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspMarkAsInvoiced.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList();

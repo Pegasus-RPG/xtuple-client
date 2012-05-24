@@ -72,7 +72,8 @@ void applyDiscount::sApply()
 
 void applyDiscount::populate()
 {
-  q.prepare("SELECT (vend_number|| '-' || vend_name) as f_vend,"
+  XSqlQuery applypopulate;
+  applypopulate.prepare("SELECT (vend_number|| '-' || vend_name) as f_vend,"
             "       CASE WHEN (apopen_doctype='V') THEN :voucher"
             "            WHEN (apopen_doctype='D') THEN :debitmemo"
             "            ELSE apopen_doctype"
@@ -95,23 +96,23 @@ void applyDiscount::populate()
             "           AND  (apapply_source_apopen_id=apopen_id)"
             "           AND  (apopen_discount)) ) AS data"
             " WHERE (apopen_id=:apopen_id); ");
-  q.bindValue(":apopen_id", _apopenid);
-  q.bindValue(":voucher", tr("Voucher"));
-  q.bindValue(":debitmemo", tr("Debit Memo"));
-  q.exec();
+  applypopulate.bindValue(":apopen_id", _apopenid);
+  applypopulate.bindValue(":voucher", tr("Voucher"));
+  applypopulate.bindValue(":debitmemo", tr("Debit Memo"));
+  applypopulate.exec();
 
-  if(q.first())
+  if(applypopulate.first())
   {
-    _vend->setText(q.value("f_vend").toString());
+    _vend->setText(applypopulate.value("f_vend").toString());
 
-    _doctype->setText(q.value("f_doctype").toString());
-    _docnum->setText(q.value("apopen_docnumber").toString());
-    _docdate->setDate(q.value("apopen_docdate").toDate());
+    _doctype->setText(applypopulate.value("f_doctype").toString());
+    _docnum->setText(applypopulate.value("apopen_docnumber").toString());
+    _docdate->setDate(applypopulate.value("apopen_docdate").toDate());
 
-    _terms->setText(q.value("f_terms").toString());
-    _discdate->setDate(q.value("discdate").toDate());
+    _terms->setText(applypopulate.value("f_terms").toString());
+    _discdate->setDate(applypopulate.value("discdate").toDate());
 
-    if(q.value("past").toBool())
+    if(applypopulate.value("past").toBool())
     {
       QPalette tmpPalette = _discdate->palette();
       tmpPalette.setColor(QPalette::HighlightedText, namedColor("error"));
@@ -121,35 +122,36 @@ void applyDiscount::populate()
       _discdateLit->setForegroundRole(QPalette::HighlightedText);
     }
 
-    _discprcnt->setDouble(q.value("terms_discprcnt").toDouble() * 100);
+    _discprcnt->setDouble(applypopulate.value("terms_discprcnt").toDouble() * 100);
 
-    _owed->setLocalValue(q.value("apopen_amount").toDouble());
-    _discountableOwed->setLocalValue(q.value("apopen_discountable_amount").toDouble());
-    _applieddiscounts->setLocalValue(q.value("applied").toDouble());
+    _owed->setLocalValue(applypopulate.value("apopen_amount").toDouble());
+    _discountableOwed->setLocalValue(applypopulate.value("apopen_discountable_amount").toDouble());
+    _applieddiscounts->setLocalValue(applypopulate.value("applied").toDouble());
 
-    _amount->set(q.value("amount").toDouble(),
-		 q.value("apopen_curr_id").toInt(), 
-		 q.value("apopen_docdate").toDate(), false);
+    _amount->set(applypopulate.value("amount").toDouble(),
+		 applypopulate.value("apopen_curr_id").toInt(), 
+		 applypopulate.value("apopen_docdate").toDate(), false);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (applypopulate.lastError().type() != QSqlError::NoError)
+    systemError(this, applypopulate.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void applyDiscount::sViewVoucher()
 {
-  q.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id"
+  XSqlQuery applyViewVoucher;
+  applyViewVoucher.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id"
             "  FROM apopen, vohead LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id)"
             " WHERE((vohead_number=apopen_docnumber)"
             "   AND (apopen_id=:apopen_id));");
-  q.bindValue(":apopen_id", _apopenid);
-  q.exec();
-  if(q.first())
+  applyViewVoucher.bindValue(":apopen_id", _apopenid);
+  applyViewVoucher.exec();
+  if(applyViewVoucher.first())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("vohead_id", q.value("vohead_id").toInt());
+    params.append("vohead_id", applyViewVoucher.value("vohead_id").toInt());
   
-    if (q.value("pohead_id").toInt() == -1)
+    if (applyViewVoucher.value("pohead_id").toInt() == -1)
     {
       miscVoucher *newdlg = new miscVoucher();
       newdlg->set(params);
@@ -163,7 +165,7 @@ void applyDiscount::sViewVoucher()
     }
   }
   else
-    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError( this, applyViewVoucher.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 

@@ -62,6 +62,7 @@ void states::languageChange()
 
 void states::sFillList()
 {
+  XSqlQuery statesFillList;
   MetaSQLQuery mql("SELECT state_id, state_abbr, state_name,"
                    "       country_name"
                    "  FROM state JOIN country ON (state_country_id=country_id) "
@@ -72,29 +73,30 @@ void states::sFillList()
   ParameterList params;
   if (_country->id() >= 0)
     params.append("country_id", _country->id());
-  q = mql.toQuery(params);
-  _state->populate(q);
+  statesFillList = mql.toQuery(params);
+  _state->populate(statesFillList);
 }
 
 void states::sDelete()
 {
-  q.prepare("SELECT EXISTS(SELECT 1"
+  XSqlQuery statesDelete;
+  statesDelete.prepare("SELECT EXISTS(SELECT 1"
             "                FROM addr JOIN state ON (addr_state=state_abbr)"
             "               WHERE ((addr_country=:country_name)"
             "                  AND (state_id=:state_id))) AS isused;");
-  q.bindValue(":state_id",     _state->id());
-  q.bindValue(":country_name", _state->currentItem()->text("country_name"));
-  q.exec();
-  if (q.first() && q.value("isused").toBool() &&
+  statesDelete.bindValue(":state_id",     _state->id());
+  statesDelete.bindValue(":country_name", _state->currentItem()->text("country_name"));
+  statesDelete.exec();
+  if (statesDelete.first() && statesDelete.value("isused").toBool() &&
         QMessageBox::question(this, tr("Delete State?"),
                               tr("<p>The state %1 is used in addresses. "
                                  "Are you sure you want to delete it?")
                                 .arg(_state->currentItem()->text("state_name")),
                               QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
     return;
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (statesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, statesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else if (QMessageBox::question(this, tr("Delete State?"),
@@ -102,10 +104,10 @@ void states::sDelete()
                             QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
     return;
 
-  q.prepare( "DELETE FROM state "
+  statesDelete.prepare( "DELETE FROM state "
              "WHERE (state_id=:state_id);" );
-  q.bindValue(":state_id", _state->id());
-  q.exec();
+  statesDelete.bindValue(":state_id", _state->id());
+  statesDelete.exec();
 
   sFillList();
 }

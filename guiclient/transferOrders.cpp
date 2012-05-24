@@ -144,21 +144,22 @@ void transferOrders::sCopy()
 
 void transferOrders::sRelease()
 {
-	q.prepare( "SELECT releaseTransferOrder(:tohead_id) AS result;");
-	q.bindValue(":tohead_id", _to->id());
-	q.exec();
-	if (q.first())
+  XSqlQuery transferRelease;
+	transferRelease.prepare( "SELECT releaseTransferOrder(:tohead_id) AS result;");
+	transferRelease.bindValue(":tohead_id", _to->id());
+	transferRelease.exec();
+	if (transferRelease.first())
 	{
-	  int result = q.value("result").toInt();
+	  int result = transferRelease.value("result").toInt();
 	  if (result < 0)
 	  {
 	    systemError(this, storedProcErrorLookup("releaseTransferOrder", result), __FILE__, __LINE__);
 	    return;
 	  }
 	}
-	else if (q.lastError().type() != QSqlError::NoError)
+	else if (transferRelease.lastError().type() != QSqlError::NoError)
 	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  systemError(this, transferRelease.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
   
@@ -178,18 +179,19 @@ void transferOrders::sIssue()
 
 void transferOrders::sDelete()
 {
+  XSqlQuery transferDelete;
   if ( QMessageBox::question(this, tr("Delete Transfer Order?"),
                              tr("<p>Are you sure that you want to completely "
 				"delete the selected Transfer Order?"),
 			     QMessageBox::Yes,
 			     QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare("SELECT deleteTo(:tohead_id) AS result;");
-    q.bindValue(":tohead_id", _to->id());
-    q.exec();
-    if (q.first())
+    transferDelete.prepare("SELECT deleteTo(:tohead_id) AS result;");
+    transferDelete.bindValue(":tohead_id", _to->id());
+    transferDelete.exec();
+    if (transferDelete.first())
     {
-      int result = q.value("result").toInt();
+      int result = transferDelete.value("result").toInt();
       if (result == -1)
       {
 	if (QMessageBox::question(this, tr("Cannot Delete Transfer Order"),
@@ -201,21 +203,21 @@ void transferOrders::sDelete()
 				  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
 	  return;
 
-	q.prepare( "SELECT closeTransferOrder(:tohead_id) AS result;");
-	q.bindValue(":tohead_id", _to->id());
-	q.exec();
-	if (q.first())
+	transferDelete.prepare( "SELECT closeTransferOrder(:tohead_id) AS result;");
+	transferDelete.bindValue(":tohead_id", _to->id());
+	transferDelete.exec();
+	if (transferDelete.first())
 	{
-	  int result = q.value("result").toInt();
+	  int result = transferDelete.value("result").toInt();
 	  if (result < 0)
 	  {
 	    systemError(this, storedProcErrorLookup("closeTransferOrder", result), __FILE__, __LINE__);
 	    return;
 	  }
 	}
-	else if (q.lastError().type() != QSqlError::NoError)
+	else if (transferDelete.lastError().type() != QSqlError::NoError)
 	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  systemError(this, transferDelete.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
   
@@ -230,9 +232,9 @@ void transferOrders::sDelete()
       omfgThis->sTransferOrdersUpdated(-1);
       omfgThis->sProjectsUpdated(-1);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (transferDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, transferDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -251,21 +253,22 @@ void transferOrders::sPrintPackingList()
 
 void transferOrders::sAddToPackingListBatch()
 {
-  q.prepare("SELECT addToPackingListBatch('TO', :tohead_id) AS result;");
-  q.bindValue(":tohead_id", _to->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery transferAddToPackingListBatch;
+  transferAddToPackingListBatch.prepare("SELECT addToPackingListBatch('TO', :tohead_id) AS result;");
+  transferAddToPackingListBatch.bindValue(":tohead_id", _to->id());
+  transferAddToPackingListBatch.exec();
+  if (transferAddToPackingListBatch.first())
   {
-    int result = q.value("result").toInt();
+    int result = transferAddToPackingListBatch.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("addToPackingListBatch", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (transferAddToPackingListBatch.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, transferAddToPackingListBatch.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

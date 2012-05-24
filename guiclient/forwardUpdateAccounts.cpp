@@ -38,6 +38,7 @@ void forwardUpdateAccounts::languageChange()
 
 void forwardUpdateAccounts::sUpdate()
 {
+  XSqlQuery forwardUpdate;
   if(_accntSelected->isChecked() && _accnt->id() == -1)
   {
     QMessageBox::warning(this, tr("No Account Selected"),
@@ -47,31 +48,31 @@ void forwardUpdateAccounts::sUpdate()
   
   if(_accntSelected->isChecked())
   {
-    q.prepare("SELECT forwardUpdateAccount(:accnt_id) AS result;");
-    q.bindValue(":accnt_id", _accnt->id());
+    forwardUpdate.prepare("SELECT forwardUpdateAccount(:accnt_id) AS result;");
+    forwardUpdate.bindValue(":accnt_id", _accnt->id());
   }
   else if(_typeSelected->isChecked())
   {
-    q.prepare("SELECT forwardUpdateAccount(accnt_id) AS result"
+    forwardUpdate.prepare("SELECT forwardUpdateAccount(accnt_id) AS result"
               "  FROM accnt LEFT OUTER JOIN company ON (company_number=accnt_company)"
               " WHERE((accnt_type=:accnt_type)"
               "   AND (NOT COALESCE(company_external,false)));");
     if (_type->currentIndex() == 0)
-      q.bindValue(":accnt_type", "A");
+      forwardUpdate.bindValue(":accnt_type", "A");
     else if (_type->currentIndex() == 1)
-      q.bindValue(":accnt_type", "L");
+      forwardUpdate.bindValue(":accnt_type", "L");
     else if (_type->currentIndex() == 2)
-      q.bindValue(":accnt_type", "E");
+      forwardUpdate.bindValue(":accnt_type", "E");
     else if (_type->currentIndex() == 3)
-      q.bindValue(":accnt_type", "R");
+      forwardUpdate.bindValue(":accnt_type", "R");
     else if (_type->currentIndex() == 4)
-      q.bindValue(":accnt_type", "Q");
+      forwardUpdate.bindValue(":accnt_type", "Q");
   }
   else
-    q.prepare("SELECT forwardUpdateAccount(accnt_id) AS result"
+    forwardUpdate.prepare("SELECT forwardUpdateAccount(accnt_id) AS result"
               "  FROM accnt LEFT OUTER JOIN company ON (company_number=accnt_company)"
               " WHERE (NOT COALESCE(company_external,false));");
   
-  q.exec();
+  forwardUpdate.exec();
 }
 

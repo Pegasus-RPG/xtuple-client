@@ -52,17 +52,18 @@ void dspMaterialUsageVarianceByBOMItem::languageChange()
 
 void dspMaterialUsageVarianceByBOMItem::sPopulateComponentItems(int pItemid)
 {
+  XSqlQuery dspPopulateComponentItems;
   if (pItemid != -1)
   {
-    q.prepare( "SELECT bomitem_id,"
+    dspPopulateComponentItems.prepare( "SELECT bomitem_id,"
                "       (bomitem_seqnumber || '-' || item_number || ' ' || item_descrip1 || ' ' || item_descrip2) "
                "FROM bomitem, item "
                "WHERE ( (bomitem_item_id=item_id)"
                " AND (bomitem_parent_item_id=:item_id) ) "
                "ORDER BY bomitem_seqnumber;" );
-    q.bindValue(":item_id", pItemid);
-    q.exec();
-    _componentItem->populate(q);
+    dspPopulateComponentItems.bindValue(":item_id", pItemid);
+    dspPopulateComponentItems.exec();
+    _componentItem->populate(dspPopulateComponentItems);
   }
   else
     _componentItem->clear();

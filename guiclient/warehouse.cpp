@@ -61,6 +61,7 @@ void warehouse::languageChange()
 
 enum SetResponse warehouse::set(const ParameterList &pParams)
 {
+  XSqlQuery warehouseet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -80,12 +81,12 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
       _mode = cNew;
       _code->setFocus();
 
-      q.exec("SELECT NEXTVAL('warehous_warehous_id_seq') AS warehous_id");
-      if (q.first())
-        _warehousid = q.value("warehous_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      warehouseet.exec("SELECT NEXTVAL('warehous_warehous_id_seq') AS warehous_id");
+      if (warehouseet.first())
+        _warehousid = warehouseet.value("warehous_id").toInt();
+      else if (warehouseet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, warehouseet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -469,18 +470,19 @@ void warehouse::populate()
 
 void warehouse::sCheck()
 {
+  XSqlQuery warehouseCheck;
   _code->setText(_code->text().trimmed().toUpper());
 
   if (_mode == cNew)
   {
-    q.prepare( "SELECT warehous_id "
+    warehouseCheck.prepare( "SELECT warehous_id "
                "FROM whsinfo "
                "WHERE (UPPER(warehous_code)=UPPER(:warehous_code));" );
-    q.bindValue(":warehous_code", _code->text());
-    q.exec();
-    if (q.first())
+    warehouseCheck.bindValue(":warehous_code", _code->text());
+    warehouseCheck.exec();
+    if (warehouseCheck.first())
     {
-      _warehousid = q.value("warehous_id").toInt();
+      _warehousid = warehouseCheck.value("warehous_id").toInt();
       _mode = cEdit;
       populate();
       emit newMode(_mode);
@@ -524,12 +526,13 @@ void warehouse::sEditZone()
 
 void warehouse::sDeleteZone()
 {
-  q.prepare( "SELECT location_id "
+  XSqlQuery warehouseDeleteZone;
+  warehouseDeleteZone.prepare( "SELECT location_id "
              "FROM location "
              "WHERE (location_whsezone_id=:whsezone_id);" );
-  q.bindValue(":whsezone_id", _whsezone->id());
-  q.exec();
-  if (q.first())
+  warehouseDeleteZone.bindValue(":whsezone_id", _whsezone->id());
+  warehouseDeleteZone.exec();
+  if (warehouseDeleteZone.first())
   {
     QMessageBox::warning( this, tr("Cannot Delete Site Zone"),
                           tr( "<p>The selected Site Zone cannot be "
@@ -539,19 +542,19 @@ void warehouse::sDeleteZone()
                              "the selected Site Zone." ) );
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (warehouseDeleteZone.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, warehouseDeleteZone.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare( "DELETE FROM whsezone "
+  warehouseDeleteZone.prepare( "DELETE FROM whsezone "
              "WHERE (whsezone_id=:whsezone_id);" );
-  q.bindValue(":whsezone_id", _whsezone->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  warehouseDeleteZone.bindValue(":whsezone_id", _whsezone->id());
+  warehouseDeleteZone.exec();
+  if (warehouseDeleteZone.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, warehouseDeleteZone.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -559,16 +562,17 @@ void warehouse::sDeleteZone()
 
 void warehouse::sFillList()
 {
-  q.prepare( "SELECT whsezone_id, whsezone_name, whsezone_descrip "
+  XSqlQuery warehouseFillList;
+  warehouseFillList.prepare( "SELECT whsezone_id, whsezone_name, whsezone_descrip "
              "FROM whsezone "
              "WHERE (whsezone_warehous_id=:warehous_id) "
              "ORDER BY whsezone_name;" );
-  q.bindValue(":warehous_id", _warehousid);
-  q.exec();
-  _whsezone->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  warehouseFillList.bindValue(":warehous_id", _warehousid);
+  warehouseFillList.exec();
+  _whsezone->populate(warehouseFillList);
+  if (warehouseFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, warehouseFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

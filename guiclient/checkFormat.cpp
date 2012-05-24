@@ -77,6 +77,7 @@ enum SetResponse checkFormat::set(const ParameterList &pParams)
 
 void checkFormat::sSave()
 {
+  XSqlQuery checkSave;
   if (_name->text().trimmed().length() == 0)
   {
     QMessageBox::warning( this, tr("Check Format Name is Invalid"),
@@ -95,34 +96,34 @@ void checkFormat::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('form_form_id_seq') AS _form_id");
-    if (q.first())
-      _formid = q.value("_form_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    checkSave.exec("SELECT NEXTVAL('form_form_id_seq') AS _form_id");
+    if (checkSave.first())
+      _formid = checkSave.value("_form_id").toInt();
+    else if (checkSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, checkSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO form "
+    checkSave.prepare( "INSERT INTO form "
                "(form_id, form_name, form_descrip, form_report_name, form_key) "
                "VALUES "
                "(:form_id, :form_name, :form_descrip, :form_report_name, 'Chck');" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE form "
+    checkSave.prepare( "UPDATE form "
                "SET form_name=:form_name, form_descrip=:form_descrip,"
                "    form_report_name=:form_report_name "
                "WHERE (form_id=:form_id);" );
 
-  q.bindValue(":form_id", _formid);
-  q.bindValue(":form_name", _name->text());
-  q.bindValue(":form_descrip", _descrip->text());
-  q.bindValue(":form_report_name", _report->code());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  checkSave.bindValue(":form_id", _formid);
+  checkSave.bindValue(":form_name", _name->text());
+  checkSave.bindValue(":form_descrip", _descrip->text());
+  checkSave.bindValue(":form_report_name", _report->code());
+  checkSave.exec();
+  if (checkSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, checkSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -131,20 +132,21 @@ void checkFormat::sSave()
 
 void checkFormat::populate()
 {
-  q.prepare( "SELECT form_name, form_descrip, form_report_name "
+  XSqlQuery checkpopulate;
+  checkpopulate.prepare( "SELECT form_name, form_descrip, form_report_name "
        	     "FROM form "
 	     "WHERE (form_id=:form_id);" );
-  q.bindValue(":form_id", _formid);
-  q.exec();
-  if (q.first())
+  checkpopulate.bindValue(":form_id", _formid);
+  checkpopulate.exec();
+  if (checkpopulate.first())
   {
-    _name->setText(q.value("form_name").toString());
-    _descrip->setText(q.value("form_descrip").toString());
-    _report->setCode(q.value("form_report_name").toString());
+    _name->setText(checkpopulate.value("form_name").toString());
+    _descrip->setText(checkpopulate.value("form_descrip").toString());
+    _report->setCode(checkpopulate.value("form_report_name").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (checkpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, checkpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -155,15 +155,16 @@ void dspCountSlipEditList::sEdit()
 
 void dspCountSlipEditList::sDelete()
 {
+  XSqlQuery dspDelete;
   if (QMessageBox::question( this, tr("Delete Count Slip?"),
                             tr("Are you sure that you want to delete the selected Count Slip?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare( "DELETE FROM cntslip "
+    dspDelete.prepare( "DELETE FROM cntslip "
                " WHERE(cntslip_id=:cntslip_id);" );
-    q.bindValue(":cntslip_id", _cntslip->id());
-    q.exec();
+    dspDelete.bindValue(":cntslip_id", _cntslip->id());
+    dspDelete.exec();
 
     sFillList();
   }
@@ -171,21 +172,23 @@ void dspCountSlipEditList::sDelete()
 
 void dspCountSlipEditList::sPost()
 {
-  q.prepare("SELECT postCountSlip(:cntslip_id);");
-  q.bindValue(":cntslip_id", _cntslip->id());
-  q.exec();
+  XSqlQuery dspPost;
+  dspPost.prepare("SELECT postCountSlip(:cntslip_id);");
+  dspPost.bindValue(":cntslip_id", _cntslip->id());
+  dspPost.exec();
 
   sFillList();
 }
 
 void dspCountSlipEditList::sPostAll()
 {
-  q.prepare( "SELECT postCountSlip(cntslip_id) "
+  XSqlQuery dspPostAll;
+  dspPostAll.prepare( "SELECT postCountSlip(cntslip_id) "
              "FROM cntslip "
              "WHERE ( (NOT cntslip_posted)"
              " AND (cntslip_cnttag_id=:cnttag_id) );" );
-  q.bindValue(":cnttag_id", _cnttagid);
-  q.exec();
+  dspPostAll.bindValue(":cnttag_id", _cnttagid);
+  dspPostAll.exec();
 
   sFillList();
 }
@@ -205,15 +208,16 @@ void dspCountSlipEditList::sCountTagList()
 
 void dspCountSlipEditList::populate()
 {
-  q.prepare( "SELECT invcnt_tagnumber, invcnt_itemsite_id "
+  XSqlQuery dsppopulate;
+  dsppopulate.prepare( "SELECT invcnt_tagnumber, invcnt_itemsite_id "
              "FROM invcnt "
              "WHERE (invcnt_id=:cnttag_id);" );
-  q.bindValue(":cnttag_id", _cnttagid);
-  q.exec();
-  if (q.first())
+  dsppopulate.bindValue(":cnttag_id", _cnttagid);
+  dsppopulate.exec();
+  if (dsppopulate.first())
   {
-    _countTagNumber->setText(q.value("invcnt_tagnumber").toString());
-    _item->setItemsiteid(q.value("invcnt_itemsite_id").toInt());
+    _countTagNumber->setText(dsppopulate.value("invcnt_tagnumber").toString());
+    _item->setItemsiteid(dsppopulate.value("invcnt_itemsite_id").toInt());
   }
 
   sFillList();
@@ -221,11 +225,12 @@ void dspCountSlipEditList::populate()
 
 void dspCountSlipEditList::sFillList()
 {
+  XSqlQuery dspFillList;
   MetaSQLQuery mql = mqlLoad("countSlip", "detail");
   ParameterList params;
   params.append("cnttag_id", _cnttagid);
-  q = mql.toQuery(params);
-  _cntslip->populate(q);
+  dspFillList = mql.toQuery(params);
+  _cntslip->populate(dspFillList);
 }
 
 void dspCountSlipEditList::sHandleButtons(bool valid)

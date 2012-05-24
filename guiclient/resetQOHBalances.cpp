@@ -40,6 +40,7 @@ void resetQOHBalances::languageChange()
 
 void resetQOHBalances::sReset()
 {
+  XSqlQuery resetReset;
   if (QMessageBox::question(this, tr("Reset Selected QOH Balances?"),
                             tr( "<p>You are about to issue Adjustment "
                                 "Transactions for all Item Sites within "
@@ -66,14 +67,14 @@ void resetQOHBalances::sReset()
 
   sql += ");";
 
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  q.bindValue(":date", _transDate->date());
-  q.exec();
-  if (q.first())
+  resetReset.prepare(sql);
+  _warehouse->bindValue(resetReset);
+  _classCode->bindValue(resetReset);
+  resetReset.bindValue(":date", _transDate->date());
+  resetReset.exec();
+  if (resetReset.first())
   {
-    int result = q.value("result").toInt();
+    int result = resetReset.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("resetQOHBalance", result),
@@ -81,9 +82,9 @@ void resetQOHBalances::sReset()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (resetReset.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, resetReset.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

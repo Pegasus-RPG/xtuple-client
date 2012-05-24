@@ -83,6 +83,7 @@ void arOpenItem::languageChange()
 
 enum SetResponse arOpenItem::set( const ParameterList &pParams )
 {
+  XSqlQuery aret;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -120,15 +121,15 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
     {
       _mode = cNew;
 
-      q.exec("SELECT fetchARMemoNumber() AS number;");
-      if (q.first())
+      aret.exec("SELECT fetchARMemoNumber() AS number;");
+      if (aret.first())
       {
-        _docNumber->setText(q.value("number").toString());
-        _seqiss = q.value("number").toInt();
+        _docNumber->setText(aret.value("number").toString());
+        _seqiss = aret.value("number").toInt();
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (aret.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, aret.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
 
@@ -197,6 +198,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
 
 void arOpenItem::sSave()
 {
+  XSqlQuery arSave;
   QString storedProc;
 
   if (_mode == cNew)
@@ -251,7 +253,7 @@ void arOpenItem::sSave()
 
     if (_docType->currentIndex() == 0)
     {
-      q.prepare( "SELECT createARCreditMemo( :aropen_id, :cust_id, :aropen_docnumber, :aropen_ordernumber,"
+      arSave.prepare( "SELECT createARCreditMemo( :aropen_id, :cust_id, :aropen_docnumber, :aropen_ordernumber,"
                  "                           :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
                  "                           :aropen_salescat_id, :aropen_accnt_id, :aropen_duedate,"
                  "                           :aropen_terms_id, :aropen_salesrep_id, :aropen_commission_due,"
@@ -260,7 +262,7 @@ void arOpenItem::sSave()
     }
     else if (_docType->currentIndex() == 1)
     {
-      q.prepare( "SELECT createARDebitMemo( :aropen_id,:cust_id, NULL, :aropen_docnumber, :aropen_ordernumber,"
+      arSave.prepare( "SELECT createARDebitMemo( :aropen_id,:cust_id, NULL, :aropen_docnumber, :aropen_ordernumber,"
                  "                          :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
                  "                          :aropen_salescat_id, :aropen_accnt_id, :aropen_duedate,"
                  "                          :aropen_terms_id, :aropen_salesrep_id, :aropen_commission_due, "
@@ -268,7 +270,7 @@ void arOpenItem::sSave()
       storedProc = "createARDebitMemo";
     }
 
-    q.bindValue(":cust_id", _cust->id());
+    arSave.bindValue(":cust_id", _cust->id());
   }
   else if (_mode == cEdit)
   {
@@ -281,7 +283,7 @@ void arOpenItem::sSave()
                                  tr("Yes"), tr("No"), QString::null ) == 1 )
         return;
 
-    q.prepare( "UPDATE aropen "
+    arSave.prepare( "UPDATE aropen "
                "SET aropen_duedate=:aropen_duedate,"
                "    aropen_terms_id=:aropen_terms_id, aropen_salesrep_id=:aropen_salesrep_id,"
                "    aropen_amount=:aropen_amount,"
@@ -292,63 +294,63 @@ void arOpenItem::sSave()
   }
 
   if (_aropenid != -1)
-    q.bindValue(":aropen_id", _aropenid);
-  q.bindValue(":aropen_docdate", _docDate->date());
-  q.bindValue(":aropen_duedate", _dueDate->date());
-  q.bindValue(":aropen_docnumber", _docNumber->text());
-  q.bindValue(":aropen_ordernumber", _orderNumber->text());
-  q.bindValue(":aropen_terms_id", _terms->id());
+    arSave.bindValue(":aropen_id", _aropenid);
+  arSave.bindValue(":aropen_docdate", _docDate->date());
+  arSave.bindValue(":aropen_duedate", _dueDate->date());
+  arSave.bindValue(":aropen_docnumber", _docNumber->text());
+  arSave.bindValue(":aropen_ordernumber", _orderNumber->text());
+  arSave.bindValue(":aropen_terms_id", _terms->id());
 
   if (_salesrep->isValid())
-    q.bindValue(":aropen_salesrep_id", _salesrep->id());
+    arSave.bindValue(":aropen_salesrep_id", _salesrep->id());
 
-  q.bindValue(":aropen_amount", _amount->localValue());
-  q.bindValue(":aropen_commission_due", _commissionDue->baseValue());
-  q.bindValue(":aropen_notes",          _notes->toPlainText());
-  q.bindValue(":aropen_rsncode_id", _rsnCode->id());
-  q.bindValue(":curr_id", _amount->id());
+  arSave.bindValue(":aropen_amount", _amount->localValue());
+  arSave.bindValue(":aropen_commission_due", _commissionDue->baseValue());
+  arSave.bindValue(":aropen_notes",          _notes->toPlainText());
+  arSave.bindValue(":aropen_rsncode_id", _rsnCode->id());
+  arSave.bindValue(":curr_id", _amount->id());
   if(_useAltPrepaid->isChecked() && _altSalescatidSelected->isChecked())
-    q.bindValue(":aropen_salescat_id", _altSalescatid->id());
+    arSave.bindValue(":aropen_salescat_id", _altSalescatid->id());
   else
-    q.bindValue(":aropen_salescat_id", -1);
+    arSave.bindValue(":aropen_salescat_id", -1);
   if(_useAltPrepaid->isChecked() && _altAccntidSelected->isChecked())
-    q.bindValue(":aropen_accnt_id", _altAccntid->id());
+    arSave.bindValue(":aropen_accnt_id", _altAccntid->id());
   else
-    q.bindValue(":aropen_accnt_id", -1);
+    arSave.bindValue(":aropen_accnt_id", -1);
 
   switch (_docType->currentIndex())
   {
     case 0:
-      q.bindValue(":aropen_doctype", "C");
+      arSave.bindValue(":aropen_doctype", "C");
       break;
 
     case 1:
-      q.bindValue(":aropen_doctype", "D");
+      arSave.bindValue(":aropen_doctype", "D");
       break;
 
     case 2:
-      q.bindValue(":aropen_doctype", "I");
+      arSave.bindValue(":aropen_doctype", "I");
       break;
 
     case 3:
-      q.bindValue(":aropen_doctype", "R");
+      arSave.bindValue(":aropen_doctype", "R");
       break;
   }
 
-  if (q.exec())
+  if (arSave.exec())
   {
     if (_mode == cEdit)
       done(_aropenid);
     else
     {
-      q.first();
-      if (q.lastError().type() != QSqlError::NoError)
+      arSave.first();
+      if (arSave.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, arSave.lastError().databaseText(), __FILE__, __LINE__);
         reset();
 	return;
       }
-      _last = q.value("result").toInt();
+      _last = arSave.value("result").toInt();
       if (_last < 0)
       {
 	systemError(this, storedProc.isEmpty() ?
@@ -363,9 +365,9 @@ void arOpenItem::sSave()
       reset();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (arSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, arSave.lastError().databaseText(), __FILE__, __LINE__);
     if (_mode == cNew)
       reset();
     return;
@@ -391,14 +393,15 @@ void arOpenItem::sClose()
 
 void arOpenItem::sReleaseNumber()
 {
+  XSqlQuery arReleaseNumber;
   if(_seqiss)
   {
-    q.prepare("SELECT releaseARMemoNumber(:docNumber);");
-    q.bindValue(":docNumber", _seqiss);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    arReleaseNumber.prepare("SELECT releaseARMemoNumber(:docNumber);");
+    arReleaseNumber.bindValue(":docNumber", _seqiss);
+    arReleaseNumber.exec();
+    if (arReleaseNumber.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, arReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -432,7 +435,8 @@ void arOpenItem::sPopulateCustInfo(int pCustid)
 
 void arOpenItem::populate()
 {
-  q.prepare( "SELECT aropen_cust_id, aropen_docdate, aropen_duedate,"
+  XSqlQuery arpopulate;
+  arpopulate.prepare( "SELECT aropen_cust_id, aropen_docdate, aropen_duedate,"
              "       aropen_doctype, aropen_docnumber,"
              "       aropen_ordernumber, aropen_journalnumber,"
              "       aropen_amount, aropen_amount,"
@@ -460,52 +464,52 @@ void arOpenItem::populate()
              "  aropen_amount, aropen_amount, aropen_paid, f_balance, aropen_terms_id, "
              "  aropen_salesrep_id, aropen_commission_due, cust_commprcnt, aropen_notes, aropen_rsncode_id, "
              "  aropen_salescat_id, aropen_accnt_id, aropen_curr_id, cmhead_id;" );
-  q.bindValue(":aropen_id", _aropenid);
-  q.exec();
-  if (q.first())
+  arpopulate.bindValue(":aropen_id", _aropenid);
+  arpopulate.exec();
+  if (arpopulate.first())
   {
-    _cust->setId(q.value("aropen_cust_id").toInt());
-    _docDate->setDate(q.value("aropen_docdate").toDate(), true);
-    _dueDate->setDate(q.value("aropen_duedate").toDate());
-    _docNumber->setText(q.value("aropen_docnumber").toString());
-    _orderNumber->setText(q.value("aropen_ordernumber").toString());
-    _journalNumber->setText(q.value("aropen_journalnumber").toString());
-    _amount->set(q.value("aropen_amount").toDouble(),
-		 q.value("aropen_curr_id").toInt(),
-		 q.value("aropen_docdate").toDate(), false);
-    _paid->setLocalValue(q.value("aropen_paid").toDouble());
-    _balance->setLocalValue(q.value("f_balance").toDouble());
-    _terms->setId(q.value("aropen_terms_id").toInt());
-    _salesrep->setId(q.value("aropen_salesrep_id").toInt());
-    _commissionDue->setBaseValue(q.value("aropen_commission_due").toDouble());
-    _commprcnt = q.value("cust_commprcnt").toDouble();
-    _notes->setText(q.value("aropen_notes").toString());
-    if (q.value("showTax").toBool())
-      _tax->setLocalValue(q.value("tax").toDouble());
+    _cust->setId(arpopulate.value("aropen_cust_id").toInt());
+    _docDate->setDate(arpopulate.value("aropen_docdate").toDate(), true);
+    _dueDate->setDate(arpopulate.value("aropen_duedate").toDate());
+    _docNumber->setText(arpopulate.value("aropen_docnumber").toString());
+    _orderNumber->setText(arpopulate.value("aropen_ordernumber").toString());
+    _journalNumber->setText(arpopulate.value("aropen_journalnumber").toString());
+    _amount->set(arpopulate.value("aropen_amount").toDouble(),
+		 arpopulate.value("aropen_curr_id").toInt(),
+		 arpopulate.value("aropen_docdate").toDate(), false);
+    _paid->setLocalValue(arpopulate.value("aropen_paid").toDouble());
+    _balance->setLocalValue(arpopulate.value("f_balance").toDouble());
+    _terms->setId(arpopulate.value("aropen_terms_id").toInt());
+    _salesrep->setId(arpopulate.value("aropen_salesrep_id").toInt());
+    _commissionDue->setBaseValue(arpopulate.value("aropen_commission_due").toDouble());
+    _commprcnt = arpopulate.value("cust_commprcnt").toDouble();
+    _notes->setText(arpopulate.value("aropen_notes").toString());
+    if (arpopulate.value("showTax").toBool())
+      _tax->setLocalValue(arpopulate.value("tax").toDouble());
     else
     {
       _taxLit->hide();
       _tax->hide();
     }
 
-    if(!q.value("aropen_rsncode_id").isNull() && q.value("aropen_rsncode_id").toInt() != -1)
-      _rsnCode->setId(q.value("aropen_rsncode_id").toInt());
+    if(!arpopulate.value("aropen_rsncode_id").isNull() && arpopulate.value("aropen_rsncode_id").toInt() != -1)
+      _rsnCode->setId(arpopulate.value("aropen_rsncode_id").toInt());
 
-    if(!q.value("aropen_accnt_id").isNull() && q.value("aropen_accnt_id").toInt() != -1)
+    if(!arpopulate.value("aropen_accnt_id").isNull() && arpopulate.value("aropen_accnt_id").toInt() != -1)
     {
       _useAltPrepaid->setChecked(TRUE);
       _altAccntidSelected->setChecked(TRUE);
-      _altAccntid->setId(q.value("aropen_accnt_id").toInt());
+      _altAccntid->setId(arpopulate.value("aropen_accnt_id").toInt());
     }
 
-    if(!q.value("aropen_salescat_id").isNull() && q.value("aropen_salescat_id").toInt() != -1)
+    if(!arpopulate.value("aropen_salescat_id").isNull() && arpopulate.value("aropen_salescat_id").toInt() != -1)
     {
       _useAltPrepaid->setChecked(TRUE);
       _altSalescatidSelected->setChecked(TRUE);
-      _altSalescatid->setId(q.value("aropen_salescat_id").toInt());
+      _altSalescatid->setId(arpopulate.value("aropen_salescat_id").toInt());
     }
 
-    QString docType = q.value("aropen_doctype").toString();
+    QString docType = arpopulate.value("aropen_doctype").toString();
     if (docType == "C")
       _docType->setCurrentIndex(0);
     else if (docType == "D")
@@ -515,11 +519,11 @@ void arOpenItem::populate()
     else if (docType == "R")
       _docType->setCurrentIndex(3);
 
-    _cAmount = q.value("aropen_amount").toDouble();
+    _cAmount = arpopulate.value("aropen_amount").toDouble();
 
     if ( (docType == "I") || (docType == "D") )
     {
-      q.prepare( "SELECT arapply_id, arapply_source_aropen_id,"
+      arpopulate.prepare( "SELECT arapply_id, arapply_source_aropen_id,"
                  "       CASE WHEN (arapply_source_doctype = 'C') THEN :creditMemo"
                  "            WHEN (arapply_source_doctype = 'R') THEN :cashdeposit"
                  "            WHEN (arapply_fundstype='C') THEN :check"
@@ -546,22 +550,22 @@ void arOpenItem::populate()
                  "WHERE (arapply_target_aropen_id=:aropen_id) "
                  "ORDER BY arapply_postdate;" );
 
-      q.bindValue(":creditMemo", tr("Credit Memo"));
-      q.bindValue(":cashdeposit", tr("Cash Deposit"));
-      q.bindValue(":check", tr("Check"));
-      q.bindValue(":certifiedCheck", tr("Certified Check"));
-      q.bindValue(":masterCard", tr("Master Card"));
-      q.bindValue(":visa", tr("Visa"));
-      q.bindValue(":americanExpress", tr("American Express"));
-      q.bindValue(":discoverCard", tr("Discover Card"));
-      q.bindValue(":otherCreditCard", tr("Other Credit Card"));
-      q.bindValue(":cash", tr("Cash"));
-      q.bindValue(":wireTransfer", tr("Wire Transfer"));
-      q.bindValue(":other", tr("Other"));
+      arpopulate.bindValue(":creditMemo", tr("Credit Memo"));
+      arpopulate.bindValue(":cashdeposit", tr("Cash Deposit"));
+      arpopulate.bindValue(":check", tr("Check"));
+      arpopulate.bindValue(":certifiedCheck", tr("Certified Check"));
+      arpopulate.bindValue(":masterCard", tr("Master Card"));
+      arpopulate.bindValue(":visa", tr("Visa"));
+      arpopulate.bindValue(":americanExpress", tr("American Express"));
+      arpopulate.bindValue(":discoverCard", tr("Discover Card"));
+      arpopulate.bindValue(":otherCreditCard", tr("Other Credit Card"));
+      arpopulate.bindValue(":cash", tr("Cash"));
+      arpopulate.bindValue(":wireTransfer", tr("Wire Transfer"));
+      arpopulate.bindValue(":other", tr("Other"));
     }
     else if (docType == "C" || docType == "R")
     {
-      q.prepare( "SELECT arapply_id, arapply_target_aropen_id,"
+      arpopulate.prepare( "SELECT arapply_id, arapply_target_aropen_id,"
                  "       CASE WHEN (arapply_target_doctype = 'I') THEN :invoice"
                  "            WHEN (arapply_target_doctype = 'D') THEN :debitMemo"
                  "            WHEN (arapply_target_doctype = 'K') THEN :apcheck"
@@ -578,22 +582,22 @@ void arOpenItem::populate()
                  "WHERE (arapply_source_aropen_id=:aropen_id) "
                  "ORDER BY arapply_postdate;" );
 
-      q.bindValue(":invoice", tr("Invoice"));
-      q.bindValue(":debitMemo", tr("Debit Memo"));
-      q.bindValue(":apcheck", tr("A/P Check"));
-      q.bindValue(":cashreceipt", tr("Cash Receipt"));
+      arpopulate.bindValue(":invoice", tr("Invoice"));
+      arpopulate.bindValue(":debitMemo", tr("Debit Memo"));
+      arpopulate.bindValue(":apcheck", tr("A/P Check"));
+      arpopulate.bindValue(":cashreceipt", tr("Cash Receipt"));
     }
 
-    q.bindValue(":error", tr("Error"));
-    q.bindValue(":aropen_id", _aropenid);
-    q.exec();
-    _arapply->populate(q, TRUE);
-    if (q.lastError().type() != QSqlError::NoError)
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    arpopulate.bindValue(":error", tr("Error"));
+    arpopulate.bindValue(":aropen_id", _aropenid);
+    arpopulate.exec();
+    _arapply->populate(arpopulate, TRUE);
+    if (arpopulate.lastError().type() != QSqlError::NoError)
+	systemError(this, arpopulate.lastError().databaseText(), __FILE__, __LINE__);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (arpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, arpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -633,14 +637,15 @@ void arOpenItem::sCalculateCommission()
 
 void arOpenItem::sPopulateDueDate()
 {
+  XSqlQuery arPopulateDueDate;
   if ( (_terms->isValid()) && (_docDate->isValid()) && (!_dueDate->isValid()) )
   {
-    q.prepare("SELECT determineDueDate(:terms_id, :docDate) AS duedate;");
-    q.bindValue(":terms_id", _terms->id());
-    q.bindValue(":docDate", _docDate->date());
-    q.exec();
-    if (q.first())
-      _dueDate->setDate(q.value("duedate").toDate());
+    arPopulateDueDate.prepare("SELECT determineDueDate(:terms_id, :docDate) AS duedate;");
+    arPopulateDueDate.bindValue(":terms_id", _terms->id());
+    arPopulateDueDate.bindValue(":docDate", _docDate->date());
+    arPopulateDueDate.exec();
+    if (arPopulateDueDate.first())
+      _dueDate->setDate(arPopulateDueDate.value("duedate").toDate());
   }
 }
 
@@ -655,7 +660,8 @@ void arOpenItem::sPrintOnPost(int temp_id)
 }
 
 void arOpenItem::sTaxDetail()
-{ 
+{
+  XSqlQuery ar;
   if (_aropenid == -1)
   {
     if (!_docDate->isValid() || !_dueDate->isValid())
@@ -666,14 +672,13 @@ void arOpenItem::sTaxDetail()
       return;
     }
     
-    XSqlQuery ar;
     ar.prepare("SELECT nextval('aropen_aropen_id_seq') AS result;");
     ar.exec();
     if (ar.first())
       _aropenid = ar.value("result").toInt();
     else if (ar.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, ar.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
@@ -696,7 +701,7 @@ void arOpenItem::sTaxDetail()
     ar.exec();
     if (ar.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, ar.lastError().databaseText(), __FILE__, __LINE__);
       reset();
       return;
     }
@@ -712,9 +717,9 @@ void arOpenItem::sTaxDetail()
   if (_mode != cNew)
     params.append("readOnly");
 
-  q.exec("SELECT getadjustmenttaxtypeid() as taxtype;");
-  if(q.first())
-    params.append("taxtype_id", q.value("taxtype").toInt());  
+  ar.exec("SELECT getadjustmenttaxtypeid() as taxtype;");
+  if(ar.first())
+    params.append("taxtype_id", ar.value("taxtype").toInt());  
    
   params.append("order_type", "AR");
   params.append("order_id", _aropenid);

@@ -38,6 +38,7 @@ void firmPlannedOrdersByPlannerCode::languageChange()
 
 void firmPlannedOrdersByPlannerCode::sFirm()
 {
+  XSqlQuery firmFirm;
   if (!_cutoffDate->isValid())
   {
     QMessageBox::critical( this, tr("Enter Cut Off Date"),
@@ -61,10 +62,10 @@ void firmPlannedOrdersByPlannerCode::sFirm()
 
   sql += ");";
 
-  q.prepare(sql);
-  q.bindValue(":cutOffDate", _cutoffDate->date());
-  _plannerCode->bindValue(q);
-  q.exec();
+  firmFirm.prepare(sql);
+  firmFirm.bindValue(":cutOffDate", _cutoffDate->date());
+  _plannerCode->bindValue(firmFirm);
+  firmFirm.exec();
 
   accept();
 }

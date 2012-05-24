@@ -95,12 +95,13 @@ void profitCenters::sView()
 
 void profitCenters::sDelete()
 {
-  q.prepare( "SELECT deleteProfitCenter(:id) AS result;" );
-  q.bindValue(":id", _prftcntr->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery profitDelete;
+  profitDelete.prepare( "SELECT deleteProfitCenter(:id) AS result;" );
+  profitDelete.bindValue(":id", _prftcntr->id());
+  profitDelete.exec();
+  if (profitDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = profitDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteProfitCenter", result),
@@ -108,9 +109,9 @@ void profitCenters::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (profitDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, profitDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -132,15 +133,16 @@ void profitCenters::sPopulateMenu(QMenu *pMenu)
 
 void profitCenters::sFillList()
 {
-  q.prepare( "SELECT prftcntr_id,"
+  XSqlQuery profitFillList;
+  profitFillList.prepare( "SELECT prftcntr_id,"
              "       prftcntr_number, prftcntr_descrip "
              "FROM prftcntr "
                  "ORDER BY prftcntr_number;" );
-  q.exec();
-  _prftcntr->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  profitFillList.exec();
+  _prftcntr->populate(profitFillList);
+  if (profitFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, profitFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

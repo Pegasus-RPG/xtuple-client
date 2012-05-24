@@ -56,19 +56,20 @@ enum SetResponse prepareCheckRun::set(const ParameterList &pParams)
 
 void prepareCheckRun::sPrint()
 {
+  XSqlQuery preparePrint;
   if(!_bankaccnt->isValid())
   {
     QMessageBox::warning(this, tr("No Bank Account"), tr("You must select a Bank Account before you may continue."));
     return;
   }
 
-  q.prepare("SELECT createChecks(:bankaccnt_id, :checkDate) AS result;");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":checkDate", _checkDate->date());
-  q.exec();
-  if (q.first())
+  preparePrint.prepare("SELECT createChecks(:bankaccnt_id, :checkDate) AS result;");
+  preparePrint.bindValue(":bankaccnt_id", _bankaccnt->id());
+  preparePrint.bindValue(":checkDate", _checkDate->date());
+  preparePrint.exec();
+  if (preparePrint.first())
   {
-    int result = q.value("result").toInt();
+    int result = preparePrint.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("createChecks", result),
@@ -76,9 +77,9 @@ void prepareCheckRun::sPrint()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (preparePrint.lastError().type() != QSqlError::NoError)
   {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, preparePrint.lastError().databaseText(), __FILE__, __LINE__);
       return;
   }
 

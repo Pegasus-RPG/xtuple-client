@@ -143,16 +143,17 @@ void maintainShipping::sShipOrder()
 
 void maintainShipping::sReturnAllOrderStock()
 {
+  XSqlQuery maintainReturnAllOrderStock;
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN");
-  q.prepare("SELECT returnCompleteShipment(:ship_id) AS result;");
-  q.bindValue(":ship_id", _ship->id());
-  q.exec();
-  if (q.first())
+  maintainReturnAllOrderStock.exec("BEGIN");
+  maintainReturnAllOrderStock.prepare("SELECT returnCompleteShipment(:ship_id) AS result;");
+  maintainReturnAllOrderStock.bindValue(":ship_id", _ship->id());
+  maintainReturnAllOrderStock.exec();
+  if (maintainReturnAllOrderStock.first())
   {
-    int result = q.value("result").toInt();
+    int result = maintainReturnAllOrderStock.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -166,34 +167,35 @@ void maintainShipping::sReturnAllOrderStock()
       QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
       return;
     }
-    q.exec("COMMIT;"); 
+    maintainReturnAllOrderStock.exec("COMMIT;"); 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (maintainReturnAllOrderStock.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, maintainReturnAllOrderStock.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void maintainShipping::sViewOrder()
 {
-  q.prepare( "SELECT shiphead_order_id, shiphead_order_type "
+  XSqlQuery maintainViewOrder;
+  maintainViewOrder.prepare( "SELECT shiphead_order_id, shiphead_order_type "
              "FROM shiphead "
              "WHERE (shiphead_id=:shiphead_id);" );
-  q.bindValue(":shiphead_id", _ship->id());
-  q.exec();
-  if (q.first())
+  maintainViewOrder.bindValue(":shiphead_id", _ship->id());
+  maintainViewOrder.exec();
+  if (maintainViewOrder.first())
   {
-    if (q.value("shiphead_order_type").toString() == "SO")
-      salesOrder::viewSalesOrder(q.value("shiphead_order_id").toInt());
-    else if (q.value("shiphead_order_type").toString() == "TO")
-      transferOrder::viewTransferOrder(q.value("shiphead_order_id").toInt());
+    if (maintainViewOrder.value("shiphead_order_type").toString() == "SO")
+      salesOrder::viewSalesOrder(maintainViewOrder.value("shiphead_order_id").toInt());
+    else if (maintainViewOrder.value("shiphead_order_type").toString() == "TO")
+      transferOrder::viewTransferOrder(maintainViewOrder.value("shiphead_order_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (maintainViewOrder.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, maintainViewOrder.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -223,17 +225,18 @@ void maintainShipping::sIssueStock()
 
 void maintainShipping::sReturnAllLineStock()
 {
+  XSqlQuery maintainReturnAllLineStock;
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN");
-  q.prepare("SELECT returnItemShipments(:ship_id) AS result;");
-  q.bindValue(":ship_id", _ship->altId());
-  q.exec();
-  if (q.first())
+  maintainReturnAllLineStock.exec("BEGIN");
+  maintainReturnAllLineStock.prepare("SELECT returnItemShipments(:ship_id) AS result;");
+  maintainReturnAllLineStock.bindValue(":ship_id", _ship->altId());
+  maintainReturnAllLineStock.exec();
+  if (maintainReturnAllLineStock.first())
   {
-    int result = q.value("result").toInt();
-    if (q.value("result").toInt() < 0)
+    int result = maintainReturnAllLineStock.value("result").toInt();
+    if (maintainReturnAllLineStock.value("result").toInt() < 0)
     {
       rollback.exec();
       systemError(this, storedProcErrorLookup("returnItemShipments", result),
@@ -246,13 +249,13 @@ void maintainShipping::sReturnAllLineStock()
       QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
       return;
     }    
-    q.exec("COMMIT;"); 
+    maintainReturnAllLineStock.exec("COMMIT;"); 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (maintainReturnAllLineStock.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, maintainReturnAllLineStock.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -281,17 +284,18 @@ void maintainShipping::sViewLine()
 
 void maintainShipping::sReturnAllStock()
 {
+  XSqlQuery maintainReturnAllStock;
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN");
-  q.prepare("SELECT returnShipmentTransaction(:ship_id) AS result;");
-  q.bindValue(":ship_id", _ship->altId());
-  q.exec();
-  if (q.first())
+  maintainReturnAllStock.exec("BEGIN");
+  maintainReturnAllStock.prepare("SELECT returnShipmentTransaction(:ship_id) AS result;");
+  maintainReturnAllStock.bindValue(":ship_id", _ship->altId());
+  maintainReturnAllStock.exec();
+  if (maintainReturnAllStock.first())
   {
-    int result = q.value("result").toInt();
-    if (q.value("result").toInt() < 0)
+    int result = maintainReturnAllStock.value("result").toInt();
+    if (maintainReturnAllStock.value("result").toInt() < 0)
     {
       rollback.exec();
       systemError(this,
@@ -305,19 +309,20 @@ void maintainShipping::sReturnAllStock()
       QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
       return;
     }    
-    q.exec("COMMIT;"); 
+    maintainReturnAllStock.exec("COMMIT;"); 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (maintainReturnAllStock.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, maintainReturnAllStock.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void maintainShipping::sFillList()
 {
+  XSqlQuery maintainFillList;
   ParameterList params;
 
   if (_metrics->boolean("MultiWhs"))
@@ -331,12 +336,12 @@ void maintainShipping::sFillList()
   params.append("printed",	tr("Yes"));
 
   MetaSQLQuery mql = mqlLoad("maintainShipping", "detail");
-  q = mql.toQuery(params);
-  q.exec();
-  _ship->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  maintainFillList = mql.toQuery(params);
+  maintainFillList.exec();
+  _ship->populate(maintainFillList, true);
+  if (maintainFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, maintainFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

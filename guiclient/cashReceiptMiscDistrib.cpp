@@ -81,24 +81,26 @@ enum SetResponse cashReceiptMiscDistrib::set(const ParameterList &pParams)
 
 void cashReceiptMiscDistrib::populate()
 {
-  q.prepare( "SELECT cashrcptmisc_accnt_id, cashrcptmisc_notes,"
+  XSqlQuery cashpopulate;
+  cashpopulate.prepare( "SELECT cashrcptmisc_accnt_id, cashrcptmisc_notes,"
              "       cashrcptmisc_amount, cashrcpt_curr_id, cashrcpt_distdate "
              "FROM cashrcptmisc JOIN cashrcpt ON (cashrcptmisc_cashrcpt_id = cashrcpt_id) "
              "WHERE (cashrcptmisc_id=:cashrcptmisc_id);" );
-  q.bindValue(":cashrcptmisc_id", _cashrcptmiscid);
-  q.exec();
-  if (q.first())
+  cashpopulate.bindValue(":cashrcptmisc_id", _cashrcptmiscid);
+  cashpopulate.exec();
+  if (cashpopulate.first())
   {
-    _account->setId(q.value("cashrcptmisc_accnt_id").toInt());
-    _amount->set(q.value("cashrcptmisc_amount").toDouble(),
-    		 q.value("cashrcpt_curr_id").toInt(),
-		 q.value("cashrcpt_distdate").toDate(), false);
-    _notes->setText(q.value("cashrcptmisc_notes").toString());
+    _account->setId(cashpopulate.value("cashrcptmisc_accnt_id").toInt());
+    _amount->set(cashpopulate.value("cashrcptmisc_amount").toDouble(),
+    		 cashpopulate.value("cashrcpt_curr_id").toInt(),
+		 cashpopulate.value("cashrcpt_distdate").toDate(), false);
+    _notes->setText(cashpopulate.value("cashrcptmisc_notes").toString());
   }
 }
 
 void cashReceiptMiscDistrib::sSave()
 {
+  XSqlQuery cashSave;
   if (!_account->isValid())
   {
     QMessageBox::warning( this, tr("Select Account"),
@@ -117,12 +119,12 @@ void cashReceiptMiscDistrib::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('cashrcptmisc_cashrcptmisc_id_seq') AS _cashrcptmisc_id;");
-    if (q.first())
-      _cashrcptmiscid = q.value("_cashrcptmisc_id").toInt();
+    cashSave.exec("SELECT NEXTVAL('cashrcptmisc_cashrcptmisc_id_seq') AS _cashrcptmisc_id;");
+    if (cashSave.first())
+      _cashrcptmiscid = cashSave.value("_cashrcptmisc_id").toInt();
 //  ToDo
 
-    q.prepare( "INSERT INTO cashrcptmisc "
+    cashSave.prepare( "INSERT INTO cashrcptmisc "
                "( cashrcptmisc_id, cashrcptmisc_cashrcpt_id,"
                "  cashrcptmisc_accnt_id, cashrcptmisc_amount,"
                "  cashrcptmisc_notes ) "
@@ -132,17 +134,17 @@ void cashReceiptMiscDistrib::sSave()
                "  :cashrcptmisc_notes );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE cashrcptmisc "
+    cashSave.prepare( "UPDATE cashrcptmisc "
                "SET cashrcptmisc_accnt_id=:cashrcptmisc_accnt_id,"
                "    cashrcptmisc_amount=:cashrcptmisc_amount, cashrcptmisc_notes=:cashrcptmisc_notes "
                "WHERE (cashrcptmisc_id=:cashrcptmisc_id);" );
 
-  q.bindValue(":cashrcptmisc_id", _cashrcptmiscid);
-  q.bindValue(":cashrcptmisc_cashrcpt_id", _cashrcptid);
-  q.bindValue(":cashrcptmisc_accnt_id", _account->id());
-  q.bindValue(":cashrcptmisc_amount", _amount->localValue());
-  q.bindValue(":cashrcptmisc_notes",       _notes->toPlainText().trimmed());
-  q.exec();
+  cashSave.bindValue(":cashrcptmisc_id", _cashrcptmiscid);
+  cashSave.bindValue(":cashrcptmisc_cashrcpt_id", _cashrcptid);
+  cashSave.bindValue(":cashrcptmisc_accnt_id", _account->id());
+  cashSave.bindValue(":cashrcptmisc_amount", _amount->localValue());
+  cashSave.bindValue(":cashrcptmisc_notes",       _notes->toPlainText().trimmed());
+  cashSave.exec();
 
   done(_cashrcptmiscid);
 }

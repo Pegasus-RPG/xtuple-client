@@ -121,6 +121,7 @@ enum SetResponse financialLayoutColumns::set(const ParameterList &pParams)
 
 void financialLayoutColumns::sSave()
 { 
+  XSqlQuery financialSave;
   QString sql;
 
   if ((!_month->isChecked()) && (!_quarter->isChecked()) && (!_year->isChecked()))
@@ -132,12 +133,12 @@ void financialLayoutColumns::sSave()
       
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('flcol_flcol_id_seq') AS flcol_id;");
-    if (q.first())
-      _flcolid = q.value("flcol_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    financialSave.exec("SELECT NEXTVAL('flcol_flcol_id_seq') AS flcol_id;");
+    if (financialSave.first())
+      _flcolid = financialSave.value("flcol_id").toInt();
+    else if (financialSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, financialSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
       
@@ -172,51 +173,51 @@ void financialLayoutColumns::sSave()
         " WHERE (flcol_id=:flcol_id);");
   }
 
-  q.prepare(sql);
+  financialSave.prepare(sql);
      
-  q.bindValue(":flcol_id", _flcolid);
-  q.bindValue(":flcol_flhead_id", _flheadid);
-  q.bindValue(":flcol_name", _name->text());
-  q.bindValue(":flcol_descrip", _descrip->text());
-  q.bindValue(":flcol_report_id", _report->id());
-  q.bindValue(":flcol_month", _month->isChecked());
-  q.bindValue(":flcol_quarter", _quarter->isChecked());
-  q.bindValue(":flcol_year", _year->isChecked());
-  q.bindValue(":flcol_showdb", _showdb->isChecked());
-  q.bindValue(":flcol_prcnt", _prcnt->isChecked());
+  financialSave.bindValue(":flcol_id", _flcolid);
+  financialSave.bindValue(":flcol_flhead_id", _flheadid);
+  financialSave.bindValue(":flcol_name", _name->text());
+  financialSave.bindValue(":flcol_descrip", _descrip->text());
+  financialSave.bindValue(":flcol_report_id", _report->id());
+  financialSave.bindValue(":flcol_month", _month->isChecked());
+  financialSave.bindValue(":flcol_quarter", _quarter->isChecked());
+  financialSave.bindValue(":flcol_year", _year->isChecked());
+  financialSave.bindValue(":flcol_showdb", _showdb->isChecked());
+  financialSave.bindValue(":flcol_prcnt", _prcnt->isChecked());
   if (_priorperiod->isChecked())
-    q.bindValue(":flcol_priortype", "P");
+    financialSave.bindValue(":flcol_priortype", "P");
   else
-    q.bindValue(":flcol_priortype", "Y");
-  q.bindValue(":flcol_priormonth", _fullmonth->isChecked());
-  q.bindValue(":flcol_priorquarter", _fullquarter->isChecked());
+    financialSave.bindValue(":flcol_priortype", "Y");
+  financialSave.bindValue(":flcol_priormonth", _fullmonth->isChecked());
+  financialSave.bindValue(":flcol_priorquarter", _fullquarter->isChecked());
   if (_fullyear->isChecked())
-    q.bindValue(":flcol_prioryear", "F");
+    financialSave.bindValue(":flcol_prioryear", "F");
   else if (_yeartodate->isChecked())
-    q.bindValue(":flcol_prioryear", "D");
+    financialSave.bindValue(":flcol_prioryear", "D");
   else
-    q.bindValue(":flcol_prioryear", "N");
-  q.bindValue(":flcol_priorprcnt", _priorprcnt->isChecked());
-  q.bindValue(":flcol_priordiff", _priordiff->isChecked());
-  q.bindValue(":flcol_priordiffprcnt", _priordiffprcnt->isChecked());
-  q.bindValue(":flcol_budget", _budget->isChecked());
+    financialSave.bindValue(":flcol_prioryear", "N");
+  financialSave.bindValue(":flcol_priorprcnt", _priorprcnt->isChecked());
+  financialSave.bindValue(":flcol_priordiff", _priordiff->isChecked());
+  financialSave.bindValue(":flcol_priordiffprcnt", _priordiffprcnt->isChecked());
+  financialSave.bindValue(":flcol_budget", _budget->isChecked());
   if (_budget->isChecked())
   {
-    q.bindValue(":flcol_budgetprcnt", _budgetprcnt->isChecked());
-    q.bindValue(":flcol_budgetdiff", _budgetdiff->isChecked());
-    q.bindValue(":flcol_budgetdiffprcnt", _budgetdiffprcnt->isChecked());
+    financialSave.bindValue(":flcol_budgetprcnt", _budgetprcnt->isChecked());
+    financialSave.bindValue(":flcol_budgetdiff", _budgetdiff->isChecked());
+    financialSave.bindValue(":flcol_budgetdiffprcnt", _budgetdiffprcnt->isChecked());
   }
   else
   {
-      q.bindValue(":flcol_budgetprcnt", false);
-    q.bindValue(":flcol_budgetdiff", false);
-    q.bindValue(":flcol_budgetdiffprcnt", false);
+      financialSave.bindValue(":flcol_budgetprcnt", false);
+    financialSave.bindValue(":flcol_budgetdiff", false);
+    financialSave.bindValue(":flcol_budgetdiffprcnt", false);
   }
     
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  financialSave.exec();
+  if (financialSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, financialSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -225,33 +226,34 @@ void financialLayoutColumns::sSave()
 
 void financialLayoutColumns::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery financialpopulate;
+  financialpopulate.prepare( "SELECT * "
              "FROM flcol "
              "WHERE (flcol_id=:flcol_id);" );
-  q.bindValue(":flcol_id", _flcolid);
-  q.exec();
-  if (q.first())
+  financialpopulate.bindValue(":flcol_id", _flcolid);
+  financialpopulate.exec();
+  if (financialpopulate.first())
   {
-    _name->setText(q.value("flcol_name"));
-    _descrip->setText(q.value("flcol_descrip"));
-    _report->setId(q.value("flcol_report_id").toInt());
-    _month->setChecked(q.value("flcol_month").toBool());
-    _quarter->setChecked(q.value("flcol_quarter").toBool());
-    _year->setChecked(q.value("flcol_year").toBool());
-    _showdb->setChecked(q.value("flcol_showdb").toBool());
-    _prcnt->setChecked(q.value("flcol_prcnt").toBool());
-  if (q.value("flcol_priortype").toString() == "P")
+    _name->setText(financialpopulate.value("flcol_name"));
+    _descrip->setText(financialpopulate.value("flcol_descrip"));
+    _report->setId(financialpopulate.value("flcol_report_id").toInt());
+    _month->setChecked(financialpopulate.value("flcol_month").toBool());
+    _quarter->setChecked(financialpopulate.value("flcol_quarter").toBool());
+    _year->setChecked(financialpopulate.value("flcol_year").toBool());
+    _showdb->setChecked(financialpopulate.value("flcol_showdb").toBool());
+    _prcnt->setChecked(financialpopulate.value("flcol_prcnt").toBool());
+  if (financialpopulate.value("flcol_priortype").toString() == "P")
         _priorperiod->setChecked(true);
   else
         _prioryear->setChecked(true);
-    _fullmonth->setChecked(q.value("flcol_priormonth").toBool());
-    _fullquarter->setChecked(q.value("flcol_priorquarter").toBool());
-    if (q.value("flcol_prioryear").toString() == "F")
+    _fullmonth->setChecked(financialpopulate.value("flcol_priormonth").toBool());
+    _fullquarter->setChecked(financialpopulate.value("flcol_priorquarter").toBool());
+    if (financialpopulate.value("flcol_prioryear").toString() == "F")
     {
         _fullyear->setChecked(true);
         _yeartodate->setChecked(false);
     }
-    else if (q.value("flcol_prioryear").toString() == "D")
+    else if (financialpopulate.value("flcol_prioryear").toString() == "D")
     {
         _yeartodate->setChecked(true);
         _fullyear->setChecked(false);
@@ -261,17 +263,17 @@ void financialLayoutColumns::populate()
         _fullyear->setChecked(false);
         _yeartodate->setChecked(false);
     }
-    _priorprcnt->setChecked(q.value("flcol_priorprcnt").toBool());
-    _priordiff->setChecked(q.value("flcol_priordiff").toBool());
-    _priordiffprcnt->setChecked(q.value("flcol_priordiffprcnt").toBool());
-    _budget->setChecked(q.value("flcol_budget").toBool());
-    _budgetprcnt->setChecked(q.value("flcol_budgetprcnt").toBool());  
-    _budgetdiff->setChecked(q.value("flcol_budgetdiff").toBool());
-    _budgetdiffprcnt->setChecked(q.value("flcol_budgetdiffprcnt").toBool());  
+    _priorprcnt->setChecked(financialpopulate.value("flcol_priorprcnt").toBool());
+    _priordiff->setChecked(financialpopulate.value("flcol_priordiff").toBool());
+    _priordiffprcnt->setChecked(financialpopulate.value("flcol_priordiffprcnt").toBool());
+    _budget->setChecked(financialpopulate.value("flcol_budget").toBool());
+    _budgetprcnt->setChecked(financialpopulate.value("flcol_budgetprcnt").toBool());  
+    _budgetdiff->setChecked(financialpopulate.value("flcol_budgetdiff").toBool());
+    _budgetdiffprcnt->setChecked(financialpopulate.value("flcol_budgetdiffprcnt").toBool());  
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (financialpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, financialpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -112,6 +112,7 @@ void unappliedAPCreditMemos::sView()
 
 void unappliedAPCreditMemos::sFillList()
 {
+  XSqlQuery unappliedFillList;
   MetaSQLQuery mql(
              "SELECT apopen_id, apopen_docnumber,"
              "       (vend_number || '-' || vend_name) AS vendor,"
@@ -147,11 +148,11 @@ void unappliedAPCreditMemos::sFillList()
   ParameterList params;
   if (! setParams(params))
     return;
-  q = mql.toQuery(params);
-  _apopen->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  unappliedFillList = mql.toQuery(params);
+  _apopen->populate(unappliedFillList);
+  if (unappliedFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, unappliedFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

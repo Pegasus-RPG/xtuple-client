@@ -137,26 +137,27 @@ enum SetResponse costCategory::set(const ParameterList &pParams)
 
 void costCategory::sCheck()
 {
+  XSqlQuery costCheck;
   if ((_mode == cNew) && (_category->text().length() != 0))
   {
-    q.prepare( "SELECT costcat_id"
+    costCheck.prepare( "SELECT costcat_id"
                "  FROM costcat"
                " WHERE((UPPER(costcat_code)=UPPER(:costcat_code))"
                "   AND (costcat_id != :costcat_id));" );
-    q.bindValue(":costcat_code", _category->text().trimmed());
-    q.bindValue(":costcat_id", _costcatid);
-    q.exec();
-    if (q.first())
+    costCheck.bindValue(":costcat_code", _category->text().trimmed());
+    costCheck.bindValue(":costcat_id", _costcatid);
+    costCheck.exec();
+    if (costCheck.first())
     {
-      _costcatid = q.value("costcat_id").toInt();
+      _costcatid = costCheck.value("costcat_id").toInt();
       _mode = cEdit;
       populate();
 
       _category->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (costCheck.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, costCheck.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -164,6 +165,7 @@ void costCategory::sCheck()
 
 void costCategory::sSave()
 {
+  XSqlQuery costSave;
   QList<GuiErrorCheck> errors;
 
   errors << GuiErrorCheck(_category->text().trimmed().isEmpty(), _category,
@@ -200,14 +202,14 @@ void costCategory::sSave()
            ;
   }
 
-  q.prepare( "SELECT costcat_id"
+  costSave.prepare( "SELECT costcat_id"
              "  FROM costcat"
              " WHERE((UPPER(costcat_code)=UPPER(:costcat_code))"
              "   AND (costcat_id != :costcat_id));" );
-  q.bindValue(":costcat_code", _category->text().trimmed());
-  q.bindValue(":costcat_id", _costcatid);
-  q.exec();
-  if (q.first())
+  costSave.bindValue(":costcat_code", _category->text().trimmed());
+  costSave.bindValue(":costcat_id", _costcatid);
+  costSave.exec();
+  if (costSave.first())
   {
     errors << GuiErrorCheck(true, _category,
                            tr("<p>The Name you have entered for this Cost Category is already in use."));
@@ -220,16 +222,16 @@ void costCategory::sSave()
 
   if ( (_mode == cNew) || (_mode == cCopy) )
   {
-    q.exec("SELECT NEXTVAL('costcat_costcat_id_seq') AS costcat_id");
-    if (q.first())
-      _costcatid = q.value("costcat_id").toInt();
+    costSave.exec("SELECT NEXTVAL('costcat_costcat_id_seq') AS costcat_id");
+    if (costSave.first())
+      _costcatid = costSave.value("costcat_id").toInt();
     else
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, costSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO costcat"
+    costSave.prepare( "INSERT INTO costcat"
                "( costcat_id, costcat_code, costcat_descrip,"
                "  costcat_asset_accnt_id, costcat_invcost_accnt_id,"
                "  costcat_liability_accnt_id, costcat_freight_accnt_id,"
@@ -249,7 +251,7 @@ void costCategory::sSave()
                "  :costcat_exp_accnt_id);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE costcat "
+    costSave.prepare( "UPDATE costcat "
                "SET costcat_code=:costcat_code, costcat_descrip=:costcat_descrip,"
                "    costcat_asset_accnt_id=:costcat_asset_accnt_id,"
                "    costcat_invcost_accnt_id=:costcat_invcost_accnt_id,"
@@ -266,27 +268,27 @@ void costCategory::sSave()
                "    costcat_exp_accnt_id=:costcat_exp_accnt_id "
                "WHERE (costcat_id=:costcat_id);" );
 
-  q.bindValue(":costcat_id", _costcatid);
-  q.bindValue(":costcat_code", _category->text().trimmed());
-  q.bindValue(":costcat_descrip", _description->text().trimmed());
-  q.bindValue(":costcat_asset_accnt_id", _asset->id());
-  q.bindValue(":costcat_invcost_accnt_id", _inventoryCost->id());
-  q.bindValue(":costcat_liability_accnt_id", _liability->id());
-  q.bindValue(":costcat_freight_accnt_id", _freight->id());
-  q.bindValue(":costcat_adjustment_accnt_id", _adjustment->id());
-  q.bindValue(":costcat_scrap_accnt_id", _invScrap->id());
-  q.bindValue(":costcat_mfgscrap_accnt_id", _mfgScrap->id());
-  q.bindValue(":costcat_transform_accnt_id", _transformClearing->id());
-  q.bindValue(":costcat_wip_accnt_id", _wip->id());
-  q.bindValue(":costcat_purchprice_accnt_id", _purchasePrice->id());
-  q.bindValue(":costcat_shipasset_accnt_id", _shippingAsset->id());
-  q.bindValue(":costcat_exp_accnt_id", _expense->id());
+  costSave.bindValue(":costcat_id", _costcatid);
+  costSave.bindValue(":costcat_code", _category->text().trimmed());
+  costSave.bindValue(":costcat_descrip", _description->text().trimmed());
+  costSave.bindValue(":costcat_asset_accnt_id", _asset->id());
+  costSave.bindValue(":costcat_invcost_accnt_id", _inventoryCost->id());
+  costSave.bindValue(":costcat_liability_accnt_id", _liability->id());
+  costSave.bindValue(":costcat_freight_accnt_id", _freight->id());
+  costSave.bindValue(":costcat_adjustment_accnt_id", _adjustment->id());
+  costSave.bindValue(":costcat_scrap_accnt_id", _invScrap->id());
+  costSave.bindValue(":costcat_mfgscrap_accnt_id", _mfgScrap->id());
+  costSave.bindValue(":costcat_transform_accnt_id", _transformClearing->id());
+  costSave.bindValue(":costcat_wip_accnt_id", _wip->id());
+  costSave.bindValue(":costcat_purchprice_accnt_id", _purchasePrice->id());
+  costSave.bindValue(":costcat_shipasset_accnt_id", _shippingAsset->id());
+  costSave.bindValue(":costcat_exp_accnt_id", _expense->id());
   if (_toLiabilityClearing->isValid())
-    q.bindValue(":costcat_toliability_accnt_id", _toLiabilityClearing->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    costSave.bindValue(":costcat_toliability_accnt_id", _toLiabilityClearing->id());
+  costSave.exec();
+  if (costSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, costSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -296,38 +298,39 @@ void costCategory::sSave()
 
 void costCategory::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery costpopulate;
+  costpopulate.prepare( "SELECT * "
              "FROM costcat "
              "WHERE (costcat_id=:costcat_id);" );
-  q.bindValue(":costcat_id", _costcatid);
-  q.exec();
-  if (q.first())
+  costpopulate.bindValue(":costcat_id", _costcatid);
+  costpopulate.exec();
+  if (costpopulate.first())
   {
     if (_mode != cCopy)
     {
-      _category->setText(q.value("costcat_code").toString());
-      _description->setText(q.value("costcat_descrip").toString());
+      _category->setText(costpopulate.value("costcat_code").toString());
+      _description->setText(costpopulate.value("costcat_descrip").toString());
     }
 
-    _asset->setId(q.value("costcat_asset_accnt_id").toInt());
-    _expense->setId(q.value("costcat_exp_accnt_id").toInt());
-    _inventoryCost->setId(q.value("costcat_invcost_accnt_id").toInt());
-    _liability->setId(q.value("costcat_liability_accnt_id").toInt());
-    _freight->setId(q.value("costcat_freight_accnt_id").toInt());
-    _adjustment->setId(q.value("costcat_adjustment_accnt_id").toInt());
-    _invScrap->setId(q.value("costcat_scrap_accnt_id").toInt());
-    _mfgScrap->setId(q.value("costcat_mfgscrap_accnt_id").toInt());
-    _wip->setId(q.value("costcat_wip_accnt_id").toInt());
-    _transformClearing->setId(q.value("costcat_transform_accnt_id").toInt());
-    _purchasePrice->setId(q.value("costcat_purchprice_accnt_id").toInt());
-    _shippingAsset->setId(q.value("costcat_shipasset_accnt_id").toInt());
-    _toLiabilityClearing->setId(q.value("costcat_toliability_accnt_id").toInt());
+    _asset->setId(costpopulate.value("costcat_asset_accnt_id").toInt());
+    _expense->setId(costpopulate.value("costcat_exp_accnt_id").toInt());
+    _inventoryCost->setId(costpopulate.value("costcat_invcost_accnt_id").toInt());
+    _liability->setId(costpopulate.value("costcat_liability_accnt_id").toInt());
+    _freight->setId(costpopulate.value("costcat_freight_accnt_id").toInt());
+    _adjustment->setId(costpopulate.value("costcat_adjustment_accnt_id").toInt());
+    _invScrap->setId(costpopulate.value("costcat_scrap_accnt_id").toInt());
+    _mfgScrap->setId(costpopulate.value("costcat_mfgscrap_accnt_id").toInt());
+    _wip->setId(costpopulate.value("costcat_wip_accnt_id").toInt());
+    _transformClearing->setId(costpopulate.value("costcat_transform_accnt_id").toInt());
+    _purchasePrice->setId(costpopulate.value("costcat_purchprice_accnt_id").toInt());
+    _shippingAsset->setId(costpopulate.value("costcat_shipasset_accnt_id").toInt());
+    _toLiabilityClearing->setId(costpopulate.value("costcat_toliability_accnt_id").toInt());
 
     emit populated(_costcatid);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (costpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, costpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

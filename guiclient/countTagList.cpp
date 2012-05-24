@@ -60,6 +60,7 @@ enum SetResponse countTagList::set(const ParameterList &pParams)
 
 void countTagList::sFillList()
 {
+  XSqlQuery countFillList;
   QString sql( "SELECT invcnt_id, invcnt_tagnumber, item_number, item_descrip1, warehous_code "
                "FROM invcnt, itemsite, item, whsinfo "
                "WHERE ((invcnt_itemsite_id=itemsite_id)"
@@ -77,14 +78,14 @@ void countTagList::sFillList()
   sql += ") "
          "ORDER BY invcnt_tagnumber";
 
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  q.exec();
+  countFillList.prepare(sql);
+  _warehouse->bindValue(countFillList);
+  countFillList.exec();
 
-  _cnttag->populate(q, _cnttagid);
-  if (q.lastError().type() != QSqlError::NoError)
+  _cnttag->populate(countFillList, _cnttagid);
+  if (countFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, countFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

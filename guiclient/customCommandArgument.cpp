@@ -68,6 +68,7 @@ enum SetResponse customCommandArgument::set( const ParameterList & pParams )
 
 void customCommandArgument::sSave()
 {
+  XSqlQuery customSave;
   if(_argument->text().trimmed().isEmpty())
   {
     QMessageBox::warning(this, tr("No Argument Specified"),
@@ -76,45 +77,46 @@ void customCommandArgument::sSave()
   }
 
   if(cNew == _mode)
-    q.prepare("INSERT INTO cmdarg"
+    customSave.prepare("INSERT INTO cmdarg"
               "      (cmdarg_cmd_id, cmdarg_order, cmdarg_arg) "
               "VALUES(:cmd_id, :order, :argument);");
   else if(cEdit == _mode)
-    q.prepare("UPDATE cmdarg"
+    customSave.prepare("UPDATE cmdarg"
               "   SET cmdarg_order=:order,"
               "       cmdarg_arg=:argument"
               " WHERE (cmdarg_id=:cmdarg_id); ");
 
-  q.bindValue(":cmd_id", _cmdid);
-  q.bindValue(":cmdarg_id", _cmdargid);
-  q.bindValue(":order", _order->value());
-  q.bindValue(":argument", _argument->text());
+  customSave.bindValue(":cmd_id", _cmdid);
+  customSave.bindValue(":cmdarg_id", _cmdargid);
+  customSave.bindValue(":order", _order->value());
+  customSave.bindValue(":argument", _argument->text());
 
-  if(q.exec())
+  if(customSave.exec())
     accept();
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (customSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void customCommandArgument::populate()
 {
-  q.prepare("SELECT cmdarg_cmd_id, cmdarg_order, cmdarg_arg"
+  XSqlQuery custompopulate;
+  custompopulate.prepare("SELECT cmdarg_cmd_id, cmdarg_order, cmdarg_arg"
             "  FROM cmdarg"
             " WHERE (cmdarg_id=:cmdarg_id);");
-  q.bindValue(":cmdarg_id", _cmdargid);
-  q.exec();
-  if(q.first())
+  custompopulate.bindValue(":cmdarg_id", _cmdargid);
+  custompopulate.exec();
+  if(custompopulate.first())
   {
-    _cmdid = q.value("cmdarg_cmd_id").toInt();
-    _order->setValue(q.value("cmdarg_order").toInt());
-    _argument->setText(q.value("cmdarg_arg").toString());
+    _cmdid = custompopulate.value("cmdarg_cmd_id").toInt();
+    _order->setValue(custompopulate.value("cmdarg_order").toInt());
+    _argument->setText(custompopulate.value("cmdarg_arg").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (custompopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, custompopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

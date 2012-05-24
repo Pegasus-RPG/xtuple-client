@@ -96,17 +96,18 @@ enum SetResponse incidentCategory::set(const ParameterList &pParams)
 
 void incidentCategory::sCheck()
 {
+  XSqlQuery incidentCheck;
   _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT incdtcat_id "
+    incidentCheck.prepare( "SELECT incdtcat_id "
                "FROM incdtcat "
                "WHERE (UPPER(incdtcat_name)=UPPER(:incdtcat_name));" );
-    q.bindValue(":incdtcat_name", _name->text());
-    q.exec();
-    if (q.first())
+    incidentCheck.bindValue(":incdtcat_name", _name->text());
+    incidentCheck.exec();
+    if (incidentCheck.first())
     {
-      _incdtcatId = q.value("incdtcat_id").toInt();
+      _incdtcatId = incidentCheck.value("incdtcat_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -117,6 +118,7 @@ void incidentCategory::sCheck()
 
 void incidentCategory::sSave()
 {
+  XSqlQuery incidentSave;
   if(_name->text().length() == 0)
   {
     QMessageBox::critical(this, tr("Category Name Required"),
@@ -127,30 +129,30 @@ void incidentCategory::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('incdtcat_incdtcat_id_seq') AS _incdtcat_id");
-    if (q.first())
-      _incdtcatId = q.value("_incdtcat_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    incidentSave.exec("SELECT NEXTVAL('incdtcat_incdtcat_id_seq') AS _incdtcat_id");
+    if (incidentSave.first())
+      _incdtcatId = incidentSave.value("_incdtcat_id").toInt();
+    else if (incidentSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO incdtcat "
+    incidentSave.prepare( "INSERT INTO incdtcat "
                "(incdtcat_id, incdtcat_name, incdtcat_order, incdtcat_descrip, incdtcat_ediprofile_id)"
                " VALUES "
                "(:incdtcat_id, :incdtcat_name, :incdtcat_order, :incdtcat_descrip, :incdtcat_ediprofile_id );" );
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "SELECT incdtcat_id "
+    incidentSave.prepare( "SELECT incdtcat_id "
                "FROM incdtcat "
                "WHERE ( (UPPER(incdtcat_name)=UPPER(:incdtcat_name))"
                " AND (incdtcat_id<>:incdtcat_id) );" );
-    q.bindValue(":incdtcat_id", _incdtcatId);
-    q.bindValue(":incdtcat_name", _name->text());
-    q.exec();
-    if (q.first())
+    incidentSave.bindValue(":incdtcat_id", _incdtcatId);
+    incidentSave.bindValue(":incdtcat_name", _name->text());
+    incidentSave.exec();
+    if (incidentSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Incident Category"),
                             tr("You may not rename this Incident Category with "
@@ -158,13 +160,13 @@ void incidentCategory::sSave()
 			       "Incident Category.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (incidentSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "UPDATE incdtcat "
+    incidentSave.prepare( "UPDATE incdtcat "
                "SET incdtcat_name=:incdtcat_name, "
 	       "    incdtcat_order=:incdtcat_order, "
 	       "    incdtcat_descrip=:incdtcat_descrip, "
@@ -172,16 +174,16 @@ void incidentCategory::sSave()
                "WHERE (incdtcat_id=:incdtcat_id);" );
   }
 
-  q.bindValue(":incdtcat_id", _incdtcatId);
-  q.bindValue(":incdtcat_name", _name->text());
-  q.bindValue(":incdtcat_order", _order->value());
-  q.bindValue(":incdtcat_descrip", _descrip->toPlainText());
+  incidentSave.bindValue(":incdtcat_id", _incdtcatId);
+  incidentSave.bindValue(":incdtcat_name", _name->text());
+  incidentSave.bindValue(":incdtcat_order", _order->value());
+  incidentSave.bindValue(":incdtcat_descrip", _descrip->toPlainText());
   if (_ediprofile->id() != -1)
-    q.bindValue(":incdtcat_ediprofile_id", _ediprofile->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    incidentSave.bindValue(":incdtcat_ediprofile_id", _ediprofile->id());
+  incidentSave.exec();
+  if (incidentSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -190,21 +192,22 @@ void incidentCategory::sSave()
 
 void incidentCategory::populate()
 {
-  q.prepare( "SELECT *,COALESCE(incdtcat_ediprofile_id,-1) AS ediprofile "
+  XSqlQuery incidentpopulate;
+  incidentpopulate.prepare( "SELECT *,COALESCE(incdtcat_ediprofile_id,-1) AS ediprofile "
              "FROM incdtcat "
              "WHERE (incdtcat_id=:incdtcat_id);" );
-  q.bindValue(":incdtcat_id", _incdtcatId);
-  q.exec();
-  if (q.first())
+  incidentpopulate.bindValue(":incdtcat_id", _incdtcatId);
+  incidentpopulate.exec();
+  if (incidentpopulate.first())
   {
-    _name->setText(q.value("incdtcat_name").toString());
-    _order->setValue(q.value("incdtcat_order").toInt());
-    _descrip->setText(q.value("incdtcat_descrip").toString());
-    _ediprofile->setId(q.value("ediprofile").toInt());
+    _name->setText(incidentpopulate.value("incdtcat_name").toString());
+    _order->setValue(incidentpopulate.value("incdtcat_order").toInt());
+    _descrip->setText(incidentpopulate.value("incdtcat_descrip").toString());
+    _ediprofile->setId(incidentpopulate.value("ediprofile").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (incidentpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, incidentpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

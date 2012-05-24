@@ -40,20 +40,21 @@ void postVouchers::languageChange()
 
 void postVouchers::sPost()
 {
-  q.prepare("SELECT count(*) AS unposted FROM vohead WHERE (NOT vohead_posted)");
-  q.exec();
-  if(q.first() && q.value("unposted").toInt()==0)
+  XSqlQuery postPost;
+  postPost.prepare("SELECT count(*) AS unposted FROM vohead WHERE (NOT vohead_posted)");
+  postPost.exec();
+  if(postPost.first() && postPost.value("unposted").toInt()==0)
   {
     QMessageBox::critical( this, tr("No Vouchers to Post"),
                            tr("There are no Vouchers to post.") );
     return;
   }
 
-  q.prepare("SELECT postVouchers(FALSE) AS result;");
-  q.exec();
-  if (q.first())
+  postPost.prepare("SELECT postVouchers(FALSE) AS result;");
+  postPost.exec();
+  if (postPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = postPost.value("result").toInt();
     if (result == -5)
     {
       QMessageBox::critical( this, tr("Cannot Post Voucher"),
@@ -107,7 +108,7 @@ void postVouchers::sPost()
     systemError( this, tr("A System Error occurred at %1::%2.\n%3")
                        .arg(__FILE__)
                        .arg(__LINE__)
-                       .arg(q.lastError().databaseText()) );
+                       .arg(postPost.lastError().databaseText()) );
     return;
   }
 

@@ -103,18 +103,19 @@ void taxCodes::sView()
 
 void taxCodes::sDelete()
 {
+  XSqlQuery taxDelete;
   if(QMessageBox::question(this, tr("Delete Tax Code?"),
 			      tr("<p>Are you sure you want to delete this Tax Code "
 				 "along with its associated Tax Code Rates?"),
 				  QMessageBox::Yes,
 				  QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare("SELECT deleteTax(:tax_id) AS result;");
-    q.bindValue(":tax_id", _tax->id());
-    q.exec();
-    if (q.first())
+    taxDelete.prepare("SELECT deleteTax(:tax_id) AS result;");
+    taxDelete.bindValue(":tax_id", _tax->id());
+    taxDelete.exec();
+    if (taxDelete.first())
     {
-      int result = q.value("result").toInt();
+      int result = taxDelete.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("deleteTax", result),
@@ -122,9 +123,9 @@ void taxCodes::sDelete()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (taxDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, taxDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList();

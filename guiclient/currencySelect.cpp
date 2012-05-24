@@ -50,18 +50,19 @@ void currencySelect::sClose()
 
 void currencySelect::sPopulate()
 {
-  q.prepare("SELECT * FROM country WHERE country_id = :country_id;");
-  q.bindValue(":country_id", _country->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery currencyPopulate;
+  currencyPopulate.prepare("SELECT * FROM country WHERE country_id = :country_id;");
+  currencyPopulate.bindValue(":country_id", _country->id());
+  currencyPopulate.exec();
+  if (currencyPopulate.first())
   {
-    _currName->setText(q.value("country_curr_name").toString());
-    _currAbbr->setText(q.value("country_curr_abbr").toString());
-    _currSymbol->setText(q.value("country_curr_symbol").toString());
+    _currName->setText(currencyPopulate.value("country_curr_name").toString());
+    _currAbbr->setText(currencyPopulate.value("country_curr_abbr").toString());
+    _currSymbol->setText(currencyPopulate.value("country_curr_symbol").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (currencyPopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, currencyPopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

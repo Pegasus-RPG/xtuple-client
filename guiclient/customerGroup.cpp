@@ -44,6 +44,7 @@ void customerGroup::languageChange()
 
 enum SetResponse customerGroup::set(const ParameterList &pParams)
 {
+  XSqlQuery customeret;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -62,12 +63,12 @@ enum SetResponse customerGroup::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('custgrp_custgrp_id_seq') AS _custgrp_id;");
-      if (q.first())
-        _custgrpid = q.value("_custgrp_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      customeret.exec("SELECT NEXTVAL('custgrp_custgrp_id_seq') AS _custgrp_id;");
+      if (customeret.first())
+        _custgrpid = customeret.value("_custgrp_id").toInt();
+      else if (customeret.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, customeret.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
 
@@ -106,25 +107,26 @@ enum SetResponse customerGroup::set(const ParameterList &pParams)
 
 void customerGroup::sCheck()
 {
+  XSqlQuery customerCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
-    q.prepare( "SELECT custgrp_id "
+    customerCheck.prepare( "SELECT custgrp_id "
                "FROM custgrp "
                "WHERE (UPPER(custgrp_name)=UPPER(:custgrp_name));" );
-    q.bindValue(":custgrp_name", _name->text());
-    q.exec();
-    if (q.first())
+    customerCheck.bindValue(":custgrp_name", _name->text());
+    customerCheck.exec();
+    if (customerCheck.first())
     {
-      _custgrpid = q.value("custgrp_id").toInt();
+      _custgrpid = customerCheck.value("custgrp_id").toInt();
       _mode = cEdit;
       populate();
 
       _name->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (customerCheck.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, customerCheck.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -132,17 +134,18 @@ void customerGroup::sCheck()
 
 void customerGroup::sClose()
 {
+  XSqlQuery customerClose;
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM custgrpitem "
+    customerClose.prepare( "DELETE FROM custgrpitem "
                "WHERE (custgrpitem_custgrp_id=:custgrp_id);"
                "DELETE FROM custgrp "
                "WHERE (custgrp_id=:custgrp_id);" );
-    q.bindValue(":custgrp_id", _custgrpid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    customerClose.bindValue(":custgrp_id", _custgrpid);
+    customerClose.exec();
+    if (customerClose.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, customerClose.lastError().databaseText(), __FILE__, __LINE__);
     }
   }
 
@@ -151,6 +154,7 @@ void customerGroup::sClose()
 
 void customerGroup::sSave()
 {
+  XSqlQuery customerSave;
   if(_name->text().trimmed().isEmpty())
   {
     QMessageBox::warning(this, tr("Cannot Save Customer Group"),
@@ -159,14 +163,14 @@ void customerGroup::sSave()
     return;
   }
 
-  q.prepare("SELECT custgrp_id"
+  customerSave.prepare("SELECT custgrp_id"
             "  FROM custgrp"
             " WHERE((custgrp_name=:custgrp_name)"
             "   AND (custgrp_id != :custgrp_id))");
-  q.bindValue(":custgrp_id", _custgrpid);
-  q.bindValue(":custgrp_name", _name->text());
-  q.exec();
-  if(q.first())
+  customerSave.bindValue(":custgrp_id", _custgrpid);
+  customerSave.bindValue(":custgrp_name", _name->text());
+  customerSave.exec();
+  if(customerSave.first())
   {
     QMessageBox::warning(this, tr("Cannot Save Customer Group"),
       tr("You cannot have a duplicate name."));
@@ -175,22 +179,22 @@ void customerGroup::sSave()
   }
 
   if (_mode == cNew)
-    q.prepare( "INSERT INTO custgrp "
+    customerSave.prepare( "INSERT INTO custgrp "
                "(custgrp_id, custgrp_name, custgrp_descrip) "
                "VALUES "
                "(:custgrp_id, :custgrp_name, :custgrp_descrip);" );
   else if (_mode == cEdit)
-    q.prepare( "UPDATE custgrp "
+    customerSave.prepare( "UPDATE custgrp "
                "SET custgrp_name=:custgrp_name, custgrp_descrip=:custgrp_descrip "
                "WHERE (custgrp_id=:custgrp_id);" );
 
-  q.bindValue(":custgrp_id", _custgrpid);
-  q.bindValue(":custgrp_name", _name->text());
-  q.bindValue(":custgrp_descrip", _descrip->text().trimmed());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  customerSave.bindValue(":custgrp_id", _custgrpid);
+  customerSave.bindValue(":custgrp_name", _name->text());
+  customerSave.bindValue(":custgrp_descrip", _descrip->text().trimmed());
+  customerSave.exec();
+  if (customerSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -199,13 +203,14 @@ void customerGroup::sSave()
 
 void customerGroup::sDelete()
 {
-  q.prepare( "DELETE FROM custgrpitem "
+  XSqlQuery customerDelete;
+  customerDelete.prepare( "DELETE FROM custgrpitem "
              "WHERE (custgrpitem_id=:custgrpitem_id);" );
-  q.bindValue(":custgrpitem_id", _custgrpitem->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  customerDelete.bindValue(":custgrpitem_id", _custgrpitem->id());
+  customerDelete.exec();
+  if (customerDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -214,6 +219,7 @@ void customerGroup::sDelete()
 
 void customerGroup::sNew()
 {
+  XSqlQuery customerNew;
   ParameterList params;
 
   CRMAcctList *newdlg = new CRMAcctList(this);
@@ -222,31 +228,31 @@ void customerGroup::sNew()
   int custid;
   if ((custid = newdlg->exec()) != XDialog::Rejected)
   {
-    q.prepare( "SELECT custgrpitem_id "
+    customerNew.prepare( "SELECT custgrpitem_id "
                "FROM custgrpitem "
                "WHERE ( (custgrpitem_custgrp_id=:custgrpitem_custgrp_id)"
                " AND (custgrpitem_cust_id=:custgrpitem_cust_id) );" );
-    q.bindValue(":custgrpitem_custgrp_id", _custgrpid);
-    q.bindValue(":custgrpitem_cust_id", custid);
-    q.exec();
-    if (q.first())
+    customerNew.bindValue(":custgrpitem_custgrp_id", _custgrpid);
+    customerNew.bindValue(":custgrpitem_cust_id", custid);
+    customerNew.exec();
+    if (customerNew.first())
       return;
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (customerNew.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, customerNew.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO custgrpitem "
+    customerNew.prepare( "INSERT INTO custgrpitem "
                "(custgrpitem_custgrp_id, custgrpitem_cust_id) "
                "VALUES "
                "(:custgrpitem_custgrp_id, :custgrpitem_cust_id);" );
-    q.bindValue(":custgrpitem_custgrp_id", _custgrpid);
-    q.bindValue(":custgrpitem_cust_id", custid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    customerNew.bindValue(":custgrpitem_custgrp_id", _custgrpid);
+    customerNew.bindValue(":custgrpitem_cust_id", custid);
+    customerNew.exec();
+    if (customerNew.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, customerNew.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -256,36 +262,38 @@ void customerGroup::sNew()
 
 void customerGroup::sFillList()
 {
-  q.prepare( "SELECT custgrpitem_id, cust_number, cust_name "
+  XSqlQuery customerFillList;
+  customerFillList.prepare( "SELECT custgrpitem_id, cust_number, cust_name "
              "FROM custgrpitem, custinfo "
              "WHERE ( (custgrpitem_cust_id=cust_id) "
              " AND (custgrpitem_custgrp_id=:custgrp_id) ) "
              "ORDER BY cust_number;" );
-  q.bindValue(":custgrp_id", _custgrpid);
-  q.exec();
-  _custgrpitem->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  customerFillList.bindValue(":custgrp_id", _custgrpid);
+  customerFillList.exec();
+  _custgrpitem->populate(customerFillList);
+  if (customerFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void customerGroup::populate()
 {
-  q.prepare( "SELECT custgrp_name, custgrp_descrip "
+  XSqlQuery customerpopulate;
+  customerpopulate.prepare( "SELECT custgrp_name, custgrp_descrip "
              "FROM custgrp "
              "WHERE (custgrp_id=:custgrp_id);" );
-  q.bindValue(":custgrp_id", _custgrpid);
-  q.exec();
-  if (q.first())
+  customerpopulate.bindValue(":custgrp_id", _custgrpid);
+  customerpopulate.exec();
+  if (customerpopulate.first())
   {
-    _name->setText(q.value("custgrp_name").toString());
-    _descrip->setText(q.value("custgrp_descrip").toString());
+    _name->setText(customerpopulate.value("custgrp_name").toString());
+    _descrip->setText(customerpopulate.value("custgrp_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (customerpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

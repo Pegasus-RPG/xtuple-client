@@ -64,6 +64,7 @@ void assignLotSerial::languageChange()
 
 enum SetResponse assignLotSerial::set(const ParameterList &pParams)
 {
+  XSqlQuery assignet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -79,16 +80,16 @@ enum SetResponse assignLotSerial::set(const ParameterList &pParams)
 
     if (_itemlocSeries == -1)
     {
-      q.exec("SELECT NEXTVAL('itemloc_series_seq') AS _itemloc_series;");
-      if (q.lastError().type() != QSqlError::NoError)
+      assignet.exec("SELECT NEXTVAL('itemloc_series_seq') AS _itemloc_series;");
+      if (assignet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, assignet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
       else
       {
-        q.first();
-        _itemlocSeries = q.value("_itemloc_series").toInt();
+        assignet.first();
+        _itemlocSeries = assignet.value("_itemloc_series").toInt();
       }
     }
 
@@ -107,7 +108,7 @@ enum SetResponse assignLotSerial::set(const ParameterList &pParams)
       _item->setItemsiteid(ild.value("itemlocdist_itemsite_id").toInt());
     else if (ild.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, ild.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
 
@@ -152,12 +153,13 @@ void assignLotSerial::sNew()
 
 void assignLotSerial::sDelete()
 {
-  q.prepare( "SELECT deleteItemlocdist(:itemlocdist_id);" );
-  q.bindValue(":itemlocdist_id", _itemlocdist->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery assignDelete;
+  assignDelete.prepare( "SELECT deleteItemlocdist(:itemlocdist_id);" );
+  assignDelete.bindValue(":itemlocdist_id", _itemlocdist->id());
+  assignDelete.exec();
+  if (assignDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, assignDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -166,14 +168,15 @@ void assignLotSerial::sDelete()
 
 void assignLotSerial::sClose()
 {
-  q.prepare( "DELETE FROM itemlocdist "
+  XSqlQuery assignClose;
+  assignClose.prepare( "DELETE FROM itemlocdist "
              "WHERE ( (itemlocdist_source_type='D')"
              " AND (itemlocdist_source_id=:source_id) );" );
-  q.bindValue(":source_id", _itemlocdistid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  assignClose.bindValue(":source_id", _itemlocdistid);
+  assignClose.exec();
+  if (assignClose.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, assignClose.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -182,6 +185,7 @@ void assignLotSerial::sClose()
 
 void assignLotSerial::sAssign()
 {
+  XSqlQuery assignAssign;
   if (_qtyBalance->toDouble() != 0.0)
   {
     QMessageBox::warning( this, tr("Incomplete Assignment"),
@@ -195,18 +199,18 @@ void assignLotSerial::sAssign()
   if (xtsettingsValue(QString("%1.autoPrint").arg(objectName())).toBool())
     sPrint();
 
-  q.prepare( "UPDATE itemlocdist "
+  assignAssign.prepare( "UPDATE itemlocdist "
              "SET itemlocdist_source_type='O' "
              "WHERE (itemlocdist_series=:itemlocdist_series);"
 
              "DELETE FROM itemlocdist "
              "WHERE (itemlocdist_id=:itemlocdist_id);" );
-  q.bindValue(":itemlocdist_series", _itemlocSeries);
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  assignAssign.bindValue(":itemlocdist_series", _itemlocSeries);
+  assignAssign.bindValue(":itemlocdist_id", _itemlocdistid);
+  assignAssign.exec();
+  if (assignAssign.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, assignAssign.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -216,42 +220,43 @@ void assignLotSerial::sAssign()
 
 void assignLotSerial::sFillList()
 {
+  XSqlQuery assignFillList;
   double openQty = 0;
 
-  q.prepare( "SELECT itemlocdist_qty AS qty "
+  assignFillList.prepare( "SELECT itemlocdist_qty AS qty "
              "FROM itemlocdist "
              "WHERE (itemlocdist_id=:itemlocdist_id);" );
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
-  q.exec();
-  if (q.first())
+  assignFillList.bindValue(":itemlocdist_id", _itemlocdistid);
+  assignFillList.exec();
+  if (assignFillList.first())
   {
-    openQty = q.value("qty").toDouble();
+    openQty = assignFillList.value("qty").toDouble();
     _qtyToAssign->setDouble(openQty);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (assignFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, assignFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare( "SELECT COALESCE(SUM(itemlocdist_qty), 0) AS totalqty "
+  assignFillList.prepare( "SELECT COALESCE(SUM(itemlocdist_qty), 0) AS totalqty "
              "FROM itemlocdist "
              "WHERE (itemlocdist_series=:itemlocdist_series);" );
-  q.bindValue(":itemlocdist_series", _itemlocSeries);
-  q.exec();
-  if (q.first())
+  assignFillList.bindValue(":itemlocdist_series", _itemlocSeries);
+  assignFillList.exec();
+  if (assignFillList.first())
   {
-    _qtyAssigned->setDouble(q.value("totalqty").toDouble());
-    _qtyBalance->setDouble(openQty - q.value("totalqty").toDouble());
+    _qtyAssigned->setDouble(assignFillList.value("totalqty").toDouble());
+    _qtyBalance->setDouble(openQty - assignFillList.value("totalqty").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (assignFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, assignFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
 
-  q.prepare( "SELECT itemlocdist_id, itemlocdist_ls_id, "
+  assignFillList.prepare( "SELECT itemlocdist_id, itemlocdist_ls_id, "
              "       itemlocdist_qty,itemlocdist_expiration, "
              "       itemlocdist_warranty, ls_number,"
              "       CASE WHEN (NOT itemsite_perishable) THEN :na "
@@ -265,13 +270,13 @@ void assignLotSerial::sFillList()
              "WHERE (itemlocdist_series=:itemlocdist_series) "
              "AND (itemlocdist_ls_id=ls_id) "
              "ORDER BY ls_number;" );
-  q.bindValue(":itemlocdist_series", _itemlocSeries);
-  q.bindValue(":na", "N/A");
-  q.exec();
-  _itemlocdist->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  assignFillList.bindValue(":itemlocdist_series", _itemlocSeries);
+  assignFillList.bindValue(":na", "N/A");
+  assignFillList.exec();
+  _itemlocdist->populate(assignFillList, true);
+  if (assignFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, assignFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -329,8 +334,8 @@ void assignLotSerial::sPrint()
     }
     orReport::endMultiPrint(&printer);
   }
-  else if (q.lastError().type() != QSqlError::NoError) {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (qlabel.lastError().type() != QSqlError::NoError) {
+    systemError(this, qlabel.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -128,6 +128,7 @@ void invoice::languageChange()
 
 enum SetResponse invoice::set(const ParameterList &pParams)
 {
+  XSqlQuery invoiceet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -140,32 +141,32 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       setObjectName("invoice new");
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('invchead_invchead_id_seq') AS invchead_id;");
-      if (q.first())
+      invoiceet.exec("SELECT NEXTVAL('invchead_invchead_id_seq') AS invchead_id;");
+      if (invoiceet.first())
       {
-        _invcheadid = q.value("invchead_id").toInt();
+        _invcheadid = invoiceet.value("invchead_id").toInt();
         _recurring->setParent(_invcheadid, "I");
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (invoiceet.lastError().type() != QSqlError::NoError)
       {
-	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	    systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
 	    return UndefinedError;
       }
 
       if ((_metrics->value("InvcNumberGeneration") == "A") ||
           (_metrics->value("InvcNumberGeneration") == "O"))
       {
-        q.exec("SELECT fetchInvcNumber() AS number;");
-        if (q.first())
+        invoiceet.exec("SELECT fetchInvcNumber() AS number;");
+        if (invoiceet.first())
         {
-          _invoiceNumber->setText(q.value("number").toString());
-          _NumberGen = q.value("number").toInt();
+          _invoiceNumber->setText(invoiceet.value("number").toString());
+          _NumberGen = invoiceet.value("number").toInt();
           if (_metrics->value("InvcNumberGeneration") == "A")
             _invoiceNumber->setEnabled(false);
         }
-        else if (q.lastError().type() != QSqlError::NoError)
+        else if (invoiceet.lastError().type() != QSqlError::NoError)
         {
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
           return UndefinedError;
         }
         // Tabbed window mode doesn't work well with this
@@ -179,7 +180,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _shipDate->setDate(omfgThis->dbDate());
       _invoiceDate->setDate(omfgThis->dbDate(), true);
 
-      q.prepare("INSERT INTO invchead ("
+      invoiceet.prepare("INSERT INTO invchead ("
 				"    invchead_id, invchead_invcnumber, invchead_orderdate,"
                 "    invchead_invcdate, invchead_cust_id, invchead_posted,"
 				"    invchead_printed, invchead_commission, invchead_freight,"
@@ -190,16 +191,16 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 				"    false, 0, 0,"
 				"    0, -1"
 				");");
-      q.bindValue(":invchead_id",	 _invcheadid);
-      q.bindValue(":invchead_invcnumber",_invoiceNumber->text().isEmpty() ?
+      invoiceet.bindValue(":invchead_id",	 _invcheadid);
+      invoiceet.bindValue(":invchead_invcnumber",_invoiceNumber->text().isEmpty() ?
                                                "TEMP" + QString(0 - _invcheadid)
                                              : _invoiceNumber->text());
-      q.bindValue(":invchead_orderdate", _orderDate->date());
-      q.bindValue(":invchead_invcdate",	 _invoiceDate->date());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      invoiceet.bindValue(":invchead_orderdate", _orderDate->date());
+      invoiceet.bindValue(":invchead_invcdate",	 _invoiceDate->date());
+      invoiceet.exec();
+      if (invoiceet.lastError().type() != QSqlError::NoError)
       {
-	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	    systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
 	    return UndefinedError;
       }
 
@@ -285,6 +286,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 
 void invoice::sClose()
 {
+  XSqlQuery invoiceClose;
   if (_mode == cNew)
   {
     int answer = QMessageBox::question(this,
@@ -296,22 +298,22 @@ void invoice::sClose()
       return;
     else
     {
-      q.prepare( "SELECT deleteInvoice(:invchead_id) AS result;" );
-      q.bindValue(":invchead_id", _invcheadid);
-      q.exec();
-      if (q.first())
+      invoiceClose.prepare( "SELECT deleteInvoice(:invchead_id) AS result;" );
+      invoiceClose.bindValue(":invchead_id", _invcheadid);
+      invoiceClose.exec();
+      if (invoiceClose.first())
       {
-        int result = q.value("result").toInt();
+        int result = invoiceClose.value("result").toInt();
         if (result < 0)
         {
           systemError(this, storedProcErrorLookup("deleteInvoice", result),
                       __FILE__, __LINE__);
         }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (invoiceClose.lastError().type() != QSqlError::NoError)
         systemError(this,
                     tr("Error deleting Invoice %1\n").arg(_invcheadid) +
-                       q.lastError().databaseText(), __FILE__, __LINE__);
+                       invoiceClose.lastError().databaseText(), __FILE__, __LINE__);
     }
   }
   else if (_mode == cEdit)
@@ -328,22 +330,22 @@ void invoice::sClose()
         return;
       else
       {
-        q.prepare( "SELECT deleteInvoice(:invchead_id) AS result;" );
-        q.bindValue(":invchead_id", _invcheadid);
-        q.exec();
-        if (q.first())
+        invoiceClose.prepare( "SELECT deleteInvoice(:invchead_id) AS result;" );
+        invoiceClose.bindValue(":invchead_id", _invcheadid);
+        invoiceClose.exec();
+        if (invoiceClose.first())
         {
-          int result = q.value("result").toInt();
+          int result = invoiceClose.value("result").toInt();
           if (result < 0)
           {
             systemError(this, storedProcErrorLookup("deleteInvoice", result),
                         __FILE__, __LINE__);
           }
         }
-        else if (q.lastError().type() != QSqlError::NoError)
+        else if (invoiceClose.lastError().type() != QSqlError::NoError)
           systemError(this,
                       tr("Error deleting Invoice %1\n").arg(_invcheadid) +
-                         q.lastError().databaseText(), __FILE__, __LINE__);
+                         invoiceClose.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
   }
@@ -561,6 +563,7 @@ void invoice::sSave()
 
 bool invoice::save()
 {
+  XSqlQuery invoiceave;
   RecurrenceWidget::RecurrenceChangePolicy cp = _recurring->getChangePolicy();
   if (cp == RecurrenceWidget::NoPolicy)
     return false;
@@ -570,7 +573,7 @@ bool invoice::save()
 
   XSqlQuery begin("BEGIN;");
 
-  q.prepare( "UPDATE invchead "
+  invoiceave.prepare( "UPDATE invchead "
 	     "SET invchead_cust_id=:invchead_cust_id,"
 	     "    invchead_invcdate=:invchead_invcdate,"
 	     "    invchead_shipdate=:invchead_shipdate,"
@@ -603,64 +606,64 @@ bool invoice::save()
 		 "    invchead_taxzone_id=:invchead_taxzone_id "
 	     "WHERE (invchead_id=:invchead_id);" );
 
-  q.bindValue(":invchead_id",			_invcheadid);
-  q.bindValue(":invchead_invcnumber",		_invoiceNumber->text());
-  q.bindValue(":invchead_cust_id",		_cust->id());
-  q.bindValue(":invchead_invcdate",		_invoiceDate->date());
-  q.bindValue(":invchead_shipdate",		_shipDate->date());
-  q.bindValue(":invchead_orderdate",		_orderDate->date());
-  q.bindValue(":invchead_ponumber",		_poNumber->text());
-  q.bindValue(":invchead_billto_name",		_billToName->text());
-  q.bindValue(":invchead_billto_address1",	_billToAddr->line1());
-  q.bindValue(":invchead_billto_address2",	_billToAddr->line2());
-  q.bindValue(":invchead_billto_address3",	_billToAddr->line3());
-  q.bindValue(":invchead_billto_city",		_billToAddr->city());
-  q.bindValue(":invchead_billto_state",		_billToAddr->state());
-  q.bindValue(":invchead_billto_zipcode",	_billToAddr->postalCode());
-  q.bindValue(":invchead_billto_country",	_billToAddr->country());
-  q.bindValue(":invchead_billto_phone",		_billToPhone->text());
-  q.bindValue(":invchead_shipto_id",		_shipTo->id());
-  q.bindValue(":invchead_shipto_name",		_shipToName->text());
-  q.bindValue(":invchead_shipto_address1",	_shipToAddr->line1());
-  q.bindValue(":invchead_shipto_address2",	_shipToAddr->line2());
-  q.bindValue(":invchead_shipto_address3",	_shipToAddr->line3());
-  q.bindValue(":invchead_shipto_city",		_shipToAddr->city());
-  q.bindValue(":invchead_shipto_state",		_shipToAddr->state());
-  q.bindValue(":invchead_shipto_zipcode",	_shipToAddr->postalCode());
-  q.bindValue(":invchead_shipto_country",	_shipToAddr->country());
-  q.bindValue(":invchead_shipto_phone",		_shipToPhone->text());
+  invoiceave.bindValue(":invchead_id",			_invcheadid);
+  invoiceave.bindValue(":invchead_invcnumber",		_invoiceNumber->text());
+  invoiceave.bindValue(":invchead_cust_id",		_cust->id());
+  invoiceave.bindValue(":invchead_invcdate",		_invoiceDate->date());
+  invoiceave.bindValue(":invchead_shipdate",		_shipDate->date());
+  invoiceave.bindValue(":invchead_orderdate",		_orderDate->date());
+  invoiceave.bindValue(":invchead_ponumber",		_poNumber->text());
+  invoiceave.bindValue(":invchead_billto_name",		_billToName->text());
+  invoiceave.bindValue(":invchead_billto_address1",	_billToAddr->line1());
+  invoiceave.bindValue(":invchead_billto_address2",	_billToAddr->line2());
+  invoiceave.bindValue(":invchead_billto_address3",	_billToAddr->line3());
+  invoiceave.bindValue(":invchead_billto_city",		_billToAddr->city());
+  invoiceave.bindValue(":invchead_billto_state",		_billToAddr->state());
+  invoiceave.bindValue(":invchead_billto_zipcode",	_billToAddr->postalCode());
+  invoiceave.bindValue(":invchead_billto_country",	_billToAddr->country());
+  invoiceave.bindValue(":invchead_billto_phone",		_billToPhone->text());
+  invoiceave.bindValue(":invchead_shipto_id",		_shipTo->id());
+  invoiceave.bindValue(":invchead_shipto_name",		_shipToName->text());
+  invoiceave.bindValue(":invchead_shipto_address1",	_shipToAddr->line1());
+  invoiceave.bindValue(":invchead_shipto_address2",	_shipToAddr->line2());
+  invoiceave.bindValue(":invchead_shipto_address3",	_shipToAddr->line3());
+  invoiceave.bindValue(":invchead_shipto_city",		_shipToAddr->city());
+  invoiceave.bindValue(":invchead_shipto_state",		_shipToAddr->state());
+  invoiceave.bindValue(":invchead_shipto_zipcode",	_shipToAddr->postalCode());
+  invoiceave.bindValue(":invchead_shipto_country",	_shipToAddr->country());
+  invoiceave.bindValue(":invchead_shipto_phone",		_shipToPhone->text());
   if(_taxzone->isValid())
-    q.bindValue(":invchead_taxzone_id",		_taxzone->id());
-  q.bindValue(":invchead_salesrep_id",		_salesrep->id());
-  q.bindValue(":invchead_terms_id",		_terms->id());
-  q.bindValue(":invchead_commission",	(_commission->toDouble() / 100.0));
-  q.bindValue(":invchead_freight",	_freight->localValue());
-  q.bindValue(":invchead_payment",	_payment->localValue());
-  q.bindValue(":invchead_curr_id",	_custCurrency->id());
-  q.bindValue(":invchead_misc_amount",	_miscAmount->localValue());
-  q.bindValue(":invchead_misc_descrip",	_miscChargeDescription->text());
-  q.bindValue(":invchead_misc_accnt_id",_miscChargeAccount->id());
-  q.bindValue(":invchead_shipvia",	_shipVia->currentText());
-  q.bindValue(":invchead_fob",		_fob->text());
-  q.bindValue(":invchead_notes",	_notes->toPlainText());
-  q.bindValue(":invchead_prj_id",	_project->id());
-  q.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
+    invoiceave.bindValue(":invchead_taxzone_id",		_taxzone->id());
+  invoiceave.bindValue(":invchead_salesrep_id",		_salesrep->id());
+  invoiceave.bindValue(":invchead_terms_id",		_terms->id());
+  invoiceave.bindValue(":invchead_commission",	(_commission->toDouble() / 100.0));
+  invoiceave.bindValue(":invchead_freight",	_freight->localValue());
+  invoiceave.bindValue(":invchead_payment",	_payment->localValue());
+  invoiceave.bindValue(":invchead_curr_id",	_custCurrency->id());
+  invoiceave.bindValue(":invchead_misc_amount",	_miscAmount->localValue());
+  invoiceave.bindValue(":invchead_misc_descrip",	_miscChargeDescription->text());
+  invoiceave.bindValue(":invchead_misc_accnt_id",_miscChargeAccount->id());
+  invoiceave.bindValue(":invchead_shipvia",	_shipVia->currentText());
+  invoiceave.bindValue(":invchead_fob",		_fob->text());
+  invoiceave.bindValue(":invchead_notes",	_notes->toPlainText());
+  invoiceave.bindValue(":invchead_prj_id",	_project->id());
+  invoiceave.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
   if(_recurring->isRecurring())
   {
     if(_recurring->parentId() != 0)
-      q.bindValue(":invchead_recurring_invchead_id", _recurring->parentId());
+      invoiceave.bindValue(":invchead_recurring_invchead_id", _recurring->parentId());
     else
-      q.bindValue(":invchead_recurring_invchead_id", _invcheadid);
+      invoiceave.bindValue(":invchead_recurring_invchead_id", _invcheadid);
   }
 
   if (_orderNumber->text().length())
-    q.bindValue(":invchead_ordernumber", _orderNumber->text().toInt());
+    invoiceave.bindValue(":invchead_ordernumber", _orderNumber->text().toInt());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  invoiceave.exec();
+  if (invoiceave.lastError().type() != QSqlError::NoError)
   {
     rollbackq.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, invoiceave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -722,13 +725,14 @@ void invoice::sView()
 
 void invoice::sDelete()
 {
-  q.prepare( "DELETE FROM invcitem "
+  XSqlQuery invoiceDelete;
+  invoiceDelete.prepare( "DELETE FROM invcitem "
              "WHERE (invcitem_id=:invcitem_id);" );
-  q.bindValue(":invcitem_id", _invcitem->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  invoiceDelete.bindValue(":invcitem_id", _invcitem->id());
+  invoiceDelete.exec();
+  if (invoiceDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, invoiceDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -737,7 +741,8 @@ void invoice::sDelete()
 
 void invoice::populate()
 {
-  q.prepare( "SELECT invchead.*,"
+  XSqlQuery invoicepopulate;
+  invoicepopulate.prepare( "SELECT invchead.*,"
              "    COALESCE(invchead_taxzone_id, -1) AS taxzone_id,"
              "    COALESCE(cust_taxzone_id, -1) AS cust_taxzone_id,"
 	         "    cust_ffbillto, cust_ffshipto, "
@@ -747,9 +752,9 @@ void invoice::populate()
              "ON (cohead.cohead_number = invchead.invchead_ordernumber) "
              "JOIN custinfo ON (invchead_cust_id = cust_id) "
 			 "WHERE (invchead_id=:invchead_id);" );
-  q.bindValue(":invchead_id", _invcheadid);
-  q.exec();
-  if (q.first())
+  invoicepopulate.bindValue(":invchead_id", _invcheadid);
+  invoicepopulate.exec();
+  if (invoicepopulate.first())
   {
     _loading = true;
     // We are setting the _taxzoneidCache here to the value that
@@ -759,41 +764,41 @@ void invoice::populate()
     // database manipulation that may be unnecessary or even harmful
     // and we intend to set the values a little further down and they
     // may differ.
-    _taxzoneidCache = q.value("cust_taxzone_id").toInt();
+    _taxzoneidCache = invoicepopulate.value("cust_taxzone_id").toInt();
 
-    _cust->setId(q.value("invchead_cust_id").toInt());
-    _custCurrency->setId(q.value("invchead_curr_id").toInt());
+    _cust->setId(invoicepopulate.value("invchead_cust_id").toInt());
+    _custCurrency->setId(invoicepopulate.value("invchead_curr_id").toInt());
 
-    _invoiceNumber->setText(q.value("invchead_invcnumber").toString());
+    _invoiceNumber->setText(invoicepopulate.value("invchead_invcnumber").toString());
     _invoiceNumber->setEnabled(false);
-    _orderNumber->setText(q.value("invchead_ordernumber").toString());
+    _orderNumber->setText(invoicepopulate.value("invchead_ordernumber").toString());
     if (! _orderNumber->text().isEmpty() && _orderNumber->text().toInt() != 0)
 	_custCurrency->setEnabled(FALSE);
 
-    _invoiceDate->setDate(q.value("invchead_invcdate").toDate(), true);
-    _orderDate->setDate(q.value("invchead_orderdate").toDate());
-    _shipDate->setDate(q.value("invchead_shipdate").toDate());
-    _poNumber->setText(q.value("invchead_ponumber").toString());
-    _shipVia->setText(q.value("invchead_shipvia").toString());
-    _fob->setText(q.value("invchead_fob").toString());
-    _shipChrgs->setId(q.value("shipchrg_id").toInt());
-    _freightCache=q.value("invchead_freight").toDouble();
-    _freight->setLocalValue(q.value("invchead_freight").toDouble());
+    _invoiceDate->setDate(invoicepopulate.value("invchead_invcdate").toDate(), true);
+    _orderDate->setDate(invoicepopulate.value("invchead_orderdate").toDate());
+    _shipDate->setDate(invoicepopulate.value("invchead_shipdate").toDate());
+    _poNumber->setText(invoicepopulate.value("invchead_ponumber").toString());
+    _shipVia->setText(invoicepopulate.value("invchead_shipvia").toString());
+    _fob->setText(invoicepopulate.value("invchead_fob").toString());
+    _shipChrgs->setId(invoicepopulate.value("shipchrg_id").toInt());
+    _freightCache=invoicepopulate.value("invchead_freight").toDouble();
+    _freight->setLocalValue(invoicepopulate.value("invchead_freight").toDouble());
 
-    if(q.value("invchead_recurring_invchead_id").toInt() != 0)
-      _recurring->setParent(q.value("invchead_recurring_invchead_id").toInt(),
+    if(invoicepopulate.value("invchead_recurring_invchead_id").toInt() != 0)
+      _recurring->setParent(invoicepopulate.value("invchead_recurring_invchead_id").toInt(),
                           "I");
     else
       _recurring->setParent(_invcheadid, "I");
 
-    _salesrep->setId(q.value("invchead_salesrep_id").toInt());
-    _commission->setDouble(q.value("invchead_commission").toDouble() * 100);
-    _taxzoneidCache = q.value("taxzone_id").toInt();
-    _taxzone->setId(q.value("taxzone_id").toInt());
-    _terms->setId(q.value("invchead_terms_id").toInt());
-    _project->setId(q.value("invchead_prj_id").toInt());
+    _salesrep->setId(invoicepopulate.value("invchead_salesrep_id").toInt());
+    _commission->setDouble(invoicepopulate.value("invchead_commission").toDouble() * 100);
+    _taxzoneidCache = invoicepopulate.value("taxzone_id").toInt();
+    _taxzone->setId(invoicepopulate.value("taxzone_id").toInt());
+    _terms->setId(invoicepopulate.value("invchead_terms_id").toInt());
+    _project->setId(invoicepopulate.value("invchead_prj_id").toInt());
 
-    bool ffBillTo = q.value("cust_ffbillto").toBool();
+    bool ffBillTo = invoicepopulate.value("cust_ffbillto").toBool();
     if (_mode != cView)
     {
       _billToName->setEnabled(ffBillTo);
@@ -801,38 +806,38 @@ void invoice::populate()
       _billToPhone->setEnabled(ffBillTo);
     }
 
-    _billToName->setText(q.value("invchead_billto_name").toString());
-    _billToAddr->setLine1(q.value("invchead_billto_address1").toString());
-    _billToAddr->setLine2(q.value("invchead_billto_address2").toString());
-    _billToAddr->setLine3(q.value("invchead_billto_address3").toString());
-    _billToAddr->setCity(q.value("invchead_billto_city").toString());
-    _billToAddr->setState(q.value("invchead_billto_state").toString());
-    _billToAddr->setPostalCode(q.value("invchead_billto_zipcode").toString());
-    _billToAddr->setCountry(q.value("invchead_billto_country").toString());
-    _billToPhone->setText(q.value("invchead_billto_phone").toString());
+    _billToName->setText(invoicepopulate.value("invchead_billto_name").toString());
+    _billToAddr->setLine1(invoicepopulate.value("invchead_billto_address1").toString());
+    _billToAddr->setLine2(invoicepopulate.value("invchead_billto_address2").toString());
+    _billToAddr->setLine3(invoicepopulate.value("invchead_billto_address3").toString());
+    _billToAddr->setCity(invoicepopulate.value("invchead_billto_city").toString());
+    _billToAddr->setState(invoicepopulate.value("invchead_billto_state").toString());
+    _billToAddr->setPostalCode(invoicepopulate.value("invchead_billto_zipcode").toString());
+    _billToAddr->setCountry(invoicepopulate.value("invchead_billto_country").toString());
+    _billToPhone->setText(invoicepopulate.value("invchead_billto_phone").toString());
 
-    setFreeFormShipto(q.value("cust_ffshipto").toBool());
-    _shipToName->setText(q.value("invchead_shipto_name").toString());
-    _shipToAddr->setLine1(q.value("invchead_shipto_address1").toString());
-    _shipToAddr->setLine2(q.value("invchead_shipto_address2").toString());
-    _shipToAddr->setLine3(q.value("invchead_shipto_address3").toString());
-    _shipToAddr->setCity(q.value("invchead_shipto_city").toString());
-    _shipToAddr->setState(q.value("invchead_shipto_state").toString());
-    _shipToAddr->setPostalCode(q.value("invchead_shipto_zipcode").toString());
-    _shipToAddr->setCountry(q.value("invchead_shipto_country").toString());
-    _shipToPhone->setText(q.value("invchead_shipto_phone").toString());
+    setFreeFormShipto(invoicepopulate.value("cust_ffshipto").toBool());
+    _shipToName->setText(invoicepopulate.value("invchead_shipto_name").toString());
+    _shipToAddr->setLine1(invoicepopulate.value("invchead_shipto_address1").toString());
+    _shipToAddr->setLine2(invoicepopulate.value("invchead_shipto_address2").toString());
+    _shipToAddr->setLine3(invoicepopulate.value("invchead_shipto_address3").toString());
+    _shipToAddr->setCity(invoicepopulate.value("invchead_shipto_city").toString());
+    _shipToAddr->setState(invoicepopulate.value("invchead_shipto_state").toString());
+    _shipToAddr->setPostalCode(invoicepopulate.value("invchead_shipto_zipcode").toString());
+    _shipToAddr->setCountry(invoicepopulate.value("invchead_shipto_country").toString());
+    _shipToPhone->setText(invoicepopulate.value("invchead_shipto_phone").toString());
     _shipTo->blockSignals(true);
-    _shipTo->setId(q.value("invchead_shipto_id").toInt());
+    _shipTo->setId(invoicepopulate.value("invchead_shipto_id").toInt());
     _shipTo->blockSignals(false);
 
-    _payment->setLocalValue(q.value("invchead_payment").toDouble());
-    _miscChargeDescription->setText(q.value("invchead_misc_descrip"));
-    _miscChargeAccount->setId(q.value("invchead_misc_accnt_id").toInt());
-    _miscAmount->setLocalValue(q.value("invchead_misc_amount").toDouble());
+    _payment->setLocalValue(invoicepopulate.value("invchead_payment").toDouble());
+    _miscChargeDescription->setText(invoicepopulate.value("invchead_misc_descrip"));
+    _miscChargeAccount->setId(invoicepopulate.value("invchead_misc_accnt_id").toInt());
+    _miscAmount->setLocalValue(invoicepopulate.value("invchead_misc_amount").toDouble());
 
-    _notes->setText(q.value("invchead_notes").toString());
+    _notes->setText(invoicepopulate.value("invchead_notes").toString());
 
-    _posted = q.value("invchead_posted").toBool();
+    _posted = invoicepopulate.value("invchead_posted").toBool();
     if (_posted)
     {
       _new->setEnabled(false);
@@ -855,16 +860,17 @@ void invoice::populate()
 
     sFillItemList();
   }
-  if (q.lastError().type() != QSqlError::NoError)
+  if (invoicepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, invoicepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void invoice::sFillItemList()
 {
-  q.prepare( "SELECT invcitem_id, invcitem_linenumber,"
+  XSqlQuery invoiceFillItemList;
+  invoiceFillItemList.prepare( "SELECT invcitem_id, invcitem_linenumber,"
              "       formatSoItemNumber(invcitem_coitem_id) AS soitemnumber, "
              "       CASE WHEN (item_id IS NULL) THEN invcitem_number"
              "            ELSE item_number"
@@ -888,29 +894,29 @@ void invoice::sFillItemList()
              "  LEFT OUTER JOIN uom AS puom ON (invcitem_price_uom_id=puom.uom_id)"
              "WHERE (invcitem_invchead_id=:invchead_id) "
              "ORDER BY invcitem_linenumber;" );
-  q.bindValue(":invchead_id", _invcheadid);
-  q.bindValue(":curr_id", _custCurrency->id());
-  q.bindValue(":date", _orderDate->date());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  invoiceFillItemList.bindValue(":invchead_id", _invcheadid);
+  invoiceFillItemList.bindValue(":curr_id", _custCurrency->id());
+  invoiceFillItemList.bindValue(":date", _orderDate->date());
+  invoiceFillItemList.exec();
+  if (invoiceFillItemList.lastError().type() != QSqlError::NoError)
+      systemError(this, invoiceFillItemList.lastError().databaseText(), __FILE__, __LINE__);
 
   _invcitem->clear();
-  _invcitem->populate(q);
+  _invcitem->populate(invoiceFillItemList);
 
   //  Determine the subtotal
-  q.prepare( "SELECT SUM( round(((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price /"
+  invoiceFillItemList.prepare( "SELECT SUM( round(((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price /"
              "            CASE WHEN (item_id IS NULL) THEN 1"
              "                 ELSE invcitem_price_invuomratio"
              "            END)),2) ) AS subtotal "
              "FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id) "
              "WHERE (invcitem_invchead_id=:invchead_id);" );
-  q.bindValue(":invchead_id", _invcheadid);
-  q.exec();
-  if (q.first())
-    _subtotal->setLocalValue(q.value("subtotal").toDouble());
-  else if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  invoiceFillItemList.bindValue(":invchead_id", _invcheadid);
+  invoiceFillItemList.exec();
+  if (invoiceFillItemList.first())
+    _subtotal->setLocalValue(invoiceFillItemList.value("subtotal").toDouble());
+  else if (invoiceFillItemList.lastError().type() != QSqlError::NoError)
+    systemError(this, invoiceFillItemList.lastError().databaseText(), __FILE__, __LINE__);
 
   _custCurrency->setEnabled(_invcitem->topLevelItemCount() == 0);
 
@@ -931,15 +937,16 @@ void invoice::sCalculateTotal()
 
 void invoice::closeEvent(QCloseEvent *pEvent)
 {
+  XSqlQuery invoicecloseEvent;
   if ( (_mode == cNew) && (_invcheadid != -1) )
   {
-    q.prepare( "DELETE FROM invcitem "
+    invoicecloseEvent.prepare( "DELETE FROM invcitem "
                "WHERE (invcitem_invchead_id=:invchead_id);" );
-    q.bindValue(":invchead_id", _invcheadid);
-    q.bindValue(":invoiceNumber", _invoiceNumber->text().toInt());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    invoicecloseEvent.bindValue(":invchead_id", _invcheadid);
+    invoicecloseEvent.bindValue(":invoiceNumber", _invoiceNumber->text().toInt());
+    invoicecloseEvent.exec();
+    if (invoicecloseEvent.lastError().type() != QSqlError::NoError)
+      systemError(this, invoicecloseEvent.lastError().databaseText(), __FILE__, __LINE__);
     sReleaseNumber();
   }
 
@@ -948,13 +955,14 @@ void invoice::closeEvent(QCloseEvent *pEvent)
 
 void invoice::sReleaseNumber()
 {
+  XSqlQuery invoiceReleaseNumber;
   if(-1 != _NumberGen)
   {
-    q.prepare("SELECT releaseInvcNumber(:number);" );
-    q.bindValue(":number", _NumberGen);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    invoiceReleaseNumber.prepare("SELECT releaseInvcNumber(:number);" );
+    invoiceReleaseNumber.bindValue(":number", _NumberGen);
+    invoiceReleaseNumber.exec();
+    if (invoiceReleaseNumber.lastError().type() != QSqlError::NoError)
+      systemError(this, invoiceReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
     _NumberGen = -1;
   }
 }
@@ -1309,6 +1317,7 @@ void invoice::sFreightChanged()
 
 bool invoice::sCheckInvoiceNumber()
 {
+  XSqlQuery invoiceCheckInvoiceNumber;
   if (cNew == _mode)
   {
     if(-1 != _NumberGen && _invoiceNumber->text().toInt() != _NumberGen)
@@ -1340,7 +1349,7 @@ bool invoice::sCheckInvoiceNumber()
         _invoiceNumber->setFocus();
       }
       else if (checkq.lastError().type() != QSqlError::NoError)
-        systemError(this, q.lastError().text(), __FILE__, __LINE__);
+        systemError(this, invoiceCheckInvoiceNumber.lastError().text(), __FILE__, __LINE__);
       else
       {
         _invoiceNumber->setEnabled(false);

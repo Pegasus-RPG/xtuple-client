@@ -87,6 +87,7 @@ enum SetResponse dspCreditCardTransactions::set( const ParameterList & pParams )
 
 void dspCreditCardTransactions::sFillList()
 {
+  XSqlQuery dspFillList;
   _CCAmount->clear();
   
   MetaSQLQuery mql = mqlLoad("ccpayments", "list");
@@ -107,8 +108,8 @@ void dspCreditCardTransactions::sFillList()
   params.append("declined",   tr("Declined"));
   params.append("voided",     tr("Voided"));
   params.append("noapproval", tr("No Approval Code"));
-  q = mql.toQuery(params);
-  _preauth->populate(q,true);
+  dspFillList = mql.toQuery(params);
+  _preauth->populate(dspFillList,true);
 }
 
 void dspCreditCardTransactions::sClear()
@@ -118,13 +119,14 @@ void dspCreditCardTransactions::sClear()
 
 void dspCreditCardTransactions::sgetCCAmount()
 {
+  XSqlQuery dspgetCCAmount;
   if (_preauth->altId() && _privileges->check("ProcessCreditCards"))
   {
-    q.prepare("SELECT ccpay_amount, ccpay_curr_id "
+    dspgetCCAmount.prepare("SELECT ccpay_amount, ccpay_curr_id "
                "FROM ccpay "
                " WHERE (ccpay_id = :ccpay_id);");
-    q.bindValue(":ccpay_id", _preauth->id());
-    if (q.exec() && q.first())
+    dspgetCCAmount.bindValue(":ccpay_id", _preauth->id());
+    if (dspgetCCAmount.exec() && dspgetCCAmount.first())
     {
       /* _CCAmount->id() defaults to customer's currency
          if CC payment is in either customer's currency or base
@@ -133,20 +135,20 @@ void dspCreditCardTransactions::sgetCCAmount()
        */
       _postPreauth->setEnabled(true);
       _voidPreauth->setEnabled(true);
-      int ccpayCurrId = q.value("ccpay_curr_id").toInt(); 
+      int ccpayCurrId = dspgetCCAmount.value("ccpay_curr_id").toInt(); 
       if (ccpayCurrId == _CCAmount->baseId())
-        _CCAmount->setBaseValue(q.value("ccpay_amount").toDouble());
+        _CCAmount->setBaseValue(dspgetCCAmount.value("ccpay_amount").toDouble());
       else if (ccpayCurrId != _CCAmount->id())
       {
         _CCAmount->setId(ccpayCurrId);
-        _CCAmount->setLocalValue(q.value("ccpay_amount").toDouble());
+        _CCAmount->setLocalValue(dspgetCCAmount.value("ccpay_amount").toDouble());
       }
       else
-        _CCAmount->setLocalValue(q.value("ccpay_amount").toDouble());
+        _CCAmount->setLocalValue(dspgetCCAmount.value("ccpay_amount").toDouble());
       return;
     }
-    else if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    else if (dspgetCCAmount.lastError().type() != QSqlError::NoError)
+      systemError(this, dspgetCCAmount.lastError().databaseText(), __FILE__, __LINE__);
   }
   _postPreauth->setEnabled(false);
   _voidPreauth->setEnabled(false);

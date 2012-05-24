@@ -79,6 +79,7 @@ enum SetResponse warehouseZone::set(const ParameterList &pParams)
 
 void warehouseZone::sSave()
 {
+  XSqlQuery warehouseSave;
   if (_name->text().length() == 0)
   {
     QMessageBox::information( this, tr("No Name Entered"),
@@ -90,35 +91,35 @@ void warehouseZone::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare("SELECT NEXTVAL('whsezone_whsezone_id_seq') AS whsezone_id");
-    q.exec();
-    if (q.first())
-      _whsezoneid = q.value("whsezone_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    warehouseSave.prepare("SELECT NEXTVAL('whsezone_whsezone_id_seq') AS whsezone_id");
+    warehouseSave.exec();
+    if (warehouseSave.first())
+      _whsezoneid = warehouseSave.value("whsezone_id").toInt();
+    else if (warehouseSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, warehouseSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO whsezone "
+    warehouseSave.prepare( "INSERT INTO whsezone "
                "(whsezone_id, whsezone_warehous_id, whsezone_name, whsezone_descrip) "
                "VALUES "
                "(:whsezone_id, :warehous_id, :whsezone_name, :whsezone_descrip);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE whsezone "
+    warehouseSave.prepare( "UPDATE whsezone "
                "SET whsezone_warehous_id=:warehous_id,"
                "    whsezone_name=:whsezone_name, whsezone_descrip=:whsezone_descrip "
                "WHERE (whsezone_id=:whsezone_id);" );
 
-  q.bindValue(":whsezone_id", _whsezoneid);
-  q.bindValue(":warehous_id", _warehousid);
-  q.bindValue(":whsezone_name", _name->text());
-  q.bindValue(":whsezone_descrip", _description->text());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  warehouseSave.bindValue(":whsezone_id", _whsezoneid);
+  warehouseSave.bindValue(":warehous_id", _warehousid);
+  warehouseSave.bindValue(":whsezone_name", _name->text());
+  warehouseSave.bindValue(":whsezone_descrip", _description->text());
+  warehouseSave.exec();
+  if (warehouseSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, warehouseSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -127,27 +128,28 @@ void warehouseZone::sSave()
 
 void warehouseZone::sCheck()
 {
+  XSqlQuery warehouseCheck;
   _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
-    q.prepare( "SELECT whsezone_id "
+    warehouseCheck.prepare( "SELECT whsezone_id "
                "FROM whsezone "
                "WHERE ( (whsezone_warehous_id=:warehous_id)"
                " AND (UPPER(whsezone_name)=UPPER(:whsezone_name)) );" );
-    q.bindValue(":warehous_id", _warehousid);
-    q.bindValue(":whsezone_name", _name->text());
-    q.exec();
-    if (q.first())
+    warehouseCheck.bindValue(":warehous_id", _warehousid);
+    warehouseCheck.bindValue(":whsezone_name", _name->text());
+    warehouseCheck.exec();
+    if (warehouseCheck.first())
     {
-      _whsezoneid = q.value("whsezone_id").toInt();
+      _whsezoneid = warehouseCheck.value("whsezone_id").toInt();
       _mode = cEdit;
       populate();
 
       _name->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (warehouseCheck.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, warehouseCheck.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -155,20 +157,21 @@ void warehouseZone::sCheck()
 
 void warehouseZone::populate()
 {
-  q.prepare( "SELECT whsezone_warehous_id, whsezone_name, whsezone_descrip "
+  XSqlQuery warehousepopulate;
+  warehousepopulate.prepare( "SELECT whsezone_warehous_id, whsezone_name, whsezone_descrip "
              "FROM whsezone "
              "WHERE (whsezone_id=:whsezone_id);" );
-  q.bindValue(":whsezone_id", _whsezoneid);
-  q.exec();
-  if (q.first())
+  warehousepopulate.bindValue(":whsezone_id", _whsezoneid);
+  warehousepopulate.exec();
+  if (warehousepopulate.first())
   {
-    _warehousid = q.value("whsezone_warehous_id").toInt();
-    _name->setText(q.value("whsezone_name").toString());
-    _description->setText(q.value("whsezone_descrip").toString());
+    _warehousid = warehousepopulate.value("whsezone_warehous_id").toInt();
+    _name->setText(warehousepopulate.value("whsezone_name").toString());
+    _description->setText(warehousepopulate.value("whsezone_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (warehousepopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, warehousepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

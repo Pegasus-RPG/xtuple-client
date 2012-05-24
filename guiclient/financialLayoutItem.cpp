@@ -29,6 +29,7 @@
 financialLayoutItem::financialLayoutItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery financialfinancialLayoutItem;
   setupUi(this);
 
 
@@ -59,11 +60,11 @@ financialLayoutItem::financialLayoutItem(QWidget* parent, const char* name, bool
   _sub->append(-1,tr("All"),"All");
   _sub->setId(-1);
 
-  q.prepare( "SELECT DISTINCT accnt_id, accnt_number, accnt_number "
+  financialfinancialLayoutItem.prepare( "SELECT DISTINCT accnt_id, accnt_number, accnt_number "
                   "FROM ONLY accnt "
                   "ORDER BY accnt_number;" );
-  q.exec();
-  _number->populate(q);
+  financialfinancialLayoutItem.exec();
+  _number->populate(financialfinancialLayoutItem);
   _number->append(-1,tr("All"),"All");
   _number->setId(-1);
 
@@ -214,22 +215,23 @@ void financialLayoutItem::sCheck()
 
 void financialLayoutItem::sSave()
 { 
+  XSqlQuery financialSave;
   QString sql;
 
   if (_selectAccount->isChecked())
   {
     if (_account->isValid())
     {
-      q.prepare( "SELECT count(*) AS result"
+      financialSave.prepare( "SELECT count(*) AS result"
                "  FROM flitem"
                " WHERE ((flitem_flhead_id=:flhead_id)"
                "   AND  (flitem_id != :flitem_id)"
                "   AND  (flitem_accnt_id=:accnt_id) ); ");
-      q.bindValue(":flhead_id", _flheadid);
-      q.bindValue(":flitem_id", _flitemid);
-      q.bindValue(":accnt_id", _account->id());
-      q.exec();
-      if(q.first() && (q.value("result").toInt() > 0) )
+      financialSave.bindValue(":flhead_id", _flheadid);
+      financialSave.bindValue(":flitem_id", _flitemid);
+      financialSave.bindValue(":accnt_id", _account->id());
+      financialSave.exec();
+      if(financialSave.first() && (financialSave.value("result").toInt() > 0) )
       {
         if ( QMessageBox::warning( this, tr("Duplicate Account Number"),
              tr("The selected Account number is already being used in this Financial Report.\n"
@@ -251,7 +253,7 @@ void financialLayoutItem::sSave()
   int order = 1;
   if (_mode == cNew)
   {
-    q.prepare("SELECT COALESCE(MAX(ord),0) + 1 AS neworder"
+    financialSave.prepare("SELECT COALESCE(MAX(ord),0) + 1 AS neworder"
               "  FROM (SELECT flgrp_order AS ord"
               "          FROM flgrp"
               "         WHERE ((flgrp_flgrp_id=:flgrp_id)"
@@ -266,19 +268,19 @@ void financialLayoutItem::sSave()
               "          FROM flspec"
               "         WHERE ((flspec_flgrp_id=:flgrp_id)"
               "           AND  (flspec_flhead_id=:flhead_id)) ) AS data;" );
-    q.bindValue(":flgrp_id", _flgrpid);
-    q.bindValue(":flhead_id", _flheadid);
-    q.exec();
+    financialSave.bindValue(":flgrp_id", _flgrpid);
+    financialSave.bindValue(":flhead_id", _flheadid);
+    financialSave.exec();
 
-    if(q.first())
-      order = q.value("neworder").toInt();
+    if(financialSave.first())
+      order = financialSave.value("neworder").toInt();
   }
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('flitem_flitem_id_seq') AS flitem_id;");
-    if (q.first())
-      _flitemid = q.value("flitem_id").toInt();
+    financialSave.exec("SELECT NEXTVAL('flitem_flitem_id_seq') AS flitem_id;");
+    if (financialSave.first())
+      _flitemid = financialSave.value("flitem_id").toInt();
     
     sql = ( "INSERT INTO flitem "
                "( flitem_id, flitem_flhead_id, flitem_flgrp_id, flitem_order,"
@@ -319,138 +321,139 @@ void financialLayoutItem::sSave()
     sql +=   " WHERE (flitem_id=:flitem_id);";
   }
 
-  q.prepare(sql);
+  financialSave.prepare(sql);
    
-  q.bindValue(":flitem_flhead_id", _flheadid);
-  q.bindValue(":flitem_flgrp_id", _flgrpid);
-  q.bindValue(":flitem_order", order);
-  q.bindValue(":flitem_accnt_id", _account->id());
-  q.bindValue(":flitem_showstart", QVariant(_showBeginning->isChecked()));
-  q.bindValue(":flitem_showend", QVariant(_showEnding->isChecked()));
-  q.bindValue(":flitem_showdelta", QVariant(_showDB->isChecked()));
-  q.bindValue(":flitem_showbudget", QVariant(_showBudget->isChecked()));
-  q.bindValue(":flitem_showdiff", QVariant(_showDiff->isChecked()));
-  q.bindValue(":flitem_showcustom", QVariant(_showCustom->isChecked()));
-  q.bindValue(":flitem_subtract", QVariant(_subtract->isChecked()));
-  q.bindValue(":flitem_showstartprcnt", QVariant(_showBeginning->isChecked() && _showBeginningPrcnt->isChecked()));
-  q.bindValue(":flitem_showendprcnt", QVariant(_showEnding->isChecked() && _showEndingPrcnt->isChecked()));
-  q.bindValue(":flitem_showdeltaprcnt", QVariant(_showDB->isChecked() && _showDBPrcnt->isChecked()));
-  q.bindValue(":flitem_showbudgetprcnt", QVariant(_showBudget->isChecked() && _showBudgetPrcnt->isChecked()));
-  q.bindValue(":flitem_showdiffprcnt", QVariant(_showDiff->isChecked() && _showDiffPrcnt->isChecked()));
-  q.bindValue(":flitem_showcustomprcnt", QVariant(_showCustom->isChecked() && _showCustomPrcnt->isChecked()));
-  q.bindValue(":flitem_id", _flitemid);
-  q.bindValue(":flitem_prcnt_flgrp_id", _group->id());
+  financialSave.bindValue(":flitem_flhead_id", _flheadid);
+  financialSave.bindValue(":flitem_flgrp_id", _flgrpid);
+  financialSave.bindValue(":flitem_order", order);
+  financialSave.bindValue(":flitem_accnt_id", _account->id());
+  financialSave.bindValue(":flitem_showstart", QVariant(_showBeginning->isChecked()));
+  financialSave.bindValue(":flitem_showend", QVariant(_showEnding->isChecked()));
+  financialSave.bindValue(":flitem_showdelta", QVariant(_showDB->isChecked()));
+  financialSave.bindValue(":flitem_showbudget", QVariant(_showBudget->isChecked()));
+  financialSave.bindValue(":flitem_showdiff", QVariant(_showDiff->isChecked()));
+  financialSave.bindValue(":flitem_showcustom", QVariant(_showCustom->isChecked()));
+  financialSave.bindValue(":flitem_subtract", QVariant(_subtract->isChecked()));
+  financialSave.bindValue(":flitem_showstartprcnt", QVariant(_showBeginning->isChecked() && _showBeginningPrcnt->isChecked()));
+  financialSave.bindValue(":flitem_showendprcnt", QVariant(_showEnding->isChecked() && _showEndingPrcnt->isChecked()));
+  financialSave.bindValue(":flitem_showdeltaprcnt", QVariant(_showDB->isChecked() && _showDBPrcnt->isChecked()));
+  financialSave.bindValue(":flitem_showbudgetprcnt", QVariant(_showBudget->isChecked() && _showBudgetPrcnt->isChecked()));
+  financialSave.bindValue(":flitem_showdiffprcnt", QVariant(_showDiff->isChecked() && _showDiffPrcnt->isChecked()));
+  financialSave.bindValue(":flitem_showcustomprcnt", QVariant(_showCustom->isChecked() && _showCustomPrcnt->isChecked()));
+  financialSave.bindValue(":flitem_id", _flitemid);
+  financialSave.bindValue(":flitem_prcnt_flgrp_id", _group->id());
 
   if(_customUseBeginning->isChecked())
-    q.bindValue(":flitem_custom_source", "S");
+    financialSave.bindValue(":flitem_custom_source", "S");
   else if(_customUseEnding->isChecked())
-    q.bindValue(":flitem_custom_source", "E");
+    financialSave.bindValue(":flitem_custom_source", "E");
   else if(_customUseDebits->isChecked())
-    q.bindValue(":flitem_custom_source", "D");
+    financialSave.bindValue(":flitem_custom_source", "D");
   else if(_customUseCredits->isChecked())
-    q.bindValue(":flitem_custom_source", "C");
+    financialSave.bindValue(":flitem_custom_source", "C");
   else if(_customUseBudget->isChecked())
-    q.bindValue(":flitem_custom_source", "B");
+    financialSave.bindValue(":flitem_custom_source", "B");
   else if(_customUseDiff->isChecked())
-    q.bindValue(":flitem_custom_source", "F");
+    financialSave.bindValue(":flitem_custom_source", "F");
 
   if ( _selectSegment->isChecked() )
   {
-    q.bindValue(":flitem_accnt_id", -1);
-    q.bindValue(":flitem_company", _company->code());
-    q.bindValue(":flitem_profit", _profit->code());
-    q.bindValue(":flitem_number", _number->code());
-    q.bindValue(":flitem_sub", _sub->code());
-    q.bindValue(":subaccnttype_id", _subType->id());
+    financialSave.bindValue(":flitem_accnt_id", -1);
+    financialSave.bindValue(":flitem_company", _company->code());
+    financialSave.bindValue(":flitem_profit", _profit->code());
+    financialSave.bindValue(":flitem_number", _number->code());
+    financialSave.bindValue(":flitem_sub", _sub->code());
+    financialSave.bindValue(":subaccnttype_id", _subType->id());
 
     if (_type->currentIndex() == 0)
-      q.bindValue(":flitem_type", "A");
+      financialSave.bindValue(":flitem_type", "A");
     else if (_type->currentIndex() == 1)
-      q.bindValue(":flitem_type", "L");
+      financialSave.bindValue(":flitem_type", "L");
     else if (_type->currentIndex() == 2)
-      q.bindValue(":flitem_type", "E");
+      financialSave.bindValue(":flitem_type", "E");
     else if (_type->currentIndex() == 3)
-      q.bindValue(":flitem_type", "R");
+      financialSave.bindValue(":flitem_type", "R");
     else if (_type->currentIndex() == 4)
-      q.bindValue(":flitem_type", "Q");
+      financialSave.bindValue(":flitem_type", "Q");
     else
-      q.bindValue(":flitem_type", "");
+      financialSave.bindValue(":flitem_type", "");
   }
   else
   {
-    q.bindValue(":flitem_accnt_id", _account->id());
-    q.bindValue(":flitem_company", "");
-    q.bindValue(":flitem_profit", "");
-    q.bindValue(":flitem_number", "");
-    q.bindValue(":flitem_sub", "");
-    q.bindValue(":flitem_subaccnttype_code", "");
-    q.bindValue(":flitem_type", "");
+    financialSave.bindValue(":flitem_accnt_id", _account->id());
+    financialSave.bindValue(":flitem_company", "");
+    financialSave.bindValue(":flitem_profit", "");
+    financialSave.bindValue(":flitem_number", "");
+    financialSave.bindValue(":flitem_sub", "");
+    financialSave.bindValue(":flitem_subaccnttype_code", "");
+    financialSave.bindValue(":flitem_type", "");
   }
   
-  q.exec();
+  financialSave.exec();
 
   done(_flitemid);
 }
 
 void financialLayoutItem::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery financialpopulate;
+  financialpopulate.prepare( "SELECT * "
              "FROM flitem "
 	     "LEFT OUTER JOIN subaccnttype ON flitem_subaccnttype_code=subaccnttype_code "
              "WHERE (flitem_id=:flitem_id);" );
-  q.bindValue(":flitem_id", _flitemid);
-  q.exec();
-  if (q.first())
+  financialpopulate.bindValue(":flitem_id", _flitemid);
+  financialpopulate.exec();
+  if (financialpopulate.first())
   {
-    if ( q.value("flitem_accnt_id").toInt() == -1 )
+    if ( financialpopulate.value("flitem_accnt_id").toInt() == -1 )
     {
       _selectSegment->setChecked(TRUE);
 
       if (_metrics->value("GLCompanySize").toInt())
-        _company->setCode(q.value("flitem_company").toString());
+        _company->setCode(financialpopulate.value("flitem_company").toString());
       if (_metrics->value("GLProfitSize").toInt())
-        _profit->setCode(q.value("flitem_profit").toString());
-      _number->setCode(q.value("flitem_number").toString());
+        _profit->setCode(financialpopulate.value("flitem_profit").toString());
+      _number->setCode(financialpopulate.value("flitem_number").toString());
       if (_metrics->value("GLSubaccountSize").toInt())
-        _sub->setCode(q.value("flitem_sub").toString());
+        _sub->setCode(financialpopulate.value("flitem_sub").toString());
 
-      if (q.value("flitem_type").toString() == "A")
+      if (financialpopulate.value("flitem_type").toString() == "A")
         _type->setCurrentIndex(0);
-      else if (q.value("flitem_type").toString() == "L")
+      else if (financialpopulate.value("flitem_type").toString() == "L")
         _type->setCurrentIndex(1);
-      else if (q.value("flitem_type").toString() == "E")
+      else if (financialpopulate.value("flitem_type").toString() == "E")
         _type->setCurrentIndex(2);
-      else if (q.value("flitem_type").toString() == "R")
+      else if (financialpopulate.value("flitem_type").toString() == "R")
         _type->setCurrentIndex(3);
-      else if (q.value("flitem_type").toString() == "Q")
+      else if (financialpopulate.value("flitem_type").toString() == "Q")
         _type->setCurrentIndex(4);
       else
 	  _type->setCurrentIndex(5);
 
-      _subType->setId(q.value("subaccnttype_id").toInt());
+      _subType->setId(financialpopulate.value("subaccnttype_id").toInt());
     }
     else
     {
       _selectAccount->setChecked(TRUE);
-      _account->setId(q.value("flitem_accnt_id").toInt());
+      _account->setId(financialpopulate.value("flitem_accnt_id").toInt());
     }
-    _showBeginning->setChecked(q.value("flitem_showstart").toBool());
-    _showEnding->setChecked(q.value("flitem_showend").toBool());
-    _showDB->setChecked(q.value("flitem_showdelta").toBool());
-    _showBudget->setChecked(q.value("flitem_showbudget").toBool());
-    _showDiff->setChecked(q.value("flitem_showdiff").toBool());
-    _showCustom->setChecked(q.value("flitem_showcustom").toBool());
-    _showBeginningPrcnt->setChecked(q.value("flitem_showstartprcnt").toBool());
-    _showEndingPrcnt->setChecked(q.value("flitem_showendprcnt").toBool());
-    _showDBPrcnt->setChecked(q.value("flitem_showdeltaprcnt").toBool());
-    _showBudgetPrcnt->setChecked(q.value("flitem_showbudgetprcnt").toBool());
-    _showDiffPrcnt->setChecked(q.value("flitem_showdiffprcnt").toBool());
-    _showCustomPrcnt->setChecked(q.value("flitem_showcustomprcnt").toBool());
+    _showBeginning->setChecked(financialpopulate.value("flitem_showstart").toBool());
+    _showEnding->setChecked(financialpopulate.value("flitem_showend").toBool());
+    _showDB->setChecked(financialpopulate.value("flitem_showdelta").toBool());
+    _showBudget->setChecked(financialpopulate.value("flitem_showbudget").toBool());
+    _showDiff->setChecked(financialpopulate.value("flitem_showdiff").toBool());
+    _showCustom->setChecked(financialpopulate.value("flitem_showcustom").toBool());
+    _showBeginningPrcnt->setChecked(financialpopulate.value("flitem_showstartprcnt").toBool());
+    _showEndingPrcnt->setChecked(financialpopulate.value("flitem_showendprcnt").toBool());
+    _showDBPrcnt->setChecked(financialpopulate.value("flitem_showdeltaprcnt").toBool());
+    _showBudgetPrcnt->setChecked(financialpopulate.value("flitem_showbudgetprcnt").toBool());
+    _showDiffPrcnt->setChecked(financialpopulate.value("flitem_showdiffprcnt").toBool());
+    _showCustomPrcnt->setChecked(financialpopulate.value("flitem_showcustomprcnt").toBool());
     
     if ((_rpttype != cAdHoc) & ((_showDiffPrcnt->isChecked()) || (_showEndingPrcnt->isChecked())))
 		_showPrcnt->setChecked(TRUE);
 
-    QString src = q.value("flitem_custom_source").toString();
+    QString src = financialpopulate.value("flitem_custom_source").toString();
     if("S" == src)
       _customUseBeginning->setChecked(TRUE);
     else if("E" == src)
@@ -464,14 +467,14 @@ void financialLayoutItem::populate()
     else if("F" == src)
       _customUseDiff->setChecked(TRUE);
 
-    if(q.value("flitem_subtract").toBool())
+    if(financialpopulate.value("flitem_subtract").toBool())
       _subtract->setChecked(TRUE);
     else
       _add->setChecked(TRUE);
 
-    _flheadid = q.value("flitem_flhead_id").toInt();
+    _flheadid = financialpopulate.value("flitem_flhead_id").toInt();
 
-    int grpid = q.value("flitem_prcnt_flgrp_id").toInt();
+    int grpid = financialpopulate.value("flitem_prcnt_flgrp_id").toInt();
     sFillGroupList();
     _group->setId(grpid);
     
@@ -481,16 +484,17 @@ void financialLayoutItem::populate()
 
 void financialLayoutItem::sFillGroupList()
 {
+  XSqlQuery financialFillGroupList;
   _group->clear();
-  q.prepare("SELECT flgrp_id, flgrp_name"
+  financialFillGroupList.prepare("SELECT flgrp_id, flgrp_name"
             "  FROM flgrp"
             " WHERE (flgrp_flhead_id=:flhead_id)"
             " ORDER BY flgrp_name;");
-  q.bindValue(":flhead_id", _flheadid);
-  q.exec();
+  financialFillGroupList.bindValue(":flhead_id", _flheadid);
+  financialFillGroupList.exec();
   _group->append(-1, tr("Parent"));
-  while(q.next())
-    _group->append(q.value("flgrp_id").toInt(), q.value("flgrp_name").toString());
+  while(financialFillGroupList.next())
+    _group->append(financialFillGroupList.value("flgrp_id").toInt(), financialFillGroupList.value("flgrp_name").toString());
 }
 
 void financialLayoutItem::sToggleShowPrcnt()

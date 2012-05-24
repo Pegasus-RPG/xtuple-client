@@ -55,6 +55,7 @@ void standardJournalGroup::languageChange()
 
 enum SetResponse standardJournalGroup::set(const ParameterList &pParams)
 {
+  XSqlQuery standardet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -73,9 +74,9 @@ enum SetResponse standardJournalGroup::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('stdjrnlgrp_stdjrnlgrp_id_seq') AS _stdjrnlgrp_id;");
-      if (q.first())
-        _stdjrnlgrpid = q.value("_stdjrnlgrp_id").toInt();
+      standardet.exec("SELECT NEXTVAL('stdjrnlgrp_stdjrnlgrp_id_seq') AS _stdjrnlgrp_id;");
+      if (standardet.first())
+        _stdjrnlgrpid = standardet.value("_stdjrnlgrp_id").toInt();
 //  ToDo
 
       connect(_stdjrnlgrpitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -115,19 +116,20 @@ enum SetResponse standardJournalGroup::set(const ParameterList &pParams)
 
 void standardJournalGroup::sCheck()
 {
+  XSqlQuery standardCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
-    q.prepare( "SELECT stdjrnlgrp_id"
+    standardCheck.prepare( "SELECT stdjrnlgrp_id"
                "  FROM stdjrnlgrp"
                " WHERE((UPPER(stdjrnlgrp_name)=UPPER(:stdjrnlgrp_name))"
                "   AND (stdjrnlgrp_id != :stdjrnlgrp_id));" );
-    q.bindValue(":stdjrnlgrp_name", _name->text());
-    q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
-    q.exec();
-    if (q.first())
+    standardCheck.bindValue(":stdjrnlgrp_name", _name->text());
+    standardCheck.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
+    standardCheck.exec();
+    if (standardCheck.first())
     {
-      _stdjrnlgrpid = q.value("stdjrnlgrp_id").toInt();
+      _stdjrnlgrpid = standardCheck.value("stdjrnlgrp_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -138,14 +140,15 @@ void standardJournalGroup::sCheck()
 
 void standardJournalGroup::sClose()
 {
+  XSqlQuery standardClose;
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM stdjrnlgrpitem "
+    standardClose.prepare( "DELETE FROM stdjrnlgrpitem "
                "WHERE (stdjrnlgrpitem_stdjrnlgrp_id=:stdjrnlgrp_id);" 
                "DELETE FROM stdjrnlgrp "
                "WHERE (stdjrnlgrp_id=:stdjrnlgrp_id);" );
-    q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
-    q.exec();
+    standardClose.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
+    standardClose.exec();
   }
 
   reject();
@@ -153,6 +156,7 @@ void standardJournalGroup::sClose()
 
 void standardJournalGroup::sSave()
 {
+  XSqlQuery standardSave;
   if (_name->text().trimmed().length() == 0)
   {
     QMessageBox::warning( this, tr("Cannot Save Standard Journal Group"),
@@ -161,14 +165,14 @@ void standardJournalGroup::sSave()
     return;
   }
 
-  q.prepare( "SELECT stdjrnlgrp_id"
+  standardSave.prepare( "SELECT stdjrnlgrp_id"
              "  FROM stdjrnlgrp"
              " WHERE((UPPER(stdjrnlgrp_name)=UPPER(:stdjrnlgrp_name))"
              "   AND (stdjrnlgrp_id != :stdjrnlgrp_id));" );
-  q.bindValue(":stdjrnlgrp_name", _name->text());
-  q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
-  q.exec();
-  if (q.first())
+  standardSave.bindValue(":stdjrnlgrp_name", _name->text());
+  standardSave.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
+  standardSave.exec();
+  if (standardSave.first())
   {
     QMessageBox::warning(this, tr("Cannot Save Standard Journal Group"),
                          tr("The Name you have entered for this Standard Journal Group is already in use. "
@@ -178,29 +182,30 @@ void standardJournalGroup::sSave()
   }
 
   if (_mode == cNew)
-    q.prepare( "INSERT INTO stdjrnlgrp "
+    standardSave.prepare( "INSERT INTO stdjrnlgrp "
                "(stdjrnlgrp_id, stdjrnlgrp_name, stdjrnlgrp_descrip) "
                "VALUES "
                "(:stdjrnlgrp_id, :stdjrnlgrp_name, :stdjrnlgrp_descrip);" );
   else
-    q.prepare( "UPDATE stdjrnlgrp "
+    standardSave.prepare( "UPDATE stdjrnlgrp "
                "SET stdjrnlgrp_name=:stdjrnlgrp_name, stdjrnlgrp_descrip=:stdjrnlgrp_descrip "
                "WHERE (stdjrnlgrp_id=:stdjrnlgrp_id);" );
 
-  q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
-  q.bindValue(":stdjrnlgrp_name", _name->text());
-  q.bindValue(":stdjrnlgrp_descrip", _descrip->text().trimmed());
-  q.exec();
+  standardSave.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
+  standardSave.bindValue(":stdjrnlgrp_name", _name->text());
+  standardSave.bindValue(":stdjrnlgrp_descrip", _descrip->text().trimmed());
+  standardSave.exec();
 
   done(_stdjrnlgrpid);
 }
 
 void standardJournalGroup::sDelete()
 {
-  q.prepare( "DELETE FROM stdjrnlgrpitem "
+  XSqlQuery standardDelete;
+  standardDelete.prepare( "DELETE FROM stdjrnlgrpitem "
              "WHERE (stdjrnlgrpitem_id=:stdjrnlgrpitem_id);" );
-  q.bindValue(":stdjrnlgrpitem_id", _stdjrnlgrpitem->id());
-  q.exec();
+  standardDelete.bindValue(":stdjrnlgrpitem_id", _stdjrnlgrpitem->id());
+  standardDelete.exec();
 
   sFillList();
 }
@@ -244,6 +249,7 @@ void standardJournalGroup::sView()
 
 void standardJournalGroup::sFillList()
 {
+  XSqlQuery standardFillList;
   QString sql( "SELECT stdjrnlgrpitem_id, stdjrnl_name, stdjrnl_descrip,"
                "       CASE WHEN (stdjrnlgrpitem_toapply=-1) THEN :always"
                "            ELSE TEXT(stdjrnlgrpitem_toapply)"
@@ -266,24 +272,25 @@ void standardJournalGroup::sFillList()
   sql += " AND (stdjrnlgrpitem_stdjrnlgrp_id=:stdjrnlgrp_id) ) "
          "ORDER BY stdjrnl_name;";
 
-  q.prepare(sql);
-  q.bindValue(":always", tr("Always"));
-  q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
-  q.exec();
-  _stdjrnlgrpitem->populate(q);
+  standardFillList.prepare(sql);
+  standardFillList.bindValue(":always", tr("Always"));
+  standardFillList.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
+  standardFillList.exec();
+  _stdjrnlgrpitem->populate(standardFillList);
 }
 
 void standardJournalGroup::populate()
 {
-  q.prepare( "SELECT stdjrnlgrp_name, stdjrnlgrp_descrip "
+  XSqlQuery standardpopulate;
+  standardpopulate.prepare( "SELECT stdjrnlgrp_name, stdjrnlgrp_descrip "
              "FROM stdjrnlgrp "
              "WHERE (stdjrnlgrp_id=:stdjrnlgrp_id);" );
-  q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
-  q.exec();
-  if (q.first())
+  standardpopulate.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
+  standardpopulate.exec();
+  if (standardpopulate.first())
   {
-    _name->setText(q.value("stdjrnlgrp_name").toString());
-    _descrip->setText(q.value("stdjrnlgrp_descrip").toString());
+    _name->setText(standardpopulate.value("stdjrnlgrp_name").toString());
+    _descrip->setText(standardpopulate.value("stdjrnlgrp_descrip").toString());
 
     sFillList();
   }

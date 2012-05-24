@@ -49,6 +49,7 @@ void characteristic::languageChange()
 
 enum SetResponse characteristic::set(const ParameterList &pParams)
 {
+  XSqlQuery characteristicet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -67,9 +68,9 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('char_char_id_seq') AS char_id;");
-      if (q.first())
-        _charid = q.value("char_id").toInt();
+      characteristicet.exec("SELECT NEXTVAL('char_char_id_seq') AS char_id;");
+      if (characteristicet.first())
+        _charid = characteristicet.value("char_id").toInt();
 
       sFillList();
     }
@@ -110,6 +111,7 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
 
 void characteristic::sSave()
 {
+  XSqlQuery characteristicSave;
   if (_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical(this, tr("Missing Name"),
@@ -145,7 +147,7 @@ void characteristic::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare( "INSERT INTO char "
+    characteristicSave.prepare( "INSERT INTO char "
                "( char_id, char_name, char_items, char_customers, "
                "  char_contacts, char_crmaccounts, char_addresses, "
                "  char_options, char_opportunity,"
@@ -162,10 +164,10 @@ void characteristic::sSave()
                "  :char_notes, :char_mask, :char_validator, :char_type, "
                "  :char_order, :char_search );" );
 
-    q.bindValue(":char_type", _type->currentIndex());
+    characteristicSave.bindValue(":char_type", _type->currentIndex());
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE char "
+    characteristicSave.prepare( "UPDATE char "
                "SET char_name=:char_name, char_items=:char_items, "
                "    char_customers=:char_customers, "
                "    char_contacts=:char_contacts, "
@@ -184,30 +186,30 @@ void characteristic::sSave()
                "    char_search=:char_search "
                "WHERE (char_id=:char_id);" );
 
-  q.bindValue(":char_id", _charid);
-  q.bindValue(":char_name", _name->text());
-  q.bindValue(":char_items",       QVariant(_items->isChecked()));
-  q.bindValue(":char_customers",   QVariant(_customers->isChecked()));
-  q.bindValue(":char_crmaccounts", QVariant(_crmaccounts->isChecked()));
-  q.bindValue(":char_contacts",	   QVariant(_contacts->isChecked()));
-  q.bindValue(":char_addresses",   QVariant(_addresses->isChecked()));
-  q.bindValue(":char_options",     QVariant(FALSE));
-  q.bindValue(":char_attributes",  QVariant(FALSE));
-  q.bindValue(":char_lotserial",   QVariant(_lotSerial->isChecked()));
-  q.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
-  q.bindValue(":char_employees",   QVariant(_employees->isChecked()));
-  q.bindValue(":char_incidents",   QVariant(_incidents->isChecked()));
-  q.bindValue(":char_notes",       _description->toPlainText().trimmed());
+  characteristicSave.bindValue(":char_id", _charid);
+  characteristicSave.bindValue(":char_name", _name->text());
+  characteristicSave.bindValue(":char_items",       QVariant(_items->isChecked()));
+  characteristicSave.bindValue(":char_customers",   QVariant(_customers->isChecked()));
+  characteristicSave.bindValue(":char_crmaccounts", QVariant(_crmaccounts->isChecked()));
+  characteristicSave.bindValue(":char_contacts",	   QVariant(_contacts->isChecked()));
+  characteristicSave.bindValue(":char_addresses",   QVariant(_addresses->isChecked()));
+  characteristicSave.bindValue(":char_options",     QVariant(FALSE));
+  characteristicSave.bindValue(":char_attributes",  QVariant(FALSE));
+  characteristicSave.bindValue(":char_lotserial",   QVariant(_lotSerial->isChecked()));
+  characteristicSave.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
+  characteristicSave.bindValue(":char_employees",   QVariant(_employees->isChecked()));
+  characteristicSave.bindValue(":char_incidents",   QVariant(_incidents->isChecked()));
+  characteristicSave.bindValue(":char_notes",       _description->toPlainText().trimmed());
   if (_mask->currentText().trimmed().size() > 0)
-    q.bindValue(":char_mask",        _mask->currentText());
+    characteristicSave.bindValue(":char_mask",        _mask->currentText());
   if (_validator->currentText().trimmed().size() > 0)
-    q.bindValue(":char_validator",   _validator->currentText());
-  q.bindValue(":char_order", _order->value());
-  q.bindValue(":char_search", QVariant(_search->isChecked()));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    characteristicSave.bindValue(":char_validator",   _validator->currentText());
+  characteristicSave.bindValue(":char_order", _order->value());
+  characteristicSave.bindValue(":char_search", QVariant(_search->isChecked()));
+  characteristicSave.exec();
+  if (characteristicSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, characteristicSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -218,17 +220,18 @@ void characteristic::sSave()
 
 void characteristic::sCheck()
 {
+  XSqlQuery characteristicCheck;
   _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().trimmed().length()))
   {
-    q.prepare( "SELECT char_id "
+    characteristicCheck.prepare( "SELECT char_id "
                "FROM char "
                "WHERE (UPPER(char_name)=UPPER(:char_name));" );
-    q.bindValue(":char_name", _name->text());
-    q.exec();
-    if (q.first())
+    characteristicCheck.bindValue(":char_name", _name->text());
+    characteristicCheck.exec();
+    if (characteristicCheck.first())
     {
-      _charid = q.value("char_id").toInt();
+      _charid = characteristicCheck.value("char_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -239,35 +242,36 @@ void characteristic::sCheck()
 
 void characteristic::populate()
 {
+  XSqlQuery characteristicpopulate;
 
-  q.prepare( "SELECT * "
+  characteristicpopulate.prepare( "SELECT * "
              "FROM char "
              "WHERE (char_id=:char_id);" );
-  q.bindValue(":char_id", _charid);
-  q.exec();
-  if (q.first())
+  characteristicpopulate.bindValue(":char_id", _charid);
+  characteristicpopulate.exec();
+  if (characteristicpopulate.first())
   {
-    _name->setText(q.value("char_name").toString());
-    _items->setChecked(q.value("char_items").toBool());
-    _customers->setChecked(q.value("char_customers").toBool());
-    _contacts->setChecked(q.value("char_contacts").toBool());
-    _crmaccounts->setChecked(q.value("char_crmaccounts").toBool());
-    _addresses->setChecked(q.value("char_addresses").toBool());
-    _lotSerial->setChecked(q.value("char_lotserial").toBool());
-    _opportunity->setChecked(q.value("char_opportunity").toBool());
-    _employees->setChecked(q.value("char_employees").toBool());
-    _incidents->setChecked(q.value("char_incidents").toBool());
-    _description->setText(q.value("char_notes").toString());
-    _mask->setText(q.value("char_mask").toString());
-    _validator->setText(q.value("char_validator").toString());
-    _type->setCurrentIndex(q.value("char_type").toInt());
+    _name->setText(characteristicpopulate.value("char_name").toString());
+    _items->setChecked(characteristicpopulate.value("char_items").toBool());
+    _customers->setChecked(characteristicpopulate.value("char_customers").toBool());
+    _contacts->setChecked(characteristicpopulate.value("char_contacts").toBool());
+    _crmaccounts->setChecked(characteristicpopulate.value("char_crmaccounts").toBool());
+    _addresses->setChecked(characteristicpopulate.value("char_addresses").toBool());
+    _lotSerial->setChecked(characteristicpopulate.value("char_lotserial").toBool());
+    _opportunity->setChecked(characteristicpopulate.value("char_opportunity").toBool());
+    _employees->setChecked(characteristicpopulate.value("char_employees").toBool());
+    _incidents->setChecked(characteristicpopulate.value("char_incidents").toBool());
+    _description->setText(characteristicpopulate.value("char_notes").toString());
+    _mask->setText(characteristicpopulate.value("char_mask").toString());
+    _validator->setText(characteristicpopulate.value("char_validator").toString());
+    _type->setCurrentIndex(characteristicpopulate.value("char_type").toInt());
     _type->setEnabled(false);
-    _order->setValue(q.value("char_order").toInt());
-    _search->setChecked(q.value("char_search").toBool());
+    _order->setValue(characteristicpopulate.value("char_order").toInt());
+    _search->setChecked(characteristicpopulate.value("char_search").toBool());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (characteristicpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, characteristicpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

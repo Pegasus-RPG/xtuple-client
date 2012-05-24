@@ -48,12 +48,13 @@ void dspUnbalancedQOHByClassCode::languageChange()
 
 void dspUnbalancedQOHByClassCode::sBalance()
 {
-  q.prepare("SELECT balanceItemsite(:itemsite_id) AS result;");
-  q.bindValue(":itemsite_id", list()->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery dspBalance;
+  dspBalance.prepare("SELECT balanceItemsite(:itemsite_id) AS result;");
+  dspBalance.bindValue(":itemsite_id", list()->id());
+  dspBalance.exec();
+  if (dspBalance.first())
   {
-    int result = q.value("result").toInt();
+    int result = dspBalance.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("balanceItemsite", result),
@@ -61,9 +62,9 @@ void dspUnbalancedQOHByClassCode::sBalance()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspBalance.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspBalance.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();

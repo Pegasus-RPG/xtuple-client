@@ -114,9 +114,10 @@ void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
 void quotes::sPrint()
 {
+  XSqlQuery quotesPrint;
   QPrinter printer(QPrinter::HighResolution);
   bool setupPrinter = TRUE;
-  q.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS reportname "
+  quotesPrint.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS reportname "
              "FROM quhead "
              "WHERE (quhead_id=:quheadid); " );
   bool userCanceled = false;
@@ -134,16 +135,16 @@ void quotes::sPrint()
   for (int i = 0; i < selected.size(); i++)
   {
     int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
-    q.bindValue(":quheadid", quheadid);
-    q.exec();
-    if (q.first())
+    quotesPrint.bindValue(":quheadid", quheadid);
+    quotesPrint.exec();
+    if (quotesPrint.first())
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
         ParameterList params;
         params.append("quhead_id", quheadid);
 
-        orReport report(q.value("reportname").toString(), params);
+        orReport report(quotesPrint.value("reportname").toString(), params);
         if (report.isValid() && report.print(&printer, setupPrinter))
         {
           setupPrinter = FALSE;
@@ -155,9 +156,9 @@ void quotes::sPrint()
           break;
         }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (quotesPrint.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, quotesPrint.lastError().databaseText(), __FILE__, __LINE__);
         break;
       }
     }
@@ -430,6 +431,7 @@ void quotes::sView()
 
 void quotes::sDelete()
 {
+  XSqlQuery quotesDelete;
   if (QMessageBox::question(this, tr("Delete Selected Quotes"),
                             tr("<p>Are you sure that you want to delete the "
 			       "selected Quotes?" ),
@@ -437,7 +439,7 @@ void quotes::sDelete()
 			    QMessageBox::No | QMessageBox::Default)
 			    == QMessageBox::Yes)
   {
-    q.prepare("SELECT deleteQuote(:quhead_id) AS result;");
+    quotesDelete.prepare("SELECT deleteQuote(:quhead_id) AS result;");
 
     int counter = 0;
     QList<XTreeWidgetItem*> selected = list()->selectedItems();
@@ -445,11 +447,11 @@ void quotes::sDelete()
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
-        q.bindValue(":quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-        q.exec();
-        if (q.first())
+        quotesDelete.bindValue(":quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+        quotesDelete.exec();
+        if (quotesDelete.first())
         {
-          int result = q.value("result").toInt();
+          int result = quotesDelete.value("result").toInt();
           if (result < 0)
           {
             systemError(this, storedProcErrorLookup("deleteQuote", result),
@@ -458,11 +460,11 @@ void quotes::sDelete()
           }
           counter++;
         }
-        else if (q.lastError().type() != QSqlError::NoError)
+        else if (quotesDelete.lastError().type() != QSqlError::NoError)
         {
           systemError(this, tr("A System Error occurred deleting Quote #%1\n%2.")
                              .arg(selected[i]->text(0))
-                             .arg(q.lastError().databaseText()), __FILE__, __LINE__);
+                             .arg(quotesDelete.lastError().databaseText()), __FILE__, __LINE__);
           continue;
         }
       }

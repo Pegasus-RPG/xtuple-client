@@ -176,11 +176,12 @@ void dspPlannedOrders::sFirmOrder()
 
 void dspPlannedOrders::sSoftenOrder()
 {
-  q.prepare( "UPDATE planord "
+  XSqlQuery dspSoftenOrder;
+  dspSoftenOrder.prepare( "UPDATE planord "
              "SET planord_firm=false "
              "WHERE (planord_id=:planord_id);" );
-  q.bindValue(":planord_id", list()->id());
-  q.exec();
+  dspSoftenOrder.bindValue(":planord_id", list()->id());
+  dspSoftenOrder.exec();
 
   sFillList();
 }
@@ -243,15 +244,16 @@ void dspPlannedOrders::sDeleteOrder()
 
 void dspPlannedOrders::sDspUsageStatistics()
 {
-  q.prepare("SELECT itemsite_item_id "
+  XSqlQuery dspDspUsageStatistics;
+  dspDspUsageStatistics.prepare("SELECT itemsite_item_id "
 	    "FROM itemsite "
 	    "WHERE (itemsite_id=:itemsite_id);");
-  q.bindValue(":itemsite_id", list()->altId());
-  q.exec();
-  if (q.first())
+  dspDspUsageStatistics.bindValue(":itemsite_id", list()->altId());
+  dspDspUsageStatistics.exec();
+  if (dspDspUsageStatistics.first())
   {
     ParameterList params = parameterWidget()->parameters();
-    params.append("item_id", q.value("itemsite_item_id"));
+    params.append("item_id", dspDspUsageStatistics.value("itemsite_item_id"));
     params.append("run");
 
     dspUsageStatistics *newdlg = new dspUsageStatistics();
@@ -259,9 +261,9 @@ void dspPlannedOrders::sDspUsageStatistics()
     if (setresp == NoError || setresp == NoError_Run)
       omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspDspUsageStatistics.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspDspUsageStatistics.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

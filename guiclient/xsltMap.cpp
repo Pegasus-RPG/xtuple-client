@@ -120,6 +120,7 @@ enum SetResponse xsltMap::set(const ParameterList &pParams)
 
 void xsltMap::sSave()
 {
+  XSqlQuery xsltSave;
   QString errorCaption = tr("Cannot Save XSLT Map");
 
   struct {
@@ -155,15 +156,15 @@ void xsltMap::sSave()
     return;
   }
 
-  q.prepare( "SELECT xsltmap_name "
+  xsltSave.prepare( "SELECT xsltmap_name "
 	     "FROM xsltmap "
 	     "WHERE ((xsltmap_name=:name)"
 	     " AND   (xsltmap_id<>:xsltmap_id) );" );
 
-  q.bindValue(":xsltmap_id",	_xsltmapId);
-  q.bindValue(":name",		_name->text());
-  q.exec();
-  if (q.first())
+  xsltSave.bindValue(":xsltmap_id",	_xsltmapId);
+  xsltSave.bindValue(":name",		_name->text());
+  xsltSave.exec();
+  if (xsltSave.first())
   {
     QMessageBox::critical(this, errorCaption,
 			  tr("<p>This Name is already in use by another "
@@ -171,23 +172,23 @@ void xsltMap::sSave()
     _name->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (xsltSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, xsltSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (cNew == _mode)
   {
-    q.exec("SELECT NEXTVAL('xsltmap_xsltmap_id_seq') AS result;");
-    if (q.first())
-      _xsltmapId = q.value("result").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    xsltSave.exec("SELECT NEXTVAL('xsltmap_xsltmap_id_seq') AS result;");
+    if (xsltSave.first())
+      _xsltmapId = xsltSave.value("result").toInt();
+    else if (xsltSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, xsltSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    q.prepare("INSERT INTO xsltmap ("
+    xsltSave.prepare("INSERT INTO xsltmap ("
 	      "    xsltmap_id, xsltmap_name, xsltmap_doctype,"
 	      "    xsltmap_system, xsltmap_import, xsltmap_export"
 	      ") VALUES ("
@@ -196,7 +197,7 @@ void xsltMap::sSave()
 	      ");");
   }
   else if (cEdit == _mode)
-    q.prepare("UPDATE xsltmap SET"
+    xsltSave.prepare("UPDATE xsltmap SET"
 	      "    xsltmap_name=:name,"
 	      "    xsltmap_doctype=:doctype,"
 	      "    xsltmap_system=:system,"
@@ -204,16 +205,16 @@ void xsltMap::sSave()
 	      "    xsltmap_export=:export "
 	      "WHERE (xsltmap_id=:id);");
 
-  q.bindValue(":id",      _xsltmapId);
-  q.bindValue(":name",    _name->text());
-  q.bindValue(":doctype", _doctype->text());
-  q.bindValue(":system",  _system->text());
-  q.bindValue(":import",  _import->text());
-  q.bindValue(":export",  _export->text());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  xsltSave.bindValue(":id",      _xsltmapId);
+  xsltSave.bindValue(":name",    _name->text());
+  xsltSave.bindValue(":doctype", _doctype->text());
+  xsltSave.bindValue(":system",  _system->text());
+  xsltSave.bindValue(":import",  _import->text());
+  xsltSave.bindValue(":export",  _export->text());
+  xsltSave.exec();
+  if (xsltSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, xsltSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -222,6 +223,7 @@ void xsltMap::sSave()
 
 void xsltMap::sPopulate()
 {
+  XSqlQuery xsltPopulate;
   if (_xsltmapId <= 0)
   {
     _name->clear();
@@ -232,20 +234,20 @@ void xsltMap::sPopulate()
   }
   else
   {
-    q.prepare("SELECT * FROM xsltmap WHERE (xsltmap_id=:id);");
-    q.bindValue(":id", _xsltmapId);
-    q.exec();
-    if (q.first())
+    xsltPopulate.prepare("SELECT * FROM xsltmap WHERE (xsltmap_id=:id);");
+    xsltPopulate.bindValue(":id", _xsltmapId);
+    xsltPopulate.exec();
+    if (xsltPopulate.first())
     {
-      _name->setText(q.value("xsltmap_name").toString());
-      _doctype->setText(q.value("xsltmap_doctype").toString());
-      _system->setText(q.value("xsltmap_system").toString());
-      _import->setText(q.value("xsltmap_import").toString());
-      _export->setText(q.value("xsltmap_export").toString());
+      _name->setText(xsltPopulate.value("xsltmap_name").toString());
+      _doctype->setText(xsltPopulate.value("xsltmap_doctype").toString());
+      _system->setText(xsltPopulate.value("xsltmap_system").toString());
+      _import->setText(xsltPopulate.value("xsltmap_import").toString());
+      _export->setText(xsltPopulate.value("xsltmap_export").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (xsltPopulate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, xsltPopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

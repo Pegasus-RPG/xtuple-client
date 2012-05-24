@@ -84,39 +84,40 @@ enum SetResponse applyAPCreditMemo::set(const ParameterList &pParams)
 
 void applyAPCreditMemo::sPost()
 {
-  q.exec("BEGIN;");
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery applyPost;
+  applyPost.exec("BEGIN;");
+  if (applyPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applyPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT postAPCreditMemoApplication(:apopen_id) AS result;");
-  q.bindValue(":apopen_id", _apopenid);
-  q.exec();
-  if (q.first())
+  applyPost.prepare("SELECT postAPCreditMemoApplication(:apopen_id) AS result;");
+  applyPost.bindValue(":apopen_id", _apopenid);
+  applyPost.exec();
+  if (applyPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = applyPost.value("result").toInt();
     if (result < 0)
     {
-      q.exec("ROLLBACK;");
+      applyPost.exec("ROLLBACK;");
       systemError(this, storedProcErrorLookup("postAPCreditMemoApplication",
                                               result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (applyPost.lastError().type() != QSqlError::NoError)
   {
-    QString msg = q.lastError().databaseText();
-    q.exec("ROLLBACK;");
+    QString msg = applyPost.lastError().databaseText();
+    applyPost.exec("ROLLBACK;");
     systemError(this, msg, __FILE__, __LINE__);
     return;
   }
 
-  q.exec("COMMIT;");
-  if (q.lastError().type() != QSqlError::NoError)
+  applyPost.exec("COMMIT;");
+  if (applyPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applyPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -125,12 +126,13 @@ void applyAPCreditMemo::sPost()
 
 void applyAPCreditMemo::sApplyBalance()
 {
-  q.prepare("SELECT applyAPCreditMemoToBalance(:apopen_id) AS result;");
-  q.bindValue(":apopen_id", _apopenid);
-  q.exec();
-  if (q.first())
+  XSqlQuery applyApplyBalance;
+  applyApplyBalance.prepare("SELECT applyAPCreditMemoToBalance(:apopen_id) AS result;");
+  applyApplyBalance.bindValue(":apopen_id", _apopenid);
+  applyApplyBalance.exec();
+  if (applyApplyBalance.first())
   {
-    int result = q.value("result").toInt();
+    int result = applyApplyBalance.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("applyAPCreditMemoToBalance",
@@ -138,9 +140,9 @@ void applyAPCreditMemo::sApplyBalance()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (applyApplyBalance.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, applyApplyBalance.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -161,27 +163,29 @@ void applyAPCreditMemo::sApply()
 
 void applyAPCreditMemo::sClear()
 {
-  q.prepare( "DELETE FROM apcreditapply "
+  XSqlQuery applyClear;
+  applyClear.prepare( "DELETE FROM apcreditapply "
              "WHERE ( (apcreditapply_source_apopen_id=:sourceApopenid) "
              " AND (apcreditapply_target_apopen_id=:targetApopenid) );" );
-  q.bindValue(":sourceApopenid", _apopenid);
-  q.bindValue(":targetApopenid", _apopen->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  applyClear.bindValue(":sourceApopenid", _apopenid);
+  applyClear.bindValue(":targetApopenid", _apopen->id());
+  applyClear.exec();
+  if (applyClear.lastError().type() != QSqlError::NoError)
+      systemError(this, applyClear.lastError().databaseText(), __FILE__, __LINE__);
 
   populate();
 }
 
 void applyAPCreditMemo::sClose()
 {
-  q.prepare( "DELETE FROM apcreditapply "
+  XSqlQuery applyClose;
+  applyClose.prepare( "DELETE FROM apcreditapply "
              "WHERE (apcreditapply_source_apopen_id=:sourceApopenid);" );
-  q.bindValue(":sourceApopenid", _apopenid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  applyClose.bindValue(":sourceApopenid", _apopenid);
+  applyClose.exec();
+  if (applyClose.lastError().type() != QSqlError::NoError)
   {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, applyClose.lastError().databaseText(), __FILE__, __LINE__);
       return;
   }
 
@@ -190,7 +194,8 @@ void applyAPCreditMemo::sClose()
 
 void applyAPCreditMemo::populate()
 {
-  q.prepare( "SELECT apopen_vend_id, apopen_docnumber, apopen_docdate,"
+  XSqlQuery applypopulate;
+  applypopulate.prepare( "SELECT apopen_vend_id, apopen_docnumber, apopen_docdate,"
              "       (apopen_amount - apopen_paid) AS available, apopen_curr_id, "
              "       COALESCE(SUM(currToCurr(apcreditapply_curr_id,"
 	     "				apopen_curr_id, apcreditapply_amount, "
@@ -199,24 +204,24 @@ void applyAPCreditMemo::populate()
              "WHERE (apopen_id=:apopen_id) "
              "GROUP BY apopen_vend_id, apopen_docnumber, apopen_docdate,"
              "         apopen_curr_id, apopen_amount, apopen_paid;" );
-  q.bindValue(":apopen_id", _apopenid);
-  q.exec();
-  if (q.first())
+  applypopulate.bindValue(":apopen_id", _apopenid);
+  applypopulate.exec();
+  if (applypopulate.first())
   {
-    _vend->setId(q.value("apopen_vend_id").toInt());
-    _docDate->setDate(q.value("apopen_docdate").toDate(), true);
-    _available->setId(q.value("apopen_curr_id").toInt());
-    _available->setLocalValue(q.value("available").toDouble());
-    _applied->setLocalValue(q.value("f_applied").toDouble());
+    _vend->setId(applypopulate.value("apopen_vend_id").toInt());
+    _docDate->setDate(applypopulate.value("apopen_docdate").toDate(), true);
+    _available->setId(applypopulate.value("apopen_curr_id").toInt());
+    _available->setLocalValue(applypopulate.value("available").toDouble());
+    _applied->setLocalValue(applypopulate.value("f_applied").toDouble());
     _balance->setLocalValue(_available->localValue() - _applied->localValue());
-    _docNumber->setText(q.value("apopen_docnumber").toString());
+    _docNumber->setText(applypopulate.value("apopen_docnumber").toString());
   
-    _cachedAmount = q.value("available").toDouble();
+    _cachedAmount = applypopulate.value("available").toDouble();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (applypopulate.lastError().type() != QSqlError::NoError)
+      systemError(this, applypopulate.lastError().databaseText(), __FILE__, __LINE__);
 
-  q.prepare( "SELECT apopen_id,"
+  applypopulate.prepare( "SELECT apopen_id,"
              "       CASE WHEN (apopen_doctype='V') THEN :voucher"
              "            WHEN (apopen_doctype='D') THEN :debitMemo"
              "       END AS doctype,"
@@ -249,14 +254,14 @@ void applyAPCreditMemo::populate()
              "   AND   ((apopen_amount - apopen_paid - COALESCE(selected,0.0) - COALESCE(prepared,0.0)) > 0.0)"
              "   AND   (apopen_vend_id=:vend_id) ) "
              " ORDER BY apopen_duedate, apopen_docnumber;" );
-  q.bindValue(":parentApopenid", _apopenid);
-  q.bindValue(":vend_id", _vend->id());
-  q.bindValue(":voucher", tr("Voucher"));
-  q.bindValue(":debitMemo", tr("Debit Memo"));
-  q.exec();
-  _apopen->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  applypopulate.bindValue(":parentApopenid", _apopenid);
+  applypopulate.bindValue(":vend_id", _vend->id());
+  applypopulate.bindValue(":voucher", tr("Voucher"));
+  applypopulate.bindValue(":debitMemo", tr("Debit Memo"));
+  applypopulate.exec();
+  _apopen->populate(applypopulate);
+  if (applypopulate.lastError().type() != QSqlError::NoError)
+      systemError(this, applypopulate.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void applyAPCreditMemo::sPriceGroup()

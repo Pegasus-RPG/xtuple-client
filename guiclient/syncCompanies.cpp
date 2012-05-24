@@ -94,35 +94,37 @@ void syncCompanies::languageChange()
 
 void syncCompanies::sFillList()
 {
-  q.exec("SELECT * "
+  XSqlQuery syncFillList;
+  syncFillList.exec("SELECT * "
          "FROM period "
          "ORDER BY period_start, period_end;");
-  q.exec();
-  _period->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  syncFillList.exec();
+  _period->populate(syncFillList);
+  if (syncFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, syncFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT *, company_id AS company_number_xtidrole, "
+  syncFillList.prepare("SELECT *, company_id AS company_number_xtidrole, "
             " currconcat(company_curr_id) AS company_curr, "
             " company_curr_id AS company_curr_xtidrole "
             "FROM company "
             "WHERE company_external "
             "ORDER BY company_number;" );
 
-  q.exec();
-  _company->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  syncFillList.exec();
+  _company->populate(syncFillList);
+  if (syncFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, syncFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void syncCompanies::sSync()
 {
+  XSqlQuery syncSync;
   if (DEBUG)
     qDebug("syncCompanies::sSync()");
 
@@ -348,29 +350,29 @@ void syncCompanies::sSync()
                   "WHERE (accnt_company=:accnt_company);");
       rmq.bindValue(":accnt_company", c->rawValue("company_number"));
       rmq.exec();
-      q.prepare("SELECT * FROM prftcntr WHERE prftcntr_number=:prftcntr_number;");
+      syncSync.prepare("SELECT * FROM prftcntr WHERE prftcntr_number=:prftcntr_number;");
       while (rmq.next())
       {
-        q.bindValue(":prftcntr_number", rmq.value("accnt_profit"));
-        q.exec();
-        if (q.first())
+        syncSync.bindValue(":prftcntr_number", rmq.value("accnt_profit"));
+        syncSync.exec();
+        if (syncSync.first())
           ; // nothing to do
-        else if (q.lastError().type() != QSqlError::NoError)
+        else if (syncSync.lastError().type() != QSqlError::NoError)
         {
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          systemError(this, syncSync.lastError().databaseText(), __FILE__, __LINE__);
           errorCount++;
           // don't break/continue - do as much as we can
         }
         else
         {
-          q.prepare("INSERT INTO prftcntr (prftcntr_number, prftcntr_descrip)"
+          syncSync.prepare("INSERT INTO prftcntr (prftcntr_number, prftcntr_descrip)"
                     "VALUES (:prftcntr_number, :prftcntr_descrip);");
-          q.bindValue(":prftcntr_number",  rmq.value("accnt_profit"));
-          q.bindValue(":prftcntr_descrip", rmq.value("prftcntr_descrip"));
-          q.exec();
-          if (q.lastError().type() != QSqlError::NoError)
+          syncSync.bindValue(":prftcntr_number",  rmq.value("accnt_profit"));
+          syncSync.bindValue(":prftcntr_descrip", rmq.value("prftcntr_descrip"));
+          syncSync.exec();
+          if (syncSync.lastError().type() != QSqlError::NoError)
           {
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+            systemError(this, syncSync.lastError().databaseText(), __FILE__, __LINE__);
             errorCount++;
             // don't break/continue - do as much as we can
           }
@@ -388,29 +390,29 @@ void syncCompanies::sSync()
                   "WHERE (accnt_company=:accnt_company);");
       rmq.bindValue(":accnt_company", c->rawValue("company_number"));
       rmq.exec();
-      q.prepare("SELECT * FROM subaccnt WHERE subaccnt_number=:subaccnt_number;");
+      syncSync.prepare("SELECT * FROM subaccnt WHERE subaccnt_number=:subaccnt_number;");
       while (rmq.next())
       {
-        q.bindValue(":subaccnt_number", rmq.value("accnt_sub"));
-        q.exec();
-        if (q.first())
+        syncSync.bindValue(":subaccnt_number", rmq.value("accnt_sub"));
+        syncSync.exec();
+        if (syncSync.first())
           ; // nothing to do
-        else if (q.lastError().type() != QSqlError::NoError)
+        else if (syncSync.lastError().type() != QSqlError::NoError)
         {
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          systemError(this, syncSync.lastError().databaseText(), __FILE__, __LINE__);
           errorCount++;
           // don't break/continue - do as much as we can
         }
         else
         {
-          q.prepare("INSERT INTO subaccnt (subaccnt_number, subaccnt_descrip)"
+          syncSync.prepare("INSERT INTO subaccnt (subaccnt_number, subaccnt_descrip)"
                     "VALUES (:subaccnt_number, :subaccnt_descrip);");
-          q.bindValue(":subaccnt_number",  rmq.value("accnt_sub"));
-          q.bindValue(":subaccnt_descrip", rmq.value("subaccnt_descrip"));
-          q.exec();
-          if (q.lastError().type() != QSqlError::NoError)
+          syncSync.bindValue(":subaccnt_number",  rmq.value("accnt_sub"));
+          syncSync.bindValue(":subaccnt_descrip", rmq.value("subaccnt_descrip"));
+          syncSync.exec();
+          if (syncSync.lastError().type() != QSqlError::NoError)
           {
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+            systemError(this, syncSync.lastError().databaseText(), __FILE__, __LINE__);
             errorCount++;
             // don't break/continue - do as much as we can
           }
@@ -643,16 +645,16 @@ void syncCompanies::sSync()
                               "    :accnt_type,:accnt_extref,:accnt_company, "
                               "    :accnt_forwardupdate, "
                               "    :accnt_subaccnttype_code,:accnt_curr_id);");
-            q.prepare("SELECT NEXTVAL('accnt_accnt_id_seq') AS accnt_id;");
-            q.exec();
-            if (q.first())
+            syncSync.prepare("SELECT NEXTVAL('accnt_accnt_id_seq') AS accnt_id;");
+            syncSync.exec();
+            if (syncSync.first())
             {
-              laccntups.bindValue(":accnt_id",	q.value("accnt_id"));
-              accntid = q.value("accnt_id").toInt();
+              laccntups.bindValue(":accnt_id",	syncSync.value("accnt_id"));
+              accntid = syncSync.value("accnt_id").toInt();
             }
-            else if (q.lastError().type() != QSqlError::NoError)
+            else if (syncSync.lastError().type() != QSqlError::NoError)
             {
-              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+              systemError(this, syncSync.lastError().databaseText(), __FILE__, __LINE__);
               errorCount++;
               break;
             }

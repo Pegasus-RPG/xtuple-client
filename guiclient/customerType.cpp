@@ -46,6 +46,7 @@ void customerType::languageChange()
 
 enum SetResponse customerType::set(const ParameterList &pParams)
 {
+  XSqlQuery customeret;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -65,9 +66,9 @@ enum SetResponse customerType::set(const ParameterList &pParams)
       _mode = cNew;
       _code->setFocus();
       
-      q.exec("SELECT NEXTVAL('custtype_custtype_id_seq') AS custtype_id;");
-      if (q.first())
-        _custtypeid = q.value("custtype_id").toInt();
+      customeret.exec("SELECT NEXTVAL('custtype_custtype_id_seq') AS custtype_id;");
+      if (customeret.first())
+        _custtypeid = customeret.value("custtype_id").toInt();
       else
       {
         systemError(this, tr("A System Error occurred at %1::%2.")
@@ -96,19 +97,20 @@ enum SetResponse customerType::set(const ParameterList &pParams)
 
 void customerType::sCheck()
 {
+  XSqlQuery customerCheck;
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
-    q.prepare( "SELECT custtype_id"
+    customerCheck.prepare( "SELECT custtype_id"
                "  FROM custtype "
                " WHERE((UPPER(custtype_code)=UPPER(:custtype_code))"
                "   AND (custtype_id != :custtype_id));" );
-    q.bindValue(":custtype_code", _code->text());
-    q.bindValue(":custtype_id", _custtypeid);
-    q.exec();
-    if (q.first())
+    customerCheck.bindValue(":custtype_code", _code->text());
+    customerCheck.bindValue(":custtype_id", _custtypeid);
+    customerCheck.exec();
+    if (customerCheck.first())
     {
-      _custtypeid = q.value("custtype_id").toInt();
+      _custtypeid = customerCheck.value("custtype_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -145,13 +147,14 @@ void customerType::sEdit()
 
 void customerType::sDelete()
 {
-  q.prepare( "DELETE FROM charass "
+  XSqlQuery customerDelete;
+  customerDelete.prepare( "DELETE FROM charass "
              "WHERE (charass_id=:charass_id);" );
-  q.bindValue(":charass_id", _charass->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  customerDelete.bindValue(":charass_id", _charass->id());
+  customerDelete.exec();
+  if (customerDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -160,24 +163,26 @@ void customerType::sDelete()
 
 void customerType::sFillList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value, charass_default "
+  XSqlQuery customerFillList;
+  customerFillList.prepare( "SELECT charass_id, char_name, charass_value, charass_default "
              "FROM charass, char "
              "WHERE ( (charass_target_type='CT')"
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:custtype_id) ) "
              "ORDER BY char_order, char_name;" );
-  q.bindValue(":custtype_id", _custtypeid);
-  q.exec();
-  _charass->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  customerFillList.bindValue(":custtype_id", _custtypeid);
+  customerFillList.exec();
+  _charass->populate(customerFillList);
+  if (customerFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void customerType::sSave()
 {
+  XSqlQuery customerSave;
   if (_code->text().trimmed().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Customer Type Code"),
@@ -186,14 +191,14 @@ void customerType::sSave()
     return;
   }
 
-  q.prepare("SELECT custtype_id"
+  customerSave.prepare("SELECT custtype_id"
             "  FROM custtype"
             " WHERE((custtype_id != :custtype_id)"
             "   AND (custtype_code=:custtype_name))");
-  q.bindValue(":custtype_id", _custtypeid);
-  q.bindValue(":custtype_name", _code->text().trimmed());
-  q.exec();
-  if(q.first())
+  customerSave.bindValue(":custtype_id", _custtypeid);
+  customerSave.bindValue(":custtype_name", _code->text().trimmed());
+  customerSave.exec();
+  if(customerSave.first())
   {
     QMessageBox::critical(this, tr("Cannot Save Customer Type"),
                           tr("You have entered a duplicate Code for this Customer Type. "
@@ -205,25 +210,25 @@ void customerType::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare( "INSERT INTO custtype "
+    customerSave.prepare( "INSERT INTO custtype "
                "(custtype_id, custtype_code, custtype_descrip, custtype_char) "
                "VALUES "
                "(:custtype_id, :custtype_code, :custtype_descrip, :custtype_char);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE custtype "
+    customerSave.prepare( "UPDATE custtype "
                "SET custtype_code=:custtype_code,"
                "    custtype_descrip=:custtype_descrip, custtype_char=:custtype_char "
                "WHERE (custtype_id=:custtype_id);" );
 
-  q.bindValue(":custtype_id", _custtypeid);
-  q.bindValue(":custtype_code", _code->text().trimmed());
-  q.bindValue(":custtype_descrip", _description->text().trimmed());
-  q.bindValue(":custtype_char",  QVariant(_characteristicGroup->isChecked()));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  customerSave.bindValue(":custtype_id", _custtypeid);
+  customerSave.bindValue(":custtype_code", _code->text().trimmed());
+  customerSave.bindValue(":custtype_descrip", _description->text().trimmed());
+  customerSave.bindValue(":custtype_char",  QVariant(_characteristicGroup->isChecked()));
+  customerSave.exec();
+  if (customerSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -232,20 +237,21 @@ void customerType::sSave()
 
 void customerType::populate()
 {
-  q.prepare( "SELECT custtype_code, custtype_descrip, custtype_char "
+  XSqlQuery customerpopulate;
+  customerpopulate.prepare( "SELECT custtype_code, custtype_descrip, custtype_char "
               "FROM custtype "
               "WHERE (custtype_id=:custtype_id);" );
-  q.bindValue(":custtype_id", _custtypeid);
-  q.exec();
-  if (q.first())
+  customerpopulate.bindValue(":custtype_id", _custtypeid);
+  customerpopulate.exec();
+  if (customerpopulate.first())
   {
-    _code->setText(q.value("custtype_code").toString());
-    _description->setText(q.value("custtype_descrip").toString());
-    _characteristicGroup->setChecked(q.value("custtype_char").toBool());
+    _code->setText(customerpopulate.value("custtype_code").toString());
+    _description->setText(customerpopulate.value("custtype_descrip").toString());
+    _characteristicGroup->setChecked(customerpopulate.value("custtype_char").toBool());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (customerpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, customerpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();

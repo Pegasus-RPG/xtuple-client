@@ -101,12 +101,13 @@ void characteristics::sView()
 
 void characteristics::sDelete()
 {
-  q.prepare("SELECT deleteCharacteristic(:char_id) AS result;");
-  q.bindValue(":char_id", _char->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery characteristicsDelete;
+  characteristicsDelete.prepare("SELECT deleteCharacteristic(:char_id) AS result;");
+  characteristicsDelete.bindValue(":char_id", _char->id());
+  characteristicsDelete.exec();
+  if (characteristicsDelete.first())
   {
-    int returnVal = q.value("result").toInt();
+    int returnVal = characteristicsDelete.value("result").toInt();
     if (returnVal < 0)
     {
       QMessageBox::critical( this, tr("Cannot Delete Characteristic"),
@@ -117,9 +118,9 @@ void characteristics::sDelete()
 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (characteristicsDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, characteristicsDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
@@ -135,14 +136,15 @@ void characteristics::sPrint()
 
 void characteristics::sFillList()
 {
-  q.prepare("SELECT char_id, char_name, char_notes "
+  XSqlQuery characteristicsFillList;
+  characteristicsFillList.prepare("SELECT char_id, char_name, char_notes "
             "FROM char "
             "ORDER BY char_name;");
-  q.exec();
-  _char->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  characteristicsFillList.exec();
+  _char->populate(characteristicsFillList);
+  if (characteristicsFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, characteristicsFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

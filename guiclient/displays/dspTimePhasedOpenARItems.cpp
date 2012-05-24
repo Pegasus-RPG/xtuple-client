@@ -172,6 +172,7 @@ void dspTimePhasedOpenARItems::sFillList()
 
 void dspTimePhasedOpenARItems::sFillCustom()
 {
+  XSqlQuery dspFillCustom;
   if (!_periods->isPeriodSelected())
   {
     if (isVisible())
@@ -226,27 +227,28 @@ void dspTimePhasedOpenARItems::sFillCustom()
   ParameterList params;
   if (! setParams(params))
     return;
-  q = mql.toQuery(params);
-  list()->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  dspFillCustom = mql.toQuery(params);
+  list()->populate(dspFillCustom);
+  if (dspFillCustom.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspFillCustom.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void dspTimePhasedOpenARItems::sFillStd()
 {
+  XSqlQuery dspFillStd;
   MetaSQLQuery mql = mqlLoad("arAging", "detail");
   ParameterList params;
   if (! setParams(params))
     return;
 
-  q = mql.toQuery(params);
-  list()->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  dspFillStd = mql.toQuery(params);
+  list()->populate(dspFillStd);
+  if (dspFillStd.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspFillStd.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

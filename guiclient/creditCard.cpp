@@ -36,6 +36,7 @@ int creditCard::saveCreditCard(QWidget *parent,
                               int &ccId,
                               bool ccActive)
 {
+  XSqlQuery creditaveCreditCard;
   bool everythingOK;
   everythingOK = true;
   int mode = cNew;
@@ -124,18 +125,18 @@ int creditCard::saveCreditCard(QWidget *parent,
   // See if this card exists on file
   if (mode == cNew)
   {
-    q.prepare("SELECT ccard_id FROM ccard "
+    creditaveCreditCard.prepare("SELECT ccard_id FROM ccard "
               "WHERE ((ccard_cust_id=:cust_id) "
               "AND (ccard_type=:type) "
               "AND (ccard_number=encrypt(setbytea(:number), setbytea(:key), 'bf'))) ");
-    q.bindValue(":cust_id", custId);
-    q.bindValue(":type" , ccType);
-    q.bindValue(":number", ccNumber);
-    q.bindValue(":key", key);
-    q.exec();
-    if (q.first())
+    creditaveCreditCard.bindValue(":cust_id", custId);
+    creditaveCreditCard.bindValue(":type" , ccType);
+    creditaveCreditCard.bindValue(":number", ccNumber);
+    creditaveCreditCard.bindValue(":key", key);
+    creditaveCreditCard.exec();
+    if (creditaveCreditCard.first())
     {
-      ccId = q.value("ccard_id").toInt();
+      ccId = creditaveCreditCard.value("ccard_id").toInt();
       mode = cEdit;
     }
   }
@@ -145,15 +146,15 @@ int creditCard::saveCreditCard(QWidget *parent,
   if (mode == cEdit && ! hasBeenFormatted)
   {
     // editccnumber validates but does not modify db
-    q.prepare("SELECT editccnumber(text(:ccnum), text(:cctype)) AS cc_back;");
-    q.bindValue(":ccnum", ccNumber);
-    q.bindValue(":cctype", ccType);
-    q.exec();
-    if (q.first())
-      cceditreturn = q.value("cc_back").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    creditaveCreditCard.prepare("SELECT editccnumber(text(:ccnum), text(:cctype)) AS cc_back;");
+    creditaveCreditCard.bindValue(":ccnum", ccNumber);
+    creditaveCreditCard.bindValue(":cctype", ccType);
+    creditaveCreditCard.exec();
+    if (creditaveCreditCard.first())
+      cceditreturn = creditaveCreditCard.value("cc_back").toInt();
+    else if (creditaveCreditCard.lastError().type() != QSqlError::NoError)
     {
-      systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(parent, creditaveCreditCard.lastError().databaseText(), __FILE__, __LINE__);
       return -2;
     }
   }
@@ -176,27 +177,27 @@ int creditCard::saveCreditCard(QWidget *parent,
 
   if (mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('ccard_ccard_id_seq') AS ccard_id;");
-    if (q.first())
-      ccId = q.value("ccard_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    creditaveCreditCard.exec("SELECT NEXTVAL('ccard_ccard_id_seq') AS ccard_id;");
+    if (creditaveCreditCard.first())
+      ccId = creditaveCreditCard.value("ccard_id").toInt();
+    else if (creditaveCreditCard.lastError().type() != QSqlError::NoError)
     {
-      systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(parent, creditaveCreditCard.lastError().databaseText(), __FILE__, __LINE__);
       return -2;
     }
 
-    q.prepare("SELECT COALESCE(MAX(ccard_seq), 0) + 10 AS ccard_seq FROM ccard WHERE ccard_cust_id =:ccard_cust_id;");
-    q.bindValue(":ccard_cust_id", custId);
-    q.exec();
-    if (q.first())
-      seq = q.value("ccard_seq").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    creditaveCreditCard.prepare("SELECT COALESCE(MAX(ccard_seq), 0) + 10 AS ccard_seq FROM ccard WHERE ccard_cust_id =:ccard_cust_id;");
+    creditaveCreditCard.bindValue(":ccard_cust_id", custId);
+    creditaveCreditCard.exec();
+    if (creditaveCreditCard.first())
+      seq = creditaveCreditCard.value("ccard_seq").toInt();
+    else if (creditaveCreditCard.lastError().type() != QSqlError::NoError)
     {
-      systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(parent, creditaveCreditCard.lastError().databaseText(), __FILE__, __LINE__);
       return -2;
     }
 
-    q.prepare( "INSERT INTO ccard "
+    creditaveCreditCard.prepare( "INSERT INTO ccard "
                "( ccard_id, ccard_seq, ccard_cust_id, "
                "  ccard_active, ccard_name, ccard_address1,"
                "  ccard_address2,"
@@ -221,7 +222,7 @@ int creditCard::saveCreditCard(QWidget *parent,
                "  :ccard_type );" );
   }
   else if (mode == cEdit)
-    q.prepare( "UPDATE ccard "
+    creditaveCreditCard.prepare( "UPDATE ccard "
                "SET ccard_active=:ccard_active, "
                "    ccard_name=encrypt(setbytea(:ccard_name), setbytea(:key), 'bf'),"
 	       "    ccard_address1=encrypt(setbytea(:ccard_address1), setbytea(:key), 'bf'),"
@@ -235,41 +236,41 @@ int creditCard::saveCreditCard(QWidget *parent,
               "    ccard_type=:ccard_type "
                "WHERE (ccard_id=:ccard_id);" );
 
-  q.bindValue(":ccard_id", ccId);
-  q.bindValue(":ccard_seq", seq);
-  q.bindValue(":ccard_cust_id", custId);
-  q.bindValue(":ccard_active", QVariant(ccActive));
-  q.bindValue(":ccard_number", ccNumber);
-  q.bindValue(":ccard_name", ccName);
-  q.bindValue(":ccard_address1", ccAddress1);
-  q.bindValue(":ccard_address2", ccAddress2);
-  q.bindValue(":ccard_city",	 ccCity);
-  q.bindValue(":ccard_state",	 ccState);
-  q.bindValue(":ccard_zip",	 ccZip);
-  q.bindValue(":ccard_country",	 ccCountry);
-  q.bindValue(":ccard_month_expired",ccExpireMonth);
-  q.bindValue(":ccard_year_expired",ccExpireYear);
-  q.bindValue(":key", key);
-  q.bindValue(":ccard_type", ccType);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  creditaveCreditCard.bindValue(":ccard_id", ccId);
+  creditaveCreditCard.bindValue(":ccard_seq", seq);
+  creditaveCreditCard.bindValue(":ccard_cust_id", custId);
+  creditaveCreditCard.bindValue(":ccard_active", QVariant(ccActive));
+  creditaveCreditCard.bindValue(":ccard_number", ccNumber);
+  creditaveCreditCard.bindValue(":ccard_name", ccName);
+  creditaveCreditCard.bindValue(":ccard_address1", ccAddress1);
+  creditaveCreditCard.bindValue(":ccard_address2", ccAddress2);
+  creditaveCreditCard.bindValue(":ccard_city",	 ccCity);
+  creditaveCreditCard.bindValue(":ccard_state",	 ccState);
+  creditaveCreditCard.bindValue(":ccard_zip",	 ccZip);
+  creditaveCreditCard.bindValue(":ccard_country",	 ccCountry);
+  creditaveCreditCard.bindValue(":ccard_month_expired",ccExpireMonth);
+  creditaveCreditCard.bindValue(":ccard_year_expired",ccExpireYear);
+  creditaveCreditCard.bindValue(":key", key);
+  creditaveCreditCard.bindValue(":ccard_type", ccType);
+  creditaveCreditCard.exec();
+  if (creditaveCreditCard.lastError().type() != QSqlError::NoError)
   {
-    systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(parent, creditaveCreditCard.lastError().databaseText(), __FILE__, __LINE__);
     return -2;
   }
 
   // TODO: combine with UPDATE above?
   if (mode == cEdit && ! hasBeenFormatted)     // user wants to change the cc number
   {
-    q.prepare("UPDATE ccard SET ccard_number=encrypt(setbytea(:ccard_number), setbytea(:key), 'bf') "
+    creditaveCreditCard.prepare("UPDATE ccard SET ccard_number=encrypt(setbytea(:ccard_number), setbytea(:key), 'bf') "
               "WHERE (ccard_id=:ccard_id);" );
-    q.bindValue(":ccard_number", ccNumber);
-    q.bindValue(":key",          key);
-    q.bindValue(":ccard_id",     ccId);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    creditaveCreditCard.bindValue(":ccard_number", ccNumber);
+    creditaveCreditCard.bindValue(":key",          key);
+    creditaveCreditCard.bindValue(":ccard_id",     ccId);
+    creditaveCreditCard.exec();
+    if (creditaveCreditCard.lastError().type() != QSqlError::NoError)
     {
-      systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(parent, creditaveCreditCard.lastError().databaseText(), __FILE__, __LINE__);
       return -2;
     }
   }
@@ -466,10 +467,11 @@ void creditCard::sSave()
 
 void creditCard::populate()
 {
+  XSqlQuery creditpopulate;
   QString key;
   key = omfgThis->_key;
 
-  q.prepare( "SELECT ccard_active,"
+  creditpopulate.prepare( "SELECT ccard_active,"
             "       formatbytea(decrypt(setbytea(ccard_name), setbytea(:key), 'bf')) AS ccard_name,"
             "       formatbytea(decrypt(setbytea(ccard_address1), setbytea(:key), 'bf')) AS ccard_address1,"
             "       formatbytea(decrypt(setbytea(ccard_address2), setbytea(:key), 'bf')) AS ccard_address2,"
@@ -484,33 +486,33 @@ void creditCard::populate()
             "       ccard_type "
              "FROM ccard "
              "WHERE (ccard_id=:ccard_id);" );
-  q.bindValue(":ccard_id", _ccardid);
-  q.bindValue(":key",key);
-  q.exec();
-  if (q.first())
+  creditpopulate.bindValue(":ccard_id", _ccardid);
+  creditpopulate.bindValue(":key",key);
+  creditpopulate.exec();
+  if (creditpopulate.first())
   {
-    // _custNum->setText(q.value("cust_number").toString());
-    // _custName->setText(q.value("cust_name").toString());
-    _active->setChecked(q.value("ccard_active").toBool());
-    _creditCardNumber->setText(q.value("ccard_number"));
-    _name->setText(q.value("ccard_name"));
-    _address->setLine1(q.value("ccard_address1").toString());
-    _address->setLine2(q.value("ccard_address2").toString());
-    _address->setCity(q.value("ccard_city").toString());
-    _address->setState(q.value("ccard_state").toString());
-    _address->setPostalCode(q.value("ccard_zip").toString());
-    _address->setCountry(q.value("ccard_country").toString());
-    _expireMonth->setText(q.value("ccard_month_expired").toString());
-    _expireYear->setText(q.value("ccard_year_expired").toString());
+    // _custNum->setText(creditpopulate.value("cust_number").toString());
+    // _custName->setText(creditpopulate.value("cust_name").toString());
+    _active->setChecked(creditpopulate.value("ccard_active").toBool());
+    _creditCardNumber->setText(creditpopulate.value("ccard_number"));
+    _name->setText(creditpopulate.value("ccard_name"));
+    _address->setLine1(creditpopulate.value("ccard_address1").toString());
+    _address->setLine2(creditpopulate.value("ccard_address2").toString());
+    _address->setCity(creditpopulate.value("ccard_city").toString());
+    _address->setState(creditpopulate.value("ccard_state").toString());
+    _address->setPostalCode(creditpopulate.value("ccard_zip").toString());
+    _address->setCountry(creditpopulate.value("ccard_country").toString());
+    _expireMonth->setText(creditpopulate.value("ccard_month_expired").toString());
+    _expireYear->setText(creditpopulate.value("ccard_year_expired").toString());
 
     for (int counter = 0; counter < _fundsType2->count(); counter++)
-      if (QString(q.value("ccard_type").toString()[0]) == _fundsTypes2[counter])
+      if (QString(creditpopulate.value("ccard_type").toString()[0]) == _fundsTypes2[counter])
         _fundsType2->setCurrentIndex(counter);
 
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (creditpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, creditpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

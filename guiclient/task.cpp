@@ -57,6 +57,7 @@ void task::languageChange()
 
 enum SetResponse task::set(const ParameterList &pParams)
 {
+  XSqlQuery tasket;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -103,9 +104,9 @@ enum SetResponse task::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      q.exec("SELECT NEXTVAL('prjtask_prjtask_id_seq') AS prjtask_id;");
-      if (q.first())
-        _prjtaskid = q.value("prjtask_id").toInt();
+      tasket.exec("SELECT NEXTVAL('prjtask_prjtask_id_seq') AS prjtask_id;");
+      if (tasket.first())
+        _prjtaskid = tasket.value("prjtask_id").toInt();
       else
       {
         systemError(this, tr("A System Error occurred at %1::%2.")
@@ -157,47 +158,48 @@ enum SetResponse task::set(const ParameterList &pParams)
 
 void task::populate()
 {
-  q.prepare( "SELECT prjtask.* "
+  XSqlQuery taskpopulate;
+  taskpopulate.prepare( "SELECT prjtask.* "
              "FROM prjtask "
              "WHERE (prjtask_id=:prjtask_id);" );
-  q.bindValue(":prjtask_id", _prjtaskid);
-  q.exec();
-  if (q.first())
+  taskpopulate.bindValue(":prjtask_id", _prjtaskid);
+  taskpopulate.exec();
+  if (taskpopulate.first())
   {
-    _number->setText(q.value("prjtask_number"));
-    _name->setText(q.value("prjtask_name"));
-    _descrip->setText(q.value("prjtask_descrip").toString());
-    _owner->setUsername(q.value("prjtask_owner_username").toString());
-    _assignedTo->setUsername(q.value("prjtask_username").toString());
-    _started->setDate(q.value("prjtask_start_date").toDate());
-    _assigned->setDate(q.value("prjtask_assigned_date").toDate());
-    _due->setDate(q.value("prjtask_due_date").toDate());
-    _completed->setDate(q.value("prjtask_completed_date").toDate());
+    _number->setText(taskpopulate.value("prjtask_number"));
+    _name->setText(taskpopulate.value("prjtask_name"));
+    _descrip->setText(taskpopulate.value("prjtask_descrip").toString());
+    _owner->setUsername(taskpopulate.value("prjtask_owner_username").toString());
+    _assignedTo->setUsername(taskpopulate.value("prjtask_username").toString());
+    _started->setDate(taskpopulate.value("prjtask_start_date").toDate());
+    _assigned->setDate(taskpopulate.value("prjtask_assigned_date").toDate());
+    _due->setDate(taskpopulate.value("prjtask_due_date").toDate());
+    _completed->setDate(taskpopulate.value("prjtask_completed_date").toDate());
 
     for (int counter = 0; counter < _status->count(); counter++)
     {
-      if (QString(q.value("prjtask_status").toString()[0]) == _taskStatuses[counter])
+      if (QString(taskpopulate.value("prjtask_status").toString()[0]) == _taskStatuses[counter])
         _status->setCurrentIndex(counter);
     }
 
-    _budgetHours->setText(formatQty(q.value("prjtask_hours_budget").toDouble()));
-    _actualHours->setText(formatQty(q.value("prjtask_hours_actual").toDouble()));
-    _budgetExp->setText(formatCost(q.value("prjtask_exp_budget").toDouble()));
-    _actualExp->setText(formatCost(q.value("prjtask_exp_actual").toDouble()));
+    _budgetHours->setText(formatQty(taskpopulate.value("prjtask_hours_budget").toDouble()));
+    _actualHours->setText(formatQty(taskpopulate.value("prjtask_hours_actual").toDouble()));
+    _budgetExp->setText(formatCost(taskpopulate.value("prjtask_exp_budget").toDouble()));
+    _actualExp->setText(formatCost(taskpopulate.value("prjtask_exp_actual").toDouble()));
 
     _alarms->setId(_prjtaskid);
     _comments->setId(_prjtaskid);    
     sHoursAdjusted();
     sExpensesAdjusted();
 
-    //if (q.value("prjtask_anyuser").toBool())
+    //if (taskpopulate.value("prjtask_anyuser").toBool())
     //  _anyUser->setChecked(TRUE);
     //else
     //  _userList->setChecked(TRUE);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (taskpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taskpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -206,6 +208,7 @@ void task::populate()
 
 void task::sSave()
 {
+  XSqlQuery taskSave;
   QList<GuiErrorCheck> errors;
   errors<< GuiErrorCheck(_number->text().length() == 0, _number,
                          tr("You must enter a valid Number."))
@@ -219,7 +222,7 @@ void task::sSave()
 
   if (_mode == cNew)
   {
-    q.prepare( "INSERT INTO prjtask "
+    taskSave.prepare( "INSERT INTO prjtask "
                "( prjtask_id, prjtask_prj_id, prjtask_number,"
                "  prjtask_name, prjtask_descrip, prjtask_status,"
                "  prjtask_hours_budget, prjtask_hours_actual,"
@@ -235,10 +238,10 @@ void task::sSave()
                "  :prjtask_start_date, :prjtask_due_date,"
                "  :prjtask_assigned_date, :prjtask_completed_date,"
                "  :prjtask_owner_username, :username );" );
-    q.bindValue(":prjtask_prj_id", _prjid);
+    taskSave.bindValue(":prjtask_prj_id", _prjid);
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE prjtask "
+    taskSave.prepare( "UPDATE prjtask "
                "SET prjtask_number=:prjtask_number, prjtask_name=:prjtask_name,"
                "    prjtask_descrip=:prjtask_descrip, prjtask_status=:prjtask_status,"
                "    prjtask_hours_budget=:prjtask_hours_budget,"
@@ -253,27 +256,27 @@ void task::sSave()
                "    prjtask_completed_date=:prjtask_completed_date "
                "WHERE (prjtask_id=:prjtask_id);" );
 
-  q.bindValue(":prjtask_id", _prjtaskid);
-  q.bindValue(":prjtask_number", _number->text());
-  q.bindValue(":prjtask_name", _name->text());
-  q.bindValue(":prjtask_descrip", _descrip->toPlainText());
-  q.bindValue(":prjtask_status", _taskStatuses[_status->currentIndex()]);
-  q.bindValue(":prjtask_owner_username", _owner->username());
-  q.bindValue(":username",   _assignedTo->username());
-  q.bindValue(":prjtask_start_date", _started->date());
-  q.bindValue(":prjtask_due_date", _due->date());
-  q.bindValue(":prjtask_assigned_date",	_assigned->date());
-  q.bindValue(":prjtask_completed_date", _completed->date());
-  //q.bindValue(":prjtask_anyuser", QVariant(_anyUser->isChecked()));
-  q.bindValue(":prjtask_hours_budget", _budgetHours->text().toDouble());
-  q.bindValue(":prjtask_hours_actual", _actualHours->text().toDouble());
-  q.bindValue(":prjtask_exp_budget", _budgetExp->text().toDouble());
-  q.bindValue(":prjtask_exp_actual", _actualExp->text().toDouble());
+  taskSave.bindValue(":prjtask_id", _prjtaskid);
+  taskSave.bindValue(":prjtask_number", _number->text());
+  taskSave.bindValue(":prjtask_name", _name->text());
+  taskSave.bindValue(":prjtask_descrip", _descrip->toPlainText());
+  taskSave.bindValue(":prjtask_status", _taskStatuses[_status->currentIndex()]);
+  taskSave.bindValue(":prjtask_owner_username", _owner->username());
+  taskSave.bindValue(":username",   _assignedTo->username());
+  taskSave.bindValue(":prjtask_start_date", _started->date());
+  taskSave.bindValue(":prjtask_due_date", _due->date());
+  taskSave.bindValue(":prjtask_assigned_date",	_assigned->date());
+  taskSave.bindValue(":prjtask_completed_date", _completed->date());
+  //taskSave.bindValue(":prjtask_anyuser", QVariant(_anyUser->isChecked()));
+  taskSave.bindValue(":prjtask_hours_budget", _budgetHours->text().toDouble());
+  taskSave.bindValue(":prjtask_hours_actual", _actualHours->text().toDouble());
+  taskSave.bindValue(":prjtask_exp_budget", _budgetExp->text().toDouble());
+  taskSave.bindValue(":prjtask_exp_actual", _actualExp->text().toDouble());
 
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  taskSave.exec();
+  if (taskSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taskSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -319,33 +322,34 @@ void task::sExpensesAdjusted()
 
 void task::sNewUser()
 {
+  XSqlQuery taskNewUser;
 /*
   userList newdlg(this, "", TRUE);
   int result = newdlg.exec();
   if (result != XDialog::Rejected)
   {
     QString username = newdlg.username();
-    q.prepare( "SELECT prjtaskuser_id "
+    taskNewUser.prepare( "SELECT prjtaskuser_id "
                "FROM prjtaskuser "
                "WHERE ( (prjtaskuser_username=:username)"
                " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
-    q.bindValue(":username", username);
-    q.bindValue(":prjtask_id", _prjtaskid);
-    q.exec();
-    if (!q.first())
+    taskNewUser.bindValue(":username", username);
+    taskNewUser.bindValue(":prjtask_id", _prjtaskid);
+    taskNewUser.exec();
+    if (!taskNewUser.first())
     {
-      q.prepare( "INSERT INTO prjtaskuser "
+      taskNewUser.prepare( "INSERT INTO prjtaskuser "
                  "( prjtaskuser_prjtask_id, prjtaskuser_username ) "
                  "VALUES "
                  "( :prjtaskuser_prjtask_id, :prjtaskuser_username );" );
-      q.bindValue(":prjtaskuser_username", username);
-      q.bindValue(":prjtaskuser_prjtask_id", _prjtaskid);
-      q.exec();
+      taskNewUser.bindValue(":prjtaskuser_username", username);
+      taskNewUser.bindValue(":prjtaskuser_prjtask_id", _prjtaskid);
+      taskNewUser.exec();
       sFillUserList();
     }
-    if (q.lastError().type() != QSqlError::NoError)
+    if (taskNewUser.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, taskNewUser.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -354,16 +358,17 @@ void task::sNewUser()
 
 void task::sDeleteUser()
 {
+  XSqlQuery taskDeleteUser;
 /*
-  q.prepare( "DELETE FROM prjtaskuser "
+  taskDeleteUser.prepare( "DELETE FROM prjtaskuser "
              "WHERE ( (prjtaskuser_username=:username)"
              " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
-  q.bindValue(":username", _usr->username());
-  q.bindValue(":prjtask_id", _prjtaskid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  taskDeleteUser.bindValue(":username", _usr->username());
+  taskDeleteUser.bindValue(":prjtask_id", _prjtaskid);
+  taskDeleteUser.exec();
+  if (taskDeleteUser.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taskDeleteUser.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillUserList();
@@ -373,17 +378,18 @@ void task::sDeleteUser()
 
 void task::sFillUserList()
 {
+  XSqlQuery taskFillUserList;
 /*
-  q.prepare( "SELECT prjtaskuser_id, usr_username, usr_propername "
+  taskFillUserList.prepare( "SELECT prjtaskuser_id, usr_username, usr_propername "
              "FROM prjtaskuser, usr "
              "WHERE ( (prjtaskuser_username=usr_username)"
              " AND (prjtaskuser_prjtask_id=:prjtask_id) );" );
-  q.bindValue(":prjtask_id", _prjtaskid);
-  q.exec();
-  _usr->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  taskFillUserList.bindValue(":prjtask_id", _prjtaskid);
+  taskFillUserList.exec();
+  _usr->populate(taskFillUserList);
+  if (taskFillUserList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, taskFillUserList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 */

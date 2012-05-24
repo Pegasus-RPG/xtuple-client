@@ -106,15 +106,16 @@ void locations::sView()
 
 void locations::sDelete()
 {
-  q.prepare("SELECT deleteLocation(:location_id) AS result;");
-  q.bindValue(":location_id", _location->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery locationsDelete;
+  locationsDelete.prepare("SELECT deleteLocation(:location_id) AS result;");
+  locationsDelete.bindValue(":location_id", _location->id());
+  locationsDelete.exec();
+  if (locationsDelete.first())
   {
     QString caption = tr("Cannot Delete Selected Location");
     QString msg;
 
-    switch (q.value("result").toInt())
+    switch (locationsDelete.value("result").toInt())
     {
       case -1:
         msg = tr("<p>There are one or more Item Sites that use the selected Location as their default Location. "
@@ -163,6 +164,7 @@ void locations::sPrint()
 
 void locations::sFillList()
 {
+  XSqlQuery locationsFillList;
   QString sql( "SELECT location_id, warehous_code, formatLocationName(location_id) AS name,"
                "       firstLine(location_descrip) AS locationname,"
                "       formatBoolYN(location_netable) AS netable,"
@@ -176,9 +178,9 @@ void locations::sFillList()
   sql += " ) "
          "ORDER BY warehous_code, locationname;";
 
-  q.prepare(sql);
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  _location->populate(q);
+  locationsFillList.prepare(sql);
+  locationsFillList.bindValue(":warehous_id", _warehouse->id());
+  locationsFillList.exec();
+  _location->populate(locationsFillList);
 }
 

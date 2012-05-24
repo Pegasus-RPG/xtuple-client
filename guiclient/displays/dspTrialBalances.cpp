@@ -95,25 +95,26 @@ void dspTrialBalances::sViewTransactions()
 
 void dspTrialBalances::sForwardUpdate()
 {
-  q.prepare( "SELECT MIN(forwardUpdateTrialBalance(trialbal_id)) AS result "
+  XSqlQuery dspForwardUpdate;
+  dspForwardUpdate.prepare( "SELECT MIN(forwardUpdateTrialBalance(trialbal_id)) AS result "
              "FROM trialbal "
              "WHERE ( (trialbal_period_id=:period_id)"
              " AND (trialbal_accnt_id=:accnt_id) );");
-  q.bindValue(":accnt_id", list()->id());
-  q.bindValue(":period_id", list()->altId());
-  q.exec();
-  if (q.first())
+  dspForwardUpdate.bindValue(":accnt_id", list()->id());
+  dspForwardUpdate.bindValue(":period_id", list()->altId());
+  dspForwardUpdate.exec();
+  if (dspForwardUpdate.first())
   {
-    int result = q.value("result").toInt();
+    int result = dspForwardUpdate.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspForwardUpdate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspForwardUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -145,6 +146,7 @@ void dspTrialBalances::sFillList()
 
 bool dspTrialBalances::forwardUpdate()
 {
+  XSqlQuery dspforwardUpdate;
   QString sql( "SELECT MIN(forwardUpdateAccount(accnt_id)) AS result "
                "FROM accnt "
                "<? if exists(\"accnt_id\") ?>"
@@ -155,19 +157,19 @@ bool dspTrialBalances::forwardUpdate()
   ParameterList params;
   setParams(params);
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.first())
+  dspforwardUpdate = mql.toQuery(params);
+  if (dspforwardUpdate.first())
   {
-    int result = q.value("result").toInt();
+    int result = dspforwardUpdate.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("forwardUpdateTrialBalance", result), __FILE__, __LINE__);
       return false;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspforwardUpdate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspforwardUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   return true;

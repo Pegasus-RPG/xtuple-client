@@ -41,10 +41,11 @@ void createRecurringInvoices::languageChange()
 
 void createRecurringInvoices::sUpdate()
 {
-  q.exec("SELECT createRecurringItems(NULL, 'I') AS result;");
-  if (q.first())
+  XSqlQuery createUpdate;
+  createUpdate.exec("SELECT createRecurringItems(NULL, 'I') AS result;");
+  if (createUpdate.first())
   {
-    int result = q.value("result").toInt();
+    int result = createUpdate.value("result").toInt();
     if (result < 0)
     {
       systemError(this,
@@ -53,9 +54,9 @@ void createRecurringInvoices::sUpdate()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (createUpdate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, createUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

@@ -122,34 +122,35 @@ void costCategories::sCopy()
 
 void costCategories::sDelete()
 {
+  XSqlQuery costDelete;
   if ( QMessageBox::question(this, tr("Delete Cost Category"),
                              tr("<p>Are you sure that you want to delete the selected Cost Category?"),
                              QMessageBox::Yes,
                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare( "SELECT itemsite_id "
+    costDelete.prepare( "SELECT itemsite_id "
                "FROM itemsite "
                "WHERE (itemsite_costcat_id=:costcat_id) "
                "LIMIT 1;" );
-    q.bindValue(":costcat_id", _costcat->id());
-    q.exec();
-    if (q.first())
+    costDelete.bindValue(":costcat_id", _costcat->id());
+    costDelete.exec();
+    if (costDelete.first())
       QMessageBox::information( this, tr("Cost Category in Use"),
                                 tr("<p>The selected Cost Category cannot be "
                                    "deleted as it still contains Items. You "
                                    "must reassign these Items before deleting "
                                    "this Cost Category.") );
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (costDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, costDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
     {
-      q.prepare( "DELETE FROM costcat "
+      costDelete.prepare( "DELETE FROM costcat "
                  "WHERE (costcat_id=:costcat_id);" );
-      q.bindValue(":costcat_id", _costcat->id());
-      q.exec();
+      costDelete.bindValue(":costcat_id", _costcat->id());
+      costDelete.exec();
       sFillList();
     }
   }

@@ -91,33 +91,34 @@ void unpostedInvoices::sView()
 
 void unpostedInvoices::sDelete()
 {
+  XSqlQuery unpostedDelete;
   if ( QMessageBox::warning( this, tr("Delete Selected Invoices"),
                              tr("<p>Are you sure that you want to delete the "
 			        "selected Invoices?"),
                              tr("Delete"), tr("Cancel"), QString::null, 1, 1 ) == 0)
   {
-    q.prepare("SELECT deleteInvoice(:invchead_id) AS result;");
+    unpostedDelete.prepare("SELECT deleteInvoice(:invchead_id) AS result;");
 
     QList<XTreeWidgetItem*> selected = list()->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
       if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
 	  {
-        q.bindValue(":invchead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-        q.exec();
-        if (q.first())
+        unpostedDelete.bindValue(":invchead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+        unpostedDelete.exec();
+        if (unpostedDelete.first())
         {
-	      int result = q.value("result").toInt();
+	      int result = unpostedDelete.value("result").toInt();
 	      if (result < 0)
 	      {
 	        systemError(this, storedProcErrorLookup("deleteInvoice", result),
 		            __FILE__, __LINE__);
 	      }
         }
-        else if (q.lastError().type() != QSqlError::NoError)
+        else if (unpostedDelete.lastError().type() != QSqlError::NoError)
 	      systemError(this,
 		          tr("Error deleting Invoice %1\n").arg(selected[i]->text(0)) +
-		          q.lastError().databaseText(), __FILE__, __LINE__);
+		          unpostedDelete.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
 
@@ -155,6 +156,7 @@ void unpostedInvoices::sPrint()
 
 void unpostedInvoices::sPost()
 {
+  XSqlQuery unpostedPost;
   bool changeDate = false;
   QDate newDate = QDate();
 
@@ -172,19 +174,19 @@ void unpostedInvoices::sPost()
   }
 
   int journal = -1;
-  q.exec("SELECT fetchJournalNumber('AR-IN') AS result;");
-  if (q.first())
+  unpostedPost.exec("SELECT fetchJournalNumber('AR-IN') AS result;");
+  if (unpostedPost.first())
   {
-    journal = q.value("result").toInt();
+    journal = unpostedPost.value("result").toInt();
     if (journal < 0)
     {
       systemError(this, storedProcErrorLookup("fetchJournalNumber", journal), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (unpostedPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, unpostedPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -276,7 +278,7 @@ void unpostedInvoices::sPost()
 	      }
         }
 
-        q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+        unpostedPost.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
         post.bindValue(":invchead_id", id);
         post.bindValue(":journal",     journal);
         post.exec();
@@ -296,7 +298,7 @@ void unpostedInvoices::sPost()
                 return;
               }
 
-              q.exec("COMMIT;");
+              unpostedPost.exec("COMMIT;");
         }
         // contains() string is hard-coded in stored procedure
         else if (post.lastError().databaseText().contains("post to closed period"))

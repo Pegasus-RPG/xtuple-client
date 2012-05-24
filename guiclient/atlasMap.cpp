@@ -266,6 +266,7 @@ void atlasMap::sSave()
 
 void atlasMap::sPopulate()
 {
+  XSqlQuery atlasPopulate;
   if (_atlasmapId <= 0)
   {
     _name->clear();
@@ -277,23 +278,23 @@ void atlasMap::sPopulate()
   }
   else
   {
-    q.prepare("SELECT * FROM atlasmap WHERE (atlasmap_id=:id);");
-    q.bindValue(":id", _atlasmapId);
-    q.exec();
-    if (q.first())
+    atlasPopulate.prepare("SELECT * FROM atlasmap WHERE (atlasmap_id=:id);");
+    atlasPopulate.bindValue(":id", _atlasmapId);
+    atlasPopulate.exec();
+    if (atlasPopulate.first())
     {
-      _name->setText(q.value("atlasmap_name").toString());
-      _filter->setText(q.value("atlasmap_filter").toString());
-      _filtertype->setCode(q.value("atlasmap_filtertype").toString());
-      _atlas->setText(q.value("atlasmap_atlas").toString());
+      _name->setText(atlasPopulate.value("atlasmap_name").toString());
+      _filter->setText(atlasPopulate.value("atlasmap_filter").toString());
+      _filtertype->setCode(atlasPopulate.value("atlasmap_filtertype").toString());
+      _atlas->setText(atlasPopulate.value("atlasmap_atlas").toString());
       sHandleAtlas();
-      if (! q.value("atlasmap_map").toString().isEmpty())
-        _map->setCode(q.value("atlasmap_map").toString());
-      _firstLine->setChecked(q.value("atlasmap_headerline").toBool());
+      if (! atlasPopulate.value("atlasmap_map").toString().isEmpty())
+        _map->setCode(atlasPopulate.value("atlasmap_map").toString());
+      _firstLine->setChecked(atlasPopulate.value("atlasmap_headerline").toBool());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (atlasPopulate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, atlasPopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

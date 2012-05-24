@@ -63,6 +63,7 @@ enum SetResponse massReplaceComponent::set(const ParameterList &pParams)
 
 void massReplaceComponent::sReplace()
 {
+  XSqlQuery massReplace;
   if (_original->isValid() && _replacement->isValid() && _effective->isValid())
   {
     if (_original->uom() != _replacement->uom())
@@ -73,33 +74,33 @@ void massReplaceComponent::sReplace()
     }
     if (_metrics->boolean("RevControl"))
     {
-      q.prepare("SELECT * "
+      massReplace.prepare("SELECT * "
 	  	      "FROM bomitem, rev "
 	 		  "WHERE ( (bomitem_rev_id=rev_id) "
 			  "AND (rev_status='P') "
 			  "AND (bomitem_item_id=:item_id) ) "
 			  "LIMIT 1;");
-	  q.bindValue(":item_id", _original->id());
-	  q.exec();
-	  if (q.first())
+	  massReplace.bindValue(":item_id", _original->id());
+	  massReplace.exec();
+	  if (massReplace.first())
         QMessageBox::information( this, tr("Mass Replace"),
                           tr("<p>This process will only affect active revisions. "
 						  "Items on pending revisions must be replaced manually.")  );
     }
-    q.prepare("SELECT massReplaceBomitem(:replacement_item_id,"
+    massReplace.prepare("SELECT massReplaceBomitem(:replacement_item_id,"
 	      "                          :original_item_id, :effective_date,"
 	      "                          :ecn) AS result;");
-    q.bindValue(":replacement_item_id", _replacement->id());
-    q.bindValue(":original_item_id", _original->id());
-    q.bindValue(":ecn", _ecn->text());
+    massReplace.bindValue(":replacement_item_id", _replacement->id());
+    massReplace.bindValue(":original_item_id", _original->id());
+    massReplace.bindValue(":ecn", _ecn->text());
 
     if (!_effective->isNull())
-      q.bindValue(":effective_date", _effective->date());
+      massReplace.bindValue(":effective_date", _effective->date());
 
-    q.exec();
-    if (q.first())
+    massReplace.exec();
+    if (massReplace.first())
     {
-      int result = q.value("result").toInt();
+      int result = massReplace.value("result").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("massReplaceBomitem", result),
@@ -107,9 +108,9 @@ void massReplaceComponent::sReplace()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (massReplace.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, massReplace.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 

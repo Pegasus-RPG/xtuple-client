@@ -206,26 +206,27 @@ void dspCashReceipts::sViewCashrcpt()
 
 void dspCashReceipts::sPostCashrcpt()
 {
+  XSqlQuery dspPostCashrcpt;
   int journalNumber = -1;
 
   XSqlQuery tx;
   tx.exec("BEGIN;");
-  q.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
-  if (q.first())
-    journalNumber = q.value("journalnumber").toInt();
-  else if (q.lastError().type() != QSqlError::NoError)
+  dspPostCashrcpt.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
+  if (dspPostCashrcpt.first())
+    journalNumber = dspPostCashrcpt.value("journalnumber").toInt();
+  else if (dspPostCashrcpt.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
-  q.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
-  q.bindValue(":journalNumber", journalNumber);
-  q.exec();
-  if (q.first())
+  dspPostCashrcpt.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
+  dspPostCashrcpt.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
+  dspPostCashrcpt.bindValue(":journalNumber", journalNumber);
+  dspPostCashrcpt.exec();
+  if (dspPostCashrcpt.first())
   {
-    int result = q.value("result").toInt();
+    int result = dspPostCashrcpt.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("postCashReceipt", result),
@@ -234,9 +235,9 @@ void dspCashReceipts::sPostCashrcpt()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspPostCashrcpt.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspPostCashrcpt.lastError().databaseText(), __FILE__, __LINE__);
     tx.exec("ROLLBACK;");
     return;
   }
@@ -248,6 +249,7 @@ void dspCashReceipts::sPostCashrcpt()
 
 void dspCashReceipts::sReversePosted()
 {
+  XSqlQuery dspReversePosted;
   if (QMessageBox::warning(this, tr("Reverse Entire Posting?"),
                                   tr("<p>This will reverse all applications related "
                                      "to this cash receipt.  Are you sure you want "
@@ -255,12 +257,12 @@ void dspCashReceipts::sReversePosted()
                                      QMessageBox::Yes | QMessageBox::Default,
                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
   {                     
-    q.prepare("SELECT reverseCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R')) AS result;");
-    q.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
-    q.exec();
-    if (q.first())
+    dspReversePosted.prepare("SELECT reverseCashReceipt(:cashrcpt_id, fetchJournalNumber('C/R')) AS result;");
+    dspReversePosted.bindValue(":cashrcpt_id", list()->currentItem()->id("source"));
+    dspReversePosted.exec();
+    if (dspReversePosted.first())
     {
-      int result = q.value("result").toInt();
+      int result = dspReversePosted.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("reverseCashReceipt", result),
@@ -268,9 +270,9 @@ void dspCashReceipts::sReversePosted()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (dspReversePosted.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspReversePosted.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList();

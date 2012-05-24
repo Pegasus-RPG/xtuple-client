@@ -69,19 +69,21 @@ enum SetResponse poLiabilityDistrib::set(const ParameterList &pParams)
 
 void poLiabilityDistrib::populate()
 {
-  q.prepare( "SELECT recv_value "
+  XSqlQuery popopulate;
+  popopulate.prepare( "SELECT recv_value "
              "FROM recv "
              "WHERE (recv_id=:recv_id);" ) ;
-  q.bindValue(":recv_id", _recvid);
-  q.exec();
-  if (q.first())
+  popopulate.bindValue(":recv_id", _recvid);
+  popopulate.exec();
+  if (popopulate.first())
   {
-    _amount->setLocalValue(q.value("recv_value").toDouble());
+    _amount->setLocalValue(popopulate.value("recv_value").toDouble());
   }
 }
 
 void poLiabilityDistrib::sPost()
 {
+  XSqlQuery poPost;
   if (!_account->isValid())
   {
     QMessageBox::warning( this, tr("Select Account"),
@@ -90,7 +92,7 @@ void poLiabilityDistrib::sPost()
     return;
   }
 
-  q.prepare( "SELECT insertGLTransaction( 'G/L', 'PO', pohead_number, 'Qty. ' || formatqty(recv_qty) || ' for ' || COALESCE(item_number,poitem_vend_item_number) || ' marked as invoiced',"
+  poPost.prepare( "SELECT insertGLTransaction( 'G/L', 'PO', pohead_number, 'Qty. ' || formatqty(recv_qty) || ' for ' || COALESCE(item_number,poitem_vend_item_number) || ' marked as invoiced',"
              "                            :creditAccntid, COALESCE(costcat_liability_accnt_id,expcat_liability_accnt_id) ,-1, :amount, current_date ) AS result"
              " FROM recv, pohead, poitem "
 			 " LEFT OUTER JOIN expcat ON (poitem_expcat_id=expcat_id) "
@@ -100,11 +102,11 @@ void poLiabilityDistrib::sPost()
              " WHERE ( (recv_id=:recv_id) "
              " AND (poitem_id=recv_orderitem_id) "
 			 " AND (pohead_id=poitem_pohead_id) );" );
-  q.bindValue(":creditAccntid", _account->id());
-  q.bindValue(":amount", _amount->baseValue());
-  q.bindValue(":recv_id", _recvid);
-  q.exec();
-  if (!q.first())
+  poPost.bindValue(":creditAccntid", _account->id());
+  poPost.bindValue(":amount", _amount->baseValue());
+  poPost.bindValue(":recv_id", _recvid);
+  poPost.exec();
+  if (!poPost.first())
   {
     systemError(this, tr("A System Error occurred at %1::%2.")
                       .arg(__FILE__)

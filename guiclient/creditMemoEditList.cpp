@@ -99,6 +99,7 @@ void creditMemoEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
 void creditMemoEditList::sFillList()
 {
+  XSqlQuery creditFillList;
   ParameterList params;
   params.append("notassigned", tr("Not Assigned"));
   params.append("taxes", tr("Taxes"));
@@ -106,11 +107,11 @@ void creditMemoEditList::sFillList()
   params.append("credit", tr("Credit"));
 
   MetaSQLQuery mql = mqlLoad("creditMemo", "editlist");
-  q = mql.toQuery(params);
-  _cmhead->populate(q, true);
-  if (q.lastError().type() != QSqlError::NoError)
+  creditFillList = mql.toQuery(params);
+  _cmhead->populate(creditFillList, true);
+  if (creditFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, creditFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -116,6 +116,7 @@ bool dspInventoryAvailabilityBySalesOrder::setParams(ParameterList &params)
 
 void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected, int)
 {
+  XSqlQuery dspPopulateMenu;
   XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
   QAction *menuItem;
   
@@ -132,23 +133,23 @@ void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWid
     menuItem = pMenu->addAction("Running Availability...", this, SLOT(sRunningAvailability()));
     menuItem = pMenu->addAction("Substitute Availability...", this, SLOT(sViewSubstituteAvailability()));
 
-    q.prepare ("SELECT item_type "
+    dspPopulateMenu.prepare ("SELECT item_type "
              "FROM itemsite,item "
              "WHERE ((itemsite_id=:itemsite_id)"
              "AND (itemsite_item_id=item_id)"
              "AND (itemsite_wosupply));");
-    q.bindValue(":itemsite_id", list()->id());
-    q.exec();
-    if (q.next())
+    dspPopulateMenu.bindValue(":itemsite_id", list()->id());
+    dspPopulateMenu.exec();
+    if (dspPopulateMenu.next())
     {
-      if (q.value("item_type") == "P")
+      if (dspPopulateMenu.value("item_type") == "P")
       {
         pMenu->addSeparator();
         menuItem = pMenu->addAction("Issue Purchase Order...", this, SLOT(sIssuePO()));
         if (!_privileges->check("MaintainPurchaseOrders"))
           menuItem->setEnabled(false);
       }
-      else if (q.value("item_type") == "M")
+      else if (dspPopulateMenu.value("item_type") == "M")
       {
         pMenu->addSeparator();
         menuItem = pMenu->addAction("Issue Work Order...", this, SLOT(sIssueWO()));
@@ -181,16 +182,17 @@ void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWid
 
 void dspInventoryAvailabilityBySalesOrder::sViewAllocations()
 {
-  q.prepare( "SELECT coitem_scheddate "
+  XSqlQuery dspViewAllocations;
+  dspViewAllocations.prepare( "SELECT coitem_scheddate "
              "FROM coitem "
              "WHERE (coitem_id=:soitem_id);" );
-  q.bindValue(":soitem_id", list()->altId());
-  q.exec();
-  if (q.first())
+  dspViewAllocations.bindValue(":soitem_id", list()->altId());
+  dspViewAllocations.exec();
+  if (dspViewAllocations.first())
   {
     ParameterList params;
     params.append("itemsite_id", list()->id());
-    params.append("byDate", q.value("coitem_scheddate"));
+    params.append("byDate", dspViewAllocations.value("coitem_scheddate"));
     params.append("run");
 
     dspAllocations *newdlg = new dspAllocations();
@@ -201,16 +203,17 @@ void dspInventoryAvailabilityBySalesOrder::sViewAllocations()
 
 void dspInventoryAvailabilityBySalesOrder::sViewOrders()
 {
-  q.prepare( "SELECT coitem_scheddate "
+  XSqlQuery dspViewOrders;
+  dspViewOrders.prepare( "SELECT coitem_scheddate "
              "FROM coitem "
              "WHERE (coitem_id=:soitem_id);" );
-  q.bindValue(":soitem_id", list()->altId());
-  q.exec();
-  if (q.first())
+  dspViewOrders.bindValue(":soitem_id", list()->altId());
+  dspViewOrders.exec();
+  if (dspViewOrders.first())
   {
     ParameterList params;
     params.append("itemsite_id", list()->id());
-    params.append("byDate", q.value("coitem_scheddate"));
+    params.append("byDate", dspViewOrders.value("coitem_scheddate"));
     params.append("run");
 
     dspOrders *newdlg = new dspOrders();
@@ -232,16 +235,17 @@ void dspInventoryAvailabilityBySalesOrder::sRunningAvailability()
 
 void dspInventoryAvailabilityBySalesOrder::sViewSubstituteAvailability()
 {
-  q.prepare( "SELECT coitem_scheddate "
+  XSqlQuery dspViewSubstituteAvailability;
+  dspViewSubstituteAvailability.prepare( "SELECT coitem_scheddate "
              "FROM coitem "
              "WHERE (coitem_id=:soitem_id);" );
-  q.bindValue(":soitem_id", list()->altId());
-  q.exec();
-  if (q.first())
+  dspViewSubstituteAvailability.bindValue(":soitem_id", list()->altId());
+  dspViewSubstituteAvailability.exec();
+  if (dspViewSubstituteAvailability.first())
   {
     ParameterList params;
     params.append("itemsite_id", list()->id());
-    params.append("byDate", q.value("coitem_scheddate"));
+    params.append("byDate", dspViewSubstituteAvailability.value("coitem_scheddate"));
     params.append("run");
 
     dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem();
@@ -330,12 +334,13 @@ void dspInventoryAvailabilityBySalesOrder::sReserveStock()
 
 void dspInventoryAvailabilityBySalesOrder::sReserveLineBalance()
 {
-  q.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
-  q.bindValue(":soitem_id", list()->altId());
-  q.exec();
-  if (q.first())
+  XSqlQuery dspReserveLineBalance;
+  dspReserveLineBalance.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
+  dspReserveLineBalance.bindValue(":soitem_id", list()->altId());
+  dspReserveLineBalance.exec();
+  if (dspReserveLineBalance.first())
   {
-    int result = q.value("result").toInt();
+    int result = dspReserveLineBalance.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("reserveSoLineBalance", result),
@@ -343,10 +348,10 @@ void dspInventoryAvailabilityBySalesOrder::sReserveLineBalance()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspReserveLineBalance.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("Error\n") +
-                      q.lastError().databaseText(), __FILE__, __LINE__);
+                      dspReserveLineBalance.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -355,13 +360,14 @@ void dspInventoryAvailabilityBySalesOrder::sReserveLineBalance()
 
 void dspInventoryAvailabilityBySalesOrder::sUnreserveStock()
 {
-  q.prepare("UPDATE coitem SET coitem_qtyreserved=0 WHERE coitem_id=:soitem_id;");
-  q.bindValue(":soitem_id", list()->altId());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  XSqlQuery dspUnreserveStock;
+  dspUnreserveStock.prepare("UPDATE coitem SET coitem_qtyreserved=0 WHERE coitem_id=:soitem_id;");
+  dspUnreserveStock.bindValue(":soitem_id", list()->altId());
+  dspUnreserveStock.exec();
+  if (dspUnreserveStock.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("Error\n") +
-                      q.lastError().databaseText(), __FILE__, __LINE__);
+                      dspUnreserveStock.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

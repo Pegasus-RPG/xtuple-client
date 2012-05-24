@@ -45,7 +45,8 @@ void voidChecks::languageChange()
 
 void voidChecks::sVoid()
 {
-  q.prepare("SELECT checkhead_id, checkhead_number,"
+  XSqlQuery voidVoid;
+  voidVoid.prepare("SELECT checkhead_id, checkhead_number,"
 	    "       voidCheck(checkhead_id) AS result"
             "  FROM checkhead"
             " WHERE ((NOT checkhead_posted)"
@@ -53,31 +54,31 @@ void voidChecks::sVoid()
             "   AND  (NOT checkhead_deleted)"
             "   AND  (NOT checkhead_void)"
             "   AND  (checkhead_bankaccnt_id=:bankaccnt_id))");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  while (q.next())
+  voidVoid.bindValue(":bankaccnt_id", _bankaccnt->id());
+  voidVoid.exec();
+  while (voidVoid.next())
   {
-    int result = q.value("result").toInt();
+    int result = voidVoid.value("result").toInt();
     if (result < 0)
       systemError(this,
-		  tr("Check %1").arg(q.value("checkhead_number").toString()) +
+		  tr("Check %1").arg(voidVoid.value("checkhead_number").toString()) +
 		  "\n" + storedProcErrorLookup("voidCheck", result),
 		  __FILE__, __LINE__);
     else if(_issueReplacements->isChecked())
     {
       XSqlQuery rplc;
       rplc.prepare("SELECT replaceVoidedCheck(:checkhead_id) AS result;");
-      while(q.next())
+      while(voidVoid.next())
       {
-        rplc.bindValue(":checkhead_id", q.value("checkhead_id").toInt());
+        rplc.bindValue(":checkhead_id", voidVoid.value("checkhead_id").toInt());
         rplc.exec();
       }
     }
     omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
   }
-  if (q.lastError().type() != QSqlError::NoError)
+  if (voidVoid.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, voidVoid.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -86,6 +87,7 @@ void voidChecks::sVoid()
 
 void voidChecks::sHandleBankAccount(int pBankaccntid)
 {
+  XSqlQuery voidHandleBankAccount;
   if (pBankaccntid == -1)
   {
     _checkNumber->clear();
@@ -93,7 +95,7 @@ void voidChecks::sHandleBankAccount(int pBankaccntid)
   }
   else
   {
-    q.prepare( "SELECT TEXT(MIN(checkhead_number)) as checknumber,"
+    voidHandleBankAccount.prepare( "SELECT TEXT(MIN(checkhead_number)) as checknumber,"
                "       TEXT(COUNT(*)) AS numofchecks "
                "  FROM checkhead "
                " WHERE ( (NOT checkhead_void)"
@@ -101,16 +103,16 @@ void voidChecks::sHandleBankAccount(int pBankaccntid)
                "   AND   (NOT checkhead_replaced)"
                "   AND   (NOT checkhead_deleted)"
                "   AND   (checkhead_bankaccnt_id=:bankaccnt_id) );" );
-    q.bindValue(":bankaccnt_id", pBankaccntid);
-    q.exec();
-    if (q.first())
+    voidHandleBankAccount.bindValue(":bankaccnt_id", pBankaccntid);
+    voidHandleBankAccount.exec();
+    if (voidHandleBankAccount.first())
     {
-      _checkNumber->setText(q.value("checknumber").toString());
-      _numberOfChecks->setText(q.value("numofchecks").toString());
+      _checkNumber->setText(voidHandleBankAccount.value("checknumber").toString());
+      _numberOfChecks->setText(voidHandleBankAccount.value("numofchecks").toString());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (voidHandleBankAccount.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, voidHandleBankAccount.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

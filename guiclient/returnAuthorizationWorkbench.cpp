@@ -233,35 +233,36 @@ void returnAuthorizationWorkbench::sHandleButton()
 
 void returnAuthorizationWorkbench::sProcess()
 {
+  XSqlQuery returnProcess;
   if (!checkSitePrivs(_radue->id()))
     return;
   
   bool _post = ((_radue->altId() > 1) ||
 		(_radue->altId() == 1 && _postmemos->isChecked())) ;
 
-  q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
-  q.bindValue(":rahead_id",_radue->id());
-  q.bindValue(":post",QVariant(_post));
-  q.exec();
-  if (q.first())
+  returnProcess.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
+  returnProcess.bindValue(":rahead_id",_radue->id());
+  returnProcess.bindValue(":post",QVariant(_post));
+  returnProcess.exec();
+  if (returnProcess.first())
   {
-    int cmheadid = q.value("result").toInt();
+    int cmheadid = returnProcess.value("result").toInt();
     if (cmheadid < 0)
     {
       systemError(this, storedProcErrorLookup("createRaCreditMemo", cmheadid), __FILE__, __LINE__);
       return;
     }
-    q.prepare( "SELECT cmhead_number "
+    returnProcess.prepare( "SELECT cmhead_number "
                "FROM cmhead "
                "WHERE (cmhead_id=:cmhead_id);" );
-    q.bindValue(":cmhead_id", cmheadid);
-    q.exec();
-    if (q.first())
+    returnProcess.bindValue(":cmhead_id", cmheadid);
+    returnProcess.exec();
+    if (returnProcess.first())
     {
       QMessageBox::information( this, tr("New Credit Memo Created"),
                                 tr("<p>A new CreditMemo has been created and "
 				                   "assigned #%1")
-                                   .arg(q.value("cmhead_number").toString()));
+                                   .arg(returnProcess.value("cmhead_number").toString()));
 	  if (_printmemo->isChecked())
 	  {
 		ParameterList params;
@@ -301,7 +302,7 @@ void returnAuthorizationWorkbench::sProcess()
 				 cardproc->errorMsg());
 	  else
 	  {
-	    QString docnum = q.value("cmhead_number").toString();
+	    QString docnum = returnProcess.value("cmhead_number").toString();
 	    QString refnum = ccq.value("cohead_number").toString();
 	    int refid = -1;
 	    int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
@@ -344,15 +345,15 @@ void returnAuthorizationWorkbench::sProcess()
       else
 	sFillListDue();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (returnProcess.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, returnProcess.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (returnProcess.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, returnProcess.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

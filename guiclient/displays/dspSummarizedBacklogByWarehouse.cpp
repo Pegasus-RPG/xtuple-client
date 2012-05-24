@@ -139,17 +139,18 @@ void dspSummarizedBacklogByWarehouse::sView()
 
 void dspSummarizedBacklogByWarehouse::sDelete()
 {
+  XSqlQuery dspDelete;
   if ( QMessageBox::question(this, tr("Delete Sales Order?"),
                              tr("<p>Are you sure that you want to completely "
 			     "delete the selected Sales Order?"),
 			     QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.prepare("SELECT deleteSo(:sohead_id) AS result;");
-    q.bindValue(":sohead_id", list()->id());
-    q.exec();
-    if (q.first())
+    dspDelete.prepare("SELECT deleteSo(:sohead_id) AS result;");
+    dspDelete.bindValue(":sohead_id", list()->id());
+    dspDelete.exec();
+    if (dspDelete.first())
     {
-      int result = q.value("result").toInt();
+      int result = dspDelete.value("result").toInt();
       switch (result)
       {
         case 0:
@@ -163,15 +164,15 @@ void dspSummarizedBacklogByWarehouse::sDelete()
 					  "selected Sales Order instead?" ),
 				    QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
           {
-            q.prepare( "UPDATE coitem "
+            dspDelete.prepare( "UPDATE coitem "
                        "SET coitem_status='C' "
                        "WHERE ((coitem_status<>'X')"
 		       "   AND (coitem_cohead_id=:sohead_id));" );
-            q.bindValue(":sohead_id", list()->id());
-            q.exec();
-	    if (q.lastError().type() != QSqlError::NoError)
+            dspDelete.bindValue(":sohead_id", list()->id());
+            dspDelete.exec();
+	    if (dspDelete.lastError().type() != QSqlError::NoError)
 	    {
-	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	      systemError(this, dspDelete.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
 	    }
       
@@ -186,9 +187,9 @@ void dspSummarizedBacklogByWarehouse::sDelete()
 	  return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (dspDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -248,6 +249,7 @@ void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu, QTreeWidgetIte
 
 void dspSummarizedBacklogByWarehouse::sFillList()
 {
+  XSqlQuery dspFillList;
   ParameterList params;
   if (setParams(params))
   {
@@ -256,32 +258,32 @@ void dspSummarizedBacklogByWarehouse::sFillList()
 //    if (list()->topLevelItemCount())
 //    {
       MetaSQLQuery totm = mqlLoad("summarizedBacklogByWarehouse", "totals");
-      q = totm.toQuery(params);
-      if (q.first())
-        _totalSalesOrders->setText(q.value("totalorders").toString());
-      else if (q.lastError().type() != QSqlError::NoError)
+      dspFillList = totm.toQuery(params);
+      if (dspFillList.first())
+        _totalSalesOrders->setText(dspFillList.value("totalorders").toString());
+      else if (dspFillList.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
 
       MetaSQLQuery cntm = mqlLoad("summarizedBacklogByWarehouse", "counts");
-      q = cntm.toQuery(params);
-      if (q.first())
-        _totalLineItems->setText(q.value("totalitems").toString());
-      else if (q.lastError().type() != QSqlError::NoError)
+      dspFillList = cntm.toQuery(params);
+      if (dspFillList.first())
+        _totalLineItems->setText(dspFillList.value("totalitems").toString());
+      else if (dspFillList.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
 
       MetaSQLQuery qtym = mqlLoad("summarizedBacklogByWarehouse", "qtys");
-      q = qtym.toQuery(params);
-      if (q.first())
-        _totalQty->setText(q.value("f_totalqty").toString());
-      else if (q.lastError().type() != QSqlError::NoError)
+      dspFillList = qtym.toQuery(params);
+      if (dspFillList.first())
+        _totalQty->setText(dspFillList.value("f_totalqty").toString());
+      else if (dspFillList.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
 //    }

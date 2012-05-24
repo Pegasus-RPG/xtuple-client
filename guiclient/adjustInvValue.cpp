@@ -105,6 +105,7 @@ enum SetResponse adjustInvValue::set(const ParameterList &pParams)
 
 void adjustInvValue::sPopulate()
 {
+  XSqlQuery adjustPopulate;
   if (_item->id() == -1)
   {
     _itemsiteid = -1;
@@ -131,14 +132,14 @@ void adjustInvValue::sPopulate()
     params.append("warehous_id", _site->id());
     params.append("item_id", _item->id());
     MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    if (q.first())
+    adjustPopulate = mql.toQuery(params);
+    if (adjustPopulate.first())
     {
-      _itemsiteid = q.value("itemsite_id").toInt();
-      _qtyonhand = q.value("itemsite_qtyonhand").toDouble();
-      _qoh->setText(q.value("f_qoh").toString());
-      _currentValue->setText(q.value("f_value").toString());
-      _currentCost->setText(q.value("f_cost").toString());
+      _itemsiteid = adjustPopulate.value("itemsite_id").toInt();
+      _qtyonhand = adjustPopulate.value("itemsite_qtyonhand").toDouble();
+      _qoh->setText(adjustPopulate.value("f_qoh").toString());
+      _currentValue->setText(adjustPopulate.value("f_value").toString());
+      _currentCost->setText(adjustPopulate.value("f_cost").toString());
       _post->setEnabled(true);
     }
     else
@@ -151,9 +152,9 @@ void adjustInvValue::sPopulate()
       _newCost->setText("0.0");
       _post->setEnabled(false);
     }
-    if (q.lastError().type() != QSqlError::NoError)
+    if (adjustPopulate.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, adjustPopulate.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -161,6 +162,7 @@ void adjustInvValue::sPopulate()
 
 void adjustInvValue::sPost()
 {
+  XSqlQuery adjustPost;
   struct {
     bool        condition;
     QString     msg;
@@ -199,10 +201,10 @@ void adjustInvValue::sPost()
                 "                      <? value('accnt_id') ?>) AS result;";
 
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  adjustPost = mql.toQuery(params);
+  if (adjustPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, adjustPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -214,6 +216,7 @@ void adjustInvValue::sPost()
 
 void adjustInvValue::sUpdateCost()
 {
+  XSqlQuery adjustUpdateCost;
   QString sql = "SELECT "
            "       CASE WHEN itemsite_qtyonhand > 0 THEN "
            "         formatCost(<? value(\"newvalue\") ?> / itemsite_qtyonhand) "
@@ -227,14 +230,14 @@ void adjustInvValue::sUpdateCost()
   params.append("item_id", _item->id());
   params.append("newvalue", _newValue->toDouble());
   MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.first())
+  adjustUpdateCost = mql.toQuery(params);
+  if (adjustUpdateCost.first())
   {
-    _newCost->setText(q.value("f_cost").toString());
+    _newCost->setText(adjustUpdateCost.value("f_cost").toString());
   }
-  if (q.lastError().type() != QSqlError::NoError)
+  if (adjustUpdateCost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, adjustUpdateCost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

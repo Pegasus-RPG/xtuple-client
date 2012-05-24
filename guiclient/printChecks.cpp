@@ -72,6 +72,7 @@ enum SetResponse printChecks::set(const ParameterList & pParams )
 
 void printChecks::sPrint()
 {
+  XSqlQuery printPrint;
   if (_somerecips_eft_enabled &&
       QMessageBox::question(this, tr("Print Anyway?"),
                             tr("<p>Some of the recipients of checks in this "
@@ -141,13 +142,13 @@ void printChecks::sPrint()
 
       if(_setCheckNumber != -1 && _setCheckNumber != _nextCheckNum->text().toInt() && firstRun)
       {
-        q.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
-        q.bindValue(":bankaccnt_id", _bankaccnt->id());
-        q.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
-        q.exec();
-        if (q.first())
+        printPrint.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
+        printPrint.bindValue(":bankaccnt_id", _bankaccnt->id());
+        printPrint.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
+        printPrint.exec();
+        if (printPrint.first())
         {
-          int result = q.value("result").toInt();
+          int result = printPrint.value("result").toInt();
           if (result < 0)
           {
             systemError(this, storedProcErrorLookup("setNextCheckNumber", result),
@@ -155,22 +156,22 @@ void printChecks::sPrint()
             return;
           }
         }
-        else if (q.lastError().type() != QSqlError::NoError)
+        else if (printPrint.lastError().type() != QSqlError::NoError)
         {
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
        firstRun = FALSE;
       }
     }
 
-    q.prepare("UPDATE checkhead SET checkhead_number=fetchNextCheckNumber(checkhead_bankaccnt_id)"
+    printPrint.prepare("UPDATE checkhead SET checkhead_number=fetchNextCheckNumber(checkhead_bankaccnt_id)"
               " WHERE(checkhead_id=:checkhead_id);");
-    q.bindValue(":checkhead_id", checks.value("checkhead_id").toInt());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    printPrint.bindValue(":checkhead_id", checks.value("checkhead_id").toInt());
+    printPrint.exec();
+    if (printPrint.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -306,7 +307,8 @@ void printChecks::sPrint()
 
 void printChecks::sHandleBankAccount(int pBankaccntid)
 {
-  q.prepare( "SELECT bankaccnt_nextchknum,"
+  XSqlQuery printHandleBankAccount;
+  printHandleBankAccount.prepare( "SELECT bankaccnt_nextchknum,"
              "       BOOL_OR(bankaccnt_ach_enabled) AS bank_eft_enabled,"
              "       COUNT(*) AS numofchecks,"
              "       BOOL_OR(COALESCE(vend_ach_enabled, false)) AS somerecip_eft_enabled,"
@@ -319,24 +321,24 @@ void printChecks::sHandleBankAccount(int pBankaccntid)
              "   AND (checkhead_bankaccnt_id=bankaccnt_id)"
              "   AND (checkhead_bankaccnt_id=:bankaccnt_id))"
              " GROUP BY bankaccnt_nextchknum;" );
-  q.bindValue(":bankaccnt_id", pBankaccntid);
-  q.exec();
-  if (q.first())
+  printHandleBankAccount.bindValue(":bankaccnt_id", pBankaccntid);
+  printHandleBankAccount.exec();
+  if (printHandleBankAccount.first())
   {
-    _setCheckNumber = q.value("bankaccnt_nextchknum").toInt();
-    _nextCheckNum->setText(q.value("bankaccnt_nextchknum").toString());
-    _numberOfChecks->setMaximum(q.value("numofchecks").toInt());
-    _numberOfChecks->setValue(q.value("numofchecks").toInt());
-    _allrecips_eft_enabled = q.value("allrecip_eft_enabled").toBool();
-    _somerecips_eft_enabled = q.value("somerecip_eft_enabled").toBool();
-    _print->setEnabled(q.value("numofchecks").toInt() > 0);
-    _createEFT->setEnabled(q.value("bank_eft_enabled").toBool() &&
-                           q.value("somerecip_eft_enabled").toBool() &&
-                           q.value("numofchecks").toInt() > 0);
+    _setCheckNumber = printHandleBankAccount.value("bankaccnt_nextchknum").toInt();
+    _nextCheckNum->setText(printHandleBankAccount.value("bankaccnt_nextchknum").toString());
+    _numberOfChecks->setMaximum(printHandleBankAccount.value("numofchecks").toInt());
+    _numberOfChecks->setValue(printHandleBankAccount.value("numofchecks").toInt());
+    _allrecips_eft_enabled = printHandleBankAccount.value("allrecip_eft_enabled").toBool();
+    _somerecips_eft_enabled = printHandleBankAccount.value("somerecip_eft_enabled").toBool();
+    _print->setEnabled(printHandleBankAccount.value("numofchecks").toInt() > 0);
+    _createEFT->setEnabled(printHandleBankAccount.value("bank_eft_enabled").toBool() &&
+                           printHandleBankAccount.value("somerecip_eft_enabled").toBool() &&
+                           printHandleBankAccount.value("numofchecks").toInt() > 0);
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (printHandleBankAccount.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, printHandleBankAccount.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else // not found
@@ -353,6 +355,7 @@ void printChecks::sHandleBankAccount(int pBankaccntid)
 
 void printChecks::sCreateEFT()
 {
+  XSqlQuery printCreateEFT;
   if (_somerecips_eft_enabled && !_allrecips_eft_enabled &&
       QMessageBox::question(this, tr("Print Anyway?"),
                             tr("<p>Some but not all of the checks in this run "
@@ -381,10 +384,10 @@ void printChecks::sCreateEFT()
   params.append("func", _metrics->value("EFTFunction"));
   params.append("bank", _bankaccnt->id());
   params.append("key",  omfgThis->_key);
-  q = mql.toQuery(params);
-  if (q.first())
+  printCreateEFT = mql.toQuery(params);
+  if (printCreateEFT.first())
   {
-    batch = q.value("achline_batch").toString();
+    batch = printCreateEFT.value("achline_batch").toString();
     releasenum.bindValue(":batch", batch);
     if (printCheck::eftFileDir.isEmpty())
     {
@@ -415,15 +418,15 @@ void printChecks::sCreateEFT()
     }
     do
     {
-      eftfile.write(q.value("achline_value").toString().toAscii());
+      eftfile.write(printCreateEFT.value("achline_value").toString().toAscii());
       eftfile.write("\n");
-    } while (q.next());
+    } while (printCreateEFT.next());
     eftfile.close();
-    if (q.lastError().type() != QSqlError::NoError)
+    if (printCreateEFT.lastError().type() != QSqlError::NoError)
     {
       releasenum.exec();
       eftfile.remove();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, printCreateEFT.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -447,9 +450,9 @@ void printChecks::sCreateEFT()
     }
     sHandleBankAccount(_bankaccnt->id());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (printCreateEFT.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, printCreateEFT.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

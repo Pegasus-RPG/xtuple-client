@@ -44,6 +44,7 @@ void selectPayment::languageChange()
 
 enum SetResponse selectPayment::set(const ParameterList &pParams)
 {
+  XSqlQuery selectet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -57,19 +58,19 @@ enum SetResponse selectPayment::set(const ParameterList &pParams)
   {
     _apopenid = param.toInt();
 
-    q.prepare( "SELECT apselect_id "
+    selectet.prepare( "SELECT apselect_id "
                "FROM apselect "
                "WHERE (apselect_apopen_id=:apopen_id);" );
-    q.bindValue(":apopen_id", _apopenid);
-    q.exec();
-    if (q.first())
+    selectet.bindValue(":apopen_id", _apopenid);
+    selectet.exec();
+    if (selectet.first())
     {
       _mode = cEdit;
-      _apselectid = q.value("apselect_id").toInt();
+      _apselectid = selectet.value("apselect_id").toInt();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (selectet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, selectet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
     else
@@ -87,6 +88,7 @@ enum SetResponse selectPayment::set(const ParameterList &pParams)
 
 void selectPayment::sSave()
 {
+  XSqlQuery selectSave;
   if (_selected->isZero())
   {
     QMessageBox::warning( this, tr("Cannot Select for Payment"),
@@ -112,14 +114,14 @@ void selectPayment::sSave()
     return;
   }
 
-  q.prepare("SELECT bankaccnt_curr_id, currConcat(bankaccnt_curr_id) AS currAbbr "
+  selectSave.prepare("SELECT bankaccnt_curr_id, currConcat(bankaccnt_curr_id) AS currAbbr "
 	    "FROM bankaccnt "
 	    "WHERE bankaccnt_id = :accntid;");
-  q.bindValue(":accntid", _bankaccnt->id());
-  q.exec();
-  if (q.first())
+  selectSave.bindValue(":accntid", _bankaccnt->id());
+  selectSave.exec();
+  if (selectSave.first())
   {
-    if (q.value("bankaccnt_curr_id").toInt() != _selected->id())
+    if (selectSave.value("bankaccnt_curr_id").toInt() != _selected->id())
     {
 	int response = QMessageBox::question(this,
 			     tr("Currencies Do Not Match"),
@@ -128,7 +130,7 @@ void selectPayment::sSave()
 				 "Bank Account (%2). Would you like to use "
 				 "this Bank Account anyway?")
 			       .arg(_selected->currAbbr())
-			       .arg(q.value("currAbbr").toString()),
+			       .arg(selectSave.value("currAbbr").toString()),
 			      QMessageBox::Yes,
 			      QMessageBox::No | QMessageBox::Default);
 	if (response == QMessageBox::No)
@@ -140,22 +142,22 @@ void selectPayment::sSave()
   }
   else
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('apselect_apselect_id_seq') AS apselect_id;");
-    if (q.first())
-      _apselectid = q.value("apselect_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    selectSave.exec("SELECT NEXTVAL('apselect_apselect_id_seq') AS apselect_id;");
+    if (selectSave.first())
+      _apselectid = selectSave.value("apselect_id").toInt();
+    else if (selectSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, selectSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO apselect "
+    selectSave.prepare( "INSERT INTO apselect "
                "( apselect_id, apselect_apopen_id,"
                "  apselect_amount, apselect_bankaccnt_id, "
 	       "  apselect_curr_id, apselect_date, apselect_discount ) "
@@ -163,10 +165,10 @@ void selectPayment::sSave()
                "( :apselect_id, :apselect_apopen_id,"
                "  :apselect_amount, :apselect_bankaccnt_id, "
 	       "  :apselect_curr_id, :apselect_docdate, :apselect_discount );" );
-    q.bindValue(":apselect_apopen_id", _apopenid);
+    selectSave.bindValue(":apselect_apopen_id", _apopenid);
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE apselect "
+    selectSave.prepare( "UPDATE apselect "
                "SET apselect_amount=:apselect_amount, "
 	       " apselect_bankaccnt_id=:apselect_bankaccnt_id, "
 	       " apselect_curr_id=:apselect_curr_id, "
@@ -174,16 +176,16 @@ void selectPayment::sSave()
                " apselect_discount=:apselect_discount "
                "WHERE (apselect_id=:apselect_id);" );
 
-  q.bindValue(":apselect_id", _apselectid);
-  q.bindValue(":apselect_amount", _selected->localValue());
-  q.bindValue(":apselect_bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":apselect_curr_id", _selected->id());
-  q.bindValue(":apselect_docdate", _docDate->date());
-  q.bindValue(":apselect_discount", _discountAmount->localValue());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  selectSave.bindValue(":apselect_id", _apselectid);
+  selectSave.bindValue(":apselect_amount", _selected->localValue());
+  selectSave.bindValue(":apselect_bankaccnt_id", _bankaccnt->id());
+  selectSave.bindValue(":apselect_curr_id", _selected->id());
+  selectSave.bindValue(":apselect_docdate", _docDate->date());
+  selectSave.bindValue(":apselect_discount", _discountAmount->localValue());
+  selectSave.exec();
+  if (selectSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -194,7 +196,8 @@ void selectPayment::sSave()
 
 void selectPayment::populate()
 {
-  q.prepare( "SELECT apopen_vend_id, apopen_docnumber, apopen_ponumber,"
+  XSqlQuery selectpopulate;
+  selectpopulate.prepare( "SELECT apopen_vend_id, apopen_docnumber, apopen_ponumber,"
              "       apopen_docdate, apopen_duedate,"
              "       apopen_amount, "
 	     "       COALESCE(apselect_curr_id, apopen_curr_id) AS curr_id, "
@@ -220,27 +223,27 @@ void selectPayment::populate()
              "FROM terms RIGHT OUTER JOIN apopen ON (apopen_terms_id=terms_id) "
 	     "      LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
              "WHERE apopen_id=:apopen_id;" );
-  q.bindValue(":apopen_id", _apopenid);
-  q.exec();
-  if (q.first())
+  selectpopulate.bindValue(":apopen_id", _apopenid);
+  selectpopulate.exec();
+  if (selectpopulate.first())
   {
-    _selected->setId(q.value("curr_id").toInt());
-    _selected->setLocalValue(q.value("f_selected").toDouble());
-    _vendor->setId(q.value("apopen_vend_id").toInt());
-    _docNumber->setText(q.value("apopen_docnumber").toString());
-    _poNum->setText(q.value("apopen_ponumber").toString());
-    _docDate->setDate(q.value("apopen_docdate").toDate());
-    _dueDate->setDate(q.value("apopen_duedate").toDate());
-    _terms->setText(q.value("f_terms").toString());
-    _total->setLocalValue(q.value("apopen_amount").toDouble());
-    _discountAmount->setLocalValue(q.value("discount").toDouble());
-    _amount->setLocalValue(q.value("f_amount").toDouble());
-    if(q.value("bankaccnt_id").toInt() != -1)
-      _bankaccnt->setId(q.value("bankaccnt_id").toInt());
+    _selected->setId(selectpopulate.value("curr_id").toInt());
+    _selected->setLocalValue(selectpopulate.value("f_selected").toDouble());
+    _vendor->setId(selectpopulate.value("apopen_vend_id").toInt());
+    _docNumber->setText(selectpopulate.value("apopen_docnumber").toString());
+    _poNum->setText(selectpopulate.value("apopen_ponumber").toString());
+    _docDate->setDate(selectpopulate.value("apopen_docdate").toDate());
+    _dueDate->setDate(selectpopulate.value("apopen_duedate").toDate());
+    _terms->setText(selectpopulate.value("f_terms").toString());
+    _total->setLocalValue(selectpopulate.value("apopen_amount").toDouble());
+    _discountAmount->setLocalValue(selectpopulate.value("discount").toDouble());
+    _amount->setLocalValue(selectpopulate.value("f_amount").toDouble());
+    if(selectpopulate.value("bankaccnt_id").toInt() != -1)
+      _bankaccnt->setId(selectpopulate.value("bankaccnt_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (selectpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, selectpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

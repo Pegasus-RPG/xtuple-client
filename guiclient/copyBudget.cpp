@@ -68,6 +68,7 @@ enum SetResponse copyBudget::set(const ParameterList &pParams)
 
 void copyBudget::sCopy()
 {
+  XSqlQuery copyCopy;
   if(_name->text().trimmed().isEmpty())
   {
     QMessageBox::warning(this, tr("Name Required"),
@@ -76,14 +77,14 @@ void copyBudget::sCopy()
     return;
   }
 
-  q.prepare("SELECT copyBudget(:budghead_id, :name, :descrip, :interval) AS result;");
-  q.bindValue(":budghead_id", _budgheadid);
-  q.bindValue(":name", _name->text());
-  q.bindValue(":descrip", _descrip->text());
-  q.bindValue(":interval", _interval->value());
-  q.exec();
+  copyCopy.prepare("SELECT copyBudget(:budghead_id, :name, :descrip, :interval) AS result;");
+  copyCopy.bindValue(":budghead_id", _budgheadid);
+  copyCopy.bindValue(":name", _name->text());
+  copyCopy.bindValue(":descrip", _descrip->text());
+  copyCopy.bindValue(":interval", _interval->value());
+  copyCopy.exec();
 
-  if(q.first() && q.value("result").toInt() < 0)
+  if(copyCopy.first() && copyCopy.value("result").toInt() < 0)
   {
     QMessageBox::information( this, tr("Error Copying Budget"),
                               tr( "There was an error copying the budget. Make sure there are valid periods\n"
@@ -91,9 +92,9 @@ void copyBudget::sCopy()
                                   "the period inteval." ));
     return;
   }
-  else if(q.lastError().type() != QSqlError::NoError)
+  else if(copyCopy.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

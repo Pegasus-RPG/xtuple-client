@@ -148,12 +148,13 @@ void accountingPeriods::sView()
 
 void accountingPeriods::sDelete()
 {
-  q.prepare("SELECT deleteAccountingPeriod(:period_id) AS result;");
-  q.bindValue(":period_id", _period->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery deleteAccounting;
+  deleteAccounting.prepare("SELECT deleteAccountingPeriod(:period_id) AS result;");
+  deleteAccounting.bindValue(":period_id", _period->id());
+  deleteAccounting.exec();
+  if (deleteAccounting.first())
   {
-    int result = q.value("result").toInt();
+    int result = deleteAccounting.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteAccountingPeriod",
@@ -161,9 +162,9 @@ void accountingPeriods::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (deleteAccounting.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, deleteAccounting.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -171,12 +172,13 @@ void accountingPeriods::sDelete()
 
 void accountingPeriods::sClosePeriod()
 {
-  q.prepare("SELECT closeAccountingPeriod(:period_id) AS result;");
-  q.bindValue(":period_id", _period->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery closeAccounting;
+  closeAccounting.prepare("SELECT closeAccountingPeriod(:period_id) AS result;");
+  closeAccounting.bindValue(":period_id", _period->id());
+  closeAccounting.exec();
+  if (closeAccounting.first())
   {
-    int result = q.value("result").toInt();
+    int result = closeAccounting.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("closeAccountingPeriod", result),
@@ -184,9 +186,9 @@ void accountingPeriods::sClosePeriod()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (closeAccounting.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, closeAccounting.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -197,16 +199,17 @@ void accountingPeriods::sOpenPeriod()
 {
   bool reallyOpen = false;
 
-  q.prepare("SELECT COUNT(gltrans_sequence) AS count "
+  XSqlQuery openAccounting;
+  openAccounting.prepare("SELECT COUNT(gltrans_sequence) AS count "
             "FROM gltrans, period "
             "WHERE ( (NOT gltrans_posted) "
             "AND (gltrans_date BETWEEN period_start AND period_end) "
             "AND (period_id=:period_id) );");
-  q.bindValue(":period_id", _period->id());
-  q.exec();
-  if (q.first())
+  openAccounting.bindValue(":period_id", _period->id());
+  openAccounting.exec();
+  if (openAccounting.first())
   {
-    if (q.value("count").toInt() <= 0)
+    if (openAccounting.value("count").toInt() <= 0)
       reallyOpen = true;
     else
     {
@@ -219,20 +222,20 @@ void accountingPeriods::sOpenPeriod()
       reallyOpen = (newdlg.exec() == XDialog::Accepted);
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (openAccounting.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, openAccounting.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (reallyOpen)
   {
-    q.prepare("SELECT openAccountingPeriod(:period_id) AS result;");
-    q.bindValue(":period_id", _period->id());
-    q.exec();
-    if (q.first())
+    openAccounting.prepare("SELECT openAccountingPeriod(:period_id) AS result;");
+    openAccounting.bindValue(":period_id", _period->id());
+    openAccounting.exec();
+    if (openAccounting.first())
     {
-      int result = q.value("result").toInt();
+      int result = openAccounting.value("result").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("openAccountingPeriod", result),
@@ -240,9 +243,9 @@ void accountingPeriods::sOpenPeriod()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (openAccounting.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, openAccounting.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -252,12 +255,13 @@ void accountingPeriods::sOpenPeriod()
 
 void accountingPeriods::sFreezePeriod()
 {
-  q.prepare("SELECT freezeAccountingPeriod(:period_id) AS result;");
-  q.bindValue(":period_id", _period->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery freezeAccounting;
+  freezeAccounting.prepare("SELECT freezeAccountingPeriod(:period_id) AS result;");
+  freezeAccounting.bindValue(":period_id", _period->id());
+  freezeAccounting.exec();
+  if (freezeAccounting.first())
   {
-    int result = q.value("result").toInt();
+    int result = freezeAccounting.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("freezeAccountingPeriod", result),
@@ -265,9 +269,9 @@ void accountingPeriods::sFreezePeriod()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (freezeAccounting.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, freezeAccounting.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -276,12 +280,13 @@ void accountingPeriods::sFreezePeriod()
 
 void accountingPeriods::sThawPeriod()
 {
-  q.prepare("SELECT thawAccountingPeriod(:period_id) AS result;");
-  q.bindValue(":period_id", _period->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery thawAccounting;
+  thawAccounting.prepare("SELECT thawAccountingPeriod(:period_id) AS result;");
+  thawAccounting.bindValue(":period_id", _period->id());
+  thawAccounting.exec();
+  if (thawAccounting.first())
   {
-    int result = q.value("result").toInt();
+    int result = thawAccounting.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("thawAccountingPeriod", result),
@@ -289,9 +294,9 @@ void accountingPeriods::sThawPeriod()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (thawAccounting.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, thawAccounting.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

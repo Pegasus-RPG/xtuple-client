@@ -102,12 +102,13 @@ void classCodes::sView()
 
 void classCodes::sDelete()
 {
-  q.prepare("SELECT deleteClassCode(:classcode_id) AS result;");
-  q.bindValue(":classcode_id", _classcode->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery classDelete;
+  classDelete.prepare("SELECT deleteClassCode(:classcode_id) AS result;");
+  classDelete.bindValue(":classcode_id", _classcode->id());
+  classDelete.exec();
+  if (classDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = classDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteClassCode", result),
@@ -115,9 +116,9 @@ void classCodes::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (classDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, classDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList(-1);
@@ -134,16 +135,17 @@ void classCodes::sPrint()
 
 void classCodes::sDeleteUnused()
 {
+  XSqlQuery classDeleteUnused;
   if ( QMessageBox::warning( this, tr("Delete Unused Class Codes"),
                              tr("<p>Are you sure that you wish to delete all "
                                 "unused Class Codes?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
-    q.exec("SELECT deleteUnusedClassCodes() AS result;");
-    if (q.first())
+    classDeleteUnused.exec("SELECT deleteUnusedClassCodes() AS result;");
+    if (classDeleteUnused.first())
     {
-      int result = q.value("result").toInt();
+      int result = classDeleteUnused.value("result").toInt();
       if (result < 0)
       {
         systemError(this,
@@ -152,9 +154,9 @@ void classCodes::sDeleteUnused()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (classDeleteUnused.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, classDeleteUnused.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     sFillList(-1);

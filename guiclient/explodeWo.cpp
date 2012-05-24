@@ -68,15 +68,16 @@ enum SetResponse explodeWo::set(const ParameterList &pParams)
 
 void explodeWo::sExplode()
 {
+  XSqlQuery explodeExplode;
   if (_wo->isValid())
   {
-    q.prepare("SELECT explodeWo(:wo_id, :explodeChildren) AS result;");
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":explodeChildren", QVariant(_multipleLevel->isChecked()));
-    q.exec();
-    if (q.first())
+    explodeExplode.prepare("SELECT explodeWo(:wo_id, :explodeChildren) AS result;");
+    explodeExplode.bindValue(":wo_id", _wo->id());
+    explodeExplode.bindValue(":explodeChildren", QVariant(_multipleLevel->isChecked()));
+    explodeExplode.exec();
+    if (explodeExplode.first())
     {
-      int result = q.value("result").toInt();
+      int result = explodeExplode.value("result").toInt();
       if (result < 0)
       {
 	systemError(this,
@@ -85,9 +86,9 @@ void explodeWo::sExplode()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (explodeExplode.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, explodeExplode.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 

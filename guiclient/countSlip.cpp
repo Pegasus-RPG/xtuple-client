@@ -70,6 +70,7 @@ void countSlip::languageChange()
 
 enum SetResponse countSlip::set(const ParameterList &pParams)
 {
+  XSqlQuery countet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -108,14 +109,14 @@ enum SetResponse countSlip::set(const ParameterList &pParams)
       _mode = cEdit;
       _captive = TRUE;
 
-      q.prepare( "SELECT cntslip_posted "
+      countet.prepare( "SELECT cntslip_posted "
                  "FROM cntslip "
                  "WHERE (cntslip_id=:cntslip_id);" );
-      q.bindValue(":cntslip_id", _cntslipid);
-      q.exec();
-      if (q.first())
+      countet.bindValue(":cntslip_id", _cntslipid);
+      countet.exec();
+      if (countet.first())
       {
-        if (q.value("cntslip_posted").toBool())
+        if (countet.value("cntslip_posted").toBool())
         {
 //  ToDo
           reject();
@@ -171,6 +172,7 @@ void countSlip::sCatchCounttagid(int pCnttagid)
 
 void countSlip::sSave()
 {
+  XSqlQuery countSave;
   QString slipNumber = _number->text().trimmed().toUpper();
   if (slipNumber.length() == 0)
   {
@@ -193,7 +195,7 @@ void countSlip::sSave()
     QString countSlipAuditing = _metrics->value("CountSlipAuditing");
     if (countSlipAuditing == "W")
     {
-      q.prepare( "SELECT cntslip_id "
+      countSave.prepare( "SELECT cntslip_id "
                  "FROM cntslip, "
                  "     invcnt AS newtag, invcnt AS oldtag,"
                  "     itemsite AS newsite, itemsite AS oldsite "
@@ -204,10 +206,10 @@ void countSlip::sSave()
                  " AND (NOT cntslip_posted)"
                  " AND (newtag.invcnt_id=:cnttag_id)"
                  " AND (cntslip_number=:cntslip_number) );" );
-      q.bindValue(":cnttag_id", _cnttagid);
-      q.bindValue(":cntslip_number", slipNumber); 
-      q.exec();
-      if (q.first())
+      countSave.bindValue(":cnttag_id", _cnttagid);
+      countSave.bindValue(":cntslip_number", slipNumber); 
+      countSave.exec();
+      if (countSave.first())
       {
         QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
                                tr( "An unposted Count Slip for this Site has already been entered\n"
@@ -219,13 +221,13 @@ void countSlip::sSave()
     }
     else if (countSlipAuditing == "A")
     {
-      q.prepare( "SELECT cntslip_id "
+      countSave.prepare( "SELECT cntslip_id "
                  "FROM cntslip "
                  "WHERE ( (NOT cntslip_posted)"
                  " AND (cntslip_number=:cntslip_number));" );
-      q.bindValue(":cntslip_number", slipNumber); 
-      q.exec();
-      if (q.first())
+      countSave.bindValue(":cntslip_number", slipNumber); 
+      countSave.exec();
+      if (countSave.first())
       {
         QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
                                tr( "An unposted Count Slip has already been entered with this #.\n"
@@ -237,7 +239,7 @@ void countSlip::sSave()
     }
     else if (countSlipAuditing == "X")
     {
-      q.prepare( "SELECT cntslip_id "
+      countSave.prepare( "SELECT cntslip_id "
                  "FROM cntslip, "
                  "     invcnt AS newtag, invcnt AS oldtag,"
                  "     itemsite AS newsite, itemsite AS oldsite "
@@ -247,10 +249,10 @@ void countSlip::sSave()
                  " AND (oldsite.itemsite_warehous_id=newsite.itemsite_warehous_id)"
                  " AND (newtag.invcnt_id=:cnttag_id)"
                  " AND (cntslip_number=:cntslip_number));" );
-      q.bindValue(":cnttag_id", _cnttagid);
-      q.bindValue(":cntslip_number", slipNumber); 
-      q.exec();
-      if (q.first())
+      countSave.bindValue(":cnttag_id", _cnttagid);
+      countSave.bindValue(":cntslip_number", slipNumber); 
+      countSave.exec();
+      if (countSave.first())
       {
         QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
                                tr( "An Count Slip for this Site has already been entered with this #.\n"
@@ -262,12 +264,12 @@ void countSlip::sSave()
     }
     else if (countSlipAuditing == "B")
     {
-      q.prepare( "SELECT cntslip_id "
+      countSave.prepare( "SELECT cntslip_id "
                  "FROM cntslip "
                  "WHERE (cntslip_number=:cntslip_number);" );
-      q.bindValue(":cntslip_number", slipNumber); 
-      q.exec();
-      if (q.first())
+      countSave.bindValue(":cntslip_number", slipNumber); 
+      countSave.exec();
+      if (countSave.first())
       {
         QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
                                tr( "An Count Slip has already been entered with this #.  The\n"
@@ -278,16 +280,16 @@ void countSlip::sSave()
     }
 
     // Check for duplicate Serial #
-    q.prepare( "SELECT cntslip_id "
+    countSave.prepare( "SELECT cntslip_id "
                "FROM invcnt JOIN itemsite ON (itemsite_id=invcnt_itemsite_id)"
                "            JOIN cntslip ON (cntslip_cnttag_id=invcnt_id)"
                "WHERE ( (invcnt_id=:cnttag_id)"
                "  AND   (itemsite_controlmethod='S')"
                "  AND   (cntslip_lotserial=:cntslip_lotserial) );" );
-    q.bindValue(":cnttag_id", _cnttagid);
-    q.bindValue(":cntslip_lotserial", _lotSerial->text());
-    q.exec();
-    if (q.first())
+    countSave.bindValue(":cnttag_id", _cnttagid);
+    countSave.bindValue(":cntslip_lotserial", _lotSerial->text());
+    countSave.exec();
+    if (countSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Duplicate Serial #"),
                              tr( "A Count Slip has already been entered with this Serial #.\n"
@@ -296,7 +298,7 @@ void countSlip::sSave()
     }
 
     // Check for duplicate Serial # in different Location from Location being counted
-    q.prepare( "SELECT itemloc_id "
+    countSave.prepare( "SELECT itemloc_id "
                "FROM invcnt JOIN itemsite ON (itemsite_id=invcnt_itemsite_id)"
                "            JOIN itemloc ON (itemloc_itemsite_id=itemsite_id)"
                "            JOIN ls ON (ls_id=itemloc_ls_id)"
@@ -305,11 +307,11 @@ void countSlip::sSave()
                "  AND   (itemsite_controlmethod='S')"
                "  AND   (itemloc_location_id <> :cntslip_location_id)"
                "  AND   (ls_number=:cntslip_lotserial) );" );
-    q.bindValue(":cnttag_id", _cnttagid);
-    q.bindValue(":cntslip_location_id", _location->id());
-    q.bindValue(":cntslip_lotserial", _lotSerial->text());
-    q.exec();
-    if (q.first())
+    countSave.bindValue(":cnttag_id", _cnttagid);
+    countSave.bindValue(":cntslip_location_id", _location->id());
+    countSave.bindValue(":cntslip_lotserial", _lotSerial->text());
+    countSave.exec();
+    if (countSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Duplicate Serial #"),
                              tr( "This Serial # exists in a different Location.\n"
@@ -317,12 +319,12 @@ void countSlip::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('cntslip_cntslip_id_seq') AS cntslip_id");
-    if (q.first())
-      _cntslipid = q.value("cntslip_id").toInt();
+    countSave.exec("SELECT NEXTVAL('cntslip_cntslip_id_seq') AS cntslip_id");
+    if (countSave.first())
+      _cntslipid = countSave.value("cntslip_id").toInt();
 //  ToDo
 
-    q.prepare( "INSERT INTO cntslip "
+    countSave.prepare( "INSERT INTO cntslip "
                "( cntslip_id, cntslip_cnttag_id,"
                "  cntslip_username, cntslip_entered, cntslip_posted,"
                "  cntslip_number, cntslip_qty,"
@@ -339,7 +341,7 @@ void countSlip::sSave()
                "       :cntslip_comments;" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE cntslip "
+    countSave.prepare( "UPDATE cntslip "
                "SET cntslip_username=getEffectiveXtUser(), cntslip_qty=:cntslip_qty, cntslip_comments=:cntslip_comments,"
                "    cntslip_entered=CURRENT_TIMESTAMP,"
                "    cntslip_location_id=:cntslip_location_id, cntslip_lotserial=:cntslip_lotserial,"
@@ -347,28 +349,28 @@ void countSlip::sSave()
                "    cntslip_lotserial_warrpurc=:cntslip_lotserial_warrpurc "
                "WHERE (cntslip_id=:cntslip_id);" );
   else if (_mode == cPost)
-    q.prepare("SELECT postCountSlip(:cntslip_id) AS result;");
+    countSave.prepare("SELECT postCountSlip(:cntslip_id) AS result;");
 
-  q.bindValue(":cntslip_id", _cntslipid);
-  q.bindValue(":cnttag_id", _cnttagid);
-  q.bindValue(":cntslip_number", slipNumber);
-  q.bindValue(":cntslip_qty", _qty->toDouble());
-  q.bindValue(":cntslip_location_id", _location->id());
-  q.bindValue(":cntslip_lotserial", _lotSerial->text());
-  q.bindValue(":cntslip_comments", _comments->toPlainText());
+  countSave.bindValue(":cntslip_id", _cntslipid);
+  countSave.bindValue(":cnttag_id", _cnttagid);
+  countSave.bindValue(":cntslip_number", slipNumber);
+  countSave.bindValue(":cntslip_qty", _qty->toDouble());
+  countSave.bindValue(":cntslip_location_id", _location->id());
+  countSave.bindValue(":cntslip_lotserial", _lotSerial->text());
+  countSave.bindValue(":cntslip_comments", _comments->toPlainText());
   if(_expiration->isEnabled())
-    q.bindValue(":cntslip_lotserial_expiration", _expiration->date());
+    countSave.bindValue(":cntslip_lotserial_expiration", _expiration->date());
   else
-    q.bindValue(":cntslip_lotserial_expiration", QVariant());
+    countSave.bindValue(":cntslip_lotserial_expiration", QVariant());
   if(_warranty->isEnabled())
-    q.bindValue(":cntslip_lotserial_warrpurc", _warranty->date());
-  q.exec();
+    countSave.bindValue(":cntslip_lotserial_warrpurc", _warranty->date());
+  countSave.exec();
 
   if (_mode == cPost)
   {
-    if (q.first())
+    if (countSave.first())
     {
-      if (q.value("result").toInt() == -1)
+      if (countSave.value("result").toInt() == -1)
         _cntslipid = XDialog::Rejected;
     }
 //  ToDo
@@ -445,21 +447,22 @@ void countSlip::populate()
 
 void countSlip::sPopulateItemSiteInfo()
 {
-  q.prepare( "SELECT itemsite_loccntrl, itemsite_controlmethod, itemsite_location_id, "
+  XSqlQuery countPopulateItemSiteInfo;
+  countPopulateItemSiteInfo.prepare( "SELECT itemsite_loccntrl, itemsite_controlmethod, itemsite_location_id, "
              "  itemsite_perishable, itemsite_warrpurc "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if (q.first())
+  countPopulateItemSiteInfo.bindValue(":item_id", _item->id());
+  countPopulateItemSiteInfo.bindValue(":warehous_id", _warehouse->id());
+  countPopulateItemSiteInfo.exec();
+  if (countPopulateItemSiteInfo.first())
   {
-    QString controlMethod(q.value("itemsite_controlmethod").toString());
-    _expiration->setEnabled(q.value("itemsite_perishable").toBool());
-    _warranty->setEnabled(q.value("itemsite_warrpurc").toBool());
+    QString controlMethod(countPopulateItemSiteInfo.value("itemsite_controlmethod").toString());
+    _expiration->setEnabled(countPopulateItemSiteInfo.value("itemsite_perishable").toBool());
+    _warranty->setEnabled(countPopulateItemSiteInfo.value("itemsite_warrpurc").toBool());
 
-    if (q.value("itemsite_loccntrl").toBool())
+    if (countPopulateItemSiteInfo.value("itemsite_loccntrl").toBool())
     {
       XSqlQuery location;
       location.prepare( "SELECT location_id, formatLocationName(location_id) AS locationname "
@@ -473,7 +476,7 @@ void countSlip::sPopulateItemSiteInfo()
       location.exec();
 
       _location->populate(location);
-      _location->setId(q.value("itemsite_location_id").toInt());
+      _location->setId(countPopulateItemSiteInfo.value("itemsite_location_id").toInt());
       _location->setEnabled(TRUE);
     }
     else
@@ -503,17 +506,18 @@ void countSlip::sPopulateItemSiteInfo()
 
 void countSlip::populateTagInfo()
 {
-  q.prepare( "SELECT invcnt_tagnumber, invcnt_itemsite_id,"
+  XSqlQuery countpopulateTagInfo;
+  countpopulateTagInfo.prepare( "SELECT invcnt_tagnumber, invcnt_itemsite_id,"
              "       COALESCE(invcnt_location_id, -1) AS location "
              "FROM invcnt "
              "WHERE (invcnt_id=:cnttag_id);" );
-  q.bindValue(":cnttag_id", _cnttagid);
-  q.exec();
-  if (q.first())
+  countpopulateTagInfo.bindValue(":cnttag_id", _cnttagid);
+  countpopulateTagInfo.exec();
+  if (countpopulateTagInfo.first())
   {
-    int locationid = q.value("location").toInt();
-    _countTagNumber->setText(q.value("invcnt_tagnumber").toString());
-    _item->setItemsiteid(q.value("invcnt_itemsite_id").toInt());
+    int locationid = countpopulateTagInfo.value("location").toInt();
+    _countTagNumber->setText(countpopulateTagInfo.value("invcnt_tagnumber").toString());
+    _item->setItemsiteid(countpopulateTagInfo.value("invcnt_itemsite_id").toInt());
     if(locationid != -1)
     {
       _location->setId(locationid);

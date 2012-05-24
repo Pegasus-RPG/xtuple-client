@@ -76,6 +76,7 @@ enum SetResponse profitCenter::set(const ParameterList &pParams )
 
 void profitCenter::sSave()
 {
+  XSqlQuery profitSave;
   if (_number->text().length() == 0)
   {
       QMessageBox::warning( this, tr("Cannot Save Profit Center"),
@@ -83,14 +84,14 @@ void profitCenter::sSave()
       return;
   }
   
-  q.prepare("SELECT prftcntr_id"
+  profitSave.prepare("SELECT prftcntr_id"
             "  FROM prftcntr"
             " WHERE((prftcntr_id != :prftcntr_id)"
             "   AND (prftcntr_number=:prftcntr_number))");
-  q.bindValue(":prftcntr_id", _prftcntrid);
-  q.bindValue(":prftcntr_number", _number->text());
-  q.exec();
-  if(q.first())
+  profitSave.bindValue(":prftcntr_id", _prftcntrid);
+  profitSave.bindValue(":prftcntr_number", _number->text());
+  profitSave.exec();
+  if(profitSave.first())
   {
     QMessageBox::critical(this, tr("Duplicate Profit Center Number"),
       tr("A Profit Center Number already exists for the one specified.") );
@@ -99,16 +100,16 @@ void profitCenter::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('prftcntr_prftcntr_id_seq') AS prftcntr_id;");
-    if (q.first())
-      _prftcntrid = q.value("prftcntr_id").toInt();
-    else if (q.lastError().type() != QSqlError::NoError)
+    profitSave.exec("SELECT NEXTVAL('prftcntr_prftcntr_id_seq') AS prftcntr_id;");
+    if (profitSave.first())
+      _prftcntrid = profitSave.value("prftcntr_id").toInt();
+    else if (profitSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, profitSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "INSERT INTO prftcntr "
+    profitSave.prepare( "INSERT INTO prftcntr "
                "( prftcntr_id, prftcntr_number, prftcntr_descrip ) "
                "VALUES "
                "( :prftcntr_id, :prftcntr_number, :prftcntr_descrip );" );
@@ -128,34 +129,34 @@ void profitCenter::sSave()
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
 
-    q.prepare( "UPDATE prftcntr "
+    profitSave.prepare( "UPDATE prftcntr "
                "SET prftcntr_number=:prftcntr_number,"
                "    prftcntr_descrip=:prftcntr_descrip "
                "WHERE (prftcntr_id=:prftcntr_id);" );
   }
 
-  q.bindValue(":prftcntr_id", _prftcntrid);
-  q.bindValue(":prftcntr_number", _number->text());
-  q.bindValue(":prftcntr_descrip", _descrip->toPlainText());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  profitSave.bindValue(":prftcntr_id", _prftcntrid);
+  profitSave.bindValue(":prftcntr_number", _number->text());
+  profitSave.bindValue(":prftcntr_descrip", _descrip->toPlainText());
+  profitSave.exec();
+  if (profitSave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, profitSave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   if (_mode == cEdit)
   {
-    q.prepare( "UPDATE accnt "
+    profitSave.prepare( "UPDATE accnt "
                "SET accnt_profit=:prftcntr_number "
                "WHERE (accnt_profit=:old_prftcntr_number);" );
 
-    q.bindValue(":prftcntr_number", _number->text());
-    q.bindValue(":old_prftcntr_number", _cachedNumber);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    profitSave.bindValue(":prftcntr_number", _number->text());
+    profitSave.bindValue(":old_prftcntr_number", _cachedNumber);
+    profitSave.exec();
+    if (profitSave.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, profitSave.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -165,21 +166,22 @@ void profitCenter::sSave()
 
 void profitCenter::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery profitpopulate;
+  profitpopulate.prepare( "SELECT * "
              "FROM prftcntr "
              "WHERE (prftcntr_id=:prftcntr_id);" );
-  q.bindValue(":prftcntr_id", _prftcntrid);
-  q.exec();
-  if (q.first())
+  profitpopulate.bindValue(":prftcntr_id", _prftcntrid);
+  profitpopulate.exec();
+  if (profitpopulate.first())
   {
-    _number->setText(q.value("prftcntr_number").toString());
-    _descrip->setText(q.value("prftcntr_descrip").toString());
+    _number->setText(profitpopulate.value("prftcntr_number").toString());
+    _descrip->setText(profitpopulate.value("prftcntr_descrip").toString());
 
-    _cachedNumber = q.value("prftcntr_number").toString();
+    _cachedNumber = profitpopulate.value("prftcntr_number").toString();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (profitpopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, profitpopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

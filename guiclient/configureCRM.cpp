@@ -22,6 +22,7 @@
 configureCRM::configureCRM(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  XSqlQuery configureconfigureCRM;
   setupUi(this);
 
   if (name)
@@ -30,17 +31,17 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool /*modal*/, Qt
   _nextInNumber->setValidator(omfgThis->orderVal());
   _nextAcctNumber->setValidator(omfgThis->orderVal());
 
-  q.exec( "SELECT orderseq_number AS innumber "
+  configureconfigureCRM.exec( "SELECT orderseq_number AS innumber "
           "  FROM orderseq"
           " WHERE (orderseq_name='IncidentNumber');" );
-  if (q.first())
-    _nextInNumber->setText(q.value("innumber"));
+  if (configureconfigureCRM.first())
+    _nextInNumber->setText(configureconfigureCRM.value("innumber"));
     
-  q.exec( "SELECT orderseq_number AS acnumber "
+  configureconfigureCRM.exec( "SELECT orderseq_number AS acnumber "
           "  FROM orderseq"
           " WHERE (orderseq_name='CRMAccountNumber');" );
-  if (q.first())
-    _nextAcctNumber->setText(q.value("acnumber"));
+  if (configureconfigureCRM.first())
+    _nextAcctNumber->setText(configureconfigureCRM.value("acnumber"));
 
   QString metric = _metrics->value("CRMAccountNumberGeneration");
   if (metric == "M")
@@ -87,19 +88,19 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool /*modal*/, Qt
     _incdtDelGroup->hide();
   }
 
-  q.exec("SELECT * FROM status WHERE (status_type='INCDT') ORDER BY status_seq;");
-  q.first();
-  _new->setText(q.value("status_color"));
-  q.next();
-  _feedback->setText(q.value("status_color"));
-  q.next();
-  _confirmed->setText(q.value("status_color"));
-  q.next();
-  _assigned->setText(q.value("status_color"));
-  q.next();
-  _resolved->setText(q.value("status_color"));
-  q.next();
-  _closed->setText(q.value("status_color"));
+  configureconfigureCRM.exec("SELECT * FROM status WHERE (status_type='INCDT') ORDER BY status_seq;");
+  configureconfigureCRM.first();
+  _new->setText(configureconfigureCRM.value("status_color"));
+  configureconfigureCRM.next();
+  _feedback->setText(configureconfigureCRM.value("status_color"));
+  configureconfigureCRM.next();
+  _confirmed->setText(configureconfigureCRM.value("status_color"));
+  configureconfigureCRM.next();
+  _assigned->setText(configureconfigureCRM.value("status_color"));
+  configureconfigureCRM.next();
+  _resolved->setText(configureconfigureCRM.value("status_color"));
+  configureconfigureCRM.next();
+  _closed->setText(configureconfigureCRM.value("status_color"));
 
   adjustSize();
 }

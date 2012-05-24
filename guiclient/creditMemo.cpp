@@ -89,6 +89,7 @@ void creditMemo::languageChange()
 
 enum SetResponse creditMemo::set(const ParameterList &pParams)
 {
+  XSqlQuery creditet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -107,31 +108,31 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
 
     if (param.toString() == "new")
     {
-      q.prepare("SELECT NEXTVAL('cmhead_cmhead_id_seq') AS cmhead_id;");
-      q.exec();
-      if (q.first())
-        _cmheadid = q.value("cmhead_id").toInt();
-      else if (q.lastError().type() != QSqlError::NoError)
+      creditet.prepare("SELECT NEXTVAL('cmhead_cmhead_id_seq') AS cmhead_id;");
+      creditet.exec();
+      if (creditet.first())
+        _cmheadid = creditet.value("cmhead_id").toInt();
+      else if (creditet.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
 
       setNumber();
       _memoDate->setDate(omfgThis->dbDate(), true);
 
-      q.prepare("INSERT INTO cmhead ("
+      creditet.prepare("INSERT INTO cmhead ("
 		"    cmhead_id, cmhead_number, cmhead_docdate, cmhead_posted"
 		") VALUES ("
 		"    :cmhead_id, :cmhead_number, :cmhead_docdate, false"
 		");");
-      q.bindValue(":cmhead_id",		_cmheadid);
-      q.bindValue(":cmhead_number",	(!_memoNumber->text().isEmpty() ? _memoNumber->text() : QString("tmp%1").arg(_cmheadid)));
-      q.bindValue(":cmhead_docdate",	_memoDate->date());
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
+      creditet.bindValue(":cmhead_id",		_cmheadid);
+      creditet.bindValue(":cmhead_number",	(!_memoNumber->text().isEmpty() ? _memoNumber->text() : QString("tmp%1").arg(_cmheadid)));
+      creditet.bindValue(":cmhead_docdate",	_memoDate->date());
+      creditet.exec();
+      if (creditet.lastError().type() != QSqlError::NoError)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, creditet.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
 
@@ -199,38 +200,39 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
 
 void creditMemo::setNumber()
 {
+  XSqlQuery creditetNumber;
   if ( (_metrics->value("CMNumberGeneration") == "A") ||
        (_metrics->value("CMNumberGeneration") == "O")   )
   {
-    q.prepare("SELECT fetchCmNumber() AS cmnumber;");
-    q.exec();
-    if (q.first())
+    creditetNumber.prepare("SELECT fetchCmNumber() AS cmnumber;");
+    creditetNumber.exec();
+    if (creditetNumber.first())
     {
-      _memoNumber->setText(q.value("cmnumber").toString());
-      _NumberGen = q.value("cmnumber").toInt();
+      _memoNumber->setText(creditetNumber.value("cmnumber").toString());
+      _NumberGen = creditetNumber.value("cmnumber").toInt();
 
       if (_metrics->value("CMNumberGeneration") == "A")
         _memoNumber->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (creditetNumber.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, creditetNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
   else if (_metrics->value("CMNumberGeneration") == "S")
   {
-    q.prepare("SELECT fetchSoNumber() AS cmnumber;");
-    q.exec();
-    if (q.first())
+    creditetNumber.prepare("SELECT fetchSoNumber() AS cmnumber;");
+    creditetNumber.exec();
+    if (creditetNumber.first())
     {
-      _memoNumber->setText(q.value("cmnumber").toString());
-      _NumberGen = q.value("cmnumber").toInt();
+      _memoNumber->setText(creditetNumber.value("cmnumber").toString());
+      _NumberGen = creditetNumber.value("cmnumber").toInt();
       _memoNumber->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (creditetNumber.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, creditetNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -318,7 +320,8 @@ void creditMemo::sSave()
 
 bool creditMemo::save()
 {
-  q.prepare( "UPDATE cmhead "
+  XSqlQuery creditave;
+  creditave.prepare( "UPDATE cmhead "
 	     "SET cmhead_invcnumber=:cmhead_invcnumber, cmhead_cust_id=:cmhead_cust_id,"
        "    cmhead_number=:cmhead_number,"
 	     "    cmhead_custponumber=:cmhead_custponumber, cmhead_hold=:cmhead_hold,"
@@ -345,48 +348,48 @@ bool creditMemo::save()
              "    cmhead_prj_id=:cmhead_prj_id "
 	     "WHERE (cmhead_id=:cmhead_id);" );
 
-  q.bindValue(":cmhead_id", _cmheadid);
-  q.bindValue(":cmhead_cust_id", _cust->id());
-  q.bindValue(":cmhead_number", _memoNumber->text());
-  q.bindValue(":cmhead_invcnumber", _invoiceNumber->invoiceNumber());
-  q.bindValue(":cmhead_custponumber", _customerPO->text().trimmed());
-  q.bindValue(":cmhead_billtoname", _billtoName->text().trimmed());
-  q.bindValue(":cmhead_billtoaddress1",	_billToAddr->line1());
-  q.bindValue(":cmhead_billtoaddress2",	_billToAddr->line2());
-  q.bindValue(":cmhead_billtoaddress3",	_billToAddr->line3());
-  q.bindValue(":cmhead_billtocity",	_billToAddr->city());
-  q.bindValue(":cmhead_billtostate",	_billToAddr->state());
-  q.bindValue(":cmhead_billtozip",	_billToAddr->postalCode());
-  q.bindValue(":cmhead_billtocountry",	_billToAddr->country());
+  creditave.bindValue(":cmhead_id", _cmheadid);
+  creditave.bindValue(":cmhead_cust_id", _cust->id());
+  creditave.bindValue(":cmhead_number", _memoNumber->text());
+  creditave.bindValue(":cmhead_invcnumber", _invoiceNumber->invoiceNumber());
+  creditave.bindValue(":cmhead_custponumber", _customerPO->text().trimmed());
+  creditave.bindValue(":cmhead_billtoname", _billtoName->text().trimmed());
+  creditave.bindValue(":cmhead_billtoaddress1",	_billToAddr->line1());
+  creditave.bindValue(":cmhead_billtoaddress2",	_billToAddr->line2());
+  creditave.bindValue(":cmhead_billtoaddress3",	_billToAddr->line3());
+  creditave.bindValue(":cmhead_billtocity",	_billToAddr->city());
+  creditave.bindValue(":cmhead_billtostate",	_billToAddr->state());
+  creditave.bindValue(":cmhead_billtozip",	_billToAddr->postalCode());
+  creditave.bindValue(":cmhead_billtocountry",	_billToAddr->country());
   if (_shipTo->id() > 0)
-    q.bindValue(":cmhead_shipto_id",	_shipTo->id());
-  q.bindValue(":cmhead_shipto_name", _shipToName->text().trimmed());
-  q.bindValue(":cmhead_shipto_address1", _shipToAddr->line1());
-  q.bindValue(":cmhead_shipto_address2", _shipToAddr->line2());
-  q.bindValue(":cmhead_shipto_address3", _shipToAddr->line3());
-  q.bindValue(":cmhead_shipto_city",	 _shipToAddr->city());
-  q.bindValue(":cmhead_shipto_state",	 _shipToAddr->state());
-  q.bindValue(":cmhead_shipto_zipcode",	 _shipToAddr->postalCode());
-  q.bindValue(":cmhead_shipto_country",	 _shipToAddr->country());
-  q.bindValue(":cmhead_docdate", _memoDate->date());
-  q.bindValue(":cmhead_comments", _comments->toPlainText());
-  q.bindValue(":cmhead_salesrep_id", _salesRep->id());
-  q.bindValue(":cmhead_rsncode_id", _rsnCode->id());
-  q.bindValue(":cmhead_hold",       QVariant(_hold->isChecked()));
-  q.bindValue(":cmhead_commission", (_commission->toDouble() / 100));
-  q.bindValue(":cmhead_misc", _miscCharge->localValue());
-  q.bindValue(":cmhead_misc_accnt_id", _miscChargeAccount->id());
-  q.bindValue(":cmhead_misc_descrip", _miscChargeDescription->text());
-  q.bindValue(":cmhead_freight", _freight->localValue());
+    creditave.bindValue(":cmhead_shipto_id",	_shipTo->id());
+  creditave.bindValue(":cmhead_shipto_name", _shipToName->text().trimmed());
+  creditave.bindValue(":cmhead_shipto_address1", _shipToAddr->line1());
+  creditave.bindValue(":cmhead_shipto_address2", _shipToAddr->line2());
+  creditave.bindValue(":cmhead_shipto_address3", _shipToAddr->line3());
+  creditave.bindValue(":cmhead_shipto_city",	 _shipToAddr->city());
+  creditave.bindValue(":cmhead_shipto_state",	 _shipToAddr->state());
+  creditave.bindValue(":cmhead_shipto_zipcode",	 _shipToAddr->postalCode());
+  creditave.bindValue(":cmhead_shipto_country",	 _shipToAddr->country());
+  creditave.bindValue(":cmhead_docdate", _memoDate->date());
+  creditave.bindValue(":cmhead_comments", _comments->toPlainText());
+  creditave.bindValue(":cmhead_salesrep_id", _salesRep->id());
+  creditave.bindValue(":cmhead_rsncode_id", _rsnCode->id());
+  creditave.bindValue(":cmhead_hold",       QVariant(_hold->isChecked()));
+  creditave.bindValue(":cmhead_commission", (_commission->toDouble() / 100));
+  creditave.bindValue(":cmhead_misc", _miscCharge->localValue());
+  creditave.bindValue(":cmhead_misc_accnt_id", _miscChargeAccount->id());
+  creditave.bindValue(":cmhead_misc_descrip", _miscChargeDescription->text());
+  creditave.bindValue(":cmhead_freight", _freight->localValue());
   if (_taxzone->isValid())
-    q.bindValue(":cmhead_taxzone_id",	_taxzone->id());
-  q.bindValue(":cmhead_curr_id", _currency->id());
+    creditave.bindValue(":cmhead_taxzone_id",	_taxzone->id());
+  creditave.bindValue(":cmhead_curr_id", _currency->id());
   if (_project->isValid())
-    q.bindValue(":cmhead_prj_id", _project->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+    creditave.bindValue(":cmhead_prj_id", _project->id());
+  creditave.exec();
+  if (creditave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, creditave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -712,15 +715,16 @@ void creditMemo::sView()
 
 void creditMemo::sDelete()
 {
-  q.prepare( "SELECT cmhead_posted "
+  XSqlQuery creditDelete;
+  creditDelete.prepare( "SELECT cmhead_posted "
              "FROM cmitem, cmhead "
              "WHERE ( (cmitem_cmhead_id=cmhead_id)"
              " AND (cmitem_id=:cmitem_id) );" );
-  q.bindValue(":cmitem_id", _cmitem->id());
-  q.exec();
-  if (q.first())
+  creditDelete.bindValue(":cmitem_id", _cmitem->id());
+  creditDelete.exec();
+  if (creditDelete.first())
   {
-    if (q.value("cmhead_posted").toBool())
+    if (creditDelete.value("cmhead_posted").toBool())
     {
       QMessageBox::information(this, "Line Item cannot be delete",
                                tr("<p>This Credit Memo has been Posted and "
@@ -728,9 +732,9 @@ void creditMemo::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (creditDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, creditDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -740,13 +744,13 @@ void creditMemo::sDelete()
 			    QMessageBox::Yes | QMessageBox::Default,
 			    QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
   {
-    q.prepare( "DELETE FROM cmitem "
+    creditDelete.prepare( "DELETE FROM cmitem "
                "WHERE (cmitem_id=:cmitem_id);" );
-    q.bindValue(":cmitem_id", _cmitem->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    creditDelete.bindValue(":cmitem_id", _cmitem->id());
+    creditDelete.exec();
+    if (creditDelete.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, creditDelete.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -756,7 +760,8 @@ void creditMemo::sDelete()
 
 void creditMemo::sFillList()
 {
-  q.prepare( "SELECT cmitem_id, cmitem_linenumber, item_number,"
+  XSqlQuery creditFillList;
+  creditFillList.prepare( "SELECT cmitem_id, cmitem_linenumber, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2) AS description,"
              "       warehous_code, quom.uom_name AS qtyuom,"
              "       cmitem_qtyreturned, cmitem_qtycredit,"
@@ -776,15 +781,15 @@ void creditMemo::sFillList()
              " AND (itemsite_warehous_id=warehous_id)"
              " AND (cmitem_cmhead_id=:cmhead_id) ) "
              "ORDER BY cmitem_linenumber;" );
-  q.bindValue(":cmhead_id", _cmheadid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  creditFillList.bindValue(":cmhead_id", _cmheadid);
+  creditFillList.exec();
+  if (creditFillList.lastError().type() != QSqlError::NoError)
+      systemError(this, creditFillList.lastError().databaseText(), __FILE__, __LINE__);
 
-  _cmitem->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  _cmitem->populate(creditFillList);
+  if (creditFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, creditFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -907,16 +912,17 @@ void creditMemo::populate()
 
 void creditMemo::closeEvent(QCloseEvent *pEvent)
 {
+  XSqlQuery creditcloseEvent;
   if ( (_mode == cNew) && (_cmheadid != -1) )
   {
-    q.prepare("SELECT deleteCreditMemo(:cmhead_id) AS result;");
-    q.bindValue(":cmhead_id", _cmheadid);
-    q.exec();
-    if (q.first())
+    creditcloseEvent.prepare("SELECT deleteCreditMemo(:cmhead_id) AS result;");
+    creditcloseEvent.bindValue(":cmhead_id", _cmheadid);
+    creditcloseEvent.exec();
+    if (creditcloseEvent.first())
       ; // TODO: add error checking when function returns int instead of boolean
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (creditcloseEvent.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, creditcloseEvent.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -929,17 +935,18 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
 
 void creditMemo::sReleaseNumber()
 {
+  XSqlQuery creditReleaseNumber;
   if ( (_metrics->value("CMNumberGeneration") == "A") ||
        (_metrics->value("CMNumberGeneration") == "O")   )
-    q.prepare("SELECT releaseCmNumber(:number) AS result;");
+    creditReleaseNumber.prepare("SELECT releaseCmNumber(:number) AS result;");
   else if (_metrics->value("CMNumberGeneration") == "S")
-    q.prepare("SELECT releaseSoNumber(:number) AS result;");
+    creditReleaseNumber.prepare("SELECT releaseSoNumber(:number) AS result;");
 
-  q.bindValue(":number", _NumberGen);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  creditReleaseNumber.bindValue(":number", _NumberGen);
+  creditReleaseNumber.exec();
+  if (creditReleaseNumber.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, creditReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

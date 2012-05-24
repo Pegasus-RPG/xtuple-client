@@ -154,13 +154,14 @@ void printPackingListBatchByShipvia::sPrint()
 
 void printPackingListBatchByShipvia::sPopulateShipVia()
 {
+  XSqlQuery printPopulateShipVia;
   ParameterList params;
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   MetaSQLQuery mql = mqlLoad("packingListBatchByShipVia", "shipVia");
-  q = mql.toQuery(params);
+  printPopulateShipVia = mql.toQuery(params);
 
-  _shipvia->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  _shipvia->populate(printPopulateShipVia);
+  if (printPopulateShipVia.lastError().type() != QSqlError::NoError)
+    systemError(this, printPopulateShipVia.lastError().databaseText(), __FILE__, __LINE__);
 }

@@ -86,6 +86,7 @@ enum SetResponse country::set(const ParameterList &pParams)
 
 void country::sSave()
 {
+  XSqlQuery countrySave;
   sToUpper();
 
   struct {
@@ -116,7 +117,7 @@ void country::sSave()
   
   if (_mode == cNew)
   {
-      q.prepare( "INSERT INTO country ("
+      countrySave.prepare( "INSERT INTO country ("
 		 " country_abbr,  country_name,  country_curr_abbr, "
 		 " country_curr_name, country_curr_number, country_curr_symbol "
 		 ") VALUES ("
@@ -126,28 +127,28 @@ void country::sSave()
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "UPDATE country SET "
+    countrySave.prepare( "UPDATE country SET "
 	       "   country_abbr=:country_abbr, country_name=:country_name, "
 	       "   country_curr_abbr=:country_curr_abbr, "
 	       "   country_curr_name=:country_curr_name, "
 	       "   country_curr_number=:country_curr_number, "
 	       "   country_curr_symbol=:country_curr_symbol "
                "WHERE (country_id=:country_id);" );
-    q.bindValue(":country_id", _countryId);
+    countrySave.bindValue(":country_id", _countryId);
   }
   
-  q.bindValue(":country_abbr",	_abbr->text());
-  q.bindValue(":country_name",	_name->text());
-  q.bindValue(":country_curr_abbr",	_currAbbr->text());
-  q.bindValue(":country_curr_name",	_currName->text());
-  q.bindValue(":country_curr_number",	_currNumber->text());
-  q.bindValue(":country_curr_symbol",	_currSymbol->text());
+  countrySave.bindValue(":country_abbr",	_abbr->text());
+  countrySave.bindValue(":country_name",	_name->text());
+  countrySave.bindValue(":country_curr_abbr",	_currAbbr->text());
+  countrySave.bindValue(":country_curr_name",	_currName->text());
+  countrySave.bindValue(":country_curr_number",	_currNumber->text());
+  countrySave.bindValue(":country_curr_symbol",	_currSymbol->text());
 
-  q.exec();
+  countrySave.exec();
 
-  if (q.lastError().type() != QSqlError::NoError)
+  if (countrySave.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, countrySave.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -156,24 +157,25 @@ void country::sSave()
 
 void country::populate()
 {
-  q.prepare( "SELECT country_abbr,  country_name,  country_curr_abbr, "
+  XSqlQuery countrypopulate;
+  countrypopulate.prepare( "SELECT country_abbr,  country_name,  country_curr_abbr, "
 	     "     country_curr_name, country_curr_number, country_curr_symbol "
              "FROM country "
              "WHERE (country_id=:country_id);" );
-  q.bindValue(":country_id", _countryId);
-  q.exec();
-  if (q.first())
+  countrypopulate.bindValue(":country_id", _countryId);
+  countrypopulate.exec();
+  if (countrypopulate.first())
   {
-    _abbr->setText(q.value("country_abbr").toString());
-    _name->setText(q.value("country_name").toString());
-    _currAbbr->setText(q.value("country_curr_abbr").toString());
-    _currName->setText(q.value("country_curr_name").toString());
-    _currNumber->setText(q.value("country_curr_number").toString());
-    _currSymbol->setText(q.value("country_curr_symbol").toString());
+    _abbr->setText(countrypopulate.value("country_abbr").toString());
+    _name->setText(countrypopulate.value("country_name").toString());
+    _currAbbr->setText(countrypopulate.value("country_curr_abbr").toString());
+    _currName->setText(countrypopulate.value("country_curr_name").toString());
+    _currNumber->setText(countrypopulate.value("country_curr_number").toString());
+    _currSymbol->setText(countrypopulate.value("country_curr_symbol").toString());
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (countrypopulate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, countrypopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

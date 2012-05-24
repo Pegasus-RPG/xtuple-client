@@ -35,6 +35,7 @@ void postPurchaseOrdersByAgent::languageChange()
 
 void postPurchaseOrdersByAgent::sRelease()
 {
+  XSqlQuery postRelease;
   static bool run = false;
   if (run)
     return;
@@ -49,14 +50,14 @@ void postPurchaseOrdersByAgent::sRelease()
   if(_selectedAgent->isChecked())
     sql +=    "   AND   (pohead_agent_username=:username)";
   sql += ")";
-  q.prepare(sql);
-  q.bindValue(":username", _agent->currentText());
-  q.exec();
-  if (q.first())
+  postRelease.prepare(sql);
+  postRelease.bindValue(":username", _agent->currentText());
+  postRelease.exec();
+  if (postRelease.first())
   {
     QMessageBox::information( this, tr("Purchase Orders Released"),
                               tr("%1 Purchase Orders have been released.")
-                              .arg(q.value("result").toString()) );
+                              .arg(postRelease.value("result").toString()) );
 
     omfgThis->sPurchaseOrdersUpdated(-1, TRUE);
   }

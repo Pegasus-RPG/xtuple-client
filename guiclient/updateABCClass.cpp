@@ -41,6 +41,7 @@ void updateABCClass::languageChange()
 
 void updateABCClass::sUpdate()
 {
+  XSqlQuery updateUpdate;
   if ( (_classCode->isPattern()) && (_classCode->pattern().length() == 0) )
   {
     QMessageBox::critical( this, tr("Enter Class Code Pattern"),
@@ -85,32 +86,32 @@ void updateABCClass::sUpdate()
   if (_warehouse->isAll())
   {
     if (_classCode->isPattern())
-      q.prepare("SELECT updateABCClass(:classcode_pattern, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
+      updateUpdate.prepare("SELECT updateABCClass(:classcode_pattern, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
     else if (_classCode->isSelected())
-      q.prepare("SELECT updateABCClass(:classcode_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
+      updateUpdate.prepare("SELECT updateABCClass(:classcode_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
     else if (_classCode->isAll())
-      q.prepare("SELECT updateABCClass(-1, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
+      updateUpdate.prepare("SELECT updateABCClass(-1, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
   }
   else if (_warehouse->isSelected())
   {
     if (_classCode->isSelected())
-      q.prepare("SELECT updateABCClass(:classcode_pattern, :warehous_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
+      updateUpdate.prepare("SELECT updateABCClass(:classcode_pattern, :warehous_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
     else if (_classCode->isSelected())
-      q.prepare("SELECT updateABCClass(:classcode_id, :warehous_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
+      updateUpdate.prepare("SELECT updateABCClass(:classcode_id, :warehous_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
     else if (_classCode->isAll())
-      q.prepare("SELECT updateABCClass(-1, :warehous_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
+      updateUpdate.prepare("SELECT updateABCClass(-1, :warehous_id, :aCutOff, :bCutOff, :startDate, :endDate) AS result;");
   }
 
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":aCutOff", (_classACutoff->toDouble() / 100.0));
-  q.bindValue(":bCutOff", (_classBCutoff->toDouble() / 100.0));
-  q.exec();
-  if (q.first())
+  _warehouse->bindValue(updateUpdate);
+  _classCode->bindValue(updateUpdate);
+  _dates->bindValue(updateUpdate);
+  updateUpdate.bindValue(":aCutOff", (_classACutoff->toDouble() / 100.0));
+  updateUpdate.bindValue(":bCutOff", (_classBCutoff->toDouble() / 100.0));
+  updateUpdate.exec();
+  if (updateUpdate.first())
     QMessageBox::information( this, tr("ABC Class Code Updated"),
                               tr("The ABC Class Code was updated for %1 Item Sites.")
-                              .arg(q.value("result").toInt()) );
+                              .arg(updateUpdate.value("result").toInt()) );
   else
     systemError(this, tr("A System Error occurred at %1::%2.")
                       .arg(__FILE__)

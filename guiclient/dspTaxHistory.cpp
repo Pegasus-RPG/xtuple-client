@@ -246,6 +246,7 @@ void dspTaxHistory::sPrint()
 
 void dspTaxHistory::sFillList()
 {
+  XSqlQuery dspFillList;
   ParameterList params;
   if (! setParams(params))
     return;
@@ -254,15 +255,15 @@ void dspTaxHistory::sFillList()
   _taxdet->clear();
 
   MetaSQLQuery mql = mqlLoad("taxHistory", "detail");
-  q = mql.toQuery(params);
-  q.exec();
+  dspFillList = mql.toQuery(params);
+  dspFillList.exec();
   if (_summary->isChecked())
-    _taxsum->populate(q);
+    _taxsum->populate(dspFillList);
   else
-    _taxdet->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+    _taxdet->populate(dspFillList);
+  if (dspFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

@@ -125,16 +125,17 @@ void dspAllocations::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int
 
 void dspAllocations::sViewWorkOrder()
 {
-  q.prepare( "SELECT womatl_wo_id "
+  XSqlQuery dspViewWorkOrder;
+  dspViewWorkOrder.prepare( "SELECT womatl_wo_id "
              "FROM womatl "
              "WHERE (womatl_id=:womatl_id);" );
-  q.bindValue(":womatl_id", list()->id());
-  q.exec();
-  if (q.first())
+  dspViewWorkOrder.bindValue(":womatl_id", list()->id());
+  dspViewWorkOrder.exec();
+  if (dspViewWorkOrder.first())
   {
     ParameterList params;
     params.append("mode", "view");
-    params.append("wo_id", q.value("womatl_wo_id").toInt());
+    params.append("wo_id", dspViewWorkOrder.value("womatl_wo_id").toInt());
   
     workOrder *newdlg = new workOrder();
     newdlg->set(params);
@@ -144,46 +145,50 @@ void dspAllocations::sViewWorkOrder()
 
 void dspAllocations::sViewCustomerOrder()
 {
-  q.prepare( "SELECT coitem_cohead_id "
+  XSqlQuery dspViewCustomerOrder;
+  dspViewCustomerOrder.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", list()->id());
-  q.exec();
-  if (q.first())
-    salesOrder::viewSalesOrder(q.value("coitem_cohead_id").toInt());
+  dspViewCustomerOrder.bindValue(":coitem_id", list()->id());
+  dspViewCustomerOrder.exec();
+  if (dspViewCustomerOrder.first())
+    salesOrder::viewSalesOrder(dspViewCustomerOrder.value("coitem_cohead_id").toInt());
 }
 
 void dspAllocations::sEditCustomerOrder()
 {
-  q.prepare( "SELECT coitem_cohead_id "
+  XSqlQuery dspEditCustomerOrder;
+  dspEditCustomerOrder.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", list()->id());
-  q.exec();
-  if (q.first())
-    salesOrder::editSalesOrder(q.value("coitem_cohead_id").toInt(), false);
+  dspEditCustomerOrder.bindValue(":coitem_id", list()->id());
+  dspEditCustomerOrder.exec();
+  if (dspEditCustomerOrder.first())
+    salesOrder::editSalesOrder(dspEditCustomerOrder.value("coitem_cohead_id").toInt(), false);
 }
 
 void dspAllocations::sViewTransferOrder()
 {
-  q.prepare( "SELECT toitem_tohead_id "
+  XSqlQuery dspViewTransferOrder;
+  dspViewTransferOrder.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:toitem_id);" );
-  q.bindValue(":toitem_id", list()->id());
-  q.exec();
-  if (q.first())
-    transferOrder::viewTransferOrder(q.value("toitem_tohead_id").toInt());
+  dspViewTransferOrder.bindValue(":toitem_id", list()->id());
+  dspViewTransferOrder.exec();
+  if (dspViewTransferOrder.first())
+    transferOrder::viewTransferOrder(dspViewTransferOrder.value("toitem_tohead_id").toInt());
 }
 
 void dspAllocations::sEditTransferOrder()
 {
-  q.prepare( "SELECT toitem_tohead_id "
+  XSqlQuery dspEditTransferOrder;
+  dspEditTransferOrder.prepare( "SELECT toitem_tohead_id "
              "FROM toitem "
              "WHERE (toitem_id=:toitem_id);" );
-  q.bindValue(":toitem_id", list()->id());
-  q.exec();
-  if (q.first())
-    transferOrder::editTransferOrder(q.value("toitem_tohead_id").toInt(), false);
+  dspEditTransferOrder.bindValue(":toitem_id", list()->id());
+  dspEditTransferOrder.exec();
+  if (dspEditTransferOrder.first())
+    transferOrder::editTransferOrder(dspEditTransferOrder.value("toitem_tohead_id").toInt(), false);
 }
 
 bool dspAllocations::setParams(ParameterList &params)

@@ -62,6 +62,7 @@ void currencies::languageChange()
 
 void currencies::sNew()
 {
+  XSqlQuery currenciesNew;
   bool single = omfgThis->singleCurrency();
 
   ParameterList params;
@@ -76,12 +77,12 @@ void currencies::sNew()
      _metrics->value("GLCompanySize").toInt() == 0)
   {
     // Check for the gain/loss and discrep accounts
-    q.prepare("SELECT COUNT(*) = 2 AS result"
+    currenciesNew.prepare("SELECT COUNT(*) = 2 AS result"
               "  FROM accnt "
               " WHERE accnt_id IN (fetchMetricValue('CurrencyGainLossAccount'),"
               "                    fetchMetricValue('GLSeriesDiscrepancyAccount'));");
-    q.exec();
-    if(q.first() && q.value("result").toBool() != true)
+    currenciesNew.exec();
+    if(currenciesNew.first() && currenciesNew.value("result").toBool() != true)
     {
       QMessageBox::warning( this, tr("Additional Configuration Required"),
         tr("<p>Your system is configured to use multiple Currencies, but the "
@@ -90,9 +91,9 @@ void currencies::sNew()
            "Accounts in 'System | Configure Modules | Configure G/L...' before "
            "posting any transactions in the system.") );
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (currenciesNew.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, currenciesNew.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -123,29 +124,30 @@ void currencies::sView()
 
 void currencies::sDelete()
 {
-  q.prepare("SELECT curr_base FROM curr_symbol "
+  XSqlQuery currenciesDelete;
+  currenciesDelete.prepare("SELECT curr_base FROM curr_symbol "
               "WHERE curr_id = :curr_id");
-  q.bindValue(":curr_id", _curr->id());
-  q.exec();
-  if (q.first() && q.value("curr_base").toBool())
+  currenciesDelete.bindValue(":curr_id", _curr->id());
+  currenciesDelete.exec();
+  if (currenciesDelete.first() && currenciesDelete.value("curr_base").toBool())
   {
       QMessageBox::critical(this,
                             tr("Cannot delete base currency"),
                             tr("You cannot delete the base currency."));
       return;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (currenciesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, currenciesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
-  q.prepare("DELETE FROM curr_symbol WHERE curr_id = :curr_id");
-  q.bindValue(":curr_id", _curr->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  currenciesDelete.prepare("DELETE FROM curr_symbol WHERE curr_id = :curr_id");
+  currenciesDelete.bindValue(":curr_id", _curr->id());
+  currenciesDelete.exec();
+  if (currenciesDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, currenciesDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   
@@ -154,16 +156,17 @@ void currencies::sDelete()
 
 void currencies::sFillList()
 {
-  q.prepare( "SELECT *, "
+  XSqlQuery currenciesFillList;
+  currenciesFillList.prepare( "SELECT *, "
              "	CASE WHEN curr_base = TRUE THEN 'Y' "
              "	ELSE '' END AS flag "
              "FROM curr_symbol "
              "ORDER BY flag DESC, curr_name;" );
-  q.exec();
-  _curr->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  currenciesFillList.exec();
+  _curr->populate(currenciesFillList);
+  if (currenciesFillList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, currenciesFillList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

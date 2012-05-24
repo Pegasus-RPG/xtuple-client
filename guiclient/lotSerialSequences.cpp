@@ -71,12 +71,13 @@ void lotSerialSequences::languageChange()
 
 void lotSerialSequences::sDelete()
 {
-  q.prepare( "SELECT itemsite_id "
+  XSqlQuery lotDelete;
+  lotDelete.prepare( "SELECT itemsite_id "
              "FROM itemsite "
              "WHERE (itemsite_lsseq_id=:lsseq_id);" );
-  q.bindValue(":lsseq_id", _lsseq->id());
-  q.exec();
-  if (q.first())
+  lotDelete.bindValue(":lsseq_id", _lsseq->id());
+  lotDelete.exec();
+  if (lotDelete.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Sequence"),
                            tr( "The selected Planner Code cannot be deleted as there are one or more Item Sites currently assigned to it.\n"
@@ -84,10 +85,10 @@ void lotSerialSequences::sDelete()
     return;
   }
 
-  q.prepare( "DELETE FROM lsseq "
+  lotDelete.prepare( "DELETE FROM lsseq "
              "WHERE (lsseq_id=:lsseq_id);" );
-  q.bindValue(":lsseq_id", _lsseq->id());
-  q.exec();
+  lotDelete.bindValue(":lsseq_id", _lsseq->id());
+  lotDelete.exec();
 
   sFillList();
 }

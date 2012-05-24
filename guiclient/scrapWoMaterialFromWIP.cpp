@@ -60,6 +60,7 @@ void scrapWoMaterialFromWIP::languageChange()
 
 enum SetResponse scrapWoMaterialFromWIP::set(const ParameterList &pParams)
 {
+  XSqlQuery scrapet;
   XDialog::set(pParams);
   _captive = TRUE;
 
@@ -71,12 +72,12 @@ enum SetResponse scrapWoMaterialFromWIP::set(const ParameterList &pParams)
   {
     _captive = TRUE;
 
-    q.prepare("SELECT womatl_wo_id FROM womatl WHERE (womatl_id=:womatl_id); ");
-    q.bindValue(":womatl_id", param.toInt());
-    q.exec();
-    if(q.first())
+    scrapet.prepare("SELECT womatl_wo_id FROM womatl WHERE (womatl_id=:womatl_id); ");
+    scrapet.bindValue(":womatl_id", param.toInt());
+    scrapet.exec();
+    if(scrapet.first())
     {
-      _wo->setId(q.value("womatl_wo_id").toInt());
+      _wo->setId(scrapet.value("womatl_wo_id").toInt());
       _wo->setEnabled(false);
     }
     _womatl->setId(param.toInt());
@@ -119,6 +120,7 @@ enum SetResponse scrapWoMaterialFromWIP::set(const ParameterList &pParams)
 
 void scrapWoMaterialFromWIP::sScrap()
 {
+  XSqlQuery scrapScrap;
   if (!_transDate->isValid())
   {
     QMessageBox::critical(this, tr("Invalid date"),
@@ -157,10 +159,10 @@ void scrapWoMaterialFromWIP::sScrap()
 
   if (_scrapComponent->isChecked())
   {
-    q.prepare("SELECT scrapWoMaterial(:womatl_id, :qty, :date) AS result;");
-    q.bindValue(":womatl_id", _womatl->id());
-    q.bindValue(":qty", _qty->toDouble());
-    q.bindValue(":date",  _transDate->date());
+    scrapScrap.prepare("SELECT scrapWoMaterial(:womatl_id, :qty, :date) AS result;");
+    scrapScrap.bindValue(":womatl_id", _womatl->id());
+    scrapScrap.bindValue(":qty", _qty->toDouble());
+    scrapScrap.bindValue(":date",  _transDate->date());
   }
   else if (_scrapTopLevel->isChecked())
   {
@@ -199,38 +201,38 @@ void scrapWoMaterialFromWIP::sScrap()
           systemError( this, tr("A System Error occurred scrapping material for "
                                 "Work Order ID #%1, Error #%2.")
                        .arg(_wo->id())
-                       .arg(q.value("result").toInt()),
+                       .arg(scrapScrap.value("result").toInt()),
                        __FILE__, __LINE__);
           return;
         }
       }
     }
 
-    q.prepare("SELECT invScrap(itemsite_id, :qty, formatWoNumber(wo_id), "
+    scrapScrap.prepare("SELECT invScrap(itemsite_id, :qty, formatWoNumber(wo_id), "
               " :descrip, :date, :invhist_id, wo_prj_id) AS result"
               " FROM wo, itemsite"
               "  WHERE ((wo_id=:wo_id)"
               " AND  (itemsite_id=wo_itemsite_id));");
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":qty",   _topLevelQty->toDouble());
-    q.bindValue(":descrip", tr("Top Level Item"));
-    q.bindValue(":date",  _transDate->date());
+    scrapScrap.bindValue(":wo_id", _wo->id());
+    scrapScrap.bindValue(":qty",   _topLevelQty->toDouble());
+    scrapScrap.bindValue(":descrip", tr("Top Level Item"));
+    scrapScrap.bindValue(":date",  _transDate->date());
     if (invhistid)
-      q.bindValue(":invhist_id", invhistid);
+      scrapScrap.bindValue(":invhist_id", invhistid);
   }
 
   XSqlQuery trans;
   trans.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  q.exec();
-  if (q.first())
+  scrapScrap.exec();
+  if (scrapScrap.first())
   {
-    if (q.value("result").toInt() < 0)
+    if (scrapScrap.value("result").toInt() < 0)
     {
       rollback.exec();
       systemError( this, tr("A System Error occurred scrapping material for "
 			    "Work Order ID #%1, Error #%2.")
 			   .arg(_wo->id())
-			   .arg(q.value("result").toInt()),
+			   .arg(scrapScrap.value("result").toInt()),
 		   __FILE__, __LINE__);
        return;
     }
@@ -239,7 +241,7 @@ void scrapWoMaterialFromWIP::sScrap()
       // scrapWoMaterial() returns womatlid, not itemlocSeries
       if (_scrapTopLevel->isChecked() && !invhistid)
       {
-        if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+        if (distributeInventory::SeriesAdjust(scrapScrap.value("result").toInt(), this) == XDialog::Rejected)
         {
           rollback.exec();
           QMessageBox::information( this, tr("Scrap Work Order Material"), tr("Transaction Canceled") );
@@ -254,7 +256,7 @@ void scrapWoMaterialFromWIP::sScrap()
         post.exec();
       }
 
-      q.exec("COMMIT;");
+      scrapScrap.exec("COMMIT;");
 
       if (_captive)
         accept();
@@ -272,7 +274,7 @@ void scrapWoMaterialFromWIP::sScrap()
     systemError( this, tr("A System Error occurred scrapping material for "
 			  "Work Order ID #%1\n\n%2")
 			  .arg(_wo->id())
-			  .arg(q.lastError().databaseText()),
+			  .arg(scrapScrap.lastError().databaseText()),
 		 __FILE__, __LINE__ );
     return;
   }

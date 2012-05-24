@@ -80,17 +80,18 @@ enum SetResponse productCategory::set(const ParameterList &pParams)
 
 void productCategory::sCheck()
 {
+  XSqlQuery productCheck;
   _category->setText(_category->text().trimmed());
   if ( (_mode == cNew) && (_category->text().length()) )
   {
-    q.prepare( "SELECT prodcat_id "
+    productCheck.prepare( "SELECT prodcat_id "
                "FROM prodcat "
                "WHERE (UPPER(prodcat_code)=UPPER(:prodcat_code));" );
-    q.bindValue(":prodcat_code", _category->text());
-    q.exec();
-    if (q.first())
+    productCheck.bindValue(":prodcat_code", _category->text());
+    productCheck.exec();
+    if (productCheck.first())
     {
-      _prodcatid = q.value("prodcat_id").toInt();
+      _prodcatid = productCheck.value("prodcat_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -101,6 +102,7 @@ void productCategory::sCheck()
 
 void productCategory::sSave()
 {
+  XSqlQuery productSave;
   if (_category->text().trimmed().isEmpty())
   {
     QMessageBox::critical(this, tr("Missing Category"),
@@ -111,14 +113,14 @@ void productCategory::sSave()
 
   if (_mode == cEdit)
   {
-    q.prepare( "SELECT prodcat_id "
+    productSave.prepare( "SELECT prodcat_id "
                "FROM prodcat "
                "WHERE ( (prodcat_id<>:prodcat_id)"
                " AND (prodcat_code=:prodcat_code) );");
-    q.bindValue(":prodcat_id", _prodcatid);
-    q.bindValue(":prodcat_code", _category->text());
-    q.exec();
-    if (q.first())
+    productSave.bindValue(":prodcat_id", _prodcatid);
+    productSave.bindValue(":prodcat_code", _category->text());
+    productSave.exec();
+    if (productSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Product Category"),
                              tr( "A Product Category with the entered code already exists."
@@ -127,22 +129,22 @@ void productCategory::sSave()
       return;
     }
 
-    q.prepare( "UPDATE prodcat "
+    productSave.prepare( "UPDATE prodcat "
                "SET prodcat_code=:prodcat_code, prodcat_descrip=:prodcat_descrip "
                "WHERE (prodcat_id=:prodcat_id);" );
-    q.bindValue(":prodcat_id", _prodcatid);
-    q.bindValue(":prodcat_code", _category->text().toUpper());
-    q.bindValue(":prodcat_descrip", _description->text());
-    q.exec();
+    productSave.bindValue(":prodcat_id", _prodcatid);
+    productSave.bindValue(":prodcat_code", _category->text().toUpper());
+    productSave.bindValue(":prodcat_descrip", _description->text());
+    productSave.exec();
   }
   else if (_mode == cNew)
   {
-    q.prepare( "SELECT prodcat_id "
+    productSave.prepare( "SELECT prodcat_id "
                "FROM prodcat "
                "WHERE (prodcat_code=:prodcat_code);");
-    q.bindValue(":prodcat_code", _category->text().trimmed());
-    q.exec();
-    if (q.first())
+    productSave.bindValue(":prodcat_code", _category->text().trimmed());
+    productSave.exec();
+    if (productSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Product Category"),
                              tr( "A Product Category with the entered code already exists.\n"
@@ -151,9 +153,9 @@ void productCategory::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('prodcat_prodcat_id_seq') AS prodcat_id;");
-    if (q.first())
-      _prodcatid = q.value("prodcat_id").toInt();
+    productSave.exec("SELECT NEXTVAL('prodcat_prodcat_id_seq') AS prodcat_id;");
+    if (productSave.first())
+      _prodcatid = productSave.value("prodcat_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -162,14 +164,14 @@ void productCategory::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO prodcat "
+    productSave.prepare( "INSERT INTO prodcat "
                "( prodcat_id, prodcat_code, prodcat_descrip ) "
                "VALUES "
                "( :prodcat_id, :prodcat_code, :prodcat_descrip );" );
-    q.bindValue(":prodcat_id", _prodcatid);
-    q.bindValue(":prodcat_code", _category->text().toUpper());
-    q.bindValue(":prodcat_descrip", _description->text());
-    q.exec();
+    productSave.bindValue(":prodcat_id", _prodcatid);
+    productSave.bindValue(":prodcat_code", _category->text().toUpper());
+    productSave.bindValue(":prodcat_descrip", _description->text());
+    productSave.exec();
   }
 
   done(_prodcatid);
@@ -177,15 +179,16 @@ void productCategory::sSave()
 
 void productCategory::populate()
 {
-  q.prepare( "SELECT prodcat_code, prodcat_descrip "
+  XSqlQuery productpopulate;
+  productpopulate.prepare( "SELECT prodcat_code, prodcat_descrip "
              "FROM prodcat "
              "WHERE (prodcat_id=:prodcat_id);" );
-  q.bindValue(":prodcat_id", _prodcatid);
-  q.exec();
-  if (q.first())
+  productpopulate.bindValue(":prodcat_id", _prodcatid);
+  productpopulate.exec();
+  if (productpopulate.first())
   {
-    _category->setText(q.value("prodcat_code").toString());
-    _description->setText(q.value("prodcat_descrip").toString());
+    _category->setText(productpopulate.value("prodcat_code").toString());
+    _description->setText(productpopulate.value("prodcat_descrip").toString());
   }
 }
 

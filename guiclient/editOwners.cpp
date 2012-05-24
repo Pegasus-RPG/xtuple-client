@@ -20,6 +20,7 @@
 editOwners::editOwners(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery editeditOwners;
   setupUi(this);
 
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
@@ -40,23 +41,24 @@ editOwners::editOwners(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _first = true;
 
-  q.prepare("SELECT usr_id "
+  editeditOwners.prepare("SELECT usr_id "
 	    "FROM usr "
 	    "WHERE (usr_username=getEffectiveXtUser());");
-  q.exec();
-  if (q.first())
+  editeditOwners.exec();
+  if (editeditOwners.first())
   {
-    _owner->setId(q.value("usr_id").toInt());
+    _owner->setId(editeditOwners.value("usr_id").toInt());
   }  
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (editeditOwners.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, editeditOwners.lastError().databaseText(), __FILE__, __LINE__);
     reject();
   }
 }
 
 void editOwners::sFillList()
 {
+  XSqlQuery editFillList;
 
   if(_todo->isChecked())
   {
@@ -140,10 +142,10 @@ void editOwners::sFillList()
     _list->clear();
   else
   {
-    q.prepare(_queryString);
-    q.bindValue(":owner", _owner->username());
-    q.exec();
-    _list->populate(q);
+    editFillList.prepare(_queryString);
+    editFillList.bindValue(":owner", _owner->username());
+    editFillList.exec();
+    _list->populate(editFillList);
   }
 
   _modifyAll->setEnabled(_list->topLevelItemCount() > 0);
@@ -215,6 +217,7 @@ void editOwners::sModifyAll()
 
 bool editOwners::modifyOne(XTreeWidgetItem * currentItem)
 {
+  XSqlQuery editmodifyOne;
   QString table;
 
   if(currentItem->rawValue("type_name").toString() == "To Do") table = "todoitem";
@@ -224,15 +227,15 @@ bool editOwners::modifyOne(XTreeWidgetItem * currentItem)
   if(currentItem->rawValue("type_name").toString() == "Account") table = "crmacct";
   if(currentItem->rawValue("type_name").toString() == "Opportunity") table = "ophead";
 
-  q.prepare("UPDATE "+table+" "
+  editmodifyOne.prepare("UPDATE "+table+" "
             "SET "+table+"_owner_username = :new_owner_username "
             "WHERE "+table+"_id = :id ");
-  q.bindValue(":new_owner_username", _newOwner->username());
-  q.bindValue(":id", currentItem->id());
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  editmodifyOne.bindValue(":new_owner_username", _newOwner->username());
+  editmodifyOne.bindValue(":id", currentItem->id());
+  editmodifyOne.exec();
+  if (editmodifyOne.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, editmodifyOne.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
   return true;

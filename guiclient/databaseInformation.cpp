@@ -18,6 +18,7 @@
 databaseInformation::databaseInformation(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  XSqlQuery databasedatabaseInformation;
   setupUi(this);
 
   if (name)
@@ -72,12 +73,12 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
 
   _disableAutoComplete->setChecked(_metrics->boolean("DisableAutoComplete"));
   
-  q.exec( "SELECT numOfDatabaseUsers() AS databaseusers,"
+  databasedatabaseInformation.exec( "SELECT numOfDatabaseUsers() AS databaseusers,"
           "       numOfServerUsers() AS serverusers;" );
-  if (q.first())
+  if (databasedatabaseInformation.first())
   {
-    _numOfDatabaseUsers->setText(q.value("databaseusers").toString());
-    _numOfServerUsers->setText(q.value("serverusers").toString());
+    _numOfDatabaseUsers->setText(databasedatabaseInformation.value("databaseusers").toString());
+    _numOfServerUsers->setText(databasedatabaseInformation.value("serverusers").toString());
   }
 //  ToDo
 

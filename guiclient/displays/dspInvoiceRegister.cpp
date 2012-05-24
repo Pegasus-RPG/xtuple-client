@@ -49,6 +49,7 @@ void dspInvoiceRegister::languageChange()
 
 enum SetResponse dspInvoiceRegister::set(const ParameterList &pParams)
 {
+  XSqlQuery dspet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -71,19 +72,19 @@ enum SetResponse dspInvoiceRegister::set(const ParameterList &pParams)
   param = pParams.value("period_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT period_start, period_end "
+    dspet.prepare( "SELECT period_start, period_end "
                "FROM period "
                "WHERE (period_id=:period_id);" );
-    q.bindValue(":period_id", param.toInt());
-    q.exec();
-    if (q.first())
+    dspet.bindValue(":period_id", param.toInt());
+    dspet.exec();
+    if (dspet.first())
     {
-      _dates->setStartDate(q.value("period_start").toDate());
-      _dates->setEndDate(q.value("period_end").toDate());
+      _dates->setStartDate(dspet.value("period_start").toDate());
+      _dates->setEndDate(dspet.value("period_end").toDate());
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (dspet.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, dspet.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
   }
@@ -134,10 +135,11 @@ void dspInvoiceRegister::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 
 void dspInvoiceRegister::sViewCreditMemo()
 {
+  XSqlQuery dspViewCreditMemo;
   ParameterList params;
   params.append("mode", "view");
 
-  q.prepare("SELECT 1 AS type, cmhead_id AS id "
+  dspViewCreditMemo.prepare("SELECT 1 AS type, cmhead_id AS id "
             "FROM cmhead "
             "WHERE (cmhead_number=:docnum) "
             "UNION "
@@ -146,37 +148,37 @@ void dspInvoiceRegister::sViewCreditMemo()
             "WHERE ((aropen_docnumber=:docnum)"
             "  AND  (aropen_doctype=:doctype)"
             ") ORDER BY type LIMIT 1;");
-  q.bindValue(":docnum", list()->currentItem()->text(3));
+  dspViewCreditMemo.bindValue(":docnum", list()->currentItem()->text(3));
   
   if(list()->altId()==1)
-    q.bindValue(":doctype", "I");
+    dspViewCreditMemo.bindValue(":doctype", "I");
   else if(list()->altId()==2)
-    q.bindValue(":doctype", "C");
+    dspViewCreditMemo.bindValue(":doctype", "C");
   else if(list()->altId()==3)
-    q.bindValue(":doctype", "D");
+    dspViewCreditMemo.bindValue(":doctype", "D");
   else if(list()->altId()==4)
-    q.bindValue(":doctype", "R");
-  q.exec();
-  if (q.first())
+    dspViewCreditMemo.bindValue(":doctype", "R");
+  dspViewCreditMemo.exec();
+  if (dspViewCreditMemo.first())
   {
-    if (q.value("type").toInt() == 1)
+    if (dspViewCreditMemo.value("type").toInt() == 1)
     {
-      params.append("cmhead_id", q.value("id"));
+      params.append("cmhead_id", dspViewCreditMemo.value("id"));
       creditMemo* newdlg = new creditMemo();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg);
     }
-    else if (q.value("type").toInt() == 2)
+    else if (dspViewCreditMemo.value("type").toInt() == 2)
     {
-      params.append("aropen_id", q.value("id"));
+      params.append("aropen_id", dspViewCreditMemo.value("id"));
       arOpenItem newdlg(this, "", true);
       newdlg.set(params);
       newdlg.exec();
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (dspViewCreditMemo.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, dspViewCreditMemo.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else

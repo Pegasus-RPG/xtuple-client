@@ -130,6 +130,7 @@ void dspGLTransactions::languageChange()
 
 enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 {
+  XSqlQuery dspet;
   XWidget::set(pParams);
 
   parameterWidget()->setSavedFilters();
@@ -152,15 +153,15 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
   param = pParams.value("period_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT period_start, period_end "
+    dspet.prepare( "SELECT period_start, period_end "
                "FROM period "
                "WHERE (period_id=:period_id);" );
-    q.bindValue(":period_id", param.toInt());
-    q.exec();
-    if (q.first())
+    dspet.bindValue(":period_id", param.toInt());
+    dspet.exec();
+    if (dspet.first())
     {
-      parameterWidget()->setDefault(tr("Start Date"), q.value("period_start").toDate());
-      parameterWidget()->setDefault(tr("End Date"), q.value("period_end").toDate());
+      parameterWidget()->setDefault(tr("Start Date"), dspet.value("period_start").toDate());
+      parameterWidget()->setDefault(tr("End Date"), dspet.value("period_end").toDate());
     }
   }
 
@@ -366,19 +367,20 @@ void dspGLTransactions::sViewTrans()
 
 void dspGLTransactions::sViewSeries()
 {
-  q.prepare("SELECT gltrans_date, gltrans_journalnumber"
+  XSqlQuery dspViewSeries;
+  dspViewSeries.prepare("SELECT gltrans_date, gltrans_journalnumber"
             "  FROM gltrans"
             " WHERE (gltrans_id=:gltrans_id)");
-  q.bindValue(":gltrans_id", list()->id());
-  q.exec();
-  if(!q.first())
+  dspViewSeries.bindValue(":gltrans_id", list()->id());
+  dspViewSeries.exec();
+  if(!dspViewSeries.first())
     return;
 
   ParameterList params;
 
-  params.append("startDate", q.value("gltrans_date").toDate());
-  params.append("endDate", q.value("gltrans_date").toDate());
-  params.append("journalnumber", q.value("gltrans_journalnumber").toString());
+  params.append("startDate", dspViewSeries.value("gltrans_date").toDate());
+  params.append("endDate", dspViewSeries.value("gltrans_date").toDate());
+  params.append("journalnumber", dspViewSeries.value("gltrans_journalnumber").toString());
 
   dspGLSeries *newdlg = new dspGLSeries();
   newdlg->set(params);
@@ -387,6 +389,7 @@ void dspGLTransactions::sViewSeries()
 
 void dspGLTransactions::sViewDocument()
 {
+  XSqlQuery dspViewDocument;
   XTreeWidgetItem * item = (XTreeWidgetItem*)list()->currentItem();
   if(0 == item)
     return;
@@ -394,18 +397,18 @@ void dspGLTransactions::sViewDocument()
   ParameterList params;
   if(item->rawValue("gltrans_doctype").toString() == "VO")
   {
-    q.prepare("SELECT vohead_id, vohead_misc"
+    dspViewDocument.prepare("SELECT vohead_id, vohead_misc"
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
-    q.bindValue(":vohead_number", item->rawValue("docnumber").toString());
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":vohead_number", item->rawValue("docnumber").toString());
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    params.append("vohead_id", q.value("vohead_id").toInt());
+    params.append("vohead_id", dspViewDocument.value("vohead_id").toInt());
     params.append("mode", "view");
     
-    if(q.value("vohead_misc").toBool())
+    if(dspViewDocument.value("vohead_misc").toBool())
     {
       miscVoucher *newdlg = new miscVoucher();
       newdlg->set(params);
@@ -421,28 +424,28 @@ void dspGLTransactions::sViewDocument()
   }
   else if(item->rawValue("gltrans_doctype").toString() == "IN")
   {
-    q.prepare("SELECT invchead_id"
+    dspViewDocument.prepare("SELECT invchead_id"
               "  FROM invchead"
               " WHERE (invchead_invcnumber=:invchead_invcnumber)");
-    q.bindValue(":invchead_invcnumber", item->rawValue("docnumber").toString());
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":invchead_invcnumber", item->rawValue("docnumber").toString());
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    invoice::viewInvoice(q.value("invchead_id").toInt());
+    invoice::viewInvoice(dspViewDocument.value("invchead_id").toInt());
   }
   else if(item->rawValue("gltrans_doctype").toString() == "PO")
   {
     QStringList docnumber = item->rawValue("docnumber").toString().split("-");
-    q.prepare("SELECT pohead_id"
+    dspViewDocument.prepare("SELECT pohead_id"
               "  FROM pohead"
               " WHERE (pohead_number=:docnumber)");
-    q.bindValue(":docnumber", docnumber[0]);
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":docnumber", docnumber[0]);
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    params.append("pohead_id", q.value("pohead_id").toInt());
+    params.append("pohead_id", dspViewDocument.value("pohead_id").toInt());
     params.append("mode", "view");
 
     purchaseOrder *newdlg = new purchaseOrder();
@@ -451,15 +454,15 @@ void dspGLTransactions::sViewDocument()
   }
   else if(item->rawValue("gltrans_doctype").toString() == "SH")
   {
-    q.prepare("SELECT shiphead_id"
+    dspViewDocument.prepare("SELECT shiphead_id"
               "  FROM shiphead"
               " WHERE (shiphead_number=:shiphead_number)");
-    q.bindValue(":shiphead_number", item->rawValue("docnumber").toString());
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":shiphead_number", item->rawValue("docnumber").toString());
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    params.append("shiphead_id", q.value("shiphead_id").toInt());
+    params.append("shiphead_id", dspViewDocument.value("shiphead_id").toInt());
 
     dspShipmentsByShipment *newdlg = new dspShipmentsByShipment();
     newdlg->set(params);
@@ -469,50 +472,50 @@ void dspGLTransactions::sViewDocument()
   {
     if(item->rawValue("gltrans_source").toString() == "A/P")
     {
-      q.prepare("SELECT apopen_id"
+      dspViewDocument.prepare("SELECT apopen_id"
                 "  FROM apopen"
                 " WHERE ( (apopen_docnumber=:docnumber) "
                 "  AND (apopen_doctype IN ('C', 'D')) );");
-      q.bindValue(":docnumber", item->rawValue("docnumber").toString());
-      q.exec();
-      if(!q.first())
+      dspViewDocument.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      dspViewDocument.exec();
+      if(!dspViewDocument.first())
         return;
 
       params.append("mode", "view");
-      params.append("apopen_id", q.value("apopen_id").toInt());
+      params.append("apopen_id", dspViewDocument.value("apopen_id").toInt());
       apOpenItem newdlg(this, "", TRUE);
       newdlg.set(params);
       newdlg.exec();
     }
     else if(item->rawValue("gltrans_source").toString() == "A/R")
     {
-      q.prepare("SELECT aropen_id"
+      dspViewDocument.prepare("SELECT aropen_id"
                 "  FROM aropen"
                 " WHERE ((aropen_docnumber=:docnumber) "
                 "  AND (aropen_doctype IN ('C', 'D')) );");
-      q.bindValue(":docnumber", item->rawValue("docnumber").toString());
-      q.exec();
-      if(!q.first())
+      dspViewDocument.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      dspViewDocument.exec();
+      if(!dspViewDocument.first())
         return;
 
       params.append("mode", "view");
-      params.append("aropen_id", q.value("aropen_id").toInt());
+      params.append("aropen_id", dspViewDocument.value("aropen_id").toInt());
       arOpenItem newdlg(this, "", TRUE);
       newdlg.set(params);
       newdlg.exec();
     }
     else if(item->rawValue("gltrans_source").toString() == "S/O")
     {
-      q.prepare("SELECT cmhead_id"
+      dspViewDocument.prepare("SELECT cmhead_id"
                 "  FROM cmhead"
                 " WHERE (cmhead_number=:docnumber);");
-      q.bindValue(":docnumber", item->rawValue("docnumber").toString());
-      q.exec();
-      if(!q.first())
+      dspViewDocument.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      dspViewDocument.exec();
+      if(!dspViewDocument.first())
         return;
 
       params.append("mode", "view");
-      params.append("cmhead_id", q.value("cmhead_id").toInt());
+      params.append("cmhead_id", dspViewDocument.value("cmhead_id").toInt());
       creditMemo *newdlg = new creditMemo();
       newdlg->set(params);
       omfgThis->handleNewWindow(newdlg, Qt::ApplicationModal);
@@ -521,13 +524,13 @@ void dspGLTransactions::sViewDocument()
   else if(item->rawValue("gltrans_doctype").toString() == "SO")
   {
     QStringList docnumber = item->rawValue("docnumber").toString().split("-");
-    q.prepare("SELECT cohead_id"
+    dspViewDocument.prepare("SELECT cohead_id"
               "  FROM cohead"
               " WHERE (cohead_number=:docnumber)");
-    q.bindValue(":docnumber", docnumber[0]);
-    q.exec();
-    if(q.first())
-      salesOrder::viewSalesOrder(q.value("cohead_id").toInt());
+    dspViewDocument.bindValue(":docnumber", docnumber[0]);
+    dspViewDocument.exec();
+    if(dspViewDocument.first())
+      salesOrder::viewSalesOrder(dspViewDocument.value("cohead_id").toInt());
   }
   else if(item->rawValue("gltrans_doctype").toString() == "WO")
   {
@@ -540,16 +543,16 @@ void dspGLTransactions::sViewDocument()
   }
   else if(item->rawValue("gltrans_source").toString() == "I/M")
   {
-    q.prepare("SELECT gltrans_misc_id"
+    dspViewDocument.prepare("SELECT gltrans_misc_id"
               "  FROM gltrans"
               " WHERE (gltrans_id=:gltrans_id)");
-    q.bindValue(":gltrans_id", item->id());
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":gltrans_id", item->id());
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
     params.append("mode", "view");
-    params.append("invhist_id", q.value("gltrans_misc_id").toInt());
+    params.append("invhist_id", dspViewDocument.value("gltrans_misc_id").toInt());
 
     transactionInformation newdlg(this, "", TRUE);
     newdlg.set(params);

@@ -17,6 +17,7 @@
 submitReport::submitReport(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
 {
+  XSqlQuery submitubmitReport;
   setupUi(this);
 
   connect(_scheduled, SIGNAL(toggled(bool)), _time, SLOT(setEnabled(bool)));
@@ -26,11 +27,11 @@ submitReport::submitReport(QWidget* parent, const char* name, bool modal, Qt::WF
 
   _error = 0;
 
-  q.exec( "SELECT usr_email "
+  submitubmitReport.exec( "SELECT usr_email "
           "FROM usr "
           "WHERE (usr_username=getEffectiveXtUser());" );
-  if (q.first())
-    _fromEmail->setText(q.value("usr_email"));
+  if (submitubmitReport.first())
+    _fromEmail->setText(submitubmitReport.value("usr_email"));
 }
 
 submitReport::~submitReport()
@@ -45,6 +46,7 @@ void submitReport::languageChange()
 
 enum SetResponse submitReport::set(const ParameterList &pParams)
 {
+  XSqlQuery submitet;
   XDialog::set(pParams);
   _params = pParams;
 
@@ -54,15 +56,15 @@ enum SetResponse submitReport::set(const ParameterList &pParams)
   param = pParams.value("report_name", &valid);
   if (valid)
   {
-    q.prepare( "SELECT report_name "
+    submitet.prepare( "SELECT report_name "
                "FROM report "
                "WHERE (report_name=:report_name);" );
-    q.bindValue(":report_name", param.toString());
-    q.exec();
-    if (q.first())
+    submitet.bindValue(":report_name", param.toString());
+    submitet.exec();
+    if (submitet.first())
     {
-      _documentName->setText(q.value("report_name").toString());
-      _cachedReportName = q.value("report_name").toString();
+      _documentName->setText(submitet.value("report_name").toString());
+      _cachedReportName = submitet.value("report_name").toString();
     }
     else
       _error = cNoReportDefinition;
@@ -71,15 +73,15 @@ enum SetResponse submitReport::set(const ParameterList &pParams)
   param = pParams.value("report_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT report_name "
+    submitet.prepare( "SELECT report_name "
                "FROM report "
                "WHERE (report_id=:report_id);" );
-    q.bindValue(":report_id", param.toInt());
-    q.exec();
-    if (q.first())
+    submitet.bindValue(":report_id", param.toInt());
+    submitet.exec();
+    if (submitet.first())
     {
-      _documentName->setText(q.value("report_name").toString());
-      _cachedReportName = q.value("report_name").toString();
+      _documentName->setText(submitet.value("report_name").toString());
+      _cachedReportName = submitet.value("report_name").toString();
     }
     else
       _error = cNoReportDefinition;
@@ -90,12 +92,12 @@ enum SetResponse submitReport::set(const ParameterList &pParams)
     _email->setText(param.toString());
   else
   {
-    q.prepare( "SELECT usr_email "
+    submitet.prepare( "SELECT usr_email "
                "FROM report, usr "
                "WHERE (usr_username=getEffectiveXtUser());" );
-    q.exec();
-    if (q.first())
-      _email->setText(q.value("usr_email").toString());
+    submitet.exec();
+    if (submitet.first())
+      _email->setText(submitet.value("usr_email").toString());
   }
   
   param = pParams.value("responseBody", &valid);
@@ -112,6 +114,7 @@ int submitReport::check()
 
 void submitReport::sSubmit()
 {
+  XSqlQuery submitSubmit;
   if (_email->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Submit Report"),
@@ -122,27 +125,27 @@ void submitReport::sSubmit()
   }
 
   if (_asap->isChecked())
-    q.prepare("SELECT submitReportToBatch(:reportName, :fromEmail, :emailAddress, '', :responseBody, '', CURRENT_TIMESTAMP) AS batch_id;");
+    submitSubmit.prepare("SELECT submitReportToBatch(:reportName, :fromEmail, :emailAddress, '', :responseBody, '', CURRENT_TIMESTAMP) AS batch_id;");
   else
   {
-    q.prepare("SELECT submitReportToBatch(:reportName, :fromEmail, :emailAddress, '', :responseBody, '', :scheduled) AS batch_id;");
+    submitSubmit.prepare("SELECT submitReportToBatch(:reportName, :fromEmail, :emailAddress, '', :responseBody, '', :scheduled) AS batch_id;");
 
     QDateTime scheduled;
     scheduled.setDate(_date->date());
     scheduled.setTime(_time->time());
-    q.bindValue(":scheduled", scheduled);
+    submitSubmit.bindValue(":scheduled", scheduled);
   }
 
-  q.bindValue(":reportName", _cachedReportName);
-  q.bindValue(":fromEmail", _fromEmail->text());
-  q.bindValue(":emailAddress", _email->text());
-  q.bindValue(":responseBody", _responseBody->toPlainText());
-  q.exec();
-  if (q.first())
+  submitSubmit.bindValue(":reportName", _cachedReportName);
+  submitSubmit.bindValue(":fromEmail", _fromEmail->text());
+  submitSubmit.bindValue(":emailAddress", _email->text());
+  submitSubmit.bindValue(":responseBody", _responseBody->toPlainText());
+  submitSubmit.exec();
+  if (submitSubmit.first())
   {
-    int batchid = q.value("batch_id").toInt();
+    int batchid = submitSubmit.value("batch_id").toInt();
 
-    q.prepare( "INSERT INTO batchparam "
+    submitSubmit.prepare( "INSERT INTO batchparam "
                "( batchparam_batch_id, batchparam_order,"
                "  batchparam_name, batchparam_type, batchparam_value ) "
                "VALUES "
@@ -150,13 +153,13 @@ void submitReport::sSubmit()
                "  :batchparam_name, :batchparam_type, :batchparam_value );" );
     for (int counter = 0; counter < _params.count(); counter++)
     {
-      q.bindValue(":batchparam_batch_id", batchid);
-      q.bindValue(":batchparam_order", (counter + 1));
-      q.bindValue(":batchparam_name", _params.name(counter));
+      submitSubmit.bindValue(":batchparam_batch_id", batchid);
+      submitSubmit.bindValue(":batchparam_order", (counter + 1));
+      submitSubmit.bindValue(":batchparam_name", _params.name(counter));
       QVariant v = _params.value(counter);
-      q.bindValue(":batchparam_type", QVariant::typeToName(v.type()));
-      q.bindValue(":batchparam_value", XVariant::encode(v));
-      q.exec();
+      submitSubmit.bindValue(":batchparam_type", QVariant::typeToName(v.type()));
+      submitSubmit.bindValue(":batchparam_value", XVariant::encode(v));
+      submitSubmit.exec();
     }
   }
   else

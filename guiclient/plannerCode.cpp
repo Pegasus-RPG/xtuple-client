@@ -96,17 +96,18 @@ enum SetResponse plannerCode::set(const ParameterList &pParams)
 
 bool plannerCode::sCheck()
 {
+  XSqlQuery plannerCheck;
   _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length() != 0))
   {
-    q.prepare( "SELECT plancode_id "
+    plannerCheck.prepare( "SELECT plancode_id "
                "FROM plancode "
                "WHERE (UPPER(plancode_code)=UPPER(:plancode_code));" );
-    q.bindValue(":plancode_code", _code->text());
-    q.exec();
-    if (q.first())
+    plannerCheck.bindValue(":plancode_code", _code->text());
+    plannerCheck.exec();
+    if (plannerCheck.first())
     {
-      _plancodeid = q.value("plancode_id").toInt();
+      _plancodeid = plannerCheck.value("plancode_id").toInt();
       _mode = cEdit;
       populate();
 
@@ -119,6 +120,7 @@ bool plannerCode::sCheck()
 
 void plannerCode::sSave()
 {
+  XSqlQuery plannerSave;
   _code->setText(_code->text().trimmed().toUpper());
   if (_code->text().length() == 0)
   {
@@ -137,9 +139,9 @@ void plannerCode::sSave()
       return;
     }
 
-    q.exec("SELECT NEXTVAL('plancode_plancode_id_seq') AS plancode_id");
-    if (q.first())
-      _plancodeid = q.value("plancode_id").toInt();
+    plannerSave.exec("SELECT NEXTVAL('plancode_plancode_id_seq') AS plancode_id");
+    if (plannerSave.first())
+      _plancodeid = plannerSave.value("plancode_id").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -148,7 +150,7 @@ void plannerCode::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO plancode "
+    plannerSave.prepare( "INSERT INTO plancode "
                "( plancode_id, plancode_code, plancode_name,"
                "  plancode_mpsexplosion, plancode_consumefcst,"
                "  plancode_mrpexcp_resched, plancode_mrpexcp_delete ) "
@@ -158,14 +160,14 @@ void plannerCode::sSave()
                "  :plancode_mrpexcp_resched, :plancode_mrpexcp_delete );" );
   }
   else if (_mode == cEdit)
-    q.prepare("SELECT plancode_id"
+    plannerSave.prepare("SELECT plancode_id"
               "  FROM plancode"
               " WHERE((plancode_id != :plancode_id)"
               " AND (plancode_code = :plancode_code));");
-    q.bindValue(":plancode_id", _plancodeid); 
-    q.bindValue(":plancode_code", _code->text());
-    q.exec();
-    if(q.first())
+    plannerSave.bindValue(":plancode_id", _plancodeid); 
+    plannerSave.bindValue(":plancode_code", _code->text());
+    plannerSave.exec();
+    if(plannerSave.first())
     {
       QMessageBox::warning( this, tr("Cannot Save Planner Code"),
                             tr("You may not rename this Planner code with the entered name as it is in use by another Planner code.") );
@@ -173,7 +175,7 @@ void plannerCode::sSave()
       return;
     }
 
-    q.prepare( "UPDATE plancode "
+    plannerSave.prepare( "UPDATE plancode "
                "SET plancode_code=:plancode_code, plancode_name=:plancode_name,"
                "    plancode_mpsexplosion=:plancode_mpsexplosion,"
                "    plancode_consumefcst=:plancode_consumefcst,"
@@ -181,51 +183,52 @@ void plannerCode::sSave()
                "    plancode_mrpexcp_delete=:plancode_mrpexcp_delete "
                "WHERE (plancode_id=:plancode_id);" );
 
-  q.bindValue(":plancode_id", _plancodeid);
-  q.bindValue(":plancode_code", _code->text());
-  q.bindValue(":plancode_name", _description->text().trimmed());
-  q.bindValue(":plancode_consumefcst", false);
-  q.bindValue(":plancode_mrpexcp_resched", QVariant(_mrpexcpResched->isChecked()));
-  q.bindValue(":plancode_mrpexcp_delete", QVariant(_mrpexcpDelete->isChecked()));
+  plannerSave.bindValue(":plancode_id", _plancodeid);
+  plannerSave.bindValue(":plancode_code", _code->text());
+  plannerSave.bindValue(":plancode_name", _description->text().trimmed());
+  plannerSave.bindValue(":plancode_consumefcst", false);
+  plannerSave.bindValue(":plancode_mrpexcp_resched", QVariant(_mrpexcpResched->isChecked()));
+  plannerSave.bindValue(":plancode_mrpexcp_delete", QVariant(_mrpexcpDelete->isChecked()));
 
   if (_autoExplode->isChecked())
   {
     if (_singleLevel->isChecked())
-      q.bindValue(":plancode_mpsexplosion", "S");
+      plannerSave.bindValue(":plancode_mpsexplosion", "S");
     else
-      q.bindValue(":plancode_mpsexplosion", "M");
+      plannerSave.bindValue(":plancode_mpsexplosion", "M");
   }
   else
-    q.bindValue(":plancode_mpsexplosion", "N");
+    plannerSave.bindValue(":plancode_mpsexplosion", "N");
 
-  q.exec();
+  plannerSave.exec();
 
   done(_plancodeid);
 }
 
 void plannerCode::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery plannerpopulate;
+  plannerpopulate.prepare( "SELECT * "
              "FROM plancode "
              "WHERE (plancode_id=:plancode_id);" );
-  q.bindValue(":plancode_id", _plancodeid);
-  q.exec();
-  if (q.first())
+  plannerpopulate.bindValue(":plancode_id", _plancodeid);
+  plannerpopulate.exec();
+  if (plannerpopulate.first())
   {
-    _code->setText(q.value("plancode_code"));
-    _description->setText(q.value("plancode_name"));
-    _mrpexcpResched->setChecked(q.value("plancode_mrpexcp_resched").toBool());
-    _mrpexcpDelete->setChecked(q.value("plancode_mrpexcp_delete").toBool());
+    _code->setText(plannerpopulate.value("plancode_code"));
+    _description->setText(plannerpopulate.value("plancode_name"));
+    _mrpexcpResched->setChecked(plannerpopulate.value("plancode_mrpexcp_resched").toBool());
+    _mrpexcpDelete->setChecked(plannerpopulate.value("plancode_mrpexcp_delete").toBool());
 
-    if (q.value("plancode_mpsexplosion").toString() == "N")
+    if (plannerpopulate.value("plancode_mpsexplosion").toString() == "N")
       _autoExplode->setChecked(FALSE);
     else
     {
       _autoExplode->setChecked(TRUE);
 
-      if (q.value("plancode_mpsexplosion").toString() == "S")
+      if (plannerpopulate.value("plancode_mpsexplosion").toString() == "S")
         _singleLevel->setChecked(TRUE);
-      else if (q.value("plancode_mpsexplosion").toString() == "M")
+      else if (plannerpopulate.value("plancode_mpsexplosion").toString() == "M")
         _multipleLevel->setChecked(TRUE);
     }
   }

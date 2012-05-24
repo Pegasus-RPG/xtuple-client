@@ -108,16 +108,17 @@ enum SetResponse itemSourcePrice::set(const ParameterList &pParams)
 
 void itemSourcePrice::sSave()
 {
-  q.prepare("SELECT itemsrcp_id"
+  XSqlQuery itemSave;
+  itemSave.prepare("SELECT itemsrcp_id"
             "  FROM itemsrcp" 
             " WHERE ((itemsrcp_id != :itemsrcp_id)"
             "   AND  (itemsrcp_itemsrc_id=:itemsrcp_itemsrc_id)"
             "   AND  (itemsrcp_qtybreak=:qtybreak));");
-  q.bindValue(":itemsrcp_id", _itemsrcpid);
-  q.bindValue(":itemsrcp_itemsrc_id", _itemsrcid);
-  q.bindValue(":qtybreak", _qtyBreak->toDouble());
-  q.exec();
-  if(q.first())
+  itemSave.bindValue(":itemsrcp_id", _itemsrcpid);
+  itemSave.bindValue(":itemsrcp_itemsrc_id", _itemsrcid);
+  itemSave.bindValue(":qtybreak", _qtyBreak->toDouble());
+  itemSave.exec();
+  if(itemSave.first())
   {
     QMessageBox::warning(this, tr("Duplicate Qty. Break"),
       tr("A Qty. Break with the specified Qty. already exists for this Item Source.") );
@@ -126,49 +127,50 @@ void itemSourcePrice::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('itemsrcp_itemsrcp_id_seq') AS itemsrcp_id;");
-    if (q.first())
-      _itemsrcpid = q.value("itemsrcp_id").toInt();
+    itemSave.exec("SELECT NEXTVAL('itemsrcp_itemsrcp_id_seq') AS itemsrcp_id;");
+    if (itemSave.first())
+      _itemsrcpid = itemSave.value("itemsrcp_id").toInt();
 //  ToDo
 
-    q.prepare( "INSERT INTO itemsrcp "
+    itemSave.prepare( "INSERT INTO itemsrcp "
                "(itemsrcp_id, itemsrcp_itemsrc_id, itemsrcp_qtybreak, itemsrcp_price, itemsrcp_updated, itemsrcp_curr_id) "
                "VALUES "
                "(:itemsrcp_id, :itemsrcp_itemsrc_id, :itemsrcp_qtybreak, :itemsrcp_price, CURRENT_DATE, :itemsrcp_curr_id);" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE itemsrcp "
+    itemSave.prepare( "UPDATE itemsrcp "
                "SET itemsrcp_qtybreak=:itemsrcp_qtybreak, "
 	       "    itemsrcp_price=:itemsrcp_price, "
 	       "    itemsrcp_updated=CURRENT_DATE, "
 	       "    itemsrcp_curr_id=:itemsrcp_curr_id "
                "WHERE (itemsrcp_id=:itemsrcp_id);" );
 
-  q.bindValue(":itemsrcp_id", _itemsrcpid);
-  q.bindValue(":itemsrcp_itemsrc_id", _itemsrcid);
-  q.bindValue(":itemsrcp_qtybreak", _qtyBreak->toDouble());
-  q.bindValue(":itemsrcp_price", _price->localValue());
-  q.bindValue(":itemsrcp_curr_id", _price->id());
-  q.exec();
+  itemSave.bindValue(":itemsrcp_id", _itemsrcpid);
+  itemSave.bindValue(":itemsrcp_itemsrc_id", _itemsrcid);
+  itemSave.bindValue(":itemsrcp_qtybreak", _qtyBreak->toDouble());
+  itemSave.bindValue(":itemsrcp_price", _price->localValue());
+  itemSave.bindValue(":itemsrcp_curr_id", _price->id());
+  itemSave.exec();
 
   done(_itemsrcpid);
 }
 
 void itemSourcePrice::populate()
 {
-  q.prepare( "SELECT itemsrcp_qtybreak,"
+  XSqlQuery itempopulate;
+  itempopulate.prepare( "SELECT itemsrcp_qtybreak,"
              "       itemsrcp_price, itemsrcp_curr_id,"
              "       itemsrcp_updated, itemsrcp_itemsrc_id "
              "FROM itemsrcp "
              "WHERE (itemsrcp_id=:itemsrcp_id);" );
-  q.bindValue(":itemsrcp_id", _itemsrcpid);
-  q.exec();
-  if (q.first())
+  itempopulate.bindValue(":itemsrcp_id", _itemsrcpid);
+  itempopulate.exec();
+  if (itempopulate.first())
   {
-    _itemsrcid = q.value("itemsrcp_itemsrc_id").toInt();
-    _qtyBreak->setDouble(q.value("itemsrcp_qtybreak").toDouble());
-    _price->setLocalValue(q.value("itemsrcp_price").toDouble());
-    _price->setEffective(q.value("itemsrcp_updated").toDate());
-    _price->setId(q.value("itemsrcp_curr_id").toInt());
+    _itemsrcid = itempopulate.value("itemsrcp_itemsrc_id").toInt();
+    _qtyBreak->setDouble(itempopulate.value("itemsrcp_qtybreak").toDouble());
+    _price->setLocalValue(itempopulate.value("itemsrcp_price").toDouble());
+    _price->setEffective(itempopulate.value("itemsrcp_updated").toDate());
+    _price->setId(itempopulate.value("itemsrcp_curr_id").toInt());
   }
 }

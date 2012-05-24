@@ -132,21 +132,22 @@ void cashReceiptsEditList::sView()
 
 void cashReceiptsEditList::sDelete()
 {
-  q.prepare( "SELECT deleteCashRcpt(:cashrcpt_id) AS result;");
-  q.bindValue(":cashrcpt_id", _cashrcpt->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery cashDelete;
+  cashDelete.prepare( "SELECT deleteCashRcpt(:cashrcpt_id) AS result;");
+  cashDelete.bindValue(":cashrcpt_id", _cashrcpt->id());
+  cashDelete.exec();
+  if (cashDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = cashDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteCashRcpt", result));
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (cashDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, cashDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   sFillList();
@@ -154,16 +155,17 @@ void cashReceiptsEditList::sDelete()
 
 void cashReceiptsEditList::sPost()
 {
+  XSqlQuery cashPost;
   int journalNumber = -1;
 
   XSqlQuery tx;
   tx.exec("BEGIN;");
-  q.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
-  if (q.first())
-    journalNumber = q.value("journalnumber").toInt();
-  else if (q.lastError().type() != QSqlError::NoError)
+  cashPost.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
+  if (cashPost.first())
+    journalNumber = cashPost.value("journalnumber").toInt();
+  else if (cashPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -172,13 +174,13 @@ void cashReceiptsEditList::sPost()
   for (int i = 0; i < selected.size(); i++)
   {
     cursor = (XTreeWidgetItem*)selected.at(i);
-    q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
-    q.bindValue(":cashrcpt_id", cursor->id());
-    q.bindValue(":journalNumber", journalNumber);
-    q.exec();
-    if (q.first())
+    cashPost.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
+    cashPost.bindValue(":cashrcpt_id", cursor->id());
+    cashPost.bindValue(":journalNumber", journalNumber);
+    cashPost.exec();
+    if (cashPost.first())
     {
-      int result = q.value("result").toInt();
+      int result = cashPost.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("postCashReceipt", result),
@@ -187,9 +189,9 @@ void cashReceiptsEditList::sPost()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (cashPost.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
       tx.exec("ROLLBACK;");
       return;
     }
@@ -230,11 +232,12 @@ void cashReceiptsEditList::sPrint()
 
 void cashReceiptsEditList::sFillList()
 {
+  XSqlQuery cashFillList;
   ParameterList params;
   if (! setParams(params))
     return;
 
   MetaSQLQuery mql = mqlLoad("unpostedCashReceipts", "detail");
-  q = mql.toQuery(params);
-  _cashrcpt->populate(q);
+  cashFillList = mql.toQuery(params);
+  _cashrcpt->populate(cashFillList);
 }

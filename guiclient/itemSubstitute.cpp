@@ -43,6 +43,7 @@ void itemSubstitute::languageChange()
 
 enum SetResponse itemSubstitute::set(const ParameterList &pParams)
 {
+  XSqlQuery itemet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -52,14 +53,14 @@ enum SetResponse itemSubstitute::set(const ParameterList &pParams)
   {
     _type = cBOMItemSub;
     _bomitemid = param.toInt();
-    q.prepare( "SELECT bomitem_item_id "
+    itemet.prepare( "SELECT bomitem_item_id "
                "FROM bomitem "
                "WHERE (bomitem_id=:bomitem_id);" );
-    q.bindValue(":bomitem_id", _bomitemid);
-    q.exec();
-    if (q.first())
+    itemet.bindValue(":bomitem_id", _bomitemid);
+    itemet.exec();
+    if (itemet.first())
     {
-      _item->setId(q.value("bomitem_item_id").toInt());
+      _item->setId(itemet.value("bomitem_item_id").toInt());
       _item->setReadOnly(TRUE);
     }
   }
@@ -132,6 +133,7 @@ enum SetResponse itemSubstitute::set(const ParameterList &pParams)
 
 void itemSubstitute::sSave()
 {
+  XSqlQuery itemSave;
   if (_type == cItemSub)
   {
     if (_item->id() == _substitute->id())
@@ -142,16 +144,16 @@ void itemSubstitute::sSave()
       return;
     }
 
-    q.prepare( "SELECT itemsub_id "
+    itemSave.prepare( "SELECT itemsub_id "
                "  FROM itemsub "
                " WHERE((itemsub_parent_item_id=:parentItem_id)"
                "   AND (itemsub_sub_item_id=:item_id)"
                "   AND (itemsub_id != :itemsub_id) );" );
-    q.bindValue(":parentItem_id", _item->id());
-    q.bindValue(":item_id", _substitute->id());
-    q.bindValue(":itemsub_id", _itemsubid);
-    q.exec();
-    if (q.first())
+    itemSave.bindValue(":parentItem_id", _item->id());
+    itemSave.bindValue(":item_id", _substitute->id());
+    itemSave.bindValue(":itemsub_id", _itemsubid);
+    itemSave.exec();
+    if (itemSave.first())
     {
       QMessageBox::critical( this, tr("Cannot Create Duplicate Substitute"),
                              tr( "This substitution has already been defined for the selected Item.\n"
@@ -162,12 +164,12 @@ void itemSubstitute::sSave()
 
     if (_mode == cNew)
     {
-      q.exec("SELECT NEXTVAL('itemsub_itemsub_id_seq') AS _itemsub_id");
-      if (q.first())
-        _itemsubid = q.value("_itemsub_id").toInt();
+      itemSave.exec("SELECT NEXTVAL('itemsub_itemsub_id_seq') AS _itemsub_id");
+      if (itemSave.first())
+        _itemsubid = itemSave.value("_itemsub_id").toInt();
 //  ToDo
 
-      q.prepare( "INSERT INTO itemsub "
+      itemSave.prepare( "INSERT INTO itemsub "
                  "( itemsub_id, itemsub_parent_item_id, itemsub_sub_item_id,"
                  "  itemsub_uomratio, itemsub_rank ) "
                  "VALUES "
@@ -175,31 +177,31 @@ void itemSubstitute::sSave()
                  "  :itemsub_uomratio, :itemsub_rank );" );
     }
     else if (_mode == cEdit)
-      q.prepare( "UPDATE itemsub "
+      itemSave.prepare( "UPDATE itemsub "
                  "   SET itemsub_uomratio=:itemsub_uomratio,"
                  "       itemsub_rank=:itemsub_rank,"
                  "       itemsub_sub_item_id=:itemsub_sub_item_id"
                  " WHERE(itemsub_id=:itemsub_id);" );
 
-    q.bindValue(":itemsub_id", _itemsubid);
-    q.bindValue(":itemsub_parent_item_id", _item->id());
-    q.bindValue(":itemsub_sub_item_id", _substitute->id());
-    q.bindValue(":itemsub_uomratio", _uomRatio->toDouble());
-    q.bindValue(":itemsub_rank", _ranking->value());
-    q.exec();
+    itemSave.bindValue(":itemsub_id", _itemsubid);
+    itemSave.bindValue(":itemsub_parent_item_id", _item->id());
+    itemSave.bindValue(":itemsub_sub_item_id", _substitute->id());
+    itemSave.bindValue(":itemsub_uomratio", _uomRatio->toDouble());
+    itemSave.bindValue(":itemsub_rank", _ranking->value());
+    itemSave.exec();
   }
   else if (_type == cBOMItemSub)
   {
     if (_mode == cNew)
     {
-      q.prepare( "SELECT bomitemsub_id "
+      itemSave.prepare( "SELECT bomitemsub_id "
                  "FROM bomitemsub "
                  "WHERE ( (bomitemsub_bomitem_id=:bomitem_id)"
                  " AND (bomitemsub_item_id=:item_id) );" );
-      q.bindValue(":bomitem_id", _bomitemid);
-      q.bindValue(":item_id", _substitute->id());
-      q.exec();
-      if (q.first())
+      itemSave.bindValue(":bomitem_id", _bomitemid);
+      itemSave.bindValue(":item_id", _substitute->id());
+      itemSave.exec();
+      if (itemSave.first())
       {
         QMessageBox::critical( this, tr("Cannot Create Duplicate Substitute"),
                                tr( "This substitution has already been defined for the selected BOM Item.\n"
@@ -211,12 +213,12 @@ void itemSubstitute::sSave()
 
     if (_mode == cNew)
     {
-      q.exec("SELECT NEXTVAL('bomitemsub_bomitemsub_id_seq') AS bomitemsub_id");
-      if (q.first())
-        _itemsubid = q.value("bomitemsub_id").toInt();
+      itemSave.exec("SELECT NEXTVAL('bomitemsub_bomitemsub_id_seq') AS bomitemsub_id");
+      if (itemSave.first())
+        _itemsubid = itemSave.value("bomitemsub_id").toInt();
 //  ToDo
 
-      q.prepare( "INSERT INTO bomitemsub "
+      itemSave.prepare( "INSERT INTO bomitemsub "
                  "( bomitemsub_id, bomitemsub_bomitem_id, bomitemsub_item_id,"
                  "  bomitemsub_uomratio, bomitemsub_rank ) "
                  "VALUES "
@@ -224,16 +226,16 @@ void itemSubstitute::sSave()
                  "  :bomitemsub_uomratio, :bomitemsub_rank );" );
     }
     else if (_mode == cEdit)
-      q.prepare( "UPDATE bomitemsub "
+      itemSave.prepare( "UPDATE bomitemsub "
                  "SET bomitemsub_uomratio=:bomitemsub_uomratio, bomitemsub_rank=:bomitemsub_rank "
                  "WHERE (bomitemsub_id=:bomitemsub_id);" );
 
-    q.bindValue(":bomitemsub_id", _itemsubid);
-    q.bindValue(":bomitemsub_bomitem_id", _bomitemid);
-    q.bindValue(":bomitemsub_item_id", _substitute->id());
-    q.bindValue(":bomitemsub_uomratio", _uomRatio->toDouble());
-    q.bindValue(":bomitemsub_rank", _ranking->value());
-    q.exec();
+    itemSave.bindValue(":bomitemsub_id", _itemsubid);
+    itemSave.bindValue(":bomitemsub_bomitem_id", _bomitemid);
+    itemSave.bindValue(":bomitemsub_item_id", _substitute->id());
+    itemSave.bindValue(":bomitemsub_uomratio", _uomRatio->toDouble());
+    itemSave.bindValue(":bomitemsub_rank", _ranking->value());
+    itemSave.exec();
   }
 
   done(_itemsubid);
@@ -241,38 +243,39 @@ void itemSubstitute::sSave()
 
 void itemSubstitute::populate()
 {
+  XSqlQuery itempopulate;
   if (_type == cItemSub)
   {
-    q.prepare( "SELECT itemsub_parent_item_id, itemsub_sub_item_id,"
+    itempopulate.prepare( "SELECT itemsub_parent_item_id, itemsub_sub_item_id,"
                "       itemsub_uomratio, itemsub_rank "
                "FROM itemsub "
                "WHERE (itemsub_id=:itemsub_id);" );
-    q.bindValue(":itemsub_id", _itemsubid);
-    q.exec();
-    if (q.first())
+    itempopulate.bindValue(":itemsub_id", _itemsubid);
+    itempopulate.exec();
+    if (itempopulate.first())
     {
-      _item->setId(q.value("itemsub_parent_item_id").toInt());
-      _substitute->setId(q.value("itemsub_sub_item_id").toInt());
-      _ranking->setValue(q.value("itemsub_rank").toInt());
-      _uomRatio->setDouble(q.value("itemsub_uomratio").toDouble());
+      _item->setId(itempopulate.value("itemsub_parent_item_id").toInt());
+      _substitute->setId(itempopulate.value("itemsub_sub_item_id").toInt());
+      _ranking->setValue(itempopulate.value("itemsub_rank").toInt());
+      _uomRatio->setDouble(itempopulate.value("itemsub_uomratio").toDouble());
     }
   }
   else if (_type == cBOMItemSub)
   {
-    q.prepare( "SELECT bomitemsub_bomitem_id, item_id,  bomitemsub_item_id,"
+    itempopulate.prepare( "SELECT bomitemsub_bomitem_id, item_id,  bomitemsub_item_id,"
                "       bomitemsub_uomratio, bomitemsub_rank "
                "FROM bomitemsub, bomitem, item "
                "WHERE ( (bomitemsub_bomitem_id=bomitem_id)"
                " AND (bomitem_item_id=item_id)"
                " AND (bomitemsub_id=:bomitemsub_id) );" );
-    q.bindValue(":bomitemsub_id", _itemsubid);
-    q.exec();
-    if (q.first())
+    itempopulate.bindValue(":bomitemsub_id", _itemsubid);
+    itempopulate.exec();
+    if (itempopulate.first())
     {
-      _item->setId(q.value("item_id").toInt());
-      _substitute->setId(q.value("bomitemsub_item_id").toInt());
-      _ranking->setValue(q.value("bomitemsub_rank").toInt());
-      _uomRatio->setDouble(q.value("bomitemsub_uomratio").toDouble());
+      _item->setId(itempopulate.value("item_id").toInt());
+      _substitute->setId(itempopulate.value("bomitemsub_item_id").toInt());
+      _ranking->setValue(itempopulate.value("bomitemsub_rank").toInt());
+      _uomRatio->setDouble(itempopulate.value("bomitemsub_uomratio").toDouble());
     }
   }
 }

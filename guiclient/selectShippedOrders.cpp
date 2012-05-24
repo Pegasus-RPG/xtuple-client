@@ -34,21 +34,22 @@ void selectShippedOrders::languageChange()
 
 void selectShippedOrders::sSelect()
 {
+  XSqlQuery selectSelect;
   if (_customerType->isAll())
-    q.prepare("SELECT selectUninvoicedShipments(:warehous_id) AS result;");
+    selectSelect.prepare("SELECT selectUninvoicedShipments(:warehous_id) AS result;");
   else if (_customerType->isSelected())
   {
-    q.prepare("SELECT selectUninvoicedShipments(:warehous_id, :custtype_id) AS result;");
-    q.bindValue(":custtype_id", _customerType->id());
+    selectSelect.prepare("SELECT selectUninvoicedShipments(:warehous_id, :custtype_id) AS result;");
+    selectSelect.bindValue(":custtype_id", _customerType->id());
   }
   else if (_customerType->isPattern())
   {
-    q.prepare("SELECT selectUninvoicedShipments(:warehous_id, :custtype_pattern) AS result;");
-    q.bindValue(":custtype_pattern", _customerType->pattern());
+    selectSelect.prepare("SELECT selectUninvoicedShipments(:warehous_id, :custtype_pattern) AS result;");
+    selectSelect.bindValue(":custtype_pattern", _customerType->pattern());
   }
 
-  q.bindValue(":warehous_id", ((_warehouse->isSelected()) ? _warehouse->id() : -1));
-  q.exec();
+  selectSelect.bindValue(":warehous_id", ((_warehouse->isSelected()) ? _warehouse->id() : -1));
+  selectSelect.exec();
 
   accept();
 }

@@ -111,6 +111,7 @@ void opportunity::languageChange()
 
 enum SetResponse opportunity::set(const ParameterList &pParams)
 {
+  XSqlQuery opportunityet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -141,24 +142,24 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
 
       _startDate->setDate(omfgThis->dbDate());
 
-      q.exec("SELECT NEXTVAL('ophead_ophead_id_seq') AS result;");
-      if (q.first())
+      opportunityet.exec("SELECT NEXTVAL('ophead_ophead_id_seq') AS result;");
+      if (opportunityet.first())
       {
-        _opheadid = q.value("result").toInt();
+        _opheadid = opportunityet.value("result").toInt();
       }
-      else if(q.lastError().type() != QSqlError::NoError)
+      else if(opportunityet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, opportunityet.lastError().databaseText(), __FILE__, __LINE__);
       }
 
-      q.exec("SELECT fetchNextNumber('OpportunityNumber') AS result;");
-      if (q.first())
+      opportunityet.exec("SELECT fetchNextNumber('OpportunityNumber') AS result;");
+      if (opportunityet.first())
       {
-        _number->setText(q.value("result").toString());
+        _number->setText(opportunityet.value("result").toString());
       }
-      else if(q.lastError().type() != QSqlError::NoError)
+      else if(opportunityet.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, opportunityet.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
     else if (param.toString() == "edit")
@@ -218,36 +219,37 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
 void opportunity::sCancel()
 {
 qDebug("->%d ->%d", cNew, _mode);
+  XSqlQuery cancelOppo;
   if(cNew == _mode)
   {
   qDebug("wtf? ->%d", _number->text().toInt());
-    q.prepare("SELECT releaseNumber('OpportunityNumber', :number);");
-    q.bindValue(":number", _number->text().toInt());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    cancelOppo.prepare("SELECT releaseNumber('OpportunityNumber', :number);");
+    cancelOppo.bindValue(":number", _number->text().toInt());
+    cancelOppo.exec();
+    if (cancelOppo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, cancelOppo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
 
   if (_saved && cNew == _mode)
   {
-    q.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
-    q.bindValue(":ophead_id", _opheadid);
-    q.exec();
-    if (q.first())
+    cancelOppo.prepare("SELECT deleteOpportunity(:ophead_id) AS result;");
+    cancelOppo.bindValue(":ophead_id", _opheadid);
+    cancelOppo.exec();
+    if (cancelOppo.first())
     {
-      int result = q.value("result").toInt();
+      int result = cancelOppo.value("result").toInt();
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("deleteOpportunity", result));
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (cancelOppo.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, cancelOppo.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -264,6 +266,7 @@ void opportunity::sSave()
 
 bool opportunity::save(bool partial)
 {
+  XSqlQuery opportunityave;
   if (! partial)
   {
     if(_crmacct->id() == -1)
@@ -285,15 +288,15 @@ bool opportunity::save(bool partial)
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  if (!q.exec("BEGIN"))
+  if (!opportunityave.exec("BEGIN"))
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, opportunityave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
   if (cNew == _mode && !_saved)
-    q.prepare("INSERT INTO ophead"
+    opportunityave.prepare("INSERT INTO ophead"
               "      (ophead_id, ophead_name, ophead_crmacct_id,"
               "       ophead_owner_username,"
               "       ophead_opstage_id, ophead_opsource_id,"
@@ -313,7 +316,7 @@ bool opportunity::save(bool partial)
               "       :ophead_username, :ophead_start_date, :ophead_assigned_date, "
               "       :ophead_priority_id, :ophead_number); " );
   else if (cEdit == _mode || _saved)
-    q.prepare("UPDATE ophead"
+    opportunityave.prepare("UPDATE ophead"
               "   SET ophead_name=:ophead_name,"
               "       ophead_crmacct_id=:ophead_crmacct_id,"
               "       ophead_owner_username=:ophead_owner_username,"
@@ -334,53 +337,53 @@ bool opportunity::save(bool partial)
               "       ophead_priority_id=:ophead_priority_id "
               " WHERE (ophead_id=:ophead_id); ");
 
-  q.bindValue(":ophead_id", _opheadid);
-  q.bindValue(":ophead_name", _name->text());
-  q.bindValue(":ophead_active",	QVariant(_active->isChecked()));
+  opportunityave.bindValue(":ophead_id", _opheadid);
+  opportunityave.bindValue(":ophead_name", _name->text());
+  opportunityave.bindValue(":ophead_active",	QVariant(_active->isChecked()));
   if (_crmacct->id() > 0)
-    q.bindValue(":ophead_crmacct_id", _crmacct->id());
-  q.bindValue(":ophead_owner_username", _owner->username());
-  q.bindValue(":ophead_username", _assignedTo->username());
+    opportunityave.bindValue(":ophead_crmacct_id", _crmacct->id());
+  opportunityave.bindValue(":ophead_owner_username", _owner->username());
+  opportunityave.bindValue(":ophead_username", _assignedTo->username());
   if(_oppstage->isValid())
-    q.bindValue(":ophead_opstage_id", _oppstage->id());
+    opportunityave.bindValue(":ophead_opstage_id", _oppstage->id());
   if(_oppsource->isValid())
-    q.bindValue(":ophead_opsource_id", _oppsource->id());
+    opportunityave.bindValue(":ophead_opsource_id", _oppsource->id());
   if(_opptype->isValid())
-    q.bindValue(":ophead_optype_id", _opptype->id());
+    opportunityave.bindValue(":ophead_optype_id", _opptype->id());
   if(!_probability->text().isEmpty())
-    q.bindValue(":ophead_probability_prcnt", _probability->text().toInt());
+    opportunityave.bindValue(":ophead_probability_prcnt", _probability->text().toInt());
   if(!_amount->isZero())
   {
-    q.bindValue(":ophead_amount", _amount->localValue());
-    q.bindValue(":ophead_curr_id", _amount->id());
+    opportunityave.bindValue(":ophead_amount", _amount->localValue());
+    opportunityave.bindValue(":ophead_curr_id", _amount->id());
   }
   if(_startDate->isValid())
-    q.bindValue(":ophead_start_date", _startDate->date());
+    opportunityave.bindValue(":ophead_start_date", _startDate->date());
   if(_assignDate->isValid())
-    q.bindValue(":ophead_assigned_date", _assignDate->date());
+    opportunityave.bindValue(":ophead_assigned_date", _assignDate->date());
   if(_targetDate->isValid())
-    q.bindValue(":ophead_target_date", _targetDate->date());
+    opportunityave.bindValue(":ophead_target_date", _targetDate->date());
   if(_actualDate->isValid())
-    q.bindValue(":ophead_actual_date", _actualDate->date());
-  q.bindValue(":ophead_notes", _notes->toPlainText());
+    opportunityave.bindValue(":ophead_actual_date", _actualDate->date());
+  opportunityave.bindValue(":ophead_notes", _notes->toPlainText());
   if (_cntct->isValid())
-    q.bindValue(":ophead_cntct_id", _cntct->id());
+    opportunityave.bindValue(":ophead_cntct_id", _cntct->id());
   if (_priority->isValid())
-    q.bindValue(":ophead_priority_id", _priority->id());
-  q.bindValue(":ophead_number", _number->text());
+    opportunityave.bindValue(":ophead_priority_id", _priority->id());
+  opportunityave.bindValue(":ophead_number", _number->text());
 
-  if(!q.exec() && q.lastError().type() != QSqlError::NoError)
+  if(!opportunityave.exec() && opportunityave.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, opportunityave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
-  q.exec("COMMIT;");
-  if(q.lastError().type() != QSqlError::NoError)
+  opportunityave.exec("COMMIT;");
+  if(opportunityave.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, opportunityave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -390,7 +393,8 @@ bool opportunity::save(bool partial)
 
 void opportunity::populate()
 { 
-  q.prepare("SELECT ophead_name,"
+  XSqlQuery opportunitypopulate;
+  opportunitypopulate.prepare("SELECT ophead_name,"
             "       ophead_crmacct_id,"
             "       ophead_owner_username,"
             "       ophead_opstage_id, ophead_opsource_id,"
@@ -403,64 +407,64 @@ void opportunity::populate()
             "       ophead_number, ophead_priority_id "
             "  FROM ophead"
             " WHERE(ophead_id=:ophead_id); ");
-  q.bindValue(":ophead_id", _opheadid);
-  q.exec();
-  if(q.first())
+  opportunitypopulate.bindValue(":ophead_id", _opheadid);
+  opportunitypopulate.exec();
+  if(opportunitypopulate.first())
   {
-    _number->setText(q.value("ophead_number").toString());
-    _name->setText(q.value("ophead_name").toString());
-    _active->setChecked(q.value("ophead_active").toBool());
-    _crmacct->setId(q.value("ophead_crmacct_id").toInt());
-    _owner->setUsername(q.value("ophead_owner_username").toString());
-    _assignedTo->setUsername(q.value("ophead_username").toString());
+    _number->setText(opportunitypopulate.value("ophead_number").toString());
+    _name->setText(opportunitypopulate.value("ophead_name").toString());
+    _active->setChecked(opportunitypopulate.value("ophead_active").toBool());
+    _crmacct->setId(opportunitypopulate.value("ophead_crmacct_id").toInt());
+    _owner->setUsername(opportunitypopulate.value("ophead_owner_username").toString());
+    _assignedTo->setUsername(opportunitypopulate.value("ophead_username").toString());
 
     _oppstage->setNull();
-    if(!q.value("ophead_opstage_id").toString().isEmpty())
-      _oppstage->setId(q.value("ophead_opstage_id").toInt());
+    if(!opportunitypopulate.value("ophead_opstage_id").toString().isEmpty())
+      _oppstage->setId(opportunitypopulate.value("ophead_opstage_id").toInt());
 
     _priority->setNull();
-    if(!q.value("ophead_priority_id").toString().isEmpty())
-      _priority->setId(q.value("ophead_priority_id").toInt());
+    if(!opportunitypopulate.value("ophead_priority_id").toString().isEmpty())
+      _priority->setId(opportunitypopulate.value("ophead_priority_id").toInt());
 
     _oppsource->setNull();
-    if(!q.value("ophead_opsource_id").toString().isEmpty())
-      _oppsource->setId(q.value("ophead_opsource_id").toInt());
+    if(!opportunitypopulate.value("ophead_opsource_id").toString().isEmpty())
+      _oppsource->setId(opportunitypopulate.value("ophead_opsource_id").toInt());
 
     _opptype->setNull();
-    if(!q.value("ophead_optype_id").toString().isEmpty())
-      _opptype->setId(q.value("ophead_optype_id").toInt());
+    if(!opportunitypopulate.value("ophead_optype_id").toString().isEmpty())
+      _opptype->setId(opportunitypopulate.value("ophead_optype_id").toInt());
 
     _probability->clear();
-    if(!q.value("ophead_probability_prcnt").toString().isEmpty())
-      _probability->setText(q.value("ophead_probability_prcnt").toDouble());
+    if(!opportunitypopulate.value("ophead_probability_prcnt").toString().isEmpty())
+      _probability->setText(opportunitypopulate.value("ophead_probability_prcnt").toDouble());
 
     _amount->clear();
-    _amount->setId(q.value("curr_id").toInt());
-    if(!q.value("ophead_amount").toString().isEmpty())
-      _amount->setLocalValue(q.value("ophead_amount").toDouble());
+    _amount->setId(opportunitypopulate.value("curr_id").toInt());
+    if(!opportunitypopulate.value("ophead_amount").toString().isEmpty())
+      _amount->setLocalValue(opportunitypopulate.value("ophead_amount").toDouble());
 
     _startDate->clear();
-    if(!q.value("ophead_start_date").toString().isEmpty())
-      _startDate->setDate(q.value("ophead_start_date").toDate());
+    if(!opportunitypopulate.value("ophead_start_date").toString().isEmpty())
+      _startDate->setDate(opportunitypopulate.value("ophead_start_date").toDate());
 
     _assignDate->clear();
-    if(!q.value("ophead_assigned_date").toString().isEmpty())
-      _assignDate->setDate(q.value("ophead_assigned_date").toDate());
+    if(!opportunitypopulate.value("ophead_assigned_date").toString().isEmpty())
+      _assignDate->setDate(opportunitypopulate.value("ophead_assigned_date").toDate());
 
     _targetDate->clear();
-    if(!q.value("ophead_target_date").toString().isEmpty())
-      _targetDate->setDate(q.value("ophead_target_date").toDate());
+    if(!opportunitypopulate.value("ophead_target_date").toString().isEmpty())
+      _targetDate->setDate(opportunitypopulate.value("ophead_target_date").toDate());
 
     _actualDate->clear();
-    if(!q.value("ophead_actual_date").toString().isEmpty())
-      _actualDate->setDate(q.value("ophead_actual_date").toDate());
+    if(!opportunitypopulate.value("ophead_actual_date").toString().isEmpty())
+      _actualDate->setDate(opportunitypopulate.value("ophead_actual_date").toDate());
 
-    _notes->setText(q.value("ophead_notes").toString());
+    _notes->setText(opportunitypopulate.value("ophead_notes").toString());
 
     _comments->setId(_opheadid);
     _documents->setId(_opheadid);
 
-    _cntct->setId(q.value("ophead_cntct_id").toInt());
+    _cntct->setId(opportunitypopulate.value("ophead_cntct_id").toInt());
 
     sFillTodoList();
     sFillSalesList();
@@ -510,12 +514,13 @@ void opportunity::sViewTodoItem()
 
 void opportunity::sDeleteTodoItem()
 {
-  q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
-  q.bindValue(":todoitem_id", _todoList->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery opportunityDeleteTodoItem;
+  opportunityDeleteTodoItem.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
+  opportunityDeleteTodoItem.bindValue(":todoitem_id", _todoList->id());
+  opportunityDeleteTodoItem.exec();
+  if (opportunityDeleteTodoItem.first())
   {
-    int result = q.value("result").toInt();
+    int result = opportunityDeleteTodoItem.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteTodoItem", result));
@@ -524,16 +529,17 @@ void opportunity::sDeleteTodoItem()
     else
       sFillTodoList();
     }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (opportunityDeleteTodoItem.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, opportunityDeleteTodoItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void opportunity::sFillTodoList()
 {
-  q.prepare("SELECT todoitem_id, incdtpriority_name, incdtpriority_order, "
+  XSqlQuery opportunityFillTodoList;
+  opportunityFillTodoList.prepare("SELECT todoitem_id, incdtpriority_name, incdtpriority_order, "
             "       todoitem_owner_username, todoitem_username, todoitem_name, "
 	    "       firstLine(todoitem_description) AS todoitem_description, "
             "       todoitem_status, todoitem_due_date, todoitem_active, "
@@ -548,14 +554,14 @@ void opportunity::sFillTodoList()
             "WHERE ( (todoitem_ophead_id=:ophead_id) ) "
 	    "ORDER BY incdtpriority_order, todoitem_username;");
 
-  q.bindValue(":ophead_id", _opheadid);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  opportunityFillTodoList.bindValue(":ophead_id", _opheadid);
+  opportunityFillTodoList.exec();
+  if (opportunityFillTodoList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, opportunityFillTodoList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _todoList->populate(q);
+  _todoList->populate(opportunityFillTodoList);
 }
 
 void opportunity::sPopulateTodoMenu(QMenu *pMenu)
@@ -666,17 +672,18 @@ void opportunity::sDeleteSale()
 
 void opportunity::sPrintQuote()
 {
-  q.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS report_name "
+  XSqlQuery opportunityPrintQuote;
+  opportunityPrintQuote.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS report_name "
              "FROM quhead "
              "WHERE (quhead_id=:quheadid); " );
-  q.bindValue(":quheadid", _salesList->id());
-  q.exec();
-  if (q.first())
+  opportunityPrintQuote.bindValue(":quheadid", _salesList->id());
+  opportunityPrintQuote.exec();
+  if (opportunityPrintQuote.first())
   {
     ParameterList params;
     params.append("quhead_id", _salesList->id());
 
-    orReport report(q.value("report_name").toString(), params);
+    orReport report(opportunityPrintQuote.value("report_name").toString(), params);
     if (report.isValid())
       report.print();
     else
@@ -685,7 +692,7 @@ void opportunity::sPrintQuote()
   else
     QMessageBox::warning( this, tr("Could not locate report"),
                           tr("Could not locate the report definition the form \"%1\"")
-                          .arg(q.value("report_name").toString()) );
+                          .arg(opportunityPrintQuote.value("report_name").toString()) );
 }
 
 void opportunity::sConvertQuote()
@@ -824,6 +831,7 @@ void opportunity::sNewQuote()
 
 void opportunity::sAttachQuote()
 {
+  XSqlQuery opportunityAttachQuote;
   ParameterList params;
   params.append("cust_id", _custid);
   params.append("openOnly", true);
@@ -834,13 +842,13 @@ void opportunity::sAttachQuote()
   int id = newdlg.exec();
   if(id != QDialog::Rejected)
   {
-    q.prepare("SELECT attachQuoteToOpportunity(:quhead_id, :ophead_id) AS result;");
-    q.bindValue(":quhead_id", id);
-    q.bindValue(":ophead_id", _opheadid);
-    q.exec();
-    if (q.first())
+    opportunityAttachQuote.prepare("SELECT attachQuoteToOpportunity(:quhead_id, :ophead_id) AS result;");
+    opportunityAttachQuote.bindValue(":quhead_id", id);
+    opportunityAttachQuote.bindValue(":ophead_id", _opheadid);
+    opportunityAttachQuote.exec();
+    if (opportunityAttachQuote.first())
     {
-      int result = q.value("result").toInt();
+      int result = opportunityAttachQuote.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("attachQuoteToOpportunity", result),
@@ -850,9 +858,9 @@ void opportunity::sAttachQuote()
       else
         sFillSalesList();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (opportunityAttachQuote.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, opportunityAttachQuote.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -885,16 +893,17 @@ void opportunity::sViewQuote()
 
 void opportunity::sDeleteQuote()
 {
+  XSqlQuery opportunityDeleteQuote;
   if ( QMessageBox::warning( this, tr("Delete Selected Quote"),
                              tr("Are you sure that you want to delete the selected Quote?" ),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
   {
-    q.prepare("SELECT deleteQuote(:quhead_id) AS result;");
-    q.bindValue(":quhead_id", _salesList->id());
-    q.exec();
-    if (q.first())
+    opportunityDeleteQuote.prepare("SELECT deleteQuote(:quhead_id) AS result;");
+    opportunityDeleteQuote.bindValue(":quhead_id", _salesList->id());
+    opportunityDeleteQuote.exec();
+    if (opportunityDeleteQuote.first())
     {
-      int result = q.value("result").toInt();
+      int result = opportunityDeleteQuote.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("deleteQuote", result),
@@ -904,9 +913,9 @@ void opportunity::sDeleteQuote()
       else
         sFillSalesList();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (opportunityDeleteQuote.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, opportunityDeleteQuote.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -941,6 +950,7 @@ void opportunity::sNewSalesOrder()
 
 void opportunity::sAttachSalesOrder()
 {
+  XSqlQuery opportunityAttachSalesOrder;
   ParameterList params;
   params.append("soType", (cSoOpen | cSoCustomer));
   params.append("cust_id", _custid);
@@ -951,13 +961,13 @@ void opportunity::sAttachSalesOrder()
   int id = newdlg.exec();
   if(id != QDialog::Rejected)
   {
-    q.prepare("SELECT attachSalesOrderToOpportunity(:cohead_id, :ophead_id) AS result;");
-    q.bindValue(":cohead_id", id);
-    q.bindValue(":ophead_id", _opheadid);
-    q.exec();
-    if (q.first())
+    opportunityAttachSalesOrder.prepare("SELECT attachSalesOrderToOpportunity(:cohead_id, :ophead_id) AS result;");
+    opportunityAttachSalesOrder.bindValue(":cohead_id", id);
+    opportunityAttachSalesOrder.bindValue(":ophead_id", _opheadid);
+    opportunityAttachSalesOrder.exec();
+    if (opportunityAttachSalesOrder.first())
     {
-      int result = q.value("result").toInt();
+      int result = opportunityAttachSalesOrder.value("result").toInt();
       if (result < 0)
       {
         systemError(this, storedProcErrorLookup("attachSalesOrderToOpportunity", result),
@@ -967,9 +977,9 @@ void opportunity::sAttachSalesOrder()
       else
         sFillSalesList();
     }
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (opportunityAttachSalesOrder.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, opportunityAttachSalesOrder.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -1007,7 +1017,8 @@ void opportunity::sDeleteSalesOrder()
 
 void opportunity::sFillSalesList()
 {
-  q.prepare("SELECT id, alt_id, sale_type, sale_number, sale_date, sale_extprice, "
+  XSqlQuery opportunityFillSalesList;
+  opportunityFillSalesList.prepare("SELECT id, alt_id, sale_type, sale_number, sale_date, sale_extprice, "
             "       'curr' AS sale_extprice_xtnumericrole, "
 			"       0 AS sale_extprice_xttotalrole "
             "FROM ( "
@@ -1025,16 +1036,16 @@ void opportunity::sFillSalesList()
             "WHERE (cohead_ophead_id=:ophead_id) "
             "     ) AS data "
             "ORDER BY sale_date;");
-  q.bindValue(":ophead_id", _opheadid);
-  q.bindValue(":quote", tr("Quote"));
-  q.bindValue(":salesorder", tr("Sales Order"));
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  opportunityFillSalesList.bindValue(":ophead_id", _opheadid);
+  opportunityFillSalesList.bindValue(":quote", tr("Quote"));
+  opportunityFillSalesList.bindValue(":salesorder", tr("Sales Order"));
+  opportunityFillSalesList.exec();
+  if (opportunityFillSalesList.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, opportunityFillSalesList.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _salesList->populate(q, true);
+  _salesList->populate(opportunityFillSalesList, true);
 }
 
 void opportunity::sPopulateSalesMenu(QMenu *pMenu)
@@ -1160,17 +1171,19 @@ void opportunity::sEditCharacteristic()
 
 void opportunity::sDeleteCharacteristic()
 {
-  q.prepare( "DELETE FROM charass "
+  XSqlQuery opportunityDeleteCharacteristic;
+  opportunityDeleteCharacteristic.prepare( "DELETE FROM charass "
              "WHERE (charass_id=:charass_id);" );
-  q.bindValue(":charass_id", _charass->id());
-  q.exec();
+  opportunityDeleteCharacteristic.bindValue(":charass_id", _charass->id());
+  opportunityDeleteCharacteristic.exec();
 
   sFillCharList();
 }
 
 void opportunity::sFillCharList()
 {
-  q.prepare( "SELECT charass_id, char_name, "
+  XSqlQuery opportunityFillCharList;
+  opportunityFillCharList.prepare( "SELECT charass_id, char_name, "
              " CASE WHEN char_type < 2 THEN "
              "   charass_value "
              " ELSE "
@@ -1182,9 +1195,9 @@ void opportunity::sFillCharList()
              " AND (charass_char_id=char_id)"
              " AND (charass_target_id=:ophead_id) ) "
              "ORDER BY char_order, char_name;" );
-  q.bindValue(":ophead_id", _opheadid);
-  q.exec();
-  _charass->populate(q);
+  opportunityFillCharList.bindValue(":ophead_id", _opheadid);
+  opportunityFillCharList.exec();
+  _charass->populate(opportunityFillCharList);
 }
 
 void opportunity::sHandleCrmacct(int pCrmacctid)

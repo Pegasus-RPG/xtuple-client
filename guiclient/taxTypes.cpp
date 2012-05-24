@@ -78,12 +78,13 @@ void taxTypes::languageChange()
 
 void taxTypes::sDelete()
 {
-  q.prepare("SELECT deleteTaxType(:taxtype_id) AS result;");
-  q.bindValue(":taxtype_id", _taxtype->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery taxDelete;
+  taxDelete.prepare("SELECT deleteTaxType(:taxtype_id) AS result;");
+  taxDelete.bindValue(":taxtype_id", _taxtype->id());
+  taxDelete.exec();
+  if (taxDelete.first())
   {
-    if (q.value("result").toInt() < 0)
+    if (taxDelete.value("result").toInt() < 0)
     {
       QMessageBox::warning( this, tr("Cannot Delete Tax Type"),
                             tr( "You cannot delete the selected Tax Type because there are currently items assigned to it.\n"

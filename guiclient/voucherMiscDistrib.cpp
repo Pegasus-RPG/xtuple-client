@@ -107,32 +107,34 @@ enum SetResponse voucherMiscDistrib::set(const ParameterList &pParams)
 
 void voucherMiscDistrib::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery vpopulateVoucher;
+  vpopulateVoucher.prepare( "SELECT * "
              "FROM vodist "
              "WHERE (vodist_id=:vodist_id);" ) ;
-  q.bindValue(":vodist_id", _vodistid);
-  q.exec();
-  if (q.first())
+  vpopulateVoucher.bindValue(":vodist_id", _vodistid);
+  vpopulateVoucher.exec();
+  if (vpopulateVoucher.first())
   {
-    _account->setId(q.value("vodist_accnt_id").toInt());
-    _amount->setLocalValue(q.value("vodist_amount").toDouble());
-    _discountable->setChecked(q.value("vodist_discountable").toBool());
-    _notes->setText(q.value("vodist_notes").toString());
-    if(q.value("vodist_expcat_id").toInt() != -1)
+    _account->setId(vpopulateVoucher.value("vodist_accnt_id").toInt());
+    _amount->setLocalValue(vpopulateVoucher.value("vodist_amount").toDouble());
+    _discountable->setChecked(vpopulateVoucher.value("vodist_discountable").toBool());
+    _notes->setText(vpopulateVoucher.value("vodist_notes").toString());
+    if(vpopulateVoucher.value("vodist_expcat_id").toInt() != -1)
     {
       _expcatSelected->setChecked(TRUE);
-      _expcat->setId(q.value("vodist_expcat_id").toInt());
+      _expcat->setId(vpopulateVoucher.value("vodist_expcat_id").toInt());
     }
-    if(q.value("vodist_tax_id").toInt() != -1)
+    if(vpopulateVoucher.value("vodist_tax_id").toInt() != -1)
     {
 	   _taxSelected->setChecked(TRUE);
-	   _taxCode->setId(q.value("vodist_tax_id").toInt());
+	   _taxCode->setId(vpopulateVoucher.value("vodist_tax_id").toInt());
     }
   }
 }
 
 void voucherMiscDistrib::sSave()
 {
+  XSqlQuery saveVoucher;
   if (_accountSelected->isChecked() && !_account->isValid())
   {
     QMessageBox::warning( this, tr("Select Account"),
@@ -159,9 +161,9 @@ void voucherMiscDistrib::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('vodist_vodist_id_seq') AS _vodistid;");
-    if (q.first())
-      _vodistid = q.value("_vodistid").toInt();
+    saveVoucher.exec("SELECT NEXTVAL('vodist_vodist_id_seq') AS _vodistid;");
+    if (saveVoucher.first())
+      _vodistid = saveVoucher.value("_vodistid").toInt();
     else
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -170,7 +172,7 @@ void voucherMiscDistrib::sSave()
       return;
     }
 
-    q.prepare( "INSERT INTO vodist "
+    saveVoucher.prepare( "INSERT INTO vodist "
                "( vodist_id, vodist_vohead_id, vodist_poitem_id,"
                "  vodist_costelem_id, vodist_accnt_id, vodist_amount, vodist_discountable,"
                "  vodist_expcat_id, vodist_tax_id, vodist_notes ) "
@@ -180,7 +182,7 @@ void voucherMiscDistrib::sSave()
                "  :vodist_expcat_id, :vodist_tax_id, :vodist_notes );" );
   }
   else if (_mode == cEdit)
-    q.prepare( "UPDATE vodist "
+    saveVoucher.prepare( "UPDATE vodist "
                "SET vodist_accnt_id=:vodist_accnt_id,"
                "    vodist_amount=:vodist_amount,"
                "    vodist_discountable=:vodist_discountable,"
@@ -189,49 +191,49 @@ void voucherMiscDistrib::sSave()
 			   "    vodist_notes=:vodist_notes "
                "WHERE (vodist_id=:vodist_id);" );
   
-  q.bindValue(":vodist_id", _vodistid);
-  q.bindValue(":vodist_vohead_id", _voheadid);
-  q.bindValue(":vodist_amount", _amount->localValue());
-  q.bindValue(":vodist_discountable", QVariant(_discountable->isChecked()));
-  q.bindValue(":vodist_notes", _notes->toPlainText().trimmed());
+  saveVoucher.bindValue(":vodist_id", _vodistid);
+  saveVoucher.bindValue(":vodist_vohead_id", _voheadid);
+  saveVoucher.bindValue(":vodist_amount", _amount->localValue());
+  saveVoucher.bindValue(":vodist_discountable", QVariant(_discountable->isChecked()));
+  saveVoucher.bindValue(":vodist_notes", _notes->toPlainText().trimmed());
   if(_accountSelected->isChecked())
   {
-    q.bindValue(":vodist_accnt_id", _account->id());
-    q.bindValue(":vodist_expcat_id", -1);
-    q.bindValue(":vodist_tax_id", -1);
+    saveVoucher.bindValue(":vodist_accnt_id", _account->id());
+    saveVoucher.bindValue(":vodist_expcat_id", -1);
+    saveVoucher.bindValue(":vodist_tax_id", -1);
   }
   else if (_expcatSelected->isChecked())
   {
-    q.bindValue(":vodist_accnt_id", -1);
-    q.bindValue(":vodist_expcat_id", _expcat->id());
-    q.bindValue(":vodist_tax_id", -1);
+    saveVoucher.bindValue(":vodist_accnt_id", -1);
+    saveVoucher.bindValue(":vodist_expcat_id", _expcat->id());
+    saveVoucher.bindValue(":vodist_tax_id", -1);
   }
   else
   {
-    q.bindValue(":vodist_accnt_id", -1);
-    q.bindValue(":vodist_expcat_id", -1);
-    q.bindValue(":vodist_tax_id", _taxCode->id()); 
+    saveVoucher.bindValue(":vodist_accnt_id", -1);
+    saveVoucher.bindValue(":vodist_expcat_id", -1);
+    saveVoucher.bindValue(":vodist_tax_id", _taxCode->id()); 
   }
-  q.exec();
+  saveVoucher.exec();
 
   done(_vodistid);
 }
 
 void voucherMiscDistrib::sCheck()     
 {
-  
+  XSqlQuery checkVoucher;
  if(_taxSelected->isChecked() && _mode == cEdit)
  {
-  q.prepare( "SELECT vodist_id, vodist_vohead_id, vodist_amount "
+  checkVoucher.prepare( "SELECT vodist_id, vodist_vohead_id, vodist_amount "
               "FROM vodist " 
               "WHERE (vodist_id=:vodist_id) "
 			  "   AND (vodist_poitem_id=-1)"
               "   AND (vodist_tax_id=:tax_id);" );
   
-  q.bindValue(":vodist_id", _vodistid);
-  q.bindValue(":tax_id", _taxCode->id());
-  q.exec();
-  if (q.first())
+  checkVoucher.bindValue(":vodist_id", _vodistid);
+  checkVoucher.bindValue(":tax_id", _taxCode->id());
+  checkVoucher.exec();
+  if (checkVoucher.first())
   {
     _amount->setFocus();
 	_taxSelected->setEnabled(false);
@@ -242,19 +244,19 @@ void voucherMiscDistrib::sCheck()
  }
 else if(_taxSelected->isChecked() && _mode == cNew)
 {
-   q.prepare( "SELECT vodist_id, vodist_amount "
+   checkVoucher.prepare( "SELECT vodist_id, vodist_amount "
               "FROM vodist " 
               "WHERE (vodist_vohead_id=:vodist_vohead_id) "
 			  "   AND (vodist_poitem_id=-1)"
               "   AND (vodist_tax_id=:tax_id);" );
   
-  q.bindValue(":vodist_vohead_id", _voheadid);
-  q.bindValue(":tax_id", _taxCode->id());
-  q.exec();
-  if (q.first())
+  checkVoucher.bindValue(":vodist_vohead_id", _voheadid);
+  checkVoucher.bindValue(":tax_id", _taxCode->id());
+  checkVoucher.exec();
+  if (checkVoucher.first())
   {
-    _vodistid=q.value("vodist_id").toInt();
-    _amount->setLocalValue(q.value("vodist_amount").toDouble());
+    _vodistid=checkVoucher.value("vodist_id").toInt();
+    _amount->setLocalValue(checkVoucher.value("vodist_amount").toDouble());
 	_amount->setFocus();
 	_mode=cEdit;
 	_taxSelected->setEnabled(false);
@@ -267,29 +269,30 @@ else if(_taxSelected->isChecked() && _mode == cNew)
 
 void voucherMiscDistrib::sPopulateVendorInfo(int pVendid)
 {
-  q.prepare( "SELECT vend_accnt_id, vend_expcat_id, vend_tax_id "
+  XSqlQuery populateVoucher;
+  populateVoucher.prepare( "SELECT vend_accnt_id, vend_expcat_id, vend_tax_id "
              "FROM vendinfo "
              "WHERE (vend_id=:vend_id);" );
-  q.bindValue(":vend_id", pVendid);
-  q.exec();
-  if (q.first())
+  populateVoucher.bindValue(":vend_id", pVendid);
+  populateVoucher.exec();
+  if (populateVoucher.first())
   {
-    if(q.value("vend_accnt_id").toInt() != -1)
+    if(populateVoucher.value("vend_accnt_id").toInt() != -1)
     {
       _accountSelected->setChecked(TRUE);
-      _account->setId(q.value("vend_accnt_id").toInt());
+      _account->setId(populateVoucher.value("vend_accnt_id").toInt());
       _amount->setFocus();
     }
-    if(q.value("vend_expcat_id").toInt() != -1)
+    if(populateVoucher.value("vend_expcat_id").toInt() != -1)
     {
       _expcatSelected->setChecked(TRUE);
-      _expcat->setId(q.value("vend_expcat_id").toInt());
+      _expcat->setId(populateVoucher.value("vend_expcat_id").toInt());
       _amount->setFocus();
     }
-    if(q.value("vend_tax_id").toInt() != -1)
+    if(populateVoucher.value("vend_tax_id").toInt() != -1)
     {
       _taxSelected->setChecked(TRUE);
-      _taxCode->setId(q.value("vend_tax_id").toInt());
+      _taxCode->setId(populateVoucher.value("vend_tax_id").toInt());
       _amount->setFocus();
     }
   }

@@ -57,11 +57,12 @@ void postCashReceipts::languageChange()
 
 void postCashReceipts::sPost()
 {
+  XSqlQuery postPost;
   int journalNumber;
 
-  q.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
-  if (q.first())
-    journalNumber = q.value("journalnumber").toInt();
+  postPost.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
+  if (postPost.first())
+    journalNumber = postPost.value("journalnumber").toInt();
   else
   {
     systemError(this, tr("A System Error occurred at %1::%2.")
@@ -70,12 +71,12 @@ void postCashReceipts::sPost()
     return;
   }
 
-  q.exec( "SELECT cashrcpt_id, cust_number "
+  postPost.exec( "SELECT cashrcpt_id, cust_number "
           "FROM cashrcpt, custinfo "
           "WHERE ( (NOT cashrcpt_posted)"
           "  AND   (NOT cashrcpt_void)"
           "  AND   (cashrcpt_cust_id=cust_id) );" );
-  if (q.first())
+  if (postPost.first())
   {
     int counter = 0;
 
@@ -85,9 +86,9 @@ void postCashReceipts::sPost()
     do
     {
       message( tr("Posting Cash Receipt #%1...")
-               .arg(q.value("cust_number").toString()) );
+               .arg(postPost.value("cust_number").toString()) );
 
-      post.bindValue(":cashrcpt_id", q.value("cashrcpt_id"));
+      post.bindValue(":cashrcpt_id", postPost.value("cashrcpt_id"));
       post.bindValue(":journalNumber", journalNumber);
       post.exec();
       if (post.first())
@@ -105,21 +106,21 @@ void postCashReceipts::sPost()
                                    tr( "A Cash Receipt for Customer #%1 cannot be posted as the A/R Account cannot be determined.\n"
                                        "You must make a A/R Account Assignment for the Customer Type to which this Customer\n"
                                        "is assigned for you may post this Cash Receipt." )
-                                   .arg(q.value("cust_number").toString())  );
+                                   .arg(postPost.value("cust_number").toString())  );
             break;
 
           case -6:
             QMessageBox::critical( this, tr("Cannot Post Cash Receipt"),
                                    tr( "A Cash Receipt for Customer #%1 cannot be posted as the Bank Account cannot be determined.\n"
                                        "You must make a Bank Account Assignment for this Cash Receipt before you may post it." )
-                                   .arg(q.value("cust_number").toString())  );
+                                   .arg(postPost.value("cust_number").toString())  );
             break;
 
           case -7:
             QMessageBox::critical( this, tr("Cannot Post Cash Receipt"),
                                    tr( "A Cash Receipt for Customer #%1 cannot be posted due to an unknown error.\n"
                                        "Contact you Systems Administrator." )
-                                   .arg(q.value("cust_number").toString())  );
+                                   .arg(postPost.value("cust_number").toString())  );
 
           default:
             counter++;
@@ -129,13 +130,13 @@ void postCashReceipts::sPost()
       {
         systemError( this, tr("While posting the cash receipt for Customer %1:"
 			      "\n\n%2")
-                           .arg(q.value("cust_number").toString())
+                           .arg(postPost.value("cust_number").toString())
                            .arg(post.lastError().databaseText()),
 		     __FILE__, __LINE__ );
         break;
       }
     }
-    while (q.next());
+    while (postPost.next());
 
     resetMessage();
 

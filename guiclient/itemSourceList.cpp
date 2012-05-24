@@ -70,12 +70,13 @@ void itemSourceList::sSelect()
 
 void itemSourceList::sFillList()
 {
+  XSqlQuery itemFillList;
   MetaSQLQuery mql = mqlLoad("itemSources", "detail");
 
   ParameterList params;
   params.append("item_id", _item->id());
   params.append("onlyShowActive", true);
-  q = mql.toQuery(params);
-  _itemsrc->populate(q);
+  itemFillList = mql.toQuery(params);
+  _itemsrc->populate(itemFillList);
 }
 

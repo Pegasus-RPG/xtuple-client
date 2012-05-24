@@ -58,6 +58,7 @@ void dspVoucherRegister::languageChange()
 
 enum SetResponse dspVoucherRegister::set(const ParameterList &pParams)
 {
+  XSqlQuery dspet;
   XWidget::set(pParams);
   QVariant param;
   bool     valid;
@@ -80,15 +81,15 @@ enum SetResponse dspVoucherRegister::set(const ParameterList &pParams)
   param = pParams.value("period_id", &valid);
   if (valid)
   {
-    q.prepare( "SELECT period_start, period_end "
+    dspet.prepare( "SELECT period_start, period_end "
                "FROM period "
                "WHERE (period_id=:period_id);" );
-    q.bindValue(":period_id", param.toInt());
-    q.exec();
-    if (q.first())
+    dspet.bindValue(":period_id", param.toInt());
+    dspet.exec();
+    if (dspet.first())
     {
-      _dates->setStartDate(q.value("period_start").toDate());
-      _dates->setEndDate(q.value("period_end").toDate());
+      _dates->setStartDate(dspet.value("period_start").toDate());
+      _dates->setEndDate(dspet.value("period_end").toDate());
     }
   }
 
@@ -177,6 +178,7 @@ void dspVoucherRegister::sViewTrans()
 
 void dspVoucherRegister::sViewDocument()
 {
+  XSqlQuery dspViewDocument;
   XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(list()->currentItem());
   if(0 == item)
     return;
@@ -186,18 +188,18 @@ void dspVoucherRegister::sViewDocument()
   ParameterList params;
   if(doctype == "VO")
   {
-    q.prepare("SELECT vohead_id, vohead_misc"
+    dspViewDocument.prepare("SELECT vohead_id, vohead_misc"
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
-    q.bindValue(":vohead_number", docnumber);
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":vohead_number", docnumber);
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    params.append("vohead_id", q.value("vohead_id").toInt());
+    params.append("vohead_id", dspViewDocument.value("vohead_id").toInt());
     params.append("mode", "view");
 
-    if(q.value("vohead_misc").toBool())
+    if(dspViewDocument.value("vohead_misc").toBool())
     {
       miscVoucher *newdlg = new miscVoucher();
       newdlg->set(params);
@@ -212,27 +214,27 @@ void dspVoucherRegister::sViewDocument()
   }
   else if(doctype == "IN")
   {
-    q.prepare("SELECT invchead_id"
+    dspViewDocument.prepare("SELECT invchead_id"
               "  FROM invchead"
               " WHERE (invchead_invcnumber=:invchead_invcnumber)");
-    q.bindValue(":invchead_invcnumber", docnumber);
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":invchead_invcnumber", docnumber);
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    invoice::viewInvoice(q.value("invchead_id").toInt());
+    invoice::viewInvoice(dspViewDocument.value("invchead_id").toInt());
   }
   else if(doctype == "PO")
   {
-    q.prepare("SELECT pohead_id"
+    dspViewDocument.prepare("SELECT pohead_id"
               "  FROM pohead"
               " WHERE (pohead_number=:pohead_number)");
-    q.bindValue(":pohead_number", docnumber);
-    q.exec();
-    if(!q.first())
+    dspViewDocument.bindValue(":pohead_number", docnumber);
+    dspViewDocument.exec();
+    if(!dspViewDocument.first())
       return;
 
-    params.append("pohead_id", q.value("pohead_id").toInt());
+    params.append("pohead_id", dspViewDocument.value("pohead_id").toInt());
     params.append("mode", "view");
 
     purchaseOrder *newdlg = new purchaseOrder();

@@ -42,24 +42,25 @@ void postInvoices::languageChange()
 
 void postInvoices::sPost()
 {
-  q.exec( "SELECT invchead_printed, COUNT(*) AS number "
+  XSqlQuery postPost;
+  postPost.exec( "SELECT invchead_printed, COUNT(*) AS number "
           "FROM ( "
           "  SELECT * FROM invchead WHERE NOT (invchead_posted)) AS data "
           "WHERE (checkInvoiceSitePrivs(invchead_id)) "
           "GROUP BY invchead_printed;" );
-  if (q.first())
+  if (postPost.first())
   {
     int printed   = 0;
     int unprinted = 0;
 
     do
     {
-      if (q.value("invchead_printed").toBool())
-        printed = q.value("number").toInt();
+      if (postPost.value("invchead_printed").toBool())
+        printed = postPost.value("number").toInt();
       else
-        unprinted = q.value("number").toInt();
+        unprinted = postPost.value("number").toInt();
     }
-    while (q.next());
+    while (postPost.next());
 
     if ( ( (unprinted) && (!printed) ) && (!_postUnprinted->isChecked()) )
     {
@@ -80,17 +81,17 @@ void postInvoices::sPost()
   }
 
   bool inclZero = false;
-  q.exec("SELECT COUNT(invchead_id) AS numZeroInvcs "
+  postPost.exec("SELECT COUNT(invchead_id) AS numZeroInvcs "
          "FROM invchead "
          "WHERE ( (NOT invchead_posted) "
          "  AND   (invoiceTotal(invchead_id) <= 0.0) "
          "  AND   (checkInvoiceSitePrivs(invchead_id)) );");
-  if (q.first() && q.value("numZeroInvcs").toInt() > 0)
+  if (postPost.first() && postPost.value("numZeroInvcs").toInt() > 0)
   {
     int toPost = QMessageBox::question(this, tr("Invoices for 0 Amount"),
 				       tr("There are %1 invoices with a total value of 0.\n"
 					  "Would you like to post them?")
-					 .arg(q.value("numZeroInvcs").toString()),
+					 .arg(postPost.value("numZeroInvcs").toString()),
 				       tr("Post All"), tr("Post Only Non-0"),
 				       tr("Cancel"), 1, 2);
     if (toPost == 2)
@@ -100,35 +101,35 @@ void postInvoices::sPost()
     else
       inclZero = true;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (postPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, postPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  q.exec("SELECT fetchJournalNumber('AR-IN') AS journal;");
-  if (!q.first())
+  postPost.exec("SELECT fetchJournalNumber('AR-IN') AS journal;");
+  if (!postPost.first())
   {
     systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
                        .arg(__FILE__)
                        .arg(__LINE__)
-                       .arg(q.value("journal").toInt()) );
+                       .arg(postPost.value("journal").toInt()) );
     return;
   }
-  int journalNumber = q.value("journal").toInt();
+  int journalNumber = postPost.value("journal").toInt();
 
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-  q.prepare("SELECT postInvoices(:postUnprinted, :inclZero, :journalNumber) AS result;");
-  q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
-  q.bindValue(":inclZero",      inclZero);
-  q.bindValue(":journalNumber", journalNumber);
-  q.exec();
-  if (q.first())
+  postPost.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+  postPost.prepare("SELECT postInvoices(:postUnprinted, :inclZero, :journalNumber) AS result;");
+  postPost.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
+  postPost.bindValue(":inclZero",      inclZero);
+  postPost.bindValue(":journalNumber", journalNumber);
+  postPost.exec();
+  if (postPost.first())
   {
-    int result = q.value("result").toInt();
+    int result = postPost.value("result").toInt();
 
     if (result == -5)
     {
@@ -146,7 +147,7 @@ void postInvoices::sPost()
       systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
                          .arg(__FILE__)
                          .arg(__LINE__)
-                         .arg(q.value("result").toInt()) );
+                         .arg(postPost.value("result").toInt()) );
       return;
     }
     else if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
@@ -156,7 +157,7 @@ void postInvoices::sPost()
       return;
     }
 
-    q.exec("COMMIT;");
+    postPost.exec("COMMIT;");
 
     if (_printJournal->isChecked())
     {
@@ -188,10 +189,10 @@ void postInvoices::sPost()
     omfgThis->sSalesOrdersUpdated(-1);
 
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (postPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError( this, postPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

@@ -86,18 +86,19 @@ enum SetResponse enterPoReturn::set(const ParameterList &pParams)
 
 void enterPoReturn::sPost()
 {
+  XSqlQuery enterPost;
   bool createMemo = false;
   
-  q.prepare("SELECT SUM(poreject_qty) AS qtyToReturn, MIN(poitem_status) AS poitem_status "
+  enterPost.prepare("SELECT SUM(poreject_qty) AS qtyToReturn, MIN(poitem_status) AS poitem_status "
             "FROM poreject, poitem "
             "WHERE ((poreject_poitem_id=poitem_id)"
             "  AND  (NOT poreject_posted)"
 	    "  AND  (poitem_pohead_id=:pohead_id));");
-  q.bindValue(":pohead_id", _po->id());
-  q.exec();
-  if (q.first())
+  enterPost.bindValue(":pohead_id", _po->id());
+  enterPost.exec();
+  if (enterPost.first())
   {
-    if (q.value("qtyToReturn").toDouble() == 0)
+    if (enterPost.value("qtyToReturn").toDouble() == 0)
     {
       QMessageBox::critical(this, tr("Nothing selected for Return"),
 			    tr("<p>No Purchase Order Items have been selected "
@@ -106,16 +107,16 @@ void enterPoReturn::sPost()
       return;
     }
   //Offer to create credit memo
-    if ( (_privileges->check("MaintainAPMemos")) && (q.value("poitem_status").toString() == "C") )
+    if ( (_privileges->check("MaintainAPMemos")) && (enterPost.value("poitem_status").toString() == "C") )
       if ( QMessageBox::question( this, tr("Create Credit Memo"),
                                         tr("One or more line items on this P/O are closed. \n"
                                            "Would you like to automatically create a credit memo against this return?"),
                                         tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
         createMemo = true;
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterPost.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -169,16 +170,16 @@ void enterPoReturn::sPost()
   reject.bindValue(":pohead_id", _po->id());
   reject.exec();
 
-  q.exec("BEGIN;");	// because of possible insertgltransaction failures
+  enterPost.exec("BEGIN;");	// because of possible insertgltransaction failures
 
   // post the returns
-  q.prepare("SELECT postPoReturns(:pohead_id,false) AS result;");
-  q.bindValue(":pohead_id", _po->id());
-  q.exec();
+  enterPost.prepare("SELECT postPoReturns(:pohead_id,false) AS result;");
+  enterPost.bindValue(":pohead_id", _po->id());
+  enterPost.exec();
   int result = 0;
-  if (q.first())
+  if (enterPost.first())
   {
-    result = q.value("result").toInt();
+    result = enterPost.value("result").toInt();
     if (result < 0)
     {
       rollback.exec();
@@ -187,21 +188,21 @@ void enterPoReturn::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (enterPost.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, enterPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+  if (distributeInventory::SeriesAdjust(enterPost.value("result").toInt(), this) == XDialog::Rejected)
   {
     rollback.exec();
     QMessageBox::information( this, tr("Enter PO Return"), tr("Transaction Canceled") );
     return;
   }
   
-  q.exec("COMMIT;");
+  enterPost.exec("COMMIT;");
 
   // if we are creating the credit memo go ahead and loop the returns that
   // we have just posted and create the credit memos.
@@ -248,11 +249,12 @@ void enterPoReturn::sEnter()
 
 void enterPoReturn::sFillList()
 {
+  XSqlQuery enterFillList;
   _poitem->clear();
 
   if (_po->id() != -1)
   {
-    q.prepare( "SELECT 1, vendaddr_addr_id AS addr_id, pohead_dropship "
+    enterFillList.prepare( "SELECT 1, vendaddr_addr_id AS addr_id, pohead_dropship "
 	       "FROM vendaddrinfo, pohead "
 	       "WHERE ((vendaddr_id=pohead_vendaddr_id)"
 	       "  AND  (pohead_id=:pohead_id))"
@@ -263,16 +265,16 @@ void enterPoReturn::sFillList()
 	       "  AND  (pohead_id=:pohead_id)) "
 	       "ORDER BY 1 "
 	       "LIMIT 1;");
-    q.bindValue(":pohead_id", _po->id());
-    q.exec();
-    if (q.first())
+    enterFillList.bindValue(":pohead_id", _po->id());
+    enterFillList.exec();
+    if (enterFillList.first())
 	{
-      _returnAddr->setId(q.value("addr_id").toInt());
-	  _dropShip->setChecked(q.value("pohead_dropship").toBool());
+      _returnAddr->setId(enterFillList.value("addr_id").toInt());
+	  _dropShip->setChecked(enterFillList.value("pohead_dropship").toBool());
 	}
-    else if (q.lastError().type() != QSqlError::NoError)
+    else if (enterFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enterFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -310,11 +312,11 @@ void enterPoReturn::sFillList()
     params.append("nonInventory", tr("Non-Inventory"));
     params.append("pohead_id", _po->id());
     MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    _poitem->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
+    enterFillList = mql.toQuery(params);
+    _poitem->populate(enterFillList);
+    if (enterFillList.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, enterFillList.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
@@ -322,20 +324,21 @@ void enterPoReturn::sFillList()
 
 void enterPoReturn::closeEvent(QCloseEvent *pEvent)
 {
+  XSqlQuery entercloseEvent;
   if (_po->isValid())
   {
 //  Cancel all received qty's for this po
-    q.prepare( "DELETE FROM poreject "
+    entercloseEvent.prepare( "DELETE FROM poreject "
                "WHERE ( poreject_id IN ( SELECT poreject_id"
                "                         FROM poreject, poitem"
                "                         WHERE ( (poreject_poitem_id=poitem_id)"
                "                          AND (NOT poreject_posted)"
                "                          AND (poitem_pohead_id=:pohead_id) ) ) );" );
-    q.bindValue(":pohead_id", _po->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    entercloseEvent.bindValue(":pohead_id", _po->id());
+    entercloseEvent.exec();
+    if (entercloseEvent.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, entercloseEvent.lastError().databaseText(), __FILE__, __LINE__);
     }
   }
 

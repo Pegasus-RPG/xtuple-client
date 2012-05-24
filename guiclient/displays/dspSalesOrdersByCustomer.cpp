@@ -54,20 +54,21 @@ void dspSalesOrdersByCustomer::languageChange()
 
 void dspSalesOrdersByCustomer::sPopulatePo()
 {
+  XSqlQuery dspPopulatePo;
   _poNumber->clear();
 
   if ((_cust->isValid()) && (_dates->allValid()))
   {
-    q.prepare( "SELECT MIN(cohead_id), cohead_custponumber "
+    dspPopulatePo.prepare( "SELECT MIN(cohead_id), cohead_custponumber "
                "FROM cohead "
                "WHERE ( (cohead_cust_id=:cust_id)"
                " AND (cohead_orderdate BETWEEN :startDate AND :endDate) ) "
                "GROUP BY cohead_custponumber "
                "ORDER BY cohead_custponumber;" );
-    _dates->bindValue(q);
-    q.bindValue(":cust_id", _cust->id());
-    q.exec();
-    _poNumber->populate(q);
+    _dates->bindValue(dspPopulatePo);
+    dspPopulatePo.bindValue(":cust_id", _cust->id());
+    dspPopulatePo.exec();
+    _poNumber->populate(dspPopulatePo);
   }
 }
 

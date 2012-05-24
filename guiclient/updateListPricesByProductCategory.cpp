@@ -46,6 +46,7 @@ void updateListPricesByProductCategory::languageChange()
 
 void updateListPricesByProductCategory::sUpdate()
 {
+  XSqlQuery updateUpdate;
   if (_updateBy->toDouble() == 0.0)
   {
     QMessageBox::critical( this, tr("Enter a Update Percentage"),
@@ -60,10 +61,10 @@ void updateListPricesByProductCategory::sUpdate()
     params.append("byValue", true);
   params.append("updateBy", _updateBy->toDouble());
   _productCategory->appendValue(params);
-  q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::NoError)
+  updateUpdate = mql.toQuery(params);
+  if (updateUpdate.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, updateUpdate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 

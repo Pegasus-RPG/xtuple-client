@@ -81,6 +81,7 @@ enum SetResponse postStandardJournalGroup::set(const ParameterList &pParams)
 
 void postStandardJournalGroup::sPost()
 {
+  XSqlQuery postPost;
   if (!_distDate->isValid())
   {
     QMessageBox::critical( this, tr("Cannot Post Standard Journal Group"),
@@ -89,16 +90,16 @@ void postStandardJournalGroup::sPost()
     return;
   }
 
-  q.prepare("SELECT postStandardJournalGroup(:stdjrnlgrp_id, :distDate, :reverse) AS result;");
-  q.bindValue(":stdjrnlgrp_id", _stdjrnlgrp->id());
-  q.bindValue(":distDate", _distDate->date());
-  q.bindValue(":reverse", QVariant(_reverse->isChecked()));
-  q.exec();
-  if (q.first())
+  postPost.prepare("SELECT postStandardJournalGroup(:stdjrnlgrp_id, :distDate, :reverse) AS result;");
+  postPost.bindValue(":stdjrnlgrp_id", _stdjrnlgrp->id());
+  postPost.bindValue(":distDate", _distDate->date());
+  postPost.bindValue(":reverse", QVariant(_reverse->isChecked()));
+  postPost.exec();
+  if (postPost.first())
   {
     ParameterList params;
     params.append("mode", "postStandardJournal");
-    params.append("glSequence", q.value("result"));
+    params.append("glSequence", postPost.value("result"));
     if(_doSubmit)
       params.append("submit");
 

@@ -59,13 +59,14 @@ void itemGroups::languageChange()
 
 void itemGroups::sDelete()
 {
-  q.prepare( "DELETE FROM itemgrpitem "
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM itemgrpitem "
              "WHERE (itemgrpitem_itemgrp_id=:itemgrp_id);"
 
              "DELETE FROM itemgrp "
              "WHERE (itemgrp_id=:itemgrp_id);" );
-  q.bindValue(":itemgrp_id", _itemgrp->id());
-  q.exec();
+  itemDelete.bindValue(":itemgrp_id", _itemgrp->id());
+  itemDelete.exec();
 
   sFillList(-1);
 }

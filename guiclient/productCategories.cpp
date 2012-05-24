@@ -67,12 +67,13 @@ void productCategories::languageChange()
 
 void productCategories::sDelete()
 {
-  q.prepare("SELECT deleteProductCategory(:prodcat_id) AS result;");
-  q.bindValue(":prodcat_id", _prodcat->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery productDelete;
+  productDelete.prepare("SELECT deleteProductCategory(:prodcat_id) AS result;");
+  productDelete.bindValue(":prodcat_id", _prodcat->id());
+  productDelete.exec();
+  if (productDelete.first())
   {
-    switch (q.value("result").toInt())
+    switch (productDelete.value("result").toInt())
     {
       case -1:
         QMessageBox::warning( this, tr("Cannot Delete Product Category"),
@@ -149,11 +150,12 @@ void productCategories::sPrint()
 
 void productCategories::sDeleteUnused()
 {
+  XSqlQuery productDeleteUnused;
   if ( QMessageBox::warning( this, tr("Delete Unused Product Categories"),
                              tr("Are you sure that you wish to delete all unused Product Categories?"),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
   {
-    q.exec("SELECT deleteUnusedProductCategories() AS result;");
+    productDeleteUnused.exec("SELECT deleteUnusedProductCategories() AS result;");
     sFillList(-1);
   }
 }

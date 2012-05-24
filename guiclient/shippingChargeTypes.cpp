@@ -91,12 +91,13 @@ void shippingChargeTypes::sView()
 
 void shippingChargeTypes::sDelete()
 {
-  q.prepare("SELECT deleteShippingCharge(:shipchrg_id) AS result;");
-  q.bindValue(":shipchrg_id", _shipchrg->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery shippingDelete;
+  shippingDelete.prepare("SELECT deleteShippingCharge(:shipchrg_id) AS result;");
+  shippingDelete.bindValue(":shipchrg_id", _shipchrg->id());
+  shippingDelete.exec();
+  if (shippingDelete.first())
   {
-    switch (q.value("result").toInt())
+    switch (shippingDelete.value("result").toInt())
     {
       case -1:
         QMessageBox::critical( this, tr("Cannot Delete Shipping Charge Type"),

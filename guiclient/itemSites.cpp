@@ -153,12 +153,13 @@ void itemSites::sEdit()
 
 void itemSites::sCopy()
 {
-  q.prepare("SELECT copyItemSite(:olditemsiteid, NULL) AS result;");
-  q.bindValue(":olditemsiteid", list()->id());
-  q.exec();
-  if (q.first())
+  XSqlQuery itemCopy;
+  itemCopy.prepare("SELECT copyItemSite(:olditemsiteid, NULL) AS result;");
+  itemCopy.bindValue(":olditemsiteid", list()->id());
+  itemCopy.exec();
+  if (itemCopy.first())
   {
-    int result = q.value("result").toInt();
+    int result = itemCopy.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("copyItemSite", result), __FILE__, __LINE__);
@@ -172,35 +173,36 @@ void itemSites::sCopy()
     newdlg.set(params);
     if (newdlg.exec() != XDialog::Accepted)
     {
-      q.prepare("SELECT deleteItemSite(:itemsite_id) AS result;");
-      q.bindValue(":itemsite_id", result);
-      q.exec();
-      if (q.first())
+      itemCopy.prepare("SELECT deleteItemSite(:itemsite_id) AS result;");
+      itemCopy.bindValue(":itemsite_id", result);
+      itemCopy.exec();
+      if (itemCopy.first())
       {
-        int result = q.value("result").toInt();
+        int result = itemCopy.value("result").toInt();
         if (result < 0)
         {
           systemError(this, storedProcErrorLookup("deleteItemSite", result), __FILE__, __LINE__);
           return;
         }
       }
-      else if (q.lastError().type() != QSqlError::NoError)
+      else if (itemCopy.lastError().type() != QSqlError::NoError)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, itemCopy.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (itemCopy.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemCopy.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
 
 void itemSites::sDelete()
 {
+  XSqlQuery itemDelete;
   if (QMessageBox::question(this, tr("Delete Selected Line Item?"),
                             tr("Are you sure that you want to delete the "
                                "selected Item Site?"),
@@ -208,12 +210,12 @@ void itemSites::sDelete()
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  q.prepare("SELECT deleteItemSite(:itemsite_id) AS result;");
-  q.bindValue(":itemsite_id", list()->id());
-  q.exec();
-  if (q.first())
+  itemDelete.prepare("SELECT deleteItemSite(:itemsite_id) AS result;");
+  itemDelete.bindValue(":itemsite_id", list()->id());
+  itemDelete.exec();
+  if (itemDelete.first())
   {
-    int result = q.value("result").toInt();
+    int result = itemDelete.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deleteItemSite", result), __FILE__, __LINE__);
@@ -221,9 +223,9 @@ void itemSites::sDelete()
     }
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (itemDelete.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, itemDelete.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

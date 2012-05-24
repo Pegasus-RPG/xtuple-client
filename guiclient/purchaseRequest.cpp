@@ -60,6 +60,7 @@ void purchaseRequest::languageChange()
 
 enum SetResponse purchaseRequest::set(const ParameterList &pParams)
 {
+  XSqlQuery purchaseet;
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
@@ -111,22 +112,22 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
       _project->setEnabled(FALSE);
       _create->hide();
 
-      q.prepare( "SELECT pr_itemsite_id,"
+      purchaseet.prepare( "SELECT pr_itemsite_id,"
                  "       pr_number,"
                  "       pr_qtyreq,"
                  "       pr_duedate,"
                  "       pr_prj_id "
                  "FROM pr "
                  "WHERE (pr_id=:pr_id);" );
-      q.bindValue(":pr_id", prid);
-      q.exec();
-      if (q.first())
+      purchaseet.bindValue(":pr_id", prid);
+      purchaseet.exec();
+      if (purchaseet.first())
       {
-        _number->setText(q.value("pr_number").toString());
-        _item->setItemsiteid(q.value("pr_itemsite_id").toInt());
-        _qty->setDouble(q.value("pr_qtyreq").toDouble());
-        _dueDate->setDate(q.value("pr_duedate").toDate());
-        _project->setId(q.value("pr_prj_id").toInt());
+        _number->setText(purchaseet.value("pr_number").toString());
+        _item->setItemsiteid(purchaseet.value("pr_itemsite_id").toInt());
+        _qty->setDouble(purchaseet.value("pr_qtyreq").toDouble());
+        _dueDate->setDate(purchaseet.value("pr_duedate").toDate());
+        _project->setId(purchaseet.value("pr_prj_id").toInt());
       }
     }
     else if (param.toString() == "release")
@@ -140,18 +141,18 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
       _qty->setEnabled(FALSE);
       _dueDate->setEnabled(FALSE);
 
-      q.prepare( "SELECT planord_itemsite_id, planord_duedate,"
+      purchaseet.prepare( "SELECT planord_itemsite_id, planord_duedate,"
                  "       planord_qty, planord_comments "
                  "FROM planord "
                  "WHERE (planord_id=:planord_id);" );
-      q.bindValue(":planord_id", _planordid);
-      q.exec();
-      if (q.first())
+      purchaseet.bindValue(":planord_id", _planordid);
+      purchaseet.exec();
+      if (purchaseet.first())
       {
-        _item->setItemsiteid(q.value("planord_itemsite_id").toInt());
-        _qty->setDouble(q.value("planord_qty").toDouble());
-        _dueDate->setDate(q.value("planord_duedate").toDate());
-        _notes->setText(q.value("planord_comments").toString());
+        _item->setItemsiteid(purchaseet.value("planord_itemsite_id").toInt());
+        _qty->setDouble(purchaseet.value("planord_qty").toDouble());
+        _dueDate->setDate(purchaseet.value("planord_duedate").toDate());
+        _notes->setText(purchaseet.value("planord_comments").toString());
 
         populateNumber();
       }
@@ -171,6 +172,7 @@ void purchaseRequest::sClose()
 
 void purchaseRequest::sCreate()
 {
+  XSqlQuery purchaseCreate;
   if (!_number->text().length())
   {
     QMessageBox::information( this, tr("Invalid Purchase Request Number"),
@@ -204,14 +206,14 @@ void purchaseRequest::sCreate()
     return;
   }
 
-  q.prepare( "SELECT itemsite_id "
+  purchaseCreate.prepare( "SELECT itemsite_id "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if (!q.first())
+  purchaseCreate.bindValue(":item_id", _item->id());
+  purchaseCreate.bindValue(":warehous_id", _warehouse->id());
+  purchaseCreate.exec();
+  if (!purchaseCreate.first())
   {
     QMessageBox::warning(this, tr("Invalid Site"),
         tr("The selected Site for this Purchase Request is not\n"
@@ -221,19 +223,19 @@ void purchaseRequest::sCreate()
   }
 
   int prid = -1;
-  int itemsiteid = q.value("itemsite_id").toInt();
+  int itemsiteid = purchaseCreate.value("itemsite_id").toInt();
 
   if (_mode == cNew)
   {
-    q.prepare( "SELECT createPr( :orderNumber, :itemsite_id, :qty,"
+    purchaseCreate.prepare( "SELECT createPr( :orderNumber, :itemsite_id, :qty,"
                "                 :dueDate, :notes ) AS prid;" );
-    q.bindValue(":orderNumber", _number->text().toInt());
-    q.bindValue(":itemsite_id", itemsiteid);
-    q.bindValue(":qty", _qty->toDouble());
-    q.bindValue(":dueDate", _dueDate->date());
-    q.bindValue(":notes", _notes->toPlainText());
-    q.exec();
-    if (!q.first())
+    purchaseCreate.bindValue(":orderNumber", _number->text().toInt());
+    purchaseCreate.bindValue(":itemsite_id", itemsiteid);
+    purchaseCreate.bindValue(":qty", _qty->toDouble());
+    purchaseCreate.bindValue(":dueDate", _dueDate->date());
+    purchaseCreate.bindValue(":notes", _notes->toPlainText());
+    purchaseCreate.exec();
+    if (!purchaseCreate.first())
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
                         .arg(__FILE__)
@@ -241,31 +243,31 @@ void purchaseRequest::sCreate()
       return;
     }
     else
-      prid = q.value("prid").toInt();
+      prid = purchaseCreate.value("prid").toInt();
   }
   else if (_mode == cRelease)
   {
-    q.prepare("SELECT createPr(:orderNumber, 'F', :planord_id, :notes) AS prid;");
-    q.bindValue(":orderNumber", _number->text().toInt());
-    q.bindValue(":planord_id", _planordid);
-    q.bindValue(":notes", _notes->toPlainText());
-    q.exec();
-    if (q.first())
+    purchaseCreate.prepare("SELECT createPr(:orderNumber, 'F', :planord_id, :notes) AS prid;");
+    purchaseCreate.bindValue(":orderNumber", _number->text().toInt());
+    purchaseCreate.bindValue(":planord_id", _planordid);
+    purchaseCreate.bindValue(":notes", _notes->toPlainText());
+    purchaseCreate.exec();
+    if (purchaseCreate.first())
     {
-      prid = q.value("prid").toInt();
+      prid = purchaseCreate.value("prid").toInt();
 
-      q.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
-      q.bindValue(":planord_id", _planordid);
-      q.exec();
+      purchaseCreate.prepare("SELECT releasePlannedOrder(:planord_id, FALSE) AS result;");
+      purchaseCreate.bindValue(":planord_id", _planordid);
+      purchaseCreate.exec();
     }
   }
 
   if(-1 != prid)
   {
-    q.prepare("UPDATE pr SET pr_prj_id=:prj_id WHERE (pr_id=:pr_id);");
-    q.bindValue(":pr_id", prid);
-    q.bindValue(":prj_id", _project->id());
-    q.exec();
+    purchaseCreate.prepare("UPDATE pr SET pr_prj_id=:prj_id WHERE (pr_id=:pr_id);");
+    purchaseCreate.bindValue(":pr_id", prid);
+    purchaseCreate.bindValue(":prj_id", _project->id());
+    purchaseCreate.exec();
   }
 
   omfgThis->sPurchaseRequestsUpdated();
@@ -286,12 +288,13 @@ void purchaseRequest::sCreate()
 
 void purchaseRequest::populateNumber()
 {
+  XSqlQuery purchasepopulateNumber;
   QString generationMethod = _metrics->value("PrNumberGeneration");
 
   if ((generationMethod == "A") || (generationMethod == "O"))
   {
-    q.exec("SELECT fetchPrNumber() AS number;");
-    if (!q.first())
+    purchasepopulateNumber.exec("SELECT fetchPrNumber() AS number;");
+    if (!purchasepopulateNumber.first())
     {
       systemError(this, tr("A System Error occurred at %1::%2.")
                         .arg(__FILE__)
@@ -301,8 +304,8 @@ void purchaseRequest::populateNumber()
       return;
     }
 
-    _number->setText(q.value("number").toString());
-    _NumberGen = q.value("number").toInt();
+    _number->setText(purchasepopulateNumber.value("number").toString());
+    _NumberGen = purchasepopulateNumber.value("number").toInt();
   }
 
   if (generationMethod == "M")
@@ -340,13 +343,14 @@ void purchaseRequest::sNumberChanged()
 
 void purchaseRequest::sReleaseNumber()
 {
+  XSqlQuery purchaseReleaseNumber;
   if(-1 != _NumberGen)
   {
-    q.prepare("SELECT releasePrNumber(:number);" );
-    q.bindValue(":number", _NumberGen);
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    purchaseReleaseNumber.prepare("SELECT releasePrNumber(:number);" );
+    purchaseReleaseNumber.bindValue(":number", _NumberGen);
+    purchaseReleaseNumber.exec();
+    if (purchaseReleaseNumber.lastError().type() != QSqlError::NoError)
+      systemError(this, purchaseReleaseNumber.lastError().databaseText(), __FILE__, __LINE__);
     _NumberGen = -1;
   }
 }

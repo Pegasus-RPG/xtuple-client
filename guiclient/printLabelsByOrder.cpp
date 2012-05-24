@@ -74,12 +74,13 @@ enum SetResponse printLabelsByOrder::set(const ParameterList &pParams)
 
 void printLabelsByOrder::sPrint()
 {
-  q.prepare( "SELECT labelform_report_name AS report_name "
+  XSqlQuery printPrint;
+  printPrint.prepare( "SELECT labelform_report_name AS report_name "
              "FROM labelform "
              "WHERE ( (labelform_id=:labelform_id) );" );
-  q.bindValue(":labelform_id", _report->id());
-  q.exec();
-  if (q.first())
+  printPrint.bindValue(":labelform_id", _report->id());
+  printPrint.exec();
+  if (printPrint.first())
   {
     ParameterList params;
     params.append("orderhead_type", _order->type());
@@ -95,7 +96,7 @@ void printLabelsByOrder::sPrint()
     params.append("labelFrom", _labelFrom->value());
     params.append("labelTo", _labelTo->value());
 
-    orReport report(q.value("report_name").toString(), params);
+    orReport report(printPrint.value("report_name").toString(), params);
     if (report.isValid())
       report.print();
     else
@@ -107,9 +108,9 @@ void printLabelsByOrder::sPrint()
     _order->setId(-1);
     _order->setFocus();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
+  else if (printPrint.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, printPrint.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   else
