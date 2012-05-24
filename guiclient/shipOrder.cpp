@@ -46,10 +46,6 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _coitem->addColumn( tr("UOM"),         _uomColumn,  Qt::AlignCenter , true, "uom_name");
   _coitem->addColumn( tr("Qty."),        _qtyColumn,  Qt::AlignRight  , true, "shipitem_qty");
 
-  _select->setChecked(_privileges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
-  _select->setEnabled(_privileges->check("SelectBilling"));
-  _create->setEnabled(_privileges->check("SelectBilling"));
-
   sCreateToggled(_create->isChecked());
   sHandleButtons();
   _reject = false;
@@ -97,12 +93,10 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
       if (q.value("shiphead_order_type").toString() == "SO")
       {
         _order->setId(param.toInt(), "SO");
-	_select->setEnabled(_privileges->check("SelectBilling"));
       }
       else if (q.value("shiphead_order_type").toString() == "TO")
       {
         _order->setId(param.toInt(), "TO");
-	_select->setEnabled(false);
       }
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -367,9 +361,7 @@ void shipOrder::sShip()
   {
     _order->setId(-1);
     _order->setEnabled(true);
-    _select->setChecked(_privileges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
-    _select->setEnabled(_privileges->check("SelectBilling"));
-    _create->setEnabled(_privileges->check("SelectBilling"));
+    sHandleButtons();
     _billToName->clear();
     _shipToName->clear();
     _shipToAddr1->clear();
@@ -639,9 +631,9 @@ void shipOrder::sHandleTo()
 
 void shipOrder::sHandleButtons()
 {
-  _select->setChecked(_privileges->check("SelectBilling") &&
+  _select->setChecked(_order->isSO() &&
+                      _privileges->check("SelectBilling") &&
 		     _metrics->boolean("AutoSelectForBilling"));
-
   _select->setEnabled(_order->isSO() &&
 		      _privileges->check("SelectBilling"));
   _create->setEnabled(_order->isSO() &&
@@ -650,19 +642,9 @@ void shipOrder::sHandleButtons()
   _receive->setEnabled(_order->isTO() &&
 		       _privileges->check("EnterReceipts"));
 
-  // logic here is reversed to ensure that by default all checkboxes are visible
-  if (_preferences->boolean("XCheckBox/forgetful"))
-  {
-    _select->setChecked(! _order->isTO());
-    _create->setChecked(! _order->isTO());
-    _receive->setChecked(! _order->isSO());
-  }
-  else
-  {
-    _select->setVisible(! _order->isTO());
-    _create->setVisible(! _order->isTO());
-    _receive->setVisible(! _order->isSO());
-  }
+  _select->setVisible(! _order->isTO());
+  _create->setVisible(! _order->isTO());
+  _receive->setVisible(! _order->isSO());
 }
 
 void shipOrder::sFillList()
