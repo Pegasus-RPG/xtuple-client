@@ -219,7 +219,7 @@ void issueWoMaterialItem::sIssue()
   {
     _close->setText(tr("Close"));
     _qtyToIssue->clear();
-    _womatl->setWoid(_wo->id());
+    _womatl->setId(-1);
     _womatl->setFocus();
   }
 }
