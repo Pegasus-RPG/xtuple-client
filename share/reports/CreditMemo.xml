@@ -24,7 +24,7 @@
                   COALESCE(cmhead_billtocity,'') || '  ' || COALESCE(cmhead_billtostate,'') || '  ' || COALESCE(cmhead_billtozip,''),
                    cmhead_billtocountry)
        AS f_custaddr,
-       cust_phone,
+       cntct_phone AS cust_phone,
        cmhead_shipto_name,
        formatAddr(cmhead_shipto_address1, cmhead_shipto_address2, cmhead_shipto_address3,
                   COALESCE(cmhead_shipto_city,'') ||'  '|| COALESCE(cmhead_shipto_state,'') || '  '|| COALESCE(cmhead_shipto_zipcode,''),
@@ -41,7 +41,8 @@
        cmhead_misc_descrip,
        curr_symbol,
        curr_name
-  FROM remitto, cmhead, custinfo, curr_symbol
+  FROM remitto, cmhead, curr_symbol, custinfo
+  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id)
  WHERE ((cmhead_cust_id=cust_id)
        AND (cmhead_curr_id = curr_id)
        AND (cmhead_id=&lt;? value("cmhead_id") ?>))
