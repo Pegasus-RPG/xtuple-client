@@ -142,6 +142,7 @@ int ExternalCCProcessor::doVoidPrevious(const int pccardid, const QString &pcvv,
 
 int ExternalCCProcessor::handleTrans(const int pccardid, const QString &ptype, const QString &pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
+  Q_UNUSED(pcvv);
   if (DEBUG)
     qDebug("ExtCC::handleTrans(%d, %s, pcvv, %f, %d, %s, %s, %d, pparams)",
 	   pccardid, qPrintable(ptype), pamount, pcurrid,

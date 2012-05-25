@@ -105,6 +105,7 @@ enum SetResponse dspFinancialReport::set(const ParameterList &pParams)
 
 void dspFinancialReport::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
 {
+  Q_UNUSED(pSelected);
   if (_columnDates.contains(pColumn) && list()->id() > 0)
   {
     _col = pColumn;

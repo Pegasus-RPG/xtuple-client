@@ -14,6 +14,9 @@
 currenciesDialog::currenciesDialog(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, modal ? (fl | Qt::Dialog) : fl)
 {
+  if (name)
+    setObjectName(name);
+
   this->setFixedSize(400, 400);
   _layout = new QBoxLayout(QBoxLayout::TopToBottom, this);
   _currencies = new currencies(this, "", Qt::Widget);
