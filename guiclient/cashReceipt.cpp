@@ -234,6 +234,8 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       _save->hide();
       _close->setText(tr("&Close"));
       _altAccnt->setEnabled(false);
+      _newCC->setEnabled(FALSE);
+      _editCC->setEnabled(FALSE);
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_cashrcptmisc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
 
