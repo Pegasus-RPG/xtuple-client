@@ -367,6 +367,9 @@ enum SetResponse item::set(const ParameterList &pParams)
       _newSrc->setEnabled(false);
       _newUOM->setEnabled(false);
       _upcCode->setEnabled(false);
+      _newItemSite->setEnabled(FALSE);
+      _bom->findChild<QWidget*>("_new")->hide();
+      _elements->findChild<QWidget*>("_new")->hide();
 
       disconnect(_itemalias, SIGNAL(valid(bool)), _editAlias, SLOT(setEnabled(bool)));
       disconnect(_itemalias, SIGNAL(valid(bool)), _deleteAlias, SLOT(setEnabled(bool)));
