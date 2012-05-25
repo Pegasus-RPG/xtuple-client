@@ -647,7 +647,7 @@ void purchaseOrder::populate()
     _vendAddr->setCountry(po.value("pohead_vendcountry").toString());
         connect(_vendAddr, SIGNAL(changed()), _vendaddrCode, SLOT(clear()));
 
-        _shiptoAddr->setId(po.value("pohead_shiptoddress_id").toInt());
+    _shiptoAddr->setId(po.value("pohead_shiptoaddress_id").toInt());
     _shiptoAddr->setLine1(po.value("pohead_shiptoaddress1").toString());
     _shiptoAddr->setLine2(po.value("pohead_shiptoaddress2").toString());
     _shiptoAddr->setLine3(po.value("pohead_shiptoaddress3").toString());
@@ -766,7 +766,7 @@ void purchaseOrder::sSave()
              "    pohead_shipto_cntct_title=:pohead_shipto_cntct_title,"
              "    pohead_shipto_cntct_fax=:pohead_shipto_cntct_fax,"
              "    pohead_shipto_cntct_email=:pohead_shipto_cntct_email,"
-             "    pohead_shiptoddress_id=:pohead_shiptoddress_id,"
+             "    pohead_shiptoddress_id=:pohead_shiptoaddress_id,"
              "    pohead_shiptoaddress1=:pohead_shiptoaddress1,"
              "    pohead_shiptoaddress2=:pohead_shiptoaddress2,"
              "    pohead_shiptoaddress3=:pohead_shiptoaddress3,"
@@ -820,7 +820,7 @@ void purchaseOrder::sSave()
   purchaseSave.bindValue(":pohead_shipto_cntct_fax", _shiptoCntct->fax());
   purchaseSave.bindValue(":pohead_shipto_cntct_email", _shiptoCntct->emailAddress());
   if (_shiptoAddr->isValid())
-    purchaseSave.bindValue(":pohead_shiptoddress_id", _shiptoAddr->id());
+    purchaseSave.bindValue(":pohead_shiptoaddress_id", _shiptoAddr->id());
   purchaseSave.bindValue(":pohead_shiptoaddress1", _shiptoAddr->line1());
   purchaseSave.bindValue(":pohead_shiptoaddress2", _shiptoAddr->line2());
   purchaseSave.bindValue(":pohead_shiptoaddress3", _shiptoAddr->line3());
