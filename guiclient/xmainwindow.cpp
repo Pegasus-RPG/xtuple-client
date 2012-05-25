@@ -112,13 +112,7 @@ void XMainWindow::closeEvent(QCloseEvent *event)
   event->accept(); // we have no reason not to accept and let the script change it if needed
   _private->callCloseEvent(event);
 
-  if(event->isAccepted() && omfgThis->showTopLevel() || forceFloat())
-  {
-    QString objName = objectName();
-    xtsettingsSetValue(objName + "/geometry/size", size());
-    if(isModal() || forceFloat())
-      xtsettingsSetValue(objName + "/geometry/pos", pos());
-  }
+  omfgThis->saveWidgetSizePos(this);
 }
 
 void XMainWindow::showEvent(QShowEvent *event)
@@ -126,40 +120,8 @@ void XMainWindow::showEvent(QShowEvent *event)
   if(!_private->_shown)
   {
     _private->_shown = true;
-//qDebug("isModal() %s", isModal()?"true":"false");
 
-    QRect availableGeometry = QApplication::desktop()->availableGeometry();
-    if(!omfgThis->showTopLevel() && !isModal())
-      availableGeometry = omfgThis->workspace()->geometry();
-
-    QString objName = objectName();
-    QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
-    QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
-
-    if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
-      resize(lsize);
-
-    setAttribute(Qt::WA_DeleteOnClose);
-    omfgThis->_windowList.append(this);
-    if(omfgThis->showTopLevel() || isModal() || forceFloat())
-    {
-      statusBar()->show();
-      QRect r(pos, size());
-      if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
-        move(pos);
-    }
-    else
-    {
-      QWidget * fw = focusWidget();
-      QMdiSubWindow *win =  omfgThis->workspace()->addSubWindow(this);
-      connect(this, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
-      QRect r(pos, size());
-      if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
-        move(pos);
-      // This originally had to be after the show? Will it work here?
-      if(fw)
-        fw->setFocus();
-    }
+    omfgThis->restoreWidgetSizePos(this);
 
     _private->loadScriptEngine();
 

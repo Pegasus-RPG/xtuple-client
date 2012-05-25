@@ -45,6 +45,7 @@ class menuManufacture;
 class menuCRM;
 class menuSales;
 class menuAccounting;
+class menuWindow;
 class menuSystem;
 
 class TimeoutHandler;
@@ -209,6 +210,8 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void populateCustomMenu(QMenu*, const QString &);
 
     Q_INVOKABLE void handleNewWindow(QWidget *, Qt::WindowModality = Qt::NonModal, bool forceFloat = false);
+    Q_INVOKABLE bool saveWidgetSizePos(QWidget *pWidget);
+    Q_INVOKABLE bool restoreWidgetSizePos(QWidget *pWidget, bool forceFloat = false);
     Q_INVOKABLE QMenuBar *menuBar();
 
     // Used by scripting
@@ -388,6 +391,7 @@ class GUIClient : public QMainWindow
     menuCRM         *crmMenu;
     menuSales       *salesMenu;
     menuAccounting  *accountingMenu;
+    menuWindow      *windowMenu;
     menuSystem      *systemMenu;
 
     QDate _startOfTime;

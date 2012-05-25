@@ -10,13 +10,8 @@
 
 #include "xwidget.h"
 
-#include <QApplication>
 #include <QCloseEvent>
-#include <QDebug>
-#include <QDesktopWidget>
-#include <QPushButton>
 #include <QShowEvent>
-#include <QMdiSubWindow>
 
 #include "xcheckbox.h"
 #include "xtsettings.h"
@@ -89,13 +84,8 @@ void XWidget::closeEvent(QCloseEvent *event)
   event->accept(); // we have no reason not to accept and let the script change it if needed
   _private->callCloseEvent(event);
 
-  if(event->isAccepted() && omfgThis->showTopLevel())
-  {
-    QString objName = objectName();
-    xtsettingsSetValue(objName + "/geometry/size", size());
-    if(isModal())
-      xtsettingsSetValue(objName + "/geometry/pos", pos());
-  }
+  if (event->isAccepted())
+    omfgThis->saveWidgetSizePos(this);
 }
 
 void XWidget::showEvent(QShowEvent *event)
@@ -103,40 +93,7 @@ void XWidget::showEvent(QShowEvent *event)
   if(!_private->_shown)
   {
     _private->_shown = true;
-    if (windowFlags() & (Qt::Window | Qt::Dialog))
-    {
-      QRect availableGeometry = QApplication::desktop()->availableGeometry();
-      if(!omfgThis->showTopLevel() && !isModal())
-        availableGeometry = QRect(QPoint(0, 0), omfgThis->workspace()->size());
-
-      QString objName = objectName();
-      QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
-      QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
-
-      if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
-        resize(lsize);
-
-      setAttribute(Qt::WA_DeleteOnClose);
-      omfgThis->_windowList.append(this);
-      if(omfgThis->showTopLevel() || isModal())
-      {
-        QRect r(pos, size());
-        if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
-          move(pos);
-      }
-      else
-      {
-        QWidget * fw = focusWidget();
-        QMdiSubWindow *win =  omfgThis->workspace()->addSubWindow(this);
-        connect(this, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
-        QRect r(pos, size());
-        if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool() && parentWidget())
-          parentWidget()->move(pos);
-        // This originally had to be after the show? Will it work here?
-        if(fw)
-          fw->setFocus();
-      }
-    }
+    omfgThis->restoreWidgetSizePos(this);
 
     _private->loadScriptEngine();
 
@@ -148,7 +105,6 @@ void XWidget::showEvent(QShowEvent *event)
   }
 
   _private->callShowEvent(event);
-
   QWidget::showEvent(event);
 }
 

@@ -39,14 +39,6 @@ class menuSystem : public QObject
     menuSystem(GUIClient *);
 
   public slots:
-    void sPrepareWindowMenu();
-    void sHideWindowMenu();
-    void sActivateWindow();
-    void sCloseAll();
-    void sCloseActive();
-    void sRememberPositionToggle();
-    void sRememberSizeToggle();
-
     void sSetup();
 
     void sEventManager();
@@ -107,18 +99,6 @@ class menuSystem : public QObject
     QMenu *masterInfoMenu;
     QMenu *sysUtilsMenu;
     QMenu *systemMenu;
-    QMenu *windowMenu;
-
-    QMenu *geometryMenu;
-
-    Action *cascade;
-    Action *tile;
-    Action *closeActive;
-    Action *closeAll;
-    Action *_rememberPos;
-    Action *_rememberSize;
-
-    QWidget *_lastActive;
 
     void	addActionsToMenu(actionProperties [], unsigned int);
     bool        loadCSVPlugin();

@@ -99,14 +99,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
   errorLogListener::initialize();
 
-  cascade = tile = closeActive = closeAll = _rememberPos = _rememberSize = 0;
-  _lastActive      = 0;
-  geometryMenu     = 0;
-
   systemMenu		= new QMenu(parent);
   masterInfoMenu	= new QMenu(parent);
   sysUtilsMenu		= new QMenu(parent);
-  windowMenu		= new QMenu(parent);
   helpMenu		= new QMenu(parent);
   designMenu            = new QMenu(parent);
   employeeMenu          = new QMenu(parent);
@@ -114,33 +109,8 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   systemMenu->setObjectName("menu.sys");
   masterInfoMenu->setObjectName("menu.sys.masterinfo");
   sysUtilsMenu->setObjectName("menu.sys.utilities");
-  windowMenu->setObjectName("menu.window");
   helpMenu->setObjectName("menu.help");
   designMenu->setObjectName("menu.sys.design");
-
-//  Window
-  // TODO: windowMenu->setCheckable(TRUE);
-
-  cascade = new Action( parent, "window.cascade", tr("&Cascade"), parent->workspace(), SLOT(cascadeSubWindows()), windowMenu, true);
-
-  tile = new Action( parent, "window.tile", tr("&Tile"), parent->workspace(), SLOT(tileSubWindows()), windowMenu, true);
-
-  closeActive = new Action( parent, "window.closeActiveWindow", tr("Close &Active Window"), this, SLOT(sCloseActive()), windowMenu, true);
-
-  closeAll = new Action( parent, "window.closeAllWindows", tr("Close A&ll Windows"), this, SLOT(sCloseAll()), windowMenu, true);
-
-  _rememberPos = new Action( parent, "window.rememberPositionToggle", tr("Remember Position"), this, SLOT(sRememberPositionToggle()), windowMenu, true);
-  _rememberPos->setCheckable(true);
-
-  _rememberSize = new Action( parent, "window.rememberSizeToggle", tr("Remember Size"), this, SLOT(sRememberSizeToggle()), windowMenu, true);
-  _rememberSize->setCheckable(true);
-
-  QAction * m = parent->menuBar()->addMenu(windowMenu );
-  if(m)
-    m->setText(tr("&Window"));
-  connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(sPrepareWindowMenu()));
-  connect(windowMenu, SIGNAL(aboutToHide()), this, SLOT(sHideWindowMenu()));
-  
 
   actionProperties acts[] = {
 
@@ -199,7 +169,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
   parent->populateCustomMenu(systemMenu, "System");
-  m = parent->menuBar()->addMenu(systemMenu);
+  QAction *m = parent->menuBar()->addMenu(systemMenu);
   if(m)
     m->setText(tr("S&ystem"));
 
@@ -284,140 +254,6 @@ void menuSystem::addActionsToMenu(actionProperties acts[], unsigned int numElems
                   acts[i].priv ) ;
     }
   }
-}
-
-void menuSystem::sPrepareWindowMenu()
-{
-  windowMenu->clear();
-
-  if(!omfgThis->showTopLevel())
-  {
-    windowMenu->addAction(cascade);
-    windowMenu->addAction(tile);
-  }
-  windowMenu->addAction(closeActive);
-  windowMenu->addAction(closeAll);
-
-  QWidgetList windows = omfgThis->windowList();
-
-  bool b = !windows.isEmpty();
-
-  cascade->setEnabled(b);
-  tile->setEnabled(b);
-
-  closeActive->setEnabled(b);
-  closeAll->setEnabled(b);
-
-  windowMenu->addSeparator();
-
-  QWidget *activeWindow = 0;
-
-  if(omfgThis->showTopLevel())
-    activeWindow = omfgThis->myActiveWindow();
-  else if (parent->workspace() && parent->workspace()->activeSubWindow())
-    activeWindow = parent->workspace()->activeSubWindow()->widget();
-
-  _lastActive = activeWindow;
-
-  if(activeWindow)
-  {
-    if(!geometryMenu)
-      geometryMenu = new QMenu();
-
-    geometryMenu->clear();
-    geometryMenu->setTitle(activeWindow->windowTitle());
-
-    QString objName = activeWindow->objectName();
-    
-    _rememberPos->setChecked(xtsettingsValue(objName + "/geometry/rememberPos", true).toBool());
-    geometryMenu->addAction(_rememberPos);
-    _rememberSize->setChecked(xtsettingsValue(objName + "/geometry/rememberSize", true).toBool());
-    geometryMenu->addAction(_rememberSize);
-
-    windowMenu->addMenu(geometryMenu);
-    windowMenu->addSeparator();
-  }
-
-  QAction * m = 0;
-  for (int cursor = 0; cursor < windows.count(); cursor++)
-  {
-    m = windowMenu->addAction(windows.at(cursor)->windowTitle(), this, SLOT(sActivateWindow()));
-    if(m)
-    {
-      m->setData(cursor);
-      m->setCheckable(true);
-      m->setChecked((activeWindow == windows.at(cursor)));
-    }
-  }
-}
-
-void menuSystem::sHideWindowMenu()
-{
-  cascade->setEnabled(true);
-  tile->setEnabled(true);
-  closeActive->setEnabled(true);
-  closeAll->setEnabled(true);
-}
-
-void menuSystem::sActivateWindow()
-{
-  int intWindowid = -1;
-  QAction * m = qobject_cast<QAction*>(sender());
-  if(m)
-    intWindowid = m->data().toInt();
-  QWidgetList windows = parent->windowList();
-  if(omfgThis->showTopLevel())
-    windows = omfgThis->windowList();
-  QWidget *window = windows.at(intWindowid);
-  if (window)
-  {
-    if(omfgThis->showTopLevel())
-      window->activateWindow();
-    else
-      window->setFocus();
-  }
-}
-
-void menuSystem::sRememberPositionToggle()
-{
-  if(!_lastActive)
-    return;
-
-  QString objName = _lastActive->objectName();
-  xtsettingsSetValue(objName + "/geometry/rememberPos", _rememberPos->isChecked());
-}
-
-void menuSystem::sRememberSizeToggle()
-{
-  if(!_lastActive)
-    return;
-
-  QString objName = _lastActive->objectName();
-  xtsettingsSetValue(objName + "/geometry/rememberSize", _rememberSize->isChecked());
-}
-
-void menuSystem::sCloseAll()
-{
-  if(omfgThis->showTopLevel())
-  {
-    foreach(QWidget * w, omfgThis->windowList())
-    {
-      w->close();
-    }
-  }
-  else
-    parent->workspace()->closeAllSubWindows();
-}
-
-void menuSystem::sCloseActive()
-{
-  if(omfgThis->showTopLevel())
-  {
-    if(omfgThis->windowList().contains(qApp->activeWindow()))
-      qApp->activeWindow()->close();
-  }
-  else
-    parent->workspace()->closeActiveSubWindow();
 }
 
 void menuSystem::sEventManager()

@@ -65,6 +65,7 @@
 #include "menuCRM.h"
 #include "menuSales.h"
 #include "menuAccounting.h"
+#include "menuWindow.h"
 #include "menuSystem.h"
 
 #include "timeoutHandler.h"
@@ -80,8 +81,6 @@
 
 #include "setup.h"
 #include "setupscriptapi.h"
-
-#define CHECK_REGISTERED 0
 
 #if defined(Q_OS_WIN32)
 #define NOCRYPT
@@ -402,6 +401,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   _workspace = new QMdiArea();
   _workspace->setViewMode(QMdiArea::TabbedView);
+  _workspace->setOption(QMdiArea::DontMaximizeSubWindowOnActivation, false);
   _workspace->setWindowIcon(QIcon(":/images/clear.png"));
   _workspace->setActivationOrder(QMdiArea::ActivationHistoryOrder);
 #if defined Q_WS_MACX
@@ -698,6 +698,8 @@ void GUIClient::initMenuBar()
     qApp->processEvents();
     accountingMenu = new menuAccounting(this);
 
+    windowMenu = new menuWindow(this);
+
     _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     systemMenu = new menuSystem(this);
@@ -763,7 +765,7 @@ void GUIClient::saveToolbarPositions()
 
 void GUIClient::closeEvent(QCloseEvent *event)
 {
-  if (_showTopLevel)
+  if (_showTopLevel || _workspace->viewMode() == QMdiArea::SubWindowView)
   {
     foreach (QWidget *child, QApplication::topLevelWidgets())
     {
@@ -959,28 +961,6 @@ void GUIClient::sTick()
       }
       else if ( (_eventButton) && (_eventButton->isVisible()) )
         _eventButton->hide();
-
-#if CHECK_REGISTERED
-      if (_metrics->value("Application") == "PostBooks")
-      {
-        if(_metrics->value("Registered") != "Yes" && xtsettingsValue("/xTuple/Registered").toString() != "Yes")
-        {
-          if (_registerButton)
-            _registerButton->setVisible(true);
-          else
-          {
-            _registerButton = new QPushButton(QIcon(":/images/dspRegister.png"), "", statusBar());
-            _registerButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-            _registerButton->setMinimumSize(QSize(32, 32));
-            _registerButton->setMaximumSize(QSize(32, 32));
-            statusBar()->setMinimumHeight(36);
-            statusBar()->addWidget(_registerButton);
-
-            connect(_registerButton, SIGNAL(clicked()), systemMenu, SLOT(sRegister()));
-          }
-        }
-      }
-#endif
     }
 
     __intervalCount++;
@@ -1011,8 +991,8 @@ void GUIClient::sNewErrorMessage()
   if (QApplication::closingDown())
     return;
 
-  if (_errorButton && _metrics)
-    _errorButton->setVisible(_metrics->value("Registered") != "Yes" && xtsettingsValue("/xTuple/Registered").toString() != "Yes");
+  if (_errorButton)
+    _errorButton->setVisible(true);
   else
   {
     _errorButton = new QPushButton(QIcon(":/images/dspError.png"), "", statusBar());
@@ -1306,17 +1286,17 @@ void audioReject()
   qApp->beep();
 }
 
-/** \brief Find the translation file for a given locale.
+/** @brief Find the translation file for a given locale.
 
     Looks for the translation %file for a particular locale in all of the
     standard places xTuple ERP knows to look. The first %file found is returned
     even if it isn't the most complete, specific, or up-to-date.
 
-    \param localestr The locale to look for, in standard format.
-    \param component The application component for which to find a
+    @param localestr The locale to look for, in standard format.
+    @param component The application component for which to find a
                      translation file (empty string means core)
 
-    \return The path to the translation file (may be relative or absolute)
+    @return The path to the translation file (may be relative or absolute)
  */
 QString translationFile(QString localestr, const QString component)
 {
@@ -1324,7 +1304,7 @@ QString translationFile(QString localestr, const QString component)
   return translationFile(localestr, component, version);
 }
 
-/** \brief Find the translation file for a given locale.
+/** @brief Find the translation file for a given locale.
 
     This overload should be used primarily by the Update Manager.
 
@@ -1336,22 +1316,22 @@ QString translationFile(QString localestr, const QString component)
     version number from the translation %file and pass it back to
     the caller.
 
-    The base translation file is expected to have a \c Version
+    The base translation file is expected to have a @c Version
     string in the component context. Translations from that base
-    translation %file are expected to translate the \c Version
+    translation %file are expected to translate the @c Version
     string to something meaningful that can be put in the compatibility
-    matrix. One suggestion is \c major.minor.percent-complete ,
-    where \c major and \c minor are component release numbers and
+    matrix. One suggestion is @c major.minor.percent-complete ,
+    where @c major and @c minor are component release numbers and
     percent-complete indicates how much of the base translation
     file has been completed.
 
-    \param[in]  localestr The locale to look for, in standard format.
-    \param[in]  component The application component for which to find a
+    @param[in]  localestr The locale to look for, in standard format.
+    @param[in]  component The application component for which to find a
                           translation file (empty string means core)
-    \param[out] version   The version string found in the translation file or
+    @param[out] version   The version string found in the translation file or
                           an empty string if none was found.
 
-    \return The path to the translation file (may be relative or absolute)
+    @return The path to the translation file (may be relative or absolute)
  */
 QString translationFile(QString localestr, const QString component, QString &version)
 {
@@ -1652,8 +1632,9 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
   if(1==QMessageBox::warning(w, tr("Failed to open URL"), url, tr("OK"), tr("Help"))) {
     //launchHelp("browser.html");
     QMessageBox::information( w, tr("Quick Help"),
-      tr("Before you can run a browser you must set the environment variable BROWSER to\n"
-         "point to the browser executable.") );
+                             tr("<p>Before you can run a browser you must set "
+                                "the environment variable BROWSER to point "
+                                "to the browser executable.") );
   }
 #endif
 }
@@ -1677,24 +1658,103 @@ void GUIClient::windowDestroyed(QObject * o)
 
 bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
 {
-  if(event->type() == QEvent::Close && omfgThis->showTopLevel())
-  {
-    QWidget * w = qobject_cast<QWidget *>(obj);
-    if(w)
-    {
-      QString objName = w->objectName();
-      xtsettingsSetValue(objName + "/geometry/size", w->size());
-      xtsettingsSetValue(objName + "/geometry/pos", w->pos());
-    }
-  }
+  if(event->type() == QEvent::Close)
+    omfgThis->saveWidgetSizePos(qobject_cast<QWidget *>(obj));
+
   return QObject::eventFilter(obj, event);
 }
 
-void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m, bool forceFloat)
+/** Save the size and position of the passed in widget for future use.
+
+  @return The return value indicates whether the position or size was saved or
+          not. It might not have been saved because the user told us not to
+          save them for this widget, because the application is running in
+          tabbed mode, or something similar.
+*/
+bool GUIClient::saveWidgetSizePos(QWidget *pWidget)
 {
-  // TO DO:  This function should be replaced by a centralized openWindow function
-  // used by toolbox, guiclient interface, and core windows
-  if(!w->isModal())
+  if (! pWidget)
+    return false;
+
+  bool returnVal = false;
+
+  QString objName = pWidget->objectName();
+  if (omfgThis->showTopLevel() ||
+      _workspace->viewMode() == QMdiArea::SubWindowView)
+  {
+    if (xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
+    {
+      xtsettingsSetValue(objName + "/geometry/size", pWidget->size());
+      returnVal = true;
+    }
+
+    if (xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
+    {
+      QWidget *mdiSubWindow = qobject_cast<QMdiSubWindow*>(pWidget->parent());
+      if (mdiSubWindow)
+        xtsettingsSetValue(objName + "/geometry/pos", mdiSubWindow->pos());
+      else
+        xtsettingsSetValue(objName + "/geometry/pos", pWidget->pos());
+      returnVal = true;
+    }
+  }
+
+  return returnVal;
+}
+
+bool GUIClient::restoreWidgetSizePos(QWidget *pWidget, bool forceFloat)
+{
+  bool returnVal = false;
+
+  if (! pWidget)
+    returnVal = false;
+
+  else if (windowFlags() & (Qt::Window | Qt::Dialog) &&
+           metaObject()->className() != QString("xTupleDesigner"))
+  {
+    QRect availableGeometry = QApplication::desktop()->availableGeometry();
+    if (! showTopLevel() && ! pWidget->isModal())
+      availableGeometry = _workspace->geometry();
+
+    QString objName = pWidget->objectName();
+    QPoint  pos     = xtsettingsValue(objName + "/geometry/pos").toPoint();
+    QSize   lsize   = xtsettingsValue(objName + "/geometry/size").toSize();
+
+    QMainWindow *mw = qobject_cast<QMainWindow*>(pWidget);
+    if (mw)
+      mw->statusBar()->show();
+
+    if (lsize.isValid() &&
+        xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
+      pWidget->resize(lsize);
+
+    bool shouldRestore = ! pos.isNull() &&
+                         availableGeometry.contains(QRect(pos, pWidget->size())) &&
+                         xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
+    if (showTopLevel() || pWidget->isModal() || forceFloat)
+    {
+      if (shouldRestore)
+        pWidget->move(pos);
+    }
+    else if (_workspace->viewMode() == QMdiArea::TabbedView)
+      pWidget->setWindowState(Qt::WindowMaximized);
+    else if (shouldRestore)
+      pWidget->parentWidget()->move(pos);
+
+    returnVal = true;
+  }
+
+  return returnVal;
+}
+
+/* TODO: in workspace subwindow mode, w->show is called twice for every call to
+   handleNewWindow. w gets resized between the 1st and 2nd calls, so pos memory
+   works but not size memory. why are there 2 show() calls & who is resizing w?
+   TODO: combine window handling from here, scripttoolbox, & guiclientinterface
+*/ 
+void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloat)
+{
+  if (! w->isModal())
   {
     if (w->parentWidget())
     {
@@ -1703,10 +1763,9 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m, bool forceFlo
       else
       {
         w->setWindowModality(m);
-        // Remove the parent because this is not a behavior we want unless
-        // window is modal.  Does, however, completely eliminate ability
-        // to set a parent on non-modal window with this implementation
-        // Get the focusWidget and then reset it as the setParent changes it.
+        // don't destroy nonmodal children if their nonmodal parents get closed.
+        // setParent(0) because using 'this' embeds w in the main app window.
+        // reset the focusWidget because setParent changes it (?)
         QWidget * fw = w->focusWidget();
         w->setParent(0);
         if(fw)
@@ -1719,57 +1778,38 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m, bool forceFlo
 
   connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
 
-  if(w->inherits("XMainWindow") || w->inherits("XWidget") || w->inherits("XDialog"))
-  {
-    if(w->inherits("XDialog"))
-      qDebug() << "warning: " << w->objectName() << " inherts XDialog and was passed to handleNewWindow()";
-    w->show();
-    return;
-  }
-
-  qDebug() << "GUIClient::handleNewWindow() called on object that doesn't inherit XMainWindow: " << w->objectName();
-
-  QRect availableGeometry = QApplication::desktop()->availableGeometry();
-  if(!_showTopLevel && !w->isModal())
-    availableGeometry = _workspace->geometry();
-
-  QString objName = w->objectName();
-  QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
-  QSize size = xtsettingsValue(objName + "/geometry/size").toSize();
-
-  if(size.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
-    w->resize(size);
-
-  bool wIsModal = w->isModal();
+  w->setAttribute(Qt::WA_DeleteOnClose);
   _windowList.append(w);
-  if(_showTopLevel || wIsModal || forceFloat)
+
+  if (w->windowModality() != Qt::ApplicationModal && ! showTopLevel())
   {
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    QMainWindow *mw = qobject_cast<QMainWindow*>(w);
-    if (mw)
-      mw->statusBar()->show();
-    QRect r(pos, w->size());
-    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
-      w->move(pos);
-    w->show();
-  }
-  else
-  {
-    QWidget * fw = w->focusWidget();
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    QMdiSubWindow *win = _workspace->addSubWindow(w);
-    win->setWindowState(Qt::WindowMaximized);
-    connect(w, SIGNAL(destroyed(QObject*)), win, SLOT(close()));
-    QRect r(pos, w->size());
-    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
-      w->move(pos);
-    w->show();
-    if(fw)
+    QWidget       *fw     = w->focusWidget();
+    QMdiSubWindow *subwin = _workspace->addSubWindow(w);
+    _workspace->setActiveSubWindow(subwin);
+
+    if (fw)
       fw->setFocus();
+
+    if (QDialog *dlg = qobject_cast<QDialog*>(w)) // not ==
+      connect(dlg, SIGNAL(finished(int)), subwin, SLOT(hide()));
+
+    connect(w, SIGNAL(destroyed(QObject*)), subwin, SLOT(close()));
   }
 
-  if(!wIsModal)
-    w->installEventFilter(__saveSizePositionEventFilter);
+  // TODO: why do {XDialog,XMainWindow,XWidget}::showEvent call restoreWidgetSizePos?
+  if (! w->inherits("XDialog") && ! w->inherits("XMainWindow") && ! w->inherits("XWidget"))
+  {
+    restoreWidgetSizePos(w, forceFloat);
+    if (! w->isModal())
+      w->installEventFilter(__saveSizePositionEventFilter);
+  }
+
+  w->show();
+
+  if (showTopLevel())
+    w->activateWindow();
+  else
+    w->setFocus();
 }
 
 QMenuBar *GUIClient::menuBar()
@@ -1785,7 +1825,7 @@ QMenuBar *GUIClient::menuBar()
 }
 
 /*!
-    Adds the given \a dockwidget to the specified \a area.
+    Adds the given @a dockwidget to the specified @a area.
 */
 void GUIClient::addDockWidget ( Qt::DockWidgetArea area, QDockWidget * dockwidget )
 {
@@ -1807,7 +1847,7 @@ void GUIClient::addToolBar ( QToolBar * toolbar )
   of the current tool bar block (i.e. line). If the main window already manages toolbar then it will
   only move the toolbar to area.
 
-  See also \sa addToolBarBreak().
+  See also @sa addToolBarBreak().
 */
 void GUIClient::addToolBar ( Qt::ToolBarArea area, QToolBar * toolbar )
 {
@@ -1823,7 +1863,7 @@ void GUIClient::addToolBarBreak ( Qt::ToolBarArea area )
 }
 
 /*!
-    Moves \a second dock widget on top of \a first dock widget, creating a tabbed
+    Moves @a second dock widget on top of @a first dock widget, creating a tabbed
     docked area in the main window.
 */
 void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
@@ -1832,9 +1872,9 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 }
 
 /*!
-    Sets the given \a widget to be the main window's central widget.
+    Sets the given @a widget to be the main window's central widget.
 
-    Note: GUIClient takes ownership of the \a widget pointer and
+    Note: GUIClient takes ownership of the @a widget pointer and
     deletes it at the appropriate time.
 */
 void GUIClient::setCentralWidget(QWidget * widget)

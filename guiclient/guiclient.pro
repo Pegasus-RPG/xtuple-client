@@ -910,6 +910,7 @@ HEADERS = ../common/format.h                    \
           menuSales.h                   \
           menuSchedule.h                \
           menuSystem.h                  \
+          menuWindow.h                  \
           miscCheck.h                   \
           miscVoucher.h                 \
           openPurchaseOrder.h           \
@@ -1508,6 +1509,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           menuSales.cpp                 \
           menuSchedule.cpp              \
           menuSystem.cpp                \
+          menuWindow.cpp                \
           miscCheck.cpp                 \
           miscVoucher.cpp               \
           openPurchaseOrder.cpp         \
