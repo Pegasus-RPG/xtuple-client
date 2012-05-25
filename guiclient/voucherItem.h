@@ -31,7 +31,7 @@ public slots:
     virtual void sDelete();
     virtual void sToggleReceiving( QTreeWidgetItem * pItem );
     virtual void sFillList();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem* );
+    virtual void sPopulateMenu( QMenu * pMenu, XTreeWidgetItem* );
     virtual void sCorrectReceiving();
     virtual void sSplitReceipt();
     virtual void reject();

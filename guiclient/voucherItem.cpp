@@ -15,6 +15,9 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
+
+#include "mqlutil.h"
 #include "voucherItemDistrib.h"
 #include "enterPoitemReceipt.h"
 #include "splitReceipt.h"
@@ -31,7 +34,7 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_uninvoiced, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
-  connect(_uninvoiced, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+  connect(_uninvoiced, SIGNAL(populateMenu(QMenu*,XTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, XTreeWidgetItem*)));
   connect(_freightToVoucher, SIGNAL(editingFinished()), this, SLOT(sFillList()));
   connect(_vodist, SIGNAL(populated()), this, SLOT(sCalculateTax()));
   connect(_taxtype,	  SIGNAL(newID(int)), this, SLOT(sCalculateTax()));
@@ -601,81 +604,53 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
 
 void voucherItem::sFillList()
 {
-  XSqlQuery voucherFillList;
-  voucherFillList.prepare( "SELECT vodist_id,"
-             "       COALESCE(costelem_type, :none) AS costelem_type,"
-             "       vodist_amount, 'currval' AS vodist_amount_xtnumericrole "
-             "FROM vodist "
-             "     LEFT OUTER JOIN costelem ON (vodist_costelem_id=costelem_id) "
-             "WHERE ( (vodist_poitem_id=:poitem_id)"
-             " AND (vodist_vohead_id=:vohead_id) );" );
-  voucherFillList.bindValue(":none", tr("None"));
-  voucherFillList.bindValue(":poitem_id", _poitemid);
-  voucherFillList.bindValue(":vohead_id", _voheadid);
-  voucherFillList.exec();
-  _vodist->populate(voucherFillList);
-  if (voucherFillList.lastError().type() != QSqlError::NoError)
+  MetaSQLQuery distmql = mqlLoad("voucherItem", "distributions");
+
+  ParameterList params;
+  params.append("none", tr("None"));
+  params.append("poitem_id", _poitemid);
+  params.append("vohead_id", _voheadid);
+  XSqlQuery distq = distmql.toQuery(params);
+  _vodist->populate(distq);
+  if (distq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, _rejectedMsg.arg(voucherFillList.lastError().databaseText()),
+    systemError(this, _rejectedMsg.arg(distq.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
+
+  // Fill univoiced receipts list
+  MetaSQLQuery recmql = mqlLoad("voucherItem", "receipts");
+
+  params.append("receiving", tr("Receiving"));
+  params.append("reject", tr("Reject"));
+  XSqlQuery recq = recmql.toQuery(params);
+  _uninvoiced->populate(recq, true);
+  if (recq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, _rejectedMsg.arg(recq.lastError().databaseText()),
                 __FILE__, __LINE__);
     reject();
     return;
   }
 
   // Display the total distributed amount
-  voucherFillList.prepare( "SELECT SUM(vodist_amount) AS totalamount "
-             "FROM vodist "
-             "WHERE ( (vodist_vohead_id=:vohead_id)"
-             " AND (vodist_poitem_id=:poitem_id) );" );
-  voucherFillList.bindValue(":vohead_id", _voheadid);
-  voucherFillList.bindValue(":poitem_id", _poitemid);
-  voucherFillList.exec();
-  if (voucherFillList.first())
-    _totalDistributed->setLocalValue(voucherFillList.value("totalamount").toDouble() + _tax->localValue() + 
-					_freightToVoucher->localValue());
-  else if (voucherFillList.lastError().type() != QSqlError::NoError)
+  XSqlQuery totalDist;
+  totalDist.prepare( "SELECT SUM(vodist_amount) AS totalamount "
+                     "FROM vodist "
+                     "WHERE ( (vodist_vohead_id=:vohead_id)"
+                     "  AND   (vodist_poitem_id=:poitem_id) );" );
+  totalDist.bindValue(":vohead_id", _voheadid);
+  totalDist.bindValue(":poitem_id", _poitemid);
+  totalDist.exec();
+  if (totalDist.first())
+    _totalDistributed->setLocalValue(totalDist.value("totalamount").toDouble() +
+                                     _tax->localValue() +
+                                     _freightToVoucher->localValue());
+  else if (totalDist.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, _rejectedMsg.arg(voucherFillList.lastError().databaseText()),
-                __FILE__, __LINE__);
-    reject();
-    return;
-  }
-          
-  // Fill univoiced receipts list
-  voucherFillList.prepare( "SELECT recv_id AS item_id, 1 AS item_type, :receiving AS action,"
-             "       recv_date AS item_date,"
-             "       recv_qty AS qty, 'qty' AS qty_xtnumericrole,"
-             "       recv_purchcost AS unitprice, 'curr' AS unitprice_xtnumericrole,"
-             "       formatBoolYN(recv_vohead_id=:vohead_id) AS f_tagged,"
-             "       0 AS qty_xttotalrole "
-             "FROM recv "
-             "WHERE ( (NOT recv_invoiced)"
-             " AND (recv_posted)"
-             " AND ((recv_vohead_id IS NULL) OR (recv_vohead_id=:vohead_id))"
-             " AND (recv_orderitem_id=:poitem_id) ) "
-
-             "UNION "
-             "SELECT poreject_id AS item_id, 2 AS item_type, :reject AS action,"
-             "       poreject_date AS item_date,"
-             "       poreject_qty * -1 AS qty, 'qty', "
-             "       COALESCE(recv_purchcost, poitem_unitprice) AS unitprice, 'curr' AS unitprice_xtnumericrole,"
-             "       formatBoolYN(poreject_vohead_id=:vohead_id) AS f_tagged,"
-             "       0 AS qty_xttotalrole "
-             "FROM poreject LEFT OUTER JOIN recv ON (recv_id=poreject_recv_id) "
-             "              LEFT OUTER JOIN poitem ON (poitem_id=poreject_poitem_id) "
-             "WHERE ( (poreject_posted)"
-             " AND (NOT poreject_invoiced)"
-             " AND ((poreject_vohead_id IS NULL) OR (poreject_vohead_id=:vohead_id))"
-             " AND (poreject_poitem_id=:poitem_id) );" );
-  voucherFillList.bindValue(":receiving", tr("Receiving"));
-  voucherFillList.bindValue(":reject", tr("Reject"));
-  voucherFillList.bindValue(":vohead_id", _voheadid);
-  voucherFillList.bindValue(":poitem_id", _poitemid);
-  voucherFillList.exec();
-  _uninvoiced->populate(voucherFillList, true);
-  if (voucherFillList.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, _rejectedMsg.arg(voucherFillList.lastError().databaseText()),
+    systemError(this, _rejectedMsg.arg(totalDist.lastError().databaseText()),
                 __FILE__, __LINE__);
     reject();
     return;
@@ -701,11 +676,11 @@ void voucherItem::sSplitReceipt()
     sFillList();
 }
 
-void voucherItem::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
+void voucherItem::sPopulateMenu(QMenu *pMenu,  XTreeWidgetItem *selected)
 {
   QAction *menuItem;
   
-  if (selected->text(4) == "No")
+  if ( (selected->rawValue("action") == "REC") && (selected->text(4) == "No") )
   {
     menuItem = pMenu->addAction(tr("Correct Receipt..."), this, SLOT(sCorrectReceiving()));
     menuItem->setEnabled(_privileges->check("EnterReceipts"));
