@@ -509,6 +509,7 @@ void todoList::sViewIncident()
 void todoList::sNewProject()
 {
   ParameterList params;
+  parameterWidget()->appendValue(params);
   params.append("mode", "new");
 
   project newdlg(this, "", true);
