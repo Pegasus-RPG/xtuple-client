@@ -80,7 +80,7 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
     copyPopulatePoInfo.prepare( "SELECT pohead_orderdate,"
               "        vend_id, cntct_phone, pohead_curr_id "
               "FROM pohead, vendinfo "
-              "LEFT OUTER JOIN cntct ON (vendinfo.vend_cntct1_id = c1.cntct_id) "
+              "LEFT OUTER JOIN cntct ON (vend_cntct1_id=cntct_id) "
               "WHERE ( (pohead_vend_id=vend_id)"
               " AND (pohead_id=:pohead_id) );" );
     copyPopulatePoInfo.bindValue(":pohead_id", _po->id());
