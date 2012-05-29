@@ -1722,6 +1722,7 @@ void salesOrderItem::sDeterminePrice(bool force)
     return;
 
   double  charTotal  =0;
+  bool    dateChanged =(_dateCache != _scheduledDate->date());
   bool    qtyChanged =(_orderQtyCache != _qtyOrdered->toDouble());
   bool    priceUOMChanged =(_priceUOMCache != _priceUOM->id());
   QDate   asOf;
@@ -1744,10 +1745,12 @@ void salesOrderItem::sDeterminePrice(bool force)
       _updatePrice = false;
     else if ( _metrics->value("UpdatePriceLineEdit").toInt() != iJustUpdate)
     {
-      QString token(tr("Scheduled Date"));
-      if ( qtyChanged)
+      QString token(tr("Characteristic"));
+      if (dateChanged)
+          token=tr("Scheduled Date");
+      if (qtyChanged)
         token=tr("Item quantity");
-      if ( priceUOMChanged)
+      if (priceUOMChanged)
         token=tr("Price UOM");
       if (QMessageBox::question(this, tr("Update Price?"),
                                 tr("<p>The %1 has changed. Do you want to update the Price?").arg(token),
