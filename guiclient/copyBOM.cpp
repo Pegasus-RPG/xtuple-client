@@ -89,14 +89,13 @@ void copyBOM::sCopy()
   copyCopy.exec();
   if (!copyCopy.first())
     QMessageBox::information( this, tr("Non-Existent Bill of Materials"),
-                              tr("The selected target Item does not have any Bill of Material Component Items associated with it.") );
+                              tr("The selected source Item does not have any Bill of Material Component Items associated with it.") );
 
   else
   {
     copyCopy.prepare( "SELECT bomitem_id "
                "FROM bomitem "
-               "WHERE ( (bomitem_expires > CURRENT_DATE)"
-               " AND (bomitem_parent_item_id=:item_id) ) "
+               "WHERE (bomitem_parent_item_id=:item_id) "
                "LIMIT 1;" );
     copyCopy.bindValue(":item_id", _target->id());
     copyCopy.exec();
