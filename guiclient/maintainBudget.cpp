@@ -87,6 +87,7 @@ enum SetResponse maintainBudget::set(const ParameterList & pParams)
     }
     else if(param.toString() == "view")
     {
+      _mode = cView;
       _name->setReadOnly(true);
       _descrip->setReadOnly(true);
       _save->setEnabled(false);
@@ -322,7 +323,8 @@ void maintainBudget::sPeriodsInvert()
 
 void maintainBudget::sValueChanged(QTableWidgetItem * /* item */)
 {
-  _dirty = true;
+  if (_mode != cView)
+    _dirty = true;
 }
 
 void maintainBudget::sGenerateTable()
