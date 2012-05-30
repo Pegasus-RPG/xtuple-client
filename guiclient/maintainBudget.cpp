@@ -257,6 +257,7 @@ void maintainBudget::sAccountsAdd()
   XSqlQuery maintainAccountsAdd;
   ParameterList params;
   params.append("type", (GLCluster::cAsset | GLCluster::cLiability | GLCluster::cExpense | GLCluster::cRevenue | GLCluster::cEquity));
+  params.append("ignoreCompany");
 
   accountList newdlg(this);
   newdlg.setAttribute(Qt::WA_DeleteOnClose, false);
