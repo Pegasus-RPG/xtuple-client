@@ -831,7 +831,7 @@ const struct {
 			 "Work Order."),				0, "" },
   { "explodeWo",  -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Work Order %1 cannot be Exploded as there are one "
 			 "or more Component Items on the Bill of Materials for "
-			 "the Work Order Item that do not exist in the Work "
+                         "the Work Order Item that are not valid in the Work "
 			 "Order Site. You must create a valid Item Site "
 			 "for all of the Component Items before you may "
 			 "explode this Work Order."),			0, "" },

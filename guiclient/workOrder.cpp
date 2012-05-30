@@ -537,8 +537,8 @@ void workOrder::sCreate()
     else if (_woid == -2 || _woid == -3)
       QMessageBox::critical( this, tr("Work Order not Exploded"),
                              tr( "The Work Order was created but not Exploded as Component Items defined in the Bill of Materials for\n"
-                                 "the selected Work Order Item do not exist in the selected  Work Order Site.\n"
-                                 "You must create Item Sites for these Component Items before you may explode this Work Order." ));
+                                 "the selected Work Order Item are not valid in the selected  Work Order Site.\n"
+                                 "You must create valid Item Sites for these Component Items before you may explode this Work Order." ));
     else if (_woid == -4)
       QMessageBox::critical( this, tr("Work Order not Exploded"),
                              tr( "The Work Order was created but not Exploded as the Work Order status is not Open\n"));
