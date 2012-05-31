@@ -41,6 +41,7 @@ class XTUPLEWIDGETS_EXPORT ParameterWidget : public QWidget, public Ui::Paramete
     };
 
     ParameterWidget(QWidget *pParent, const char * = 0);
+    ~ParameterWidget();
     void appendValue(ParameterList &);
     Q_INVOKABLE void applyDefaultFilterSet();
     Q_INVOKABLE int paramIndex(QString pName);

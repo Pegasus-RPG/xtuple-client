@@ -123,6 +123,13 @@ ParameterWidget::ParameterWidget(QWidget *pParent, const char *pName)  :
                           .append(_saveButton->shortcut().toString(QKeySequence::NativeText)));
 }
 
+ParameterWidget::~ParameterWidget()
+{
+  foreach (ParamProps *pp, _params)
+    if (pp)
+      delete pp;
+}
+
 void ParameterWidget::showEvent(QShowEvent * event)
 {
 

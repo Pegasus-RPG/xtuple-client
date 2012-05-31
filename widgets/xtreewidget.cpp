@@ -2449,15 +2449,14 @@ QString XTreeWidget::toHtml() const
 
 QList<XTreeWidgetItem *> XTreeWidget::selectedItems() const
 {
-  QList<QTreeWidgetItem *>  qlist  = QTreeWidget::selectedItems();
-  QList<XTreeWidgetItem *>  *xlist = new QList<XTreeWidgetItem *>();
+  QList<XTreeWidgetItem *>  xlist;
 
-  for (int i = 0; i < qlist.size(); i++)
+  foreach (QTreeWidgetItem *qitem, QTreeWidget::selectedItems())
   {
-    if (dynamic_cast<XTreeWidgetItem *>(qlist.at(i)))
-      xlist->append(dynamic_cast<XTreeWidgetItem *>(qlist.at(i)));
+    if (dynamic_cast<XTreeWidgetItem *>(qitem))
+      xlist.append(dynamic_cast<XTreeWidgetItem *>(qitem));
   }
-  return *xlist;
+  return xlist;
 }
 
 void XTreeWidget::addTopLevelItems(const QList<XTreeWidgetItem *> &items)
