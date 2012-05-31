@@ -120,9 +120,9 @@ enum SetResponse dspWoSchedule::set(const ParameterList &pParams)
   if (valid)
     parameterWidget()->setDefault(tr("Site"), param);
 
-  param = pParams.value("wo_id", &valid);
+  param = pParams.value("item_id", &valid);
   if (valid)
-    parameterWidget()->setDefault(tr("Work Order"), param);
+    parameterWidget()->setDefault(tr("Item"), param);
 
   param = pParams.value("startDate", &valid);
   if (valid)

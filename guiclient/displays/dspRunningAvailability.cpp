@@ -158,7 +158,7 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
 	  !(ordertype == tr("Planned W/O Req. (firmed)") || ordertype == tr("Planned W/O Req.")))
   {
     pMenu->addAction(tr("View Work Order Details..."), this, SLOT(sViewWo()));
-    menuItem = pMenu->addAction(tr("Work Order Schedule..."), this, SLOT(sDspWoScheduleByWorkOrder()));
+    menuItem = pMenu->addAction(tr("Work Order Schedule by Item..."), this, SLOT(sDspWoScheduleByWorkOrder()));
     menuItem->setEnabled( _privileges->check("MaintainWorkOrders") ||
 				    _privileges->check("ViewWorkOrders"));
   }
@@ -343,7 +343,7 @@ void dspRunningAvailability::sFillList()
 void dspRunningAvailability::sDspWoScheduleByWorkOrder()
 {
   ParameterList params;
-  params.append("wo_id", list()->id());
+  params.append("item_id", _item->id());
   params.append("run");
 
   dspWoSchedule *newdlg = new dspWoSchedule();
