@@ -18,6 +18,8 @@
 #include "xsqlquery.h"
 #include "xsqltablemodel.h"
 
+#define DEBUG false
+
 XSqlTableNode::XSqlTableNode(const QString tableName, ParameterList relations, XSqlTableNode *parent)
     : QObject(parent)
 {
@@ -143,7 +145,7 @@ XSqlTableModel::~XSqlTableModel()
 
 bool XSqlTableModel::select()
 {
-  qDebug("selecting ");
+  if (DEBUG) qDebug("selecting ");
   bool result;
   result = QSqlRelationalTableModel::select();
   applyColumnRoles();
