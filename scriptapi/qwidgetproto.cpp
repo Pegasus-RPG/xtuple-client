@@ -12,7 +12,7 @@
 
 #include <QApplication>
 
-#define DEBUG true
+#define DEBUG false
 
 QScriptValue scriptFind(QScriptContext *context, QScriptEngine  * engine)
 {
