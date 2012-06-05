@@ -218,11 +218,9 @@ enum SetResponse opportunity::set(const ParameterList &pParams)
 
 void opportunity::sCancel()
 {
-qDebug("->%d ->%d", cNew, _mode);
   XSqlQuery cancelOppo;
   if(cNew == _mode)
   {
-  qDebug("wtf? ->%d", _number->text().toInt());
     cancelOppo.prepare("SELECT releaseNumber('OpportunityNumber', :number);");
     cancelOppo.bindValue(":number", _number->text().toInt());
     cancelOppo.exec();
