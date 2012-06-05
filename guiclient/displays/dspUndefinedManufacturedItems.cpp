@@ -33,9 +33,9 @@ dspUndefinedManufacturedItems::dspUndefinedManufacturedItems(QWidget* parent, co
   list()->addColumn(tr("Active"),      _orderColumn, Qt::AlignCenter, true,  "item_active" );
   list()->addColumn(tr("Exception"),   _itemColumn,  Qt::AlignCenter, true,  "exception" );
 
-  connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
-  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
-  connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
+  connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList()));
   
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
