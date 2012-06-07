@@ -2705,9 +2705,11 @@ to be bound by its terms.</comment>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
-  <tabstop>_otherOption</tabstop>
-  <tabstop>_demoOption</tabstop>
   <tabstop>_username</tabstop>
+  <tabstop>_password</tabstop>
+  <tabstop>_buttonBox</tabstop>
+  <tabstop>_demoOption</tabstop>
+  <tabstop>_otherOption</tabstop>
  </tabstops>
  <resources>
   <include location="xTupleCommon.qrc"/>
