@@ -59,7 +59,7 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
   connect(_reprint, SIGNAL(toggled(bool)), this, SLOT(sHandleReprint()));
   connect(_shipment,   SIGNAL(newId(int)), this, SLOT(sHandleShipment()));
 
-  _order->setAllowedStatuses(OrderLineEdit::AnyStatus);
+  _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Sales | OrderLineEdit::Transfer);
   _order->setFromSitePrivsEnforced(TRUE);
   _shipment->setStatus(ShipmentClusterLineEdit::Unshipped);
