@@ -102,49 +102,12 @@ class ScriptToolbox : public QObject
     XSqlQuery executeCommit();
     XSqlQuery executeRollback();
 
-    QObject * qtyVal();
-    QObject * TransQtyVal();
-    QObject * qtyPerVal();
-    QObject * percentVal();
-    QObject * moneyVal();
-    QObject * negMoneyVal();
-    QObject * priceVal();
-    QObject * costVal();
-    QObject * ratioVal();
-    QObject * weightVal();
-    QObject * runTimeVal();
-    QObject * orderVal();
-    QObject * dayVal();
     QObject * customVal(const QString & ReqExp);
 
     QObject * widgetGetLayout(QWidget * w);
 
-    QObject * createGridLayout();
 
-    void layoutGridAddLayout(QObject *, QObject *, int row, int column, int alignment = 0);
-
-    void layoutBoxInsertWidget(QObject *, int index, QWidget *, int stretch = 0, int alignment = 0);
-    void layoutGridAddWidget(QObject *, QWidget *, int row, int column, int alignment = 0);
-    void layoutGridAddWidget(QObject *, QWidget *, int fromRow, int fromColumn, int rowSpan, int columnSpan, int alignment = 0);
-    void layoutStackedInsertWidget(QObject *, int index, QWidget *);
-
-    QObject * menuAddAction(QObject * menu, const QString & text, const bool enabled = true);
-    QObject * menuAddMenu(QObject * menu, const QString & text, const QString & name = QString());
-    QObject * menuAddSeparator(QObject * menu);
-    QObject * menuInsertAction(QObject * menu, QObject * before, const QString & name = QString(), const bool enabled = true);
-    QObject * menuInsertMenu(QObject * menu, QObject * before, const QString & name);
-    QObject * menuInsertSeparator(QObject * menu, QObject * before);
-    void      menuRemove(QObject * menu, QObject * action);
     int       menuActionCount(QObject * menu);
-
-    int       tabCount(QWidget * tab);
-    QWidget * tabWidget(QWidget * tab, int idx);
-    int       tabInsertTab(QWidget * tab, int idx, QWidget * page, const QString & text);
-    int       tabTabIndex(QWidget * tab, QWidget * page);
-    void      tabRemoveTab(QWidget * tab, int idx);
-    void      tabSetTabEnabled(QWidget * tab, int idx, bool enable);
-    void      tabSetTabText(QWidget * tab, int idx, const QString & text);
-    QString   tabtabText(QWidget * tab, int idx);
 
     QWidget * createWidget(const QString & className, QWidget * parent = 0, const QString & name = QString());
     QObject * createLayout(const QString & className, QWidget * parent, const QString & name = QString());
@@ -154,9 +117,6 @@ class ScriptToolbox : public QObject
     QWidget * openWindow(const QString pname, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0);
     QWidget * newDisplay(const QString pname, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0);
 
-    void addColumnXTreeWidget(QWidget * tree, const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
-    void populateXTreeWidget(QWidget * tree, XSqlQuery pSql, bool = FALSE);
-    
     void loadQWebView(QWidget * webView, const QString & url);
 
     bool printReport(const QString & name, const ParameterList & params, const QString & pdfFilename = QString::null);
@@ -167,19 +127,7 @@ class ScriptToolbox : public QObject
 
     QString fileDialog(QWidget * parent, const QString & caption, const QString & dir, const QString & filter, int fileModeSel, int acceptModeSel);
     void openUrl(const QString & fileUrl);
-    bool copyFile(const QString & oldName, const QString & newName);
-    QString getFileName(const QString & path);
-    bool renameFile(const QString & oldName, const QString & newName);
-    bool removeFile(const QString & name);
-    bool fileExists(const QString & name);
-    QString getCurrentDir();
-    QString getHomeDir();
-    QString getTempDir();
     void    listProperties(const QScriptValue &obj, const bool showPrototype = true) const;
-    bool    makePath(const QString & mkPath, const QString & rootPath);
-    int     messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
-    bool    removePath(const QString & rmPath, const QString & rootPath);
-    QString rootPath();
     QString textStreamRead(const QString & name);
     bool    textStreamWrite(const QString & name, const QString & WriteText);
 
@@ -196,8 +144,8 @@ class ScriptToolbox : public QObject
                               QString ccType,
                               QString ccExpireMonth,
                               QString ccExpireYear,
-                              int ccId = 0,
-                              bool ccActive = true );
+                              int     ccId = 0,
+                              bool    ccActive = true);
     QObject *getCreditCardProcessor();
 
     QString storedProcErrorLookup(const QString proc, const int result);
