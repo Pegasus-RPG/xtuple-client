@@ -34,6 +34,7 @@ dspOrders::dspOrders(QWidget* parent, const char*, Qt::WFlags fl)
   _warehouse->setEnabled(false);
 
   list()->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter, true,  "order_type" );
+  list()->addColumn(tr("Status"),       _statusColumn,  Qt::AlignCenter, true,  "order_status" );
   list()->addColumn(tr("Order #"),      -1,             Qt::AlignLeft,   true,  "order_number"   );
   list()->addColumn(tr("Total"),        _qtyColumn,     Qt::AlignRight,  true,  "totalqty"  );
   list()->addColumn(tr("Received"),     _qtyColumn,     Qt::AlignRight,  true,  "relievedqty"  );
@@ -120,7 +121,8 @@ void dspOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
       menuItem->setEnabled(false);
 
     menuItem = pMenu->addAction(tr("Reschedule W/O..."), this, SLOT(sRescheduleWO()));
-    if (!_privileges->check("RescheduleWorkOrders"))
+    if (!_privileges->check("RescheduleWorkOrders") ||
+        (list()->rawValue("order_status") != "O" && list()->rawValue("order_status") != "E"))
       menuItem->setEnabled(false);
 
     menuItem = pMenu->addAction(tr("Change W/O Quantity..."), this, SLOT(sChangeWOQty()));
