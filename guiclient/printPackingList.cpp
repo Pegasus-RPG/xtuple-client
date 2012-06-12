@@ -91,11 +91,17 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
 
   param = pParams.value("sohead_id", &valid);
   if (valid)
+  {
+    _order->setAllowedStatuses(OrderLineEdit::AnyStatus);
     _order->setId(param.toInt(), "SO");
+  }
 
   param = pParams.value("tohead_id", &valid);
   if (valid)
+  {
+    _order->setAllowedStatuses(OrderLineEdit::AnyStatus);
     _order->setId(param.toInt(), "TO");
+  }
 
   QString ordertype;
   param = pParams.value("head_type", &valid);
@@ -108,7 +114,10 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
     if (ordertype.isEmpty())
       return UndefinedError;
     else
+	{
+	  _order->setAllowedStatuses(OrderLineEdit::AnyStatus);
       _order->setId(param.toInt(), ordertype);
+	}
   }
 
   param = pParams.value("shiphead_id", &valid);
@@ -126,7 +135,10 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
       _pldata->_shipformid = shipq.value("shiphead_shipform_id").toInt();
       ordertype            = shipq.value("shiphead_order_type").toString();
       if (ordertype == "SO" || ordertype == "TO")
+	  {
+	    _order->setAllowedStatuses(OrderLineEdit::AnyStatus);
         _order->setId(shipq.value("shiphead_order_id").toInt(), ordertype);
+	  }
       else
         return UndefinedError;
     }
@@ -134,7 +146,7 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
                                   shipq, __FILE__, __LINE__))
       return UndefinedError;
   }
-
+  sHandleReprint();
   setId(_order->id());
 
   return printSinglecopyDocument::set(pParams);
@@ -244,7 +256,6 @@ void printPackingList::sPopulate()
   if (! _order->type().isEmpty())
   {
     ParameterList destp;
-
     if (_order->isSO())
       destp.append("sohead_id", _order->id());
     else if (_order->isTO())
@@ -310,7 +321,9 @@ void printPackingList::sPopulate()
                                   shipq, __FILE__, __LINE__))
       return;
     else
+    {
       _shipment->setId(-1);
+    }
   }
   else
   {
