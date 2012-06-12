@@ -1318,10 +1318,13 @@ void customer::sPopulateSummary()
     _firstSaleDate->setDate(query.value("firstdate").toDate());
     _lastSaleDate->setDate(query.value("lastdate").toDate());
   }
+
+  // exclude some credit card charges so they don't cancel the actual sales figures
   query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS lysales "
                  "FROM cohist "
                  "WHERE ( (cohist_invcdate BETWEEN (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 year') AND"
                  "                                 (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 day'))"
+                 " AND (cohist_cohead_ccpay_id IS NULL)"
                  " AND (cohist_cust_id=:cust_id) );" );
   query.bindValue(":cust_id", _custid);
   query.exec();
@@ -1331,6 +1334,7 @@ void customer::sPopulateSummary()
   query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS ytdsales "
                  "FROM cohist "
                  "WHERE ( (cohist_invcdate>=DATE_TRUNC('year', CURRENT_TIMESTAMP))"
+                 " AND (cohist_cohead_ccpay_id IS NULL)"
                  " AND (cohist_cust_id=:cust_id) );" );
   query.bindValue(":cust_id", _custid);
   query.exec();

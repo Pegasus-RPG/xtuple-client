@@ -11,14 +11,12 @@
 #include "salesHistoryInformation.h"
 
 #include <QVariant>
-#include <QValidator>
 
 salesHistoryInformation::salesHistoryInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
@@ -36,7 +34,6 @@ salesHistoryInformation::salesHistoryInformation(QWidget* parent, const char* na
 
   _salesrep->setType(XComboBox::SalesReps);
 
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -166,6 +163,7 @@ void salesHistoryInformation::sSave()
   salesSave.bindValue(":cohist_salesrep_id", _salesrep->id());
   salesSave.bindValue(":cohist_commission", _commission->toDouble());
   salesSave.bindValue(":cohist_commissionpaid", QVariant(_commissionPaid->isChecked()));
+  // _isCcPayment is read-only, so don't save it
   salesSave.exec();
 
   done(_sohistid);
@@ -186,7 +184,7 @@ void salesHistoryInformation::populate()
              "       cohist_qtyshipped, cohist_unitprice, cohist_unitcost,"
              "       (cohist_qtyshipped * cohist_unitprice) AS extprice,"
              "       (cohist_qtyshipped * cohist_unitcost) AS extcost,"
-             "       cohist_commission "
+             "       cohist_commission, cohist_cohead_ccpay_id "
              "FROM cohist "
              "WHERE (cohist_id=:sohist_id);" );
   salespopulate.bindValue(":sohist_id", _sohistid);
@@ -221,6 +219,7 @@ void salesHistoryInformation::populate()
     _salesrep->setId(salespopulate.value("cohist_salesrep_id").toInt());
     _commission->setDouble(salespopulate.value("cohist_commission").toDouble());
     _commissionPaid->setChecked(salespopulate.value("cohist_commissionpaid").toBool());
+    _isCcPayment->setChecked(! salespopulate.value("cohist_cohead_ccpay_id").isNull());
   }
 }
 

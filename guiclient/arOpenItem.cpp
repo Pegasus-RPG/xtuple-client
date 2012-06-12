@@ -257,7 +257,7 @@ void arOpenItem::sSave()
                  "                           :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
                  "                           :aropen_salescat_id, :aropen_accnt_id, :aropen_duedate,"
                  "                           :aropen_terms_id, :aropen_salesrep_id, :aropen_commission_due,"
-                 "                           :curr_id ) AS result;" );
+                 "                           NULL, :curr_id ) AS result;" );
       storedProc = "createARCreditMemo";
     }
     else if (_docType->currentIndex() == 1)
