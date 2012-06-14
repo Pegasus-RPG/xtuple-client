@@ -34,7 +34,6 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
   adjustSize();
 
   _qtyToAssign->setValidator(omfgThis->qtyVal());
-  _lotSerial->setFocus();
 }
 
 createLotSerial::~createLotSerial()
@@ -130,12 +129,6 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
           systemError(this, fetchlsnum.lastError().databaseText(), __FILE__, __LINE__);
           return UndefinedError;
         }
-        if (!_serial)
-          _qtyToAssign->setFocus();
-        else if (_expiration->isEnabled())
-          _expiration->setFocus();
-        else
-          _warranty->setFocus();
       }
       else if (!_serial) {
         XSqlQuery lots;

@@ -63,7 +63,6 @@ enum SetResponse changeWoQty::set(const ParameterList &pParams)
   {
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-    _newQtyOrdered->setFocus();
   }
 
   param = pParams.value("newQty", &valid);

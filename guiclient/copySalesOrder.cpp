@@ -62,8 +62,6 @@ enum SetResponse copySalesOrder::set(const ParameterList &pParams)
     _captive = TRUE;
     _so->setId(param.toInt());
     _so->setEnabled(FALSE);
-
-    _buttonBox->setFocus();
   }
 
   return NoError;

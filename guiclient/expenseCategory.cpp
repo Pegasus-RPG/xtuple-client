@@ -63,18 +63,15 @@ enum SetResponse expenseCategory::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _category->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _category->setFocus();
     }
     else if (param.toString() == "copy")
     {
       _mode = cCopy;
       _category->clear();
-      _category->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -89,7 +86,6 @@ enum SetResponse expenseCategory::set(const ParameterList &pParams)
       _freight->setReadOnly(TRUE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

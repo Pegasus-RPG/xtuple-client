@@ -51,7 +51,6 @@ enum SetResponse copyItem::set(const ParameterList &pParams)
   {
     _source->setId(param.toInt());
     _source->setEnabled(FALSE);
-    _targetItemNumber->setFocus();
   }
 
   return NoError;

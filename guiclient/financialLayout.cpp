@@ -114,14 +114,11 @@ enum SetResponse financialLayout::set(const ParameterList &pParams)
       
       sSetType();
 //  ToDo
-
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
 
-      _buttonBox->setFocus();
       _view->setHidden(TRUE);
       _viewCol->setHidden(TRUE);
     }

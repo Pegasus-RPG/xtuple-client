@@ -60,7 +60,6 @@ enum SetResponse enterMiscCount::set(const ParameterList &pParams)
     _item->setItemsiteid(param.toInt());
     _item->setEnabled(FALSE);
     _warehouse->setEnabled(FALSE);
-    _qty->setFocus();
   }
 
   return NoError;

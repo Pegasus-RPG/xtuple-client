@@ -81,17 +81,15 @@ enum SetResponse currency::set(const ParameterList &pParams)
   param = pParams.value("mode", &valid);
   if (valid)
   {
-      if (param.toString() == "new")
-      {
-	  _mode = cNew;
-	  _currName->setFocus();
-	_currBase->setEnabled(! isBaseSet());
-      }
+    if (param.toString() == "new")
+    {
+      _mode = cNew;
+      _currBase->setEnabled(! isBaseSet());
+    }
     else if (param.toString() == "edit")
     {
-	_mode = cEdit;
-	_currBase->setEnabled(! isBaseSet());
-	_currName->setFocus();
+      _mode = cEdit;
+      _currBase->setEnabled(! isBaseSet());
     }
     else if (param.toString() == "view")
     {
@@ -103,7 +101,6 @@ enum SetResponse currency::set(const ParameterList &pParams)
       _currBase->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

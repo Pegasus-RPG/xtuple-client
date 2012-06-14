@@ -97,13 +97,11 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
     {
       _mode = cNew;
       _useCompanyIdOrigin->setChecked(true);
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _currency->setEnabled(FALSE);
-      _description->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -122,7 +120,6 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
       _assetAccount->setReadOnly(TRUE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

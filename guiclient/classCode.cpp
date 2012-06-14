@@ -54,14 +54,10 @@ enum SetResponse classCode::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      _classCode->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -71,7 +67,6 @@ enum SetResponse classCode::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

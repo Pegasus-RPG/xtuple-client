@@ -78,7 +78,6 @@ enum SetResponse enterPoReturn::set(const ParameterList &pParams)
   {
     _captive = TRUE;
     _po->setId(param.toInt());
-    _poitem->setFocus();
   }
 
   return NoError;

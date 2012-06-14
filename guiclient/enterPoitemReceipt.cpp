@@ -40,7 +40,6 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
   _toReceiveInv->setPrecision(omfgThis->qtyVal());
 
   _toReceive->setValidator(omfgThis->qtyVal());
-  _toReceive->setFocus();
   _receiptDate->setDate(QDate::currentDate());
 
   _mode		= cView;

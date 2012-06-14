@@ -183,20 +183,16 @@ enum SetResponse employee::set(const ParameterList &pParams)
           _NumberGen = numq.value("number").toInt();
         }
       }
-      else
-        _code->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _number->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
       _save->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
 

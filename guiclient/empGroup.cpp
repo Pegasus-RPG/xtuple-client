@@ -135,13 +135,11 @@ enum SetResponse empGroup::set(const ParameterList &pParams)
   if (editing)
   {
     connect(_empgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    _name->setFocus();
   }
   else
   {
     _save->hide();
     _close->setText(tr("&Close"));
-    _close->setFocus();
   }
   _name->setEnabled(_mode == cNew);
   _descrip->setEnabled(editing);

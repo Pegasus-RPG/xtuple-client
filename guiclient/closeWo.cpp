@@ -30,7 +30,6 @@ closeWo::closeWo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoOpen | cWoExploded | cWoReleased | cWoIssued);
-  _wo->setFocus();
   
   _postMaterialVariance->setChecked(_metrics->boolean("PostMaterialVariances"));
 }
@@ -62,7 +61,6 @@ enum SetResponse closeWo::set(const ParameterList &pParams)
   {
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-    _closeWo->setFocus();
   }
 
   return NoError;

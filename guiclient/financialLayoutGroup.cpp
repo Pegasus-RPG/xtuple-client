@@ -17,20 +17,11 @@
 #define cCash     2
 #define cAdHoc    3
 
-/*
- *  Constructs a financialLayoutGroup as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 financialLayoutGroup::financialLayoutGroup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_showSubtotal, SIGNAL(toggled(bool)), this, SLOT(sToggled()));
   connect(_summarize, SIGNAL(toggled(bool)), this, SLOT(sToggled()));
@@ -44,18 +35,11 @@ financialLayoutGroup::financialLayoutGroup(QWidget* parent, const char* name, bo
   connect(_showPrcnt, SIGNAL(toggled(bool)), this, SLOT(sToggleShowPrcnt()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 financialLayoutGroup::~financialLayoutGroup()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void financialLayoutGroup::languageChange()
 {
   retranslateUi(this);
@@ -91,14 +75,10 @@ enum SetResponse financialLayoutGroup::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -106,7 +86,6 @@ enum SetResponse financialLayoutGroup::set(const ParameterList &pParams)
       
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
       _name->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _subSummGroup->setEnabled(FALSE);

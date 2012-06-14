@@ -18,8 +18,6 @@ financialLayoutSpecial::financialLayoutSpecial(QWidget* parent, const char* name
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_showBudget, SIGNAL(toggled(bool)), _showBudgetPrcnt, SLOT(setEnabled(bool)));
   connect(_showDB, SIGNAL(toggled(bool)), _showDBPrcnt, SLOT(setEnabled(bool)));
@@ -75,12 +73,10 @@ enum SetResponse financialLayoutSpecial::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
-      _buttonBox->setFocus();
     }
   }
 

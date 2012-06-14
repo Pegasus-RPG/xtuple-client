@@ -391,8 +391,6 @@ enum SetResponse distributeInventory::set(const ParameterList &pParams)
     populate();
   }
 
-  _bc->setFocus();
-
   return NoError;
 }
 

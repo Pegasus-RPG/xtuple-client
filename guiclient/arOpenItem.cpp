@@ -173,7 +173,6 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _notes->setReadOnly(TRUE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
     else
       return UndefinedError;

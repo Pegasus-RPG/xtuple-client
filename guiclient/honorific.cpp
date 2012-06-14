@@ -15,37 +15,21 @@
 #include <QValidator>
 #include <QVariant>
 
-/*
- *  Constructs a honorific as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 honorific::honorific(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
     setupUi(this);
 
-
-    // signals and slots connections
     connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
     connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
     connect(_code, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 honorific::~honorific()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void honorific::languageChange()
 {
     retranslateUi(this);
@@ -70,12 +54,10 @@ enum SetResponse honorific::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _code->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _code->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -84,7 +66,6 @@ enum SetResponse honorific::set(const ParameterList &pParams)
       _code->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

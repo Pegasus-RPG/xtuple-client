@@ -84,11 +84,12 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-      _name->setEnabled(FALSE);
+      _name->setEnabled(false);
       _search->setEnabled(false);
-      _useGroup->setEnabled(FALSE);
-      _mask->setEnabled(FALSE);
-      _validator->setEnabled(FALSE);
+      _useGroup->setEnabled(false);
+      _order->setEnabled(false);
+      _mask->setEnabled(false);
+      _validator->setEnabled(false);
 
       _items->setEnabled(FALSE);
       _customers->setEnabled(FALSE);
@@ -102,7 +103,6 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
 
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

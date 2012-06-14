@@ -111,12 +111,10 @@ enum SetResponse group::set(const ParameterList &pParams)
 
       _module->setCurrentIndex(0);
       sModuleSelected(_module->itemText(0));
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -131,7 +129,6 @@ enum SetResponse group::set(const ParameterList &pParams)
       disconnect(_granted, SIGNAL(valid(bool)), _revoke, SLOT(setEnabled(bool)));
       _save->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
 

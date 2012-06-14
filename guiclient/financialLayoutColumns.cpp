@@ -71,13 +71,12 @@ enum SetResponse financialLayoutColumns::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-    _mode = cNew;
+      _mode = cNew;
     }
     else if (param.toString() == "edit")
     {
-    _mode = cEdit;
-    _buttonBox->setFocus();
-    populate();
+      _mode = cEdit;
+      populate();
     }
     else if (param.toString() == "view")
     {
@@ -86,7 +85,6 @@ enum SetResponse financialLayoutColumns::set(const ParameterList &pParams)
       _report->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
       _selected->setEnabled(FALSE);
       _prior->setEnabled(FALSE);
       _budget->setEnabled(FALSE);

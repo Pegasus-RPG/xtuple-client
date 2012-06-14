@@ -87,8 +87,6 @@ enum SetResponse company::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      
-      _buttonBox->button(QDialogButtonBox::Save)->setFocus();
     }
     else if (param.toString() == "view")
     {

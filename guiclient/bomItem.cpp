@@ -84,8 +84,6 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
       _itemcost->hideColumn(6);
   }
 
-  _item->setFocus();
-  
   _parentitemid=0;
   _saved=FALSE;
   adjustSize();
@@ -181,7 +179,6 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       }
 
       connect(_bomDefinedCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleBomitemCost()));
-      _item->setFocus();
     }
     else if (param.toString() == "replace")
     {
@@ -189,7 +186,6 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 
       _item->setId(-1);
       _dates->setStartDate(omfgThis->dbDate());
-      _item->setFocus();
 
       _sourceBomitemid = _bomitemid;
       bomet.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
@@ -242,7 +238,6 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _notes->setEnabled(FALSE);
       _ref->setEnabled(FALSE);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

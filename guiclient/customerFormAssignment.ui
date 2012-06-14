@@ -13,281 +13,244 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>266</height>
+    <width>524</width>
+    <height>316</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Customer Form Assignment</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
+    <widget class="QDialogButtonBox" name="_buttonBox">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <layout class="QVBoxLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>5</number>
+      <widget class="QGroupBox" name="_customerTypeGroup">
+       <property name="title">
+        <string/>
        </property>
-       <item>
-        <widget class="QGroupBox" name="_customerTypeGroup">
-         <property name="title">
-          <string/>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="_selectedCustomerType">
+          <property name="text">
+           <string>Selected Customer Type:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="XComboBox" name="_customerTypes">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="type">
+           <enum>XComboBox::CustomerTypes</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="_customerTypePattern">
+          <property name="text">
+           <string>Customer Type Pattern:</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="XLineEdit" name="_customerType">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="1" column="0">
+        <widget class="QLabel" name="_invoiceFormLit">
+         <property name="text">
+          <string>Invoice Form:</string>
          </property>
-         <layout class="QVBoxLayout">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="margin">
-           <number>5</number>
-          </property>
-          <item>
-           <layout class="QHBoxLayout">
-            <property name="spacing">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="_selectedCustomerType">
-              <property name="text">
-               <string>Selected Customer Type:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XComboBox" name="_customerTypes">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="type">
-               <enum>XComboBox::CustomerTypes</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout">
-            <property name="spacing">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="_customerTypePattern">
-              <property name="text">
-               <string>Customer Type Pattern:</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLineEdit" name="_customerType">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
         </widget>
        </item>
-       <item>
-        <layout class="QHBoxLayout">
-         <property name="spacing">
-          <number>5</number>
+       <item row="1" column="1">
+        <widget class="XComboBox" name="_invoiceForm">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <item>
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="_invoiceFormLit">
-             <property name="text">
-              <string>Invoice Form:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_creditMemoLit">
-             <property name="text">
-              <string>Credit Memo Form:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_statementLit">
-             <property name="text">
-              <string>Statement Form:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_quoteFormLit">
-             <property name="text">
-              <string>Quote Form:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_packingListFormLit">
-             <property name="text">
-              <string>Packing List Form:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_soPickListFormLit">
-             <property name="text">
-              <string>Sales Order Pick List Form:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="XComboBox" name="_invoiceForm">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="allowNull">
-              <bool>true</bool>
-             </property>
-             <property name="nullStr">
-              <string>Default</string>
-             </property>
-             <property name="type">
-              <enum>XComboBox::Reports</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_creditMemoForm">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="allowNull">
-              <bool>true</bool>
-             </property>
-             <property name="nullStr">
-              <string>Default</string>
-             </property>
-             <property name="type">
-              <enum>XComboBox::Reports</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_statementForm">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="allowNull">
-              <bool>true</bool>
-             </property>
-             <property name="nullStr">
-              <string>Default</string>
-             </property>
-             <property name="type">
-              <enum>XComboBox::Reports</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_quoteForm">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="allowNull">
-              <bool>true</bool>
-             </property>
-             <property name="nullStr">
-              <string>Default</string>
-             </property>
-             <property name="type">
-              <enum>XComboBox::Reports</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_packingListForm">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="allowNull">
-              <bool>true</bool>
-             </property>
-             <property name="nullStr">
-              <string>Default</string>
-             </property>
-             <property name="type">
-              <enum>XComboBox::Reports</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_soPickListForm">
-             <property name="allowNull">
-              <bool>true</bool>
-             </property>
-             <property name="nullStr">
-              <string>Default</string>
-             </property>
-             <property name="type">
-              <enum>XComboBox::Reports</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="nullStr">
+          <string>Default</string>
+         </property>
+         <property name="type">
+          <enum>XComboBox::Reports</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="_creditMemoLit">
+         <property name="text">
+          <string>Credit Memo Form:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="XComboBox" name="_creditMemoForm">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="nullStr">
+          <string>Default</string>
+         </property>
+         <property name="type">
+          <enum>XComboBox::Reports</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="_statementLit">
+         <property name="text">
+          <string>Statement Form:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="XComboBox" name="_statementForm">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="nullStr">
+          <string>Default</string>
+         </property>
+         <property name="type">
+          <enum>XComboBox::Reports</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="_quoteFormLit">
+         <property name="text">
+          <string>Quote Form:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="XComboBox" name="_quoteForm">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="nullStr">
+          <string>Default</string>
+         </property>
+         <property name="type">
+          <enum>XComboBox::Reports</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="_packingListFormLit">
+         <property name="text">
+          <string>Packing List Form:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="XComboBox" name="_packingListForm">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="nullStr">
+          <string>Default</string>
+         </property>
+         <property name="type">
+          <enum>XComboBox::Reports</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="_soPickListFormLit">
+         <property name="text">
+          <string>Sales Order Pick List Form:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="XComboBox" name="_soPickListForm">
+         <property name="allowNull">
+          <bool>true</bool>
+         </property>
+         <property name="nullStr">
+          <string>Default</string>
+         </property>
+         <property name="type">
+          <enum>XComboBox::Reports</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -309,16 +272,6 @@ to be bound by its terms.</comment>
      </item>
     </layout>
    </item>
-   <item row="0" column="1">
-    <widget class="QDialogButtonBox" name="_buttonBox">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
@@ -332,6 +285,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -344,6 +298,8 @@ to be bound by its terms.</comment>
   <tabstop>_statementForm</tabstop>
   <tabstop>_quoteForm</tabstop>
   <tabstop>_packingListForm</tabstop>
+  <tabstop>_soPickListForm</tabstop>
+  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

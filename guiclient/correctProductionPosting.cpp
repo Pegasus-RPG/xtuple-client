@@ -74,8 +74,6 @@ enum SetResponse correctProductionPosting::set(const ParameterList &pParams)
 
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-
-    _qty->setFocus();
   }
 
   return NoError;

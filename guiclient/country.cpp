@@ -57,12 +57,10 @@ enum SetResponse country::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -77,7 +75,6 @@ enum SetResponse country::set(const ParameterList &pParams)
 
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

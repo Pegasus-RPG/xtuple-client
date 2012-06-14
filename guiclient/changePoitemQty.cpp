@@ -67,7 +67,6 @@ enum SetResponse changePoitemQty::set(const ParameterList &pParams)
   {
     _po->setId(param.toInt());
     _po->setReadOnly(true);
-    _newQty->setFocus();
   }
 
   param = pParams.value("poitem_id", &valid);
@@ -83,9 +82,8 @@ enum SetResponse changePoitemQty::set(const ParameterList &pParams)
       _po->setId(changeet.value("poitem_pohead_id").toInt());
       _po->setReadOnly(true);
       _poitem->setId(param.toInt());
+      _poitem->setEnabled(false);
     }
-
-    _newQty->setFocus();
   }
 
   param = pParams.value("newQty", &valid);

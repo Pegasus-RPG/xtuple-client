@@ -13,20 +13,11 @@
 #include <QVariant>
 #include <QMessageBox>
 
-/*
- *  Constructs a copyBOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 copyBOM::copyBOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_source, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
   connect(_target, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
@@ -42,18 +33,11 @@ copyBOM::copyBOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
                    ItemLineEdit::cPlanning);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 copyBOM::~copyBOM()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void copyBOM::languageChange()
 {
   retranslateUi(this);
@@ -72,7 +56,6 @@ enum SetResponse copyBOM::set(const ParameterList &pParams)
   {
     _source->setId(param.toInt());
     _source->setEnabled(FALSE);
-    _target->setFocus();
   }
 
   return NoError;

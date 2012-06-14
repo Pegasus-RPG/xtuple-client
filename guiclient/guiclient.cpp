@@ -349,7 +349,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
   XSqlQuery _GGUIClient;
   _menuBar = 0;
-  _activeWindow = 0;
   _shown = false;
   _shuttingDown = false;
 
@@ -497,8 +496,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _splash->showMessage(tr("Completing Initialization"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
   _splash->finish(this);
-
-  connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*)));
 
   //Restore Window Size Saved on Close
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
@@ -1648,12 +1645,7 @@ void GUIClient::windowDestroyed(QObject * o)
 {
   QWidget * w = qobject_cast<QWidget *>(o);
   if(w)
-  {
-    if(w == _activeWindow)
-      _activeWindow = 0;
-
     _windowList.removeAll(w);
-  }
 }
 
 bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
@@ -1679,8 +1671,14 @@ bool GUIClient::saveWidgetSizePos(QWidget *pWidget)
   bool returnVal = false;
 
   QString objName = pWidget->objectName();
-  if (omfgThis->showTopLevel() ||
-      _workspace->viewMode() == QMdiArea::SubWindowView)
+
+/*
+qDebug() << __FUNCTION__    << pWidget->isMaximized()
+         << pWidget->size() << xtsettingsValue(objName + "/geometry/rememberSize", true).toBool()
+         << pWidget->pos()  << xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
+
+*/
+  if (! pWidget->isMaximized())
   {
     if (xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
     {
@@ -1720,6 +1718,13 @@ bool GUIClient::restoreWidgetSizePos(QWidget *pWidget, bool forceFloat)
     QPoint  pos     = xtsettingsValue(objName + "/geometry/pos").toPoint();
     QSize   lsize   = xtsettingsValue(objName + "/geometry/size").toSize();
 
+/*
+qDebug() << __FUNCTION__   << pWidget->isModal()
+         << showTopLevel() << _workspace->viewMode()
+         << availableGeometry
+         << lsize << xtsettingsValue(objName + "/geometry/rememberSize", true).toBool()
+         << pos   << xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
+*/
     QMainWindow *mw = qobject_cast<QMainWindow*>(pWidget);
     if (mw)
       mw->statusBar()->show();
@@ -1880,23 +1885,6 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 void GUIClient::setCentralWidget(QWidget * widget)
 {
   QMainWindow::setCentralWidget(widget);
-}
-
-void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
- {
-   QWidget * thisActive = workspace()->activeSubWindow();
-   if(omfgThis->showTopLevel())
-     thisActive = qApp->activeWindow();
-   if(thisActive == this)
-     return;
-   if(thisActive && thisActive->inherits("QMessageBox"))
-     return;
-   _activeWindow = thisActive;
-}
-
-QWidget * GUIClient::myActiveWindow()
-{
-  return _activeWindow;
 }
 
 // TODO: when std edition is extracted, replace this with a script include()

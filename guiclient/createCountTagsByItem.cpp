@@ -68,8 +68,6 @@ enum SetResponse createCountTagsByItem::set(const ParameterList &pParams)
     _item->setItemsiteid(param.toInt());
     _item->setReadOnly(TRUE);
     _warehouse->setEnabled(FALSE);
-
-    _priority->setFocus();
   }
 
   return NoError;

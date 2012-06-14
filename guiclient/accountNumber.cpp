@@ -89,13 +89,14 @@ enum SetResponse accountNumber::set(const ParameterList &pParams)
       _mode = cNew;
       _number->setValidator(new QRegExpValidator(QRegExp(QString("\\S{0,%1}").arg(_metrics->value("GLMainSize").toInt())),
                                                  _number));
-      _number->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      _company->setEnabled(FALSE);
+      _profit->setEnabled(FALSE);
       _number->setEnabled(FALSE);
-      _description->setFocus();
+      _sub->setEnabled(FALSE);
     }
     else if (param.toString() == "view")
     {

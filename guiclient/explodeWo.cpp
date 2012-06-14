@@ -34,8 +34,6 @@ explodeWo::explodeWo(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 
   _multipleLevel->setChecked(_metrics->value("WOExplosionLevel") == "M");
   _wo->setType(cWoOpen);
-
-  _wo->setFocus();
 }
 
 explodeWo::~explodeWo()
@@ -60,7 +58,7 @@ enum SetResponse explodeWo::set(const ParameterList &pParams)
   if (valid)
   {
     _wo->setId(param.toInt());
-    _explode->setFocus();
+    _wo->setEnabled(false);
   }
 
   return NoError;

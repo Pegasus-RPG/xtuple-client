@@ -153,12 +153,10 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _char->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {

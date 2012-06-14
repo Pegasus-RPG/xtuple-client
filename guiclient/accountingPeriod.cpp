@@ -58,7 +58,6 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
       setAccounting.exec("SELECT period_id "
              "FROM period "
              "WHERE (period_closed) "
@@ -94,7 +93,6 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _startDate->setFocus();
     }
     else if (param.toString() == "view")
     {

@@ -59,10 +59,7 @@ enum SetResponse accountingYearPeriod::set(const ParameterList &pParams)
     if (check.first())
     {
       _startDate->setEnabled(false);
-      _endDate->setFocus();
     }
-    else
-      _startDate->setFocus();
 
     if (param.toString() == "new")
     {
@@ -77,13 +74,10 @@ enum SetResponse accountingYearPeriod::set(const ParameterList &pParams)
         _startDate->setDate(check.value("start_date").toDate());
         _endDate->setDate(check.value("start_date").toDate().addYears(1).addDays(-1));
       }
-
-      _startDate->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _startDate->setFocus();
     }
     else if (param.toString() == "view")
     {

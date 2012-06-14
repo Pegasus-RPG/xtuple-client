@@ -15,9 +15,10 @@
 #include <dbtools.h>
 #include "xtupleproductkey.h"
 
-databaseInformation::databaseInformation(QWidget* parent, const char* name, bool /*modal*/, Qt::WFlags fl)
+databaseInformation::databaseInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XAbstractConfigure(parent, fl)
 {
+  Q_UNUSED(modal);
   XSqlQuery databasedatabaseInformation;
   setupUi(this);
 
@@ -43,8 +44,6 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   }
   else
     _forceLicense->hide(); // doesn't apply to postbooks
-
-  _description->setFocus();
 
   _description->setText(_metrics->value("DatabaseName"));
   _comments->setText(_metrics->value("DatabaseComments"));

@@ -23,143 +23,99 @@ to be bound by its terms.</comment>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <layout class="QVBoxLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>5</number>
+      <widget class="QGroupBox" name="_vendorTypeGroup">
+       <property name="title">
+        <string/>
        </property>
-       <item>
-        <widget class="QGroupBox" name="_vendorTypeGroup">
-         <property name="title">
-          <string/>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="_allVendorTypes">
+          <property name="text">
+           <string>All Vendor Types:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="_selectedVendorType">
+          <property name="text">
+           <string>Selected Vendor Type:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="XComboBox" name="_vendorTypes">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QRadioButton" name="_vendorTypePattern">
+          <property name="text">
+           <string>Vendor Type Pattern:</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="XLineEdit" name="_vendorType">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QGridLayout">
+       <item row="1" column="0">
+        <widget class="QLabel" name="_prepaidAccountLit">
+         <property name="text">
+          <string>Prepaid Account:</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QRadioButton" name="_allVendorTypes">
-              <property name="text">
-               <string>All Vendor Types:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <layout class="QHBoxLayout">
-            <property name="spacing">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="_selectedVendorType">
-              <property name="text">
-               <string>Selected Vendor Type:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XComboBox" name="_vendorTypes">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="0">
-           <layout class="QHBoxLayout">
-            <property name="spacing">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="_vendorTypePattern">
-              <property name="text">
-               <string>Vendor Type Pattern:</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLineEdit" name="_vendorType">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
         </widget>
        </item>
-       <item>
-        <layout class="QGridLayout">
-         <property name="spacing">
-          <number>5</number>
+       <item row="1" column="1">
+        <widget class="GLCluster" name="_prepaid"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="_discountAccountLit">
+         <property name="text">
+          <string>Discount Account:</string>
          </property>
-         <item row="1" column="0">
-          <widget class="QLabel" name="_prepaidAccountLit">
-           <property name="text">
-            <string>Prepaid Account:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="GLCluster" name="_prepaid"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="_discountAccountLit">
-           <property name="text">
-            <string>Discount Account:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="_apAccountLit">
-           <property name="text">
-            <string>Payables Account:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="GLCluster" name="_ap"/>
-         </item>
-         <item row="2" column="1">
-          <widget class="GLCluster" name="_discount"/>
-         </item>
-        </layout>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="_apAccountLit">
+         <property name="text">
+          <string>Payables Account:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="GLCluster" name="_ap"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="GLCluster" name="_discount"/>
        </item>
       </layout>
      </item>
@@ -171,26 +127,14 @@ to be bound by its terms.</comment>
        <property name="sizeType">
         <enum>QSizePolicy::Expanding</enum>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>16</width>
-         <height>0</height>
-        </size>
-       </property>
       </spacer>
      </item>
     </layout>
    </item>
    <item row="0" column="1">
     <layout class="QVBoxLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
       <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>5</number>
-       </property>
        <item>
         <widget class="QDialogButtonBox" name="_buttonBox">
          <property name="orientation">
@@ -239,9 +183,11 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_allVendorTypes</tabstop>
   <tabstop>_selectedVendorType</tabstop>
   <tabstop>_vendorTypes</tabstop>
   <tabstop>_vendorTypePattern</tabstop>
@@ -249,7 +195,7 @@ to be bound by its terms.</comment>
   <tabstop>_ap</tabstop>
   <tabstop>_prepaid</tabstop>
   <tabstop>_discount</tabstop>
-  <tabstop>_allVendorTypes</tabstop>
+  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

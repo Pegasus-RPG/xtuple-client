@@ -1,5 +1,3 @@
-
-
 /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
@@ -12,16 +10,15 @@
 
 #include "department.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QVariant>
 
 department::department(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(sClose()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
 
@@ -57,12 +54,10 @@ enum SetResponse department::set(const ParameterList& pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _number->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -71,7 +66,6 @@ enum SetResponse department::set(const ParameterList& pParams)
        _name->setEnabled(false);
        _buttonBox->clear();
        _buttonBox->addButton(QDialogButtonBox::Close);
-       _buttonBox->setFocus();
     }
   }
 

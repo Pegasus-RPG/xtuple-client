@@ -19,21 +19,12 @@
 #define cCash		2
 #define cAdHoc		3
 
-/*
- *  Constructs a financialLayoutItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  TRUE to construct a modal dialog.
- */
 financialLayoutItem::financialLayoutItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   XSqlQuery financialfinancialLayoutItem;
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_showBeginning, SIGNAL(toggled(bool)), _showBeginningPrcnt, SLOT(setEnabled(bool)));
   connect(_showBudget, SIGNAL(toggled(bool)), _showBudgetPrcnt, SLOT(setEnabled(bool)));
@@ -141,14 +132,13 @@ enum SetResponse financialLayoutItem::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
+
       _selectAccount->setEnabled(FALSE);
       _selectSegment->setEnabled(FALSE);
       _operationGroup->setEnabled(FALSE);
@@ -156,7 +146,6 @@ enum SetResponse financialLayoutItem::set(const ParameterList &pParams)
       _showPrcnt->setEnabled(FALSE);
       _group->setEnabled(FALSE);
       _showCustom->setEnabled(FALSE);
-      _buttonBox->setFocus();
     }
   }
   param = pParams.value("type", &valid);

@@ -27,7 +27,6 @@ createInvoices::createInvoices(QWidget* parent, const char* name, bool modal, Qt
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
   _customerType->setType(ParameterGroup::CustomerType);
-  _post->setFocus();
 }
 
 createInvoices::~createInvoices()

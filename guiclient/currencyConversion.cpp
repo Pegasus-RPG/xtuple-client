@@ -101,15 +101,13 @@ enum SetResponse currencyConversion::set(const ParameterList &pParams)
   param = pParams.value("mode", &valid);
   if (valid)
   {
-      if (param.toString() == "new")
-      {
-          _mode = cNew;
-          _currency->setFocus();
-      }
+    if (param.toString() == "new")
+    {
+      _mode = cNew;
+    }
     else if (param.toString() == "edit")
     {
-        _mode = cEdit;
-        _currency->setFocus();
+      _mode = cEdit;
     }
     else if (param.toString() == "view")
     {
@@ -121,7 +119,6 @@ enum SetResponse currencyConversion::set(const ParameterList &pParams)
       
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

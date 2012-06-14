@@ -156,8 +156,6 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
-
-      _item->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -165,12 +163,9 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
-      _qtyReturned->setFocus();
 
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -188,7 +183,6 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 
       _save->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
 

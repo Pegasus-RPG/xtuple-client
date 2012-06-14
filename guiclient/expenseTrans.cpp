@@ -82,8 +82,6 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
-
-      _item->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -98,7 +96,6 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
       _post->hide();
       _expcat->setEnabled(FALSE);
       _close->setText(tr("&Close"));
-      _close->setFocus();
 
       XSqlQuery histq;
       histq.prepare("SELECT invhist.*, invhistexpcat_expcat_id"
@@ -122,8 +119,6 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting History"),
                                     histq, __FILE__, __LINE__))
 	return UndefinedError;
-
-      _close->setFocus();
     }
   }
 

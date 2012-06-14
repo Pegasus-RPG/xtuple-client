@@ -221,7 +221,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-      //_name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -1170,7 +1169,6 @@ void crmaccount::sCheckNumber()
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-      //_name->setFocus();
       _number->setEnabled(FALSE);
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),

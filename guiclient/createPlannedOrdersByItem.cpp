@@ -21,13 +21,11 @@ createPlannedOrdersByItem::createPlannedOrdersByItem(QWidget* parent, const char
 
   _item->setType(ItemLineEdit::cPlanningMRP);
 
-  // signals and slots connections
   connect(_item, SIGNAL(valid(bool)), _create, SLOT(setEnabled(bool)));
   connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_create, SIGNAL(clicked()), this, SLOT(sCreate()));
 
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -59,7 +57,6 @@ enum SetResponse createPlannedOrdersByItem::set(const ParameterList &pParams)
     _captive = TRUE;
 
     _item->setItemsiteid(param.toInt());
-    _cutOffDate->setFocus();
   }
 
   return NoError;

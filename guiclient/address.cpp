@@ -100,7 +100,6 @@ enum SetResponse address::set(const ParameterList &pParams)
       _addr->setLine1("");
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-      _addr->setFocus();
     }
     else if (param.toString() == "edit")
     {

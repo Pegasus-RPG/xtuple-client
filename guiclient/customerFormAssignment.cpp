@@ -51,12 +51,10 @@ enum SetResponse customerFormAssignment::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _customerType->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -71,7 +69,6 @@ enum SetResponse customerFormAssignment::set(const ParameterList &pParams)
       _soPickListForm->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

@@ -58,13 +58,10 @@ enum SetResponse freightClass::set(const ParameterList &pParams)
       _mode = cNew;
 
       _buttonBox->button(QDialogButtonBox::Save)->setEnabled(FALSE);
-      _freightClass->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -74,7 +71,6 @@ enum SetResponse freightClass::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

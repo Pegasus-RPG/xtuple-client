@@ -88,8 +88,6 @@ enum SetResponse commentType::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -101,7 +99,6 @@ enum SetResponse commentType::set(const ParameterList &pParams)
       _order->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

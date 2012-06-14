@@ -363,13 +363,11 @@ enum SetResponse creditCard::set(const ParameterList &pParams)
         _address->setPostalCode(cust.value("addr_postalcode").toString());
         _address->setCountry(cust.value("addr_country").toString());
       }
-      _fundsType2->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _fundsType2->setEnabled(FALSE);
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -384,8 +382,6 @@ enum SetResponse creditCard::set(const ParameterList &pParams)
       _expireYear->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

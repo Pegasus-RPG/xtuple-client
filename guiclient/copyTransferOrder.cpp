@@ -60,7 +60,6 @@ enum SetResponse copyTransferOrder::set(const ParameterList &pParams)
     _to->setId(param.toInt());
     _to->setEnabled(FALSE);
     populate();
-    _buttonBox->setFocus();
   }
 
   return NoError;

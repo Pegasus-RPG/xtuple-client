@@ -79,7 +79,6 @@ enum SetResponse calendar::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
 
       calendaret.exec("SELECT NEXTVAL('calhead_calhead_id_seq') AS _calhead_id;");
       if (calendaret.first())
@@ -96,8 +95,6 @@ enum SetResponse calendar::set(const ParameterList &pParams)
 
       _relative->setEnabled(FALSE);
       _absolute->setEnabled(FALSE);
-
-      _descrip->setFocus();
     }
   }
 

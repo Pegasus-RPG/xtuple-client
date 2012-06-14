@@ -94,17 +94,14 @@ enum SetResponse costCategory::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _category->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _description->setFocus();
     }
     else if (param.toString() == "copy")
     {
       _mode = cCopy;
-      _description->setFocus();
       _costcatid = -1;
     }
     else if (param.toString() == "view")
@@ -128,7 +125,6 @@ enum SetResponse costCategory::set(const ParameterList &pParams)
       _toLiabilityClearing->setReadOnly(TRUE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

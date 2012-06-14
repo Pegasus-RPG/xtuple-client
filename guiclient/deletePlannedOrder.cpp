@@ -11,7 +11,7 @@
 #include "deletePlannedOrder.h"
 
 #include <QVariant>
-#include <QMessageBox>
+
 #include "plCluster.h"
 
 deletePlannedOrder::deletePlannedOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -19,8 +19,6 @@ deletePlannedOrder::deletePlannedOrder(QWidget* parent, const char* name, bool m
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_planord, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -50,7 +48,6 @@ enum SetResponse deletePlannedOrder::set(const ParameterList &pParams)
   {
     _planord->setId(param.toInt());
     _planord->setReadOnly(TRUE);
-    _delete->setFocus();
   }
 
   return NoError;

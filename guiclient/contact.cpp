@@ -344,7 +344,6 @@ enum SetResponse contact::set(const ParameterList &pParams)
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       _contact->setOwnerUsername(omfgThis->username());
-      _contact->setFocus();
     }
     else if (param.toString() == "edit")
     {

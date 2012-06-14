@@ -49,7 +49,6 @@ adjustInvValue::adjustInvValue(QWidget* parent, const char * name, Qt::WindowFla
   _itemsiteid = -1;
   _qtyonhand = -0;
   sValidateSite(_site->id());
-  _item->setFocus();
 }
 
 adjustInvValue::~adjustInvValue()
@@ -84,9 +83,6 @@ enum SetResponse adjustInvValue::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      if (!_item->isValid())
-        _item->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -96,7 +92,6 @@ enum SetResponse adjustInvValue::set(const ParameterList &pParams)
       _site->setEnabled(FALSE);
       _post->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
 

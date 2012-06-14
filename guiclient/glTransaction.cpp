@@ -36,7 +36,6 @@ glTransaction::glTransaction(QWidget* parent, const char* name, bool modal, Qt::
     QWidget::setTabOrder(_notes, _buttonBox->button(QDialogButtonBox::Ok));
     QWidget::setTabOrder(_buttonBox->button(QDialogButtonBox::Ok), _buttonBox->button(QDialogButtonBox::Cancel));
 
-    _amount->setFocus();
     _captive = FALSE;
 }
 
@@ -88,7 +87,6 @@ enum SetResponse glTransaction::set(const ParameterList &pParams)
       _notes->setReadOnly(TRUE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

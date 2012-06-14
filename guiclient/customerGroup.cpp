@@ -73,8 +73,6 @@ enum SetResponse customerGroup::set(const ParameterList &pParams)
       }
 
       connect(_custgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -83,8 +81,6 @@ enum SetResponse customerGroup::set(const ParameterList &pParams)
       sFillList();
 
       connect(_custgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -97,8 +93,6 @@ enum SetResponse customerGroup::set(const ParameterList &pParams)
       _save->hide();
 
       sFillList();
-
-      _close->setFocus();
     }
   }
 

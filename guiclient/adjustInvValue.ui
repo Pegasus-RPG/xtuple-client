@@ -252,6 +252,15 @@ to be bound by its terms.</comment>
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_site</tabstop>
+  <tabstop>_item</tabstop>
+  <tabstop>_newValue</tabstop>
+  <tabstop>_altAccnt</tabstop>
+  <tabstop>_accnt</tabstop>
+  <tabstop>_post</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

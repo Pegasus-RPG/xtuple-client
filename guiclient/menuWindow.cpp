@@ -99,6 +99,8 @@ void menuWindow::sPrepareWindowMenu()
     _windowMenu->addAction(_data->_cascade);
     _windowMenu->addAction(_data->_tile);
     _windowMenu->addAction(_data->_retab);
+
+    _windowMenu->addSeparator();
   }
 
   _windowMenu->addAction(_data->_closeActive);
@@ -119,7 +121,7 @@ void menuWindow::sPrepareWindowMenu()
   _windowMenu->addSeparator();
 
   if (_parent->showTopLevel())
-    _data->_lastActive = _parent->myActiveWindow();
+    _data->_lastActive = QApplication::activeWindow();
   else if (_parent->workspace() && _parent->workspace()->activeSubWindow())
     _data->_lastActive = _parent->workspace()->activeSubWindow()->widget();
   else
@@ -194,8 +196,8 @@ void menuWindow::sCloseActive()
 {
   if (_parent->showTopLevel())
   {
-    if (_parent->windowList().contains(qApp->activeWindow()))
-      qApp->activeWindow()->close();
+    if (_parent->windowList().contains(QApplication::activeWindow()))
+      QApplication::activeWindow()->close();
   }
   else
     _parent->workspace()->closeActiveSubWindow();

@@ -75,8 +75,6 @@ enum SetResponse glSeriesItem::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _buttonBox->setFocus();
     }
   }
 

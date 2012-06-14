@@ -64,7 +64,6 @@ enum SetResponse customerType::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _code->setFocus();
       
       customeret.exec("SELECT NEXTVAL('custtype_custtype_id_seq') AS custtype_id;");
       if (customeret.first())
@@ -79,7 +78,6 @@ enum SetResponse customerType::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _code->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -88,7 +86,6 @@ enum SetResponse customerType::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

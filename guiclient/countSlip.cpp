@@ -101,8 +101,6 @@ enum SetResponse countSlip::set(const ParameterList &pParams)
       _mode = cNew;
 
       omfgThis->inputManager()->notify(cBCCountTag, this, this, SLOT(sCatchCounttagid(int)));
-
-      _number->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -125,8 +123,6 @@ enum SetResponse countSlip::set(const ParameterList &pParams)
 
       _countTagList->hide();
       _number->setEnabled(FALSE);
-
-      _qty->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -138,8 +134,6 @@ enum SetResponse countSlip::set(const ParameterList &pParams)
       _comments->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
     else if (param.toString() == "post")
     {
@@ -154,8 +148,6 @@ enum SetResponse countSlip::set(const ParameterList &pParams)
       _save->setText(tr("&Post"));
       _expiration->setEnabled(FALSE);
       _warranty->setEnabled(FALSE);
-
-      _save->setFocus();
     }
   }
 

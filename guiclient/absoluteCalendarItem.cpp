@@ -11,15 +11,12 @@
 #include "absoluteCalendarItem.h"
 
 #include <QVariant>
-#include <QMessageBox>
 
 absoluteCalendarItem::absoluteCalendarItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
@@ -74,8 +71,6 @@ enum SetResponse absoluteCalendarItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {

@@ -25,8 +25,6 @@ countTag::countTag(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_countTagList, SIGNAL(clicked()), this, SLOT(sCountTagList()));
   connect(_enter, SIGNAL(clicked()), this, SLOT(sEnter()));
   connect(_countTagNumber, SIGNAL(editingFinished()), this, SLOT(sParseCountTagNumber()));
@@ -39,7 +37,6 @@ countTag::countTag(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _qty->setValidator(omfgThis->qtyVal());
 
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -49,7 +46,7 @@ countTag::countTag(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
 countTag::~countTag()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void countTag::languageChange()
@@ -104,10 +101,8 @@ enum SetResponse countTag::set(const ParameterList &pParams)
 
       _thaw->hide();
 
-      if(param.toString() == "new")
-        _countTagNumber->setFocus();
-      else
-        _qty->setFocus();
+      if(param.toString() == "edit")
+        _countTagNumber->setEnabled(false);
     }
     else if (param.toString() == "post")
     {
@@ -115,10 +110,9 @@ enum SetResponse countTag::set(const ParameterList &pParams)
       _captive = TRUE;
 
       setWindowTitle("Post Count Tag");
-      _qty->setEnabled(FALSE);
+      _countTagNumber->setEnabled(false);
+      _qty->setEnabled(false);
       _enter->setText(tr("&Post Count"));
-
-      _enter->setFocus();
     }
     else if (param.toString() == "view")
     {

@@ -149,8 +149,6 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       _invoiceList->hide();
 
       _new->setEnabled(TRUE);
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -186,8 +184,6 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       _edit->setText(tr("&View"));
       disconnect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
       connect(_edit, SIGNAL(clicked()), this, SLOT(sView()));
-
-      _close->setFocus();
     }
   }
 

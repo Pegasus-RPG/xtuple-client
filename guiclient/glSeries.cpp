@@ -150,8 +150,6 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _post->setFocus();
     }
     else if (param.toString() == "postStandardJournal")
     {
@@ -177,8 +175,6 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
       }
       while(glet.next())
         _notes->append(glet.value("glseries_docnumber").toString() + ": " + glet.value("stdjrnl_notes").toString() + "\n\n");
-
-      _post->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -194,7 +190,6 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
       _notes->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

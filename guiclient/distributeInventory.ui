@@ -572,6 +572,7 @@ to be bound by its terms.</comment>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
@@ -601,18 +602,20 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_bc</tabstop>
+  <tabstop>_bcQty</tabstop>
+  <tabstop>_distribute</tabstop>
+  <tabstop>_bcDistribute</tabstop>
   <tabstop>_defaultAndPost</tabstop>
   <tabstop>_default</tabstop>
   <tabstop>_cancel</tabstop>
   <tabstop>_post</tabstop>
+  <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_locations</tabstop>
-  <tabstop>_taggedOnly</tabstop>
   <tabstop>_qtyOnly</tabstop>
+  <tabstop>_taggedOnly</tabstop>
   <tabstop>_itemloc</tabstop>
-  <tabstop>_bc</tabstop>
-  <tabstop>_bcQty</tabstop>
-  <tabstop>_distribute</tabstop>
  </tabstops>
  <resources/>
  <connections>
