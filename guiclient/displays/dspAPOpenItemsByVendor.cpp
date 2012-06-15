@@ -186,8 +186,6 @@ bool dspAPOpenItemsByVendor::setParams(ParameterList & params)
   params.append("debitMemo", tr("Debit Memo"));
   params.append("voucher", tr("Voucher"));
 
-  params.append("includeFormatted", true); // report only?
-
   return true;
 }
 

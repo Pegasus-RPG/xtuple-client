@@ -77,8 +77,6 @@ bool dspWoMaterialsByItem::setParams(ParameterList & params)
   if (_manufacturing)
     params.append("Manufacturing");
 
-  params.append("includeFormatted"); // report only?
-
   return true;
 }
 

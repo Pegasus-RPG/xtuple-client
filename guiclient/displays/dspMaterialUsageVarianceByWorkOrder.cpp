@@ -58,7 +58,6 @@ bool dspMaterialUsageVarianceByWorkOrder::setParams(ParameterList &params)
     return false;
   }
 
-  params.append("includeFormatted"); // report only?
   params.append("wo_id", _wo->id());
 
   return true;

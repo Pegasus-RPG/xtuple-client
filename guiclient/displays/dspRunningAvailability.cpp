@@ -126,8 +126,6 @@ bool dspRunningAvailability::setParams(ParameterList & params)
     params.append("showMRPplan");
   }
 
-  params.append("includeFormatted"); // report only?
-
   params.append("qoh", _qoh->toDouble()); // metasql only?
 
   return true;

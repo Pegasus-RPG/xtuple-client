@@ -58,7 +58,6 @@ bool dspMaterialUsageVarianceByWarehouse::setParams(ParameterList &params)
     return false;
   }
 
-  params.append("includeFormatted"); // report only?
   _dates->appendValue(params);
   _warehouse->appendValue(params);
 

@@ -65,7 +65,6 @@ bool dspMaterialUsageVarianceByComponentItem::setParams(ParameterList &params)
     return false;
   }
 
-  params.append("includeFormatted"); // report only?
   params.append("component_item_id", _item->id());
   _dates->appendValue(params);
   _warehouse->appendValue(params);

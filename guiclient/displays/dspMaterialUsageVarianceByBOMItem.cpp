@@ -92,7 +92,6 @@ bool dspMaterialUsageVarianceByBOMItem::setParams(ParameterList &params)
     return false;
   }
 
-  params.append("includeFormatted"); // print only?
   params.append("item_id", _item->id());
   params.append("bomitem_id", _componentItem->id());
   _dates->appendValue(params);

@@ -83,8 +83,6 @@ bool dspPoItemReceivingsByDate::setParams(ParameterList &pParams)
   if (_showUnvouchered->isChecked())
     pParams.append("showUnvouchered");
 
-  pParams.append("includeFormatted"); // report only?
-
   return true;
 }
 

@@ -178,6 +178,7 @@ void displayPrivate::print(ParameterList pParams, bool showPreview, bool forceSe
     if(!_parent->setParams(params))
       return;
   }
+  params.append("isReport", true);
 
   XSqlQuery report;
   report.prepare("SELECT report_grade, report_source "

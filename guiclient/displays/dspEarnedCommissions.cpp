@@ -67,7 +67,6 @@ bool dspEarnedCommissions::setParams(ParameterList &params)
     params.append("salesrep_id", _salesrep->id());
   if (_includeMisc->isChecked())
     params.append("includeMisc");
-  params.append("includeFormatted"); // report only?
   params.append("orderBySalesRepInvcdate"); // metasql only?
 
   return true;

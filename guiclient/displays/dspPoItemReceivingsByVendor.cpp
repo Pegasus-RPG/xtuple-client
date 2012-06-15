@@ -100,8 +100,6 @@ bool dspPoItemReceivingsByVendor::setParams(ParameterList &pParams)
   pParams.append("nonInv",   tr("NonInv - "));
   pParams.append("na",       tr("N/A"));
 
-  pParams.append("includeFormatted"); // report only?
-
   return true;
 }
 
