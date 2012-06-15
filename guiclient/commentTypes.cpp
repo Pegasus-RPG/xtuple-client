@@ -22,7 +22,10 @@ commentTypes::commentTypes(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  if (_privileges->check("MaintainCommentTypes"))
+    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  else
+    _new->setEnabled(false);
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_cmnttype, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(sHandleButtons()));
@@ -64,7 +67,7 @@ void commentTypes::sFillList()
 void commentTypes::sHandleButtons()
 {
   XTreeWidgetItem *selected = (XTreeWidgetItem*)_cmnttype->currentItem();
-  if (selected)
+  if (selected && _privileges->check("MaintainCommentTypes"))
   {
     _edit->setEnabled(true);
     _delete->setEnabled(!selected->rawValue("cmnttype_sys").toBool());
