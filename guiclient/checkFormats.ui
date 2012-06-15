@@ -136,41 +136,9 @@ to be bound by its terms.</comment>
  <connections>
   <connection>
    <sender>_form</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_delete</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_form</sender>
    <signal>itemSelected(int)</signal>
    <receiver>_edit</receiver>
    <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_form</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_edit</receiver>
-   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>20</x>

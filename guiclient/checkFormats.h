@@ -25,12 +25,14 @@ public:
 
 public slots:
     virtual void sFillList();
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
 
     virtual void sNew();
     virtual void sEdit();
+    virtual void sView();
     virtual void sDelete();
 
 };

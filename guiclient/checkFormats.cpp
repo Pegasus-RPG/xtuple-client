@@ -25,9 +25,13 @@ checkFormats::checkFormats(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  if (_privileges->check("MaintainCheckFormats"))
+    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  else
+    _new->setEnabled(false);
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_form, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(sHandleButtons()));
 
   _form->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "form_name");
   _form->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "form_descrip");
@@ -43,6 +47,21 @@ checkFormats::~checkFormats()
 void checkFormats::languageChange()
 {
   retranslateUi(this);
+}
+
+void checkFormats::sHandleButtons()
+{
+  XTreeWidgetItem *selected = (XTreeWidgetItem*)_form->currentItem();
+  if (selected && _privileges->check("MaintainCheckFormats"))
+  {
+    _edit->setEnabled(true);
+    _delete->setEnabled(true);
+  }
+  else
+  {
+    _edit->setEnabled(false);
+    _delete->setEnabled(false);
+  }
 }
 
 void checkFormats::sNew()
@@ -68,6 +87,18 @@ void checkFormats::sEdit()
 
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
+}
+
+void checkFormats::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("form_id", _form->id());
+
+  checkFormat newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  newdlg.exec();
 }
 
 void checkFormats::sDelete()
