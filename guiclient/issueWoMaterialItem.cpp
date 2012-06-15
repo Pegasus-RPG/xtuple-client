@@ -17,52 +17,37 @@
 #include "inputManager.h"
 #include "distributeInventory.h"
 
-/*
- *  Constructs a issueWoMaterialItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    // signals and slots connections
-    connect(_womatl, SIGNAL(newId(int)), this, SLOT(sSetQOH(int)));
-    connect(_qtyToIssue, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQOH()));
-    connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
+  connect(_womatl, SIGNAL(newId(int)), this, SLOT(sSetQOH(int)));
+  connect(_qtyToIssue, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQOH()));
+  connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
 
-    _captive = FALSE;
-    _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
-    _transDate->setDate(omfgThis->dbDate(), true);
+  _captive = FALSE;
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
+  _transDate->setDate(omfgThis->dbDate(), true);
 
-    omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
-    omfgThis->inputManager()->notify(cBCItem, this, this, SLOT(sCatchItemid(int)));
-    omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));
+  omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
+  omfgThis->inputManager()->notify(cBCItem, this, this, SLOT(sCatchItemid(int)));
+  omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));
 
-    _wo->setType(cWoExploded | cWoIssued | cWoReleased);
-    _qtyToIssue->setValidator(omfgThis->qtyVal());
-    _beforeQty->setPrecision(omfgThis->transQtyVal());
-    _afterQty->setPrecision(omfgThis->transQtyVal());
+  _wo->setType(cWoExploded | cWoIssued | cWoReleased);
+  _qtyToIssue->setValidator(omfgThis->qtyVal());
+  _beforeQty->setPrecision(omfgThis->transQtyVal());
+  _afterQty->setPrecision(omfgThis->transQtyVal());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 issueWoMaterialItem::~issueWoMaterialItem()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void issueWoMaterialItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse issueWoMaterialItem::set(const ParameterList &pParams)
@@ -78,7 +63,6 @@ enum SetResponse issueWoMaterialItem::set(const ParameterList &pParams)
 
     _wo->setId(param.toInt());
     _wo->setEnabled(false);
-    _issue->setFocus();
   }
 
   param = pParams.value("womatl_id", &valid);

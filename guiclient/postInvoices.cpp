@@ -26,8 +26,6 @@ postInvoices::postInvoices(QWidget* parent, const char* name, bool modal, Qt::WF
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
-
-  _post->setFocus();
 }
 
 postInvoices::~postInvoices()

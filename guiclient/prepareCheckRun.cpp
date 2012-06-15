@@ -48,7 +48,6 @@ enum SetResponse prepareCheckRun::set(const ParameterList &pParams)
     _bankaccnt->setId(param.toInt());
     if (_bankaccnt->isValid())
       _bankaccnt->setEnabled(FALSE);
-    _checkDate->setFocus();
   }
     
   return NoError;

@@ -84,16 +84,12 @@ enum SetResponse location::set(const ParameterList &pParams)
 
         return UndefinedError;
       }
-
-      _warehouse->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
 
       _warehouse->setEnabled(FALSE);
-
-      _location->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -113,8 +109,6 @@ enum SetResponse location::set(const ParameterList &pParams)
       _new->hide();
       _delete->hide();
       _close->setText(tr("&Close"));
-
-      _close->setFocus();
     }
   }
 

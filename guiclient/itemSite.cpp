@@ -304,8 +304,6 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_close->setText(tr("&Close"));
 	_save->hide();
 	_comments->setReadOnly(TRUE);
-	
-	_close->setFocus();
     }
   }
 

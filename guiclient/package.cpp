@@ -127,14 +127,12 @@ enum SetResponse package::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _name->setEnabled(false);
       _version->setEnabled(false);
-      _description->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -150,7 +148,6 @@ enum SetResponse package::set(const ParameterList &pParams)
 
       _save->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
 

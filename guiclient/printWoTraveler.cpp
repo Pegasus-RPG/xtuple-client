@@ -19,7 +19,7 @@
 #include "inputManager.h"
 #include "storedProcErrorLookup.h"
 
-#define DEBUG true
+#define DEBUG false
 
 printWoTraveler::printWoTraveler(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)

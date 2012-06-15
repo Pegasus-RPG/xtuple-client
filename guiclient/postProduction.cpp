@@ -20,7 +20,7 @@
 #include "scrapWoMaterialFromWIP.h"
 #include "storedProcErrorLookup.h"
 
-#define DEBUG true
+#define DEBUG false
 
 postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -46,7 +46,6 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
   _qtyReceived->setPrecision(decimalPlaces("qty"));
   _qtyBalance->setPrecision(decimalPlaces("qty"));
 
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _immediateTransfer->hide();
@@ -87,7 +86,6 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
   {
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-    _qty->setFocus();
   }
 
   param = pParams.value("backflush", &valid);

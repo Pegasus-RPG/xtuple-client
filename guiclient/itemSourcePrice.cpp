@@ -10,24 +10,15 @@
 
 #include "itemSourcePrice.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
+#include <QVariant>
 
-/*
- *  Constructs a itemSourcePrice as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 itemSourcePrice::itemSourcePrice(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
@@ -36,18 +27,11 @@ itemSourcePrice::itemSourcePrice(QWidget* parent, const char* name, bool modal, 
   _itemsrcid = -1;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 itemSourcePrice::~itemSourcePrice()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void itemSourcePrice::languageChange()
 {
     retranslateUi(this);
@@ -84,12 +68,10 @@ enum SetResponse itemSourcePrice::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _qtyBreak->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -98,8 +80,6 @@ enum SetResponse itemSourcePrice::set(const ParameterList &pParams)
       _price->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

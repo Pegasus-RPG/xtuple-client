@@ -22,7 +22,6 @@ reasonCode::reasonCode(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _rsncodeid = -1;
 
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_code, SIGNAL(editingFinished()), this, SLOT(sCheck()));
@@ -57,12 +56,10 @@ enum SetResponse reasonCode::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _code->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _description->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -71,7 +68,6 @@ enum SetResponse reasonCode::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

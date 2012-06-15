@@ -158,8 +158,6 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       connect(_billed, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
       connect(_billed, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
       connect(_price, SIGNAL(editingFinished()), this, SLOT(sCalculateExtendedPrice()));
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -173,10 +171,11 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _notes->setReadOnly(TRUE);
       _taxtype->setEnabled(false);
       _altRevAccnt->setEnabled(false);
+      _qtyUOM->setEnabled(false);
+      _pricingUOM->setEnabled(false);
+
       _save->hide();
       _close->setText(tr("&Cancel"));
-
-      _close->setFocus();
     }
   }
 

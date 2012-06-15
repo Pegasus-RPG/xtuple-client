@@ -20,8 +20,6 @@ implodeWo::implodeWo(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_wo, SIGNAL(valid(bool)), _implode, SLOT(setEnabled(bool)));
   connect(_implode, SIGNAL(clicked()), this, SLOT(sImplode()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
@@ -54,7 +52,7 @@ enum SetResponse implodeWo::set(const ParameterList &pParams)
   if (valid)
   {
     _wo->setId(param.toInt());
-    _implode->setFocus();
+    _wo->setEnabled(false);
   }
 
   return NoError;

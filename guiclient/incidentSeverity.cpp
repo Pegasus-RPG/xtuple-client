@@ -15,22 +15,14 @@
 #include <QValidator>
 #include <QVariant>
 
-/*
- *  Constructs a incidentSeverity as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 incidentSeverity::incidentSeverity(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    // signals and slots connections
-    connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-    connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
+  connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
 incidentSeverity::~incidentSeverity()
@@ -39,7 +31,7 @@ incidentSeverity::~incidentSeverity()
 
 void incidentSeverity::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse incidentSeverity::set(const ParameterList &pParams)
@@ -61,12 +53,10 @@ enum SetResponse incidentSeverity::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -77,7 +67,6 @@ enum SetResponse incidentSeverity::set(const ParameterList &pParams)
       _descrip->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

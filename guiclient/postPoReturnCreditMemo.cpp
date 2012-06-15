@@ -14,40 +14,23 @@
 #include <QMessageBox>
 #include <openreports.h>
 
-/*
- *  Constructs a postPoReturnCreditMemo as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postPoReturnCreditMemo::postPoReturnCreditMemo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
   _qty->setPrecision(omfgThis->qtyVal());
 
   _porejectid = -1;
-
-  _post->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postPoReturnCreditMemo::~postPoReturnCreditMemo()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postPoReturnCreditMemo::languageChange()
 {
   retranslateUi(this);

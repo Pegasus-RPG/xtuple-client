@@ -15,45 +15,29 @@
 
 #include <openreports.h>
 
-/*
- *  Constructs a printWoPickList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 printWoPickList::printWoPickList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_wo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-    // signals and slots connections
-    connect(_wo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  _captive = FALSE;
 
-    _captive = FALSE;
+  _wo->setType(cWoExploded | cWoReleased | cWoIssued);
 
-    _wo->setType(cWoExploded | cWoReleased | cWoIssued);
-
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 printWoPickList::~printWoPickList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void printWoPickList::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse printWoPickList::set(const ParameterList &pParams)
@@ -69,7 +53,6 @@ enum SetResponse printWoPickList::set(const ParameterList &pParams)
   {
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-    _copies->setFocus();
   }
 
   if (pParams.inList("print"))

@@ -23,7 +23,6 @@ issueWoMaterialBatch::issueWoMaterialBatch(QWidget* parent, const char* name, bo
 
   _captive = false;
 
-  // signals and slots connections
   connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
   connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -68,7 +67,6 @@ enum SetResponse issueWoMaterialBatch::set(const ParameterList &pParams)
 
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-    _issue->setFocus();
   }
 
   return NoError;

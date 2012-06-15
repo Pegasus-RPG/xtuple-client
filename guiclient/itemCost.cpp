@@ -119,10 +119,7 @@ enum SetResponse itemCost::set(const ParameterList &pParams)
     _type = cItemCost;
     _item->setId(param.toInt());
     _item->setReadOnly(TRUE);
-    _actualCost->setFocus();
   }
-  else
-    _item->setFocus();
 
   param = pParams.value("itemcost_id", &valid);
   if (valid)

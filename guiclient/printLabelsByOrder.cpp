@@ -59,14 +59,13 @@ enum SetResponse printLabelsByOrder::set(const ParameterList &pParams)
   if (valid)
   {
     _order->setAllowedType(param.toString());
-    _print->setFocus();
   }
 
   param = pParams.value("orderid", &valid);
   if (valid)
   {
     _order->setId(param.toInt());
-    _print->setFocus();
+    _order->setReadOnly(true);
   }
 
   return NoError;

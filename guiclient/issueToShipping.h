@@ -49,6 +49,9 @@ protected slots:
     virtual void languageChange();
     virtual void sFillList();
 
+protected:
+    bool        _captive;
+
 private:
     bool	sufficientInventory(int);
     bool	sufficientItemInventory(int);

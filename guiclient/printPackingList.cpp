@@ -67,7 +67,6 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
   _orderDate->setEnabled(false);
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _order, SLOT(setId(int)));
-  _order->setFocus();
 }
 
 printPackingList::~printPackingList()

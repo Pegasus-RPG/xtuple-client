@@ -53,7 +53,6 @@ enum SetResponse rescheduleWo::set(const ParameterList &pParams)
   {
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-    _newStartDate->setFocus();
   }
 
   return NoError;

@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>450</width>
-    <height>155</height>
+    <width>497</width>
+    <height>258</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,191 +29,131 @@ to be bound by its terms.</comment>
    </property>
    <item>
     <layout class="QVBoxLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
      <item>
-      <layout class="QVBoxLayout">
-       <property name="spacing">
-        <number>5</number>
+      <layout class="QFormLayout" name="formLayout">
+       <property name="topMargin">
+        <number>10</number>
        </property>
-       <item>
-        <layout class="QHBoxLayout">
-         <property name="spacing">
-          <number>5</number>
+       <property name="bottomMargin">
+        <number>10</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="_codeLit">
+         <property name="text">
+          <string>C&amp;ode:</string>
          </property>
-         <item>
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="_codeLit">
-             <property name="text">
-              <string>C&amp;ode:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy">
-              <cstring>_code</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_descriptionLit">
-             <property name="text">
-              <string>&amp;Description:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy">
-              <cstring>_description</cstring>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>5</number>
-           </property>
-           <item>
-            <layout class="QHBoxLayout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="XLineEdit" name="_code"/>
-             </item>
-             <item>
-              <spacer name="Spacer18">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="XLineEdit" name="_description"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>_code</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="XLineEdit" name="_code"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="_descriptionLit">
+         <property name="text">
+          <string>&amp;Description:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>_description</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="XLineEdit" name="_description"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="_mrpexcpResched">
+       <property name="text">
+        <string>Reschedule Unreleased Supply Orders per MRP Exceptions</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="_mrpexcpDelete">
+       <property name="text">
+        <string>Delete Unreleased Supply Orders per MRP Exceptions</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="_autoExplode">
+       <property name="text">
+        <string>Automatically Explode Planned Orders</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout">
+       <item>
+        <spacer name="Spacer11">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
+        <widget class="QGroupBox" name="_explosionGroup">
+         <property name="enabled">
+          <bool>false</bool>
          </property>
-         <item>
-          <widget class="QCheckBox" name="_mrpexcpResched">
-           <property name="text">
-            <string>Reschedule Unreleased Supply Orders per MRP Exceptions</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="_mrpexcpDelete">
-           <property name="text">
-            <string>Delete Unreleased Supply Orders per MRP Exceptions</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="_autoExplode">
-           <property name="text">
-            <string>Automatically Explode Planned Orders</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <spacer name="Spacer11">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>16</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="_explosionGroup">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="title">
-              <string/>
-             </property>
-             <layout class="QVBoxLayout">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-              <property name="margin">
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="QRadioButton" name="_singleLevel">
-                <property name="text">
-                 <string>Single Level Explosion</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_multipleLevel">
-                <property name="text">
-                 <string>Multiple Level Explosion</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <spacer name="spacer57">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>31</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QVBoxLayout" name="_2">
+          <item>
+           <widget class="QRadioButton" name="_singleLevel">
+            <property name="text">
+             <string>Single Level Explosion</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_multipleLevel">
+            <property name="text">
+             <string>Multiple Level Explosion</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="spacer57">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>31</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -282,9 +222,12 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_code</tabstop>
   <tabstop>_description</tabstop>
+  <tabstop>_mrpexcpResched</tabstop>
+  <tabstop>_mrpexcpDelete</tabstop>
   <tabstop>_autoExplode</tabstop>
   <tabstop>_singleLevel</tabstop>
   <tabstop>_multipleLevel</tabstop>
+  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <includes>
   <include location="global">parameter.h</include>

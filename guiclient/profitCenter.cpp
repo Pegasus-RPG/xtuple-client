@@ -57,18 +57,16 @@ enum SetResponse profitCenter::set(const ParameterList &pParams )
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _save->setFocus();
     }
 
     else if (param.toString() == "view")
     {
       _mode = cView;
 
-      _number->setEnabled(FALSE);
-      _descrip->setEnabled(FALSE);
+      _number->setEnabled(false);
+      _descrip->setEnabled(false);
+      _save->setVisible(false);
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
   return NoError;

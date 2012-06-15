@@ -169,9 +169,6 @@ enum SetResponse invoice::set(const ParameterList &pParams)
           systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
           return UndefinedError;
         }
-        // Tabbed window mode doesn't work well with this
-        if (omfgThis->showTopLevel())
-          _cust->setFocus();
       }
       else
         sCheckInvoiceNumber();

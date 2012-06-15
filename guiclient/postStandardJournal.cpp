@@ -14,20 +14,11 @@
 #include <QMessageBox>
 #include "glSeries.h"
 
-/*
- *  Constructs a postStandardJournal as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postStandardJournal::postStandardJournal(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   
@@ -43,18 +34,11 @@ postStandardJournal::postStandardJournal(QWidget* parent, const char* name, bool
                       "ORDER BY stdjrnl_name;" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postStandardJournal::~postStandardJournal()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postStandardJournal::languageChange()
 {
   retranslateUi(this);
@@ -72,7 +56,7 @@ enum SetResponse postStandardJournal::set(const ParameterList &pParams)
   if (valid)
   {
     _stdjrnl->setId(param.toInt());
-    _post->setFocus();
+    _stdjrnl->setEnabled(false);
   }
 
   return NoError;

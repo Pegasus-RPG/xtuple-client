@@ -10,49 +10,32 @@
 
 #include "postCashReceipts.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QSqlError>
-#include <QStatusBar>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
+
+#include "errorReporter.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a postCashReceipts as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postCashReceipts::postCashReceipts(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-
-  _post->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postCashReceipts::~postCashReceipts()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postCashReceipts::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void postCashReceipts::sPost()
@@ -126,13 +109,9 @@ void postCashReceipts::sPost()
             counter++;
         }
       }
-      else
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Posting"),
+                                    post, __FILE__, __LINE__))
       {
-        systemError( this, tr("While posting the cash receipt for Customer %1:"
-			      "\n\n%2")
-                           .arg(postPost.value("cust_number").toString())
-                           .arg(post.lastError().databaseText()),
-		     __FILE__, __LINE__ );
         break;
       }
     }

@@ -156,8 +156,6 @@ enum SetResponse purchaseRequest::set(const ParameterList &pParams)
 
         populateNumber();
       }
-
-      _create->setFocus();
     }
   }
 

@@ -79,8 +79,6 @@ enum SetResponse postMiscProduction::set(const ParameterList &pParams)
     _item->setItemsiteid(param.toInt());
     _warehouse->setEnabled(FALSE);
     _item->setReadOnly(TRUE);
-
-    _qtyToPost->setFocus();
   }
 
   return NoError;
@@ -365,5 +363,4 @@ void postMiscProduction::clear()
 
   _item->setFocus();
 }
-
 

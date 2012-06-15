@@ -290,13 +290,6 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
         return UndefinedError;
       }
 
-      if (!_item->isValid())
-        _item->setFocus();
-      else if (!haveQty)
-        _ordered->setFocus();
-      else if (!haveDate)
-        _dueDate->setFocus();
-
       _bomRevision->setEnabled(_privileges->boolean("UseInactiveRevisions"));
       _booRevision->setEnabled(_privileges->boolean("UseInactiveRevisions"));
       _comments->setId(_poitemid);
@@ -307,8 +300,6 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _typeGroup->setEnabled(FALSE);
-
-      _ordered->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -333,8 +324,6 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

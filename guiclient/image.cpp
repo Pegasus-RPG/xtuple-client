@@ -19,20 +19,11 @@
 #include <QScrollArea>
 #include <quuencode.h>
 
-/*
- *  Constructs a image as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 image::image(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_fileList, SIGNAL(clicked()), this, SLOT(sFileList()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
@@ -53,18 +44,11 @@ image::image(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _imageFrame->setLayout(layout);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 image::~image()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void image::languageChange()
 {
   retranslateUi(this);
@@ -89,7 +73,6 @@ enum SetResponse image::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _fileName->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -98,8 +81,6 @@ enum SetResponse image::set(const ParameterList &pParams)
       _filenameLit->hide();
       _fileName->hide();
       _fileList->hide();
-
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -112,7 +93,6 @@ enum SetResponse image::set(const ParameterList &pParams)
       _fileList->hide();
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

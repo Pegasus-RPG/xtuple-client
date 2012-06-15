@@ -13,20 +13,11 @@
 #include <QVariant>
 #include <QMessageBox>
 
-/*
- *  Constructs a pricingScheduleAssignment as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 pricingScheduleAssignment::pricingScheduleAssignment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_selectedCustomerType, SIGNAL(toggled(bool)), _customerTypes, SLOT(setEnabled(bool)));
   connect(_customerTypePattern, SIGNAL(toggled(bool)), _customerType, SLOT(setEnabled(bool)));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sAssign()));
@@ -42,21 +33,14 @@ pricingScheduleAssignment::pricingScheduleAssignment(QWidget* parent, const char
                       "ORDER BY ipshead_name;" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 pricingScheduleAssignment::~pricingScheduleAssignment()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void pricingScheduleAssignment::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse pricingScheduleAssignment::set(const ParameterList &pParams)
@@ -78,14 +62,10 @@ enum SetResponse pricingScheduleAssignment::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      _cust->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -95,7 +75,6 @@ enum SetResponse pricingScheduleAssignment::set(const ParameterList &pParams)
       _ipshead->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

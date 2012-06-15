@@ -20,8 +20,6 @@ relativeCalendarItem::relativeCalendarItem(QWidget* parent, const char* name, bo
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_offsetType, SIGNAL(activated(int)), this, SLOT(sHandleNewOffsetType(int)));
@@ -77,12 +75,10 @@ enum SetResponse relativeCalendarItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _name->setFocus();
     }
   }
 

@@ -52,7 +52,6 @@ enum SetResponse reprioritizeWo::set(const ParameterList &pParams)
   {
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-    _new->setFocus();
   }
 
   return NoError;

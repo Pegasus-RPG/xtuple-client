@@ -401,7 +401,6 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
                       omfgThis->sPurchaseRequestsUpdated();
                     }
                     other->sFillList();
-                    other->setFocus();
                     return UndefinedError;
                   }
                 }
@@ -472,8 +471,6 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 
       connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
       connect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-
-      _close->setFocus();
     }
   }
 
@@ -766,7 +763,7 @@ void purchaseOrder::sSave()
              "    pohead_shipto_cntct_title=:pohead_shipto_cntct_title,"
              "    pohead_shipto_cntct_fax=:pohead_shipto_cntct_fax,"
              "    pohead_shipto_cntct_email=:pohead_shipto_cntct_email,"
-             "    pohead_shiptoddress_id=:pohead_shiptoaddress_id,"
+             "    pohead_shiptoaddress_id=:pohead_shiptoaddress_id,"
              "    pohead_shiptoaddress1=:pohead_shiptoaddress1,"
              "    pohead_shiptoaddress2=:pohead_shiptoaddress2,"
              "    pohead_shiptoaddress3=:pohead_shiptoaddress3,"

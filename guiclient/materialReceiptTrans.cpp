@@ -25,8 +25,6 @@ materialReceiptTrans::materialReceiptTrans(QWidget* parent, const char* name, Qt
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_item,      SIGNAL(newId(int)), this, SLOT(sPopulateQty()));
   connect(_post,       SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateQty()));
@@ -108,7 +106,6 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
       _notes->setEnabled(FALSE);
       _post->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
 
       XSqlQuery popq;
       popq.prepare( "SELECT * "

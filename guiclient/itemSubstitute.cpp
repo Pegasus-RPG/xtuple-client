@@ -21,8 +21,6 @@ itemSubstitute::itemSubstitute(QWidget* parent, const char* name, bool modal, Qt
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_substitute, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -106,12 +104,10 @@ enum SetResponse itemSubstitute::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _item->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -123,8 +119,6 @@ enum SetResponse itemSubstitute::set(const ParameterList &pParams)
       _ranking->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

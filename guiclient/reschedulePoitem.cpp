@@ -48,7 +48,6 @@ enum SetResponse reschedulePoitem::set(const ParameterList &pParams)
   {
     _po->setId(param.toInt());
     _po->setReadOnly(true);
-    _new->setFocus();
   }
 
   param = pParams.value("poitem_id", &valid);
@@ -66,6 +65,7 @@ enum SetResponse reschedulePoitem::set(const ParameterList &pParams)
       _po->setId(rescheduleet.value("pohead_id").toInt());
       _po->setReadOnly(true);
       _poitem->setId(param.toInt());
+      _poitem->setEnabled(false);
     }
     else
     {
@@ -74,8 +74,6 @@ enum SetResponse reschedulePoitem::set(const ParameterList &pParams)
            "not belong to an Open P/O.") );
       return UndefinedError;
     }
-
-    _new->setFocus();
   }
 
   return NoError;

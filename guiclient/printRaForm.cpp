@@ -21,14 +21,11 @@ printRaForm::printRaForm(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_ra, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-
-   _captive = FALSE; 
+  _captive = FALSE; 
 
   _report->populate( "SELECT form_id, form_name "
                      "FROM form "
@@ -58,7 +55,6 @@ enum SetResponse printRaForm::set(const ParameterList &pParams)
   if (valid)
   {
     _ra->setId(param.toInt());
-    _print->setFocus();
   }
 
   return NoError;

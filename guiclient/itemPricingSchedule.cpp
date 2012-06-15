@@ -18,21 +18,12 @@
 #include <metasql.h>
 #include "mqlutil.h"
 
-/*
- *  Constructs a itemPricingSchedule as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   XSqlQuery itemitemPricingSchedule;
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -65,18 +56,11 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
                     "stop editing this Pricing Schedule.\n%1");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 itemPricingSchedule::~itemPricingSchedule()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void itemPricingSchedule::languageChange()
 {
   retranslateUi(this);
@@ -95,20 +79,14 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _save->setFocus();
     }
     else if (param.toString() == "copy")
     {
       _mode = cCopy;
-
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -121,8 +99,6 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
       _new->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

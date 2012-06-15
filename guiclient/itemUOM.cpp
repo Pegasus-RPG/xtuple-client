@@ -16,13 +16,6 @@
 #include <parameter.h>
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a itemUOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -32,7 +25,6 @@ itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _uomidFrom = -1;
   _ignoreSignals = false;
 
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_uomFrom, SIGNAL(currentIndexChanged(int)), this, SLOT(sCheck()));
@@ -50,18 +42,11 @@ itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _uomTo->setType(XComboBox::UOMs);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 itemUOM::~itemUOM()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void itemUOM::languageChange()
 {
   retranslateUi(this);
@@ -121,7 +106,6 @@ enum SetResponse itemUOM::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      _save->setFocus();
       _uomTo->setEnabled(false);
       _uomFrom->setEnabled(false);
     }
@@ -137,8 +121,6 @@ enum SetResponse itemUOM::set(const ParameterList &pParams)
       _remove->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

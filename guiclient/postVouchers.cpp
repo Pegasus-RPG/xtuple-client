@@ -24,13 +24,11 @@ postVouchers::postVouchers(QWidget* parent, const char* name, bool modal, Qt::WF
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
-
-  _post->setFocus();
 }
 
 postVouchers::~postVouchers()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void postVouchers::languageChange()

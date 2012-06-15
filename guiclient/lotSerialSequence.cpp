@@ -60,12 +60,10 @@ enum SetResponse lotSerialSequence::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _number->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _number->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -78,7 +76,6 @@ enum SetResponse lotSerialSequence::set(const ParameterList &pParams)
       _suffix->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

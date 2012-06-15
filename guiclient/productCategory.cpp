@@ -18,8 +18,6 @@ productCategory::productCategory(QWidget* parent, const char* name, bool modal, 
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_category, SIGNAL(editingFinished()), this, SLOT(sCheck()));
@@ -54,14 +52,10 @@ enum SetResponse productCategory::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      _category->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -71,7 +65,6 @@ enum SetResponse productCategory::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

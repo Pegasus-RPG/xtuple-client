@@ -159,7 +159,6 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _crmacct->setEnabled(true);
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -187,7 +186,6 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _owner->setEnabled(false);
 
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
       _comments->setReadOnly(true);
       _documents->setReadOnly(true);
       _alarms->setReadOnly(true);

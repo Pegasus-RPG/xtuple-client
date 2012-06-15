@@ -111,7 +111,6 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
       _mode = cEdit;
       populate();
       _itemGroup->setEnabled(false);
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -130,7 +129,6 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
       _notes->setEnabled(false);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

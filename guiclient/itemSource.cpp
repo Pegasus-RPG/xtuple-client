@@ -135,8 +135,6 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       connect(_itemsrcp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_itemsrcp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_itemsrcp, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-
-      _item->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -148,8 +146,6 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _vendor->setEnabled(FALSE);
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -173,8 +169,6 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       _delete->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
     if (param.toString() == "copy")
     {

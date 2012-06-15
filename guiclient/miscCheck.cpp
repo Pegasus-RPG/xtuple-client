@@ -78,8 +78,6 @@ enum SetResponse miscCheck::set(const ParameterList &pParams)
 
     _save->setText(tr("C&reate"));
 
-    _vend->setFocus();
-    
     connect(_cmCluster, SIGNAL(newId(int)),   this, SLOT(sCreditMemoSelected()));
   }
   else if (pParams.inList("edit"))
@@ -87,8 +85,6 @@ enum SetResponse miscCheck::set(const ParameterList &pParams)
     _mode = cEdit;
 
     _bankaccnt->setEnabled(FALSE);
-
-    _save->setFocus();
   }
 
   return NoError;

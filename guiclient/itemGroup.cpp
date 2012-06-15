@@ -32,12 +32,12 @@ itemGroup::itemGroup(QWidget* parent, const char* name, Qt::WFlags fl)
 
 itemGroup::~itemGroup()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void itemGroup::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse itemGroup::set(const ParameterList &pParams)
@@ -67,16 +67,12 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
 //  ToDo
 
       connect(_itemgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
 
       connect(_itemgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -86,7 +82,6 @@ enum SetResponse itemGroup::set(const ParameterList &pParams)
       _new->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-      _close->setFocus();
     }
   }
 

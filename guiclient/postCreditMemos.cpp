@@ -24,8 +24,6 @@ postCreditMemos::postCreditMemos(QWidget* parent, const char* name, bool modal, 
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
-
-  _post->setFocus();
 }
 
 postCreditMemos::~postCreditMemos()

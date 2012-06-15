@@ -178,8 +178,6 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      _item->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -190,11 +188,6 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
       _typeGroup->setEnabled(FALSE);
       _dscitem->setReadOnly(TRUE);
       _discountBy->setEnabled(FALSE);
-
-      if(_ipsitemid != -1)
-        _qtyBreak->setFocus();
-      else if(_ipsprodcatid != -1)
-        _qtyBreakCat->setFocus();
     }
     else if (param.toString() == "view")
     {

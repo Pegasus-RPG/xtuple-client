@@ -27,9 +27,6 @@ massExpireComponent::massExpireComponent(QWidget* parent, const char* name, Qt::
   _expireAsOf->setAllowNullDate(true);
   _expireAsOf->setNull();
 
-  _original->setFocus();
-
-  // signals and slots connections
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 }

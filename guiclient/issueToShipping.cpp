@@ -24,7 +24,8 @@
 #include "storedProcErrorLookup.h"
 
 issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+    : XWidget(parent, name, fl),
+      _captive(false)
 {
   setupUi(this);
 
@@ -103,14 +104,22 @@ enum SetResponse issueToShipping::set(const ParameterList &pParams)
   if (valid)
   {
     _order->setId(param.toInt(), "SO");
-    _soitem->setFocus();
+    if (_order->isValid())
+    {
+      _order->setEnabled(false);
+      _captive = true;
+    }
   }
 
   param = pParams.value("tohead_id", &valid);
   if (valid)
   {
     _order->setId(param.toInt(), "TO");
-    _soitem->setFocus();
+    if (_order->isValid())
+    {
+      _order->setEnabled(false);
+      _captive = true;
+    }
   }
 
   return NoError;
@@ -607,9 +616,14 @@ void issueToShipping::sShip()
     return;
   }
   else
+  {
     QMessageBox::information( this, tr("Cannot Ship Order"),
                               tr("<p>You must issue some amount of Stock to "
                                  "this Order before you may ship it.") );
+    return;
+  }
+  if (_captive)
+    close();
 }
 
 void issueToShipping::sFillList()

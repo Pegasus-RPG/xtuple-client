@@ -46,7 +46,6 @@ enum SetResponse postPurchaseOrder::set(const ParameterList &pParams)
   if (valid)
   {
     _po->setId(param.toInt());
-    _release->setFocus();
   }
 
   return NoError;

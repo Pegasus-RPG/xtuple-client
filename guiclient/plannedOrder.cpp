@@ -16,7 +16,8 @@
 #include <QVariant>
 
 plannedOrder::plannedOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl),
+      _captive(false)
 {
   setupUi(this);
 
@@ -63,21 +64,12 @@ enum SetResponse plannedOrder::set(const ParameterList &pParams)
     _item->setItemsiteid(param.toInt());
     _item->setReadOnly(TRUE);
     _warehouse->setEnabled(FALSE);
-
-    _qty->setFocus();
-  }
-  else
-  {
-    _captive = FALSE;
-
-    _item->setFocus();
   }
 
   param = pParams.value("planord_id", &valid);
   if (valid)
   {
     _captive = TRUE;
-
     _planordid = param.toInt();
   }
 
@@ -94,7 +86,6 @@ enum SetResponse plannedOrder::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       populate();
-      _close->setFocus();
     }
     else if (param.toString() == "view")
     {

@@ -77,7 +77,6 @@ enum SetResponse relocateInventory::set(const ParameterList &pParams)
     _item->setItemsiteid(param.toInt());
     _item->setEnabled(FALSE);
     _warehouse->setEnabled(FALSE);
-    _source->setFocus();
   }
 
   int locid;
