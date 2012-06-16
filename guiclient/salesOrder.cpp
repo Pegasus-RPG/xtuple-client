@@ -265,6 +265,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     {
       setObjectName("salesOrder new");
       _mode = cNew;
+      emit newModeType(2);
+      emit newModeState(1);
 
       _cust->setType(CLineEdit::ActiveCustomers);
       _salesRep->setType(XComboBox::SalesRepsActive);
@@ -277,6 +279,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else if (param.toString() == "newQuote")
     {
       _mode = cNewQuote;
+      emit newModeType(1);
+      emit newModeState(1);
 
       _cust->setType(CLineEdit::ActiveCustomersAndProspects);
       _salesRep->setType(XComboBox::SalesRepsActive);
@@ -302,6 +306,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      emit newModeType(2);
+      emit newModeState(2);
 
       if (_metrics->boolean("AlwaysShowSaveAndAdd"))
         _saveAndAdd->setEnabled(true);
@@ -316,6 +322,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else if (param.toString() == "editQuote")
     {
       _mode = cEditQuote;
+      emit newModeType(1);
+      emit newModeState(2);
 
       _cust->setType(CLineEdit::AllCustomersAndProspects);
       _action->setEnabled(FALSE);
@@ -350,6 +358,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     else if (param.toString() == "viewQuote")
     {
       _mode = cViewQuote;
+      emit newModeType(1);
+      emit newModeState(3);
 
       _orderNumber->setEnabled(FALSE);
       _packDate->setEnabled(FALSE);
@@ -414,6 +424,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     if (setSales.first())
     {
       _soheadid = setSales.value("head_id").toInt();
+      emit newId(_soheadid);
       _comments->setId(_soheadid);
       _documents->setId(_soheadid);
       _orderDateCache = omfgThis->dbDate();
@@ -543,6 +554,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
   if (valid)
   {
     _soheadid = param.toInt();
+    emit newId(_soheadid);
     if (cEdit == _mode)
       setObjectName(QString("salesOrder edit %1").arg(_soheadid));
     else if (cView == _mode)
@@ -557,6 +569,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
   if (valid)
   {
     _soheadid = param.toInt();
+    emit newId(_soheadid);
     populate();
   }
 
@@ -582,6 +595,29 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _captive = true;
 
   return NoError;
+}
+
+/** \return one of cNew, cEdit, cView, ...
+    \todo   change possible modes to an enum in guiclient.h (and add cUnknown?)
+ */
+int salesOrder::modeState() const
+{
+  if (ISNEW(_mode))
+    return 1;
+  else if (ISEDIT(_mode))
+    return 2;
+  else
+    return 3;
+}
+
+/** \return one of isOrder, isQuote, ...
+ */
+int salesOrder::modeType() const
+{
+  if (ISQUOTE(_mode))
+    return 1;
+  else
+    return 2;
 }
 
 void salesOrder::sSave()
@@ -1539,6 +1575,8 @@ void salesOrder::sHandleOrderNumber()
       if (query.first())
       {
         _mode      = cEdit;
+        emit newModeType(2);
+        emit newModeState(2);
         _soheadid  = query.value("cohead_id").toInt();
         populate();
         _orderNumber->setEnabled(FALSE);
@@ -1622,6 +1660,8 @@ void salesOrder::sHandleOrderNumber()
         {
           _orderNumber->setText(orderNumber);
           _mode = cNewQuote;
+          emit newModeType(1);
+          emit newModeState(1);
           _orderNumber->setEnabled(FALSE);
         }
       }
@@ -2621,6 +2661,7 @@ void salesOrder::populate()
       _comments->setId(_soheadid);
       _documents->setId(_soheadid);
       sFillItemList();
+      emit populated();
       // TODO - a partial save is not saving everything
       save(false);
     }
@@ -3066,12 +3107,18 @@ void salesOrder::clear()
   if ( (_mode == cEdit) || (_mode == cNew) )
   {
     _mode = cNew;
+    emit newModeType(2);
+    emit newModeState(1);
     setObjectName("salesOrder new");
     _orderDateCache = omfgThis->dbDate();
     _orderDate->setDate(_orderDateCache, true);
   }
   else if ( (_mode == cEditQuote) || (_mode == cNewQuote) )
+  {
     _mode = cNewQuote;
+    emit newModeType(1);
+    emit newModeState(1);
+  }
 
   populateOrderNumber();
   if (_orderNumber->text().isEmpty())
@@ -3088,6 +3135,7 @@ void salesOrder::clear()
   if (headid.first())
   {
     _soheadid = headid.value("_soheadid").toInt();
+    emit newId(_soheadid);
     _comments->setId(_soheadid);
     _documents->setId(_soheadid);
     if (ISORDER(_mode))
@@ -3267,6 +3315,8 @@ void salesOrder::setViewMode()
   }
 
   _mode = cView;
+  emit newModeType(2);
+  emit newModeState(3);
   setObjectName(QString("salesOrder view %1").arg(_soheadid));
 
   _orderNumber->setEnabled(FALSE);
