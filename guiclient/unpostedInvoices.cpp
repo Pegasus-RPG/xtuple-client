@@ -33,7 +33,9 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   if (name)
     setObjectName(name);
 
-  setWindowTitle(tr("Unposted invoices"));
+  setupUi(optionsWidget());
+  setWindowTitle(tr("Unposted Invoices"));
+  setListLabel(tr("Unposted Invoices"));
   setMetaSQLOptions("invoices", "detail");
   setNewVisible(true);
 
@@ -61,6 +63,9 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
     newAction()->setEnabled(false);
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sView()));
   }
+
+  if (_preferences->boolean("XCheckBox/forgetful"))
+    _printJournal->setChecked(true);
 
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillList()));
 
@@ -329,7 +334,7 @@ void unpostedInvoices::sPost()
       }
     }
   } while (tryagain);
-/*
+
   if (_printJournal->isChecked())
   {
     ParameterList params;
@@ -355,7 +360,7 @@ void unpostedInvoices::sPost()
     else
       report.reportError(this);
   }
-*/
+
   omfgThis->sInvoicesUpdated(-1, TRUE);
 }
 

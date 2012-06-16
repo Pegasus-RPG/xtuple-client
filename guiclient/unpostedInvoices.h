@@ -11,10 +11,11 @@
 #ifndef UNPOSTEDINVOICES_H
 #define UNPOSTEDINVOICES_H
 
-#include "guiclient.h"
 #include "display.h"
 
-class unpostedInvoices : public display
+#include "ui_unpostedInvoices.h"
+
+class unpostedInvoices : public display, public Ui::unpostedInvoices
 {
     Q_OBJECT
 
