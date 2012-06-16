@@ -36,6 +36,7 @@
 #include "freightBreakdown.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
+#include "printQuote.h"
 #include "prospect.h"
 #include "allocateARCreditMemo.h"
 #include "reserveSalesOrderItem.h"
@@ -189,6 +190,8 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _cc->addColumn(tr("Active"),  _itemColumn, Qt::AlignLeft, true, "ccard_active");
   _cc->addColumn(tr("Name"),    _itemColumn, Qt::AlignLeft, true, "ccard_name");
   _cc->addColumn(tr("Expiration Date"),  -1, Qt::AlignLeft, true, "expiration");
+
+  _printSO->setChecked(_metrics->boolean("DefaultPrintSOOnSave"));
 
   _quotestatusLit->hide();
   _quotestaus->hide();
@@ -488,7 +491,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _shippingChargesLit->hide();
     _shippingForm->hide();
     _shippingFormLit->hide();
-    _printSO->hide();
 
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
     _showCanceled->hide();
@@ -496,7 +498,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
   }
   else
   {
-    _printSO->setChecked(_metrics->boolean("DefaultPrintSOOnSave"));
     _expireLit->hide();
     _expire->hide();
   }
@@ -589,12 +590,24 @@ void salesOrder::sSave()
   {
     if (_printSO->isChecked())
     {
-      ParameterList params;
-      params.append("sohead_id", _soheadid);
+      if (ISQUOTE(_mode))
+      {
+        ParameterList params;
+        params.append("quhead_id", _soheadid);
 
-      printSoForm newdlgX(this, "", true);
-      newdlgX.set(params);
-      newdlgX.exec();
+        printQuote newdlgX(this, "", true);
+        newdlgX.set(params);
+        newdlgX.exec();
+      }
+      else
+      {
+        ParameterList params;
+        params.append("sohead_id", _soheadid);
+
+        printSoForm newdlgX(this, "", true);
+        newdlgX.set(params);
+        newdlgX.exec();
+      }
     }
 
     if (_captive)
@@ -615,16 +628,28 @@ void salesOrder::sSaveAndAdd()
 
     if (_printSO->isChecked())
     {
-      ParameterList params;
-      params.append("sohead_id", _soheadid);
+      if (ISQUOTE(_mode))
+      {
+        ParameterList params;
+        params.append("quhead_id", _soheadid);
 
-      printPackingList newdlgP(this, "", true);
-      newdlgP.set(params);
-      newdlgP.exec();
+        printQuote newdlgS(this, "", true);
+        newdlgS.set(params);
+        newdlgS.exec();
+      }
+      else
+      {
+        ParameterList params;
+        params.append("sohead_id", _soheadid);
 
-      printSoForm newdlgS(this, "", true);
-      newdlgS.set(params);
-      newdlgS.exec();
+        printPackingList newdlgP(this, "", true);
+        newdlgP.set(params);
+        newdlgP.exec();
+
+        printSoForm newdlgS(this, "", true);
+        newdlgS.set(params);
+        newdlgS.exec();
+      }
     }
 
     if (_captive)
