@@ -278,6 +278,11 @@ void itemUOM::sCheck()
   if(cNew != _mode || _ignoreSignals)
     return;
 
+  if (!(_uomFrom->isValid() && _uomTo->isValid()))
+    return;
+  if (_uomFrom->id() == _uomTo->id())
+    return;
+
   _ignoreSignals = true;
 
   _uomFrom->setEnabled(false);
