@@ -20,8 +20,6 @@ systemMessage::systemMessage(QWidget* parent, const char* name, bool modal, Qt::
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
 
@@ -64,7 +62,6 @@ enum SetResponse systemMessage::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _scheduledDate->setFocus();
     }
     else if (param.toString() == "acknowledge")
     {
@@ -77,8 +74,6 @@ enum SetResponse systemMessage::set(const ParameterList &pParams)
       _message->setReadOnly(TRUE);
       _close->setText("&Acknowlege");
       _save->setText("&Snooze");
-
-      _close->setFocus();
     }
   }
 

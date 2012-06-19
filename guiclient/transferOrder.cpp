@@ -324,7 +324,6 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
               if(_toheadid == other->_toheadid)
               {
                 other->sFillItemList();
-                other->setFocus();
                 return UndefinedError;
               }
             }

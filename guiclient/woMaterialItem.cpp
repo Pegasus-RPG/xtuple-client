@@ -71,8 +71,6 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   {
     _wo->setId(param.toInt());
     _wo->setReadOnly(TRUE);
-
-    _item->setFocus();
   }
   
   param = pParams.value("bomitem_id", &valid);
@@ -145,14 +143,12 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      if(_wo->id() == -1)
-        _wo->setFocus();
+      if (_wo->id() >= 0)
+        _wo->setEnabled(false);
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -170,8 +166,6 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
 
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

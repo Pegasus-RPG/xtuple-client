@@ -83,8 +83,7 @@ enum SetResponse shippingInformation::set(const ParameterList &pParams)
 
       _order->setId(shippinget.value("shiphead_order_id").toInt(),
                     shippinget.value("shiphead_order_type").toString());
-
-      _shipDate->setFocus();
+      _order->setReadOnly(true);
     }
     else if (shippinget.lastError().type() != QSqlError::NoError)
     {

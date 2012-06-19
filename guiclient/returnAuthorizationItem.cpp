@@ -31,30 +31,38 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _saleListPrices->setMaximumWidth(25);
 #endif
 
-  _mode = cNew;
-  _raitemid = -1;
-  _raheadid = -1;
-  _custid = -1;
-  _priceRatio = 1.0;
-  _qtyAuthCache = 0.0;
-  _shiptoid = -1;
-  _taxzoneid = -1;
-  _qtyinvuomratio = 1.0;
-  _priceinvuomratio = 1.0;
-  _invuomid = -1;
-  _orderId = -1;
-  _preferredWarehousid = -1;
+  _coitemid                = -1;
+  _coitemitemsiteid        = -1;
+  _costmethod              = "";
+  _creditmethod            = "";
+  _crmacctid               = -1;
+  _custid                  = -1;
+  _dispositionCache        = -1;
+  _invuomid                = -1;
+  _mode                    = cNew;
+  _orderId                 = -1;
+  _origsoid                = -1;
   _preferredShipWarehousid = -1;
-  _status = "O";
-  _creditmethod = "";
-  _qtycredited = 0;
-  _soldQty = 0;
-  _coitemid = -1;
-  _crmacctid = -1;
-  _unitcost = 0;
-  _origsoid = -1;
-  _costmethod = "";
-  _coitemitemsiteid = -1;
+  _preferredWarehousid     = -1;
+  _priceRatio              = 1.0;
+  _priceinvuomratio        = 1.0;
+  _qtyAuthCache            = 0.0;
+  _qtycredited             = 0;
+  _qtyinvuomratio          = 1.0;
+  _raheadid                = -1;
+  _raitemid                = -1;
+  _shiptoid                = -1;
+  _soldQty                 = 0;
+  _status                  = "O";
+  _taxzoneid               = -1;
+  _unitcost                = 0;
+
+  // order and id are important. don't change them without makeing adjustments below
+  _disposition->append(0, tr("Credit"),  "C");
+  _disposition->append(1, tr("Return"),  "R");
+  _disposition->append(2, tr("Replace"), "P");
+  _disposition->append(3, tr("Service"), "V");
+  _disposition->append(4, tr("Ship"),    "S");
 
   connect(_discountFromSale,     SIGNAL(editingFinished()),                    this, SLOT(sCalculateFromDiscount()));
   connect(_saleDiscountFromSale, SIGNAL(editingFinished()),                    this, SLOT(sCalculateSaleFromDiscount()));
@@ -79,10 +87,10 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_qtyUOM,               SIGNAL(newID(int)),                     this, SLOT(sQtyUOMChanged()));
   connect(_qtyUOM,               SIGNAL(newID(int)),                     this, SLOT(sPopulateOrderInfo()));
   connect(_pricingUOM,           SIGNAL(newID(int)),                     this, SLOT(sPriceUOMChanged()));
-  connect(_disposition,          SIGNAL(currentIndexChanged(int)),       this, SLOT(sDispositionChanged()));
+  connect(_disposition,          SIGNAL(newID(int)),                     this, SLOT(sDispositionChanged()));
   connect(_shipWhs,              SIGNAL(newID(int)),                     this, SLOT(sDetermineAvailability()));
   connect(_scheduledDate,        SIGNAL(newDate(const QDate&)),          this, SLOT(sDetermineAvailability()));
-  connect(_qtyAuth,              SIGNAL(editingFinished()),                    this, SLOT(sDetermineAvailability()));
+  connect(_qtyAuth,              SIGNAL(editingFinished()),              this, SLOT(sDetermineAvailability()));
   connect(_createOrder,          SIGNAL(toggled(bool)),                  this, SLOT(sHandleWo(bool)));
   connect(_showAvailability,     SIGNAL(toggled(bool)),                  this, SLOT(sDetermineAvailability()));
   connect(this,                  SIGNAL(rejected()),                     this, SLOT(rejectEvent()));
@@ -119,7 +127,6 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _available->setPrecision(omfgThis->qtyVal());
   _discountFromList->setPrecision(omfgThis->percentVal());
 
-  //If not multi-warehouse hide whs controls
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -237,17 +244,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       returnet.exec();
       if (returnet.first())
       {
-
-        if (returnet.value("rahead_disposition").toString() == "C") // credit
-          sDispositionChanged();
-        else if (returnet.value("rahead_disposition").toString() == "R") // return
-          _disposition->setCurrentIndex(1);
-        else if (returnet.value("rahead_disposition").toString() == "P") // replace
-          _disposition->setCurrentIndex(2);
-        else if (returnet.value("rahead_disposition").toString() == "V")  // service
-          _disposition->setCurrentIndex(3);
-        else if (returnet.value("rahead_disposition").toString() == "M")  // ship
-          _disposition->setCurrentIndex(4);
+        _disposition->setCode(returnet.value("rahead_disposition").toString());
       }
       else if (returnet.lastError().type() == QSqlError::NoError)
       {
@@ -270,7 +267,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _discountFromSale->hide();
       _salePrice->hide();
       _salePriceLit->hide();
-      _item->setFocus();
       _comments->setType(Comments::ReturnAuthItem);
       _comments->setReadOnly(true);
     }
@@ -281,14 +277,11 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
       _shipWhs->setEnabled(FALSE);
-      _qtyAuth->setFocus();
       _comments->setType(Comments::ReturnAuthItem);
       _comments->setReadOnly(false);
 
       connect(_discountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateFromDiscount()));
       connect(_saleDiscountFromSale, SIGNAL(editingFinished()), this, SLOT(sCalculateSaleFromDiscount()));
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -321,7 +314,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       _save->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
 
@@ -352,8 +344,6 @@ void returnAuthorizationItem::sSaveClicked()
 bool returnAuthorizationItem::sSave()
 {
   XSqlQuery returnSave;
-  // credit, return, replace, service, ship
-  const char *dispositionTypes[] = { "C", "R", "P", "V", "S" };
 
   if (!(_scheduledDate->isValid()) && _scheduledDate->isEnabled())
   {
@@ -436,7 +426,9 @@ bool returnAuthorizationItem::sSave()
                "    raitem_custpn=:raitem_custpn "
                "WHERE (raitem_id=:raitem_id);" );
 
-     if (_disposition->currentIndex() >= 2)
+     if (_disposition->code() == "P" ||
+         _disposition->code() == "V" ||
+         _disposition->code() == "S")
      {
        XSqlQuery coitemsite;
        coitemsite.prepare("SELECT itemsite_id "
@@ -465,7 +457,7 @@ bool returnAuthorizationItem::sSave()
   returnSave.bindValue(":rahead_id", _raheadid);
   returnSave.bindValue(":raitem_linenumber", _lineNumber->text().toInt());
   returnSave.bindValue(":raitem_qtyauthorized", _qtyAuth->toDouble());
-  returnSave.bindValue(":raitem_disposition", QString(dispositionTypes[_disposition->currentIndex()]));
+  returnSave.bindValue(":raitem_disposition",   _disposition->code());
   returnSave.bindValue(":qty_uom_id", _qtyUOM->id());
   returnSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
   returnSave.bindValue(":price_uom_id", _pricingUOM->id());
@@ -479,8 +471,12 @@ bool returnAuthorizationItem::sSave()
     returnSave.bindValue(":raitem_rsncode_id", _rsnCode->id());
   returnSave.bindValue(":item_id", _item->id());
   returnSave.bindValue(":warehous_id", _warehouse->id());
-  if (_disposition->currentIndex() >= 2) // replace, service, or ship
+
+  if (_disposition->code() == "P" ||
+      _disposition->code() == "V" ||
+      _disposition->code() == "S")
     returnSave.bindValue(":shipWhs_id", _shipWhs->id());
+
   if (_altcosAccntid->id() != -1)
     returnSave.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id());
   returnSave.bindValue(":raitem_scheddate", _scheduledDate->date());
@@ -586,8 +582,11 @@ bool returnAuthorizationItem::sSave()
       }
     }
   }
+
   //If this save has resulted in a link to an shipping S/O, we need to signal that
-  if (_disposition->currentIndex() > 1) // replace, service, or ship
+  if (_disposition->code() == "P" ||
+      _disposition->code() == "V" ||
+      _disposition->code() == "S")
   {
     XSqlQuery so;
     so.prepare("SELECT raitem_new_coitem_id, cohead_number, "
@@ -725,7 +724,7 @@ void returnAuthorizationItem::sPopulateItemInfo()
   }
 
   if (_item->itemType() == "M" && _costmethod != "J")
-    _createOrder->setEnabled(TRUE);
+    _createOrder->setEnabled(_mode == cNew || _mode == cEdit);
   else
     _createOrder->setEnabled(FALSE);
   if (_costmethod == "J")
@@ -766,7 +765,7 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
       }
       else if (cNew == _mode)
       {
-        if ( _disposition->currentIndex() == 3 && _costmethod != "J")
+        if ( _disposition->code() == "V" && _costmethod != "J")
         {
           QMessageBox::warning( this, tr("Cannot use Service Disposition"),
                                 tr("<p>Only Items Sites using the Job cost method may have a Disposition of Service.") );
@@ -784,8 +783,8 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
         }
       }
 
-     if ( _disposition->currentIndex() == 1 ||
-          _disposition->currentIndex() == 2)
+     if ( _disposition->code() == "R" ||
+          _disposition->code() == "P")
      {
       if (_costmethod == "A")
       {
@@ -887,17 +886,8 @@ void returnAuthorizationItem::populate()
       _newSoNumber->hide();
       _newSoLineNumber->hide();
     }
-    if (raitem.value("raitem_disposition").toString() == "C") // credit
-      sDispositionChanged();
-    else if (raitem.value("raitem_disposition").toString() == "R") // return
-      _disposition->setCurrentIndex(1);
-    else if (raitem.value("raitem_disposition").toString() == "P") // replace
-      _disposition->setCurrentIndex(2);
-    else if (raitem.value("raitem_disposition").toString() == "V") // service
-      _disposition->setCurrentIndex(3);
-    else if (raitem.value("raitem_disposition").toString() == "S") // ship
-      _disposition->setCurrentIndex(4);
-	  _orderId = raitem.value("coitem_order_id").toInt();
+    _disposition->setCode(raitem.value("raitem_disposition").toString());
+    _orderId = raitem.value("coitem_order_id").toInt();
     _netUnitPrice->setId(raitem.value("rahead_curr_id").toInt());
     _netUnitPrice->setEffective(raitem.value("rahead_authdate").toDate());
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());
@@ -1356,8 +1346,9 @@ void returnAuthorizationItem::sQtyUOMChanged()
   }
   else
   {
-    _pricingUOM->setEnabled(true);
-    _salePricingUOM->setEnabled(true);
+    bool isEditing = (_mode == cNew || _mode == cEdit);
+    _pricingUOM->setEnabled(isEditing);
+    _salePricingUOM->setEnabled(isEditing);
   }
   sCalculateExtendedPrice();
   sCalculateSaleExtendedPrice();
@@ -1404,32 +1395,34 @@ void returnAuthorizationItem::updatePriceInfo()
 
 void returnAuthorizationItem::sDispositionChanged()
 {
-  if ( (_disposition->currentIndex() == 3) && // service
+  bool isEditing = (_mode == cNew || _mode == cEdit);
+
+  if ( (_disposition->code() == "V") && // service
        (_item->id() != -1) &&
        (_costmethod != "J") )
   {
     QMessageBox::warning( this, tr("Cannot use Service Disposition"),
                           tr("<p>Only Items Sites using the Job cost method may have a Disposition of Service.") );
     _disposition->setFocus();
-    _disposition->setCurrentIndex(_dispositionCache);
+    _disposition->setId(_dispositionCache);
     return;
   }
-  else if (_disposition->currentIndex() == 3)
+  else if (_disposition->code() == "V")
   {
     _shipWhs->setId(_warehouse->id());
     _shipWhs->setEnabled(false);
   }
-  else if ( (_disposition->currentIndex() < 2) && // credit or return
+  else if ( (_disposition->id() < 2) && // credit or return
        (_orderId != -1) )
   {
     QMessageBox::warning( this, tr("Cannot change Disposition"),
                           tr("<p>A work order is associated with this Return. "
                              "First delete the work order, then change this disposition.") );
     _disposition->setFocus();
-    _disposition->setCurrentIndex(_dispositionCache);
+    _disposition->setId(_dispositionCache);
     return;
   }
-  else if (_disposition->currentIndex() < 2)
+  else if (_disposition->code() == "C" || _disposition->code() == "R")
   {
     _shipWhs->setId(_warehouse->id());
     _shipWhs->setVisible(false);
@@ -1437,13 +1430,13 @@ void returnAuthorizationItem::sDispositionChanged()
   else
   {
     _shipWhs->setVisible(true);
-    _shipWhs->setEnabled(true);
+    _shipWhs->setEnabled(isEditing);
   }
 
   if (_mode == cNew)
       _item->addExtraClause( QString("(item_id IN (SELECT custitem FROM custitem(%1, %2) ) )").arg(_custid).arg(_shiptoid) );
 
-  if (_disposition->currentIndex() > 2) // service or ship
+  if (_disposition->code() == "V" || _disposition->code() == "S") // service or ship
   {
     _netUnitPrice->setLocalValue(0);
     _netUnitPrice->setEnabled(FALSE);
@@ -1453,30 +1446,32 @@ void returnAuthorizationItem::sDispositionChanged()
   }
   else
   {
-    _netUnitPrice->setEnabled(TRUE);
-    _listPrices->setEnabled(TRUE);
-    _pricingUOM->setEnabled(TRUE);
-    _discountFromSale->setEnabled(TRUE);
+    _netUnitPrice->setEnabled(isEditing);
+    _listPrices->setEnabled(isEditing);
+    _pricingUOM->setEnabled(isEditing);
+    _discountFromSale->setEnabled(isEditing);
   }
 
-  if (_disposition->currentIndex() >= 2) // replace, service, or ship
+  if (_disposition->code() == "P" ||
+      _disposition->code() == "V" ||
+      _disposition->code() == "S")      // replace, service, or ship
   {
     _tab->setTabEnabled(_tab->indexOf(_supply),TRUE);
-    _scheduledDate->setEnabled(TRUE);
-    _altcosAccntid->setEnabled(TRUE);
+    _scheduledDate->setEnabled(isEditing);
+    _altcosAccntid->setEnabled(isEditing);
     _shipWhsLit->setVisible(TRUE);
     _shipWhs->setVisible(TRUE);
-    _saleNetUnitPrice->setEnabled(TRUE);
-    _saleListPrices->setEnabled(TRUE);
-    _salePricingUOM->setEnabled(TRUE);
-    _saleDiscountFromSale->setEnabled(TRUE);
+    _saleNetUnitPrice->setEnabled(isEditing);
+    _saleListPrices->setEnabled(isEditing);
+    _salePricingUOM->setEnabled(isEditing);
+    _saleDiscountFromSale->setEnabled(isEditing);
   }
   else
   {
     _tab->setTabEnabled(_tab->indexOf(_supply),FALSE);
     _scheduledDate->clear();
     _scheduledDate->setEnabled(FALSE);
-    _altcosAccntid->setEnabled(TRUE);
+    _altcosAccntid->setEnabled(isEditing);
     _shipWhsLit->setVisible(FALSE);
     _shipWhs->setVisible(FALSE);
     _saleNetUnitPrice->setLocalValue(0);
@@ -1496,7 +1491,7 @@ void returnAuthorizationItem::sDispositionChanged()
     disconnect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
   }
 
-  _dispositionCache = _disposition->currentIndex();
+  _dispositionCache = _disposition->id();
   sPopulateItemInfo();
   sPopulateItemsiteInfo();
 }
@@ -1551,7 +1546,7 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
                   _qtyShipped->toDouble() == 0 &&
                   _qtycredited == 0 &&
                   _status == "O")
-                _disposition->setEnabled(TRUE);
+                _disposition->setEnabled(_mode == cNew || _mode == cEdit);
 
               _createOrder->setChecked(FALSE);
             }

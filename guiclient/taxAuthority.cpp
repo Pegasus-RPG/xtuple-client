@@ -83,13 +83,10 @@ enum SetResponse taxAuthority::set(const ParameterList &pParams)
           _NumberGen = numq.value("number").toInt();
         }
       }
-      else
-        _code->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -97,8 +94,6 @@ enum SetResponse taxAuthority::set(const ParameterList &pParams)
 
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

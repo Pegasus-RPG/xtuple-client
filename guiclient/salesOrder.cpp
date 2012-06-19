@@ -406,8 +406,9 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
     populateOrderNumber();
 
-    // Tabbed window mode has problems with this behavior
-    if (omfgThis->showTopLevel())
+    // try setfocus in spite of bug 17344 - users dislike changes to salesOrder flow 
+    if (omfgThis->viewMode() == GUIClient::FreeFloatingView ||
+        omfgThis->viewMode() == GUIClient::SubWindowView)
     {
       if (_orderNumber->text().isEmpty())
         _orderNumber->setFocus();

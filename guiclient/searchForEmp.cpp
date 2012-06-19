@@ -103,8 +103,6 @@ searchForEmp::searchForEmp(QWidget* parent, const char* name, Qt::WFlags fl)
     _searchNumber->setChecked(true);
     _searchShift->setChecked(true);
   }
-
-  _search->setFocus();
 }
 
 searchForEmp::~searchForEmp()

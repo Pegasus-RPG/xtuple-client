@@ -80,7 +80,6 @@ enum SetResponse taxCodeRate::set( const ParameterList & pParams )
           return UndefinedError;
         }
 	  }
-	  _dates->setFocus();
       
       taxet.exec("SELECT NEXTVAL('taxrate_taxrate_id_seq') AS taxrate_id");
       if (taxet.first())
@@ -95,8 +94,6 @@ enum SetResponse taxCodeRate::set( const ParameterList & pParams )
     {
       _mode = cEdit;
 	  sPopulate();
-      
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -108,8 +105,6 @@ enum SetResponse taxCodeRate::set( const ParameterList & pParams )
 	  _flat->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-      
-      _close->setFocus();
     }
   }
   

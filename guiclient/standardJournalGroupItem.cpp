@@ -18,8 +18,6 @@ standardJournalGroupItem::standardJournalGroupItem(QWidget* parent, const char* 
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_limited, SIGNAL(toggled(bool)), _toApply, SLOT(setEnabled(bool)));
   connect(_stdjrnl, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -68,14 +66,10 @@ enum SetResponse standardJournalGroupItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-
-      _stdjrnl->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -86,8 +80,6 @@ enum SetResponse standardJournalGroupItem::set(const ParameterList &pParams)
       _applyGroup->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

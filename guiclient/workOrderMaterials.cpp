@@ -97,7 +97,7 @@ workOrderMaterials::~workOrderMaterials()
 
 void workOrderMaterials::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse workOrderMaterials::set(const ParameterList &pParams)
@@ -110,7 +110,7 @@ enum SetResponse workOrderMaterials::set(const ParameterList &pParams)
   if (valid)
   {
     _wo->setId(param.toInt());
-    _womatl->setFocus();
+    _wo->setEnabled(false);
   }
 
   return NoError;

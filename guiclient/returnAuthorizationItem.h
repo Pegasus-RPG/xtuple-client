@@ -81,7 +81,7 @@ private:
     int	     _taxzoneid;
     double	 _qtySoldCache;
     double   _qtycredited;
-	  int	     _dispositionCache;
+    int      _dispositionCache;
     int      _invuomid;
     double   _qtyinvuomratio;
     double   _priceinvuomratio;

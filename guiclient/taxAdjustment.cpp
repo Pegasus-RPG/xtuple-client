@@ -10,10 +10,9 @@
 
 #include "taxAdjustment.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QCloseEvent>
+#include <QVariant>
 
 #include "storedProcErrorLookup.h"
 
@@ -22,10 +21,9 @@ taxAdjustment::taxAdjustment(QWidget* parent, const char* name, bool modal, Qt::
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-	connect(_taxcode, SIGNAL(newID(int)), this, SLOT(sCheck()));
-  
+  connect(_taxcode, SIGNAL(newID(int)), this, SLOT(sCheck()));
+
   _taxhistid = -1;
   _sense = 1;
 }
@@ -40,7 +38,7 @@ void taxAdjustment::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse taxAdjustment::set(const ParameterList &pParams)  
+enum SetResponse taxAdjustment::set(const ParameterList &pParams)
 {
   XDialog::set(pParams);
   QVariant param;
@@ -49,7 +47,7 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
   param = pParams.value("order_id", &valid);
   if (valid)
     _orderid = param.toInt();
-    
+
   param = pParams.value("order_type", &valid);
   if (valid)
   {
@@ -65,18 +63,17 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
       _table = "apopentax";
     else
       _table = param.toString();
-  }  
-   
+  }
+
   param = pParams.value("mode", &valid);
   if (valid)
   {
     if (param.toString() == "new")
     {
-      _mode = cNew;      
-      _taxcode->setFocus();
+      _mode = cNew;
     }
   }
- 
+
   param = pParams.value("date", &valid);
    if (valid)
      _amount->setEffective(param.toDate());
@@ -84,7 +81,7 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
   param = pParams.value("curr_id", &valid);
    if (valid)
      _amount->setId(param.toInt());
-     
+
    param = pParams.value("sense", &valid);
    if (valid)
     _sense = param.toInt();
@@ -93,7 +90,7 @@ enum SetResponse taxAdjustment::set(const ParameterList &pParams)
 }
 
 void taxAdjustment::sSave()
-{ 
+{
   XSqlQuery taxSave;
   if (_taxcode->id() == -1)
   {
@@ -102,12 +99,12 @@ void taxAdjustment::sSave()
                           " before you may save." ) );
     return;
   }
-  
+
   QString sql;
   if (_mode == cNew)
     sql = QString( "INSERT into %1 (taxhist_basis,taxhist_percent,taxhist_amount,taxhist_docdate, taxhist_tax_id, taxhist_tax, taxhist_taxtype_id, taxhist_parent_id  ) "
-                   "VALUES (0, 0, 0, :date, :taxcode_id, :amount, getadjustmenttaxtypeid(), :order_id) ").arg(_table); 
-  
+                   "VALUES (0, 0, 0, :date, :taxcode_id, :amount, getadjustmenttaxtypeid(), :order_id) ").arg(_table);
+
   else if (_mode == cEdit)
     sql = QString( "UPDATE taxhist "
                    "SET taxhist_tax=:amount, taxhist_docdate=:date "
@@ -115,7 +112,7 @@ void taxAdjustment::sSave()
   taxSave.prepare(sql);
   taxSave.bindValue(":taxhist_id", _taxhistid);
   taxSave.bindValue(":taxcode_id", _taxcode->id());
-  taxSave.bindValue(":amount", _amount->localValue() * _sense);          
+  taxSave.bindValue(":amount", _amount->localValue() * _sense);
   taxSave.bindValue(":order_id", _orderid);
   taxSave.bindValue(":date", _amount->effective());
   taxSave.exec();
@@ -127,13 +124,13 @@ void taxAdjustment::sSave()
   done(_orderid);
 }
 
-void taxAdjustment::sCheck()     
+void taxAdjustment::sCheck()
 {
   XSqlQuery taxCheck;
   QString table;
-    
+
    taxCheck.prepare( "SELECT taxhist_id, taxhist_tax_id, taxhist_tax "
-              "FROM taxhist " 
+              "FROM taxhist "
               " JOIN pg_class ON (pg_class.oid=taxhist.tableoid) "
               "WHERE ((taxhist_parent_id=:order_id) "
               " AND (taxhist_taxtype_id=getadjustmenttaxtypeid()) "
@@ -141,8 +138,8 @@ void taxAdjustment::sCheck()
               " AND (relname=:table) );" );
   taxCheck.bindValue(":order_id", _orderid);
   taxCheck.bindValue(":tax_id", _taxcode->id());
-  taxCheck.bindValue(":table", _table);  
- 
+  taxCheck.bindValue(":table", _table);
+
   taxCheck.exec();
   if (taxCheck.first())
   {
@@ -155,9 +152,8 @@ void taxAdjustment::sCheck()
   {
     _taxhistid=-1;
     _amount->clear();
-	  _amount->setFocus();
-	  _mode=cNew;
+    _amount->setFocus();
+    _mode=cNew;
   }
 }
-
 

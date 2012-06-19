@@ -40,7 +40,6 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
   // Change to Issued only
   //_wo->setType(cWoExploded | cWoReleased | cWoIssued);
   _wo->setType(cWoIssued);
-  _wo->setFocus();
 }
 
 returnWoMaterialItem::~returnWoMaterialItem()
@@ -78,7 +77,6 @@ enum SetResponse returnWoMaterialItem::set(const ParameterList &pParams)
     _womatl->setId(param.toInt());
     _womatl->setEnabled(false);
    }
-    _qty->setFocus();
   }
 
   return NoError;

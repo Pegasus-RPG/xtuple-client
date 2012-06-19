@@ -56,8 +56,6 @@ enum SetResponse subaccount::set(const ParameterList &pParams )
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -66,8 +64,6 @@ enum SetResponse subaccount::set(const ParameterList &pParams )
       _number->setEnabled(FALSE);
       _descrip->setEnabled(FALSE);
       _close->setText(tr("&Close"));
-      
-      _close->setFocus();
     }
   }
   return NoError;

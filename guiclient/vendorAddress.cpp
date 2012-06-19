@@ -58,7 +58,6 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _number->setFocus();
 
       setVendor.prepare("SELECT crmacct_id "
                 "FROM vendinfo "
@@ -80,7 +79,6 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _number->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -93,8 +91,6 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
       _notes->setReadOnly(TRUE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

@@ -28,7 +28,6 @@ splitReceipt::splitReceipt(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_split, SIGNAL(clicked()), this, SLOT(sSplit()));
 
   _toSplit->setValidator(omfgThis->qtyVal());
-  _toSplit->setFocus();
   _receiptDate->setDate(QDate::currentDate());
 
   _recvid	= -1;

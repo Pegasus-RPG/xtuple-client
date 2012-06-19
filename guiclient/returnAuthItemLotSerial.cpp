@@ -118,12 +118,10 @@ enum SetResponse returnAuthItemLotSerial::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _lotSerial->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _qtyAuth->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -133,8 +131,6 @@ enum SetResponse returnAuthItemLotSerial::set(const ParameterList &pParams)
       _qtyAuth->setEnabled(FALSE);
       _cancel->setText(tr("&Close"));
       _save->hide();
-
-      _cancel->setFocus();
     }
   }
 

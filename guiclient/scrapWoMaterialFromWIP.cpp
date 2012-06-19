@@ -82,7 +82,6 @@ enum SetResponse scrapWoMaterialFromWIP::set(const ParameterList &pParams)
     }
     _womatl->setId(param.toInt());
     _womatl->setEnabled(false);
-    _qty->setFocus();
   }
 
   param = pParams.value("wo_id", &valid);

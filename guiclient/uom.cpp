@@ -17,19 +17,11 @@
 #include "storedProcErrorLookup.h"
 #include "uomConv.h"
 
-/*
- *  Constructs a uom as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 uom::uom(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
   connect(_name, SIGNAL(editingFinished()), this, SLOT(sCheck()));
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -44,18 +36,11 @@ uom::uom(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _uomconv->addColumn(tr("Fractional"), _ynColumn, Qt::AlignCenter, true,  "uomconv_fractional");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 uom::~uom()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void uom::languageChange()
 {
   retranslateUi(this);
@@ -83,7 +68,6 @@ enum SetResponse uom::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      _buttonBox->setFocus();
       _new->setEnabled(true);
     }
     else if (param.toString() == "view")
@@ -95,7 +79,6 @@ enum SetResponse uom::set(const ParameterList &pParams)
       _weightUom->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
 
       _edit->setText(tr("&View"));
     }

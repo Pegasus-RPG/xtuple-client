@@ -76,8 +76,6 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _code->setFocus();
-
       syset.exec("SELECT NEXTVAL('locale_locale_id_seq') AS _locale_id");
       if (syset.first())
         _localeid = syset.value("_locale_id").toInt();
@@ -90,7 +88,6 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _description->setFocus();
     }
     else if (param.toString() == "copy")
     {
@@ -109,8 +106,6 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
 	systemError(this, syset.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
-
-      _code->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -131,7 +126,6 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
       _comments->setReadOnly(TRUE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

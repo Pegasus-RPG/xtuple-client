@@ -94,13 +94,10 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
           _NumberGen = numq.value("number").toInt();
         }
       }
-      else
-        _number->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -108,7 +105,6 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
 
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

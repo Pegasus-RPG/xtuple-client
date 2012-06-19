@@ -80,8 +80,6 @@ enum SetResponse salesAccount::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -98,7 +96,6 @@ enum SetResponse salesAccount::set(const ParameterList &pParams)
       _cow->setReadOnly(TRUE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

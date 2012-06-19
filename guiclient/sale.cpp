@@ -20,7 +20,6 @@ sale::sale(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _saleid = -1;
 
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
@@ -58,12 +57,10 @@ enum SetResponse sale::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -75,8 +72,6 @@ enum SetResponse sale::set(const ParameterList &pParams)
       _ipshead->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

@@ -328,7 +328,6 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _orderStatus->hide();
       _item->setReadOnly(false);
       _warehouse->setEnabled(true);
-      _item->setFocus();
       _orderId = -1;
       _itemsrc = -1;
 
@@ -380,7 +379,6 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _subItemList->hide();
       _item->setReadOnly(false);
       _warehouse->setEnabled(true);
-      _item->setFocus();
       _orderId = -1;
       _itemsrc = -1;
       _warranty->hide();
@@ -414,14 +412,11 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _item->setReadOnly(TRUE);
       _listPrices->setEnabled(TRUE);
       _comments->setType(Comments::SalesOrderItem);
-      _qtyOrdered->setFocus();
 
       connect(_qtyOrdered,        SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice,      SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()));
       connect(_discountFromCust,  SIGNAL(editingFinished()),    this, SLOT(sCalculateFromDiscount()));
       connect(_createOrder,       SIGNAL(toggled(bool)),  this, SLOT(sHandleWo(bool)));
-
-      _save->setFocus();
     }
     else if (param.toString() == "editQuote")
     {
@@ -445,7 +440,6 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _sub->hide();
       _subItem->hide();
       _subItemList->hide();
-      _qtyOrdered->setFocus();
       _warranty->hide();
       _tabs->removeTab(_tabs->indexOf(_costofsalesTab));
 
@@ -513,8 +507,6 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
     _subItemList->setVisible(!viewMode);
     _save->setVisible(!viewMode);
-
-    _close->setFocus();
   }
 
   param = pParams.value("soitem_id", &valid);

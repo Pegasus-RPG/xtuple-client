@@ -24,8 +24,6 @@ scrapTrans::scrapTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_post,                 SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_qty,SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
   connect(_warehouse,           SIGNAL(newID(int)), this, SLOT(sPopulateQOH(int)));
@@ -82,8 +80,6 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
-
-      _item->setFocus();
     }
     else if (param.toString() == "view")
     {

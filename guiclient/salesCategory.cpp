@@ -61,19 +61,16 @@ enum SetResponse salesCategory::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _category->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _category->setFocus();
     }
     else if (param.toString() == "copy")
     {
       _mode = cCopy;
       _salescatid = -1;
       _category->clear();
-      _category->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -87,7 +84,6 @@ enum SetResponse salesCategory::set(const ParameterList &pParams)
       _araccnt->setReadOnly(TRUE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

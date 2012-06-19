@@ -56,12 +56,10 @@ enum SetResponse warehouseZone::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _description->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -70,7 +68,6 @@ enum SetResponse warehouseZone::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-      _close->setFocus();
     }
   }
 

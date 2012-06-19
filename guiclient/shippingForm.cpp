@@ -54,12 +54,10 @@ enum SetResponse shippingForm::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _buttonBox->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -68,7 +66,6 @@ enum SetResponse shippingForm::set(const ParameterList &pParams)
       _report->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

@@ -21,8 +21,6 @@ returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, 
   XSqlQuery returnreturnWoMaterialBatch;
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_wo, SIGNAL(valid(bool)), _return, SLOT(setEnabled(bool)));
   connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
@@ -37,7 +35,6 @@ returnWoMaterialBatch::returnWoMaterialBatch(QWidget* parent, const char* name, 
   // Change to Issued only
   //_wo->setType(cWoExploded | cWoReleased | cWoIssued);
   _wo->setType(cWoIssued);
-  _wo->setFocus();
 }
 
 returnWoMaterialBatch::~returnWoMaterialBatch()
@@ -62,7 +59,6 @@ enum SetResponse returnWoMaterialBatch::set(const ParameterList &pParams)
   if (valid)
   {
     _wo->setId(param.toInt());
-    _return->setFocus();
   }
 
   return NoError;

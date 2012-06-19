@@ -70,7 +70,6 @@ enum SetResponse salesHistoryInformation::set(const ParameterList &pParams)
     if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _orderNumber->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -104,8 +103,6 @@ enum SetResponse salesHistoryInformation::set(const ParameterList &pParams)
       _commissionPaid->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

@@ -166,7 +166,6 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
       _next->setText(tr("New"));
       _comments->setReadOnly(true);
       _item->setReadOnly(false);
-      _item->setFocus();
 
       _item->addExtraClause(QString("(item_id IN ("
 				    "  SELECT itemsite_item_id"
@@ -209,7 +208,6 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _item->setReadOnly(true);
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -229,8 +227,6 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
     _promisedDate->setEnabled(false);
 
     _save->hide();
-
-    _close->setFocus();
   }
 
   param = pParams.value("toitem_id", &valid);

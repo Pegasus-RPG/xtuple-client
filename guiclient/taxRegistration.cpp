@@ -75,7 +75,6 @@ enum SetResponse taxRegistration::set(const ParameterList pParams)
     {
       _mode = cNew; 
 
-
       taxet.exec("SELECT NEXTVAL('taxreg_taxreg_id_seq') AS _taxreg_id;");
       if (taxet.first())
 		{
@@ -105,7 +104,6 @@ enum SetResponse taxRegistration::set(const ParameterList pParams)
 
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

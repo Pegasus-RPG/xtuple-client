@@ -37,46 +37,36 @@ void state::languageChange()
 
 enum SetResponse state::set(const ParameterList &pParams)
 {
-  qDebug("state::set() entered");
   XDialog::set(pParams);
   QVariant param;
   bool     valid;
 
-  qDebug("state::set() about to check for country");
   param = pParams.value("country_id", &valid);
   if (valid)
   {
-    qDebug("setting country");
     _country->setId(param.toInt());
+    if (_country->isValid())
+      _country->setEnabled(false);
   }
 
-  qDebug("state::set() about to check for state");
   param = pParams.value("state_id", &valid);
   if (valid)
   {
-    qDebug("setting state");
     _stateid = param.toInt();
     populate();
   }
 
-  qDebug("state::set() about to check for mode");
   param = pParams.value("mode", &valid);
   if (valid)
   {
-    qDebug("setting mode");
     if (param.toString() == "new")
     {
       _mode = cNew;
-      if (_country->isValid())
-        _abbr->setFocus();
-      else
-        _country->setFocus();
       enableWindowModifiedSetting();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _abbr->setFocus();
       enableWindowModifiedSetting();
     }
     else if (param.toString() == "view")
@@ -89,7 +79,6 @@ enum SetResponse state::set(const ParameterList &pParams)
 
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

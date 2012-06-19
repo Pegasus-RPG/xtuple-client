@@ -399,7 +399,13 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _systemFont = new QFont(qApp->font());
 
   _workspace = new QMdiArea();
-  _workspace->setViewMode(QMdiArea::TabbedView);
+  xtViewMode prevmode = (xtViewMode)(xtsettingsValue("GUIClient/viewMode",
+                                                     SubWindowView).toInt());
+  if (FreeFloatingView == prevmode)
+    _workspace->setViewMode(QMdiArea::SubWindowView);
+  else
+    _workspace->setViewMode((QMdiArea::ViewMode)(prevmode));
+
   _workspace->setOption(QMdiArea::DontMaximizeSubWindowOnActivation, false);
   _workspace->setWindowIcon(QIcon(":/images/clear.png"));
   _workspace->setActivationOrder(QMdiArea::ActivationHistoryOrder);
@@ -574,6 +580,18 @@ GUIClient::WindowSystem GUIClient::getWindowSystem()
 #else
   return Unknown;
 #endif
+}
+
+// TODO: can we get rid of _showTopLevel altogether?
+GUIClient::xtViewMode GUIClient::viewMode() const
+{
+  if (_showTopLevel)
+    return FreeFloatingView;
+  else if (_workspace)
+    return (GUIClient::xtViewMode)(_workspace->viewMode());
+
+  qWarning("GUIClient:: Don't know what viewMode I'm in");
+  return FreeFloatingView;
 }
 
 bool GUIClient::singleCurrency()
@@ -799,9 +817,10 @@ void GUIClient::closeEvent(QCloseEvent *event)
 
   saveToolbarPositions();
 
-  // save main window size for next login
-  xtsettingsSetValue("GUIClient/geometry/pos", pos());
+  // save main window info for next login
+  xtsettingsSetValue("GUIClient/geometry/pos",  pos());
   xtsettingsSetValue("GUIClient/geometry/size", size());
+  xtsettingsSetValue("GUIClient/viewMode",      viewMode());
 
   // save state of any main window children
   QList<QMainWindow*> windows = findChildren<QMainWindow*>();

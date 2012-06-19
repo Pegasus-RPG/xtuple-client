@@ -196,9 +196,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         systemError(this, returnet.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
-      // Tabbed windows has a problem with this
-      if (omfgThis->showTopLevel())
-        _cust->setFocus();
+
       setNumber();
       _authDate->setDate(omfgThis->dbDate(), true);
       _calcfreight = _metrics->boolean("CalculateFreight");

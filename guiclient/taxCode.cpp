@@ -240,15 +240,12 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
     if (param.toString() == "new") 
     {
       _mode = cNew;
-      _code->setFocus();
 	  initTaxCode(); 
 	  populateBasis();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _description->setFocus();
-
     }
     else if (param.toString() == "view")
     {
@@ -265,7 +262,6 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
       _delete->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }  
   return NoError;

@@ -168,6 +168,12 @@ class GUIClient : public QMainWindow
       Unknown, X11, WIN, MAC, QWS, WINCE, S60
     };
 
+    enum xtViewMode {
+      FreeFloatingView = -1,    // don't conflict with QMdiArea::ViewMode
+      SubWindowView    = QMdiArea::SubWindowView,
+      TabbedView       = QMdiArea::TabbedView
+    };
+
     GUIClient(const QString &, const QString &);
     virtual ~GUIClient();
 
@@ -206,6 +212,7 @@ class GUIClient : public QMainWindow
 
     Q_INVOKABLE bool singleCurrency();
     Q_INVOKABLE bool showTopLevel() const { return _showTopLevel; }
+    Q_INVOKABLE xtViewMode viewMode() const;
     Q_INVOKABLE QWidgetList windowList();
     Q_INVOKABLE void populateCustomMenu(QMenu*, const QString &);
 

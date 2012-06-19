@@ -21,7 +21,6 @@ standardJournalGroup::standardJournalGroup(QWidget* parent, const char* name, bo
 
   _stdjrnlgrpid = -1;
 
-  // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -82,8 +81,6 @@ enum SetResponse standardJournalGroup::set(const ParameterList &pParams)
       connect(_stdjrnlgrpitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_stdjrnlgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_stdjrnlgrpitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-
-      _name->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -92,8 +89,6 @@ enum SetResponse standardJournalGroup::set(const ParameterList &pParams)
       connect(_stdjrnlgrpitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_stdjrnlgrpitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_stdjrnlgrpitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -106,8 +101,6 @@ enum SetResponse standardJournalGroup::set(const ParameterList &pParams)
 
       _new->setEnabled(FALSE);
       connect(_stdjrnlgrpitem, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-
-      _close->setFocus();
     }
   }
 

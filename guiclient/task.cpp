@@ -125,7 +125,6 @@ enum SetResponse task::set(const ParameterList &pParams)
 
       connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
-      _buttonBox->setFocus();
     }
     if (param.toString() == "view")
     {
@@ -149,7 +148,6 @@ enum SetResponse task::set(const ParameterList &pParams)
       _comments->setReadOnly(true);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

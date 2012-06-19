@@ -119,13 +119,10 @@ enum SetResponse user::set(const ParameterList &pParams)
       _module->setCurrentIndex(0);
       sModuleSelected(_module->itemText(0));
 
-      if (_cUsername.isEmpty())
-        _username->setFocus();
-      else
+      if (! _cUsername.isEmpty())
       {
         _username->setEnabled(false);
         _username->setText(_cUsername);
-        _active->setFocus();
         sCheck();
       }
       if (_metrics->boolean("MultiWhs"))
@@ -136,8 +133,6 @@ enum SetResponse user::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _username->setEnabled(FALSE);
-
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -145,8 +140,6 @@ enum SetResponse user::set(const ParameterList &pParams)
 
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

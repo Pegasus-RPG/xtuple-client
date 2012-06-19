@@ -24,8 +24,6 @@ transformTrans::transformTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_item,       SIGNAL(newId(int)), this, SLOT(sPopulateQOH()));
   connect(_post,        SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_qty, SIGNAL(editingFinished()), this, SLOT(sRecalculateAfter()));
@@ -118,7 +116,6 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
       _documentNum->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _close->setText(tr("&Close"));
-      _close->setFocus();
       _post->hide();
 
       transformet.prepare( "SELECT invhist.*, "
@@ -157,8 +154,6 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
         _item->setItemsiteid(transformet.value("invhist_itemsite_id").toInt());
         _warehouse->setId(transformet.value("warehous_id").toInt());
       }
-
-      _close->setFocus();
     }
   }
 

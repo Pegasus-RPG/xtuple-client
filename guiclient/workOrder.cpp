@@ -102,14 +102,12 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
   _itemcharView->setItemDelegate(delegate);
 
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
     _warehouse->hide();
   }
 
-  //If not Routing, hide controls
   if (!_metrics->boolean("Routings"))
   {
    _booGroup->hide();
@@ -117,17 +115,15 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
    _showOperations->hide();
   }
 
-  //If not Revision Control, hide controls
   if (!_metrics->boolean("RevControl"))
    _tabs->removeTab(_tabs->indexOf(_revision));
    
-  //If not cost privileges, hide tab
   if (!_privileges->boolean("ViewCosts"))
   {
    //_tabs->removeTab(_tabs->indexOf(_costing));
    _costGroup->hide();
   }
-  
+
   if (_metrics->value("JobItemCosDefault") == "P")
     _proportional->setChecked(TRUE);
 
@@ -154,18 +150,11 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _woIndentedList->addColumn(tr("Notes"),            100,           Qt::AlignLeft      , false,  "wodata_notes");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 workOrder::~workOrder()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void workOrder::languageChange()
 {
     retranslateUi(this);
@@ -186,8 +175,6 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     _item->setItemsiteid(param.toInt());
     _item->setEnabled(FALSE);
     _warehouse->setEnabled(FALSE);
-
-    _qty->setFocus();
   }
 
   param = pParams.value("qty", &valid);

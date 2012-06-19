@@ -17,7 +17,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>812</width>
-    <height>852</height>
+    <height>865</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -224,9 +224,6 @@ to be bound by its terms.</comment>
        </item>
        <item row="0" column="7" rowspan="5">
         <layout class="QVBoxLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
          <item>
           <widget class="QPushButton" name="_close">
            <property name="enabled">
@@ -289,31 +286,12 @@ to be bound by its terms.</comment>
           </item>
           <item row="0" column="1">
            <widget class="XComboBox" name="_disposition">
-            <item>
-             <property name="text">
-              <string>Credit</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Return</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Replace</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Service</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Ship</string>
-             </property>
-            </item>
+            <property name="allowNull">
+             <bool>true</bool>
+            </property>
+            <property name="nullStr">
+             <string>[ Pick One ]</string>
+            </property>
            </widget>
           </item>
           <item row="0" column="2">

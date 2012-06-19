@@ -68,12 +68,11 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       {
         _todoitemid = todoet.value("todoitem_id").toInt();
         _alarms->setId(_todoitemid);
-	_comments->setId(_todoitemid);
+        _comments->setId(_todoitemid);
         _documents->setId(_todoitemid);
         _recurring->setParent(_todoitemid, "TODO");
       }
 
-      _name->setFocus();
       _assignedTo->setEnabled(_privileges->check("ReassignToDoItems"));
     }
     else if (param.toString() == "edit")
@@ -87,8 +86,6 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _due->setEnabled(FALSE);
       _assignedTo->setEnabled(_privileges->check("ReassignToDoItems"));
       _description->setEnabled(FALSE);
-
-      _name->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -116,7 +113,6 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _cntct->setReadOnly(true);
 
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

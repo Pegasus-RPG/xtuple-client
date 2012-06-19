@@ -119,13 +119,11 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
 	    return UndefinedError;
       }
       _save->setEnabled(false);
-      _shipToNumber->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _shipToNumber->setEnabled(FALSE);
-      _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -148,8 +146,6 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
       _shippingComments->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

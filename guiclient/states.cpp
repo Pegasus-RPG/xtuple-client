@@ -66,8 +66,8 @@ void states::sFillList()
   MetaSQLQuery mql("SELECT state_id, state_abbr, state_name,"
                    "       country_name"
                    "  FROM state JOIN country ON (state_country_id=country_id) "
-                   "<? if exists(\"country_id\") ?>"
-                   " WHERE (state_country_id=<? value(\"country_id\") ?>) "
+                   "<? if exists('country_id') ?>"
+                   " WHERE (state_country_id=<? value('country_id') ?>) "
                    "<? endif ?>"
                    "ORDER BY country_name, state_name;");
   ParameterList params;
@@ -117,11 +117,7 @@ void states::sNew()
   ParameterList params;
   params.append("mode", "new");
   if (_country->isValid())
-  {
-    //if (DEBUG)
-      qDebug("setting country_id to %d", _country->id());
     params.append("country_id", _country->id());
-  }
 
   state newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -134,6 +130,8 @@ void states::sEdit()
   ParameterList params;
   params.append("mode", "edit");
   params.append("state_id", _state->id());
+  if (_country->isValid())
+    params.append("country_id", _country->id());
 
   state newdlg(this, "", TRUE);
   newdlg.set(params);

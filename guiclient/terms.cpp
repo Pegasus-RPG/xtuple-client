@@ -57,12 +57,10 @@ enum SetResponse terms::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _code->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _description->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -79,7 +77,6 @@ enum SetResponse terms::set(const ParameterList &pParams)
       _cutOffDay->setEnabled(FALSE);
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
-      _buttonBox->setFocus();
     }
   }
 

@@ -36,8 +36,8 @@ warehouse::warehouse(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_address, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _contact, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
 
-  _whsezone->addColumn(tr("Name"),        _itemColumn, Qt::AlignCenter, true,  "whsezone_name" );
-  _whsezone->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "whsezone_descrip"   );
+  _whsezone->addColumn(tr("Name"), _itemColumn, Qt::AlignCenter, true, "whsezone_name");
+  _whsezone->addColumn(tr("Description"),   -1, Qt::AlignLeft,   true, "whsezone_descrip");
 
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -79,8 +79,6 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _code->setFocus();
-
       warehouseet.exec("SELECT NEXTVAL('warehous_warehous_id_seq') AS warehous_id");
       if (warehouseet.first())
         _warehousid = warehouseet.value("warehous_id").toInt();
@@ -98,7 +96,6 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _description->setFocus();
 
       connect(_whsezone, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_whsezone, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -136,8 +133,6 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
 
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
 
     emit newMode(_mode);
@@ -259,10 +254,9 @@ void warehouse::sSave()
   int saveResult = _address->save(AddressCluster::CHECK);
   if (-2 == saveResult)
   {
-    int answer = QMessageBox::question(this,
-                    tr("Question Saving Address"),
-                    tr("There are multiple uses of this Site "
-                       "Address.\nWhat would you like to do?"),
+    int answer = QMessageBox::question(this, tr("Question Saving Address"),
+                    tr("<p>There are multiple uses of this Site Address.</p>"
+                       "<p>What would you like to do?</p>"),
                     tr("Change This One"),
                     tr("Change Address for All"),
                     tr("Cancel"),

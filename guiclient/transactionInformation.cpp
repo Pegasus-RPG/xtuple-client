@@ -97,7 +97,6 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
 
       _save->hide();
       _close->setText(tr("&Close"));
-      _close->setFocus();
     }
   }
 

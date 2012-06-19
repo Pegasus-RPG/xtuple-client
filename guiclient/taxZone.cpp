@@ -17,35 +17,20 @@
 
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a taxZone as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 taxZone::taxZone(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_taxZone, SIGNAL(editingFinished()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 taxZone::~taxZone()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void taxZone::languageChange()
 {
   retranslateUi(this);
@@ -70,15 +55,11 @@ enum SetResponse taxZone::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
 		_mode = cNew;
-      
-		_taxZone->setFocus();
     }
 	
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-
-	  _save->setFocus();
     }
     else if (param.toString() == "view")
     {
@@ -88,8 +69,6 @@ enum SetResponse taxZone::set(const ParameterList &pParams)
       _description->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
-      _close->setFocus();
     }
   }
 

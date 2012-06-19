@@ -17,7 +17,6 @@ voucherItemDistrib::voucherItemDistrib(QWidget* parent, const char* name, bool m
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_costelem, SIGNAL(newID(int)), this, SLOT(sCheck()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
@@ -85,15 +84,12 @@ enum SetResponse voucherItemDistrib::set(const ParameterList &pParams)
       param = pParams.value("amount", &valid);
       if (valid)
         _amount->setLocalValue(param.toDouble());
-
-      _amount->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
 
       _costelem->setEnabled(false);
-      _save->setFocus();
     }
   }
 
