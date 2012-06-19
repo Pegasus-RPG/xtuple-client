@@ -34,34 +34,17 @@
        terms_descrip,
        vend_number,
        vend_name,
-       va.addr_line1 AS vend_address1,
-       va.addr_line2 AS vend_address2,
-       va.addr_line3 AS vend_address3,
-       (va.addr_city || '  '  || va.addr_state || '  ' || va.addr_postalcode) AS vendcitystatezip,
-       formataddr(va.addr_line1, va.addr_line2, va.addr_line3, (va.addr_city || '  '  || va.addr_state || '   ' || va.addr_postalcode), va.addr_country) as vend_address,
        warehous_descrip,
-       wa.addr_line1 as warehous_addr1,
-       wa.addr_line2 as warehous_addr2,
-       wa.addr_line3 as warehous_addr3,
-       wa.addr_city  as warehous_addr4,
-       wa.addr_postalcode as zip,
-       wa.addr_state,
-       wa.addr_country,
-       formataddr(wa.addr_line1, wa.addr_line2, wa.addr_line3, (wa.addr_city || ' ' || wa.addr_state || ' ' || wa.addr_postalcode), wa.addr_country) as warehouse_address,
        pohead_agent_username,
        usr.usr_propername AS username,
        pohead_comments,
        text(&lt;? value("title") ?>) AS title
  FROM pohead
-   LEFT OUTER JOIN usr ON (pohead.pohead_agent_username = usr.usr_username)
-   LEFT OUTER JOIN terms ON (pohead_terms_id = terms_id),
-   vendinfo
-   LEFT OUTER JOIN addr va ON (vend_addr_id=va.addr_id),
-   whsinfo
-   LEFT OUTER JOIN addr wa ON (warehous_addr_id = wa.addr_id)
- WHERE ((pohead_vend_id=vend_id)
-   AND (pohead_warehous_id = warehous_id)
-   AND (pohead_id=&lt;? value("pohead_id") ?>) );</sql>
+   LEFT OUTER JOIN usr ON (pohead_agent_username = usr_username)
+   LEFT OUTER JOIN terms ON (pohead_terms_id = terms_id)
+   LEFT OUTER JOIN vendinfo ON (pohead_vend_id = vend_id)
+   LEFT OUTER JOIN whsinfo ON (pohead_warehous_id = warehous_id)
+ WHERE (pohead_id=&lt;? value("pohead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>Detail</name>
