@@ -1805,14 +1805,10 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
   w->setAttribute(Qt::WA_DeleteOnClose);
   _windowList.append(w);
 
-  if (w->windowModality() != Qt::ApplicationModal && ! showTopLevel())
+  if (! forceFloat && ! w->isModal() && ! showTopLevel())
   {
-    QWidget       *fw     = w->focusWidget();
     QMdiSubWindow *subwin = _workspace->addSubWindow(w);
     _workspace->setActiveSubWindow(subwin);
-
-    if (fw)
-      fw->setFocus();
 
     if (QDialog *dlg = qobject_cast<QDialog*>(w)) // not ==
       connect(dlg, SIGNAL(finished(int)), subwin, SLOT(hide()));
@@ -1832,8 +1828,6 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
 
   if (showTopLevel())
     w->activateWindow();
-  else
-    w->setFocus();
 }
 
 QMenuBar *GUIClient::menuBar()
