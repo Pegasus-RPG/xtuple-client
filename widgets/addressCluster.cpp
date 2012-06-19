@@ -18,6 +18,7 @@
 #include "xcheckbox.h"
 
 #include "addresscluster.h"
+#include "errorReporter.h"
 
 #define DEBUG false
 
@@ -190,7 +191,7 @@ void AddressCluster::populateStateComboBox()
                        "            WHEN TRIM(state_abbr) = '' THEN state_name"
                        "            ELSE state_abbr END"
                        "  FROM state"
-                       " WHERE (state_country_id=<? value(\"country_id\") ?>) "
+                       " WHERE (state_country_id=<? value('country_id') ?>) "
                        "ORDER BY 2;");
     ParameterList params;
     params.append("country_id", _country->id());
@@ -261,11 +262,9 @@ void AddressCluster::setNumber(QString pNumber)
   address.exec();
   if (address.first())
     setId(address.value("addr_id").toInt());
-  else if (address.lastError().type() != QSqlError::NoError)
-    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                          .arg(__FILE__)
-                                          .arg(__LINE__),
-                                  address.lastError().databaseText()); 
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Id"),
+                                address, __FILE__, __LINE__))
+    return;
 }
 
 void AddressCluster::setId(const int pId)
@@ -333,11 +332,9 @@ void AddressCluster::silentSetId(const int pId)
         c_active     = _active->isChecked();
         c_notes      = _notes;
       }
-      else if (idQ.lastError().type() != QSqlError::NoError)
-          QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                        .arg(__FILE__)
-                                        .arg(__LINE__),
-                                idQ.lastError().databaseText());
+      else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Setting Id"),
+                                    idQ, __FILE__, __LINE__))
+        return;
   }
 
     // _parsed = TRUE;
@@ -520,8 +517,12 @@ int AddressCluster::save(enum SaveFlags flag)
     if (datamodQ.value("result").toInt() == -2)
       return -2;
     else
-      return -1; //error
+      return -1;
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Saving Address"),
+                                datamodQ, __FILE__, __LINE__))
+    return -1;
+
   return id();
 }
 
@@ -539,8 +540,8 @@ void AddressCluster::check()
     {
       int answer = 2;	// Cancel
       answer = QMessageBox::question(this, tr("Question Saving Address"),
-                  tr("There are multiple Contacts sharing this Address.\n"
-                     "What would you like to do?"),
+                  tr("<p>There are multiple Contacts sharing this Address.</p>"
+                     "<p>What would you like to do?</p>"),
                   tr("Change This One"),
                   tr("Change Address for All"),
                   0, 0);
@@ -722,28 +723,18 @@ void AddressList::sFillList()
                   " ORDER BY addr_country, addr_state, addr_postalcode;");
     query.exec();
     query.first();
-    if (query.lastError().type() != QSqlError::NoError)
-    {
-      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                    .arg(__FILE__)
-                                    .arg(__LINE__),
-                            query.lastError().databaseText());
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Addresses"),
+                             query, __FILE__, __LINE__))
       return;
-    }
     else if (query.size() < 1)// no rows found with limit so try without
     {
       query.prepare(_parent->_query +
                   " ORDER BY addr_country, addr_state, addr_postalcode;");
       query.exec();
       query.first();
-      if (query.lastError().type() != QSqlError::NoError)
-      {
-        QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                      .arg(__FILE__)
-                                      .arg(__LINE__),
-                              query.lastError().databaseText());
+      if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Addresses"),
+                               query, __FILE__, __LINE__))
         return;
-      }
     }
 
     _listTab->populate(query);
@@ -869,40 +860,40 @@ void AddressSearch::sFillList()
       return;
 
     QString sql = _parent->_query +
-                  "<? if exists(\"extraClause\") ?> "
-                  "  <? literal(\"extraClause\") ?> "
+                  "<? if exists('extraClause') ?> "
+                  "  <? literal('extraClause') ?> "
                   "<? else ?>"
                   "  WHERE true "
                   "<? endif ?> "
-                  "<? if exists(\"searchInactive\") ?> "
+                  "<? if exists('searchInactive') ?> "
                   "   AND addr_active "
                   "<? endif ?>"
-                  "<? if reExists(\"search[CPS]\") ?> "
+                  "<? if reExists('search[CPS]') ?> "
                   "  AND ("
-                  "<? if exists(\"searchCrmaact\") ?> "
+                  "<? if exists('searchCrmaact') ?> "
                   "   crmacct_name || '\n' ||  "
                   "<? endif ?>"
-                  "  <? if exists(\"searchStreet\") ?> "
+                  "  <? if exists('searchStreet') ?> "
                   "    addr_line1 || '\n' || addr_line2 || '\n' || addr_line3 || '\n' "
                   "  <? else ?>"
                   "    '\n' "
                   "  <? endif ?>"
-                  "  <? if exists(\"searchCity\") ?> "
+                  "  <? if exists('searchCity') ?> "
                   "     || addr_city || '\n' "
                   "  <? endif ?>"
-                  "  <? if exists(\"searchState\") ?> "
+                  "  <? if exists('searchState') ?> "
                   "     || addr_state || '\n' "
                   "  <? endif ?>"
-                  "  <? if exists(\"searchCountry\") ?> "
+                  "  <? if exists('searchCountry') ?> "
                   "     || addr_country || '\n' "
                   "  <? endif ?>"
-                  "  <? if exists(\"searchPostalCode\") ?> "
+                  "  <? if exists('searchPostalCode') ?> "
                   "     || addr_postalcode || '\n' "
                   "  <? endif ?>"
-                  "  ~* <? value(\"searchText\") ?> )"
+                  "  ~* <? value('searchText') ?> )"
                   "<? else ?>"
-                  "<? if exists(\"searchCrmaact\") ?> "
-                  "   crmacct_name ~* <? value(\"searchText\") ?> "
+                  "<? if exists('searchCrmaact') ?> "
+                  "   crmacct_name ~* <? value('searchText') ?> "
                   "<? endif ?>"
                   "<? endif ?>"
                   "ORDER BY addr_country, addr_state, addr_postalcode;";
@@ -932,15 +923,9 @@ void AddressSearch::sFillList()
     XSqlQuery query = mql.toQuery(params);
     query.exec();
     _listTab->populate(query);
-    if (query.lastError().type() != QSqlError::NoError)
-    {
-      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                    .arg(__FILE__)
-                                    .arg(__LINE__),
-                            query.lastError().databaseText());
+    if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Searching Addresses"),
+                             query, __FILE__, __LINE__))
       return;
-    }
-
 }
 
 void AddressCluster::setMode(Mode p)
