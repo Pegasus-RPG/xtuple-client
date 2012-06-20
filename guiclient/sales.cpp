@@ -76,13 +76,20 @@ void sales::sEdit()
 
 void sales::sDelete()
 {
-  XSqlQuery salesDelete;
-  salesDelete.prepare( "DELETE FROM sale "
-             "WHERE (sale_id=:sale_id);" );
-  salesDelete.bindValue(":sale_id", _sale->id());
-  salesDelete.exec();
+  if (QMessageBox::question(this, tr("Delete Selected Sale?"),
+                            tr("<p>Are you sure that you want to delete the "
+                                 "selected Sale?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    XSqlQuery salesDelete;
+    salesDelete.prepare( "DELETE FROM sale "
+               "WHERE (sale_id=:sale_id);" );
+    salesDelete.bindValue(":sale_id", _sale->id());
+    salesDelete.exec();
 
-  sFillList();
+    sFillList();
+  }
 }
 
 void sales::sFillList()
