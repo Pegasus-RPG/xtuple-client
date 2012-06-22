@@ -476,6 +476,15 @@ void project::sFillTaskList()
     systemError(this, qry.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  else
+  {
+    _totalHrBud->setDouble(0.0);
+    _totalHrAct->setDouble(0.0);
+    _totalHrBal->setDouble(0.0);
+    _totalExpBud->setDouble(0.0);
+    _totalExpAct->setDouble(0.0);
+    _totalExpBal->setDouble(0.0);
+  }
 
   _prjtask->populate(qry);
 }
