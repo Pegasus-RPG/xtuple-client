@@ -965,12 +965,19 @@ void salesOrderItem::sSave()
   else if (_mode == cEdit)
   {
     salesSave.prepare( "UPDATE coitem "
-               "SET coitem_scheddate=:soitem_scheddate, coitem_promdate=:soitem_promdate,"
-               "    coitem_qtyord=:soitem_qtyord, coitem_qty_uom_id=:qty_uom_id, coitem_qty_invuomratio=:qty_invuomratio,"
-               "    coitem_price=:soitem_price, coitem_price_uom_id=:price_uom_id, coitem_price_invuomratio=:price_invuomratio,"
+               "SET coitem_scheddate=:soitem_scheddate,"
+               "    coitem_promdate=:soitem_promdate,"
+               "    coitem_qtyord=:soitem_qtyord,"
+               "    coitem_qty_uom_id=:qty_uom_id,"
+               "    coitem_qty_invuomratio=:qty_invuomratio,"
+               "    coitem_custprice=:soitem_custprice,"
+               "    coitem_price=:soitem_price,"
+               "    coitem_price_uom_id=:price_uom_id,"
+               "    coitem_price_invuomratio=:price_invuomratio,"
                "    coitem_memo=:soitem_memo,"
                "    coitem_order_type=:soitem_order_type,"
-               "    coitem_order_id=:soitem_order_id, coitem_substitute_item_id=:soitem_substitute_item_id,"
+               "    coitem_order_id=:soitem_order_id,"
+               "    coitem_substitute_item_id=:soitem_substitute_item_id,"
                "    coitem_prcost=:soitem_prcost,"
                "    coitem_taxtype_id=:soitem_taxtype_id, "
                "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
@@ -982,6 +989,7 @@ void salesOrderItem::sSave()
     salesSave.bindValue(":soitem_qtyord", _qtyOrdered->toDouble());
     salesSave.bindValue(":qty_uom_id", _qtyUOM->id());
     salesSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
+    salesSave.bindValue(":soitem_custprice", _customerPrice->localValue());
     salesSave.bindValue(":soitem_price", _netUnitPrice->localValue());
     salesSave.bindValue(":price_uom_id", _priceUOM->id());
     salesSave.bindValue(":price_invuomratio", _priceinvuomratio);
@@ -1373,12 +1381,17 @@ void salesOrderItem::sSave()
                "SET quitem_scheddate=:quitem_scheddate,"
                "    quitem_promdate=:quitem_promdate,"
                "    quitem_qtyord=:quitem_qtyord,"
-               "    quitem_qty_uom_id=:qty_uom_id, quitem_qty_invuomratio=:qty_invuomratio,"
+               "    quitem_qty_uom_id=:qty_uom_id,"
+               "    quitem_qty_invuomratio=:qty_invuomratio,"
+               "    quitem_custprice=:quitem_custprice,"
                "    quitem_price=:quitem_price,"
-               "    quitem_price_uom_id=:price_uom_id, quitem_price_invuomratio=:price_invuomratio,"
-               "    quitem_memo=:quitem_memo, quitem_createorder=:quitem_createorder,"
+               "    quitem_price_uom_id=:price_uom_id,"
+               "    quitem_price_invuomratio=:price_invuomratio,"
+               "    quitem_memo=:quitem_memo,"
+               "    quitem_createorder=:quitem_createorder,"
                "    quitem_order_warehous_id=:quitem_order_warehous_id,"
-               "    quitem_prcost=:quitem_prcost, quitem_taxtype_id=:quitem_taxtype_id,"
+               "    quitem_prcost=:quitem_prcost,"
+               "    quitem_taxtype_id=:quitem_taxtype_id,"
                "    quitem_dropship=:quitem_dropship,"
                "    quitem_itemsrc_id=:quitem_itemsrc_id "
                "WHERE (quitem_id=:quitem_id);" );
@@ -1387,6 +1400,7 @@ void salesOrderItem::sSave()
     salesSave.bindValue(":quitem_qtyord", _qtyOrdered->toDouble());
     salesSave.bindValue(":qty_uom_id", _qtyUOM->id());
     salesSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
+    salesSave.bindValue(":quitem_custprice", _customerPrice->localValue());
     salesSave.bindValue(":quitem_price", _netUnitPrice->localValue());
     salesSave.bindValue(":price_uom_id", _priceUOM->id());
     salesSave.bindValue(":price_invuomratio", _priceinvuomratio);
