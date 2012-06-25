@@ -1148,7 +1148,7 @@ void salesOrderItem::sSave()
           }
         }
 
-        if (_qtyOrdered->toDouble() != _cQtyOrdered)
+        if (_orderQty->toDouble() != _originalQtyOrd)
         {
           if (_item->itemType() == "M")
           {
