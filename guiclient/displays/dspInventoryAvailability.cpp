@@ -264,6 +264,8 @@ void dspInventoryAvailability::sViewHistory()
 {
   ParameterList params;
   params.append("itemsite_id", list()->id());
+  params.append("startDate", _startDate->date());
+  params.append("endDate", _endDate->date());
 
   dspInventoryHistory *newdlg = new dspInventoryHistory();
   newdlg->set(params);

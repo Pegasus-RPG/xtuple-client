@@ -164,14 +164,10 @@ enum SetResponse dspInventoryHistory::set(const ParameterList &pParams)
   param = pParams.value("startDate", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Start Date"), param);
-  else
-    parameterWidget()->setDefault(tr("Start Date"), omfgThis->startOfTime());
 
   param = pParams.value("endDate", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("End Date"), param);
-  else
-    parameterWidget()->setDefault(tr("End Date"), omfgThis->endOfTime());
 
   param = pParams.value("transtype", &valid);
   if (valid)
