@@ -102,22 +102,7 @@ enum SetResponse plannedOrder::set(const ParameterList &pParams)
       _leadTime->hide();
       _daysLit->hide();
 
-      plannedet.prepare( "SELECT fo_itemsite_id,"
-                 "       formatFoNumber(fo_id) AS fonumber,"
-                 "       fo_qtyord,"
-                 "       fo_startdate, fo_duedate "
-                 "FROM fo "
-                 "WHERE (fo_id=:fo_id);" );
-      plannedet.bindValue(":fo_id", _planordid);
-      plannedet.exec();
-      if (plannedet.first())
-      {
-        _number->setText(plannedet.value("fonumber").toString());
-        _qty->setDouble(plannedet.value("fo_qtyord").toDouble());
-        _startDate->setDate(plannedet.value("fo_startdate").toDate());
-        _dueDate->setDate(plannedet.value("fo_duedate").toDate());
-        _item->setItemsiteid(plannedet.value("fo_itemsite_id").toInt());
-      }
+      populate();
     }
   }
 
