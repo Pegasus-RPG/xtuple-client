@@ -258,16 +258,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _project->setEnabled(FALSE);
       _itemcharView->setEnabled(false);
       _jobCosGroup->setEnabled(FALSE);
-      }
-      else
-      {
-        systemError(this, tr("A System Error occurred at %1::%2, W/O ID %3.")
-                          .arg(__FILE__)
-                          .arg(__LINE__)
-                          .arg(_woid) );
-        close();
-      }
     }
+
     else if (param.toString() == "release")
     {
       _mode = cRelease;
@@ -321,8 +313,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                           .arg(_planordid) );
         close();
       }
-    }
-  
+     }
+   }
   return NoError;
 }
 
