@@ -14,15 +14,11 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
 
 #define DEBUG false
-
-/* TODO: fix transaction handling in this window.
-         currently only cNew is wrapped in a transaction, so the Cancel
-         button really closes the window in edit mode instead of actually
-         canceling the changes.
- */
 
 group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -115,6 +111,8 @@ enum SetResponse group::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      _trapClose = true;
+      groupet.exec("BEGIN;");
     }
     else if (param.toString() == "view")
     {
@@ -176,7 +174,7 @@ void group::reject()
 void group::sCheck()
 {
   XSqlQuery groupCheck;
-  _name->setText(_name->text().trimmed());
+  _name->setText(_name->text().trimmed().toUpper());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
     groupCheck.prepare( "SELECT grp_id "
@@ -186,6 +184,9 @@ void group::sCheck()
     groupCheck.exec();
     if (groupCheck.first())
     {
+      XSqlQuery groupet;
+      groupet.exec("ROLLBACK;");
+      groupet.exec("BEGIN;");
       _grpid = groupCheck.value("grp_id").toInt();
       _mode = cEdit;
       populate();
@@ -199,13 +200,15 @@ void group::sSave()
 {
   XSqlQuery groupSave;
   _name->setText(_name->text().trimmed().toUpper());
-  if (_name->text().length() == 0)
-  {
-    QMessageBox::information( this, tr("Invalid Name"),
-                              tr("You must enter a valid Name for this Group.") );
-    _name->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("You must enter a valid Name for this Group "
+                             "before continuing"))
+     ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Group"), errors))
     return;
-  }
 
   groupSave.prepare( "UPDATE grp "
              "   SET grp_name=:grp_name,"

@@ -13,6 +13,9 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
+
 classCode::classCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
 {
@@ -76,13 +79,15 @@ enum SetResponse classCode::set(const ParameterList &pParams)
 void classCode::sSave()
 {
   XSqlQuery classSave;
-  if (_classCode->text().length() == 0)
-  {
-    QMessageBox::information( this, tr("No Class Code Entered"),
-                              tr("You must enter a valid Class Code before saving this Item Type.") );
-    _classCode->setFocus();
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_classCode->text().length() == 0, _classCode,
+                          tr("You must enter a valid Class Code "
+                             "before continuing"))
+     ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Class Code"), errors))
     return;
-  }
 
   if (_mode == cEdit)
     classSave.prepare( "UPDATE classcode "

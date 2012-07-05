@@ -14,6 +14,9 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
+
 checkFormat::checkFormat(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -75,21 +78,31 @@ enum SetResponse checkFormat::set(const ParameterList &pParams)
 void checkFormat::sSave()
 {
   XSqlQuery checkSave;
-  if (_name->text().trimmed().length() == 0)
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("You must enter a valid Name for this Check Format "
+                             "before continuing"))
+         << GuiErrorCheck(_report->id() == -1, _report,
+                          tr("You must select a Report for this Check Format "
+                             "before continuing"))
+     ;
+
+  if (_mode == cNew)
   {
-    QMessageBox::warning( this, tr("Check Format Name is Invalid"),
-                          tr("You must enter a valid name for this Check Format.") );
-    _name->setFocus();
-    return;
+    checkSave.prepare( "SELECT form_id "
+               "FROM form "
+               "WHERE (form_name=:form_name);" );
+    checkSave.bindValue(":form_name", _name->text());
+    checkSave.exec();
+    if (checkSave.first())
+      errors << GuiErrorCheck(true, _name,
+                              tr( "A Form has already been defined with the selected Name.\n"
+                                  "You may not create duplicate Forms." ) );
   }
 
-  if (_report->currentIndex() == -1)
-  {
-    QMessageBox::warning( this, tr("Report is Invalid"),
-                          tr("You must enter a select report for this Check Format.") );
-    _report->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Check Format"), errors))
     return;
-  }
 
   if (_mode == cNew)
   {

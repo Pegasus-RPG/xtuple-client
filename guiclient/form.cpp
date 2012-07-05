@@ -14,6 +14,9 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
+
 form::form(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -74,21 +77,31 @@ enum SetResponse form::set(const ParameterList &pParams)
 void form::sSave()
 {
   XSqlQuery formSave;
-  if (_name->text().length() == 0)
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("You must enter a valid Name for this Form "
+                             "before continuing"))
+         << GuiErrorCheck(_report->id() == -1, _report,
+                          tr("You must select a Report for this Form "
+                             "before continuing"))
+     ;
+
+  if (_mode == cNew)
   {
-    QMessageBox::warning( this, tr("Form Name is Invalid"),
-                          tr("<p>You must enter a valid name for this Form.") );
-    _name->setFocus();
-    return;
+    formSave.prepare( "SELECT form_id "
+               "FROM form "
+               "WHERE (form_name=:form_name);" );
+    formSave.bindValue(":form_name", _name->text());
+    formSave.exec();
+    if (formSave.first())
+      errors << GuiErrorCheck(true, _name,
+                              tr( "A Form has already been defined with the selected Name.\n"
+                                  "You may not create duplicate Forms." ) );
   }
 
-  else if (_report->id() == -1)
-  {
-    QMessageBox::warning( this, tr("Report is Invalid"),
-                          tr("<p>You must select a report for this Form.") );
-    _report->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Form"), errors))
     return;
-  }
 
   if (_mode == cNew)
   {

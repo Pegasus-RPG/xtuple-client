@@ -8,7 +8,10 @@
  * to be bound by its terms.
  */
 #include <QMessageBox>
+
 #include "externalShipping.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 bool externalShipping::userHasPriv(const int /*pMode*/)
 {
@@ -122,41 +125,26 @@ void externalShipping::sHandleOrder()
 
 void externalShipping::sSave()
 {
-  if (!_order->isValid())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
-      tr("You may not save this External Shipping Record until you have entered a valid Order Number.") );
-    _order->setFocus();
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(!_order->isValid(), _order,
+                          tr("You must enter a valid Order Number for this External Shipping Record "
+                             "before continuing"))
+         << GuiErrorCheck(!_shipment->isValid(), _shipment,
+                          tr("You must select a valid Shipment Number for this External Shipping Record "
+                             "before continuing"))
+         << GuiErrorCheck(_shipper->text().isEmpty(), _shipper,
+                          tr("You must select a valid Shipper for this External Shipping Record "
+                             "before continuing"))
+         << GuiErrorCheck(_packnumTracknum->text().isEmpty(), _packnumTracknum,
+                          tr("You must select a valid Package Tracking Number for this External Shipping Record "
+                             "before continuing"))
+         << GuiErrorCheck(_tracknum->text().isEmpty(), _tracknum,
+                          tr("You must select a valid Tracking Number for this External Shipping Record "
+                             "before continuing"))
+     ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Shipping Record"), errors))
     return;
-  }
-  if (!_shipment->isValid())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
-      tr("You may not save this External Shipping Record until you have entered a valid Shipment Number.") );
-    _shipment->setFocus();
-    return;
-  }
-  if (_shipper->text().isEmpty())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
-      tr("You may not save this External Shipping Record until you have entered a valid Shipper.") );
-    _shipper->setFocus();
-    return;
-  }
-  if (_packnumTracknum->text().isEmpty())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
-      tr("You may not save this External Shipping Record until you have entered a valid Package Tracking Number.") );
-    _packnumTracknum->setFocus();
-    return;
-  }
-  if (_tracknum->text().isEmpty())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Shipping Record"),
-      tr("You may not save this External Shipping Record until you have entered a valid Tracking Number.") );
-    _tracknum->setFocus();
-    return;
-  }
   else
   {
     _screen->save();

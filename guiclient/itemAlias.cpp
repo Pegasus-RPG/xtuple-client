@@ -13,6 +13,9 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
+
 itemAlias::itemAlias(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -95,6 +98,13 @@ enum SetResponse itemAlias::set(const ParameterList &pParams)
 void itemAlias::sSave()
 {
   XSqlQuery itemSave;
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_number->text().trimmed().isEmpty(), _number,
+                          tr("You must enter a valid Alias "
+                             "before continuing"))
+     ;
+
   if (_mode == cNew)
   {
     itemSave.prepare( "SELECT itemalias_id "
@@ -105,14 +115,16 @@ void itemAlias::sSave()
     itemSave.bindValue(":itemalias_number", _number->text());
     itemSave.exec();
     if (itemSave.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Create Item Alias"),
-                             tr( "An Item Alias for the selected Item Number has already been defined with the selected Alias Item Number.\n"
-                                 "You may not create duplicate Item Aliases." ) );
-      _number->setFocus();
-      return;
-    }
+      errors << GuiErrorCheck(true, _number,
+                              tr( "An Item Alias for the selected Item Number has already been defined with the selected Alias Item Number.\n"
+                                  "You may not create duplicate Item Aliases." ) );
+  }
 
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item Alias"), errors))
+    return;
+
+  if (_mode == cNew)
+  {
     itemSave.exec("SELECT NEXTVAL('itemalias_itemalias_id_seq') AS _itemalias_id;");
     if (itemSave.first())
       _itemaliasid = itemSave.value("_itemalias_id").toInt();
