@@ -53,13 +53,14 @@ void taxCode::populateBasis()
 
   QString sql(" SELECT tax_id, tax_code || '-' || tax_descrip, tax_code" 
    			  " FROM tax"
-			  " WHERE ( tax_taxclass_id = "
-			  " <? value(\"taxclass_id\") ?>);"); 
+                          " WHERE (tax_taxclass_id = <? value('taxclass_id'') ?>)"
+                          "   AND (tax_id != <? value('tax_id') ?>);");
 
   MetaSQLQuery mql(sql);
   ParameterList params;
   params.append("taxclass_id", _taxClass->id()); 
-  XSqlQuery taxbasis = mql.toQuery(params); 
+  params.append("tax_id", _taxid);
+  XSqlQuery taxbasis = mql.toQuery(params);
   _basis->populate(taxbasis);
 } 
 
