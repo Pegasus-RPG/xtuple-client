@@ -161,13 +161,14 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 void adjustmentTrans::sPost()
 {
   XSqlQuery adjustmentPost;
-  double qty = 0.0;
+  double qty = _qty->toDouble();
   double cost = _cost->toDouble();
 
   if (_absolute->isChecked())
+  {
     qty = (_qty->toDouble() - _cachedQOH);
-  else if (_relative->isChecked())
-    qty = _qty->toDouble();
+    cost = (_cost->toDouble() - _cachedValue);
+  }
 
   struct {
     bool        condition;
@@ -279,7 +280,7 @@ void adjustmentTrans::sPopulateQOH()
   XSqlQuery populateAdjustment;
   if (_mode != cView)
   {
-    populateAdjustment.prepare( "SELECT itemsite_freeze, itemsite_qtyonhand, itemsite_costmethod "
+    populateAdjustment.prepare( "SELECT itemsite_freeze, itemsite_qtyonhand, itemsite_costmethod, itemsite_value "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id));" );
@@ -290,6 +291,7 @@ void adjustmentTrans::sPopulateQOH()
     _absolute->setStyleSheet("");
     if (populateAdjustment.first())
     {
+      _cachedValue = populateAdjustment.value("itemsite_value").toDouble();
       _cachedQOH = populateAdjustment.value("itemsite_qtyonhand").toDouble();
       if(_cachedQOH == 0.0)
         _costManual->setChecked(true);

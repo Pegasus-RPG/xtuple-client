@@ -38,6 +38,7 @@ protected slots:
 private:
     int _mode;
     double _cachedQOH;
+    double _cachedValue;
     bool _captive;
     QButtonGroup* _adjustmentTypeGroupInt;
     QString _costMethod;
