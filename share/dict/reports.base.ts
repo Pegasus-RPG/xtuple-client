@@ -27061,18 +27061,38 @@
   <context>
     <name>TimePhasedStatisticsByItem</name>
     <message>
+      <width>300</width>
+      <source>Scrapped (RedGreen/Line) Adjusted (RedBlue/Points&amp;Line)</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>104</width>
+      <source>Warehouse:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
       <width>80</width>
-      <source>Received</source>
+      <source>Scrap</source>
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>484</width>
-      <source>Time Phased Usage Statistics By Item</source>
+      <width>80</width>
+      <source>Issued</source>
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>105</width>
-      <source>Site:</source>
+      <width>80</width>
+      <source>Adjusted</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>360</width>
+      <source>Legend: Issued (Green/Bar) Received: (BlueGreen/Line) Sold: (Blue/Bar)</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>35</width>
+      <source>Whs.</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -27081,51 +27101,21 @@
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>105</width>
+      <width>80</width>
+      <source>Received</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>644</width>
+      <source>Time Phased Usage Statistics By Item with Graph</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>104</width>
       <source>Item Number:</source>
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>80</width>
-      <source>Issued</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>80</width>
-      <source>Scrap</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>80</width>
-      <source>Adjusted</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>250</width>
-      <source>Period</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>35</width>
-      <source>Site</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>80</width>
-      <source>Adjusted</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>80</width>
-      <source>Issued</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>80</width>
-      <source>Received</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
       <width>250</width>
       <source>Period</source>
       <translation type="unfinished"/>
@@ -27141,8 +27131,28 @@
       <translation type="unfinished"/>
     </message>
     <message>
+      <width>80</width>
+      <source>Received</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
       <width>35</width>
-      <source>Site</source>
+      <source>Whs.</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>80</width>
+      <source>Adjusted</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>250</width>
+      <source>Period</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>80</width>
+      <source>Issued</source>
       <translation type="unfinished"/>
     </message>
     <message>
