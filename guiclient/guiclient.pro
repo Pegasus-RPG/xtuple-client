@@ -229,7 +229,6 @@ FORMS =   absoluteCalendarItem.ui               \
           empGroup.ui                   \
           empGroups.ui                  \
           employee.ui                   \
-          employees.ui                  \
           enterMiscCount.ui             \
           enterPoReceipt.ui             \
           enterPoReturn.ui              \

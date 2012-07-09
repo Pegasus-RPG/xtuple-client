@@ -10,79 +10,86 @@
 
 #include "employees.h"
 
+#include <QAction>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
 
-#include <parameter.h>
-#include <openreports.h>
-#include <metasql.h>
-
+#include "characteristic.h"
 #include "employee.h"
 #include "errorReporter.h"
-#include "guiclient.h"
 #include "storedProcErrorLookup.h"
+#include "parameterwidget.h"
 
-employees::employees(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XWidget(parent, name, fl)
+employees::employees(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "employees", fl)
 {
-  setupUi(this);
+  setWindowTitle(tr("Employees"));
+  setReportName("EmployeeList");
+  setMetaSQLOptions("employees", "detail");
+  setParameterWidgetVisible(true);
+  setNewVisible(true);
+  setSearchVisible(true);
+  setQueryOnStartEnabled(true);
 
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
+  if (_metrics->boolean("MultiWhs"))
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+  parameterWidget()->applyDefaultFilterSet();
 
-  _emp->addColumn(tr("Site"),   _whsColumn,  Qt::AlignLeft, true, "warehous_code");
-  _emp->addColumn(tr("Active"), _ynColumn,   Qt::AlignLeft, true, "emp_active");
-  _emp->addColumn(tr("Code"),   _itemColumn, Qt::AlignLeft, true, "emp_code");
-  _emp->addColumn(tr("Number"), -1,          Qt::AlignLeft, true, "emp_number");
-  _emp->addColumn(tr("First"),  _itemColumn, Qt::AlignLeft, true, "cntct_first_name");
-  _emp->addColumn(tr("Last"),   _itemColumn, Qt::AlignLeft, true, "cntct_last_name");
-  
+  connect(omfgThis, SIGNAL(employeesUpdated(int)),     this, SLOT(sFillList()));
 
-  if (_privileges->check("MaintainEmployees"))
-  {
-    connect(_emp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_emp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_emp, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  }
-  else
-  {
-    connect(_emp, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-    _new->setEnabled(FALSE);
-  }
+  list()->addColumn(tr("Site"),   _whsColumn,  Qt::AlignLeft, true, "warehous_code");
+  list()->addColumn(tr("Active"), _ynColumn,   Qt::AlignLeft, true, "emp_active");
+  list()->addColumn(tr("Code"),   _itemColumn, Qt::AlignLeft, true, "emp_code");
+  list()->addColumn(tr("Number"), -1,          Qt::AlignLeft, true, "emp_number");
+  list()->addColumn(tr("First"),  _itemColumn, Qt::AlignLeft, true, "cntct_first_name");
+  list()->addColumn(tr("Last"),   _itemColumn, Qt::AlignLeft, true, "cntct_last_name");
 
-   sFillList();
+  setupCharacteristics(characteristic::Employees);
+  parameterWidget()->applyDefaultFilterSet();
+
+  connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sOpen()));
+
+  if (!_privileges->check("MaintainEmployees"))
+    newAction()->setEnabled(FALSE);
 }
 
-employees::~employees()
+void employees::sNew()
 {
-  // no need to delete child widgets, Qt does it all for us
+  ParameterList params;
+  params.append("mode", "new");
+
+  employee* newdlg = new employee();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
-void employees::languageChange()
+void employees::sView()
 {
-  retranslateUi(this);
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("emp_id", list()->id());
+
+  employee* newdlg = new employee();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void employees::sDelete()
 {
   if (QMessageBox::question(this, tr("Delete?"),
-                            tr("<p>Are you sure you want to delete the "
-                               "selected employee?"),
+                            tr("Are you sure you want to delete this Employee?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
   XSqlQuery delq;
-  delq.prepare("DELETE FROM emp WHERE (emp_id=:id);");
-  delq.bindValue(":id", _emp->id());
+  delq.prepare("DELETE FROM emp WHERE emp_id = :emp_id;");
+  delq.bindValue(":emp_id", list()->id());
   delq.exec();
-  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Deleting"),
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Employee"),
                            delq, __FILE__, __LINE__))
     return;
   sFillList();
@@ -92,81 +99,43 @@ void employees::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("emp_id", _emp->id());
+  params.append("emp_id", list()->id());
 
-  employee newdlg(this);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  employee* newdlg = new employee();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
-void employees::sView()
+void employees::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int)
 {
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("emp_id", _emp->id());
+  QAction *menuItem;
 
-  employee newdlg(this);
-  newdlg.set(params);
-  newdlg.exec();
+  bool editPriv =
+      (_privileges->check("MaintainEmployees"));
+
+  bool viewPriv =
+      (_privileges->check("ViewEmployees"));
+
+  menuItem = pMenu->addAction(tr("Edit..."), this, SLOT(sEdit()));
+  menuItem->setEnabled(editPriv);
+
+  menuItem = pMenu->addAction(tr("View..."), this, SLOT(sView()));
+  menuItem->setEnabled(viewPriv);
+
+  menuItem = pMenu->addAction(tr("Delete"), this, SLOT(sDelete()));
+  menuItem->setEnabled(editPriv);
 }
 
-void employees::sFillList()
+void employees::sOpen()
 {
-  
-  QString sql("SELECT emp_id, warehous_code, emp_active, emp_code, emp_number, "
-              "       cntct_first_name, cntct_last_name "
-              "FROM emp "
-              "  LEFT OUTER JOIN cntct ON (emp_cntct_id=cntct_id) "
-              "  LEFT OUTER JOIN whsinfo ON (emp_warehous_id=warehous_id) "
-              "WHERE (true) "
-              "<? if exists('warehouse_id') ?>"
-              "  AND (warehous_id=<? value('warehouse_id') ?>)"
-              "<? endif ?>"
-              "<? if exists('activeOnly') ?>"
-              "  AND (emp_active)"
-              "<? endif ?>"
-              "ORDER BY emp_code;" );
-              
-  MetaSQLQuery mql(sql);
-  ParameterList params;
-  if (!_warehouse->isAll())
-    params.append("warehouse_id", _warehouse->id());
-  if (!_showInactive->isChecked())
-    params.append("activeOnly", true);
-  XSqlQuery r = mql.toQuery(params);
-  _emp->populate(r);
-  if (r.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
+  bool editPriv =
+      (_privileges->check("MaintainEmployees"));
 
-void employees::sNew()
-{
-  ParameterList params;
-  params.append("mode", "new");
+  bool viewPriv =
+      (_privileges->check("ViewEmployees"));
 
-  employee newdlg(this);
-  newdlg.set(params);
-  
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
-}
-
-void employees::sPrint()
-{
-  ParameterList params;
-  if (!_warehouse->isAll())
-    params.append("warehouse_id", _warehouse->id());
-  if (!_showInactive->isChecked())
-    params.append("activeOnly", true);
-
-  orReport report("EmployeeList", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
+  if (editPriv)
+    sEdit();
+  else if (viewPriv)
+    sView();
 }

@@ -11,28 +11,23 @@
 #ifndef EMPLOYEES_H
 #define EMPLOYEES_H
 
-#include "xwidget.h"
-#include "ui_employees.h"
+#include "display.h"
+#include <parameter.h>
 
-class employees : public XWidget, public Ui::employees
+class employees : public display
 {
     Q_OBJECT
 
 public:
     employees(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~employees();
 
 public slots:
     virtual void sDelete();
     virtual void sEdit();
-    virtual void sView();
-    virtual void sFillList();
     virtual void sNew();
-    virtual void sPrint();
-
-protected slots:
-    virtual void languageChange();
-
+    virtual void sView();
+    virtual void sOpen();
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
 };
 
 #endif // EMPLOYEES_H
