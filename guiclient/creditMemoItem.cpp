@@ -200,19 +200,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
                               "ORDER BY item_number" )
                      .arg(_invoiceNumber) );
   else
-    _item->setQuery( QString( "SELECT DISTINCT item_id, item_number,"
-                              "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-                              "                item_upccode,"
-                              "                item_descrip1, item_descrip2,"
-                              "                item_active, uom_name, item_type, item_config "
-                              "FROM item, itemsite, uom "
-                              "WHERE ( (itemsite_item_id=item_id)"
-                              " AND (item_inv_uom_id=uom_id)"
-                              " AND (itemsite_active)"
-                              " AND (item_active)"
-                              " AND (item_id IN (SELECT custitem FROM custitem(%1, %2) ) ) ) "
-                              "ORDER BY item_number" )
-                     .arg(_custid).arg(_shiptoid) );
+    _item->addExtraClause( QString("(item_id IN (SELECT custitem FROM custitem(%1, %2) ) )").arg(_custid).arg(_shiptoid) );
 
   return NoError;
 }
