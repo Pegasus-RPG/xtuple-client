@@ -98,6 +98,7 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   {
     _warehouseLit->hide();
     _warehouse->hide();
+    _create->setEnabled(true);
   }
   else
   {
