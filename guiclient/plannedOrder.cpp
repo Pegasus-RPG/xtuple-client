@@ -15,6 +15,9 @@
 #include <QValidator>
 #include <QVariant>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
+
 plannedOrder::plannedOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl),
       _captive(false)
@@ -125,43 +128,27 @@ void plannedOrder::sClose()
 void plannedOrder::sCreate()
 {
   XSqlQuery plannedCreate;
-  if (!(_item->isValid()))
-  {
-    QMessageBox::information( this, tr("No Item Number Selected"),
-                              tr("You must enter or select a valid Item number before creating this Planned Order")  );
-    return;
-  }
 
-  if (!_qty->text().length())
-  {
-    QMessageBox::information( this, tr("Invalid Quantity Ordered"),
-                              tr( "You have entered an invalid Qty. Ordered.\n"
-                                  "Please correct before creating this Planned Order"  ) );
-    _qty->setFocus();
-    return;
-  }
-
-  if (!_dueDate->isValid())
-  {
-    QMessageBox::information( this, tr("Invalid Due Date Entered"),
-                              tr( "You have entered an invalid Due Date.\n"
-                                  "Please correct before creating this Planned Order"  ) );
-    _dueDate->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(!_item->isValid(), _item,
+                          tr("You must enter or select a valid Item number before creating this Planned Order"))
+         << GuiErrorCheck(!_qty->text().length(), _qty,
+                          tr("You must enter a valid Qty. Ordered before creating this Planned Order"))
+         << GuiErrorCheck(!_dueDate->isValid(), _dueDate,
+                          tr("You must enter a valid Due Date before creating this Planned Order"))
+     ;
 
   plannedCreate.prepare( "SELECT itemsite_id "
-             "FROM itemsite "
-             "WHERE ( (itemsite_item_id=:item_id)"
-             " AND (itemsite_warehous_id=:warehous_id) );" );
+                         "FROM itemsite "
+                         "WHERE ( (itemsite_item_id=:item_id)"
+                         " AND (itemsite_warehous_id=:warehous_id) );" );
   plannedCreate.bindValue(":item_id", _item->id());
   plannedCreate.bindValue(":warehous_id", _warehouse->id());
   plannedCreate.exec();
   if (!plannedCreate.first())
   {
-    QMessageBox::information( this, tr("Invalid Item Site"),
-                              tr("The Item and Site entered is and invalid Item Site combination.")  );
-    return;
+    errors << GuiErrorCheck(true, _item,
+                            tr("The Item and Site entered is an invalid Item Site combination.")  );
   }
 
   int itemsiteid = plannedCreate.value("itemsite_id").toInt();
@@ -169,9 +156,9 @@ void plannedOrder::sCreate()
   if (_toButton->isChecked())
   {
     plannedCreate.prepare("SELECT itemsite_id "
-              "FROM itemsite "
-              "WHERE ( (itemsite_item_id=:item_id)"
-              "  AND   (itemsite_warehous_id=:warehous_id) ); ");
+                          "FROM itemsite "
+                          "WHERE ( (itemsite_item_id=:item_id)"
+                          "  AND   (itemsite_warehous_id=:warehous_id) ); ");
     plannedCreate.bindValue(":item_id", _item->id());
     plannedCreate.bindValue(":warehous_id", _fromWarehouse->id());
     plannedCreate.exec();
@@ -179,25 +166,25 @@ void plannedOrder::sCreate()
     {
       if (plannedCreate.value("itemsite_id").toInt() == itemsiteid)
       { 
-        QMessageBox::warning( this, tr("Cannot Save Planned Order"),
-          tr("The Supplied From Site must be different from the Transfer To Site.") );
-        return;
+        errors << GuiErrorCheck(true, _item,
+                                tr("The Supplied From Site must be different from the Transfer To Site.") );
       }
       else
         _supplyItemsiteId = plannedCreate.value("itemsite_id").toInt();
     }
     else
     { 
-      QMessageBox::warning( this, tr("Cannot Save Planned"),
-        tr("Cannot find Supplied From Item Site.") );
-      return;
+      errors << GuiErrorCheck(true, _item,
+                              tr("Cannot find Supplied From Item Site.") );
     }
   }
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Planned Order"), errors))
+    return;
 
   int foid = 0;
 
   if(cEdit == _mode)
-  {
     plannedCreate.prepare( "UPDATE planord "
                "SET planord_number=:planord_number, "
                "    planord_type=:planord_type, "
@@ -205,32 +192,41 @@ void plannedOrder::sCreate()
                "    planord_supply_itemsite_id=:planord_supply_itemsite_id, "
                "    planord_comments=:planord_comments, "
                "    planord_qty=:planord_qty, "
-               "    planord_duedate=:planord_dueDate, "
-               "    planord_startdate=(DATE(:planord_dueDate) - :planord_leadTime) "
+               "    planord_duedate=:planord_duedate, "
+               "    planord_startdate=COALESCE(:planord_startdate, date(:planord_duedate) - :planord_leadtime) "
                "WHERE (planord_id=:planord_id);" );
-    plannedCreate.bindValue(":planord_number", _number->text().toInt());
-    plannedCreate.bindValue(":planord_itemsite_id", itemsiteid);
-    if (_poButton->isChecked())
-      plannedCreate.bindValue(":planord_type", "P");
-    else if (_woButton->isChecked())
-      plannedCreate.bindValue(":planord_type", "W");
-    else if (_toButton->isChecked())
-    {
-      plannedCreate.bindValue(":planord_type", "T");
-      plannedCreate.bindValue(":planord_supply_itemsite_id", _supplyItemsiteId);
-    }
-    plannedCreate.bindValue(":planord_qty", _qty->toDouble());
-    plannedCreate.bindValue(":planord_dueDate", _dueDate->date());
-    plannedCreate.bindValue(":planord_leadTime", _leadTime->value());
-    plannedCreate.bindValue(":planord_comments", _notes->toPlainText());
-    plannedCreate.bindValue(":planord_id", _planordid);
-    plannedCreate.exec();
-    if (plannedCreate.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, plannedCreate.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+  else
+    plannedCreate.prepare( "SELECT createPlannedOrder( :planord_number, :planord_itemsite_id, :planord_qty, "
+               "                   COALESCE(:planord_startdate, date(:planord_duedate) - :planord_leadtime), :planord_duedate, "
+               "                   :planord_type, :planord_supply_itemsite_id, :planord_notes) AS result;" );
 
+  plannedCreate.bindValue(":planord_number", _number->text().toInt());
+  plannedCreate.bindValue(":planord_itemsite_id", itemsiteid);
+  if (_poButton->isChecked())
+    plannedCreate.bindValue(":planord_type", "P");
+  else if (_woButton->isChecked())
+    plannedCreate.bindValue(":planord_type", "W");
+  else if (_toButton->isChecked())
+  {
+    plannedCreate.bindValue(":planord_type", "T");
+    plannedCreate.bindValue(":planord_supply_itemsite_id", _supplyItemsiteId);
+  }
+  plannedCreate.bindValue(":planord_qty", _qty->toDouble());
+  plannedCreate.bindValue(":planord_duedate", _dueDate->date());
+  plannedCreate.bindValue(":planord_startdate", _startDate->date());
+  plannedCreate.bindValue(":planord_leadtime", _leadTime->value());
+  plannedCreate.bindValue(":planord_comments", _notes->toPlainText());
+  plannedCreate.bindValue(":planord_id", _planordid);
+
+  plannedCreate.exec();
+  if (plannedCreate.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, plannedCreate.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  if(cEdit == _mode)
+  {
     plannedCreate.prepare( "SELECT explodePlannedOrder( :planord_id, true) AS result;" );
     plannedCreate.bindValue(":planord_id", _planordid);
     plannedCreate.exec();
@@ -253,26 +249,6 @@ void plannedOrder::sCreate()
   }
   else
   {
-    plannedCreate.prepare( "SELECT createPlannedOrder( :orderNumber, :itemsite_id, :qty, "
-               "                           (DATE(:dueDate) - :leadTime), :dueDate, "
-               "                           :type, :supply_itemsite_id, :notes) AS result;" );
-    plannedCreate.bindValue(":orderNumber", _number->text().toInt());
-    plannedCreate.bindValue(":itemsite_id", itemsiteid);
-    plannedCreate.bindValue(":qty", _qty->toDouble());
-    plannedCreate.bindValue(":dueDate", _dueDate->date());
-    plannedCreate.bindValue(":leadTime", _leadTime->value());
-    plannedCreate.bindValue(":notes",    _notes->toPlainText());
-    if (_poButton->isChecked())
-      plannedCreate.bindValue(":type", "P");
-    else if (_woButton->isChecked())
-      plannedCreate.bindValue(":type", "W");
-    else if (_toButton->isChecked())
-    {
-      plannedCreate.bindValue(":type", "T");
-      plannedCreate.bindValue(":supply_itemsite_id", _supplyItemsiteId);
-    }
-  
-    plannedCreate.exec();
     if (!plannedCreate.first())
     {
       systemError( this, tr("A System Error occurred at %1::%2.")
@@ -324,9 +300,10 @@ void plannedOrder::sCreate()
 void plannedOrder::populate()
 {
   XSqlQuery planord;
-  planord.prepare( "SELECT planord.*, (planord_duedate - planord_startdate) AS leadtime,"
-                   "       itemsite_warehous_id AS supplywarehousid "
-                   "FROM planord LEFT OUTER JOIN itemsite ON (planord_supply_itemsite_id=itemsite_id) "
+  planord.prepare( "SELECT planord.*, itemsite.itemsite_leadtime AS leadtime, "
+                   "       supply.itemsite_warehous_id AS supplywarehousid "
+                   "FROM planord JOIN itemsite ON (planord_itemsite_id=itemsite.itemsite_id)"
+                   "             LEFT OUTER JOIN itemsite supply ON (planord_supply_itemsite_id=supply.itemsite_id) "
                    "WHERE (planord_id=:planord_id);" );
   planord.bindValue(":planord_id", _planordid);
   planord.exec();
@@ -335,9 +312,9 @@ void plannedOrder::populate()
     _number->setText(planord.value("planord_number").toString());
     _item->setItemsiteid(planord.value("planord_itemsite_id").toInt());
     _qty->setDouble(planord.value("planord_qty").toDouble());
+    _leadTime->setValue(planord.value("leadtime").toInt());
     _dueDate->setDate(planord.value("planord_duedate").toDate());
     _startDate->setDate(planord.value("planord_startdate").toDate());
-    _leadTime->setValue(planord.value("leadtime").toInt());
     _notes->setText(planord.value("planord_comments").toString());
     if (planord.value("planord_type").toString() == "P")
       _poButton->setChecked(TRUE);
@@ -358,12 +335,40 @@ void plannedOrder::populate()
 
 void plannedOrder::sUpdateStartDate()
 {
-  if(_dueDate->isValid())
-    _startDate->setDate(_dueDate->date().addDays(_leadTime->value() * -1));
+  if (!_warehouse->isValid() || !_dueDate->isValid())
+    return;
+
+  if (_leadTime->value() == 0)
+  {
+    _startDate->setDate(_dueDate->date());
+    return;
+  }
+
+  XSqlQuery startDate;
+  if (_metrics->boolean("UseSiteCalendar"))
+      startDate.prepare("SELECT calculateNextWorkingDate(:warehous_id, :dueDate, (:leadTime * -1)) AS startdate;");
+  else
+      startDate.prepare("SELECT (DATE(:dueDate) - :leadTime) AS startdate;");
+  startDate.bindValue(":dueDate", _dueDate->date());
+  startDate.bindValue(":leadTime", _leadTime->value());
+  startDate.bindValue(":warehous_id", _warehouse->id());
+  startDate.exec();
+  if (startDate.first())
+    _startDate->setDate(startDate.value("startdate").toDate());
+  else
+    systemError(this, tr("A System Error occurred at %1::%2.")
+                      .arg(__FILE__)
+                      .arg(__LINE__) );
 }
 
 void plannedOrder::sHandleItemsite(int pWarehousid)
 {
+  if (_metrics->boolean("UseSiteCalendar"))
+  {
+    _dueDate->setCalendarSiteId(pWarehousid);
+    _startDate->setCalendarSiteId(pWarehousid);
+  }
+
   XSqlQuery plannedHandleItemsite;
   plannedHandleItemsite.prepare( "SELECT itemsite_leadtime, itemsite_wosupply, itemsite_posupply, item_type "
              "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "

@@ -31,6 +31,7 @@ dspPlannedOrders::dspPlannedOrders(QWidget* parent, const char*, Qt::WFlags fl)
   setWindowTitle(tr("Planned Orders"));
   setReportName("PlannedOrders");
   setMetaSQLOptions("schedule", "plannedorders");
+  setNewVisible(true);
   setUseAltId(true);
   setParameterWidgetVisible(true);
   setSearchVisible(true);
@@ -67,6 +68,12 @@ dspPlannedOrders::dspPlannedOrders(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "planord_duedate");
   list()->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight, true, "planord_qty");
   list()->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter,true, "planord_firm");
+
+  if (_privileges->check("CreatePlannedOrders"))
+    connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEditOrder()));
+  else
+    newAction()->setEnabled(false);
+
 }
 
 enum SetResponse dspPlannedOrders::set(const ParameterList &pParams)
@@ -149,6 +156,17 @@ void dspPlannedOrders::sDspRunningAvailability()
   dspRunningAvailability *newdlg = new dspRunningAvailability();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void dspPlannedOrders::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+
+  plannedOrder newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
+  sFillList();
 }
 
 void dspPlannedOrders::sEditOrder()

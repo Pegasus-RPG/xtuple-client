@@ -25,6 +25,7 @@ public slots:
     virtual void sDeleteOrder();
     virtual void sDspRunningAvailability();
     virtual void sDspUsageStatistics();
+    virtual void sNew();
     virtual void sEditOrder();
     virtual void sFirmOrder();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int);
