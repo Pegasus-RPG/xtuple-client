@@ -71,4 +71,5 @@ void printCreditMemos::languageChange()
 void printCreditMemos::sHandleFinishedWithAll()
 {
   omfgThis->sCreditMemosUpdated();
+  this->close();
 }
