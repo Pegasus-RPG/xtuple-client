@@ -54,7 +54,7 @@ void AddressCluster::init()
     _addr3         = new XLineEdit(this);
     _cityLit       = new QLabel(tr("City:"), this);
     _city          = new XLineEdit(this);
-    _stateLit      = new QLabel(tr("State:"));
+    _stateLit      = new QLabel(tr("State/Province:"));
     _state         = new XComboBox(this, "_state");
     _postalcodeLit = new QLabel(tr("Postal:"));
     _postalcode    = new XLineEdit(this);
@@ -94,19 +94,19 @@ void AddressCluster::init()
     _grid->addWidget(_addr1,         1, 1, 1, -1);
     _grid->addWidget(_addr2,         2, 1, 1, -1);
     _grid->addWidget(_addr3,         3, 1, 1, -1);
-    _grid->addWidget(_cityLit,       4, 0);
-    _grid->addWidget(_city,          4, 1);
-    _grid->addWidget(_stateLit,      4, 2);
-    _grid->addWidget(_state,         4, 3);
-    _grid->addWidget(_postalcodeLit, 4, 4);
-    _grid->addWidget(_postalcode,    4, 5, 1, 2);
-    _grid->addWidget(_countryLit,    5, 0);
-    _grid->addWidget(_country,       5, 1, 1, 3);
-    _grid->addWidget(_active,        5, 4);
+    _grid->addWidget(_cityLit,       5, 0);
+    _grid->addWidget(_city,          5, 1);
+    _grid->addWidget(_stateLit,      5, 2);
+    _grid->addWidget(_state,         5, 3);
+    _grid->addWidget(_postalcodeLit, 5, 4);
+    _grid->addWidget(_postalcode,    5, 5, 1, 2);
+    _grid->addWidget(_countryLit,    4, 0);
+    _grid->addWidget(_country,       4, 1, 1, 3);
+    _grid->addWidget(_active,        4, 4);
 
     QHBoxLayout* hbox = new QHBoxLayout;
     hbox->addWidget(_list);
-    _grid->addLayout(hbox, 5, 5, 1, -1, Qt::AlignRight);
+    _grid->addLayout(hbox, 4, 5, 1, -1, Qt::AlignRight);
 
     _grid->setColumnStretch(0, 0);
     _grid->setColumnStretch(1, 3);
@@ -642,14 +642,14 @@ void AddressCluster::setActiveVisible(const bool p)
   if (p)
   {
     _grid->removeWidget(_country);
-    _grid->addWidget(_active,  5, 4);
-    _grid->addWidget(_country, 5, 1, 1, 3);
+    _grid->addWidget(_active,  4, 4);
+    _grid->addWidget(_country, 4, 1, 1, 3);
   }
   else
   {
     _grid->removeWidget(_active);
     _grid->removeWidget(_country);
-    _grid->addWidget(_country, 5, 1, 1, 4);
+    _grid->addWidget(_country, 4, 1, 1, 4);
   }
 }
 
