@@ -283,7 +283,8 @@ void unpostedPoReceipts::sPost()
         else if (postLine.value("dropship").toBool())
         {
           XSqlQuery issue;
-          issue.prepare("SELECT issueToShipping('SO', coitem_id, recv_qty, "
+          issue.prepare("SELECT issueToShipping('SO', coitem_id, "
+                        "  (recv_qty * poitem_invvenduomratio / coitem_qty_invuomratio), "
                         "  :itemlocseries, now(), invhist_id ) AS result, "
                         "  coitem_cohead_id, cohead_holdtype, pohead_number "
                         "FROM invhist, recv "
