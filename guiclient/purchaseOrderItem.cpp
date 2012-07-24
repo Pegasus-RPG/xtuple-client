@@ -471,7 +471,7 @@ void purchaseOrderItem::populate()
     _manufItemNumber->setText(purchasepopulate.value("poitem_manuf_item_number").toString());
     _manufItemDescrip->setText(purchasepopulate.value("poitem_manuf_item_descrip").toString());
 
-    if (!_itemsrcid == -1)
+    if (_itemsrcid != -1)
     {
       _vendorUOM->setEnabled(FALSE);
       _manufName->setEnabled(FALSE);

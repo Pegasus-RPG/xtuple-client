@@ -163,7 +163,7 @@ void adjustInvValue::sPost()
     QString     msg;
     QWidget     *widget;
   } error[] = {
-    { ! _itemsiteid == -1,
+    { _itemsiteid != -1,
       tr("You must select a valid Itemsite before posting this transaction."), _item },
     { _newValue->text().length() == 0,
       tr("<p>You must enter a valid New Value before posting this transaction."),
