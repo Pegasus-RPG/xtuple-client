@@ -69,6 +69,11 @@ void printStatementByCustomer::clear()
   _cust->setFocus();
 }
 
+ParameterList printStatementByCustomer::getParams(XSqlQuery *docq)
+{
+  return getParams();
+}
+
 ParameterList printStatementByCustomer::getParams()
 {
   ParameterList params;

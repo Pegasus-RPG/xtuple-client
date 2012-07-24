@@ -871,6 +871,7 @@ void dspAROpenItems::sPrint()
     printStatementByCustomer newdlg(this, "", true);
     ParameterList params;
     params.append("cust_id", _customerSelector->custId());
+    params.append("asofDate", _asOf->date());
     params.append("print");
     newdlg.set(params);
   }

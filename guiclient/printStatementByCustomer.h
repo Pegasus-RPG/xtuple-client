@@ -24,6 +24,7 @@ class printStatementByCustomer : public printSinglecopyDocument,
     ~printStatementByCustomer();
 
     Q_INVOKABLE virtual void          clear();
+    Q_INVOKABLE virtual ParameterList getParams(XSqlQuery *docq);
     Q_INVOKABLE virtual ParameterList getParams();
     Q_INVOKABLE virtual bool          isOkToPrint();
 
