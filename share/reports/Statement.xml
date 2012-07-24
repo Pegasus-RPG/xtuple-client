@@ -18,8 +18,8 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT CASE WHEN (araging_doctype = 'I') THEN &lt;? value("invoice") ?>
-            WHEN (araging_doctype = 'D') THEN &lt;? value("debitMemo") ?>
-            WHEN (araging_doctype = 'C') THEN &lt;? value("creditMemo") ?>
+            WHEN (araging_doctype = 'D') THEN &lt;? value("debit") ?>
+            WHEN (araging_doctype = 'C') THEN &lt;? value("credit") ?>
             WHEN (araging_doctype = 'R') THEN &lt;? value("deposit") ?>
             ELSE 'Misc.'
        END AS doctype,
