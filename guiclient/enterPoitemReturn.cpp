@@ -137,7 +137,12 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
       enteret.bindValue(":poitem_id", _poitemid);
       enteret.exec();
       if (enteret.first())
-        _toReturn->setText(enteret.value("qtytoreturn").toString());
+      {
+          if(enteret.value("qtytoreturn").toDouble() <= _cachedReceived)
+              _toReturn->setText(enteret.value("qtytoreturn").toString());
+          else
+              _toReturn->setText(_cachedReceived);
+      }
       else if (enteret.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
