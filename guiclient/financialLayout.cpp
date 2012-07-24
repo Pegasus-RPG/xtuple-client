@@ -42,7 +42,7 @@ financialLayout::financialLayout(QWidget* parent, const char* name, bool modal, 
   connect(_addGroup, SIGNAL(clicked()), this, SLOT(sAddGroup()));
   connect(_layout, SIGNAL(itemSelected(int)), this, SLOT(sHandleSelection()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_view, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_addAccount, SIGNAL(clicked()), this, SLOT(sAddAccount()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_moveUp, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -115,13 +115,13 @@ enum SetResponse financialLayout::set(const ParameterList &pParams)
       sSetType();
 //  ToDo
     }
-    else if (param.toString() == "edit")
+    /*else if (param.toString() == "edit")
     {
       _mode = cEdit;
 
       _view->setHidden(TRUE);
       _viewCol->setHidden(TRUE);
-    }
+    }*/
     else if (param.toString() == "view")
     {
       _mode = cView;
@@ -754,56 +754,70 @@ void financialLayout::sAddSpecial()
 
 void financialLayout::sEdit()
 {
-  bool ok = false;
   ParameterList params;
-  if ( (_mode == cEdit) || (_mode == cNew) )
-	params.append("mode", "edit");
-  else
-	params.append("mode", "view");
+  params.append("mode", "edit");
 
-  if(_layout->altId() == cFlGroup)
-  {
-    params.append("flgrp_id", _layout->id());
-    if (_income->isChecked())
-      params.append("type", "income");
-    else if (_balance->isChecked())
-      params.append("type", "balance");
-    else if (_cash->isChecked())
-      params.append("type", "cash");
-    else if (_adHoc->isChecked())
-      params.append("type", "adHoc");
+  this->sHandleEditOrView(params);
+}
 
-    financialLayoutGroup newdlg(this, "", TRUE);
-    newdlg.set(params);
-    ok = (newdlg.exec() != XDialog::Rejected);
-  }
-  else if(_layout->altId() == cFlItem)
-  {
-    params.append("flitem_id", _layout->id());
-    if (_income->isChecked())
-      params.append("type", "income");
-    else if (_balance->isChecked())
-      params.append("type", "balance");
-    else if (_cash->isChecked())
-      params.append("type", "cash");
-    else if (_adHoc->isChecked())
-      params.append("type", "adHoc");
-  
-    financialLayoutItem newdlg(this, "", TRUE);
-    newdlg.set(params);
-    ok = (newdlg.exec() != XDialog::Rejected);
-  }
-  else if(_layout->altId() == cFlSpec)
-  {
-    params.append("flspec_id", _layout->id());
-  
-    financialLayoutSpecial newdlg(this, "", TRUE);
-    newdlg.set(params);
-    ok = (newdlg.exec() != XDialog::Rejected);
-  }
+void financialLayout::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
 
-  if(ok)
-    sFillList();
+  this->sHandleEditOrView(params);
+}
+
+void financialLayout::sHandleEditOrView(ParameterList &rams)
+{
+    bool ok = false;
+
+    ParameterList params = rams;
+
+    if(_layout->altId() == cFlGroup)
+    {
+      params.append("flgrp_id", _layout->id());
+      if (_income->isChecked())
+        params.append("type", "income");
+      else if (_balance->isChecked())
+        params.append("type", "balance");
+      else if (_cash->isChecked())
+        params.append("type", "cash");
+      else if (_adHoc->isChecked())
+        params.append("type", "adHoc");
+
+      financialLayoutGroup newdlg(this, "", TRUE);
+
+      newdlg.set(params);
+      ok = (newdlg.exec() != XDialog::Rejected);
+    }
+    else if(_layout->altId() == cFlItem)
+    {
+      params.append("flitem_id", _layout->id());
+      if (_income->isChecked())
+        params.append("type", "income");
+      else if (_balance->isChecked())
+        params.append("type", "balance");
+      else if (_cash->isChecked())
+        params.append("type", "cash");
+      else if (_adHoc->isChecked())
+        params.append("type", "adHoc");
+
+      financialLayoutItem newdlg(this, "", TRUE);
+      newdlg.set(params);
+      ok = (newdlg.exec() != XDialog::Rejected);
+    }
+    else if(_layout->altId() == cFlSpec)
+    {
+      params.append("flspec_id", _layout->id());
+
+      financialLayoutSpecial newdlg(this, "", TRUE);
+      newdlg.set(params);
+      ok = (newdlg.exec() != XDialog::Rejected);
+    }
+
+    if(ok)
+      sFillList();
 }
 
 void financialLayout::sDelete()

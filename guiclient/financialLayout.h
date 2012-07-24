@@ -41,6 +41,8 @@ public slots:
     virtual void sAddAccount();
     virtual void sAddSpecial();
     virtual void sEdit();
+    virtual void sView();
+    virtual void sHandleEditOrView(ParameterList&);
     virtual void sDelete();
     virtual void sMoveUp();
     virtual void sMoveDown();
