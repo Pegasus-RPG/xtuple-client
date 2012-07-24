@@ -191,6 +191,17 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
 
 void characteristicAssignment::sSave()
 {
+  if(_targetType == "I")
+  {
+      if(_value->text().trimmed() == "")
+      {
+          QMessageBox::information( this, tr("No Value Entered"),
+                                    tr("You must enter a value before saving this Item Characteristic.") );
+          _value->setFocus();
+          return;
+      }
+  }
+
   XSqlQuery characteristicSave;
   if (_char->model()->data(_char->model()->index(_char->currentIndex(), 0)) == -1)
   {
