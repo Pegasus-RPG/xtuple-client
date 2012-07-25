@@ -60,7 +60,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
   connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sHandleAssigned()));
 
-  _probability->setValidator(0);
+  _probability->setValidator(new QIntValidator(this));
   
   _opheadid = -1;
   _custid = -1;
