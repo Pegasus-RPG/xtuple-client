@@ -1113,8 +1113,9 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "       COALESCE(vend_addr_id, -1) AS vendaddrid,"
                "       COALESCE(vend_taxzone_id, -1) AS vendtaxzoneid,"
                "       crmacct_id"
-               "  FROM vendinfo JOIN addr ON (vend_addr_id=addr_id)"
-               "  JOIN crmacct ON (vend_id=crmacct_vend_id)"
+               "  FROM vendinfo"
+               "  LEFT OUTER JOIN addr ON (vend_addr_id=addr_id)"
+               "  LEFT OUTER JOIN crmacct ON (vend_id=crmacct_vend_id)"
                "  LEFT OUTER JOIN cntct ON (vend_cntct1_id=cntct_id) "
                "WHERE (vend_id=:vend_id) "
                "LIMIT 1;" );
