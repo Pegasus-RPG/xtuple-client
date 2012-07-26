@@ -33,7 +33,7 @@ costCategory::costCategory(QWidget* parent, const char* name, bool modal, Qt::WF
   _adjustment->setType(GLCluster::cExpense);
   _invScrap->setType(GLCluster::cExpense);
   _mfgScrap->setType(GLCluster::cExpense);
-  _transformClearing->setType(GLCluster::cAsset);
+  _transformClearing->setType(GLCluster::cExpense | GLCluster::cAsset);
   _purchasePrice->setType(GLCluster::cExpense | GLCluster::cAsset);
   _liability->setType(GLCluster::cLiability);
   _freight->setType(GLCluster::cExpense);
