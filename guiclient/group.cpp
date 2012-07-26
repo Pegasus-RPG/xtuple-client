@@ -111,7 +111,6 @@ enum SetResponse group::set(const ParameterList &pParams)
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-      _trapClose = true;
       groupet.exec("BEGIN;");
     }
     else if (param.toString() == "view")
@@ -294,6 +293,7 @@ void group::sAdd()
   }
 
   sModuleSelected(_module->currentText());
+  _trapClose = true;
 }
 
 void group::sAddAll()
@@ -320,6 +320,7 @@ void group::sAddAll()
   }
 
   sModuleSelected(_module->currentText());
+  _trapClose = true;
 }
 
 void group::sRevoke()
@@ -346,6 +347,7 @@ void group::sRevoke()
   }
 
   sModuleSelected(_module->currentText());
+  _trapClose = true;
 }
 
 void group::sRevokeAll()
@@ -372,6 +374,7 @@ void group::sRevokeAll()
   }
 
   sModuleSelected(_module->currentText());
+  _trapClose = true;
 }
 
 void group::populate()
