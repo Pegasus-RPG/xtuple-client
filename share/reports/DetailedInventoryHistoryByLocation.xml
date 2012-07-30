@@ -38,7 +38,7 @@
        formatQty(invdetail_qty_before) AS qohbefore,
        formatQty(invdetail_qty_after) AS qohafter,
        invhist_user AS username,
-       (select warehous_code from warehous where warehous_id=itemsite_warehous_id) as warehous_code
+       (select warehous_code from whsinfo where warehous_id=itemsite_warehous_id) as warehous_code
   FROM invdetail, invhist, itemsite, item
  WHERE ((invdetail_invhist_id=invhist_id)
    AND (invhist_itemsite_id=itemsite_id)

@@ -22,7 +22,7 @@
        item_descrip2,
        &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
-             FROM warehous
+             FROM whsinfo
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Warehouses')
@@ -49,7 +49,7 @@
        summTransC(itemsite_id, calitem_id) AS a_scrap,
        summTransA(itemsite_id, calitem_id) AS a_adjustments
 
-  FROM itemsite, warehous,
+  FROM itemsite, whsinfo,
 
        ( SELECT rcalitem_id as calitem_id,
                 findPeriodStart(rcalitem_id) as calitem_pstart,

@@ -95,7 +95,7 @@ void dspQOHByLocation::sPopulateLocations()
                          "       CASE WHEN (LENGTH(location_descrip) > 0) THEN (warehous_code || '-' || formatLocationName(location_id) || '-' || location_descrip)"
                          "            ELSE (warehous_code || '-' || formatLocationName(location_id))"
                          "       END AS locationname "
-                         "FROM location, warehous "
+                         "FROM location, whsinfo "
                          "WHERE (location_warehous_id=warehous_id) "
                          "ORDER BY locationname;" );
   else
@@ -146,7 +146,7 @@ void dspQOHByLocation::sFillList()
     XSqlQuery qq;
     qq.prepare( "SELECT formatBoolYN(location_netable) AS netable,"
                 "       formatBoolYN(location_restrict) AS restricted "
-                "FROM location, warehous "
+                "FROM location, whsinfo "
                 "WHERE ( (location_warehous_id=warehous_id)"
                 " AND (location_id=:location_id));" );
     qq.bindValue(":location_id", _location->id());
