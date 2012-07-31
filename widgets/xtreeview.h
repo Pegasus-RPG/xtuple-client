@@ -20,6 +20,8 @@
 #include "xsqltablemodel.h"
 #include "widgets.h"
 
+class QTextDocument;
+
 class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
 {
     Q_OBJECT
@@ -101,7 +103,9 @@ class XTUPLEWIDGETS_EXPORT XTreeView : public QTreeView
       void sResetAllWidths();
       void sResetWidth();
       void sShowHeaderMenu(const QPoint &);
+      void sExport();
       void sToggleForgetfulness();
+      bool populateTextDocument(QTextDocument *doc, QString suffix);
 
     private:
       bool                 _forgetful;

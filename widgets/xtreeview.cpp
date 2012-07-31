@@ -11,6 +11,8 @@
 #include "xtreeview.h"
 #include "xsqltablemodel.h"
 
+#include <QFileDialog>
+#include <QFont>
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QScriptEngine>
@@ -19,6 +21,13 @@
 #include <QSqlField>
 #include <QSqlIndex>
 #include <QSqlQuery>
+#include <QTextCharFormat>
+#include <QTextCursor>
+#include <QTextDocument>
+#include <QTextDocumentWriter>
+#include <QTextTable>
+#include <QTextTableCell>
+#include <QTextTableFormat>
 
 #include "format.h"
 #include "xtsettings.h"
@@ -707,6 +716,160 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
 
   if (! _menu->isEmpty())
     _menu->popup(mapToGlobal(pntThis));
+}
+
+// TODO: fix 13589 here then mv sExport and populateTextDocument to xtreewidget
+void XTreeView::sExport()
+{
+  QString   currdir = xtsettingsValue(window()->objectName() + "/" +
+                                      objectName() + "/exportPath").toString();
+  QString   selectedFilter;
+  QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Export Save Filename"),
+                                            currdir,
+                                            tr("Text CSV (*.csv);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)"), &selectedFilter));
+  if (fi.filePath().isEmpty())
+    return;
+
+  QString defaultSuffix;
+  if(selectedFilter.contains("csv"))
+    defaultSuffix = ".csv";
+  else if(selectedFilter.contains("odt"))
+    defaultSuffix = ".odt";
+  else if(selectedFilter.contains("html"))
+    defaultSuffix = ".html";
+  else
+    defaultSuffix = ".txt";
+
+  QTextDocument doc;
+  if (! populateTextDocument(&doc, defaultSuffix))
+    return;
+
+  QTextDocumentWriter writer;
+  if (fi.suffix().isEmpty())
+    fi.setFile(fi.filePath() += defaultSuffix);
+  xtsettingsSetValue(currdir, fi.path());
+  writer.setFileName(fi.filePath());
+
+  if (fi.suffix() == "txt")
+    writer.setFormat("plaintext");
+  else if (fi.suffix() == "csv")
+    writer.setFormat("plaintext");
+  else if (fi.suffix() == "odt")
+    writer.setFormat("odf");
+  else if (fi.suffix() == "html")
+    writer.setFormat("HTML");
+
+  writer.write(&doc);
+}
+
+bool XTreeView::populateTextDocument(QTextDocument *doc, QString suffix)
+{
+  QTextCursor cursor(doc);
+  int     colcnt = 0;
+  int     rowcnt = 0;
+
+  for (int i = 0; i < header()->count(); i++)
+    if (! isColumnHidden(i))
+      colcnt++;
+  for (int i = 0; i < model()->rowCount(); i++)
+    if (! isRowHidden(i))
+      rowcnt++;
+
+  /* QTextDocumentWriter appears to put each table cell on its own line,
+     so we need special handling of csv and txt to build full lines.
+  */
+  if (suffix == ".csv" || suffix == ".txt")
+  {
+    QStringList fields;
+    QString fieldWrapper   = (suffix == ".csv") ? "\"%1\"" : "%1";
+    QString fieldSeparator = (suffix == ".csv") ? ","      : "\t";
+
+    for (int col = 0; col < header()->count(); col++)
+      if (! isColumnHidden(col))
+        fields << fieldWrapper.arg(model()->headerData(col, Qt::Horizontal,
+                                                       Qt::DisplayRole)
+                                    .toString().replace(QRegExp("\\s+"), " "));
+
+    cursor.insertText(fields.join(fieldSeparator));
+
+    for (int row = 0; row < model()->rowCount(); row++)
+    {
+      fields.clear();
+      if (! isRowHidden(row))
+      {
+        for (int col = 0; col < model()->columnCount(); col++)
+          if (! isColumnHidden(col))
+            fields << fieldWrapper.arg(model()->index(row, col)
+                                       .data(Qt::DisplayRole).toString()
+                                       .replace(QRegExp("\\s+"), " "));
+
+        cursor.insertBlock();
+        cursor.insertText(fields.join(fieldSeparator));
+      }
+    }
+  }
+
+  else
+  {
+    QTextTableFormat  tableFormat;
+    QTextTableCell    cell;
+    QTextCharFormat   format;
+    QString           font;
+
+    tableFormat.setHeaderRowCount(1);
+
+    // presizing the table gives a huge performance gain over adding dynamically
+    cursor.insertTable(rowcnt + 1, colcnt, tableFormat);
+
+    for (int col = 0; col < header()->count(); col++)
+    {
+      if (! isColumnHidden(col))
+      {
+        cell   = cursor.currentTable()->cellAt(cursor.position());
+        format = cell.format();
+        format.setBackground(Qt::lightGray);
+        cell.setFormat(format);
+        cursor.insertText(model()->headerData(col, Qt::Horizontal,
+                                              Qt::DisplayRole).toString());
+        cursor.movePosition(QTextCursor::NextCell);
+      }
+    }
+
+    for (int row = 0; row < model()->rowCount(); row++)
+    {
+      if (! isRowHidden(row))
+      {
+        for (int col = 0; col < model()->columnCount(); col++)
+        {
+          if (! isColumnHidden(col))
+          {
+            QModelIndex idx = model()->index(row, col);
+
+            cell   = cursor.currentTable()->cellAt(cursor.position());
+            format = cell.format();
+            if (idx.data(Qt::BackgroundRole).isValid())
+              format.setBackground(idx.data(Qt::BackgroundRole).value<QColor>());
+            if (idx.data(Qt::ForegroundRole).isValid())
+              format.setForeground(idx.data(Qt::ForegroundRole).value<QColor>());
+            // Qt::TextAlignmentRole?
+
+            if (idx.data(Qt::FontRole).isValid())
+            {
+              font = idx.data(Qt::FontRole).toString();
+              if (!font.isEmpty())
+                format.setFont(QFont(font));
+            }
+
+            cell.setFormat(format);
+            cursor.insertText(idx.data(Qt::DisplayRole).toString());
+            cursor.movePosition(QTextCursor::NextCell);
+          }
+        }
+      }
+    }
+  }
+
+  return true;
 }
 
 void XTreeView::sToggleForgetfulness()
