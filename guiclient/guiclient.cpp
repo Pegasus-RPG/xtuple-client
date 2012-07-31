@@ -925,36 +925,6 @@ void GUIClient::sTick()
 
     if (isVisible())
     {
-      if (tickle.value("messages").toBool())
-      {
-//  Grab any new System Messages
-        XSqlQuery msg;
-        msg.exec( "SELECT msguser_id "
-                  "FROM msg, msguser "
-                  "WHERE ( (msguser_username=getEffectiveXtUser())"
-                  " AND (msguser_msg_id=msg_id)"
-                  " AND (CURRENT_TIMESTAMP BETWEEN msg_scheduled AND msg_expires)"
-                  " AND (msguser_viewed IS NULL) );" );
-        if (msg.first())
-        {
-          ParameterList params;
-          params.append("mode", "acknowledge");
-
-          systemMessage newdlg(this, "", TRUE);
-          newdlg.set(params);
-
-          do
-          {
-            ParameterList params;
-            params.append("msguser_id", msg.value("msguser_id").toInt());
-
-            newdlg.set(params);
-            newdlg.exec();
-          }
-          while (msg.next());
-        }
-      }
-
 //  Handle any un-dispatched Events
       if (tickle.value("events").toBool())
       {
@@ -1029,6 +999,38 @@ void GUIClient::sClearErrorMessages()
 }
 
 //  Global notification slots
+void GUIClient::sSystemMessageAdded()
+{
+  emit systemMessageAdded();
+
+  //  Grab any new System Messages
+          XSqlQuery msg;
+          msg.exec( "SELECT msguser_id "
+                    "FROM msg, msguser "
+                    "WHERE ( (msguser_username=getEffectiveXtUser())"
+                    " AND (msguser_msg_id=msg_id)"
+                    " AND (CURRENT_TIMESTAMP BETWEEN msg_scheduled AND msg_expires)"
+                    " AND (msguser_viewed IS NULL) );" );
+          if (msg.first())
+          {
+            ParameterList params;
+            params.append("mode", "acknowledge");
+
+            systemMessage newdlg(this, "", TRUE);
+            newdlg.set(params);
+
+            do
+            {
+              ParameterList params;
+              params.append("msguser_id", msg.value("msguser_id").toInt());
+
+              newdlg.set(params);
+              newdlg.exec();
+            }
+            while (msg.next());
+          }
+}
+
 void GUIClient::sItemsUpdated(int intPItemid, bool boolPLocalUpdate)
 {
   emit itemsUpdated(intPItemid, boolPLocalUpdate);

@@ -293,6 +293,7 @@ class GUIClient : public QMainWindow
     void sSalesOrdersUpdated(int);
     void sSalesRepUpdated(int);
     void sStandardPeriodsUpdated();
+    void sSystemMessageAdded();
     void sTaxAuthsUpdated(int);
     void sTransferOrdersUpdated(int);
     void sUserUpdated(QString);
@@ -346,6 +347,7 @@ class GUIClient : public QMainWindow
     void salesOrdersUpdated(int, bool);
     void salesRepUpdated(int);
     void standardPeriodsUpdated();
+    void systemMessageAdded();
     void taxAuthsUpdated(int);
     void transferOrdersUpdated(int);
     void userUpdated(QString);
