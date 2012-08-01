@@ -176,6 +176,17 @@ const struct {
   { "copyItemSite",  -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "You do not have sufficient privilege to "
 			    "create an Item Site."),			0, "" },
 
+  { "copyBOM", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not find the Source BOM to copy."), 0, "" },
+  { "copyBOM", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected source Item does not "
+                                     "have any Bill of Material Component Items associated with it."), 0, "" },
+  { "copyBOM", -3, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected target Item already has a "
+                                     "Bill of Materials associated with it.\n"
+                                     "You must first delete the Bill of Materials for the selected target item before "
+                                     "attempting to copy an existing Bill of Materials."), 0, "" },
+  { "copyBOM", -4, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Item you are trying to copy "
+                                     "this Bill of Material to is a "
+                                     "component item which would cause a recursive Bill of Material."),	0, "" },
+
   { "copyPO", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Could not find the P/O to copy."),		0, "" },
   { "copyPO", -2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The Vendor of the original P/O does not match "
 		     "the Vendor for the copy. Changing the Vendor "

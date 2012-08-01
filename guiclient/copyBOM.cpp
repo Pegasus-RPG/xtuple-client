@@ -12,6 +12,9 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+
+#include "storedProcErrorLookup.h"
 
 copyBOM::copyBOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -64,60 +67,37 @@ enum SetResponse copyBOM::set(const ParameterList &pParams)
 void copyBOM::sCopy()
 {
   XSqlQuery copyCopy;
-  copyCopy.prepare( "SELECT bomitem_id "
-             "FROM bomitem "
-             "WHERE (bomitem_parent_item_id=:item_id) "
-             "LIMIT 1;" );
+  copyCopy.prepare("SELECT bomitem_id "
+                   "FROM bomitem(:item_id) "
+                   "WHERE ( (bomitem_booitem_seq_id != -1) "
+                   " AND (bomitem_booitem_seq_id IS NOT NULL) ) "
+                   "LIMIT 1;" );
   copyCopy.bindValue(":item_id", _source->id());
   copyCopy.exec();
-  if (!copyCopy.first())
-    QMessageBox::information( this, tr("Non-Existent Bill of Materials"),
-                              tr("The selected source Item does not have any Bill of Material Component Items associated with it.") );
-
-  else
-  {
-    copyCopy.prepare( "SELECT bomitem_id "
-               "FROM bomitem "
-               "WHERE (bomitem_parent_item_id=:item_id) "
-               "LIMIT 1;" );
-    copyCopy.bindValue(":item_id", _target->id());
-    copyCopy.exec();
-    if (copyCopy.first())
-      QMessageBox::information( this, tr("Existing Bill of Materials"),
-                                tr( "The selected target Item already has a Bill of Materials associated with it.\n"
-                                    "You must first delete the Bill of Materials for the selected target item before\n"
-                                    "attempting to copy an existing Bill of Materials." ) );
-    else
-    {
-	
-      copyCopy.prepare("SELECT bomitem_id "
-		        "FROM bomitem(:item_id) "
-                "WHERE ( (bomitem_booitem_seq_id != -1) "
-                " AND (bomitem_booitem_seq_id IS NOT NULL) ) "
-                "LIMIT 1;" );
-      copyCopy.bindValue(":item_id", _source->id());
-      copyCopy.exec();
-      if (copyCopy.first())
-        QMessageBox::information( this, tr("Dependent BOO Data"),
-          tr("One or more of the components for this Bill of Materials make reference to a\n"
-             "Bill of Operations. These references cannot be copied and must be added manually.") );
+  if (copyCopy.first())
+    QMessageBox::information( this, tr("Dependent BOO Data"),
+      tr("One or more of the components for this Bill of Materials make reference to a\n"
+         "Bill of Operations. These references cannot be copied and must be added manually.") );
       
-      copyCopy.prepare("SELECT copyBOM(:sourceid, :targetid) AS result;");
-      copyCopy.bindValue(":sourceid", _source->id());
-      copyCopy.bindValue(":targetid", _target->id());
-      copyCopy.exec();
-      if(copyCopy.first() && copyCopy.value("result").toInt() < 0)
-      {
-        QMessageBox::information( this, tr("Recursive BOM"),
-          tr("The Item you are trying to copy this Bill of Material to is a\n"
-             "component item which would cause a recursive Bill of Material.\n"
-             "Cannot copy Bill of Material.") );
-        return;
-      }
-      omfgThis->sBOMsUpdated(_target->id(), TRUE);
+  copyCopy.prepare("SELECT copyBOM(:sourceid, :targetid) AS result;");
+  copyCopy.bindValue(":sourceid", _source->id());
+  copyCopy.bindValue(":targetid", _target->id());
+  copyCopy.exec();
+  if (copyCopy.first())
+  {
+    int result = copyCopy.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("copyBOM", result), __FILE__, __LINE__);
+      return;
     }
   }
-
+  else if (copyCopy.lastError().type() != QSqlError::NoError)
+  {
+      systemError(this, copyCopy.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  omfgThis->sBOMsUpdated(_target->id(), TRUE);
   if (_captive)
     close();
   else
