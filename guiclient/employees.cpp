@@ -86,7 +86,9 @@ void employees::sDelete()
     return;
 
   XSqlQuery delq;
-  delq.prepare("DELETE FROM emp WHERE emp_id = :emp_id;");
+  delq.prepare("DELETE FROM charass WHERE charass_target_type = 'EMP' AND charass_target_id = :emp_id;"
+               "DELETE FROM empgrpitem WHERE empgrpitem_emp_id = :emp_id;"
+               "DELETE FROM emp WHERE emp_id = :emp_id;");
   delq.bindValue(":emp_id", list()->id());
   delq.exec();
   if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Employee"),

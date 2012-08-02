@@ -417,12 +417,18 @@ const struct {
 			       "it. You must remove these assignments before "
 			       "you may delete the selected Characteristic."),
 			       					 0, "" },
-{ "deleteCharacteristic",
+  { "deleteCharacteristic",
                       -6, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Characteristic cannot be deleted "
                              "because there are Incidents assigned to "
                              "it. You must remove these assignments before "
                              "you may delete the selected Characteristic."),
                                                                0, "" },
+  { "deleteCharacteristic",
+			-7, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The selected Characteristic cannot be deleted "
+			       "because there are Employees assigned to "
+			       "it. You must remove these assignments before "
+			       "you may delete the selected Characteristic."),
+			       					 0, "" },
 
   { "deleteCheck", -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot delete this check because either it has not "
                           "been voided, it has already been posted or replaced,"
