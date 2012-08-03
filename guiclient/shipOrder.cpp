@@ -804,7 +804,7 @@ void shipOrder::sSelectToggled( bool yes )
 
 void shipOrder::sCreateToggled( bool yes )
 {
-  if(yes && !_select->isChecked())
+  if(yes && !_select->isChecked() && _privileges->check("SelectBilling"))
     _select->setChecked(true);
 }
 
