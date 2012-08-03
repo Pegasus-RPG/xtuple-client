@@ -149,6 +149,7 @@ void editOwners::sFillList()
   }
 
   _modifyAll->setEnabled(_list->topLevelItemCount() > 0);
+  _modify->setEnabled(false);
   _first = true;
   _queryString = "";
 }
