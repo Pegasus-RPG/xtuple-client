@@ -479,24 +479,26 @@ void workOrder::sCreate()
                              tr( "The Work Order was created but not Exploded as the Work Order status is not Open\n"));
     
 
-	if (_woid > 0)
-	{
-		if (_mode == cNew)
-		{
-		  disconnect(_woNumber, SIGNAL(editingFinished()), this, SLOT(sCreate()));
-		  disconnect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sCreate()));
-		  disconnect(_qty, SIGNAL(editingFinished()), this, SLOT(sCreate()));
-		  disconnect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
-	      
-		  connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
-		  connect(_qty, SIGNAL(editingFinished()), this, SLOT(sChangeParentQty()));
-		  connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
-		  connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
-		}
-	     
-		populate();
-		omfgThis->sWorkOrdersUpdated(_woid, TRUE);
-	}
+    if (_woid > 0)
+    {
+      if (_mode == cNew)
+      {
+        disconnect(_woNumber, SIGNAL(editingFinished()), this, SLOT(sCreate()));
+        disconnect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sCreate()));
+        disconnect(_qty, SIGNAL(editingFinished()), this, SLOT(sCreate()));
+        disconnect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sCreate()));
+
+        connect(_priority, SIGNAL(editingFinished ()), this, SLOT(sReprioritizeParent()));
+        connect(_qty, SIGNAL(editingFinished()), this, SLOT(sChangeParentQty()));
+        connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
+        connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sRescheduleParent()));
+      }
+
+      populate();
+      omfgThis->sWorkOrdersUpdated(_woid, TRUE);
+    }
+    else
+      close();
   }
 }
 
