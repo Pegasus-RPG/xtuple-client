@@ -20,6 +20,8 @@
 #include "xdoublevalidator.h"
 #include "priceList.h"
 #include "taxDetail.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 /* TODO: connect(_warehouse id, SIGNAL(newId(int)), ...) to set _trackqoh?
          bug 16465 - seems too disruptive now as we're between 3.8.0RC and RC2
@@ -94,10 +96,8 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
   {
     _invcheadid = param.toInt();
 
-    invoiceet.prepare("SELECT invchead_invcnumber, invchead_cust_id, "
-	          "       invchead_curr_id, invchead_invcdate, "
-			  "       invchead_taxzone_id "
-              "FROM invchead "
+    invoiceet.prepare("SELECT * "
+                      "FROM invchead "
 			  "WHERE (invchead_id = :invchead_id);");
     invoiceet.bindValue(":invchead_id", _invcheadid);
     invoiceet.exec();
@@ -106,7 +106,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _invoiceNumber->setText(invoiceet.value("invchead_invcnumber").toString());
       _custid = invoiceet.value("invchead_cust_id").toInt();
       _taxzoneid = invoiceet.value("invchead_taxzone_id").toInt();
-	  _tax->setId(invoiceet.value("invchead_curr_id").toInt());
+      _tax->setId(invoiceet.value("invchead_curr_id").toInt());
       _price->setId(invoiceet.value("invchead_curr_id").toInt());
       _price->setEffective(invoiceet.value("invchead_invcdate").toDate());
       sPriceGroup();
@@ -132,9 +132,18 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
+      invoiceet.exec("SELECT NEXTVAL('invcitem_invcitem_id_seq') AS invcitem_id;");
+      if (invoiceet.first())
+        _invcitemid = invoiceet.value("invcitem_id").toInt();
+      else if (invoiceet.lastError().type() != QSqlError::NoError)
+      {
+            systemError(this, invoiceet.lastError().databaseText(), __FILE__, __LINE__);
+            return UndefinedError;
+      }
+
       invoiceet.prepare( "SELECT (COALESCE(MAX(invcitem_linenumber), 0) + 1) AS linenumber "
-                 "FROM invcitem "
-                 "WHERE (invcitem_invchead_id=:invchead_id);" );
+                         "FROM invcitem "
+                         "WHERE (invcitem_invchead_id=:invchead_id);" );
       invoiceet.bindValue(":invchead_id", _invcheadid);
       invoiceet.exec();
       if (invoiceet.first())
@@ -182,57 +191,35 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
   return NoError;
 }
 
+int invoiceItem::id() const
+{
+  return _invcitemid;
+}
+
+int invoiceItem::mode() const
+{
+  return _mode;
+}
+
 void invoiceItem::sSave()
 {
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_itemSelected->isChecked() && !_item->isValid(), _item,
+                          tr("<p>You must select an Item for this Invoice Item before you may save it."))
+         << GuiErrorCheck(!_itemSelected->isChecked() && !_itemNumber->text().length(), _itemNumber,
+                          tr("<p>You must enter an Item Number for this Miscellaneous Invoice Item before you may save it."))
+         << GuiErrorCheck(!_itemSelected->isChecked() && !_itemDescrip->toPlainText().length(), _itemDescrip,
+                          tr("<p>You must enter a Item Description for this Miscellaneous Invoice Item before you may save it."))
+         << GuiErrorCheck(!_itemSelected->isChecked() && !_salescat->isValid(), _salescat,
+                          tr("<p>You must select a Sales Category for this Miscellaneous Invoice Item before you may save it."))
+  ;
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Invoice Item"), errors))
+    return;
+
   XSqlQuery invoiceSave;
-  if (_itemSelected->isChecked())
-  {
-    if (!_item->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Invoice Item"),
-                             tr("<p>You must select an Item for this Invoice Item before you may save it.") );
-      _item->setFocus();
-      return;
-    }
-  }
-  else
-  {
-    if (!_itemNumber->text().length())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Invoice Item"),
-                             tr("<p>You must enter an Item Number for this Miscellaneous Invoice Item before you may save it.") );
-      _itemNumber->setFocus();
-      return;
-    }
-
-    if (!_itemDescrip->toPlainText().length())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Invoice Item"),
-                             tr("<p>You must enter a Item Description for this Miscellaneous Invoice Item before you may save it.") );
-      _itemDescrip->setFocus();
-      return;
-    }
-
-    if (!_salescat->isValid())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Invoice Item"),
-                             tr("<p>You must select a Sales Category for this Miscellaneous Invoice Item before you may save it.") );
-      _salescat->setFocus();
-      return;
-    }
-  }
 
   if (_mode == cNew)
   {
-    invoiceSave.exec("SELECT NEXTVAL('invcitem_invcitem_id_seq') AS invcitem_id;");
-    if (invoiceSave.first())
-      _invcitemid = invoiceSave.value("invcitem_id").toInt();
-    else if (invoiceSave.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, invoiceSave.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
     invoiceSave.prepare( "INSERT INTO invcitem "
                "( invcitem_id, invcitem_invchead_id, invcitem_linenumber,"
                "  invcitem_item_id, invcitem_warehous_id,"
@@ -244,7 +231,7 @@ void invoiceItem::sSave()
                "  invcitem_price_uom_id, invcitem_price_invuomratio,"
                "  invcitem_notes, "
                "  invcitem_taxtype_id, invcitem_rev_accnt_id) "
-	           "VALUES "
+               "VALUES "
                "( :invcitem_id, :invchead_id, :invcitem_linenumber,"
                "  :item_id, :warehous_id,"
                "  :invcitem_number, :invcitem_descrip, :invcitem_salescat_id,"
@@ -314,6 +301,7 @@ void invoiceItem::sSave()
     return;
   }
   _saved = true;
+  emit saved(_invcitemid);
 
   done(_invcitemid);
 }
@@ -325,13 +313,13 @@ void invoiceItem::populate()
                     "       CASE WHEN (item_id IS NULL) THEN :na"
                     "            ELSE item_listprice"
                     "       END AS f_listprice,"
-					"		taxzone_id,"
+                    "		taxzone_id,"
                     "       invchead_curr_id AS taxcurr_id,"
                     "       itemsite_costmethod"
                     " FROM invcitem JOIN "
                     "     invchead LEFT OUTER JOIN taxzone ON "
-					"       (invchead_taxzone_id = taxzone_id) "
-					"     ON (invcitem_invchead_id = invchead_id) LEFT OUTER JOIN "
+                    "       (invchead_taxzone_id = taxzone_id) "
+                    "     ON (invcitem_invchead_id = invchead_id) LEFT OUTER JOIN "
                     "     item ON (invcitem_item_id = item_id) "
                     " LEFT OUTER JOIN invcitemtax ON (invcitem_id = taxhist_parent_id) "
                     " LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id "
@@ -421,6 +409,7 @@ void invoiceItem::populate()
   sCalculateExtendedPrice();
 
   _saved = true;
+  emit populated();
 }
 
 void invoiceItem::sCalculateExtendedPrice()

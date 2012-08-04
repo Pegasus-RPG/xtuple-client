@@ -25,6 +25,9 @@ public:
     invoiceItem(QWidget* = 0, const char * = 0, Qt::WindowFlags = 0);
     ~invoiceItem();
 
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
+
     virtual void populate();
 
 public slots:
@@ -44,6 +47,12 @@ public slots:
 
 protected slots:
     virtual void languageChange();
+
+signals:
+    void populated();
+    void newId(int);
+    void newMode(int);
+    void saved(int);
 
 private:
     int _mode;
