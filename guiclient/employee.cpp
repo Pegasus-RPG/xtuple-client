@@ -388,7 +388,10 @@ bool employee::sSave(const bool pClose)
   if (pClose)
     done(_empid);
   else
+  {
+    _mode = cEdit;
     sPopulate();
+  }
 
   return true;
 }
