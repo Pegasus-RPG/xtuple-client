@@ -34,6 +34,7 @@ dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char*, Q
   _classCode->setType(ParameterGroup::ClassCode);
 
   list()->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Active"),      _ynColumn,    Qt::AlignCenter ,true,  "item_active" );
   list()->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "description"   );
   list()->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
   list()->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight,  true,  "scost"  );
@@ -77,6 +78,9 @@ bool dspItemCostsByClassCode::setParams(ParameterList &params)
 
   if(_onlyShowDiff->isChecked())
     params.append("onlyShowDiffCosts");
+
+  if(!_showInactive->isChecked())
+    params.append("onlyShowActive");
 
   XSqlQuery qq;
   qq.exec("SELECT locale_cost_scale "

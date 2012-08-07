@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
-    <height>174</height>
+    <width>403</width>
+    <height>219</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,6 +59,13 @@ to be bound by its terms.</comment>
     <widget class="XCheckBox" name="_onlyShowDiff">
      <property name="text">
       <string>Only Show Items where Actual and Standard are different</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="XCheckBox" name="_showInactive">
+     <property name="text">
+      <string>Show Inactive Items</string>
      </property>
     </widget>
    </item>
