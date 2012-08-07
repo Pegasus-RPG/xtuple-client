@@ -393,7 +393,6 @@ void ContactWidget::silentSetId(const int pId)
           _phone->setText(idQ.value("cntct_phone").toString());
           _phone2->setText(idQ.value("cntct_phone2").toString());
           _fax->setText(idQ.value("cntct_fax").toString());
-          _emailCache=idQ.value("cntct_email").toString();
           _webaddr->setText(idQ.value("cntct_webaddr").toString());
           _address->setId(idQ.value("cntct_addr_id").toInt());
           _active->setChecked(idQ.value("cntct_active").toBool());
@@ -1391,8 +1390,6 @@ void ContactWidget::setEmailBodyText(const QString text)
 
 void ContactWidget::fillEmail()
 {
-  // TODO: why block signals? the only connection is to emit changed()
-  _email->blockSignals(true);
   XSqlQuery qry;
   qry.prepare("SELECT cntcteml_id AS id, cntcteml_email AS email "
               "FROM cntcteml "
@@ -1400,14 +1397,14 @@ void ContactWidget::fillEmail()
               "ORDER BY email, id;");
   qry.bindValue(":cntct_id", _id);
   qry.exec();
+
   _email->populate(qry);
-  _email->setText(_emailCache);
-  _email->blockSignals(false);
+  _email->setId(_id);
 }
 
 void ContactWidget::sEditEmailList()
 {
-  _emailCache = _email->currentText();
+  _email->setId(_id);
   
   ParameterList params;
   params.append("cntct_id", _id);
@@ -1419,7 +1416,7 @@ void ContactWidget::sEditEmailList()
   if (selected)
     _email->setId(selected);
   else
-    _email->setText(_emailCache);
+    _email->setId(_id);
 }
 
 bool ContactWidget::eventFilter(QObject *obj, QEvent *event)

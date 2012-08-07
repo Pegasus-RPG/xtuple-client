@@ -375,7 +375,6 @@ private:
   QString _notes;
   bool    _valid;
   bool    _changed;
-  QString _emailCache;
 
   //Data Mapping Values
   QString  _fieldNameChange;
