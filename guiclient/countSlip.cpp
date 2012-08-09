@@ -16,6 +16,8 @@
 
 #include "inputManager.h"
 #include "countTagList.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 
 countSlip::countSlip(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -165,22 +167,15 @@ void countSlip::sCatchCounttagid(int pCnttagid)
 void countSlip::sSave()
 {
   XSqlQuery countSave;
-  QString slipNumber = _number->text().trimmed().toUpper();
-  if (slipNumber.length() == 0)
-  {
-    QMessageBox::critical( this, tr("Enter Count Slip #"),
-                           tr("You must enter a Count Slip # for this Count Slip.") );
-    _number->setFocus();
-    return;
-  }
 
-  if (_qty->text().trimmed().length() == 0)
-  {
-    QMessageBox::critical( this, tr("Enter Count Slip Quantity"),
-                           tr("You must enter a counted quantity for this Count Slip.") );
-    _qty->setFocus();
-    return;
-  }
+  QString slipNumber = _number->text().trimmed().toUpper();
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(slipNumber.length() == 0, _number,
+                          tr("You must enter a Count Slip # for this Count Slip."))
+         << GuiErrorCheck(_qty->text().trimmed().length() == 0, _qty,
+                          tr("You must enter a counted quantity for this Count Slip."))
+     ;
 
   if (_mode == cNew)
   {
@@ -203,12 +198,11 @@ void countSlip::sSave()
       countSave.exec();
       if (countSave.first())
       {
-        QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
+        errors << GuiErrorCheck(true, _number,
                                tr( "An unposted Count Slip for this Site has already been entered\n"
                                    "with this #.  The I/M Module has been configured to disallow the\n"
                                    "duplication of unposted Count Slip #s within a given Site.\n"
-                                   "Please verify the # of the Count Slip you are entering." ) );
-        return;
+                                   "Please verify the # of the Count Slip you are entering." ));
       }
     }
     else if (countSlipAuditing == "A")
@@ -221,12 +215,11 @@ void countSlip::sSave()
       countSave.exec();
       if (countSave.first())
       {
-        QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
+        errors << GuiErrorCheck(true, _number,
                                tr( "An unposted Count Slip has already been entered with this #.\n"
                                    "The I/M Module has been configured to disallow the\n"
                                    "duplication of unposted Count Slip #s.\n"
-                                   "Please verify the # of the Count Slip you are entering." ) );
-        return;
+                                   "Please verify the # of the Count Slip you are entering." ));
       }
     }
     else if (countSlipAuditing == "X")
@@ -246,12 +239,11 @@ void countSlip::sSave()
       countSave.exec();
       if (countSave.first())
       {
-        QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
+        errors << GuiErrorCheck(true, _number,
                                tr( "An Count Slip for this Site has already been entered with this #.\n"
                                    "The I/M Module has been configured to disallow the duplication\n"
                                    "of Count Slip #s within a given Site.\n"
-                                   "Please verify the # of the Count Slip you are entering." ) );
-        return;
+                                   "Please verify the # of the Count Slip you are entering." ));
       }
     }
     else if (countSlipAuditing == "B")
@@ -263,11 +255,10 @@ void countSlip::sSave()
       countSave.exec();
       if (countSave.first())
       {
-        QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
+        errors << GuiErrorCheck(true, _number,
                                tr( "An Count Slip has already been entered with this #.  The\n"
                                    "I/M Module has been configured to disallow the duplication of Count Slip #s.\n"
-                                   "Please verify the # of the Count Slip you are entering." ) );
-        return;
+                                   "Please verify the # of the Count Slip you are entering." ));
       }
     }
 
@@ -283,14 +274,15 @@ void countSlip::sSave()
     countSave.exec();
     if (countSave.first())
     {
-      QMessageBox::critical( this, tr("Cannot Duplicate Serial #"),
+      errors << GuiErrorCheck(true, _lotSerial,
                              tr( "A Count Slip has already been entered with this Serial #.\n"
-                                 "Please verify the Serial # of the Count Slip you are entering." ) );
-      return;
+                                 "Please verify the Serial # of the Count Slip you are entering." ));
     }
 
     // Check for duplicate Serial # in different Location from Location being counted
-    countSave.prepare( "SELECT itemloc_id "
+    if (!_metrics->boolean("MultiWhs"))
+    {
+      countSave.prepare( "SELECT itemloc_id "
                "FROM invcnt JOIN itemsite ON (itemsite_id=invcnt_itemsite_id)"
                "            JOIN itemloc ON (itemloc_itemsite_id=itemsite_id)"
                "            JOIN ls ON (ls_id=itemloc_ls_id)"
@@ -299,17 +291,20 @@ void countSlip::sSave()
                "  AND   (itemsite_controlmethod='S')"
                "  AND   (itemloc_location_id <> :cntslip_location_id)"
                "  AND   (ls_number=:cntslip_lotserial) );" );
-    countSave.bindValue(":cnttag_id", _cnttagid);
-    countSave.bindValue(":cntslip_location_id", _location->id());
-    countSave.bindValue(":cntslip_lotserial", _lotSerial->text());
-    countSave.exec();
-    if (countSave.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Duplicate Serial #"),
-                             tr( "This Serial # exists in a different Location.\n"
-                                 "Please verify the Serial # of the Count Slip you are entering." ) );
-      return;
+      countSave.bindValue(":cnttag_id", _cnttagid);
+      countSave.bindValue(":cntslip_location_id", _location->id());
+      countSave.bindValue(":cntslip_lotserial", _lotSerial->text());
+      countSave.exec();
+      if (countSave.first())
+      {
+        errors << GuiErrorCheck(true, _lotSerial,
+                               tr( "This Serial # exists in a different Location.\n"
+                                   "Please verify the Serial # of the Count Slip you are entering." ));
+      }
     }
+
+    if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Count Slip"), errors))
+      return;
 
     countSave.exec("SELECT NEXTVAL('cntslip_cntslip_id_seq') AS cntslip_id");
     if (countSave.first())
