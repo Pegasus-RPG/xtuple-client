@@ -12,6 +12,7 @@
 
 #include <QMessageBox>
 #include <QVariant>
+#include <QRegExp>
 
 #include <qmd5.h>
 #include <metasql.h>
@@ -514,7 +515,18 @@ void user::sRevokeGroup()
 
 void user::sCheck()
 {
+  //This regexp checks to make sure the user name starts with a letter.
+  QRegExp re("(\\d+)"); // just digits
+  QRegExp re2("(\\w+)"); // this includes all letters & numbers of all alphabets
   _cUsername = _username->text().trimmed();
+  if ((!re.indexIn(_cUsername.at(0)) || re2.indexIn(_cUsername.at(0))) && _username->text() != "")
+  {
+      QMessageBox::critical(this, tr("Error"), tr("User names must begin with a letter."));
+      _username->clear();
+      _username->setFocus();
+      return;
+  }
+
   if (_cUsername.length() > 0)
   {
     XSqlQuery usrq;
