@@ -2776,7 +2776,7 @@ void salesOrderItem::populate()
           " AND (coitem_id=<? value('id') ?>) "
           " AND (locale_id = usr_locale_id));"
           "<? else ?>"
-            "SELECT itemsite_leadtime, COALESCE(warehous_id, -1) AS warehous_id, "
+            "SELECT item_fractional, itemsite_leadtime, COALESCE(warehous_id, -1) AS warehous_id, "
             "       warehous_code,"
             "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
             "       item_inv_uom_id,"
@@ -2840,7 +2840,13 @@ void salesOrderItem::populate()
     _orderId       = item.value("coitem_order_id").toInt();
     _orderNumber->setText(item.value("ordnumber").toString());
     _orderQtyCache = item.value("qtyord").toDouble();
-    _qtyOrdered->setDouble(_orderQtyCache, item.value("locale_qty_scale").toInt());
+    if(item.value("item_fractional") == false)
+        _qtyOrdered->setDouble(_orderQtyCache, 0);
+    else
+    {
+        _qtyOrdered->setValidator(omfgThis->qtyVal());
+        _qtyOrdered->setText(_orderQtyCache);
+    }
     _dateCache     = item.value("coitem_scheddate").toDate();
     _scheduledDate->setDate(_dateCache);
     _notes->setText(item.value("coitem_memo").toString());
