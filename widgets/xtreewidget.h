@@ -56,6 +56,7 @@
 class QAction;
 class QMenu;
 class QScriptEngine;
+class QTextDocument;
 class XTreeWidget;
 class XTreeWidgetProgress;
 
@@ -204,9 +205,9 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     Q_INVOKABLE XTreeWidgetItem         *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     Q_INVOKABLE XTreeWidgetItem         *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
 
-    Q_INVOKABLE QString toTxt() const;
-    Q_INVOKABLE QString toCsv() const;
-    Q_INVOKABLE QString toHtml() const;
+    Q_INVOKABLE QString toTxt();
+    Q_INVOKABLE QString toCsv();
+    Q_INVOKABLE QString toHtml();
 
     // just for scripting exposure:
     Q_INVOKABLE inline void addTopLevelItem(XTreeWidgetItem *item) {        QTreeWidget::addTopLevelItem(item); }
@@ -302,6 +303,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     virtual void  mousePressEvent(QMouseEvent *);
     virtual void  mouseMoveEvent(QMouseEvent *);
     virtual void  resizeEvent(QResizeEvent *);
+    virtual bool  populateTextDocument(QTextDocument *doc, QString suffix);
 
   private:
     QString _dragString;

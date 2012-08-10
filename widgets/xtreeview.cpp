@@ -718,62 +718,55 @@ void XTreeView::sShowHeaderMenu(const QPoint &pntThis)
     _menu->popup(mapToGlobal(pntThis));
 }
 
-// TODO: fix 13589 here then mv sExport and populateTextDocument to xtreewidget
 void XTreeView::sExport()
 {
-  QString   currdir = xtsettingsValue(window()->objectName() + "/" +
-                                      objectName() + "/exportPath").toString();
-  QString   selectedFilter;
-  QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Export Save Filename"),
+  QString currdir = xtsettingsValue(window()->objectName() + "/" +
+                                    objectName() + "/exportPath").toString();
+  QString selectedFilter;
+  QFile   file(QFileDialog::getSaveFileName(this, tr("Export Save Filename"),
                                             currdir,
                                             tr("Text CSV (*.csv);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)"), &selectedFilter));
-  if (fi.filePath().isEmpty())
+  if (file.fileName().isEmpty())
     return;
 
-  QString defaultSuffix;
-  if(selectedFilter.contains("csv"))
-    defaultSuffix = ".csv";
-  else if(selectedFilter.contains("odt"))
-    defaultSuffix = ".odt";
-  else if(selectedFilter.contains("html"))
-    defaultSuffix = ".html";
-  else
-    defaultSuffix = ".txt";
+  QString    suffix       = ".txt";
+  QByteArray writerformat = "plaintext";
+  QIODevice::OpenMode mode= QIODevice::WriteOnly | QIODevice::Text;
+
+  if (selectedFilter.contains("csv"))
+    suffix = ".csv";
+  else if (selectedFilter.contains("odt"))
+  {
+    suffix       = ".odt";
+    writerformat = "odf";
+    mode         = QIODevice::WriteOnly;
+  }
+  else if (selectedFilter.contains("html"))
+  {
+    suffix       = ".html";
+    writerformat = "HTML";
+  }
+
+  if (! file.fileName().endsWith(suffix))
+    file.setFileName(file.fileName() + suffix);
+
+  if (! file.open(mode))
+    return;
+  xtsettingsSetValue(currdir, QFileInfo(file).path());
 
   QTextDocument doc;
-  if (! populateTextDocument(&doc, defaultSuffix))
-    return;
+  if (populateTextDocument(&doc, suffix))
+  {
+    QTextDocumentWriter writer(&file, writerformat);
+    writer.write(&doc);
+  }
 
-  QTextDocumentWriter writer;
-  if (fi.suffix().isEmpty())
-    fi.setFile(fi.filePath() += defaultSuffix);
-  xtsettingsSetValue(currdir, fi.path());
-  writer.setFileName(fi.filePath());
-
-  if (fi.suffix() == "txt")
-    writer.setFormat("plaintext");
-  else if (fi.suffix() == "csv")
-    writer.setFormat("plaintext");
-  else if (fi.suffix() == "odt")
-    writer.setFormat("odf");
-  else if (fi.suffix() == "html")
-    writer.setFormat("HTML");
-
-  writer.write(&doc);
+  file.close();
 }
 
 bool XTreeView::populateTextDocument(QTextDocument *doc, QString suffix)
 {
   QTextCursor cursor(doc);
-  int     colcnt = 0;
-  int     rowcnt = 0;
-
-  for (int i = 0; i < header()->count(); i++)
-    if (! isColumnHidden(i))
-      colcnt++;
-  for (int i = 0; i < model()->rowCount(); i++)
-    if (! isRowHidden(i))
-      rowcnt++;
 
   /* QTextDocumentWriter appears to put each table cell on its own line,
      so we need special handling of csv and txt to build full lines.
@@ -789,7 +782,6 @@ bool XTreeView::populateTextDocument(QTextDocument *doc, QString suffix)
         fields << fieldWrapper.arg(model()->headerData(col, Qt::Horizontal,
                                                        Qt::DisplayRole)
                                     .toString().replace(QRegExp("\\s+"), " "));
-
     cursor.insertText(fields.join(fieldSeparator));
 
     for (int row = 0; row < model()->rowCount(); row++)
@@ -808,15 +800,23 @@ bool XTreeView::populateTextDocument(QTextDocument *doc, QString suffix)
       }
     }
   }
-
   else
   {
     QTextTableFormat  tableFormat;
     QTextTableCell    cell;
     QTextCharFormat   format;
     QString           font;
+    int colcnt = 0;
+    int rowcnt = 0;
 
     tableFormat.setHeaderRowCount(1);
+
+    for (int i = 0; i < header()->count(); i++)
+      if (! isColumnHidden(i))
+	colcnt++;
+    for (int i = 0; i < model()->rowCount(); i++)
+      if (! isRowHidden(i))
+	rowcnt++;
 
     // presizing the table gives a huge performance gain over adding dynamically
     cursor.insertTable(rowcnt + 1, colcnt, tableFormat);
