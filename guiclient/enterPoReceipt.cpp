@@ -76,7 +76,7 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
                        "   AND  (orderhead_type = 'RA')) "
                        " LIMIT 1)");
 
-      _order->setExtraClause("TO", "(SELECT SUM(toitem_qty_shipped - toitem_qty_received) > 0 "
+      _order->setExtraClause("TO", "(SELECT SUM(NONEG(toitem_qty_shipped - toitem_qty_received)) > 0 "
                        "  FROM toitem"
                        "  WHERE ((toitem_tohead_id=orderhead_id)"
                        "     AND (orderhead_type = 'TO'))) ");
