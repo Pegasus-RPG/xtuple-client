@@ -83,7 +83,7 @@ void printShippingForm::clear()
   _order->setFocus();
 }
 
-ParameterList printShippingForm::getParamsOneCopy(int row, XSqlQuery *qry)
+ParameterList printShippingForm::getParamsOneCopy(const int row, XSqlQuery *qry)
 {
   ParameterList params = printMulticopyDocument::getParamsOneCopy(row, qry);
 

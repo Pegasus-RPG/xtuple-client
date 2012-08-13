@@ -25,7 +25,7 @@ class printShippingForms : public printMulticopyDocument,
 
   public slots:
     Q_INVOKABLE virtual ParameterList getParamsDocList();
-    Q_INVOKABLE virtual ParameterList getParamsOneCopy(int row, XSqlQuery *qry);
+    Q_INVOKABLE virtual ParameterList getParamsOneCopy(const int row, XSqlQuery *qry);
     Q_INVOKABLE virtual bool isOkToPrint();
 
   protected slots:

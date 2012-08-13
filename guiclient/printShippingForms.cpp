@@ -86,7 +86,7 @@ ParameterList printShippingForms::getParamsDocList()
   return params;
 }
 
-ParameterList printShippingForms::getParamsOneCopy(int row, XSqlQuery *qry)
+ParameterList printShippingForms::getParamsOneCopy(const int row, XSqlQuery *qry)
 {
   ParameterList params = printMulticopyDocument::getParamsOneCopy(row, qry);
 

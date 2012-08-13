@@ -94,7 +94,7 @@ ParameterList printInvoices::getParamsDocList()
   return params;
 }
 
-ParameterList printInvoices::getParamsOneCopy(int row, XSqlQuery *qry)
+ParameterList printInvoices::getParamsOneCopy(const int row, XSqlQuery *qry)
 {
   ParameterList params = printMulticopyDocument::getParamsOneCopy(row, qry);
   if (_selectedShipvia->isChecked())
