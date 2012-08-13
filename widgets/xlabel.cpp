@@ -21,51 +21,69 @@
 
 #define DEBUG false
 
+class XLabelPrivate {
+  public:
+    XLabelPrivate(XLabel *parent)
+      : _precision(0)
+    {
+      Q_UNUSED(parent);
+    }
+
+    QString _image;
+    QString _fieldName;
+    int     _precision;
+};
+
 XLabel::XLabel(QWidget *parent, const char *name) :
   QLabel(parent)
 {
   if(name)
     setObjectName(name);
-  _fieldName = "";
-  _precision = 0;
+
+  _data = new XLabelPrivate(this);
+}
+
+QString XLabel::fieldName() const { return _data->_fieldName; }
+QString XLabel::image()     const { return _data->_image; }
+int     XLabel::precision() const { return _data->_precision; }
+
+XLabel::~XLabel()
+{
+  if (_data)
+  {
+    delete _data;
+    _data = 0;
+  }
 }
 
 void XLabel::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(this, _fieldName, QByteArray("text"), QByteArray("defaultText"));
+  m->addMapping(this, _data->_fieldName, QByteArray("text"), QByteArray("defaultText"));
 }
 
 void XLabel::setPrecision(int pPrec)
 {
-  _precision = pPrec;
-}
-
-void XLabel::setPrecision(QDoubleValidator *pVal)
-{
-  _precision = pVal->decimals();
-}
-
-void XLabel::setPrecision(QIntValidator * /*pVal*/)
-{
-  _precision = 0;
+  _data->_precision = pPrec;
 }
 
 void XLabel::setDouble(const double pDouble, const int pPrec)
 {
-  QLabel::setText(formatNumber(pDouble, (pPrec < 0) ? _precision : pPrec));
+  QLabel::setText(formatNumber(pDouble, (pPrec < 0) ? _data->_precision : pPrec));
 }
+
+void XLabel::setFieldName(QString p)    { _data->_fieldName = p; }
 
 void XLabel::setImage(QString image)
 {
-  if (_image == image)
+  if (_data->_image == image)
     return;
 
-  _image = image;
+  _data->_image = image;
   XSqlQuery qry;
   qry.prepare("SELECT image_data "
               "FROM image "
               "WHERE (image_name=:image);");
-  qry.bindValue(":image", _image);
+  qry.bindValue(":image", _data->_image);
   qry.exec();
   if (qry.first())
   {
@@ -82,6 +100,17 @@ void XLabel::setImage(QString image)
   setPixmap(QPixmap());
 }
 
+void XLabel::setPrecision(QValidator *pVal)
+{
+  if (qobject_cast<QDoubleValidator *>(pVal))
+    _data->_precision = (qobject_cast<QDoubleValidator *>(pVal))->decimals();
+  else if (qobject_cast<QIntValidator *>(pVal))
+    _data->_precision = 0;
+  else
+    qWarning("XLabel %s::setPrecision called with unexpected validator",
+             qPrintable(objectName()));
+}
+
 void XLabel::setText(const QVariant &pVariant)
 {
   if (DEBUG)
@@ -89,7 +118,7 @@ void XLabel::setText(const QVariant &pVariant)
            qPrintable(pVariant.toString()));
   if (pVariant.type() == QVariant::Double ||
       pVariant.type() == QVariant::Int)
-    QLabel::setText(formatNumber(pVariant.toDouble(), _precision));
+    QLabel::setText(formatNumber(pVariant.toDouble(), _data->_precision));
   else
     QLabel::setText(pVariant.toString());
 }
@@ -104,7 +133,7 @@ void XLabel::setText(const QString &pText)
 {
   if (DEBUG)
     qDebug("XLabel::setText(const QString & = %s)", qPrintable(pText));
-  if (_precision == 0)
+  if (_data->_precision == 0)
     QLabel::setText(pText);
   else
   {

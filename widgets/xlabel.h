@@ -16,9 +16,9 @@
 #include "widgets.h"
 #include "xdatawidgetmapper.h"
 
-class QDoubleValidator;
-class QIntValidator;
+class QValidator;
 class QVariant;
+class XLabelPrivate;
 
 class XTUPLEWIDGETS_EXPORT XLabel : public QLabel
 {
@@ -29,19 +29,19 @@ class XTUPLEWIDGETS_EXPORT XLabel : public QLabel
   
   public:
     XLabel(QWidget *, const char * = 0);
+    virtual ~XLabel();
 
-    virtual QString fieldName()   const { return _fieldName; }
-    virtual QString image()       const { return _image; }
-    virtual void    setPrecision(int);
-    int precision() const { return _precision; }
-    Q_INVOKABLE virtual void    setPrecision(QDoubleValidator *);
-    Q_INVOKABLE virtual void    setPrecision(QIntValidator *);
-    Q_INVOKABLE double          toDouble(bool * = 0);
+                virtual QString fieldName() const;
+                virtual QString image()     const;
+                virtual int     precision() const;
+    Q_INVOKABLE virtual void    setPrecision(QValidator *pval);
+                virtual void    setPrecision(int p);
+    Q_INVOKABLE virtual double  toDouble(bool *pIsValid = 0);
 
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
     virtual void setDouble(const double, const int = -1);
-    virtual void setFieldName(QString p)    { _fieldName = p; }
+    virtual void setFieldName(QString p);
     virtual void setImage(QString image);
     virtual void setText(const QString &);
     virtual void setText(const char *);
@@ -49,9 +49,7 @@ class XTUPLEWIDGETS_EXPORT XLabel : public QLabel
     virtual void setTextColor(const QString &);
 
   private:
-    QString _image;
-    QString _fieldName;
-    int     _precision;
+    XLabelPrivate *_data;
 };
 
 #endif
