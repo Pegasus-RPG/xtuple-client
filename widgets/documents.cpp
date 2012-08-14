@@ -287,8 +287,15 @@ void Documents::sOpenDoc(QString mode)
     {
       QFileInfo fi( qfile.value("url_url").toString() );
       QDir tdir;
+      // TODO: QDesktopServices::openUrl(urldb) on windows does not open files
+      // containing spaces. why not?
+#ifdef Q_WS_WIN
+      QString fileName = fi.fileName().remove(" ");
+#else
       QString fileName = fi.fileName();
-      QString filePath = tdir.tempPath() + "/xtTempDoc/" + qfile.value("docass_id").toString() + "/";
+#endif
+      QString filePath = tdir.tempPath() + "/xtTempDoc/" +
+	                 qfile.value("url_id").toString() + "/";
       QFile tfile(filePath + fileName);
 
       // Remove any previous watches
@@ -311,7 +318,12 @@ void Documents::sOpenDoc(QString mode)
       urldb.setScheme("file");
 #endif
       tfile.close();
-      QDesktopServices::openUrl(urldb);
+      if (! QDesktopServices::openUrl(urldb))
+      {
+        QMessageBox::warning(this, tr("File Open Error"),
+			     tr("Could not open %1.").arg(urldb.toString()));
+	return;
+      }
 
       // Add a watch to the file that will save any changes made to the file back to the database.
       if (_guiClientInterface && !_readOnly) // TODO: only if NOT read-only
