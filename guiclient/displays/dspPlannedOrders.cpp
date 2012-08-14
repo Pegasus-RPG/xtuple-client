@@ -62,7 +62,7 @@ dspPlannedOrders::dspPlannedOrders(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("From Site"),   _whsColumn,   Qt::AlignCenter,true, "supply_warehous_code");
   list()->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
   list()->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "item_descrip");
-  list()->addColumn(tr("Classcode Description"), -1,           Qt::AlignLeft,  true, "classcode_descrip");
+  list()->addColumn(tr("Class Code Description"), -1,           Qt::AlignLeft,  true, "classcode_descrip");
   list()->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
   list()->addColumn(tr("Start Date"),  _dateColumn,  Qt::AlignCenter,true, "planord_startdate");
   list()->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "planord_duedate");
