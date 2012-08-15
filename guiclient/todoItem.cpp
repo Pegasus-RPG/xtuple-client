@@ -38,6 +38,9 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _owner->setUsername(omfgThis->username());
   _owner->setType(UsernameLineEdit::UsersActive);
   _assignedTo->setType(UsernameLineEdit::UsersActive);
+
+  _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems"));
+
 }
 
 void todoItem::languageChange()
@@ -74,6 +77,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       }
 
       _assignedTo->setEnabled(_privileges->check("ReassignToDoItems"));
+      _assignedTo->setEnabled(_privileges->check("MaintainAllToDoItems"));
     }
     else if (param.toString() == "edit")
     {
