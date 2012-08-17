@@ -54,7 +54,7 @@ void AddressCluster::init()
     _addr3         = new XLineEdit(this);
     _cityLit       = new QLabel(tr("City:"), this);
     _city          = new XLineEdit(this);
-    _stateLit      = new QLabel(tr("State/Province:"));
+    _stateLit      = new QLabel(tr("State:"));
     _state         = new XComboBox(this, "_state");
     _postalcodeLit = new QLabel(tr("Postal:"));
     _postalcode    = new XLineEdit(this);
