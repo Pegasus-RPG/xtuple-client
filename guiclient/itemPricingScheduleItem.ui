@@ -915,7 +915,7 @@ to be bound by its terms.</comment>
                      </size>
                     </property>
                     <property name="format">
-                     <enum>CurrDisplay::Cost</enum>
+                     <enum>CurrDisplay::SalesPrice</enum>
                     </property>
                     <property name="currencyDisabled">
                      <bool>true</bool>
