@@ -2847,12 +2847,15 @@ void salesOrderItem::populate()
     _orderId       = item.value("coitem_order_id").toInt();
     _orderNumber->setText(item.value("ordnumber").toString());
     _orderQtyCache = item.value("qtyord").toDouble();
-    if(item.value("item_fractional") == false)
-        _qtyOrdered->setDouble(_orderQtyCache, 0);
-    else
+    if(item.value("item_fractional") == true)
     {
         _qtyOrdered->setValidator(omfgThis->qtyVal());
         _qtyOrdered->setText(_orderQtyCache);
+    }
+    else
+    {
+        _qtyOrdered->setValidator(new QIntValidator());
+        _qtyOrdered->setText(qRound(_orderQtyCache));
     }
     _dateCache     = item.value("coitem_scheddate").toDate();
     _scheduledDate->setDate(_dateCache);
