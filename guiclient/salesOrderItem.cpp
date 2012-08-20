@@ -100,8 +100,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _createPO              = false;
   _createPR              = false;
 
-  _firstPass             = true;
-
   _authNumber->hide();
   _authNumberLit->hide();
   _authLineNumber->hide();
@@ -1760,15 +1758,10 @@ void salesOrderItem::sDeterminePrice(bool force)
         token=tr("Item quantity");
       if (priceUOMChanged)
         token=tr("Price UOM");
-      if (_firstPass == true)
-          _firstPass = false;
-      else
-      {
-        if (QMessageBox::question(this, tr("Update Price?"),
+      if (QMessageBox::question(this, tr("Update Price?"),
                                 tr("<p>The %1 has changed. Do you want to update the Price?").arg(token),
                                 QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
         _updatePrice = false;
-      }
     }
   }
   // Go get the new price information

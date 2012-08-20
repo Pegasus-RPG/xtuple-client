@@ -108,7 +108,6 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     double  _qtyreserved;
     QDate   _dateCache;
     QString _costmethod;
-    bool    _firstPass;
 
     // For holding variables for characteristic pricing
     QList<QVariant> _charVars;
