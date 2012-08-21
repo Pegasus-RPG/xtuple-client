@@ -15,7 +15,7 @@
 #include "errorReporter.h"
 
 printQuote::printQuote(QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl)
-    : printSinglecopyDocument(parent, name, modal, fl)
+: printSinglecopyDocument(parent, name, modal, fl)
 {
   setupUi(optionsWidget());
   setWindowTitle(optionsWidget()->windowTitle());
@@ -32,7 +32,13 @@ printQuote::printQuote(QWidget* parent, const char* name, bool modal, Qt::Window
                         "       findCustomerForm(quhead_cust_id, 'Q')"
                         " <? endif ?> AS reportname"
                         "  FROM quhead"
-                        " WHERE (quhead_id=<? value('docid') ?>);" ;
+                        " WHERE FALSE"
+                        " <? if exists('docid') ?>"
+                        " OR (quhead_id=<? value('docid') ?>)"
+                        "<? elif exists('docidlist') ?>"
+                        " OR (quhead_id IN (-1"
+                        " <? foreach('docidlist') ?>,<? value('docidlist') ?><? endforeach ?>))"
+                        "<? endif ?> ;";
 
   connect(_quote,          SIGNAL(newId(int)), this, SLOT(sHandleNewQuoteId()));
   connect(_report,         SIGNAL(newID(int)), this, SLOT(sHandleButtons()));
