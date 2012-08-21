@@ -19,20 +19,16 @@
 #include <parameter.h>
 #include <openreports.h>
 
-#include "customer.h"
 #include "failedPostList.h"
-#include "parameterwidget.h"
-#include "printQuote.h"
 #include "salesOrder.h"
 #include "storedProcErrorLookup.h"
+#include "customer.h"
+#include "parameterwidget.h"
 
-quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
-  : display(parent, "quotes", fl)
+quotes::quotes(QWidget* parent, const char*, Qt::WFlags fl)
+  : display(parent, "vendors", fl)
 {
   setupUi(optionsWidget());
-  if (name)
-    setObjectName(name);
-
   setWindowTitle(tr("Quotes"));
   setMetaSQLOptions("quotes", "detail");
   setParameterWidgetVisible(true);
@@ -118,26 +114,60 @@ void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
 
 void quotes::sPrint()
 {
-  QList<XTreeWidgetItem *> selected = list()->selectedItems();
-  if (selected.size() <= 0)
-    return;
+  XSqlQuery quotesPrint;
+  QPrinter printer(QPrinter::HighResolution);
+  bool setupPrinter = TRUE;
+  quotesPrint.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS reportname "
+             "FROM quhead "
+             "WHERE (quhead_id=:quheadid); " );
+  bool userCanceled = false;
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
 
-  printQuote newdlg(this);
-  ParameterList params;
-  params.append("print");
-
-  if (selected.size() > 1)
+  if (selected.size() > 0 &&
+      orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
-    QVariantList id;
-    foreach (XTreeWidgetItem *item, selected)
-      id.append(item->id());
-
-    params.append("docidlist", id);
+    if(!userCanceled)
+      systemError(this, tr("<p>Could not initialize printing system for "
+			   "multiple reports."));
+    return;
   }
-  else
-    params.append("quhead_id", selected.at(0)->id());
+  QList<int> printedQuotes;
+  for (int i = 0; i < selected.size(); i++)
+  {
+    int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
+    quotesPrint.bindValue(":quheadid", quheadid);
+    quotesPrint.exec();
+    if (quotesPrint.first())
+    {
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+      {
+        ParameterList params;
+        params.append("quhead_id", quheadid);
 
-  newdlg.set(params);
+        orReport report(quotesPrint.value("reportname").toString(), params);
+        if (report.isValid() && report.print(&printer, setupPrinter))
+        {
+          setupPrinter = FALSE;
+          printedQuotes.append(quheadid);
+        }
+        else
+        {
+          report.reportError(this);
+          break;
+        }
+      }
+      else if (quotesPrint.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, quotesPrint.lastError().databaseText(), __FILE__, __LINE__);
+        break;
+      }
+    }
+  }
+  if (selected.size() > 0)
+    orReport::endMultiPrint(&printer);
+
+  for (int i = 0; i < printedQuotes.size(); i++)
+    emit finishedPrinting(printedQuotes.at(i));
 }
 
 void quotes::sConvert(int pType)

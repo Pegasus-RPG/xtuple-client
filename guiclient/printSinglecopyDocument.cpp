@@ -108,16 +108,6 @@ enum SetResponse printSinglecopyDocument::set(const ParameterList &pParams)
   if (valid)
     setId(param.toInt());
 
-  param = pParams.value("docidlist", &valid);
-  if (valid)
-  {
-    foreach (QVariant id, param.toList())
-    {
-      setId(id.toInt());
-      sPrint();
-    }
-  }
-
   if (pParams.inList("print"))
   {
     sPrint();
@@ -127,8 +117,14 @@ enum SetResponse printSinglecopyDocument::set(const ParameterList &pParams)
   if (pParams.inList("persistentPrint"))
   {
     _data->_alert = FALSE;
-    sPrint();
-    return NoError_Print;
+
+    if (isSetup())
+    {
+      sPrint();
+      return NoError_Print;
+    }
+    else
+      return Error_NoSetup;
   }
 
   return NoError;
