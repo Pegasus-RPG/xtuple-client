@@ -95,7 +95,10 @@ void PoitemTableView::setModel(QAbstractItemModel* model)
 
   int dest = 0;
   header->moveSection(header->visualIndex(ITEM_NUMBER_COL),	 	dest++);
+  if (_metrics->boolean("MultiWhs"))
+  {
   header->moveSection(header->visualIndex(WAREHOUS_CODE_COL),		dest++);
+  }
   header->moveSection(header->visualIndex(POITEM_VEND_ITEM_NUMBER_COL),	dest++);
   header->moveSection(header->visualIndex(POITEM_VEND_ITEM_DESCRIP_COL),	dest++);
 #ifdef QE_NONINVENTORY

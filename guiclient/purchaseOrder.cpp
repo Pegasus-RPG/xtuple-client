@@ -79,7 +79,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _poCurrency->setLabel(_poCurrencyLit);
 
   _poitem->addColumn(tr("#"),              _whsColumn,    Qt::AlignCenter,true,  "poitem_linenumber");
-  _poitem->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter,true,  "poitemstatus");
+  _poitem->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter,true,  "poitem_status");
   _poitem->addColumn(tr("Item"),           _itemColumn,   Qt::AlignLeft,  true,  "item_number");
   _poitem->addColumn(tr("Description"),    -1,            Qt::AlignLeft,  true,  "item_descrip");
   _poitem->addColumn(tr("Orgl. Due Date"), _dateColumn,   Qt::AlignRight, false, "orgl_duedate");

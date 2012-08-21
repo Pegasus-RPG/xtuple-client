@@ -100,7 +100,7 @@ void PoitemTableModel::findHeadData()
 		  "  AND  (pohead_id=:id));");
     vendq.bindValue(":id", _poheadid);
   }
-  else if (_poheadid > 0)
+  else if (_poitemid > 0)
   {
     poheadq.prepare("SELECT pohead_id, pohead_curr_id, pohead_orderdate,"
 		    "       pohead_status "
@@ -115,8 +115,8 @@ void PoitemTableModel::findHeadData()
 		  "  AND  (poitem_id=:id));");
     vendq.bindValue(":id", _poitemid);
   }
-  else
-    return;
+  else if (_poitemid <= 0 && _poheadid <= 0)
+     return;
 
   poheadq.exec();
   if (poheadq.first())
@@ -259,7 +259,7 @@ bool PoitemTableModel::validRow(QSqlRecord& record)
     errormsg = tr("<p>You must select an Item Number before you may save.");
 
   else if (inventoryItem &&
-	   record.value("warehous_id").toInt() <= 0)
+       record.value("warehous_id").toInt() <= 0 && (_metrics->boolean("MultiWhs")))
     errormsg = tr("<p>You must select a Supplying Site before you may save.");
 
   else if (record.value("poitem_qty_ordered").toDouble() <= 0)
@@ -325,8 +325,8 @@ bool PoitemTableModel::validRow(QSqlRecord& record)
 	       .arg(record.value("item_number").toString());
   }
 
-  int index = record.indexOf("poitem_pohead_id");
-  if (index < 0)
+  int index = record.indexOf("poitem_pohead_id"); //returns 14, based on #define value in header, fixes problem with poitem_pohead_id not being assigned
+  if (index > 0)
   {
     QSqlField field("poitem_pohead_id", QVariant::Int);
     field.setValue(_poheadid);
