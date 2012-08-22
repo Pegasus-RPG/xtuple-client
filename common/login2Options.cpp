@@ -56,12 +56,6 @@ void login2Options::set(const ParameterList &pParams)
     _port->setText(port);
   }
   
-  if(pParams.inList("useEnhancedAuthentication"))
-    _enhancedAuth->setChecked(TRUE);
-
-  if(pParams.inList("requireSSL"))
-    _requireSSL->setChecked(TRUE);
-
   if (pParams.inList("dontSaveSettings"))
     _saveSettings = false;
 }
@@ -73,8 +67,6 @@ void login2Options::sSave()
   if (_saveSettings)
   {
     xtsettingsSetValue("/xTuple/_databaseURL", _databaseURL);
-    xtsettingsSetValue("/xTuple/_enhancedAuthentication", (bool)_enhancedAuth->isChecked());
-    xtsettingsSetValue("/xTuple/_requireSSL", (bool)_requireSSL->isChecked());
   }
 
   accept();

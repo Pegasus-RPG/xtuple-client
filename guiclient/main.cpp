@@ -144,8 +144,6 @@ int main(int argc, char *argv[])
   bool    loggedIn        = FALSE;
   bool    haveEnhancedAuth= false;
   bool    _enhancedAuth   = false;
-  bool    haveRequireSSL  = false;
-  bool    _requireSSL     = false;
   bool    havePasswd      = false;
   bool    forceWelcomeStub= false;
 
@@ -202,13 +200,6 @@ int main(int argc, char *argv[])
         if(argument.contains("=no", Qt::CaseInsensitive) || argument.contains("=false", Qt::CaseInsensitive))
           _enhancedAuth = false;
       }
-      else if (argument.contains("-requireSSL", Qt::CaseInsensitive))
-      {
-        haveRequireSSL = true;
-        _requireSSL = true;
-        if(argument.contains("=no", Qt::CaseInsensitive) || argument.contains("=false", Qt::CaseInsensitive))
-          _requireSSL = false;
-      }
       else if (argument.contains("-forceWelcomeStub", Qt::CaseInsensitive))
         forceWelcomeStub = true;
     }
@@ -259,9 +250,6 @@ int main(int argc, char *argv[])
     if (haveEnhancedAuth)
       params.append("enhancedAuth", _enhancedAuth);
     
-    if (haveRequireSSL)
-      params.append("requireSSL", _requireSSL);
-
     if (_evaluation)
       params.append("evaluation");
 

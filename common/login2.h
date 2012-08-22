@@ -37,8 +37,6 @@ class login2 : public QDialog, public Ui::login2
     virtual void populateDatabaseInfo();
     virtual QString username();
     virtual QString password();
-    virtual bool enhancedAuth() const { return _enhancedAuth; }
-    virtual bool requireSSL() const { return _requireSSL; }
 
     QPushButton* _recent;
     QPushButton* _options;
@@ -46,8 +44,6 @@ class login2 : public QDialog, public Ui::login2
   public slots:
     virtual int set(const ParameterList & pParams);
     virtual void setLogo( const QImage & );
-    virtual void setEnhancedAuth(bool);
-    virtual void setRequireSSL(bool);
     virtual void updateRecentOptions();
     virtual void updateRecentOptionsActions();
     virtual void selectRecentOptions();
@@ -63,8 +59,6 @@ class login2 : public QDialog, public Ui::login2
     bool _captive;
     bool _evaluation;
     bool _nonxTupleDB;
-    bool _enhancedAuth;
-    bool _requireSSL;
     bool _multipleConnections;
     QSplashScreen *_splash;
     QString _cUsername;

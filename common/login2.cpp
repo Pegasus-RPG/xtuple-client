@@ -11,27 +11,23 @@
 #include "login2.h"
 
 #include <QAction>
-#include <QVariant>
+#include <QApplication>
+#include <QCursor>
 #include <QMenu>
 #include <QMessageBox>
-#include <QCursor>
+#include <QPushButton>
+#include <QSplashScreen>
 #include <QSqlDatabase>
 #include <QSqlError>
-#include <QApplication>
-#include <QSplashScreen>
 #include <QStringList>
-#include <QCheckBox>
-#include <QDesktopServices>
-#include <QUrl>
-#include <QPushButton>
+#include <QVariant>
 
-#include "xtsettings.h"
 #include "dbtools.h"
-#include "xsqlquery.h"
 #include "login2Options.h"
-#include "login2.h"
 #include "qmd5.h"
 #include "storedProcErrorLookup.h"
+#include "xsqlquery.h"
+#include "xtsettings.h"
 
 #include "splashconst.h"
 
@@ -64,8 +60,6 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   updateRecentOptionsActions();
   _databaseURL = xtsettingsValue("/xTuple/_databaseURL", "pgsql://:5432/").toString();
-  _enhancedAuth = xtsettingsValue("/xTuple/_enhancedAuthentication", false).toBool();
-  _requireSSL = xtsettingsValue("/xTuple/_requireSSL", false).toBool();
   if(xtsettingsValue("/xTuple/_demoOption", false).toBool())
     _demoOption->setChecked(true);
 
@@ -87,7 +81,7 @@ int login2::set(const ParameterList &pParams) { return set(pParams, 0); }
 int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
 {
   _splash = pSplash;
-  
+
   QVariant param;
   bool     valid;
 
@@ -145,14 +139,6 @@ int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
   if (valid)
     _multipleConnections = true;
 
-  param = pParams.value("enhancedAuth", &valid);
-  if (valid)
-    _enhancedAuth = param.toBool();
-
-  param = pParams.value("requireSSL", &valid);
-  if (valid)
-    _requireSSL = param.toBool();
-
   if(pParams.inList("login"))
     sLogin();
 
@@ -191,13 +177,13 @@ void login2::sLogin()
   {
     if (_splash)
       _splash->hide();
-    
+
     QMessageBox::warning( this, tr("No Database Driver"),
                           tr("<p>A connection could not be established with "
                              "the specified Database as the Proper Database "
                              "Drivers have not been installed. Contact your "
                              "Systems Administator."));
-    
+
     return;
   }
 
@@ -205,7 +191,7 @@ void login2::sLogin()
   {
     if (_splash)
       _splash->hide();
-    
+
     QMessageBox::warning(this, tr("Incomplete Connection Options"),
                          tr("<p>One or more connection options are missing. "
                             "Please check that you have specified the host "
@@ -222,64 +208,70 @@ void login2::sLogin()
   _cUsername = _username->text().trimmed();
   _cPassword = _password->text().trimmed();
 
-  db.setUserName(_cUsername);
-  if(_demoOption->isChecked())
-  {
-    QString passwd = QMd5(QString(_cPassword + "private" + _cUsername)); 
-    db.setPassword(passwd);
-  }
-  else
-  {
-    if(_enhancedAuth)
-    {
-      QString passwd = QMd5(QString(_cPassword + "xTuple" + _cUsername));
-      db.setPassword(passwd);
-    }
-    else
-      db.setPassword(_cPassword);
-
-    if(_requireSSL)
-      db.setConnectOptions("requiressl=1");
-  }
-
   setCursor(QCursor(Qt::WaitCursor));
+  qApp->processEvents();
 
   if (_splash)
   {
     _splash->showMessage(tr("Connecting to the Database"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
   }
-  
-  //  Try to connect to the Database
-  bool result = db.open();
-  if(!result && _enhancedAuth)
+
+  db.setUserName(_cUsername);
+
+  if(_demoOption->isChecked())
   {
-    QString altpasswd = QMd5(QString(_cPassword + "OpenMFG" + _cUsername));
-    db.setPassword(altpasswd);
-    result = db.open();
-    if(result)
+    db.setPassword(QMd5(QString(_cPassword + "private" + _cUsername)));
+    db.open();
+  }
+  else
+  {
+    // try connecting to the database in each of the following ways in this order
+    QList<QPair<QString, QString> > method;
+    method << QPair<QString, QString>("requiressl=1", QMd5(QString(_cPassword + "xTuple"  + _cUsername)))
+           << QPair<QString, QString>("requiressl=1", _cPassword)
+           << QPair<QString, QString>("requiressl=1", QMd5(QString(_cPassword + "OpenMFG" + _cUsername)))
+           << QPair<QString, QString>("",             QMd5(QString(_cPassword + "xTuple"  + _cUsername)))
+           << QPair<QString, QString>("",             _cPassword)
+           << QPair<QString, QString>("",             QMd5(QString(_cPassword + "OpenMFG" + _cUsername)))
+        ;
+    int methodidx; // not declared in for () because we'll need it later
+    for (methodidx = 0; methodidx < method.size(); methodidx++)
     {
-      altpasswd = QMd5(QString(_cPassword + "xTuple" + _cUsername));
-      XSqlQuery chgpass(QString("ALTER USER %1 WITH PASSWORD '%2'").arg(_cUsername).arg(altpasswd));
+      db.setConnectOptions(method.at(methodidx).first);
+      db.setPassword(method.at(methodidx).second);
+      if (db.open())
+        break;  // break instead of for-loop condition to preserve methodidx
+    }
+
+    // if connected using OpenMFG enhanced auth, remangle the password
+    if (db.isOpen() && (methodidx == 2 || methodidx == 5))
+      XSqlQuery chgpass(QString("ALTER USER %1 WITH PASSWORD '%2'")
+                        .arg(_cUsername, QMd5(QString(_cPassword + "xTuple" + _cUsername))));
+    else if (db.isOpen() && method.at(methodidx).first.isEmpty())
+    {
+      XSqlQuery sslq("SHOW ssl;");
+      if (sslq.first() && sslq.value("ssl").toString() != "on")
+        QMessageBox::warning(this, tr("Could Not Enforce Security"),
+                             tr("The connection to the xTuple ERP Server is not "
+                                "secure. Please ask your administrator to set "
+                                "the 'ssl' configuration option to 'on'."));
     }
   }
 
-  if (!result)
+  if (! db.isOpen())
   {
-    if(_requireSSL)
-      db.setConnectOptions();
-
     if (_splash)
       _splash->hide();
-    
+
     setCursor(QCursor(Qt::ArrowCursor));
 
     QMessageBox::critical(this, tr("Cannot Connect to xTuple ERP Server"),
                           tr("<p>Sorry, can't connect to the specified xTuple ERP server. "
                              "<p>This may be due to a problem with your user name, password, or server connection information. "
                              "<p>Below is more detail on the connection problem: "
-                             "<p>%1" )
-                            .arg(db.lastError().databaseText().replace('\n', "<br>") ));
+                             "<p>%1" ).arg(db.lastError().text()));
+
     if (!_captive)
     {
       _username->setText("");
@@ -299,7 +291,7 @@ void login2::sLogin()
     _splash->showMessage(tr("Logging into the Database"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
   }
-  
+
   if(!_nonxTupleDB)
   {
     XSqlQuery login( "SELECT login() AS result,"
@@ -341,7 +333,7 @@ void login2::sLogin()
     {
       if (_splash)
         _splash->hide();
-      
+
       QMessageBox::critical(this, tr("System Error"),
                             tr("<p>An unknown error occurred at %1::%2. You may"
                                " not log in to the specified xTuple ERP Server "
@@ -366,20 +358,12 @@ void login2::sOptions()
   if (_multipleConnections)
     params.append("dontSaveSettings");
 
-  if(_enhancedAuth)
-    params.append("useEnhancedAuthentication");
-
-  if(_requireSSL)
-    params.append("requireSSL");
-
   login2Options newdlg(this, "", TRUE);
   newdlg.set(params);
   if (newdlg.exec() != QDialog::Rejected)
   {
     updateRecentOptions();
     _databaseURL = newdlg._databaseURL;
-    _enhancedAuth = newdlg._enhancedAuth->isChecked();
-    _requireSSL = newdlg._requireSSL->isChecked();
     populateDatabaseInfo();
     updateRecentOptions();
     updateRecentOptionsActions();
@@ -417,31 +401,21 @@ void login2::setLogo(const QImage & img)
     _logo->setPixmap(QPixmap::fromImage(img));
 }
 
-void login2::setEnhancedAuth(bool on)
-{
-  _enhancedAuth = on;
-}
-
-void login2::setRequireSSL(bool on)
-{
-  _requireSSL = on;
-}
-
 void login2::updateRecentOptions()
 {
   if (_demoOption->isChecked())
     return;
-    
+
   QStringList list = xtsettingsValue("/xTuple/_recentOptionsList").toStringList();
   list.removeAll(_databaseURL);
   list.prepend(_databaseURL);
-      
+
   xtsettingsSetValue("/xTuple/_recentOptionsList", list);
   xtsettingsSetValue("/xTuple/_databaseURL", _databaseURL);
 }
 
 void login2::updateRecentOptionsActions()
-{ 
+{
   QMenu * recentMenu = new QMenu;
   QStringList list = xtsettingsValue("/xTuple/_recentOptionsList").toStringList();
   if (list.size())
@@ -450,18 +424,18 @@ void login2::updateRecentOptionsActions()
     int size = list.size();
     if (size > 5)
       size = 5;
-  
+
     if (size)
     {
       _recent->setEnabled(true);
       QAction *act;
-      for (int i = 0; i < size; ++i) 
+      for (int i = 0; i < size; ++i)
       {
         act = new QAction(list.value(i).remove("psql://"),this);
         connect(act, SIGNAL(triggered()), this, SLOT(selectRecentOptions()));
         recentMenu->addAction(act);
       }
-  
+
       recentMenu->addSeparator();
 
       act = new QAction(tr("Clear &Menu"), this);
@@ -474,13 +448,13 @@ void login2::updateRecentOptionsActions()
   }
   else
     _recent->setEnabled(false);
-  
+
   _recent->setMenu(recentMenu);
 }
 
 void login2::selectRecentOptions()
 {
-  if (const QAction *action = qobject_cast<const QAction *>(sender())) 
+  if (const QAction *action = qobject_cast<const QAction *>(sender()))
   {
     _databaseURL = action->iconText().prepend("psql://");
     populateDatabaseInfo();
