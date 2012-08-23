@@ -272,34 +272,46 @@ int main(int argc, char *argv[])
     }
   }
 
-  XSqlQuery metric;
-  metric.exec("SELECT metric_value"
-           "  FROM metric"
-           " WHERE (metric_name = 'Application')" );
-  if(!metric.first() || (metric.value("metric_value").toString() == "Standard"))
-  {
-    // check if the xtmfg package is installed
-    metric.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
-    if(metric.first())
-    {
-      metric.exec("SELECT count(*) FROM pkghead WHERE pkghead_name IN ('xtprjaccnt','asset','assetdepn')");
-      if(metric.first() && metric.value(0).toInt() == 3)
-      {
-        _splash->setPixmap(QPixmap(":/images/splashEnterprise.png"));
-        _Name = _Name.arg("Enterprise");
-      }
-      else
-      {
-        _splash->setPixmap(QPixmap(":/images/splashMfgEdition.png"));
-        _Name = _Name.arg("Manufacturing");
-      }
-    }
-    else
-    {
-      _splash->setPixmap(QPixmap(":/images/splashStdEdition.png"));
-      _Name = _Name.arg("Standard");
-    }
+  // better data structure? compose the splash screen on the fly from parts?
+  struct {
+    QString editionName;
+    QString splashResource;
+    bool    shouldCheckLicense;
+    QString queryString;
+  } editionDesc[] = {
+    { "Enterprise",     ":/images/splashEnterprise.png",        true,
+      "SELECT fetchMetricText('Application') = 'Standard' AND COUNT(*) = 4"
+      " FROM pkghead"
+      " WHERE pkghead_name IN ('xtmfg', 'xtprjaccnt', 'asset', 'assetdepn');" },
+    { "Manufacturing",  ":/images/splashMfgEdition.png",        true,
+      "SELECT fetchMetricText('Application') = 'Standard' AND COUNT(*) = 1"
+      " FROM pkghead"
+      " WHERE pkghead_name IN ('xtmfg');" },
+    { "Standard",       ":/images/splashStdEdition.png",        true,
+      "SELECT fetchMetricText('Application') = 'Standard';" },
+    { "PostBooks",      ":/images/splashPostBooks.png",        false,
+      "SELECT fetchMetricText('Application') = 'PostBooks';" }
+  };
 
+  XSqlQuery metric;
+  unsigned int editionIdx;       // we'll use this after the loop
+  for (editionIdx = 0;
+       editionIdx < sizeof(editionDesc) / sizeof(editionDesc[0]);
+       editionIdx++)
+  {
+    metric.exec(editionDesc[editionIdx].queryString);
+    if (metric.first() && metric.value(0).toBool())
+      break;
+  }
+  // default to PostBooks
+  if (editionIdx >= sizeof(editionDesc) / sizeof(editionDesc[0]))
+    editionIdx = (sizeof(editionDesc) / sizeof(editionDesc[0])) - 1;
+
+  _splash->setPixmap(QPixmap(editionDesc[editionIdx].splashResource));
+  _Name = _Name.arg(editionDesc[editionIdx].editionName);
+
+  if (editionDesc[editionIdx].shouldCheckLicense)
+  {
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
     metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
@@ -437,20 +449,6 @@ int main(int argc, char *argv[])
         return 0;
 
       _splash->show();
-    }
-  }
-  else
-  {
-    metric.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtprjaccnt'");
-    if(metric.first())
-    {
-      _splash->setPixmap(QPixmap(":/images/splashProject.png"));
-      _Name = _Name.arg("Project");
-    }
-    else
-    {
-      _splash->setPixmap(QPixmap(":/images/splashPostBooks.png"));
-      _Name = _Name.arg("PostBooks");
     }
   }
 
