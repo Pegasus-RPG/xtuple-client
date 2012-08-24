@@ -131,6 +131,21 @@ QString __password;
 
 extern void xTupleMessageOutput(QtMsgType type, const char *msg);
 
+// helps determine which edition we're running & what splash screen to present
+struct editionDesc {
+  editionDesc(QString ed, QString splash, bool check, QString query)
+    : editionName(ed),
+      splashResource(splash),
+      shouldCheckLicense(check),
+      queryString(query)
+  {}
+
+  QString editionName;
+  QString splashResource;
+  bool    shouldCheckLicense;
+  QString queryString;
+};
+
 int main(int argc, char *argv[])
 {
   XSqlQuery main;
@@ -272,45 +287,37 @@ int main(int argc, char *argv[])
     }
   }
 
-  // better data structure? compose the splash screen on the fly from parts?
-  struct {
-    QString editionName;
-    QString splashResource;
-    bool    shouldCheckLicense;
-    QString queryString;
-  } editionDesc[] = {
-    { "Enterprise",     ":/images/splashEnterprise.png",        true,
-      "SELECT fetchMetricText('Application') = 'Standard' AND COUNT(*) = 4"
-      " FROM pkghead"
-      " WHERE pkghead_name IN ('xtmfg', 'xtprjaccnt', 'asset', 'assetdepn');" },
-    { "Manufacturing",  ":/images/splashMfgEdition.png",        true,
-      "SELECT fetchMetricText('Application') = 'Standard' AND COUNT(*) = 1"
-      " FROM pkghead"
-      " WHERE pkghead_name IN ('xtmfg');" },
-    { "Standard",       ":/images/splashStdEdition.png",        true,
-      "SELECT fetchMetricText('Application') = 'Standard';" },
-    { "PostBooks",      ":/images/splashPostBooks.png",        false,
-      "SELECT fetchMetricText('Application') = 'PostBooks';" }
-  };
+  // TODO: can/should we compose the splash screen on the fly from parts?
+  QList<editionDesc> edition;
+  edition << editionDesc( "Enterprise",     ":/images/splashEnterprise.png",        true,
+               "SELECT fetchMetricText('Application') = 'Standard' AND COUNT(*) = 4"
+               " FROM pkghead"
+               " WHERE pkghead_name IN ('xtmfg', 'xtprjaccnt', 'asset', 'assetdepn');" )
+          << editionDesc( "Manufacturing",  ":/images/splashMfgEdition.png",        true,
+               "SELECT fetchMetricText('Application') = 'Standard' AND COUNT(*) = 1"
+               " FROM pkghead"
+               " WHERE pkghead_name IN ('xtmfg');" )
+          << editionDesc( "Standard",       ":/images/splashStdEdition.png",        true,
+               "SELECT fetchMetricText('Application') = 'Standard';" )
+          << editionDesc( "PostBooks",      ":/images/splashPostBooks.png",        false,
+               "SELECT fetchMetricText('Application') = 'PostBooks';" )
+  ;
 
   XSqlQuery metric;
-  unsigned int editionIdx;       // we'll use this after the loop
-  for (editionIdx = 0;
-       editionIdx < sizeof(editionDesc) / sizeof(editionDesc[0]);
-       editionIdx++)
+  int editionIdx;       // we'll use this after the loop
+  for (editionIdx = 0; editionIdx < edition.size(); editionIdx++)
   {
-    metric.exec(editionDesc[editionIdx].queryString);
+    metric.exec(edition[editionIdx].queryString);
     if (metric.first() && metric.value(0).toBool())
       break;
   }
-  // default to PostBooks
-  if (editionIdx >= sizeof(editionDesc) / sizeof(editionDesc[0]))
-    editionIdx = (sizeof(editionDesc) / sizeof(editionDesc[0])) - 1;
+  if (editionIdx >= edition.size())
+    editionIdx = edition.size(); // default to PostBooks
 
-  _splash->setPixmap(QPixmap(editionDesc[editionIdx].splashResource));
-  _Name = _Name.arg(editionDesc[editionIdx].editionName);
+  _splash->setPixmap(QPixmap(edition[editionIdx].splashResource));
+  _Name = _Name.arg(edition[editionIdx].editionName);
 
-  if (editionDesc[editionIdx].shouldCheckLicense)
+  if (edition[editionIdx].shouldCheckLicense)
   {
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
