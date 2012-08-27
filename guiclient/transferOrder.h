@@ -87,26 +87,17 @@ private:
 
     int			_cachedTabIndex;
     bool		_captive;
-    bool		_doAuthorize;
-    bool		_ffShipto;
-    int			_freighttaxid;
     bool		_ignoreSignals;
     int			_lineMode;
+    bool                _locked;
     int			_mode;
     int			_orderNumberGen;
-    int			_originalPrjid;
-    bool		_passPrecheck;
-    QString		_port;
     ToitemTableModel*	_qeitem;
-    QString		_response;
     bool		_saved;
-    int			_shiptoid;
-    int			_toheadid;
     int			_taxzoneidCache;
+    int			_toheadid;
     bool		_userEnteredOrderNumber;
     int			_whstaxzoneid;
-    QString		doServer;
-    bool        _locked;
 
 
 };
