@@ -177,6 +177,8 @@ class GUIClient : public QMainWindow
     GUIClient(const QString &, const QString &);
     virtual ~GUIClient();
 
+    Q_INVOKABLE void setUpListener(const QString &);
+
     Q_INVOKABLE void setCaption();
     Q_INVOKABLE void initMenuBar();
     Q_INVOKABLE void saveToolbarPositions();
@@ -274,6 +276,7 @@ class GUIClient : public QMainWindow
     void sCrmAccountsUpdated(int);
     void sCustomCommand();
     void sCustomersUpdated(int, bool);
+    void sEmitNotifyHeard(const QString &note);
     void sEmployeeUpdated(int);
     void sGlSeriesUpdated();
     void sInvoicesUpdated(int, bool);
@@ -313,6 +316,8 @@ class GUIClient : public QMainWindow
 
   signals:
     void tick();
+
+    void messageNotify();
 
     void assortmentsUpdated(int, bool);
     void bankAccountsUpdated();

@@ -22,6 +22,7 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QSqlDatabase>
+#include <QSqlDriver>
 #include <QImage>
 #include <QSplashScreen>
 #include <QMessageBox>
@@ -46,6 +47,7 @@
 #include <dbtools.h>
 #include <quuencode.h>
 #include <xvariant.h>
+#include <libpq-fe.h>
 
 #include "xtsettings.h"
 #include "xuiloader.h"
@@ -2308,4 +2310,23 @@ int GUIClient::hunspell_ignore(const QString word)
 {
     QByteArray encodedString = _spellCodec->fromUnicode(word);
     return _spellChecker->add(encodedString.data());
+}
+
+
+void GUIClient::setUpListener(const QString &note)
+{
+    if(QSqlDatabase::database().isOpen())
+    {
+        QSqlDatabase::database().driver()->subscribeToNotification(note);
+        QObject::connect(QSqlDatabase::database().driver(), SIGNAL(notification(const QString&)),
+                this, SLOT(sEmitNotifyHeard(const QString &)));
+    }
+}
+
+void GUIClient::sEmitNotifyHeard(const QString &note)
+{
+    if(note == "testNote")
+        QMessageBox::information(this, "asdf", "test note received");
+    else if(note == "messagePosted")
+        emit messageNotify();
 }
