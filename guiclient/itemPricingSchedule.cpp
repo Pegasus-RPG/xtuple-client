@@ -36,15 +36,16 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Expires"));
 
-  _ipsitem->addColumn(tr("Type"),            _ynColumn,    Qt::AlignLeft,   true,  "type"  );
+  _ipsitem->addColumn(tr("Target"),          _ynColumn,    Qt::AlignLeft,   true,  "target"  );
   _ipsitem->addColumn(tr("Item/Prod. Cat."), _itemColumn,  Qt::AlignLeft,   true,  "number"  );
   _ipsitem->addColumn(tr("Description"),     -1,           Qt::AlignLeft,   true,  "descrip"  );
   _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "qtyuom");
   _ipsitem->addColumn(tr("Qty. Break"),      _qtyColumn,   Qt::AlignRight,  true,  "qtybreak" );
   _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "priceuom");
-  _ipsitem->addColumn(tr("Price/Discount"),  _priceColumn, Qt::AlignRight,  true,  "price" );
-  _ipsitem->addColumn(tr("Fixed Discount"),  _priceColumn, Qt::AlignRight,  true,  "fixedAmtDiscount" );
-  _ipsitem->addColumn(tr("Discounted Price"),_priceColumn, Qt::AlignRight,  true,  "discounted_prc" );
+  _ipsitem->addColumn(tr("Price/Percent"),   _priceColumn, Qt::AlignRight,  true,  "price" );
+  _ipsitem->addColumn(tr("Fixed Amt."),      _priceColumn, Qt::AlignRight,  true,  "fixedAmt" );
+  _ipsitem->addColumn(tr("Net Price"),       _priceColumn, Qt::AlignRight,  true,  "netPrice" );
+  _ipsitem->addColumn(tr("Type"),            -1,           Qt::AlignLeft,   true,  "type" );
   _ipsitem->addColumn(tr("Method"),          -1,           Qt::AlignLeft,   true,  "method" );
 
   _currency->setType(XComboBox::Currencies);
@@ -326,9 +327,16 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
   params.append("ipshead_id", _ipsheadid);
   params.append("item",tr("Item"));
   params.append("prodcat", tr("Prod. Cat."));
-  params.append("freight", tr("Freight"));
   params.append("flatrate", tr("Flat Rate"));
   params.append("peruom", tr("Price Per UOM"));
+  params.append("nominal",tr("Nominal"));
+  params.append("discount",tr("Discount"));
+  params.append("markup",tr("Markup"));
+  params.append("freight", tr("Freight"));
+  params.append("price", tr("Price"));
+  params.append("fixed", tr("Fixed"));
+  params.append("percent", tr("Percent"));
+  params.append("mixed", tr("Mixed"));
 
   itemFillList = mql.toQuery(params);
 

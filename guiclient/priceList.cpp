@@ -33,8 +33,9 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _price->addColumn(tr("Qty. UOM"),          _qtyColumn, Qt::AlignRight, true, "qty_uom");
   _price->addColumn(tr("Price"),           _priceColumn, Qt::AlignRight, true, "base_price");
   _price->addColumn(tr("Price UOM"),       _priceColumn, Qt::AlignRight, true, "price_uom");
-  _price->addColumn(tr("Discount %"),      _prcntColumn, Qt::AlignRight, true, "discountpercent");
-  _price->addColumn(tr("Fixed Discount"),  _priceColumn, Qt::AlignRight, true, "discountfixed");
+  _price->addColumn(tr("Percent"),         _prcntColumn, Qt::AlignRight, true, "discountpercent");
+  _price->addColumn(tr("Fixed Amt."),      _priceColumn, Qt::AlignRight, true, "discountfixed");
+  _price->addColumn(tr("Type"),             _itemColumn, Qt::AlignLeft,  true, "price_type");
   _price->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,  true, "currency");
   _price->addColumn(tr("Price (in Base)"), _priceColumn, Qt::AlignRight, true, "price");
   // column title reset in priceList::set
@@ -165,7 +166,11 @@ void priceList::sSelect()
     case 14:
     case 16:
       priceSelect.prepare( "SELECT currToLocal(:curr_id,"
-                 "       noneg(item_listprice - (item_listprice * ipsprodcat_discntprcnt) - ipsprodcat_fixedamtdiscount),"
+                 "       CASE WHEN (ipsprodcat_type='D') THEN"
+                 "         noneg(item_listprice - (item_listprice * ipsprodcat_discntprcnt) - ipsprodcat_fixedamtdiscount)"
+                 "            WHEN (ipsprodcat_type='M') THEN"
+                 "         noneg(item_maxcost + (item_maxcost * ipsprodcat_discntprcnt) + ipsprodcat_fixedamtdiscount)"
+                 "       END,"
                  "       :effective) AS price "
                  "  FROM ipsprodcat JOIN item ON (ipsprodcat_prodcat_id=item_prodcat_id AND item_id=:item_id) "
                  " WHERE (ipsprodcat_id=:ipsprodcat_id);" );
@@ -225,6 +230,9 @@ void priceList::sFillList()
   pricelistp.append("custTypePattern",  tr("Cust. Type Pattern"));
   pricelistp.append("sale",             tr("Sale"));
   pricelistp.append("listPrice",        tr("List Price"));
+  pricelistp.append("nominal",          tr("Nominal"));
+  pricelistp.append("discount",         tr("Discount"));
+  pricelistp.append("markup",           tr("Markup"));
   pricelistp.append("item_id",          _item->id());
   pricelistp.append("cust_id",          _cust->id());
   pricelistp.append("shipto_id",        _shiptoid);
