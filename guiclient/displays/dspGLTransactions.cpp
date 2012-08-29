@@ -80,6 +80,7 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char*, Qt::WFlags fl
   connect(_showRunningTotal, SIGNAL(toggled(bool)), this, SLOT(handleTotalCheckbox()));
 
   list()->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true, "gltrans_date");
+  list()->addColumn(tr("Date Created"), 75,          Qt::AlignCenter, true, "gltrans_created");
   list()->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true, "gltrans_source");
   list()->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, !_metrics->boolean("UseJournals"), "gltrans_doctype");
   list()->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
