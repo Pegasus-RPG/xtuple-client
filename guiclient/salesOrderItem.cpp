@@ -1156,7 +1156,7 @@ void salesOrderItem::sSave()
           }
         }
 
-        if (_orderQty->toDouble() != _originalQtyOrd)
+        if (_qtyOrdered->toDouble() != _originalQtyOrd)
         {
           if (_item->itemType() == "M")
           {
@@ -1171,7 +1171,7 @@ void salesOrderItem::sSave()
             {
               salesSave.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE) AS result;");
               salesSave.bindValue(":wo_id", _orderId);
-              salesSave.bindValue(":qty", _orderQty->toDouble());
+              salesSave.bindValue(":qty", _qtyOrdered->toDouble());
               salesSave.exec();
               if (salesSave.first())
               {
