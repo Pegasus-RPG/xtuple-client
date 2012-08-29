@@ -76,6 +76,7 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char*, Qt::WFlags 
   connect(_notesBtn, SIGNAL(clicked()), _notesAct, SLOT(trigger()));
   connect(_notesAct, SIGNAL(triggered()), this, SLOT(sNotes()));
 
+  list()->setPopulateLinear(true);
   _flhead->setType(XComboBox::FinancialLayouts);
 
   _periods->addColumn(tr("Period"), _itemColumn, Qt::AlignLeft, true, "f_name");
