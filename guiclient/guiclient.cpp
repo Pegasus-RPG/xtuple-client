@@ -47,7 +47,6 @@
 #include <dbtools.h>
 #include <quuencode.h>
 #include <xvariant.h>
-#include <libpq-fe.h>
 
 #include "xtsettings.h"
 #include "xuiloader.h"
