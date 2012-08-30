@@ -69,11 +69,10 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
   private:
     QString _custName;
     double  _priceRatio;
-    double  _cQtyOrdered;
     QDate   _cScheduledDate;
     int     _preferredWarehouseid;
     int     _shiptoid;
-    int     _orderId;
+    int     _supplyOrderId;
     int     _leadTime;
     int     _custid;
     int     _soheadid;
@@ -97,7 +96,8 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     bool    _createPO;
     bool    _createPR;
     int     _priceUOMCache;
-    double  _orderQtyCache;
+    double  _qtyOrderedCache;
+    double  _supplyOrderQtyCache;
     double  _cachedPct;
     double  _cachedRate;
     int     _taxzoneid;

@@ -1081,7 +1081,7 @@ to be bound by its terms.</comment>
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QGroupBox" name="_createOrder">
+                <widget class="QGroupBox" name="_createSupplyOrder">
                  <property name="title">
                   <string>Create Work Order</string>
                  </property>
@@ -1096,7 +1096,7 @@ to be bound by its terms.</comment>
                       <item>
                        <layout class="QGridLayout">
                         <item row="2" column="0">
-                         <widget class="QLabel" name="_orderQtyLit">
+                         <widget class="QLabel" name="_supplyOrderQtyLit">
                           <property name="text">
                            <string>Qty.:</string>
                           </property>
@@ -1104,12 +1104,12 @@ to be bound by its terms.</comment>
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="buddy">
-                           <cstring>_orderQty</cstring>
+                           <cstring>_supplyOrderQty</cstring>
                           </property>
                          </widget>
                         </item>
                         <item row="0" column="0">
-                         <widget class="QLabel" name="_orderLit">
+                         <widget class="QLabel" name="_supplyOrderLit">
                           <property name="text">
                            <string>Order #:</string>
                           </property>
@@ -1121,7 +1121,7 @@ to be bound by its terms.</comment>
                         <item row="0" column="1">
                          <layout class="QHBoxLayout" name="_2">
                           <item>
-                           <widget class="XLabel" name="_order">
+                           <widget class="XLabel" name="_supplyOrder">
                             <property name="maximumSize">
                              <size>
                               <width>80</width>
@@ -1134,7 +1134,7 @@ to be bound by its terms.</comment>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLabel" name="_orderLineLit">
+                           <widget class="QLabel" name="_supplyOrderLineLit">
                             <property name="text">
                              <string>Line #:</string>
                             </property>
@@ -1144,7 +1144,7 @@ to be bound by its terms.</comment>
                            </widget>
                           </item>
                           <item>
-                           <widget class="XLabel" name="_orderLine">
+                           <widget class="XLabel" name="_supplyOrderLine">
                             <property name="maximumSize">
                              <size>
                               <width>80</width>
@@ -1174,7 +1174,7 @@ to be bound by its terms.</comment>
                         <item row="2" column="1">
                          <layout class="QHBoxLayout">
                           <item>
-                           <widget class="XLabel" name="_orderQty">
+                           <widget class="XLabel" name="_supplyOrderQty">
                             <property name="alignment">
                              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                             </property>
@@ -1185,7 +1185,7 @@ to be bound by its terms.</comment>
                         <item row="3" column="1">
                          <layout class="QHBoxLayout">
                           <item>
-                           <widget class="DLineEdit" name="_orderDueDate">
+                           <widget class="DLineEdit" name="_supplyOrderDueDate">
                             <property name="enabled">
                              <bool>false</bool>
                             </property>
@@ -1207,7 +1207,7 @@ to be bound by its terms.</comment>
                          </layout>
                         </item>
                         <item row="3" column="0">
-                         <widget class="QLabel" name="_orderDueDateLit">
+                         <widget class="QLabel" name="_supplyOrderDueDateLit">
                           <property name="text">
                            <string>Due Date:</string>
                           </property>
@@ -1215,12 +1215,12 @@ to be bound by its terms.</comment>
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
                           <property name="buddy">
-                           <cstring>_orderDueDate</cstring>
+                           <cstring>_supplyOrderDueDate</cstring>
                           </property>
                          </widget>
                         </item>
                         <item row="1" column="0">
-                         <widget class="QLabel" name="_orderStatusLit">
+                         <widget class="QLabel" name="_supplyOrderStatusLit">
                           <property name="text">
                            <string>Status:</string>
                           </property>
@@ -1230,7 +1230,7 @@ to be bound by its terms.</comment>
                          </widget>
                         </item>
                         <item row="1" column="1">
-                         <widget class="QLabel" name="_orderStatus">
+                         <widget class="QLabel" name="_supplyOrderStatus">
                           <property name="sizePolicy">
                            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                             <horstretch>0</horstretch>
@@ -1271,7 +1271,7 @@ to be bound by its terms.</comment>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QCheckBox" name="_dropShip">
+                           <widget class="QCheckBox" name="_supplyDropShip">
                             <property name="text">
                              <string>Drop Ship</string>
                             </property>
@@ -1293,17 +1293,17 @@ to be bound by its terms.</comment>
                          </layout>
                         </item>
                         <item row="5" column="0">
-                         <widget class="QLabel" name="_overridePoPriceLit">
+                         <widget class="QLabel" name="_supplyOverridePriceLit">
                           <property name="text">
                            <string>Override Price:</string>
                           </property>
                           <property name="buddy">
-                           <cstring>_overridePoPrice</cstring>
+                           <cstring>_supplyOverridePrice</cstring>
                           </property>
                          </widget>
                         </item>
                         <item row="5" column="1">
-                         <widget class="CurrCluster" name="_overridePoPrice">
+                         <widget class="CurrCluster" name="_supplyOverridePrice">
                           <property name="format">
                            <enum>CurrDisplay::Cost</enum>
                           </property>
@@ -1926,11 +1926,11 @@ to be bound by its terms.</comment>
   <tabstop>_showAvailability</tabstop>
   <tabstop>_inventoryButton</tabstop>
   <tabstop>_dependenciesButton</tabstop>
-  <tabstop>_createOrder</tabstop>
-  <tabstop>_orderDueDate</tabstop>
+  <tabstop>_createSupplyOrder</tabstop>
+  <tabstop>_supplyOrderDueDate</tabstop>
   <tabstop>_supplyWarehouse</tabstop>
-  <tabstop>_dropShip</tabstop>
-  <tabstop>_overridePoPrice</tabstop>
+  <tabstop>_supplyDropShip</tabstop>
+  <tabstop>_supplyOverridePrice</tabstop>
   <tabstop>_baseUnitPrice</tabstop>
   <tabstop>_itemcharView</tabstop>
   <tabstop>_taxtype</tabstop>
@@ -2202,7 +2202,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_netUnitPrice</sender>
    <signal>effectiveChanged(QDate)</signal>
-   <receiver>_overridePoPrice</receiver>
+   <receiver>_supplyOverridePrice</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -2218,7 +2218,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_netUnitPrice</sender>
    <signal>idChanged(int)</signal>
-   <receiver>_overridePoPrice</receiver>
+   <receiver>_supplyOverridePrice</receiver>
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel">
