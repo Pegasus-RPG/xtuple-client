@@ -516,10 +516,10 @@ void user::sRevokeGroup()
 void user::sCheck()
 {
   //This regexp checks to make sure the user name starts with a letter.
-  QRegExp re("(\\d+)"); // just digits
-  QRegExp re2("(\\w+)"); // this includes all letters & numbers of all alphabets
+  QRegExp re("^\\d"); // just digits
+  QRegExp re2("^\\w"); // this includes all letters & numbers of all alphabets
   _cUsername = _username->text().trimmed();
-  if ((!re.indexIn(_cUsername.at(0)) || re2.indexIn(_cUsername.at(0))) && _username->text() != "")
+  if (((re.indexIn(_cUsername) != -1) || (re2.indexIn(_cUsername) == -1)) && _username->text() != "")
   {
       QMessageBox::critical(this, tr("Error"), tr("User names must begin with a letter."));
       _username->clear();
