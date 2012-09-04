@@ -119,7 +119,7 @@ Alternatively, the contents of this file may be used under the terms of the xTup
 [NOTE: The text of this Exhibit A may differ slightly from the text of the notices in the Source Code files of the Original Code.  You should use the text of this Exhibit A rather than the text found in the Original Code Source Code for Your Modifications.]
  
 
- 
+
 EXHIBIT B.  Attribution Information
 
 Attribution Copyright Notice: Copyright (c) 1999-2012 by OpenMFG, LLC, d/b/a xTuple
