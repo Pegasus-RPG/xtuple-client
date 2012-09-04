@@ -550,6 +550,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   connect(_fileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleDocument(QString)));
 
   hunspell_initialize();
+
+  setUpListener("usrprivUpdated");
 }
 
 GUIClient::~GUIClient()
@@ -2328,4 +2330,6 @@ void GUIClient::sEmitNotifyHeard(const QString &note)
         QMessageBox::information(this, "asdf", "test note received");
     else if(note == "messagePosted")
         emit messageNotify();
+    else if(note == "usrprivUpdated")
+        systemMenu->sRescanPrivileges();
 }
