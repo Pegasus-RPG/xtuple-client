@@ -508,6 +508,12 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
 
 void invoiceItem::sDeterminePrice()
 {
+  //if we don't have item selected, don't try to determine the price yet
+  if (!_item->isValid() ||
+       _pricingUOM->id() < 0 ||
+       _qtyUOM->id() < 0)
+      return;
+
   if ( (_itemSelected->isChecked()) && (_item->isValid()) && (_billed->toDouble()) )
   {
     XSqlQuery itemprice;
