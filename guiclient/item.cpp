@@ -97,6 +97,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _inTransaction = false;
 
   _listprice->setValidator(omfgThis->priceVal());
+  _listcost->setValidator(omfgThis->costVal());
   _prodWeight->setValidator(omfgThis->weightVal());
   _packWeight->setValidator(omfgThis->weightVal());
 
@@ -419,14 +420,14 @@ void item::saveCore()
             "       item_picklist, item_sold, item_fractional, item_active,"
             "       item_type,"
             "       item_prodweight, item_packweight, item_prodcat_id,"
-            "       item_exclusive, item_listprice, item_maxcost,"
+            "       item_exclusive, item_listprice, item_listcost, item_maxcost,"
             "       item_inv_uom_id, item_price_uom_id)"
             "VALUES(:item_id, :item_number, '', '',"
             "       :item_classcode_id,"
             "       false, false, false, :item_active,"
             "       :item_type,"
             "       0.0, 0.0, -1,"
-            "       true, 0.0, 0.0,"
+            "       true, 0.0, 0.0, 0.0,"
             "       :item_inv_uom_id, :item_inv_uom_id);");
     itemaveCore.bindValue(":item_id", _itemid);
     itemaveCore.bindValue(":item_number", _itemNumber->text().trimmed().toUpper());
@@ -794,7 +795,8 @@ void item::sSave()
                "  item_maxcost, item_prodweight, item_packweight,"
                "  item_prodcat_id, item_price_uom_id,"
                "  item_exclusive,"
-               "  item_listprice, item_upccode, item_config,"
+               "  item_listprice, item_listcost,"
+               "  item_upccode, item_config,"
                "  item_comments, item_extdescrip, item_warrdays, item_freightclass_id,"
                "  item_tax_recoverable ) "
                "VALUES "
@@ -805,7 +807,8 @@ void item::sSave()
                "  :item_maxcost, :item_prodweight, :item_packweight,"
                "  :item_prodcat_id, :item_price_uom_id,"
                "  :item_exclusive,"
-               "  :item_listprice, :item_upccode, :item_config,"
+               "  :item_listprice, :item_listcost,"
+               "  :item_upccode, :item_config,"
                "  :item_comments, :item_extdescrip, :item_wardays, :item_freightclass_id,"
                "  :item_tax_recoverable );" ;
   else if ((_mode == cEdit) || (cNew == _mode && _inTransaction))
@@ -818,7 +821,8 @@ void item::sSave()
                "    item_prodcat_id=:item_prodcat_id,"
                "    item_price_uom_id=:item_price_uom_id,"
                "    item_exclusive=:item_exclusive,"
-               "    item_listprice=:item_listprice, item_upccode=:item_upccode, item_config=:item_config,"
+               "    item_listprice=:item_listprice, item_listcost=:item_listcost,"
+               "    item_upccode=:item_upccode, item_config=:item_config,"
                "    item_comments=:item_comments, item_extdescrip=:item_extdescrip, item_warrdays=:item_warrdays,"
                "    item_freightclass_id=:item_freightclass_id,"
                "    item_tax_recoverable=:item_tax_recoverable "
@@ -835,6 +839,7 @@ void item::sSave()
   itemSave.bindValue(":item_exclusive", QVariant(_exclusive->isChecked()));
   itemSave.bindValue(":item_price_uom_id", _priceUOM->id());
   itemSave.bindValue(":item_listprice", _listprice->toDouble());
+  itemSave.bindValue(":item_listcost", _listcost->toDouble());
   itemSave.bindValue(":item_upccode", _upcCode->text());
   itemSave.bindValue(":item_active", QVariant(_active->isChecked()));
   itemSave.bindValue(":item_picklist", QVariant(_pickListItem->isChecked()));
@@ -1084,6 +1089,7 @@ void item::populate()
     _upcCode->setText(item.value("item_upccode"));
     _exclusive->setChecked(item.value("item_exclusive").toBool());
     _listprice->setDouble(item.value("item_listprice").toDouble());
+    _listcost->setDouble(item.value("item_listcost").toDouble());
     _priceUOM->setId(item.value("item_price_uom_id").toInt());
     _warranty->setValue(item.value("item_warrdays").toInt());
     _taxRecoverable->setChecked(item.value("item_tax_recoverable").toBool());
@@ -1119,6 +1125,7 @@ void item::clear()
   _inventoryUOM->clear();
   _priceUOM->clear();
   _listprice->clear();
+  _listcost->clear();
 
   _active->setChecked(TRUE);
   _pickListItem->setChecked(TRUE);

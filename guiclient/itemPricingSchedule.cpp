@@ -267,8 +267,6 @@ void itemPricingSchedule::sEdit()
   if(_ipsitem->altId() == 1)
     params.append("ipsitem_id", _ipsitem->id());
   else if(_ipsitem->altId() == 2)
-    params.append("ipsprodcat_id", _ipsitem->id());
-  else if(_ipsitem->altId() == 3)
     params.append("ipsfreight_id", _ipsitem->id());
   else
     return;
@@ -291,12 +289,9 @@ void itemPricingSchedule::sDelete()
 {
   XSqlQuery itemDelete;
   if(_ipsitem->altId() == 1)
-    itemDelete.prepare( "DELETE FROM ipsitem "
+    itemDelete.prepare( "DELETE FROM ipsiteminfo "
                "WHERE (ipsitem_id=:ipsitem_id);" );
   else if(_ipsitem->altId() == 2)
-    itemDelete.prepare( "DELETE FROM ipsprodcat "
-               "WHERE (ipsprodcat_id=:ipsitem_id);" );
-  else if(_ipsitem->altId() == 3)
     itemDelete.prepare( "DELETE FROM ipsfreight "
                "WHERE (ipsfreight_id=:ipsitem_id);" );
   else
@@ -387,10 +382,8 @@ void itemPricingSchedule::reject()
   itemreject.exec("ROLLBACK;");
   if(_mode == cCopy) 
   {
-    itemreject.prepare( "DELETE FROM ipsitem "
+    itemreject.prepare( "DELETE FROM ipsiteminfo "
                "WHERE (ipsitem_ipshead_id=:ipshead_id); "
-               "DELETE FROM ipsprodcat "
-               "WHERE (ipsprodcat_ipshead_id=:ipshead_id); "
                "DELETE FROM ipsfreight "
                "WHERE (ipsfreight_ipshead_id=:ipshead_id); "
                "DELETE FROM ipshead "

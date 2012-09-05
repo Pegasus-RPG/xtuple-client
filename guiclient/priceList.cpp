@@ -1,4 +1,4 @@
-/*
+  /*
  * This file is part of the xTuple ERP: PostBooks Edition, a free and
  * open source Enterprise Resource Planning software suite,
  * Copyright (c) 1999-2012 by OpenMFG LLC, d/b/a xTuple.
@@ -20,6 +20,7 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
 {
   setupUi(this);
 
+  connect(_cust,   SIGNAL(newId(int)),        this,    SLOT(sNewCust()));
   connect(_item,   SIGNAL(newId(int)),        this,    SLOT(sNewItem()));
   connect(_close,  SIGNAL(clicked()),         this,    SLOT(reject()));
   connect(_price,  SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
@@ -47,6 +48,11 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
   }
 
   _shiptoid = -1;
+  _shiptonum = "";
+  _prodcatid = -1;
+  _custtypeid = -1;
+  _custtypecode = "";
+  _listcost = 0.0;
 
   _qty->setValidator(omfgThis->qtyVal());
   _listPrice->setPrecision(omfgThis->priceVal());
@@ -78,7 +84,10 @@ enum SetResponse priceList::set(const ParameterList &pParams)
 
   param = pParams.value("shipto_id", &valid);
   if (valid)
+  {
     _shiptoid = param.toInt();
+    sNewShipto();
+  }
 
   param = pParams.value("item_id", &valid);
   if (valid)
@@ -121,19 +130,68 @@ enum SetResponse priceList::set(const ParameterList &pParams)
   return NoError;
 }
 
+void priceList::sNewCust()
+{
+  if (_cust->isValid())
+  {
+    XSqlQuery custq;
+    custq.prepare("SELECT custtype_id, custtype_code"
+                  "  FROM custinfo LEFT OUTER JOIN custtype ON (custtype_id=cust_custtype_id)"
+                  " WHERE (cust_id=:id);");
+    custq.bindValue(":id", _cust->id());
+    custq.exec();
+    if (custq.first())
+    {
+      _custtypeid = custq.value("custtype_id").toInt();
+      _custtypecode = custq.value("custtype_code").toString();
+    }
+    else if (custq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, custq.lastError().text(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
+void priceList::sNewShipto()
+{
+  if (_shiptoid > 0)
+  {
+    XSqlQuery shiptoq;
+    shiptoq.prepare("SELECT shipto_num"
+                    "  FROM shiptoinfo"
+                    " WHERE (shipto_id=:id);");
+    shiptoq.bindValue(":id", _shiptoid);
+    shiptoq.exec();
+    if (shiptoq.first())
+    {
+      _shiptonum = shiptoq.value("shipto_num").toString();
+    }
+    else if (shiptoq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, shiptoq.lastError().text(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
 void priceList::sNewItem()
 {
   _listPrice->clear();
   if (_item->isValid())
   {
     XSqlQuery itemq;
-    itemq.prepare("SELECT item_listprice"
+    itemq.prepare("SELECT item_listprice, item_listcost, item_prodcat_id"
                   "  FROM item"
                   " WHERE (item_id=:id);");
     itemq.bindValue(":id", _item->id());
     itemq.exec();
     if (itemq.first())
+    {
       _listPrice->setDouble(itemq.value("item_listprice").toDouble());
+      _listcost = itemq.value("item_listcost").toDouble();
+      _prodcatid = itemq.value("item_prodcat_id").toInt();
+    }
     else if (itemq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, itemq.lastError().text(), __FILE__, __LINE__);
@@ -154,7 +212,7 @@ void priceList::sSelect()
     case 6:
       priceSelect.prepare( "SELECT currToCurr(ipshead_curr_id, :curr_id, ipsitem_price, "
                  "                  :effective) AS price "
-                 "FROM ipsitem JOIN ipshead ON (ipsitem_ipshead_id = ipshead_id) "
+                 "FROM ipsiteminfo JOIN ipshead ON (ipsitem_ipshead_id = ipshead_id) "
                  "WHERE (ipsitem_id=:ipsitem_id);" );
       priceSelect.bindValue(":ipsitem_id", _price->altId());
 
@@ -166,16 +224,16 @@ void priceList::sSelect()
     case 14:
     case 16:
       priceSelect.prepare( "SELECT currToLocal(:curr_id,"
-                 "       CASE WHEN (ipsprodcat_type='D') THEN"
-                 "         noneg(item_listprice - (item_listprice * ipsprodcat_discntprcnt) - ipsprodcat_fixedamtdiscount)"
-                 "            WHEN (ipsprodcat_type='M') THEN"
-                 "         noneg(item_maxcost + (item_maxcost * ipsprodcat_discntprcnt) + ipsprodcat_fixedamtdiscount)"
+                 "       CASE WHEN (ipsitem_type='D') THEN"
+                 "         noneg(item_listprice - (item_listprice * ipsitem_discntprcnt) - ipsitem_fixedamtdiscount)"
+                 "            WHEN (ipsitem_type='M') THEN"
+                 "         noneg(item_listcost + (item_listcost * ipsitem_discntprcnt) + ipsitem_fixedamtdiscount)"
                  "       END,"
                  "       :effective) AS price "
-                 "  FROM ipsprodcat JOIN item ON (ipsprodcat_prodcat_id=item_prodcat_id AND item_id=:item_id) "
-                 " WHERE (ipsprodcat_id=:ipsprodcat_id);" );
+                 "  FROM ipsiteminfo JOIN item ON (ipsitem_prodcat_id=item_prodcat_id AND item_id=:item_id) "
+                 " WHERE (ipsitem_id=:ipsitem_id);" );
       priceSelect.bindValue(":item_id", _item->id());
-      priceSelect.bindValue(":ipsprodcat_id", _price->altId());
+      priceSelect.bindValue(":ipsitem_id", _price->altId());
 
       break;
 
@@ -234,11 +292,17 @@ void priceList::sFillList()
   pricelistp.append("discount",         tr("Discount"));
   pricelistp.append("markup",           tr("Markup"));
   pricelistp.append("item_id",          _item->id());
+  pricelistp.append("prodcat_id",       _prodcatid);
   pricelistp.append("cust_id",          _cust->id());
+  pricelistp.append("custtype_id",      _custtypeid);
+  pricelistp.append("custtype_code",    _custtypecode);
   pricelistp.append("shipto_id",        _shiptoid);
+  pricelistp.append("shipto_num",       _shiptonum);
   pricelistp.append("curr_id",          _curr_id);
   pricelistp.append("effective",        _effective);
   pricelistp.append("asof",             _asOf);
+  pricelistp.append("item_listprice",   _listPrice->toDouble());
+  pricelistp.append("item_listcost",    _listcost);
 
   XSqlQuery pricelistq = pricelistm.toQuery(pricelistp);
   _price->populate(pricelistq, true);

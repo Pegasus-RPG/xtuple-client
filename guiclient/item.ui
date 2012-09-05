@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>849</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -563,7 +563,7 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </item>
-          <item row="0" column="2" colspan="2">
+          <item row="0" column="2" colspan="4">
            <widget class="XComboBox" name="_prodcat">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -579,7 +579,7 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </item>
-          <item row="0" column="4" colspan="2">
+          <item row="0" column="6" colspan="2">
            <widget class="QLabel" name="_warrantyCodeLit">
             <property name="text">
              <string>Warranty:</string>
@@ -589,14 +589,14 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </item>
-          <item row="0" column="6">
+          <item row="0" column="8">
            <widget class="QSpinBox" name="_warranty">
             <property name="maximum">
              <number>9999</number>
             </property>
            </widget>
           </item>
-          <item row="0" column="7">
+          <item row="0" column="9">
            <widget class="QLabel" name="_warrantyCodeLit_2">
             <property name="text">
              <string>Days</string>
@@ -632,7 +632,7 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </item>
-          <item row="1" column="3" colspan="2">
+          <item row="1" column="5" colspan="2">
            <widget class="QLabel" name="_priceUOMLit">
             <property name="text">
              <string>Unit Price UOM:</string>
@@ -642,7 +642,7 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </item>
-          <item row="1" column="5" colspan="2">
+          <item row="1" column="7" colspan="2">
            <widget class="XComboBox" name="_priceUOM">
             <property name="minimumSize">
              <size>
@@ -652,7 +652,30 @@ to be bound by its terms.</comment>
             </property>
            </widget>
           </item>
-          <item row="1" column="7">
+          <item row="1" column="4">
+           <widget class="XLineEdit" name="_listcost">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLabel" name="_listCostLit">
+            <property name="text">
+             <string>List Cost:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="9">
            <widget class="QCheckBox" name="_exclusive">
             <property name="text">
              <string>Exclusive</string>
@@ -1604,6 +1627,7 @@ to be bound by its terms.</comment>
   <tabstop>_prodcat</tabstop>
   <tabstop>_warranty</tabstop>
   <tabstop>_listprice</tabstop>
+  <tabstop>_listcost</tabstop>
   <tabstop>_priceUOM</tabstop>
   <tabstop>_prodWeight</tabstop>
   <tabstop>_packWeight</tabstop>

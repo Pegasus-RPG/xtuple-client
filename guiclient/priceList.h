@@ -34,11 +34,18 @@ public slots:
 
 protected:
     int _shiptoid;
+    QString _shiptonum;
+    int _prodcatid;
+    int _custtypeid;
+    QString _custtypecode;
     QDate _effective;
     QDate _asOf;
+    float _listcost;
 
 protected slots:
     virtual void languageChange();
+    virtual void sNewCust();
+    virtual void sNewShipto();
     virtual void sNewItem();
 
 };

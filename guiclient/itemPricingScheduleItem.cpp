@@ -27,10 +27,10 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   setupUi(this);
 
   _save = _buttonBox->button(QDialogButtonBox::Save);
+  _save->setEnabled(false);
 
   connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
-  connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sUpdateCosts(int)));
   connect(_price, SIGNAL(idChanged(int)), _actCost, SLOT(setId(int)));
   connect(_price, SIGNAL(idChanged(int)), _stdCost, SLOT(setId(int)));
@@ -52,12 +52,14 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   connect(_dscbyprodcat, SIGNAL(toggled(bool)), this, SLOT(sCheckEnable()));
   connect(_markupbyItem, SIGNAL(toggled(bool)), this, SLOT(sCheckEnable()));
   connect(_markupbyprodcat, SIGNAL(toggled(bool)), this, SLOT(sCheckEnable()));
-  connect(_dscitem, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-  connect(_markupitem, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_item, SIGNAL(valid(bool)), this, SLOT(sCheckEnable()));
+  connect(_dscitem, SIGNAL(valid(bool)), this, SLOT(sCheckEnable()));
+  connect(_markupitem, SIGNAL(valid(bool)), this, SLOT(sCheckEnable()));
+  connect(_prodcat, SIGNAL(valid(bool)), this, SLOT(sCheckEnable()));
+  connect(_markupProdcat, SIGNAL(valid(bool)), this, SLOT(sCheckEnable()));
 
   _ipsheadid = -1;
   _ipsitemid = -1;
-  _ipsprodcatid = -1;
   _ipsfreightid = -1;
   _invuomid = -1;
   
@@ -67,6 +69,7 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
 
   _qtyBreak->setValidator(omfgThis->qtyVal());
   _qtyBreakCat->setValidator(omfgThis->qtyVal());
+  _markupQtyBreakCat->setValidator(omfgThis->qtyVal());
   _qtyBreakFreight->setValidator(omfgThis->weightVal());
   _discount->setValidator(new XDoubleValidator(-999, 999, decimalPlaces("percent"), this));
   _fixedAmtDiscount->setValidator(omfgThis->negMoneyVal());
@@ -136,56 +139,7 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
   if (valid)
   {
     _ipsitemid = param.toInt();
-    itemet.prepare("SELECT * "
-                   "FROM ipsiteminfo "
-                   "WHERE (ipsitem_id = :ipsitem_id) ");
-    itemet.bindValue(":ipsitem_id", _ipsitemid);
-    itemet.exec();
-    if (itemet.first())
-    {
-      _ipsheadid = itemet.value("ipsitem_ipshead_id").toInt();
-      if(itemet.value("ipsitem_type").toString() == "D")
-      {
-        _discountSelected->setChecked(true);
-        _dscbyItem->setChecked(true);
-      }
-      else if(itemet.value("ipsitem_type").toString() == "M")
-      {
-        _markupSelected->setChecked(true);
-        _markupbyItem->setChecked(true);
-      }
-      else
-      {
-        _itemSelected->setChecked(true);
-      }
-      populate();
-    }
-  }
-
-  param = pParams.value("ipsprodcat_id", &valid);
-  if (valid)
-  {
-    _ipsprodcatid = param.toInt();
-    prodcatet.prepare("SELECT * "
-                      "FROM ipsprodcat "
-                   "WHERE (ipsprodcat_id = :ipsprodcat_id) ");
-    prodcatet.bindValue(":ipsprodcat_id", _ipsprodcatid);
-    prodcatet.exec();
-    if (prodcatet.first())
-    {
-      _ipsheadid = prodcatet.value("ipsprodcat_ipshead_id").toInt();
-      if(prodcatet.value("ipsprodcat_type").toString() == "D")
-      {
-        _discountSelected->setChecked(true);
-        _dscbyprodcat->setChecked(true);
-      }
-      else if(prodcatet.value("ipsprodcat_type").toString() == "M")
-      {
-        _markupSelected->setChecked(true);
-        _markupbyprodcat->setChecked(true);
-      }
-      populate();
-    }
+    populate();
   }
 
   param = pParams.value("ipsfreight_id", &valid);
@@ -209,8 +163,10 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _prodcat->setEnabled(FALSE);
+      _markupProdcat->setEnabled(FALSE);
       _typeGroup->setEnabled(FALSE);
       _dscitem->setReadOnly(TRUE);
+      _markupitem->setReadOnly(TRUE);
       _discountBy->setEnabled(FALSE);
       _markupBy->setEnabled(FALSE);
     }
@@ -247,6 +203,13 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
 
 void itemPricingScheduleItem::sCheckEnable()
 {
+  if(_itemSelected->isChecked())
+  {
+    if (_item->isValid())
+      _save->setEnabled(true);
+    else
+      _save->setEnabled(false);
+  }
   if (_dscbyItem->isChecked())
   {
     _prodcatLit->hide();
@@ -262,7 +225,10 @@ void itemPricingScheduleItem::sCheckEnable()
     _itemGroup->hide();
     _prodcatLit->show();
     _prodcat->show();
-    _save->setEnabled(true);
+    if (_prodcat->isValid())
+      _save->setEnabled(true);
+    else
+      _save->setEnabled(false);
   }
   if (_markupbyItem->isChecked())
   {
@@ -279,13 +245,15 @@ void itemPricingScheduleItem::sCheckEnable()
     _markupItemGroup->hide();
     _markupProdcatLit->show();
     _markupProdcat->show();
-    _save->setEnabled(true);
+    if (_markupProdcat->isValid())
+      _save->setEnabled(true);
+    else
+      _save->setEnabled(false);
   }
 }
 
 void itemPricingScheduleItem::sSave()
 {
-  XSqlQuery itemSave;
   sSave(TRUE);
 }
 
@@ -353,16 +321,16 @@ void itemPricingScheduleItem::sSave( bool pClose)
     }
     else if(_dscbyprodcat->isChecked())
     {
-      itemSave.prepare( "SELECT ipsprodcat_id "
-                 "FROM ipsprodcat "
-                 "WHERE ( (ipsprodcat_ipshead_id=:ipshead_id)"
-                 " AND (ipsprodcat_prodcat_id=:prodcat_id)"
-                 " AND (ipsprodcat_qtybreak=:qtybreak)"
-                 " AND (ipsprodcat_id <> :ipsprodcat_id) );" );
+      itemSave.prepare( "SELECT ipsitem_id "
+                 "FROM ipsiteminfo "
+                 "WHERE ( (ipsitem_ipshead_id=:ipshead_id)"
+                 " AND (ipsitem_prodcat_id=:prodcat_id)"
+                 " AND (ipsitem_qtybreak=:qtybreak)"
+                 " AND (ipsitem_id <> :ipsitem_id) );" );
       itemSave.bindValue(":ipshead_id", _ipsheadid);
       itemSave.bindValue(":prodcat_id", _prodcat->id());
       itemSave.bindValue(":qtybreak", _qtyBreakCat->toDouble());
-      itemSave.bindValue(":ipsprodcat_id", _ipsprodcatid);
+      itemSave.bindValue(":ipsitem_id", _ipsitemid);
       itemSave.exec();
       if (itemSave.first())
       {
@@ -391,8 +359,8 @@ void itemPricingScheduleItem::sSave( bool pClose)
                  "   AND (ipsitem_id <> :ipsitem_id));" );
 
       itemSave.bindValue(":ipshead_id", _ipsheadid);
-      itemSave.bindValue(":item_id", _dscitem->id());
-      itemSave.bindValue(":qtybreak", _qtyBreakCat->toDouble());
+      itemSave.bindValue(":item_id", _markupitem->id());
+      itemSave.bindValue(":qtybreak", _markupQtyBreakCat->toDouble());
       itemSave.bindValue(":ipsitem_id", _ipsitemid);
       itemSave.exec();
       if (itemSave.first())
@@ -411,16 +379,16 @@ void itemPricingScheduleItem::sSave( bool pClose)
     }
     else if(_markupbyprodcat->isChecked())
     {
-      itemSave.prepare( "SELECT ipsprodcat_id "
-                 "FROM ipsprodcat "
-                 "WHERE ( (ipsprodcat_ipshead_id=:ipshead_id)"
-                 " AND (ipsprodcat_prodcat_id=:prodcat_id)"
-                 " AND (ipsprodcat_qtybreak=:qtybreak)"
-                 " AND (ipsprodcat_id <> :ipsprodcat_id) );" );
+      itemSave.prepare( "SELECT ipsitem_id "
+                 "FROM ipsiteminfo "
+                 "WHERE ( (ipsitem_ipshead_id=:ipshead_id)"
+                 " AND (ipsitem_prodcat_id=:prodcat_id)"
+                 " AND (ipsitem_qtybreak=:qtybreak)"
+                 " AND (ipsitem_id <> :ipsitem_id) );" );
       itemSave.bindValue(":ipshead_id", _ipsheadid);
-      itemSave.bindValue(":prodcat_id", _prodcat->id());
-      itemSave.bindValue(":qtybreak", _qtyBreakCat->toDouble());
-      itemSave.bindValue(":ipsprodcat_id", _ipsprodcatid);
+      itemSave.bindValue(":prodcat_id", _markupProdcat->id());
+      itemSave.bindValue(":qtybreak", _markupQtyBreakCat->toDouble());
+      itemSave.bindValue(":ipsitem_id", _ipsitemid);
       itemSave.exec();
       if (itemSave.first())
       {
@@ -472,7 +440,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
 
   if (_mode == cNew)
   {
-    if(_itemSelected->isChecked())
+    if(_itemSelected->isChecked() || _discountSelected->isChecked() || _markupSelected->isChecked())
     {
       itemSave.exec("SELECT NEXTVAL('ipsitem_ipsitem_id_seq') AS ipsitem_id;");
       if (itemSave.first())
@@ -485,145 +453,17 @@ void itemPricingScheduleItem::sSave( bool pClose)
       }
 
       itemSave.prepare( "INSERT INTO ipsiteminfo "
-                 "( ipsitem_id, ipsitem_ipshead_id, ipsitem_item_id, ipsitem_type,"
+                 "( ipsitem_id, ipsitem_ipshead_id, ipsitem_item_id, ipsitem_prodcat_id,"
                  "  ipsitem_qty_uom_id, ipsitem_qtybreak, "
                  "  ipsitem_price_uom_id, ipsitem_price, "
-                 "  ipsitem_discntprcnt, ipsitem_fixedamtdiscount ) "
+                 "  ipsitem_discntprcnt, ipsitem_fixedamtdiscount, "
+                 "  ipsitem_type, ipsitem_warehous_id ) "
                  "VALUES "
-                 "( :ipsitem_id, :ipshead_id, :ipsitem_item_id, :ipsitem_type, "
-                 "  :qty_uom_id, :ipsitem_qtybreak, "
-                 "  :price_uom_id, :ipsitem_price, "
-                 "  :ipsitem_discntprcnt, :ipsitem_fixedamtdiscount );" );
-    }
-    else if(_discountSelected->isChecked())
-    {
-      if(_dscbyItem->isChecked())
-      {
-        itemSave.exec("SELECT NEXTVAL ('ipsitem_ipsitem_id_seq') AS ipsitem_id;");
-        if (itemSave.first())
-          _ipsitemid = itemSave.value("ipsitem_id").toInt();
-        else if (itemSave.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                    __FILE__, __LINE__);
-          done(-1);
-        }
-
-        itemSave.prepare("INSERT INTO ipsiteminfo "
-                  "( ipsitem_id, ipsitem_ipshead_id, "
-                  "  ipsitem_item_id, ipsitem_type, ipsitem_qtybreak, "
-                  "  ipsitem_price, ipsitem_qty_uom_id, "
-                  "  ipsitem_price_uom_id, ipsitem_discntprcnt, "
-                  "  ipsitem_fixedamtdiscount ) "
-                  "VALUES "
-                  "( :ipsitem_id, :ipshead_id, "
-                  "  :ipsitem_item_id, :ipsitem_type, :ipsitem_qtybreak, "
-                  "  :ipsitem_price, :ipsitem_qty_uom_id, "
-                  "  :ipsitem_price_uom_id, :ipsitem_discntprcnt, "
-                  "  :ipsitem_fixedamtdiscount); ");
-
-        XSqlQuery qry;
-        qry.prepare("SELECT item_inv_uom_id, item_price_uom_id "
-                    "FROM item "
-                    "WHERE (item_id=:item_id);");
-        qry.bindValue(":item_id", _dscitem->id());
-        qry.exec();
-        if (qry.first())
-        {
-          itemSave.bindValue(":ipsitem_qty_uom_id", qry.value("item_inv_uom_id"));
-          itemSave.bindValue(":ipsitem_price_uom_id", qry.value("item_price_uom_id"));
-        }
-        else if (qry.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, _rejectedMsg.arg(qry.lastError().databaseText()),
-                    __FILE__, __LINE__);
-          done(-1);
-        }
-      }
-      else if(_dscbyprodcat->isChecked())
-      {
-        itemSave.exec("SELECT NEXTVAL('ipsprodcat_ipsprodcat_id_seq') AS ipsprodcat_id;");
-        if (itemSave.first())
-          _ipsprodcatid = itemSave.value("ipsprodcat_id").toInt();
-        else if (itemSave.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                    __FILE__, __LINE__);
-          done(-1);
-        }
-
-        itemSave.prepare( "INSERT INTO ipsprodcat "
-                   "( ipsprodcat_id, ipsprodcat_ipshead_id, ipsprodcat_prodcat_id, ipsprodcat_type,"
-                   "  ipsprodcat_qtybreak, ipsprodcat_discntprcnt, ipsprodcat_fixedamtdiscount )"
-                   "VALUES "
-                   "( :ipsprodcat_id, :ipshead_id, :ipsprodcat_prodcat_id, :ipsprodcat_type,"
-                   "  :ipsprodcat_qtybreak, :ipsprodcat_discntprcnt, :ipsprodcat_fixedamtdiscount );" );
-      }
-    }
-    else if(_markupSelected->isChecked())
-    {
-      if(_markupbyItem->isChecked())
-      {
-        itemSave.exec("SELECT NEXTVAL ('ipsitem_ipsitem_id_seq') AS ipsitem_id;");
-        if (itemSave.first())
-          _ipsitemid = itemSave.value("ipsitem_id").toInt();
-        else if (itemSave.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                    __FILE__, __LINE__);
-          done(-1);
-        }
-
-        itemSave.prepare("INSERT INTO ipsiteminfo "
-                  "( ipsitem_id, ipsitem_ipshead_id, "
-                  "  ipsitem_item_id, ipsitem_type, ipsitem_qtybreak, "
-                  "  ipsitem_price, ipsitem_qty_uom_id, "
-                  "  ipsitem_price_uom_id, ipsitem_discntprcnt, "
-                  "  ipsitem_fixedamtdiscount ) "
-                  "VALUES "
-                  "( :ipsitem_id, :ipshead_id, "
-                  "  :ipsitem_item_id, :ipsitem_type, :ipsitem_qtybreak, "
-                  "  :ipsitem_price, :ipsitem_qty_uom_id, "
-                  "  :ipsitem_price_uom_id, :ipsitem_discntprcnt, "
-                  "  :ipsitem_fixedamtdiscount); ");
-
-        XSqlQuery qry;
-        qry.prepare("SELECT item_inv_uom_id, item_price_uom_id "
-                    "FROM item "
-                    "WHERE (item_id=:item_id);");
-        qry.bindValue(":item_id", _markupitem->id());
-        qry.exec();
-        if (qry.first())
-        {
-          itemSave.bindValue(":ipsitem_qty_uom_id", qry.value("item_inv_uom_id"));
-          itemSave.bindValue(":ipsitem_price_uom_id", qry.value("item_price_uom_id"));
-        }
-        else if (qry.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, _rejectedMsg.arg(qry.lastError().databaseText()),
-                    __FILE__, __LINE__);
-          done(-1);
-        }
-      }
-      else if(_markupbyprodcat->isChecked())
-      {
-        itemSave.exec("SELECT NEXTVAL('ipsprodcat_ipsprodcat_id_seq') AS ipsprodcat_id;");
-        if (itemSave.first())
-          _ipsprodcatid = itemSave.value("ipsprodcat_id").toInt();
-        else if (itemSave.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, _rejectedMsg.arg(itemSave.lastError().databaseText()),
-                    __FILE__, __LINE__);
-          done(-1);
-        }
-
-        itemSave.prepare( "INSERT INTO ipsprodcat "
-                   "( ipsprodcat_id, ipsprodcat_ipshead_id, ipsprodcat_prodcat_id, ipsprodcat_type,"
-                   "  ipsprodcat_qtybreak, ipsprodcat_discntprcnt, ipsprodcat_fixedamtdiscount )"
-                   "VALUES "
-                   "( :ipsprodcat_id, :ipshead_id, :ipsprodcat_prodcat_id, :ipsprodcat_type,"
-                   "  :ipsprodcat_qtybreak, :ipsprodcat_discntprcnt, :ipsprodcat_fixedamtdiscount );" );
-      }
+                 "( :ipsitem_id, :ipshead_id, :ipsitem_item_id, :ipsitem_prodcat_id, "
+                 "  :ipsitem_qty_uom_id, :ipsitem_qtybreak, "
+                 "  :ipsitem_price_uom_id, :ipsitem_price, "
+                 "  :ipsitem_discntprcnt, :ipsitem_fixedamtdiscount, "
+                 "  :ipsitem_type, :ipsitem_warehous_id);" );
     }
     else if(_freightSelected->isChecked())
     {
@@ -649,51 +489,15 @@ void itemPricingScheduleItem::sSave( bool pClose)
   }
   else if (_mode == cEdit)
   {
-    if(_itemSelected->isChecked())
+    if(_itemSelected->isChecked() || _discountSelected->isChecked() || _markupSelected->isChecked())
       itemSave.prepare( "UPDATE ipsiteminfo "
-                 "   SET ipsitem_qty_uom_id=:qty_uom_id,"
+                 "   SET ipsitem_qty_uom_id=:ipsitem_qty_uom_id,"
                  "       ipsitem_qtybreak=:ipsitem_qtybreak,"
-                 "       ipsitem_price_uom_id=:price_uom_id,"
-                 "       ipsitem_price=:ipsitem_price "
+                 "       ipsitem_price_uom_id=:ipsitem_price_uom_id,"
+                 "       ipsitem_price=:ipsitem_price,"
+                 "       ipsitem_discntprcnt=:ipsitem_discntprcnt,"
+                 "       ipsitem_fixedamtdiscount=:ipsitem_fixedamtdiscount "
                  "WHERE (ipsitem_id=:ipsitem_id);" );
-    else if(_discountSelected->isChecked())
-    {
-      if(_dscbyprodcat->isChecked())
-      {
-        itemSave.prepare( "UPDATE ipsprodcat "
-                   "   SET ipsprodcat_qtybreak=:ipsprodcat_qtybreak,"
-                   "       ipsprodcat_discntprcnt=:ipsprodcat_discntprcnt,"
-                   "       ipsprodcat_fixedamtdiscount=:ipsprodcat_fixedamtdiscount "
-                   "WHERE (ipsprodcat_id=:ipsprodcat_id);" );
-      }
-      else if(_dscbyItem->isChecked())
-      {
-        itemSave.prepare("UPDATE ipsiteminfo "
-                  "SET ipsitem_qtybreak = :ipsitem_qtybreak, "
-                  "    ipsitem_discntprcnt = :ipsitem_discntprcnt, "
-                  "    ipsitem_fixedamtdiscount = :ipsitem_fixedamtdiscount "
-                  "WHERE (ipsitem_id= :ipsitem_id);");
-      }
-    }
-    else if(_markupSelected->isChecked())
-    {
-      if(_markupbyprodcat->isChecked())
-      {
-        itemSave.prepare( "UPDATE ipsprodcat "
-                   "   SET ipsprodcat_qtybreak=:ipsprodcat_qtybreak,"
-                   "       ipsprodcat_discntprcnt=:ipsprodcat_discntprcnt,"
-                   "       ipsprodcat_fixedamtdiscount=:ipsprodcat_fixedamtdiscount "
-                   "WHERE (ipsprodcat_id=:ipsprodcat_id);" );
-      }
-      else if(_markupbyItem->isChecked())
-      {
-        itemSave.prepare("UPDATE ipsiteminfo "
-                  "SET ipsitem_qtybreak = :ipsitem_qtybreak, "
-                  "    ipsitem_discntprcnt = :ipsitem_discntprcnt, "
-                  "    ipsitem_fixedamtdiscount = :ipsitem_fixedamtdiscount "
-                  "WHERE (ipsitem_id= :ipsitem_id);");
-      }
-    }
     else if(_freightSelected->isChecked())
       itemSave.prepare( "UPDATE ipsfreight "
                  "   SET ipsfreight_qtybreak=:ipsfreight_qtybreak,"
@@ -707,7 +511,6 @@ void itemPricingScheduleItem::sSave( bool pClose)
   }
 
   itemSave.bindValue(":ipsitem_id", _ipsitemid);
-  itemSave.bindValue(":ipsprodcat_id", _ipsprodcatid);
   itemSave.bindValue(":ipsfreight_id", _ipsfreightid);
   itemSave.bindValue(":ipshead_id", _ipsheadid);
 
@@ -715,6 +518,8 @@ void itemPricingScheduleItem::sSave( bool pClose)
   {
     itemSave.bindValue(":ipsitem_item_id", _item->id());
     itemSave.bindValue(":ipsitem_type", "N");
+    itemSave.bindValue(":ipsitem_qty_uom_id", _qtyUOM->id());
+    itemSave.bindValue(":ipsitem_price_uom_id", _priceUOM->id());
     itemSave.bindValue(":ipsitem_qtybreak", _qtyBreak->toDouble());
     itemSave.bindValue(":ipsitem_discntprcnt", 0.00);
     itemSave.bindValue(":ipsitem_fixedamtdiscount", 0.00);
@@ -731,11 +536,12 @@ void itemPricingScheduleItem::sSave( bool pClose)
   }
   else if((_discountSelected->isChecked()) && (_dscbyprodcat->isChecked()))
   {
-    itemSave.bindValue(":ipsprodcat_prodcat_id", _prodcat->id());
-    itemSave.bindValue(":ipsprodcat_type", "D");
-    itemSave.bindValue(":ipsprodcat_qtybreak", _qtyBreakCat->toDouble());
-    itemSave.bindValue(":ipsprodcat_discntprcnt", (_discount->toDouble() / 100.0));
-    itemSave.bindValue(":ipsprodcat_fixedamtdiscount", (_fixedAmtDiscount->toDouble()));
+    itemSave.bindValue(":ipsitem_prodcat_id", _prodcat->id());
+    itemSave.bindValue(":ipsitem_type", "D");
+    itemSave.bindValue(":ipsitem_qtybreak", _qtyBreakCat->toDouble());
+    itemSave.bindValue(":ipsitem_discntprcnt", (_discount->toDouble() / 100.0));
+    itemSave.bindValue(":ipsitem_fixedamtdiscount", (_fixedAmtDiscount->toDouble()));
+    itemSave.bindValue(":ipsitem_price", 0.00);
   }
   else if((_markupSelected->isChecked()) && (_markupbyItem->isChecked()))
   {
@@ -748,11 +554,53 @@ void itemPricingScheduleItem::sSave( bool pClose)
   }
   else if((_markupSelected->isChecked()) && (_markupbyprodcat->isChecked()))
   {
-    itemSave.bindValue(":ipsprodcat_prodcat_id", _markupProdcat->id());
-    itemSave.bindValue(":ipsprodcat_type", "M");
-    itemSave.bindValue(":ipsprodcat_qtybreak", _markupQtyBreakCat->toDouble());
-    itemSave.bindValue(":ipsprodcat_discntprcnt", (_markup->toDouble() / 100.0));
-    itemSave.bindValue(":ipsprodcat_fixedamtdiscount", (_fixedAmtMarkup->toDouble()));
+    itemSave.bindValue(":ipsitem_prodcat_id", _markupProdcat->id());
+    itemSave.bindValue(":ipsitem_type", "M");
+    itemSave.bindValue(":ipsitem_qtybreak", _markupQtyBreakCat->toDouble());
+    itemSave.bindValue(":ipsitem_discntprcnt", (_markup->toDouble() / 100.0));
+    itemSave.bindValue(":ipsitem_fixedamtdiscount", (_fixedAmtMarkup->toDouble()));
+    itemSave.bindValue(":ipsitem_price", 0.00);
+  }
+
+  XSqlQuery qry;
+  if((_discountSelected->isChecked()) && (_dscbyItem->isChecked()))
+  {
+    qry.prepare("SELECT item_inv_uom_id, item_price_uom_id "
+                "FROM item "
+                "WHERE (item_id=:item_id);");
+    qry.bindValue(":item_id", _dscitem->id());
+    qry.exec();
+    if (qry.first())
+    {
+      itemSave.bindValue(":ipsitem_qty_uom_id", qry.value("item_inv_uom_id"));
+      itemSave.bindValue(":ipsitem_price_uom_id", qry.value("item_price_uom_id"));
+    }
+    else if (qry.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, _rejectedMsg.arg(qry.lastError().databaseText()),
+                __FILE__, __LINE__);
+      done(-1);
+    }
+  }
+
+  if((_markupSelected->isChecked()) && (_markupbyItem->isChecked()))
+  {
+    qry.prepare("SELECT item_inv_uom_id, item_price_uom_id "
+                "FROM item "
+                "WHERE (item_id=:item_id);");
+    qry.bindValue(":item_id", _markupitem->id());
+    qry.exec();
+    if (qry.first())
+    {
+      itemSave.bindValue(":ipsitem_qty_uom_id", qry.value("item_inv_uom_id"));
+      itemSave.bindValue(":ipsitem_price_uom_id", qry.value("item_price_uom_id"));
+    }
+    else if (qry.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, _rejectedMsg.arg(qry.lastError().databaseText()),
+                __FILE__, __LINE__);
+      done(-1);
+    }
   }
 
   itemSave.bindValue(":ipsfreight_qtybreak", _qtyBreakFreight->toDouble());
@@ -785,19 +633,9 @@ void itemPricingScheduleItem::sSave( bool pClose)
     if(_itemSelected->isChecked())
       done(_ipsitemid);
     if(_discountSelected->isChecked())
-    {
-      if(_dscbyItem->isChecked())
-        done(_ipsitemid);
-      else if(_dscbyprodcat->isChecked())
-        done(_ipsprodcatid);
-    }
+      done(_ipsitemid);
     if(_markupSelected->isChecked())
-    {
-      if(_markupbyItem->isChecked())
-        done(_ipsitemid);
-      else if(_markupbyprodcat->isChecked())
-        done(_ipsprodcatid);
-    }
+      done(_ipsitemid);
     if(_freightSelected->isChecked())
       done(_ipsfreightid);
   }
@@ -815,130 +653,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
 void itemPricingScheduleItem::populate()
 {
   XSqlQuery itempopulate;
-  if(_itemSelected->isChecked())
-  {
-    itempopulate.prepare( "SELECT * "
-                          "FROM ipsitem "
-                          "WHERE (ipsitem_id=:ipsitem_id);" );
-    itempopulate.bindValue(":ipsitem_id", _ipsitemid);
-    itempopulate.exec();
-    if (itempopulate.first())
-    {
-      _ipsheadid=itempopulate.value("ipsitem_ipshead_id").toInt();
-      _item->setId(itempopulate.value("ipsitem_item_id").toInt());
-      _qtyBreak->setDouble(itempopulate.value("ipsitem_qtybreak").toDouble());
-      _price->setLocalValue(itempopulate.value("ipsitem_price").toDouble());
-      _qtyUOM->setId(itempopulate.value("ipsitem_qty_uom_id").toInt());
-      _priceUOM->setId(itempopulate.value("ipsitem_price_uom_id").toInt());
-
-      sUpdateMargins();
-    }
-    else if (itempopulate.lastError().type() != QSqlError::NoError)
-    {
-	systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
-                  __FILE__, __LINE__);
-        done(-1);
-    }
-  }
-  else if(_discountSelected->isChecked())
-  {
-    if(_dscbyprodcat->isChecked())
-    {
-      itempopulate.prepare( "SELECT ipsprodcat_ipshead_id,"
-                 "       ipsprodcat_prodcat_id,"
-                 "       ipsprodcat_qtybreak AS qty_brk,"
-                 "       (ipsprodcat_discntprcnt * 100) AS discntprcnt,"
-                 "       ipsprodcat_fixedamtdiscount AS fxd_amnt "
-                 "FROM ipsprodcat "
-                 "WHERE (ipsprodcat_id=:ipsprodcat_id);" );
-      itempopulate.bindValue(":ipsprodcat_id", _ipsprodcatid);
-    }
-    else if(_dscbyItem->isChecked())
-    {
-      itempopulate.prepare( "SELECT ipsitem_ipshead_id,"
-                 "       ipsitem_item_id,"
-                 "       ipsitem_qtybreak AS qty_brk,"
-                 "       (ipsitem_discntprcnt * 100) AS discntprcnt,"
-                 "       ipsitem_fixedamtdiscount AS fxd_amnt "
-                 "FROM ipsiteminfo "
-                 "WHERE (ipsitem_id=:ipsitem_id);" );
-      itempopulate.bindValue(":ipsitem_id", _ipsitemid);
-    }
-    itempopulate.exec();
-    if (itempopulate.first())
-    {
-      if(_dscbyprodcat->isChecked())
-      {
-        _ipsheadid=itempopulate.value("ipsprodcat_ipshead_id").toInt();
-        _prodcat->setId(itempopulate.value("ipsprodcat_prodcat_id").toInt());
-      }
-      else if(_dscbyItem->isChecked())
-      {
-        _ipsheadid=itempopulate.value("ipsitem_ipshead_id").toInt();
-        _dscitem->setId(itempopulate.value("ipsitem_item_id").toInt());
-      }
-
-      _qtyBreakCat->setDouble(itempopulate.value("qty_brk").toDouble());
-      _discount->setDouble(itempopulate.value("discntprcnt").toDouble());
-      _fixedAmtDiscount->setDouble(itempopulate.value("fxd_amnt").toDouble());
-    }
-    else if (itempopulate.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
-                   __FILE__, __LINE__);
-      done(-1);
-    }
-  }
-  else if(_markupSelected->isChecked())
-  {
-    if(_markupbyprodcat->isChecked())
-    {
-      itempopulate.prepare( "SELECT ipsprodcat_ipshead_id,"
-                 "       ipsprodcat_prodcat_id,"
-                 "       ipsprodcat_qtybreak AS qty_brk,"
-                 "       (ipsprodcat_discntprcnt * 100) AS discntprcnt,"
-                 "       ipsprodcat_fixedamtdiscount AS fxd_amnt "
-                 "FROM ipsprodcat "
-                 "WHERE (ipsprodcat_id=:ipsprodcat_id);" );
-      itempopulate.bindValue(":ipsprodcat_id", _ipsprodcatid);
-    }
-    else if(_markupbyItem->isChecked())
-    {
-      itempopulate.prepare( "SELECT ipsitem_ipshead_id,"
-                 "       ipsitem_item_id,"
-                 "       ipsitem_qtybreak AS qty_brk,"
-                 "       (ipsitem_discntprcnt * 100) AS discntprcnt,"
-                 "       ipsitem_fixedamtdiscount AS fxd_amnt "
-                 "FROM ipsiteminfo "
-                 "WHERE (ipsitem_id=:ipsitem_id);" );
-      itempopulate.bindValue(":ipsitem_id", _ipsitemid);
-    }
-    itempopulate.exec();
-    if (itempopulate.first())
-    {
-      if(_markupbyprodcat->isChecked())
-      {
-        _ipsheadid=itempopulate.value("ipsprodcat_ipshead_id").toInt();
-        _markupProdcat->setId(itempopulate.value("ipsprodcat_prodcat_id").toInt());
-      }
-      else if(_markupbyItem->isChecked())
-      {
-        _ipsheadid=itempopulate.value("ipsitem_ipshead_id").toInt();
-        _markupitem->setId(itempopulate.value("ipsitem_item_id").toInt());
-      }
-
-      _markupQtyBreakCat->setDouble(itempopulate.value("qty_brk").toDouble());
-      _markup->setDouble(itempopulate.value("discntprcnt").toDouble());
-      _fixedAmtMarkup->setDouble(itempopulate.value("fxd_amnt").toDouble());
-    }
-    else if (itempopulate.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
-                   __FILE__, __LINE__);
-      done(-1);
-    }
-  }
-  else if(_freightSelected->isChecked())
+  if(_freightSelected->isChecked())
   {
     MetaSQLQuery mql = mqlLoad("pricingFreight", "detail");
 
@@ -997,6 +712,68 @@ void itemPricingScheduleItem::populate()
     else if (itempopulate.lastError().type() != QSqlError::NoError)
     {
        systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+    }
+  }
+  else
+  {
+    itempopulate.prepare( "SELECT * "
+                          "FROM ipsiteminfo "
+                          "WHERE (ipsitem_id=:ipsitem_id);" );
+    itempopulate.bindValue(":ipsitem_id", _ipsitemid);
+    itempopulate.exec();
+    if (itempopulate.first())
+    {
+      if(itempopulate.value("ipsitem_type").toString() == "D")
+        _discountSelected->setChecked(true);
+      else if(itempopulate.value("ipsitem_type").toString() == "M")
+        _markupSelected->setChecked(true);
+      else
+        _itemSelected->setChecked(true);
+
+      if (itempopulate.value("ipsitem_item_id").toInt() > 0)
+      {
+        if(itempopulate.value("ipsitem_type").toString() == "D")
+          _dscbyItem->setChecked(true);
+        else if(itempopulate.value("ipsitem_type").toString() == "M")
+          _markupbyItem->setChecked(true);
+      }
+      else
+      {
+        if(itempopulate.value("ipsitem_type").toString() == "D")
+          _dscbyprodcat->setChecked(true);
+        else if(itempopulate.value("ipsitem_type").toString() == "M")
+          _markupbyprodcat->setChecked(true);
+      }
+      _ipsheadid=itempopulate.value("ipsitem_ipshead_id").toInt();
+
+      // Nominal
+      _item->setId(itempopulate.value("ipsitem_item_id").toInt());
+      _qtyBreak->setDouble(itempopulate.value("ipsitem_qtybreak").toDouble());
+      _price->setLocalValue(itempopulate.value("ipsitem_price").toDouble());
+      _qtyUOM->setId(itempopulate.value("ipsitem_qty_uom_id").toInt());
+      _priceUOM->setId(itempopulate.value("ipsitem_price_uom_id").toInt());
+
+      // Discount
+      _dscitem->setId(itempopulate.value("ipsitem_item_id").toInt());
+      _prodcat->setId(itempopulate.value("ipsitem_prodcat_id").toInt());
+      _qtyBreakCat->setDouble(itempopulate.value("ipsitem_qtybreak").toDouble());
+      _discount->setDouble(itempopulate.value("ipsitem_discntprcnt").toDouble() * 100.0);
+      _fixedAmtDiscount->setDouble(itempopulate.value("ipsitem_fixedamtdiscount").toDouble());
+
+      // Markup
+      _markupitem->setId(itempopulate.value("ipsitem_item_id").toInt());
+      _markupProdcat->setId(itempopulate.value("ipsitem_prodcat_id").toInt());
+      _markupQtyBreakCat->setDouble(itempopulate.value("ipsitem_qtybreak").toDouble());
+      _markup->setDouble(itempopulate.value("ipsitem_discntprcnt").toDouble() * 100.0);
+      _fixedAmtMarkup->setDouble(itempopulate.value("ipsitem_fixedamtdiscount").toDouble());
+
+      sUpdateMargins();
+    }
+    else if (itempopulate.lastError().type() != QSqlError::NoError)
+    {
+	systemError(this, _rejectedMsg.arg(itempopulate.lastError().databaseText()),
                   __FILE__, __LINE__);
         done(-1);
     }
@@ -1130,8 +907,6 @@ void itemPricingScheduleItem::sTypeChanged(bool pChecked)
     _markupbyprodcat->setChecked(false);
     _save->setEnabled(false);
     _save->setEnabled(_dscitem->isValid());
-    connect(_dscbyItem, SIGNAL(toggled(bool)), this, SLOT(sCheckEnable()));
-    connect(_dscbyprodcat, SIGNAL(toggled(bool)), this, SLOT(sCheckEnable()));
   }
   else if(_markupSelected->isChecked())
   {
@@ -1142,8 +917,6 @@ void itemPricingScheduleItem::sTypeChanged(bool pChecked)
     _markupbyprodcat->setChecked(false);
     _save->setEnabled(false);
     _save->setEnabled(_markupitem->isValid());
-    connect(_markupbyItem, SIGNAL(toggled(bool)), this, SLOT(sCheckEnable()));
-    connect(_markupbyprodcat, SIGNAL(toggled(bool)), this, SLOT(sCheckEnable()));
   }
   else if(_freightSelected->isChecked())
   {
