@@ -15,6 +15,7 @@
 #include <QVBoxLayout>
 #include <QUrl>
 #include <QDesktopServices>
+#include <QDebug>
 
 #include <metasql.h>
 
@@ -23,6 +24,8 @@
 #include "contactemail.h"
 #include "contactwidget.h"
 #include "errorReporter.h"
+
+#define FAKEEMAILID -999
 
 void ContactWidget::init()
 {
@@ -393,6 +396,8 @@ void ContactWidget::silentSetId(const int pId)
           _phone->setText(idQ.value("cntct_phone").toString());
           _phone2->setText(idQ.value("cntct_phone2").toString());
           _fax->setText(idQ.value("cntct_fax").toString());
+          _emailCache=idQ.value("cntct_email").toString();
+          _email->append(FAKEEMAILID, idQ.value("cntct_email").toString()); // TODO: this is rotten
           _webaddr->setText(idQ.value("cntct_webaddr").toString());
           _address->setId(idQ.value("cntct_addr_id").toInt());
           _active->setChecked(idQ.value("cntct_active").toBool());
@@ -1398,14 +1403,28 @@ void ContactWidget::fillEmail()
   qry.bindValue(":cntct_id", _id);
   qry.exec();
 
-  _email->populate(qry);
-  _email->setId(_id);
+  QString curremail = _email->currentText();
+
+  if(qry.first())
+  {
+   _email->populate(qry);
+  }
+
+  if (curremail.isEmpty())
+      curremail = _emailCache;
+  if (! curremail.isEmpty())
+  {
+      qDebug() << "using" << curremail;
+      if (_email->findText(curremail) >= 0)
+          _email->setText(curremail);
+      else
+          _email->append(FAKEEMAILID, curremail);
+  }
 }
 
 void ContactWidget::sEditEmailList()
 {
-  _email->setId(_id);
-  
+  int emailId = _email->id();
   ParameterList params;
   params.append("cntct_id", _id);
 
@@ -1416,7 +1435,7 @@ void ContactWidget::sEditEmailList()
   if (selected)
     _email->setId(selected);
   else
-    _email->setId(_id);
+    _email->setId(emailId);
 }
 
 bool ContactWidget::eventFilter(QObject *obj, QEvent *event)
