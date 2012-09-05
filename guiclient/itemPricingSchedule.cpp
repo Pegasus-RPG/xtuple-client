@@ -332,6 +332,8 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
   params.append("fixed", tr("Fixed"));
   params.append("percent", tr("Percent"));
   params.append("mixed", tr("Mixed"));
+  params.append("allsites", tr("All Sites"));
+  params.append("allzones", tr("All Shipping Zones"));
 
   itemFillList = mql.toQuery(params);
 
