@@ -202,67 +202,7 @@ void priceList::sNewItem()
 
 void priceList::sSelect()
 {
-  XSqlQuery priceSelect;
-  switch (_price->id())
-  {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 6:
-      priceSelect.prepare( "SELECT currToCurr(ipshead_curr_id, :curr_id, ipsitem_price, "
-                 "                  :effective) AS price "
-                 "FROM ipsiteminfo JOIN ipshead ON (ipsitem_ipshead_id = ipshead_id) "
-                 "WHERE (ipsitem_id=:ipsitem_id);" );
-      priceSelect.bindValue(":ipsitem_id", _price->altId());
-
-      break;
-
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 16:
-      priceSelect.prepare( "SELECT currToLocal(:curr_id,"
-                 "       CASE WHEN (ipsitem_type='D') THEN"
-                 "         noneg(item_listprice - (item_listprice * ipsitem_discntprcnt) - ipsitem_fixedamtdiscount)"
-                 "            WHEN (ipsitem_type='M') THEN"
-                 "         noneg(item_listcost + (item_listcost * ipsitem_discntprcnt) + ipsitem_fixedamtdiscount)"
-                 "       END,"
-                 "       :effective) AS price "
-                 "  FROM ipsiteminfo JOIN item ON (ipsitem_prodcat_id=item_prodcat_id AND item_id=:item_id) "
-                 " WHERE (ipsitem_id=:ipsitem_id);" );
-      priceSelect.bindValue(":item_id", _item->id());
-      priceSelect.bindValue(":ipsitem_id", _price->altId());
-
-      break;
-
-    case 5:
-      priceSelect.prepare( "SELECT currToLocal(:curr_id, "
-                 "        item_listprice - (item_listprice * cust_discntprcnt),"
-                 "        :effective) AS price "
-                 "FROM custinfo, item "
-                 "WHERE ( (cust_id=:cust_id)"
-                 " AND (item_id=:item_id) );" );
-      priceSelect.bindValue(":cust_id", _cust->id());
-      priceSelect.bindValue(":item_id", _item->id());
-
-      break;
-
-    default:
-      priceSelect.prepare( "SELECT 0 AS price;" );
-  }
-
-  priceSelect.bindValue(":curr_id", _curr_id);
-  priceSelect.bindValue(":effective", _effective);
-  priceSelect.exec();
-  if (priceSelect.first())
-    _selectedPrice = priceSelect.value("price").toDouble();
-  else
-  {
-    systemError(this, priceSelect.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  _selectedPrice = _price->rawValue("base_price").toDouble();
 
   accept();
 }

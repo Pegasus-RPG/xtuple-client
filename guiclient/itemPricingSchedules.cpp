@@ -157,10 +157,8 @@ void itemPricingSchedules::sDelete()
     return;
   }
 
-  itemDelete.prepare( "DELETE FROM ipsitem "
+  itemDelete.prepare( "DELETE FROM ipsiteminfo "
              "WHERE (ipsitem_ipshead_id=:ipshead_id); "
-             "DELETE FROM ipsprodcat "
-             "WHERE (ipsprodcat_ipshead_id=:ipshead_id); "
              "DELETE FROM ipsfreight "
              "WHERE (ipsfreight_ipshead_id=:ipshead_id); "
              "DELETE FROM ipshead "
