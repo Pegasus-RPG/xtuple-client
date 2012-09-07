@@ -466,6 +466,9 @@ to be bound by its terms.</comment>
            <property name="checked">
             <bool>true</bool>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">settingsButtonGroup</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -473,6 +476,9 @@ to be bound by its terms.</comment>
            <property name="text">
             <string>Terms</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">settingsButtonGroup</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -480,6 +486,9 @@ to be bound by its terms.</comment>
            <property name="text">
             <string>Tax</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">settingsButtonGroup</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -487,6 +496,9 @@ to be bound by its terms.</comment>
            <property name="text">
             <string>Credit Cards</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">settingsButtonGroup</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -2078,7 +2090,7 @@ to be bound by its terms.</comment>
             <bool>true</bool>
            </property>
            <attribute name="buttonGroup">
-            <string>accountingButtonGroup</string>
+            <string notr="true">accountingButtonGroup</string>
            </attribute>
           </widget>
          </item>
@@ -2088,7 +2100,7 @@ to be bound by its terms.</comment>
             <string>Cash Receipts</string>
            </property>
            <attribute name="buttonGroup">
-            <string>accountingButtonGroup</string>
+            <string notr="true">accountingButtonGroup</string>
            </attribute>
           </widget>
          </item>
@@ -2098,7 +2110,7 @@ to be bound by its terms.</comment>
             <string>Credit Cards</string>
            </property>
            <attribute name="buttonGroup">
-            <string>accountingButtonGroup</string>
+            <string notr="true">accountingButtonGroup</string>
            </attribute>
           </widget>
          </item>
@@ -2508,5 +2520,6 @@ to be bound by its terms.</comment>
  </connections>
  <buttongroups>
   <buttongroup name="accountingButtonGroup"/>
+  <buttongroup name="settingsButtonGroup"/>
  </buttongroups>
 </ui>
