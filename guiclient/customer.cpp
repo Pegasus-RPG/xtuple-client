@@ -1598,16 +1598,6 @@ void customer::currentTabChanged(int index)
 
 void customer::sHandleButtons()
 {
-  //the following if/else if lines fix a bug where the user could uncheck all radio buttons
-    if (sender() == _termsButton)
-        _termsButton->setChecked(true);
-    else if (sender() == _taxButton)
-      _taxButton->setChecked(true);
-    else if (sender() == _creditcardsButton)
-      _creditcardsButton->setChecked(true);
-    else if (sender() == _generalButton)
-      _generalButton->setChecked(true);
-
   if (_billingButton->isChecked())
     _addressStack->setCurrentIndex(0);
   else if (_correspButton->isChecked())
