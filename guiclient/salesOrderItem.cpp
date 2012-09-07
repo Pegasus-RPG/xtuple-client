@@ -1167,8 +1167,8 @@ void salesOrderItem::sSave()
                                            "Should the quantity required for the "
                                            "associated Work Order be changed to "
                                            "reflect this?"),
-                                      QMessageBox::Yes | QMessageBox::Default,
-                                      QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+                                      QMessageBox::No | QMessageBox::Escape,
+                                      QMessageBox::Yes  | QMessageBox::Default) == QMessageBox::Yes)
             {
               salesSave.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE) AS result;");
               salesSave.bindValue(":wo_id", _supplyOrderId);
