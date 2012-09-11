@@ -328,6 +328,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       _supplyOrderStatus->hide();
       _item->setReadOnly(false);
       _warehouse->setEnabled(true);
+      _cancel->setEnabled(false);
       _supplyOrderId = -1;
       _itemsrc = -1;
 
