@@ -180,7 +180,6 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void setUpListener(const QString &);
 
     Q_INVOKABLE void setCaption();
-    Q_INVOKABLE void initMenuBar();
     Q_INVOKABLE void saveToolbarPositions();
 
     Q_INVOKABLE inline QMdiArea *workspace()         { return _workspace;    }
@@ -279,6 +278,7 @@ class GUIClient : public QMainWindow
     void sEmitNotifyHeard(const QString &note);
     void sEmployeeUpdated(int);
     void sGlSeriesUpdated();
+    void initMenuBar();
     void sInvoicesUpdated(int, bool);
     void sItemGroupsUpdated(int, bool);
     void sItemsUpdated(int, bool);

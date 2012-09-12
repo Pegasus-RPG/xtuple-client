@@ -492,6 +492,8 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _timeoutHandler->setIdleMinutes(_preferences->value("IdleTimeout").toInt());
   _reportHandler = 0;
 
+  connect(_privileges, SIGNAL(loaded()), this, SLOT(initMenuBar()));
+
   VirtualClusterLineEdit::_guiClientInterface = new xTupleGuiClientInterface();
   Documents::_guiClientInterface = VirtualClusterLineEdit::_guiClientInterface;
   MenuButton::_guiClientInterface =  VirtualClusterLineEdit::_guiClientInterface;
@@ -551,7 +553,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   hunspell_initialize();
 
-  setUpListener("usrprivUpdated");
 }
 
 GUIClient::~GUIClient()
@@ -2330,6 +2331,4 @@ void GUIClient::sEmitNotifyHeard(const QString &note)
         QMessageBox::information(this, "asdf", "test note received");
     else if(note == "messagePosted")
         emit messageNotify();
-    else if(note == "usrprivUpdated")
-        systemMenu->sRescanPrivileges();
 }

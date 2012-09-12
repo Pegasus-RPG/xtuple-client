@@ -11,13 +11,21 @@
 
 #include "metrics.h"
 #include <QSqlError>
+#include <QSqlDatabase>
+#include <QSqlDriver>
 #include <QVariant>
 #include "xsqlquery.h"
+#include <QMessageBox>
 
 Parameters::Parameters(QObject * parent)
   : QObject(parent)
 {
   _dirty = FALSE;
+
+  _notifyName = "default";
+  QSqlDatabase::database().driver()->subscribeToNotification(_notifyName);
+  QObject::connect(QSqlDatabase::database().driver(), SIGNAL(notification(const QString&)),
+           this, SLOT(sSetDirty(const QString &)));
 }
 
 void Parameters::load()
@@ -32,6 +40,14 @@ void Parameters::load()
     _values[q.value("key").toString()] = q.value("value").toString();
 
   _dirty = FALSE;
+
+  emit loaded();
+}
+
+void Parameters::sSetDirty(const QString &note)
+{
+    if(note == _notifyName)
+        _dirty = true;
 }
 
 QString Parameters::value(const char *pName)
@@ -129,8 +145,13 @@ QString Parameters::parent(const QString &pValue)
 
 Metrics::Metrics()
 {
+  _notifyName = "metricsUpdated";
   _readSql = "SELECT metric_name AS key, metric_value AS value FROM metric;";
   _setSql  = "SELECT setMetric(:name, :value);";
+
+  QSqlDatabase::database().driver()->subscribeToNotification("metricsUpdated");
+  QObject::connect(QSqlDatabase::database().driver(), SIGNAL(notification(const QString&)),
+           this, SLOT(sSetDirty(const QString &)));
 
   load();
 }
@@ -138,11 +159,16 @@ Metrics::Metrics()
 
 Preferences::Preferences(const QString &pUsername)
 {
+  _notifyName = "preferencesUpdated";
   _readSql  = "SELECT usrpref_name AS key, usrpref_value AS value "
               "FROM usrpref "
               "WHERE (usrpref_username=:username);";
   _setSql   = "SELECT setUserPreference(:username, :name, :value);";
   _username = pUsername;
+
+  QSqlDatabase::database().driver()->subscribeToNotification("preferencesUpdated");
+  QObject::connect(QSqlDatabase::database().driver(), SIGNAL(notification(const QString&)),
+           this, SLOT(sSetDirty(const QString &)));
 
   load();
 }
@@ -160,6 +186,7 @@ void Preferences::remove(const QString &pPrefName)
 
 Privileges::Privileges()
 {
+  _notifyName = "usrprivUpdated";
   QString user;
   XSqlQuery userq("SELECT getEffectiveXtUser() AS user;");
   if (userq.lastError().type() != QSqlError::NoError)
@@ -178,11 +205,17 @@ Privileges::Privileges()
              "   AND (grppriv_priv_id=priv_id)"
              "   AND (usrgrp_username='%1'));").arg(user);
 
+  QSqlDatabase::database().driver()->subscribeToNotification("usrprivUpdated");
+  QObject::connect(QSqlDatabase::database().driver(), SIGNAL(notification(const QString&)),
+           this, SLOT(sSetDirty(const QString &)));
+
   load();
 }
 
 bool Privileges::check(const QString &pName)
 {
+  if(_dirty)
+    load();
   MetricMap::iterator it = _values.find(pName);
   if (it == _values.end())
     return FALSE;

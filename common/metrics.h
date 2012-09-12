@@ -28,6 +28,7 @@ class Parameters : public QObject
     QString   _setSql;
     QString   _username;
     bool      _dirty;
+    QString   _notifyName;
 
   public:
     Parameters(QObject * parent = 0);
@@ -50,9 +51,13 @@ class Parameters : public QObject
   public slots:
     QString value(const QString &);
     bool    boolean(const QString &);
+    void    sSetDirty(const QString &);
 
   protected:
     void _set(const QString &, QVariant);
+
+  signals:
+    void loaded();
 
 };
 
