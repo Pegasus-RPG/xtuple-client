@@ -21,11 +21,6 @@ Parameters::Parameters(QObject * parent)
   : QObject(parent)
 {
   _dirty = FALSE;
-
-  _notifyName = "default";
-  QSqlDatabase::database().driver()->subscribeToNotification(_notifyName);
-  QObject::connect(QSqlDatabase::database().driver(), SIGNAL(notification(const QString&)),
-           this, SLOT(sSetDirty(const QString &)));
 }
 
 void Parameters::load()
@@ -149,10 +144,6 @@ Metrics::Metrics()
   _readSql = "SELECT metric_name AS key, metric_value AS value FROM metric;";
   _setSql  = "SELECT setMetric(:name, :value);";
 
-  QSqlDatabase::database().driver()->subscribeToNotification("metricsUpdated");
-  QObject::connect(QSqlDatabase::database().driver(), SIGNAL(notification(const QString&)),
-           this, SLOT(sSetDirty(const QString &)));
-
   load();
 }
 
@@ -165,10 +156,6 @@ Preferences::Preferences(const QString &pUsername)
               "WHERE (usrpref_username=:username);";
   _setSql   = "SELECT setUserPreference(:username, :name, :value);";
   _username = pUsername;
-
-  QSqlDatabase::database().driver()->subscribeToNotification("preferencesUpdated");
-  QObject::connect(QSqlDatabase::database().driver(), SIGNAL(notification(const QString&)),
-           this, SLOT(sSetDirty(const QString &)));
 
   load();
 }
