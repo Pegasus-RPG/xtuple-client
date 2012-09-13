@@ -41,6 +41,8 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sRecalcAvailability();
     virtual void        sDetermineAvailability();
     virtual void        sDetermineAvailability( bool p );
+    virtual void        sPopulateItemSources( int pItemid );
+    virtual void        sPopulateHistory();
     virtual void        sCalculateDiscountPrcnt();
     virtual void        sCalculateExtendedPrice();
     virtual void        sHandleWo( bool pCreate );
@@ -60,6 +62,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sCalcWoUnitCost();
     virtual void        sHandleButton();
     virtual void        sHandleScheduleDate();
+    virtual void        sMaintainItemCosts();
 
   protected slots:
     virtual void  languageChange();

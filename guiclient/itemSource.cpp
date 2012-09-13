@@ -20,6 +20,8 @@
 #include "crmacctcluster.h"
 #include "itemSourcePrice.h"
 #include "xcombobox.h"
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include <metasql.h>
 #include <parameter.h>
 #include "mqlutil.h"
@@ -49,6 +51,11 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cTooling);
   _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
 
+  _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartCaption(tr("Effective"));
+  _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndCaption(tr("Expires"));
+
   _captive = false;
   _new = false;
   
@@ -61,9 +68,13 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _itemsrcp->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
   _itemsrcp->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight,true, "itemsrcp_price");
-  _itemsrcp->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "currabbr");
-  _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight,true, "itemsrcp_price_base");
-  
+  _itemsrcp->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "item_curr");
+  _itemsrcp->addColumn(tr("Discount Percent"),                    -1, Qt::AlignRight,true, "itemsrcp_discntprcnt" );
+  _itemsrcp->addColumn(tr("Discount Fixed Amt."),                 -1, Qt::AlignRight,true, "itemsrcp_fixedamtdiscount" );
+  _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight,true, "price_base");
+  _itemsrcp->addColumn(tr("Type"),                      _orderColumn, Qt::AlignLeft, true, "type" );
+  _itemsrcp->addColumn(tr("Method"),                    _orderColumn, Qt::AlignLeft, true, "method" );
+
   if (omfgThis->singleCurrency())
   {
     _itemsrcp->hideColumn(1);
@@ -153,8 +164,9 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _active->setEnabled(FALSE);
-	  _default->setEnabled(FALSE);
+      _default->setEnabled(FALSE);
       _vendor->setEnabled(FALSE);
+      _dates->setEnabled(FALSE);
       _vendorItemNumber->setEnabled(FALSE);
       _vendorItemDescrip->setEnabled(FALSE);
       _vendorUOM->setEnabled(FALSE);
@@ -192,7 +204,8 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       
       _item->setReadOnly(TRUE);
       _vendorItemNumber->setText(_vendorItemNumber->text().prepend("Copy Of "));
-      
+      _dates->setStartDate(omfgThis->dbDate());
+
       if (sSave())
       {
         itemet.prepare("INSERT INTO itemsrcp ( "
@@ -222,33 +235,63 @@ void itemSource::sSaveClicked()
 bool itemSource::sSave()
 {
   XSqlQuery itemSave;
-  if (!_item->isValid())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Item Source"),
-                           tr( "You must select an Item that this Item Source represents\n"
-                               "before you may save this Item Source." ) );
-    _item->setFocus();
-    return false;
-  }
 
-  if (!_vendor->isValid())
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(!_item->isValid(), _item,
+                          tr( "You must select an Item that this Item Source represents\n"
+                              "before you may save this Item Source." ) )
+         << GuiErrorCheck(!_vendor->isValid(), _vendor,
+                          tr( "You must select this Vendor that this Item Source is sold by\n"
+                              "before you may save this Item Source." ) )
+         << GuiErrorCheck(_dates->endDate() < _dates->startDate(), _dates,
+                          tr("The expiration date cannot be earlier than the effective date."))
+         << GuiErrorCheck(_vendorUOM->currentText().length() == 0, _vendorUOM,
+                          tr( "You must indicate the Unit of Measure that this Item Source is sold in\n"
+                               "before you may save this Item Source." ) )
+         << GuiErrorCheck(_invVendorUOMRatio->toDouble() == 0.0, _invVendorUOMRatio,
+                          tr( "You must indicate the Ratio of Inventory to Vendor Unit of Measures\n"
+                               "before you may save this Item Source." ) )
+     ;
+
+  itemSave.prepare( "SELECT count(*) AS numberOfOverlaps "
+                    "FROM itemsrc "
+                    "WHERE (itemsrc_item_id = :itemsrc_item_id)"
+                    "  AND (itemsrc_vend_id = :itemsrc_vend_id)"
+                    "  AND (itemsrc_id != :itemsrc_id)"
+                    "  AND ( (itemsrc_effective BETWEEN :itemsrc_effective AND :itemsrc_expires OR"
+                    "         itemsrc_expires BETWEEN :itemsrc_effective AND :itemsrc_expires)"
+                    "   OR   (itemsrc_effective <= :itemsrc_effective AND"
+                    "         itemsrc_expires   >= :itemsrc_expires) );" );
+  itemSave.bindValue(":itemsrc_id", _itemsrcid);
+  itemSave.bindValue(":itemsrc_item_id", _item->id());
+  itemSave.bindValue(":itemsrc_vend_id", _vendor->id());
+  itemSave.bindValue(":itemsrc_effective", _dates->startDate());
+  itemSave.bindValue(":itemsrc_expires", _dates->endDate());
+  itemSave.exec();
+  if (itemSave.first())
   {
-    QMessageBox::critical( this, tr("Cannot Save Item Source"),
-                           tr( "You must select this Vendor that this Item Source is sold by\n"
-                               "before you may save this Item Source." ) );
-    _item->setFocus();
+    if (itemSave.value("numberOfOverlaps").toInt() > 0)
+    {
+      errors << GuiErrorCheck(true, _dates,
+                              tr("The date range overlaps with another date range.\n"
+                                 "Please check the values of these dates."));
+    }
+  }
+  else if (itemSave.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
   if(_mode == cNew || _mode == cCopy)
   {
     itemSave.prepare( "SELECT itemsrc_id "
-               "  FROM itemsrc "
-               " WHERE ((itemsrc_item_id=:item_id) "
-               "   AND (itemsrc_vend_id=:vend_id) "
-               "   AND (itemsrc_vend_item_number=:itemsrc_vend_item_number) "
-               "   AND (UPPER(itemsrc_manuf_name)=UPPER(:itemsrc_manuf_name)) "
-               "   AND (UPPER(itemsrc_manuf_item_number)=UPPER(:itemsrc_manuf_item_number)) ) ");
+                      "  FROM itemsrc "
+                      " WHERE ((itemsrc_item_id=:item_id) "
+                      "   AND (itemsrc_vend_id=:vend_id) "
+                      "   AND (itemsrc_vend_item_number=:itemsrc_vend_item_number) "
+                      "   AND (UPPER(itemsrc_manuf_name)=UPPER(:itemsrc_manuf_name)) "
+                      "   AND (UPPER(itemsrc_manuf_item_number)=UPPER(:itemsrc_manuf_item_number)) ) ");
     itemSave.bindValue(":item_id", _item->id());
     itemSave.bindValue(":vend_id", _vendor->id());
     itemSave.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
@@ -257,9 +300,9 @@ bool itemSource::sSave()
     itemSave.exec();
     if(itemSave.first())
     {
-      QMessageBox::critical( this, tr("Cannot Save Item Source"),
-                            tr("An Item Source already exists for the Item Number, Vendor, Vendor Item, Manfacturer Name and Manufacturer Item Number you have specified.\n"));
-      return false;
+      errors << GuiErrorCheck(true, _item,
+                              tr("An Item Source already exists for the Item Number, Vendor,\n"
+                                 "Vendor Item, Manfacturer Name and Manufacturer Item Number you have specified."));
     }
     else if (itemSave.lastError().type() != QSqlError::NoError)
     {
@@ -268,44 +311,29 @@ bool itemSource::sSave()
     }
   }
   
-  if (_vendorUOM->currentText().length() == 0)
-  {
-    QMessageBox::critical( this, tr("Cannot Save Item Source"),
-                          tr( "You must indicate the Unit of Measure that this Item Source is sold in\n"
-                               "before you may save this Item Source." ) );
-    _vendorUOM->setFocus();
-    return false;
-  }
-
-  if (_invVendorUOMRatio->toDouble() == 0.0)
-  {
-    QMessageBox::critical( this, tr("Cannot Save Item Source"),
-                          tr( "You must indicate the Ratio of Inventory to Vendor Unit of Measures\n"
-                               "before you may save this Item Source." ) );
-    _invVendorUOMRatio->setFocus();
-    return false;
-  }
-
   if(_active->isChecked())
   {
     itemSave.prepare("SELECT item_id "
-              "FROM item "
-              "WHERE ((item_id=:item_id)"
-              "  AND  (item_active)) "
-              "LIMIT 1; ");
+                     "FROM item "
+                     "WHERE ((item_id=:item_id)"
+                     "  AND  (item_active)) "
+                     "LIMIT 1; ");
     itemSave.bindValue(":item_id", _item->id());
     itemSave.exec();
     if (!itemSave.first())         
     { 
-      QMessageBox::warning( this, tr("Cannot Save Item Source"),
-        tr("This Item Source refers to an inactive Item and must be marked as inactive.") );
-      return false;
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Item Source refers to an inactive Item and must be marked as inactive.") );
     }
   }
     
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item Source"), errors))
+    return false;
+
   if (_mode == cNew || _mode == cCopy)
     itemSave.prepare( "INSERT INTO itemsrc "
                "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_default, itemsrc_vend_id,"
+               "  itemsrc_effective, itemsrc_expires,"
                "  itemsrc_vend_item_number, itemsrc_vend_item_descrip,"
                "  itemsrc_vend_uom, itemsrc_invvendoruomratio,"
                "  itemsrc_minordqty, itemsrc_multordqty, itemsrc_upccode,"
@@ -314,6 +342,7 @@ bool itemSource::sSave()
                "  itemsrc_manuf_item_number, itemsrc_manuf_item_descrip ) "
                "VALUES "
                "( :itemsrc_id, :itemsrc_item_id, :itemsrc_active, :itemsrc_default, :itemsrc_vend_id,"
+               "  :itemsrc_effective, :itemsrc_expires,"
                "  :itemsrc_vend_item_number, :itemsrc_vend_item_descrip,"
                "  :itemsrc_vend_uom, :itemsrc_invvendoruomratio,"
                "  :itemsrc_minordqty, :itemsrc_multordqty, :itemsrc_upccode,"
@@ -323,8 +352,10 @@ bool itemSource::sSave()
   if (_mode == cEdit)
     itemSave.prepare( "UPDATE itemsrc "
                "SET itemsrc_active=:itemsrc_active,"
-			   "    itemsrc_default=:itemsrc_default,"
+               "    itemsrc_default=:itemsrc_default,"
                "    itemsrc_vend_id=:itemsrc_vend_id,"
+               "    itemsrc_effective=:itemsrc_effective,"
+               "    itemsrc_expires=:itemsrc_expires,"
                "    itemsrc_vend_item_number=:itemsrc_vend_item_number,"
                "    itemsrc_vend_item_descrip=:itemsrc_vend_item_descrip,"
                "    itemsrc_vend_uom=:itemsrc_vend_uom,"
@@ -342,6 +373,8 @@ bool itemSource::sSave()
   itemSave.bindValue(":itemsrc_active", QVariant(_active->isChecked()));
   itemSave.bindValue(":itemsrc_default", QVariant(_default->isChecked()));
   itemSave.bindValue(":itemsrc_vend_id", _vendor->id());
+  itemSave.bindValue(":itemsrc_effective", _dates->startDate());
+  itemSave.bindValue(":itemsrc_expires", _dates->endDate());
   itemSave.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
   itemSave.bindValue(":itemsrc_vend_item_descrip", _vendorItemDescrip->toPlainText());
   itemSave.bindValue(":itemsrc_vend_uom", _vendorUOM->currentText());
@@ -447,32 +480,26 @@ void itemSource::sPopulateMenu(QMenu *pMenu)
 void itemSource::sFillPriceList()
 {
   XSqlQuery priceq;
-  priceq.prepare("SELECT *,"
-                 " currConcat(itemsrcp_curr_id) AS currabbr, "
-                 " currToBase(itemsrcp_curr_id, itemsrcp_price,"
-                 "            itemsrcp_updated) AS itemsrcp_price_base,"
-                 " 'qty' AS itemsrcp_qtybreak_xtnumericrole,"
-                 " 'purchprice' AS itemsrcp_price_xtnumericrole,"
-                 " 'purchprice' AS itemsrcp_price_base_xtnumericrole "
-                 "FROM itemsrcp "
-                 "WHERE (itemsrcp_itemsrc_id=:itemsrc_id) "
-                 "ORDER BY itemsrcp_qtybreak;" );
-  priceq.bindValue(":itemsrc_id", _itemsrcid);
-  priceq.exec();
+  MetaSQLQuery mql = mqlLoad("itemSources", "prices");
+  ParameterList params;
+  params.append("itemsrc_id", _itemsrcid);
+  params.append("nominal",tr("Nominal"));
+  params.append("discount",tr("Discount"));
+  params.append("price", tr("Price"));
+  params.append("fixed", tr("Fixed"));
+  params.append("percent", tr("Percent"));
+  params.append("mixed", tr("Mixed"));
+
+  priceq = mql.toQuery(params);
   _itemsrcp->populate(priceq);
-  if (priceq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, priceq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 }
 
 void itemSource::populate()
 {
   XSqlQuery itemsrcQ;
   itemsrcQ.prepare( "SELECT * "
-             "FROM itemsrc "
-             "WHERE (itemsrc_id=:itemsrc_id);" );
+                    "FROM itemsrc "
+                    "WHERE (itemsrc_id=:itemsrc_id);" );
   itemsrcQ.bindValue(":itemsrc_id", _itemsrcid);
   itemsrcQ.exec();
   if (itemsrcQ.first())
@@ -481,6 +508,8 @@ void itemSource::populate()
     _active->setChecked(itemsrcQ.value("itemsrc_active").toBool());
 	_default->setChecked(itemsrcQ.value("itemsrc_default").toBool());
     _vendor->setId(itemsrcQ.value("itemsrc_vend_id").toInt());
+    _dates->setStartDate(itemsrcQ.value("itemsrc_effective").toDate());
+    _dates->setEndDate(itemsrcQ.value("itemsrc_expires").toDate());
     _vendorItemNumber->setText(itemsrcQ.value("itemsrc_vend_item_number").toString());
     _vendorItemDescrip->setText(itemsrcQ.value("itemsrc_vend_item_descrip").toString());
 	//U-HAUL
@@ -525,11 +554,26 @@ void itemSource::sRejected()
 void itemSource::sVendorChanged( int pId )
 {
   XSqlQuery itemVendorChanged;
-    itemVendorChanged.prepare("SELECT vend_curr_id FROM vendinfo WHERE vend_id = :vend_id;");
+    itemVendorChanged.prepare("SELECT vend_curr_id, contrct_number,"
+                              "       contrct_effective, contrct_expires "
+                              "FROM vendinfo LEFT OUTER JOIN contrct ON (contrct_vend_id=vend_id) "
+                              "WHERE (vend_id = :vend_id)"
+                              "  AND (CURRENT_DATE BETWEEN contrct_effective AND contrct_expires);");
     itemVendorChanged.bindValue(":vend_id", pId);
     itemVendorChanged.exec();
     if (itemVendorChanged.first())
-	_vendorCurrency->setId(itemVendorChanged.value("vend_curr_id").toInt());
+    {
+      _vendorCurrency->setId(itemVendorChanged.value("vend_curr_id").toInt());
+      _contract->setText(itemVendorChanged.value("contrct_number").toString());
+      if (!_contract->isNull())
+      {
+        _dates->setStartDate(itemVendorChanged.value("contrct_effective").toDate());
+        _dates->setEndDate(itemVendorChanged.value("contrct_expires").toDate());
+        _dates->setEnabled(false);
+      }
+      else
+        _dates->setEnabled(true);
+    }
     else if (itemVendorChanged.lastError().type() != QSqlError::NoError)
     {
       systemError(this, itemVendorChanged.lastError().databaseText(), __FILE__, __LINE__);

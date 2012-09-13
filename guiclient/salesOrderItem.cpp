@@ -16,6 +16,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
 
 #include "errorReporter.h"
 #include "itemCharacteristicDelegate.h"
@@ -24,6 +25,7 @@
 #include "taxDetail.h"
 #include "xdoublevalidator.h"
 #include "itemSourceList.h"
+#include "maintainItemCosts.h"
 
 #define cNewQuote   (0x20 | cNew)
 #define cEditQuote  (0x20 | cEdit)
@@ -43,6 +45,8 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   connect(_item,              SIGNAL(privateIdChanged(int)),        this, SLOT(sFindSellingWarehouseItemsites(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemInfo(int)));
+  connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSources(int)));
+  connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateHistory()));
   connect(_listPrices,        SIGNAL(clicked()),                    this, SLOT(sListPrices()));
   connect(_netUnitPrice,      SIGNAL(idChanged(int)),               this, SLOT(sPriceGroup()));
   connect(_netUnitPrice,      SIGNAL(valueChanged()),               this, SLOT(sCalculateExtendedPrice()));
@@ -76,6 +80,13 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_qtyUOM,            SIGNAL(newID(int)),                   this, SLOT(sQtyUOMChanged()));
   connect(_priceUOM,          SIGNAL(newID(int)),                   this, SLOT(sPriceUOMChanged()));
   connect(_inventoryButton,   SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
+  connect(_itemSourcesButton, SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
+  connect(_dependenciesButton,SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
+  connect(_historyCostsButton,SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
+  connect(_historyCostsButton,SIGNAL(toggled(bool)),                this, SLOT(sPopulateHistory()));
+  connect(_historyDates,      SIGNAL(updated()),                    this, SLOT(sPopulateHistory()));
+// TODO cannot launch window from dialog???
+//  connect(_unitCostLit,       SIGNAL(leftClickedURL(const QString &)), this, SLOT(sMaintainItemCosts()));
 
 #ifndef Q_WS_MAC
   _listPrices->setMaximumWidth(25);
@@ -117,7 +128,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _item->setType(ItemLineEdit::cSold | ItemLineEdit::cActive);
   _item->addExtraClause( QString("(itemsite_active)") );  // ItemLineEdit::cActive doesn't compare against the itemsite record
   _item->addExtraClause( QString("(itemsite_sold)") );    // ItemLineEdit::cSold doesn't compare against the itemsite record
-  _discountFromCust->setValidator(new XDoubleValidator(-9999, 100, 2, this));
 
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
 
@@ -130,6 +140,52 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _availability->addColumn(tr("On Order"),    _qtyColumn, Qt::AlignRight, true, "ordered");
   _availability->addColumn(tr("QOH"),         _qtyColumn, Qt::AlignRight, true, "qoh");
   _availability->addColumn(tr("Availability"),_qtyColumn, Qt::AlignRight, true, "totalavail");
+
+  _itemsrcp->addColumn(tr("Vendor #"),    _itemColumn, Qt::AlignLeft, true, "vend_number");
+  _itemsrcp->addColumn(tr("Vendor Name"),          -1, Qt::AlignLeft, true, "vend_name");
+  _itemsrcp->addColumn(tr("Description"),          -1, Qt::AlignLeft, true, "itemsrc_descrip");
+  _itemsrcp->addColumn(tr("Qty Break"),    _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
+  _itemsrcp->addColumn(tr("Base Price"), _moneyColumn, Qt::AlignRight,true, "price_base");
+
+  _historyDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _historyDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+
+  _historyCosts->addColumn(tr("P/O #"),        _orderColumn, Qt::AlignRight, true, "ponumber");
+  _historyCosts->addColumn(tr("Vendor"),       120,          Qt::AlignLeft,  true, "vend_name");
+  _historyCosts->addColumn(tr("Due Date"),     _dateColumn,  Qt::AlignCenter,true, "duedate");
+  _historyCosts->addColumn(tr("Recv. Date"),   _dateColumn,  Qt::AlignCenter,true, "recvdate");
+  _historyCosts->addColumn(tr("Vend. Item #"), _itemColumn,  Qt::AlignLeft,  true, "venditemnumber");
+  _historyCosts->addColumn(tr("Description"),  -1,           Qt::AlignLeft,  true, "venditemdescrip");
+  _historyCosts->addColumn(tr("Rcvd/Rtnd"),    _qtyColumn,   Qt::AlignRight, true, "sense");
+  _historyCosts->addColumn(tr("Qty."),         _qtyColumn,   Qt::AlignRight, true, "qty");
+  if (_privileges->check("ViewCosts"))
+  {
+    _historyCosts->addColumn(tr("Purch. Cost"),_priceColumn, Qt::AlignRight,true, "purchcost");
+    _historyCosts->addColumn(tr("Recv. Cost"), _priceColumn, Qt::AlignRight,true, "recvcost");
+    _historyCosts->addColumn(tr("Value"),      _priceColumn, Qt::AlignRight,true, "value");
+  }
+
+  _historySales->addColumn(tr("Customer"),            -1,              Qt::AlignLeft,   true,  "cust_name"   );
+  _historySales->addColumn(tr("Doc. #"),              _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
+  _historySales->addColumn(tr("Invoice #"),           _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
+  _historySales->addColumn(tr("Ord. Date"),           _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
+  _historySales->addColumn(tr("Invc. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
+  _historySales->addColumn(tr("Item Number"),         _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
+  _historySales->addColumn(tr("Description"),         -1,              Qt::AlignLeft,   true,  "itemdescription"   );
+  _historySales->addColumn(tr("Shipped"),             _qtyColumn,      Qt::AlignRight,  true,  "cohist_qtyshipped"  );
+  if (_privileges->check("ViewCustomerPrices"))
+  {
+    _historySales->addColumn(tr("Unit Price"),        _priceColumn,    Qt::AlignRight,  true,  "cohist_unitprice" );
+    _historySales->addColumn(tr("Ext. Price"),        _bigMoneyColumn, Qt::AlignRight,  true,  "extprice" );
+    _historySales->addColumn(tr("Currency"),          _currencyColumn, Qt::AlignRight,  true,  "currAbbr" );
+    _historySales->addColumn(tr("Base Unit Price"),   _bigMoneyColumn, Qt::AlignRight,  true,  "baseunitprice" );
+    _historySales->addColumn(tr("Base Ext. Price"),   _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice" );
+  }
+  if (_privileges->check("ViewCosts"))
+  {
+    _historySales->addColumn(tr("Unit Cost"),         _costColumn,     Qt::AlignRight,  true,  "cohist_unitcost" );
+    _historySales->addColumn(tr("Ext. Cost"),         _bigMoneyColumn, Qt::AlignRight,  true,  "extcost" );
+  }
 
   _itemchar = new QStandardItemModel(0, 3, this);
   _itemchar->setHeaderData( CHAR_ID, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
@@ -160,6 +216,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   _shippedToDate->setPrecision(omfgThis->qtyVal());
   _discountFromList->setPrecision(omfgThis->percentVal());
+  _profit->setPrecision(omfgThis->percentVal());
   _onHand->setPrecision(omfgThis->qtyVal());
   _allocated->setPrecision(omfgThis->qtyVal());
   _unallocated->setPrecision(omfgThis->qtyVal());
@@ -200,6 +257,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
     adjustSize();
 
   _inventoryButton->setEnabled(_showAvailability->isChecked());
+  _itemSourcesButton->setEnabled(_showAvailability->isChecked());
   _dependenciesButton->setEnabled(_showAvailability->isChecked());
   _availability->setEnabled(_showAvailability->isChecked());
   _showIndented->setEnabled(_showAvailability->isChecked());
@@ -721,10 +779,13 @@ void salesOrderItem::clear()
 //  _scheduledDate->clear();
   _promisedDate->clear();
   _unitCost->clear();
+  _avgCost->clear();
+  _listCost->clear();
   _listPrice->clear();
   _customerPrice->clear();
   _discountFromList->clear();
   _discountFromCust->clear();
+  _profit->clear();
   _shippedToDate->clear();
   _createSupplyOrder->setChecked(FALSE);
   _supplyOrderQty->clear();
@@ -735,6 +796,9 @@ void salesOrderItem::clear()
   _unallocated->clear();
   _onOrder->clear();
   _available->clear();
+  _itemsrcp->clear();
+  _historyCosts->clear();
+  _historySales->clear();
   _leadtime->clear();
   _itemchar->removeRows(0, _itemchar->rowCount());
   _notes->clear();
@@ -1866,6 +1930,10 @@ void salesOrderItem::sDeterminePrice(bool force)
 
       _baseUnitPrice->setLocalValue(price);
       _customerPrice->setLocalValue(price + charTotal);
+      if (_unitCost->baseValue() > 0.0)
+        _profit->setDouble((_customerPrice->baseValue() - _unitCost->baseValue()) / _unitCost->baseValue() * 100.0);
+      else
+        _profit->setDouble(100.0);
       if (_updatePrice) // Configuration or user said they also want net unit price updated
         _netUnitPrice->setLocalValue(price + charTotal);
 
@@ -1914,9 +1982,10 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     salesPopulateItemInfo.prepare( "SELECT item_type, item_config, uom_name,"
                "       item_inv_uom_id, item_price_uom_id,"
                "       iteminvpricerat(item_id) AS invpricerat,"
-               "       item_listprice, item_fractional,"
-               "       stdcost(item_id) AS f_unitcost, itemsite_createsopo,"
-               "       itemsite_dropship,"
+               "       item_listcost, item_listprice, item_fractional,"
+               "       stdcost(item_id) AS f_unitcost,"
+               "       avgcost(item_id) AS f_avgcost,"
+               "       itemsite_createsopo, itemsite_dropship,"
                "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
                "LEFT OUTER JOIN itemsite ON ((itemsite_item_id=item_id) AND (itemsite_warehous_id=:warehous_id)) "
@@ -2044,7 +2113,9 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _priceUOM->setId(salesPopulateItemInfo.value("item_price_uom_id").toInt());
 
       _listPrice->setBaseValue(salesPopulateItemInfo.value("item_listprice").toDouble());
+      _listCost->setBaseValue(salesPopulateItemInfo.value("item_listcost").toDouble());
       _unitCost->setBaseValue(salesPopulateItemInfo.value("f_unitcost").toDouble());
+      _avgCost->setBaseValue(salesPopulateItemInfo.value("f_avgcost").toDouble());
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
 
       sCalculateDiscountPrcnt();
@@ -2458,6 +2529,57 @@ void salesOrderItem::sDetermineAvailability( bool p )
   }
 }
 
+void salesOrderItem::sPopulateItemSources(int pItemid)
+{
+  XSqlQuery priceq;
+  MetaSQLQuery mql = mqlLoad("itemSources", "prices");
+  ParameterList params;
+  params.append("item_id", pItemid);
+  params.append("nominal",tr("Nominal"));
+  params.append("discount",tr("Discount"));
+  params.append("price", tr("Price"));
+  params.append("fixed", tr("Fixed"));
+  params.append("percent", tr("Percent"));
+  params.append("mixed", tr("Mixed"));
+
+  priceq = mql.toQuery(params);
+  _itemsrcp->populate(priceq);
+}
+
+void salesOrderItem::sPopulateHistory()
+{
+  if (_historyCostsButton->isChecked())
+  {
+    XSqlQuery historyq;
+    MetaSQLQuery historymql = mqlLoad("receivings", "detail");
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("warehous_id", _warehouse->id());
+    params.append("startDate", _historyDates->startDate());
+    params.append("endDate", _historyDates->endDate());
+    params.append("received", tr("Received"));
+    params.append("returned", tr("Returned"));
+    params.append("unvouchered", tr("Not Vouchered"));
+    params.append("nonInv",   tr("NonInv - "));
+    params.append("na",       tr("N/A"));
+    historyq = historymql.toQuery(params);
+    _historyCosts->populate(historyq);
+  }
+  else
+  {
+    XSqlQuery historyq;
+    MetaSQLQuery historymql = mqlLoad("salesHistory", "detail");
+    ParameterList params;
+    params.append("cust_id", _custid);
+    params.append("item_id", _item->id());
+    params.append("warehous_id", _warehouse->id());
+    params.append("startDate", _historyDates->startDate());
+    params.append("endDate", _historyDates->endDate());
+    historyq = historymql.toQuery(params);
+    _historySales->populate(historyq);
+  }
+}
+
 void salesOrderItem::sCalculateDiscountPrcnt()
 {
   double  netUnitPrice = _netUnitPrice->baseValue();
@@ -2865,6 +2987,10 @@ void salesOrderItem::populate()
       _subItem->setId(item.value("coitem_substitute_item_id").toInt());
     }
     _customerPrice->setLocalValue(item.value("coitem_custprice").toDouble());
+    if (_unitCost->baseValue() > 0.0)
+      _profit->setDouble((_customerPrice->baseValue() - _unitCost->baseValue()) / _unitCost->baseValue() * 100.0);
+    else
+      _profit->setDouble(100.0);
     _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _leadTime        = item.value("itemsite_leadtime").toInt();
@@ -3539,9 +3665,16 @@ void salesOrderItem::sCalcWoUnitCost()
 void salesOrderItem::sHandleButton()
 {
   if (_inventoryButton->isChecked())
-    _availabilityStack->setCurrentIndex(0);
+    _availabilityStack->setCurrentWidget(_inventoryPage);
+  else if (_itemSourcesButton->isChecked())
+    _availabilityStack->setCurrentWidget(_itemSourcesPage);
   else
-    _availabilityStack->setCurrentIndex(1);
+    _availabilityStack->setCurrentWidget(_dependenciesPage);
+
+  if (_historyCostsButton->isChecked())
+    _historyStack->setCurrentWidget(_historyCostsPage);
+  else if (_historySalesButton->isChecked())
+    _historyStack->setCurrentWidget(_historySalesPage);
 }
 
 void salesOrderItem::setItemExtraClause()
@@ -3620,4 +3753,13 @@ void salesOrderItem::sHandleScheduleDate()
   sDeterminePrice();
   sDetermineAvailability();
   sPopulateOrderInfo();
+}
+
+void salesOrderItem::sMaintainItemCosts()
+{
+  ParameterList params;
+  params.append("item_id", _item->id());
+  maintainItemCosts *newdlg = new maintainItemCosts();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }

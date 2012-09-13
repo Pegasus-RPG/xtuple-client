@@ -12,6 +12,9 @@
 
 #include <QVariant>
 #include <QSqlError>
+#include <metasql.h>
+#include <parameter.h>
+#include "mqlutil.h"
 
 vendorPriceList::vendorPriceList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -37,7 +40,10 @@ vendorPriceList::vendorPriceList(QWidget* parent, const char* name, bool modal, 
   _price->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
   _price->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "currabbr");
   _price->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight,true, "itemsrcp_price");
-  _price->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight,true, "itemsrcp_price_base");
+  _price->addColumn(tr("Discount Percent"),                    -1, Qt::AlignRight,true, "itemsrcp_discntprcnt" );
+  _price->addColumn(tr("Discount Fixed Amt."),                 -1, Qt::AlignRight,true, "itemsrcp_fixedamtdiscount" );
+  _price->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight,true, "price_base");
+  _price->addColumn(tr("Type"),                       _itemColumn, Qt::AlignLeft, true, "type");
 
 }
 
@@ -147,24 +153,23 @@ void vendorPriceList::sSelect()
 void vendorPriceList::sFillList()
 {
   XSqlQuery priceq;
-  priceq.prepare("SELECT *,"
-                 " currConcat(itemsrcp_curr_id) AS currabbr, "
-                 " currToBase(itemsrcp_curr_id, itemsrcp_price,"
-                 "            itemsrcp_updated) AS itemsrcp_price_base,"
-                 " 'qty' AS itemsrcp_qtybreak_xtnumericrole,"
-                 " 'purchprice' AS itemsrcp_price_xtnumericrole,"
-                 " 'purchprice' AS itemsrcp_price_base_xtnumericrole "
-                 "FROM itemsrcp "
-                 "WHERE (itemsrcp_itemsrc_id=:itemsrc_id) "
-                 "ORDER BY itemsrcp_qtybreak DESC;" );
-  priceq.bindValue(":itemsrc_id", _itemsrcid);
-  priceq.exec();
+  MetaSQLQuery mql = mqlLoad("itemSources", "prices");
+  ParameterList params;
+  params.append("itemsrc_id", _itemsrcid);
+  params.append("nominal",tr("Nominal"));
+  params.append("discount",tr("Discount"));
+  params.append("price", tr("Price"));
+  params.append("fixed", tr("Fixed"));
+  params.append("percent", tr("Percent"));
+  params.append("mixed", tr("Mixed"));
+
+  priceq = mql.toQuery(params);
   _price->populate(priceq, TRUE);
 
-   priceq.exec();
-   if (priceq.first())
-   _unitPrice->setId(priceq.value("itemsrcp_curr_id").toInt());
-   _extendedPrice->setId(priceq.value("itemsrcp_curr_id").toInt());
+  priceq = mql.toQuery(params);
+  if (priceq.first())
+  _unitPrice->setId(priceq.value("itemsrcp_curr_id").toInt());
+  _extendedPrice->setId(priceq.value("itemsrcp_curr_id").toInt());
 
   _price->clearSelection();
   for (int i = 0; i < _price->topLevelItemCount(); i++)

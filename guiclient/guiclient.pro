@@ -150,6 +150,7 @@ FORMS =   absoluteCalendarItem.ui               \
           contact.ui                            \
           contacts.ui                           \
           contactMerge.ui                       \
+          contract.ui                           \
           copyBOM.ui                            \
           copyBudget.ui                         \
           copyItem.ui                           \
@@ -314,7 +315,6 @@ FORMS =   absoluteCalendarItem.ui               \
           itemSourceList.ui             \
           itemSourcePrice.ui            \
           itemSourceSearch.ui           \
-          itemSources.ui                \
           itemSubstitute.ui             \
           itemUOM.ui                    \
           items.ui                      \
@@ -696,6 +696,8 @@ HEADERS = ../common/format.h                    \
           contact.h                     \
           contacts.h                    \
           contactMerge.h                \
+          contract.h                    \
+          contracts.h                   \
           copyBOM.h                     \
           copyBudget.h                  \
           copyItem.h                    \
@@ -1296,6 +1298,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           contact.cpp                           \
           contacts.cpp                          \
           contactMerge.cpp                      \
+          contract.cpp                          \
+          contracts.cpp                         \
           copyBOM.cpp                           \
           copyBudget.cpp                        \
           copyItem.cpp                          \

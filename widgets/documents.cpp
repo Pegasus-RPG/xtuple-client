@@ -44,6 +44,7 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( BOOItem,           "BOI" ),
   DocumentMap( CRMAccount,        "CRMA",  "crmacct_id", "crmaccount"    ),
   DocumentMap( Contact,           "T",     "cntct_id",   "contact"       ),
+  DocumentMap( Contract,          "CNTR",  "contrct_id", "contrct"       ),
   DocumentMap( Customer,          "C",     "cust_id",    "customer"      ),
   DocumentMap( Employee,          "EMP",   "emp_id",     "employee"      ),
   DocumentMap( Incident,          "INCDT", "incdt_id",   "incident"      ),
@@ -462,6 +463,7 @@ void Documents::refresh()
               " ELSE :other"
               " END AS purpose_qtdisplayrole, "
               " CASE WHEN (target_type='T') THEN :contact "
+              " WHEN (target_type='CNTR') THEN :contract "
               " WHEN (target_type='CRMA') THEN :crma "
               " WHEN (target_type='C') THEN :cust "
               " WHEN (target_type='EMP') THEN :emp "
@@ -512,6 +514,7 @@ void Documents::refresh()
   query.bindValue(":cust", tr("Customer"));
   query.bindValue(":vendor", tr("Vendor"));
   query.bindValue(":contact", tr("Contact"));
+  query.bindValue(":contract", tr("Contract"));
   query.bindValue(":opp", tr("Opportunity"));
   query.bindValue(":url", tr("URL"));
   query.bindValue(":emp", tr("Employee"));

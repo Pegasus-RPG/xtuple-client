@@ -854,6 +854,7 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
                      "FROM itemsrc, pohead "
                      "WHERE ( (itemsrc_vend_id=pohead_vend_id)"
                      " AND (itemsrc_item_id=:item_id)"
+                     " AND (CURRENT_DATE BETWEEN itemsrc_effective AND itemsrc_expires)"
                      " AND (itemsrc_active)"
                      " AND (pohead_id=:pohead_id) );" );
         item.bindValue(":item_id", pItemid);
@@ -1005,20 +1006,14 @@ void purchaseOrderItem::sDeterminePrice()
       (_ordered->toDouble() != 0.0) &&
       (_orderQtyCache != _ordered->toDouble()))
   {
-    purchaseDeterminePrice.prepare( "SELECT currToCurr(itemsrcp_curr_id, :curr_id, itemsrcp_price, :effective) "
-       	       "AS new_itemsrcp_price "
-               "FROM itemsrcp "
-               "WHERE ( (itemsrcp_itemsrc_id=:itemsrc_id)"
-               " AND (itemsrcp_qtybreak <= :qty) ) "
-               "ORDER BY itemsrcp_qtybreak DESC "
-               "LIMIT 1;" );
+    purchaseDeterminePrice.prepare( "SELECT itemsrcPrice(:itemsrc_id, :qty, :curr_id, :effective) AS new_itemsrc_price;");
     purchaseDeterminePrice.bindValue(":itemsrc_id", _itemsrcid);
     purchaseDeterminePrice.bindValue(":qty", _ordered->toDouble());
     purchaseDeterminePrice.bindValue(":curr_id", _unitPrice->id());
     purchaseDeterminePrice.bindValue(":effective", _unitPrice->effective());
     purchaseDeterminePrice.exec();
     if (purchaseDeterminePrice.first())
-      _unitPrice->setLocalValue(purchaseDeterminePrice.value("new_itemsrcp_price").toDouble());
+      _unitPrice->setLocalValue(purchaseDeterminePrice.value("new_itemsrc_price").toDouble());
     else
       _unitPrice->clear();
   }

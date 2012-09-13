@@ -153,6 +153,7 @@ HEADERS += displays/dspAllocations.h \
            displays/dspItemCostHistory.h \
            displays/dspItemCostSummary.h \
            displays/dspItemCostsByClassCode.h \
+           displays/dspItemSources.h \
            displays/dspItemsWithoutItemSources.h \
            displays/dspJobCosting.h \
            displays/dspJournals.h \
@@ -282,6 +283,7 @@ SOURCES += displays/dspAllocations.cpp \
            displays/dspItemCostHistory.cpp \
            displays/dspItemCostSummary.cpp \
            displays/dspItemCostsByClassCode.cpp \
+           displays/dspItemSources.cpp \
            displays/dspItemsWithoutItemSources.cpp \
            displays/dspJobCosting.cpp \
            displays/dspJournals.cpp \

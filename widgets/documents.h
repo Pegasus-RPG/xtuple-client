@@ -45,15 +45,15 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
       Address,          BBOMHead,           BBOMItem,
       BOMHead,          BOMItem,            BOOHead,
       BOOItem,          CRMAccount,         Contact, 
-      Customer,         Employee,           Incident,   
-      Item,             ItemSite,           ItemSource,
-      Location,		LotSerial,          Opportunity,
-      Project,		PurchaseOrder,      PurchaseOrderItem,
-      ReturnAuth,       ReturnAuthItem,     Quote, 
-      QuoteItem,        SalesOrder,         SalesOrderItem,
-      TimeExpense,      Todo,               TransferOrder,
-      TransferOrderItem,Vendor,             Warehouse,
-      WorkOrder
+      Contract,         Customer,           Employee,
+      Incident,         Item,               ItemSite,
+      ItemSource,       Location,		        LotSerial,
+      Opportunity,      Project,		        PurchaseOrder,
+      PurchaseOrderItem,ReturnAuth,         ReturnAuthItem,
+      Quote,            QuoteItem,          SalesOrder,
+      SalesOrderItem,   TimeExpense,        Todo,
+      TransferOrder,    TransferOrderItem,  Vendor,
+      Warehouse,        WorkOrder
     };
 
     static GuiClientInterface *_guiClientInterface;

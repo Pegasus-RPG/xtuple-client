@@ -14,6 +14,8 @@
 #include <QMessageBox>
 #include <parameter.h>
 #include <openreports.h>
+#include <metasql.h>
+#include "mqlutil.h"
 
 /*
  *  Constructs a itemSourceSearch as a child of 'parent', with the
@@ -87,147 +89,27 @@ void itemSourceSearch::sFillList()
 {
   XSqlQuery itemFillList;
   _itemsrc->clear();
-  
-  bool first = true;
-
-  QString sql( "SELECT itemsrc_id AS id,"
-               "       1 AS altid,"
-               "       item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
-               "       vend_name,"
-               "       itemsrc_vend_item_number,"
-               "       itemsrc_vend_item_descrip, "
-               "       itemsrc_manuf_name, "
-               "       itemsrc_manuf_item_number, "
-               "       itemsrc_manuf_item_descrip "
-               "  FROM item, vendinfo, itemsrc "
-               " WHERE((itemsrc_item_id=item_id)"
-               "   AND (itemsrc_vend_id=vend_id)"
-               "   AND (vend_id=:vend_id)"
-               "   AND (" );
+  MetaSQLQuery mql = mqlLoad("itemSources", "search");
+  ParameterList params;
+  params.append("vend_id", _vendid);
+  params.append("item_id", _itemid);
+  params.append("non", tr("Non-Inventory"));
   if(_searchNumber->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (item_number ~* :searchString)";
-    first = false;
-  }
+    params.append("searchNumber", _search->text());
   if(_searchVendNumber->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (itemsrc_vend_item_number ~* :searchString)";
-    first = false;
-  }
+    params.append("searchVendNumber", _search->text());
   if(_searchDescrip1->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (item_descrip1 ~* :searchString)";
-    first = false;
-  }
+    params.append("searchDescrip1", _search->text());
   if(_searchDescrip2->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (item_descrip2 ~* :searchString)";
-    first = false;
-  }
+    params.append("searchDescrip2", _search->text());
   if(_searchVendDescrip->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (itemsrc_vend_item_descrip ~* :searchString)";
-    first = false;
-  }
-  
+    params.append("searchVendDescrip", _search->text());
   if(_searchManufName->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (itemsrc_manuf_name ~* :searchString)";
-    first = false;
-  }
-  
+    params.append("searchManufName", _search->text());
   if(_searchManufNumber->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (itemsrc_manuf_item_number ~* :searchString)";
-    first = false;
-  }
-  
-  sql +=       "       )"
-               "  )"
-               " UNION "
-               "SELECT DISTINCT poitem_expcat_id AS id,"
-               "        2 AS altid,"
-               "        :non AS item_number,"
-               "       (expcat_code || ' ' || expcat_descrip) AS item_descrip,"
-               "       vend_name,"
-               "       poitem_vend_item_number,"
-               "       poitem_vend_item_descrip, "
-               "       poitem_manuf_name, "
-               "       poitem_manuf_item_number, "
-               "       poitem_manuf_item_descrip "
-               "  FROM vendinfo, pohead, poitem"
-               "       LEFT OUTER JOIN expcat ON (poitem_expcat_id=expcat_id)"
-               " WHERE((pohead_vend_id=vend_id)"
-               "   AND (COALESCE(poitem_vend_item_number, '')!='')"
-               "   AND (poitem_pohead_id=pohead_id)"
-               "   AND (poitem_itemsite_id IS NULL) "
-               "   AND (vend_id=:vend_id)"
-               "   AND ( ";
+    params.append("searchManufNumber", _search->text());
 
-  first = true;
-  if(_searchVendNumber->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (poitem_vend_item_number ~* :searchString)";
-    first = false;
-  }
-  if(_searchDescrip1->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "    (expcat_code ~* :searchString)"
-               "    OR  (expcat_descrip ~* :searchString)";
-    first = false;
-  }
-  if(_searchVendDescrip->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (poitem_vend_item_descrip ~* :searchString)";
-    first = false;
-  }
-  
-  if(_searchManufName->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (poitem_manuf_name ~* :searchString)";
-    first = false;
-  }
-  
-  if(_searchManufNumber->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (poitem_manuf_item_number ~* :searchString)";
-    first = false;
-  }
-
-
-  sql +=       "    ) )"
-               " ORDER BY item_number, vend_name;";
-  itemFillList.prepare(sql);
-  itemFillList.bindValue(":searchString", _search->text());
-  itemFillList.bindValue(":vend_id", _vendid);
-  itemFillList.bindValue(":item_id", _itemid);
-  itemFillList.bindValue(":non", tr("Non-Inventory"));
-  itemFillList.exec();
+  itemFillList = mql.toQuery(params);
   _itemsrc->populate(itemFillList, TRUE);
 }
 

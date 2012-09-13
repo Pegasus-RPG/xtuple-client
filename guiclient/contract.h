@@ -8,37 +8,39 @@
  * to be bound by its terms.
  */
 
-#ifndef ITEMSOURCEPRICE_H
-#define ITEMSOURCEPRICE_H
+#ifndef CONTRACT_H
+#define CONTRACT_H
 
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
 
-#include "ui_itemSourcePrice.h"
+#include "ui_contract.h"
 
-class itemSourcePrice : public XDialog, public Ui::itemSourcePrice
+class contract : public XDialog, public Ui::contract
 {
     Q_OBJECT
 
 public:
-    itemSourcePrice(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~itemSourcePrice();
+    contract(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~contract();
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sSave();
+    virtual bool sSave();
+    virtual void sSaveClicked();
     virtual void populate();
-    virtual void sTypeChanged(bool);
+    virtual void sRejected();
 
 protected slots:
     virtual void languageChange();
 
 private:
-    int _mode;
-    int _itemsrcpid;
-    int _itemsrcid;
-
+    int  _mode;
+    int  _contrctid;
+    bool _captive;
+    bool _new;
+ 
 };
 
-#endif // ITEMSOURCEPRICE_H
+#endif // CONTRACT_H

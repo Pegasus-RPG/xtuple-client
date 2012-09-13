@@ -37,10 +37,13 @@
 #include "openVouchers.h"
 #include "postVouchers.h"
 
+#include "contract.h"
+#include "contracts.h"
 #include "itemSource.h"
 #include "itemSources.h"
-#include  "itemSites.h"
+#include "itemSites.h"
 
+#include "dspItemSources.h"
 #include "dspPurchaseReqsByItem.h"
 #include "dspPurchaseReqsByPlannerCode.h"
 #include "dspPoItemsByVendor.h"
@@ -89,6 +92,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   requestMenu = new QMenu(parent);
   ordersMenu = new QMenu(parent);
   vouchersMenu = new QMenu(parent);
+  contractsMenu = new QMenu(parent);
   itemSourcesMenu = new QMenu(parent);
   vendorMenu = new QMenu(parent);
   formsMenu = new QMenu(parent);
@@ -104,6 +108,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   requestMenu->setObjectName("menu.purch.request");
   ordersMenu->setObjectName("menu.purch.orders");
   vouchersMenu->setObjectName("menu.purch.vouchers");
+  contractsMenu->setObjectName("menu.purch.contracts");
   itemSourcesMenu->setObjectName("menu.purch.itemsources");
   vendorMenu->setObjectName("menu.purch.vendor");
   formsMenu->setObjectName("menu.purch.forms");
@@ -157,6 +162,7 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.itemSites", tr("Item &Sites..."), SLOT(sItemSites()), reportsMenu, "ViewItemSites", NULL, NULL, true , NULL },
     
     // Purchasing | Reports | Item Sources
+    { "po.dspItemSources", tr("&Item Sources..."), SLOT(sDspItemSources()), reportsMenu, "ViewItemSources", NULL, NULL, true , NULL },
     { "po.dspBuyCard", tr("&Buy Card..."), SLOT(sDspBuyCard()), reportsMenu, "ViewItemSources", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
  
@@ -210,7 +216,14 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "separator", NULL, NULL, vendorMenu, "true", NULL, NULL, true , NULL },
     { "po.vendorWorkBench", tr("&Workbench..."), SLOT(sVendorWorkBench()), vendorMenu, "MaintainVendors", NULL, NULL, true , NULL },
 
-     //  P/O | Item Source
+    { "separator", NULL, NULL, mainMenu, "true", NULL, NULL, true , NULL },
+
+    //  P/O | Contract
+    { "menu", tr("&Contract"), (char*)contractsMenu, mainMenu, "true", NULL, NULL, true , NULL },
+    { "po.enterNewContract", tr("&New..."), SLOT(sNewContract()), contractsMenu, "MaintainItemSources", NULL, NULL, true , NULL },
+    { "po.listContracts", tr("&List..."), SLOT(sContracts()), contractsMenu, "MaintainItemSources ViewItemSources", NULL, NULL, true , NULL },
+
+    //  P/O | Item Source
     { "menu", tr("&Item Source"), (char*)itemSourcesMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "po.enterNewItemSource", tr("&New..."), SLOT(sNewItemSource()), itemSourcesMenu, "MaintainItemSources", NULL, NULL, true , NULL },
     { "po.listItemSources", tr("&List..."), SLOT(sItemSources()), itemSourcesMenu, "MaintainItemSources ViewItemSources", NULL, NULL, true , NULL },
@@ -398,6 +411,21 @@ void menuPurchase::sItemSources()
   omfgThis->handleNewWindow(new itemSources());
 }
 
+void menuPurchase::sNewContract()
+{
+  ParameterList params;
+  params.append("mode", "new");
+
+  contract newdlg(parent, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void menuPurchase::sContracts()
+{
+  omfgThis->handleNewWindow(new contracts());
+}
+
 void menuPurchase::sDspPurchaseReqsByItem()
 {
   omfgThis->handleNewWindow(new dspPurchaseReqsByItem());
@@ -445,6 +473,11 @@ void menuPurchase::sDspPoItemsByDate()
 void menuPurchase::sDspPoHistory()
 {
   omfgThis->handleNewWindow(new dspPoHistory());
+}
+
+void menuPurchase::sDspItemSources()
+{
+  omfgThis->handleNewWindow(new dspItemSources());
 }
 
 void menuPurchase::sDspBuyCard()
