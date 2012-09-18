@@ -333,12 +333,12 @@ bool ImportHelper::importCSV(const QString &pFileName, QString &errmsg)
     CSVImpPluginInterface *csvplugin = getCSVImpPlugin();
     if (csvplugin)
     {
-      if (! csvplugin->openCSV(pFileName))
-        errmsg = tr("Could not open CSV File %1").arg(pFileName);
-      else if (! csvplugin->openAtlas(atlasfile))
+      if (! csvplugin->openAtlas(atlasfile))
         errmsg = tr("Could not open Atlas %1").arg(atlasfile);
       else if (! csvplugin->setAtlasMap(map))
         errmsg = tr("Could not set Map to %1").arg(map);
+      else if (! csvplugin->openCSV(pFileName))
+        errmsg = tr("Could not open CSV File %1").arg(pFileName);
       else if (! csvplugin->setFirstLineHeader(mapq.value("atlasmap_headerline").toBool()))
         errmsg = tr("Could not set first line status");
       else if (! csvplugin->importCSV())

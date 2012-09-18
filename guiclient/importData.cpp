@@ -11,6 +11,7 @@
 #include "importData.h"
 
 #include <QDirIterator>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QVariant>
 
@@ -107,7 +108,7 @@ void importData::sFillList()
     QStringList filters;
     filters << "*.xml" << "*.XML";
     if (ImportHelper::getCSVImpPlugin(omfgThis))
-      filters << "*.csv" << "*.CSV";
+      filters << "*.csv" << "*.CSV" << "*.tsv" << "*.TSV";
 
     QDirIterator iterator(_defaultDir, filters);
     XTreeWidgetItem *last = 0;
@@ -118,9 +119,9 @@ void importData::sFillList()
       QString suffix = QFileInfo(filename).suffix().toUpper();
       if (suffix == "XML")
         type = Xml;
-      else if (suffix == "CSV")
+      else if (suffix == "CSV" || suffix == "TSV")
         type = Csv;
-      last = new XTreeWidgetItem(_file, last, i, QVariant(suffix), QVariant(filename));
+      last = new XTreeWidgetItem(_file, last, type, i, QVariant(suffix), QVariant(filename));
     }
   }
 }
@@ -131,8 +132,8 @@ void importData::sAdd()
   newdlg.setFileMode(QFileDialog::ExistingFiles);
   QStringList filters;
   if (ImportHelper::getCSVImpPlugin(omfgThis))
-    filters << tr("Data files (*.xml *.csv)")
-            << tr("CSV files (*.csv)");
+    filters << tr("Data files (*.xml *.csv *.tsv)")
+            << tr("CSV files (*.csv *.tsv)");
   filters << tr("XML files (*.xml)")
           << tr("Any Files (*)");
   newdlg.setNameFilters(filters);
@@ -146,7 +147,7 @@ void importData::sAdd()
       QString suffix = QFileInfo(files[i]).suffix().toUpper();
       if (suffix == "XML")
         type = Xml;
-      else if (suffix == "CSV")
+      else if (suffix == "CSV" || suffix == "TSV")
         type = Csv;
 
       last = new XTreeWidgetItem(_file, last, i, type, QVariant(suffix), QVariant(files[i]));
@@ -220,9 +221,47 @@ bool importData::importOne(const QString &pFileName, int pType)
   if (DEBUG)
     qDebug("importData::importOne(%s, %d)", qPrintable(pFileName), pType);
 
+  int filetype = pType;
+
+  if (filetype == Unknown)
+  {
+    QFile file(pFileName);
+    if (file.open(QIODevice::ReadOnly))
+    {
+      QString firstline(file.readLine(1024));
+      file.close();
+      if (firstline.contains(QRegExp("^<[?a-zA-Z]")))         // <? or <abc
+        filetype = Xml;
+      if (firstline.contains(QRegExp("^\"[^\"]*\",")))        // "stuff",
+        filetype = Csv;
+      else if (firstline.contains(QRegExp("^[^\",]*,")))      // stuff,
+        filetype = Csv;
+      else if (firstline.contains(QRegExp("^\"[^\"]*\"\t")))  // "stuff"<tab>
+        filetype = Csv;
+      else if (firstline.contains(QRegExp("^[^\"\t]*\t")))    // stuff<tab>
+        filetype = Csv;
+    }
+
+    QStringList typestrings;
+    typestrings << "Unknown" << "CSV" << "XML"; // must match ImportFileType seq
+
+    bool ok;
+    QString typestring =
+      QInputDialog::getItem(this, tr("Select File Type"),
+                            tr("Please select the best description of the "
+                               "structure of the file %1:").arg(pFileName),
+                            typestrings,
+                            filetype + 1,    // ImportFileType enum starts at -1
+                            false, &ok);
+    filetype = typestrings.indexOf(typestring) - 1;
+
+    if (! ok || filetype == Unknown)
+      return false;
+  }
+
   QString errmsg;
   QString warnmsg;
-  if (pType == Xml || QFileInfo(pFileName).suffix().toUpper() == "XML")
+  if (filetype == Xml || QFileInfo(pFileName).suffix().toUpper() == "XML")
   {
     if (! ImportHelper::importXML(pFileName, errmsg, warnmsg))
     {
@@ -235,18 +274,15 @@ bool importData::importOne(const QString &pFileName, int pType)
       return true;
     }
   }
-  else if (pType == Csv || QFileInfo(pFileName).suffix().toUpper() == "CSV")
+  else if (filetype == Csv ||
+           QFileInfo(pFileName).suffix().toUpper() == "CSV" ||
+           QFileInfo(pFileName).suffix().toUpper() == "TSV")
   {
     if (! ImportHelper::importCSV(pFileName, errmsg))
     {
       systemError(this, errmsg);
       return false;
     }
-  }
-  else
-  {
-    systemError(this, tr("Don't know how to import %1").arg(pFileName));
-    return false;
   }
 
   return true;
