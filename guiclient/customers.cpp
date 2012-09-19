@@ -45,6 +45,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("State Pattern"), "addr_state_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Postal Code Pattern"), "addr_postalcode_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Country Pattern"), "addr_country_pattern", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesReps);
 
   if (_privileges->check("MaintainCustomerMasters"))
     connect(list(), SIGNAL(itemSelected(int)), this, SLOT(sEdit()));
