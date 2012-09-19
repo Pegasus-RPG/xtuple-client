@@ -371,7 +371,7 @@ void enterPoReceipt::sPost()
         XSqlQuery issue;
         issue.prepare("SELECT issueToShipping('SO', coitem_id, "
                       "  (recv_qty * poitem_invvenduomratio / coitem_qty_invuomratio), "
-                      "  :itemlocseries, now(), invhist_id ) AS result, "
+                      "  :itemlocseries, recv_gldistdate, invhist_id ) AS result, "
                       "  coitem_cohead_id, cohead_holdtype "
                       "FROM invhist, recv "
                       " JOIN poitem ON (poitem_id=recv_orderitem_id) "
@@ -409,13 +409,15 @@ void enterPoReceipt::sPost()
           if (qi.value("dropship").toBool() && _soheadid != -1)
           {
             XSqlQuery ship;
-            ship.prepare("SELECT shipShipment(shiphead_id) AS result, "
+            ship.prepare("SELECT shipShipment(shiphead_id, recv_gldistdate) AS result, "
                          "  shiphead_id "
-                         "FROM shiphead "
+                         "FROM shiphead, recv "
                          "WHERE ( (shiphead_order_type='SO') "
                          " AND (shiphead_order_id=:cohead_id) "
-                         " AND (NOT shiphead_shipped) );");
+                         " AND (NOT shiphead_shipped) "
+                         " AND (recv_id=:recv_id) );");
             ship.bindValue(":cohead_id", _soheadid);
+            ship.bindValue(":recv_id",  qi.value("recv_id").toInt());
             ship.exec();
             if (ship.first())
             {
