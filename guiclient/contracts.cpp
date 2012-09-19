@@ -14,8 +14,10 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
+#include <QSqlError>
 
 #include "contract.h"
+#include "copyContract.h"
 #include "guiclient.h"
 #include "parameterwidget.h"
 
@@ -64,8 +66,8 @@ void contracts::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
   menuItem = menuThis->addAction(tr("View..."), this, SLOT(sView()));
   menuItem->setEnabled(_privileges->check("MaintainItemSources") || _privileges->check("ViewItemSource"));
 
-//  menuItem = menuThis->addAction(tr("Copy..."), this, SLOT(sCopy()));
-//  menuItem->setEnabled(_privileges->check("MaintainItemSources"));
+  menuItem = menuThis->addAction(tr("Copy..."), this, SLOT(sCopy()));
+  menuItem->setEnabled(_privileges->check("MaintainItemSources"));
 
   menuItem = menuThis->addAction(tr("Delete..."), this, SLOT(sDelete()));
   menuItem->setEnabled(_privileges->check("MaintainItemSources"));
@@ -110,14 +112,13 @@ void contracts::sView()
 void contracts::sCopy()
 {
   ParameterList params;
-  params.append("mode", "copy");
   params.append("contrct_id", list()->id());
 
-  contract newdlg(this, "", TRUE);
+  copyContract newdlg(this, "", TRUE);
   newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+//  if (newdlg.exec() != XDialog::Rejected)
+//    sFillList();
+  newdlg.exec();
 }
 
 void contracts::sDelete()
@@ -128,10 +129,45 @@ void contracts::sDelete()
                                 QMessageBox::Yes | QMessageBox::No,
                                 QMessageBox::No) == QMessageBox::Yes)
   {
+    if (QMessageBox::question(this, tr("Delete Contract"),
+                              tr( "Do you want to deactivate the associated Item Sources?"),
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No) == QMessageBox::Yes)
+    {
+      // itemsrcp deleted on cascade
+      itemDelete.prepare( "UPDATE itemsrc SET itemsrc_active=FALSE, "
+                          "                   itemsrc_contrct_id=NULL "
+                          "WHERE (itemsrc_contrct_id=:contrct_id);");
+      itemDelete.bindValue(":contrct_id", list()->id());
+      itemDelete.exec();
+      if (itemDelete.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, itemDelete.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
+    else
+    {
+      itemDelete.prepare( "UPDATE itemsrc SET itemsrc_contrct_id=NULL "
+                          "WHERE (itemsrc_contrct_id=:contrct_id);");
+      itemDelete.bindValue(":contrct_id", list()->id());
+      itemDelete.exec();
+      if (itemDelete.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, itemDelete.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
+
     itemDelete.prepare( "DELETE FROM contrct "
                         "WHERE (contrct_id=:contrct_id);");
     itemDelete.bindValue(":contrct_id", list()->id());
     itemDelete.exec();
+    if (itemDelete.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, itemDelete.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
     sFillList();
   }

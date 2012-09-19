@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
+    <width>1013</width>
     <height>608</height>
    </rect>
   </property>
@@ -449,7 +449,7 @@ to be bound by its terms.</comment>
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="_notesTab">
       <attribute name="title">
@@ -762,9 +762,15 @@ to be bound by its terms.</comment>
          </widget>
         </item>
         <item>
-         <widget class="XLineEdit" name="_contract">
-          <property name="enabled">
-           <bool>false</bool>
+         <widget class="XComboBox" name="_contract">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>26</height>
+           </size>
+          </property>
+          <property name="allowNull">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -774,22 +780,6 @@ to be bound by its terms.</comment>
            <enum>Qt::StrongFocus</enum>
           </property>
          </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>
@@ -844,6 +834,10 @@ to be bound by its terms.</comment>
   <tabstop>_item</tabstop>
   <tabstop>_active</tabstop>
   <tabstop>_default</tabstop>
+  <tabstop>_vendor</tabstop>
+  <tabstop>_vendorCurrency</tabstop>
+  <tabstop>_contract</tabstop>
+  <tabstop>_dates</tabstop>
   <tabstop>_vendorItemNumber</tabstop>
   <tabstop>_vendorUOM</tabstop>
   <tabstop>_invVendorUOMRatio</tabstop>
@@ -852,18 +846,18 @@ to be bound by its terms.</comment>
   <tabstop>_multOrderQty</tabstop>
   <tabstop>_vendorRanking</tabstop>
   <tabstop>_leadTime</tabstop>
-  <tabstop>_tab</tabstop>
-  <tabstop>_notes</tabstop>
-  <tabstop>_itemsrcp</tabstop>
   <tabstop>_add</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_itemsrcp</tabstop>
+  <tabstop>_notes</tabstop>
   <tabstop>_vendorItemDescrip</tabstop>
   <tabstop>_manufName</tabstop>
   <tabstop>_manufItemNumber</tabstop>
   <tabstop>_manufItemDescrip</tabstop>
-  <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_save</tabstop>
  </tabstops>
  <resources/>
  <connections/>

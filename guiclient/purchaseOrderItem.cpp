@@ -38,6 +38,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _minimumOrder = 0;
   _orderMultiple = 0;
   _maxCost = 0.0;
+  _dropship = false;
 
   connect(_ordered, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
   connect(_inventoryItem, SIGNAL(toggled(bool)), this, SLOT(sInventoryItemToggled(bool)));
@@ -135,6 +136,10 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   param = pParams.value("warehous_id", &valid);
   if (valid)
     _preferredWarehouseid = param.toInt();
+
+  param = pParams.value("dropship", &valid);
+  if (valid)
+    _dropship = param.toBool();
 
   param = pParams.value("parentWo", &valid);
   if (valid)
@@ -1006,8 +1011,11 @@ void purchaseOrderItem::sDeterminePrice()
       (_ordered->toDouble() != 0.0) &&
       (_orderQtyCache != _ordered->toDouble()))
   {
-    purchaseDeterminePrice.prepare( "SELECT itemsrcPrice(:itemsrc_id, :qty, :curr_id, :effective) AS new_itemsrc_price;");
+    purchaseDeterminePrice.prepare( "SELECT itemsrcPrice(:itemsrc_id, :warehous_id, :dropship,"
+                                    "                    :qty, :curr_id, :effective) AS new_itemsrc_price;");
     purchaseDeterminePrice.bindValue(":itemsrc_id", _itemsrcid);
+    purchaseDeterminePrice.bindValue(":warehous_id", _warehouse->id());
+    purchaseDeterminePrice.bindValue(":dropship", _dropship);
     purchaseDeterminePrice.bindValue(":qty", _ordered->toDouble());
     purchaseDeterminePrice.bindValue(":curr_id", _unitPrice->id());
     purchaseDeterminePrice.bindValue(":effective", _unitPrice->effective());

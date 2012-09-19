@@ -34,6 +34,11 @@ dspItemSources::dspItemSources(QWidget* parent, const char*, Qt::WFlags fl)
 //  setNewVisible(true);
 //  setQueryOnStartEnabled(true);
 
+  if (_metrics->boolean("MultiWhs"))
+  {
+    parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
+    parameterWidget()->append(tr("Drop Ship Only"), "showDropShip", ParameterWidget::Exists);
+  }
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   parameterWidget()->append(tr("Item Number Pattern"), "item_number_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Item Description"), "item_descrip_pattern", ParameterWidget::Text);
@@ -47,15 +52,21 @@ dspItemSources::dspItemSources(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Effective End"), "effectiveEndDate", ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Expires Start"), "expireStartDate", ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Expires End"), "expireEndDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
 
+  if (_metrics->boolean("MultiWhs"))
+  {
+    list()->addColumn(tr("Site"),              _qtyColumn, Qt::AlignCenter, true, "warehous_code");
+    list()->addColumn(tr("Order Type"),                -1, Qt::AlignCenter, true, "itemsrcp_dropship");
+  }
   list()->addColumn(tr("Item Number"),        _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
   list()->addColumn(tr("Description"),        -1,          Qt::AlignLeft,   false, "item_descrip"   );
   list()->addColumn(tr("UOM"),                _uomColumn,  Qt::AlignCenter, false, "uom_name" );
   list()->addColumn(tr("Vendor #"),           _itemColumn, Qt::AlignLeft,   true,  "vend_number"   );
   list()->addColumn(tr("Vendor Name"),        -1,          Qt::AlignLeft,   true,  "vend_name"   );
   list()->addColumn(tr("Contract #"),         _itemColumn, Qt::AlignLeft,   true,  "contrct_number"   );
-  list()->addColumn(tr("Effective"),          _dateColumn, Qt::AlignCenter, false, "effective"   );
-  list()->addColumn(tr("Expires"),            _dateColumn, Qt::AlignCenter, false, "expires"   );
+  list()->addColumn(tr("Effective"),          _dateColumn, Qt::AlignCenter, false, "itemsrc_effective"   );
+  list()->addColumn(tr("Expires"),            _dateColumn, Qt::AlignCenter, false, "itemsrc_expires"   );
   list()->addColumn(tr("Vendor Currency"),    _itemColumn, Qt::AlignCenter, false, "vend_curr"   );
   list()->addColumn(tr("Vendor Item Number"), _itemColumn, Qt::AlignLeft,   true,  "itemsrc_vend_item_number"   );
   list()->addColumn(tr("Manufacturer"),       _itemColumn, Qt::AlignLeft,   false, "itemsrc_manuf_name" );
@@ -257,8 +268,11 @@ bool dspItemSources::setParams(ParameterList &params)
   if (!display::setParams(params))
     return false;
 
-  params.append("always",      tr("'Always'"));
-  params.append("never",       tr("'Never'"));
+  params.append("always", tr("'Always'"));
+  params.append("never", tr("'Never'"));
+  params.append("all", tr("All"));
+  params.append("stock", tr("Into Stock"));
+  params.append("dropship", tr("Drop Ship"));
 
   return true;
 }

@@ -153,6 +153,7 @@ FORMS =   absoluteCalendarItem.ui               \
           contract.ui                           \
           copyBOM.ui                            \
           copyBudget.ui                         \
+          copyContract.ui                       \
           copyItem.ui                           \
           copyPurchaseOrder.ui                  \
           copySalesOrder.ui                     \
@@ -700,6 +701,7 @@ HEADERS = ../common/format.h                    \
           contracts.h                   \
           copyBOM.h                     \
           copyBudget.h                  \
+          copyContract.h                \
           copyItem.h                    \
           copyPurchaseOrder.h           \
           copySalesOrder.h              \
@@ -1302,6 +1304,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           contracts.cpp                         \
           copyBOM.cpp                           \
           copyBudget.cpp                        \
+          copyContract.cpp                      \
           copyItem.cpp                          \
           copyPurchaseOrder.cpp                 \
           copySalesOrder.cpp                    \

@@ -85,6 +85,7 @@
 #include "contracts.h"
 #include "copyBOM.h"
 #include "copyBudget.h"
+#include "copyContract.h"
 #include "copyItem.h"
 #include "copyPurchaseOrder.h"
 #include "copySalesOrder.h"

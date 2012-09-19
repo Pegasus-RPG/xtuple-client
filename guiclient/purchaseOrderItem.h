@@ -54,13 +54,14 @@ private:
     int _parentwo;
     int _parentso;
     int _preferredWarehouseid;
-	int _taxzoneid;                    // new variable added
+    int _taxzoneid;
     double _invVendUOMRatio;
     double _minimumOrder;
     double _orderMultiple;
     double _orderQtyCache;
     double _maxCost;
     bool _overriddenUnitPrice;
+    bool _dropship;
     QString	_poStatus;
     QStandardItemModel * _itemchar;
 

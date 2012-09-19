@@ -38,9 +38,10 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_edit,               SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_itemsrcp,SIGNAL(populateMenu(QMenu*, XTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_save,               SIGNAL(clicked()), this, SLOT(sSaveClicked()));
-  connect(_vendor,            SIGNAL(newId(int)), this, SLOT(sVendorChanged(int)));
-  connect(_vendorCurrency,    SIGNAL(newID(int)), this, SLOT(sFillPriceList()));
-  connect(this,               SIGNAL(rejected()), this, SLOT(sRejected()));
+  connect(_vendor,             SIGNAL(newId(int)), this, SLOT(sVendorChanged(int)));
+  connect(_vendorCurrency,     SIGNAL(newID(int)), this, SLOT(sFillPriceList()));
+  connect(_contract,           SIGNAL(newID(int)), this, SLOT(sContractChanged(int)));
+  connect(this,                SIGNAL(rejected()), this, SLOT(sRejected()));
 
 //  TODO method doesn't exist?
 //  connect(_vendorUOM, SIGNAL(textChanged()), this, SLOT(sClearVendorUOM()));
@@ -66,14 +67,19 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   else
     base = tr("Base");
 
-  _itemsrcp->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
-  _itemsrcp->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight,true, "itemsrcp_price");
-  _itemsrcp->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "item_curr");
-  _itemsrcp->addColumn(tr("Discount Percent"),                    -1, Qt::AlignRight,true, "itemsrcp_discntprcnt" );
-  _itemsrcp->addColumn(tr("Discount Fixed Amt."),                 -1, Qt::AlignRight,true, "itemsrcp_fixedamtdiscount" );
-  _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight,true, "price_base");
-  _itemsrcp->addColumn(tr("Type"),                      _orderColumn, Qt::AlignLeft, true, "type" );
-  _itemsrcp->addColumn(tr("Method"),                    _orderColumn, Qt::AlignLeft, true, "method" );
+  if (_metrics->boolean("MultiWhs"))
+  {
+    _itemsrcp->addColumn(tr("Site"),                      _qtyColumn, Qt::AlignCenter,true, "warehous_code");
+    _itemsrcp->addColumn(tr("Order Type"),                        -1, Qt::AlignCenter,true, "itemsrcp_dropship");
+  }
+  _itemsrcp->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight, true, "itemsrcp_qtybreak");
+  _itemsrcp->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight, true, "itemsrcp_price");
+  _itemsrcp->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft,  true, "item_curr");
+  _itemsrcp->addColumn(tr("Discount Percent"),                    -1, Qt::AlignRight, true, "itemsrcp_discntprcnt" );
+  _itemsrcp->addColumn(tr("Discount Fixed Amt."),                 -1, Qt::AlignRight, true, "itemsrcp_fixedamtdiscount" );
+  _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight, true, "price_base");
+  _itemsrcp->addColumn(tr("Type"),                      _orderColumn, Qt::AlignLeft,  true, "type" );
+  _itemsrcp->addColumn(tr("Method"),                    _orderColumn, Qt::AlignLeft,  true, "method" );
 
   if (omfgThis->singleCurrency())
   {
@@ -333,7 +339,7 @@ bool itemSource::sSave()
   if (_mode == cNew || _mode == cCopy)
     itemSave.prepare( "INSERT INTO itemsrc "
                "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_default, itemsrc_vend_id,"
-               "  itemsrc_effective, itemsrc_expires,"
+               "  itemsrc_contrct_id, itemsrc_effective, itemsrc_expires,"
                "  itemsrc_vend_item_number, itemsrc_vend_item_descrip,"
                "  itemsrc_vend_uom, itemsrc_invvendoruomratio,"
                "  itemsrc_minordqty, itemsrc_multordqty, itemsrc_upccode,"
@@ -342,7 +348,7 @@ bool itemSource::sSave()
                "  itemsrc_manuf_item_number, itemsrc_manuf_item_descrip ) "
                "VALUES "
                "( :itemsrc_id, :itemsrc_item_id, :itemsrc_active, :itemsrc_default, :itemsrc_vend_id,"
-               "  :itemsrc_effective, :itemsrc_expires,"
+               "  :itemsrc_contrct_id, :itemsrc_effective, :itemsrc_expires,"
                "  :itemsrc_vend_item_number, :itemsrc_vend_item_descrip,"
                "  :itemsrc_vend_uom, :itemsrc_invvendoruomratio,"
                "  :itemsrc_minordqty, :itemsrc_multordqty, :itemsrc_upccode,"
@@ -354,6 +360,7 @@ bool itemSource::sSave()
                "SET itemsrc_active=:itemsrc_active,"
                "    itemsrc_default=:itemsrc_default,"
                "    itemsrc_vend_id=:itemsrc_vend_id,"
+               "    itemsrc_contrct_id=:itemsrc_contrct_id,"
                "    itemsrc_effective=:itemsrc_effective,"
                "    itemsrc_expires=:itemsrc_expires,"
                "    itemsrc_vend_item_number=:itemsrc_vend_item_number,"
@@ -373,6 +380,8 @@ bool itemSource::sSave()
   itemSave.bindValue(":itemsrc_active", QVariant(_active->isChecked()));
   itemSave.bindValue(":itemsrc_default", QVariant(_default->isChecked()));
   itemSave.bindValue(":itemsrc_vend_id", _vendor->id());
+  if (_contract->isValid())
+    itemSave.bindValue(":itemsrc_contrct_id", _contract->id());
   itemSave.bindValue(":itemsrc_effective", _dates->startDate());
   itemSave.bindValue(":itemsrc_expires", _dates->endDate());
   itemSave.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
@@ -489,6 +498,9 @@ void itemSource::sFillPriceList()
   params.append("fixed", tr("Fixed"));
   params.append("percent", tr("Percent"));
   params.append("mixed", tr("Mixed"));
+  params.append("all", tr("All"));
+  params.append("stock", tr("Into Stock"));
+  params.append("dropship", tr("Drop Ship"));
 
   priceq = mql.toQuery(params);
   _itemsrcp->populate(priceq);
@@ -506,15 +518,14 @@ void itemSource::populate()
   {
     _item->setId(itemsrcQ.value("itemsrc_item_id").toInt());
     _active->setChecked(itemsrcQ.value("itemsrc_active").toBool());
-	_default->setChecked(itemsrcQ.value("itemsrc_default").toBool());
+    _default->setChecked(itemsrcQ.value("itemsrc_default").toBool());
     _vendor->setId(itemsrcQ.value("itemsrc_vend_id").toInt());
+    _contract->setId(itemsrcQ.value("itemsrc_contrct_id").toInt());
     _dates->setStartDate(itemsrcQ.value("itemsrc_effective").toDate());
     _dates->setEndDate(itemsrcQ.value("itemsrc_expires").toDate());
     _vendorItemNumber->setText(itemsrcQ.value("itemsrc_vend_item_number").toString());
     _vendorItemDescrip->setText(itemsrcQ.value("itemsrc_vend_item_descrip").toString());
-	//U-HAUL
     _vendorUOM->setCode(itemsrcQ.value("itemsrc_vend_uom").toString());
-	//U-HAUL
     _invVendorUOMRatio->setDouble(itemsrcQ.value("itemsrc_invvendoruomratio").toDouble());
     _upcCode->setText(itemsrcQ.value("itemsrc_upccode"));
     _minOrderQty->setDouble(itemsrcQ.value("itemsrc_minordqty").toDouble());
@@ -553,30 +564,54 @@ void itemSource::sRejected()
 
 void itemSource::sVendorChanged( int pId )
 {
-  XSqlQuery itemVendorChanged;
-    itemVendorChanged.prepare("SELECT vend_curr_id, contrct_number,"
-                              "       contrct_effective, contrct_expires "
-                              "FROM vendinfo LEFT OUTER JOIN contrct ON (contrct_vend_id=vend_id) "
-                              "WHERE (vend_id = :vend_id)"
-                              "  AND (CURRENT_DATE BETWEEN contrct_effective AND contrct_expires);");
-    itemVendorChanged.bindValue(":vend_id", pId);
-    itemVendorChanged.exec();
-    if (itemVendorChanged.first())
-    {
-      _vendorCurrency->setId(itemVendorChanged.value("vend_curr_id").toInt());
-      _contract->setText(itemVendorChanged.value("contrct_number").toString());
-      if (!_contract->isNull())
-      {
-        _dates->setStartDate(itemVendorChanged.value("contrct_effective").toDate());
-        _dates->setEndDate(itemVendorChanged.value("contrct_expires").toDate());
-        _dates->setEnabled(false);
-      }
-      else
-        _dates->setEnabled(true);
-    }
-    else if (itemVendorChanged.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, itemVendorChanged.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+  XSqlQuery vendorChanged;
+  vendorChanged.prepare("SELECT vend_curr_id "
+                        "FROM vendinfo "
+                        "WHERE (vend_id = :vend_id)");
+  vendorChanged.bindValue(":vend_id", pId);
+  vendorChanged.exec();
+  if (vendorChanged.first())
+  {
+    _vendorCurrency->setId(vendorChanged.value("vend_curr_id").toInt());
+  }
+  else if (vendorChanged.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, vendorChanged.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  vendorChanged.prepare("SELECT contrct_id, contrct_number "
+                        "FROM contrct "
+                        "WHERE (contrct_vend_id = :vend_id)");
+  vendorChanged.bindValue(":vend_id", pId);
+  vendorChanged.exec();
+  _contract->populate(vendorChanged);
+  if (vendorChanged.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, vendorChanged.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void itemSource::sContractChanged( int pId )
+{
+  XSqlQuery contractChanged;
+  contractChanged.prepare("SELECT contrct_effective, contrct_expires "
+                          "FROM contrct "
+                          "WHERE (contrct_id = :contrct_id);");
+  contractChanged.bindValue(":contrct_id", pId);
+  contractChanged.exec();
+  if (contractChanged.first())
+  {
+    _dates->setStartDate(contractChanged.value("contrct_effective").toDate());
+    _dates->setEndDate(contractChanged.value("contrct_expires").toDate());
+    _dates->setEnabled(false);
+  }
+  else if (contractChanged.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, contractChanged.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else
+    _dates->setEnabled(true);
 }

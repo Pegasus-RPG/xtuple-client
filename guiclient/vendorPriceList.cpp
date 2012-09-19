@@ -37,6 +37,11 @@ vendorPriceList::vendorPriceList(QWidget* parent, const char* name, bool modal, 
   else
     base = tr("Base");
 
+  if (_metrics->boolean("MultiWhs"))
+  {
+    _price->addColumn(tr("Site"),                      _qtyColumn, Qt::AlignCenter,true, "warehous_code");
+    _price->addColumn(tr("Order Type"),                        -1, Qt::AlignCenter,true, "itemsrcp_dropship");
+  }
   _price->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
   _price->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "currabbr");
   _price->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight,true, "itemsrcp_price");
@@ -162,6 +167,9 @@ void vendorPriceList::sFillList()
   params.append("fixed", tr("Fixed"));
   params.append("percent", tr("Percent"));
   params.append("mixed", tr("Mixed"));
+  params.append("all", tr("All"));
+  params.append("stock", tr("Into Stock"));
+  params.append("dropship", tr("Drop Ship"));
 
   priceq = mql.toQuery(params);
   _price->populate(priceq, TRUE);

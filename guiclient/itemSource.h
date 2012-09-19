@@ -37,6 +37,7 @@ public slots:
     virtual void populate();
     virtual void sRejected();
     virtual void sVendorChanged( int pId );
+    virtual void sContractChanged( int pId );
 
 protected slots:
     virtual void languageChange();

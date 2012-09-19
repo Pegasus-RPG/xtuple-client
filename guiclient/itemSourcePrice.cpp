@@ -31,6 +31,13 @@ itemSourcePrice::itemSourcePrice(QWidget* parent, const char* name, bool modal, 
   _discount->setValidator(new XDoubleValidator(-999, 999, decimalPlaces("percent"), this));
   _fixedAmtDiscount->setValidator(omfgThis->negMoneyVal());
 
+  _site->setAll();
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _site->hide();
+    _dropship->hide();
+  }
+
   _itemsrcpid = -1;
   _itemsrcid = -1;
 }
@@ -112,15 +119,24 @@ void itemSourcePrice::sSave()
                    "  FROM itemsrcp"
                    " WHERE ((itemsrcp_id != :itemsrcp_id)"
                    "   AND  (itemsrcp_itemsrc_id=:itemsrcp_itemsrc_id)"
-                   "   AND  (itemsrcp_qtybreak=:qtybreak));");
+                   "   AND  (itemsrcp_warehous_id=:itemsrcp_warehous_id)"
+                   "   AND  (itemsrcp_dropship=:itemsrcp_dropship)"
+                   "   AND  (itemsrcp_qtybreak=:itemsrcp_qtybreak));");
   itemSave.bindValue(":itemsrcp_id", _itemsrcpid);
   itemSave.bindValue(":itemsrcp_itemsrc_id", _itemsrcid);
-  itemSave.bindValue(":qtybreak", _qtyBreak->toDouble());
+  itemSave.bindValue(":itemsrcp_warehous_id", _site->id());
+  itemSave.bindValue(":itemsrcp_dropship", QVariant(_dropship->isChecked()));
+  itemSave.bindValue(":itemsrcp_qtybreak", _qtyBreak->toDouble());
   itemSave.exec();
   if(itemSave.first())
   {
-    errors << GuiErrorCheck(true, _qtyBreak,
-                            tr("A Qty. Break with the specified Qty. already exists for this Item Source.") );
+    if (_metrics->boolean("MultiWhs"))
+      errors << GuiErrorCheck(true, _qtyBreak,
+                              tr("A Qty. Break with the specified Site, Drop Ship and Qty. \n"
+                                 "already exists for this Item Source.") );
+    else
+      errors << GuiErrorCheck(true, _qtyBreak,
+                              tr("A Qty. Break with the specified Qty. already exists for this Item Source.") );
   }
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item Source Price"), errors))
@@ -130,11 +146,13 @@ void itemSourcePrice::sSave()
   {
     itemSave.prepare( "INSERT INTO itemsrcp "
                       "(itemsrcp_id, itemsrcp_itemsrc_id, itemsrcp_type,"
+                      " itemsrcp_warehous_id, itemsrcp_dropship,"
                       " itemsrcp_qtybreak, itemsrcp_price,"
                       " itemsrcp_discntprcnt, itemsrcp_fixedamtdiscount,"
                       " itemsrcp_updated, itemsrcp_curr_id) "
                       "VALUES "
                       "(:itemsrcp_id, :itemsrcp_itemsrc_id, :itemsrcp_type,"
+                      " :itemsrcp_warehous_id, :itemsrcp_dropship,"
                       " :itemsrcp_qtybreak, :itemsrcp_price,"
                       " :itemsrcp_discntprcnt, :itemsrcp_fixedamtdiscount,"
                       " CURRENT_DATE, :itemsrcp_curr_id);" );
@@ -142,6 +160,8 @@ void itemSourcePrice::sSave()
   else if (_mode == cEdit)
     itemSave.prepare( "UPDATE itemsrcp "
                       "SET itemsrcp_type=:itemsrcp_type,"
+                      "    itemsrcp_warehous_id=:itemsrcp_warehous_id,"
+                      "    itemsrcp_dropship=:itemsrcp_dropship,"
                       "    itemsrcp_qtybreak=:itemsrcp_qtybreak,"
                       "    itemsrcp_price=:itemsrcp_price,"
                       "    itemsrcp_discntprcnt=:itemsrcp_discntprcnt,"
@@ -152,18 +172,19 @@ void itemSourcePrice::sSave()
 
   itemSave.bindValue(":itemsrcp_id", _itemsrcpid);
   itemSave.bindValue(":itemsrcp_itemsrc_id", _itemsrcid);
+  itemSave.bindValue(":itemsrcp_warehous_id", _site->id());
+  itemSave.bindValue(":itemsrcp_dropship", QVariant(_dropship->isChecked()));
+  itemSave.bindValue(":itemsrcp_qtybreak", _qtyBreak->toDouble());
 
   if(_itemSelected->isChecked())
   {
     itemSave.bindValue(":itemsrcp_type", "N");
-    itemSave.bindValue(":itemsrcp_qtybreak", _qtyBreak->toDouble());
     itemSave.bindValue(":itemsrcp_price", _price->localValue());
     itemSave.bindValue(":itemsrcp_curr_id", _price->id());
   }
   else if(_discountSelected->isChecked())
   {
     itemSave.bindValue(":itemsrcp_type", "D");
-    itemSave.bindValue(":itemsrcp_qtybreak", _qtyBreak->toDouble());
     itemSave.bindValue(":itemsrcp_discntprcnt", (_discount->toDouble() / 100.0));
     itemSave.bindValue(":itemsrcp_fixedamtdiscount", (_fixedAmtDiscount->toDouble()));
   }
@@ -189,6 +210,11 @@ void itemSourcePrice::populate()
       _discountSelected->setChecked(true);
     else
       _itemSelected->setChecked(true);
+    if (itempopulate.value("itemsrcp_warehous_id").toInt() > 0)
+      _site->setId(itempopulate.value("itemsrcp_warehous_id").toInt());
+    else
+      _site->setAll();
+    _dropship->setChecked(itempopulate.value("itemsrcp_dropship").toBool());
     _qtyBreak->setDouble(itempopulate.value("itemsrcp_qtybreak").toDouble());
     _price->setLocalValue(itempopulate.value("itemsrcp_price").toDouble());
     _price->setEffective(itempopulate.value("itemsrcp_updated").toDate());

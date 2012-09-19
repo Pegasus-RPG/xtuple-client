@@ -62,7 +62,6 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sCalcWoUnitCost();
     virtual void        sHandleButton();
     virtual void        sHandleScheduleDate();
-    virtual void        sMaintainItemCosts();
 
   protected slots:
     virtual void  languageChange();
@@ -111,6 +110,8 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     double  _qtyreserved;
     QDate   _dateCache;
     QString _costmethod;
+    QString _priceType;
+    QString _priceMode;
 
     // For holding variables for characteristic pricing
     QList<QVariant> _charVars;

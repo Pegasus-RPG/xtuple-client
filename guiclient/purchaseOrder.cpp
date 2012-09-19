@@ -902,36 +902,13 @@ void purchaseOrder::sSave()
 
 void purchaseOrder::sNew()
 {
-  XSqlQuery purchaseNew;
-  if (_mode == cEdit || _mode == cNew)
-  {
-    purchaseNew.prepare( "UPDATE pohead "
-               "SET pohead_warehous_id=:pohead_warehous_id, pohead_vend_id=:pohead_vend_id,"
-               "    pohead_number=:pohead_number, pohead_taxzone_id=:pohead_taxzone_id, "
-               "    pohead_curr_id=:pohead_curr_id, "
-               "    pohead_orderdate=:pohead_orderdate "
-               "WHERE (pohead_id=:pohead_id);" );
-    if (_warehouse->isValid())
-      purchaseNew.bindValue(":pohead_warehous_id", _warehouse->id());
-    purchaseNew.bindValue(":pohead_vend_id", _vendor->id());
-    purchaseNew.bindValue(":pohead_number", _orderNumber->text());
-    purchaseNew.bindValue(":pohead_id", _poheadid);
-    if (_taxZone->isValid())
-      purchaseNew.bindValue(":pohead_taxzone_id", _taxZone->id());
-    purchaseNew.bindValue(":pohead_curr_id", _poCurrency->id());
-    purchaseNew.bindValue(":pohead_orderdate", _orderDate->date());
-    purchaseNew.exec();
-    if (purchaseNew.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, purchaseNew.lastError().text(), __FILE__, __LINE__);
-      return;
-    }
-  }
+  saveDetail();
 
   ParameterList params;
   params.append("mode", "new");
   params.append("pohead_id", _poheadid);
   params.append("warehous_id", _warehouse->id());
+  params.append("dropship", QVariant(_dropShip->isChecked()));
 
   purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -949,6 +926,7 @@ void purchaseOrder::sEdit()
   ParameterList params;
   params.append("pohead_id", _poheadid);
   params.append("poitem_id", _poitem->id());
+  params.append("dropship", QVariant(_dropShip->isChecked()));
 
   if (_mode == cEdit || _mode == cNew)
     params.append("mode", "edit");
@@ -1521,26 +1499,34 @@ void purchaseOrder::sTaxDetail()
 
 void purchaseOrder::saveDetail()
 {
+  if (_mode == cView)
+    return;
+
   XSqlQuery taxq;
-  if (_mode != cView)
+  taxq.prepare( "UPDATE pohead "
+                "SET pohead_warehous_id=:pohead_warehous_id,"
+                "    pohead_vend_id=:pohead_vend_id,"
+                "    pohead_number=:pohead_number,"
+                "    pohead_taxzone_id=:pohead_taxzone_id, "
+                "    pohead_curr_id=:pohead_curr_id, "
+                "    pohead_orderdate=:pohead_orderdate, "
+                "    pohead_freight = :pohead_freight "
+                "WHERE (pohead_id=:pohead_id);" );
+  if (_warehouse->isValid())
+    taxq.bindValue(":pohead_warehous_id", _warehouse->id());
+  taxq.bindValue(":pohead_vend_id", _vendor->id());
+  taxq.bindValue(":pohead_number", _orderNumber->text());
+  taxq.bindValue(":pohead_id", _poheadid);
+  if (_taxZone->isValid())
+    taxq.bindValue(":pohead_taxzone_id", _taxZone->id());
+  taxq.bindValue(":pohead_curr_id", _poCurrency->id());
+  taxq.bindValue(":pohead_orderdate", _orderDate->date());
+  taxq.bindValue(":pohead_freight", _freight->localValue());
+  taxq.exec();
+  if (taxq.lastError().type() != QSqlError::NoError)
   {
-    taxq.prepare("UPDATE pohead SET pohead_taxzone_id = :taxzone,"
-                 " pohead_orderdate = :pohead_orderdate,"
-                                 " pohead_curr_id = :pohead_curr_id,"
-                                 " pohead_freight = :pohead_freight "
-                         "WHERE (pohead_id = :pohead_id);");
-    if (_taxZone->isValid())
-      taxq.bindValue(":taxzone",        _taxZone->id());
-    taxq.bindValue(":pohead_id",        _poheadid);
-    taxq.bindValue(":pohead_orderdate", _orderDate->date());
-        taxq.bindValue(":pohead_curr_id", _poCurrency->id());
-        taxq.bindValue(":pohead_freight", _freight->localValue());
-    taxq.exec();
-    if (taxq.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 

@@ -14,6 +14,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
+#include <QSqlError>
 
 #include "itemSource.h"
 #include "buyCard.h"
@@ -34,8 +35,14 @@ itemSources::itemSources(QWidget* parent, const char*, Qt::WFlags fl)
 
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   parameterWidget()->append(tr("Vendor"), "vend_id", ParameterWidget::Vendor);
+  parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
+  parameterWidget()->append(tr("Show Expired"), "showExpired", ParameterWidget::Exists);
+  parameterWidget()->append(tr("Show Future"), "showFuture", ParameterWidget::Exists);
 
   list()->addColumn(tr("Vendor"),             -1,          Qt::AlignLeft,   true,  "vend_name"   );
+  list()->addColumn(tr("Contract #"),         _itemColumn, Qt::AlignLeft,   true,  "contrct_number"   );
+  list()->addColumn(tr("Effective"),          _dateColumn, Qt::AlignCenter, true,  "itemsrc_effective"   );
+  list()->addColumn(tr("Expires"),            _dateColumn, Qt::AlignCenter, true,  "itemsrc_expires"   );
   list()->addColumn(tr("Item Number"),        _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
   list()->addColumn(tr("Description"),        -1,          Qt::AlignLeft,   true,  "item_descrip"   );
   list()->addColumn(tr("UOM"),                _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
@@ -175,12 +182,16 @@ void itemSources::sDelete()
                                   QMessageBox::Yes | QMessageBox::No,
                                   QMessageBox::No) == QMessageBox::Yes)
     {
+      // itemsrcp deleted on cascade
       itemDelete.prepare( "DELETE FROM itemsrc "
-                 "WHERE (itemsrc_id=:itemsrc_id);"
-                 "DELETE FROM itemsrcp "
-                 "WHERE (itemsrcp_itemsrc_id=:itemsrc_id);" );
+                          "WHERE (itemsrc_id=:itemsrc_id);" );
       itemDelete.bindValue(":itemsrc_id", list()->id());
       itemDelete.exec();
+      if (itemDelete.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, itemDelete.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
 
       sFillList();
     }
