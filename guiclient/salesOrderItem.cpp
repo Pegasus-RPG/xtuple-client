@@ -1040,7 +1040,7 @@ void salesOrderItem::sSave()
                "    coitem_qty_uom_id=:qty_uom_id,"
                "    coitem_qty_invuomratio=:qty_invuomratio,"
                "    coitem_custprice=:soitem_custprice,"
-               "    coitem_pricemode-:soitem_pricemode,"
+               "    coitem_pricemode=:soitem_pricemode,"
                "    coitem_price=:soitem_price,"
                "    coitem_price_uom_id=:price_uom_id,"
                "    coitem_price_invuomratio=:price_invuomratio,"
