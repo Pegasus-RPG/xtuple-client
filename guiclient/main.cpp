@@ -250,8 +250,8 @@ int main(int argc, char *argv[])
   {
     ParameterList params;
     params.append("copyright", _Copyright);
-    params.append("version", _Version);
-    params.append("build", QString("%1 %2").arg(__DATE__).arg(__TIME__));
+    params.append("version",   _Version);
+    params.append("build",     _Build.arg(__DATE__).arg(__TIME__));
 
     if (haveUsername)
       params.append("username", username);

@@ -17,5 +17,6 @@ extern QString _Name;
 extern QString _Version;
 extern QString _dbVersion;
 extern QString _Copyright;
+extern QString _Build;
 
 #endif // __XTUPLE_VERSION_H__

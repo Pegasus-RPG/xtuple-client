@@ -15,6 +15,12 @@ QString _Version   = "4.0.0Beta2";
 QString _dbVersion = "4.0.0Beta2";
 QString _Copyright = "Copyright (c) 1999-2012, OpenMFG, LLC.";
 
+#ifdef __USEALTVERSION__
+#include "altVersion.cpp"
+#else
+QString _Build     = "%1 %2";
+#endif
+
 /*: Please translate this Version string to the base version of the application
     you are translating. This is a hack to embed the application version number
     into the translation file so the Update Manager can find
