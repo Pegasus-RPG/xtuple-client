@@ -508,17 +508,9 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
 
 void invoiceItem::sDeterminePrice()
 {
-  //if we don't have item selected, don't try to determine the price yet
-  if (!_item->isValid() ||
-       _pricingUOM->id() < 0 ||
-       _qtyUOM->id() < 0)
+
+  if ( (_itemSelected->isChecked()) && (_item->isValid()) && (_billed->toDouble()) && (_qtyUOM->id() > 0) && (_pricingUOM->id() > 0) )
   {
-      return;
-  }
-      else
-  {
-  if ( (_itemSelected->isChecked()) && (_item->isValid()) && (_billed->toDouble()) )
-   {
     XSqlQuery itemprice;
     itemprice.prepare( "SELECT itemPrice(item_id, :cust_id, -1, "
 		       "		 :qty, :qtyUOM, :priceUOM, :curr_id, :effective) AS price "
@@ -560,7 +552,6 @@ void invoiceItem::sDeterminePrice()
       systemError(this, itemprice.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-   }
   }
 }
 
