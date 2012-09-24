@@ -212,12 +212,13 @@ bool Privileges::check(const QString &pName)
 
 bool Privileges::isDba()
 {
-  XSqlQuery su;
-  su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=getEffectiveXtUser());");
-  if (su.lastError().type() != QSqlError::NoError)
-    su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=CURRENT_USER);");
+  XSqlQuery su("SELECT isDBA() AS issuper;");
+  su.exec();
   if (su.first())
-    return su.value("rolsuper").toBool();
+    return su.value("issuper").toBool();
+  else if (su.lastError().type() != QSqlError::NoError)
+    qWarning("SQL error in Privileges::isDba(): %s",
+             qPrintable(su.lastError().text()));
 
   return false;
 }

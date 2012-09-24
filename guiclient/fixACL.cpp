@@ -13,7 +13,6 @@
 #include <QApplication>
 #include <QCursor>
 #include <QSqlError>
-//#include <QStatusBar>
 
 #include "storedProcErrorLookup.h"
 
@@ -28,7 +27,7 @@ fixACL::fixACL(QWidget* parent, const char * name, Qt::WindowFlags fl)
   setupUi(this);
 
   connect(_fix,		SIGNAL(clicked()),	this, SLOT(sFix()));
-//  statusBar()->showMessage("");
+  _status->setText("");
 }
 
 fixACL::~fixACL()
@@ -57,7 +56,7 @@ void fixACL::sFix()
                   __FILE__, __LINE__);
       return;
     }
-//    statusBar()->showMessage(tr("Done. %1 entities examined.").arg(result));
+    _status->setText(tr("Done. %1 entities examined.").arg(result));
   }
   else if (fixFix.lastError().type() != QSqlError::NoError)
   {
