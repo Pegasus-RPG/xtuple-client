@@ -105,7 +105,6 @@ class salesOrder : public XWidget, public Ui::salesOrder
 
   signals:
     void populated();
-    void listFilled();
     void newId(int);
     void newModeType(int);
     void newModeState(int);
