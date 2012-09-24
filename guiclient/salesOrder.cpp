@@ -2507,7 +2507,7 @@ void salesOrder::populate()
           _fromQuote->setText(so.value("rahead_number").toString());
         }
       }
-
+      emit populated();
       sFillItemList();
     }
     else if (so.lastError().type() != QSqlError::NoError)
@@ -2719,6 +2719,7 @@ void salesOrder::sFillItemList()
       return;
     }
 
+    emit listFilled();
     _cust->setReadOnly(fl.size() || !ISNEW(_mode));
     _amountAtShipping->setLocalValue(0.0);
     QString sql = "SELECT ROUND(((COALESCE(SUM(shipitem_qty),0)-coitem_qtyshipped) *"
@@ -2787,6 +2788,7 @@ void salesOrder::sFillItemList()
       systemError(this, fl.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    emit listFilled();
   }
 
   //  Determine the subtotal
