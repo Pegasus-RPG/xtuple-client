@@ -201,7 +201,11 @@ void dspOrderActivityByProject::sEdit()
   }
   else if(list()->altId() == 25)
   {
-    salesOrder::editSalesOrder(list()->id(), false, this);
+    params.append("mode",      "edit");
+    params.append("sohead_id", list()->id());
+    salesOrder *newdlg = new salesOrder(this);
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
   }
   else if(list()->altId() == 27)
   {
@@ -279,7 +283,11 @@ void dspOrderActivityByProject::sView()
   }
   else if(list()->altId() == 25)
   {
-    salesOrder::viewSalesOrder(list()->id(), false);
+    params.append("mode",      "view");
+    params.append("sohead_id", list()->id());
+    salesOrder *newdlg = new salesOrder(this);
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
   }
   else if(list()->altId() == 27)
   {
