@@ -16,6 +16,8 @@
 #include <QSqlError>
 #include <metasql.h>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "mqlutil.h"
 #include "taxDetail.h"
 #include "itemCharacteristicDelegate.h"
@@ -536,28 +538,23 @@ void purchaseOrderItem::populate()
 
 void purchaseOrderItem::sSave()
 {
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(!_inventoryItem->isChecked() && _expcat->id() == -1, _expcat,
+                          tr("<p>You must specify an Expense Category for this non-Inventory Item before you may save."))
+         << GuiErrorCheck(_inventoryItem->isChecked() && !_item->isValid(), _item,
+                          tr("<p>You must select an Item Number before you may save."))
+         << GuiErrorCheck(_inventoryItem->isChecked() && _warehouse->id() == -1, _warehouse,
+                          tr("<p>You must select a Supplying Site before you may save."))
+         << GuiErrorCheck(!_dueDate->isValid(), _dueDate,
+                          tr("<p>You must enter a due date before you may save this Purchase Order Item."))
+         << GuiErrorCheck(_metrics->boolean("RequirePOTax") && !_taxtype->isValid(), _taxtype,
+                          tr("<p>You must select a Tax Type before you may save." ))
+     ;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order Item"), errors))
+    return;
+
   XSqlQuery purchaseSave;
-  if (!_inventoryItem->isChecked() && _expcat->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Expense Category Required"),
-                           tr("<p>You must specify an Expense Category for this non-Inventory Item before you may save it.") );
-    return;
-  }
-
-  if (_inventoryItem->isChecked() && !_item->isValid())
-  {
-    QMessageBox::critical( this, tr("No Item Selected"),
-                           tr("<p>You must select an Item Number before you may save.") );
-    return;
-  }
-
-  if (_inventoryItem->isChecked() && _warehouse->id() == -1)
-  {
-    QMessageBox::critical( this, tr("No Site Selected"),
-                           tr("<p>You must select a Supplying Site before you may save.") );
-    return;
-  }
-
   if (_ordered->toDouble() == 0.0)
   {
     if (QMessageBox::critical( this, tr("Zero Order Quantity"),
@@ -609,14 +606,6 @@ void purchaseOrderItem::sSave()
       _unitPrice->setFocus();
       return;
     }
-  }
-
-  if (!_dueDate->isValid())
-  {
-    QMessageBox::critical( this, tr("Invalid Due Date"),
-                           tr("<p>You must enter a due date before you may save this Purchase Order Item.") );
-    _dueDate->setFocus();
-    return;
   }
 
   if (_dueDate->date() < _earliestDate->date())

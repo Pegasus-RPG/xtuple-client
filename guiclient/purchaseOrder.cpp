@@ -17,6 +17,8 @@
 
 #include <metasql.h>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "comment.h"
 #include "itemSourceList.h"
 #include "mqlutil.h"
@@ -672,58 +674,46 @@ void purchaseOrder::sSave()
   if(_orderNumber->hasFocus())
     sHandleOrderNumber();
 
-  if (_orderNumber->text().isEmpty())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Purchase Order"),
-      tr("You may not save this Purchase Order until you have entered a valid Purchase Order Number.") );
-    _orderNumber->setFocus();
-    return;
-  }
-
-  if (!_vendor->isValid())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Purchase Order"),
-                           tr("You may not save this Purchase Order until you have selected a Vendor." ) );
-
-    _vendor->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_orderNumber->text().isEmpty(), _orderNumber,
+                          tr("You may not save this Purchase Order until you have entered a valid Purchase Order Number."))
+         << GuiErrorCheck(!_vendor->isValid(), _vendor,
+                          tr("You may not save this Purchase Order until you have selected a Vendor." ))
+         << GuiErrorCheck(_metrics->boolean("RequirePOTax") && !_taxZone->isValid(), _taxZone,
+                          tr("You may not save this Purchase Order until you have selected a Tax Zone." ))
+     ;
 
   if (_qeitem->isDirty() && ! sQESave())
     return;
 
   purchaseSave.prepare( "SELECT poitem_id " 
-             "FROM poitem "
-             "WHERE (poitem_pohead_id=:pohead_id) "
-             "LIMIT 1;" );
+                        "FROM poitem "
+                        "WHERE (poitem_pohead_id=:pohead_id) "
+                        "LIMIT 1;" );
   purchaseSave.bindValue(":pohead_id", _poheadid);
   purchaseSave.exec();
   if (!purchaseSave.first())
   {
-    QMessageBox::critical( this, tr("Cannot Save Purchase Order"),
-                           tr( "You may not save this Purchase Order until you have created at least one Line Item for it." ) );
-
-    _new->setFocus();
-    return;
+    errors << GuiErrorCheck(true, _new,
+                            tr( "You may not save this Purchase Order until you have created at least one Line Item for it." ));
   }
 
-  XSqlQuery postatus;
-  postatus.prepare( "SELECT pohead_status "
-                    "FROM pohead "
-                    "WHERE (pohead_id=:pohead_id);" );
-  postatus.bindValue(":pohead_id", _poheadid);
-  postatus.exec();
-  if (postatus.first())
+  purchaseSave.prepare( "SELECT pohead_status "
+                        "FROM pohead "
+                        "WHERE (pohead_id=:pohead_id);" );
+  purchaseSave.bindValue(":pohead_id", _poheadid);
+  purchaseSave.exec();
+  if (purchaseSave.first())
   {
-    if ((postatus.value("pohead_status") == "O") && (_status->currentIndex() == 0))
+    if ((purchaseSave.value("pohead_status") == "O") && (_status->currentIndex() == 0))
     {
-          QMessageBox::critical( this, tr("Cannot Save Purchase Order"),
-                             tr( "This Purchase Order has been released. You may not set its Status back to 'Unreleased'." ) );
-
-      _status->setFocus();
-      return;
+      errors << GuiErrorCheck(true, _status,
+                              tr( "This Purchase Order has been released. You may not set its Status back to 'Unreleased'." ));
     }
   }
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order"), errors))
+    return;
 
   purchaseSave.prepare( "UPDATE pohead "
              "SET pohead_warehous_id=:pohead_warehous_id, pohead_orderdate=:pohead_orderdate,"
@@ -902,7 +892,8 @@ void purchaseOrder::sSave()
 
 void purchaseOrder::sNew()
 {
-  saveDetail();
+  if (!saveDetail())
+    return;
 
   ParameterList params;
   params.append("mode", "new");
@@ -921,8 +912,9 @@ void purchaseOrder::sNew()
 
 void purchaseOrder::sEdit()
 {
-  saveDetail();
-  
+  if (!saveDetail())
+    return;
+
   ParameterList params;
   params.append("pohead_id", _poheadid);
   params.append("poitem_id", _poitem->id());
@@ -1483,7 +1475,8 @@ void purchaseOrder::sCalculateTax()
 
 void purchaseOrder::sTaxDetail()
 {
-  saveDetail();
+  if (!saveDetail())
+    return;
 
   ParameterList params;
   params.append("order_id", _poheadid);
@@ -1497,10 +1490,17 @@ void purchaseOrder::sTaxDetail()
     populate();
 }
 
-void purchaseOrder::saveDetail()
+bool purchaseOrder::saveDetail()
 {
   if (_mode == cView)
-    return;
+    return true;
+
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_metrics->boolean("RequirePOTax") && !_taxZone->isValid(), _taxZone,
+                          tr("You may not save this Purchase Order until you have selected a Tax Zone." ));
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order"), errors))
+    return false;
 
   XSqlQuery taxq;
   taxq.prepare( "UPDATE pohead "
@@ -1526,8 +1526,9 @@ void purchaseOrder::saveDetail()
   if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
+  return true;
 }
 
 void purchaseOrder::sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected )

@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>657</width>
-    <height>553</height>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -251,14 +251,14 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
+            <item row="7" column="0">
              <widget class="QCheckBox" name="_enableDropShip">
               <property name="text">
                <string>Enable Drop Shipments</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="0">
+            <item row="8" column="0">
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
                <spacer name="horizontalSpacer">
@@ -287,6 +287,13 @@ to be bound by its terms.</comment>
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="6" column="0">
+             <widget class="QCheckBox" name="_requirePOTax">
+              <property name="text">
+               <string>Require Tax on Purchase Orders</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

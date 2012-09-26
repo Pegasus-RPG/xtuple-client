@@ -30,7 +30,7 @@ public:
 
     virtual void createHeader();
     virtual void populateOrderNumber();
-	virtual void saveDetail();
+    virtual bool saveDetail();
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );

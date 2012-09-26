@@ -96,10 +96,9 @@ configurePO::configurePO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _vendorChangeLog->setChecked(_metrics->boolean("VendorChangeLog"));
   _earliestPO->setChecked(_metrics->boolean("UseEarliestAvailDateOnPOItem"));
   _printPO->setChecked(_metrics->boolean("DefaultPrintPOOnSave"));
-
   _requirePoitemStdCost->setChecked(_metrics->boolean("RequireStdCostForPOItem"));
+  _requirePOTax->setChecked(_metrics->boolean("RequirePOTax"));
   _notes->setChecked(_metrics->boolean("CopyPRtoPOItem"));
-
   _defaultShipVia->setText(_metrics->value("DefaultPOShipVia"));
 
   this->setWindowTitle("Purchase Configuration");
@@ -146,6 +145,7 @@ bool configurePO::sSave()
   _metrics->set("BillDropShip",         _billDropShip->isChecked());
  
   _metrics->set("RequireStdCostForPOItem", _requirePoitemStdCost->isChecked());
+  _metrics->set("RequirePOTax", _requirePOTax->isChecked());
   _metrics->set("CopyPRtoPOItem", _notes->isChecked());
   _metrics->set("DefaultPOShipVia", _defaultShipVia->text().trimmed());
 
