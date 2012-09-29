@@ -24,9 +24,20 @@ salesAccount::salesAccount(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
 
   _warehouse->populate( "SELECT -1, 'Any'::text AS warehous_code, 0 AS sort "
-			"UNION SELECT warehous_id, warehous_code, 1 AS sort "
-            "FROM whsinfo "
-			"ORDER BY sort, warehous_code" );
+                        "UNION SELECT warehous_id, warehous_code, 1 AS sort "
+                        "FROM whsinfo "
+                        "ORDER BY sort, warehous_code" );
+
+  _shippingZones->populate( "SELECT -1, 'Any'::text AS shipzone_name, 0 AS sort "
+                            "UNION SELECT shipzone_id, shipzone_name, 1 AS sort "
+                            "FROM shipzone "
+                            "ORDER BY sort, shipzone_name" );
+
+  _saleTypes->populate( "SELECT -1, 'Any'::text AS saletype_code, 0 AS sort "
+                        "UNION SELECT saletype_id, saletype_code, 1 AS sort "
+                        "FROM saletype "
+                        "WHERE (saletype_active) "
+                        "ORDER BY sort, saletype_code" );
 
   _customerTypes->setType(ParameterGroup::CustomerType);
   _productCategories->setType(ParameterGroup::ProductCategory);
@@ -86,6 +97,8 @@ enum SetResponse salesAccount::set(const ParameterList &pParams)
       _mode = cView;
 
       _warehouse->setEnabled(FALSE);
+      _shippingZones->setEnabled(FALSE);
+      _saleTypes->setEnabled(FALSE);
       _customerTypes->setEnabled(FALSE);
       _productCategories->setEnabled(FALSE);
       _sales->setReadOnly(TRUE);
@@ -127,6 +140,8 @@ void salesAccount::sSave()
   salesSave.prepare("SELECT salesaccnt_id"
             "  FROM salesaccnt"
             " WHERE((salesaccnt_warehous_id=:salesaccnt_warehous_id)"
+            "   AND (salesaccnt_shipzone_id=:salesaccnt_shipzone_id)"
+            "   AND (salesaccnt_saletype_id=:salesaccnt_saletype_id)"
             "   AND (salesaccnt_custtype=:salesaccnt_custtype)"
             "   AND (salesaccnt_custtype_id=:salesaccnt_custtype_id)"
             "   AND (salesaccnt_prodcat=:salesaccnt_prodcat)"
@@ -134,6 +149,8 @@ void salesAccount::sSave()
             "   AND (salesaccnt_id != :salesaccnt_id))");
   salesSave.bindValue(":salesaccnt_id", _salesaccntid);
   salesSave.bindValue(":salesaccnt_warehous_id", _warehouse->id());
+  salesSave.bindValue(":salesaccnt_shipzone_id", _shippingZones->id());
+  salesSave.bindValue(":salesaccnt_saletype_id", _saleTypes->id());
 
   if (_customerTypes->isAll())
   {
@@ -178,17 +195,9 @@ void salesAccount::sSave()
 
   if (_mode == cNew)
   {
-    salesSave.exec("SELECT NEXTVAL('salesaccnt_salesaccnt_id_seq') AS salesaccnt_id;");
-    if (salesSave.first())
-      _salesaccntid = salesSave.value("salesaccnt_id").toInt();
-    else if (salesSave.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
     salesSave.prepare( "INSERT INTO salesaccnt "
                "( salesaccnt_warehous_id,"
+               "  salesaccnt_shipzone_id, salesaccnt_saletype_id,"
                "  salesaccnt_custtype, salesaccnt_custtype_id,"
                "  salesaccnt_prodcat, salesaccnt_prodcat_id,"
                "  salesaccnt_sales_accnt_id,"
@@ -199,6 +208,7 @@ void salesAccount::sSave()
 	       "  salesaccnt_cow_accnt_id) "
                "VALUES "
                "( :salesaccnt_warehous_id,"
+               "  :salesaccnt_shipzone_id, :salesaccnt_saletype_id,"
                "  :salesaccnt_custtype, :salesaccnt_custtype_id,"
                "  :salesaccnt_prodcat, :salesaccnt_prodcat_id,"
                "  :salesaccnt_sales_accnt_id,"
@@ -206,11 +216,14 @@ void salesAccount::sSave()
                "  :salesaccnt_cos_accnt_id,"
 	       "  :salesaccnt_returns_accnt_id,"
 	       "  :salesaccnt_cor_accnt_id,"
-	       "  :salesaccnt_cow_accnt_id);" );
+               "  :salesaccnt_cow_accnt_id ) "
+               "RETURNING salesaccnt_id;" );
   }
   else if (_mode == cEdit)
     salesSave.prepare( "UPDATE salesaccnt "
                "SET salesaccnt_warehous_id=:salesaccnt_warehous_id,"
+               "    salesaccnt_shipzone_id=:salesaccnt_shipzone_id,"
+               "    salesaccnt_saletype_id=:salesaccnt_saletype_id,"
                "    salesaccnt_custtype=:salesaccnt_custtype,"
                "    salesaccnt_custtype_id=:salesaccnt_custtype_id,"
                "    salesaccnt_prodcat=:salesaccnt_prodcat,"
@@ -235,6 +248,8 @@ void salesAccount::sSave()
     salesSave.bindValue(":salesaccnt_cow_accnt_id",	_cow->id());
 
   salesSave.bindValue(":salesaccnt_warehous_id", _warehouse->id());
+  salesSave.bindValue(":salesaccnt_shipzone_id", _shippingZones->id());
+  salesSave.bindValue(":salesaccnt_saletype_id", _saleTypes->id());
 
   if (_customerTypes->isAll())
   {
@@ -269,6 +284,13 @@ void salesAccount::sSave()
   }
 
   salesSave.exec();
+  if (_mode == cNew && salesSave.first())
+    _salesaccntid = salesSave.value("salesaccnt_id").toInt();
+  else if (salesSave.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_salesaccntid);
 }
@@ -276,14 +298,7 @@ void salesAccount::sSave()
 void salesAccount::populate()
 {
   XSqlQuery salespopulate;
-  salespopulate.prepare( "SELECT salesaccnt_warehous_id,"
-             "       salesaccnt_custtype, salesaccnt_custtype_id,"
-             "       salesaccnt_prodcat, salesaccnt_prodcat_id,"
-             "       salesaccnt_sales_accnt_id, salesaccnt_credit_accnt_id,"
-             "       salesaccnt_cos_accnt_id,"
-             "       salesaccnt_returns_accnt_id,"
-             "       salesaccnt_cor_accnt_id,"
-             "       salesaccnt_cow_accnt_id "
+  salespopulate.prepare( "SELECT * "
              "FROM salesaccnt "
              "WHERE (salesaccnt_id=:salesaccnt_id);" );
   salespopulate.bindValue(":salesaccnt_id", _salesaccntid);
@@ -291,6 +306,8 @@ void salesAccount::populate()
   if (salespopulate.first())
   {
     _warehouse->setId(salespopulate.value("salesaccnt_warehous_id").toInt());
+    _shippingZones->setId(salespopulate.value("salesaccnt_shipzone_id").toInt());
+    _saleTypes->setId(salespopulate.value("salesaccnt_saletype_id").toInt());
 
     if (salespopulate.value("salesaccnt_custtype_id").toInt() != -1)
       _customerTypes->setId(salespopulate.value("salesaccnt_custtype_id").toInt());

@@ -84,7 +84,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       QuoteCommentTypes, QuoteItemCommentTypes,
       SalesOrderCommentTypes, SalesOrderItemCommentTypes,               
       SalesCategories, SalesCategoriesActive,
-      SalesReps, SalesRepsActive,
+      SalesReps, SalesRepsActive, SaleTypes,
       ShipVias, ShippingCharges,	ShippingForms, ShippingZones,
       SiteTypes, SoProjects, Subaccounts,
       TaxAuths, TaxClasses, TaxCodes, TaxZones,

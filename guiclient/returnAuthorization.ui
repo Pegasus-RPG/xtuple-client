@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>993</width>
+    <height>599</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -180,16 +180,6 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="3" column="3">
-          <widget class="QLabel" name="_rsnCodeLit">
-           <property name="text">
-            <string>Reason Code:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="4">
           <widget class="XComboBox" name="_salesRep">
            <property name="sizePolicy">
@@ -273,19 +263,6 @@ to be bound by its terms.</comment>
            </property>
            <property name="type">
             <enum>XComboBox::TaxZones</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="4">
-          <widget class="XComboBox" name="_rsnCode">
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="type">
-            <enum>XComboBox::ReturnReasonCodes</enum>
            </property>
           </widget>
          </item>
@@ -417,13 +394,6 @@ to be bound by its terms.</comment>
            </item>
           </widget>
          </item>
-         <item row="3" column="7">
-          <widget class="QCheckBox" name="_printRA">
-           <property name="text">
-            <string>Print on Save</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="8">
           <spacer>
            <property name="orientation">
@@ -492,6 +462,70 @@ to be bound by its terms.</comment>
            </property>
            <property name="nullStr">
             <string>None</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="_rsnCodeLit">
+           <property name="text">
+            <string>Reason Code:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="XComboBox" name="_rsnCode">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="type">
+            <enum>XComboBox::ReturnReasonCodes</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="10">
+          <widget class="QCheckBox" name="_printRA">
+           <property name="text">
+            <string>Print on Save</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="3">
+          <widget class="QLabel" name="_shippingZoneLit">
+           <property name="text">
+            <string>Shipping Zone:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="6">
+          <widget class="QLabel" name="_saleTypeLit">
+           <property name="text">
+            <string>Sale Type:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="4">
+          <widget class="XComboBox" name="_shippingZone">
+           <property name="type">
+            <enum>XComboBox::ShippingZones</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="7">
+          <widget class="XComboBox" name="_saleType">
+           <property name="type">
+            <enum>XComboBox::SaleTypes</enum>
            </property>
           </widget>
          </item>
@@ -1480,11 +1514,9 @@ to be bound by its terms.</comment>
   <tabstop>_salesRep</tabstop>
   <tabstop>_commission</tabstop>
   <tabstop>_taxzone</tabstop>
-  <tabstop>_rsnCode</tabstop>
   <tabstop>_disposition</tabstop>
   <tabstop>_timing</tabstop>
   <tabstop>_creditBy</tabstop>
-  <tabstop>_printRA</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_shipWhs</tabstop>
   <tabstop>_origso</tabstop>

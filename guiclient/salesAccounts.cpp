@@ -30,21 +30,23 @@ salesAccounts::salesAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  _salesaccnt->addColumn(tr("Site"),            -1,          Qt::AlignCenter            , true, "warehouscode");
-  _salesaccnt->addColumn(tr("Cust. Type"),      _itemColumn, Qt::AlignCenter            , true, "custtypecode");
-  _salesaccnt->addColumn(tr("Prod. Cat."),      _itemColumn, Qt::AlignCenter            , true, "prodcatcode");
-  _salesaccnt->addColumn(tr("Sales Accnt. #"),  _itemColumn, Qt::AlignCenter            , true, "salesaccount");
-  _salesaccnt->addColumn(tr("Credit Accnt. #"), _itemColumn, Qt::AlignCenter            , true, "creditaccount");
-  _salesaccnt->addColumn(tr("COS Accnt. #"),    _itemColumn, Qt::AlignCenter            , true, "cosaccount");
-  _salesaccnt->addColumn(tr("Returns Accnt. #"), _itemColumn, Qt::AlignCenter           , true, "returnsaccount");
+  _salesaccnt->addColumn(tr("Site"),                      _whsColumn,  Qt::AlignCenter  , true, "warehouscode");
+  _salesaccnt->addColumn(tr("Cust. Type"),                _itemColumn, Qt::AlignCenter  , true, "custtypecode");
+  _salesaccnt->addColumn(tr("Shipping Zone"),             _itemColumn, Qt::AlignCenter  , true, "shipzonecode");
+  _salesaccnt->addColumn(tr("Sale Type"),                 _itemColumn, Qt::AlignCenter  , true, "saletypecode");
+  _salesaccnt->addColumn(tr("Prod. Cat."),                _itemColumn, Qt::AlignCenter  , true, "prodcatcode");
+  _salesaccnt->addColumn(tr("Sales Accnt. #"),            _itemColumn, Qt::AlignCenter  , true, "salesaccount");
+  _salesaccnt->addColumn(tr("Credit Accnt. #"),           _itemColumn, Qt::AlignCenter  , true, "creditaccount");
+  _salesaccnt->addColumn(tr("COS Accnt. #"),              _itemColumn, Qt::AlignCenter  , true, "cosaccount");
+  _salesaccnt->addColumn(tr("Returns Accnt. #"),          _itemColumn, Qt::AlignCenter  , true, "returnsaccount");
   _salesaccnt->addColumn(tr("Cost of Returns Accnt. #"),  _itemColumn, Qt::AlignCenter  , true, "coraccount" );
   _salesaccnt->addColumn(tr("Cost of Warranty Accnt. #"), _itemColumn, Qt::AlignCenter  , true, "cowaccount" );
 
   if (! _metrics->boolean("EnableReturnAuth"))
   {
-    _salesaccnt->hideColumn(6);
-    _salesaccnt->hideColumn(7);
-    _salesaccnt->hideColumn(8);
+    _salesaccnt->hideColumn("returnsaccount");;
+    _salesaccnt->hideColumn("coraccount");
+    _salesaccnt->hideColumn("cowaccount");
   }
 
   if (_privileges->check("MaintainSalesAccount"))
@@ -138,13 +140,23 @@ void salesAccounts::sFillList()
   XSqlQuery r;
   r.exec("SELECT salesaccnt_id,"
 	 "       CASE WHEN (salesaccnt_warehous_id=-1) THEN TEXT('Any')"
-     "            ELSE (SELECT warehous_code FROM whsinfo WHERE (warehous_id=salesaccnt_warehous_id))"
+         "            ELSE (SELECT warehous_code FROM whsinfo WHERE (warehous_id=salesaccnt_warehous_id))"
 	 "       END AS warehouscode,"
 	 "       CASE WHEN ((salesaccnt_custtype_id=-1) AND (salesaccnt_custtype='.*')) THEN 'All'"
 	 "            WHEN (salesaccnt_custtype_id=-1) THEN salesaccnt_custtype"
 	 "            ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=salesaccnt_custtype_id))"
 	 "       END AS custtypecode,"
-	 "       CASE WHEN ((salesaccnt_prodcat_id=-1) AND (salesaccnt_prodcat='.*')) THEN 'All'"
+         "       CASE WHEN (salesaccnt_shipzone_id=-1) THEN TEXT('Any')"
+         "            ELSE (SELECT shipzone_name FROM shipzone WHERE (shipzone_id=salesaccnt_shipzone_id))"
+         "       END AS shipzonecode,"
+         "       CASE WHEN (salesaccnt_saletype_id=-1) THEN TEXT('Any')"
+         "            ELSE (SELECT saletype_code FROM saletype WHERE (saletype_id=salesaccnt_saletype_id))"
+         "       END AS saletypecode,"
+         "       CASE WHEN ((salesaccnt_custtype_id=-1) AND (salesaccnt_custtype='.*')) THEN 'All'"
+         "            WHEN (salesaccnt_custtype_id=-1) THEN salesaccnt_custtype"
+         "            ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=salesaccnt_custtype_id))"
+         "       END AS custtypecode,"
+         "       CASE WHEN ((salesaccnt_prodcat_id=-1) AND (salesaccnt_prodcat='.*')) THEN 'All'"
 	 "            WHEN (salesaccnt_prodcat_id=-1) THEN salesaccnt_prodcat"
 	 "            ELSE (SELECT prodcat_code FROM prodcat WHERE (prodcat_id=salesaccnt_prodcat_id))"
 	 "       END AS prodcatcode,"

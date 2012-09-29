@@ -326,6 +326,8 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _currency->setEnabled(FALSE);
       _warehouse->setEnabled(FALSE);
       _shipWhs->setEnabled(FALSE);
+      _shippingZone->setEnabled(FALSE);
+      _saleType->setEnabled(FALSE);
       _save->hide();
       _new->hide();
       _delete->hide();
@@ -495,7 +497,8 @@ bool returnAuthorization::sSave(bool partial)
              "       rahead_misc_descrip=:rahead_misc_descrip, rahead_curr_id=:rahead_curr_id,"
              "       rahead_freight=:rahead_freight, rahead_calcfreight=:rahead_calcfreight,"
              "       rahead_printed=:rahead_printed,"
-             "       rahead_warehous_id=:rahead_warehous_id, rahead_cohead_warehous_id=:rahead_cohead_warehous_id "
+             "       rahead_warehous_id=:rahead_warehous_id, rahead_cohead_warehous_id=:rahead_cohead_warehous_id,"
+             "       rahead_shipzone_id=:rahead_shipzone_id, rahead_saletype_id=:rahead_saletype_id "
              " WHERE(rahead_id=:rahead_id);" );
 
   returnSave.bindValue(":rahead_id", _raheadid);
@@ -554,6 +557,8 @@ bool returnAuthorization::sSave(bool partial)
   returnSave.bindValue(":rahead_calcfreight", _calcfreight);
   returnSave.bindValue(":rahead_warehous_id", _warehouse->id());
   returnSave.bindValue(":rahead_cohead_warehous_id", _shipWhs->id());
+  returnSave.bindValue(":rahead_shipzone_id", _shippingZone->id());
+  returnSave.bindValue(":rahead_saletype_id", _saleType->id());
 
   returnSave.exec();
   if (returnSave.lastError().type() != QSqlError::NoError)
@@ -696,6 +701,8 @@ void returnAuthorization::sOrigSoChanged()
         _customerPO->setText(sohead.value("cohead_custponumber"));
 
         _project->setId(sohead.value("cohead_prj_id").toInt());
+        _shippingZone->setId(sohead.value("cohead_shipzone_id").toInt());
+        _saleType->setId(sohead.value("cohead_saletype_id").toInt());
 
         _cust->setEnabled(FALSE);
 
@@ -753,9 +760,7 @@ void returnAuthorization::populateShipto(int pShiptoid)
   if (pShiptoid != -1)
   {
     XSqlQuery query;
-    query.prepare( "SELECT shipto_id, shipto_num, shipto_name,"
-                   " shipto_addr_id, shipto_taxzone_id, "
-                   " shipto_salesrep_id, shipto_commission "
+    query.prepare( "SELECT * "
                    "FROM shiptoinfo "
                    "WHERE (shipto_id=:shipto_id);" );
     query.bindValue(":shipto_id", pShiptoid);
@@ -768,6 +773,7 @@ void returnAuthorization::populateShipto(int pShiptoid)
       _shipToAddr->setId(query.value("shipto_addr_id").toInt());
       _taxzone->setId(query.value("shipto_taxzone_id").toInt());
       _salesRep->setId(query.value("shipto_salesrep_id").toInt());
+      _shippingZone->setId(query.value("shipto_shipzone_id").toInt());
       _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
       _ignoreShiptoSignals = false;
     }
@@ -1368,6 +1374,9 @@ void returnAuthorization::populate()
     _miscCharge->setLocalValue(rahead.value("rahead_misc").toDouble());
     _miscChargeDescription->setText(rahead.value("rahead_misc_descrip"));
     _miscChargeAccount->setId(rahead.value("rahead_misc_accnt_id").toInt());
+
+    _shippingZone->setId(rahead.value("rahead_shipzone_id").toInt());
+    _saleType->setId(rahead.value("rahead_saletype_id").toInt());
 
     _notes->setText(rahead.value("rahead_notes").toString());
 

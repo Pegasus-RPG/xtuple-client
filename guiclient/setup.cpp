@@ -195,6 +195,9 @@ setup::setup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   modeVal = mode("MaintainSalesReps", "ViewSalesReps");
   insert(tr("Sales Reps"), "salesReps",  MasterInformation, Xt::SalesModule, modeVal, modeVal);
 
+  modeVal = mode("MaintainSaleTypes", "ViewSaleTypes");
+  insert( tr("Sale Types"), "saleTypes", MasterInformation, Xt::SalesModule, modeVal, modeVal);
+
   modeVal = mode("MaintainStates");
   insert(tr("States and Provinces"), "states", MasterInformation, Xt::SystemModule, modeVal, modeVal);
 

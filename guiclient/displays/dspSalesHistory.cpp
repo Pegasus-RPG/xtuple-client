@@ -42,7 +42,8 @@ dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Product Category Pattern"), "prodcat_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Sales Order"), "cohead_id", ParameterWidget::SalesOrder);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesReps);
-  parameterWidget()->appendComboBox(tr("Shipping Zones"), "shipzone_id", XComboBox::ShippingZones);
+  parameterWidget()->appendComboBox(tr("Shipping Zone"), "shipzone_id", XComboBox::ShippingZones);
+  parameterWidget()->appendComboBox(tr("Sale Type"), "saletype_id", XComboBox::SaleTypes);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
@@ -53,6 +54,8 @@ dspSalesHistory::dspSalesHistory(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Invoice #"),           _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
   list()->addColumn(tr("Ord. Date"),           _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
   list()->addColumn(tr("Invc. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
+  list()->addColumn(tr("Sale Type"),           _orderColumn,    Qt::AlignLeft,   true,  "saletype_code"   );
+  list()->addColumn(tr("Shipping Zone"),       _orderColumn,    Qt::AlignLeft,   true,  "shipzone_name"   );
   list()->addColumn(tr("Item Number"),         _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
   list()->addColumn(tr("Description"),         -1,              Qt::AlignLeft,   true,  "itemdescription"   );
   list()->addColumn(tr("Shipped"),             _qtyColumn,      Qt::AlignRight,  true,  "cohist_qtyshipped"  );
@@ -94,6 +97,14 @@ enum SetResponse dspSalesHistory::set(const ParameterList &pParams)
   param = pParams.value("custtype_pattern", &valid);
   if (valid)
     parameterWidget()->setDefault(tr("Customer Type Pattern"), param.toString());
+
+  param = pParams.value("shipzone_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Shipping Zone"), param.toInt());
+
+  param = pParams.value("saletype_id", &valid);
+  if (valid)
+    parameterWidget()->setDefault(tr("Sale Type"), param.toInt());
 
   param = pParams.value("item_id", &valid);
   if (valid)

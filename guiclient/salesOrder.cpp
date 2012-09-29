@@ -904,7 +904,9 @@ bool salesOrder::save(bool partial)
                "    cohead_billto_cntct_phone=:billto_cntct_phone,"
                "    cohead_billto_cntct_title=:billto_cntct_title,"
                "    cohead_billto_cntct_fax=:billto_cntct_fax,"
-               "    cohead_billto_cntct_email=:billto_cntct_email "
+               "    cohead_billto_cntct_email=:billto_cntct_email, "
+               "    cohead_shipzone_id=:shipzone_id,"
+               "    cohead_saletype_id=:saletype_id "
                "WHERE (cohead_id=:id);" );
   else if (_mode == cNew)
   {
@@ -962,7 +964,8 @@ bool salesOrder::save(bool partial)
               "    cohead_billto_cntct_phone,"
               "    cohead_billto_cntct_title,"
               "    cohead_billto_cntct_fax,"
-              "    cohead_billto_cntct_email)"
+              "    cohead_billto_cntct_email,"
+              "    cohead_shipzone_id, cohead_saletype_id)"
               "    VALUES (:id,:number, :cust_id,"
               "    :custponumber,:shipto_id,"
               "    :billtoname, :billtoaddress1,"
@@ -1004,7 +1007,8 @@ bool salesOrder::save(bool partial)
               "    :billto_cntct_phone,"
               "    :billto_cntct_title,"
               "    :billto_cntct_fax,"
-              "    :billto_cntct_email) ");
+              "    :billto_cntct_email,"
+              "    :shipzone_id, :saletype_id) ");
   }
   else if ((_mode == cEditQuote) || ((_mode == cNewQuote) && _saved))
     saveSales.prepare( "UPDATE quhead "
@@ -1045,7 +1049,9 @@ bool salesOrder::save(bool partial)
                "    quhead_billto_cntct_phone=:billto_cntct_phone,"
                "    quhead_billto_cntct_title=:billto_cntct_title,"
                "    quhead_billto_cntct_fax=:billto_cntct_fax,"
-               "    quhead_billto_cntct_email=:billto_cntct_email "
+               "    quhead_billto_cntct_email=:billto_cntct_email,"
+               "    quhead_shipzone_id=:shipzone_id,"
+               "    quhead_saletype_id=:saletype_id "
                "WHERE (quhead_id=:id);" );
   else if (_mode == cNewQuote)
     saveSales.prepare( "INSERT INTO quhead ("
@@ -1088,7 +1094,8 @@ bool salesOrder::save(bool partial)
                "    quhead_billto_cntct_title,"
                "    quhead_billto_cntct_fax,"
                "    quhead_billto_cntct_email,"
-               "    quhead_status)"
+               "    quhead_status,"
+               "    quhead_shipzone_id, quhead_saletype_id)"
                "    VALUES ("
                "    :id, :number, :cust_id,"
                "    :custponumber, :shipto_id,"
@@ -1129,7 +1136,8 @@ bool salesOrder::save(bool partial)
                "    :billto_cntct_title,"
                "    :billto_cntct_fax,"
                "    :billto_cntct_email,"
-               "    :quhead_status) ");
+               "    :quhead_status,"
+               "    :shipzone_id, :saletype_id) ");
   saveSales.bindValue(":id", _soheadid );
   saveSales.bindValue(":number", _orderNumber->text());
   saveSales.bindValue(":orderdate", _orderDate->date());
@@ -1229,6 +1237,8 @@ bool salesOrder::save(bool partial)
     saveSales.bindValue(":holdtype", "R");
 
   saveSales.bindValue(":origin", _origin->code());
+  saveSales.bindValue(":shipzone_id", _shippingZone->id());
+  saveSales.bindValue(":saletype_id", _saleType->id());
   saveSales.bindValue(":quhead_status", "O");
 
   saveSales.exec();
@@ -1872,7 +1882,7 @@ void salesOrder::populateShipto(int pShiptoid)
   {
     XSqlQuery shipto;
     shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
-                    "       cntct_phone, shipto_cntct_id,"
+                    "       cntct_phone, shipto_cntct_id, shipto_shipzone_id,"
                     "       shipto_shipvia, shipto_shipcomments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
                     "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
@@ -1896,6 +1906,7 @@ void salesOrder::populateShipto(int pShiptoid)
       _salesRep->setId(shipto.value("shipto_salesrep_id").toInt());
       _commission->setDouble(shipto.value("commission").toDouble() * 100);
       _shipVia->setText(shipto.value("shipto_shipvia"));
+      _shippingZone->setId(shipto.value("shipto_shipzone_id").toInt());
       _shippingComments->setText(shipto.value("shipto_shipcomments").toString());
       if ( (ISNEW(_mode)) && (shipto.value("shipto_taxzone_id").toInt() > 0) )
         _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
@@ -2346,6 +2357,8 @@ void salesOrder::populate()
                 "       cohead_commission AS commission,"
                 "       COALESCE(cohead_taxzone_id,-1) AS taxzone_id,"
                 "       COALESCE(cohead_warehous_id,-1) as cohead_warehous_id,"
+                "       COALESCE(cohead_shipzone_id,-1) as cohead_shipzone_id,"
+                "       COALESCE(cohead_saletype_id,-1) as cohead_saletype_id,"
                 "       cust_name, cust_ffshipto, cust_blanketpos,"
                 "       COALESCE(cohead_misc_accnt_id,-1) AS cohead_misc_accnt_id,"
                 "       CASE WHEN(cohead_wasquote) THEN COALESCE(cohead_quote_number, cohead_number)"
@@ -2478,6 +2491,8 @@ void salesOrder::populate()
       _shippingComments->setText(so.value("cohead_shipcomments").toString());
       _shippingCharges->setId(so.value("cohead_shipchrg_id").toInt());
       _shippingForm->setId(so.value("cohead_shipform_id").toInt());
+      _shippingZone->setId(so.value("cohead_shipzone_id").toInt());
+      _saleType->setId(so.value("cohead_saletype_id").toInt());
 
       _calcfreight = so.value("cohead_calcfreight").toBool();
       // Auto calculated _freight is populated in sFillItemList
@@ -2523,6 +2538,8 @@ void salesOrder::populate()
                 "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id,"
                 "       quhead_commission AS commission,"
                 "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
+                "       COALESCE(quhead_shipzone_id,-1) as quhead_shipzone_id,"
+                "       COALESCE(quhead_saletype_id,-1) as quhead_saletype_id,"
                 "       cust_ffshipto, cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id, "
                 "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id, "
@@ -2538,6 +2555,8 @@ void salesOrder::populate()
                 "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id,"
                 "       quhead_commission AS commission,"
                 "       COALESCE(quhead_taxzone_id, -1) AS quhead_taxzone_id,"
+                "       COALESCE(quhead_shipzone_id,-1) as quhead_shipzone_id,"
+                "       COALESCE(quhead_saletype_id,-1) as quhead_saletype_id,"
                 "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
                 "       COALESCE(quhead_misc_accnt_id, -1) AS quhead_misc_accnt_id, "
                 "       COALESCE(quhead_ophead_id,-1) AS quhead_ophead_id, "
@@ -2638,6 +2657,8 @@ void salesOrder::populate()
       _origin->setCode(qu.value("quhead_origin").toString());
       _custPONumber->setText(qu.value("quhead_custponumber"));
       _shipVia->setText(qu.value("quhead_shipvia"));
+      _shippingZone->setId(qu.value("quhead_shipzone_id").toInt());
+      _saleType->setId(qu.value("quhead_saletype_id").toInt());
 
       _fob->setText(qu.value("quhead_fob"));
 
@@ -3353,6 +3374,8 @@ void salesOrder::setViewMode()
   setFreeFormShipto(false);
   _orderCurrency->setEnabled(FALSE);
   _printSO->setEnabled(FALSE);
+  _shippingZone->setEnabled(FALSE);
+  _saleType->setEnabled(FALSE);
   _save->hide();
   _clear->hide();
   _project->setReadOnly(true);
@@ -4497,6 +4520,8 @@ void salesOrder::sHandleMore()
   _shipDate->setVisible(_more->isChecked());
   _packDateLit->setVisible(_more->isChecked());
   _packDate->setVisible(_more->isChecked());
+  _saleTypeLit->setVisible(_more->isChecked());
+  _saleType->setVisible(_more->isChecked());
 
   if (ISORDER(_mode))
   {

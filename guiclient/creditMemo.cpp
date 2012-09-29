@@ -178,6 +178,8 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       _shipToName->setEnabled(FALSE);
       _shipToAddr->setEnabled(FALSE);
       _currency->setEnabled(FALSE);
+      _shippingZone->setEnabled(FALSE);
+      _saleType->setEnabled(FALSE);
       _save->hide();
       _new->hide();
       _delete->hide();
@@ -341,7 +343,9 @@ bool creditMemo::save()
 	     "    cmhead_comments=:cmhead_comments, "
 	     "    cmhead_rsncode_id=:cmhead_rsncode_id, "
              "    cmhead_curr_id=:cmhead_curr_id, "
-             "    cmhead_prj_id=:cmhead_prj_id "
+             "    cmhead_prj_id=:cmhead_prj_id,"
+             "    cmhead_shipzone_id=:cmhead_shipzone_id,"
+             "    cmhead_saletype_id=:cmhead_saletype_id "
 	     "WHERE (cmhead_id=:cmhead_id);" );
 
   creditave.bindValue(":cmhead_id", _cmheadid);
@@ -382,6 +386,8 @@ bool creditMemo::save()
   creditave.bindValue(":cmhead_curr_id", _currency->id());
   if (_project->isValid())
     creditave.bindValue(":cmhead_prj_id", _project->id());
+  creditave.bindValue(":cmhead_shipzone_id", _shippingZone->id());
+  creditave.bindValue(":cmhead_saletype_id", _saleType->id());
   creditave.exec();
   if (creditave.lastError().type() != QSqlError::NoError)
   {
@@ -483,6 +489,7 @@ void creditMemo::populateShipto(int pShiptoid)
       _taxzone->setId(query.value("shipto_taxzone_id").toInt());
       _salesRep->setId(query.value("shipto_salesrep_id").toInt());
       _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
+      _shippingZone->setId(query.value("shipto_shipzone_id").toInt());
     }
     else if (query.lastError().type() != QSqlError::NoError)
     {
@@ -894,6 +901,9 @@ void creditMemo::populate()
 
     if (!cmhead.value("cmhead_prj_id").isNull())
       _project->setId(cmhead.value("cmhead_prj_id").toInt());
+
+    _shippingZone->setId(cmhead.value("cmhead_shipzone_id").toInt());
+    _saleType->setId(cmhead.value("cmhead_saletype_id").toInt());
 
     sCalculateTax();
   }

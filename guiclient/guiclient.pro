@@ -474,6 +474,8 @@ FORMS =   absoluteCalendarItem.ui               \
           salesOrderItem.ui                     \
           salesRep.ui                           \
           salesReps.ui                          \
+          saleType.ui                           \
+          saleTypes.ui                          \
           scrapTrans.ui                         \
           scrapWoMaterialFromWIP.ui             \
           scriptEditor.ui                       \
@@ -1056,6 +1058,8 @@ HEADERS = ../common/format.h                    \
           salesOrderItem.h                      \
           salesRep.h                            \
           salesReps.h                           \
+          saleType.h                            \
+          saleTypes.h                           \
           scrapTrans.h                          \
           scrapWoMaterialFromWIP.h              \
           scriptablePrivate.h                   \
@@ -1658,6 +1662,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           salesOrderItem.cpp                    \
           salesRep.cpp                          \
           salesReps.cpp                         \
+          saleType.cpp                          \
+          saleTypes.cpp                         \
           scrapTrans.cpp                        \
           scrapWoMaterialFromWIP.cpp            \
           scriptablePrivate.cpp                 \

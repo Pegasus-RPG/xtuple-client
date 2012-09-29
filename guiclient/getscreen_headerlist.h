@@ -514,6 +514,8 @@
 #include "salesOrderItem.h"
 #include "salesRep.h"
 #include "salesReps.h"
+#include "saleType.h"
+#include "saleTypes.h"
 #include "scrapTrans.h"
 #include "scrapWoMaterialFromWIP.h"
 #include "scriptEditor.h"

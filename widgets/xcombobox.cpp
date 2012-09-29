@@ -261,6 +261,7 @@ void XComboBox::init()
   insertEditor(SalesCategoriesActive,"salesCategories","MaintainSalesCategories");
   insertEditor(SalesReps,"salesReps","MaintainSalesReps");
   insertEditor(SalesRepsActive,"salesReps","MaintainSalesReps");
+  insertEditor(SaleTypes,"saleTypes","MaintainSaleTypes");
   insertEditor(ShipVias,"shipVias","MaintainShipVias");
   insertEditor(ShippingCharges,"shippingChargeTypes","MaintainShippingChargeTypes");
   insertEditor(ShippingForms,"shippingForms","MaintainShippingForms");
@@ -537,6 +538,12 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "ORDER by salesrep_number;" );
       break;
 
+    case SaleTypes:
+      query.exec( "SELECT saletype_id, (saletype_code || '-' || saletype_descr), saletype_code "
+                  "FROM saletype "
+                  "ORDER BY saletype_code;" );
+      break;
+
     case ShippingCharges:
       query.exec( "SELECT shipchrg_id, (shipchrg_name || '-' || shipchrg_descrip), shipchrg_name "
                   "FROM shipchrg "
@@ -548,11 +555,12 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "FROM shipform "
                   "ORDER BY shipform_name;" );
       break;
-   case ShippingZones:
+
+    case ShippingZones:
       query.exec( "SELECT shipzone_id, shipzone_name, shipzone_name "
                   "FROM shipzone "
                   "ORDER BY shipzone_name;" );
-    break;
+      break;
     case Terms:
       query.exec( "SELECT terms_id, (terms_code || '-' || terms_descrip), terms_code "
                   "FROM terms "
@@ -1742,6 +1750,7 @@ void setupXComboBox(QScriptEngine *engine)
   widget.setProperty("SalesCategoriesActive",QScriptValue(engine, XComboBox::SalesCategoriesActive),QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("SalesReps",            QScriptValue(engine, XComboBox::SalesReps),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("SalesRepsActive",      QScriptValue(engine, XComboBox::SalesRepsActive),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
+  widget.setProperty("SaleTypes",            QScriptValue(engine, XComboBox::SaleTypes),            QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("ShipVias",             QScriptValue(engine, XComboBox::ShipVias),             QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("ShippingCharges",      QScriptValue(engine, XComboBox::ShippingCharges),      QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("ShippingForms",        QScriptValue(engine, XComboBox::ShippingForms),        QScriptValue::ReadOnly | QScriptValue::Undeletable);

@@ -256,6 +256,8 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _delete->hide();
       _project->setEnabled(false);
       _shipChrgs->setEnabled(FALSE);
+      _shippingZone->setEnabled(FALSE);
+      _saleType->setEnabled(FALSE);
 
       disconnect(_invcitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_invcitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -427,7 +429,8 @@ void invoice::populateShipto(int pShiptoid)
                     "       cntct_phone, shipto_shipvia, shipto_salesrep_id, "
                     "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
                     "       COALESCE(shipto_shipchrg_id, -1) AS shipto_shipchrg_id,"
-		    "       shipto_commission * 100 AS commission "
+                    "       COALESCE(shipto_shipzone_id, -1) AS shipto_shipzone_id,"
+                    "       shipto_commission * 100 AS commission "
                     "FROM shiptoinfo LEFT OUTER JOIN "
 		    "     cntct ON (shipto_cntct_id=cntct_id)"
                     "WHERE (shipto_id=:shipto_id);" );
@@ -455,6 +458,7 @@ void invoice::populateShipto(int pShiptoid)
       _shipVia->setText(shipto.value("shipto_shipvia"));
       _taxzone->setId(shipto.value("shipto_taxzone_id").toInt());
       _shipChrgs->setId(shipto.value("shipto_shipchrg_id").toInt());
+      _shippingZone->setId(shipto.value("shipto_shipzone_id").toInt());
     }
     else if (shipto.lastError().type() != QSqlError::NoError)
     {
@@ -598,9 +602,11 @@ bool invoice::save()
 	     "    invchead_curr_id=:invchead_curr_id,"
 	     "    invchead_shipvia=:invchead_shipvia, invchead_fob=:invchead_fob, invchead_notes=:invchead_notes,"
              "    invchead_recurring_invchead_id=:invchead_recurring_invchead_id,"
-	     "    invchead_prj_id=:invchead_prj_id, "
-         "    invchead_shipchrg_id=:invchead_shipchrg_id, "
-		 "    invchead_taxzone_id=:invchead_taxzone_id "
+             "    invchead_prj_id=:invchead_prj_id,"
+             "    invchead_shipchrg_id=:invchead_shipchrg_id, "
+             "    invchead_taxzone_id=:invchead_taxzone_id,"
+             "    invchead_shipzone_id=:invchead_shipzone_id,"
+             "    invchead_saletype_id=:invchead_saletype_id "
 	     "WHERE (invchead_id=:invchead_id);" );
 
   invoiceave.bindValue(":invchead_id",			_invcheadid);
@@ -645,6 +651,8 @@ bool invoice::save()
   invoiceave.bindValue(":invchead_notes",	_notes->toPlainText());
   invoiceave.bindValue(":invchead_prj_id",	_project->id());
   invoiceave.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
+  invoiceave.bindValue(":invchead_shipzone_id",	_shippingZone->id());
+  invoiceave.bindValue(":invchead_saletype_id",	_saleType->id());
   if(_recurring->isRecurring())
   {
     if(_recurring->parentId() != 0)
@@ -794,6 +802,8 @@ void invoice::populate()
     _taxzone->setId(invoicepopulate.value("taxzone_id").toInt());
     _terms->setId(invoicepopulate.value("invchead_terms_id").toInt());
     _project->setId(invoicepopulate.value("invchead_prj_id").toInt());
+    _shippingZone->setId(invoicepopulate.value("invchead_shipzone_id").toInt());
+    _saleType->setId(invoicepopulate.value("invchead_saletype_id").toInt());
 
     bool ffBillTo = invoicepopulate.value("cust_ffbillto").toBool();
     if (_mode != cView)
@@ -851,6 +861,8 @@ void invoice::populate()
       _miscChargeAccount->setEnabled(false);
       _miscAmount->setEnabled(false);
       _freight->setEnabled(false);
+      _shippingZone->setEnabled(false);
+      _saleType->setEnabled(false);
     }
 
     _loading = false;
