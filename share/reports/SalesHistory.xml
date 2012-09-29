@@ -42,10 +42,6 @@
               JOIN site() ON (warehous_id=itemsite_warehous_id)
               JOIN item ON (item_id=itemsite_item_id)
 &lt;? endif ?>
-&lt;? if exists("shipzone_id") ?>
-              JOIN shiptoinfo ON (shipto_id=cohist_shipto_id)
-              JOIN shipzone ON (shipzone_id=shipto_shipzone_id)
-&lt;? endif ?>
 &lt;? if exists("cohead_id") ?>
               JOIN cohead ON (cohead_number=cohist_ordernumber)
 &lt;? endif ?>
@@ -117,7 +113,10 @@ WHERE ( (true)
   AND  (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
 &lt;? if exists("shipzone_id") ?>
-  AND (shipzone_id=&lt;? value("shipzone_id") ?>)
+  AND (cohist_shipzone_id=&lt;? value("shipzone_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("saletype_id") ?>
+  AND (cohist_saletype_id=&lt;? value("saletype_id") ?>)
 &lt;? endif ?>
 &lt;? if exists("cohead_id") ?>
   AND (cohead_id=&lt;? value("cohead_id") ?>)
