@@ -25713,63 +25713,8 @@
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>90</width>
-      <source>Name</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>75</width>
-      <source>Project #</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>95</width>
-      <source>Work Date</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>90</width>
-      <source>Description</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>75</width>
-      <source>Hours</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>50</width>
-      <source>Billable</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>75</width>
-      <source>Item #</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>75</width>
-      <source>Task #</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>90</width>
-      <source>Name</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>90</width>
-      <source>Extended</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>75</width>
-      <source>Customer #:</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>90</width>
-      <source>Name</source>
+      <width>450</width>
+      <source>Time</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -25833,8 +25778,8 @@
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>450</width>
-      <source>Time</source>
+      <width>190</width>
+      <source>Project Time Summary</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -25850,11 +25795,6 @@
     <message>
       <width>60</width>
       <source>Billing Total</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <width>190</width>
-      <source>Project Time Summary</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -25880,6 +25820,11 @@
     <message>
       <width>90</width>
       <source>Work Date</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>450</width>
+      <source>Expenses</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -25923,13 +25868,13 @@
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>450</width>
-      <source>Expenses</source>
+      <width>90</width>
+      <source>Total Expenses:</source>
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>90</width>
-      <source>Total Expenses:</source>
+      <width>230</width>
+      <source>Project Expense Summary</source>
       <translation type="unfinished"/>
     </message>
     <message>
@@ -25943,18 +25888,18 @@
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>230</width>
-      <source>Project Expense Summary</source>
+      <width>85</width>
+      <source>Report Date:</source>
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>85</width>
+      <width>45</width>
       <source>Page:</source>
       <translation type="unfinished"/>
     </message>
     <message>
-      <width>85</width>
-      <source>Report Date:</source>
+      <width>15</width>
+      <source>of</source>
       <translation type="unfinished"/>
     </message>
     <message>
