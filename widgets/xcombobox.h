@@ -64,7 +64,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
       BOOHeadCommentTypes, BOOItemCommentTypes,
       CRMAccounts, CRMAccountCommentTypes,
       ClassCodes,	Companies, ContactCommentTypes,
-      CostCategories, Countries,
+      Contracts, CostCategories, Countries,
       Currencies,	CurrenciesNotBase, CustomerCommentTypes,
       CustomerGroups,	CustomerTypes,
       EmployeeCommentTypes, ExpenseCategories,

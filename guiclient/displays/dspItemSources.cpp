@@ -45,6 +45,7 @@ dspItemSources::dspItemSources(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Vendor"), "vend_id", ParameterWidget::Vendor);
   parameterWidget()->append(tr("Vendor Name"), "vend_name_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Vendor Item Number Pattern"), "vend_item_number_pattern", ParameterWidget::Text);
+  parameterWidget()->appendComboBox(tr("Contract"), "contrct_id", XComboBox::Contracts);
   parameterWidget()->append(tr("Contract Number Pattern"), "contract_number_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Manufacturer Pattern"), "manuf_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Manufacturer Item Number Pattern"), "manuf_item_number_pattern", ParameterWidget::Text);

@@ -517,6 +517,12 @@ void XComboBox::setType(XComboBoxTypes pType)
                   "ORDER BY vendgrp_name;" );
       break;
 
+    case Contracts:
+      query.exec( "SELECT contrct_id, (vend_number || '-' || contrct_number), contrct_number "
+                  "FROM contrct JOIN vendinfo ON (vend_id=contrct_vend_id) "
+                  "ORDER BY vend_number, contrct_number;" );
+      break;
+
     case SalesRepsActive:
       query.exec( "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
                   "FROM salesrep "
