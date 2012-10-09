@@ -28,7 +28,6 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sFillList( int pId );
-    virtual void sPopulateMenu( QMenu * );
     virtual void sPrint();
 
 protected slots:

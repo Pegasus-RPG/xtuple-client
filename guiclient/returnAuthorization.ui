@@ -1511,22 +1511,37 @@ to be bound by its terms.</comment>
   <tabstop>_authNumber</tabstop>
   <tabstop>_authDate</tabstop>
   <tabstop>_expireDate</tabstop>
+  <tabstop>_rsnCode</tabstop>
   <tabstop>_salesRep</tabstop>
   <tabstop>_commission</tabstop>
   <tabstop>_taxzone</tabstop>
+  <tabstop>_shippingZone</tabstop>
   <tabstop>_disposition</tabstop>
   <tabstop>_timing</tabstop>
   <tabstop>_creditBy</tabstop>
+  <tabstop>_saleType</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_shipWhs</tabstop>
+  <tabstop>_printRA</tabstop>
   <tabstop>_origso</tabstop>
   <tabstop>_newso</tabstop>
   <tabstop>_project</tabstop>
+  <tabstop>_cust</tabstop>
+  <tabstop>_copyToShipto</tabstop>
+  <tabstop>_shipTo</tabstop>
   <tabstop>_billToName</tabstop>
   <tabstop>_billToAddr</tabstop>
   <tabstop>_shipToName</tabstop>
   <tabstop>_shipToAddr</tabstop>
-  <tabstop>_raitem</tabstop>
+  <tabstop>_customerPO</tabstop>
+  <tabstop>_incident</tabstop>
+  <tabstop>_currency</tabstop>
+  <tabstop>_miscChargeDescription</tabstop>
+  <tabstop>_miscChargeAccount</tabstop>
+  <tabstop>_miscCharge</tabstop>
+  <tabstop>_freight</tabstop>
+  <tabstop>_total</tabstop>
+  <tabstop>_CCCVV</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
@@ -1538,16 +1553,10 @@ to be bound by its terms.</comment>
   <tabstop>_enterReceipt</tabstop>
   <tabstop>_receiveAll</tabstop>
   <tabstop>_postReceipts</tabstop>
-  <tabstop>_currency</tabstop>
-  <tabstop>_miscChargeDescription</tabstop>
-  <tabstop>_miscChargeAccount</tabstop>
-  <tabstop>_miscCharge</tabstop>
-  <tabstop>_freight</tabstop>
-  <tabstop>_total</tabstop>
   <tabstop>_refund</tabstop>
-  <tabstop>_CCCVV</tabstop>
-  <tabstop>_notes</tabstop>
+  <tabstop>_raitem</tabstop>
   <tabstop>_save</tabstop>
+  <tabstop>_notes</tabstop>
   <tabstop>_cancel</tabstop>
   <tabstop>_returnAuthInformation</tabstop>
  </tabstops>

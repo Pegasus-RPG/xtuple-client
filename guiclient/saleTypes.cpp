@@ -19,6 +19,7 @@
 #include <openreports.h>
 #include "saleType.h"
 #include "storedProcErrorLookup.h"
+#include "errorReporter.h"
 #include "guiclient.h"
 
 saleTypes::saleTypes(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -32,7 +33,6 @@ saleTypes::saleTypes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view,     SIGNAL(clicked()), this, SLOT(sView()));
   connect(_delete,   SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_print,    SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_saletype, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close,    SIGNAL(clicked()), this, SLOT(close()));
   connect(_saletype, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
@@ -72,16 +72,9 @@ void saleTypes::sDelete()
   params.append("DeleteMode");
   params.append("saletype_id", _saletype->id());
   XSqlQuery saleTypeDelete = mql.toQuery(params);
-  if (saleTypeDelete.first())
-  {
-    int result = saleTypeDelete.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("deleteSaleType", result),
-                  __FILE__, __LINE__);
-      return;
-    }
-  }
+  if (ErrorReporter::error(QtCriticalMsg, this, tr("Error deleting Sale Type"),
+                           saleTypeDelete, __FILE__, __LINE__))
+    return;
   sFillList(-1);
 }
 
@@ -128,11 +121,6 @@ void saleTypes::sFillList(int pId)
   params.append("ViewMode");
   XSqlQuery saleTypePopulate = mql.toQuery(params);
   _saletype->populate( saleTypePopulate, pId  );
-}
-
-void saleTypes::sPopulateMenu( QMenu * )
-{
-
 }
 
 void saleTypes::sPrint()

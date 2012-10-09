@@ -13,6 +13,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+#include "mqlutil.h"
+#include <metasql.h>
 #include <parameter.h>
 #include <openreports.h>
 
@@ -137,53 +139,17 @@ void salesAccounts::sDelete()
 
 void salesAccounts::sFillList()
 {
-  XSqlQuery r;
-  r.exec("SELECT salesaccnt_id,"
-	 "       CASE WHEN (salesaccnt_warehous_id=-1) THEN TEXT('Any')"
-         "            ELSE (SELECT warehous_code FROM whsinfo WHERE (warehous_id=salesaccnt_warehous_id))"
-	 "       END AS warehouscode,"
-	 "       CASE WHEN ((salesaccnt_custtype_id=-1) AND (salesaccnt_custtype='.*')) THEN 'All'"
-	 "            WHEN (salesaccnt_custtype_id=-1) THEN salesaccnt_custtype"
-	 "            ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=salesaccnt_custtype_id))"
-	 "       END AS custtypecode,"
-         "       CASE WHEN (salesaccnt_shipzone_id=-1) THEN TEXT('Any')"
-         "            ELSE (SELECT shipzone_name FROM shipzone WHERE (shipzone_id=salesaccnt_shipzone_id))"
-         "       END AS shipzonecode,"
-         "       CASE WHEN (salesaccnt_saletype_id=-1) THEN TEXT('Any')"
-         "            ELSE (SELECT saletype_code FROM saletype WHERE (saletype_id=salesaccnt_saletype_id))"
-         "       END AS saletypecode,"
-         "       CASE WHEN ((salesaccnt_custtype_id=-1) AND (salesaccnt_custtype='.*')) THEN 'All'"
-         "            WHEN (salesaccnt_custtype_id=-1) THEN salesaccnt_custtype"
-         "            ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=salesaccnt_custtype_id))"
-         "       END AS custtypecode,"
-         "       CASE WHEN ((salesaccnt_prodcat_id=-1) AND (salesaccnt_prodcat='.*')) THEN 'All'"
-	 "            WHEN (salesaccnt_prodcat_id=-1) THEN salesaccnt_prodcat"
-	 "            ELSE (SELECT prodcat_code FROM prodcat WHERE (prodcat_id=salesaccnt_prodcat_id))"
-	 "       END AS prodcatcode,"
-         "       CASE WHEN (salesaccnt_sales_accnt_id IS NULL) THEN 'N/A' "
-         "            WHEN (salesaccnt_sales_accnt_id = -1) THEN 'N/A' "
-         "            ELSE formatGLAccount(salesaccnt_sales_accnt_id) END AS salesaccount,"
-         "       CASE WHEN (salesaccnt_credit_accnt_id IS NULL) THEN 'N/A' "
-         "            WHEN (salesaccnt_credit_accnt_id = -1) THEN 'N/A' "
-         "            ELSE formatGLAccount(salesaccnt_credit_accnt_id) END AS creditaccount,"
-         "       CASE WHEN (salesaccnt_cos_accnt_id IS NULL) THEN 'N/A' "
-         "            WHEN (salesaccnt_cos_accnt_id = -1) THEN 'N/A' "
-         "            ELSE formatGLAccount(salesaccnt_cos_accnt_id) END AS cosaccount,"
-         "       CASE WHEN (salesaccnt_returns_accnt_id IS NULL) THEN 'N/A' "
-         "            WHEN (salesaccnt_returns_accnt_id = -1) THEN 'N/A' "
-         "            ELSE formatGLAccount(salesaccnt_returns_accnt_id) END AS returnsaccount,"
-         "       CASE WHEN (salesaccnt_cor_accnt_id IS NULL) THEN 'N/A' "
-         "            WHEN (salesaccnt_cor_accnt_id = -1) THEN 'N/A' "
-         "            ELSE formatGLAccount(salesaccnt_cor_accnt_id) END AS coraccount,"
-         "       CASE WHEN (salesaccnt_cow_accnt_id IS NULL) THEN 'N/A' "
-         "            WHEN (salesaccnt_cow_accnt_id = -1) THEN 'N/A' "
-         "            ELSE formatGLAccount(salesaccnt_cow_accnt_id) END AS cowaccount "
-	 "FROM salesaccnt "
-	 "ORDER BY warehouscode, custtypecode, prodcatcode;" );
-  _salesaccnt->populate(r);
-  if (r.lastError().type() != QSqlError::NoError)
+  MetaSQLQuery mql = mqlLoad("salesAccounts", "detail");
+
+  ParameterList params;
+  params.append("any", tr("Any"));
+  params.append("notapplicable", tr("N/A"));
+
+  XSqlQuery fillq = mql.toQuery(params);
+  _salesaccnt->populate(fillq);
+  if (fillq.lastError().type() != QSqlError::NoError)
   {
-    systemError(this, r.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, fillq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }

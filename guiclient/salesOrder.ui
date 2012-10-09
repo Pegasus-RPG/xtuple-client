@@ -385,38 +385,6 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="3" column="4">
-          <widget class="QLabel" name="_originatedByLit">
-           <property name="text">
-            <string>Origi&amp;nated By:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="margin">
-            <number>3</number>
-           </property>
-           <property name="buddy">
-            <cstring>_origin</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="5">
-          <widget class="XComboBox" name="_origin">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>200</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="8">
           <layout class="QHBoxLayout">
            <item>
@@ -487,7 +455,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="3" column="6">
+         <item row="3" column="4">
           <widget class="QLabel" name="_saleTypeLit">
            <property name="text">
             <string>Sale Type:</string>
@@ -497,7 +465,7 @@ to be bound by its terms.</comment>
            </property>
           </widget>
          </item>
-         <item row="3" column="8">
+         <item row="3" column="5">
           <widget class="XComboBox" name="_saleType">
            <property name="type">
             <enum>XComboBox::SaleTypes</enum>
@@ -2044,7 +2012,6 @@ to be bound by its terms.</comment>
   <tabstop>_shipComplete</tabstop>
   <tabstop>_printSO</tabstop>
   <tabstop>_warehouse</tabstop>
-  <tabstop>_origin</tabstop>
   <tabstop>_more</tabstop>
   <tabstop>_cust</tabstop>
   <tabstop>_billToName</tabstop>

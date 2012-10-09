@@ -12,6 +12,7 @@
 #include "guiErrorCheck.h"
 #include "salesAccount.h"
 
+#include <metasql.h>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
@@ -23,21 +24,27 @@ salesAccount::salesAccount(QWidget* parent, const char* name, bool modal, Qt::WF
 
   connect(_buttonBox, SIGNAL(accepted()), this, SLOT(sSave()));
 
-  _warehouse->populate( "SELECT -1, 'Any'::text AS warehous_code, 0 AS sort "
-                        "UNION SELECT warehous_id, warehous_code, 1 AS sort "
-                        "FROM whsinfo "
-                        "ORDER BY sort, warehous_code" );
+  ParameterList params;
+  params.append("any", tr("Any"));
 
-  _shippingZones->populate( "SELECT -1, 'Any'::text AS shipzone_name, 0 AS sort "
-                            "UNION SELECT shipzone_id, shipzone_name, 1 AS sort "
-                            "FROM shipzone "
-                            "ORDER BY sort, shipzone_name" );
+  MetaSQLQuery warehousemql("SELECT -1, <? value('any') ?> AS warehous_code, 0 AS sort "
+                            "UNION SELECT warehous_id, warehous_code, 1 AS sort "
+                            "FROM whsinfo "
+                            "ORDER BY sort, warehous_code");
+  _warehouse->populate(warehousemql.toQuery(params));
 
-  _saleTypes->populate( "SELECT -1, 'Any'::text AS saletype_code, 0 AS sort "
-                        "UNION SELECT saletype_id, saletype_code, 1 AS sort "
-                        "FROM saletype "
-                        "WHERE (saletype_active) "
-                        "ORDER BY sort, saletype_code" );
+  MetaSQLQuery shippingzonemql("SELECT -1, <? value('any') ?> AS shipzone_name, 0 AS sort "
+                               "UNION SELECT shipzone_id, shipzone_name, 1 AS sort "
+                               "FROM shipzone "
+                               "ORDER BY sort, shipzone_name");
+  _shippingZones->populate(shippingzonemql.toQuery(params));
+
+  MetaSQLQuery saletypemql("SELECT -1, <? value('any') ?> AS saletype_code, 0 AS sort "
+                           "UNION SELECT saletype_id, saletype_code, 1 AS sort "
+                           "FROM saletype "
+                           "WHERE (saletype_active) "
+                           "ORDER BY sort, saletype_code");
+  _saleTypes->populate(saletypemql.toQuery(params));
 
   _customerTypes->setType(ParameterGroup::CustomerType);
   _productCategories->setType(ParameterGroup::ProductCategory);

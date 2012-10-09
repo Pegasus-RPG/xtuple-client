@@ -158,10 +158,6 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _weight->setValidator(omfgThis->weightVal());
   _commission->setValidator(omfgThis->percentVal());
 
-  _origin->append(0, tr("Customer"),   "C");
-  _origin->append(1, tr("Internet"),   "I");
-  _origin->append(2, tr("Sales Rep."), "S");
-
   _soitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "f_linenumber");
   _soitem->addColumn(tr("Kit Seq. #"),  _seqColumn, Qt::AlignRight, false,"coitem_subnumber");
   _soitem->addColumn(tr("Item"),       _itemColumn, Qt::AlignLeft,  true, "item_number");
@@ -370,7 +366,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _taxZone->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
       _terms->setType(XComboBox::Terms);
-      _origin->setEnabled(FALSE);
       _fob->setEnabled(FALSE);
       _shipVia->setEnabled(FALSE);
       _shippingCharges->setEnabled(FALSE);
@@ -874,7 +869,7 @@ bool salesOrder::save(bool partial)
                "    cohead_shiptocountry=:shiptocountry,"
                "    cohead_orderdate=:orderdate, cohead_packdate=:packdate,"
                "    cohead_salesrep_id=:salesrep_id, cohead_commission=:commission,"
-               "    cohead_taxzone_id=:taxzone_id, cohead_terms_id=:terms_id, cohead_origin=:origin,"
+               "    cohead_taxzone_id=:taxzone_id, cohead_terms_id=:terms_id,"
                "    cohead_fob=:fob, cohead_shipvia=:shipvia, cohead_warehous_id=:warehous_id,"
                "    cohead_freight=:freight, cohead_calcfreight=:calcfreight,"
                "    cohead_misc=:misc, cohead_misc_accnt_id=:misc_accnt_id, cohead_misc_descrip=:misc_descrip,"
@@ -935,7 +930,7 @@ bool salesOrder::save(bool partial)
               "    cohead_shiptocountry,"
               "    cohead_orderdate, cohead_packdate,"
               "    cohead_salesrep_id, cohead_commission,"
-              "    cohead_taxzone_id, cohead_terms_id, cohead_origin,"
+              "    cohead_taxzone_id, cohead_terms_id,"
               "    cohead_fob, cohead_shipvia, cohead_warehous_id,"
               "    cohead_freight, cohead_calcfreight,"
               "    cohead_misc, cohead_misc_accnt_id, cohead_misc_descrip,"
@@ -978,7 +973,7 @@ bool salesOrder::save(bool partial)
               "    :shiptocountry,"
               "    :orderdate, :packdate,"
               "    :salesrep_id, :commission,"
-              "    :taxzone_id, :terms_id, :origin,"
+              "    :taxzone_id, :terms_id,"
               "    :fob, :shipvia, :warehous_id,"
               "    :freight, :calcfreight,"
               "    :misc, :misc_accnt_id, :misc_descrip,"
@@ -1024,7 +1019,7 @@ bool salesOrder::save(bool partial)
                "    quhead_quotedate=:orderdate, quhead_packdate=:packdate,"
                "    quhead_salesrep_id=:salesrep_id, quhead_commission=:commission,"
                "    quhead_taxzone_id=:taxzone_id, quhead_terms_id=:terms_id,"
-               "    quhead_origin=:origin, quhead_shipvia=:shipvia, quhead_fob=:fob,"
+               "    quhead_shipvia=:shipvia, quhead_fob=:fob,"
                "    quhead_freight=:freight, quhead_calcfreight=:calcfreight,"
                "    quhead_misc=:misc, quhead_misc_accnt_id=:misc_accnt_id, quhead_misc_descrip=:misc_descrip,"
                "    quhead_ordercomments=:ordercomments, quhead_shipcomments=:shipcomments,"
@@ -1068,7 +1063,7 @@ bool salesOrder::save(bool partial)
                "    quhead_quotedate, quhead_packdate,"
                "    quhead_salesrep_id, quhead_commission,"
                "    quhead_taxzone_id, quhead_terms_id,"
-               "    quhead_origin, quhead_shipvia, quhead_fob,"
+               "    quhead_shipvia, quhead_fob,"
                "    quhead_freight, quhead_calcfreight,"
                "    quhead_misc, quhead_misc_accnt_id, quhead_misc_descrip,"
                "    quhead_ordercomments, quhead_shipcomments,"
@@ -1110,7 +1105,7 @@ bool salesOrder::save(bool partial)
                "    :orderdate, :packdate,"
                "    :salesrep_id, :commission,"
                "    :taxzone_id, :terms_id,"
-               "    :origin, :shipvia, :fob,"
+               "    :shipvia, :fob,"
                "    :freight, :calcfreight,"
                "    :misc, :misc_accnt_id, :misc_descrip,"
                "    :ordercomments, :shipcomments,"
@@ -1236,7 +1231,6 @@ bool salesOrder::save(bool partial)
   else if (_holdType->currentIndex() == 4)
     saveSales.bindValue(":holdtype", "R");
 
-  saveSales.bindValue(":origin", _origin->code());
   saveSales.bindValue(":shipzone_id", _shippingZone->id());
   saveSales.bindValue(":saletype_id", _saleType->id());
   saveSales.bindValue(":quhead_status", "O");
@@ -2466,7 +2460,6 @@ void salesOrder::populate()
       if (_mode == cView)
         _shipTo->setEnabled(FALSE);
 
-      _origin->setCode(so.value("cohead_origin").toString());
       _custPONumber->setText(so.value("cohead_custponumber"));
       _shipVia->setText(so.value("cohead_shipvia"));
 
@@ -2654,7 +2647,6 @@ void salesOrder::populate()
       if (_mode == cViewQuote)
         _shipTo->setEnabled(FALSE);
 
-      _origin->setCode(qu.value("quhead_origin").toString());
       _custPONumber->setText(qu.value("quhead_custponumber"));
       _shipVia->setText(qu.value("quhead_shipvia"));
       _shippingZone->setId(qu.value("quhead_shipzone_id").toInt());
@@ -3090,7 +3082,6 @@ void salesOrder::clear()
   _taxzoneidCache  = -1;
   _custtaxzoneid   = -1;
   _terms->setCurrentIndex(-1);
-  _origin->setCurrentIndex(0);
   _shipVia->setCurrentIndex(-1);
   _shippingCharges->setCurrentIndex(-1);
   _shippingForm->setCurrentIndex(-1);
@@ -3351,7 +3342,6 @@ void salesOrder::setViewMode()
   _commission->setEnabled(FALSE);
   _taxZone->setEnabled(FALSE);
   _terms->setEnabled(FALSE);
-  _origin->setEnabled(FALSE);
   _fob->setEnabled(FALSE);
   _shipVia->setEnabled(FALSE);
   _shippingCharges->setEnabled(FALSE);
@@ -4509,8 +4499,6 @@ void salesOrder::sHandleMore()
 {
   _warehouse->setVisible(_more->isChecked());
   _shippingWhseLit->setVisible(_more->isChecked());
-  _originatedByLit->setVisible(_more->isChecked());
-  _origin->setVisible(_more->isChecked());
   _commissionLit->setVisible(_more->isChecked());
   _commission->setVisible(_more->isChecked());
   _commissionPrcntLit->setVisible(_more->isChecked());
