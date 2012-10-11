@@ -1697,25 +1697,23 @@ bool GUIClient::saveWidgetSizePos(QWidget *pWidget)
 
   QString objName = pWidget->objectName();
 
-/*
-qDebug() << __FUNCTION__    << pWidget->isMaximized()
-         << pWidget->size() << xtsettingsValue(objName + "/geometry/rememberSize", true).toBool()
-         << pWidget->pos()  << xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
-
-*/
   if (! pWidget->isMaximized())
   {
+    QWidget *parentWindow = qobject_cast<QWidget*>(pWidget->parent());
+
     if (xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
     {
-      xtsettingsSetValue(objName + "/geometry/size", pWidget->size());
+      if (parentWindow)
+        xtsettingsSetValue(objName + "/geometry/size", parentWindow->size());
+      else
+        xtsettingsSetValue(objName + "/geometry/size", pWidget->size());
       returnVal = true;
     }
 
     if (xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
     {
-      QWidget *mdiSubWindow = qobject_cast<QMdiSubWindow*>(pWidget->parent());
-      if (mdiSubWindow)
-        xtsettingsSetValue(objName + "/geometry/pos", mdiSubWindow->pos());
+      if (parentWindow)
+        xtsettingsSetValue(objName + "/geometry/pos", parentWindow->pos());
       else
         xtsettingsSetValue(objName + "/geometry/pos", pWidget->pos());
       returnVal = true;
@@ -1743,20 +1741,19 @@ bool GUIClient::restoreWidgetSizePos(QWidget *pWidget, bool forceFloat)
     QPoint  pos     = xtsettingsValue(objName + "/geometry/pos").toPoint();
     QSize   lsize   = xtsettingsValue(objName + "/geometry/size").toSize();
 
-/*
-qDebug() << __FUNCTION__   << pWidget->isModal()
-         << showTopLevel() << _workspace->viewMode()
-         << availableGeometry
-         << lsize << xtsettingsValue(objName + "/geometry/rememberSize", true).toBool()
-         << pos   << xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
-*/
     QMainWindow *mw = qobject_cast<QMainWindow*>(pWidget);
     if (mw)
       mw->statusBar()->show();
 
+    QWidget *parentWindow = qobject_cast<QWidget*>(pWidget->parent());
     if (lsize.isValid() &&
         xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
-      pWidget->resize(lsize);
+    {
+      if (showTopLevel())
+        pWidget->resize(lsize);
+      else if (parentWindow && _workspace->viewMode() == QMdiArea::SubWindowView)
+        parentWindow->resize(lsize);
+    }
 
     bool shouldRestore = ! pos.isNull() &&
                          availableGeometry.contains(QRect(pos, pWidget->size())) &&
@@ -1777,11 +1774,6 @@ qDebug() << __FUNCTION__   << pWidget->isModal()
   return returnVal;
 }
 
-/* TODO: in workspace subwindow mode, w->show is called twice for every call to
-   handleNewWindow. w gets resized between the 1st and 2nd calls, so pos memory
-   works but not size memory. why are there 2 show() calls & who is resizing w?
-   TODO: combine window handling from here, scripttoolbox, & guiclientinterface
-*/ 
 void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloat)
 {
   if (! w->isModal())
