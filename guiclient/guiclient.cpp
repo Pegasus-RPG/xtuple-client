@@ -1725,13 +1725,12 @@ bool GUIClient::saveWidgetSizePos(QWidget *pWidget)
 
 bool GUIClient::restoreWidgetSizePos(QWidget *pWidget, bool forceFloat)
 {
+  Q_UNUSED(forceFloat);
   bool returnVal = false;
 
-  if (! pWidget)
-    returnVal = false;
-
-  else if (windowFlags() & (Qt::Window | Qt::Dialog) &&
-           metaObject()->className() != QString("xTupleDesigner"))
+  if (pWidget &&
+      windowFlags() & (Qt::Window | Qt::Dialog) &&
+      metaObject()->className() != QString("xTupleDesigner"))
   {
     QRect availableGeometry = QApplication::desktop()->availableGeometry();
     if (! showTopLevel() && ! pWidget->isModal())
@@ -1755,18 +1754,31 @@ bool GUIClient::restoreWidgetSizePos(QWidget *pWidget, bool forceFloat)
         parentWindow->resize(lsize);
     }
 
-    bool shouldRestore = ! pos.isNull() &&
-                         availableGeometry.contains(QRect(pos, pWidget->size())) &&
-                         xtsettingsValue(objName + "/geometry/rememberPos", true).toBool();
-    if (showTopLevel() || pWidget->isModal() || forceFloat)
+    if (_workspace->viewMode() == QMdiArea::TabbedView)
+      pWidget->setWindowState(Qt::WindowMaximized);
+    else if (! pos.isNull() &&
+             xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
     {
-      if (shouldRestore)
+      if (! availableGeometry.contains(QRect(pos, pWidget->size())))
+      {
+        if (pos.x() < availableGeometry.left() ||
+            pWidget->size().width() > availableGeometry.width())
+          pos.setX(availableGeometry.left());
+        else if (pos.x() + pWidget->size().width() > availableGeometry.width())
+          pos.setX(availableGeometry.width() - pWidget->size().width());
+
+        if (pos.y() < availableGeometry.top() ||
+            pWidget->size().height() > availableGeometry.height())
+          pos.setY(availableGeometry.top());
+        else if (pos.y() + pWidget->size().height() > availableGeometry.height())
+          pos.setY(availableGeometry.height() - pWidget->size().height());
+      }
+
+      if (parentWindow)
+        parentWindow->move(pos);
+      else
         pWidget->move(pos);
     }
-    else if (_workspace->viewMode() == QMdiArea::TabbedView)
-      pWidget->setWindowState(Qt::WindowMaximized);
-    else if (shouldRestore)
-      pWidget->parentWidget()->move(pos);
 
     returnVal = true;
   }
