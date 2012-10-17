@@ -76,7 +76,8 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   QAction *menuItem;
   QMenu * todoMenu = new QMenu;
   menuItem = todoMenu->addAction(tr("To-Do Item"),   this, SLOT(sNew()));
-  menuItem->setShortcut(QKeySequence::New);
+  if(_privileges->check("MaintainAllToDoItems") || _privileges->check("MaintainPersonalToDoItems"))
+    menuItem->setShortcut(QKeySequence::New);
   newBtn->setEnabled(_privileges->check("MaintainPersonalToDoItems") ||
                        _privileges->check("MaintainAllToDoItems"));
   menuItem = todoMenu->addAction(tr("Opportunity"), this, SLOT(sNewOpportunity()));
