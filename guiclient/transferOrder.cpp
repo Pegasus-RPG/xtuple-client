@@ -439,16 +439,15 @@ bool transferOrder::insertPlaceholder()
   _ignoreSignals = FALSE;
 
   transferinsertPlaceholder.prepare("INSERT INTO tohead ("
-	    "          tohead_id, tohead_number, tohead_src_warehous_id,"
+        "          tohead_number, tohead_src_warehous_id,"
 	    "          tohead_trns_warehous_id, tohead_dest_warehous_id,"
 	    "          tohead_status, tohead_shipform_id"
 	    ") VALUES ("
-	    "          :tohead_id, :tohead_number, :tohead_src_warehous_id,"
+        "          :tohead_number, :tohead_src_warehous_id,"
 	    "          :tohead_trns_warehous_id, :tohead_dest_warehous_id,"
 	    "          :tohead_status, :tohead_shipform_id)"
             " RETURNING tohead_id;");
 
-  transferinsertPlaceholder.bindValue(":tohead_id", _toheadid);
   if (_orderNumber->text().isEmpty())
     transferinsertPlaceholder.bindValue(":tohead_number", QString::number(_toheadid * -1));
   else
@@ -465,7 +464,7 @@ bool transferOrder::insertPlaceholder()
   transferinsertPlaceholder.exec();
   if (transferinsertPlaceholder.first())
   {
-    setToheadid(transferinsertPlaceholder.value("head_id").toInt());
+    setToheadid(transferinsertPlaceholder.value("tohead_id").toInt());
     _orderDate->setDate(omfgThis->dbDate(), true);
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Creating Header"),
