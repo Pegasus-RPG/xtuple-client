@@ -39,6 +39,7 @@ protected slots:
     virtual void sPopulateExtPrice();
     virtual void sFindWarehouseItemsites( int pId );
     virtual void sPopulateItemInfo( int pItemid );
+    virtual void sPopulateItemsiteInfo();
     virtual void sPopulateItemSourceInfo( int pItemsrcid );
     virtual void sInventoryItemToggled( bool yes );
     virtual void sVendorItemNumberList();
@@ -63,6 +64,7 @@ private:
     bool _overriddenUnitPrice;
     bool _dropship;
     QString	_poStatus;
+    QString	_costmethod;
     QStandardItemModel * _itemchar;
 
 };

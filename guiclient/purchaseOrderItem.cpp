@@ -41,11 +41,13 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _orderMultiple = 0;
   _maxCost = 0.0;
   _dropship = false;
+  _costmethod = "";
 
   connect(_ordered, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
   connect(_inventoryItem, SIGNAL(toggled(bool)), this, SLOT(sInventoryItemToggled(bool)));
   connect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sFindWarehouseItemsites(int)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateItemInfo(int)));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateItemsiteInfo()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_vendorItemNumberList, SIGNAL(clicked()), this, SLOT(sVendorItemNumberList()));
   connect(_notesButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
@@ -549,6 +551,8 @@ void purchaseOrderItem::sSave()
                           tr("<p>You must enter a due date before you may save this Purchase Order Item."))
          << GuiErrorCheck(_metrics->boolean("RequirePOTax") && !_taxtype->isValid(), _taxtype,
                           tr("<p>You must select a Tax Type before you may save." ))
+         << GuiErrorCheck(_so->text().length() == 0 && _costmethod == "J", _item,
+                          tr("<p>You may not purchase a Job Item without an associated demand."))
      ;
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order Item"), errors))
@@ -814,6 +818,8 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
         _taxRecoverable->setChecked(item.value("item_tax_recoverable").toBool());
         _maxCost = item.value("maxcost").toDouble();
 
+        sPopulateItemsiteInfo();
+
         item.prepare( "SELECT DISTINCT char_id, char_name,"
                    "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='I') AND (c.charass_target_id=:item_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
                    "  FROM charass a, char "
@@ -896,6 +902,27 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
           _orderMultiple = 0;
         }
       }
+  }
+}
+
+void purchaseOrderItem::sPopulateItemsiteInfo()
+{
+  XSqlQuery itemsite;
+  if (_item->isValid() && _warehouse->isValid())
+  {
+    itemsite.prepare("SELECT * "
+                     "FROM itemsite "
+                     "WHERE ( (itemsite_item_id=:item_id) "
+                     "  AND   (itemsite_warehous_id=:warehous_id) );");
+    itemsite.bindValue(":item_id", _item->id());
+    itemsite.bindValue(":warehous_id", _warehouse->id());
+    itemsite.exec();
+    if (itemsite.first())
+    {
+       _costmethod = itemsite.value("itemsite_costmethod").toString();
+       if (_costmethod == "J")
+         _tab->setTabEnabled(_tab->indexOf(_demandTab), true);
+    }
   }
 }
 
