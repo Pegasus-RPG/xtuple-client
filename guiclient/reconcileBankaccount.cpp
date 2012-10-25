@@ -482,6 +482,7 @@ void reconcileBankaccount::sAddAdjustment()
   params.append("bankaccnt_id", _bankaccnt->id());
 
   bankAdjustment *newdlg = new bankAdjustment();
+  newdlg->setWindowModality(Qt::WindowModal);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
