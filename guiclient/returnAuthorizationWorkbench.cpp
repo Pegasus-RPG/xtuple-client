@@ -513,14 +513,15 @@ void returnAuthorizationWorkbench::sFillListReview()
 	if (_closed->isChecked())
 	  sql +=  " AND (raitem_status='O' OR rahead_authdate BETWEEN :startDate AND :endDate)";
 	else
-      sql +=  " AND (raitem_status = 'O') ";
+    {
+      sql +=  " AND (raitem_status = 'O' OR raitem_status IS NULL) ";
 
-  	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name,rahead_expiredate, "
+      sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name,rahead_expiredate, "
 			  " rahead_authdate,raitem_status,raitem_disposition,rahead_creditmethod, "
 			  " rahead_curr_id "
 			  " ORDER BY rahead_authdate,rahead_number "
 			  ") as data ";
-
+    }
 	if (_receipts->isChecked())
 	{
 	  sql +=  " WHERE ((disposition IN (:return,:replace,:service)) "
