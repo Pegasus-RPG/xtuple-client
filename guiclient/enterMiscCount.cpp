@@ -26,6 +26,8 @@ enterMiscCount::enterMiscCount(QWidget* parent, const char* name, bool modal, Qt
   _captive = FALSE;
   
   _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
+  _item->addExtraClause( QString("(item_type NOT IN ('R', 'F'))") );
+  _item->addExtraClause( QString("(itemsite_costmethod != 'J')") );
   _warehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->qtyVal());
 

@@ -38,6 +38,8 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, const char * name, Qt::WindowF
   _captive = FALSE;
 
   _item->setType((ItemLineEdit::cGeneralInventory ^ ItemLineEdit::cBreeder) | ItemLineEdit::cActive);
+  _item->addExtraClause( QString("(item_type NOT IN ('R', 'F'))") );
+  _item->addExtraClause( QString("(itemsite_costmethod != 'J')") );
   _warehouse->setType(WComboBox::AllActiveInventory);
   _afterQty->setPrecision(omfgThis->qtyVal());
   _beforeQty->setPrecision(omfgThis->qtyVal());
