@@ -38,6 +38,13 @@ itemSourcePrice::itemSourcePrice(QWidget* parent, const char* name, bool modal, 
     _dropship->hide();
   }
 
+  _discount->hide();
+  _fixedAmtDiscount->hide();
+  _listCost->hide();
+  _discountLit->hide();
+  _fixedAmtDiscountLit->hide();
+  _listCostLit->hide();
+
   _itemsrcpid = -1;
   _itemsrcid = -1;
 }
@@ -232,15 +239,25 @@ void itemSourcePrice::sTypeChanged(bool pChecked)
 
   if(_itemSelected->isChecked())
   {
-    _price->setEnabled(true);
-    _discount->setEnabled(false);
-    _fixedAmtDiscount->setEnabled(false);
+    _price->show();
+    _priceLit->show();
+    _discount->hide();
+    _fixedAmtDiscount->hide();
+    _listCost->hide();
+    _discountLit->hide();
+    _fixedAmtDiscountLit->hide();
+    _listCostLit->hide();
   }
   else if(_discountSelected->isChecked())
   {
-    _price->setEnabled(false);
-    _discount->setEnabled(true);
-    _fixedAmtDiscount->setEnabled(true);
+    _price->hide();
+    _priceLit->hide();
+    _discount->show();
+    _fixedAmtDiscount->show();
+    _listCost->show();
+    _discountLit->show();
+    _fixedAmtDiscountLit->show();
+    _listCostLit->show();
   }
 }
 
