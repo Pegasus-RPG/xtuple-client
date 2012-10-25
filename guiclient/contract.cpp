@@ -140,7 +140,8 @@ enum SetResponse contract::set(const ParameterList &pParams)
 void contract::sSaveClicked()
 {
   _captive = false;
-  sSave();
+  if (sSave())
+    done(_contrctid);
 }
 
 bool contract::sSave()
@@ -254,8 +255,6 @@ bool contract::sSave()
     _mode = cEdit;
     _captive = false;
   }
-  else
-    done(_contrctid);
     
   return true;
 }
