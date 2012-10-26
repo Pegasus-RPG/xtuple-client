@@ -130,19 +130,18 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
 
       _cachedReceived = enteret.value("returnable").toDouble();
 
-      enteret.prepare( "SELECT COALESCE(SUM(poreject_qty), 0) AS qtytoreturn "
+      enteret.prepare( "SELECT COALESCE(SUM(poreject_qty), 0) AS qtytoreturn,"
+                       "       SUM(poreject_qty) AS returned "
                  "FROM poreject "
                  "WHERE ( (poreject_poitem_id=:poitem_id)"
                  " AND (NOT poreject_posted) );" );
       enteret.bindValue(":poitem_id", _poitemid);
       enteret.exec();
       if (enteret.first())
-      {
-          if(enteret.value("qtytoreturn").toDouble() <= _cachedReceived)
-              _toReturn->setText(enteret.value("qtytoreturn").toString());
-          else
-              _toReturn->setText(_cachedReceived);
-      }
+        {
+          _toReturn->setText(enteret.value("qtytoreturn").toString());
+          _returned = enteret.value("returned").toDouble();
+        }
       else if (enteret.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, enteret.lastError().databaseText(), __FILE__, __LINE__);
@@ -162,6 +161,7 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
 void enterPoitemReturn::sReturn()
 {
   XSqlQuery enterReturn;
+
   if (_rejectCode->id() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Enter Return"),
@@ -171,6 +171,13 @@ void enterPoitemReturn::sReturn()
   }
 
   if (_cachedReceived < _toReturn->toDouble())
+  {
+    QMessageBox::critical( this, tr("Cannot Enter Return"),
+                           tr("You may not enter a return whose returned quantity is greater than the returnable quantity.") );
+    _toReturn->setFocus();
+    return;
+  }
+  if(_returned >= _cachedReceived)
   {
     QMessageBox::critical( this, tr("Cannot Enter Return"),
                            tr("You may not enter a return whose returned quantity is greater than the returnable quantity.") );

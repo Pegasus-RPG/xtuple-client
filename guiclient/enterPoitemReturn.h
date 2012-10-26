@@ -35,6 +35,7 @@ protected slots:
 private:
     int _poitemid;
     double _cachedReceived;
+    double _returned;
 
 };
 
