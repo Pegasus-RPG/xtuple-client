@@ -130,8 +130,7 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
 
       _cachedReceived = enteret.value("returnable").toDouble();
 
-      enteret.prepare( "SELECT COALESCE(SUM(poreject_qty), 0) AS qtytoreturn,"
-                       "       SUM(poreject_qty) AS returned "
+      enteret.prepare( "SELECT COALESCE(SUM(poreject_qty), 0) AS qtytoreturn "
                  "FROM poreject "
                  "WHERE ( (poreject_poitem_id=:poitem_id)"
                  " AND (NOT poreject_posted) );" );
@@ -140,7 +139,7 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
       if (enteret.first())
         {
           _toReturn->setText(enteret.value("qtytoreturn").toString());
-          _returned = enteret.value("returned").toDouble();
+          _returned = enteret.value("qtytoreturn").toDouble();
         }
       else if (enteret.lastError().type() != QSqlError::NoError)
       {
