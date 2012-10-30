@@ -478,6 +478,18 @@ void workOrder::sCreate()
       QMessageBox::critical( this, tr("Work Order not Exploded"),
                              tr( "The Work Order was created but not Exploded as the Work Order status is not Open\n"));
     
+    // if explosion failed then we don't have a valid wo_id.  retrieve using wo_number
+    if (_woid < 0)
+    {
+      workCreate.prepare("SELECT wo_id FROM wo WHERE (wo_number=:woNumber);");
+      workCreate.bindValue(":woNumber", _woNumber->text().toInt());
+      workCreate.exec();
+      if (workCreate.first())
+        _woid = workCreate.value("wo_id").toInt();
+      else
+        // give up
+        close();
+    }
 
     if (_woid > 0)
     {
@@ -497,8 +509,6 @@ void workOrder::sCreate()
       populate();
       omfgThis->sWorkOrdersUpdated(_woid, TRUE);
     }
-    else
-      close();
   }
 }
 
