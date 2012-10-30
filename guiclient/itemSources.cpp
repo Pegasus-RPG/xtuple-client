@@ -36,6 +36,8 @@ itemSources::itemSources(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Item"), "item_id", ParameterWidget::Item);
   parameterWidget()->append(tr("Vendor"), "vend_id", ParameterWidget::Vendor);
   parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
+  parameterWidget()->appendComboBox(tr("Contract"), "contrct_id", XComboBox::Contracts);
+  parameterWidget()->append(tr("Contract Number Pattern"), "contract_number_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("Show Expired"), "showExpired", ParameterWidget::Exists);
   parameterWidget()->append(tr("Show Future"), "showFuture", ParameterWidget::Exists);
 
