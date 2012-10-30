@@ -545,8 +545,8 @@ void purchaseOrder::createHeader()
              "  :pohead_orderdate, :pohead_curr_id, false );" );
   purchasecreateHeader.bindValue(":pohead_id", _poheadid);
   purchasecreateHeader.bindValue(":pohead_agent_username", _agent->currentText());
-  if (!_orderNumber->text().isEmpty())
-    purchasecreateHeader.bindValue(":pohead_number", _orderNumber->text());
+  purchasecreateHeader.bindValue(":pohead_number", _orderNumber->text().isEmpty() ? "TEMP" + QString(0 - _poheadid)
+                                                                                  : _orderNumber->text());
   if (_vendor->isValid())
     purchasecreateHeader.bindValue(":pohead_vend_id", _vendor->id());
   if (_taxZone->isValid())
@@ -1287,6 +1287,11 @@ void purchaseOrder::populateOrderNumber()
   {
     _orderNumber->setText(on.value("ponumber"));
     _NumberGen = on.value("ponumber").toInt();
+  }
+  else if (on.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, on.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 
   if (_metrics->value("PONumberGeneration") == "A")
