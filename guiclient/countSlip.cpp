@@ -280,7 +280,7 @@ void countSlip::sSave()
     }
 
     // Check for duplicate Serial # in different Location from Location being counted
-    if (!_metrics->boolean("MultiWhs"))
+    if (_metrics->boolean("MultiWhs"))
     {
       countSave.prepare( "SELECT itemloc_id "
                "FROM invcnt JOIN itemsite ON (itemsite_id=invcnt_itemsite_id)"
