@@ -21792,6 +21792,54 @@
     </message>
   </context>
   <context>
+    <name>SaleTypesMasterList</name>
+    <message>
+      <width>80</width>
+      <source>Description</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>450</width>
+      <source>Sale Types Master List</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>95</width>
+      <source>Code</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>30</width>
+      <source>Active</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>95</width>
+      <source>Code</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>80</width>
+      <source>Description</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>30</width>
+      <source>Active</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Report Date:</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <width>85</width>
+      <source>Page:</source>
+      <translation type="unfinished"/>
+    </message>
+  </context>
+  <context>
     <name>SalesAccountAssignmentsMasterList</name>
     <message>
       <width>75</width>
