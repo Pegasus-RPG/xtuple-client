@@ -76,19 +76,19 @@ COVERED CODE IS PROVIDED UNDER THIS LICENSE ON AN "AS IS" BASIS, WITHOUT WARRANT
 8.3	If You assert a patent infringement claim against Participant alleging that such Participant's Contributor Version directly or indirectly infringes any patent where such claim is resolved (such as by license or settlement) prior to the initiation of patent infringement litigation, then the reasonable value of the licenses granted by such Participant under Sections 2.1 or 2.2 shall be taken into account in determining the amount or value of any payment or license. 
 8.4	In the event of termination under Sections 8.1 or 8.2 above,  all end user license agreements (excluding distributors and resellers) which have been validly granted by You or any distributor hereunder prior to termination shall survive termination.
 
-9.	LIMITATION OF LIABILITY. 
+9.	LIMITATION OF LIABILITY.
 UNDER NO CIRCUMSTANCES AND UNDER NO LEGAL THEORY, WHETHER TORT (INCLUDING NEGLIGENCE), CONTRACT, OR OTHERWISE, SHALL YOU, THE INITIAL DEVELOPER, ORIGINAL DEVELOPER, ANY OTHER CONTRIBUTOR, OR ANY DISTRIBUTOR OF COVERED CODE, OR ANY SUPPLIER OF ANY OF SUCH PARTIES, BE LIABLE TO ANY PERSON FOR ANY INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF GOODWILL, WORK STOPPAGE, COMPUTER FAILURE OR MALFUNCTION, OR ANY AND ALL OTHER COMMERCIAL DAMAGES OR LOSSES, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGES.  THIS LIMITATION OF LIABILITY SHALL NOT APPLY TO LIABILITY FOR DEATH OR PERSONAL INJURY RESULTING FROM SUCH PARTY'S NEGLIGENCE TO THE EXTENT APPLICABLE LAW PROHIBITS SUCH LIMITATION.  SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OR LIMITATION OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THIS EXCLUSION AND LIMITATION MAY NOT APPLY TO YOU.
 
-10.	U.S. GOVERNMENT END USERS. 
+10.	U.S. GOVERNMENT END USERS.
 The Covered Code is a "commercial item," as that term is defined in 48 C.F.R. 2.101 (Oct. 1995), consisting of "commercial computer software" and "commercial computer software documentation," as such terms are used in 48 C.F.R. 12.212 (Sept. 1995). Consistent with 48 C.F.R. 12.212 and 48 C.F.R. 227.7202-1 through 227.7202-4 (June 1995), all U.S. Government End Users acquire Covered Code with only those rights set forth herein.
 
 11.	MISCELLANEOUS. 
 This License represents the complete agreement concerning subject matter hereof.  If any provision of this License is held to be unenforceable, such provision shall be reformed only to the extent necessary to make it enforceable.  This License shall be governed by Virginia law provisions (except to the extent applicable law, if any, provides otherwise), excluding its conflict-of-law provisions.  With respect to disputes in which at least one party is a citizen of, or an entity chartered or registered to do business in the United States of America, any litigation relating to this License shall be subject to the jurisdiction of the Federal Courts of Virginia, with venue lying in Norfolk, Virginia, with the losing party responsible for costs, including without limitation, court costs and reasonable attorneys' fees and expenses.  The application of the United Nations Convention on Contracts for the International Sale of Goods is expressly excluded.  Any law or regulation which provides that the language of a contract shall be construed against the drafter shall not apply to this License.
 
-12.	RESPONSIBILITY FOR CLAIMS. 
+12.	RESPONSIBILITY FOR CLAIMS.
 As between Initial Developer, Original Developer and the Contributors, each party is responsible for claims and damages arising, directly or indirectly, out of its utilization of rights under this License and You agree to work with Initial Developer, Original Developer and Contributors to distribute such responsibility on an equitable basis.  Nothing herein is intended or shall be deemed to constitute any admission of liability.
 
-13.	MULTIPLE-LICENSED CODE. 
+13.	MULTIPLE-LICENSED CODE.
 Initial Developer may designate portions of the Covered Code as Multiple-Licensed.  Multiple-Licensed means that the Initial Developer permits you to utilize portions of the Covered Code under Your choice of the CPAL or the alternative licenses, if any, specified by the Initial Developer in the file described in Exhibit A.
 
 14.	ADDITIONAL TERM: ATTRIBUTION
