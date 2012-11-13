@@ -63,6 +63,16 @@ itemSources::itemSources(QWidget* parent, const char*, Qt::WFlags fl)
   }
 }
 
+bool itemSources::setParams(ParameterList & params)
+{
+  if (!display::setParams(params))
+    return false;
+  params.append("always", tr("Always"));
+  params.append("never", tr("Never"));
+
+  return true;
+}
+
 void itemSources::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
 {
   QAction *menuItem;

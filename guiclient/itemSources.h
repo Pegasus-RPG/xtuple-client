@@ -17,6 +17,8 @@ class itemSources : public display
 {
     Q_OBJECT
 
+    Q_INVOKABLE virtual bool setParams(ParameterList &);
+
 public:
     itemSources(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 

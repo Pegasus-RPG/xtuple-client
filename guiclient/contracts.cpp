@@ -56,6 +56,16 @@ contracts::contracts(QWidget* parent, const char*, Qt::WFlags fl)
   }
 }
 
+bool contracts::setParams(ParameterList & params)
+{
+  if (!display::setParams(params))
+    return false;
+  params.append("always", tr("Always"));
+  params.append("never", tr("Never"));
+
+  return true;
+}
+
 void contracts::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem*, int)
 {
   QAction *menuItem;

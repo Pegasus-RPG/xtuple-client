@@ -20,6 +20,8 @@ class contracts : public display
 public:
     contracts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
+    Q_INVOKABLE virtual bool setParams(ParameterList &);
+
 public slots:
     virtual void sPopulateMenu(QMenu * menuThis, QTreeWidgetItem*, int);
     virtual void sNew();
