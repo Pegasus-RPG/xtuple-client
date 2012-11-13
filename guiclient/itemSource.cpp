@@ -259,6 +259,7 @@ bool itemSource::sSave()
                                "before you may save this Item Source." ) )
      ;
 
+  /* TODO - need this?
   itemSave.prepare( "SELECT count(*) AS numberOfOverlaps "
                     "FROM itemsrc "
                     "WHERE (itemsrc_item_id = :itemsrc_item_id)"
@@ -288,6 +289,7 @@ bool itemSource::sSave()
     systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
+  */
 
   if(_mode == cNew || _mode == cCopy)
   {
