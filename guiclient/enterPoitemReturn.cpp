@@ -169,14 +169,7 @@ void enterPoitemReturn::sReturn()
     return;
   }
 
-  if (_cachedReceived < _toReturn->toDouble())
-  {
-    QMessageBox::critical( this, tr("Cannot Enter Return"),
-                           tr("You may not enter a return whose returned quantity is greater than the returnable quantity.") );
-    _toReturn->setFocus();
-    return;
-  }
-  if(_returned >= _cachedReceived)
+  if (_cachedReceived < (_toReturn->toDouble() + _returned))
   {
     QMessageBox::critical( this, tr("Cannot Enter Return"),
                            tr("You may not enter a return whose returned quantity is greater than the returnable quantity.") );
