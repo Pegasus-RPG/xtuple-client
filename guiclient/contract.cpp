@@ -159,6 +159,7 @@ bool contract::sSave()
                           tr( "You must enter a Description before you may save this Contract." ) )
      ;
 
+  /* TODO - need this?
   itemSave.prepare( "SELECT count(*) AS numberOfOverlaps "
                     "FROM contrct "
                     "WHERE (contrct_vend_id = :contrct_vend_id)"
@@ -186,6 +187,7 @@ bool contract::sSave()
     systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
+  */
 
   if(_mode == cNew || _mode == cCopy)
   {
