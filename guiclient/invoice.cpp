@@ -651,8 +651,10 @@ bool invoice::save()
   invoiceave.bindValue(":invchead_notes",	_notes->toPlainText());
   invoiceave.bindValue(":invchead_prj_id",	_project->id());
   invoiceave.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
-  invoiceave.bindValue(":invchead_shipzone_id",	_shippingZone->id());
-  invoiceave.bindValue(":invchead_saletype_id",	_saleType->id());
+  if(_shippingZone->isValid())
+    invoiceave.bindValue(":invchead_shipzone_id",	_shippingZone->id());
+  if(_saleType->isValid())
+    invoiceave.bindValue(":invchead_saletype_id",	_saleType->id());
   if(_recurring->isRecurring())
   {
     if(_recurring->parentId() != 0)
