@@ -4073,31 +4073,35 @@ void salesOrder::sIssueLineBalance()
     XTreeWidgetItem *soitem = (XTreeWidgetItem *)(selected[i]);
     if (soitem->altId() != 1 && soitem->altId() != 4)
     {
-      if (_requireInventory->isChecked())
-      {
-        // sufficientInventoryToShipItem assumes line balance if qty not passed
-        issueSales.prepare("SELECT itemsite_id, item_number, warehous_code, itemsite_costmethod, "
+      // sufficientInventoryToShipItem assumes line balance if qty not passed
+      issueSales.prepare("SELECT itemsite_id, item_number, warehous_code, itemsite_costmethod, "
                   "       sufficientInventoryToShipItem('SO', coitem_id) AS isqtyavail "
                   "  FROM coitem JOIN itemsite ON (itemsite_id=coitem_itemsite_id)"
                   "              JOIN item ON (item_id=itemsite_item_id)"
                   "              JOIN whsinfo ON (warehous_id=itemsite_warehous_id) "
                   " WHERE (coitem_id=:soitem_id); ");
-        issueSales.bindValue(":soitem_id", soitem->id());
-        issueSales.exec();
-        while (issueSales.next())
-        {
-          if (issueSales.value("itemsite_costmethod").toString() == "J")
-            job = true;
+      issueSales.bindValue(":soitem_id", soitem->id());
+      issueSales.exec();
+      if (issueSales.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, issueSales.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+      while (issueSales.next())
+      {
+        if (issueSales.value("itemsite_costmethod").toString() == "J")
+          job = true;
 
-          if (issueSales.value("isqtyavail").toInt() < 0 && issueSales.value("itemsite_costmethod").toString() != "J")
-          {
-            QMessageBox::critical(this, tr("Insufficient Inventory"),
-                                  tr("<p>There is not enough Inventory to issue the amount required"
-                                       " of Item %1 in Site %2.")
-                                  .arg(issueSales.value("item_number").toString())
-                                  .arg(issueSales.value("warehous_code").toString()) );
-            return;
-          }
+        if (_requireInventory->isChecked() &&
+            issueSales.value("isqtyavail").toInt() < 0 &&
+            issueSales.value("itemsite_costmethod").toString() != "J")
+        {
+          QMessageBox::critical(this, tr("Insufficient Inventory"),
+                                      tr("<p>There is not enough Inventory to issue the amount required"
+                                         " of Item %1 in Site %2.")
+                                .arg(issueSales.value("item_number").toString())
+                                .arg(issueSales.value("warehous_code").toString()) );
+          return;
         }
       }
 
@@ -4111,6 +4115,11 @@ void salesOrder::sIssueLineBalance()
                 "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)));");
       issueSales.bindValue(":soitem_id", soitem->id());
       issueSales.exec();
+      if (issueSales.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, issueSales.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
       while (issueSales.next())
       {
         if (issueSales.value("isqtyavail").toInt() < 0 && issueSales.value("itemsite_costmethod").toString() != "J")
@@ -4139,6 +4148,12 @@ void salesOrder::sIssueLineBalance()
         prod.prepare("SELECT postSoItemProduction(:soitem_id, now()) AS result;");
         prod.bindValue(":soitem_id", _soitem->id());
         prod.exec();
+        if (prod.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          systemError(this, prod.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
         if (prod.first())
         {
           itemlocSeries = prod.value("result").toInt();
@@ -4164,6 +4179,12 @@ void salesOrder::sIssueLineBalance()
                        " AND (invhist_transtype = 'RM')); ");
           prod.bindValue(":itemlocseries", itemlocSeries);
           prod.exec();
+          if (prod.lastError().type() != QSqlError::NoError)
+          {
+            rollback.exec();
+            systemError(this, prod.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+          }
           if (prod.first())
             invhistid = prod.value("invhist_id").toInt();
           else
@@ -4184,6 +4205,12 @@ void salesOrder::sIssueLineBalance()
       if (itemlocSeries)
         issueSales.bindValue(":itemlocseries", itemlocSeries);
       issueSales.exec();
+      if (issueSales.lastError().type() != QSqlError::NoError)
+      {
+        rollback.exec();
+        systemError(this, issueSales.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
       if (issueSales.first())
       {
         int result = issueSales.value("result").toInt();
