@@ -53,6 +53,7 @@ public slots:
     virtual void sViewSalesOrder();
     virtual void sIncident();
     virtual void sViewIncident();
+    virtual void sPreview();
     virtual void sPrint();
     virtual void sPrintItem();
     virtual void sPost();

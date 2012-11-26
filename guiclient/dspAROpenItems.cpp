@@ -864,6 +864,32 @@ bool dspAROpenItems::setParams(ParameterList &params)
   return true;
 }
 
+void dspAROpenItems::sPreview()
+{
+  if (_printStatement->isChecked())
+  {
+    MetaSQLQuery mql("SELECT findCustomerForm(cust_id, 'S') AS reportname"
+                     "  FROM custinfo"
+                     " WHERE (cust_id=<? value('cust_id') ?>);");
+    ParameterList params;
+    params.append("cust_id", _customerSelector->custId());
+    params.append("invoice",  tr("Invoice"));
+    params.append("debit",    tr("Debit Memo"));
+    params.append("credit",   tr("Credit Memo"));
+    params.append("deposit",  tr("Deposit"));
+    params.append("asofdate", _asOf->date());
+    XSqlQuery qry = mql.toQuery(params);
+    if (qry.first())
+      setReportName(qry.value("reportname").toString());
+    display::sPreview(params);
+  }
+  else
+  {
+    setReportName("AROpenItems");
+    display::sPreview();
+  }
+}
+
 void dspAROpenItems::sPrint()
 {
   if (_printStatement->isChecked())
