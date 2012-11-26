@@ -372,13 +372,15 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
   if(_parentso != -1)
   {
-    purchaseet.prepare("SELECT coitem_prcost"
-              "  FROM coitem"
+    purchaseet.prepare("SELECT cohead_number, coitem_linenumber, coitem_prcost"
+              "  FROM coitem JOIN cohead ON (cohead_id=coitem_cohead_id)"
               " WHERE (coitem_id=:parentso); ");
     purchaseet.bindValue(":parentso", _parentso);
     purchaseet.exec();
     if(purchaseet.first())
     {
+      _so->setText(purchaseet.value("cohead_number").toString());
+      _soLine->setText(purchaseet.value("coitem_linenumber").toString());
       if(purchaseet.value("coitem_prcost").toDouble() > 0)
       {
         _overriddenUnitPrice = true;
