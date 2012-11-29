@@ -52,6 +52,7 @@ dspPlannedOrders::dspPlannedOrders(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->appendComboBox(tr("Planner Code"), "plancode_id", XComboBox::PlannerCodes);
   parameterWidget()->append(tr("Planner Code Pattern"), "plancode_pattern", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Class Code"), "classcode_id", XComboBox::ClassCodes);
+  parameterWidget()->appendComboBox(tr("Item Group"), "itemgrp_id", XComboBox::ItemGroups);
   parameterWidget()->append(tr("Show Inactive"), "showInactive", ParameterWidget::Exists);
   if (_metrics->boolean("MultiWhs"))
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
@@ -62,7 +63,7 @@ dspPlannedOrders::dspPlannedOrders(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("From Site"),   _whsColumn,   Qt::AlignCenter,true, "supply_warehous_code");
   list()->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
   list()->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "item_descrip");
-  list()->addColumn(tr("Class Code Description"), -1,           Qt::AlignLeft,  true, "classcode_descrip");
+  list()->addColumn(tr("Class Code"),  -1,           Qt::AlignLeft,  true, "f_classcode");
   list()->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
   list()->addColumn(tr("Start Date"),  _dateColumn,  Qt::AlignCenter,true, "planord_startdate");
   list()->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "planord_duedate");
