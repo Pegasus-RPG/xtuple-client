@@ -78,7 +78,7 @@ todoList::todoList(QWidget* parent, const char*, Qt::WFlags fl)
   menuItem = todoMenu->addAction(tr("To-Do Item"),   this, SLOT(sNew()));
   if(_privileges->check("MaintainAllToDoItems") || _privileges->check("MaintainPersonalToDoItems"))
     menuItem->setShortcut(QKeySequence::New);
-  newBtn->setEnabled(_privileges->check("MaintainPersonalToDoItems") ||
+  menuItem->setEnabled(_privileges->check("MaintainPersonalToDoItems") ||
                        _privileges->check("MaintainAllToDoItems"));
   menuItem = todoMenu->addAction(tr("Opportunity"), this, SLOT(sNewOpportunity()));
   menuItem->setEnabled(_privileges->check("MaintainPersonalOpportunities") ||
@@ -238,6 +238,11 @@ enum SetResponse todoList::set(const ParameterList& pParams)
 
 void todoList::sNew()
 {
+  //Need an extra priv check because of display trigger
+  if (!_privileges->check("MaintainPersonalToDoItems") &&
+      !_privileges->check("MaintainAllToDoItems"))
+    return;
+
   ParameterList params;
   parameterWidget()->appendValue(params);
   params.append("mode", "new");
