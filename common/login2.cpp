@@ -251,11 +251,12 @@ void login2::sLogin()
     else if (db.isOpen() && method.at(methodidx).first.isEmpty())
     {
       XSqlQuery sslq("SHOW ssl;");
-      if (sslq.first() && sslq.value("ssl").toString() != "on")
+      //TODO: Add SSL to installer and require it by default for all xTuple users
+      /*if (sslq.first() && sslq.value("ssl").toString() != "on")
         QMessageBox::warning(this, tr("Could Not Enforce Security"),
                              tr("The connection to the xTuple ERP Server is not "
                                 "secure. Please ask your administrator to set "
-                                "the 'ssl' configuration option to 'on'."));
+                                "the 'ssl' configuration option to 'on'.")); */
     }
   }
 
