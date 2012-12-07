@@ -39,7 +39,7 @@ dspItemCostDetail::dspItemCostDetail(QWidget* parent, const char*, Qt::WFlags fl
   list()->addColumn(tr("Unit Cost"),       _costColumn,  Qt::AlignRight, true, "cost");
   list()->addColumn(tr("Ext'd Cost"),      _moneyColumn, Qt::AlignRight, true, "extendedcost");
 
-  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
+  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList()));
 }
 
 void dspItemCostDetail::languageChange()
