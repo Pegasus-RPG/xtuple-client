@@ -21,11 +21,6 @@
        quhead_shipvia,
        formatDate(quhead_quotedate) as f_orderdate,
        formatDate(quhead_packdate) as f_packdate,
-       CASE WHEN(quhead_origin='C') THEN 'Customer'
-            WHEN(quhead_origin='I') THEN 'Internet'
-            WHEN(quhead_origin='S') THEN 'Sales Rep.'
-            ELSE quhead_origin
-       END AS f_origin,
        salesrep_name,
        formatScrap(quhead_commission) as f_commission,
        (terms_code||' - '||terms_descrip) as f_terms,
@@ -46,11 +41,12 @@
                  (quhead_shiptocity || ', ' || quhead_shiptostate || ' ' || quhead_shiptozipcode),
                   quhead_shiptocountry) AS f_shiptoaddress,
        quhead_custponumber,
-       quhead_fob
+       quhead_fob, saletype_code
 FROM quhead
      LEFT OUTER JOIN custinfo ON (quhead_cust_id = cust_id)
      LEFT OUTER JOIN terms ON (quhead_terms_id = terms_id)
      LEFT OUTER JOIN salesrep ON (quhead_salesrep_id = salesrep_id)
+     LEFT OUTER JOIN saletype ON (quhead_saletype_id = saletype_id)
 WHERE (quhead_id = &lt;? value("quhead_id") ?>)
 </sql>
  </querysource>
@@ -470,7 +466,7 @@ WHERE ( (cust_id = quhead_cust_id)
    <vcenter/>
    <data>
     <query>head</query>
-    <column>f_origin</column>
+    <column>saletype_code</column>
    </data>
   </field>
   <label>
@@ -701,7 +697,7 @@ WHERE ( (cust_id = quhead_cust_id)
    </font>
    <left/>
    <vcenter/>
-   <string>Originated By:</string>
+   <string>Sale Type:</string>
   </label>
   <label>
    <rect>
