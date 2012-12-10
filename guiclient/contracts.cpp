@@ -34,10 +34,10 @@ contracts::contracts(QWidget* parent, const char*, Qt::WFlags fl)
   setQueryOnStartEnabled(true);
 
   parameterWidget()->append(tr("Vendor"), "vend_id", ParameterWidget::Vendor);
-  parameterWidget()->append(tr("Effective Start"), "effectiveStartDate", ParameterWidget::Date, QDate::currentDate());
-  parameterWidget()->append(tr("Effective End"), "effectiveEndDate", ParameterWidget::Date, QDate::currentDate());
-  parameterWidget()->append(tr("Expires Start"), "expireStartDate", ParameterWidget::Date, QDate::currentDate());
-  parameterWidget()->append(tr("Expires End"), "expireEndDate", ParameterWidget::Date, QDate::currentDate());
+  parameterWidget()->append(tr("Effective Start"), "effectiveStartDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("Effective End"), "effectiveEndDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("Expires Start"), "expireStartDate", ParameterWidget::Date);
+  parameterWidget()->append(tr("Expires End"), "expireEndDate", ParameterWidget::Date);
 
   list()->addColumn(tr("Vendor Number"),      -1,          Qt::AlignLeft,   true,  "vend_number"   );
   list()->addColumn(tr("Vendor Name"),        -1,          Qt::AlignLeft,   true,  "vend_name"   );
