@@ -856,7 +856,7 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
                      "FROM itemsrc, pohead "
                      "WHERE ( (itemsrc_vend_id=pohead_vend_id)"
                      " AND (itemsrc_item_id=:item_id)"
-                     " AND (CURRENT_DATE BETWEEN itemsrc_effective AND itemsrc_expires)"
+                     " AND (CURRENT_DATE BETWEEN itemsrc_effective AND (itemsrc_expires - 1))"
                      " AND (itemsrc_active)"
                      " AND (pohead_id=:pohead_id) );" );
         item.bindValue(":item_id", pItemid);
