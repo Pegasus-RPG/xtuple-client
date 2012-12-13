@@ -105,7 +105,8 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   {
     connect(_cashrcpt, SIGNAL(valid(bool)), _editCashrcpt, SLOT(setEnabled(bool)));
     connect(_cashrcpt, SIGNAL(valid(bool)), _deleteCashrcpt, SLOT(setEnabled(bool)));
-    connect(_cashrcpt, SIGNAL(valid(bool)), _postCashrcpt, SLOT(setEnabled(bool)));
+    if (_privileges->check("PostCashReceipts"))
+      connect(_cashrcpt, SIGNAL(valid(bool)), _postCashrcpt, SLOT(setEnabled(bool)));
   }
   else
   {
