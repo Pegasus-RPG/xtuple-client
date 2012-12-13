@@ -145,6 +145,8 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
       _mode = cNew;
       if (_wo->id() >= 0)
         _wo->setEnabled(false);
+      _item->setType(ItemLineEdit::cActive);
+      _item->addExtraClause( QString("(itemsite_active)") );  // ItemLineEdit::cActive doesn't compare against the itemsite record
     }
     else if (param.toString() == "edit")
     {
