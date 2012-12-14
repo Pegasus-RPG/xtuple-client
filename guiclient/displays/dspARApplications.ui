@@ -22,7 +22,7 @@ to be bound by its terms.</comment>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QGroupBox" name="_customerTypeGroup">
        <property name="sizePolicy">
@@ -34,8 +34,8 @@ to be bound by its terms.</comment>
        <property name="title">
         <string/>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
          <widget class="QRadioButton" name="_allCustomers">
           <property name="text">
            <string>All Customers</string>
@@ -45,83 +45,62 @@ to be bound by its terms.</comment>
           </property>
          </widget>
         </item>
-        <item>
-         <layout class="QHBoxLayout">
-          <property name="spacing">
-           <number>5</number>
+        <item row="1" column="0">
+         <widget class="QRadioButton" name="_selectedCustomer">
+          <property name="text">
+           <string>Selected Customer:</string>
           </property>
-          <item>
-           <widget class="QRadioButton" name="_selectedCustomer">
-            <property name="text">
-             <string>Selected Customer:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="CustCluster" name="_cust">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="nameVisible">
-             <bool>false</bool>
-            </property>
-            <property name="descriptionVisible">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         </widget>
         </item>
-        <item>
-         <layout class="QHBoxLayout">
-          <property name="spacing">
-           <number>5</number>
+        <item row="1" column="1" colspan="3">
+         <widget class="CustCluster" name="_cust">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
-          <item>
-           <widget class="QRadioButton" name="_selectedCustomerType">
-            <property name="text">
-             <string>Selected Customer Type:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="XComboBox" name="_customerTypes">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="type">
-             <enum>XComboBox::CustomerTypes</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
+          <property name="nameVisible">
+           <bool>false</bool>
+          </property>
+          <property name="descriptionVisible">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
-        <item>
-         <layout class="QHBoxLayout">
-          <property name="spacing">
-           <number>5</number>
+        <item row="2" column="0" colspan="3">
+         <widget class="QRadioButton" name="_selectedCustomerType">
+          <property name="text">
+           <string>Selected Customer Type:</string>
           </property>
-          <item>
-           <widget class="QRadioButton" name="_customerTypePattern">
-            <property name="text">
-             <string>Customer Type Pattern:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="XLineEdit" name="_customerType">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="XComboBox" name="_customerTypes">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="type">
+           <enum>XComboBox::CustomerTypes</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QRadioButton" name="_customerTypePattern">
+          <property name="text">
+           <string>Customer Type Pattern:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2" colspan="2">
+         <widget class="XLineEdit" name="_customerType">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -136,8 +115,8 @@ to be bound by its terms.</comment>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>20</width>
-         <height>0</height>
+         <width>420</width>
+         <height>18</height>
         </size>
        </property>
       </spacer>
