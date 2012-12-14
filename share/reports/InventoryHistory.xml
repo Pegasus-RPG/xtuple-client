@@ -1499,7 +1499,6 @@ WHERE ( (invhist_itemsite_id=itemsite_id)
     <query>footer</query>
     <column>transvalue_total</column>
    </data>
-   <format builtin="true">money</format>
   </field>
   <label>
    <rect>
