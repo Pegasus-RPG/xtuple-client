@@ -88,7 +88,7 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
   FROM coitem, shipitem
  WHERE ((coitem_status &lt;> 'X')
    AND  (coitem_id=shipitem_orderitem_id)
-   AND  (shipitem_shiphead_id=&lt;? value("shipitem_shiphead_id") ?>));</sql>
+   AND  (shipitem_shiphead_id=&lt;? value("shiphead_id") ?>));</sql>
  </querysource>
  <querysource>
   <name>detail</name>
