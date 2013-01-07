@@ -1231,8 +1231,10 @@ bool salesOrder::save(bool partial)
   else if (_holdType->currentIndex() == 4)
     saveSales.bindValue(":holdtype", "R");
 
-  saveSales.bindValue(":shipzone_id", _shippingZone->id());
-  saveSales.bindValue(":saletype_id", _saleType->id());
+  if(_shippingZone->isValid())
+    saveSales.bindValue(":shipzone_id", _shippingZone->id());
+  if(_saleType->isValid())
+    saveSales.bindValue(":saletype_id", _saleType->id());
   saveSales.bindValue(":quhead_status", "O");
 
   saveSales.exec();
