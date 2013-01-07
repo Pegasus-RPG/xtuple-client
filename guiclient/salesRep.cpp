@@ -174,10 +174,45 @@ bool salesRep::save()
                           _commPrcnt,
                           tr("You must enter a Commission Rate for this Sales Rep."))
   ;
+
+  XSqlQuery saveq;
+  if((_mode == cEdit) && (!_active->isChecked()))
+  {
+    saveq.prepare("SELECT cust_id "
+                  "FROM custinfo "
+                  "WHERE ((cust_active) "
+                  "AND (cust_salesrep_id=:salesrep_id)) "
+                  "LIMIT 1; ");
+    saveq.bindValue(":salesrep_id", _salesrepid);
+    saveq.exec();
+    if (saveq.first())
+    {
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Sales Rep is used by an active Customer and must be marked as active."));
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
+                                  saveq, __FILE__, __LINE__))
+      return false;
+    saveq.prepare("SELECT shipto_id "
+                  "FROM shiptoinfo JOIN custinfo ON (cust_id=shipto_cust_id) "
+                  "WHERE ((cust_active) AND (shipto_active) "
+                  "AND (shipto_salesrep_id=:salesrep_id)) "
+                  "LIMIT 1; ");
+    saveq.bindValue(":salesrep_id", _salesrepid);
+    saveq.exec();
+    if (saveq.first())
+    {
+      errors << GuiErrorCheck(true, _active,
+                              tr("This Sales Rep is used by an active Ship To and must be marked as active."));
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Database Error"),
+                                  saveq, __FILE__, __LINE__))
+      return false;
+  }
+
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Rep"), errors))
     return false;
 
-  XSqlQuery saveq;
   if (_mode == cNew)
     saveq.prepare( "INSERT INTO salesrep ( salesrep_id,"
                    "  salesrep_number,  salesrep_active,"
