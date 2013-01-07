@@ -13,6 +13,9 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
+
 uomConv::uomConv(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -27,8 +30,6 @@ uomConv::uomConv(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_uomTo, SIGNAL(currentIndexChanged(int)), this, SLOT(sToChanged()));
   connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
 
-  _uomFrom->setType(XComboBox::UOMs);
-  _uomTo->setType(XComboBox::UOMs);
   _fromValue->setValidator(omfgThis->ratioVal());
   _toValue->setValidator(omfgThis->ratioVal());
 }
@@ -99,21 +100,19 @@ void uomConv::sSave()
 {
   XSqlQuery uomSave;
   bool valid;
-  if (_fromValue->toDouble(&valid) == 0)
-  {
-    QMessageBox::information( this, tr("No Ratio Entered"),
-                              tr("You must enter a valid Ratio before saving this UOM Conversion.") );
-    _fromValue->setFocus();
-    return;
-  }
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(!_uomFrom->isValid(), _uomFrom,
+                          tr("You must select a From UOM."))
+         << GuiErrorCheck(!_uomTo->isValid(), _uomTo,
+                          tr("You must select a To UOM."))
+         << GuiErrorCheck(_fromValue->toDouble(&valid) == 0, _fromValue,
+                          tr("You must enter a valid Ratio before saving this UOM Conversion."))
+         << GuiErrorCheck(_toValue->toDouble(&valid) == 0, _toValue,
+                          tr("You must enter a valid Ratio before saving this UOM Conversion."))
+  ;
 
-  if (_toValue->toDouble(&valid) == 0)
-  {
-    QMessageBox::information( this, tr("No Ratio Entered"),
-                              tr("You must enter a valid Ratio before saving this UOM Conversion.") );
-    _toValue->setFocus();
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save UOM Conversion"), errors))
     return;
-  }
 
   if (_mode == cEdit)
     uomSave.prepare( "UPDATE uomconv "
