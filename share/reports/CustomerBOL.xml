@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
  <title>Drop Ship Bill of Lading</title>
- <name></name>
+ <name>CustomerBOL</name>
  <description></description>
  <size>
   <width>850</width>
