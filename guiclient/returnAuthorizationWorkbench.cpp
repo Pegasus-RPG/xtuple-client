@@ -364,10 +364,18 @@ void returnAuthorizationWorkbench::setParams(ParameterList &params)
 
   params.append("credit",     tr("Credit"));
   params.append("return",     tr("Return"));
+  params.append("replace",    tr("Replace"));
+  params.append("service",    tr("Service"));
   params.append("none",       tr("None"));
   params.append("creditmemo", tr("Memo"));
   params.append("check",      tr("Check"));
   params.append("creditcard", tr("Card"));
+  params.append("undefined",  tr("Undefined"));
+  params.append("payment",    tr("Payment"));
+  params.append("receipt",    tr("Receipt"));
+  params.append("ship",       tr("Shipment"));
+  params.append("never",      tr("Never"));
+  params.append("closed",     tr("Closed"));
 
   if (_creditmemo->isChecked())
     params.append("doM");
@@ -375,6 +383,25 @@ void returnAuthorizationWorkbench::setParams(ParameterList &params)
     params.append("doK");
   if (_creditcard->isChecked())
     params.append("doC");
+  if (!_expired->isChecked())
+    params.append("showUnexpired");
+  if (!_unauthorized->isChecked())
+    params.append("showAuthorized");
+  if (_closed->isChecked())
+    params.append("showClosed");
+
+  if (_receipts->isChecked() ||
+      _shipments->isChecked() ||
+      _payment->isChecked() ||
+      _closed->isChecked())
+    params.append("awaitingFilter");
+
+  if (_receipts->isChecked())
+    params.append("awaitingReceipts");
+  if (_shipments->isChecked())
+    params.append("awaitingShipments");
+  if (_payment->isChecked())
+    params.append("awaitingPayments");
 
   _dates->appendValue(params);
 }
@@ -410,181 +437,17 @@ void returnAuthorizationWorkbench::sFillListReview()
 	        (_payment->isChecked()) || (_closed->isChecked()) ||
 			(_unauthorized->isChecked()))
   {
-	bool bw;
-	bw = false;
-	QString sql (" SELECT *, :never  AS rahead_expiredate_xtnullrole FROM ( "
-			  "SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined) AS cust_name, "
-			  "rahead_authdate, rahead_expiredate, "
-	  		  "CASE "
-			  "  WHEN raitem_disposition = 'C' THEN "
-			  "    :credit "
-			  "  WHEN raitem_disposition = 'R' THEN "
-			  "    :return "
-			  "  WHEN raitem_disposition = 'P' THEN "
-			  "    :replace "
-			  "  WHEN raitem_disposition = 'V' THEN "
-			  "    :service "
-			  "  WHEN raitem_disposition = 'S' THEN "
-			  "    :ship "
-			  "  END AS disposition, "
-			  "CASE "
-			  "  WHEN rahead_creditmethod = 'N' THEN "
-			  "    :none "
-			  "  WHEN rahead_creditmethod = 'M' THEN "
-			  "    :creditmemo "
-			  "  WHEN rahead_creditmethod = 'K' THEN "
-			  "    :check "
-			  "  WHEN rahead_creditmethod = 'C' THEN "
-			  "    :creditcard "
-			  "END AS creditmethod, "
-			  "CASE "
-			  "  WHEN raitem_status = 'C' THEN "
-			  "    :closed "
-			  "  WHEN raitem_disposition = 'C' THEN "
-			  "    :payment "
-			  "  WHEN (raitem_disposition = 'R' "
-			  "    AND SUM(raitem_qtyauthorized-raitem_qtycredited) > 0 "
-			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0) THEN "
-			  "    :receipt || ',' || :payment "
-			  "  WHEN raitem_disposition = 'R' "
-			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
-			  "    :payment "
-			  "  WHEN raitem_disposition = 'R' "
-			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 THEN "
-			  "    :receipt "
-			  "  WHEN raitem_disposition = 'P' "
-			  "    AND SUM(raitem_qtyauthorized-COALESCE(coitem_qtyshipped,0)) > 0 "
-			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 "
-                          "    AND SUM(raitem_qtyauthorized * raitem_unitprice - raitem_amtcredited) > 0 "
-			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
-			  "    :receipt || ','  || :payment || ',' || :ship "
-			  "  WHEN raitem_disposition = 'P' "
-			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 "
-                          "    AND SUM(raitem_qtyauthorized * raitem_unitprice) > 0 "
-			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
-			  "    :receipt || ','  || :payment "
-			  "  WHEN raitem_disposition = 'P' "
-			  "    AND SUM(raitem_qtyauthorized-COALESCE(coitem_qtyshipped,0)) > 0 "
-                          "    AND SUM(raitem_qtyauthorized * raitem_unitprice - raitem_amtcredited) > 0 "
-			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
-			  "    :payment || ',' || :ship "
-			  "  WHEN raitem_disposition IN ('P','V') "
-			  "    AND SUM(raitem_qtyauthorized-COALESCE(coitem_qtyshipped,0)) > 0 "
-			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 THEN "
-			  "    :receipt || ',' || :ship "
-			  "  WHEN raitem_disposition IN ('P','V') "
-			  "    AND SUM(raitem_qtyauthorized-COALESCE(coitem_qtyshipped,0)) > 0 THEN "
-			  "    :ship "
-			  "  WHEN raitem_disposition IN ('P','V') "
-			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 THEN "
-			  "    :receipt "
-			  "  WHEN raitem_disposition = 'S' THEN "
-			  "    :ship "
-			  "  ELSE '' "
-			  "END AS awaiting, "
-        "CASE WHEN (rahead_expiredate < current_date) THEN "
-        "  'error' "
-        "END AS rahead_expiredate_qtforegroundrole "
-			  "FROM rahead "
-			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id) "
-			  "  LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id) "
-			  "  LEFT OUTER JOIN custgrpitem ON (custgrpitem_cust_id=cust_id), "
-			  " raitem "
-			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
-			  "WHERE ( (rahead_id=raitem_rahead_id)"
-                          "  AND   ((SELECT COUNT(*)"
-                          "          FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id)"
-                          "                      JOIN site() ON (warehous_id=itemsite_warehous_id)"
-                          "          WHERE (raitem_rahead_id=rahead_id)) > 0)" );
-    
-    if ((_customerSelector->isSelectedCust()))
-	  sql += " AND (cust_id=:cust_id) ";
-    else if (_customerSelector->isSelectedType())
-	  sql += " AND (custtype_id=:custtype_id) ";
-    else if (_customerSelector->isTypePattern())
-	  sql += " AND (custtype_code ~ :custtype_pattern) ";
-    else if (_customerSelector->isSelectedGroup())
-	  sql += " AND (custgrpitem_custgrp_id=:custgrp_id) ";
+    MetaSQLQuery mql = mqlLoad("returnauthorizationworkbench", "review");
+    ParameterList params;
+    setParams(params);
 
-	if (!_expired->isChecked())
-	  sql +=  " AND (COALESCE(rahead_expiredate,current_date) >= current_date)";
-	if (!_unauthorized->isChecked())
-	  sql +=  " AND (raitem_qtyauthorized > 0)";
-	if (_closed->isChecked())
-	  sql +=  " AND (raitem_status='O' OR rahead_authdate BETWEEN :startDate AND :endDate)";
-	else
+    XSqlQuery rareview = mql.toQuery(params);
+    _ra->populate(rareview);
+    if (rareview.lastError().type() != QSqlError::NoError)
     {
-      sql +=  " AND (raitem_status = 'O' OR raitem_status IS NULL) ";
-
-      sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name,rahead_expiredate, "
-			  " rahead_authdate,raitem_status,raitem_disposition,rahead_creditmethod, "
-			  " rahead_curr_id "
-			  " ORDER BY rahead_authdate,rahead_number "
-			  ") as data ";
+      systemError(this, rareview.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
-	if (_receipts->isChecked())
-	{
-	  sql +=  " WHERE ((disposition IN (:return,:replace,:service)) "
-			  " AND (awaiting ~ :receipt)) "; 
-	  bw = true;
-	}
-	if (_shipments->isChecked())
-	{
-	  if (bw)
-		sql += "OR (";
-	  else
-		sql += "WHERE (";
-	  sql +=  " (disposition IN (:replace,:service,:ship))"
-			  " AND (awaiting ~ :ship)) ";  
-	  bw = true;
-	}
-	if (_payment->isChecked())
-	{
-	  if (bw)
-		sql += "OR (";
-	  else
-		sql += "WHERE (";
-	  sql +=  " (disposition IN (:credit,:return))"
-			  " AND (awaiting ~ :payment)) "; 
-	  bw = true;
-	}
-	if (_closed->isChecked())
-	{
-	  if (bw)
-		sql += "OR (";
-	  else
-		sql += "WHERE (";
-	  sql +=  "(awaiting = :closed)) "; 
-	}
-    
-	XSqlQuery ra;
-	ra.prepare(sql);
-	ra.bindValue(":cust_id", _customerSelector->custId());
-	ra.bindValue(":custtype_id", _customerSelector->custTypeId());
-	ra.bindValue(":custtype_pattern", _customerSelector->typePattern());
-        ra.bindValue(":custgrp_id", _customerSelector->custGroupId());
-	ra.bindValue(":undefined",tr("Undefined"));
-	ra.bindValue(":credit",tr("Credit"));
-	ra.bindValue(":return",tr("Return"));
-	ra.bindValue(":replace",tr("Replace"));
-	ra.bindValue(":service",tr("Service"));
-	ra.bindValue(":none",tr("None"));
-	ra.bindValue(":creditmemo",tr("Memo"));
-	ra.bindValue(":check",tr("Check"));
-	ra.bindValue(":creditcard",tr("Card"));
-	ra.bindValue(":payment",tr("Payment"));
-	ra.bindValue(":receipt",tr("Receipt"));
-	ra.bindValue(":ship",tr("Shipment"));
-	ra.bindValue(":never",tr("Never"));
-	ra.bindValue(":closed",tr("Closed"));
-        _dates->bindValue(ra);
-	ra.exec();
-        _ra->populate(ra);
-        if (ra.lastError().type() != QSqlError::NoError)
-        {
-          systemError(this, ra.lastError().databaseText(), __FILE__, __LINE__);
-          return;
-        }
   }
 }
 
@@ -595,9 +458,6 @@ void returnAuthorizationWorkbench::sFillListDue()
   //Fill Due Credit List
   if ((_creditmemo->isChecked()) || (_check->isChecked()) || (_creditcard->isChecked()))
   {
-    bool bc;
-    bc = false;
-
     MetaSQLQuery mql = mqlLoad("returnauthorizationworkbench", "duecredit");
     ParameterList params;
     setParams(params);
