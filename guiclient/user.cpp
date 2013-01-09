@@ -406,6 +406,12 @@ void user::sModuleSelected(const QString &pModule)
 
 void user::sAdd()
 {
+  if (_available->id() == -1)
+  {
+      QMessageBox::critical(this, tr("Error"), tr("Please select an Available Privilege."));
+      return;
+  }
+
   XSqlQuery privq;
   privq.prepare("SELECT grantPriv(:username, :priv_id) AS result;");
   privq.bindValue(":username", _cUsername);
@@ -445,6 +451,12 @@ void user::sAddAll()
 
 void user::sRevoke()
 {
+  if (_granted->id() == -1)
+  {
+      QMessageBox::critical(this, tr("Error"), tr("Please select a Granted Privilege."));
+      return;
+  }
+
   XSqlQuery privq;
   privq.prepare("SELECT revokePriv(:username, :priv_id) AS result;");
   privq.bindValue(":username", _cUsername);
