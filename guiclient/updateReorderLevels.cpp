@@ -116,7 +116,7 @@ void updateReorderLevels::sUpdate()
   _totalDays->setText("");
 
   QString method;
-  if (_periods->topLevelItemCount() > 0)
+  if (_periods->selectedItems().count() > 0)
   {
     QString sql;
 
@@ -159,7 +159,7 @@ void updateReorderLevels::sUpdate()
 
 void updateReorderLevels::sSubmit()
 {
-  if (_periods->topLevelItemCount() > 0)
+  if (_periods->selectedItems().count() > 0)
   {
     ParameterList params;
     params.append("action_name", "UpdateReorderLevel");
