@@ -403,7 +403,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   xtViewMode prevmode = (xtViewMode)(xtsettingsValue("GUIClient/viewMode",
                                                      SubWindowView).toInt());
   if (FreeFloatingView == prevmode)
-    _workspace->setViewMode(QMdiArea::TabbedView);
+    _workspace->setViewMode(QMdiArea::SubWindowView);
   else
     _workspace->setViewMode((QMdiArea::ViewMode)(prevmode));
 
