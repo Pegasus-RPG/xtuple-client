@@ -100,6 +100,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   sysUtilsMenu->setObjectName("menu.sys.utilities");
   helpMenu->setObjectName("menu.help");
   designMenu->setObjectName("menu.sys.design");
+  employeeMenu->setObjectName("menu.sys.employee");
 
   actionProperties acts[] = {
 
