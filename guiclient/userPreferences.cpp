@@ -21,7 +21,6 @@
 
 #include <parameter.h>
 
-#include "dbtools.h"
 #include "hotkey.h"
 #include "imageList.h"
 #include "timeoutHandler.h"
@@ -416,18 +415,6 @@ bool userPreferences::save()
         passwd = QMd5(passwd);
       }
     }
-    QString protocol;
-    QString hostName;
-    QString dbName;
-    QString port;
-    parseDatabaseURL(omfgThis->databaseURL(), protocol, hostName, dbName, port);
-
-    if(hostName=="cloud.xtuple.com")
-    {
-        passwd = passwd + "private" + _username->text();
-        passwd = QMd5(passwd);
-    }
-
     userave.prepare( QString( "ALTER USER %1 WITH PASSWORD :password;")
            .arg(_username->text()) );
     userave.bindValue(":password", passwd);
