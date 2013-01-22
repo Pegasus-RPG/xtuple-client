@@ -17,7 +17,6 @@
 #include <qmd5.h>
 #include <metasql.h>
 
-#include "dbtools.h"
 #include "crmaccount.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
@@ -234,22 +233,12 @@ bool user::save()
      }
     return false;
   }
-  QString protocol;
-  QString hostName;
-  QString dbName;
-  QString port;
-  parseDatabaseURL(omfgThis->databaseURL(), protocol, hostName, dbName, port);
 
   QString passwd = _passwd->text();
   if(_enhancedAuth->isChecked())
   {
     passwd = passwd + "xTuple" + username;
     passwd = QMd5(passwd);
-  }
-  if (hostName=="cloud.xtuple.com")
-  {
-      passwd = passwd + "private" + username;
-      passwd = QMd5(passwd);
   }
 
   XSqlQuery usrq;
