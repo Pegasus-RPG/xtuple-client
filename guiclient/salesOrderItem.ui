@@ -870,6 +870,16 @@ to be bound by its terms.</comment>
               </widget>
              </item>
              <item>
+              <widget class="QRadioButton" name="_substitutesButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Substitutes</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <spacer>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -1404,6 +1414,29 @@ to be bound by its terms.</comment>
                   </widget>
                  </item>
                 </layout>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="_substitutesPage">
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="XTreeWidget" name="_subs">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>100</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -2514,6 +2547,38 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>422</x>
      <y>678</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showAvailability</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_substitutesButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>499</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>564</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showAvailability</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_subs</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>499</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>89</x>
+     <y>573</y>
     </hint>
    </hints>
   </connection>

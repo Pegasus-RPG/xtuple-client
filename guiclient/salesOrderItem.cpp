@@ -46,6 +46,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_item,              SIGNAL(privateIdChanged(int)),        this, SLOT(sFindSellingWarehouseItemsites(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemInfo(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSources(int)));
+  connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSubs(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateHistory()));
   connect(_listPrices,        SIGNAL(clicked()),                    this, SLOT(sListPrices()));
   connect(_netUnitPrice,      SIGNAL(idChanged(int)),               this, SLOT(sPriceGroup()));
@@ -61,6 +62,8 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_item,              SIGNAL(privateIdChanged(int)),        this, SLOT(sPopulateItemsiteInfo()));
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
+  connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
+  connect(_subs,              SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateSubMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_next,              SIGNAL(clicked()),                    this, SLOT(sNext()));
   connect(_prev,              SIGNAL(clicked()),                    this, SLOT(sPrev()));
   connect(_notes,             SIGNAL(textChanged()),                this, SLOT(sChanged()));
@@ -82,6 +85,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_inventoryButton,   SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
   connect(_itemSourcesButton, SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
   connect(_dependenciesButton,SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
+  connect(_substitutesButton,SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
   connect(_historyCostsButton,SIGNAL(toggled(bool)),                this, SLOT(sHandleButton()));
   connect(_historyCostsButton,SIGNAL(toggled(bool)),                this, SLOT(sPopulateHistory()));
   connect(_historyDates,      SIGNAL(updated()),                    this, SLOT(sPopulateHistory()));
@@ -146,6 +150,16 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _itemsrcp->addColumn(tr("Description"),          -1, Qt::AlignLeft, true, "itemsrc_descrip");
   _itemsrcp->addColumn(tr("Qty Break"),    _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
   _itemsrcp->addColumn(tr("Base Price"), _moneyColumn, Qt::AlignRight,true, "price_base");
+
+  _subs->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _subs->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _subs->addColumn(tr("Description"),   -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _subs->addColumn(tr("LT"),            _whsColumn,  Qt::AlignCenter, true,  "leadtime" );
+  _subs->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight,  true,  "qtyonhand"  );
+  _subs->addColumn(tr("Allocated"),     _qtyColumn,  Qt::AlignRight,  true,  "allocated"  );
+  _subs->addColumn(tr("On Order"),      _qtyColumn,  Qt::AlignRight,  true,  "ordered"  );
+  _subs->addColumn(tr("Reorder Lvl."),  _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
+  _subs->addColumn(tr("Available"),     _qtyColumn,  Qt::AlignRight,  true,  "available"  );
 
   _historyDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _historyDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -260,6 +274,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _inventoryButton->setEnabled(_showAvailability->isChecked());
   _itemSourcesButton->setEnabled(_showAvailability->isChecked());
   _dependenciesButton->setEnabled(_showAvailability->isChecked());
+  _substitutesButton->setEnabled(_showAvailability->isChecked());
   _availability->setEnabled(_showAvailability->isChecked());
   _showIndented->setEnabled(_showAvailability->isChecked());
 
@@ -799,6 +814,7 @@ void salesOrderItem::clear()
   _onOrder->clear();
   _available->clear();
   _itemsrcp->clear();
+  _subs->clear();
   _historyCosts->clear();
   _historySales->clear();
   _leadtime->clear();
@@ -2558,6 +2574,36 @@ void salesOrderItem::sPopulateItemSources(int pItemid)
   _itemsrcp->populate(priceq);
 }
 
+void salesOrderItem::sPopulateItemSubs(int pItemid)
+{
+  XSqlQuery subq;
+  MetaSQLQuery mql = mqlLoad("substituteAvailability", "detail");
+  ParameterList params;
+  params.append("item_id", pItemid);
+  params.append("warehous_id", _warehouse->id());
+  params.append("byDate", true);
+  if (_scheduledDate->isValid())
+    params.append("date", _scheduledDate->date());
+  else
+    params.append("date", omfgThis->dbDate());
+
+  subq = mql.toQuery(params);
+  _subs->populate(subq);
+}
+
+void salesOrderItem::sPopulateSubMenu(QMenu *menu, QTreeWidgetItem*, int)
+{
+  menu->addAction(tr("Substitute..."), this, SLOT(sSubstitute()));
+}
+
+void salesOrderItem::sSubstitute()
+{
+  int _itemsiteid = _subs->id();
+  _sub->setChecked(true);
+  _subItem->setId(_item->id());
+  _item->setItemsiteid(_itemsiteid);
+}
+
 void salesOrderItem::sPopulateHistory()
 {
   if (_historyCostsButton->isChecked())
@@ -3725,8 +3771,10 @@ void salesOrderItem::sHandleButton()
     _availabilityStack->setCurrentWidget(_inventoryPage);
   else if (_itemSourcesButton->isChecked())
     _availabilityStack->setCurrentWidget(_itemSourcesPage);
-  else
+  else if (_dependenciesButton->isChecked())
     _availabilityStack->setCurrentWidget(_dependenciesPage);
+  else
+    _availabilityStack->setCurrentWidget(_substitutesPage);
 
   if (_historyCostsButton->isChecked())
     _historyStack->setCurrentWidget(_historyCostsPage);
