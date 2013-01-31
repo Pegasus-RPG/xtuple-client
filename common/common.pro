@@ -32,7 +32,8 @@ SOURCES = calendarcontrol.cpp \
           tarfile.cpp \
           xbase32.cpp \
           xtupleproductkey.cpp \
-          xtsettings.cpp
+          xtsettings.cpp \
+	  checkForUpdates.cpp
 HEADERS = calendarcontrol.h \
           calendargraphicsitem.h \
           errorReporter.h        \
@@ -52,9 +53,10 @@ HEADERS = calendarcontrol.h \
           tarfile.h \
           xbase32.h \
           xtupleproductkey.h \
-          xtsettings.h
-FORMS = login2.ui login2Options.ui
+          xtsettings.h \
+	  checkForUpdates.h
+FORMS = login2.ui login2Options.ui checkForUpdates.ui
 
-QT +=  script sql xml xmlpatterns
+QT +=  script sql xml xmlpatterns network
 
 RESOURCES += xTupleCommon.qrc
