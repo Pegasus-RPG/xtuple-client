@@ -29,7 +29,7 @@
 #include <parameter.h>
 
 
-#define DEBUG true
+#define DEBUG false
 #define QT_NO_URL_CAST_FROM_STRING
 
 checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -65,6 +65,8 @@ suffix = "run";
   {
     serverVersion = versions.value("dbver").toString();
     newurl = url + "/xTuple-" + serverVersion + "-" + OS + "-installer." + suffix;
+
+    _label->setText(tr("Your client does not match the server version: %1. Would you like to update to xTuple %1?").arg(serverVersion));
 
     metric.exec("SELECT metric_value AS disallowMismatch FROM metric WHERE(metric_name='DisallowMismatchClientVersion')");
     if(metric.first() && (metric.value("disallowMismatch").toString() == "t"))

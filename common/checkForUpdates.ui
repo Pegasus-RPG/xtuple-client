@@ -39,7 +39,7 @@ to be bound by its terms.</comment>
      <item>
       <widget class="QLabel" name="_label">
        <property name="text">
-        <string>Would you like to update now?</string>
+        <string>Your client does not match the server, would you like to update now?</string>
        </property>
       </widget>
      </item>
@@ -91,14 +91,14 @@ to be bound by its terms.</comment>
    <item>
     <widget class="QPushButton" name="_button">
      <property name="text">
-      <string>Yes</string>
+      <string>Ok</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="_no">
      <property name="text">
-      <string>No</string>
+      <string>Cancel</string>
      </property>
     </widget>
    </item>
