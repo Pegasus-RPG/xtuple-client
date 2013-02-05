@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QTranslator>
 #include <QDialog>
+#include <QProcess>
 
 #include "../guiclient/guiclient.h"
 #include <parameter.h>
@@ -97,7 +98,7 @@ void checkForUpdates::downloadButtonPressed()
       this->close();
       QUrl url(newurl);
       qDebug() << "redirecting to:" << url;
-      QString filename = "xTuple-" + serverVersion + "-" + OS + "-installer."+ suffix;
+      filename = "xTuple-" + serverVersion + "-" + OS + "-installer."+ suffix;
 
       if(QFile::exists(filename))
       {
@@ -183,6 +184,13 @@ void checkForUpdates::downloadFinished()
     reply = NULL;
     delete file;
     file = NULL;
+    if(QFile::exists(filename))
+    {
+        QFileInfo *path = new QFileInfo(filename);
+        QProcess *installer = new QProcess(this);
+        installer->startDetached(path->absoluteFilePath(), QStringList());
+        QMessageBox::information(this, "Error", tr("Failed: %1").arg(installer->error()));
+    }
 }
 
 checkForUpdates::~checkForUpdates()

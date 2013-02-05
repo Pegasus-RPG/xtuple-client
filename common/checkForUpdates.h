@@ -47,6 +47,7 @@ private:
     QString OS;
     QString suffix;
     QString newurl;
+    QString filename;
 };
 
 #endif // CHECKFORUPDATES_H
