@@ -42,7 +42,7 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
   setupUi(this);
   progressDialog = new QProgressDialog(this);
   connect(_button, SIGNAL(clicked()), this, SLOT(downloadButtonPressed()));
-  connect(_button, SIGNAL(clicked()), this, SLOT(accept()));
+  connect(_button, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_no, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_continue, SIGNAL(clicked()), this, SLOT (accept()));
 
@@ -97,7 +97,6 @@ void checkForUpdates::downloadButtonPressed()
 {
       this->close();
       QUrl url(newurl);
-      qDebug() << "redirecting to:" << url;
       filename = "xTuple-" + serverVersion + "-" + OS + "-installer."+ suffix;
 
       if(QFile::exists(filename))
@@ -191,7 +190,6 @@ void checkForUpdates::downloadFinished()
         QFileInfo *path = new QFileInfo(filename);
         QProcess *installer = new QProcess(this);
         installer->startDetached(path->absoluteFilePath(), QStringList());
-        QMessageBox::information(this, "Error", tr("Failed: %1").arg(installer->error()));
     }
 }
 

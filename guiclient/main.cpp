@@ -475,7 +475,7 @@ int main(int argc, char *argv[])
     checkForUpdates newdlg(0,"", TRUE);
 
     int result = newdlg.exec();
-    if (result == XDialog::Rejected)
+    if (result == QDialog::Rejected)
         return 0;
 
     _splash->show();
