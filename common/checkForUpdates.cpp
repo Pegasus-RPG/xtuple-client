@@ -186,6 +186,8 @@ void checkForUpdates::downloadFinished()
     file = NULL;
     if(QFile::exists(filename))
     {
+        QFile launch(filename);
+        launch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
         QFileInfo *path = new QFileInfo(filename);
         QProcess *installer = new QProcess(this);
         installer->startDetached(path->absoluteFilePath(), QStringList());
