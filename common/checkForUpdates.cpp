@@ -49,7 +49,8 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
 #ifdef Q_WS_MACX
 OS = "osx";
 suffix = "dmg";
-#elif Q_WS_WIN
+#endif
+#ifdef Q_WS_WIN
 OS = "windows";
 suffix = "exe";
 #else
