@@ -46,14 +46,15 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
   connect(_no, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_continue, SIGNAL(clicked()), this, SLOT (accept()));
 
-#ifdef Q_WS_MACX
+#ifdef Q_OS_MACX
 OS = "osx";
 suffix = "dmg";
 #endif
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 OS = "windows";
 suffix = "exe";
-#else
+#endif
+#ifdef Q_OS_LINUX
 OS = "linux";
 suffix = "run";
 #endif
@@ -189,8 +190,10 @@ void checkForUpdates::downloadFinished()
         QFile launch(filename);
         launch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
         QFileInfo *path = new QFileInfo(filename);
+        QStringList options;
+        //options << "--unattendedmodeui minimal --mode unattended --prefix " + path->absolutePath();  TODO: run installer in unattended mode rather than user selecting options
         QProcess *installer = new QProcess(this);
-        installer->startDetached(path->absoluteFilePath(), QStringList());
+        installer->startDetached(path->absoluteFilePath(), options);
     }
 }
 
