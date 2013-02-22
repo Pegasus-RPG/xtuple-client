@@ -12,6 +12,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
 #include <parameter.h>
 #include "sysLocale.h"
 
@@ -74,15 +75,27 @@ void locales::sEdit()
 
 void locales::sCopy()
 {
-  ParameterList params;
-  params.append("mode", "copy");
-  params.append("locale_id", _locale->id());
+  XSqlQuery syset;
+  syset.prepare("SELECT copyLocale(:locale_id) AS _locale_id;");
+  syset.bindValue(":locale_id", _locale->id());
+  syset.exec();
+  if (syset.first())
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("locale_id", syset.value("_locale_id").toInt());
 
-  sysLocale newdlg(this, "", TRUE);
-  newdlg.set(params);
+    sysLocale newdlg(this, "", TRUE);
+    newdlg.set(params);
 
-  if (newdlg.exec() != XDialog::Rejected)
+    newdlg.exec();
     sFillList();
+  }
+  else if (syset.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, syset.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void locales::sView()

@@ -89,24 +89,6 @@ enum SetResponse sysLocale::set(const ParameterList &pParams)
     {
       _mode = cEdit;
     }
-    else if (param.toString() == "copy")
-    {
-      _mode = cCopy;
-
-      syset.prepare("SELECT copyLocale(:locale_id) AS _locale_id;");
-      syset.bindValue(":locale_id", _localeid);
-      syset.exec();
-      if (syset.first())
-      {
-        _localeid = syset.value("_locale_id").toInt();
-	populate();
-      }
-      else if (syset.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, syset.lastError().databaseText(), __FILE__, __LINE__);
-        return UndefinedError;
-      }
-    }
     else if (param.toString() == "view")
     {
       _mode = cView;
