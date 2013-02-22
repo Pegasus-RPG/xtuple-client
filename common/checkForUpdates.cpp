@@ -193,10 +193,12 @@ void checkForUpdates::downloadFinished()
         launch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
         QFileInfo *path = new QFileInfo(filename);
         QStringList options;
-        //options << "--unattendedmodeui minimal --mode unattended --prefix " + path->absolutePath();  TODO: run installer in unattended mode rather than user selecting options
+        //options << "--mode <unattended>"; //--prefix " + path->absolutePath();  //TODO: run installer in unattended mode rather than user selecting options
         QProcess *installer = new QProcess(this);
         installer->startDetached(path->absoluteFilePath(), options);
+        #ifdef Q_OS_WIN
         (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
+        #endif
     }
 }
 
