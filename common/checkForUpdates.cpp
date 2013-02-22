@@ -25,6 +25,8 @@
 #include <QTranslator>
 #include <QDialog>
 #include <QProcess>
+#include <windows.h>
+#include <shellapi.h>
 
 #include "../guiclient/guiclient.h"
 #include <parameter.h>
@@ -194,6 +196,7 @@ void checkForUpdates::downloadFinished()
         //options << "--unattendedmodeui minimal --mode unattended --prefix " + path->absolutePath();  TODO: run installer in unattended mode rather than user selecting options
         QProcess *installer = new QProcess(this);
         installer->startDetached(path->absoluteFilePath(), options);
+        (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
     }
 }
 
