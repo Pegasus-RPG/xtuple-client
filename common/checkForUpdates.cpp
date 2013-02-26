@@ -45,7 +45,6 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
   setupUi(this);
   progressDialog = new QProgressDialog(this);
   connect(_button, SIGNAL(clicked()), this, SLOT(downloadButtonPressed()));
-  connect(_button, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_no, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_continue, SIGNAL(clicked()), this, SLOT (accept()));
 
@@ -200,6 +199,7 @@ void checkForUpdates::downloadFinished()
         #ifdef Q_WS_WIN
         (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
         #endif
+        reject();
     }
 }
 
