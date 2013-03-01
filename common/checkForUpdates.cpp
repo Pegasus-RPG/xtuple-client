@@ -25,6 +25,8 @@
 #include <QTranslator>
 #include <QDialog>
 #include <QProcess>
+#include <gunzip.h>
+#include <tarfile.h>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <shellapi.h>
@@ -50,7 +52,7 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
 
 #ifdef Q_OS_MACX
 OS = "osx";
-suffix = "dmg";
+suffix = "tar.gz";
 #endif
 #ifdef Q_OS_WIN
 OS = "windows";
@@ -195,7 +197,20 @@ void checkForUpdates::downloadFinished()
         QStringList options;
         //options << "--mode <unattended>"; //--prefix " + path->absolutePath();  //TODO: run installer in unattended mode rather than user selecting options
         QProcess *installer = new QProcess(this);
+        #ifdef Q_WS_MACX
+        QProcess sh;
+        sh.start("tar -xvf " + filename);
+        sh.waitForFinished();
+        QByteArray output= sh.readAll();
+        sh.close();
+        filename = "xTuple-" + serverVersion + "-" + OS + "-installer.app";
+        QFileInfo *path2 = new QFileInfo(filename);
+        QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/osx-intel";
+        installer->startDetached(filepath, options);
+        #endif
+        #ifdef Q_WS_LINUX
         installer->startDetached(path->absoluteFilePath(), options);
+        #endif
         #ifdef Q_WS_WIN
         int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
         if (SE_ERR_ACCESSDENIED== result)
