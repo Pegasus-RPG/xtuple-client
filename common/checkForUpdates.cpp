@@ -25,8 +25,6 @@
 #include <QTranslator>
 #include <QDialog>
 #include <QProcess>
-#include <gunzip.h>
-#include <tarfile.h>
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <shellapi.h>
@@ -208,8 +206,10 @@ void checkForUpdates::downloadFinished()
         QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/osx-intel";
         installer->startDetached(filepath, options);
         #endif
-        #ifdef Q_WS_LINUX
+        #ifdef Q_OS_LINUX
         installer->startDetached(path->absoluteFilePath(), options);
+        if(QProcess::startDetached(filename))
+             reject();
         #endif
         #ifdef Q_WS_WIN
         int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
@@ -221,8 +221,6 @@ void checkForUpdates::downloadFinished()
         if (result <= 32)
             QMessageBox::information(this, "Download failed", tr("Failed: %1").arg(result));
         #endif
-       if(QProcess::startDetached(filename))
-            reject();
     }
 }
 
