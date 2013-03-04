@@ -189,11 +189,7 @@ void checkForUpdates::downloadFinished()
     file = NULL;
     if(QFile::exists(filename))
     {
-        QFile launch(filename);
-        launch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
-        QFileInfo *path = new QFileInfo(filename);
         QStringList options;
-        //options << "--mode <unattended>"; //--prefix " + path->absolutePath();  //TODO: run installer in unattended mode rather than user selecting options
         QProcess *installer = new QProcess(this);
         #ifdef Q_WS_MACX
         QProcess sh;
@@ -204,11 +200,14 @@ void checkForUpdates::downloadFinished()
         filename = "xTuple-" + serverVersion + "-" + OS + "-installer.app";
         QFileInfo *path2 = new QFileInfo(filename);
         QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/osx-intel";
-        installer->startDetached(filepath, options);
+        if(installer->startDetached(filepath, options))
+            reject();
         #endif
         #ifdef Q_OS_LINUX
-        installer->startDetached(path->absoluteFilePath(), options);
-        if(QProcess::startDetached(filename))
+        QFile launch(filename);
+        launch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
+        QFileInfo *path = new QFileInfo(filename);
+        if(installer->startDetached(path->absoluteFilePath(), options))
              reject();
         #endif
         #ifdef Q_WS_WIN
