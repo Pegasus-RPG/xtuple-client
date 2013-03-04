@@ -187,15 +187,15 @@ void checkForUpdates::downloadFinished()
     reply = NULL;
     delete file;
     file = NULL;
-    if(QFile::exists(filename))
+    QFile *updater = new QFile(filename);
+    if(updater->exists())
     {
         QStringList options;
         QProcess *installer = new QProcess(this);
-        #ifdef Q_WS_MACX
+        #ifdef Q_OS_MAC
         QProcess sh;
         sh.start("tar -xvf " + filename);
         sh.waitForFinished();
-        QByteArray output= sh.readAll();
         sh.close();
         filename = "xTuple-" + serverVersion + "-" + OS + "-installer.app";
         QFileInfo *path2 = new QFileInfo(filename);
@@ -210,7 +210,7 @@ void checkForUpdates::downloadFinished()
         if(installer->startDetached(path->absoluteFilePath(), options))
              reject();
         #endif
-        #ifdef Q_WS_WIN
+        #ifdef Q_OS_WIN
         int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
         if (SE_ERR_ACCESSDENIED== result)
         {
