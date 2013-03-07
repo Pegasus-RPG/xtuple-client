@@ -98,8 +98,8 @@ WHERE TRUE
     AND (shiphead_id=&lt;? value("shiphead_id")?>)
 &lt;? endif ?>
 &lt;? if exists("head_id") ?>
-   AND  (tohead_id=&lt;? value("head_id") ?>)
-   AND ((&lt;? value("head_type") ?>='TO')
+   AND (tohead_id=&lt;? value("head_id") ?>)
+   AND (&lt;? value("head_type") ?>='TO')
 &lt;? endif ?>
 &lt;? endif ?>;</sql>
  </querysource>
