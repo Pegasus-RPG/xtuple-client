@@ -1958,10 +1958,6 @@ void salesOrderItem::sDeterminePrice(bool force)
 
       _baseUnitPrice->setLocalValue(price);
       _customerPrice->setLocalValue(price + charTotal);
-      if (_unitCost->baseValue() > 0.0)
-        _profit->setDouble((_customerPrice->baseValue() - _unitCost->baseValue()) / _unitCost->baseValue() * 100.0);
-      else
-        _profit->setDouble(100.0);
       if (_updatePrice) // Configuration or user said they also want net unit price updated
         _netUnitPrice->setLocalValue(price + charTotal);
 
@@ -2711,6 +2707,11 @@ void salesOrderItem::sCalculateDiscountPrcnt()
     _baseUnitPrice->setLocalValue(_netUnitPrice->localValue() - charTotal);
   }
 
+  if (_unitCost->baseValue() > 0.0)
+    _profit->setDouble((_netUnitPrice->baseValue() - _unitCost->baseValue()) / _unitCost->baseValue() * 100.0);
+  else
+    _profit->setDouble(100.0);
+
   sCalculateExtendedPrice();
 }
 
@@ -3089,13 +3090,13 @@ void salesOrderItem::populate()
       _subItem->setId(item.value("coitem_substitute_item_id").toInt());
     }
     _customerPrice->setLocalValue(item.value("coitem_custprice").toDouble());
-    if (_unitCost->baseValue() > 0.0)
-      _profit->setDouble((_customerPrice->baseValue() - _unitCost->baseValue()) / _unitCost->baseValue() * 100.0);
-    else
-      _profit->setDouble(100.0);
     _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _priceMode = item.value("coitem_pricemode").toString();
+    if (_unitCost->baseValue() > 0.0)
+      _profit->setDouble((_netUnitPrice->baseValue() - _unitCost->baseValue()) / _unitCost->baseValue() * 100.0);
+    else
+      _profit->setDouble(100.0);
     _leadTime        = item.value("itemsite_leadtime").toInt();
     _qtyOrderedCache = _qtyOrdered->toDouble();
     _originalQtyOrd  = _qtyOrdered->toDouble() * _qtyinvuomratio;
