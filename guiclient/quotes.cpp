@@ -98,7 +98,7 @@ void quotes::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem *, int)
   menuItem->setEnabled(_privileges->check("ConvertQuotes"));
 
   menuItem = pMenu->addAction(tr("Convert to Invoice..."), this, SLOT(sConvertInvoice()));
-  menuItem->setEnabled(_privileges->check("ConvertQuotes"));
+  menuItem->setEnabled(_privileges->check("ConvertQuotesInvoice"));
 
   pMenu->addSeparator();
 
