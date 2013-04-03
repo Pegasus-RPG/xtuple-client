@@ -46,6 +46,10 @@ win32 {
   RC_FILE = rcguiclient.rc
   OBJECTS_DIR = win_obj
 }
+win32-g++-4.6 {
+  LIBS += -lz
+}
+
 
 unix {
   OBJECTS_DIR = unx_obj
