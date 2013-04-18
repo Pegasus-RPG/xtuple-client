@@ -33,6 +33,7 @@ public slots:
     void downloadFinished();
     void downloadReadyRead();
     void cancelDownload();
+    void startUpdate();
 
 protected slots:
     virtual void languageChange();
@@ -48,6 +49,7 @@ private:
     QString suffix;
     QString newurl;
     QString filename;
+    qint64 filesize;
 };
 
 #endif // CHECKFORUPDATES_H
