@@ -74,11 +74,10 @@
        formatlotserialnumber(itemloc_ls_id),
        formatDate(itemloc_expiration, 'N/A') AS expiration,
        itemloc_qty AS location_qty_qty,
-&lt;? if exists("EnableSOReservationsByLocation") 
-       formatQty(qtyReservedLocation(itemloc_id, 'SO', coitem_id)) AS location_reserved_qty,
-&lt;? else ?>
-       formatQty(0) AS location_reserved_qty,
-&lt;? endif ?>
+       CASE WHEN (SELECT metric_value::boolean FROM metric WHERE metric_name = 'EnableSOReservationsByLocation') 
+            THEN formatQty(qtyReservedLocation(itemloc_id, 'SO', coitem_id)) 
+            ELSE  formatQty(0) 
+       END AS location_reserved_qty,
        itemuomtouomratio(item_id,item_inv_uom_id, coitem_qty_uom_id) * itemloc_qty AS loc_issue_uom_qty,
        formatqty(itemuomtouomratio(item_id,item_inv_uom_id, coitem_qty_uom_id) * itemloc_qty) AS loc_issue_uom_fmt,
        coitemuom.uom_name AS uom_name,
