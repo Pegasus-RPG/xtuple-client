@@ -667,7 +667,28 @@ void invoiceItem::sHandleUpdateInv()
       (_warehouse->isValid()) &&
       (_trackqoh) )
   {
-    _updateInv->setEnabled(true);
+    XSqlQuery invq;
+    invq.prepare("SELECT itemsite_id FROM itemsite "
+                 "WHERE (itemsite_item_id=:item_id) "
+                 "  AND (itemsite_warehous_id=:warehous_id) "
+                 "  AND (itemsite_controlmethod != 'N');");
+    invq.bindValue(":item_id", _item->id());
+    invq.bindValue(":warehous_id", _warehouse->id());
+    invq.exec();
+    if (invq.first())
+    {
+      _updateInv->setEnabled(true);
+    }
+    else if (invq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, invq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+    {
+      _updateInv->setChecked(false);
+      _updateInv->setEnabled(false);
+    }
   }
   else
   {
