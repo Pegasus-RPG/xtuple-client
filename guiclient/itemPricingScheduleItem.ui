@@ -988,7 +988,7 @@ to be bound by its terms.</comment>
           <item row="2" column="0">
            <widget class="XLabel" name="_markupLit">
             <property name="text">
-             <string>Markup Percent (List Cost):</string>
+             <string>Markup Percent (Wholesale Price):</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

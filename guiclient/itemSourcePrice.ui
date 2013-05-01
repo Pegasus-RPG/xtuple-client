@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
+    <width>675</width>
     <height>394</height>
    </rect>
   </property>
@@ -245,7 +245,7 @@ to be bound by its terms.</comment>
       <item row="3" column="0">
        <widget class="XLabel" name="_discountLit">
         <property name="text">
-         <string>Discount Percent (List Cost):</string>
+         <string>Discount Percent (Wholesale Price):</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -430,7 +430,7 @@ to be bound by its terms.</comment>
       <item row="5" column="0">
        <widget class="XLabel" name="_listCostLit">
         <property name="text">
-         <string>List Cost:</string>
+         <string>Wholesale Price:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

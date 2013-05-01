@@ -1706,7 +1706,7 @@ to be bound by its terms.</comment>
             <item row="2" column="0">
              <widget class="QLabel" name="_listCostLit">
               <property name="text">
-               <string>List Cost:</string>
+               <string>Wholesale Price:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1749,7 +1749,7 @@ to be bound by its terms.</comment>
             <item row="6" column="0">
              <widget class="QLabel" name="_markupFromListCostLit">
               <property name="text">
-               <string>List Cost Markup %:</string>
+               <string>Wholesale Price Markup %:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -2383,12 +2383,32 @@ to be bound by its terms.</comment>
    <signal>idChanged(int)</signal>
    <receiver>_listCost</receiver>
    <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>_netUnitPrice</sender>
    <signal>effectiveChanged(QDate)</signal>
    <receiver>_listCost</receiver>
    <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>_netUnitPrice</sender>

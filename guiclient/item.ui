@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>849</width>
-    <height>655</height>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -653,7 +653,7 @@ to be bound by its terms.</comment>
            <widget class="XComboBox" name="_priceUOM">
             <property name="minimumSize">
              <size>
-              <width>120</width>
+              <width>100</width>
               <height>0</height>
              </size>
             </property>
@@ -667,6 +667,12 @@ to be bound by its terms.</comment>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>22</height>
+             </size>
+            </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -675,7 +681,7 @@ to be bound by its terms.</comment>
           <item row="1" column="3">
            <widget class="QLabel" name="_listCostLit">
             <property name="text">
-             <string>List Cost:</string>
+             <string>Wholesale Price:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
