@@ -131,7 +131,7 @@ void checkForUpdates::downloadButtonPressed()
       connect(reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
       connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
       connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
-      connect(reply, SIGNAL(finished()), this, SLOT(startUpdate()));
+      //connect(reply, SIGNAL(downloadComplete()), this, SLOT(startUpdate()));
 
       progressDialog->setLabelText(tr("Downloading %1...").arg(filename));
       _button->setEnabled(false);
@@ -189,8 +189,8 @@ void checkForUpdates::downloadFinished()
     reply = NULL;
     delete file;
     file = NULL;
+    startUpdate();
 }
-
 void checkForUpdates::startUpdate()
 {
     QFile *updater = new QFile(filename);
