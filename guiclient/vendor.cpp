@@ -588,7 +588,6 @@ void vendor::sCheck()
                  " WHERE (crmacct_number=:vend_number)"
                  " ORDER BY type;");
     dupq.bindValue(":vend_number", _number->text());
-    dupq.bindValue(":vendid",      _vendid);
     dupq.exec();
     if (dupq.first())
     {
