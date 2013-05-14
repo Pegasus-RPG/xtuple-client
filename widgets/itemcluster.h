@@ -158,6 +158,7 @@ friend class ItemLineEditDelegate;
     Q_INVOKABLE QString upc();
     Q_INVOKABLE QString itemType();
     Q_INVOKABLE bool    isConfigured();
+    Q_INVOKABLE bool    isFractional();
 
   public slots:
     void sHandleCompleter();
@@ -184,6 +185,7 @@ friend class ItemLineEditDelegate;
     void typeChanged(const QString &);
     void upcChanged(const QString &);
     void configured(bool);
+    void fractional(bool);
     void warehouseIdChanged(int);
     void valid(bool);
 
@@ -206,6 +208,7 @@ friend class ItemLineEditDelegate;
     unsigned int _type;
     unsigned int _defaultType;
     bool    _configured;
+    bool    _fractional;
     bool    _useQuery;
     bool    _useValidationQuery;
 };
@@ -250,6 +253,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
     Q_INVOKABLE QString itemNumber() const                 { return static_cast<ItemLineEdit*>(_number)->itemNumber();           }
     Q_INVOKABLE QString itemType() const                   { return static_cast<ItemLineEdit*>(_number)->itemType();             }
     Q_INVOKABLE bool isConfigured() const                  { return static_cast<ItemLineEdit*>(_number)->isConfigured();         }
+    Q_INVOKABLE bool isFractional() const                  { return static_cast<ItemLineEdit*>(_number)->isFractional();         }
     Q_INVOKABLE QString  uom() const                       { return static_cast<ItemLineEdit*>(_number)->uom();                  }
     Q_INVOKABLE QString  upc() const                       { return static_cast<ItemLineEdit*>(_number)->upc();                  }
 
@@ -277,6 +281,7 @@ class XTUPLEWIDGETS_EXPORT ItemCluster : public VirtualCluster
     void typeChanged(const QString &);
     void upcChanged(const QString &);
     void configured(bool);
+    void fractional(bool);
 
   protected:
     void addNumberWidget(ItemLineEdit* pNumberWidget);

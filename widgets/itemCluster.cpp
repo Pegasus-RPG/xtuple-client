@@ -236,6 +236,7 @@ ItemLineEdit::ItemLineEdit(QWidget* pParent, const char* pName) :
   _itemType = "";
   _id = -1;
   _configured = FALSE;
+  _fractional = FALSE;
   _delegate = new ItemLineEditDelegate(this);
 
   connect(_aliasAct, SIGNAL(triggered()), this, SLOT(sAlias()));
@@ -280,7 +281,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     else if (pNumber != QString::Null())
     {
       QString pre( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                   "                uom_name, item_type, item_config, item_upccode");
+                   "                uom_name, item_type, item_config, item_fractional, item_upccode");
 
       QStringList clauses;
       clauses = _extraClauses;
@@ -309,6 +310,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     _uom        = item.value("uom_name").toString();
     _itemType   = item.value("item_type").toString();
     _configured = item.value("item_config").toBool();
+    _fractional = item.value("item_fractional").toBool();
     _id         = item.value("item_id").toInt();
     _upc        = item.value("item_upccode").toInt();
     _valid      = TRUE;
@@ -321,6 +323,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     emit descrip2Changed(item.value("item_descrip2").toString());
     emit uomChanged(item.value("uom_name").toString());
     emit configured(item.value("item_config").toBool());
+    emit fractional(item.value("item_fractional").toBool());
     emit upcChanged(item.value("item_upccode").toString());
     
     emit valid(TRUE);
@@ -342,6 +345,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
     emit descrip2Changed("");
     emit uomChanged("");
     emit configured(FALSE);
+    emit fractional(FALSE);
     emit upcChanged("");
 
     emit valid(FALSE);
@@ -376,7 +380,7 @@ void ItemLineEdit::silentSetId(const int pId)
   else if (pId != -1)
   {
     QString pre( "SELECT DISTINCT item_number, item_descrip1, item_descrip2,"
-                 "                uom_name, item_type, item_config, item_upccode");
+                 "                uom_name, item_type, item_config, item_fractional, item_upccode");
 
     QStringList clauses;
     clauses = _extraClauses;
@@ -401,6 +405,7 @@ void ItemLineEdit::silentSetId(const int pId)
     _uom        = item.value("uom_name").toString();
     _itemType   = item.value("item_type").toString();
     _configured = item.value("item_config").toBool();
+    _fractional = item.value("item_fractional").toBool();
     _upc        = item.value("item_upccode").toString();
     _id         = pId;
     _valid      = TRUE;
@@ -412,6 +417,7 @@ void ItemLineEdit::silentSetId(const int pId)
     emit descrip2Changed(item.value("item_descrip2").toString());
     emit uomChanged(item.value("uom_name").toString());
     emit configured(item.value("item_config").toBool());
+    emit fractional(item.value("item_fractional").toBool());
     emit upcChanged(item.value("item_upccode").toString());
     
     emit valid(TRUE);
@@ -436,6 +442,7 @@ void ItemLineEdit::silentSetId(const int pId)
     emit descrip2Changed("");
     emit uomChanged("");
     emit configured(FALSE);
+    emit fractional(FALSE);
     emit upcChanged("");
 
     emit valid(FALSE);
@@ -705,6 +712,12 @@ bool ItemLineEdit::isConfigured()
   return _configured;
 }
 
+bool ItemLineEdit::isFractional()
+{
+    sParse();
+    return _fractional;
+}
+
 void ItemLineEdit::sParse()
 {
   if (DEBUG)
@@ -850,6 +863,7 @@ ItemCluster::ItemCluster(QWidget* pParent, const char* pName) :
   connect(itemNumber, SIGNAL(typeChanged(const QString &)), this, SIGNAL(typeChanged(const QString &)));
   connect(itemNumber, SIGNAL(upcChanged(const QString &)), this, SIGNAL(upcChanged(const QString &)));
   connect(itemNumber, SIGNAL(configured(bool)), this, SIGNAL(configured(bool)));
+  connect(itemNumber, SIGNAL(fractional(bool)), this, SIGNAL(fractional(bool)));
 
   connect(itemNumber, SIGNAL(uomChanged(const QString &)), _uom, SLOT(setText(const QString &)));
   connect(itemNumber, SIGNAL(descrip1Changed(const QString &)), _description, SLOT(setText(const QString &)));
