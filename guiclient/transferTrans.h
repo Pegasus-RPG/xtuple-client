@@ -30,6 +30,7 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+    virtual void sHandleItem();
     virtual void sPost();
     virtual void sPopulateFromQty( int pWarehousid );
     virtual void sPopulateToQty( int pWarehousid );

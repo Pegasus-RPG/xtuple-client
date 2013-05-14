@@ -423,6 +423,12 @@ void  transformTrans::sPopulateQOH()
     if (transformPopulateQOH.first())
     {
       _fromBeforeQty->setDouble(transformPopulateQOH.value("itemsite_qtyonhand").toDouble());
+
+      if (_item->isFractional())
+        _qty->setValidator(omfgThis->transQtyVal());
+      else
+        _qty->setValidator(new QIntValidator(this));
+
       sRecalculateAfter();
 
     }

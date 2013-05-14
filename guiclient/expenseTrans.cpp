@@ -224,6 +224,12 @@ void expenseTrans::sPopulateQOH(int pWarehousid)
     {
       _cachedQOH = qohq.value("itemsite_qtyonhand").toDouble();
       _beforeQty->setDouble(qohq.value("itemsite_qtyonhand").toDouble());
+
+      if (_item->isFractional())
+        _qty->setValidator(omfgThis->transQtyVal());
+      else
+        _qty->setValidator(new QIntValidator(this));
+
       sPopulateQty();
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting QOH"),

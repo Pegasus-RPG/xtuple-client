@@ -307,6 +307,11 @@ void adjustmentTrans::sPopulateQOH()
       if (populateAdjustment.value("itemsite_freeze").toBool())
         _absolute->setStyleSheet(QString("* { color: %1; }")
                                  .arg(namedColor("error").name()));
+
+      if (_item->isFractional())
+        _qty->setValidator(omfgThis->transQtyVal());
+      else
+        _qty->setValidator(new QIntValidator(this));
     }
     else if (populateAdjustment.lastError().type() != QSqlError::NoError)
     {

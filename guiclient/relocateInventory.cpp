@@ -22,6 +22,7 @@ relocateInventory::relocateInventory(QWidget* parent, const char* name, bool mod
 {
   setupUi(this);
 
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sHandleItem()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_move, SIGNAL(clicked()), this, SLOT(sMove()));
 
@@ -151,6 +152,14 @@ enum SetResponse relocateInventory::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+void relocateInventory::sHandleItem()
+{
+  if (_item->isFractional())
+    _qty->setValidator(omfgThis->transQtyVal());
+  else
+    _qty->setValidator(new QIntValidator(this));
 }
 
 void relocateInventory::sMove()

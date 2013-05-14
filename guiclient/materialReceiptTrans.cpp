@@ -301,6 +301,12 @@ void materialReceiptTrans::sPopulateQty()
       _afterQty->setDouble(materialPopulateQty.value("itemsite_qtyonhand").toDouble());
     else if (_qty->toDouble() != 0)
       _afterQty->setDouble(_cachedQOH + _qty->toDouble());
+
+    if (_item->isFractional())
+      _qty->setValidator(omfgThis->transQtyVal());
+    else
+      _qty->setValidator(new QIntValidator(this));
+
   }
   else if (materialPopulateQty.lastError().type() != QSqlError::NoError)
   {

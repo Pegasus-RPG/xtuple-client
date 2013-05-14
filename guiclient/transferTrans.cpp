@@ -27,6 +27,7 @@ transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 
 //  (void)statusBar();
 
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sHandleItem()));
   connect(_fromWarehouse, SIGNAL(newID(int)), this, SLOT(sPopulateFromQty(int)));
   connect(_post, SIGNAL(clicked()),                   this, SLOT(sPost()));
   connect(_qty,  SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQty(const QString&)));
@@ -159,6 +160,14 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+void transferTrans::sHandleItem()
+{
+  if (_item->isFractional())
+    _qty->setValidator(omfgThis->transQtyVal());
+  else
+    _qty->setValidator(new QIntValidator(this));
 }
 
 void transferTrans::sPost()

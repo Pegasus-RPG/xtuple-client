@@ -240,6 +240,12 @@ void scrapTrans::sPopulateQOH(int pWarehousid)
     {
       _cachedQOH = scrapPopulateQOH.value("itemsite_qtyonhand").toDouble();
       _beforeQty->setDouble(scrapPopulateQOH.value("itemsite_qtyonhand").toDouble());
+
+      if (_item->isFractional())
+        _qty->setValidator(omfgThis->transQtyVal());
+      else
+        _qty->setValidator(new QIntValidator(this));
+
       sPopulateQty();
     }
     else if (scrapPopulateQOH.lastError().type() != QSqlError::NoError)

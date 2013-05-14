@@ -26,6 +26,7 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
+    virtual void sHandleItem();
     virtual void sMove();
     virtual void sChangeDefaultLocation();
     virtual void sShowHideDefaultToTarget();
