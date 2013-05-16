@@ -40,13 +40,13 @@ void RateValidator::fixup ( QString & input ) const
   if (input.isEmpty())
       return;
 
-  double rateDouble = input.toDouble();
+  double rateDouble = QLocale().toDouble(input);
   if (rateDouble < bottom())
       rateDouble = bottom();
   else if (rateDouble > top())
       rateDouble = top();
 
-  input.setNum(rateDouble, 'f', decimals());
+  //input.setNum(rateDouble, 'f', decimals());
 }
 
 currencyConversion::currencyConversion(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -221,6 +221,7 @@ void currencyConversion::_sSave()
                     "WHERE curr_rate_id = :curr_rate_id")
                     .arg(inverter);
 
+  _rate->setText(_rate->text().replace(',', '.'));
 
   currency_sSave.prepare(sql);
   currency_sSave.bindValue(":curr_rate_id", _curr_rate_id);
