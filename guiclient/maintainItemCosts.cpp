@@ -52,7 +52,10 @@ maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WFla
     }
 
     if (_privileges->check("CreateCosts"))
+    {
       connect(_item, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
+      _new->setEnabled(true);
+    }
 }
 
 maintainItemCosts::~maintainItemCosts()
