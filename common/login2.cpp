@@ -224,8 +224,8 @@ void login2::sLogin()
 
   db.setUserName(_cUsername);
 
-  QRegExp xtuplecloud(".*\.xtuplecloud.com");
-  QRegExp xtuple(".*\.xtuple.com");
+  QRegExp xtuplecloud(".*\\.xtuplecloud\\.com");
+  QRegExp xtuple(".*\\.xtuple\\.com");
 
   bool isCloud = xtuplecloud.exactMatch(hostName);
   bool isXtuple = xtuple.exactMatch(hostName);
