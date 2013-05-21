@@ -297,6 +297,19 @@ void invoice::sClose()
       return;
     else
     {
+      // make sure invoice not posted
+      invoiceClose.prepare( "SELECT invchead_posted FROM invchead WHERE (invchead_id=:invchead_id);" );
+      invoiceClose.bindValue(":invchead_id", _invcheadid);
+      invoiceClose.exec();
+      if (invoiceClose.lastError().type() != QSqlError::NoError)
+        systemError(this, invoiceClose.lastError().databaseText(), __FILE__, __LINE__);
+      if (invoiceClose.first() && invoiceClose.value("invchead_posted").toBool())
+      {
+        QMessageBox::warning( this, tr("Cannot delete Invoice"),
+                              tr("<p>The Invoice has been posted and must be saved.") );
+        return;
+      }
+
       invoiceClose.prepare( "SELECT deleteInvoice(:invchead_id) AS result;" );
       invoiceClose.bindValue(":invchead_id", _invcheadid);
       invoiceClose.exec();
@@ -951,8 +964,20 @@ void invoice::closeEvent(QCloseEvent *pEvent)
   XSqlQuery invoicecloseEvent;
   if ( (_mode == cNew) && (_invcheadid != -1) )
   {
-    invoicecloseEvent.prepare( "DELETE FROM invcitem "
-               "WHERE (invcitem_invchead_id=:invchead_id);" );
+    // make sure invoice not posted
+    invoicecloseEvent.prepare( "SELECT invchead_posted FROM invchead WHERE (invchead_id=:invchead_id);" );
+    invoicecloseEvent.bindValue(":invchead_id", _invcheadid);
+    invoicecloseEvent.exec();
+    if (invoicecloseEvent.lastError().type() != QSqlError::NoError)
+      systemError(this, invoicecloseEvent.lastError().databaseText(), __FILE__, __LINE__);
+    if (invoicecloseEvent.first() && invoicecloseEvent.value("invchead_posted").toBool())
+    {
+      QMessageBox::warning( this, tr("Cannot delete Invoice"),
+                            tr("<p>The Invoice has been posted and must be saved.") );
+      return;
+    }
+
+    invoicecloseEvent.prepare( "DELETE FROM invcitem WHERE (invcitem_invchead_id=:invchead_id);" );
     invoicecloseEvent.bindValue(":invchead_id", _invcheadid);
     invoicecloseEvent.bindValue(":invoiceNumber", _invoiceNumber->text().toInt());
     invoicecloseEvent.exec();
