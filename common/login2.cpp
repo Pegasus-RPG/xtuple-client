@@ -245,16 +245,6 @@ void login2::sLogin()
     db.setPassword(QMd5(QString(_cPassword + "private" + _cUsername)));
     db.open();
   }
-  else if(isCloud)
-  {
-      db.setPassword(QMd5(QString(_cPassword + salt + _cUsername)));
-      db.open();
-  }
-  else if(isXtuple)
-  {
-      db.setPassword(QMd5(QString(_cPassword + salt + _cUsername)));
-      db.open();
-  }
     // try connecting to the database in each of the following ways in this order
     QList<QPair<QString, QString> > method;
     method << QPair<QString, QString>("requiressl=1", QMd5(QString(_cPassword + salt  + _cUsername)))
