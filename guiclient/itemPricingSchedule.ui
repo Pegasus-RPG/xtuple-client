@@ -192,19 +192,19 @@ to be bound by its terms.</comment>
            <number>5</number>
           </property>
           <item>
+           <widget class="QPushButton" name="_close">
+            <property name="text">
+             <string>&amp;Cancel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="_save">
             <property name="text">
              <string>&amp;Save</string>
             </property>
             <property name="default">
              <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_close">
-            <property name="text">
-             <string>&amp;Cancel</string>
             </property>
            </widget>
           </item>
@@ -348,7 +348,6 @@ to be bound by its terms.</comment>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>
