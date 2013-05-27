@@ -152,6 +152,11 @@ void XDateEdit::parseDate()
 
   _valid = false;
 
+  if (dateString.contains(QRegExp("[0-9]+[-][0-9]+"))) //user enters hyphens instead of slashes
+  {
+    dateString.replace("-", "/");
+  }
+
   if (dateString == _nullString || dateString.isEmpty())
     setNull();
 
