@@ -3122,6 +3122,7 @@ void salesOrderItem::populate()
         _itemsrc = item.value("quitem_itemsrc_id").toInt();
       else
         _itemsrc = -1;
+      _supplyOverridePrice->setLocalValue(item.value("coitem_prcost").toDouble());
     }
 
     _warranty->setChecked(item.value("coitem_warranty").toBool());
