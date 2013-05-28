@@ -14,6 +14,9 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
+
 warehouseZone::warehouseZone(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -76,15 +79,37 @@ enum SetResponse warehouseZone::set(const ParameterList &pParams)
 
 void warehouseZone::sSave()
 {
-  XSqlQuery warehouseSave;
-  if (_name->text().length() == 0)
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_name->text().trimmed().isEmpty(), _name,
+                          tr("<p>You must enter a valid name before saving "
+                             "this Site Zone."))
+         ;
+
+  XSqlQuery uniq;
+  uniq.prepare("SELECT whsezone_id "
+               "FROM whsezone "
+               "WHERE ( (whsezone_id<>:whsezone_id)"
+               " AND (UPPER(whsezone_name)=UPPER(:whsezone_name)) );" );
+  uniq.bindValue(":whsezone_id", _whsezoneid);
+  uniq.bindValue(":whsezone_name", _name->text());
+  uniq.exec();
+  if (uniq.first())
   {
-    QMessageBox::information( this, tr("No Name Entered"),
-                              tr("<p>You must enter a valid name before saving "
-                                 "this Site Zone.") );
-    _name->setFocus();
-    return;
+    errors << GuiErrorCheck(true, _name,
+                            tr("<p>The Site Zone information cannot be "
+                               "saved as the Site Zone Name that you "
+                               "entered conflicts with an existing Site Zone. "
+                               "You must uniquely name this Site Zone before "
+                               "you may save it." ));
   }
+  else if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Site Zone Name"),
+                                uniq, __FILE__, __LINE__))
+    return;
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Site Zone"), errors))
+    return;
+
+  XSqlQuery warehouseSave;
 
   if (_mode == cNew)
   {
