@@ -130,7 +130,8 @@ void postCreditMemos::sPost()
     if (_printJournal->isChecked())
     {
       ParameterList params;
-      params.append("source", tr("A/R"));
+      params.append("source", "A/R");
+      params.append("sourceLit", tr("A/R"));
       params.append("startJrnlnum", journalNumber);
       params.append("endJrnlnum", journalNumber);
 

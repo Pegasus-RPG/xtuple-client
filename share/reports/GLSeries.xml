@@ -20,12 +20,12 @@
   <sql>SELECT &lt;? value("title") ?> AS title,
        formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
-       &lt;? if exists("source") ?>
-         text(&lt;? value("source") ?>)
+       &lt;? if exists("sourceLit") ?>
+         text(&lt;? value("sourceLit") ?>)
        &lt;? else ?>
          text('All Sources')
        &lt;? endif  ?>
-       AS source,
+       AS sourceLit,
        &lt;? if exists("startJrnlnum") ?>
          text('Start Journal Number:')
        &lt;? else ?>
@@ -57,6 +57,12 @@ SELECT gltrans_id,
        CASE WHEN (gltrans_amount > 0) THEN formatMoney(gltrans_amount)
             ELSE ''
        END AS f_credit,
+       CASE WHEN (gltrans_amount &lt; 0) THEN (gltrans_amount * -1)
+            ELSE 0.0
+       END AS debit,
+       CASE WHEN (gltrans_amount > 0) THEN (gltrans_amount)
+            ELSE 0.0
+       END AS credit,
        formatBoolYN(gltrans_posted) AS f_posted
   FROM gltrans, accnt
  WHERE ((gltrans_accnt_id=accnt_id)
@@ -88,6 +94,12 @@ SELECT sltrans_id AS gltrans_id,
        CASE WHEN (sltrans_amount > 0) THEN formatMoney(sltrans_amount)
             ELSE ''
        END AS f_credit,
+       CASE WHEN (sltrans_amount &lt; 0) THEN (sltrans_amount * -1)
+            ELSE 0.0
+       END AS debit,
+       CASE WHEN (sltrans_amount > 0) THEN (sltrans_amount)
+            ELSE 0.0
+       END AS credit,
        formatBoolYN(sltrans_posted) AS f_posted
   FROM sltrans, accnt
  WHERE ((sltrans_accnt_id=accnt_id)
@@ -189,7 +201,7 @@ ORDER BY sltrans_date, sltrans_sequence, sltrans_amount DESC;
    <vcenter/>
    <data>
     <query>head</query>
-    <column>source</column>
+    <column>sourceLit</column>
    </data>
   </field>
   <label>
@@ -863,4 +875,65 @@ ORDER BY sltrans_date, sltrans_sequence, sltrans_amount DESC;
    </data>
   </field>
  </pgfoot>
+ <rptfoot>
+  <height>35</height>
+  <field>
+   <rect>
+    <x>510</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>detail</query>
+    <column>debit</column>
+   </data>
+   <format>%0.2f</format>
+   <tracktotal/>
+  </field>
+  <field>
+   <rect>
+    <x>595</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>detail</query>
+    <column>credit</column>
+   </data>
+   <format>%0.2f</format>
+   <tracktotal/>
+  </field>
+  <label>
+   <rect>
+    <x>415</x>
+    <y>5</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Totals:</string>
+  </label>
+ </rptfoot>
 </report>

@@ -305,7 +305,8 @@ void openVouchers::sPost()
   if (_printJournal->isChecked())
   {
     ParameterList params;
-    params.append("source", tr("A/P"));
+    params.append("source", "A/P");
+    params.append("sourceLit", tr("A/P"));
     params.append("startJrnlnum", journalNumber);
     params.append("endJrnlnum", journalNumber);
 
