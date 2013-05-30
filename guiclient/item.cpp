@@ -2017,6 +2017,23 @@ bool item::checkSitePrivs(int itemsiteid)
 
 void item::sHandleButtons()
 {
+  if(_mode == cNew)
+  {
+    ParameterList params;
+
+    if(_privileges->check("MaintainBOMs") && _mode != cView)
+      params.append("mode", "edit");
+    else
+      params.append("mode", "view");
+    params.append("item_id", _itemid);
+
+    _bomPage->layout()->removeWidget(_bom);
+    _bom->set(params);
+    _bomPage->layout()->addWidget(_bom);
+
+    _bom->sFillList();
+  }
+
   if (_notesButton->isChecked())
     _remarksStack->setCurrentIndex(0);
   else if (_extDescripButton->isChecked())
