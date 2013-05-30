@@ -2027,9 +2027,7 @@ void item::sHandleButtons()
       params.append("mode", "view");
     params.append("item_id", _itemid);
 
-    _bomPage->layout()->removeWidget(_bom);
     _bom->set(params);
-    _bomPage->layout()->addWidget(_bom);
 
     _bom->sFillList();
   }
