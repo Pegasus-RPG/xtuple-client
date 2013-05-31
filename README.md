@@ -1,4 +1,4 @@
-desktop
+Qt Client
 =======
 
-Desktop Client and Database
+xTuple Desktop Client built with Qt framework
