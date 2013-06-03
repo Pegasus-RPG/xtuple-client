@@ -64,7 +64,7 @@ INCLUDEPATH += ../$${OPENRPT_DIR}/common           ../$${OPENRPT_BLD}/common \
 	       ../$${CSVIMP_DIR}/csvimpcommon      ../$${CSVIMP_BLD}/csvimpcommon
 INCLUDEPATH =  $$unique(INCLUDEPATH)
 
-XTUPLE_DIR=../../xtuple
+XTUPLE_DIR=../../qt-client
 XTUPLE_BLD=$${XTUPLE_DIR}
 exists(../xtuple-build-desktop) {
   XTUPLE_BLD=../../xtuple-build-desktop
