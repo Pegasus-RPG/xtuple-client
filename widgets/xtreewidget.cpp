@@ -997,10 +997,13 @@ bool XTreeWidgetItem::operator<(const XTreeWidgetItem &other) const
       break;
 
     case QVariant::String:
+      bool ok;
       if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
         returnVal = (v1.toString() < v2.toString());
-      else if (v1.toString().toDouble() == 0.0 && v2.toDouble() != 0.0) //v1 is string, v2 is number
+      else if (v1.toString().toDouble() == 0.0 && v2.toDouble(&ok)) //v1 is string, v2 is number
         returnVal = false; //the number should always be treated as greater than a string
+      else if (v1.toDouble(&ok) && v2.toString().toDouble() == 0.0)
+        returnVal = true;
       else
         returnVal = (v1.toDouble() < v2.toDouble());
       break;
