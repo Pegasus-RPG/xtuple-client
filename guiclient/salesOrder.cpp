@@ -4295,7 +4295,6 @@ void salesOrder::sFreightChanged()
       _freightCache = _freight->localValue();
   }
 
-  save(true);
   sCalculateTax();
 }
 
