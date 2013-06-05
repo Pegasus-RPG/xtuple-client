@@ -184,6 +184,9 @@ void login2::sChangeURL()
 {
   buildDatabaseURL(_databaseURL, "psql", _server->text(), _database->lineEdit()->text(), _port->text());
 
+  _databaseURL.replace("http://", "");
+  _databaseURL.replace("https://", "");
+
   updateRecentOptions();
   populateDatabaseInfo();
   updateRecentOptions();
