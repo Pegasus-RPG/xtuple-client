@@ -545,6 +545,11 @@ void login2::updateRecentOptionsActions()
     int size = list.size();
     if (size > 5)
       size = 5;
+
+    QString protocol;
+    QString hostName;
+    QString dbName;
+    QString port;
   
     if (size)
     {
@@ -556,6 +561,8 @@ void login2::updateRecentOptionsActions()
         act = new QAction(list.value(i).remove("psql://"),this);
         connect(act, SIGNAL(triggered()), this, SLOT(selectRecentOptions()));
         recentMenu->addAction(act);
+        parseDatabaseURL(list.value(i), protocol, hostName, dbName, port);
+        _database->addItem(dbName);
       }
   
       recentMenu->addSeparator();
