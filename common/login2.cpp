@@ -184,14 +184,6 @@ void login2::sChangeURL()
 {
   buildDatabaseURL(_databaseURL, "psql", _server->text(), _database->lineEdit()->text(), _port->text());
 
-  _saveSettings = true;
-  //toDo: implement saveSettings checkbox
-
-  if (_saveSettings)
-  {
-    xtsettingsSetValue("/xTuple/_databaseURL", _databaseURL);
-  }
-
   updateRecentOptions();
   populateDatabaseInfo();
   updateRecentOptions();
@@ -550,6 +542,7 @@ void login2::updateRecentOptionsActions()
     QString hostName;
     QString dbName;
     QString port;
+    int alreadyExists;
   
     if (size)
     {
@@ -562,7 +555,9 @@ void login2::updateRecentOptionsActions()
         connect(act, SIGNAL(triggered()), this, SLOT(selectRecentOptions()));
         recentMenu->addAction(act);
         parseDatabaseURL(list.value(i), protocol, hostName, dbName, port);
-        _database->addItem(dbName);
+        alreadyExists = _database->findText(dbName);
+        if (alreadyExists == -1)
+          _database->addItem(dbName);
       }
   
       recentMenu->addSeparator();
