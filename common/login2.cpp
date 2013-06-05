@@ -174,6 +174,9 @@ int login2::set(const ParameterList &pParams, QSplashScreen *pSplash)
   if(pParams.inList("login"))
     sLogin();
 
+  updateRecentOptions();
+  updateRecentOptionsActions();
+
   return 0;
 }
 
@@ -486,6 +489,7 @@ void login2::populateDatabaseInfo()
   parseDatabaseURL(_databaseURL, protocol, hostName, dbName, port);
   _server->setText(hostName);
   _database->lineEdit()->setText(dbName);
+  _port->setText(port);
 }
 
 QString login2::username()
@@ -521,9 +525,9 @@ void login2::updateRecentOptions()
 {
   //if (_cloudOption->isChecked())
   //  return;
-
     
   QStringList list = xtsettingsValue("/xTuple/_recentOptionsList").toStringList();
+  _recent->setEnabled(list.size());
   list.removeAll(_databaseURL);
   list.prepend(_databaseURL);
       
@@ -545,7 +549,7 @@ void login2::updateRecentOptionsActions()
     if (size)
     {
       //if (_otherOption->isChecked())
-      //  _recent->setEnabled(true);
+      _recent->setEnabled(true);
       QAction *act;
       for (int i = 0; i < size; ++i) 
       {
