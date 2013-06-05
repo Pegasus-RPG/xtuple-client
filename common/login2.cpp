@@ -517,7 +517,6 @@ void login2::updateRecentOptions()
 {
   //if (_cloudOption->isChecked())
   //  return;
-    
   QStringList list = xtsettingsValue("/xTuple/_recentOptionsList").toStringList();
   _recent->setEnabled(list.size());
   list.removeAll(_databaseURL);
