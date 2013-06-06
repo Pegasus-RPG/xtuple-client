@@ -230,8 +230,10 @@ to be bound by its terms.</comment>
  </widget>
  <layoutdefault spacing="5" margin="5"/>
  <tabstops>
-  <tabstop>_server</tabstop>
+  <tabstop>_username</tabstop>
+  <tabstop>_password</tabstop>
   <tabstop>_database</tabstop>
+  <tabstop>_server</tabstop>
   <tabstop>_port</tabstop>
  </tabstops>
  <resources/>

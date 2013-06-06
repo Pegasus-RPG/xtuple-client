@@ -53,7 +53,7 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_buttonBox, SIGNAL(helpRequested()), this, SLOT(sOpenHelp()));
   //connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
   connect(_server, SIGNAL(editingFinished()), this, SLOT(sChangeURL()));
-  connect(_database, SIGNAL(editingFinished()), this, SLOT(sChangeURL()));
+  connect(_database, SIGNAL(editTextChanged(QString)), this, SLOT(sChangeURL()));
   connect(_port, SIGNAL(editingFinished()), this, SLOT(sChangeURL()));
   //connect(_otherOption, SIGNAL(toggled(bool)), _options, SLOT(setEnabled(bool)));
   //connect(_otherOption, SIGNAL(toggled(bool)), _recent, SLOT(setEnabled(bool)));
@@ -69,7 +69,7 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _password->setEchoMode(QLineEdit::Password);
 
   //updateRecentOptionsActions();
-  _databaseURL = xtsettingsValue("/xTuple/_databaseURL", "pgsql://:5432/").toString();
+  _databaseURL = xtsettingsValue("/xTuple/_databaseURL", "pgsql://:5432/demo").toString();
   /*
   if(xtsettingsValue("/xTuple/_demoOption", false).toBool())
     _demoOption->setChecked(true);
@@ -184,14 +184,13 @@ void login2::sChangeURL()
 {
   buildDatabaseURL(_databaseURL, "psql", _server->text(), _database->lineEdit()->text(), _port->text());
 
-  _databaseURL.replace("http://", "");
   _databaseURL.replace("https://", "");
+  _databaseURL.replace("http://", "");
 
   updateRecentOptions();
   populateDatabaseInfo();
   updateRecentOptions();
   updateRecentOptionsActions();
-  _username->setFocus();
 }
 
 void login2::sHandleButton()
