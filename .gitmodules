@@ -1,0 +1,9 @@
+[submodule "openrpt"]
+	path = openrpt
+	url = https://github.com/mikerodonnell89/openrpt
+[submodule "csvimp"]
+	path = csvimp
+	url = https://github.com/mikerodonnell89/csvimp
+[submodule "xtlib"]
+	path = xtlib
+	url = https://github.com/mikerodonnell89/xtlib
