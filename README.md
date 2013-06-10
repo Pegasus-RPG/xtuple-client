@@ -43,3 +43,22 @@ Pull Requests
 So, you've got your new code on YOUR github, but not xTuple's.  Time to issue a pull request.  Click the pull request button.  The left side is the side we want to merge into (in this case, xTuple's master branch) and the right side is the side where the new code is coming from (your github's newBranch).  It's always a good idea to double check everything here using Github's diff tools - make sure your code looks good and make sure you're merging from the right branch into xTuple's master!
 
 Issue the pull request, but don't merge it!  Someone else will look over the request using the diff tools and merge it into xTuple's master branch for you.  Set the incident you fixed to Resolved/Open, and whoever does the merge and tests it will close it.
+
+Keeping up to date with Master
+------
+
+Since everyone is pushing their code and pulling requests on xTuple code all the time, your local code will become dated pretty quickly.  We need to set up an easy way to keep our code up to date with xTuple's master on github.  To do this, we set up a remote.
+
+git remote add QTCLIENT git://github.com/xtuple/qt-client.git
+
+Now we have two remotes: origin (you) and QTCLIENT (xTuple).  To get QTCLIENT/master code into our local masters, we do the following:
+
+git checkout master
+git fetch QTCLIENT
+git merge QTCLIENT/master
+git submodule update --recursive
+git push origin master
+
+What this does is 1) checks out our local master 2) fetches QTCLIENT things 3) merges QTCLIENT's master into our local master 4) updates the submodules (in this case, openrpt, csvimp and xtlib) and 5) pushes our now up-to-date local master to our github's internet master.
+
+I recommend sticking those 5 commands in a shell script and running it a couple of times throughout the day to stay up to date.
