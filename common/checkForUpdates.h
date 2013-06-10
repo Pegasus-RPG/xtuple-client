@@ -18,6 +18,7 @@
 #include <QFile>
 #include <QtNetwork>
 #include <QMessageBox>
+#include <QPushButton>
 
 class checkForUpdates : public QDialog, public Ui::checkForUpdates
 {
@@ -26,6 +27,10 @@ class checkForUpdates : public QDialog, public Ui::checkForUpdates
 public:
     checkForUpdates(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~checkForUpdates();
+
+    QPushButton* _ok;
+    QPushButton* _cancel;
+    QPushButton* _ignore;
 
 public slots:
     void downloadButtonPressed();
