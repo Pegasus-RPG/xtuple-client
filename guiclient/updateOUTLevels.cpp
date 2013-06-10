@@ -11,7 +11,6 @@
 #include "updateOUTLevels.h"
 
 #include <QMessageBox>
-#include "submitAction.h"
 
 updateOUTLevels::updateOUTLevels(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -28,10 +27,6 @@ updateOUTLevels::updateOUTLevels(QWidget* parent, const char* name, bool modal, 
   connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
   connect(_fixedDays, SIGNAL(toggled(bool)), _days, SLOT(setEnabled(bool)));
   connect(_leadTime, SIGNAL(toggled(bool)), _leadTimePad, SLOT(setEnabled(bool)));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-  
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
   
   _plannerCode->setType(ParameterGroup::PlannerCode);
 }
@@ -83,36 +78,6 @@ void updateOUTLevels::sUpdate()
     updateUpdate.exec();
 
     accept();
-  }
-  else
-  {
-    QMessageBox::critical( this, tr("Incomplete Data"),
-                           tr("You must select at least one Period to continue.") );
-    _periods->setFocus();
-    return;
-  }
-}
-
-void updateOUTLevels::sSubmit()
-{
-  if (_periods->topLevelItemCount() > 0)
-  {
-    ParameterList params;
-    params.append("action_name", "UpdateOUTLevel");
-    params.append("period_id_list", _periods->periodString());
-    _warehouse->appendValue(params);
-    _plannerCode->appendValue(params);
-
-    if (_leadTime->isChecked())
-      params.append("leadtimepad", _leadTimePad->value());
-    else if (_fixedDays->isChecked())
-      params.append("fixedlookahead", _days->value());
-
-    submitAction newdlg(this, "", TRUE);
-    newdlg.set(params);
-
-    if (newdlg.exec() == XDialog::Accepted)
-      accept();
   }
   else
   {

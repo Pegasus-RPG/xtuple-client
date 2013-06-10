@@ -12,7 +12,6 @@
 
 #include <QVariant>
 #include <QSqlError>
-#include "submitAction.h"
 
 updateActualCostsByItem::updateActualCostsByItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -21,14 +20,9 @@ updateActualCostsByItem::updateActualCostsByItem(QWidget* parent, const char* na
 
   // signals and slots connections
   connect(_item, SIGNAL(valid(bool)), _update, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _submit, SLOT(setEnabled(bool)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_selectAll, SIGNAL(clicked()), this, SLOT(sSelectAll()));
   connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-  
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
 
   if (!_metrics->boolean("Routings"))
   {
@@ -143,52 +137,4 @@ void updateActualCostsByItem::sUpdate()
     _item->setId(-1);
     _item->setFocus();
   }
-}
-
-void updateActualCostsByItem::sSubmit()
-{
-  ParameterList params;
-
-  if (_updateActual)
-    params.append("action_name", "UpdateActualCost");
-  else
-    params.append("action_name", "UpdateStandardCost");
-
-  params.append("item_id", _item->id());
-
-  if (_lowerMaterial->isChecked())
-    params.append("LowerMaterial");
-
-  if (_directLabor->isChecked())
-    params.append("DirectLabor");
-
-  if (_lowerDirectLabor->isChecked())
-    params.append("LowerDirectLabor");
-
-  if (_overhead->isChecked())
-    params.append("Overhead");
-
-  if (_lowerOverhead->isChecked())
-    params.append("LowerOverhead");
-
-  if (_machOverhead->isChecked())
-    params.append("MachineOverhead");
-
-  if (_lowerMachOverhead->isChecked())
-    params.append("LowerMachineOverhead");
-
-  if (_user->isChecked())
-    params.append("User");
-
-  if (_lowerUser->isChecked())
-    params.append("LowerUser");
-
-  if (_rollUp->isChecked())
-    params.append("RollUp");
-
-  submitAction newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() == XDialog::Accepted)
-    accept();
 }

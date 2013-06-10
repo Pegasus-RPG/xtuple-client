@@ -240,13 +240,6 @@ to be bound by its terms.</comment>
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QPushButton" name="_submit">
-             <property name="text">
-              <string>&amp;Schedule</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
          <item>
@@ -387,7 +380,6 @@ to be bound by its terms.</comment>
   <tabstop>_days</tabstop>
   <tabstop>_periods</tabstop>
   <tabstop>_update</tabstop>
-  <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>

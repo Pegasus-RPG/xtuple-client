@@ -13,7 +13,6 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
-#include "submitAction.h"
 #include <metasql.h>
 #include "mqlutil.h"
 
@@ -94,19 +93,6 @@ void createPlannedOrdersByPlannerCode::sCreate(ParameterList params)
   accept();
 }
 
-
-void createPlannedOrdersByPlannerCode::sSubmit()
-{
-  ParameterList params;
-  if (! setParams(params))
-    return;
-
-  submitAction newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() == XDialog::Accepted)
-    accept();
-}
 
 bool createPlannedOrdersByPlannerCode::setParams(ParameterList &pParams)
 {

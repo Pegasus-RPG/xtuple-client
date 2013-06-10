@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>621</width>
+    <width>626</width>
     <height>133</height>
    </rect>
   </property>
@@ -68,13 +68,6 @@ to be bound by its terms.</comment>
          </property>
          <property name="default">
           <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_submit">
-         <property name="text">
-          <string>&amp;Schedule</string>
          </property>
         </widget>
        </item>
