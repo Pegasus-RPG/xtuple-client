@@ -53,7 +53,7 @@ Since everyone is pushing their code and pulling requests on xTuple code all the
 
 git remote add QTCLIENT git://github.com/xtuple/qt-client.git
 
-Now we have two remotes: origin (you) and QTCLIENT (xTuple).  To get QTCLIENT/master code into our local masters, we do the following:
+Now we have two remotes: origin (you) and QTCLIENT (xTuple).  To get QTCLIENT/master code into our local masters, do the following:
 
 git checkout master
 
