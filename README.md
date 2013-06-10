@@ -53,12 +53,16 @@ Since everyone is pushing their code and pulling requests on xTuple code all the
 
 git remote add QTCLIENT git://github.com/xtuple/qt-client.git
 
-Now we have two remotes: origin (you) and QTCLIENT (xTuple).  To get QTCLIENT/master code into our local masters, we do the following:
+Now we have two remotes: origin (you) and QTCLIENT (xTuple).  To get QTCLIENT/master code into our local masters, do the following:
 
 git checkout master
+
 git fetch QTCLIENT
+
 git merge QTCLIENT/master
+
 git submodule update --recursive
+
 git push origin master
 
 What this does is 1) checks out our local master 2) fetches QTCLIENT things 3) merges QTCLIENT's master into our local master 4) updates the submodules (in this case, openrpt, csvimp and xtlib) and 5) pushes our now up-to-date local master to our github's internet master.
