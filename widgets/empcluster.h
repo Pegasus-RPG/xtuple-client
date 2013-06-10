@@ -14,6 +14,9 @@
 
 #include "virtualCluster.h"
 
+void setupEmpClusterLineEdit(QScriptEngine *engine);
+void setupEmpCluster(QScriptEngine *engine);
+
 class EmpInfo : public VirtualInfo
 {
     Q_OBJECT
@@ -61,4 +64,8 @@ class XTUPLEWIDGETS_EXPORT EmpCluster : public VirtualCluster
     public:
         EmpCluster(QWidget*, const char* = 0);
 };
+
+Q_DECLARE_METATYPE(EmpClusterLineEdit*)
+Q_DECLARE_METATYPE(EmpCluster*)
+
 #endif
