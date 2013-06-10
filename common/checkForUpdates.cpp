@@ -44,9 +44,11 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
 
   setupUi(this);
   progressDialog = new QProgressDialog(this);
-  connect(_button, SIGNAL(clicked()), this, SLOT(downloadButtonPressed()));
-  connect(_no, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_continue, SIGNAL(clicked()), this, SLOT (accept()));
+  _ok = _buttonBox->button(QDialogButtonBox::Ok);
+  _ignore = _buttonBox->button(QDialogButtonBox::Ignore);
+  connect(_ok, SIGNAL(clicked()), this, SLOT(downloadButtonPressed()));
+  connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(_ignore, SIGNAL(clicked()), this, SLOT (accept()));
 
 #ifdef Q_OS_MACX
 OS = "osx";
@@ -71,23 +73,15 @@ suffix = "run";
     serverVersion = versions.value("dbver").toString();
     newurl = url + "/xTuple-" + serverVersion + "-" + OS + "-installer." + suffix;
 
-    _label->setText(tr("Your client does not match the server version: %1. Would you like to update to xTuple %1?").arg(serverVersion));
+    _label->setText(tr("Your client does not match the server version: %1. Would you like to update?").arg(serverVersion));
 
-    metric.exec("SELECT metric_value AS disallowMismatch FROM metric WHERE(metric_name='DisallowMismatchClientVersion')");
-    if(metric.first() && (metric.value("disallowMismatch").toString() == "t"))
-      _continue->setEnabled(true);
-    if(metric.first() && (metric.value("disallowMismatch").toString() =="f"))
-      _continue->setEnabled(false);
-    else if (metric.lastError().type() != QSqlError::NoError)
-      systemError(this, metric.lastError().text(), __FILE__, __LINE__);
+    metric.exec("SELECT fetchMetricBool('DisallowMismatchClientVersion') as disallowed;");
+    metric.first();
+    _ignore->setEnabled(!metric.value("disallowed").toBool());
 
-    metric.exec("SELECT metric_value AS allowUpdate FROM metric WHERE(metric_name='AutoVersionUpdate')");
-    if(metric.first() && (metric.value("allowUpdate").toString() =="t"))
-        _button->setEnabled(true);
-    if (metric.first() && (metric.value("allowUpdate").toString() == "f"))
-        _button->setEnabled(false);
-    else if (metric.lastError().type() != QSqlError::NoError)
-      systemError(this, metric.lastError().text(), __FILE__, __LINE__);
+    metric.exec("SELECT fetchMetricBool('AutoVersionUpdate') as allow;");
+    metric.first();
+    _ok->setEnabled(metric.value("allow").toBool());
   }
   else if (versions.lastError().type() != QSqlError::NoError)
     systemError(this, versions.lastError().text(), __FILE__, __LINE__);
@@ -134,7 +128,7 @@ void checkForUpdates::downloadButtonPressed()
       //connect(reply, SIGNAL(downloadComplete()), this, SLOT(startUpdate()));
 
       progressDialog->setLabelText(tr("Downloading %1...").arg(filename));
-      _button->setEnabled(false);
+      _ok->setEnabled(false);
       progressDialog->exec();
 }
 void checkForUpdates::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
@@ -154,7 +148,7 @@ void checkForUpdates::cancelDownload()
 {
     downloadRequestAborted = true;
     reply->abort();
-    _button->setEnabled(true);
+    _ok->setEnabled(true);
 }
 void checkForUpdates::downloadFinished()
 {
@@ -169,13 +163,13 @@ void checkForUpdates::downloadFinished()
         }
         reply->deleteLater();
         progressDialog->hide();
-        _button->setEnabled(true);
+        _ok->setEnabled(true);
         return;
     }
 
     downloadReadyRead();
     progressDialog->hide();
-    _button->setEnabled(true);
+    _ok->setEnabled(true);
     file->flush();
     file->close();
 
