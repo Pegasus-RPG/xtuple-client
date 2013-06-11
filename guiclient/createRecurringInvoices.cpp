@@ -15,7 +15,6 @@
 #include <QVariant>
 
 #include "storedProcErrorLookup.h"
-#include "submitAction.h"
 
 createRecurringInvoices::createRecurringInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -23,10 +22,6 @@ createRecurringInvoices::createRecurringInvoices(QWidget* parent, const char* na
   setupUi(this);
 
   connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
 }
 
 createRecurringInvoices::~createRecurringInvoices()
@@ -62,17 +57,3 @@ void createRecurringInvoices::sUpdate()
 
   accept();
 }
-
-void createRecurringInvoices::sSubmit()
-{
-  ParameterList params;
-
-  params.append("action_name", "CreateRecurringInvoices");
-
-  submitAction newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if(newdlg.exec() == XDialog::Accepted)
-    accept();
-}
-

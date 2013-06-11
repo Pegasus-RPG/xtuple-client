@@ -12,7 +12,6 @@
 
 #include <QSqlError>
 #include <QVariant>
-#include "submitAction.h"
 
 postCostsByItem::postCostsByItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -21,14 +20,9 @@ postCostsByItem::postCostsByItem(QWidget* parent, const char* name, bool modal, 
 
   // signals and slots connections
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_item, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _submit, SLOT(setEnabled(bool)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_selectAll, SIGNAL(clicked()), this, SLOT(sSelectAll()));
-  
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
   
   if (!_metrics->boolean("Routings"))
   {
@@ -135,51 +129,4 @@ void postCostsByItem::sPost()
     _item->setId(-1);
     _item->setFocus();
   }
-}
-
-void postCostsByItem::sSubmit()
-{
-  ParameterList params;
-
-  params.append("action_name", "PostActualCost");
-  params.append("item_id", _item->id());
-
-  if (_material->isChecked())
-    params.append("Material");
-
-  if (_lowerMaterial->isChecked())
-    params.append("LowerMaterial");
-
-  if (_directLabor->isChecked())
-    params.append("DirectLabor");
-
-  if (_lowerDirectLabor->isChecked())
-    params.append("LowerDirectLabor");
-
-  if (_overhead->isChecked())
-    params.append("Overhead");
-
-  if (_lowerOverhead->isChecked())
-    params.append("LowerOverhead");
-
-  if (_machOverhead->isChecked())
-    params.append("MachineOverhead");
-
-  if (_lowerMachOverhead->isChecked())
-    params.append("LowerMachineOverhead");
-
-  if (_user->isChecked())
-    params.append("User");
-
-  if (_lowerUser->isChecked())
-    params.append("LowerUser");
-
-  if (_rollUp->isChecked())
-    params.append("RollUp");
-
-  submitAction newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() == XDialog::Accepted)
-    accept();
 }

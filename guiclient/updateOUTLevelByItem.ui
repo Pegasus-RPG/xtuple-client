@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
+    <width>744</width>
     <height>381</height>
    </rect>
   </property>
@@ -99,16 +99,6 @@ to be bound by its terms.</comment>
              </property>
              <property name="default">
               <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_submit">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>&amp;Schedule</string>
              </property>
             </widget>
            </item>
@@ -349,6 +339,7 @@ to be bound by its terms.</comment>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -371,7 +362,6 @@ to be bound by its terms.</comment>
   <tabstop>_days</tabstop>
   <tabstop>_periods</tabstop>
   <tabstop>_update</tabstop>
-  <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
@@ -428,22 +418,6 @@ to be bound by its terms.</comment>
    <sender>_item</sender>
    <signal>valid(bool)</signal>
    <receiver>_update</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_item</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_submit</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">

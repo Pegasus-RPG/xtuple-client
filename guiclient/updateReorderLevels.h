@@ -28,7 +28,6 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sUpdate();
-    virtual void sSubmit();
     virtual void sPost();
     virtual void sOpenEdit(XTreeWidgetItem *item, const int col);
     virtual void sCloseEdit(XTreeWidgetItem *current, XTreeWidgetItem *previous);

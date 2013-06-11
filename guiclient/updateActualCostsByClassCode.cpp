@@ -12,7 +12,6 @@
 
 #include <QSqlError>
 #include <QVariant>
-#include "submitAction.h"
 
 updateActualCostsByClassCode::updateActualCostsByClassCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -23,10 +22,6 @@ updateActualCostsByClassCode::updateActualCostsByClassCode(QWidget* parent, cons
   connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_selectAll, SIGNAL(clicked()), this, SLOT(sSelectAll()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-  
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
 
   _classCode->setType(ParameterGroup::ClassCode);
 
@@ -153,52 +148,3 @@ void updateActualCostsByClassCode::sUpdate()
 
   accept();
 }
-
-void updateActualCostsByClassCode::sSubmit()
-{
-  ParameterList params;
-
-  if (_updateActual)
-    params.append("action_name", "UpdateActualCost");
-  else
-    params.append("action_name", "UpdateStandardCost");
-
-  if (_lowerMaterial->isChecked())
-    params.append("LowerMaterial");
-
-  if (_directLabor->isChecked())
-    params.append("DirectLabor");
-
-  if (_lowerDirectLabor->isChecked())
-    params.append("LowerDirectLabor");
-
-  if (_overhead->isChecked())
-    params.append("Overhead");
-
-  if (_lowerOverhead->isChecked())
-    params.append("LowerOverhead");
-
-  if (_machOverhead->isChecked())
-    params.append("MachineOverhead");
-
-  if (_lowerMachOverhead->isChecked())
-    params.append("LowerMachineOverhead");
-
-  if (_user->isChecked())
-    params.append("User");
-
-  if (_lowerUser->isChecked())
-    params.append("LowerUser");
-
-  if (_rollUp->isChecked())
-    params.append("RollUp");
-
-  _classCode->appendValue(params);
-
-  submitAction newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() == XDialog::Accepted)
-    accept();
-}
-
