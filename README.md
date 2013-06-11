@@ -32,7 +32,7 @@ Clone the Code
 
 Then we'll use terminal to clone our freshly forked repos onto our machines.  When you call git clone from a terminal window, you pull the repository from github to your local machine.  By default, it'll be created in a new directory named after the repo you're cloning.
 
-git clone https://github.com/YOUR_GIT_NAME/qt-client.git
+    git clone https://github.com/YOUR_GIT_NAME/qt-client.git
 
 openrpt, csvimp and xtlib are submodules of the qt-client repository.  When you clone qt-client, you get these repos too, and you'll see them in your file system as subdirectories of qt-client.  They're special though; any manipulation or updating of these directories will be ignored by the qt-client repo - for example, changed openrpt code will not show up in a "git diff" called from the qt-client directory.  If you look at the directory structure through Github, you'll notice that submodules directories are green.
 
@@ -43,7 +43,7 @@ When you first clone a repo, you start off in the "master" branch.  We want this
 
 To create a new branch, and to check it out, call
 
-git checkout -b newBranchName
+    git checkout -b newBranchName
 
 "checkout" is the command used to switch between branches.  Use -b when you want to create a new branch.  Use "git branch" to list your branches for the current repo.
 
@@ -70,19 +70,19 @@ Keeping up to date with xTuple's Master
 
 Since everyone is pushing their code and pulling requests on xTuple code all the time, your local code will become dated pretty quickly.  We need to set up an easy way to keep our code up to date with xTuple's master on github.  To do this, we set up a remote.
 
-git remote add QTCLIENT git://github.com/xtuple/qt-client.git
+    git remote add QTCLIENT git://github.com/xtuple/qt-client.git
 
 Now we have two remotes: origin (you) and QTCLIENT (xTuple).  To get QTCLIENT/master code into our local masters, do the following:
 
-git checkout master
+    git checkout master
 
-git fetch QTCLIENT
+    git fetch QTCLIENT
 
-git merge QTCLIENT/master
+    git merge QTCLIENT/master
 
-git submodule update --recursive
+    git submodule update --recursive
 
-git push origin master
+    git push origin master
 
 What this does is 1) checks out our local master 2) fetches QTCLIENT things 3) merges QTCLIENT's master into our local master 4) updates the submodules (in this case, openrpt, csvimp and xtlib) and 5) pushes our now up-to-date local master to our github's internet master.
 
