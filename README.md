@@ -56,7 +56,11 @@ Adding, Committing and Pushing Code
 
 Now you're ready to commit.  Make use of the "git status" and "git diff" tools to make sure you're satisfied with the changes you've made.  "git status" will tell you that there are changes, but nothing is staged for commit.  To stage files for commit, you add them with "git add".  Then, you commit them with "git commit" (please use -m and leave a message detailing the commit).
 
-At this point, everything's still local.  Your github page on the internet is completely unaware of newBranchName and the changes you've made.  To get this stuff up online, use "git push origin branchName".  Origin refers to the repository that you cloned from.  After pushing, you'll see on your github page for that repo that a new branch has been created.  You can use Git's diff tools to see the files and code changed against your master branch.
+At this point, everything's still local.  Your github page on the internet is completely unaware of newBranchName and the changes you've made.  To get this stuff up online, use: 
+
+    git push origin branchName
+
+Origin refers to the repository that you cloned from.  After pushing, you'll see on your github page for that repo that a new branch has been created.  You can use Git's diff tools to see the files and code changed against your master branch.
 
 Pull Requests
 ------
