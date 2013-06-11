@@ -26,7 +26,6 @@ public:
 
 public slots:
     virtual void sUpdate();
-    virtual void sSubmit();
 
 protected slots:
     virtual void languageChange();

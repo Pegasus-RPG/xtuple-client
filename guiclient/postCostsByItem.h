@@ -28,7 +28,6 @@ public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSelectAll();
     virtual void sPost();
-    virtual void sSubmit();
 
 protected slots:
     virtual void languageChange();

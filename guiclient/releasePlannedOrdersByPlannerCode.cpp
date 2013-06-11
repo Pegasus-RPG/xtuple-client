@@ -13,18 +13,12 @@
 #include <QVariant>
 #include <QMessageBox>
 
-#include "submitAction.h"
-
 releasePlannedOrdersByPlannerCode::releasePlannedOrdersByPlannerCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
   connect(_release, SIGNAL(clicked()), this, SLOT(sRelease()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
   
@@ -82,37 +76,3 @@ void releasePlannedOrdersByPlannerCode::sRelease()
 
   accept();
 }
-
-void releasePlannedOrdersByPlannerCode::sSubmit()
-{
-  XSqlQuery releaseSubmit;
-  if (!_cutoffDate->isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Cut Off Date"),
-                          tr( "You must enter a valid Cut Off Date before\n"
-                              "submitting this job." ));
-    _cutoffDate->setFocus();
-    return;
-  }
-
-  ParameterList params;
-
-  params.append("action_name", "ReleasePlannedOrders");
-
-  _plannerCode->appendValue(params);
-  _warehouse->appendValue(params);
-
-  if(_firmedOnly->isChecked())
-    params.append("firmedOnly", true);
-
-  params.append("cutoff_offset", QDate::currentDate().daysTo(_cutoffDate->date()));
-//  releaseSubmit.bindValue(":appendTransferOrder",	QVariant(_appendTransferOrder->isChecked()));
-  releaseSubmit.bindValue(":appendTransferOrder",	true);
-
-  submitAction newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() == XDialog::Accepted)
-    accept();
-}
-

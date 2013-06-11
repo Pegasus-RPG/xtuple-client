@@ -13,8 +13,6 @@
 #include <QVariant>
 #include <QMessageBox>
 
-#include "submitAction.h"
-
 /*
  *  Constructs a updateLateCustCreditStatus as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -28,10 +26,6 @@ updateLateCustCreditStatus::updateLateCustCreditStatus(QWidget* parent, const ch
   setupUi(this);
 
   connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-
-  if (!_metrics->boolean("EnableBatchManager"))
-    _submit->hide();
 }
 
 /*
@@ -71,17 +65,3 @@ void updateLateCustCreditStatus::sUpdate()
 
   accept();
 }
-
-void updateLateCustCreditStatus::sSubmit()
-{
-  ParameterList params;
-
-  params.append("action_name", "UpdateLateCustCreditStatus");
-
-  submitAction newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if(newdlg.exec() == XDialog::Accepted)
-    accept();
-}
-

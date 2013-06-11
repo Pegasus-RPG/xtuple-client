@@ -26,7 +26,6 @@ public:
 
 public slots:
     virtual void sRelease();
-    virtual void sSubmit();
 
 protected slots:
     virtual void languageChange();
