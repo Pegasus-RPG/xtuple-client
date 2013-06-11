@@ -30,35 +30,50 @@ From github.com/xtuple, you'll want to "fork" the openrpt, csvimp, xtlib, and qt
 Clone the Code
 ------
 
-After setting up our forks, we'll use terminal to clone our freshly forked repos onto our machines.  When you call git clone from a terminal window, you pull the repository from github to your local machine.  By default, it'll be created in a new directory named after the repo you're cloning.
+After setting up our forks, we'll use terminal to clone our freshly forked repos onto our machines.  When you call "git clone" from a terminal window, you pull the repository from github to your local machine.  By default, it'll be created in a new directory named after the repo you're cloning.
 
     git clone https://github.com/YOUR_GIT_NAME/qt-client.git
 
-openrpt, csvimp and xtlib are submodules of the qt-client repository.  When you clone qt-client, you get these repos too, and you'll see them in your file system as subdirectories of qt-client.  They're special though; any manipulation or updating of these directories will be ignored by the qt-client repo - for example, changed openrpt code will not show up in a "git diff" called from the qt-client directory.  If you look at the directory structure through Github, you'll notice that submodules directories are green.
+openrpt, csvimp and xtlib are submodules of the qt-client repository.  When you clone qt-client, you get these repos too, and you'll see them in your file system as subdirectories of qt-client.  They're special though; any manipulation or updating of these directories will be ignored by the qt-client repo - for example, changed openrpt code will not show up in a "git diff" called from the qt-client directory.  If you look at the directory structure through Github, you'll notice that submodules directories are green.  Submodules allow us to isolate certain subdirectories from a repository and establish these subdirectories as their own repositories.  This is very useful when you have semi-independent code such as library or framework code, and you want to be able to update and manipulate this code seperately from the parent repository/directory.
 
 Branching off Master
 ------
 
-When you first clone a repo, you start off in the "master" branch.  We want this branch to be clean, so we're not going to be writing code in it.  Instead, we'll create branches based off master, then work from those.  When you make changes in a branch, those changes are bound to those branch.  When you switch to another branch, you'll ditch the changes in the branch you were working in, and load up the changes you've made on the branch you're switching to.  Branching allows us to work on a number of different bugs and features at a time - a task that was an enormous hassle with SVN.
+When you first clone a repo, you start off in the "master" branch.  We want this branch to be clean at all times, so we're not going to be writing code in it.  Instead, we'll create branches based off master, then work from those.  When you make changes in a branch, those changes are bound to those branch.  When you switch to another branch, you'll ditch the changes in the branch you were working in, and load up the changes you've made on the branch you're switching to.  Branching allows us to work on a number of different bugs and features at a time - a task that was an enormous hassle with SVN.
 
 To create a new branch, and to check it out, call
 
     git checkout -b newBranchName
 
-"checkout" is the command used to switch between branches.  Use -b when you want to create a new branch.  Use "git branch" to list your branches for the current repo.
+"checkout" is the command used to switch between branches.  Use -b when you want to create a new branch.  Use 
 
-Notice that, when you create a new branch, it's based off of the current branch you're in.  So when you want to start working on a new issue that you haven't touched yet, you'll want to switch to your master branch and make sure it's up to date with xTuple's master before creating a new branch to work with.  It's important that each branch approaches one issue at a time.  See the section entitled "Keeping up to date with xTuple's Master" on how to keep your master up to date.
+    git branch
+
+to list your branches for the current repo.
+
+Notice that, when you create a new branch, it's based off of the current branch you're in.  So when you want to start working on a new issue that you haven't touched yet, you'll want to switch to your master branch and make sure it's up to date with xTuple's master before creating a new branch to work with.  It's important that each branch approaches only one issue at a time.  See the section entitled "Keeping up to date with xTuple's Master" on how to keep your master up to date.
 
 After you've made some changes and you're ready to stick them in the master xTuple source, you'll want to add, commit, push, and issue a pull request.
 
 Adding, Committing and Pushing Code
 ------
 
-Now you're ready to commit.  Make use of the "git status" and "git diff" tools to make sure you're satisfied with the changes you've made.  "git status" will tell you that there are changes, but nothing is staged for commit.  To stage files for commit, you add them with "git add".  Then, you commit them with "git commit" (please use -m and leave a message detailing the commit).
+Now you're ready to commit.  Make use of 
 
-At this point, everything's still local.  Your github page on the internet is completely unaware of newBranchName and the changes you've made.  To get this stuff up online, use: 
+    git status
+    git diff
 
-    git push origin branchName
+to make sure you're satisfied with the changes you've made.  "git status" will tell you that there are changes, but nothing is staged for commit.  To stage files for commit, you add them with 
+
+    git add (filenames)
+    
+Then, you commit them with 
+
+    git commit (please use -m and leave a message detailing the commit)
+
+At this point, everything's still local.  Your github page on the internet is completely unaware of this newly created and modified branch and the changes you've made to it.  To get this stuff up online, use: 
+
+    git push origin (branchName)
 
 Origin refers to the repository that you cloned from.  After pushing, you'll see on your github page for that repo that a new branch has been created.  You can use Git's diff tools to see the files and code changed against your master branch.
 
