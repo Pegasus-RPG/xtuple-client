@@ -64,3 +64,90 @@ EmpSearch::EmpSearch(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualSearch(p
   _searchNumber->setText(tr("Search through Codes"));
   _searchName->setText(tr("Search through Numbers"));
 }
+
+
+// script exposure ////////////////////////////////////////////////////////////
+
+QScriptValue EmpClusterLineEdittoScriptValue(QScriptEngine *engine, EmpClusterLineEdit* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void EmpClusterLineEditfromScriptValue(const QScriptValue &obj, EmpClusterLineEdit* &item)
+{
+  item = qobject_cast<EmpClusterLineEdit*>(obj.toQObject());
+}
+
+QScriptValue constructEmpClusterLineEdit(QScriptContext *context,
+                                         QScriptEngine  *engine)
+{
+  EmpClusterLineEdit *obj = 0;
+
+  if (context->argumentCount() == 1 &&
+      qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new EmpClusterLineEdit(qscriptvalue_cast<QWidget*>(context->argument(0)));
+
+  else if (context->argumentCount() >= 2 &&
+           qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new EmpClusterLineEdit(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                                 qPrintable(context->argument(1).toString()));
+
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "could not find an appropriate EmpClusterLineEdit constructor");
+
+  return engine->toScriptValue(obj);
+}
+
+void setupEmpClusterLineEdit(QScriptEngine *engine)
+{
+  qScriptRegisterMetaType(engine, EmpClusterLineEdittoScriptValue, EmpClusterLineEditfromScriptValue);
+
+  QScriptValue widget = engine->newFunction(constructEmpClusterLineEdit);
+
+//  widget.setProperty("EmpAll",     QScriptValue(engine, EmpClusterLineEdit::EmpAll),     QScriptValue::ReadOnly | QScriptValue::Undeletable);
+//  widget.setProperty("EmpActive",  QScriptValue(engine, EmpClusterLineEdit::EmpActive),  QScriptValue::ReadOnly | QScriptValue::Undeletable);
+//  widget.setProperty("EmpInactive",QScriptValue(engine, EmpClusterLineEdit::EmpInactive),QScriptValue::ReadOnly | QScriptValue::Undeletable);
+
+  engine->globalObject().setProperty("EmpClusterLineEdit", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
+
+QScriptValue EmpClustertoScriptValue(QScriptEngine *engine, EmpCluster* const &item)
+{
+  return engine->newQObject(item);
+}
+
+void EmpClusterfromScriptValue(const QScriptValue &obj, EmpCluster* &item)
+{
+  item = qobject_cast<EmpCluster*>(obj.toQObject());
+}
+
+QScriptValue constructEmpCluster(QScriptContext *context,
+                                 QScriptEngine  *engine)
+{
+  EmpCluster *obj = 0;
+
+  if (context->argumentCount() == 1 &&
+      qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new EmpCluster(qscriptvalue_cast<QWidget*>(context->argument(0)));
+
+  else if (context->argumentCount() >= 2 &&
+           qscriptvalue_cast<QWidget*>(context->argument(0)))
+    obj = new EmpCluster(qscriptvalue_cast<QWidget*>(context->argument(0)),
+                         qPrintable(context->argument(1).toString()));
+
+  else
+    context->throwError(QScriptContext::UnknownError,
+                        "could not find an appropriate EmpCluster constructor");
+
+  return engine->toScriptValue(obj);
+}
+
+void setupEmpCluster(QScriptEngine *engine)
+{
+  qScriptRegisterMetaType(engine, EmpClustertoScriptValue, EmpClusterfromScriptValue);
+
+  QScriptValue widget = engine->newFunction(constructEmpCluster);
+
+  engine->globalObject().setProperty("EmpCluster", widget, QScriptValue::ReadOnly | QScriptValue::Undeletable);
+}
