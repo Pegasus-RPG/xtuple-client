@@ -30,7 +30,7 @@ From github.com/xtuple, you'll want to "fork" the openrpt, csvimp, xtlib, and qt
 Clone the Code
 ------
 
-Then we'll use terminal to clone our freshly forked repos onto our machines.  When you call git clone from a terminal window, you pull the repository from github to your local machine.  By default, it'll be created in a new directory named after the repo you're cloning.
+After setting up our forks, we'll use terminal to clone our freshly forked repos onto our machines.  When you call git clone from a terminal window, you pull the repository from github to your local machine.  By default, it'll be created in a new directory named after the repo you're cloning.
 
     git clone https://github.com/YOUR_GIT_NAME/qt-client.git
 
