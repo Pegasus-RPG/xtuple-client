@@ -1,10 +1,29 @@
 Development for the Qt (C++) xTuple App
 ========
 
+Download and Install Postgres 9.1 and the xTuple Database
+------
+
+You'll need to install Postgres 9.1.  There are several different ways you can do this.  Go to www.postgresql.org to get started.
+
+After you've successfully installed Postgres and you're able to get a local server running, you'll need to install the xTuple demo database so that you'll have a database to log in to and some data to work with when testing your code.  Select the most recent version from the link below:
+
+http://sourceforge.net/projects/postbooks/files/03%20PostBooks-databases/
+
+And you'll want to download the database entitled postbooks_demo-(version).backup
+
+The "demo" databases are set up with a fictional company that seems to have been running for a while, so whatever part of the application you're working on, there will surely be some data for you to test against.  Use the pg_restore terminal command to install the database .backup onto your Postgres server.
+
+Download and Install Qt 4.8
+------
+
+There are several ways to do this as well.  Visit www.qt-project.org or www.developer.nokia.com to get started.
+
+
 Set up your Forks
 ------
 
-First we'll need the xTuple source code, along with some other code needed to compile the app.
+Now that we've installed all the necessary software to develop for xTuple, we'll need the xTuple source code, along with some other code needed to compile the app.
 
 From github.com/xtuple, you'll want to "fork" the openrpt, csvimp, xtlib, and qt-client repos into your git profile.  Towards the top right of the page of each repository, there's a fork button.  This copies everything over to your git profile, so that you can safely manipulate the code without touching anything on the xTuple git.
 
