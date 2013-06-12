@@ -197,7 +197,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 	return UndefinedError;
       }
     }
-    else if (param.toString() == "edit" || param.toString() == "view")
+    else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _item->setReadOnly(TRUE);
@@ -238,6 +238,12 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _notes->setEnabled(FALSE);
       _ref->setEnabled(FALSE);
       _buttonBox->setStandardButtons(QDialogButtonBox::Close);
+
+      _newCost->setEnabled(false);
+      _deleteCost->setEnabled(false);
+      _editCost->setText("&View");
+
+      connect(_bomDefinedCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleBomitemCost()));
     }
   }
 
@@ -669,7 +675,7 @@ void bomItem::sFillCostList()
     if (qry.first())
     {
       _bomDefinedCosts->setChecked(true);
-      if (_privileges->check("CreateCosts"))
+      if (_privileges->check("CreateCosts") && _mode != cView)
         _newCost->setEnabled(true);
     }
     else
@@ -762,7 +768,7 @@ void bomItem::sCostSelectionChanged()
   if (_privileges->check("EnterActualCosts"))
     _editCost->setEnabled(yes);
 
-  if (_privileges->check("DeleteCosts"))
+  if (_privileges->check("DeleteCosts") && _mode != cView)
     _deleteCost->setEnabled(yes);
 }
 
@@ -784,7 +790,10 @@ void bomItem::sEditCost()
 {
   ParameterList params;
   params.append("bomitemcost_id", _itemcost->id());
-  params.append("mode", "edit");
+  if (_mode == cEdit)
+    params.append("mode", "edit");
+  if (_mode == cView)
+    params.append("mode", "view");
 
   itemCost newdlg(this, "", TRUE);
   newdlg.set(params);
