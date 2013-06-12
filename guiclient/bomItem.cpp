@@ -197,7 +197,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 	return UndefinedError;
       }
     }
-    else if (param.toString() == "edit")
+    else if (param.toString() == "edit" || param.toString() == "view")
     {
       _mode = cEdit;
       _item->setReadOnly(TRUE);
