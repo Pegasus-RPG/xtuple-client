@@ -1720,8 +1720,9 @@ void salesOrderItem::sPopulateItemsiteInfo()
   if (_item->isValid())
   {
     XSqlQuery itemsite;
-    itemsite.prepare( "SELECT itemsite_leadtime, itemsite_costmethod, itemsite_createsopo, "
-                      "       itemsite_createwo, itemsite_createsopr "
+    itemsite.prepare( "SELECT itemsite_leadtime, itemsite_costmethod, "
+                      "       itemsite_createwo, itemsite_createsopr, "
+                      "       itemsite_createsopo, itemsite_dropship "
                       "FROM item, itemsite "
                       "WHERE ( (itemsite_item_id=item_id)"
                       " AND (itemsite_warehous_id=:warehous_id)"
@@ -1745,8 +1746,30 @@ void salesOrderItem::sPopulateItemsiteInfo()
           _createSupplyOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
         else if (_item->itemType() == "P")
         {
-          _createPR = itemsite.value("itemsite_createsopr").toBool();
-          _createSupplyOrder->setChecked(itemsite.value("itemsite_createsopr").toBool() || itemsite.value("itemsite_createsopo").toBool() );
+          if (itemsite.value("itemsite_createsopo").toBool())
+          {
+            _createPO = true;
+            _createSupplyOrder->setChecked(true);
+            _createSupplyOrder->setTitle(tr("Create Purchase Order"));
+            _supplyOrderLit->setText(tr("PO #:"));
+            _supplyOrderLineLit->setText(tr("PO Line #:"));
+            _supplyOrderQtyLit->setText(tr("PO Q&ty.:"));
+            _supplyOrderDueDateLit->setText(tr("PO Due Date:"));
+            _supplyOrderStatusLit->setText(tr("PO Status:"));
+            _supplyOrderStatusLit->show();
+            _supplyOverridePrice->show();
+            _supplyOverridePriceLit->show();
+            if (_metrics->boolean("EnableDropShipments"))
+            {
+              _supplyDropShip->show();
+              _supplyDropShip->setChecked(itemsite.value("itemsite_dropship").toBool());
+            }
+          }
+          else
+          {
+            _createPR = itemsite.value("itemsite_createsopr").toBool();
+            _createSupplyOrder->setChecked(itemsite.value("itemsite_createsopr").toBool() );
+          }
         }
         else
         {
