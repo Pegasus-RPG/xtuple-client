@@ -177,6 +177,9 @@ enum SetResponse itemCost::set(const ParameterList &pParams)
     {
       _actualCost->setEnabled(false);
       _costelem->setEnabled(false);
+      _postCost->setEnabled(false);
+      _save->hide();
+      _close->setText("&Close");
       if (_type == cItemCost)
         setWindowTitle("View Actual Cost");
       else
