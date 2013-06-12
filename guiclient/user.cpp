@@ -237,7 +237,22 @@ bool user::save()
   QString passwd = _passwd->text();
   if(_enhancedAuth->isChecked())
   {
-    passwd = passwd + "xTuple" + username;
+      QRegExp xtuplecloud(".*\\.xtuplecloud\\.com.*");
+      QRegExp xtuple(".*\\.xtuple\\.com.*");
+
+      bool isCloud = xtuplecloud.exactMatch(omfgThis->databaseURL());
+      bool isXtuple = xtuple.exactMatch(omfgThis->databaseURL());
+      QString salt;
+
+      if(isCloud || isXtuple)
+      {
+        salt = "private";
+      }
+      else
+      {
+        salt = "xTuple";
+      }
+      passwd = passwd + salt + username;
     passwd = QMd5(passwd);
   }
 
