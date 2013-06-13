@@ -502,7 +502,7 @@ void ParameterWidget::applySaved(int pId, int filter_id)
   }
 
 
-  QStringList filterRows = filterValue.split("|");
+  QStringList filterRows = filterValue.split("`");
   QString tempFilter = QString();
 
   int windowIdx = _filtersLayout->rowCount();
@@ -1450,11 +1450,11 @@ void ParameterWidget::save()
       else
         variantString = tempVar.toString();
 
-      filter = filter + tempPair.first + ":" + variantString + ":" + split[1] + "|";
+      filter = filter + tempPair.first + ":" + variantString + ":" + split[1] + "`";
     }
     else if (tempVar.canConvert(QVariant::StringList))
       filter += tempPair.first + ":" + tempVar.toStringList().join(",")
-      + ":" + split[1] + "|";
+      + ":" + split[1] + "`";
   }
 
   QString classname(parent()->objectName());
