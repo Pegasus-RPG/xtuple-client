@@ -2807,20 +2807,15 @@ void salesOrder::sFillItemList()
   //  Determine the subtotal
   if (ISORDER(_mode))
     fillSales.prepare( "SELECT SUM(round((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS subtotal,"
-               "       SUM(round((coitem_qtyord * coitem_qty_invuomratio) * currToCurr(baseCurrId(), cohead_curr_id, stdCost(item_id), cohead_orderdate),2)) AS totalcost "
-               "FROM coitem, cohead, itemsite, item "
-               "WHERE ( (coitem_cohead_id=:head_id)"
-               " AND (coitem_cohead_id=cohead_id)"
-               " AND (coitem_itemsite_id=itemsite_id)"
-               " AND (coitem_status <> 'X')"
-               " AND (itemsite_item_id=item_id) );" );
+                       "       SUM(round((coitem_qtyord * coitem_qty_invuomratio) * currToCurr(baseCurrId(), cohead_curr_id, itemCost(coitem_itemsite_id), cohead_orderdate),2)) AS totalcost "
+                       "FROM cohead JOIN coitem ON (coitem_cohead_id=cohead_id) "
+                       "WHERE ( (cohead_id=:head_id)"
+                       " AND (coitem_status <> 'X') );" );
   else
     fillSales.prepare( "SELECT SUM(round((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio),2)) AS subtotal,"
-               "       SUM(round((quitem_qtyord * quitem_qty_invuomratio) * currToCurr(baseCurrId(), quhead_curr_id, stdCost(item_id), quhead_quotedate),2)) AS totalcost "
-               "  FROM quitem, quhead, item "
-               " WHERE ( (quitem_quhead_id=:head_id)"
-               "   AND   (quitem_quhead_id=quhead_id)"
-               "   AND   (quitem_item_id=item_id) );" );
+                       "       SUM(round((quitem_qtyord * quitem_qty_invuomratio) * currToCurr(baseCurrId(), quhead_curr_id, itemCost(quitem_itemsite_id), quhead_quotedate),2)) AS totalcost "
+                       "FROM quhead JOIN quitem ON (quitem_quhead_id=quhead_id) "
+                       "WHERE (quhead_id=:head_id);" );
   fillSales.bindValue(":head_id", _soheadid);
   fillSales.exec();
   if (fillSales.first())
