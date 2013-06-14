@@ -22,6 +22,12 @@ exists(openrpt) {
     OPENRPT_DIR = openrpt
 }
 
+! exists(openrpt) {
+    exists(../openrpt) {
+        OPENRPT_DIR = ../openrpt
+    }
+}
+
 ! exists($${OPENRPT_DIR}) {
     error("Could not set the OPENRPT_DIR qmake variable.")
 }
@@ -33,6 +39,12 @@ exists($${OPENRPT_DIR}-build-desktop) {
 
 exists(csvimp) {
     CSVIMP_DIR = csvimp
+}
+
+! exists(csvimp) {
+    exists(../csvimp) {
+        CSVIMP_DIR = ../csvimp
+    }
 }
 
 ! exists($${CSVIMP_DIR}) {
@@ -53,6 +65,9 @@ INCLUDEPATH += ../$${OPENRPT_DIR}/common           ../$${OPENRPT_BLD}/common \
 INCLUDEPATH =  $$unique(INCLUDEPATH)
 
 XTUPLE_DIR=../../qt-client
+! exists(../qt-client) {
+    XTUPLE_DIR=../../xtuple
+}
 XTUPLE_BLD=$${XTUPLE_DIR}
 exists(../xtuple-build-desktop) {
   XTUPLE_BLD=../../xtuple-build-desktop
