@@ -51,6 +51,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sHandleWo( bool pCreate );
     virtual void        sPopulateOrderInfo();
     virtual void        sCalculateFromDiscount();
+    virtual void        sCalculateFromMarkup();
     virtual void        populate();
     virtual void        sFindSellingWarehouseItemsites( int id );
     virtual void        sPriceGroup();

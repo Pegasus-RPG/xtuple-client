@@ -608,6 +608,7 @@ void creditMemoItem::sListPrices()
     params.append("cust_id", _custid);
     params.append("shipto_id", _shiptoid);
     params.append("item_id", _item->id());
+    params.append("warehous_id", _warehouse->id());
     // don't params.append("qty", ...) as we don't know how many were purchased
     params.append("curr_id", _netUnitPrice->id());
     params.append("effective", _netUnitPrice->effective());

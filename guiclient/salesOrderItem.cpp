@@ -113,7 +113,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _createPO              = false;
   _createPR              = false;
   _priceType             = "N";  // default to nominal
-  _priceMode             = "D";  // default to default
+  _priceMode             = "D";  // default to discount
 
   _authNumber->hide();
   _authNumberLit->hide();
@@ -229,9 +229,8 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _discountFromCust->setValidator(omfgThis->negPercentVal());
 
   _shippedToDate->setPrecision(omfgThis->qtyVal());
-  _discountFromListPrice->setPrecision(omfgThis->percentVal());
-  _markupFromListCost->setPrecision(omfgThis->percentVal());
-  _profit->setPrecision(omfgThis->percentVal());
+  _discountFromListPrice->setValidator(omfgThis->percentVal());
+  _markupFromUnitCost->setValidator(omfgThis->percentVal());
   _onHand->setPrecision(omfgThis->qtyVal());
   _allocated->setPrecision(omfgThis->qtyVal());
   _unallocated->setPrecision(omfgThis->qtyVal());
@@ -243,6 +242,15 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   {
     _netUnitPrice->setEnabled(FALSE);
     _discountFromCust->setEnabled(FALSE);
+    _unitCost->setEnabled(FALSE);
+    _markupFromUnitCost->setEnabled(FALSE);
+  }
+  if (!_privileges->check("ViewCosts"))
+  {
+    _unitCost->hide();
+    _unitCostLit->hide();
+    _markupFromUnitCost->hide();
+    _markupFromUnitCostLit->hide();
   }
 
   if ((_metrics->boolean("DisableSalesOrderPriceOverride")) || (!_privileges->check("OverridePrice")))
@@ -412,6 +420,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
       connect(_netUnitPrice,      SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
       connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      connect(_unitCost,          SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
+      connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
       connect(_item,              SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)));
       connect(_createSupplyOrder, SIGNAL(toggled(bool)),        this,         SLOT(sHandleWo(bool)));
 
@@ -463,9 +473,11 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
 
       prepare();
 
-      connect(_netUnitPrice,      SIGNAL(editingFinished()),  this,         SLOT(sCalculateDiscountPrcnt()));
-      connect(_discountFromCust,  SIGNAL(editingFinished()),  this,         SLOT(sCalculateFromDiscount()));
-      connect(_item,              SIGNAL(valid(bool)),  _listPrices,  SLOT(setEnabled(bool)));
+      connect(_netUnitPrice,      SIGNAL(editingFinished()),    this,         SLOT(sCalculateDiscountPrcnt()));
+      connect(_discountFromCust,  SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromDiscount()));
+      connect(_unitCost,          SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
+      connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this,         SLOT(sCalculateFromMarkup()));
+      connect(_item,              SIGNAL(valid(bool)),          _listPrices,  SLOT(setEnabled(bool)));
 
       setSales.prepare("SELECT count(*) AS cnt"
                 "  FROM quitem"
@@ -491,6 +503,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       connect(_qtyOrdered,        SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice,      SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()));
       connect(_discountFromCust,  SIGNAL(editingFinished()),    this, SLOT(sCalculateFromDiscount()));
+      connect(_unitCost,          SIGNAL(editingFinished()),    this, SLOT(sCalculateFrom()));
+      connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_createSupplyOrder, SIGNAL(toggled(bool)),        this, SLOT(sHandleWo(bool)));
     }
     else if (param.toString() == "editQuote")
@@ -521,6 +535,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       connect(_qtyOrdered,        SIGNAL(editingFinished()),  this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice,      SIGNAL(editingFinished()),  this, SLOT(sCalculateDiscountPrcnt()));
       connect(_discountFromCust,  SIGNAL(editingFinished()),  this, SLOT(sCalculateFromDiscount()));
+      connect(_unitCost,          SIGNAL(editingFinished()),  this, SLOT(sCalculateFromMarkup()));
+      connect(_markupFromUnitCost,SIGNAL(editingFinished()),  this, SLOT(sCalculateFromMarkup()));
     }
     else if (param.toString() == "view")
     {
@@ -566,6 +582,8 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
     _qtyOrdered->setEnabled(!viewMode);
     _netUnitPrice->setEnabled(!viewMode);
     _discountFromCust->setEnabled(!viewMode);
+    _unitCost->setEnabled(!viewMode);
+    _markupFromUnitCost->setEnabled(!viewMode);
     _scheduledDate->setEnabled(!viewMode);
     _createSupplyOrder->setEnabled(!viewMode);
     _notes->setEnabled(!viewMode);
@@ -797,14 +815,12 @@ void salesOrderItem::clear()
 //  _scheduledDate->clear();
   _promisedDate->clear();
   _unitCost->clear();
-  _avgCost->clear();
-  _listCost->clear();
   _listPrice->clear();
   _customerPrice->clear();
   _discountFromListPrice->clear();
-  _markupFromListCost->clear();
+  _markupFromUnitCost->clear();
   _discountFromCust->clear();
-  _profit->clear();
+  _margin->clear();
   _shippedToDate->clear();
   _createSupplyOrder->setChecked(FALSE);
   _supplyOrderQty->clear();
@@ -1005,7 +1021,7 @@ void salesOrderItem::sSave()
                "  SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
                "       'O', :soitem_scheddate, :soitem_promdate,"
                "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
-               "       stdCost(:item_id), :soitem_custprice, :soitem_pricemode,"
+               "       :soitem_unitcost, :soitem_custprice, :soitem_pricemode,"
                "       :soitem_price, :price_uom_id, :price_invuomratio,"
                "       '', -1,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
@@ -1023,6 +1039,7 @@ void salesOrderItem::sSave()
     salesSave.bindValue(":qty_uom_id", _qtyUOM->id());
     salesSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
     salesSave.bindValue(":soitem_custprice", _customerPrice->localValue());
+    salesSave.bindValue(":soitem_unitcost", _unitCost->localValue());
     salesSave.bindValue(":soitem_pricemode", _priceMode);
     salesSave.bindValue(":soitem_price", _netUnitPrice->localValue());
     salesSave.bindValue(":price_uom_id", _priceUOM->id());
@@ -1057,6 +1074,7 @@ void salesOrderItem::sSave()
                "    coitem_qtyord=:soitem_qtyord,"
                "    coitem_qty_uom_id=:qty_uom_id,"
                "    coitem_qty_invuomratio=:qty_invuomratio,"
+               "    coitem_unitcost=:soitem_unitcost,"
                "    coitem_custprice=:soitem_custprice,"
                "    coitem_pricemode=:soitem_pricemode,"
                "    coitem_price=:soitem_price,"
@@ -1077,6 +1095,7 @@ void salesOrderItem::sSave()
     salesSave.bindValue(":soitem_qtyord", _qtyOrdered->toDouble());
     salesSave.bindValue(":qty_uom_id", _qtyUOM->id());
     salesSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
+    salesSave.bindValue(":soitem_unitcost", _unitCost->localValue());
     salesSave.bindValue(":soitem_custprice", _customerPrice->localValue());
     salesSave.bindValue(":soitem_price", _netUnitPrice->localValue());
     salesSave.bindValue(":soitem_pricemode", _priceMode);
@@ -1427,7 +1446,7 @@ void salesOrderItem::sSave()
                "       (SELECT itemsite_id FROM itemsite WHERE ((itemsite_item_id=:item_id) AND (itemsite_warehous_id=:warehous_id))),"
                "       :item_id, :quitem_scheddate, :quitem_promdate, :quitem_qtyord,"
                "       :qty_uom_id, :qty_invuomratio,"
-               "       stdCost(:item_id), :quitem_custprice, :quitem_price, :quitem_pricemode,"
+               "       :quitem_unitcost, :quitem_custprice, :quitem_price, :quitem_pricemode,"
                "       :price_uom_id, :price_invuomratio,"
                "       :quitem_custpn, :quitem_memo, :quitem_createorder, "
                "       :quitem_order_warehous_id, :quitem_prcost, :quitem_taxtype_id, "
@@ -1440,6 +1459,7 @@ void salesOrderItem::sSave()
     salesSave.bindValue(":quitem_qtyord", _qtyOrdered->toDouble());
     salesSave.bindValue(":qty_uom_id", _qtyUOM->id());
     salesSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
+    salesSave.bindValue(":quitem_unitcost", _unitCost->localValue());
     salesSave.bindValue(":quitem_custprice", _customerPrice->localValue());
     salesSave.bindValue(":quitem_price", _netUnitPrice->localValue());
     salesSave.bindValue(":quitem_pricemode", _priceMode);
@@ -1473,6 +1493,7 @@ void salesOrderItem::sSave()
                "    quitem_qtyord=:quitem_qtyord,"
                "    quitem_qty_uom_id=:qty_uom_id,"
                "    quitem_qty_invuomratio=:qty_invuomratio,"
+               "    quitem_unitcost=:quitem_unitcost,"
                "    quitem_custprice=:quitem_custprice,"
                "    quitem_price=:quitem_price,"
                "    quitem_pricemode=:quitem_pricemode,"
@@ -1491,6 +1512,7 @@ void salesOrderItem::sSave()
     salesSave.bindValue(":quitem_qtyord", _qtyOrdered->toDouble());
     salesSave.bindValue(":qty_uom_id", _qtyUOM->id());
     salesSave.bindValue(":qty_invuomratio", _qtyinvuomratio);
+    salesSave.bindValue(":quitem_unitcost", _unitCost->localValue());
     salesSave.bindValue(":quitem_custprice", _customerPrice->localValue());
     salesSave.bindValue(":quitem_price", _netUnitPrice->localValue());
     salesSave.bindValue(":quitem_pricemode", _priceMode);
@@ -1720,13 +1742,12 @@ void salesOrderItem::sPopulateItemsiteInfo()
   if (_item->isValid())
   {
     XSqlQuery itemsite;
-    itemsite.prepare( "SELECT itemsite_leadtime, itemsite_costmethod, "
+    itemsite.prepare( "SELECT itemsite_leadtime, itemsite_costmethod, itemsite_createsopo, "
                       "       itemsite_createwo, itemsite_createsopr, "
-                      "       itemsite_createsopo, itemsite_dropship "
-                      "FROM item, itemsite "
-                      "WHERE ( (itemsite_item_id=item_id)"
-                      " AND (itemsite_warehous_id=:warehous_id)"
-                      " AND (item_id=:item_id) );" );
+                      "       item_listcost, itemCost(itemsite_id) AS unitcost "
+                      "FROM itemsite JOIN item ON (item_id=itemsite_item_id) "
+                      "WHERE ( (itemsite_warehous_id=:warehous_id)"
+                      "  AND   (itemsite_item_id=:item_id) );" );
     itemsite.bindValue(":warehous_id", _warehouse->id());
     itemsite.bindValue(":item_id", _item->id());
     itemsite.exec();
@@ -1734,6 +1755,10 @@ void salesOrderItem::sPopulateItemsiteInfo()
     {
       _leadTime    = itemsite.value("itemsite_leadtime").toInt();
       _costmethod  = itemsite.value("itemsite_costmethod").toString();
+      if (_metrics->boolean("WholesalePriceCosting"))
+        _unitCost->setBaseValue(itemsite.value("item_listcost").toDouble());
+      else
+        _unitCost->setBaseValue(itemsite.value("unitcost").toDouble());
 
       if (cNew == _mode || cNewQuote == _mode)
       {
@@ -1792,6 +1817,7 @@ void salesOrderItem::sListPrices()
   params.append("cust_id", _custid);
   params.append("shipto_id", _shiptoid);
   params.append("item_id", _item->id());
+  params.append("warehous_id", _warehouse->id());
   params.append("qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
   params.append("curr_id", _netUnitPrice->id());
   params.append("effective", _netUnitPrice->effective());
@@ -1930,7 +1956,7 @@ void salesOrderItem::sDeterminePrice(bool force)
   XSqlQuery itemprice;
   itemprice.prepare( "SELECT * FROM "
                      "itemIpsPrice(:item_id, :cust_id, :shipto_id, :qty, :qtyUOM, :priceUOM,"
-                     "             :curr_id, :effective, :asof, NULL);" );
+                     "             :curr_id, :effective, :asof, :warehouse);" );
   itemprice.bindValue(":cust_id", _custid);
   itemprice.bindValue(":shipto_id", _shiptoid);
   itemprice.bindValue(":qty", _qtyOrdered->toDouble());
@@ -1940,6 +1966,7 @@ void salesOrderItem::sDeterminePrice(bool force)
   itemprice.bindValue(":curr_id", _customerPrice->id());
   itemprice.bindValue(":effective", _customerPrice->effective());
   itemprice.bindValue(":asof", asOf);
+  itemprice.bindValue(":warehouse", _warehouse->id());
   itemprice.exec();
   if (itemprice.first())
   {
@@ -2031,9 +2058,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     salesPopulateItemInfo.prepare( "SELECT item_type, item_config, uom_name,"
                "       item_inv_uom_id, item_price_uom_id,"
                "       iteminvpricerat(item_id) AS invpricerat,"
-               "       item_listcost, item_listprice, item_fractional,"
-               "       stdcost(item_id) AS f_unitcost,"
-               "       avgcost(item_id) AS f_avgcost,"
+               "       item_listprice, item_fractional,"
                "       itemsite_createsopo, itemsite_dropship, itemsite_costmethod,"
                "       getItemTaxType(item_id, :taxzone) AS taxtype_id "
                "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
@@ -2162,9 +2187,6 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _priceUOM->setId(salesPopulateItemInfo.value("item_price_uom_id").toInt());
 
       _listPrice->setBaseValue(salesPopulateItemInfo.value("item_listprice").toDouble());
-      _listCost->setBaseValue(salesPopulateItemInfo.value("item_listcost").toDouble());
-      _unitCost->setBaseValue(salesPopulateItemInfo.value("f_unitcost").toDouble());
-      _avgCost->setBaseValue(salesPopulateItemInfo.value("f_avgcost").toDouble());
       _taxtype->setId(salesPopulateItemInfo.value("taxtype_id").toInt());
 
       sCalculateDiscountPrcnt();
@@ -2665,13 +2687,40 @@ void salesOrderItem::sCalculateDiscountPrcnt()
   double  netUnitPrice = _netUnitPrice->baseValue();
   double  charTotal    = 0;
 
-  if (_priceMode == "M")  // markup
-  {
-    _discountFromCustLit->setText(tr("Cust. Markup %:"));
+//  if (_priceMode == "M")  // markup
+//  {
+//    _discountFromCustLit->setText(tr("Cust. Markup %:"));
+//    if (netUnitPrice == 0.0)
+//    {
+//      _discountFromListPrice->setDouble(100.0);
+//      _markupFromUnitCost->setDouble(100.0);
+//      _discountFromCust->setDouble(100.0);
+//    }
+//    else
+//    {
+//      if (_listPrice->isZero())
+//        _discountFromListPrice->setText(tr("N/A"));
+//      else
+//        _discountFromListPrice->setDouble((1.0 - (netUnitPrice / _listPrice->baseValue())) * 100.0);
+//
+//      if (_unitCost->isZero())
+//        _markupFromUnitCost->setText(tr("N/A"));
+//      else
+//        _markupFromUnitCost->setDouble(((netUnitPrice / _unitCost->baseValue()) - 1.0) * 100.0);
+//
+//      if (_customerPrice->isZero())
+//        _discountFromCust->setText(tr("N/A"));
+//      else
+//        _discountFromCust->setDouble(((netUnitPrice / _customerPrice->baseValue()) - 1.0) * 100.0);
+//    }
+//  }
+//  else  // discount
+//  {
+//    _discountFromCustLit->setText(tr("Cust. Discount %:"));
     if (netUnitPrice == 0.0)
     {
       _discountFromListPrice->setDouble(100.0);
-      _markupFromListCost->setDouble(100.0);
+      _markupFromUnitCost->setDouble(100.0);
       _discountFromCust->setDouble(100.0);
     }
     else
@@ -2681,44 +2730,19 @@ void salesOrderItem::sCalculateDiscountPrcnt()
       else
         _discountFromListPrice->setDouble((1.0 - (netUnitPrice / _listPrice->baseValue())) * 100.0);
 
-      if (_listCost->isZero())
-        _markupFromListCost->setText(tr("N/A"));
+      if (_unitCost->isZero())
+        _markupFromUnitCost->setText(tr("N/A"));
+      else if (_metrics->boolean("Long30Markups"))
+        _markupFromUnitCost->setDouble((1.0 - (_unitCost->baseValue() / netUnitPrice)) * 100.0);
       else
-        _markupFromListCost->setDouble(((netUnitPrice / _listCost->baseValue()) - 1.0) * 100.0);
-
-      if (_customerPrice->isZero())
-        _discountFromCust->setText(tr("N/A"));
-      else
-        _discountFromCust->setDouble(((netUnitPrice / _customerPrice->baseValue()) - 1.0) * 100.0);
-    }
-  }
-  else  // discount
-  {
-    _discountFromCustLit->setText(tr("Cust. Discount %:"));
-    if (netUnitPrice == 0.0)
-    {
-      _discountFromListPrice->setDouble(100.0);
-      _markupFromListCost->setDouble(100.0);
-      _discountFromCust->setDouble(100.0);
-    }
-    else
-    {
-      if (_listPrice->isZero())
-        _discountFromListPrice->setText(tr("N/A"));
-      else
-        _discountFromListPrice->setDouble((1.0 - (netUnitPrice / _listPrice->baseValue())) * 100.0);
-
-      if (_listCost->isZero())
-        _markupFromListCost->setText(tr("N/A"));
-      else
-        _markupFromListCost->setDouble(((netUnitPrice / _listCost->baseValue()) - 1.0) * 100.0);
+        _markupFromUnitCost->setDouble(((netUnitPrice / _unitCost->baseValue()) - 1.0) * 100.0);
 
       if (_customerPrice->isZero())
         _discountFromCust->setText(tr("N/A"));
       else
         _discountFromCust->setDouble((1.0 - (netUnitPrice / _customerPrice->baseValue())) * 100.0);
     }
-  }
+//  }
 
 
   if (_item->isConfigured())  // Total up price for configured item characteristics
@@ -2733,10 +2757,7 @@ void salesOrderItem::sCalculateDiscountPrcnt()
     _baseUnitPrice->setLocalValue(_netUnitPrice->localValue() - charTotal);
   }
 
-  if (_unitCost->baseValue() > 0.0)
-    _profit->setDouble((_netUnitPrice->baseValue() - _unitCost->baseValue()) / _unitCost->baseValue() * 100.0);
-  else
-    _profit->setDouble(100.0);
+  _margin->setLocalValue((_netUnitPrice->baseValue() - _unitCost->baseValue()) * _qtyOrdered->toDouble());
 
   sCalculateExtendedPrice();
 }
@@ -2975,15 +2996,34 @@ void salesOrderItem::sCalculateFromDiscount()
   {
     if (_updatePrice)
     {
-      if (_priceMode == "M")  // markup
-        _netUnitPrice->setLocalValue(_customerPrice->localValue() +
-                                    (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
-      else  // discount
+//      if (_priceMode == "M")  // markup
+//        _netUnitPrice->setLocalValue(_customerPrice->localValue() +
+//                                    (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
+//      else  // discount
         _netUnitPrice->setLocalValue(_customerPrice->localValue() -
                                     (_customerPrice->localValue() * _discountFromCust->toDouble() / 100.0));
     }
     sCalculateDiscountPrcnt();
   }
+}
+
+void salesOrderItem::sCalculateFromMarkup()
+{
+    if (_unitCost->isZero())
+      _markupFromUnitCost->setText(tr("N/A"));
+    else
+    {
+        if (_updatePrice)
+        {
+            if (_markupFromUnitCost->toDouble() <= 50.0 && _metrics->boolean("Long30Markups"))
+                _netUnitPrice->setLocalValue(_unitCost->localValue() /
+                                             (1.0 - (_markupFromUnitCost->toDouble() / 100.0)));
+            else
+                _netUnitPrice->setLocalValue(_unitCost->localValue() +
+                                             (_unitCost->localValue() * _markupFromUnitCost->toDouble() / 100.0));
+        }
+        sCalculateDiscountPrcnt();
+    }
 }
 
 void salesOrderItem::populate()
@@ -2997,7 +3037,6 @@ void salesOrderItem::populate()
           "SELECT itemsite_leadtime, warehous_id, warehous_code, "
           "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
           "       item_inv_uom_id, item_fractional,"
-          "       stdCost(item_id) AS stdcost,"
           "       coitem_status, coitem_cohead_id,"
           "       coitem_order_type, coitem_order_id, coitem_custpn,"
           "       coitem_memo, NULL AS quitem_createorder,"
@@ -3008,7 +3047,7 @@ void salesOrderItem::populate()
           "       coitem_qty_invuomratio AS qty_invuomratio,"
           "       coitem_qtyshipped AS qtyshipped,"
           "       coitem_scheddate,"
-          "       coitem_custprice,"
+          "       coitem_custprice, coitem_unitcost,"
           "       coitem_price, coitem_pricemode,"
           "       coitem_price_uom_id AS price_uom_id,"
           "       coitem_price_invuomratio AS price_invuomratio,"
@@ -3033,7 +3072,6 @@ void salesOrderItem::populate()
             "       warehous_code,"
             "       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
             "       item_inv_uom_id, item_fractional,"
-            "       stdcost(item_id) AS stdcost,"
             "       'O' AS coitem_status, quitem_quhead_id AS coitem_cohead_id,"
             "       '' AS coitem_order_type, -1 AS coitem_order_id,"
             "       quitem_custpn AS coitem_custpn,"
@@ -3045,7 +3083,7 @@ void salesOrderItem::populate()
             "       quitem_qty_invuomratio AS qty_invuomratio,"
             "       NULL AS qtyshipped,"
             "       quitem_scheddate AS coitem_scheddate,"
-            "       quitem_custprice AS coitem_custprice, "
+            "       quitem_custprice AS coitem_custprice, quitem_unitcost AS coitem_unitcost,"
             "       quitem_price AS coitem_price, quitem_pricemode AS coitem_pricemode,"
             "       quitem_price_uom_id AS price_uom_id,"
             "       quitem_price_invuomratio AS price_invuomratio,"
@@ -3087,7 +3125,7 @@ void salesOrderItem::populate()
     _priceUOMCache = _priceUOM->id();
     _qtyinvuomratio    = item.value("qty_invuomratio").toDouble();
     _priceinvuomratio  = item.value("price_invuomratio").toDouble();
-    _unitCost->setBaseValue(item.value("stdcost").toDouble());
+    _unitCost->setBaseValue(item.value("coitem_unitcost").toDouble());
     // do tax stuff before _qtyOrdered so signal cascade has data to work with
     _taxtype->setId(item.value("coitem_taxtype_id").toInt());
     _supplyOrderId       = item.value("coitem_order_id").toInt();
@@ -3119,10 +3157,7 @@ void salesOrderItem::populate()
     _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _priceMode = item.value("coitem_pricemode").toString();
-    if (_unitCost->baseValue() > 0.0)
-      _profit->setDouble((_netUnitPrice->baseValue() - _unitCost->baseValue()) / _unitCost->baseValue() * 100.0);
-    else
-      _profit->setDouble(100.0);
+    _margin->setLocalValue((_netUnitPrice->baseValue() - _unitCost->baseValue()) * _qtyOrdered->toDouble());
     _leadTime        = item.value("itemsite_leadtime").toInt();
     _qtyOrderedCache = _qtyOrdered->toDouble();
     _originalQtyOrd  = _qtyOrdered->toDouble() * _qtyinvuomratio;
