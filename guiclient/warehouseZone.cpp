@@ -89,9 +89,11 @@ void warehouseZone::sSave()
   uniq.prepare("SELECT whsezone_id "
                "FROM whsezone "
                "WHERE ( (whsezone_id<>:whsezone_id)"
-               " AND (UPPER(whsezone_name)=UPPER(:whsezone_name)) );" );
+               " AND (UPPER(whsezone_name)=UPPER(:whsezone_name)) "
+               " AND (whsezone_warehous_id=(:warehouse_id)));" );
   uniq.bindValue(":whsezone_id", _whsezoneid);
   uniq.bindValue(":whsezone_name", _name->text());
+  uniq.bindValue(":warehouse_id", _warehousid);
   uniq.exec();
   if (uniq.first())
   {
