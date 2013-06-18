@@ -1756,9 +1756,9 @@ void salesOrderItem::sPopulateItemsiteInfo()
       _leadTime    = itemsite.value("itemsite_leadtime").toInt();
       _costmethod  = itemsite.value("itemsite_costmethod").toString();
       if (_metrics->boolean("WholesalePriceCosting"))
-        _unitCost->setBaseValue(itemsite.value("item_listcost").toDouble());
+        _unitCost->setBaseValue(itemsite.value("item_listcost").toDouble() * (_priceinvuomratio / _priceRatio));
       else
-        _unitCost->setBaseValue(itemsite.value("unitcost").toDouble());
+        _unitCost->setBaseValue(itemsite.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
 
       if (cNew == _mode || cNewQuote == _mode)
       {
@@ -2757,7 +2757,7 @@ void salesOrderItem::sCalculateDiscountPrcnt()
     _baseUnitPrice->setLocalValue(_netUnitPrice->localValue() - charTotal);
   }
 
-  _margin->setLocalValue((_netUnitPrice->baseValue() - _unitCost->baseValue()) * _qtyOrdered->toDouble());
+  _margin->setLocalValue((_netUnitPrice->baseValue() - _unitCost->baseValue()) * _qtyOrdered->toDouble() * _qtyinvuomratio / _priceinvuomratio);
 
   sCalculateExtendedPrice();
 }
@@ -3802,13 +3802,19 @@ void salesOrderItem::sPriceUOMChanged()
   }
 
   XSqlQuery item;
-  item.prepare("SELECT item_listprice"
-               "  FROM item"
+  item.prepare("SELECT item_listprice, item_listcost,"
+               "       itemCost(itemsite_id) AS unitcost"
+               "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
                " WHERE(item_id=:item_id);");
   item.bindValue(":item_id", _item->id());
+  item.bindValue(":warehous_id", _warehouse->id());
   item.exec();
   item.first();
   _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
+  if (_metrics->boolean("WholesalePriceCosting"))
+    _unitCost->setBaseValue(item.value("item_listcost").toDouble() * (_priceinvuomratio / _priceRatio));
+  else
+    _unitCost->setBaseValue(item.value("unitcost").toDouble() * (_priceinvuomratio / _priceRatio));
   sDeterminePrice(true);
 }
 
