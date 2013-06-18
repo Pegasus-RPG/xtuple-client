@@ -1588,51 +1588,20 @@ to be bound by its terms.</comment>
             <string>Costs</string>
            </property>
            <layout class="QGridLayout">
-            <item row="0" column="1">
-             <widget class="CurrDisplay" name="_unitCost">
-              <property name="format">
-               <enum>CurrDisplay::Cost</enum>
+            <item row="10" column="0">
+             <spacer>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
               </property>
-              <property name="localControl">
-               <bool>false</bool>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>0</height>
+               </size>
               </property>
-             </widget>
+             </spacer>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="_listPriceLit">
-              <property name="text">
-               <string>List Price:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="CurrDisplay" name="_listPrice">
-              <property name="format">
-               <enum>CurrDisplay::SalesPrice</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="_customerPriceLit">
-              <property name="text">
-               <string>Customer Price:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="CurrDisplay" name="_customerPrice">
-              <property name="format">
-               <enum>CurrDisplay::SalesPrice</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
              <widget class="QLabel" name="_discountFromListPriceLit">
               <property name="minimumSize">
                <size>
@@ -1648,124 +1617,110 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
-             <widget class="XLabel" name="_discountFromListPrice">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>80</width>
-                <height>16777215</height>
-               </size>
-              </property>
+            <item row="2" column="0">
+             <widget class="QLabel" name="_customerPriceLit">
               <property name="text">
-               <string/>
+               <string>Customer Price:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="8" column="0">
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item row="1" column="1">
-             <widget class="CurrDisplay" name="_avgCost"/>
+             <widget class="CurrDisplay" name="_listPrice">
+              <property name="format">
+               <enum>CurrDisplay::SalesPrice</enum>
+              </property>
+             </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="CurrDisplay" name="_listCost">
+            <item row="0" column="1">
+             <widget class="CurrCluster" name="_unitCost">
               <property name="format">
                <enum>CurrDisplay::Cost</enum>
               </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="_avgCostLit">
-              <property name="text">
-               <string>Avg. Cost (Current Inv.):</string>
+              <property name="currencyEditable" stdset="0">
+               <bool>false</bool>
               </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="_listCostLit">
-              <property name="text">
-               <string>Wholesale Price:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="XLabel" name="_profit">
-              <property name="maximumSize">
-               <size>
-                <width>80</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="_profitLit">
-              <property name="text">
-               <string>Profit %:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <property name="currencyVisible">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
             <item row="0" column="0">
              <widget class="QLabel" name="_unitCostLit">
               <property name="text">
-               <string>Std. Cost (Inv. UOM):</string>
+               <string>Unit Cost:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="_markupFromListCostLit">
+            <item row="9" column="0">
+             <widget class="QLabel" name="_marginLit">
               <property name="text">
-               <string>Wholesale Price Markup %:</string>
+               <string>Margin:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="6" column="1">
-             <widget class="XLabel" name="_markupFromListCost">
-              <property name="maximumSize">
-               <size>
-                <width>80</width>
-                <height>16777215</height>
-               </size>
+            <item row="1" column="0">
+             <widget class="QLabel" name="_listPriceLit">
+              <property name="text">
+               <string>List Price:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="CurrDisplay" name="_customerPrice">
+              <property name="format">
+               <enum>CurrDisplay::SalesPrice</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="XLineEdit" name="_discountFromListPrice">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="XLineEdit" name="_markupFromUnitCost">
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="_markupFromUnitCostLit">
+              <property name="text">
+               <string>Unit Cost Markup %:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="1">
+             <widget class="CurrCluster" name="_margin">
+              <property name="currencyEditable" stdset="0">
+               <bool>false</bool>
+              </property>
+              <property name="currencyVisible">
+               <bool>false</bool>
+              </property>
+              <property name="enabled">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -2317,38 +2272,6 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_netUnitPrice</sender>
    <signal>idChanged(int)</signal>
-   <receiver>_unitCost</receiver>
-   <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>589</x>
-     <y>316</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>158</x>
-     <y>527</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_netUnitPrice</sender>
-   <signal>effectiveChanged(QDate)</signal>
-   <receiver>_unitCost</receiver>
-   <slot>setEffective(QDate)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>589</x>
-     <y>316</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>158</x>
-     <y>527</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_netUnitPrice</sender>
-   <signal>idChanged(int)</signal>
    <receiver>_listPrice</receiver>
    <slot>setId(int)</slot>
    <hints>
@@ -2375,38 +2298,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>158</x>
      <y>527</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_netUnitPrice</sender>
-   <signal>idChanged(int)</signal>
-   <receiver>_listCost</receiver>
-   <slot>setId(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_netUnitPrice</sender>
-   <signal>effectiveChanged(QDate)</signal>
-   <receiver>_listCost</receiver>
-   <slot>setEffective(QDate)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
     </hint>
    </hints>
   </connection>

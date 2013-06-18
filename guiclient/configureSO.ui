@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>708</width>
+    <width>714</width>
     <height>661</height>
    </rect>
   </property>
@@ -529,13 +529,6 @@ to be bound by its terms.</comment>
                   <string>Price Control</string>
                  </property>
                  <layout class="QGridLayout">
-                  <item row="0" column="0">
-                   <widget class="QCheckBox" name="_allowDiscounts">
-                    <property name="text">
-                     <string>Allow Price Discounts</string>
-                    </property>
-                   </widget>
-                  </item>
                   <item row="1" column="0">
                    <widget class="QCheckBox" name="_priceOverride">
                     <property name="text">
@@ -543,10 +536,38 @@ to be bound by its terms.</comment>
                     </property>
                    </widget>
                   </item>
+                  <item row="4" column="0">
+                   <widget class="QCheckBox" name="_wholesalePriceCosting">
+                    <property name="text">
+                     <string>Use Wholesale Price as Unit Cost for Markups</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QCheckBox" name="_allowDiscounts">
+                    <property name="text">
+                     <string>Allow Price Discounts</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="5" column="0">
+                   <widget class="QCheckBox" name="_long30Markups">
+                    <property name="text">
+                     <string>Use &quot;Long 30&quot; Method for Markups</string>
+                    </property>
+                   </widget>
+                  </item>
                   <item row="2" column="0">
                    <widget class="QCheckBox" name="_hideSOMiscChrg">
                     <property name="text">
                      <string>Hide Misc. Charges on Sales Order screen</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QCheckBox" name="_itemPricingPrecedence">
+                    <property name="text">
+                     <string>Item Precedence Over Product Category Pricing</string>
                     </property>
                    </widget>
                   </item>

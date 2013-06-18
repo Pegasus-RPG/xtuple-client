@@ -40,7 +40,6 @@ protected:
     QString _custtypecode;
     QDate _effective;
     QDate _asOf;
-    float _listcost;
 
 protected slots:
     virtual void languageChange();

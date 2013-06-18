@@ -988,7 +988,7 @@ to be bound by its terms.</comment>
           <item row="2" column="0">
            <widget class="XLabel" name="_markupLit">
             <property name="text">
-             <string>Markup Percent (Wholesale Price):</string>
+             <string>Markup Percent:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1457,6 +1457,7 @@ to be bound by its terms.</comment>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
