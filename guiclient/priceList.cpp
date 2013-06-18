@@ -22,6 +22,7 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
 
   connect(_cust,   SIGNAL(newId(int)),        this,    SLOT(sNewCust()));
   connect(_item,   SIGNAL(newId(int)),        this,    SLOT(sNewItem()));
+  connect(_warehouse, SIGNAL(newID(int)),     this,    SLOT(sNewItem()));
   connect(_close,  SIGNAL(clicked()),         this,    SLOT(reject()));
   connect(_price,  SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
   connect(_price,  SIGNAL(itemSelected(int)), this,    SLOT(sSelect()));
@@ -52,10 +53,10 @@ priceList::priceList(QWidget* parent, const char * name, Qt::WindowFlags fl)
   _prodcatid = -1;
   _custtypeid = -1;
   _custtypecode = "";
-  _listcost = 0.0;
 
   _qty->setValidator(omfgThis->qtyVal());
   _listPrice->setPrecision(omfgThis->priceVal());
+  _unitCost->setPrecision(omfgThis->costVal());
 }
 
 priceList::~priceList()
@@ -96,6 +97,13 @@ enum SetResponse priceList::set(const ParameterList &pParams)
     _item->setReadOnly(true);
   }
 
+  param = pParams.value("warehouse_id", &valid);
+  if (valid)
+  {
+    _warehouse->setId(param.toInt());
+    _warehouse->setEnabled(false);
+  }
+    
   param = pParams.value("curr_id", &valid);
   if (valid)
   {
@@ -178,18 +186,24 @@ void priceList::sNewShipto()
 void priceList::sNewItem()
 {
   _listPrice->clear();
+  _unitCost->clear();
   if (_item->isValid())
   {
     XSqlQuery itemq;
-    itemq.prepare("SELECT item_listprice, item_listcost, item_prodcat_id"
-                  "  FROM item"
-                  " WHERE (item_id=:id);");
-    itemq.bindValue(":id", _item->id());
+    itemq.prepare("SELECT item_listprice, item_listcost, item_prodcat_id,"
+                  "       itemCost(itemsite_id) AS item_unitcost"
+                  "  FROM item LEFT OUTER JOIN itemsite ON (itemsite_item_id=item_id AND itemsite_warehous_id=:warehous_id)"
+                  " WHERE (item_id=:item_id);");
+    itemq.bindValue(":item_id", _item->id());
+    itemq.bindValue(":warehous_id", _warehouse->id());
     itemq.exec();
     if (itemq.first())
     {
       _listPrice->setDouble(itemq.value("item_listprice").toDouble());
-      _listcost = itemq.value("item_listcost").toDouble();
+      if (_metrics->boolean("WholesalePriceCosting"))
+        _unitCost->setDouble(itemq.value("item_listcost").toDouble());
+      else
+        _unitCost->setDouble(itemq.value("item_unitcost").toDouble());
       _prodcatid = itemq.value("item_prodcat_id").toInt();
     }
     else if (itemq.lastError().type() != QSqlError::NoError)
@@ -242,7 +256,7 @@ void priceList::sFillList()
   pricelistp.append("effective",        _effective);
   pricelistp.append("asof",             _asOf);
   pricelistp.append("item_listprice",   _listPrice->toDouble());
-  pricelistp.append("item_listcost",    _listcost);
+  pricelistp.append("item_unitcost",    _unitCost->toDouble());
 
   XSqlQuery pricelistq = pricelistm.toQuery(pricelistp);
   _price->populate(pricelistq, true);

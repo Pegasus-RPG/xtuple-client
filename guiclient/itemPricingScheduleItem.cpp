@@ -95,6 +95,11 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
     _qtyBreakFreightUOM->setText(uom);
   }
 
+  if (_metrics->boolean("WholesalePriceCosting"))
+      _markupLit->setText(tr("Markup Percent (Wholesale Price):"));
+  else
+      _markupLit->setText(tr("Markup Percent (Inventory Cost):"));
+
   _rejectedMsg = tr("The application has encountered an error and must "
                     "stop editing this Pricing Schedule.\n%1");
 }
