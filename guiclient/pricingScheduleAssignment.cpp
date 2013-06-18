@@ -91,8 +91,6 @@ void pricingScheduleAssignment::sAssign()
     return;
   }
 
-  if (_mode == cNew)
-  {
     pricingAssign.prepare( "SELECT ipsass_id "
                "FROM ipsass "
                "WHERE ( (ipsass_ipshead_id=:ipsass_ipshead_id)"
@@ -136,7 +134,8 @@ void pricingScheduleAssignment::sAssign()
                             tr("<p>This Pricing Schedule Assignment already exists."));
       return;
     }
-
+  if (_mode == cNew)
+  {
     pricingAssign.exec("SELECT NEXTVAL('ipsass_ipsass_id_seq') AS ipsass_id;");
     if (pricingAssign.first())
       _ipsassid = pricingAssign.value("ipsass_id").toInt();

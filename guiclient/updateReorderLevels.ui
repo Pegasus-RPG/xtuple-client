@@ -71,7 +71,6 @@ to be bound by its terms.</comment>
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
-                  <zorder>_frame</zorder>
                  </widget>
                 </item>
                </layout>
@@ -112,16 +111,6 @@ to be bound by its terms.</comment>
               <widget class="QPushButton" name="_update">
                <property name="text">
                 <string>Q&amp;uery</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_submit">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>&amp;Schedule</string>
                </property>
               </widget>
              </item>
@@ -496,6 +485,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -513,7 +503,6 @@ to be bound by its terms.</comment>
   <tabstop>_days</tabstop>
   <tabstop>_periods</tabstop>
   <tabstop>_update</tabstop>
-  <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
@@ -563,22 +552,6 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>234</x>
      <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_postImmediate</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_submit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>260</x>
-     <y>166</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>464</x>
-     <y>95</y>
     </hint>
    </hints>
   </connection>

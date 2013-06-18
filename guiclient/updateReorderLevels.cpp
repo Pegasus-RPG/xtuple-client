@@ -17,7 +17,6 @@
 
 #include "updateReorderLevels.h"
 #include "mqlutil.h"
-#include "submitAction.h"
 
 updateReorderLevels::updateReorderLevels(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -32,7 +31,6 @@ updateReorderLevels::updateReorderLevels(QWidget* parent, const char* name, bool
     connect(_preview, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
     connect(_results, SIGNAL(currentItemChanged(XTreeWidgetItem*, XTreeWidgetItem*)), this, SLOT(sCloseEdit(XTreeWidgetItem*,XTreeWidgetItem*)));
     connect(_results, SIGNAL(itemClicked(XTreeWidgetItem*, int)), this, SLOT(sOpenEdit(XTreeWidgetItem*, int)));
-    connect(_submit,   SIGNAL(clicked()), this, SLOT(sSubmit()));
     connect(_update,   SIGNAL(clicked()), this, SLOT(sUpdate()));
 
     _results->addColumn(tr("Site"),        _whsColumn, Qt::AlignLeft, true, "reordlvl_warehous_code");
@@ -43,9 +41,6 @@ updateReorderLevels::updateReorderLevels(QWidget* parent, const char* name, bool
     _results->addColumn(tr("Days Stock"),  _qtyColumn, Qt::AlignRight,true, "reordlvl_daysofstock");
     _results->addColumn(tr("Total Usage"), _qtyColumn, Qt::AlignRight,true, "reordlvl_total_usage");
     _results->addColumn(tr("New Level"),   _qtyColumn, Qt::AlignRight,true, "reordlvl_calc_level");
-
-    if (!_metrics->boolean("EnableBatchManager"))
-      _submit->hide();
 }
 
 updateReorderLevels::~updateReorderLevels()
@@ -156,35 +151,6 @@ void updateReorderLevels::sUpdate()
   else
     QMessageBox::information(this, windowTitle(), tr("No Calendar Periods selected."));
 }
-
-void updateReorderLevels::sSubmit()
-{
-  if (_periods->selectedItems().count() > 0)
-  {
-    ParameterList params;
-    params.append("action_name", "UpdateReorderLevel");
-    params.append("period_id_list", _periods->periodString());
-    _warehouse->appendValue(params);
-    if (_item->id() != -1)
-      params.append("item_id", _item->id());
-    else
-      _parameter->appendValue(params);
-
-    if (_leadTime->isChecked())
-      params.append("leadtimepad", _leadTimePad->value());
-    else if (_fixedDays->isChecked())
-      params.append("fixedlookahead", _days->value());
-
-    submitAction newdlg(this, "", TRUE);
-    newdlg.set(params);
-
-    if (newdlg.exec() == XDialog::Accepted)
-      accept();
-  }
-  else
-    QMessageBox::information(this, windowTitle(), tr("No Calendar Periods selected."));
-}
-
 void updateReorderLevels::sHandleButtons()
 {
   if (_preview->isChecked())

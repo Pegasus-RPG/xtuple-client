@@ -28,9 +28,6 @@ public:
     ~createPlannedOrdersByPlannerCode();
     virtual bool setParams(ParameterList&);
 
-public slots:
-    virtual void sSubmit();
-
 protected slots:
     virtual void languageChange();
 

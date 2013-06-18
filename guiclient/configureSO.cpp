@@ -88,6 +88,9 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
   _calcFreight->setChecked(_metrics->boolean("CalculateFreight"));
   _includePkgWeight->setChecked(_metrics->boolean("IncludePackageWeight"));
   _quoteafterSO->setChecked(_metrics->boolean("ShowQuotesAfterSO"));
+  _itemPricingPrecedence->setChecked(_metrics->boolean("ItemPricingPrecedence"));
+  _wholesalePriceCosting->setChecked(_metrics->boolean("WholesalePriceCosting"));
+  _long30Markups->setChecked(_metrics->boolean("Long30Markups"));
 
   _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
   _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
@@ -283,6 +286,9 @@ bool configureSO::sSave()
   _metrics->set("IncludePackageWeight", _includePkgWeight->isChecked());
   _metrics->set("EnableReturnAuth", _enableReturns->isChecked());
   _metrics->set("EnableSOReservations", _enableReservations->isChecked());
+  _metrics->set("ItemPricingPrecedence", _itemPricingPrecedence->isChecked());
+  _metrics->set("WholesalePriceCosting", _wholesalePriceCosting->isChecked());
+  _metrics->set("Long30Markups", _long30Markups->isChecked());
 
   _metrics->set("EnableSOReservationsByLocation", _locationGroup->isChecked());
   //SOReservationLocationMethod are three Options Either 

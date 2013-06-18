@@ -30,6 +30,7 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_currency, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Effective"));
@@ -96,6 +97,7 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
       _name->setEnabled(FALSE);
       _descrip->setEnabled(FALSE);
       _dates->setEnabled(FALSE);
+      _warehouse->setEnabled(FALSE);
       _currency->setEnabled(FALSE);
       _new->setEnabled(FALSE);
       _close->setText(tr("&Close"));
@@ -320,6 +322,7 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
   MetaSQLQuery mql = mqlLoad("itemPricingSchedule", "detail");
   ParameterList params;
   params.append("ipshead_id", _ipsheadid);
+  params.append("warehous_id", _warehouse->id());
   params.append("item",tr("Item"));
   params.append("prodcat", tr("Prod. Cat."));
   params.append("flatrate", tr("Flat Rate"));
