@@ -62,6 +62,7 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT 1 AS groupby,
+       coitem_linenumber AS sortline, coitem_subnumber AS sortsubline,
        formatsolinenumber(coitem_id) AS linenumber,
        coitem_memo,
        item_number,
@@ -124,7 +125,7 @@ GROUP BY coitem_qty_uom_id, coitem_linenumber, coitem_subnumber, coitem_id, coit
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
          coitem_qtyreturned, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
-ORDER BY linenumber;</sql>
+ORDER BY sortline, sortsubline;</sql>
  </querysource>
  <querysource>
   <name>logo</name>
