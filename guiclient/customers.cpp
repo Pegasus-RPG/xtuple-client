@@ -61,6 +61,7 @@ customers::customers(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Type"),_itemColumn, Qt::AlignLeft,   true,  "custtype_code");
   list()->addColumn(tr("Bill First"),   50, Qt::AlignLeft  , true,  "bill_first_name" );
   list()->addColumn(tr("Bill Last"),    -1, Qt::AlignLeft  , true,  "bill_last_name" );
+  list()->addColumn(tr("Bill Title"),  100, Qt::AlignLeft  , true,  "bill_title" );
   list()->addColumn(tr("Bill Phone"),  100, Qt::AlignLeft  , true,  "bill_phone" );
   list()->addColumn(tr("Bill Fax"),    100, Qt::AlignLeft  , false, "bill_fax" );
   list()->addColumn(tr("Bill Email"),  100, Qt::AlignLeft  , true,  "bill_email" );

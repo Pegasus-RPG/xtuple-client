@@ -93,9 +93,7 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
  <querysource>
   <name>detail</name>
   <sql>SELECT 1 AS groupby,
---     coitem_linenumber AS linenumber,
---     In 3.1 replace line above with line below to support 
---     kitting functionality
+       coitem_linenumber AS sortline, coitem_subnumber AS sortsubline,
        formatsolinenumber(coitem_id) AS linenumber,
        coitem_memo AS memo,
        CASE WHEN (coitem_custpn != '') THEN coitem_custpn
@@ -170,8 +168,7 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
 &lt;? if exists("MultiWhs") ?>
 UNION
 SELECT 2 AS groupby,
---     For 3.1 added CAST to match column type of corresponding column in other SELECT 
---     in this UNION
+       toitem_linenumber AS sortline, 0 AS sortsubline,
        CAST(toitem_linenumber AS text) AS linenumber,
        toitem_notes AS memo,
        item_number,
@@ -214,7 +211,7 @@ SELECT 2 AS groupby,
    AND  (shiphead_id=&lt;? value("shiphead_id") ?>)
 )
 &lt;? endif ?>
-ORDER BY linenumber;</sql>
+ORDER BY sortline, sortsubline;</sql>
  </querysource>
  <querysource>
   <name>logo</name>

@@ -59,7 +59,7 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( PurchaseOrderItem, "PI"  ),
   DocumentMap( ReturnAuth,        "RA"  ),
   DocumentMap( ReturnAuthItem,    "RI"  ),
-  DocumentMap( Quote,             "Q"     "quhead_id",   "salesOrder"    ),
+  DocumentMap( Quote,             "Q",     "quhead_id",   "salesOrder"    ),
   DocumentMap( QuoteItem,         "QI"  ),
   DocumentMap( SalesOrder,        "S",    "sohead_id",   "salesOrder"    ),
   DocumentMap( SalesOrderItem,    "SI"  ),
