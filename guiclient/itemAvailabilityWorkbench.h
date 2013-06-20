@@ -70,6 +70,9 @@ public slots:
     virtual void sEditTransInfo();
     virtual void sViewWOInfo();
     virtual void sViewWOInfoHistory();
+    virtual void sEditSo();
+    virtual void sEditTo();
+    virtual void sEditPo();
     virtual void sRelocateInventory();
     virtual void sReassignLotSerial();
     virtual void sEditBOM();
