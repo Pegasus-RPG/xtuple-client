@@ -18,6 +18,8 @@
 #include <QValidator>
 #include <QVariant>
 
+#include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "storedProcErrorLookup.h"
 
 adjustInvValue::adjustInvValue(QWidget* parent, const char * name, Qt::WindowFlags fl)
@@ -158,32 +160,20 @@ void adjustInvValue::sPopulate()
 void adjustInvValue::sPost()
 {
   XSqlQuery adjustPost;
-  struct {
-    bool        condition;
-    QString     msg;
-    QWidget     *widget;
-  } error[] = {
-    { _itemsiteid == -1,
-      tr("You must select a valid Itemsite before posting this transaction."), _item },
-    { _newValue->text().length() == 0,
-      tr("<p>You must enter a valid New Value before posting this transaction."),
-      _newValue },
-    { _altAccnt->isChecked() && ! _accnt->isValid(),
-      tr("<p>You must enter a valid Alternate G/L Account before posting this transaction."),
-      _accnt },
-    { true, "", NULL }
-  };
 
-  int errIndex;
-  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(_itemsiteid == -1, _item,
+                          tr("You must select a valid Itemsite before posting this transaction.") )
+         << GuiErrorCheck(_newValue->text().length() == 0, _newValue,
+                          tr("<p>You must enter a valid New Value before posting this transaction.") )
+         << GuiErrorCheck(_altAccnt->isChecked() && ! _accnt->isValid(), _accnt,
+                          tr("<p>You must enter a valid Alternate G/L Account before posting this transaction.") )
+         << GuiErrorCheck(_qtyonhand <= 0.0, _item,
+                          tr("You must select an Itemsite with a positive Qty on Hand before posting this transaction.") )
     ;
-  if (! error[errIndex].msg.isEmpty())
-  {
-    QMessageBox::critical(this, tr("Cannot Post Transaction"),
-                          error[errIndex].msg);
-    error[errIndex].widget->setFocus();
+
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Post Transaction"), errors))
     return;
-  }
 
   ParameterList params;
   params.append("newValue", _newValue->toDouble());
