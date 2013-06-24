@@ -220,8 +220,8 @@ bool dspAPApplications::setParams(ParameterList & params)
     params.append("showCreditMemos");
 
   _dates->appendValue(params);
-  params.append("creditMemo", tr("Credit Memo"));
-  params.append("debitMemo",  tr("Debit Memo"));
+  params.append("creditMemo", tr("Credit"));
+  params.append("debitMemo",  tr("Debit"));
   params.append("check",      tr("Check"));
   params.append("voucher",    tr("Voucher"));
 

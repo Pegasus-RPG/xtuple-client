@@ -3,6 +3,12 @@
  <title>A/P Applications</title>
  <name>APApplications</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -43,7 +49,7 @@
 &lt;? endif ?>
 ;</sql>
  </querysource>
- <querysource loadFromDb="true" >
+ <querysource loadFromDb="true">
   <name>detail</name>
   <mqlgroup>apApplications</mqlgroup>
   <mqlname>detail</mqlname>
@@ -157,7 +163,7 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Source</string>
+   <string>Source Document</string>
   </label>
   <label>
    <rect>
@@ -243,7 +249,7 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Target</string>
+   <string>Apply To Document</string>
   </label>
   <label>
    <rect>
@@ -365,7 +371,7 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Target</string>
+   <string>Apply To Document</string>
   </label>
   <label>
    <rect>
@@ -397,7 +403,7 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Source</string>
+   <string>Source Document</string>
   </label>
   <label>
    <rect>
@@ -712,7 +718,8 @@
     <query>detail</query>
     <column>base_applied</column>
    </data>
-   <tracktotal builtin="true" >money</tracktotal>
+   <format builtin="true">money</format>
+   <tracktotal/>
   </field>
   <label>
    <rect>
