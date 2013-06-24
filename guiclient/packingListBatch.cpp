@@ -115,6 +115,19 @@ void packingListBatch::sPrintBatch()
   while (packingPrintBatch.next())
   {
     int osmiscid = packingPrintBatch.value("pack_shiphead_id").toInt();
+    bool usePickForm;
+    if (_printPick->isChecked())
+      usePickForm = true;
+    else if (_printPack->isChecked())
+      usePickForm = false;
+    else if (osmiscid > 0)
+      usePickForm = false;
+    else
+      usePickForm = true;
+      
+    // skip when PackForm and no shiphead_id
+    if (!usePickForm && osmiscid <= 0)
+        continue;
 
     // set sohead_id, tohead_id, and shiphead_id for customer and 3rd-party use
     ParameterList params;
@@ -131,7 +144,7 @@ void packingListBatch::sPrintBatch()
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
 
-    orReport report(packingPrintBatch.value(osmiscid > 0 ? "packform" : "pickform").toString(), params);
+    orReport report(packingPrintBatch.value(usePickForm ? "pickform" : "packform").toString(), params);
     if (! report.isValid())
     {
       report.reportError(this);

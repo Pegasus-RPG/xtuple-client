@@ -43,6 +43,8 @@
 #include "transactionInformation.h"
 #include "transferTrans.h"
 #include "workOrder.h"
+#include "salesOrder.h"
+#include "transferOrder.h"
 
 itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -890,6 +892,8 @@ void itemAvailabilityWorkbench::sPrintWhereUsed()
 
 void itemAvailabilityWorkbench::sPopulateMenuRunning( QMenu * pMenu, QTreeWidgetItem * pSelected )
 {
+  QAction *menuItem;
+    
   if (pSelected->text(0) == tr("Planned W/O (firmed)") || pSelected->text(0) == tr("Planned W/O") ||
       pSelected->text(0) == tr("Planned P/O (firmed)") || pSelected->text(0) == tr("Planned P/O") )
   {
@@ -904,6 +908,24 @@ void itemAvailabilityWorkbench::sPopulateMenuRunning( QMenu * pMenu, QTreeWidget
 
   else if (pSelected->text(0).contains("W/O") && !(pSelected->text(0) == tr("Planned W/O Req. (firmed)") || pSelected->text(0) == tr("Planned W/O Req.")))
     pMenu->addAction(tr("View Work Order Details..."), this, SLOT(sViewWOInfo()));
+    
+  else if (pSelected->text(0) == tr("S/O"))
+  {
+      menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEditSo()));
+      menuItem->setEnabled(_privileges->check("ViewSalesOrders") || _privileges->check("MaintainSalesOrders"));
+  }
+    
+  else if (pSelected->text(0) == tr("T/O"))
+  {
+      menuItem = pMenu->addAction(tr("Edit Transfer Order..."), this, SLOT(sEditTo()));
+      menuItem->setEnabled(_privileges->check("ViewTransferOrders") || _privileges->check("MaintainTransferOrders"));
+  }
+    
+  else if (pSelected->text(0) == tr("P/O"))
+  {
+      menuItem = pMenu->addAction(tr("Edit Purchase Order..."), this, SLOT(sEditPo()));
+      menuItem->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
+  }
 }
 
 void itemAvailabilityWorkbench::sPopulateMenuAvail( QMenu *pMenu, QTreeWidgetItem * selected )
@@ -1367,6 +1389,38 @@ void itemAvailabilityWorkbench::sViewWOInfoHistory()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
+}
+
+void itemAvailabilityWorkbench::sEditSo()
+{
+    ParameterList params;
+    if (_privileges->check("MaintainSalesOrders"))
+      salesOrder::editSalesOrder(_availability->id(), true);
+    else
+      salesOrder::viewSalesOrder(_availability->id());
+}
+
+void itemAvailabilityWorkbench::sEditTo()
+{
+    ParameterList params;
+    if (_privileges->check("MaintainTransferOrders"))
+      transferOrder::editTransferOrder(_availability->id(), true);
+    else
+      transferOrder::viewTransferOrder(_availability->id());
+}
+
+void itemAvailabilityWorkbench::sEditPo()
+{
+    ParameterList params;
+    if (_privileges->check("MaintainPurchaseOrders"))
+      params.append("mode", "edit");
+    else
+      params.append("mode", "view");
+    params.append("pohead_id", _availability->id());
+    
+    purchaseOrder *newdlg = new purchaseOrder();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
 }
 
 void itemAvailabilityWorkbench::sRelocateInventory()
