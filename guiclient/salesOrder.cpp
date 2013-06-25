@@ -27,6 +27,7 @@
 #include "crmacctcluster.h"
 #include "customer.h"
 #include "errorReporter.h"
+#include "guiErrorCheck.h"
 #include "distributeInventory.h"
 #include "issueLineToShipping.h"
 #include "mqlutil.h"
@@ -64,6 +65,18 @@
 #define iDontUpdate   1
 #define iAskToUpdate  2
 #define iJustUpdate   3
+
+const struct {
+    const char * full;
+    QString abbr;
+    bool    cc;
+} _fundsTypes[] = {
+    { QT_TRANSLATE_NOOP("cashReceipt", "Cash"),             "K", false },
+    { QT_TRANSLATE_NOOP("cashReceipt", "Check"),            "C", false },
+    { QT_TRANSLATE_NOOP("cashReceipt", "Certified Check"),  "T", false },
+    { QT_TRANSLATE_NOOP("cashReceipt", "Wire Transfer"),    "W", false },
+    { QT_TRANSLATE_NOOP("cashReceipt", "Other"),            "O", false }
+};
 
 salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   : XWidget(parent, name, fl)
@@ -218,7 +231,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 
   if (!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
   {
-    _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
+    _paymentInformation->removeTab(_paymentInformation->indexOf(_creditCardPage));
   }
 
   if (_metrics->boolean("EnableSOReservations"))
@@ -234,6 +247,14 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 
   _miscChargeAccount->setType(GLCluster::cRevenue | GLCluster::cExpense);
 
+  for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
+  {
+    _fundsType->append(i, tr(_fundsTypes[i].full), _fundsTypes[i].abbr);
+  }
+    
+  _bankaccnt->setType(XComboBox::ARBankAccounts);
+  _salescat->setType(XComboBox::SalesCategoriesActive);
+    
   sHandleMore();
 }
 
@@ -269,6 +290,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _comments->setType(Comments::SalesOrder);
       _documents->setType(Documents::SalesOrder);
       _calcfreight = _metrics->boolean("CalculateFreight");
+      _applDate->setDate(omfgThis->dbDate(), true);
+      _distDate->setDate(omfgThis->dbDate(), true);
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
@@ -293,6 +316,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _downCC->hide();
       _authorize->hide();
       _charge->hide();
+      _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
       _quotestatusLit->show();
       _quotestaus->show();
       _quotestaus->setText("Open");
@@ -312,6 +336,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _comments->setType(Comments::SalesOrder);
       _documents->setType(Documents::SalesOrder);
       _cust->setType(CLineEdit::AllCustomers);
+      _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
@@ -335,6 +360,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _downCC->hide();
       _authorize->hide();
       _charge->hide();
+      _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
       _quotestatusLit->show();
       _quotestaus->show();
 
@@ -350,6 +376,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
 
       _reserveStock->hide();
       _reserveLineBalance->hide();
+      _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
     }
     else if (param.toString() == "viewQuote")
     {
@@ -384,6 +411,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _documents->setReadOnly(true);
       _copyToShipto->setEnabled(FALSE);
       _orderCurrency->setEnabled(FALSE);
+      _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
       _save->hide();
       _clear->hide();
       _action->hide();
@@ -499,7 +527,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _shippingForm->hide();
     _shippingFormLit->hide();
 
-    _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
+    _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_paymentPage));
     _showCanceled->hide();
     _total->setBaseVisible(true);
   }
@@ -694,63 +722,33 @@ void salesOrder::sSaveAndAdd()
 bool salesOrder::save(bool partial)
 {
   XSqlQuery saveSales;
-  //  Make sure that all of the required field have been populated
-  if (!_orderDate->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must enter an Order Date for this order before you may save it.") );
-    _orderDate->setFocus();
-    return FALSE;
-  }
 
-  if ( (!_shipDate->isValid()) && (_metrics->value("soPriceEffective") == "ScheduleDate") )
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must enter an Scheduled Date for this order before you may save it.") );
-    _shipDate->setFocus();
-    return FALSE;
-  }
-
-  if (!_cust->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must select a Customer for this order before you may save it.") );
-    _cust->setFocus();
-    return FALSE;
-  }
-
-  if (!_salesRep->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must select a Sales Rep. for this order before you may save it.") );
-    _salesRep->setFocus();
-    return FALSE;
-  }
-
-  if (!_terms->isValid())
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must select the Terms for this order before you may save it.") );
-    _terms->setFocus();
-    return FALSE;
-  }
-
-  if ( (_shipTo->id() == -1) && (!_shipToAddr->isEnabled()) )
-  {
-    QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("You must select a Ship-To for this order before you may save it.") );
-    _shipTo->setFocus();
-    return FALSE;
-  }
-
-  if (_total->localValue() < 0)
-  {
-    QMessageBox::information(this, tr("Total Less than Zero"),
-                              tr("<p>The Total must be a positive value.") );
-    _cust->setFocus();
-    return FALSE;
-  }
-
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck(!_orderDate->isValid(), _orderDate,
+                          tr("You must enter an Order Date for this order before you may save it.") )
+         << GuiErrorCheck((!_shipDate->isValid()) && (_metrics->value("soPriceEffective") == "ScheduleDate"), _shipDate,
+                          tr("You must enter an Scheduled Date for this order before you may save it.") )
+         << GuiErrorCheck(!_cust->isValid(), _cust,
+                          tr("You must select a Customer for this order before you may save it.") )
+         << GuiErrorCheck(!_salesRep->isValid(), _salesRep,
+                          tr("You must select a Sales Rep. for this order before you may save it.") )
+         << GuiErrorCheck(!_terms->isValid(), _terms,
+                          tr("You must select the Terms for this order before you may save it.") )
+         << GuiErrorCheck((_shipTo->id() == -1) && (!_shipToAddr->isEnabled()), _shipTo,
+                          tr("You must select a Ship-To for this order before you may save it.") )
+         << GuiErrorCheck(_total->localValue() < 0, _cust,
+                          tr("<p>The Total must be a positive value.") )
+         << GuiErrorCheck(!partial && _soitem->topLevelItemCount() == 0, _new,
+                          tr("<p>You must create at least one Line Item for this order before you may save it.") )
+         << GuiErrorCheck(_orderNumber->text().toInt() == 0, _orderNumber,
+                          tr( "<p>You must enter a valid Number for this order before you may save it." ) )
+         << GuiErrorCheck((!_miscCharge->isZero()) && (!_miscChargeAccount->isValid()), _miscChargeAccount,
+                          tr("<p>You may not enter a Misc. Charge without "
+                             "indicating the G/L Sales Account number for the "
+                             "charge.  Please set the Misc. Charge amount to 0 "
+                             "or select a Misc. Charge Sales Account." ) )
+  ;
+    
   if (_opportunity->isValid())
   {
     saveSales.prepare( "SELECT crmacct_cust_id, crmacct_prospect_id "
@@ -762,10 +760,8 @@ bool salesOrder::save(bool partial)
     {
       if (saveSales.value("crmacct_cust_id").toInt() == 0 && saveSales.value("crmacct_prospect_id").toInt() == 0)
       {
-        QMessageBox::warning( this, tr("Cannot Save Sales Order"),
+        errors << GuiErrorCheck(true, _opportunity,
                               tr("Only opportunities from Customers or Prospects can be related.") );
-        _opportunity->setFocus();
-        return FALSE;
       }
     }
     else if (saveSales.lastError().type() != QSqlError::NoError)
@@ -781,10 +777,8 @@ bool salesOrder::save(bool partial)
     {
       if (_custPONumber->text().trimmed().length() == 0)
       {
-        QMessageBox::warning( this, tr("Cannot Save Sales Order"),
+        errors << GuiErrorCheck(true, _custPONumber,
                                 tr("You must enter a Customer P/O for this Sales Order before you may save it.") );
-        _custPONumber->setFocus();
-        return FALSE;
       }
 
       if (!_blanketPos)
@@ -806,15 +800,13 @@ bool salesOrder::save(bool partial)
         saveSales.exec();
         if (saveSales.first())
         {
-          QMessageBox::warning( this, tr("Cannot Save Sales Order"),
+          errors << GuiErrorCheck(true, _custPONumber,
                                 tr("<p>This Customer does not use Blanket P/O "
                                      "Numbers and the P/O Number you entered has "
                                      "already been used for another Sales Order."
                                      "Please verify the P/O Number and either"
                                      "enter a new P/O Number or add to the"
                                      "existing Sales Order." ) );
-          _custPONumber->setFocus();
-          return FALSE;
         }
         else if (saveSales.lastError().type() != QSqlError::NoError)
         {
@@ -825,34 +817,49 @@ bool salesOrder::save(bool partial)
     }
   }
 
-  if (!partial && _soitem->topLevelItemCount() == 0)
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order"), errors))
+      return false;
+
+  // Cash Payment
+  if (_received->localValue() >  _balance->localValue() &&
+      QMessageBox::question(this, tr("Overapplied?"),
+                              tr("The Cash Payment is more than the Balance.  Do you want to continue?"),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+        return FALSE;
+    
+  int _bankaccnt_curr_id = -1;
+  QString _bankaccnt_currAbbr;
+  saveSales.prepare( "SELECT bankaccnt_curr_id, "
+                     "       currConcat(bankaccnt_curr_id) AS currAbbr "
+                     "  FROM bankaccnt "
+                     " WHERE (bankaccnt_id=:bankaccnt_id);");
+  saveSales.bindValue(":bankaccnt_id", _bankaccnt->id());
+  saveSales.exec();
+  if (saveSales.first())
   {
-    QMessageBox::warning( this, tr("Create Line Items for this Order"),
-                          tr("<p>You must create at least one Line Item for "
-                               "this order before you may save it."));
-    _new->setFocus();
+    _bankaccnt_curr_id = saveSales.value("bankaccnt_curr_id").toInt();
+    _bankaccnt_currAbbr = saveSales.value("currAbbr").toString();
+  }
+  else if (saveSales.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, saveSales.lastError().databaseText(), __FILE__, __LINE__);
     return FALSE;
   }
-
-  if (_orderNumber->text().toInt() == 0)
+    
+  if (_received->currencyEnabled() && _received->id() != _bankaccnt_curr_id &&
+      QMessageBox::question(this, tr("Bank Currency?"),
+                                  tr("<p>This Sales Order is specified in %1 while the "
+                                     "Bank Account is specified in %2. Do you wish to "
+                                     "convert at the current Exchange Rate?"
+                                     "<p>If not, click NO "
+                                     "and change the Bank Account in the POST TO field.")
+                                  .arg(_received->currAbbr())
+                                  .arg(_bankaccnt_currAbbr),
+                              QMessageBox::Yes|QMessageBox::Escape,
+                              QMessageBox::No |QMessageBox::Default) != QMessageBox::Yes)
   {
-    QMessageBox::warning( this, tr("Invalid S/O # Entered"),
-                          tr( "<p>You must enter a valid Number for this "
-                                "order before you may save it." ) );
-    _orderNumber->setFocus();
-    return FALSE;
-  }
-
-  //  We can't post a Misc. Charge without a Sales Account
-  if ( (!_miscCharge->isZero()) && (!_miscChargeAccount->isValid()) )
-  {
-    QMessageBox::warning( this, tr("No Misc. Charge Account Number"),
-                          tr("<p>You may not enter a Misc. Charge without "
-                               "indicating the G/L Sales Account number for the "
-                               "charge.  Please set the Misc. Charge amount to 0 "
-                               "or select a Misc. Charge Sales Account." ) );
-    _salesOrderInformation->setCurrentIndex(_salesOrderInformation->indexOf(_lineItemsPage));
-    _miscChargeAccount->setFocus();
+    _bankaccnt->setFocus();
     return FALSE;
   }
 
@@ -1271,6 +1278,11 @@ bool salesOrder::save(bool partial)
 
   if (!partial)
   {
+    if ((cNew == _mode) && _received->localValue() > 0.0)
+    {
+      sEnterCashPayment();
+    }
+      
     if ((cNew == _mode) && _metrics->boolean("AutoAllocateCreditMemos"))
     {
       sAllocateCreditMemos();
@@ -4421,22 +4433,109 @@ void salesOrder::sShowReservations()
   }
 }
 
+void salesOrder::sEnterCashPayment()
+{
+  XSqlQuery cashsave;
+  QString _cashrcptnumber;
+  int _cashrcptid;
+
+  cashsave.exec("SELECT fetchCashRcptNumber() AS number, NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
+  if (cashsave.first())
+  {
+    _cashrcptnumber = cashsave.value("number").toString();
+    _cashrcptid = cashsave.value("cashrcpt_id").toInt();
+  }
+  else if (cashsave.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, cashsave.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+    
+  cashsave.prepare( "INSERT INTO cashrcpt "
+                    "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
+                    "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
+                    "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_docdate, "
+                    "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, cashrcpt_discount ) "
+                    "VALUES "
+                    "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
+                    "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
+                    "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
+                    "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, :cashrcpt_discount );" );
+  cashsave.bindValue(":cashrcpt_id", _cashrcptid);
+  cashsave.bindValue(":cashrcpt_number", _cashrcptnumber);
+  cashsave.bindValue(":cashrcpt_cust_id", _cust->id());
+  cashsave.bindValue(":cashrcpt_amount", _received->localValue());
+  cashsave.bindValue(":cashrcpt_fundstype", _fundsType->code());
+  cashsave.bindValue(":cashrcpt_docnumber", _docNumber->text());
+  cashsave.bindValue(":cashrcpt_docdate", _docDate->date());
+  cashsave.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
+  cashsave.bindValue(":cashrcpt_distdate", _distDate->date());
+  cashsave.bindValue(":cashrcpt_applydate", _applDate->date());
+  cashsave.bindValue(":cashrcpt_notes", "Sales Order Cash Payment");
+  cashsave.bindValue(":cashrcpt_usecustdeposit", true);
+  cashsave.bindValue(":cashrcpt_discount", 0.0);
+  cashsave.bindValue(":curr_id", _received->id());
+  if(_altAccnt->isChecked())
+    cashsave.bindValue(":cashrcpt_salescat_id", _salescat->id());
+  else
+    cashsave.bindValue(":cashrcpt_salescat_id", -1);
+  cashsave.exec();
+  if (cashsave.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, cashsave.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+    
+  // Post the Cash Receipt
+  XSqlQuery cashPost;
+  int journalNumber = -1;
+    
+  cashPost.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
+  if (cashPost.first())
+    journalNumber = cashPost.value("journalnumber").toInt();
+  else if (cashPost.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+    
+  cashPost.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
+  cashPost.bindValue(":cashrcpt_id", _cashrcptid);
+  cashPost.bindValue(":journalNumber", journalNumber);
+  cashPost.exec();
+  if (cashPost.first())
+  {
+    int result = cashPost.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("postCashReceipt", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (cashPost.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
 void salesOrder::sCreditAllocate()
 {
-  ParameterList params;
-  params.append("doctype", "S");
-  params.append("cohead_id", _soheadid);
-  params.append("cust_id", _cust->id());
-  params.append("total",  _total->localValue());
-  params.append("balance",  _balance->localValue());
-  params.append("curr_id",   _balance->id());
-  params.append("effective", _balance->effective());
-
-  allocateARCreditMemo newdlg(this, "", TRUE);
-  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
-  {
-    populateCMInfo();
-  }
+    ParameterList params;
+    params.append("doctype", "S");
+    params.append("cohead_id", _soheadid);
+    params.append("cust_id", _cust->id());
+    params.append("total",  _total->localValue());
+    params.append("balance",  _balance->localValue());
+    params.append("curr_id",   _balance->id());
+    params.append("effective", _balance->effective());
+    
+    allocateARCreditMemo newdlg(this, "", TRUE);
+    if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
+    {
+        populateCMInfo();
+    }
 }
 
 void salesOrder::sAllocateCreditMemos()
