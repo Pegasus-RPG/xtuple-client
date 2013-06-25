@@ -2757,7 +2757,7 @@ void salesOrderItem::sCalculateDiscountPrcnt()
     _baseUnitPrice->setLocalValue(_netUnitPrice->localValue() - charTotal);
   }
 
-  _margin->setLocalValue((_netUnitPrice->baseValue() - _unitCost->baseValue()) * _qtyOrdered->toDouble() * _qtyinvuomratio / _priceinvuomratio);
+  _margin->setLocalValue((_netUnitPrice->localValue() - _unitCost->localValue()) * _qtyOrdered->toDouble() * _qtyinvuomratio / _priceinvuomratio);
 
   sCalculateExtendedPrice();
 }
@@ -3125,7 +3125,7 @@ void salesOrderItem::populate()
     _priceUOMCache = _priceUOM->id();
     _qtyinvuomratio    = item.value("qty_invuomratio").toDouble();
     _priceinvuomratio  = item.value("price_invuomratio").toDouble();
-    _unitCost->setBaseValue(item.value("coitem_unitcost").toDouble());
+    _unitCost->setLocalValue(item.value("coitem_unitcost").toDouble());
     // do tax stuff before _qtyOrdered so signal cascade has data to work with
     _taxtype->setId(item.value("coitem_taxtype_id").toInt());
     _supplyOrderId       = item.value("coitem_order_id").toInt();
@@ -3157,7 +3157,7 @@ void salesOrderItem::populate()
     _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _priceMode = item.value("coitem_pricemode").toString();
-    _margin->setLocalValue((_netUnitPrice->baseValue() - _unitCost->baseValue()) * _qtyOrdered->toDouble());
+    _margin->setLocalValue((_netUnitPrice->localValue() - _unitCost->localValue()) * _qtyOrdered->toDouble());
     _leadTime        = item.value("itemsite_leadtime").toInt();
     _qtyOrderedCache = _qtyOrdered->toDouble();
     _originalQtyOrd  = _qtyOrdered->toDouble() * _qtyinvuomratio;

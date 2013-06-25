@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
+    <width>446</width>
     <height>294</height>
    </rect>
   </property>
@@ -736,7 +736,14 @@ to be bound by its terms.</comment>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="VendorCluster" name="_vend"/>
+               <widget class="VendorCluster" name="_vend">
+                <property name="label">
+                 <string>Vendor #:</string>
+                </property>
+                <property name="descriptionVisible">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
               <item>
                <spacer name="verticalSpacer_3">

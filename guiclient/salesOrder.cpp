@@ -2807,13 +2807,13 @@ void salesOrder::sFillItemList()
   //  Determine the subtotal
   if (ISORDER(_mode))
     fillSales.prepare( "SELECT SUM(round((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS subtotal,"
-                       "       SUM(round((coitem_qtyord * coitem_qty_invuomratio) * currToCurr(baseCurrId(), cohead_curr_id, itemCost(coitem_itemsite_id), cohead_orderdate),2)) AS totalcost "
+                       "       SUM(round((coitem_qtyord * coitem_qty_invuomratio) * (coitem_unitcost / coitem_price_invuomratio),2)) AS totalcost "
                        "FROM cohead JOIN coitem ON (coitem_cohead_id=cohead_id) "
                        "WHERE ( (cohead_id=:head_id)"
                        " AND (coitem_status <> 'X') );" );
   else
     fillSales.prepare( "SELECT SUM(round((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio),2)) AS subtotal,"
-                       "       SUM(round((quitem_qtyord * quitem_qty_invuomratio) * currToCurr(baseCurrId(), quhead_curr_id, itemCost(quitem_itemsite_id), quhead_quotedate),2)) AS totalcost "
+                       "       SUM(round((quitem_qtyord * quitem_qty_invuomratio) * (quitem_unitcost / quitem_price_invuomratio),2)) AS totalcost "
                        "FROM quhead JOIN quitem ON (quitem_quhead_id=quhead_id) "
                        "WHERE (quhead_id=:head_id);" );
   fillSales.bindValue(":head_id", _soheadid);
