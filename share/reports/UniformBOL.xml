@@ -3,6 +3,15 @@
  <title>Uniform Bill of Lading</title>
  <name>UniformBOL</name>
  <description></description>
+ <parameter default="324" active="true" listtype="static" type="string" name="shiphead_id">
+  <description></description>
+ </parameter>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -17,12 +26,11 @@
                 cohead_shiptoname, cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3,
                 (cohead_shiptocity || ' ' || cohead_shiptostate || ' ' || cohead_shiptozipcode) AS shiptocitystatezip,
                 cohead_shiptophone
-         FROM shiphead, cohead, whsinfo, custinfo
-         LEFT OUTER JOIN addr ON (warehous_addr_id=addr_id)
-         WHERE ((shiphead_cohead_id=cohead_id)
-          AND (cohead_cust_id=cust_id)
-          AND (cohead_warehous_id=warehous_id)
-          AND (shiphead_id=%1));</sql>
+         FROM shiphead JOIN cohead ON (cohead_id=shiphead_order_id)
+                       LEFT OUTER JOIN whsinfo ON (warehous_id=cohead_warehous_id)
+                       JOIN custinfo ON (cust_id=cohead_cust_id)
+                       LEFT OUTER JOIN addr ON (warehous_addr_id=addr_id)
+         WHERE (shiphead_id=&lt;? value("shiphead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -40,8 +48,8 @@
    AND (coitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
-   AND (shipitem_shiphead_id=%1))
-GROUP BY coitem_linenumber, item_number,
+   AND (shipitem_shiphead_id=&lt;? value("shiphead_id") ?>))
+GROUP BY coitem_linenumber, item_number, item_id,
          uom_name, shipuom,
          item_descrip1,
          item_descrip2, item_prodweight,
@@ -57,13 +65,13 @@ ORDER BY coitem_linenumber;
  WHERE ((shipitem_orderitem_id=coitem_id)
    AND (coitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
-   AND (shipitem_shiphead_id=%1));</sql>
+   AND (shipitem_shiphead_id=&lt;? value("shiphead_id") ?>));</sql>
  </querysource>
  <querysource>
   <name>notes</name>
   <sql>SELECT shiphead_notes
   FROM shiphead
- WHERE (shiphead_id=%1);</sql>
+ WHERE (shiphead_id=&lt;? value("shiphead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>legal1</name>
