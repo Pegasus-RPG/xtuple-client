@@ -88,6 +88,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_action,              SIGNAL(clicked()),                              this,         SLOT(sAction()));
   connect(_authorize,           SIGNAL(clicked()),                              this,         SLOT(sAuthorizeCC()));
   connect(_charge,              SIGNAL(clicked()),                              this,         SLOT(sChargeCC()));
+  connect(_postCash,            SIGNAL(clicked()),                              this,         SLOT(sEnterCashPayment()));
   connect(_clear,               SIGNAL(pressed()),                              this,         SLOT(sClear()));
   connect(_copyToShipto,        SIGNAL(clicked()),                              this,         SLOT(sCopyToShipto()));
   connect(_cust,                SIGNAL(newId(int)),                             this,         SLOT(sPopulateCustomerInfo(int)));
@@ -170,6 +171,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
   _weight->setValidator(omfgThis->weightVal());
   _commission->setValidator(omfgThis->percentVal());
+
+  _applDate->setDate(omfgThis->dbDate(), true);
+  _distDate->setDate(omfgThis->dbDate(), true);
 
   _soitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "f_linenumber");
   _soitem->addColumn(tr("Kit Seq. #"),  _seqColumn, Qt::AlignRight, false,"coitem_subnumber");
@@ -290,8 +294,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _comments->setType(Comments::SalesOrder);
       _documents->setType(Documents::SalesOrder);
       _calcfreight = _metrics->boolean("CalculateFreight");
-      _applDate->setDate(omfgThis->dbDate(), true);
-      _distDate->setDate(omfgThis->dbDate(), true);
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
@@ -336,7 +338,6 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _comments->setType(Comments::SalesOrder);
       _documents->setType(Documents::SalesOrder);
       _cust->setType(CLineEdit::AllCustomers);
-      _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
@@ -747,8 +748,10 @@ bool salesOrder::save(bool partial)
                              "indicating the G/L Sales Account number for the "
                              "charge.  Please set the Misc. Charge amount to 0 "
                              "or select a Misc. Charge Sales Account." ) )
+         << GuiErrorCheck(_received->localValue() > 0.0, _postCash,
+                          tr( "<p>You must Post Cash Payment before you may save it." ) )
   ;
-    
+  
   if (_opportunity->isValid())
   {
     saveSales.prepare( "SELECT crmacct_cust_id, crmacct_prospect_id "
@@ -1278,11 +1281,6 @@ bool salesOrder::save(bool partial)
 
   if (!partial)
   {
-    if ((cNew == _mode) && _received->localValue() > 0.0)
-    {
-      sEnterCashPayment();
-    }
-      
     if ((cNew == _mode) && _metrics->boolean("AutoAllocateCreditMemos"))
     {
       sAllocateCreditMemos();
@@ -4435,6 +4433,14 @@ void salesOrder::sShowReservations()
 
 void salesOrder::sEnterCashPayment()
 {
+  if (_received->localValue() > _balance->localValue())
+  {
+    QMessageBox::critical(this,tr("Invalid Cash Payment"),
+                               tr("Cash Payment Amount Received cannot be greater than Balance."));
+    _received->setFocus();
+    return;
+  }
+
   XSqlQuery cashsave;
   QString _cashrcptnumber;
   int _cashrcptid;
@@ -4458,7 +4464,7 @@ void salesOrder::sEnterCashPayment()
                     "  cashrcpt_notes, cashrcpt_salescat_id, cashrcpt_number, cashrcpt_applydate, cashrcpt_discount ) "
                     "VALUES "
                     "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
-                    "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
+                    "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :cashrcpt_curr_id, "
                     "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_docdate, "
                     "  :cashrcpt_notes, :cashrcpt_salescat_id, :cashrcpt_number, :cashrcpt_applydate, :cashrcpt_discount );" );
   cashsave.bindValue(":cashrcpt_id", _cashrcptid);
@@ -4474,7 +4480,7 @@ void salesOrder::sEnterCashPayment()
   cashsave.bindValue(":cashrcpt_notes", "Sales Order Cash Payment");
   cashsave.bindValue(":cashrcpt_usecustdeposit", true);
   cashsave.bindValue(":cashrcpt_discount", 0.0);
-  cashsave.bindValue(":curr_id", _received->id());
+  cashsave.bindValue(":cashrcpt_curr_id", _received->id());
   if(_altAccnt->isChecked())
     cashsave.bindValue(":cashrcpt_salescat_id", _salescat->id());
   else
@@ -4518,6 +4524,37 @@ void salesOrder::sEnterCashPayment()
     systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
+  // Find the Customer Deposit C/M and Allocate
+  cashPost.prepare("SELECT cashrcptitem_aropen_id FROM cashrcptitem WHERE cashrcptitem_cashrcpt_id=:cashrcpt_id;");
+  cashPost.bindValue(":cashrcpt_id", _cashrcptid);
+  cashPost.exec();
+  if (cashPost.first())
+  {
+    int aropenid = cashPost.value("cashrcptitem_aropen_id").toInt();
+    cashPost.prepare("INSERT INTO aropenalloc"
+                     "      (aropenalloc_aropen_id, aropenalloc_doctype, aropenalloc_doc_id, "
+                     "       aropenalloc_amount, aropenalloc_curr_id)"
+                     "VALUES(:aropen_id, 'S', :doc_id, :amount, :curr_id);");
+    cashPost.bindValue(":doc_id", _soheadid);
+    cashPost.bindValue(":aropen_id", aropenid);
+    cashPost.bindValue(":amount", _received->localValue());
+    cashPost.bindValue(":curr_id", _received->id());
+    cashPost.exec();
+    if (cashPost.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (cashPost.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, cashPost.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  
+  _received->clear();
+  populateCMInfo();
 }
 
 void salesOrder::sCreditAllocate()
