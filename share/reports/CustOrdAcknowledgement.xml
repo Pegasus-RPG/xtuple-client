@@ -126,15 +126,16 @@ WHERE ((image_name='logo'));</sql>
  </querysource>
  <querysource>
   <name>footer</name>
-  <sql>SELECT formatMoney(SUM(round(coitem_qtyord * coitem_price,2)) + cohead_freight + cohead_misc) AS f_totaldue,
-       formatMoney(SUM(round(coitem_qtyord * coitem_price,2))) AS f_subtotal,
+  <sql>SELECT formatMoney(calcSalesOrderAmt(cohead_id, 'S')) AS f_subtotal,
+       formatMoney(calcSalesOrderAmt(cohead_id, 'T')) AS f_total,
+       formatMoney(calcSalesOrderAmt(cohead_id, 'B')) AS f_balance,
+       formatMoney(calcSalesOrderAmt(cohead_id, 'X')) AS f_tax,
+       formatMoney(calcSalesOrderAmt(cohead_id, 'C')) AS f_credit,
        formatMoney(cohead_freight) AS f_freight,
-       formatMoney(cohead_misc) AS f_miscamt
-FROM coitem,cohead
-WHERE (coitem_cohead_id=&lt;? value("sohead_id") ?> AND coitem_cohead_id= cohead_id)
-AND coitem_status &lt;> 'X'
-GROUP BY cohead_freight,cohead_misc
-</sql>
+       formatMoney(cohead_misc) AS f_misc
+FROM cohead
+WHERE (cohead_id=&lt;? value("sohead_id") ?>)
+;</sql>
  </querysource>
  <querysource>
   <name>lastupdated</name>
@@ -930,12 +931,12 @@ GROUP BY cohead_freight,cohead_misc
  </section>
  <pgfoot>
   <lastpage/>
-  <height>163</height>
+  <height>233</height>
   <label>
    <rect>
-    <x>507</x>
-    <y>57</y>
-    <width>116</width>
+    <x>510</x>
+    <y>48</y>
+    <width>115</width>
     <height>15</height>
    </rect>
    <font>
@@ -943,15 +944,15 @@ GROUP BY cohead_freight,cohead_misc
     <size>8</size>
     <weight>bold</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
    <string>MISCELLANEOUS</string>
   </label>
   <label>
    <rect>
-    <x>492</x>
-    <y>90</y>
-    <width>95</width>
+    <x>425</x>
+    <y>138</y>
+    <width>170</width>
     <height>30</height>
    </rect>
    <font>
@@ -959,15 +960,15 @@ GROUP BY cohead_freight,cohead_misc
     <size>12</size>
     <weight>bold</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <string>Total (US $):</string>
+   <string>Balance Due:</string>
   </label>
   <field>
    <rect>
-    <x>655</x>
-    <y>31</y>
-    <width>77</width>
+    <x>635</x>
+    <y>28</y>
+    <width>97</width>
     <height>16</height>
    </rect>
    <font>
@@ -984,9 +985,9 @@ GROUP BY cohead_freight,cohead_misc
   </field>
   <field>
    <rect>
-    <x>651</x>
-    <y>57</y>
-    <width>82</width>
+    <x>635</x>
+    <y>48</y>
+    <width>97</width>
     <height>17</height>
    </rect>
    <font>
@@ -998,14 +999,14 @@ GROUP BY cohead_freight,cohead_misc
    <vcenter/>
    <data>
     <query>footer</query>
-    <column>f_miscamt</column>
+    <column>f_misc</column>
    </data>
   </field>
   <label>
    <rect>
-    <x>507</x>
-    <y>35</y>
-    <width>75</width>
+    <x>510</x>
+    <y>33</y>
+    <width>115</width>
     <height>12</height>
    </rect>
    <font>
@@ -1013,15 +1014,15 @@ GROUP BY cohead_freight,cohead_misc
     <size>8</size>
     <weight>bold</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
    <string>FREIGHT</string>
   </label>
   <field>
    <rect>
-    <x>632</x>
-    <y>86</y>
-    <width>147</width>
+    <x>605</x>
+    <y>138</y>
+    <width>172</width>
     <height>32</height>
    </rect>
    <font>
@@ -1033,14 +1034,14 @@ GROUP BY cohead_freight,cohead_misc
    <vcenter/>
    <data>
     <query>footer</query>
-    <column>f_totaldue</column>
+    <column>f_balance</column>
    </data>
   </field>
   <label>
    <rect>
-    <x>507</x>
-    <y>7</y>
-    <width>61</width>
+    <x>510</x>
+    <y>13</y>
+    <width>115</width>
     <height>12</height>
    </rect>
    <font>
@@ -1048,14 +1049,14 @@ GROUP BY cohead_freight,cohead_misc
     <size>8</size>
     <weight>bold</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
    <string>SUBTOTAL</string>
   </label>
   <field>
    <rect>
     <x>640</x>
-    <y>5</y>
+    <y>8</y>
     <width>92</width>
     <height>17</height>
    </rect>
@@ -1069,6 +1070,111 @@ GROUP BY cohead_freight,cohead_misc
    <data>
     <query>footer</query>
     <column>f_subtotal</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>510</x>
+    <y>68</y>
+    <width>115</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>TAX</string>
+  </label>
+  <field>
+   <rect>
+    <x>635</x>
+    <y>68</y>
+    <width>97</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>footer</query>
+    <column>f_tax</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>630</x>
+    <y>88</y>
+    <width>102</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>footer</query>
+    <column>f_total</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>510</x>
+    <y>88</y>
+    <width>115</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>TOTAL</string>
+  </label>
+  <label>
+   <rect>
+    <x>510</x>
+    <y>108</y>
+    <width>115</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>CREDITS</string>
+  </label>
+  <field>
+   <rect>
+    <x>630</x>
+    <y>108</y>
+    <width>102</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>footer</query>
+    <column>f_credit</column>
    </data>
   </field>
  </pgfoot>
