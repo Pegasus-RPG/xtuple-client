@@ -99,11 +99,10 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     bool    _invIsFractional;
     bool    _updateItemsite;
     bool    _updatePrice;
-    bool    _createPO;
-    bool    _createPR;
     int     _priceUOMCache;
     double  _qtyOrderedCache;
     double  _supplyOrderQtyCache;
+    QDate   _supplyOrderDueDateCache;
     double  _cachedPct;
     double  _cachedRate;
     int     _taxzoneid;
@@ -112,10 +111,11 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     double  _qtyinvuomratio;
     double  _priceinvuomratio;
     double  _qtyreserved;
-    QDate   _dateCache;
+    QDate   _scheduledDateCache;
     QString _costmethod;
     QString _priceType;
     QString _priceMode;
+    QString _supplyOrderType;
 
     // For holding variables for characteristic pricing
     QList<QVariant> _charVars;

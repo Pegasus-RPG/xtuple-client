@@ -84,6 +84,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sReserveLineBalance();
     virtual void        sUnreserveStock();
     virtual void        sShowReservations();
+    virtual void        sEnterCashPayment();
     virtual void        sCreditAllocate();
     virtual void        sAllocateCreditMemos();
     virtual void        sCheckValidContacts();

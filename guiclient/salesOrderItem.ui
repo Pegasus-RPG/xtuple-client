@@ -1097,7 +1097,7 @@ to be bound by its terms.</comment>
                <item row="0" column="1">
                 <widget class="QGroupBox" name="_createSupplyOrder">
                  <property name="title">
-                  <string>Create Work Order</string>
+                  <string>Create Supply Order</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -1116,9 +1116,6 @@ to be bound by its terms.</comment>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>_supplyOrderQty</cstring>
                           </property>
                          </widget>
                         </item>
@@ -1185,23 +1182,12 @@ to be bound by its terms.</comment>
                           </item>
                          </layout>
                         </item>
-                        <item row="2" column="1">
-                         <layout class="QHBoxLayout">
-                          <item>
-                           <widget class="XLabel" name="_supplyOrderQty">
-                            <property name="alignment">
-                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </item>
                         <item row="3" column="1">
                          <layout class="QHBoxLayout">
                           <item>
                            <widget class="DLineEdit" name="_supplyOrderDueDate">
                             <property name="enabled">
-                             <bool>false</bool>
+                             <bool>true</bool>
                             </property>
                            </widget>
                           </item>
@@ -1331,6 +1317,30 @@ to be bound by its terms.</comment>
                            <bool>true</bool>
                           </property>
                          </widget>
+                        </item>
+                        <item row="2" column="1">
+                         <layout class="QHBoxLayout" name="horizontalLayout_7">
+                          <item>
+                           <widget class="XLineEdit" name="_supplyOrderQty">
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_2">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
                         </item>
                        </layout>
                       </item>
@@ -2067,6 +2077,7 @@ to be bound by its terms.</comment>
   <tabstop>_inventoryButton</tabstop>
   <tabstop>_dependenciesButton</tabstop>
   <tabstop>_createSupplyOrder</tabstop>
+  <tabstop>_supplyOrderQty</tabstop>
   <tabstop>_supplyOrderDueDate</tabstop>
   <tabstop>_supplyWarehouse</tabstop>
   <tabstop>_supplyDropShip</tabstop>
