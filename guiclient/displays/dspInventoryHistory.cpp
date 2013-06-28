@@ -336,3 +336,7 @@ void dspInventoryHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, in
   }
 }
 
+void dspInventoryHistory::setItemId(int itemId)
+{
+  parameterWidget()->setDefault(tr("Item"), itemId, true );
+}

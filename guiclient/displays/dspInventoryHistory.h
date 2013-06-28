@@ -23,6 +23,7 @@ public:
     dspInventoryHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList & params);
+    Q_INVOKABLE virtual void setItemId(int itemId);
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );

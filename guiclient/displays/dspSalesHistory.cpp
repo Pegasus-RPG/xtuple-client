@@ -210,3 +210,7 @@ void dspSalesHistory::sView()
   newdlg.exec();
 }
 
+void dspSalesHistory::setItemId(int itemId)
+{
+  parameterWidget()->setDefault(tr("Item"), itemId, true );
+}

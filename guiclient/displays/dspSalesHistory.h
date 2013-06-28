@@ -22,6 +22,7 @@ public:
     dspSalesHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     Q_INVOKABLE virtual bool setParams(ParameterList &);
+    Q_INVOKABLE virtual void setItemId(int itemId);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
