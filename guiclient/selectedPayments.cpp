@@ -71,6 +71,7 @@ bool selectedPayments::setParams(ParameterList & params)
     
   params.append("voucher",tr("Voucher"));
   params.append("debitmemo",tr("Debit Memo"));
+  params.append("creditmemo",tr("Credit Memo"));
 
   return true;
 }

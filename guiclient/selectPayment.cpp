@@ -197,39 +197,43 @@ void selectPayment::sSave()
 void selectPayment::populate()
 {
   XSqlQuery selectpopulate;
-  selectpopulate.prepare( "SELECT apopen_vend_id, apopen_docnumber, apopen_ponumber,"
-             "       apopen_docdate, apopen_duedate,"
-             "       apopen_amount, "
-	     "       COALESCE(apselect_curr_id, apopen_curr_id) AS curr_id, "
-             "       (apopen_amount - apopen_paid"
-             "          - COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
-             "                        FROM checkitem, checkhead "
-             "                       WHERE ((checkitem_checkhead_id=checkhead_id) "
-             "                         AND (checkitem_apopen_id=apopen_id) "
-             "                         AND (NOT checkhead_void) "
-             "                         AND (NOT checkhead_posted)) "
-             "                     ),0)) AS f_amount,"
-             "       COALESCE(apselect_amount, (apopen_amount - apopen_paid"
-             "          - COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
-             "                        FROM checkitem, checkhead "
-             "                       WHERE ((checkitem_checkhead_id=checkhead_id) "
-             "                         AND (checkitem_apopen_id=apopen_id) "
-             "                         AND (NOT checkhead_void) "
-             "                         AND (NOT checkhead_posted)) "
-             "                     ),0))) AS f_selected,"
+  selectpopulate.prepare(
+             "SELECT apopen_vend_id, apopen_docnumber, apopen_ponumber,"
+             "       apopen_doctype, apopen_docdate, apopen_duedate, apopen_amount,"
+             "       CASE apopen_doctype WHEN 'V' THEN :voucher"
+             "                           WHEN 'D' THEN :debitMemo"
+             "                           WHEN 'C' THEN :creditMemo"
+             "       END AS f_doctype,"
+             "       COALESCE(apselect_curr_id, apopen_curr_id) AS curr_id, "
+             "       (apopen_amount - apopen_paid - apCheckPending(apopen_id)) AS f_amount,"
+             "       COALESCE(apselect_amount,"
+             "                (apopen_amount - apopen_paid - apCheckPending(apopen_id)),"
+             "                0.0) AS f_selected,"
              "       COALESCE(apselect_discount, 0.0) AS discount,"
              "       COALESCE(apselect_bankaccnt_id, -1) AS bankaccnt_id,"
              "       (terms_code || '-' || terms_descrip) AS f_terms "
              "FROM terms RIGHT OUTER JOIN apopen ON (apopen_terms_id=terms_id) "
-	     "      LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
-             "WHERE apopen_id=:apopen_id;" );
+             "           LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
+             "WHERE (apopen_id=:apopen_id);");
   selectpopulate.bindValue(":apopen_id", _apopenid);
+  selectpopulate.bindValue(":voucher", tr("Voucher"));
+  selectpopulate.bindValue(":debitMemo", tr("Debit Memo"));
+  selectpopulate.bindValue(":creditMemo", tr("Credit Memo"));
   selectpopulate.exec();
   if (selectpopulate.first())
   {
     _selected->setId(selectpopulate.value("curr_id").toInt());
     _selected->setLocalValue(selectpopulate.value("f_selected").toDouble());
     _vendor->setId(selectpopulate.value("apopen_vend_id").toInt());
+    _docType->setText(selectpopulate.value("f_doctype").toString());
+    if (selectpopulate.value("apopen_doctype").toString() == "C")
+    {
+      _totalLit->setText(tr("Total Credit"));
+      _amountLit->setText(tr("Balance Credit"));
+      _discountLit->hide();
+      _discountAmount->hide();
+      _discount->hide();
+    }
     _docNumber->setText(selectpopulate.value("apopen_docnumber").toString());
     _poNum->setText(selectpopulate.value("apopen_ponumber").toString());
     _docDate->setDate(selectpopulate.value("apopen_docdate").toDate());
