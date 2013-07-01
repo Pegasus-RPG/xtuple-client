@@ -466,6 +466,7 @@ void selectPayments::sFillList()
     return;
   params.append("voucher", tr("Voucher"));
   params.append("debitMemo", tr("Debit Memo"));
+  params.append("creditMemo", tr("Credit Memo"));
   if (_selectDate->currentIndex()==1)
     params.append("olderDate", _onOrBeforeDate->date());
   else if (_selectDate->currentIndex()==2)
