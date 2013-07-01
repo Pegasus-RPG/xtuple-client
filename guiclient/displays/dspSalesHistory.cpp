@@ -214,3 +214,8 @@ void dspSalesHistory::setItemId(int itemId)
 {
   parameterWidget()->setDefault(tr("Item"), itemId, true );
 }
+
+void dspSalesHistory::setStartDate(QDate startDate)
+{
+  parameterWidget()->setDefault(tr("Invoice Start Date"), startDate, true );
+}

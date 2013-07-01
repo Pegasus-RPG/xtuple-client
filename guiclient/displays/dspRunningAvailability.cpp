@@ -43,6 +43,7 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char*, Qt:
   list()->addColumn(tr("Order #"),       _itemColumn, Qt::AlignLeft,  true, "ordernumber");
   list()->addColumn(tr("Source/Destination"),     -1, Qt::AlignLeft,  true, "item_number");
   list()->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "duedate");
+  list()->addColumn(tr("Amount"),       _moneyColumn, Qt::AlignRight, true, "amount");
   list()->addColumn(tr("Ordered"),        _qtyColumn, Qt::AlignRight, true, "qtyordered");
   list()->addColumn(tr("Received"),       _qtyColumn, Qt::AlignRight, true, "qtyreceived");
   list()->addColumn(tr("Balance"),        _qtyColumn, Qt::AlignRight, true, "balance");

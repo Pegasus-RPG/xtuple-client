@@ -84,11 +84,10 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _inventoryHistoryPage->layout()->addWidget(_dspInventoryHistory);
   _dspInventoryHistory->setCloseVisible(false);
   _dspInventoryHistory->setQueryOnStartEnabled(false);
-//  _dspInventoryHistory->setParameterWidgetVisible(false);
+  _dspInventoryHistory->setParameterWidgetVisible(false);
   _dspInventoryHistory->setAutoUpdateEnabled(false);
-  _dspInventoryHistory->optionsWidget()->show();
-//  _dspInventoryHistory->parameterWidget()->setEnabled(tr("Item"), false);
-//  _dspInventoryHistory->list()->hideColumn("item_number");
+  _dspInventoryHistory->setStartDate(QDate().currentDate().addDays(-365));
+  _dspInventoryHistory->list()->hideColumn("item_number");
   
   _dspPoItemReceivingsByItem = new dspPoItemReceivingsByItem(this, "dspPoItemReceivingsByItem", Qt::Widget);
   _dspPoItemReceivingsByItem->setObjectName("dspPoItemReceivingsByItem");
@@ -97,7 +96,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _dspPoItemReceivingsByItem->setQueryOnStartEnabled(false);
   _dspPoItemReceivingsByItem->findChild<QWidget*>("_item")->hide();
   _dspPoItemReceivingsByItem->findChild<QWidget*>("_itemGroup")->hide();
-  _dspPoItemReceivingsByItem->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-90));
+  _dspPoItemReceivingsByItem->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-365));
   _dspPoItemReceivingsByItem->findChild<DateCluster*>("_dates")->setEndDate(QDate().currentDate());
   
   _dspSalesHistory = new dspSalesHistory(this, "dspSalesHistory", Qt::Widget);
@@ -105,10 +104,11 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _salesHistoryPage->layout()->addWidget(_dspSalesHistory);
   _dspSalesHistory->setCloseVisible(false);
   _dspSalesHistory->setQueryOnStartEnabled(false);
-//  _dspSalesHistory->setParameterWidgetVisible(false);
+  _dspSalesHistory->setParameterWidgetVisible(false);
   _dspSalesHistory->setAutoUpdateEnabled(false);
-  _dspSalesHistory->optionsWidget()->show();
-//  _dspSalesHistory->list()->hideColumn("item_number");
+  _dspSalesHistory->setStartDate(QDate().currentDate().addDays(-365));
+  _dspSalesHistory->list()->hideColumn("item_number");
+  _dspSalesHistory->list()->hideColumn("itemdescription");
   
   _dspPoItemsByItem = new dspPoItemsByItem(this, "dspPoItemsByItem", Qt::Widget);
   _dspPoItemsByItem->setObjectName("dspPoItemsByItem");
@@ -168,6 +168,10 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _itemMaster->findChild<QWidget*>("_deleteSrc")->hide();
   _itemMaster->findChild<QWidget*>("_copySrc")->hide();
   _itemMaster->findChild<QTabWidget*>("_tab")->removeTab(2);
+  _itemMaster->findChild<QWidget*>("_active")->setEnabled(false);
+  _itemMaster->findChild<QWidget*>("_sold")->setEnabled(false);
+  _itemMaster->findChild<QWidget*>("_itemGroup")->setEnabled(false);
+  _itemMaster->findChild<QWidget*>("_weightGroup")->setEnabled(false);
   
   connect(_tab, SIGNAL(currentChanged(int)), this, SLOT(sFillList()));
   connect(_availabilityButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
@@ -303,6 +307,7 @@ void itemAvailabilityWorkbench::populate()
   _dspSalesOrdersByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
   _dspQuotesByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
   _itemMaster->setId(_item->id());
+  _itemMaster->findChild<QWidget*>("_sold")->setEnabled(false);
   
   sFillList();
 }

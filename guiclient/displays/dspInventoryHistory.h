@@ -24,6 +24,7 @@ public:
 
     virtual bool setParams(ParameterList & params);
     Q_INVOKABLE virtual void setItemId(int itemId);
+    Q_INVOKABLE virtual void setStartDate(QDate startDate);
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
