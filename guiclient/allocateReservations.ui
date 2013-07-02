@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>496</width>
-    <height>317</height>
+    <width>512</width>
+    <height>334</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -146,7 +146,14 @@ to be bound by its terms.</comment>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="_addPackingList">
+          <widget class="XCheckBox" name="_partialReservations">
+           <property name="text">
+            <string>Allow Partial Quantity Reservations</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XCheckBox" name="_addPackingList">
            <property name="text">
             <string>Automatically Add to Packing List Batch</string>
            </property>
@@ -209,6 +216,11 @@ to be bound by its terms.</comment>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -222,6 +234,7 @@ to be bound by its terms.</comment>
  </customwidgets>
  <tabstops>
   <tabstop>_selectedCustomer</tabstop>
+  <tabstop>_cust</tabstop>
   <tabstop>_selectedCustomerShipto</tabstop>
   <tabstop>_customerShipto</tabstop>
   <tabstop>_selectedCustomerType</tabstop>
@@ -229,7 +242,9 @@ to be bound by its terms.</comment>
   <tabstop>_customerTypePattern</tabstop>
   <tabstop>_customerType</tabstop>
   <tabstop>_dates</tabstop>
+  <tabstop>_partialReservations</tabstop>
   <tabstop>_addPackingList</tabstop>
+  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>
