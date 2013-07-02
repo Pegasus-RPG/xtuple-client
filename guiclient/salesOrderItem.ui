@@ -1097,7 +1097,7 @@ to be bound by its terms.</comment>
                <item row="0" column="1">
                 <widget class="QGroupBox" name="_createSupplyOrder">
                  <property name="title">
-                  <string>Create Work Order</string>
+                  <string>Create Supply Order</string>
                  </property>
                  <property name="checkable">
                   <bool>true</bool>
@@ -1116,9 +1116,6 @@ to be bound by its terms.</comment>
                           </property>
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                          </property>
-                          <property name="buddy">
-                           <cstring>_supplyOrderQty</cstring>
                           </property>
                          </widget>
                         </item>
@@ -1185,23 +1182,12 @@ to be bound by its terms.</comment>
                           </item>
                          </layout>
                         </item>
-                        <item row="2" column="1">
-                         <layout class="QHBoxLayout">
-                          <item>
-                           <widget class="XLabel" name="_supplyOrderQty">
-                            <property name="alignment">
-                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </item>
                         <item row="3" column="1">
                          <layout class="QHBoxLayout">
                           <item>
                            <widget class="DLineEdit" name="_supplyOrderDueDate">
                             <property name="enabled">
-                             <bool>false</bool>
+                             <bool>true</bool>
                             </property>
                            </widget>
                           </item>
@@ -1331,6 +1317,30 @@ to be bound by its terms.</comment>
                            <bool>true</bool>
                           </property>
                          </widget>
+                        </item>
+                        <item row="2" column="1">
+                         <layout class="QHBoxLayout" name="horizontalLayout_7">
+                          <item>
+                           <widget class="XLineEdit" name="_supplyOrderQty">
+                            <property name="alignment">
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer name="horizontalSpacer_2">
+                            <property name="orientation">
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>40</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
                         </item>
                        </layout>
                       </item>
@@ -1588,18 +1598,18 @@ to be bound by its terms.</comment>
             <string>Costs</string>
            </property>
            <layout class="QGridLayout">
-            <item row="10" column="0">
-             <spacer>
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
+            <item row="0" column="1">
+             <widget class="CurrCluster" name="_unitCost">
+              <property name="format">
+               <enum>CurrDisplay::Cost</enum>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
+              <property name="currencyEditable" stdset="0">
+               <bool>false</bool>
               </property>
-             </spacer>
+              <property name="currencyVisible">
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="_discountFromListPriceLit">
@@ -1617,6 +1627,13 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
+            <item row="2" column="1">
+             <widget class="CurrDisplay" name="_customerPrice">
+              <property name="format">
+               <enum>CurrDisplay::SalesPrice</enum>
+              </property>
+             </widget>
+            </item>
             <item row="2" column="0">
              <widget class="QLabel" name="_customerPriceLit">
               <property name="text">
@@ -1627,40 +1644,10 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
-             <widget class="CurrDisplay" name="_listPrice">
-              <property name="format">
-               <enum>CurrDisplay::SalesPrice</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="CurrCluster" name="_unitCost">
-              <property name="format">
-               <enum>CurrDisplay::Cost</enum>
-              </property>
-              <property name="currencyEditable" stdset="0">
-               <bool>false</bool>
-              </property>
-              <property name="currencyVisible">
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0">
              <widget class="QLabel" name="_unitCostLit">
               <property name="text">
                <string>Unit Cost:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="_marginLit">
-              <property name="text">
-               <string>Margin:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1677,17 +1664,33 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="CurrDisplay" name="_customerPrice">
-              <property name="format">
-               <enum>CurrDisplay::SalesPrice</enum>
+            <item row="9" column="0">
+             <widget class="QLabel" name="_marginLit">
+              <property name="text">
+               <string>Margin:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
-             <widget class="XLineEdit" name="_discountFromListPrice">
-              <property name="enabled">
-               <bool>false</bool>
+            <item row="11" column="0">
+             <spacer>
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="_markupFromUnitCostLit">
+              <property name="text">
+               <string>Unit Cost Markup %:</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1701,28 +1704,25 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="_markupFromUnitCostLit">
-              <property name="text">
-               <string>Unit Cost Markup %:</string>
+            <item row="3" column="1">
+             <widget class="XLineEdit" name="_discountFromListPrice">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
-            <item row="9" column="1">
-             <widget class="CurrCluster" name="_margin">
-              <property name="currencyEditable" stdset="0">
-               <bool>false</bool>
-              </property>
-              <property name="currencyVisible">
-               <bool>false</bool>
-              </property>
-              <property name="enabled">
-               <bool>false</bool>
+            <item row="1" column="1">
+             <widget class="CurrDisplay" name="_listPrice">
+              <property name="format">
+               <enum>CurrDisplay::SalesPrice</enum>
               </property>
              </widget>
+            </item>
+            <item row="9" column="1">
+             <widget class="CurrDisplay" name="_margin"/>
             </item>
            </layout>
           </widget>
@@ -2077,6 +2077,7 @@ to be bound by its terms.</comment>
   <tabstop>_inventoryButton</tabstop>
   <tabstop>_dependenciesButton</tabstop>
   <tabstop>_createSupplyOrder</tabstop>
+  <tabstop>_supplyOrderQty</tabstop>
   <tabstop>_supplyOrderDueDate</tabstop>
   <tabstop>_supplyWarehouse</tabstop>
   <tabstop>_supplyDropShip</tabstop>
@@ -2506,6 +2507,70 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>89</x>
      <y>573</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_unitCost</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>519</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_unitCost</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>519</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_margin</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>691</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_margin</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>492</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>691</y>
     </hint>
    </hints>
   </connection>
