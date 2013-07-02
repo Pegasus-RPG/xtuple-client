@@ -1120,9 +1120,14 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
   connect( _searchUpc, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
 
   _listTab->setColumnCount(0);
-  _listTab->addColumn(tr("Item Number"), 100,  Qt::AlignLeft, true );
-  _listTab->addColumn(tr("Description"), -1,   Qt::AlignLeft, true );
-  _listTab->addColumn(tr("Bar Code"),    100,  Qt::AlignLeft, true );
+  _listTab->addColumn(tr("Alias Number"), 100,  Qt::AlignLeft,  true, "itemalias_number" );
+  _listTab->addColumn(tr("Item Number"),  100,  Qt::AlignLeft,  true, "item_number" );
+  _listTab->addColumn(tr("Active"),        50,  Qt::AlignLeft,  true, "item_active" );
+  _listTab->addColumn(tr("Customer"),     100,  Qt::AlignLeft,  true, "cust_name" );
+  _listTab->addColumn(tr("Description"),   -1,  Qt::AlignLeft,  true, "itemdescrip" );
+  _listTab->addColumn(tr("Bar Code"),     100,  Qt::AlignLeft,  true, "item_upccode" );
+  _listTab->addColumn(tr("Site"),          50,  Qt::AlignLeft,  true, "warehous_code" );
+  _listTab->addColumn(tr("QOH"),          100,  Qt::AlignRight, true, "itemsite_qtyonhand" );
 }
 
 void itemSearch::set(const ParameterList &pParams)
@@ -1228,14 +1233,14 @@ void itemSearch::sFillList()
     QString post;
     if(_x_preferences && _x_preferences->boolean("ListNumericItemNumbersFirst"))
     {
-      pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number) item_id, item_number, (item_descrip1 || ' ' || item_descrip2), item_upccode ";
+      pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number)"
+             "       item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";
       post = "ORDER BY toNumeric(item_number, 999999999999999), item_number";
     }
     else
     {
-      pre =  "SELECT DISTINCT item_id, item_number AS number, "
-             "(item_descrip1 || ' ' || item_descrip2) AS name, "
-             "item_upccode AS description ";
+      pre =  "SELECT DISTINCT"
+             "       item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode ";
       post = "ORDER BY item_number";
     }
 
