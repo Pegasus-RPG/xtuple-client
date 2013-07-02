@@ -38,6 +38,10 @@ public slots:
     virtual void sViewTo();
     virtual void sViewWo();
     virtual void sViewPo();
+    virtual void sEditSo();
+    virtual void sEditTo();
+    virtual void sEditWo();
+    virtual void sEditPo();
     virtual void sFillList();
 
 protected slots:

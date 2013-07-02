@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
-    <height>277</height>
+    <width>919</width>
+    <height>315</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,19 +25,7 @@ to be bound by its terms.</comment>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="_itemGroup">
-         <property name="title">
-          <string/>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="0" column="0">
-           <widget class="ItemCluster" name="_item"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="1">
+       <item row="0" column="2">
         <widget class="QGroupBox" name="_agentGroup">
          <property name="minimumSize">
           <size>
@@ -93,17 +81,7 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="WarehouseGroup" name="_warehouse">
-         <property name="title">
-          <string/>
-         </property>
-         <property name="fixedSize">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
+       <item row="1" column="2">
         <widget class="QGroupBox" name="_dateGroup">
          <property name="title">
           <string/>
@@ -115,50 +93,72 @@ to be bound by its terms.</comment>
          </layout>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="_itemGroup">
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0">
+           <widget class="ItemCluster" name="_item"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="WarehouseGroup" name="_warehouse">
+         <property name="title">
+          <string/>
+         </property>
+         <property name="fixedSize">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QGroupBox" name="_showGroup">
+           <property name="title">
+            <string>Show</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="1">
+             <widget class="XCheckBox" name="_showVariances">
+              <property name="text">
+               <string>Costs</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="XCheckBox" name="_showUnvouchered">
+              <property name="text">
+               <string>Unvouchered</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
       </layout>
      </item>
      <item>
       <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QGroupBox" name="_showGroup">
-       <property name="title">
-        <string>Show</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="1">
-         <widget class="XCheckBox" name="_showVariances">
-          <property name="text">
-           <string>Costs</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="XCheckBox" name="_showUnvouchered">
-          <property name="text">
-           <string>Unvouchered</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -198,11 +198,13 @@ to be bound by its terms.</comment>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XCheckBox</class>
@@ -218,7 +220,6 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_item</tabstop>
   <tabstop>_dates</tabstop>
-  <tabstop>_warehouse</tabstop>
   <tabstop>_allPurchasingAgents</tabstop>
   <tabstop>_agent</tabstop>
   <tabstop>_showVariances</tabstop>

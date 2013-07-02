@@ -16,6 +16,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "adjustmentTrans.h"
 #include "createCountTagsByItem.h"
 #include "dspAllocations.h"
 #include "dspInventoryHistory.h"
@@ -258,6 +259,9 @@ void dspInventoryAvailability::sPopulateMenu(QMenu *menu, QTreeWidgetItem *selec
 
   menuItem = menu->addAction(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()));
   menuItem->setEnabled(_privileges->check("EnterMiscCounts"));
+  
+  menuItem = menu->addAction(tr("Enter Adjustment..."), this, SLOT(sEnterAdjustment()));
+  menuItem->setEnabled(_privileges->check("CreateAdjustmentTrans"));
 }
 
 void dspInventoryAvailability::sViewHistory()
@@ -412,6 +416,16 @@ void dspInventoryAvailability::sEnterMiscCount()
   newdlg.exec();
 }
 
+void dspInventoryAvailability::sEnterAdjustment()
+{
+  ParameterList params;
+  params.append("itemsite_id", list()->id());
+  
+  adjustmentTrans *newdlg = new adjustmentTrans();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
 void dspInventoryAvailability::sHandleShowReorder(bool pValue)
 {
   _ignoreReorderAtZero->setEnabled(pValue);
@@ -450,4 +464,9 @@ void dspInventoryAvailability::sAsofChanged(int index)
 {
   if (!_forgetful)
     _preferences->set(_settingsName, index);
+}
+
+void dspInventoryAvailability::setItemId(int itemId)
+{
+  parameterWidget()->setDefault(tr("Item"), itemId, true );
 }
