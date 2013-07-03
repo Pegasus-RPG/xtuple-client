@@ -30,6 +30,7 @@ public slots:
     virtual void sNew();
     virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*, int);
     virtual void sRelease();
+    virtual void sUnrelease();
     virtual void sPrint();
     virtual void sView();
     virtual bool setParams(ParameterList &);
