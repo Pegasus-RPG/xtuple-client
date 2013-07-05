@@ -27,8 +27,10 @@ QString buildItemLineEditTitle(const unsigned int, const QString);
 QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, const QString pPost, const unsigned int pType)
 {
   QStringList clauses = pClauses;
-  QString sql = pPre + " FROM item, uom";
-  clauses << "(item_inv_uom_id=uom_id)";
+  QString sql = pPre + " FROM item "
+                       "      JOIN uom ON (uom_id=item_inv_uom_id)"
+                       "      LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id)"
+                       "      LEFT OUTER JOIN crmacct ON (crmacct_id=itemalias_crmacct_id)";
 
   if (pType & (ItemLineEdit::cLocationControlled | ItemLineEdit::cLotSerialControlled | ItemLineEdit::cDefaultLocation | ItemLineEdit::cActive))
   {
@@ -1105,24 +1107,33 @@ itemSearch::itemSearch(QWidget* pParent, Qt::WindowFlags pFlags)
   _searchDescrip->show();
   _searchDescrip->setText(tr("Search through Description 2"));
 
-  _searchUpc = new XCheckBox(tr("Search through Bar Code"));
+  _searchUpc = new XCheckBox(tr("Search through Bar Code"), this);
   _searchUpc->setChecked( TRUE );
   _searchUpc->setObjectName("_searchUpc");
-  selectorsLyt->addWidget(_searchUpc);
+  selectorsLyt->addWidget(_searchUpc, 3, 0);
 
-  _showInactive = new XCheckBox(tr("Show &Inactive Items"));
+  _searchAlias = new XCheckBox(tr("Search through Alias Number"), this);
+  _searchAlias->setChecked( TRUE );
+  _searchAlias->setObjectName("_searchAlias");
+  selectorsLyt->addWidget(_searchAlias, 4, 0);
+  
+  _showInactive = new XCheckBox(tr("Show &Inactive Items"), this);
   _showInactive->setObjectName("_showInactive");
-  selectorsLyt->addWidget(_showInactive);
+  selectorsLyt->addWidget(_showInactive, 5, 0);
 
   // signals and slots connections
   connect( _showInactive, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
   connect( _searchName, SIGNAL(clicked() ), this, SLOT( sFillList() ) );
   connect( _searchUpc, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
+  connect( _searchAlias, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
 
   _listTab->setColumnCount(0);
-  _listTab->addColumn(tr("Item Number"), 100,  Qt::AlignLeft, true );
-  _listTab->addColumn(tr("Description"), -1,   Qt::AlignLeft, true );
-  _listTab->addColumn(tr("Bar Code"),    100,  Qt::AlignLeft, true );
+  _listTab->addColumn(tr("Item Number"),  100,  Qt::AlignLeft,  true, "item_number" );
+  _listTab->addColumn(tr("Description"),   -1,  Qt::AlignLeft,  true, "itemdescrip" );
+  _listTab->addColumn(tr("Bar Code"),     100,  Qt::AlignLeft,  true, "item_upccode" );
+  _listTab->addColumn(tr("Active"),        50,  Qt::AlignLeft,  true, "item_active" );
+  _listTab->addColumn(tr("Alias Number"), 100,  Qt::AlignLeft,  true, "itemalias_number" );
+  _listTab->addColumn(tr("CRM Account"),  100,  Qt::AlignLeft,  true, "crmacct_name" );
 }
 
 void itemSearch::set(const ParameterList &pParams)
@@ -1207,6 +1218,9 @@ void itemSearch::sFillList()
     if (_searchUpc->isChecked())
       subClauses << "(item_upccode ~* :searchString)";
 
+    if (_searchAlias->isChecked())
+      subClauses << "(itemalias_number ~* :searchString)";
+    
     if(!subClauses.isEmpty())
       clauses << QString("( " + subClauses.join(" OR ") + " )");
 
@@ -1218,7 +1232,8 @@ void itemSearch::sFillList()
     if ( (!_searchNumber->isChecked()) &&
          (!_searchName->isChecked()) &&
          (!_searchDescrip->isChecked()) &&
-         (!_searchUpc->isChecked()) )
+         (!_searchUpc->isChecked()) &&
+         (!_searchAlias->isChecked()) )
     {
       _listTab->clear();
       return;
@@ -1228,14 +1243,16 @@ void itemSearch::sFillList()
     QString post;
     if(_x_preferences && _x_preferences->boolean("ListNumericItemNumbersFirst"))
     {
-      pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number) item_id, item_number, (item_descrip1 || ' ' || item_descrip2), item_upccode ";
+      pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number)"
+             "       item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode,"
+             "       item_active, itemalias_number, crmacct_name";
       post = "ORDER BY toNumeric(item_number, 999999999999999), item_number";
     }
     else
     {
-      pre =  "SELECT DISTINCT item_id, item_number AS number, "
-             "(item_descrip1 || ' ' || item_descrip2) AS name, "
-             "item_upccode AS description ";
+      pre =  "SELECT DISTINCT"
+             "       item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_upccode,"
+             "       item_active, itemalias_number, crmacct_name";
       post = "ORDER BY item_number";
     }
 
@@ -1257,6 +1274,9 @@ void itemSearch::sFillList()
     if (_searchUpc->isChecked())
       subClauses << "(item_upccode ~* :searchString)";
 
+    if (_searchAlias->isChecked())
+      subClauses << "(itemalias_number ~* :searchString)";
+    
     if(!subClauses.isEmpty())
       clauses << QString("( " + subClauses.join(" OR ") + " )");
 

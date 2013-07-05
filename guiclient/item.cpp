@@ -169,8 +169,11 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_item_number" );
   _itemsrc->addColumn(tr("Default"),      _dateColumn,   Qt::AlignCenter, true, "default");
 
-  _itemalias->addColumn(tr("Alias Number"), _itemColumn, Qt::AlignLeft, true, "itemalias_number"  );
-  _itemalias->addColumn(tr("Comments"),     -1,          Qt::AlignLeft, true, "itemalias_comments" );
+  _itemalias->addColumn(tr("Alias Number"),    _itemColumn, Qt::AlignLeft,   true, "itemalias_number"  );
+  _itemalias->addColumn(tr("CRM Account"),     _itemColumn, Qt::AlignLeft,   true, "crmacct_name"  );
+  _itemalias->addColumn(tr("Use Description"), _ynColumn,   Qt::AlignCenter, true, "itemalias_usedescrip"  );
+  _itemalias->addColumn(tr("Description"),     -1,          Qt::AlignLeft,   true, "f_descrip"  );
+  _itemalias->addColumn(tr("Comments"),        -1,          Qt::AlignLeft,   true, "f_comments" );
 
   _itemsub->addColumn(tr("Rank"),        _whsColumn,  Qt::AlignCenter, true, "itemsub_rank" );
   _itemsub->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number"   );
@@ -1350,10 +1353,12 @@ void item::sDeleteAlias()
 void item::sFillAliasList()
 {
   XSqlQuery itemFillAliasList;
-  itemFillAliasList.prepare( "SELECT itemalias_id, itemalias_number, firstLine(itemalias_comments) AS itemalias_comments "
-             "FROM itemalias "
-             "WHERE (itemalias_item_id=:item_id) "
-             "ORDER BY itemalias_number;" );
+  itemFillAliasList.prepare( "SELECT itemalias.*, firstLine(itemalias_comments) AS f_comments,"
+                             "       (itemalias_descrip1 || ' ' || itemalias_descrip2) AS f_descrip,"
+                             "       crmacct_name "
+                             "FROM itemalias LEFT OUTER JOIN crmacct ON (crmacct_id=itemalias_crmacct_id) "
+                             "WHERE (itemalias_item_id=:item_id) "
+                             "ORDER BY itemalias_number;" );
   itemFillAliasList.bindValue(":item_id", _itemid);
   itemFillAliasList.exec();
   _itemalias->populate(itemFillAliasList);
