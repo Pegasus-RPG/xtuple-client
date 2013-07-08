@@ -700,7 +700,7 @@ void contact::sExportContact()
       "REV:" + revision + "\n" +
       "END:" + end + "\n";
 
-      //actually save file
+    //need to save file
 }
 
 void contact::sFillList()
