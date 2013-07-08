@@ -59,6 +59,7 @@ protected slots:
     virtual void sEditVendor();
     virtual void sEditVendorAddress();
     virtual void sEditWarehouse();
+    virtual void sExportContact();
     virtual void sFillList();
     virtual void sHandleValidUse(bool);
     virtual void sNewCharass();
