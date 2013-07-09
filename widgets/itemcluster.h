@@ -65,6 +65,7 @@ public:
 
     XCheckBox* _searchDescrip2;
     XCheckBox* _searchUpc;
+    XCheckBox* _searchAlias;
     XCheckBox* _showInactive;
 
 public slots:

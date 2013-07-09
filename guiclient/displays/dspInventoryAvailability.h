@@ -28,6 +28,7 @@ class dspInventoryAvailability : public display, public Ui::dspInventoryAvailabi
 public:
     dspInventoryAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     virtual bool setParams(ParameterList &);
+    Q_INVOKABLE virtual void setItemId(int itemId);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
@@ -43,6 +44,7 @@ public slots:
     virtual void sViewSubstituteAvailability();
     virtual void sIssueCountTag();
     virtual void sEnterMiscCount();
+    virtual void sEnterAdjustment();
     virtual void sHandleShowReorder( bool pValue );
     virtual void sByVendorChanged();
     virtual void sAsofChanged(int index);

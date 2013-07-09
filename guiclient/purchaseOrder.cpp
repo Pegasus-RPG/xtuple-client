@@ -1161,7 +1161,7 @@ void purchaseOrder::sFillList()
   ParameterList params;
   params.append("pohead_id", _poheadid);
   params.append("closed", tr("Closed"));
-  params.append("unposted", tr("Unposted"));
+  params.append("unposted", tr("Unreleased"));
   params.append("partial", tr("Partial"));
   params.append("received", tr("Received"));
   params.append("open", tr("Open"));

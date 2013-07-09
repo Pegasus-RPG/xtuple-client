@@ -43,8 +43,10 @@ void allocateReservations::sAllocate()
   }
 
   XSqlQuery allocateRes;
-  allocateRes.prepare("SELECT reserveAllSo(:addpackinglist, :startDate, :endDate, :cust_id, :shipto_id, :custtype_id, :custtype_pattern) AS result;");
+  allocateRes.prepare("SELECT reserveAllSo(:addpackinglist, :partialreservations, :startDate, :endDate,"
+                      "                    :cust_id, :shipto_id, :custtype_id, :custtype_pattern) AS result;");
   allocateRes.bindValue(":addpackinglist", _addPackingList->isChecked());
+  allocateRes.bindValue(":partialreservations", _partialReservations->isChecked());
   _dates->bindValue(allocateRes);
   if (_selectedCustomer->isChecked())
     allocateRes.bindValue(":cust_id", _cust->id());

@@ -115,7 +115,7 @@ void dspInventoryLocator::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected
 {
   QAction *menuItem;
 
-  if (((XTreeWidgetItem *)pSelected)->altId() == -1)
+  if (((XTreeWidgetItem *)pSelected)->altId() == 1)
   {
     menuItem = pMenu->addAction(tr("Relocate..."), this, SLOT(sRelocateInventory()));;
     if (!_privileges->check("RelocateInventory"))

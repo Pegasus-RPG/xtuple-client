@@ -1426,6 +1426,10 @@ const struct {
 			       "List Item was selected."),
 								0, "" },
 
+  { "unreleasePurchaseOrder",
+    -1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "Cannot unrelease this Purchase Order because it "
+                          "has in process Purchase Order Items."),	0, "" },
+  
   { "updateTodoItem",	-1, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The To-Do List Item cannot be updated as "
 			       "there is no assigned User."),	0, "" },
   { "updateTodoItem",	-2, QT_TRANSLATE_NOOP("storedProcErrorLookup", "The To-Do List Item cannot be updated as "

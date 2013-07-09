@@ -48,14 +48,17 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char*, Qt:
   connect(omfgThis,	SIGNAL(purchaseOrdersUpdated(int, bool)),
                                               this,	SLOT(sFillList()));
 
-  list()->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignLeft,   true, "pohead_number" );
-  list()->addColumn(tr("Vendor #"),  _orderColumn, Qt::AlignLeft,   true, "vend_number"   );
-  list()->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft,   true, "vend_name"   );
-  list()->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter, true, "min_duedate" );
-  list()->addColumn(tr("Status"),    _ynColumn,    Qt::AlignCenter, true, "pohead_status" );
-  list()->addColumn(tr("Printed"),   _ynColumn,    Qt::AlignCenter, true, "pohead_printed");
-  list()->addColumn(tr("Vend. Type"), -1,          Qt::AlignLeft,   false,"vendtype_code" );
-  list()->addColumn(tr("Agent"),      -1,          Qt::AlignLeft,   true, "pohead_agent_username");
+  list()->addColumn(tr("P/O #"),         _orderColumn, Qt::AlignLeft,   true, "pohead_number" );
+  list()->addColumn(tr("Vendor #"),      _orderColumn, Qt::AlignLeft,   true, "vend_number"   );
+  list()->addColumn(tr("Vendor"),        _orderColumn, Qt::AlignLeft,   true, "vend_name"   );
+  list()->addColumn(tr("Order Date"),    _dateColumn,  Qt::AlignCenter, true, "pohead_orderdate" );
+  list()->addColumn(tr("Release Date"),  _dateColumn,  Qt::AlignCenter, true, "pohead_released" );
+  list()->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter, true, "min_duedate" );
+  list()->addColumn(tr("Status"),        _ynColumn,    Qt::AlignCenter, true, "pohead_status" );
+  list()->addColumn(tr("Printed"),       _ynColumn,    Qt::AlignCenter, true, "pohead_printed");
+  list()->addColumn(tr("Total Amount"),  _moneyColumn, Qt::AlignRight,  true, "order_total" );
+  list()->addColumn(tr("Vend. Type"),    _orderColumn, Qt::AlignLeft,   false,"vendtype_code" );
+  list()->addColumn(tr("Agent"),         _orderColumn, Qt::AlignLeft,   true, "pohead_agent_username");
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -237,9 +240,46 @@ void unpostedPurchaseOrders::sRelease()
   if (done)
     omfgThis->sPurchaseOrdersUpdated(-1, TRUE);
   else
-    QMessageBox::information(this, tr("Nothing To Post"),
+    QMessageBox::information(this, tr("Nothing To Release"),
                              tr("<p>There were no selected Purchase Orders "
-                                "to be posted."),
+                                "to be released."),
+                             QMessageBox::Ok|QMessageBox::Default);
+}
+
+void unpostedPurchaseOrders::sUnrelease()
+{
+  XSqlQuery unRelease;
+  unRelease.prepare("SELECT unreleasePurchaseOrder(:pohead_id) AS result;");
+  
+  QList<XTreeWidgetItem*> selected = list()->selectedItems();
+  bool done = false;
+  for (int i = 0; i < selected.size(); i++)
+  {
+    if ((selected[i]->rawValue("pohead_status").toString() == "O")
+        && (_privileges->check("UnreleasePurchaseOrders"))
+        && (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id())))
+    {
+      unRelease.bindValue(":pohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      unRelease.exec();
+      if (unRelease.first())
+      {
+        int result = unRelease.value("result").toInt();
+        if (result < 0)
+          systemError(this, storedProcErrorLookup("unreleasePurchaseOrder", result),
+                      __FILE__, __LINE__);
+        else
+          done = true;
+      }
+      else if (unRelease.lastError().type() != QSqlError::NoError)
+        systemError(this, unRelease.lastError().databaseText(), __FILE__, __LINE__);
+    }
+  }
+  if (done)
+    omfgThis->sPurchaseOrdersUpdated(-1, TRUE);
+  else
+    QMessageBox::information(this, tr("Nothing To Unrelease"),
+                             tr("<p>There were no selected Purchase Orders "
+                                "to be unreleased."),
                              QMessageBox::Ok|QMessageBox::Default);
 }
 
@@ -271,6 +311,9 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem,
   menuItem = pMenu->addAction(tr("Release..."), this, SLOT(sRelease()));
   menuItem->setEnabled(_privileges->check("ReleasePurchaseOrders") &&
                        item->rawValue("pohead_status").toString() == "U");
+  menuItem = pMenu->addAction(tr("Unrelease..."), this, SLOT(sUnrelease()));
+  menuItem->setEnabled(_privileges->check("UnreleasePurchaseOrders") &&
+                       item->rawValue("pohead_status").toString() == "O");
 }
 
 bool unpostedPurchaseOrders::setParams(ParameterList &params)
@@ -286,6 +329,9 @@ bool unpostedPurchaseOrders::setParams(ParameterList &params)
     params.append("showOpen");
   else
     params.append("shownothing");
+  params.append("closed", tr("Closed"));
+  params.append("unposted", tr("Unreleased"));
+  params.append("open", tr("Open"));
 
   return true;
 }
