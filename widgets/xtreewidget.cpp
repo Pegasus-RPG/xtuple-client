@@ -44,7 +44,6 @@
 #include "xtsettings.h"
 #include "xsqlquery.h"
 #include "format.h"
-#include "contact.h"
 
 #define DEBUG false
 
@@ -2384,9 +2383,9 @@ QString XTreeWidget::toVcf() const
 
   QString name;
   QString fullName;
-  QString first = qry.value("cntct_first_name");
-  Qstring middle = qry.value("cntct_middle");
-  QString last = qry.value("cntct_last_name");
+  QString first = qry.value("cntct_first_name").toString();
+  QString middle = qry.value("cntct_middle").toString();
+  QString last = qry.value("cntct_last_name").toString();
   if (!last.isEmpty()) {
     name = last;
     fullName = last;
@@ -2403,11 +2402,11 @@ QString XTreeWidget::toVcf() const
   QString begin = "VCARD";
   QString version = "3.0";
   QString org = "?";
-  QString title = qry.value("cntct_title");
+  QString title = qry.value("cntct_title").toString();
   QString photo = "";
-  QString phoneWork = qry.value("cntct_phone");
-  QString phoneHome = qry.value("cntct_phone2");
-  QString addressId = qry.value("cntct_addr_id");
+  QString phoneWork = qry.value("cntct_phone").toString();
+  QString phoneHome = qry.value("cntct_phone2").toString();
+  QString addressId = qry.value("cntct_addr_id").toString();
   XSqlQuery qry2;
   qry2.prepare("SELECT * FROM addr WHERE (addr_id=:addr_id);");
   qry2.bindValue(":addr_id", addressId);
@@ -2415,13 +2414,13 @@ QString XTreeWidget::toVcf() const
   QStringList address;
   QString addressWork;
   QString labelWork;
-  address.append(qry2.value("addr_line1"));
-  address.append(qry2.value("addr_line2"));
-  address.append(qry2.value("addr_line3"));
-  address.append(qry2.value("addr_city"));
-  address.append(qry2.value("addr_state"));
-  address.append(qry2.value("addr_postalcode"));
-  address.append(qry2.value("addr_country"));
+  address.append(qry2.value("addr_line1").toString());
+  address.append(qry2.value("addr_line2").toString());
+  address.append(qry2.value("addr_line3").toString());
+  address.append(qry2.value("addr_city").toString());
+  address.append(qry2.value("addr_state").toString());
+  address.append(qry2.value("addr_postalcode").toString());
+  address.append(qry2.value("addr_country").toString());
   //for address, set address with semicolon delimiters
   for (int i = 0; i < address.length(); i++) {
     addressWork = addressWork + address.at(i) + ";";
@@ -2432,7 +2431,7 @@ QString XTreeWidget::toVcf() const
   }
   QString addressHome = "";
   QString labelHome = "";
-  QString email = qry.value("cntct_email");
+  QString email = qry.value("cntct_email").toString();
   QString revision = "";
   QString end = "VCARD";
 
@@ -2450,7 +2449,7 @@ QString XTreeWidget::toVcf() const
     "REV:" + revision + "\n" +
     "END:" + end + "\n";
 
-  return stringToSave
+  return stringToSave;
 }
 
 QString XTreeWidget::toHtml() const
