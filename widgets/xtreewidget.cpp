@@ -2381,6 +2381,74 @@ QString XTreeWidget::toVcf() const
   qry.prepare("SELECT * FROM cntct WHERE (cntct_id=:cntct_id);");
   qry.bindValue(":cntct_id", this->id());
   qry.exec();
+
+  QString name;
+  QString fullName;
+
+  if (!_contact->last().isEmpty()) {
+    name = _contact->last();
+    fullName = _contact->last();
+  }
+  if (!_contact->middle().isEmpty()) {
+    name = name + ";" + _contact->middle();
+    fullName = _contact->middle() + " " + fullName;
+  }
+  if (!_contact->first().isEmpty()) {
+    name = name + ";" + _contact->first();
+    fullName = _contact->first() + " " + fullName;
+  }
+
+  QString begin = "VCARD";
+  QString version = "3.0";
+  QString org = "?";
+  QString title = _contact->title();
+  QString photo = "";
+  QString phoneWork = _contact->phone();
+  QString phoneHome = _contact->phone2();
+  QStringList address;
+  QString addressWork;
+  QString labelWork;
+  address.append(_contact->address1());
+  address.append(_contact->address2());
+  address.append(_contact->address3());
+  address.append(_contact->city());
+  address.append(_contact->state());
+  address.append(_contact->postalCode());
+  address.append(_contact->country());
+  //for address, set address with semicolon delimiters
+  for (int i = 0; i < address.length(); i++) {
+    addressWork = addressWork + address.at(i) + ";";
+  }
+  //for label, set address with ESCAPED newline delimiters
+  for (int i = 0; i < address.length(); i++) {
+    labelWork = labelWork + address.at(i) + "\\n";
+  }
+  QString addressHome = "";
+  QString labelHome = "";
+  QString email = _contact->emailAddress();
+  QString revision = "";
+  QString end = "VCARD";
+
+  QString stringToSave = "BEGIN:" + begin + "\n" +
+    "VERSION:" + version + "\n" +
+    "N:" + name + "\n" +
+    "FN:" + fullName + "\n" +
+    "ORG:" + org + "\n" +
+    "TITLE:" + title + "\n" +
+    "TEL;TYPE=WORK,VOICE:" + phoneWork + "\n" +
+    "TEL;TYPE=HOME,VOICE:" + phoneHome + "\n" +
+    "ADR;TYPE=WORK:;;" + addressWork + "\n" +
+    "LABEL;TYPE=WORK:;;" + labelWork + "\n" +
+    "EMAIL;TYPE=PREF,INTERNET:" + email + "\n" +
+    "REV:" + revision + "\n" +
+    "END:" + end + "\n";
+
+  QString fileName = QFileDialog::getSaveFileName(
+    this,
+    tr("Export Contact"),
+    QDir::currentPath(),
+    tr("*.vcf")
+  );
 }
 
 QString XTreeWidget::toHtml() const

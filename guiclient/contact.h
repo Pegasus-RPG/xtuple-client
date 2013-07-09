@@ -34,7 +34,6 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList &pParams);
-    virtual void sExportVCard();
 
 protected slots:
     virtual void languageChange();
