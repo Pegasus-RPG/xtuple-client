@@ -12,8 +12,6 @@
 
 #include <QMessageBox>
 #include <QVariant>
-#include <QFile>
-#include <QFileDialog>
 
 #include <metasql.h>
 #include <mqlutil.h>
