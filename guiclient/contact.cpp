@@ -12,6 +12,8 @@
 
 #include <QMessageBox>
 #include <QVariant>
+#include <QFile>
+#include <QFileDialog>
 
 #include <metasql.h>
 #include <mqlutil.h>
@@ -637,7 +639,7 @@ void contact::sDeleteCharass()
   sFillList();
 }
 
-void contact::sExportContact()
+void contact::sExportVCard()
 {
     QString name;
     QString fullName;
@@ -700,7 +702,12 @@ void contact::sExportContact()
       "REV:" + revision + "\n" +
       "END:" + end + "\n";
 
-    //need to save file
+    QString fileName = QFileDialog::getSaveFileName(
+      this,
+      tr("Export Contact"),
+      QDir::currentPath(),
+      tr("*.vcf")
+    );
 }
 
 void contact::sFillList()

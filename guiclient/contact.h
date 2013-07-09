@@ -34,6 +34,7 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList &pParams);
+    virtual void sExportVCard();
 
 protected slots:
     virtual void languageChange();
@@ -59,7 +60,6 @@ protected slots:
     virtual void sEditVendor();
     virtual void sEditVendorAddress();
     virtual void sEditWarehouse();
-    virtual void sExportContact();
     virtual void sFillList();
     virtual void sHandleValidUse(bool);
     virtual void sNewCharass();
