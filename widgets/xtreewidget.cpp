@@ -2378,78 +2378,78 @@ QString XTreeWidget::toVcf() const
 {
   XSqlQuery qry;
   qry.prepare("SELECT * FROM cntct WHERE (cntct_id=:cntct_id);");
-  qry.bindValue(":cntct_id", this->id());
-  qry.exec();
+  qry.bindValue(":cntct_id", this->selectedItems().at(0)->id());
+  if (qry.exec()) {
+    QString name;
+    QString fullName;
+    QString first = qry.value("cntct_first_name").toString();
+    QString middle = qry.value("cntct_middle").toString();
+    QString last = qry.value("cntct_last_name").toString();
+    if (!last.isEmpty()) {
+      name = last;
+      fullName = last;
+    }
+    if (!middle.isEmpty()) {
+      name = name + ";" + middle;
+      fullName = middle + " " + fullName;
+    }
+    if (!first.isEmpty()) {
+      name = name + ";" + first;         fullName = first + " " + fullName;
+    }
+    QString begin = "VCARD";
+    QString version = "3.0";
+    QString org = "?";
+    QString title = qry.value("cntct_title").toString();
+    QString photo = "";
+    QString phoneWork = qry.value("cntct_phone").toString();
+    QString phoneHome = qry.value("cntct_phone2").toString();
+    QString addressId = qry.value("cntct_addr_id").toString();
+    XSqlQuery qry2;
+    qry2.prepare("SELECT * FROM addr WHERE (addr_id=:addr_id);");
+    qry2.bindValue(":addr_id", addressId);
+    qry2.exec();
+    QStringList address;
+    QString addressWork;
+    QString labelWork;
+    address.append(qry2.value("addr_line1").toString());
+    address.append(qry2.value("addr_line2").toString());
+    address.append(qry2.value("addr_line3").toString());
+    address.append(qry2.value("addr_city").toString());
+    address.append(qry2.value("addr_state").toString());
+    address.append(qry2.value("addr_postalcode").toString());
+    address.append(qry2.value("addr_country").toString());
+    //for address, set address with semicolon delimiters
+    for (int i = 0; i < address.length(); i++) {
+      addressWork = addressWork + address.at(i) + ";";
+    }
+      //for label, set address with ESCAPED newline delimiters
+    for (int i = 0; i < address.length(); i++) {
+      labelWork = labelWork + address.at(i) + "\\n";
+    }
+    QString addressHome = "";
+    QString labelHome = "";
+    QString email = qry.value("cntct_email").toString();
+    QString revision = "";
+    QString end = "VCARD";
 
-  QString name;
-  QString fullName;
-  QString first = qry.value("cntct_first_name").toString();
-  QString middle = qry.value("cntct_middle").toString();
-  QString last = qry.value("cntct_last_name").toString();
-  if (!last.isEmpty()) {
-    name = last;
-    fullName = last;
-  }
-  if (!middle.isEmpty()) {
-    name = name + ";" + middle;
-    fullName = middle + " " + fullName;
-  }
-  if (!first.isEmpty()) {
-    name = name + ";" + first;
-    fullName = first + " " + fullName;
-  }
+    QString stringToSave = "BEGIN:" + begin + "\n" +
+      "VERSION:" + version + "\n" +
+      "N:" + name + "\n" +
+      "FN:" + fullName + "\n" +
+      "ORG:" + org + "\n" +
+      "TITLE:" + title + "\n" +
+      "TEL;TYPE=WORK,VOICE:" + phoneWork + "\n" +
+      "TEL;TYPE=HOME,VOICE:" + phoneHome + "\n" +
+      "ADR;TYPE=WORK:;;" + addressWork + "\n" +
+      "LABEL;TYPE=WORK:;;" + labelWork + "\n" +
+      "EMAIL;TYPE=PREF,INTERNET:" + email + "\n" +
+      "REV:" + revision + "\n" +
+      "END:" + end + "\n";
 
-  QString begin = "VCARD";
-  QString version = "3.0";
-  QString org = "?";
-  QString title = qry.value("cntct_title").toString();
-  QString photo = "";
-  QString phoneWork = qry.value("cntct_phone").toString();
-  QString phoneHome = qry.value("cntct_phone2").toString();
-  QString addressId = qry.value("cntct_addr_id").toString();
-  XSqlQuery qry2;
-  qry2.prepare("SELECT * FROM addr WHERE (addr_id=:addr_id);");
-  qry2.bindValue(":addr_id", addressId);
-  qry2.exec();
-  QStringList address;
-  QString addressWork;
-  QString labelWork;
-  address.append(qry2.value("addr_line1").toString());
-  address.append(qry2.value("addr_line2").toString());
-  address.append(qry2.value("addr_line3").toString());
-  address.append(qry2.value("addr_city").toString());
-  address.append(qry2.value("addr_state").toString());
-  address.append(qry2.value("addr_postalcode").toString());
-  address.append(qry2.value("addr_country").toString());
-  //for address, set address with semicolon delimiters
-  for (int i = 0; i < address.length(); i++) {
-    addressWork = addressWork + address.at(i) + ";";
+    return stringToSave;
   }
-  //for label, set address with ESCAPED newline delimiters
-  for (int i = 0; i < address.length(); i++) {
-    labelWork = labelWork + address.at(i) + "\\n";
-  }
-  QString addressHome = "";
-  QString labelHome = "";
-  QString email = qry.value("cntct_email").toString();
-  QString revision = "";
-  QString end = "VCARD";
-
-  QString stringToSave = "BEGIN:" + begin + "\n" +
-    "VERSION:" + version + "\n" +
-    "N:" + name + "\n" +
-    "FN:" + fullName + "\n" +
-    "ORG:" + org + "\n" +
-    "TITLE:" + title + "\n" +
-    "TEL;TYPE=WORK,VOICE:" + phoneWork + "\n" +
-    "TEL;TYPE=HOME,VOICE:" + phoneHome + "\n" +
-    "ADR;TYPE=WORK:;;" + addressWork + "\n" +
-    "LABEL;TYPE=WORK:;;" + labelWork + "\n" +
-    "EMAIL;TYPE=PREF,INTERNET:" + email + "\n" +
-    "REV:" + revision + "\n" +
-    "END:" + end + "\n";
-
-  return stringToSave;
+  else
+    return "failed to select contact for export";
 }
 
 QString XTreeWidget::toHtml() const
