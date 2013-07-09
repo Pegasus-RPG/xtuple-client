@@ -44,6 +44,7 @@
 #include "xtsettings.h"
 #include "xsqlquery.h"
 #include "format.h"
+#include "contact.h"
 
 #define DEBUG false
 
@@ -1552,10 +1553,12 @@ void XTreeWidget::sExport()
   QString   path = xtsettingsValue(_settingsName + "/exportPath").toString();
   QString selectedFilter;
   QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Export Save Filename"), path,
-                                            tr("Text CSV (*.csv);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)"), &selectedFilter));
+                                            tr("Text CSV (*.csv);;Text VCF (*.vcf);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)"), &selectedFilter));
   QString defaultSuffix;
   if(selectedFilter.contains("csv"))
     defaultSuffix = ".csv";
+  else if(selectedFilter.contains("vcf"))
+    defaultSuffix = ".vcf";
   else if(selectedFilter.contains("odt"))
     defaultSuffix = ".odt";
   else if(selectedFilter.contains("html"))
@@ -1580,6 +1583,11 @@ void XTreeWidget::sExport()
     else if (fi.suffix() == "csv")
     {
       doc->setPlainText(toCsv());
+      writer.setFormat("plaintext");
+    }
+    else if (fi.suffix() == "vcf")
+    {
+      doc->setPlainText(toVcf());
       writer.setFormat("plaintext");
     }
     else if (fi.suffix() == "odt")
@@ -2365,6 +2373,14 @@ QString XTreeWidget::toCsv() const
     }
   }
   return opText;
+}
+
+QString XTreeWidget::toVcf() const
+{
+  XSqlQuery qry;
+  qry.prepare("SELECT * FROM cntct WHERE (cntct_id=:cntct_id);");
+  qry.bindValue(":cntct_id", this->id());
+  qry.exec();
 }
 
 QString XTreeWidget::toHtml() const
