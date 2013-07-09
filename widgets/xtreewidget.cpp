@@ -2379,7 +2379,8 @@ QString XTreeWidget::toVcf() const
   XSqlQuery qry;
   qry.prepare("SELECT * FROM cntct WHERE (cntct_id=:cntct_id);");
   qry.bindValue(":cntct_id", this->selectedItems().at(0)->id());
-  if (qry.exec()) {
+  qry.exec();
+  if (qry.first()) {
     QString name;
     QString fullName;
     QString first = qry.value("cntct_first_name").toString();
