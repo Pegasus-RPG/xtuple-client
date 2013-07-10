@@ -2602,6 +2602,7 @@ void salesOrderItem::sPopulateItemSubs(int pItemid)
 
 void salesOrderItem::sPopulateSubMenu(QMenu *menu, QTreeWidgetItem*, int)
 {
+  if ((_mode == cNew) || (_mode == cNewQuote))
   menu->addAction(tr("Substitute..."), this, SLOT(sSubstitute()));
 }
 
