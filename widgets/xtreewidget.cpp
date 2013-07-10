@@ -2399,7 +2399,7 @@ QString XTreeWidget::toVcf() const
     }
     QString begin = "VCARD";
     QString version = "3.0";
-    QString org = "?";
+    QString org = "";
     QString title = qry.value("cntct_title").toString();
     QString photo = "";
     QString phoneWork = qry.value("cntct_phone").toString();
@@ -2410,42 +2410,65 @@ QString XTreeWidget::toVcf() const
     qry2.bindValue(":addr_id", addressId);
     qry2.exec();
     QStringList address;
-    QString addressWork;
-    QString labelWork;
-    address.append(qry2.value("addr_line1").toString());
-    address.append(qry2.value("addr_line2").toString());
-    address.append(qry2.value("addr_line3").toString());
-    address.append(qry2.value("addr_city").toString());
-    address.append(qry2.value("addr_state").toString());
-    address.append(qry2.value("addr_postalcode").toString());
-    address.append(qry2.value("addr_country").toString());
-    //for address, set address with semicolon delimiters
+    QString addressWork= "";
+    QString labelWork = "";
+    if (qry2.first()) {
+      /*
+      * this is tricky, because sometimes (in the test database at least)
+      * our addr_line1 is the company name, and sometimes it's really the
+      * first line of the actual address.  For the former, we can use
+      * the addr_line1 as the organization name.
+      */
+      if(qry2.value("addr_line1").toString().at(0).isDigit())
+        address.append(qry2.value("addr_line1").toString());
+      else
+        org = qry2.value("addr_line1").toString();
+      address.append(qry2.value("addr_line2").toString());
+      address.append(qry2.value("addr_line3").toString());
+      address.append(qry2.value("addr_city").toString());
+      address.append(qry2.value("addr_state").toString());
+      address.append(qry2.value("addr_postalcode").toString());
+      address.append(qry2.value("addr_country").toString());
+    }
+      //for address, set address with semicolon delimiters
     for (int i = 0; i < address.length(); i++) {
-      addressWork = addressWork + address.at(i) + ";";
+      if(!address.at(i).isEmpty())
+        addressWork = addressWork + address.at(i) + ";";
     }
       //for label, set address with ESCAPED newline delimiters
     for (int i = 0; i < address.length(); i++) {
-      labelWork = labelWork + address.at(i) + "\\n";
+      if(!address.at(i).isEmpty())
+        labelWork = labelWork + address.at(i) + "\\n";
     }
     QString addressHome = "";
     QString labelHome = "";
     QString email = qry.value("cntct_email").toString();
-    QString revision = "";
+    QDateTime dateTime = QDateTime::currentDateTime();
+    QString revision = dateTime.toString(Qt::ISODate);
     QString end = "VCARD";
 
-    QString stringToSave = "BEGIN:" + begin + "\n" +
-      "VERSION:" + version + "\n" +
-      "N:" + name + "\n" +
-      "FN:" + fullName + "\n" +
-      "ORG:" + org + "\n" +
-      "TITLE:" + title + "\n" +
-      "TEL;TYPE=WORK,VOICE:" + phoneWork + "\n" +
-      "TEL;TYPE=HOME,VOICE:" + phoneHome + "\n" +
-      "ADR;TYPE=WORK:;;" + addressWork + "\n" +
-      "LABEL;TYPE=WORK:;;" + labelWork + "\n" +
-      "EMAIL;TYPE=PREF,INTERNET:" + email + "\n" +
-      "REV:" + revision + "\n" +
-      "END:" + end + "\n";
+    QString stringToSave;
+
+    stringToSave.append("BEGIN:" + begin + "\n");
+    stringToSave.append("VERSION:" + version + "\n");
+    stringToSave.append("N:" + name + "\n");
+    stringToSave.append("FN:" + fullName + "\n");
+    if (!org.isEmpty())
+      stringToSave.append("ORG:" + org + "\n");
+    if (!title.isEmpty())
+      stringToSave.append("TITLE:" + title + "\n");
+    if (!phoneWork.isEmpty())
+      stringToSave.append("TEL;TYPE=WORK,VOICE:" + phoneWork + "\n");
+    if (!phoneHome.isEmpty())
+      stringToSave.append("TEL;TYPE=HOME,VOICE:" + phoneHome + "\n");
+    if (!addressWork.isEmpty())
+      stringToSave.append("ADR;TYPE=WORK:;;" + addressWork + "\n");
+    if (!labelWork.isEmpty())
+      stringToSave.append("LABEL;TYPE=WORK:;;" + labelWork + "\n");
+    if (!email.isEmpty())
+      stringToSave.append("EMAIL;TYPE=PREF,INTERNET:" + email + "\n");
+    stringToSave.append("REV:" + revision + "\n");
+    stringToSave.append("END:" + end + "\n");
 
     return stringToSave;
   }
