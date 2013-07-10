@@ -2395,7 +2395,8 @@ QString XTreeWidget::toVcf() const
       fullName = middle + " " + fullName;
     }
     if (!first.isEmpty()) {
-      name = name + ";" + first;         fullName = first + " " + fullName;
+      name = name + ";" + first;
+      fullName = first + " " + fullName;
     }
     QString begin = "VCARD";
     QString version = "3.0";
