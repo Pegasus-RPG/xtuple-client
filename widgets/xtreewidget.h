@@ -206,6 +206,7 @@ class XTUPLEWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 
     Q_INVOKABLE QString toTxt() const;
     Q_INVOKABLE QString toCsv() const;
+    Q_INVOKABLE QString toVcf() const;
     Q_INVOKABLE QString toHtml() const;
 
     // just for scripting exposure:
