@@ -1552,10 +1552,12 @@ void XTreeWidget::sExport()
   QString   path = xtsettingsValue(_settingsName + "/exportPath").toString();
   QString selectedFilter;
   QFileInfo fi(QFileDialog::getSaveFileName(this, tr("Export Save Filename"), path,
-                                            tr("Text CSV (*.csv);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)"), &selectedFilter));
+                                            tr("Text CSV (*.csv);;Text VCF (*.vcf);;Text (*.txt);;ODF Text Document (*.odt);;HTML Document (*.html)"), &selectedFilter));
   QString defaultSuffix;
   if(selectedFilter.contains("csv"))
     defaultSuffix = ".csv";
+  else if(selectedFilter.contains("vcf"))
+    defaultSuffix = ".vcf";
   else if(selectedFilter.contains("odt"))
     defaultSuffix = ".odt";
   else if(selectedFilter.contains("html"))
@@ -1580,6 +1582,11 @@ void XTreeWidget::sExport()
     else if (fi.suffix() == "csv")
     {
       doc->setPlainText(toCsv());
+      writer.setFormat("plaintext");
+    }
+    else if (fi.suffix() == "vcf")
+    {
+      doc->setPlainText(toVcf());
       writer.setFormat("plaintext");
     }
     else if (fi.suffix() == "odt")
@@ -2365,6 +2372,109 @@ QString XTreeWidget::toCsv() const
     }
   }
   return opText;
+}
+
+QString XTreeWidget::toVcf() const
+{
+  XSqlQuery qry;
+  qry.prepare("SELECT * FROM cntct WHERE (cntct_id=:cntct_id);");
+  qry.bindValue(":cntct_id", this->selectedItems().at(0)->id());
+  qry.exec();
+  if (qry.first()) {
+    QString name;
+    QString fullName;
+    QString first = qry.value("cntct_first_name").toString();
+    QString middle = qry.value("cntct_middle").toString();
+    QString last = qry.value("cntct_last_name").toString();
+    if (!last.isEmpty()) {
+      name = last;
+      fullName = last;
+    }
+    if (!middle.isEmpty()) {
+      name = name + ";" + middle;
+      fullName = middle + " " + fullName;
+    }
+    if (!first.isEmpty()) {
+      name = name + ";" + first;
+      fullName = first + " " + fullName;
+    }
+    QString begin = "VCARD";
+    QString version = "3.0";
+    QString org = "";
+    QString title = qry.value("cntct_title").toString();
+    QString photo = "";
+    QString phoneWork = qry.value("cntct_phone").toString();
+    QString phoneHome = qry.value("cntct_phone2").toString();
+    QString addressId = qry.value("cntct_addr_id").toString();
+    XSqlQuery qry2;
+    qry2.prepare("SELECT * FROM addr WHERE (addr_id=:addr_id);");
+    qry2.bindValue(":addr_id", addressId);
+    qry2.exec();
+    QStringList address;
+    QString addressWork= "";
+    QString labelWork = "";
+    if (qry2.first()) {
+      /*
+      * this is tricky, because sometimes (in the test database at least)
+      * our addr_line1 is the company name, and sometimes it's really the
+      * first line of the actual address.  For the former, we can use
+      * the addr_line1 as the organization name.
+      */
+      if(qry2.value("addr_line1").toString().at(0).isDigit())
+        address.append(qry2.value("addr_line1").toString());
+      else
+        org = qry2.value("addr_line1").toString();
+      address.append(qry2.value("addr_line2").toString());
+      address.append(qry2.value("addr_line3").toString());
+      address.append(qry2.value("addr_city").toString());
+      address.append(qry2.value("addr_state").toString());
+      address.append(qry2.value("addr_postalcode").toString());
+      address.append(qry2.value("addr_country").toString());
+    }
+      //for address, set address with semicolon delimiters
+    for (int i = 0; i < address.length(); i++) {
+      if(!address.at(i).isEmpty())
+        addressWork = addressWork + address.at(i) + ";";
+    }
+      //for label, set address with ESCAPED newline delimiters
+    for (int i = 0; i < address.length(); i++) {
+      if(!address.at(i).isEmpty())
+        labelWork = labelWork + address.at(i) + "\\n";
+    }
+    QString addressHome = "";
+    QString labelHome = "";
+    QString email = qry.value("cntct_email").toString();
+    QDateTime dateTime = QDateTime::currentDateTime();
+    QString revision = dateTime.toString(Qt::ISODate);
+    QString end = "VCARD";
+
+    QString stringToSave;
+
+    stringToSave.append("BEGIN:" + begin + "\n");
+    stringToSave.append("VERSION:" + version + "\n");
+    stringToSave.append("N:" + name + "\n");
+    stringToSave.append("FN:" + fullName + "\n");
+    if (!org.isEmpty())
+      stringToSave.append("ORG:" + org + "\n");
+    if (!title.isEmpty())
+      stringToSave.append("TITLE:" + title + "\n");
+    if (!phoneWork.isEmpty())
+      stringToSave.append("TEL;TYPE=WORK,VOICE:" + phoneWork + "\n");
+    if (!phoneHome.isEmpty())
+      stringToSave.append("TEL;TYPE=HOME,VOICE:" + phoneHome + "\n");
+    if (!addressWork.isEmpty())
+      stringToSave.append("ADR;TYPE=WORK:;;" + addressWork + "\n");
+    if (!labelWork.isEmpty())
+      stringToSave.append("LABEL;TYPE=WORK:;;" + labelWork + "\n");
+    if (!email.isEmpty())
+      stringToSave.append("EMAIL;TYPE=PREF,INTERNET:" + email + "\n");
+    stringToSave.append("REV:" + revision + "\n");
+    stringToSave.append("END:" + end + "\n");
+
+    return stringToSave;
+  }
+  else
+    return "failed to select contact for export";
 }
 
 QString XTreeWidget::toHtml() const

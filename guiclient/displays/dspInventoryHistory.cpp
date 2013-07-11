@@ -336,3 +336,12 @@ void dspInventoryHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, in
   }
 }
 
+void dspInventoryHistory::setItemId(int itemId)
+{
+  parameterWidget()->setDefault(tr("Item"), itemId, true );
+}
+
+void dspInventoryHistory::setStartDate(QDate startDate)
+{
+  parameterWidget()->setDefault(tr("Start Date"), startDate, true );
+}

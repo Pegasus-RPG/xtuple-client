@@ -43,6 +43,7 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char*, Qt:
   list()->addColumn(tr("Order #"),       _itemColumn, Qt::AlignLeft,  true, "ordernumber");
   list()->addColumn(tr("Source/Destination"),     -1, Qt::AlignLeft,  true, "item_number");
   list()->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "duedate");
+  list()->addColumn(tr("Amount"),       _moneyColumn, Qt::AlignRight, true, "amount");
   list()->addColumn(tr("Ordered"),        _qtyColumn, Qt::AlignRight, true, "qtyordered");
   list()->addColumn(tr("Received"),       _qtyColumn, Qt::AlignRight, true, "qtyreceived");
   list()->addColumn(tr("Balance"),        _qtyColumn, Qt::AlignRight, true, "balance");
@@ -142,8 +143,7 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
       ordertype == tr("Planned P/O (firmed)") ||
       ordertype == tr("Planned P/O") )
   {
-    if (ordertype == tr("Planned W/O (firmed)") ||
-	ordertype == tr("Planned P/O (firmed)") )
+    if (ordertype == tr("Planned W/O (firmed)") || ordertype == tr("Planned P/O (firmed)") )
       pMenu->addAction(tr("Soften Order..."), this, SLOT(sSoftenOrder()));
     else
       pMenu->addAction(tr("Firm Order..."), this, SLOT(sFirmOrder()));
@@ -157,25 +157,30 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
   {
     pMenu->addAction(tr("View Work Order Details..."), this, SLOT(sViewWo()));
     menuItem = pMenu->addAction(tr("Work Order Schedule by Item..."), this, SLOT(sDspWoScheduleByWorkOrder()));
-    menuItem->setEnabled( _privileges->check("MaintainWorkOrders") ||
-				    _privileges->check("ViewWorkOrders"));
+    menuItem->setEnabled( _privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders"));
   }
   else if (ordertype == "S/O")
   {
     menuItem = pMenu->addAction(tr("View Sales Order..."), this, SLOT(sViewSo()));
     menuItem->setEnabled(_privileges->check("ViewSalesOrders"));
+    menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEditSo()));
+    menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
   }
 
   else if (ordertype == "T/O")
   {
     menuItem = pMenu->addAction(tr("View Transfer Order..."), this, SLOT(sViewTo()));
     menuItem->setEnabled(_privileges->check("ViewTransferOrders"));
+    menuItem = pMenu->addAction(tr("Edit Transfer Order..."), this, SLOT(sEditTo()));
+    menuItem->setEnabled(_privileges->check("MaintainTransferOrders"));
   }
 
   else if (ordertype == "P/O")
   {
     menuItem = pMenu->addAction(tr("View Purchase Order..."), this, SLOT(sViewPo()));
-    menuItem->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
+    menuItem->setEnabled(_privileges->check("ViewPurchaseOrders"));
+    menuItem = pMenu->addAction(tr("Edit Purchase Order..."), this, SLOT(sEditPo()));
+    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   }
 
 }
@@ -299,6 +304,40 @@ void dspRunningAvailability::sViewPo()
   params.append("mode", "view");
   params.append("pohead_id", list()->id());
 
+  purchaseOrder *newdlg = new purchaseOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspRunningAvailability::sEditSo()
+{
+  ParameterList params;
+  salesOrder::editSalesOrder(list()->id(), true);
+}
+
+void dspRunningAvailability::sEditTo()
+{
+  ParameterList params;
+  transferOrder::editTransferOrder(list()->id(), true);
+}
+
+void dspRunningAvailability::sEditWo()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("wo_id", list()->id());
+  
+  workOrder *newdlg = new workOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspRunningAvailability::sEditPo()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("pohead_id", list()->id());
+  
   purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);

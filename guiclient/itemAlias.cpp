@@ -82,6 +82,7 @@ enum SetResponse itemAlias::set(const ParameterList &pParams)
       _mode = cView;
 
       _number->setEnabled(FALSE);
+      _crmacct->setEnabled(FALSE);
       _useDescription->setEnabled(FALSE);
       _descrip1->setEnabled(FALSE);
       _descrip2->setEnabled(FALSE);
@@ -105,20 +106,20 @@ void itemAlias::sSave()
                              "before continuing"))
      ;
 
-  if (_mode == cNew)
-  {
-    itemSave.prepare( "SELECT itemalias_id "
-               "FROM itemalias "
-               "WHERE ( (itemalias_item_id=:item_id)"
-               " AND (itemalias_number=:itemalias_number) );" );
-    itemSave.bindValue(":item_id", _itemid);
-    itemSave.bindValue(":itemalias_number", _number->text());
-    itemSave.exec();
-    if (itemSave.first())
-      errors << GuiErrorCheck(true, _number,
-                              tr( "An Item Alias for the selected Item Number has already been defined with the selected Alias Item Number.\n"
-                                  "You may not create duplicate Item Aliases." ) );
-  }
+  itemSave.prepare( "SELECT itemalias_id "
+             "FROM itemalias "
+             "WHERE ( (itemalias_item_id=:itemalias_item_id)"
+             " AND (itemalias_number=:itemalias_number)"
+             " AND (itemalias_id != :itemalias_id) );" );
+  itemSave.bindValue(":itemalias_id", _itemaliasid);
+  itemSave.bindValue(":itemalias_item_id", _itemid);
+  itemSave.bindValue(":itemalias_number", _number->text());
+  itemSave.exec();
+  if (itemSave.first())
+    errors << GuiErrorCheck(true, _number,
+                            tr( "An Item Alias for the selected Item Number has already been defined\n"
+                                "with the selected Alias Item Number and CRM Account.\n"
+                                "You may not create duplicate Item Aliases." ) );
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Item Alias"), errors))
     return;
@@ -130,17 +131,18 @@ void itemAlias::sSave()
       _itemaliasid = itemSave.value("_itemalias_id").toInt();
 
     itemSave.prepare( "INSERT INTO itemalias "
-               "( itemalias_id, itemalias_item_id, itemalias_number,"
+               "( itemalias_id, itemalias_item_id, itemalias_number, itemalias_crmacct_id,"
                "  itemalias_usedescrip, itemalias_descrip1, itemalias_descrip2,"
                "  itemalias_comments ) "
                "VALUES "
-               "( :itemalias_id, :itemalias_item_id, :itemalias_number,"
+               "( :itemalias_id, :itemalias_item_id, :itemalias_number, :itemalias_crmacct_id,"
                "  :itemalias_usedescrip, :itemalias_descrip1, :itemalias_descrip2,"
                "  :itemalias_comments );" );
   }
   else if (_mode == cEdit)
     itemSave.prepare( "UPDATE itemalias "
                "SET itemalias_number=:itemalias_number, itemalias_comments=:itemalias_comments,"
+               "    itemalias_crmacct_id=:itemalias_crmacct_id,"
                "    itemalias_usedescrip=:itemalias_usedescrip,"
                "    itemalias_descrip1=:itemalias_descrip1, itemalias_descrip2=:itemalias_descrip2 "
                "WHERE (itemalias_id=:itemalias_id);" );
@@ -148,6 +150,8 @@ void itemAlias::sSave()
   itemSave.bindValue(":itemalias_id", _itemaliasid);
   itemSave.bindValue(":itemalias_item_id", _itemid);
   itemSave.bindValue(":itemalias_number", _number->text().trimmed());
+  if (_crmacct->id() != -1)
+    itemSave.bindValue(":itemalias_crmacct_id", _crmacct->id());
   itemSave.bindValue(":itemalias_descrip1", _descrip1->text().trimmed());
   itemSave.bindValue(":itemalias_descrip2", _descrip2->text().trimmed());
   itemSave.bindValue(":itemalias_comments", _comments->toPlainText());
@@ -160,9 +164,7 @@ void itemAlias::sSave()
 void itemAlias::populate()
 {
   XSqlQuery itempopulate;
-  itempopulate.prepare( "SELECT itemalias_item_id, itemalias_number,"
-             "       itemalias_usedescrip, itemalias_descrip1, itemalias_descrip2,"
-             "       itemalias_comments, item_number "
+  itempopulate.prepare( "SELECT itemalias.*, item_number "
              "FROM itemalias LEFT OUTER JOIN item ON (itemalias_item_id=item_id) "
              "WHERE (itemalias_id=:itemalias_id);" );
   itempopulate.bindValue(":itemalias_id", _itemaliasid);
@@ -172,6 +174,7 @@ void itemAlias::populate()
     _itemid = itempopulate.value("itemalias_item_id").toInt();
     _item->setText(itempopulate.value("item_number").toString());
     _number->setText(itempopulate.value("itemalias_number").toString());
+    _crmacct->setId(itempopulate.value("itemalias_crmacct_id").toInt());
 
     if (itempopulate.value("itemalias_usedescrip").toBool())
     {

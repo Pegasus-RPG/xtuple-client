@@ -32,7 +32,7 @@ Clone the Code
 
 After setting up our forks, we'll use terminal to clone our freshly forked repos onto our machines.  When you call "git clone" from a terminal window, you pull the repository from github to your local machine.  By default, it'll be created in a new directory named after the repo you're cloning.
 
-    git clone https://github.com/YOUR_GIT_NAME/qt-client.git
+    git clone git@github.com:YOUR_GIT_NAME/qt-client.git
 
 openrpt, csvimp and xtlib are submodules of the qt-client repository.  When you clone qt-client, you get these repos too, and you'll see them in your file system as subdirectories of qt-client.  They're special though; any manipulation or updating of these directories will be ignored by the qt-client repo - for example, changed openrpt code will not show up in a "git diff" called from the qt-client directory.  If you look at the directory structure through Github, you'll notice that submodules directories are green.  Submodules allow us to isolate certain subdirectories from a repository and establish these subdirectories as their own repositories.  This is very useful when you have semi-independent code such as library or framework code, and you want to be able to update and manipulate this code seperately from the parent repository/directory.
 

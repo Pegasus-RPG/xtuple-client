@@ -10,6 +10,7 @@
 
 #include "itemAvailabilityWorkbench.h"
 
+#include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
@@ -17,213 +18,225 @@
 #include <metasql.h>
 #include <openreports.h>
 
-#include "adjustmentTrans.h"
-#include "bom.h"
-#include "countTag.h"
-#include "createCountTagsByItem.h"
-#include "dspAllocations.h"
+#include "dspCostedIndentedBOM.h"
+#include "dspInventoryAvailability.h"
 #include "dspInventoryHistory.h"
-#include "dspItemCostSummary.h"
-#include "dspOrders.h"
+#include "dspInventoryLocator.h"
+#include "dspPoItemsByItem.h"
+#include "dspPoItemReceivingsByItem.h"
+#include "dspQuotesByItem.h"
 #include "dspRunningAvailability.h"
-#include "dspSubstituteAvailabilityByItem.h"
-#include "enterMiscCount.h"
-#include "expenseTrans.h"
-#include "firmPlannedOrder.h"
+#include "dspSalesHistory.h"
+#include "dspSalesOrdersByItem.h"
+#include "dspSingleLevelWhereUsed.h"
 #include "item.h"
-#include "maintainItemCosts.h"
-#include "materialReceiptTrans.h"
-#include "mqlutil.h"
-#include "purchaseOrder.h"
-#include "purchaseRequest.h"
-#include "reassignLotSerial.h"
-#include "relocateInventory.h"
-#include "scrapTrans.h"
-#include "storedProcErrorLookup.h"
-#include "transactionInformation.h"
-#include "transferTrans.h"
-#include "workOrder.h"
-#include "salesOrder.h"
-#include "transferOrder.h"
+#include "parameterwidget.h"
 
 itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  _costsGroupInt = new QButtonGroup(this);
-  _costsGroupInt->addButton(_useStandardCosts);
-  _costsGroupInt->addButton(_useActualCosts);
+  _dspInventoryAvailability = new dspInventoryAvailability(this, "dspInventoryAvailabilty", Qt::Widget);
+  _dspInventoryAvailability->setObjectName("dspInventoryAvailability");
+  _availabilityPage->layout()->addWidget(_dspInventoryAvailability);
+  _dspInventoryAvailability->setCloseVisible(false);
+  _dspInventoryAvailability->setQueryOnStartEnabled(false);
+  _dspInventoryAvailability->setParameterWidgetVisible(false);
+  _dspInventoryAvailability->setAutoUpdateEnabled(false);
+  _dspInventoryAvailability->optionsWidget()->show();
+  _dspInventoryAvailability->list()->hideColumn("item_number");
+  _dspInventoryAvailability->list()->hideColumn("itemdescrip");
+  _dspInventoryAvailability->list()->hideColumn("uom_name");
+  _dspInventoryAvailability->findChild<QWidget*>("_showGroup")->hide();
+  
+  _dspRunningAvailability = new dspRunningAvailability(this, "dspRunningAvailabilty", Qt::Widget);
+  _dspRunningAvailability->setObjectName("dspRunningAvailability");
+  _runningAvailabilityPage->layout()->addWidget(_dspRunningAvailability);
+  _dspRunningAvailability->setCloseVisible(false);
+  _dspRunningAvailability->setQueryOnStartEnabled(false);
+  _dspRunningAvailability->findChild<QWidget*>("_item")->hide();
+  
+  _dspInventoryLocator = new dspInventoryLocator(this, "dspInventoryLocator", Qt::Widget);
+  _dspInventoryLocator->setObjectName("dspInventoryLocator");
+  _locationDetailPage->layout()->addWidget(_dspInventoryLocator);
+  _dspInventoryLocator->setCloseVisible(false);
+  _dspInventoryLocator->setQueryOnStartEnabled(false);
+  _dspInventoryLocator->findChild<QWidget*>("_item")->hide();
+  _dspInventoryLocator->findChild<QWidget*>("_itemGroup")->hide();
+  
+  _dspCostedIndentedBOM = new dspCostedIndentedBOM(this, "dspCostedIndentedBOM", Qt::Widget);
+  _dspCostedIndentedBOM->setObjectName("dspCostedIndentedBOM");
+  _costedIndentedBOMPage->layout()->addWidget(_dspCostedIndentedBOM);
+  _dspCostedIndentedBOM->setCloseVisible(false);
+  _dspCostedIndentedBOM->setQueryOnStartEnabled(false);
+  _dspCostedIndentedBOM->findChild<QWidget*>("_item")->hide();
+  
+  _dspSingleLevelWhereUsed = new dspSingleLevelWhereUsed(this, "dspSingleLevelWhereUsed", Qt::Widget);
+  _dspSingleLevelWhereUsed->setObjectName("dspSingleLevelWhereUsed");
+  _whereUsedPage->layout()->addWidget(_dspSingleLevelWhereUsed);
+  _dspSingleLevelWhereUsed->setCloseVisible(false);
+  _dspSingleLevelWhereUsed->setQueryOnStartEnabled(false);
+  _dspSingleLevelWhereUsed->findChild<QWidget*>("_item")->hide();
+  
+  _dspInventoryHistory = new dspInventoryHistory(this, "dspInventoryHistory", Qt::Widget);
+  _dspInventoryHistory->setObjectName("dspInventoryHistory");
+  _inventoryHistoryPage->layout()->addWidget(_dspInventoryHistory);
+  _dspInventoryHistory->setCloseVisible(false);
+  _dspInventoryHistory->setQueryOnStartEnabled(false);
+  _dspInventoryHistory->setParameterWidgetVisible(false);
+  _dspInventoryHistory->setAutoUpdateEnabled(false);
+  _dspInventoryHistory->setStartDate(QDate().currentDate().addDays(-365));
+  _dspInventoryHistory->list()->hideColumn("item_number");
+  
+  _dspPoItemReceivingsByItem = new dspPoItemReceivingsByItem(this, "dspPoItemReceivingsByItem", Qt::Widget);
+  _dspPoItemReceivingsByItem->setObjectName("dspPoItemReceivingsByItem");
+  _receivingHistoryPage->layout()->addWidget(_dspPoItemReceivingsByItem);
+  _dspPoItemReceivingsByItem->setCloseVisible(false);
+  _dspPoItemReceivingsByItem->setQueryOnStartEnabled(false);
+  _dspPoItemReceivingsByItem->findChild<QWidget*>("_item")->hide();
+  _dspPoItemReceivingsByItem->findChild<QWidget*>("_itemGroup")->hide();
+  _dspPoItemReceivingsByItem->findChild<DateCluster*>("_dates")->setStartDate(QDate().currentDate().addDays(-365));
+  _dspPoItemReceivingsByItem->findChild<DateCluster*>("_dates")->setEndDate(QDate().currentDate());
+  
+  _dspSalesHistory = new dspSalesHistory(this, "dspSalesHistory", Qt::Widget);
+  _dspSalesHistory->setObjectName("dspSalesHistory");
+  _salesHistoryPage->layout()->addWidget(_dspSalesHistory);
+  _dspSalesHistory->setCloseVisible(false);
+  _dspSalesHistory->setQueryOnStartEnabled(false);
+  _dspSalesHistory->setParameterWidgetVisible(false);
+  _dspSalesHistory->setAutoUpdateEnabled(false);
+  _dspSalesHistory->setStartDate(QDate().currentDate().addDays(-365));
+  _dspSalesHistory->list()->hideColumn("item_number");
+  _dspSalesHistory->list()->hideColumn("itemdescription");
+  
+  _dspPoItemsByItem = new dspPoItemsByItem(this, "dspPoItemsByItem", Qt::Widget);
+  _dspPoItemsByItem->setObjectName("dspPoItemsByItem");
+  _purchaseOrderItemsPage->layout()->addWidget(_dspPoItemsByItem);
+  _dspPoItemsByItem->setCloseVisible(false);
+  _dspPoItemsByItem->setQueryOnStartEnabled(false);
+  _dspPoItemsByItem->findChild<QWidget*>("_item")->hide();
+  _dspPoItemsByItem->findChild<QWidget*>("_itemGroup")->hide();
+  
+  _dspSalesOrdersByItem = new dspSalesOrdersByItem(this, "dspSalesOrdersByItem", Qt::Widget);
+  _dspSalesOrdersByItem->setObjectName("dspSalesOrdersByItem");
+  _salesOrderItemsPage->layout()->addWidget(_dspSalesOrdersByItem);
+  _dspSalesOrdersByItem->setCloseVisible(false);
+  _dspSalesOrdersByItem->setQueryOnStartEnabled(false);
+  _dspSalesOrdersByItem->findChild<QWidget*>("_item")->hide();
+  
+  _dspQuotesByItem = new dspQuotesByItem(this, "dspQuotesByItem", Qt::Widget);
+  _dspQuotesByItem->setObjectName("dspQuotesByItem");
+  _quoteItemsPage->layout()->addWidget(_dspQuotesByItem);
+  _dspQuotesByItem->setCloseVisible(false);
+  _dspQuotesByItem->setQueryOnStartEnabled(false);
+  _dspQuotesByItem->findChild<QWidget*>("_item")->hide();
+  
+  _itemMaster = new item(this, "item", Qt::Widget);
+  _itemMaster->setObjectName("item");
+  _itemPage->layout()->addWidget(_itemMaster);
+  _itemMaster->findChild<QWidget*>("_itemNumber")->hide();
+  _itemMaster->findChild<QWidget*>("_itemNumberLit")->hide();
+  _itemMaster->findChild<QWidget*>("_description1")->hide();
+  _itemMaster->findChild<QWidget*>("_description2")->hide();
+  _itemMaster->findChild<QWidget*>("_descriptionLit")->hide();
+  _itemMaster->findChild<QWidget*>("_save")->hide();
+  _itemMaster->findChild<QWidget*>("_close")->hide();
+  _itemMaster->findChild<QWidget*>("_print")->hide();
+  _itemMaster->findChild<QWidget*>("_newCharacteristic")->hide();
+  _itemMaster->findChild<QWidget*>("_editCharacteristic")->hide();
+  _itemMaster->findChild<QWidget*>("_deleteCharacteristic")->hide();
+  _itemMaster->findChild<QWidget*>("_newAlias")->hide();
+  _itemMaster->findChild<QWidget*>("_editAlias")->hide();
+  _itemMaster->findChild<QWidget*>("_deleteAlias")->hide();
+  _itemMaster->findChild<QWidget*>("_newSubstitute")->hide();
+  _itemMaster->findChild<QWidget*>("_editSubstitute")->hide();
+  _itemMaster->findChild<QWidget*>("_deleteSubstitute")->hide();
+  _itemMaster->findChild<QWidget*>("_newTransform")->hide();
+  _itemMaster->findChild<QWidget*>("_deleteTransform")->hide();
+  _itemMaster->findChild<QWidget*>("_newItemSite")->hide();
+  _itemMaster->findChild<QWidget*>("_editItemSite")->hide();
+  _itemMaster->findChild<QWidget*>("_deleteItemSite")->hide();
+  _itemMaster->findChild<QWidget*>("_itemtaxNew")->hide();
+  _itemMaster->findChild<QWidget*>("_itemtaxEdit")->hide();
+  _itemMaster->findChild<QWidget*>("_itemtaxDelete")->hide();
+  _itemMaster->findChild<QWidget*>("_newUOM")->hide();
+  _itemMaster->findChild<QWidget*>("_editUOM")->hide();
+  _itemMaster->findChild<QWidget*>("_deleteUOM")->hide();
+  _itemMaster->findChild<QWidget*>("_newSrc")->hide();
+  _itemMaster->findChild<QWidget*>("_editSrc")->hide();
+  _itemMaster->findChild<QWidget*>("_deleteSrc")->hide();
+  _itemMaster->findChild<QWidget*>("_copySrc")->hide();
+  _itemMaster->findChild<QTabWidget*>("_tab")->removeTab(2);
+  _itemMaster->findChild<QWidget*>("_active")->setEnabled(false);
+  _itemMaster->findChild<QWidget*>("_sold")->setEnabled(false);
+  _itemMaster->findChild<QWidget*>("_itemGroup")->setEnabled(false);
+  _itemMaster->findChild<QWidget*>("_weightGroup")->setEnabled(false);
+  
+  connect(_tab, SIGNAL(currentChanged(int)), this, SLOT(sFillList()));
+  connect(_availabilityButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_runningAvailabilityButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_locationDetailButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_costedIndentedBOMButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_whereUsedButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_inventoryHistoryButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_receivingHistoryButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_salesHistoryButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_purchaseOrderItemsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_salesOrderItemsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_quoteItemsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_item,	SIGNAL(newId(int)), this, SLOT(populate()));
 
-  connect(_availPrint,	SIGNAL(clicked()), this, SLOT(sPrintAvail()));
-  connect(_availability,SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuRunning(QMenu*,QTreeWidgetItem*)));
-  connect(_availability,SIGNAL(resorted()), this, SLOT(sHandleResort()));
-  connect(_bomitem,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCosted(QMenu*,QTreeWidgetItem*)));
-  connect(_byDates,	SIGNAL(toggled(bool)), _endDate, SLOT(setEnabled(bool)));
-  connect(_byDates,	SIGNAL(toggled(bool)), _startDate, SLOT(setEnabled(bool)));
-  connect(_costedPrint,	SIGNAL(clicked()), this, SLOT(sPrintCosted()));
-  connect(_costsGroup,	SIGNAL(toggled(bool)), this, SLOT(sFillListCosted()));
-  connect(_costsGroupInt,SIGNAL(buttonClicked(int)), this, SLOT(sFillListCosted()));
-  connect(_effective,	SIGNAL(newDate(const QDate&)), this, SLOT(sFillListWhereUsed()));
-  connect(_histPrint,	SIGNAL(clicked()), this, SLOT(sPrintHistory()));
-  connect(_invAvailability,SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuAvail(QMenu*,QTreeWidgetItem*)));
-  connect(_invQuery,	SIGNAL(clicked()), this, SLOT(sFillListAvail()));
-  connect(_invhist,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuHistory(QMenu*,QTreeWidgetItem*)));
-  connect(_invhistQuery,SIGNAL(clicked()), this, SLOT(sFillListInvhist()));
-  connect(_item,	SIGNAL(newId(int)), this, SLOT(sFillListCosted()));
-  connect(_item,	SIGNAL(newId(int)), this, SLOT(sFillListWhereUsed()));
-  connect(_item,	SIGNAL(newId(int)), this, SLOT(sClearQueries()));
-  connect(_itemloc,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuLocation(QMenu*,QTreeWidgetItem*)));
-  connect(_itemlocQuery,SIGNAL(clicked()), this, SLOT(sFillListItemloc()));
-  connect(_locPrint,	SIGNAL(clicked()), this, SLOT(sPrintLocation()));
-  connect(_runPrint,	SIGNAL(clicked()), this, SLOT(sPrintRunning()));
-  connect(_showPlanned,	SIGNAL(toggled(bool)), this, SLOT(sFillListRunning()));
-  connect(_showReorder,	SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
-  connect(_warehouse,	SIGNAL(newID(int)), this, SLOT(sFillListRunning()));
-  connect(_wherePrint,	SIGNAL(clicked()), this, SLOT(sPrintWhereUsed()));
-  connect(_whereused,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuWhereUsed(QMenu*,QTreeWidgetItem*)));
-  
-  // Running Availability
-  _availability->addColumn(tr("Order Type"),    _itemColumn, Qt::AlignLeft,  true, "ordertype");
-  _availability->addColumn(tr("Order #"),       _itemColumn, Qt::AlignLeft,  true, "ordernumber");
-  _availability->addColumn(tr("Source/Destination"),     -1, Qt::AlignLeft,  true, "item_number");
-  _availability->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "duedate");
-  _availability->addColumn(tr("Ordered"),        _qtyColumn, Qt::AlignRight, true, "qtyordered");
-  _availability->addColumn(tr("Received"),       _qtyColumn, Qt::AlignRight, true, "qtyreceived");
-  _availability->addColumn(tr("Balance"),        _qtyColumn, Qt::AlignRight, true, "balance");
-  _availability->addColumn(tr("Running Avail."), _qtyColumn, Qt::AlignRight, true, "runningavail");
-
-  connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillListRunning()));
-  
-  // Inventory Availability
-  _invAvailability->addColumn(tr("Site"),         -1,         Qt::AlignCenter, true, "warehous_code" );
-  _invAvailability->addColumn(tr("LT"),           _whsColumn, Qt::AlignCenter, true, "itemsite_leadtime" );
-  _invAvailability->addColumn(tr("QOH"),          _qtyColumn, Qt::AlignRight , true, "qoh" );
-  _invAvailability->addColumn(tr("Allocated"),    _qtyColumn, Qt::AlignRight , true, "allocated" );
-  _invAvailability->addColumn(tr("Unallocated"),  _qtyColumn, Qt::AlignRight , true, "unallocated" );
-  _invAvailability->addColumn(tr("On Order"),     _qtyColumn, Qt::AlignRight , true, "ordered" );
-  _invAvailability->addColumn(tr("Reorder Lvl."), _qtyColumn, Qt::AlignRight , true, "reorderlevel" );
-  _invAvailability->addColumn(tr("OUT Level"),    _qtyColumn, Qt::AlignRight , true, "outlevel" );
-  _invAvailability->addColumn(tr("Available"),    _qtyColumn, Qt::AlignRight , true, "available" );
-
-  connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillListAvail()));
-                                                                     
-  // Costed BOM
-  _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Seq #"),       _itemColumn, Qt::AlignLeft,  true, "bomdata_bomwork_seqnumber");
-  _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
-  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
-  _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
-  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
-  _bomitem->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "bomdata_scrap");
-  _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomdata_effective");
-  _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomdata_expires");
-  _bomitem->addColumn(tr("Unit Cost"),   _costColumn, Qt::AlignRight, true, "unitcost");
-  _bomitem->addColumn(tr("Ext Cost"), _priceColumn, Qt::AlignRight, true, "extendedcost");
-  _bomitem->setIndentation(10);
-  
-  // Invhist
-  _invhist->setRootIsDecorated(TRUE);
-  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft, true, "invhist_transdate");
-  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft, false, "invhist_created");
-  _invhist->addColumn(tr("Type"),        _transColumn,        Qt::AlignCenter,true, "invhist_transtype");
-  _invhist->addColumn(tr("Site"),        _whsColumn,          Qt::AlignCenter,true, "warehous_code");
-  _invhist->addColumn(tr("Order #/Detail"), -1,Qt::AlignLeft,  true, "orderlocation");
-  _invhist->addColumn(tr("UOM"),         _uomColumn,          Qt::AlignCenter,true, "invhist_invuom");
-  _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,          Qt::AlignRight, true, "transqty");
-  _invhist->addColumn(tr("From Area"),   _orderColumn,        Qt::AlignLeft,  true, "locfrom");
-  _invhist->addColumn(tr("QOH Before"),  _qtyColumn,          Qt::AlignRight, true, "qohbefore");
-  _invhist->addColumn(tr("To Area"),     _orderColumn,        Qt::AlignLeft,  true, "locto");
-  _invhist->addColumn(tr("QOH After"),   _qtyColumn,          Qt::AlignRight, false, "qohafter");
-  _invhist->addColumn(tr("Cost Method"), _qtyColumn,          Qt::AlignLeft,  false, "costmethod");
-  _invhist->addColumn(tr("Value Before"),_qtyColumn,          Qt::AlignRight, false, "invhist_value_before");
-  _invhist->addColumn(tr("Value After"), _qtyColumn,          Qt::AlignRight, false, "invhist_value_after");
-  _invhist->addColumn(tr("User"),        _orderColumn,        Qt::AlignCenter,true, "invhist_user");
-
-  _transType->append(cTransAll,       tr("All Transactions")       );
-  _transType->append(cTransReceipts,  tr("Receipts")               );
-  _transType->append(cTransIssues,    tr("Issues")                 );
-  _transType->append(cTransShipments, tr("Shipments")              );
-  _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
-  _transType->append(cTransTransfers, tr("Transfers")              );
-  _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentIndex(0);
-  
-  // Itemloc
-  _itemloc->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
-  _itemloc->addColumn(tr("Location"),      200,          Qt::AlignLeft,   true,  "locationname"   );
-  _itemloc->addColumn(tr("Netable"),       _orderColumn, Qt::AlignCenter, true,  "netable" );
-  _itemloc->addColumn(tr("Lot/Serial #"),  -1,           Qt::AlignLeft,   true,  "lotserial"   );
-  _itemloc->addColumn(tr("Expiration"),    _dateColumn,  Qt::AlignCenter, true,  "itemloc_expiration" );
-  _itemloc->addColumn(tr("Warranty"),      _dateColumn,  Qt::AlignCenter, true,  "itemloc_warrpurc" );
-  _itemloc->addColumn(tr("Qty."),          _qtyColumn,   Qt::AlignRight,  true,  "qoh"  );
-  
-  // Where Used
-  _effective->setNullString(tr("Now"));
-  _effective->setNullDate(omfgThis->dbDate());
-  _effective->setAllowNullDate(TRUE);
-  _effective->setNull();
-  
-  _whereused->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true,  "bomitem_seqnumber" );
-  _whereused->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
-  _whereused->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "descrip"   );
-  _whereused->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true,  "uom_name"   );
-  _whereused->addColumn(tr("Fxd. Qty."),   _qtyColumn,   Qt::AlignRight, true,   "qtyfxd");
-  _whereused->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
-  _whereused->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "bomitem_scrap"  );
-  _whereused->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter, true,  "bomitem_effective" );
-  _whereused->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter, true,  "bomitem_expires" );
-  
-//  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillListWhereUsed(int, bool)));
-  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillListWhereUsed()));
-  
   // General
-  if(!_privileges->check("ViewBOMs"))
-    _tab->removeTab(5);
-  if(!_privileges->check("ViewQOH"))
-    _tab->removeTab(4);
-  if(!_privileges->check("ViewInventoryHistory"))
-    _tab->removeTab(3);
-  if(!_privileges->check("ViewBOMs"))
-    _tab->removeTab(2);
-  if(!_privileges->check("ViewInventoryAvailability"))
-  {
-    _tab->removeTab(1);
+  if (!_privileges->check("ViewInventoryAvailability") && !_privileges->check("ViewQOH"))
     _tab->removeTab(0);
-  }
-  if(!_privileges->check("ViewCosts"))
-  {
-    _costsGroup->setEnabled(false);
-    _costsGroup->setChecked(false);
-  }
   else
-    _costsGroup->setChecked(true);
-    
-  //If not Manufacturing, hide show planned option
-  if (_metrics->value("Application") != "Standard")
-    _showPlanned->hide();
-    
-  //If not multi-warehouse hide whs control
-  if (!_metrics->boolean("MultiWhs"))
   {
-    _warehouseLit->hide();
-    _warehouse->hide();
+    if (!_privileges->check("ViewInventoryAvailability"))
+    {
+      _availabilityButton->hide();
+      _runningAvailabilityButton->hide();
+    }
+    if (!_privileges->check("ViewQOH"))
+      _locationDetailButton->hide();
   }
   
-  //If not Serial Control, hide lot control
-  if (!_metrics->boolean("LotSerialControl"))
-    _tab->removeTab(_tab->indexOf(lotserial));
+  if (!_privileges->check("ViewPurchaseOrders") && !_privileges->check("ViewSalesOrders") && !_privileges->check("ViewQuotes"))
+    _tab->removeTab(1);
+  else
+  {
+    if (!_privileges->check("ViewPurchaseOrders"))
+      _purchaseOrderItemsButton->hide();
+    if (!_privileges->check("ViewSalesOrders"))
+      _salesOrderItemsButton->hide();
+    if (!_privileges->check("ViewQuotes"))
+      _quoteItemsButton->hide();
+  }
   
-  if (_preferences->boolean("XCheckBox/forgetful"))
-    _ignoreReorderAtZero->setChecked(true);
+  if (!_privileges->check("ViewInventoryHistory") && !_privileges->check("ViewReceiptsReturns") && !_privileges->check("ViewSalesHistory"))
+    _tab->removeTab(2);
+  else
+  {
+    if (!_privileges->check("ViewInventoryHistory"))
+      _inventoryHistoryButton->hide();
+    if (!_privileges->check("ViewReceiptsReturns"))
+      _receivingHistoryButton->hide();
+    if (!_privileges->check("ViewSalesHistory"))
+      _salesHistoryButton->hide();
+  }
 
-  _ignoreReorderAtZero->setEnabled(_showReorder->isChecked());
-  
-  _qoh->setPrecision(omfgThis->qtyVal());
-  _orderMultiple->setPrecision(omfgThis->qtyVal());
-  _reorderLevel->setPrecision(omfgThis->qtyVal());
-  _orderToQty->setPrecision(omfgThis->qtyVal());
+  if (!_privileges->check("ViewItemMaster") && !_privileges->check("MaintainItemMasters"))
+    _tab->removeTab(3);
 
+  if (!_privileges->check("ViewCosts") && !_privileges->check("ViewBOMs"))
+    _tab->removeTab(4);
+  else
+  {
+    if (!_privileges->check("ViewCosts"))
+      _costedIndentedBOMButton->hide();
+    if (!_privileges->check("ViewBOMs"))
+      _whereUsedButton->hide();
+  }
 }
 
 itemAvailabilityWorkbench::~itemAvailabilityWorkbench()
@@ -249,1237 +262,90 @@ enum SetResponse itemAvailabilityWorkbench::set( const ParameterList & pParams )
   return NoError;
 }
 
-void itemAvailabilityWorkbench::setParams(ParameterList & params)
+void itemAvailabilityWorkbench::sHandleButtons()
 {
-  params.append("item_id",	_item->id());
-  params.append("warehous_id",	_warehouse->id());
+  if (_availabilityButton->isChecked())
+    _availabilityStack->setCurrentIndex(0);
+  else if (_runningAvailabilityButton->isChecked())
+    _availabilityStack->setCurrentIndex(1);
+  else if (_locationDetailButton->isChecked())
+    _availabilityStack->setCurrentIndex(2);
+  
+  if (_costedIndentedBOMButton->isChecked())
+    _bomStack->setCurrentIndex(0);
+  else if (_whereUsedButton->isChecked())
+    _bomStack->setCurrentIndex(1);
 
-  params.append("firmPo",	tr("Planned P/O (firmed)"));
-  params.append("plannedPo",	tr("Planned P/O"));
-  params.append("firmWo",	tr("Planned W/O (firmed)"));
-  params.append("plannedWo",	tr("Planned W/O"));
-  params.append("firmTo",	tr("Planned T/O (firmed)"));
-  params.append("plannedTo",	tr("Planned T/O"));
-  params.append("firmWoReq",	tr("Planned W/O Req. (firmed)"));
-  params.append("plannedWoReq",	tr("Planned W/O Req."));
-  params.append("pr",		tr("Purchase Request"));
+  if (_inventoryHistoryButton->isChecked())
+    _historyStack->setCurrentIndex(0);
+  else if (_receivingHistoryButton->isChecked())
+    _historyStack->setCurrentIndex(1);
+  else if (_salesHistoryButton->isChecked())
+    _historyStack->setCurrentIndex(2);
+  
+  if (_purchaseOrderItemsButton->isChecked())
+    _ordersStack->setCurrentIndex(0);
+  else if (_salesOrderItemsButton->isChecked())
+    _ordersStack->setCurrentIndex(1);
+  else if (_quoteItemsButton->isChecked())
+    _ordersStack->setCurrentIndex(2);
+  
+  sFillList();
+}
 
-  if (_showPlanned->isChecked())
-    params.append("showPlanned");
+void itemAvailabilityWorkbench::populate()
+{
+  _dspInventoryAvailability->setItemId(_item->id());
+  _dspRunningAvailability->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspInventoryLocator->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspCostedIndentedBOM->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspSingleLevelWhereUsed->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspInventoryHistory->setItemId(_item->id());
+  _dspPoItemReceivingsByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspSalesHistory->setItemId(_item->id());
+  _dspPoItemsByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspSalesOrdersByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspQuotesByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _itemMaster->setId(_item->id());
+  _itemMaster->findChild<QWidget*>("_sold")->setEnabled(false);
+  
+  sFillList();
+}
 
-  if (_metrics->boolean("MultiWhs"))
-    params.append("MultiWhs");
-
-  if (_metrics->value("Application") == "Standard")
+void itemAvailabilityWorkbench::sFillList()
+{
+  if (_tab->currentIndex() == _tab->indexOf(_availabilityTab))
   {
-    XSqlQuery xtmfg;
-    xtmfg.exec("SELECT pkghead_name FROM pkghead WHERE pkghead_name='xtmfg'");
-    if (xtmfg.first())
-      params.append("Manufacturing");
-    params.append("showMRPplan");
+    if (_availabilityButton->isChecked())
+      _dspInventoryAvailability->sFillList();
+    else if (_runningAvailabilityButton->isChecked())
+      _dspRunningAvailability->sFillList();
+    else if (_locationDetailButton->isChecked())
+      _dspInventoryLocator->sFillList();
+  }
+  else if (_tab->currentIndex() == _tab->indexOf(_bomTab))
+  {
+    if (_costedIndentedBOMButton->isChecked())
+      _dspCostedIndentedBOM->sFillList();
+    else if (_whereUsedButton->isChecked())
+      _dspSingleLevelWhereUsed->sFillList();
+  }
+  else if (_tab->currentIndex() == _tab->indexOf(_historyTab))
+  {
+    if (_inventoryHistoryButton->isChecked())
+      _dspInventoryHistory->sFillList();
+    else if (_receivingHistoryButton->isChecked())
+      _dspPoItemReceivingsByItem->sFillList();
+    else if (_salesHistoryButton->isChecked())
+      _dspSalesHistory->sFillList();
+  }
+  else if (_tab->currentIndex() == _tab->indexOf(_ordersTab))
+  {
+    if (_purchaseOrderItemsButton->isChecked())
+      _dspPoItemsByItem->sFillList();
+    else if (_salesOrderItemsButton->isChecked())
+      _dspSalesOrdersByItem->sFillList();
+    else if (_quoteItemsButton->isChecked())
+      _dspQuotesByItem->sFillList();
   }
 }
-
-void itemAvailabilityWorkbench::sFillListWhereUsed()
-{
-  XSqlQuery itemFillListWhereUsed;
-  if ((_item->isValid()) && (_effective->isValid()))
-  {
-    ParameterList params;
-    params.append("item_id", _item->id());
-    params.append("effective", _effective->date());
-    params.append("always", tr("Always"));
-    params.append("never", tr("Never"));
-    MetaSQLQuery mql = mqlLoad("whereUsed", "detail");
-    itemFillListWhereUsed = mql.toQuery(params);
-    _whereused->populate(itemFillListWhereUsed, true);
-    if (itemFillListWhereUsed.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, itemFillListWhereUsed.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-  else
-    _whereused->clear();
-}
-
-void itemAvailabilityWorkbench::sFillListItemloc()
-{
-  XSqlQuery itemFillListItemloc;
-    if (_item->isValid())
-  {
-    QString sql( "SELECT itemloc_id, 1 AS type, warehous_code,"
-                 "       CASE WHEN (location_id IS NULL) THEN :na"
-                 "            ELSE (formatLocationName(location_id) || '-' || firstLine(location_descrip))"
-                 "       END AS locationname,"
-                 "       CASE WHEN (location_id IS NULL) THEN :na"
-                 "            WHEN (location_netable) THEN :yes"
-                 "            ELSE :no"
-                 "       END AS netable,"
-                 "       CASE WHEN (itemsite_controlmethod NOT IN ('L', 'S')) THEN :na"
-                 "            ELSE formatlotserialnumber(itemloc_ls_id)"
-                 "       END AS lotserial,"
-                 "       itemloc_expiration,"
-                 "       CASE WHEN (NOT itemsite_perishable) THEN :na END AS itemloc_expiration_qtdisplayrole,"
-                 "       itemloc_warrpurc,"
-                 "       CASE WHEN (NOT itemsite_warrpurc) THEN :na END AS itemloc_warrpurc_qtdisplayrole,"
-                 "       CASE WHEN ((itemsite_perishable) AND (itemloc_expiration <= CURRENT_DATE)) THEN 'red'"
-                 "       END AS itemloc_expiration_qtforegroundrole,"
-                 "       CASE WHEN ((itemsite_warrpurc) AND (itemloc_warrpurc <= CURRENT_DATE)) THEN 'red'"
-                 "       END AS itemloc_warrpurc_qtforegroundrole,"
-                 "       itemloc_qty AS qoh,"
-                 "       'qty' AS qoh_xtnumericrole "
-                 "FROM itemsite, whsinfo,"
-                 "     itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
-                 "WHERE ( ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) )"
-                 " AND (itemloc_itemsite_id=itemsite_id)"
-                 " AND (itemsite_warehous_id=warehous_id)"
-                 " AND (itemsite_item_id=:item_id)" );
-
-    if (_itemlocWarehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += ") "
-           "UNION SELECT itemsite_id, 2 AS type, warehous_code,"
-           "             :na AS locationname,"
-           "             :na AS netable,"
-           "             :na AS lotserial,"
-           "             CAST(NULL AS DATE) AS itemloc_expiration,"
-           "             :na AS itemloc_expiration_qtdisplayrole,"
-           "             CAST(NULL AS DATE) AS itemloc_warrpurc,"
-           "             :na AS itemloc_warrpurc_qtdisplayrole,"
-           "             NULL AS itemloc_expiration_qtforegroundrole,"
-           "             NULL AS itemloc_warrpurc_qtforegroundrole,"
-           "             itemsite_qtyonhand AS qoh,"
-           "             'qty' AS qoh_xtnumericrole "
-           "FROM itemsite, whsinfo "
-           "WHERE ( (NOT itemsite_loccntrl)"
-           " AND (itemsite_controlmethod NOT IN ('L', 'S'))"
-           " AND (itemsite_warehous_id=warehous_id)"
-           " AND (itemsite_item_id=:item_id)";
-
-    if (_itemlocWarehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += ") "
-           "ORDER BY warehous_code, locationname, lotserial;";
-
-    itemFillListItemloc.prepare(sql);
-    itemFillListItemloc.bindValue(":yes", tr("Yes"));
-    itemFillListItemloc.bindValue(":no", tr("No"));
-    itemFillListItemloc.bindValue(":na", tr("N/A"));
-    itemFillListItemloc.bindValue(":undefined", tr("Undefined"));
-    itemFillListItemloc.bindValue(":item_id", _item->id());
-    _itemlocWarehouse->bindValue(itemFillListItemloc);
-    itemFillListItemloc.exec();
-    _itemloc->populate(itemFillListItemloc, true);
-  }
-  else
-    _itemloc->clear();
-}
-
-void itemAvailabilityWorkbench::sFillListInvhist()
-{
-  XSqlQuery itemFillListInvhist;
-  _invhist->clear();
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if (_item->isValid())
-  {
-    ParameterList params;
-    _dates->appendValue(params);
-    params.append("item_id", _item->id());
-    params.append("transType", _transType->id());
-    _invhistWarehouse->appendValue(params);
-    MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
-    itemFillListInvhist = mql.toQuery(params);
-    _invhist->populate(itemFillListInvhist, true);
-    if (itemFillListInvhist.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, itemFillListInvhist.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-}
-
-void itemAvailabilityWorkbench::sFillListCosted()
-{
-  XSqlQuery itemFillListCosted;
-  if (! _item->isValid() || _item->itemType() == "R")
-    return;
-
-  MetaSQLQuery mql( "SELECT bomdata_bomwork_id AS id,"
-                    "       CASE WHEN bomdata_bomwork_parent_id = -1 AND "
-                    "                 bomdata_bomwork_id = -1 THEN"
-                    "                     -1"
-                    "            ELSE bomdata_item_id"
-                    "       END AS altid,"
-                    "       *, "
-                    "<? if exists(\"useStandardCosts\") ?> "
-                    "       bomdata_stdunitcost AS unitcost, "
-                    "       bomdata_stdextendedcost AS extendedcost, "
-                    "<? elseif exists(\"useActualCosts\") ?> "
-                    "       bomdata_actunitcost AS unitcost, "
-                    "       bomdata_actextendedcost AS extendedcost, "
-                    "<? endif ?> "
-                    "       bomdata_qtyper, "
-                    "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
-                    "       'percent' AS bomdata_scrap_xtnumericrole,"
-                    "       'cost' AS unitcost_xtnumericrole,"
-                    "       'cost' AS extendedcost_xtnumericrole,"
-                    "       CASE WHEN COALESCE(bomdata_effective, startOfTime()) <= startOfTime() THEN <? value(\"always\") ?> END AS bomdata_effective_qtdisplayrole,"
-                    "       CASE WHEN COALESCE(bomdata_expires, endOfTime()) <= endOfTime() THEN <? value(\"never\") ?> END AS bomdata_expires_qtdisplayrole,"
-                    "       CASE WHEN bomdata_expired THEN 'expired'"
-                    "            WHEN bomdata_future  THEN 'future'"
-                    "       END AS qtforegroundrole,"
-                    "       bomdata_bomwork_level - 1 AS xtindentrole, bomdata_itemdescription "
-                    "FROM indentedbom(<? value(\"item_id\") ?>,"
-                    "                 <? value(\"revision_id\") ?>,0,0)");
-  ParameterList params;
-  if (! setParamsCosted(params))
-    return;
-  itemFillListCosted = mql.toQuery(params);
-  _bomitem->populate(itemFillListCosted, true);
-  if (itemFillListCosted.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, itemFillListCosted.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  if(_costsGroup->isChecked())
-  {
-    _bomitem->showColumn(8);
-    _bomitem->showColumn(9);
-    itemFillListCosted.prepare("SELECT formatCost(SUM(bomdata_actextendedcost)) AS actextendedcost,"
-              "       formatCost(SUM(bomdata_stdextendedcost)) AS stdextendedcost,"
-              "       formatCost(actcost(:item_id)) AS actual,"
-              "       formatCost(stdcost(:item_id)) AS standard "
-              "FROM indentedbom(:item_id,"
-              "                 getActiveRevId('BOM',:item_id),0,0)"
-              "WHERE (bomdata_bomwork_level=1) "
-              "GROUP BY actual, standard;" );
-    itemFillListCosted.bindValue(":item_id", _item->id());
-    itemFillListCosted.exec();
-    if (itemFillListCosted.first())
-    {
-      XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1);
-      last->setText(0, tr("Total Cost"));
-      if(_useStandardCosts->isChecked())
-        last->setText(9, itemFillListCosted.value("stdextendedcost").toString());
-      else
-        last->setText(9, itemFillListCosted.value("actextendedcost").toString());
-
-      last = new XTreeWidgetItem( _bomitem, -1, -1);
-      last->setText(0, tr("Actual Cost"));
-      last->setText(9, itemFillListCosted.value("actual").toString());
-
-      last = new XTreeWidgetItem( _bomitem, -1, -1);
-      last->setText(0, tr("Standard Cost"));
-      last->setText(9, itemFillListCosted.value("standard").toString());
-    }
-    else if (itemFillListCosted.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, itemFillListCosted.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-  else
-  {
-    _bomitem->hideColumn(8);
-    _bomitem->hideColumn(9);
-  }
-}
-
-
-void itemAvailabilityWorkbench::sFillListRunning()
-{
-  XSqlQuery itemFillListRunning;
-  _availability->clear();
-
-  if (_item->isValid())
-  {
-    itemFillListRunning.prepare( "SELECT item_type, item_sold,"
-               "       itemsite_id, itemsite_qtyonhand,"
-               "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-               "       CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty ELSE 0.0 END AS ordertoqty,"
-               "       CASE WHEN(itemsite_useparams) THEN itemsite_multordqty ELSE 0.0 END AS multorderqty "
-               "FROM item, itemsite "
-               "WHERE ( (itemsite_item_id=item_id)"
-               " AND (itemsite_warehous_id=:warehous_id)"
-               " AND (item_id=:item_id) );" );
-    itemFillListRunning.bindValue(":item_id", _item->id());
-    itemFillListRunning.bindValue(":warehous_id", _warehouse->id());
-    itemFillListRunning.exec();
-    if (itemFillListRunning.first())
-    {
-      _qoh->setDouble(itemFillListRunning.value("itemsite_qtyonhand").toDouble());
-      _reorderLevel->setDouble(itemFillListRunning.value("reorderlevel").toDouble());
-      _orderMultiple->setDouble(itemFillListRunning.value("multorderqty").toDouble());
-      _orderToQty->setDouble(itemFillListRunning.value("ordertoqty").toDouble());
-
-      QString itemType            = itemFillListRunning.value("item_type").toString();
-      QString sql;
-
-      MetaSQLQuery mql = mqlLoad("runningAvailability", "detail");
-      ParameterList params;
-      setParams(params);
-      params.append("qoh",          itemFillListRunning.value("itemsite_qtyonhand").toDouble());
-
-      itemFillListRunning = mql.toQuery(params);
-      _availability->populate(itemFillListRunning, true);
-      sHandleResort();
-      if (itemFillListRunning.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, itemFillListRunning.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-    }
-  }
-  else
-  {
-    _qoh->setDouble(0);
-    _reorderLevel->setDouble(0);
-    _orderMultiple->setDouble(0);
-    _orderToQty->setDouble(0);
-  }
-}
-
-void itemAvailabilityWorkbench::sHandleResort()
-{
-  for (int i = 0; i < _availability->topLevelItemCount(); i++)
-  {
-    XTreeWidgetItem *item = _availability->topLevelItem(i);
-    if (item->data(_availability->column("runningavail"), Qt::DisplayRole).toDouble() < 0)
-      item->setTextColor(_availability->column("runningavail"), namedColor("error"));
-    else if (item->data(_availability->column("runningavail"), Qt::DisplayRole).toDouble() < _reorderLevel->toDouble())
-      item->setTextColor(_availability->column("runningavail"), namedColor("warning"));
-    else
-      item->setTextColor(_availability->column("runningavail"), namedColor(""));
-  }
-}
-
-void itemAvailabilityWorkbench::sHandleShowReorder( bool pValue )
-{
-  _ignoreReorderAtZero->setEnabled(pValue);
-  if (pValue && _preferences->boolean("XCheckBox/forgetful"))
-    _showShortages->setChecked(TRUE);
-}
-
-
-void itemAvailabilityWorkbench::sFillListAvail()
-{
-  XSqlQuery itemFillListAvail;
-  _invAvailability->clear();
-
-  if ((_byDate->isChecked()) && (!_date->isValid()))
-  {
-    QMessageBox::critical(this, tr("Enter Valid Date"),
-                          tr("<p>You have choosen to view Inventory Availability"
-			     " as of a given date but have not indicated the "
-			     "date.  Please enter a valid date." ) );
-    _date->setFocus();
-    return;
-  }
-
-  QString sql( "SELECT itemsite_id, itemtype, warehous_id, warehous_code, itemsite_leadtime,"
-               "       qoh,"
-               "       noNeg(qoh - allocated) AS unallocated,"
-               "       allocated,"
-               "       ordered,"
-               "       reorderlevel,"
-               "       outlevel,"
-               "       (qoh - allocated + ordered) AS available,"
-               "       CASE WHEN (NOT :byLeadtime) THEN 'grey' END AS itemsite_leadtime_qtforegroundrole, "
-               "       CASE "
-               "         WHEN ((qoh - allocated + ordered) < 0) THEN 'error' "
-               "         WHEN ((qoh - allocated + ordered) <= reorderlevel) THEN 'warning' "
-               "       END AS available_qtforegroundrole, "
-               "       'qty' AS qoh_xtnumericrole, "
-               "       'qty' AS unallocated_xtnumericrole, "
-               "       'qty' AS allocated_xtnumericrole, "
-               "       'qty' AS ordered_xtnumericrole, "
-               "       'qty' AS reorderlevel_xtnumericrole, "
-               "       'qty' AS outlevel_xtnumericrole, "
-               "       'qty' AS available_xtnumericrole "
-               "FROM ( SELECT itemsite_id,"
-               "              CASE WHEN (item_type IN ('P', 'O')) THEN 1"
-               "                   WHEN (item_type IN ('M')) THEN 2"
-               "                   ELSE 0"
-               "              END AS itemtype,"
-               "              warehous_id, warehous_code, itemsite_leadtime,"
-               "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0 END AS reorderlevel,"
-               "              CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty ELSE 0 END AS outlevel,"
-               "              itemsite_qtyonhand AS qoh," );
-
-  if (_leadTime->isChecked())
-    sql += " qtyAllocated(itemsite_id, itemsite_leadtime) AS allocated,"
-           " qtyOrdered(itemsite_id, itemsite_leadtime) AS ordered ";
-
-  else if (_byDays->isChecked())
-    sql += " qtyAllocated(itemsite_id, :days) AS allocated,"
-           " qtyOrdered(itemsite_id, :days) AS ordered ";
-
-  else if (_byDate->isChecked())
-    sql += " qtyAllocated(itemsite_id, (:date - CURRENT_DATE)) AS allocated,"
-           " qtyOrdered(itemsite_id, (:date - CURRENT_DATE)) AS ordered ";
-
-  else if (_byDates->isChecked())
-    sql += " qtyAllocated(itemsite_id, :startDate, :endDate) AS allocated,"
-           " qtyOrdered(itemsite_id, :startDate, :endDate) AS ordered ";
-
-
-   sql += "FROM itemsite, whsinfo, item "
-          "WHERE ( (itemsite_active)"
-          " AND (itemsite_warehous_id=warehous_id)"
-          " AND (itemsite_item_id=item_id)"
-          " AND (item_id=:item_id)";
-
-  if (_invWarehouse->isSelected())
-    sql += " AND (warehous_id=:warehous_id)";
-
-  sql += ") ) AS data ";
-
-  if (_showReorder->isChecked())
-  {
-    sql += "WHERE ( ((qoh - allocated + ordered) <= reorderlevel) ";
-
-    if (_ignoreReorderAtZero->isChecked())
-      sql += " AND (NOT ( ((qoh - allocated + ordered) = 0) AND (reorderlevel = 0)) ) ) ";
-    else
-      sql += ") ";
-  }
-  else if (_showShortages->isChecked())
-    sql += "WHERE ((qoh - allocated + ordered) < 0) ";
-
-  sql += "ORDER BY warehous_code DESC;";
-
-  itemFillListAvail.prepare(sql);
-  itemFillListAvail.bindValue(":days", _days->value());
-  itemFillListAvail.bindValue(":date", _date->date());
-  itemFillListAvail.bindValue(":startDate", _startDate->date());
-  itemFillListAvail.bindValue(":endDate", _endDate->date());
-  itemFillListAvail.bindValue(":item_id", _item->id());
-  itemFillListAvail.bindValue(":byLeadtime",QVariant(_leadTime->isChecked()));
-  _invWarehouse->bindValue(itemFillListAvail);
-  itemFillListAvail.exec();
-  _invAvailability->populate(itemFillListAvail,TRUE);
-}
-
-void itemAvailabilityWorkbench::sPrintRunning()
-{
-  ParameterList params;
-  setParams(params);
-  params.append("isReport");
-
-  orReport report("RunningAvailability", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void itemAvailabilityWorkbench::sPrintAvail()
-{
-  if (!_item->isValid())
-  {
-    QMessageBox::warning( this, tr("Invalid Data"),
-                      tr("You must enter a valid Item Number for this report.") );
-    _item->setFocus();
-    return;
-  }
-
-  ParameterList params;
-  params.append("item_id", _item->id());
-  _invWarehouse->appendValue(params);
-
-  if (_leadTime->isChecked())
-    params.append("byLeadTime");
-  else if (_byDays->isChecked())
-    params.append("byDays", _days->text().toInt());
-  else if (_byDate->isChecked())
-    params.append("byDate", _date->date());
-  else if (_byDates->isChecked())
-  {
-    params.append("byDates");
-    params.append("startDate", _startDate->date());
-    params.append("endDate", _endDate->date());
-  }
-
-
-  if(_showReorder->isChecked())
-    params.append("showReorder");
-
-  if(_ignoreReorderAtZero->isChecked())
-    params.append("ignoreReorderAtZero");
-
-  if(_showShortages->isChecked())
-    params.append("showShortages");
-
-  orReport report("InventoryAvailability", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-bool itemAvailabilityWorkbench::setParamsCosted(ParameterList &params)
-{
-  if (! _item->isValid())
-  {
-    QMessageBox::critical(this, tr("Select an Item"),
-                          tr("Please select an Item and try again."));
-    _item->setFocus();
-    return false;
-  }
-
-  if  (_item->itemType() != "M" && _item->itemType() != "B" &&
-       _item->itemType() != "F" && _item->itemType() != "K" &&
-       _item->itemType() != "P" && _item->itemType() != "O" &&
-       _item->itemType() != "L" && _item->itemType() != "J" &&
-       _item->itemType() != "T")
-  {
-    _tab->setTabEnabled(_tab->indexOf(costed),false);
-    return false;
-  }
-  _tab->setTabEnabled(_tab->indexOf(costed),true);
-
-  params.append("item_id", _item->id());
-
-  if(_useStandardCosts->isChecked())
-    params.append("useStandardCosts");
-
-  if(_useActualCosts->isChecked())
-    params.append("useActualCosts");
-
-  params.append("always", tr("Always"));
-  params.append("never", tr("Never"));
-
-  XSqlQuery rq;
-  rq.prepare("SELECT getActiveRevId('BOM', :item_id) AS result;");
-  rq.bindValue(":item_id", _item->id());
-  rq.exec();
-  if (rq.first())
-  {
-    int result = rq.value("result").toInt();
-    if (result < -1)
-    {
-      systemError(this, storedProcErrorLookup("getActiveRevId", result), __FILE__, __LINE__);
-      return false;
-    }
-    params.append("revision_id", result);
-  }
-  else if (rq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, rq.lastError().databaseText(), __FILE__, __LINE__);
-    return false;
-  }
-
-  return true;
-}
-
-void itemAvailabilityWorkbench::sPrintCosted()
-{
-  XSqlQuery itemPrintCosted;
-  itemPrintCosted.prepare("SELECT indentedBOM(:item_id) AS result;");
-  itemPrintCosted.bindValue(":item_id", _item->id());
-  itemPrintCosted.exec();
-  if (itemPrintCosted.first())
-  {
-    ParameterList params;
-    params.append("bomworkset_id", itemPrintCosted.value("result").toInt());
-    if (! setParamsCosted(params))
-      return;
-
-    orReport report("CostedIndentedBOM", params);
-
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }
-  else if (itemPrintCosted.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this,
-                tr("<p>Could not collect the Indented BOM information to write "
-                   "write the report.</p><pre>%1</pre>")
-                  .arg(itemPrintCosted.lastError().databaseText()),
-                __FILE__, __LINE__);
-
-    return;
-  }
-}
-
-void itemAvailabilityWorkbench::sPrintHistory()
-{
-  if (!_dates->allValid())
-  {
-    QMessageBox::warning( this, tr("Invalid Data"),
-                          tr("You must enter a valid Start Date and End Date for this report.") );
-    _dates->setFocus();
-    return;
-  }
-
-  ParameterList params;
-  _invhistWarehouse->appendValue(params);
-  _dates->appendValue(params);
-  params.append("item_id", _item->id());
-  params.append("transType", _transType->id());
-
-  params.append("average", tr("Average"));
-  params.append("standard", tr("Standard"));
-  params.append("job", tr("Job"));
-  params.append("none", tr("None"));
-  params.append("unknown", tr("Unknown"));
-
-  orReport report("InventoryHistory", params);
-  if(report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void itemAvailabilityWorkbench::sPrintLocation()
-{
-  if(!_item->isValid())
-  {
-    QMessageBox::warning( this, tr("Enter a Valid Item Number"),
-                      tr("You must enter a valid Item Number for this report.") );
-    return;
-  }
-
-  ParameterList params;
-
-  params.append("item_id", _item->id());
-  _itemlocWarehouse->appendValue(params);
-
-  orReport report("LocationLotSerialNumberDetail", params);
-
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void itemAvailabilityWorkbench::sPrintWhereUsed()
-{
-  ParameterList params;
-  params.append("item_id", _item->id());
-
-  if(!_effective->isNull())
-    params.append("effective", _effective->date());
-
-  orReport report("SingleLevelWhereUsed", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-void itemAvailabilityWorkbench::sPopulateMenuRunning( QMenu * pMenu, QTreeWidgetItem * pSelected )
-{
-  QAction *menuItem;
-    
-  if (pSelected->text(0) == tr("Planned W/O (firmed)") || pSelected->text(0) == tr("Planned W/O") ||
-      pSelected->text(0) == tr("Planned P/O (firmed)") || pSelected->text(0) == tr("Planned P/O") )
-  {
-    if (pSelected->text(0) == tr("Planned W/O (firmed)") || pSelected->text(0) == tr("Planned P/O (firmed)") )
-      pMenu->addAction(tr("Soften Order..."), this, SLOT(sSoftenOrder()));
-    else
-      pMenu->addAction(tr("Firm Order..."), this, SLOT(sFirmOrder()));
-
-    pMenu->addAction(tr("Release Order..."), this, SLOT(sReleaseOrder()));
-    pMenu->addAction(tr("Delete Order..."), this, SLOT(sDeleteOrder()));
-  }
-
-  else if (pSelected->text(0).contains("W/O") && !(pSelected->text(0) == tr("Planned W/O Req. (firmed)") || pSelected->text(0) == tr("Planned W/O Req.")))
-    pMenu->addAction(tr("View Work Order Details..."), this, SLOT(sViewWOInfo()));
-    
-  else if (pSelected->text(0) == tr("S/O"))
-  {
-      menuItem = pMenu->addAction(tr("Edit Sales Order..."), this, SLOT(sEditSo()));
-      menuItem->setEnabled(_privileges->check("ViewSalesOrders") || _privileges->check("MaintainSalesOrders"));
-  }
-    
-  else if (pSelected->text(0) == tr("T/O"))
-  {
-      menuItem = pMenu->addAction(tr("Edit Transfer Order..."), this, SLOT(sEditTo()));
-      menuItem->setEnabled(_privileges->check("ViewTransferOrders") || _privileges->check("MaintainTransferOrders"));
-  }
-    
-  else if (pSelected->text(0) == tr("P/O"))
-  {
-      menuItem = pMenu->addAction(tr("Edit Purchase Order..."), this, SLOT(sEditPo()));
-      menuItem->setEnabled(_privileges->check("ViewPurchaseOrders") || _privileges->check("MaintainPurchaseOrders"));
-  }
-}
-
-void itemAvailabilityWorkbench::sPopulateMenuAvail( QMenu *pMenu, QTreeWidgetItem * selected )
-{
-  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(selected);
-
-  QAction *menuItem;
-
-  menuItem = pMenu->addAction(tr("View Inventory History..."), this, SLOT(sViewHistory()));
-  menuItem->setEnabled(_privileges->check("ViewInventoryHistory"));
-
-  pMenu->addSeparator();
-
-  menuItem = pMenu->addAction(tr("View Allocations..."), this, SLOT(sViewAllocations()));
-  menuItem->setEnabled(item && item->rawValue("allocated").toDouble() != 0.0);
-
-  menuItem = pMenu->addAction(tr("View Orders..."), this, SLOT(sViewOrders()));
-  menuItem->setEnabled(item && item->rawValue("ordered").toDouble() != 0.0);
-
-  menuItem = pMenu->addAction(tr("Running Availability..."), this, SLOT(sRunningAvailability()));
-
-  pMenu->addSeparator();
-
-  if (item && (item->altId() == 1))
-  {
-    menuItem = pMenu->addAction(tr("Create P/R..."), this, SLOT(sCreatePR()));
-    menuItem->setEnabled(_privileges->check("MaintainPurchaseRequests"));
-
-    menuItem = pMenu->addAction(tr("Create P/O..."), this, SLOT(sCreatePO()));
-    menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
-
-    pMenu->addSeparator();
-  }
-  else if (item && (item->altId() == 2))
-  {
-    menuItem = pMenu->addAction(tr("Create W/O..."), this, SLOT(sCreateWO()));
-    menuItem->setEnabled(_privileges->check("MaintainWorkOrders"));
-
-    pMenu->addSeparator();
-  }
-
-  menuItem = pMenu->addAction(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()));
-  menuItem->setEnabled(_privileges->check("IssueCountTags"));
-
-  menuItem = pMenu->addAction(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()));
-  menuItem->setEnabled(_privileges->check("EnterMiscCounts"));
-
-  pMenu->addSeparator();
-
-  pMenu->addAction(tr("View Substitute Availability..."), this, SLOT(sViewSubstituteAvailability()));
-}
-
-void itemAvailabilityWorkbench::sPopulateMenuCosted( QMenu * pMenu, QTreeWidgetItem * pSelected )
-{
-  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(pSelected);
-  if(! item || !_privileges->check("ViewCosts"))
-    return;
-
-  if (item->id() != -1)
-    pMenu->addAction(tr("Maintain Item Costs..."), this, SLOT(sMaintainItemCosts()));
-
-  if (item->id() != -1)
-    pMenu->addAction(tr("View Item Costing..."), this, SLOT(sViewItemCosting()));
-}
-
-void itemAvailabilityWorkbench::sPopulateMenuHistory( QMenu * pMenu, QTreeWidgetItem * pItem )
-{
-  QAction *menuItem;
-
-  menuItem = pMenu->addAction(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()));
-  menuItem = pMenu->addAction(tr("Edit Transaction Information..."), this, SLOT(sEditTransInfo()));
-
-  if ( (pItem->text(3).length()) &&
-       ( (pItem->text(2) == "RM") || (pItem->text(2) == "IM") ) )
-  {
-    QString orderNumber = _invhist->currentItem()->text(4);
-    int sep1            = orderNumber.indexOf('-');
-    int sep2            = orderNumber.indexOf('-', (sep1 + 1));
-    int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
-    int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
-
-    if ( (mainNumber) && (subNumber) )
-    {
-      menuItem = pMenu->addAction(tr("View Work Order Information..."), this, SLOT(sViewWOInfoHistory()));
-      menuItem->setEnabled(_privileges->check("MaintainWorkOrders") ||
-                           _privileges->check("ViewWorkOrders"));
-    }
-  }
-}
-
-void itemAvailabilityWorkbench::sPopulateMenuLocation( QMenu * pMenu, QTreeWidgetItem * pSelected )
-{
-  QAction *menuItem;
-  XTreeWidgetItem *item = dynamic_cast<XTreeWidgetItem*>(pSelected);
-
-  if (item && item->altId() == -1)
-  {
-    menuItem = pMenu->addAction(tr("Relocate..."), this, SLOT(sRelocateInventory()));
-    menuItem->setEnabled(_privileges->check("RelocateInventory"));
-
-    menuItem = pMenu->addAction(tr("Reassign Lot/Serial #..."), this, SLOT(sReassignLotSerial()));
-    menuItem->setEnabled(_privileges->check("ReassignLotSerial"));
-  }
-}
-
-void itemAvailabilityWorkbench::sPopulateMenuWhereUsed( QMenu *menu, QTreeWidgetItem * )
-{
-  QAction *menuItem;
-
-  menuItem = menu->addAction(tr("Edit Bill of Materials..."), this, SLOT(sEditBOM()));
-  menuItem->setEnabled(_privileges->check("MaintainBOMs"));
-
-  menuItem = menu->addAction(tr("Edit Item Master..."), this, SLOT(sEditItem()));
-  menuItem->setEnabled(_privileges->check("MaintainItemMasters"));
-
-  menuItem = menu->addAction(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()));
-  menuItem->setEnabled(_privileges->check("ViewInventoryHistory"));
-}
-
-void itemAvailabilityWorkbench::sViewHistory()
-{
-  ParameterList params;
-  params.append("itemsite_id", _invAvailability->id());
-  params.append("run");
-
-  dspInventoryHistory *newdlg = new dspInventoryHistory();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sViewAllocations()
-{
-  ParameterList params;
-  params.append("itemsite_id", _invAvailability->id());
-  params.append("run");
-
-  if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
-  else if (_byDays->isChecked())
-    params.append("byDays", _days->value() );
-  else if (_byDate->isChecked())
-    params.append("byDate", _date->date());
-  else if (_byDates->isChecked())
-  {
-    params.append("byRange");
-    params.append("startDate", _startDate->date());
-    params.append("endDate", _endDate->date());
-  }
-
-  dspAllocations *newdlg = new dspAllocations();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sViewOrders()
-{
-  ParameterList params;
-  params.append("itemsite_id", _invAvailability->id());
-  params.append("run");
-
-  if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
-  else if (_byDays->isChecked())
-    params.append("byDays", _days->value());
-  else if (_byDate->isChecked())
-    params.append("byDate", _date->date());
-  else if (_byDates->isChecked())
-  {
-    params.append("byRange");
-    params.append("startDate", _startDate->date());
-    params.append("endDate", _endDate->date());
-  }
-
-  dspOrders *newdlg = new dspOrders();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sRunningAvailability()
-{
-  ParameterList params;
-  params.append("itemsite_id", _invAvailability->id());
-  params.append("run");
-
-  dspRunningAvailability *newdlg = new dspRunningAvailability();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sCreatePR()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("itemsite_id", _invAvailability->id());
-
-  purchaseRequest newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void itemAvailabilityWorkbench::sCreatePO()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("itemsite_id", _invAvailability->id());
-
-  purchaseOrder *newdlg = new purchaseOrder();
-  if(newdlg->set(params) == NoError)
-    omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sCreateWO()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("itemsite_id", _invAvailability->id());
-
-  workOrder *newdlg = new workOrder();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sIssueCountTag()
-{
-  ParameterList params;
-  params.append("itemsite_id", _invAvailability->id());
-
-  createCountTagsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void itemAvailabilityWorkbench::sEnterMiscCount()
-{
-  ParameterList params;
-  params.append("itemsite_id", _invAvailability->id());
-
-  enterMiscCount newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void itemAvailabilityWorkbench::sViewSubstituteAvailability()
-{
-  ParameterList params;
-  params.append("itemsite_id", _invAvailability->id());
-
-  if (_leadTime->isChecked())
-    params.append("byLeadTime", TRUE);
-  else if (_byDays->isChecked())
-    params.append("byDays", _days->value() );
-  else if (_byDate->isChecked())
-    params.append("byDate", _date->date());
-
-  dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sSoftenOrder()
-{
-  XSqlQuery itemSoftenOrder;
-  itemSoftenOrder.prepare( "UPDATE planord "
-             "SET planord_firm=FALSE "
-             "WHERE (planord_id=:planord_id);" );
-  itemSoftenOrder.bindValue(":planord_id", _availability->id());
-  itemSoftenOrder.exec();
-
-  sFillListRunning();
-}
-
-void itemAvailabilityWorkbench::sFirmOrder()
-{
-  ParameterList params;
-  params.append("planord_id", _availability->id());
-
-  firmPlannedOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillListRunning();
-}
-
-void itemAvailabilityWorkbench::sReleaseOrder()
-{
-  // TODO
-  if (_availability->currentItem()->text(0) == tr("Planned W/O (firmed)") || _availability->currentItem()->text(0) == tr("Planned W/O"))
-  {
-    ParameterList params;
-    params.append("mode", "release");
-    params.append("planord_id", _availability->id());
-
-    workOrder *newdlg = new workOrder();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-#if 0
-    if (newdlg.exec() != XDialog::Rejected)
-    {
-      sDeleteOrder();
-      sFillListRunning();
-    }
-#endif
-  }
-  else if (_availability->currentItem()->text(0) == tr("Planned P/O (firmed)") || _availability->currentItem()->text(0) == tr("Planned P/O"))
-  {
-    ParameterList params;
-    params.append("mode", "release");
-    params.append("planord_id", _availability->id());
-
-    purchaseRequest newdlg(this, "", TRUE);
-    newdlg.set(params);
-
-    if (newdlg.exec() != XDialog::Rejected)
-      sFillListRunning();
-  }
-}
-
-void itemAvailabilityWorkbench::sDeleteOrder()
-{
-  XSqlQuery itemDeleteOrder;
-  itemDeleteOrder.prepare( "SELECT deletePlannedOrder(:planord_id, FALSE);" );
-  itemDeleteOrder.bindValue(":planord_id", _availability->id());
-  itemDeleteOrder.exec();
-
-  sFillListRunning();
-}
-
-void itemAvailabilityWorkbench::sMaintainItemCosts()
-{
-  ParameterList params;
-  params.append("item_id", _bomitem->altId());
-
-  maintainItemCosts *newdlg  = new maintainItemCosts();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sViewItemCosting()
-{
-  ParameterList params;
-  params.append( "item_id", _bomitem->altId() );
-  params.append( "run",     TRUE              );
-
-  dspItemCostSummary *newdlg = new dspItemCostSummary();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sViewTransInfo()
-{
-  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(2));
-
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("invhist_id", _invhist->id());
-
-  if (transType == "AD")
-  {
-    adjustmentTrans *newdlg = new adjustmentTrans();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if (transType == "TW")
-  {
-    transferTrans *newdlg = new transferTrans();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if (transType == "SI")
-  {
-    scrapTrans *newdlg = new scrapTrans();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if (transType == "EX")
-  {
-    expenseTrans *newdlg = new expenseTrans();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if (transType == "RX")
-  {
-    materialReceiptTrans *newdlg = new materialReceiptTrans();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-  else if (transType == "CC")
-  {
-    countTag newdlg(this, "", TRUE);
-    newdlg.set(params);
-    newdlg.exec();
-  }
-  else
-  {
-    transactionInformation newdlg(this, "", TRUE);
-    newdlg.set(params);
-    newdlg.exec();
-  }
-}
-
-void itemAvailabilityWorkbench::sEditTransInfo()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("invhist_id", _invhist->id());
-
-  transactionInformation newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void itemAvailabilityWorkbench::sViewWOInfo()
-{
-  XSqlQuery itemViewWOInfo;
-  QString orderNumber = _availability->currentItem()->text(1);
-  int sep1            = orderNumber.indexOf('-');
-  int mainNumber      = orderNumber.left(sep1).toInt();
-  int subNumber       = orderNumber.right(orderNumber.length() - sep1 - 1).toInt();
-
-  itemViewWOInfo.prepare( "SELECT wo_id "
-             "FROM wo "
-             "WHERE ( (wo_number=:wo_number)"
-             " AND (wo_subnumber=:wo_subnumber) );" );
-  itemViewWOInfo.bindValue(":wo_number", mainNumber);
-  itemViewWOInfo.bindValue(":wo_subnumber", subNumber);
-  itemViewWOInfo.exec();
-  if (itemViewWOInfo.first())
-  {
-    ParameterList params;
-    params.append("mode", "view");
-    params.append("wo_id", itemViewWOInfo.value("wo_id"));
-
-    workOrder *newdlg = new workOrder();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-}
-
-void itemAvailabilityWorkbench::sViewWOInfoHistory()
-{
-  XSqlQuery itemViewWOInfoHistory;
-  QString orderNumber = _invhist->currentItem()->text(4);
-  int sep1            = orderNumber.indexOf('-');
-  int sep2            = orderNumber.indexOf('-', (sep1 + 1));
-  int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
-  int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
-
-  itemViewWOInfoHistory.prepare( "SELECT wo_id "
-             "FROM wo "
-             "WHERE ( (wo_number=:wo_number)"
-             " AND (wo_subnumber=:wo_subnumber) );" );
-  itemViewWOInfoHistory.bindValue(":wo_number", mainNumber);
-  itemViewWOInfoHistory.bindValue(":wo_subnumber", subNumber);
-  itemViewWOInfoHistory.exec();
-  if (itemViewWOInfoHistory.first())
-  {
-    ParameterList params;
-    params.append("mode", "view");
-    params.append("wo_id", itemViewWOInfoHistory.value("wo_id"));
-
-    workOrder *newdlg = new workOrder();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-  }
-}
-
-void itemAvailabilityWorkbench::sEditSo()
-{
-    ParameterList params;
-    if (_privileges->check("MaintainSalesOrders"))
-      salesOrder::editSalesOrder(_availability->id(), true);
-    else
-      salesOrder::viewSalesOrder(_availability->id());
-}
-
-void itemAvailabilityWorkbench::sEditTo()
-{
-    ParameterList params;
-    if (_privileges->check("MaintainTransferOrders"))
-      transferOrder::editTransferOrder(_availability->id(), true);
-    else
-      transferOrder::viewTransferOrder(_availability->id());
-}
-
-void itemAvailabilityWorkbench::sEditPo()
-{
-    ParameterList params;
-    if (_privileges->check("MaintainPurchaseOrders"))
-      params.append("mode", "edit");
-    else
-      params.append("mode", "view");
-    params.append("pohead_id", _availability->id());
-    
-    purchaseOrder *newdlg = new purchaseOrder();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sRelocateInventory()
-{
-  ParameterList params;
-  params.append("itemloc_id", _itemloc->id());
-
-  relocateInventory newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec())
-    sFillListItemloc();
-}
-
-void itemAvailabilityWorkbench::sReassignLotSerial()
-{
-  ParameterList params;
-  params.append("itemloc_id", _itemloc->id());
-
-  reassignLotSerial newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillListItemloc();
-}
-
-void itemAvailabilityWorkbench::sEditBOM()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("item_id", _whereused->id());
-
-  BOM *newdlg = new BOM();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sEditItem()
-{
-  item::editItem(_whereused->id());
-}
-
-void itemAvailabilityWorkbench::sViewInventoryHistory()
-{
-  ParameterList params;
-  params.append("item_id", _whereused->altId());
-  params.append("warehous_id", -1);
-  params.append("run");
-
-  dspInventoryHistory *newdlg = new dspInventoryHistory();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}
-
-void itemAvailabilityWorkbench::sClearQueries()
-{
-  _invAvailability->clear();
-  _invhist->clear();
-  _itemloc->clear();
-}
-
-

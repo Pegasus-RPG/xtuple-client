@@ -41,16 +41,16 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vendorgroup,    SIGNAL(updated()), this, SLOT(sHandleVendorGroup()));
   connect(_void,           SIGNAL(clicked()), this, SLOT(sVoid()));
 
-  _check->addColumn(tr("Void"),               _ynColumn, Qt::AlignCenter,true, "checkhead_void");
-  _check->addColumn(tr("Misc."),              _ynColumn, Qt::AlignCenter,true, "checkhead_misc" );
-  _check->addColumn(tr("Prt'd"),              _ynColumn, Qt::AlignCenter,true, "checkhead_printed" );
-  _check->addColumn(tr("Chk./Voucher/RA #"),_itemColumn, Qt::AlignCenter,true, "number" );
-  _check->addColumn(tr("Recipient/Invc./CM #"),      -1, Qt::AlignLeft,  true, "description"   );
-  _check->addColumn(tr("Check Date") ,      _dateColumn, Qt::AlignCenter,true, "checkdate" );
-  _check->addColumn(tr("Amount"),          _moneyColumn, Qt::AlignRight, true, "amount"  );
-  _check->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,  true, "currAbbr" );
+  _check->addColumn(tr("Void"),                _ynColumn,       Qt::AlignCenter,true, "checkhead_void");
+  _check->addColumn(tr("Misc."),               _ynColumn,       Qt::AlignCenter,true, "checkhead_misc" );
+  _check->addColumn(tr("Prt'd"),               _ynColumn,       Qt::AlignCenter,true, "checkhead_printed" );
+  _check->addColumn(tr("Chk./Document #"),     _itemColumn,     Qt::AlignCenter,true, "number" );
+  _check->addColumn(tr("Recipient/Invc./CM #"),-1,              Qt::AlignLeft,  true, "description"   );
+  _check->addColumn(tr("Check Date") ,         _dateColumn,     Qt::AlignCenter,true, "checkdate" );
+  _check->addColumn(tr("Amount"),              _moneyColumn,    Qt::AlignRight, true, "amount"  );
+  _check->addColumn(tr("Currency"),            _currencyColumn, Qt::AlignLeft,  true, "currAbbr" );
   if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled"))
-    _check->addColumn(tr("EFT Batch"),     _orderColumn, Qt::AlignLeft,  true, "checkhead_ach_batch" );
+    _check->addColumn(tr("EFT Batch"),        _orderColumn,     Qt::AlignLeft,  true, "checkhead_ach_batch" );
 
   if (omfgThis->singleCurrency())
       _check->hideColumn("curr_concat");
@@ -298,6 +298,9 @@ void viewCheckRun::sFillList()
   params.append("showTotal");
   params.append("newOnly");
   params.append("showDetail");
+  params.append("voucher", tr("Voucher"));
+  params.append("debitMemo", tr("Debit Memo"));
+  params.append("creditMemo", tr("Credit Memo"));
   _vendorgroup->appendValue(params);
   viewFillList = mql.toQuery(params);
   _check->populate(viewFillList);
