@@ -2431,15 +2431,13 @@ QString XTreeWidget::toVcf() const
       address.append(qry2.value("addr_postalcode").toString());
       address.append(qry2.value("addr_country").toString());
     }
-      //for address, set address with semicolon delimiters
+    //for address, set address with semicolon delimiters
+    //for label, set address with ESCAPED newline delimiters
     for (int i = 0; i < address.length(); i++) {
-      if(!address.at(i).isEmpty())
+      if(!address.at(i).isEmpty()) {
         addressWork = addressWork + address.at(i) + ";";
-    }
-      //for label, set address with ESCAPED newline delimiters
-    for (int i = 0; i < address.length(); i++) {
-      if(!address.at(i).isEmpty())
         labelWork = labelWork + address.at(i) + "\\n";
+      }
     }
     QString addressHome = "";
     QString labelHome = "";
