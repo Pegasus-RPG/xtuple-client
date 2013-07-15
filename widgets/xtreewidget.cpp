@@ -2442,7 +2442,7 @@ QString XTreeWidget::toVcf() const
     QString addressHome = "";
     QString labelHome = "";
     QString email = qry.value("cntct_email").toString();
-    QDateTime date = QDate::currentDate();
+    QDate date = QDate::currentDate();
     QString revision = date.toString(Qt::ISODate);
     QString end = "VCARD";
 
