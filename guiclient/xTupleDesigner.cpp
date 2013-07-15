@@ -46,8 +46,8 @@ class WidgetBoxWindow : public XMainWindow
     virtual void closeEvent(QCloseEvent *);
 
   private:
-    QDesignerWidgetBoxInterface *_widgetbox;
-    xTupleDesigner * _designer;
+    QPointer<QDesignerWidgetBoxInterface>_widgetbox;
+    QPointer<xTupleDesigner> _designer;
 };
 
 WidgetBoxWindow::WidgetBoxWindow(xTupleDesigner *parent)
@@ -62,10 +62,10 @@ WidgetBoxWindow::WidgetBoxWindow(xTupleDesigner *parent)
 
 void WidgetBoxWindow::closeEvent(QCloseEvent * event)
 {
-  if(_designer->_actions->sClose())
-    XMainWindow::closeEvent(event);
+  if(_designer && _designer->_actions && !_designer->_actions->sClose())
+      event->ignore();
   else
-    event->ignore();
+      XMainWindow::closeEvent(event);
 }
 
 class ObjectInspectorWindow : public XMainWindow
