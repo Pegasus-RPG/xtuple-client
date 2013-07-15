@@ -12,6 +12,7 @@
 
 void setupQt(QScriptEngine *engine)
 {
+    qRegisterMetaType<Qt::FocusPolicy>("Qt::FocusPolicy");
   QScriptValue widget = engine->newObject();
 
   qScriptRegisterMetaType(engine, AlignmentFlagtoScriptValue,	AlignmentFlagfromScriptValue);
@@ -184,7 +185,6 @@ void setupQt(QScriptEngine *engine)
   widget.setProperty("OddEvenFill", QScriptValue(engine, Qt::OddEvenFill), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("WindingFill", QScriptValue(engine, Qt::WindingFill), QScriptValue::ReadOnly | QScriptValue::Undeletable);
 
-  qScriptRegisterMetaType(engine, FocusPolicytoScriptValue,	FocusPolicyfromScriptValue);
   widget.setProperty("TabFocus", QScriptValue(engine, Qt::TabFocus), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("ClickFocus", QScriptValue(engine, Qt::ClickFocus), QScriptValue::ReadOnly | QScriptValue::Undeletable);
   widget.setProperty("StrongFocus", QScriptValue(engine, Qt::StrongFocus), QScriptValue::ReadOnly | QScriptValue::Undeletable);
@@ -934,7 +934,6 @@ Q_DECLARE_METATYPE(enum Qt::DockWidgetArea);
 Q_DECLARE_METATYPE(enum Qt::DropAction);
 Q_DECLARE_METATYPE(enum Qt::EventPriority);
 Q_DECLARE_METATYPE(enum Qt::FillRule);
-Q_DECLARE_METATYPE(enum Qt::FocusPolicy);
 Q_DECLARE_METATYPE(enum Qt::FocusReason);
 Q_DECLARE_METATYPE(enum Qt::GlobalColor);
 Q_DECLARE_METATYPE(enum Qt::HitTestAccuracy);
@@ -1081,7 +1080,7 @@ QScriptValue FillRuletoScriptValue(QScriptEngine *engine, const enum Qt::FillRul
   return QScriptValue(engine, (int)p);
 }
 
-QScriptValue FocusPolicytoScriptValue(QScriptEngine *engine, const enum Qt::FocusPolicy &p)
+QScriptValue FocusPolicytoScriptValue(QScriptEngine *engine, const Qt::FocusPolicy &p)
 {
   return QScriptValue(engine, (int)p);
 }
@@ -1393,9 +1392,9 @@ void FillRulefromScriptValue(const QScriptValue &obj, enum Qt::FillRule &p)
   p = (enum Qt::FillRule)obj.toInt32();
 }
 
-void FocusPolicyfromScriptValue(const QScriptValue &obj, enum Qt::FocusPolicy &p)
+void FocusPolicyfromScriptValue(const QScriptValue &obj, Qt::FocusPolicy &p)
 {
-  p = (enum Qt::FocusPolicy)obj.toInt32();
+  p = (Qt::FocusPolicy)obj.toInt32();
 }
 
 void FocusReasonfromScriptValue(const QScriptValue &obj, enum Qt::FocusReason &p)

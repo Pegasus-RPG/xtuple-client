@@ -38,7 +38,7 @@ QScriptValue DockWidgetAreatoScriptValue(QScriptEngine *engine, const enum Qt::D
 QScriptValue DropActiontoScriptValue(QScriptEngine *engine, const enum Qt::DropAction &p);
 QScriptValue EventPrioritytoScriptValue(QScriptEngine *engine, const enum Qt::EventPriority &p);
 QScriptValue FillRuletoScriptValue(QScriptEngine *engine, const enum Qt::FillRule &p);
-QScriptValue FocusPolicytoScriptValue(QScriptEngine *engine, const enum Qt::FocusPolicy &p);
+QScriptValue FocusPolicytoScriptValue(QScriptEngine *engine, const Qt::FocusPolicy &p);
 QScriptValue FocusReasontoScriptValue(QScriptEngine *engine, const enum Qt::FocusReason &p);
 QScriptValue GlobalColortoScriptValue(QScriptEngine *engine, const enum Qt::GlobalColor &p);
 QScriptValue HitTestAccuracytoScriptValue(QScriptEngine *engine, const enum Qt::HitTestAccuracy &p);
@@ -101,7 +101,7 @@ void DockWidgetAreafromScriptValue(const QScriptValue &obj, enum Qt::DockWidgetA
 void DropActionfromScriptValue(const QScriptValue &obj, enum Qt::DropAction &p);
 void EventPriorityfromScriptValue(const QScriptValue &obj, enum Qt::EventPriority &p);
 void FillRulefromScriptValue(const QScriptValue &obj, enum Qt::FillRule &p);
-void FocusPolicyfromScriptValue(const QScriptValue &obj, enum Qt::FocusPolicy &p);
+void FocusPolicyfromScriptValue(const QScriptValue &obj, Qt::FocusPolicy &p);
 void FocusReasonfromScriptValue(const QScriptValue &obj, enum Qt::FocusReason &p);
 void GlobalColorfromScriptValue(const QScriptValue &obj, enum Qt::GlobalColor &p);
 void HitTestAccuracyfromScriptValue(const QScriptValue &obj, enum Qt::HitTestAccuracy &p);
