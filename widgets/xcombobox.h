@@ -117,7 +117,7 @@ class XTUPLEWIDGETS_EXPORT XComboBox : public QComboBox
     int               id(int)                const;
     Q_INVOKABLE int   id()                   const;
     Q_INVOKABLE void  insertEditor(XComboBoxTypes type, const QString &uiName, const QString& privilege);
-    Q_INVOKABLE void  insertEditor(XComboBoxTypes type, QObject *obj, char *slot, const QString &privilege = QString());
+    Q_INVOKABLE void  insertEditor(XComboBoxTypes type, QObject *obj, const char *slot, const QString &privilege = QString());
     QString           code()                 const;
 
     QString           fieldName()            const;
