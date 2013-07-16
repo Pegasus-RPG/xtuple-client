@@ -23,6 +23,7 @@ Makefile
 
 macx.pri
 
+bin
 bin/*.*
 common/tmp/*.*
 guiclient/ui/*.*
