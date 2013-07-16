@@ -865,6 +865,7 @@ void purchaseOrderItem::sSave()
     }
   }
 
+  
   if (cNew == _mode)
   {
     clear();
