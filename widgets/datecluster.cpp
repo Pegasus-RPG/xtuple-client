@@ -173,8 +173,12 @@ void XDateEdit::parseDate()
   else if (dateString[0] == '#')                        // julian day
   {
     int offset = dateString.right(dateString.length() - 1).toInt(&isNumeric);
-    if (isNumeric)
-      checkDate(QDate(today.year(), 1, 1).addDays(offset - 1));
+    if (isNumeric) {
+      if (offset < 0)
+        checkDate(QDate(today.year(), 12, 31).addDays(offset + 1));
+      else
+        checkDate(QDate(today.year(), 1, 1).addDays(offset - 1));
+    }
   }
 
   else if (dateString.contains(QRegExp("^[0-9][0-9]?$"))) // date in month
