@@ -133,7 +133,6 @@
 #include "bankAccounts.h"
 #include "checkFormats.h"
 #include "assessFinanceCharges.h"
-#include "filterfinancecharges.h"
 
 #include "customers.h"
 
