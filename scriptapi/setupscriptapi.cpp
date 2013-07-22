@@ -88,6 +88,7 @@
 #include "qtexteditproto.h"
 #include "qtimerproto.h"
 #include "qtoolbarproto.h"
+#include "qtoolbuttonproto.h"
 #include "qtreewidgetitemproto.h"
 #include "qtsetup.h"
 #include "queryset.h"
@@ -210,6 +211,7 @@ void setupScriptApi(QScriptEngine *engine)
   setupQTextEditProto(engine);
   setupQTimerProto(engine);
   setupQToolBarProto(engine);
+  setupQToolButtonProto(engine);
   setupQTreeWidgetItemProto(engine);
   setupQt(engine);
   setupQuerySet(engine);

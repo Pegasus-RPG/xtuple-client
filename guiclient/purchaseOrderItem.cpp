@@ -67,7 +67,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _parentwo = -1;
   _parentso = -1;
   _itemsrcid = -1;
-  _taxzoneid = -1;   //  _taxzoneid  added // 
+  _taxzoneid = -1;   //  _taxzoneid  added //
   _orderQtyCache = -1;
 
   _overriddenUnitPrice = false;
@@ -561,6 +561,79 @@ void purchaseOrderItem::populate()
   }
 }
 
+void purchaseOrderItem::prepare()
+{
+  XSqlQuery prepareq;
+  //  Grab the next poitem_id
+  prepareq.exec("SELECT NEXTVAL('poitem_poitem_id_seq') AS _poitem_id");
+  if (prepareq.first())
+  {
+    _poitemid = prepareq.value("_poitem_id").toInt();
+    _comments->setId(_poitemid);
+  }
+  else if (prepareq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, prepareq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+        
+  prepareq.prepare( "SELECT (COALESCE(MAX(poitem_linenumber), 0) + 1) AS _linenumber "
+                    "FROM poitem "
+                    "WHERE (poitem_pohead_id=:pohead_id)" );
+  prepareq.bindValue(":pohead_id", _poheadid);
+  prepareq.exec();
+  if (prepareq.first())
+    _lineNumber->setText(prepareq.value("_linenumber").toString());
+  else if (prepareq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, prepareq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void purchaseOrderItem::clear()
+{
+  _poitemid = -1;
+  _item->setId(-1);
+//  _warehouse->setId(-1);
+  _expcat->setId(-1);
+  _taxtype->setId(-1);
+  _taxRecoverable->setChecked(false);
+  _lineNumber->clear();
+  _ordered->clear();
+  _unitPrice->clear();
+  _freight->clear();
+//  _dueDate->clear();
+  _notes->clear();
+  _project->setId(-1);
+  _bomRevision->setId(-1);
+  _booRevision->setId(-1);
+  _maxCost = 0.0;
+  _dropship = false;
+  _parentwo = -1;
+  _parentso = -1;
+  _costmethod = "";
+  _orderQtyCache = -1;
+  _overriddenUnitPrice = false;
+  _itemchar->removeRows(0, _itemchar->rowCount());
+  _itemcharView->setEnabled(TRUE);
+  _itemsrcid = -1;
+  _vendorItemNumber->clear();
+  _vendorDescrip->clear();
+  _vendorUOM->setText(_item->uom());
+  _uom->setText(_item->uom());
+  _minOrderQty->clear();
+  _orderQtyMult->clear();
+  _invVendorUOMRatio->setDouble(1.0);
+  _earliestDate->setDate(omfgThis->dbDate());
+  _manufName->setId(-1);
+  _manufItemNumber->clear();
+  _manufItemDescrip->clear();
+  _invVendUOMRatio = 1;
+  _minimumOrder = 0;
+  _orderMultiple = 0;
+}
+
 void purchaseOrderItem::sSave()
 {
   QList<GuiErrorCheck> errors;
@@ -794,7 +867,15 @@ void purchaseOrderItem::sSave()
     }
   }
 
-  done(_poitemid);
+  
+  if (cNew == _mode)
+  {
+    clear();
+    prepare();
+    _item->setFocus();
+  }
+  else
+    done(_poitemid);
 }
 
 void purchaseOrderItem::sPopulateExtPrice()
@@ -1002,7 +1083,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
 
         _ordered->setFocus();
 
-        if(_metrics->boolean("UseEarliestAvailDateOnPOItem"))
+        if(_metrics->boolean("UseEarliestAvailDateOnPOItem") && _dueDate->date() < _earliestDate->date())
           _dueDate->setDate(_earliestDate->date());
 
         skipClear = true;

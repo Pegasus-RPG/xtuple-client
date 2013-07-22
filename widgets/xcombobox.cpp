@@ -41,7 +41,7 @@ class XComboBoxEditorDescrip {
     }
 
     XComboBoxEditorDescrip(int   pType,       QObject *pObj,
-                           char *pSlot, const QString &pPriv)
+                           const char *pSlot, const QString &pPriv)
     {
       type = pType;
       obj  = pObj;
@@ -49,11 +49,11 @@ class XComboBoxEditorDescrip {
       priv = pPriv;
     }
 
-    int      type;   // XComboBoxTypes + possible out-of-range
-    QString  priv;
-    QString  uiName;
-    QObject *obj;
-    char    *slot;
+    int         type;   // XComboBoxTypes + possible out-of-range
+    QString     priv;
+    QString     uiName;
+    QObject     *obj;
+    const char  *slot;
 };
 
 XComboBoxPrivate::XComboBoxPrivate(XComboBox *pParent)
@@ -1624,7 +1624,7 @@ void XComboBox::insertEditor(XComboBoxTypes type, const QString &uiName,
 }
 
 void XComboBox::insertEditor(XComboBoxTypes type, QObject *obj,
-                             char *slot, const QString &privilege)
+                             const char *slot, const QString &privilege)
 {
   _data->_editorMap.insert(type, new XComboBoxEditorDescrip(type, obj,
                                                             slot, privilege));

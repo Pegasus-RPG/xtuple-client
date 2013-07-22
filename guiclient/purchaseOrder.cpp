@@ -904,11 +904,9 @@ void purchaseOrder::sNew()
 
   purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-  {
-    sFillList();
-    _vendor->setReadOnly(true);
-  }
+  newdlg.exec();
+  sFillList();
+  _vendor->setReadOnly(true);
 }
 
 void purchaseOrder::sEdit()
