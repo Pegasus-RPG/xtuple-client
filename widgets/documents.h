@@ -47,13 +47,13 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
       BOOItem,          CRMAccount,         Contact, 
       Contract,         Customer,           Employee,
       Incident,         Item,               ItemSite,
-      ItemSource,       Location,		        LotSerial,
-      Opportunity,      Project,		        PurchaseOrder,
+      ItemSource,       Location,	    LotSerial,
+      Opportunity,      Project,	    PurchaseOrder,
       PurchaseOrderItem,ReturnAuth,         ReturnAuthItem,
       Quote,            QuoteItem,          SalesOrder,
       SalesOrderItem,   TimeExpense,        Todo,
       TransferOrder,    TransferOrderItem,  Vendor,
-      Warehouse,        WorkOrder
+      Warehouse,        WorkOrder,	    ProjectTask		
     };
 
     static GuiClientInterface *_guiClientInterface;

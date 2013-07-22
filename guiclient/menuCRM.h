@@ -41,6 +41,7 @@ class menuCRM : public QObject
 
     void sNewProject();
     void sProjects();
+    void sProjectTypes();
     void sDspOrderActivityByProject();
 
     void sAddress();

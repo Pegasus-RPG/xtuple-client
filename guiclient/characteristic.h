@@ -38,6 +38,8 @@ public:
                Items         = 0x00000040,
                LotSerial     = 0x00000080,
                Opportunities = 0x00000100,
+               Projects      = 0x00000200,
+	       Tasks  	     = 0x00000400	
              };
 
 public slots:

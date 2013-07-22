@@ -21,6 +21,7 @@
 #include "guiErrorCheck.h"
 #include "task.h"
 #include "dspOrderActivityByProject.h"
+#include "characteristicAssignment.h"
 
 const char *_projectStatuses[] = { "P", "O", "C" };
 
@@ -41,12 +42,19 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_number,        SIGNAL(editingFinished()), this, SLOT(sNumberChanged()));
   connect(_activity,      SIGNAL(clicked()),         this, SLOT(sActivity()));
   connect(_crmacct,       SIGNAL(newId(int)),        this, SLOT(sCRMAcctChanged(int)));
+  connect(_newCharacteristic, SIGNAL(clicked()),     this, SLOT(sNew()));
+  connect(_editCharacteristic, SIGNAL(clicked()),    this, SLOT(sEdit()));
+  connect(_deleteCharacteristic, SIGNAL(clicked()),  this, SLOT(sDelete()));
 
   _prjtask->addColumn( tr("Number"),            _itemColumn,    Qt::AlignLeft,  true, "prjtask_number" );
   _prjtask->addColumn( tr("Name"),              _itemColumn,    Qt::AlignLeft,  true, "prjtask_name"  );
   _prjtask->addColumn( tr("Description"),                -1,    Qt::AlignLeft,  true, "prjtask_descrip" );
   _prjtask->addColumn( tr("Hours Balance"),     _itemColumn,    Qt::AlignRight, true, "prjtaskhrbal" );
   _prjtask->addColumn( tr("Expense Balance"),   _itemColumn,    Qt::AlignRight, true, "prjtaskexpbal" );
+
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
+  _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter, true, "charass_default" );
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
@@ -118,6 +126,8 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       projectet.exec("SELECT NEXTVAL('prj_prj_id_seq') AS prj_id;");
       if (projectet.first())
@@ -143,6 +153,8 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -168,6 +180,8 @@ enum SetResponse project::set(const ParameterList &pParams)
       _due->setEnabled(FALSE);
       _completed->setEnabled(FALSE);
       _recurring->setEnabled(FALSE);
+      _projectType->setEnabled(FALSE);
+      _newCharacteristic->setEnabled(FALSE);
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Save));
       _buttonBox->removeButton(_buttonBox->button(QDialogButtonBox::Cancel));
       _buttonBox->addButton(QDialogButtonBox::Close);
@@ -202,6 +216,7 @@ void project::populate()
     _assigned->setDate(projectpopulate.value("prj_assigned_date").toDate());
     _due->setDate(projectpopulate.value("prj_due_date").toDate());
     _completed->setDate(projectpopulate.value("prj_completed_date").toDate());
+    _projectType->setId(projectpopulate.value("prj_prjtype_id").toInt());
     for (int counter = 0; counter < _status->count(); counter++)
     {
       if (QString(projectpopulate.value("prj_status").toString()[0]) == _projectStatuses[counter])
@@ -213,7 +228,23 @@ void project::populate()
                           "J");
   }
 
+  XSqlQuery projectType;
+  projectType.prepare( "SELECT prjtype_id, prjtype_descr FROM prjtype WHERE prjtype_active "
+                       "UNION "
+                       "SELECT prjtype_id, prjtype_descr FROM prjtype "
+                       "JOIN prj ON (prj_prjtype_id=prjtype_id) "
+                       "WHERE (prj_id=:prj_id);" );
+  projectType.bindValue(":prj_id", _prjid);
+  projectType.exec();
+  _projectType->populate(projectType);
+  if (projectType.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, projectType.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   sFillTaskList();
+  sFillCharList();
   _comments->setId(_prjid);
   _documents->setId(_prjid);
   emit populated(_prjid);
@@ -292,13 +323,13 @@ bool project::sSave(bool partial)
                "  prj_so, prj_wo, prj_po, prj_status, prj_owner_username, "
                "  prj_start_date, prj_due_date, prj_assigned_date,"
                "  prj_completed_date, prj_username, prj_recurring_prj_id,"
-               "  prj_crmacct_id, prj_cntct_id) "
+               "  prj_crmacct_id, prj_cntct_id, prj_prjtype_id) "
                "VALUES "
                "( :prj_id, :prj_number, :prj_name, :prj_descrip,"
                "  :prj_so, :prj_wo, :prj_po, :prj_status, :prj_owner_username,"
                "  :prj_start_date, :prj_due_date, :prj_assigned_date,"
                "  :prj_completed_date, :username, :prj_recurring_prj_id,"
-               "  :prj_crmacct_id, :prj_cntct_id);" );
+               "  :prj_crmacct_id, :prj_cntct_id, :prj_prjtype_id);" );
   else
     projectSave.prepare( "UPDATE prj "
                "SET prj_number=:prj_number, prj_name=:prj_name, prj_descrip=:prj_descrip,"
@@ -309,7 +340,8 @@ bool project::sSave(bool partial)
                "    prj_username=:username,"
                "    prj_recurring_prj_id=:prj_recurring_prj_id,"
                "    prj_crmacct_id=:prj_crmacct_id,"
-               "    prj_cntct_id=:prj_cntct_id "
+               "    prj_cntct_id=:prj_cntct_id, "
+               "    prj_prjtype_id=:prj_prjtype_id "
                "WHERE (prj_id=:prj_id);" );
 
   projectSave.bindValue(":prj_id", _prjid);
@@ -326,6 +358,8 @@ bool project::sSave(bool partial)
     projectSave.bindValue(":prj_crmacct_id", _crmacct->id());
   if (_cntct->id() > 0)
     projectSave.bindValue(":prj_cntct_id", _cntct->id());
+  if (_projectType->id() > 0)
+    projectSave.bindValue(":prj_prjtype_id", _projectType->id());
   projectSave.bindValue(":prj_start_date", _started->date());
   projectSave.bindValue(":prj_due_date",	_due->date());
   projectSave.bindValue(":prj_assigned_date", _assigned->date());
@@ -453,6 +487,63 @@ void project::sDeleteTask()
   }
   emit deletedTask();
   sFillTaskList();
+}
+
+void project::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("prj_id", _prjid);
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharList();
+}
+
+void project::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharList();
+}
+
+void project::sDelete()
+{
+  XSqlQuery taskDelete;
+  taskDelete.prepare( "DELETE FROM charass "
+             "WHERE (charass_id=:charass_id);" );
+  taskDelete.bindValue(":charass_id", _charass->id());
+  taskDelete.exec();
+
+  sFillCharList();
+}
+
+void project::sFillCharList()
+{
+  XSqlQuery taskFillList;
+  taskFillList.prepare( "SELECT charass_id, char_name, "
+             " CASE WHEN char_type < 2 THEN "
+             "   charass_value "
+             " ELSE "
+             "   formatDate(charass_value::date) "
+             "END AS charass_value, "
+             " charass_default "
+             "FROM charass, char "
+             "WHERE ( (charass_target_type='PROJ')"
+             " AND (charass_char_id=char_id)"
+             " AND (charass_target_id=:prj_id) ) "
+             "ORDER BY char_order, char_name;" );
+  taskFillList.bindValue(":prj_id", _prjid);
+  taskFillList.exec();
+  _charass->populate(taskFillList);
 }
 
 void project::sFillTaskList()

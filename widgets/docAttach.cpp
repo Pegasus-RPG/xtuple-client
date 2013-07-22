@@ -134,7 +134,7 @@ void docAttach::set(const ParameterList &pParams)
       }
       else
       {
-        _docType->setCurrentIndex(14);
+        _docType->setCurrentIndex(15);
         _urltitle->setText(qry.value("url_title").toString());
         _url->setText(url.toString());
       }

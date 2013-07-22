@@ -70,6 +70,7 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( Vendor,            "V",    "vend_id",     "vendor"        ),
   DocumentMap( Warehouse,         "WH"  ),
   DocumentMap( WorkOrder,         "W",    "wo_id",       "workOrder"     ),
+  DocumentMap( ProjectTask,       "TASK",  "prjtask_id", "projectTask"   ),
 };
 
 GuiClientInterface* Documents::_guiClientInterface = 0;
@@ -474,6 +475,7 @@ void Documents::refresh()
               " WHEN (target_type='I') THEN :item "
               " WHEN (target_type='OPP') THEN :opp "
               " WHEN (target_type='J') THEN :project "
+              " WHEN (target_type='TASK') THEN :projecttask "
               " WHEN (target_type='P') THEN :po "
               " WHEN (target_type='S') THEN :so "
               " WHEN (target_type='Q') THEN :quote "
@@ -509,6 +511,7 @@ void Documents::refresh()
   query.bindValue(":todo", tr("To-Do"));
   query.bindValue(":task", tr("Task"));
   query.bindValue(":project", tr("Project"));
+  query.bindValue(":projecttask", tr("Project Task"));
   query.bindValue(":item", tr("Item"));
   query.bindValue(":crma", tr("CRM Account"));
   query.bindValue(":cust", tr("Customer"));

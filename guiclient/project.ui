@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
-    <height>636</height>
+    <width>702</width>
+    <height>649</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -88,6 +88,16 @@ to be bound by its terms.</comment>
           </property>
          </item>
         </widget>
+       </item>
+       <item>
+        <widget class="XLabel" name="_projectTypeLit">
+         <property name="text">
+          <string>Project Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XComboBox" name="_projectType"/>
        </item>
       </layout>
      </item>
@@ -311,9 +321,6 @@ to be bound by its terms.</comment>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
      <widget class="QWidget" name="_tasksTab">
       <attribute name="title">
        <string>Tasks</string>
@@ -492,6 +499,7 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
+<!--
             <item>
              <widget class="QPushButton" name="_activity">
               <property name="text">
@@ -499,6 +507,7 @@ to be bound by its terms.</comment>
               </property>
              </widget>
             </item>
+-->
            </layout>
           </item>
          </layout>
@@ -678,6 +687,70 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_characteristicsTab">
+      <attribute name="title">
+       <string>Characteristics</string>
+      </attribute>
+      <layout class="QGridLayout">
+       <item row="0" column="0">
+        <widget class="XTreeWidget" name="_charass">
+         <property name="focusPolicy">
+          <enum>Qt::ClickFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QVBoxLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_newCharacteristic">
+           <property name="text">
+            <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_editCharacteristic">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_deleteCharacteristic">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="_commentsTab">
       <attribute name="title">
        <string>Comments</string>
@@ -815,7 +888,6 @@ to be bound by its terms.</comment>
   <tabstop>_so</tabstop>
   <tabstop>_po</tabstop>
   <tabstop>_wo</tabstop>
-  <tabstop>_activity</tabstop>
   <tabstop>_descrip</tabstop>
   <tabstop>_recurring</tabstop>
   <tabstop>_buttonBox</tabstop>

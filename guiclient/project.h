@@ -40,6 +40,10 @@ public slots:
     virtual void sFillTaskList();
     virtual void sNumberChanged();
     virtual void sActivity();
+    virtual void sNew();
+    virtual void sEdit();
+    virtual void sDelete();
+    virtual void sFillCharList();
 
 protected slots:
     virtual void languageChange();

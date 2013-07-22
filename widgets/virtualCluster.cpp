@@ -452,6 +452,7 @@ void VirtualClusterLineEdit::sUpdateMenu()
   _listAct->setEnabled(isEnabled());
   _searchAct->setEnabled(isEnabled());
   _aliasAct->setEnabled(isEnabled());
+  _copyProject->setEnabled(isEnabled());
   _infoAct->setEnabled(_id != -1);
   _openAct->setEnabled((_x_privileges->check(_editPriv) ||
                         _x_privileges->check(_viewPriv)) &&

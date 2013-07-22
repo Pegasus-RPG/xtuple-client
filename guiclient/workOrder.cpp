@@ -573,6 +573,8 @@ bool workOrder::sSave()
          << GuiErrorCheck(!_startDate->isValid(), _startDate,
                           tr( "You have entered an invalid Start Date.\n"
                               "Please correct before updating this Work Order"  ) )
+         << GuiErrorCheck(!_project->isValid() && _metrics->boolean("RequireProjectAssignment"), _project,
+                          tr("<p>You must enter a Project for this order before you may save it."))
      ;
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Work Order"), errors))

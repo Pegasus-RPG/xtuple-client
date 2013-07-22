@@ -28,6 +28,7 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   setupUi(optionsWidget());
   setWindowTitle(tr("Projects"));
   setMetaSQLOptions("projects", "detail");
+  setReportName("ListProjectsDetail");
   setParameterWidgetVisible(true);
   setNewVisible(true);
   setSearchVisible(true);
@@ -44,8 +45,10 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Status"),        _itemColumn,  Qt::AlignCenter, true,  "prj_status" );
   list()->addColumn(tr("Owner"),         _userColumn,  Qt::AlignLeft,   false, "prj_owner_username");
   list()->addColumn(tr("Assigned To"),   _userColumn,  Qt::AlignLeft,   true,  "prj_username");
-  list()->addColumn(tr("CRM Account"),   _userColumn,  Qt::AlignLeft,   true,  "crmacct_number");
+  list()->addColumn(tr("CRM Account/Customer"),   _userColumn,  Qt::AlignLeft,   true,  "crmacct_number");
   list()->addColumn(tr("Contact"),       _userColumn,  Qt::AlignLeft,   true,  "contact_name");
+  list()->addColumn(tr("City"),       -1,  Qt::AlignLeft,   false,  "contact_city");
+  list()->addColumn(tr("State"),       -1,  Qt::AlignLeft,   false,  "contact_state");
   list()->addColumn(tr("Due"),           _dateColumn,  Qt::AlignCenter, true,  "prj_due_date");
   list()->addColumn(tr("Assigned"),      _dateColumn,  Qt::AlignCenter, true,  "prj_assigned_date");
   list()->addColumn(tr("Started"),       _dateColumn,  Qt::AlignCenter, true,  "prj_start_date");
@@ -53,14 +56,29 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Budget Hrs."),   _costColumn,  Qt::AlignRight,  true,  "budget_hrs");
   list()->addColumn(tr("Actual Hrs."),   _costColumn,  Qt::AlignRight,  true,  "actual_hrs");
   list()->addColumn(tr("Balance Hrs."),  _costColumn,  Qt::AlignRight,  true,  "balance_hrs");
+  list()->addColumn(tr("Budget Exp."),   _priceColumn,  Qt::AlignRight,  false,  "budget_exp");
+  list()->addColumn(tr("Actual Exp."),   _priceColumn,  Qt::AlignRight,  false,  "actual_exp");
+  list()->addColumn(tr("Balance Exp."),  _priceColumn,  Qt::AlignRight,  false,  "balance_exp");
 
   connect(omfgThis, SIGNAL(projectsUpdated(int)), this, SLOT(sFillList()));
   connect(_showComplete, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_salesOrders, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_workOrders, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_purchaseOrders, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+
+  QString qryType = QString( "SELECT prjtype_id, prjtype_descr FROM prjtype " );
+  QString qryTask = QString( "SELECT prjtask_id, prjtask_number	 FROM prjtask " );
 
   parameterWidget()->append(tr("Owner"), "owner_username", ParameterWidget::User);
   parameterWidget()->append(tr("AssignedTo"), "assigned_username", ParameterWidget::User);
   parameterWidget()->append(tr("CRM Account"), "crmacct_id", ParameterWidget::Crmacct);
   parameterWidget()->append(tr("Contact"), "cntct_id", ParameterWidget::Contact);
+  parameterWidget()->appendComboBox(tr("Project Type"), "project_type", qryType);
+  parameterWidget()->append(tr("Project"), "prj_id", ParameterWidget::Project);
+  parameterWidget()->appendComboBox(tr("Project Task"), "project_task", qryTask);
+  parameterWidget()->append(tr("Sales Order"), "cohead_id", ParameterWidget::SalesOrder);
+  parameterWidget()->append(tr("Work Order"), "wo_id", ParameterWidget::WorkOrder);
+  parameterWidget()->append(tr("Purchase Order"), "pohead_id", ParameterWidget::PurchaseOrder);
   parameterWidget()->append(tr("Start Start Date"), "startStartDate", ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Start End Date"), "startEndDate", ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Due Start Date"), "dueStartDate", ParameterWidget::Date, QDate::currentDate());
@@ -69,6 +87,10 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Assigned End Date"), "assignedEndDate", ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Completed Start Date"), "completedStartDate", ParameterWidget::Date, QDate::currentDate());
   parameterWidget()->append(tr("Completed End Date"), "completedEndDate", ParameterWidget::Date, QDate::currentDate());
+
+  _salesOrders->setChecked(true);
+  _workOrders->setChecked(true);
+  _purchaseOrders->setChecked(true);
 
   sFillList();
 }
@@ -242,6 +264,15 @@ bool projects::setParams(ParameterList &params)
 
   if (_showComplete->isChecked())
     params.append("showComplete",true);
+
+  if (_salesOrders->isChecked())
+    params.append("showSo", true);
+
+  if (_workOrders->isChecked())
+    params.append("showWo", true);
+
+  if (_purchaseOrders->isChecked())
+    params.append("showPo", true);
 
   params.append("planning", tr("Concept"));
   params.append("open", tr("In-Process"));

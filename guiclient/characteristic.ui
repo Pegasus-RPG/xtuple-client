@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>505</width>
-    <height>452</height>
+    <width>500</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -126,13 +126,6 @@ to be bound by its terms.</comment>
       <string>May be used on:</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="_addresses">
-        <property name="text">
-         <string>Address</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QCheckBox" name="_contacts">
         <property name="text">
@@ -161,6 +154,13 @@ to be bound by its terms.</comment>
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="_addresses">
+        <property name="text">
+         <string>Address</string>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="0">
        <widget class="QCheckBox" name="_items">
         <property name="text">
@@ -186,6 +186,20 @@ to be bound by its terms.</comment>
        <widget class="QCheckBox" name="_crmaccounts">
         <property name="text">
          <string>CRM Account</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="_projects">
+        <property name="text">
+         <string>Projects</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="_tasks">
+        <property name="text">
+         <string>Project Tasks</string>
         </property>
        </widget>
       </item>

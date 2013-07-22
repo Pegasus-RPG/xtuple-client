@@ -55,6 +55,7 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool /*modal*/, Qt
   _useProjects->setChecked(_metrics->boolean("UseProjects"));
   _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));
   _opportunityChangeLog->setChecked(_metrics->boolean("OpportunityChangeLog"));
+  _requireProjectAssignment->setChecked(_metrics->boolean("RequireProjectAssignment"));
 
   if (! _metrics->value("DefaultAddressCountry").isEmpty())
     _country->setText(_metrics->value("DefaultAddressCountry"));
@@ -135,6 +136,7 @@ bool configureCRM::sSave()
   _metrics->set("UseProjects", _useProjects->isChecked());
   _metrics->set("AutoCreateProjectsForOrders", (_autoCreate->isChecked() && _useProjects->isChecked()));
   _metrics->set("OpportunityChangeLog", _opportunityChangeLog->isChecked());
+  _metrics->set("RequireProjectAssignment", _requireProjectAssignment->isChecked());
 
   if (_country->isValid())
     _metrics->set("DefaultAddressCountry", _country->currentText());

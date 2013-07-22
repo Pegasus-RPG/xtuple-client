@@ -99,7 +99,9 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
       _contacts->setEnabled(FALSE);
       _opportunity->setEnabled(FALSE);
       _employees->setEnabled(FALSE);
-      _incidents->setEnabled(false);
+      _incidents->setEnabled(FALSE);
+      _projects->setEnabled(FALSE);
+      _tasks->setEnabled(FALSE);
 
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
@@ -124,7 +126,8 @@ void characteristic::sSave()
 	 _lotSerial->isChecked()   || _addresses->isChecked() ||
 	 _crmaccounts->isChecked() || _contacts->isChecked()  ||
          _opportunity->isChecked() || _employees->isChecked() ||
-         _incidents->isChecked()))
+         _incidents->isChecked()   || _projects->isChecked()  ||
+	 _tasks->isChecked() ))
   {
     QMessageBox::critical(this, tr("Apply Characteristic"),
 			  tr("<p>You must apply this Characteristic to at "
@@ -152,7 +155,7 @@ void characteristic::sSave()
                "  char_contacts, char_crmaccounts, char_addresses, "
                "  char_options, char_opportunity,"
                "  char_attributes, char_lotserial, char_employees,"
-               "  char_incidents, "
+               "  char_incidents, char_projects, char_tasks, "
                "  char_notes, char_mask, char_validator, char_type, "
                "  char_order, char_search ) "
                "VALUES "
@@ -160,7 +163,7 @@ void characteristic::sSave()
                "  :char_contacts, :char_crmaccounts, :char_addresses, "
                "  :char_options, :char_opportunity,"
                "  :char_attributes, :char_lotserial, :char_employees,"
-               "  :char_incidents, "
+               "  :char_incidents, :char_projects, :char_tasks, "
                "  :char_notes, :char_mask, :char_validator, :char_type, "
                "  :char_order, :char_search );" );
 
@@ -179,6 +182,8 @@ void characteristic::sSave()
                "    char_lotserial=:char_lotserial,"
                "    char_employees=:char_employees,"
                "    char_incidents=:char_incidents,"
+               "    char_projects=:char_projects,"
+               "    char_tasks=:char_tasks,"
                "    char_notes=:char_notes,"
                "    char_mask=:char_mask,"
                "    char_validator=:char_validator, "
@@ -199,6 +204,8 @@ void characteristic::sSave()
   characteristicSave.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
   characteristicSave.bindValue(":char_employees",   QVariant(_employees->isChecked()));
   characteristicSave.bindValue(":char_incidents",   QVariant(_incidents->isChecked()));
+  characteristicSave.bindValue(":char_projects",    QVariant(_projects->isChecked()));
+  characteristicSave.bindValue(":char_tasks",       QVariant(_tasks->isChecked()));
   characteristicSave.bindValue(":char_notes",       _description->toPlainText().trimmed());
   if (_mask->currentText().trimmed().size() > 0)
     characteristicSave.bindValue(":char_mask",        _mask->currentText());
@@ -261,6 +268,8 @@ void characteristic::populate()
     _opportunity->setChecked(characteristicpopulate.value("char_opportunity").toBool());
     _employees->setChecked(characteristicpopulate.value("char_employees").toBool());
     _incidents->setChecked(characteristicpopulate.value("char_incidents").toBool());
+    _projects->setChecked(characteristicpopulate.value("char_projects").toBool());
+    _tasks->setChecked(characteristicpopulate.value("char_tasks").toBool());
     _description->setText(characteristicpopulate.value("char_notes").toString());
     _mask->setText(characteristicpopulate.value("char_mask").toString());
     _validator->setText(characteristicpopulate.value("char_validator").toString());

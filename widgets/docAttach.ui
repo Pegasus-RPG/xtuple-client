@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
-    <height>294</height>
+    <width>436</width>
+    <height>278</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -204,9 +204,6 @@ to be bound by its terms.</comment>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="QStackedWidget" name="_documentsStack">
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
         <widget class="QWidget" name="_selectPage">
          <layout class="QGridLayout" name="gridLayout_10">
           <item row="0" column="0">
@@ -952,6 +949,11 @@ to be bound by its terms.</comment>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>

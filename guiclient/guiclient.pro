@@ -421,6 +421,8 @@ FORMS =   absoluteCalendarItem.ui               \
           profitCenters.ui                      \
           project.ui                            \
           projects.ui                           \
+	  projectType.ui			\
+	  projectTypes.ui			\
           prospect.ui                           \
           purchaseOrder.ui                      \
           purchaseOrderItem.ui                  \
@@ -1003,6 +1005,8 @@ HEADERS = ../common/format.h                    \
           profitCenters.h               \
           project.h                     \
           projects.h                    \
+	  projectType.h			\
+	  projectTypes.h		\
           prospect.h                    \
           prospects.h                   \
           purchaseOrder.h               \
@@ -1606,6 +1610,8 @@ SOURCES = absoluteCalendarItem.cpp              \
           profitCenters.cpp                     \
           project.cpp                           \
           projects.cpp                          \
+	  projectType.cpp			\
+	  projectTypes.cpp			\
           prospect.cpp                          \
           prospects.cpp                         \
           purchaseOrder.cpp                     \

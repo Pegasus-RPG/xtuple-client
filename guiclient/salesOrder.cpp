@@ -750,6 +750,8 @@ bool salesOrder::save(bool partial)
                              "or select a Misc. Charge Sales Account." ) )
          << GuiErrorCheck(_received->localValue() > 0.0, _postCash,
                           tr( "<p>You must Post Cash Payment before you may save it." ) )
+         << GuiErrorCheck(!partial && !_project->isValid() && _metrics->boolean("RequireProjectAssignment"), _project,
+                          tr("<p>You must enter a Project for this order before you may save it."))
   ;
   
   if (_opportunity->isValid())
