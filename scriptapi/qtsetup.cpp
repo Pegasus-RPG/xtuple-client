@@ -12,7 +12,6 @@
 
 void setupQt(QScriptEngine *engine)
 {
-    qRegisterMetaType<Qt::FocusPolicy>("Qt::FocusPolicy");
   QScriptValue widget = engine->newObject();
 
   qScriptRegisterMetaType(engine, AlignmentFlagtoScriptValue,	AlignmentFlagfromScriptValue);
