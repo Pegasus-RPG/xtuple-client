@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>852</width>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -981,6 +981,16 @@ to be bound by its terms.</comment>
    <item row="0" column="0">
     <layout class="QHBoxLayout">
      <item>
+      <widget class="XLabel" name="_orderNumberLabelLit">
+       <property name="text">
+        <string>Order #:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="XLabel" name="_orderNumberLabel"/>
+     </item>
+     <item>
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -1077,6 +1087,11 @@ to be bound by its terms.</comment>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -1382,6 +1397,22 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>611</x>
      <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_orderNumber</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>_orderNumberLabel</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>77</x>
+     <y>24</y>
     </hint>
    </hints>
   </connection>
