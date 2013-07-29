@@ -1058,7 +1058,8 @@ void salesOrderItem::sSave()
                "    coitem_taxtype_id=:soitem_taxtype_id, "
                "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
                "    coitem_rev_accnt_id=:soitem_rev_accnt_id, "
-               "    coitem_warranty=:soitem_warranty "
+               "    coitem_warranty=:soitem_warranty, "
+               "    coitem_custpn=:custpn "
                "WHERE (coitem_id=:soitem_id);" );
     salesSave.bindValue(":soitem_scheddate", _scheduledDate->date());
     salesSave.bindValue(":soitem_promdate", promiseDate);
@@ -1086,6 +1087,7 @@ void salesOrderItem::sSave()
     if (_altRevAccnt->isValid())
       salesSave.bindValue(":soitem_rev_accnt_id", _altRevAccnt->id());
     salesSave.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
+    salesSave.bindValue(":custpn", _customerPN->text());
 
     salesSave.exec();
     if (salesSave.lastError().type() != QSqlError::NoError)
@@ -1519,7 +1521,8 @@ void salesOrderItem::sSave()
                "    quitem_prcost=:quitem_prcost,"
                "    quitem_taxtype_id=:quitem_taxtype_id,"
                "    quitem_dropship=:quitem_dropship,"
-               "    quitem_itemsrc_id=:quitem_itemsrc_id "
+               "    quitem_itemsrc_id=:quitem_itemsrc_id, "
+               "    quitem_custpn=:custpn "
                "WHERE (quitem_id=:quitem_id);" );
     salesSave.bindValue(":quitem_scheddate", _scheduledDate->date());
     salesSave.bindValue(":quitem_promdate", promiseDate);
@@ -1542,6 +1545,7 @@ void salesOrderItem::sSave()
     salesSave.bindValue(":quitem_dropship", QVariant(_supplyDropShip->isChecked()));
     if (itemsrcid > 0)
       salesSave.bindValue(":quitem_itemsrc_id", itemsrcid);
+    salesSave.bindValue(":custpn", _customerPN->text());
     salesSave.exec();
     if (salesSave.lastError().type() != QSqlError::NoError)
     {
@@ -2229,6 +2233,22 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     _charVars.replace(ITEM_ID, _item->id());
     disconnect( _itemchar,  SIGNAL(itemChanged(QStandardItem *)), this, SLOT(sRecalcPrice()));
     disconnect( _itemchar,  SIGNAL(itemChanged(QStandardItem *)), this, SLOT(sRecalcAvailability()));
+
+    // Populate customer part number if any
+    salesPopulateItemInfo.prepare( "SELECT itemalias_number "
+              "FROM itemalias"
+              " JOIN item on item_id=itemalias_item_id"
+              " JOIN crmacct on itemalias_crmacct_id=crmacct_id"
+              " JOIN custinfo on crmacct_cust_id=cust_id "
+              "WHERE item_id=:item_id"
+              " AND cust_id=:cust_id;" );
+    salesPopulateItemInfo.bindValue(":item_id", _item->id());
+    salesPopulateItemInfo.bindValue(":cust_id", _custid);
+    salesPopulateItemInfo.exec();
+    if (salesPopulateItemInfo.first())
+    {
+       _customerPN->setText(salesPopulateItemInfo.value("itemalias_number").toString());
+    }
 
     // Populate Characteristics
     salesPopulateItemInfo.prepare("SELECT char_id, char_name, "
