@@ -318,7 +318,9 @@ void dspInventoryAvailabilityBySalesOrder::sHandleReservationNetting(bool yn)
     list()->headerItem()->setText(7, tr("This Reserve"));
   else
     list()->headerItem()->setText(7, tr("This Avail."));
-  sFillList();
+
+  if(_so->isValid())
+    sFillList();
 }
 
 void dspInventoryAvailabilityBySalesOrder::sReserveStock()
