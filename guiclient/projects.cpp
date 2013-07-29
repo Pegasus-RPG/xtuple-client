@@ -9,6 +9,7 @@
  */
 
 #include "projects.h"
+#include "projectCopy.h"
 
 #include <QAction>
 #include <QMenu>
@@ -21,6 +22,8 @@
 
 #include "parameterwidget.h"
 #include "project.h"
+
+#define DEBUG false
 
 projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "projects", fl)
@@ -43,10 +46,11 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   list()->addColumn(tr("Name"),                   -1,  Qt::AlignLeft,   true,  "prj_name");
   list()->addColumn(tr("Description"),            -1,  Qt::AlignLeft,   true,  "prj_descrip");
   list()->addColumn(tr("Status"),        _itemColumn,  Qt::AlignCenter, true,  "prj_status" );
+  list()->addColumn(tr("Project Type"),        _itemColumn,  Qt::AlignCenter, true,  "prjtype_code" );
   list()->addColumn(tr("Owner"),         _userColumn,  Qt::AlignLeft,   false, "prj_owner_username");
   list()->addColumn(tr("Assigned To"),   _userColumn,  Qt::AlignLeft,   true,  "prj_username");
   list()->addColumn(tr("CRM Account/Customer"),   _userColumn,  Qt::AlignLeft,   true,  "crmacct_number");
-  list()->addColumn(tr("Contact"),       _userColumn,  Qt::AlignLeft,   true,  "contact_name");
+  list()->addColumn(tr("Contact"),       _userColumn,  Qt::AlignLeft,   false,  "contact_name");
   list()->addColumn(tr("City"),       -1,  Qt::AlignLeft,   false,  "contact_city");
   list()->addColumn(tr("State"),       -1,  Qt::AlignLeft,   false,  "contact_state");
   list()->addColumn(tr("Due"),           _dateColumn,  Qt::AlignCenter, true,  "prj_due_date");
@@ -179,54 +183,22 @@ void projects::sDelete()
 
 void projects::sCopy()
 {
-  XSqlQuery projectsCopy;
-  bool ok;
-  QString newNumber = QInputDialog::getText(this, tr("Project Number"),
-                                            tr("Project Number for the new Project:"),
-        QLineEdit::Normal, "", &ok);
-  if(!ok)
-    return;
-  int newDueOffset = QInputDialog::getInt(this, tr("Due Date"),
-                               tr("Offset from old Due Date:"),
-                               0, 0, 365, 1, &ok);
-  if ( !ok )
-    return;
+  if (DEBUG)
+    qDebug("Project sCopy() Project ID: %d)", list()->id());  
 
-  projectsCopy.prepare("SELECT copyProject(:prj_id, :newNumber, :newDueOffset) AS result");
-  projectsCopy.bindValue(":prj_id", list()->id());
-  projectsCopy.bindValue(":newNumber", newNumber);
-  projectsCopy.bindValue(":newDueOffset", newDueOffset);
-  projectsCopy.exec();
-  if(projectsCopy.first())
+  if (list()->id() == -1)
   {
-    int result = projectsCopy.value("result").toInt();
-    if(result < 0)
-    {
-      QString errmsg;
-      switch(result)
-      {
-        case -1:
-          errmsg = tr("Project Number for the new Project cannot be blank.");
-          break;
-        case -2:
-          errmsg = tr("The Project Number entered for the new Project already exists.");
-          break;
-        case -3:
-          errmsg = tr("Source Project not found.");
-          break;
-        default:
-          errmsg = tr("Error #%1 encountered while trying to copy project.").arg(result);
-      }
-      QMessageBox::critical( this, tr("Cannot Copy Project"),
-        tr("Could not copy the project for one or more reasons.\n") + errmsg);
-      return;
-    }
-    else if (projectsCopy.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, projectsCopy.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    QMessageBox::information(this, tr("Project Copy"), tr("Please select a project to copy first"));
+    return;
   }
+  
+  ParameterList params;
+  params.append("prj_id", list()->id());
+  
+  projectCopy newdlg(parentWidget(), "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+
   sFillList();
 }
 

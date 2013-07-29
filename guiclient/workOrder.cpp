@@ -317,6 +317,14 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       }
      }
    }
+
+  if (_mode == cNew)
+  {
+    param = pParams.value("prj_id", &valid);
+    if (valid)
+      _project->setId(param.toInt());
+  }
+
   return NoError;
 }
 

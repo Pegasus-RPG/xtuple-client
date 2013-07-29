@@ -420,6 +420,13 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _quotestatusLit->show();
       _quotestaus->show();
     }
+
+    if (_mode == cNew)
+    {
+       param = pParams.value("prj_id", &valid);
+       if (valid)
+         _project->setId(param.toInt());
+    }
   }
 
   sHandleMore();

@@ -34,23 +34,11 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   connect(_buttonBox,     SIGNAL(rejected()),        this, SLOT(sClose()));
   connect(_buttonBox,     SIGNAL(accepted()),        this, SLOT(sSave()));
-  connect(_printTasks,    SIGNAL(clicked()),         this, SLOT(sPrintTasks()));
-  connect(_newTask,       SIGNAL(clicked()),         this, SLOT(sNewTask()));
-  connect(_editTask,      SIGNAL(clicked()),         this, SLOT(sEditTask()));
-  connect(_viewTask,      SIGNAL(clicked()),         this, SLOT(sViewTask()));
-  connect(_deleteTask,    SIGNAL(clicked()),         this, SLOT(sDeleteTask()));
   connect(_number,        SIGNAL(editingFinished()), this, SLOT(sNumberChanged()));
-  connect(_activity,      SIGNAL(clicked()),         this, SLOT(sActivity()));
   connect(_crmacct,       SIGNAL(newId(int)),        this, SLOT(sCRMAcctChanged(int)));
   connect(_newCharacteristic, SIGNAL(clicked()),     this, SLOT(sNew()));
   connect(_editCharacteristic, SIGNAL(clicked()),    this, SLOT(sEdit()));
   connect(_deleteCharacteristic, SIGNAL(clicked()),  this, SLOT(sDelete()));
-
-  _prjtask->addColumn( tr("Number"),            _itemColumn,    Qt::AlignLeft,  true, "prjtask_number" );
-  _prjtask->addColumn( tr("Name"),              _itemColumn,    Qt::AlignLeft,  true, "prjtask_name"  );
-  _prjtask->addColumn( tr("Description"),                -1,    Qt::AlignLeft,  true, "prjtask_descrip" );
-  _prjtask->addColumn( tr("Hours Balance"),     _itemColumn,    Qt::AlignRight, true, "prjtaskhrbal" );
-  _prjtask->addColumn( tr("Expense Balance"),   _itemColumn,    Qt::AlignRight, true, "prjtaskexpbal" );
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
@@ -68,6 +56,15 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _totalExpAct->setPrecision(omfgThis->moneyVal());
   _totalExpBal->setPrecision(omfgThis->moneyVal());
   
+  _taskactivity = new dspOrderActivityByProject(this, "dspOrderActivityByProject", Qt::Widget);
+  _taskactivity->setObjectName("dspOrderActivityByProject");
+  _activityPage->layout()->addWidget(_taskactivity);
+  _taskactivity->setCloseVisible(false);
+  _taskactivity->setNewVisible(true);
+  _taskactivity->setQueryOnStartEnabled(true);
+  _taskactivity->findChild<ProjectCluster*>("_project")->hide();
+  _taskactivity->setReportName("OrderActivityByProject");
+
   _saved=false;
 
   populate();
@@ -123,9 +120,6 @@ enum SetResponse project::set(const ParameterList &pParams)
 
       connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
-      connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
-      connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
-      connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
@@ -150,9 +144,6 @@ enum SetResponse project::set(const ParameterList &pParams)
 
       connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
-      connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
-      connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
-      connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
@@ -171,8 +162,6 @@ enum SetResponse project::set(const ParameterList &pParams)
       _assignedTo->setEnabled(FALSE);
       _crmacct->setEnabled(false);
       _cntct->setEnabled(false);
-      _newTask->setEnabled(FALSE);
-      connect(_prjtask, SIGNAL(itemSelected(int)), _viewTask, SLOT(animateClick()));
       _comments->setReadOnly(TRUE);
       _documents->setReadOnly(TRUE);
       _started->setEnabled(FALSE);
@@ -243,6 +232,7 @@ void project::populate()
     return;
   }
 
+  _taskactivity->findChild<ProjectCluster*>("_project")->setId(_prjid);
   sFillTaskList();
   sFillCharList();
   _comments->setId(_prjid);
@@ -407,88 +397,6 @@ void project::sPrintTasks()
     report.reportError(this);
 }
 
-void project::sNewTask()
-{
-  if (!_saved)
-  {
-    if (!sSave(true))
-      return;
-  }
-    
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("prj_id", _prjid);
-  params.append("prj_owner_username", _owner->username());
-  params.append("prj_username", _assignedTo->username());
-  params.append("prj_start_date", _started->date());
-  params.append("prj_due_date",	_due->date());
-  params.append("prj_assigned_date", _assigned->date());
-  params.append("prj_completed_date", _completed->date());
-
-  task newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillTaskList();
-}
-
-void project::sEditTask()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("prjtask_id", _prjtask->id());
-
-  task newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillTaskList();
-}
-
-void project::sViewTask()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("prjtask_id", _prjtask->id());
-
-  task newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void project::sDeleteTask()
-{
-  XSqlQuery projectDeleteTask;
-  projectDeleteTask.prepare("SELECT deleteProjectTask(:prjtask_id) AS result; ");
-  projectDeleteTask.bindValue(":prjtask_id", _prjtask->id());
-  projectDeleteTask.exec();
-  if(projectDeleteTask.first())
-  {
-    int result = projectDeleteTask.value("result").toInt();
-    if(result < 0)
-    {
-      QString errmsg;
-      switch(result)
-      {
-        case -1:
-          errmsg = tr("Project task not found.");
-          break;
-        case -2:
-          errmsg = tr("Actual hours have been posted to this project task.");
-          break;
-        case -3:
-          errmsg = tr("Actual expenses have been posted to this project task.");
-          break;
-        default:
-          errmsg = tr("Error #%1 encountered while trying to delete project task.").arg(result);
-      }
-      QMessageBox::critical( this, tr("Cannot Delete Project Task"),
-        tr("Could not delete the project task for one or more reasons.\n") + errmsg);
-      return;
-    }
-  }
-  emit deletedTask();
-  sFillTaskList();
-}
-
 void project::sNew()
 {
   ParameterList params;
@@ -577,7 +485,7 @@ void project::sFillTaskList()
     _totalExpBal->setDouble(0.0);
   }
 
-  _prjtask->populate(qry);
+  _taskactivity->sFillList();
 }
 
 void project::sNumberChanged()
@@ -607,13 +515,4 @@ void project::sNumberChanged()
   }
 }
 
-void project::sActivity()
-{
-  ParameterList params;
-  params.append("prj_id", _prjid);
-  params.append("run", true);
 
-  dspOrderActivityByProject *newdlg = new dspOrderActivityByProject(this,"dspOrderActivityByProject",Qt::Dialog );
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
-}

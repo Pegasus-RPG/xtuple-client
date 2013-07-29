@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>702</width>
+    <width>684</width>
     <height>649</height>
    </rect>
   </property>
@@ -50,7 +50,7 @@ to be bound by its terms.</comment>
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -321,9 +321,12 @@ to be bound by its terms.</comment>
        <verstretch>1</verstretch>
       </sizepolicy>
      </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="_tasksTab">
       <attribute name="title">
-       <string>Tasks</string>
+       <string>Activity</string>
       </attribute>
       <layout class="QHBoxLayout">
        <property name="spacing">
@@ -333,101 +336,9 @@ to be bound by its terms.</comment>
         <number>5</number>
        </property>
        <item>
-        <widget class="XTreeWidget" name="_prjtask">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QWidget" name="_activityPage">
+          <layout class="QGridLayout" name="gridLayout_activity"/>
         </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout">
-         <item>
-          <layout class="QVBoxLayout">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="_printTasks">
-             <property name="text">
-              <string>Print</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_newTask">
-             <property name="text">
-              <string>&amp;New</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_editTask">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>&amp;Edit</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_viewTask">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>&amp;View</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_deleteTask">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>&amp;Delete</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>
@@ -499,15 +410,6 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-<!--
-            <item>
-             <widget class="QPushButton" name="_activity">
-              <property name="text">
-               <string>Activity...</string>
-              </property>
-             </widget>
-            </item>
--->
            </layout>
           </item>
          </layout>
@@ -737,7 +639,7 @@ to be bound by its terms.</comment>
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
+            <enum>QSizePolicy::Fixed</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -879,12 +781,6 @@ to be bound by its terms.</comment>
   <tabstop>_completed</tabstop>
   <tabstop>_cntct</tabstop>
   <tabstop>_tab</tabstop>
-  <tabstop>_prjtask</tabstop>
-  <tabstop>_printTasks</tabstop>
-  <tabstop>_newTask</tabstop>
-  <tabstop>_editTask</tabstop>
-  <tabstop>_viewTask</tabstop>
-  <tabstop>_deleteTask</tabstop>
   <tabstop>_so</tabstop>
   <tabstop>_po</tabstop>
   <tabstop>_wo</tabstop>
@@ -893,22 +789,5 @@ to be bound by its terms.</comment>
   <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>_prjtask</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_viewTask</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

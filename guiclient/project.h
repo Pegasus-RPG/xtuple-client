@@ -16,6 +16,8 @@
 #include <parameter.h>
 #include "ui_project.h"
 
+#include "dspOrderActivityByProject.h"
+
 class project : public XDialog, public Ui::project
 {
     Q_OBJECT
@@ -33,13 +35,8 @@ public slots:
     virtual void sClose();
     virtual bool sSave(bool partial = false);
     virtual void sPrintTasks();
-    virtual void sNewTask();
-    virtual void sEditTask();
-    virtual void sViewTask();
-    virtual void sDeleteTask();
     virtual void sFillTaskList();
     virtual void sNumberChanged();
-    virtual void sActivity();
     virtual void sNew();
     virtual void sEdit();
     virtual void sDelete();
@@ -48,9 +45,12 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+protected:
+     dspOrderActivityByProject *_taskactivity; 
+
 private:
     int _mode;
-    int _prjid;
+    int 	_prjid;
     bool _saved;
 
 signals:
