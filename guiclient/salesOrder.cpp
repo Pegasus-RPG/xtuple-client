@@ -178,6 +178,7 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "f_linenumber");
   _soitem->addColumn(tr("Kit Seq. #"),  _seqColumn, Qt::AlignRight, false,"coitem_subnumber");
   _soitem->addColumn(tr("Item"),       _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _soitem->addColumn(tr("Customer P/N"), _itemColumn, Qt::AlignLeft,  false, "item_number_cust");
   _soitem->addColumn(tr("Type"),       _itemColumn, Qt::AlignLeft,  false,"item_type");
   _soitem->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "description");
   _soitem->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
@@ -2756,6 +2757,9 @@ void salesOrder::sFillItemList()
                 "       ROUND((quitem_qtyord * quitem_qty_invuomratio) *"
                 "             (quitem_price / quitem_price_invuomratio),2) AS extprice,"
                 "       quitem_custprice AS coitem_custprice,"
+                "       CASE WHEN (quitem_custpn != '') THEN quitem_custpn "
+                "       ELSE item_number "
+                "       END AS item_number_cust, "
                 "       'qty' AS coitem_qtyord_xtnumericrole,"
                 "       'qty' AS qtyshipped_xtnumericrole,"
                 "       'qty' AS balance_xtnumericrole,"
