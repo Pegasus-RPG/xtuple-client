@@ -15,6 +15,7 @@
 #include "xwidget.h"
 #include <parameter.h>
 #include "ui_salesOrder.h"
+#include "dspShipmentsBySalesOrder.h"
 
 class salesOrder : public XWidget, public Ui::salesOrder
 {
@@ -99,10 +100,15 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sMaintainPO();
     virtual void        sReleasePR();
     virtual void        sViewPR();
+    virtual void        sPopulateShipments();
+    virtual void        sViewItemWorkbench();
 
   protected slots:
     virtual void  languageChange();
     virtual bool  okToProcessCC();
+
+  protected:
+    dspShipmentsBySalesOrder *_dspShipmentsBySalesOrder;
 
   signals:
     void populated();

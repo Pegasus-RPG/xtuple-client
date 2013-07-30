@@ -45,6 +45,7 @@
 #include "purchaseRequest.h"
 #include "purchaseOrder.h"
 #include "workOrder.h"
+#include "itemAvailabilityWorkbench.h"
 
 #define cNewQuote   (0x20 | cNew)
 #define cEditQuote  (0x20 | cEdit)
@@ -82,6 +83,12 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   : XWidget(parent, name, fl)
 {
   setupUi(this);
+
+  _dspShipmentsBySalesOrder = new dspShipmentsBySalesOrder(this, "dspShipmentsBySalesOrder", Qt::Widget);
+  _dspShipmentsBySalesOrder->setObjectName("dspShipmentsBySalesOrder");
+  _shipmentsPage->layout()->addWidget(_dspShipmentsBySalesOrder);
+  _dspShipmentsBySalesOrder->setCloseVisible(false);
+  _dspShipmentsBySalesOrder->findChild<OrderCluster*>("_salesOrder")->setEnabled(false);
 
   sCheckValidContacts();
 
@@ -197,6 +204,12 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _soitem->addColumn(tr("Cust. Discount"),  _priceColumn, Qt::AlignRight, false, "discountfromcust");
   _soitem->addColumn(tr("Supply Type"), _itemColumn, Qt::AlignCenter, false, "spplytype");
   _soitem->addColumn(tr("Order Number"),_itemColumn, Qt::AlignCenter, false, "ordrnumbr");
+  _soitem->addColumn(tr("On Hand"), _qtyColumn, Qt::AlignCenter, true, "itemsite_qtyonhand");
+  if (_metrics->boolean("EnableSOReservations"))
+  {
+    _soitem->addColumn(tr("Reserved"), _qtyColumn, Qt::AlignCenter, true, "reserved");
+    _soitem->addColumn(tr("Reservable"),_qtyColumn, Qt::AlignCenter, true, "reservable");
+  }
 
   _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
   _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
@@ -530,6 +543,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _shippingFormLit->hide();
 
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_paymentPage));
+    _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_shipmentsPage));
     _showCanceled->hide();
     _total->setBaseVisible(true);
   }
@@ -1417,6 +1431,10 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
       }
       didsomething = true;
     }
+    if (didsomething)
+      pMenu->addSeparator();
+    menuItem = pMenu->addAction(tr("Item Workbench"), this, SLOT(sViewItemWorkbench()));
+    menuItem->setEnabled(_privileges->check("ViewItemAvailabilityWorkbench"));
   }
 }
 
@@ -2485,6 +2503,7 @@ void salesOrder::populate()
           _fromQuote->setText(so.value("rahead_number").toString());
         }
       }
+      sPopulateShipments();
       emit populated();
       sFillItemList();
     }
@@ -2694,6 +2713,8 @@ void salesOrder::sFillItemList()
       params.append("excludeCancelled", true);
 
     params.append("sohead_id", _soheadid);
+    if (_metrics->boolean("EnableSOReservations"))
+      params.append("includeReservations");
     XSqlQuery fl = mql.toQuery(params);
     _soitem->populate(fl, true);
     if (fl.lastError().type() != QSqlError::NoError)
@@ -4027,8 +4048,11 @@ void salesOrder::sIssueStock()
     }
   }
 
-  if (update)
+  if (update) 
+  {
     sFillItemList();
+    sPopulateShipments();
+  }
 }
 
 void salesOrder::sIssueLineBalance()
@@ -4211,6 +4235,7 @@ void salesOrder::sIssueLineBalance()
   }
 
   sFillItemList();
+  sPopulateShipments();
 }
 
 void salesOrder::sFreightChanged()
@@ -5205,6 +5230,38 @@ void salesOrder::sViewPR()
     else if (pr.lastError().type() != QSqlError::NoError)
     {
       systemError(this, pr.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
+void salesOrder::sPopulateShipments()
+{
+  _dspShipmentsBySalesOrder->findChild<OrderCluster*>("_salesOrder")->setId(_soheadid);
+  _dspShipmentsBySalesOrder->sFillList();
+  _dspShipmentsBySalesOrder->list()->expandAll();
+}
+
+void salesOrder::sViewItemWorkbench()
+{
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    XSqlQuery item;
+    item.prepare("SELECT itemsite_item_id FROM coitem join itemsite on itemsite_id=coitem_itemsite_id WHERE (coitem_id=:soitem_id);");
+    item.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
+    item.exec();
+    if (item.first())
+    {
+      ParameterList params;
+      params.append("item_id",  item.value("itemsite_item_id").toInt());
+      itemAvailabilityWorkbench *newdlg = new itemAvailabilityWorkbench();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+    else if (item.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }

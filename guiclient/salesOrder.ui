@@ -2270,6 +2270,12 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_shipmentsPage">
+      <attribute name="title">
+       <string>Shipments</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_10"/>
+     </widget>
     </widget>
    </item>
   </layout>
