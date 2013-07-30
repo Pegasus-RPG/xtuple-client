@@ -473,16 +473,18 @@ void dspWoSchedule::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected, int)
     }
   }
 
-  if ((status == "O") || (status == "E"))
+  if ((status == "O") || (status == "E") || (status == "R") || (status == "I"))
   {
     pMenu->addSeparator();
-
     menuItem = pMenu->addAction(tr("Reprioritize..."), this, SLOT(sReprioritizeWo()));
     menuItem->setEnabled(_privileges->check("ReprioritizeWorkOrders"));
-
+  }
+  
+  if ((status == "O") || (status == "E"))
+  {
     menuItem = pMenu->addAction(tr("Reschedule..."), this, SLOT(sRescheduleWO()));
     menuItem->setEnabled(_privileges->check("RescheduleWorkOrders"));
-
+    
     menuItem = pMenu->addAction(tr("Change Quantity..."), this, SLOT(sChangeWOQty()));
     menuItem->setEnabled(_privileges->check("ChangeWorkOrderQty"));
   }
