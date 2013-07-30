@@ -121,7 +121,10 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       insq.bindValue(":vohead_number", _voucherNumber->text());
       insq.exec();
       if (insq.first())
+      {
         _voheadid = insq.value("vohead_id").toInt();
+        _documents->setId(_voheadid);
+      }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Inserting Voucher"),
                                     insq, __FILE__, __LINE__))
         return UndefinedError;
@@ -158,6 +161,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _flagFor1099->setEnabled(FALSE);
       _distributeall->setEnabled(FALSE);
       _notes->setEnabled(false);
+      _documents->setReadOnly(TRUE);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -176,11 +180,22 @@ enum SetResponse voucher::set(const ParameterList &pParams)
   if (valid)
   {
     _voheadid = param.toInt();
+    _documents->setId(_voheadid);
     populate();
     enableWindowModifiedSetting();
   }
 
   return NoError;
+}
+
+int voucher::id() const
+{
+  return _voheadid;
+}
+
+int voucher::mode() const
+{
+  return _mode;
 }
 
 bool voucher::sSave()

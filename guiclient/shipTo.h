@@ -26,6 +26,7 @@ public:
     ~shipTo();
 
     Q_INVOKABLE virtual int id() const;
+    Q_INVOKABLE virtual int mode() const;
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );

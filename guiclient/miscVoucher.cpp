@@ -96,6 +96,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       {
         _voheadid = insq.value("vohead_id").toInt();
         _recurring->setParent(_voheadid, "V");
+        _documents->setId(_voheadid);
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Creating Voucher"),
                                insq, __FILE__, __LINE__))
@@ -128,6 +129,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _new->setEnabled(false);
       _flagFor1099->setEnabled(false);
       _notes->setEnabled(false);
+      _documents->setReadOnly(true);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -138,10 +140,21 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
   if (valid)
   {
     _voheadid = param.toInt();
+    _documents->setId(_voheadid);
     populate();
   }
 
   return NoError;
+}
+
+int miscVoucher::id() const
+{
+  return _voheadid;
+}
+
+int miscVoucher::mode() const
+{
+  return _mode;
 }
 
 void miscVoucher::sSave()

@@ -33,6 +33,9 @@ public:
     static	void editTransferOrder( int pId, bool enableSaveAndAdd );
     static	void viewTransferOrder( int pId );
 
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
+  
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
 

@@ -25,6 +25,9 @@ public:
     itemSource(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~itemSource();
 
+    Q_INVOKABLE virtual int id()   const;
+    Q_INVOKABLE virtual int mode() const;
+  
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual bool sSave();

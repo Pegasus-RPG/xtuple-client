@@ -14,7 +14,7 @@ to be bound by its terms.</comment>
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>711</height>
    </rect>
   </property>
   <property name="sizeIncrement">
@@ -466,6 +466,20 @@ to be bound by its terms.</comment>
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_documentsTab">
+        <attribute name="title">
+         <string>Documents</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="Documents" name="_documents">
+           <property name="type">
+            <enum>Documents::ShipTo</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -483,6 +497,11 @@ to be bound by its terms.</comment>
    <class>ContactCluster</class>
    <extends>QWidget</extends>
    <header>contactcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Documents</class>
+   <extends>QWidget</extends>
+   <header>documents.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
