@@ -26,20 +26,34 @@ public:
     ~copyItem();
 
     Q_INVOKABLE inline  bool    captive() const { return _captive; }
-    Q_INVOKABLE virtual void    createItemSites(int pItemid);
     Q_INVOKABLE virtual bool    okToSave();
+    Q_INVOKABLE virtual int     id()   const;
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams);
     virtual void clear();
-    virtual void sHandleItemType(const QString & pItemType);
+    virtual void sSaveItem();
+    virtual void sCopyBom();
+    virtual void sAddBomitem();
+    virtual void sEditBomitem();
+    virtual void sRevokeBomitem();
+    virtual void sFillItem();
+    virtual void sFillBomitem();
+    virtual void sCopyItemsite();
+    virtual void sAddItemsite();
+    virtual void sEditItemsite();
+    virtual void sRevokeItemsite();
+    virtual void sFillItemsite();
     virtual void sCopy();
+    virtual void closeEvent( QCloseEvent * pEvent );
 
 protected slots:
     virtual void languageChange();
 
 private:
     bool _captive;
+    bool _inTransaction;
+    int _newitemid;
 
 };
 

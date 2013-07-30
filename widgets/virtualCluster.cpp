@@ -341,6 +341,14 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     connect(_openAct, SIGNAL(triggered()), this, SLOT(sOpen()));
     addAction(_openAct);
 
+    _copyAct = new QAction(tr("Copy..."), this);
+    _copyAct->setShortcut(QKeySequence(tr("Ctrl+Shift+C")));
+    _copyAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    _copyAct->setToolTip(tr("Copy record detail"));
+    _copyAct->setEnabled(false);
+    connect(_copyAct, SIGNAL(triggered()), this, SLOT(sCopy()));
+    addAction(_copyAct);
+  
     _newAct = new QAction(tr("New..."), this);
     _newAct->setShortcut(QKeySequence(tr("Ctrl+Shift+N")));
     _newAct->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -456,6 +464,9 @@ void VirtualClusterLineEdit::sUpdateMenu()
   _openAct->setEnabled((_x_privileges->check(_editPriv) ||
                         _x_privileges->check(_viewPriv)) &&
                        _id != -1);
+  _copyAct->setEnabled((_x_privileges->check(_editPriv) ||
+                        _x_privileges->check(_newPriv)) &&
+                       _id != -1 && _uiName == "item");
   _newAct->setEnabled(_x_privileges->check(_newPriv) &&
                       isEnabled());
 
@@ -464,6 +475,9 @@ void VirtualClusterLineEdit::sUpdateMenu()
     if (!menu()->actions().contains(_openAct))
       menu()->addAction(_openAct);
 
+    if (!menu()->actions().contains(_copyAct))
+      menu()->addAction(_copyAct);
+    
     if (!menu()->actions().contains(_newAct) &&
         !_newPriv.isEmpty())
       menu()->addAction(_newAct);
@@ -473,6 +487,9 @@ void VirtualClusterLineEdit::sUpdateMenu()
     if (menu()->actions().contains(_openAct))
       menu()->removeAction(_openAct);
 
+    if (menu()->actions().contains(_copyAct))
+      menu()->removeAction(_copyAct);
+    
     if (menu()->actions().contains(_newAct))
       menu()->removeAction(_newAct);
   }
@@ -893,6 +910,15 @@ void VirtualClusterLineEdit::sOpen()
   params.append(_idColName, id());
 
   sOpenWindow(_uiName, params);
+}
+
+void VirtualClusterLineEdit::sCopy()
+{
+  ParameterList params;
+  params.append(_idColName, id());
+  
+  if (_uiName == "item")
+    sOpenWindow("copyItem", params);
 }
 
 QWidget* VirtualClusterLineEdit::sOpenWindow(const QString &uiName, ParameterList &params)
