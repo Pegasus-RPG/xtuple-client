@@ -146,6 +146,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       {
         _invcheadid = invoiceet.value("invchead_id").toInt();
         _recurring->setParent(_invcheadid, "I");
+        _documents->setId(_invcheadid);
       }
       else if (invoiceet.lastError().type() != QSqlError::NoError)
       {
@@ -258,6 +259,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _shipChrgs->setEnabled(FALSE);
       _shippingZone->setEnabled(FALSE);
       _saleType->setEnabled(FALSE);
+      _documents->setReadOnly(TRUE);
 
       disconnect(_invcitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_invcitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -275,12 +277,23 @@ enum SetResponse invoice::set(const ParameterList &pParams)
   if (valid)
   {
     _invcheadid = param.toInt();
+    _documents->setId(_invcheadid);
     populate();
     populateCMInfo();
     populateCCInfo();
   }
 
   return NoError;
+}
+
+int invoice::id() const
+{
+  return _invcheadid;
+}
+
+int invoice::mode() const
+{
+  return _mode;
 }
 
 void invoice::sClose()

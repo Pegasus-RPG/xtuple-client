@@ -190,6 +190,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       {
         _raheadid = returnet.value("rahead_id").toInt();
         _comments->setId(_raheadid);
+        _documents->setId(_raheadid);
       }
       else if (returnet.lastError().type() != QSqlError::NoError)
       {
@@ -286,6 +287,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
   {
     _raheadid = param.toInt();
     _comments->setId(_raheadid);
+    _documents->setId(_raheadid);
     populate();
   }
 
@@ -319,6 +321,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _freight->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
       _comments->setReadOnly(true);
+      _documents->setReadOnly(true);
       _copyToShipto->setEnabled(FALSE);
       _shipTo->setEnabled(FALSE);
       _shipToName->setEnabled(FALSE);
@@ -344,6 +347,16 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+int returnAuthorization::id() const
+{
+  return _raheadid;
+}
+
+int returnAuthorization::mode() const
+{
+  return _mode;
 }
 
 void returnAuthorization::setNumber()
