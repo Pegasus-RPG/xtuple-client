@@ -41,7 +41,6 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   setUseAltId(true);
 
   _run = false;
-  _showHierarchy->setChecked(true);
 
   list()->addColumn(tr("Name"),        _itemColumn,  Qt::AlignLeft,   true,  "name"   );
   list()->addColumn(tr("Status"),      _orderColumn, Qt::AlignLeft,   true,  "status"   );
@@ -70,7 +69,6 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
 
   disconnect(newAction(), SIGNAL(triggered()), this, SLOT(sNew()));
   connect(newAction(), SIGNAL(triggered()), this, SLOT(sNewProjectTask()));
-  connect(_showHierarchy, SIGNAL(checked()), this, SLOT(sFillList()));
   connect(_showSo, SIGNAL(checked()), this, SLOT(sFillList()));
   connect(_showPo, SIGNAL(checked()), this, SLOT(sFillList()));
   connect(_showWo, SIGNAL(checked()), this, SLOT(sFillList()));
@@ -133,8 +131,6 @@ void dspOrderActivityByProject::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, i
                          _privileges->check("ViewAllProjects")  ||
 			 _privileges->check("ViewPersonalProjects"));
 
-    menuItem = pMenu->addAction(tr("Delete Task..."), this, SLOT(sDeleteTask()));
-    menuItem->setEnabled(_privileges->check("MaintainAllProjects") || _privileges->check("MaintainPersonalProjects"));
   }
 
   if(list()->altId() == 15)
@@ -437,14 +433,14 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
     return false;
   }
 
-/*  if (!_showWo->isChecked() &&
+  if (!_showWo->isChecked() &&
       !_showPo->isChecked() &&
       !_showSo->isChecked())
   {
     list()->clear();
     return false;
   }
-*/
+
 
   params.append("prj_id", _project->id());
   
@@ -475,6 +471,7 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
   params.append("complete", tr("Complete"));
   params.append("unreleased", tr("Unreleased"));
   params.append("total", tr("Total"));
+  params.append("showHierarchy");
 
   if(_showSo->isChecked())
     params.append("showSo");
@@ -484,9 +481,6 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
 
   if(_showPo->isChecked())
     params.append("showPo");
-
-  if(_showHierarchy->isChecked())
-    params.append("showHierarchy");
 
   if (! _privileges->check("ViewAllProjects") && ! _privileges->check("MaintainAllProjects"))
     params.append("owner_username", omfgThis->username());
@@ -510,7 +504,6 @@ void dspOrderActivityByProject::showEvent(QShowEvent *event)
 
 void dspOrderActivityByProject::sNewProjectTask()
 {
-  project.sSave(true);
 
   ParameterList params;
   params.append("mode", "new");
@@ -539,40 +532,6 @@ void dspOrderActivityByProject::sNewProjectTask()
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
-}
-
-void dspOrderActivityByProject::sDeleteTask()
-{
-  XSqlQuery projectDeleteTask;
-  projectDeleteTask.prepare("SELECT deleteProjectTask(:prjtask_id) AS result; ");
-  projectDeleteTask.bindValue(":prjtask_id", list()->id());
-  projectDeleteTask.exec();
-  if(projectDeleteTask.first())
-  {
-    int result = projectDeleteTask.value("result").toInt();
-    if(result < 0)
-    {
-      QString errmsg;
-      switch(result)
-      {
-        case -1:
-          errmsg = tr("Project task not found.");
-          break;
-        case -2:
-          errmsg = tr("Actual hours have been posted to this project task.");
-          break;
-        case -3:
-          errmsg = tr("Actual expenses have been posted to this project task.");
-          break;
-        default:
-          errmsg = tr("Error #%1 encountered while trying to delete project task.").arg(result);
-      }
-      QMessageBox::critical( this, tr("Cannot Delete Project Task"),
-        tr("Could not delete the project task for one or more reasons.\n") + errmsg);
-      return;
-    }
-  }
-  sFillList();
 }
 
 void dspOrderActivityByProject::sNewSalesOrder()

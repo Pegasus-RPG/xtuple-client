@@ -138,6 +138,5 @@ void projectType::populate()
     _typeCode->setText(typepopulate.value("prjtype_code").toString());
     _typeDescr->setText(typepopulate.value("prjtype_descr").toString());
     _active->setChecked(typepopulate.value("prjtype_active").toBool());
-
   }
 }

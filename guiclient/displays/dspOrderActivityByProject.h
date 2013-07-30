@@ -36,7 +36,6 @@ public slots:
     virtual void sNewPurchaseOrder();
     virtual void sNewWorkOrder();
     virtual void sNewProjectTask();
-    virtual void sDeleteTask();
 
 protected slots:
     virtual void languageChange();

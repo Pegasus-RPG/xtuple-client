@@ -77,16 +77,6 @@ to be bound by its terms.</comment>
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="XCheckBox" name="_showHierarchy">
-              <property name="text">
-               <string>Display Hierarchy</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
          </layout>

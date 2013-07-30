@@ -28,21 +28,21 @@ to be bound by its terms.</comment>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="XCheckBox" name="_salesOrders">
+       <widget class="QCheckBox" name="_salesOrders">
         <property name="text">
          <string>Sales Orders</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="XCheckBox" name="_workOrders">
+       <widget class="QCheckBox" name="_workOrders">
         <property name="text">
          <string>Work Orders</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="XCheckBox" name="_purchaseOrders">
+       <widget class="QCheckBox" name="_purchaseOrders">
         <property name="text">
          <string>Purchase Orders</string>
         </property>
