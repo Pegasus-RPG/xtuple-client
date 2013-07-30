@@ -51,6 +51,7 @@ dspShipmentsBase::dspShipmentsBase(QWidget* parent, const char* name, Qt::WFlags
   list()->addColumn(tr("Shipped"),             _qtyColumn,  Qt::AlignRight,  true,  "qtyshipped"  );
   list()->addColumn(tr("Tracking Number"),     _qtyColumn,  Qt::AlignRight,  true,  "shiphead_tracknum"  );
   list()->addColumn(tr("Freight at Shipping"), _qtyColumn,  Qt::AlignRight,  true,  "shiphead_freight"  );
+  list()->addColumn(tr("Notes"),               _itemColumn,  Qt::AlignRight, false,  "notes"  );
 }
 
 void dspShipmentsBase::languageChange()

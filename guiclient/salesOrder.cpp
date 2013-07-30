@@ -83,6 +83,12 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _dspShipmentsBySalesOrder = new dspShipmentsBySalesOrder(this, "dspShipmentsBySalesOrder", Qt::Widget);
+  _dspShipmentsBySalesOrder->setObjectName("dspShipmentsBySalesOrder");
+  _shipmentsPage->layout()->addWidget(_dspShipmentsBySalesOrder);
+  _dspShipmentsBySalesOrder->setCloseVisible(false);
+  _dspShipmentsBySalesOrder->findChild<OrderCluster*>("_salesOrder")->setEnabled(false);
+
   sCheckValidContacts();
 
   connect(_action,              SIGNAL(clicked()),                              this,         SLOT(sAction()));
@@ -530,6 +536,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _shippingFormLit->hide();
 
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_paymentPage));
+    _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_shipmentsPage));
     _showCanceled->hide();
     _total->setBaseVisible(true);
   }
@@ -2485,6 +2492,7 @@ void salesOrder::populate()
           _fromQuote->setText(so.value("rahead_number").toString());
         }
       }
+      sPopulateShipments();
       emit populated();
       sFillItemList();
     }
@@ -4027,8 +4035,11 @@ void salesOrder::sIssueStock()
     }
   }
 
-  if (update)
+  if (update) 
+  {
     sFillItemList();
+    sPopulateShipments();
+  }
 }
 
 void salesOrder::sIssueLineBalance()
@@ -4211,6 +4222,7 @@ void salesOrder::sIssueLineBalance()
   }
 
   sFillItemList();
+  sPopulateShipments();
 }
 
 void salesOrder::sFreightChanged()
@@ -5208,4 +5220,11 @@ void salesOrder::sViewPR()
       return;
     }
   }
+}
+
+void salesOrder::sPopulateShipments()
+{
+  _dspShipmentsBySalesOrder->findChild<OrderCluster*>("_salesOrder")->setId(_soheadid);
+  _dspShipmentsBySalesOrder->sFillList();
+  _dspShipmentsBySalesOrder->list()->expandAll();
 }
