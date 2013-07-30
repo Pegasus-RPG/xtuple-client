@@ -23,7 +23,7 @@ reprioritizeWo::reprioritizeWo(QWidget* parent, const char* name, bool modal, Qt
 
   _captive = FALSE;
 
-  _wo->setType(cWoOpen | cWoExploded);
+  _wo->setType(cWoOpen | cWoExploded | cWoReleased | cWoIssued);
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _changeChildren->setChecked(true);
@@ -60,13 +60,6 @@ enum SetResponse reprioritizeWo::set(const ParameterList &pParams)
 void reprioritizeWo::sReprioritize()
 {
   XSqlQuery reprioritizeReprioritize;
-  if (_wo->status() == 'R')
-  {
-    QMessageBox::warning( this, tr("Cannot Reschedule Released W/O"),
-                          tr( "The selected Work Order has been Released.\n"
-                              "You must Recall this Work Order before Rescheduling it." ) );
-    return;
-  }
 
   reprioritizeReprioritize.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
   reprioritizeReprioritize.bindValue(":wo_id", _wo->id());
