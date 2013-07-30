@@ -101,6 +101,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sReleasePR();
     virtual void        sViewPR();
     virtual void        sPopulateShipments();
+    virtual void        sViewItemWorkbench();
 
   protected slots:
     virtual void  languageChange();
