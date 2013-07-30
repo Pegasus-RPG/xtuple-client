@@ -48,6 +48,7 @@ dspRunningAvailability::dspRunningAvailability(QWidget* parent, const char*, Qt:
   list()->addColumn(tr("Received"),       _qtyColumn, Qt::AlignRight, true, "qtyreceived");
   list()->addColumn(tr("Balance"),        _qtyColumn, Qt::AlignRight, true, "balance");
   list()->addColumn(tr("Running Avail."), _qtyColumn, Qt::AlignRight, true, "runningavail");
+  list()->addColumn(tr("Notes"),          _itemColumn, Qt::AlignLeft, true, "notes");
 
   _qoh->setValidator(omfgThis->qtyVal());
   _reorderLevel->setValidator(omfgThis->qtyVal());
