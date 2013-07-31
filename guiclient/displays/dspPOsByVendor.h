@@ -25,8 +25,9 @@ public:
     virtual bool setParams(ParameterList &);
 
 public slots:
-    virtual void sEditOrder();
-    virtual void sViewOrder();
+    virtual void sNew();
+    virtual void sEdit();
+    virtual void sView();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected, int);
 
 protected slots:

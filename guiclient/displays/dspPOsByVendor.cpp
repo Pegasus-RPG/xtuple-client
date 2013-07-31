@@ -21,6 +21,7 @@ dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char*, Qt::WFlags fl)
   setListLabel(tr("Purchase Orders"));
   setReportName("POsByVendor");
   setMetaSQLOptions("purchaseOrders", "detail");
+  setNewVisible(true);
 
   list()->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight,  true,  "pohead_number"  );
   list()->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehousecode" );
@@ -75,16 +76,27 @@ void dspPOsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int
   if (dynamic_cast<XTreeWidgetItem*>(pSelected) &&
       dynamic_cast<XTreeWidgetItem*>(pSelected)->rawValue("poitem_status").toString() == "U")
   {
-    menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEditOrder()));
+    menuItem = pMenu->addAction(tr("Edit Order..."), this, SLOT(sEdit()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders"));
   }
 
-  menuItem = pMenu->addAction(tr("View Order..."), this, SLOT(sViewOrder()));
+  menuItem = pMenu->addAction(tr("View Order..."), this, SLOT(sView()));
   menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
                        _privileges->check("ViewPurchaseOrders"));
 }
 
-void dspPOsByVendor::sEditOrder()
+void dspPOsByVendor::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  _vend->appendValue(params);
+  
+  purchaseOrder *newdlg = new purchaseOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspPOsByVendor::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
@@ -95,7 +107,7 @@ void dspPOsByVendor::sEditOrder()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspPOsByVendor::sViewOrder()
+void dspPOsByVendor::sView()
 {
   ParameterList params;
   params.append("mode", "view");
