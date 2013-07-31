@@ -495,6 +495,10 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     populate();
   }
 
+  param = pParams.value("vend_id", &valid);
+  if (valid)
+    _vendor->setId(param.toInt());
+  
   param = pParams.value("captive", &valid);
   if (valid)
     _captive = true;
