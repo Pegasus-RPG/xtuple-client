@@ -56,7 +56,7 @@ const Documents::DocumentMap Documents::_documentMap[] =
   DocumentMap( ItemSite,          "IS"  ),
   DocumentMap( ItemSource,        "IR",    "itemsrc_id", "itemSource"    ),
   DocumentMap( Location,          "L"   ),
-  DocumentMap( LotSerial,         "LS"  ),
+  DocumentMap( LotSerial,         "LS",    "ls_id",      "lotSerial"     ),
   DocumentMap( Opportunity,       "OPP",   "ophead_id",  "opportunity"   ),
   DocumentMap( Project,           "J",     "prj_id",     "project"       ),
   DocumentMap( PurchaseOrder,     "P",     "pohead_id",  "purchaseOrder" ),
