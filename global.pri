@@ -18,8 +18,14 @@
 # This is the relative directory path to the openrpt project.
 #
 
-exists(openrpt) {
-    OPENRPT_DIR = openrpt
+exists(../../../openrpt) {
+    OPENRPT_DIR = ../../../openrpt
+}
+exists(../../openrpt) {
+    OPENRPT_DIR = ../../openrpt
+}
+exists(../openrpt) {
+    OPENRPT_DIR = ../openrpt
 }
 
 ! exists(openrpt) {
@@ -37,8 +43,14 @@ exists($${OPENRPT_DIR}-build-desktop) {
     OPENRPT_BLD = $${OPENRPT_DIR}-build-desktop
 }
 
-exists(csvimp) {
-    CSVIMP_DIR = csvimp
+exists(../../../csvimp) {
+    CSVIMP_DIR = ../../../csvimp
+}
+exists(../../csvimp) {
+    CSVIMP_DIR = ../../csvimp
+}
+exists(../csvimp) {
+    CSVIMP_DIR = ../csvimp
 }
 
 ! exists(csvimp) {
