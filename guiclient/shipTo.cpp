@@ -66,6 +66,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
   if (valid)
   {
     _shiptoid = param.toInt();
+    _documents->setId(_shiptoid);
     populate();
   }
 
@@ -144,6 +145,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
       _shipchrg->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
       _shippingComments->setEnabled(FALSE);
+      _documents->setReadOnly(TRUE);
       _close->setText(tr("&Close"));
       _save->hide();
     }
@@ -155,6 +157,11 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
 int shipTo::id() const
 {
   return _shiptoid;
+}
+
+int shipTo::mode() const
+{
+  return _mode;
 }
 
 void shipTo::sSave()
@@ -403,6 +410,7 @@ void shipTo::sPopulateNumber()
       return;
     }
   }
+  _documents->setId(_shiptoid);
   _save->setEnabled(true);
 }
 

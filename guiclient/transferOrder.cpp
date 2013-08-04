@@ -126,6 +126,7 @@ void transferOrder::setToheadid(const int pId)
   _toheadid = pId;
   _qeitem->setHeadId(pId);
   _comments->setId(_toheadid);
+  _documents->setId(_toheadid);
        
   if(_mode == cEdit && !_locked)
   {
@@ -371,10 +372,6 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
     _captive = TRUE;
     _orderNumber->setEnabled(FALSE);
   }
-  else if (cView == _mode)
-  {
-    _project->setReadOnly(true);
-  }
 
   if( !_metrics->boolean("EnableTOShipping"))
   {
@@ -421,6 +418,16 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
     _captive = true;
 
   return NoError;
+}
+
+int transferOrder::id() const
+{
+  return _toheadid;
+}
+
+int transferOrder::mode() const
+{
+  return _mode;
 }
 
 bool transferOrder::insertPlaceholder()
@@ -1235,6 +1242,7 @@ void transferOrder::populate()
       _project->setId(to.value("tohead_prj_id").toInt());
 
       _comments->setId(_toheadid);
+      _documents->setId(_toheadid);
       sFillItemList();
     }
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Error Getting Order"),
@@ -1651,6 +1659,8 @@ void transferOrder::setViewMode()
 
   _edit->setText(tr("View"));
   _comments->setReadOnly(true);
+  _project->setReadOnly(true);
+  _documents->setReadOnly(true);
   _shipComplete->setEnabled(false);
   _save->hide();
   _clear->hide();

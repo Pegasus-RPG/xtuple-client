@@ -125,6 +125,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
   if (valid)
   {
     _itemsrcid = param.toInt();
+    _documents->setId(_itemsrcid);
     populate();
   }
 
@@ -145,7 +146,10 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
 
       itemet.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
       if (itemet.first())
+      {
         _itemsrcid = itemet.value("_itemsrc_id").toInt();
+        _documents->setId(_itemsrcid);
+      }
       else if (itemet.lastError().type() != QSqlError::NoError)
       {
         systemError(this, itemet.lastError().databaseText(), __FILE__, __LINE__);
@@ -187,6 +191,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       _leadTime->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
       _upcCode->setEnabled(FALSE);
+      _documents->setReadOnly(TRUE);
       _add->setEnabled(FALSE);
       _delete->setEnabled(FALSE);
       _close->setText(tr("&Close"));
@@ -234,6 +239,16 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+int itemSource::id() const
+{
+  return _itemsrcid;
+}
+
+int itemSource::mode() const
+{
+  return _mode;
 }
 
 void itemSource::sSaveClicked()

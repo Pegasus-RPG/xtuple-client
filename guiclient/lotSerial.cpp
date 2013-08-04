@@ -88,6 +88,7 @@ void lotSerial::populate()
   if (lotpopulate.first())
   {
     _lsidCache=_lotSerial->id();
+    _documents->setId(_lsidCache);
     if (_item->id() == -1)
       _item->setId(lotpopulate.value("ls_item_id").toInt());
     _itemidCache=_item->id();
