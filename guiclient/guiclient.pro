@@ -902,6 +902,7 @@ HEADERS = ../common/format.h                    \
           lotSerialSequence.h           \
           lotSerialSequences.h          \
           lotSerialRegistration.h       \
+          lotSerialUtils.h              \
           maintainBudget.h              \
           maintainItemCosts.h           \
           maintainShipping.h            \
@@ -1504,6 +1505,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           lotSerialSequence.cpp         \
           lotSerialSequences.cpp        \
           lotSerialRegistration.cpp     \
+          lotSerialUtils.cpp            \
           main.cpp                      \
           maintainBudget.cpp            \
           maintainItemCosts.cpp         \
