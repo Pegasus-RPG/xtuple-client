@@ -91,15 +91,21 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
       _mask->setEnabled(false);
       _validator->setEnabled(false);
 
-      _items->setEnabled(FALSE);
-      _customers->setEnabled(FALSE);
-      _lotSerial->setEnabled(FALSE);
-      _addresses->setEnabled(FALSE);
-      _crmaccounts->setEnabled(FALSE);
-      _contacts->setEnabled(FALSE);
-      _opportunity->setEnabled(FALSE);
-      _employees->setEnabled(FALSE);
+      _items->setEnabled(false);
+      _customers->setEnabled(false);
+      _lotSerial->setEnabled(false);
+      _addresses->setEnabled(false);
+      _crmaccounts->setEnabled(false);
+      _contacts->setEnabled(false);
+      _opportunity->setEnabled(false);
+      _employees->setEnabled(false);
       _incidents->setEnabled(false);
+      _quotes->setEnabled(false);
+      _salesorders->setEnabled(false);
+      _invoices->setEnabled(false);
+      _vendors->setEnabled(false);
+      _purchaseorders->setEnabled(false);
+      _vouchers->setEnabled(false);
 
       _buttonBox->clear();
       _buttonBox->addButton(QDialogButtonBox::Close);
@@ -120,11 +126,14 @@ void characteristic::sSave()
     _name->setFocus();
     return;
   }
-  if (! (_items->isChecked()       || _customers->isChecked() ||
-	 _lotSerial->isChecked()   || _addresses->isChecked() ||
-	 _crmaccounts->isChecked() || _contacts->isChecked()  ||
+  if (! (_items->isChecked() || _customers->isChecked() ||
+         _lotSerial->isChecked()   || _addresses->isChecked() ||
+         _crmaccounts->isChecked() || _contacts->isChecked()  ||
          _opportunity->isChecked() || _employees->isChecked() ||
-         _incidents->isChecked()))
+         _incidents->isChecked()   || _quotes->isChecked()    ||
+         _salesorders->isChecked() || _invoices->isChecked()  ||
+         _vendors->isChecked()     || _purchaseorders->isChecked() ||
+         _vouchers->isChecked()) )
   {
     QMessageBox::critical(this, tr("Apply Characteristic"),
 			  tr("<p>You must apply this Characteristic to at "
@@ -153,6 +162,8 @@ void characteristic::sSave()
                "  char_options, char_opportunity,"
                "  char_attributes, char_lotserial, char_employees,"
                "  char_incidents, "
+               "  char_quotes, char_salesorders, char_invoices,"
+               "  char_vendors, char_purchaseorders, char_vouchers,"
                "  char_notes, char_mask, char_validator, char_type, "
                "  char_order, char_search ) "
                "VALUES "
@@ -161,6 +172,8 @@ void characteristic::sSave()
                "  :char_options, :char_opportunity,"
                "  :char_attributes, :char_lotserial, :char_employees,"
                "  :char_incidents, "
+               "  :char_quotes, :char_salesorders, :char_invoices,"
+               "  :char_vendors, :char_purchaseorders, :char_vouchers,"
                "  :char_notes, :char_mask, :char_validator, :char_type, "
                "  :char_order, :char_search );" );
 
@@ -179,6 +192,12 @@ void characteristic::sSave()
                "    char_lotserial=:char_lotserial,"
                "    char_employees=:char_employees,"
                "    char_incidents=:char_incidents,"
+               "    char_quotes=:char_quotes,"
+               "    char_salesorders=:char_salesorders,"
+               "    char_invoices=:char_invoices,"
+               "    char_vendors=:char_vendors,"
+               "    char_purchaseorders=:char_purchaseorders,"
+               "    char_vouchers=:char_vouchers,"
                "    char_notes=:char_notes,"
                "    char_mask=:char_mask,"
                "    char_validator=:char_validator, "
@@ -186,26 +205,32 @@ void characteristic::sSave()
                "    char_search=:char_search "
                "WHERE (char_id=:char_id);" );
 
-  characteristicSave.bindValue(":char_id", _charid);
-  characteristicSave.bindValue(":char_name", _name->text());
-  characteristicSave.bindValue(":char_items",       QVariant(_items->isChecked()));
-  characteristicSave.bindValue(":char_customers",   QVariant(_customers->isChecked()));
-  characteristicSave.bindValue(":char_crmaccounts", QVariant(_crmaccounts->isChecked()));
-  characteristicSave.bindValue(":char_contacts",	   QVariant(_contacts->isChecked()));
-  characteristicSave.bindValue(":char_addresses",   QVariant(_addresses->isChecked()));
-  characteristicSave.bindValue(":char_options",     QVariant(FALSE));
-  characteristicSave.bindValue(":char_attributes",  QVariant(FALSE));
-  characteristicSave.bindValue(":char_lotserial",   QVariant(_lotSerial->isChecked()));
-  characteristicSave.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
-  characteristicSave.bindValue(":char_employees",   QVariant(_employees->isChecked()));
-  characteristicSave.bindValue(":char_incidents",   QVariant(_incidents->isChecked()));
-  characteristicSave.bindValue(":char_notes",       _description->toPlainText().trimmed());
+  characteristicSave.bindValue(":char_id",             _charid);
+  characteristicSave.bindValue(":char_name",           _name->text());
+  characteristicSave.bindValue(":char_items",          QVariant(_items->isChecked()));
+  characteristicSave.bindValue(":char_customers",      QVariant(_customers->isChecked()));
+  characteristicSave.bindValue(":char_crmaccounts",    QVariant(_crmaccounts->isChecked()));
+  characteristicSave.bindValue(":char_contacts",       QVariant(_contacts->isChecked()));
+  characteristicSave.bindValue(":char_addresses",      QVariant(_addresses->isChecked()));
+  characteristicSave.bindValue(":char_options",        QVariant(FALSE));
+  characteristicSave.bindValue(":char_attributes",     QVariant(FALSE));
+  characteristicSave.bindValue(":char_lotserial",      QVariant(_lotSerial->isChecked()));
+  characteristicSave.bindValue(":char_opportunity",    QVariant(_opportunity->isChecked()));
+  characteristicSave.bindValue(":char_employees",      QVariant(_employees->isChecked()));
+  characteristicSave.bindValue(":char_incidents",      QVariant(_incidents->isChecked()));
+  characteristicSave.bindValue(":char_quotes",         QVariant(_quotes->isChecked()));
+  characteristicSave.bindValue(":char_salesorders",    QVariant(_salesorders->isChecked()));
+  characteristicSave.bindValue(":char_invoices",       QVariant(_invoices->isChecked()));
+  characteristicSave.bindValue(":char_vendors",        QVariant(_vendors->isChecked()));
+  characteristicSave.bindValue(":char_purchaseorders", QVariant(_purchaseorders->isChecked()));
+  characteristicSave.bindValue(":char_vouchers",       QVariant(_vouchers->isChecked()));
+  characteristicSave.bindValue(":char_notes",          _description->toPlainText().trimmed());
   if (_mask->currentText().trimmed().size() > 0)
     characteristicSave.bindValue(":char_mask",        _mask->currentText());
   if (_validator->currentText().trimmed().size() > 0)
     characteristicSave.bindValue(":char_validator",   _validator->currentText());
-  characteristicSave.bindValue(":char_order", _order->value());
-  characteristicSave.bindValue(":char_search", QVariant(_search->isChecked()));
+  characteristicSave.bindValue(":char_order",         _order->value());
+  characteristicSave.bindValue(":char_search",        QVariant(_search->isChecked()));
   characteristicSave.exec();
   if (characteristicSave.lastError().type() != QSqlError::NoError)
   {
@@ -261,6 +286,12 @@ void characteristic::populate()
     _opportunity->setChecked(characteristicpopulate.value("char_opportunity").toBool());
     _employees->setChecked(characteristicpopulate.value("char_employees").toBool());
     _incidents->setChecked(characteristicpopulate.value("char_incidents").toBool());
+    _quotes->setChecked(characteristicpopulate.value("char_quotes").toBool());
+    _salesorders->setChecked(characteristicpopulate.value("char_salesorders").toBool());
+    _invoices->setChecked(characteristicpopulate.value("char_invoices").toBool());
+    _vendors->setChecked(characteristicpopulate.value("char_vendors").toBool());
+    _purchaseorders->setChecked(characteristicpopulate.value("char_purchaseorders").toBool());
+    _vouchers->setChecked(characteristicpopulate.value("char_vouchers").toBool());
     _description->setText(characteristicpopulate.value("char_notes").toString());
     _mask->setText(characteristicpopulate.value("char_mask").toString());
     _validator->setText(characteristicpopulate.value("char_validator").toString());

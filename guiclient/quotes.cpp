@@ -19,6 +19,7 @@
 #include <parameter.h>
 #include <openreports.h>
 
+#include "characteristic.h"
 #include "customer.h"
 #include "failedPostList.h"
 #include "parameterwidget.h"
@@ -51,6 +52,7 @@ quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
   parameterWidget()->append(tr("Start Date"), "startDate", ParameterWidget::Date);
   parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
+  setupCharacteristics(characteristic::Quotes);
 
   list()->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight, true, "quhead_number");
   list()->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,  true, "quhead_billtoname");

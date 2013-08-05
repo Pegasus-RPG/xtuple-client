@@ -266,6 +266,18 @@ void displayPrivate::setupCharacteristics(unsigned int use)
     uses << "char_lotserial";
   if (use & characteristic::Opportunities)
     uses << "char_opportunity";
+  if (use & characteristic::Quotes)
+    uses << "char_quotes";
+  if (use & characteristic::SalesOrders)
+    uses << "char_salesorders";
+  if (use & characteristic::Invoices)
+    uses << "char_invoices";
+  if (use & characteristic::Vendors)
+    uses << "char_vendors";
+  if (use & characteristic::PurchaseOrders)
+    uses << "char_purchaseorders";
+  if (use & characteristic::Vouchers)
+    uses << "char_vouchers";
 
   // Add columns and parameters for characteristics
   QString column;
