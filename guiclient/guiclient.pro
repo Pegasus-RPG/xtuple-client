@@ -430,6 +430,7 @@ FORMS =   absoluteCalendarItem.ui               \
           purgeInvoices.ui                      \
           purgePostedCountSlips.ui              \
           purgePostedCounts.ui                  \
+          quickRelocateLot.ui                   \
           quotes.ui                             \
           reasonCode.ui                         \
           reasonCodes.ui                        \
@@ -1014,6 +1015,7 @@ HEADERS = ../common/format.h                    \
           purgeInvoices.h               \
           purgePostedCountSlips.h       \
           purgePostedCounts.h           \
+          quickRelocateLot.h            \
           quotes.h                      \
           reasonCode.h                  \
           reasonCodes.h                 \
@@ -1618,6 +1620,7 @@ SOURCES = absoluteCalendarItem.cpp              \
           purgeInvoices.cpp                     \
           purgePostedCountSlips.cpp             \
           purgePostedCounts.cpp                 \
+          quickRelocateLot.cpp                  \
           quotes.cpp                            \
           reasonCode.cpp                        \
           reasonCodes.cpp                       \

@@ -37,6 +37,7 @@
 #include "relocateInventory.h"
 
 #include "reassignLotSerial.h"
+#include "quickRelocateLot.h"
 
 #include "createCountTagsByParameterList.h"
 #include "createCountTagsByItem.h"
@@ -365,6 +366,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "separator",                      NULL,                           NULL,   lotSerialControlMenu,   "true", NULL, NULL,  _metrics->boolean("LotSerialControl") , NULL },
 
     { "im.reassignLotSerialNumber",     tr("&Reassign Lot/Serial #..."),        SLOT(sReassignLotSerialNumber()), lotSerialControlMenu, "ReassignLotSerial",    NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
+    { "im.quickRelocateLot",            tr("&Quick Relocate..."),               SLOT(sQuickRelocateLot()),        lotSerialControlMenu, "true",  NULL, NULL, _metrics->boolean("LotSerialControl"), NULL },
 
     { "separator", NULL, NULL, mainMenu,        "true", NULL, NULL, true, NULL },
 
@@ -593,6 +595,12 @@ void menuInventory::sReassignLotSerialNumber()
 {
   reassignLotSerial newdlg(parent, "", TRUE);
   newdlg.exec();
+}
+
+void menuInventory::sQuickRelocateLot()
+{
+    quickRelocateLot newdlg(parent, "", TRUE);
+    newdlg.exec();
 }
 
 
