@@ -19,7 +19,8 @@
 #include <openreports.h>
 
 createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl),
+      _lotsFound(false)
 {
   setupUi(this);
 
@@ -34,6 +35,8 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
   adjustSize();
 
   _qtyToAssign->setValidator(omfgThis->qtyVal());
+
+  _charWidgets = LotSerialUtils::addLotCharsToGridLayout(this, gridLayout, _lschars);
 }
 
 createLotSerial::~createLotSerial()
@@ -166,7 +169,95 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
 
 void createLotSerial::sHandleLotSerial()
 {
-  _lotSerial->setText(_lotSerial->currentText().toUpper());
+    _lotSerial->setText(_lotSerial->currentText().toUpper());
+
+    if (_lotSerial->currentText().length() == 0)
+    {
+        return;
+    }
+
+    int ls_id = -1;
+    XSqlQuery q;
+    q.prepare(QString("SELECT ls_id FROM ls WHERE ls_number='%1'").arg(_lotSerial->currentText()));
+    bool success = q.exec();
+    if (!success)
+    {
+        qDebug() << __FUNCTION__ << __LINE__ << q.lastError().text();
+        return;
+    }
+    if( q.first() )
+    {
+        ls_id = q.value("ls_id").toInt();
+    }
+    _lotsFound = ls_id > -1;
+    if (_lotsFound)
+    {
+        XSqlQuery charQuery;
+        charQuery.prepare(QString("SELECT char.char_type, charass.charass_value "
+                          " FROM charass INNER JOIN char ON charass.charass_char_id=char.char_id "
+                          " WHERE charass.charass_target_type='LS' AND "
+                          " charass.charass_target_id=%1 "
+                          " ORDER BY charass.charass_id ASC").arg(ls_id));
+        success = charQuery.exec();
+        if (!success)
+        {
+            qDebug() << __FUNCTION__ << __LINE__ << q.lastError().text();
+        }
+        int i=0;
+        while(charQuery.next())
+        {
+            QString charass_value = charQuery.value("charass_value").toString();
+            int char_type = charQuery.value("char_type").toInt();
+            if (char_type == 2)
+            {
+                DLineEdit *l = qobject_cast<DLineEdit *>(_charWidgets.at(i));
+                if (l)
+                    l->setDate(QDate::fromString(charass_value, "yyyy-MM-dd"));
+            }
+            else if (char_type == 1)
+            {
+                XComboBox *x = qobject_cast<XComboBox *>(_charWidgets.at(i));
+                int index = x->findText(charass_value);
+                if (index > -1) {
+                    x->setCurrentIndex(index);
+                }
+
+            }
+            else
+            {
+                QLineEdit *l = qobject_cast<QLineEdit *>(_charWidgets.at(i));
+                if (l)
+                    l->setText(charass_value);
+            }
+            i++;
+        }
+    }
+    else
+    {
+        QList<int> char_types = _lschars.getLotCharTypes();
+        for (int i=0; i < _lschars.numLotChars(); i++)
+        {
+            if (char_types.at(i) == 2)
+            {
+                DLineEdit *l = qobject_cast<DLineEdit *>(_charWidgets.at(i));
+                l->clear();
+            }
+            else if (char_types.at(i) == 1)
+            {
+                XComboBox *x = qobject_cast<XComboBox *>(_charWidgets.at(i));
+                x->setCurrentIndex(0);
+            }
+            else
+            {
+                QLineEdit *l = qobject_cast<QLineEdit *>(_charWidgets.at(i));
+                l->clear();
+            }
+        }
+    }
+    foreach (QWidget *w, _charWidgets)
+    {
+        w->setEnabled(!_lotsFound);
+    }
 }
 
 void createLotSerial::sAssign()
@@ -357,6 +448,21 @@ void createLotSerial::sAssign()
   {
     systemError(this, createAssign.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+
+  if (!_lotsFound)
+  {
+      /* createlotserial calls "NEXTVAL('ls_ls_id_seq') which will advance the
+       * next ls_id.  Fetch the last ls_id */
+      int ls_id = -1;
+      XSqlQuery ls_id_query;
+      ls_id_query.prepare("SELECT ls_id FROM ls WHERE ls_number=:lotserial");
+      ls_id_query.bindValue(":lotserial", _lotSerial->currentText().toUpper());
+      ls_id_query.exec();
+      if (ls_id_query.first()) {
+          ls_id = ls_id_query.value("ls_id").toInt();
+          _lschars.updateLotCharacteristics(ls_id, _charWidgets);
+      }
   }
 
   accept();
