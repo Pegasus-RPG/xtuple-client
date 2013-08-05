@@ -335,6 +335,7 @@ void assignLotSerial::sPrint()
       ParameterList params;
       params.append("label", label);
       params.append("ls_id", qlabel.value("ls_id").toInt());
+      _lschars.setParams(params);
 
       orReport report("LotSerialLabel", params);
       if (report.isValid() && report.print(&printer, setupPrinter))
