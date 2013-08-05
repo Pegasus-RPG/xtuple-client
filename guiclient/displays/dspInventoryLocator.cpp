@@ -91,6 +91,13 @@ bool dspInventoryLocator::setParams(ParameterList &params)
   params.append("yes",     tr("Yes"));
   params.append("no",      tr("No"));
   params.append("na",      tr("N/A"));
+  ParameterList widgetParams = parameterWidget()->parameters();
+  foreach(const Parameter &p, widgetParams)
+  {
+      params.append(p);
+  }
+
+  display::setParams(params);
 
   //if (_showZeroLevel->isChecked())
   //  params.append("showZeroLevel");
