@@ -1917,29 +1917,74 @@ to be bound by its terms.</comment>
           <attribute name="title">
            <string>Cash</string>
           </attribute>
-          <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_2">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_6">
-               <item>
-                <widget class="QLabel" name="_receivedLit">
-                 <property name="text">
-                  <string>Amount Received:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="CurrCluster" name="_received">
-                 <property name="baseVisible">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              <widget class="QGroupBox" name="_cashGroup">
+               <property name="title">
+                <string/>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_11">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="_cashTotalLit">
+                  <property name="text">
+                   <string>Order Total:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="CurrCluster" name="_cashTotal">
+                  <property name="currencyDisabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="_cashBalanceLit">
+                  <property name="text">
+                   <string>Balance:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="CurrCluster" name="_cashBalance">
+                  <property name="currencyDisabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="_cashReceivedLit">
+                  <property name="text">
+                   <string>Amount Received:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="CurrCluster" name="_cashReceived">
+                  <property name="baseVisible">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </item>
              <item>
               <widget class="QGroupBox" name="_docGroup">
@@ -2425,7 +2470,7 @@ to be bound by its terms.</comment>
   <tabstop>_editCC</tabstop>
   <tabstop>_CCAmount</tabstop>
   <tabstop>_CCCVV</tabstop>
-  <tabstop>_received</tabstop>
+  <tabstop>_cashReceived</tabstop>
   <tabstop>_fundsType</tabstop>
   <tabstop>_docNumber</tabstop>
   <tabstop>_docDate</tabstop>
@@ -2989,7 +3034,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_distDate</sender>
    <signal>newDate(QDate)</signal>
-   <receiver>_received</receiver>
+   <receiver>_cashReceived</receiver>
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -3005,7 +3050,7 @@ to be bound by its terms.</comment>
   <connection>
    <sender>_orderCurrency</sender>
    <signal>newID(int)</signal>
-   <receiver>_received</receiver>
+   <receiver>_cashReceived</receiver>
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -3015,6 +3060,70 @@ to be bound by its terms.</comment>
     <hint type="destinationlabel">
      <x>134</x>
      <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_orderCurrency</sender>
+   <signal>newID(int)</signal>
+   <receiver>_cashBalance</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>84</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_orderDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_cashBalance</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>134</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_orderCurrency</sender>
+   <signal>newID(int)</signal>
+   <receiver>_cashTotal</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>473</x>
+     <y>485</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>137</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_orderDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_cashTotal</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>137</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>
