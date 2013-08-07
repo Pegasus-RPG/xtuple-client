@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+#include "characteristicAssignment.h"
 #include "invoiceItem.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
@@ -33,43 +34,46 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
 
   setupUi(this);
 
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_cust, SIGNAL(newId(int)),   _shipTo,     SLOT(setCustid(int)));
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
-  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_shipTo, SIGNAL(newId(int)), this, SLOT(populateShipto(int)));
-  connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sShipToModified()));
-  connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_tax, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_miscAmount, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
-  connect(_allocatedCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_outstandingCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sShipToModified()));
-  connect(_shipToPhone, SIGNAL(textChanged(const QString&)), this, SLOT(sShipToModified()));
-  connect(_authCC, SIGNAL(idChanged(int)), this, SLOT(populateCCInfo()));
-  connect(_allocatedCM, SIGNAL(idChanged(int)), this, SLOT(populateCMInfo()));
-  connect(_outstandingCM, SIGNAL(idChanged(int)), this, SLOT(populateCMInfo()));
-  connect(_authCC, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(populateCCInfo()));
+  connect(_close,               SIGNAL(clicked()),                       this,         SLOT(sClose()));
+  connect(_save,                SIGNAL(clicked()),                       this,         SLOT(sSave()));
+  connect(_cust,                SIGNAL(newId(int)),                      _shipTo,      SLOT(setCustid(int)));
+  connect(_cust,                SIGNAL(newId(int)),                      this,         SLOT(sPopulateCustomerInfo(int)));
+  connect(_new,                 SIGNAL(clicked()),                       this,         SLOT(sNew()));
+  connect(_edit,                SIGNAL(clicked()),                       this,         SLOT(sEdit()));
+  connect(_view,                SIGNAL(clicked()),                       this,         SLOT(sView()));
+  connect(_delete,              SIGNAL(clicked()),                       this,         SLOT(sDelete()));
+  connect(_copyToShipto,        SIGNAL(clicked()),                       this,         SLOT(sCopyToShipto()));
+  connect(_taxLit,              SIGNAL(leftClickedURL(const QString&)),  this,         SLOT(sTaxDetail()));
+  connect(_shipTo,              SIGNAL(newId(int)),                      this,         SLOT(populateShipto(int)));
+  connect(_shipToName,          SIGNAL(textChanged(const QString&)),     this,         SLOT(sShipToModified()));
+  connect(_subtotal,            SIGNAL(valueChanged()),                  this,         SLOT(sCalculateTotal()));
+  connect(_tax,                 SIGNAL(valueChanged()),                  this,         SLOT(sCalculateTotal()));
+  connect(_miscAmount,          SIGNAL(valueChanged()),                  this,         SLOT(sCalculateTotal()));
+  connect(_freight,             SIGNAL(valueChanged()),                  this,         SLOT(sFreightChanged()));
+  connect(_allocatedCM,         SIGNAL(valueChanged()),                  this,         SLOT(sCalculateTotal()));
+  connect(_outstandingCM,       SIGNAL(valueChanged()),                  this,         SLOT(sCalculateTotal()));
+  connect(_authCC,              SIGNAL(valueChanged()),                  this,         SLOT(sCalculateTotal()));
+  connect(_shipToAddr,          SIGNAL(changed()),                       this,         SLOT(sShipToModified()));
+  connect(_shipToPhone,         SIGNAL(textChanged(const QString&)),     this,         SLOT(sShipToModified()));
+  connect(_authCC,              SIGNAL(idChanged(int)),                  this,         SLOT(populateCCInfo()));
+  connect(_allocatedCM,         SIGNAL(idChanged(int)),                  this,         SLOT(populateCMInfo()));
+  connect(_outstandingCM,       SIGNAL(idChanged(int)),                  this,         SLOT(populateCMInfo()));
+  connect(_authCC,              SIGNAL(effectiveChanged(const QDate&)),  this,         SLOT(populateCCInfo()));
   if (_privileges->check("ApplyARMemos"))
-    connect(_allocatedCMLit,    SIGNAL(leftClickedURL(const QString &)),        this,         SLOT(sCreditAllocate()));
-  connect(_allocatedCM, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(populateCMInfo()));
-  connect(_outstandingCM, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(populateCMInfo()));
-  connect(_invcitem, SIGNAL(valid(bool)),       _edit, SLOT(setEnabled(bool)));
-  connect(_invcitem, SIGNAL(valid(bool)),     _delete, SLOT(setEnabled(bool)));
-  connect(_invcitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_taxzone,  SIGNAL(newID(int)),	 this, SLOT(sTaxZoneChanged()));
-  connect(_shipChrgs, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
-  connect(_cust, SIGNAL(newCrmacctId(int)), _billToAddr, SLOT(setSearchAcct(int)));
-  connect(_cust, SIGNAL(newCrmacctId(int)), _shipToAddr, SLOT(setSearchAcct(int)));
-  connect(_invoiceNumber, SIGNAL(editingFinished()), this, SLOT(sCheckInvoiceNumber()));
+    connect(_allocatedCMLit,    SIGNAL(leftClickedURL(const QString &)), this,         SLOT(sCreditAllocate()));
+  connect(_allocatedCM,         SIGNAL(effectiveChanged(const QDate&)),  this,         SLOT(populateCMInfo()));
+  connect(_outstandingCM,       SIGNAL(effectiveChanged(const QDate&)),  this,         SLOT(populateCMInfo()));
+  connect(_invcitem,            SIGNAL(valid(bool)),                     _edit,        SLOT(setEnabled(bool)));
+  connect(_invcitem,            SIGNAL(valid(bool)),                     _delete,      SLOT(setEnabled(bool)));
+  connect(_invcitem,            SIGNAL(itemSelected(int)),               _edit,        SLOT(animateClick()));
+  connect(_taxzone,             SIGNAL(newID(int)),	                     this,         SLOT(sTaxZoneChanged()));
+  connect(_shipChrgs,           SIGNAL(newID(int)),                      this,         SLOT(sHandleShipchrg(int)));
+  connect(_cust,                SIGNAL(newCrmacctId(int)),               _billToAddr,  SLOT(setSearchAcct(int)));
+  connect(_cust,                SIGNAL(newCrmacctId(int)),               _shipToAddr,  SLOT(setSearchAcct(int)));
+  connect(_invoiceNumber,       SIGNAL(editingFinished()),               this,         SLOT(sCheckInvoiceNumber()));
+  connect(_newCharacteristic,   SIGNAL(clicked()),                       this,         SLOT(sNewCharacteristic()));
+  connect(_editCharacteristic,  SIGNAL(clicked()),                       this,         SLOT(sEditCharacteristic()));
+  connect(_deleteCharacteristic,SIGNAL(clicked()),                       this,         SLOT(sDeleteCharacteristic()));
 
   setFreeFormShipto(false);
 
@@ -86,17 +90,20 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _shipTo->setNameVisible(false);
   _shipTo->setDescriptionVisible(false);
 
-  _invcitem->addColumn(tr("#"),           _seqColumn,      Qt::AlignCenter, true,  "invcitem_linenumber" );
-  _invcitem->addColumn(tr("Order #"),     _itemColumn,     Qt::AlignLeft,   true,  "soitemnumber"   );
-  _invcitem->addColumn(tr("Item"),        _itemColumn,     Qt::AlignLeft,   true,  "itemnumber"   );
-  _invcitem->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "itemdescription"   );
-  _invcitem->addColumn(tr("Qty. UOM"),    _uomColumn,      Qt::AlignLeft,   true,  "qtyuom"   );
-  _invcitem->addColumn(tr("Ordered"),     _qtyColumn,      Qt::AlignRight,  true,  "invcitem_ordered"  );
-  _invcitem->addColumn(tr("Billed"),      _qtyColumn,      Qt::AlignRight,  true,  "invcitem_billed"  );
-  _invcitem->addColumn(tr("Price UOM"),   _uomColumn,      Qt::AlignLeft,   true,  "priceuom"   );
-  _invcitem->addColumn(tr("Price"),       _moneyColumn,    Qt::AlignRight,  true,  "invcitem_price"  );
-  _invcitem->addColumn(tr("Extended"),    _bigMoneyColumn, Qt::AlignRight,  true,  "extprice"  );
+  _invcitem->addColumn(tr("#"),             _seqColumn,      Qt::AlignCenter, true,  "invcitem_linenumber" );
+  _invcitem->addColumn(tr("Order #"),       _itemColumn,     Qt::AlignLeft,   true,  "soitemnumber"   );
+  _invcitem->addColumn(tr("Item"),          _itemColumn,     Qt::AlignLeft,   true,  "itemnumber"   );
+  _invcitem->addColumn(tr("Description"),   -1,              Qt::AlignLeft,   true,  "itemdescription"   );
+  _invcitem->addColumn(tr("Qty. UOM"),      _uomColumn,      Qt::AlignLeft,   true,  "qtyuom"   );
+  _invcitem->addColumn(tr("Ordered"),       _qtyColumn,      Qt::AlignRight,  true,  "invcitem_ordered"  );
+  _invcitem->addColumn(tr("Billed"),        _qtyColumn,      Qt::AlignRight,  true,  "invcitem_billed"  );
+  _invcitem->addColumn(tr("Price UOM"),     _uomColumn,      Qt::AlignLeft,   true,  "priceuom"   );
+  _invcitem->addColumn(tr("Price"),         _moneyColumn,    Qt::AlignRight,  true,  "invcitem_price"  );
+  _invcitem->addColumn(tr("Extended"),      _bigMoneyColumn, Qt::AlignRight,  true,  "extprice"  );
 
+  _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
+  _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
+  
   _custCurrency->setLabel(_custCurrencyLit);
 
   _project->setType(ProjectLineEdit::SalesOrder);
@@ -147,6 +154,8 @@ enum SetResponse invoice::set(const ParameterList &pParams)
         _invcheadid = invoiceet.value("invchead_id").toInt();
         _recurring->setParent(_invcheadid, "I");
         _documents->setId(_invcheadid);
+        connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+        connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       }
       else if (invoiceet.lastError().type() != QSqlError::NoError)
       {
@@ -218,6 +227,8 @@ enum SetResponse invoice::set(const ParameterList &pParams)
 
       _new->setEnabled(TRUE);
       _cust->setReadOnly(TRUE);
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
     }
     else if (param.toString() == "view")
@@ -260,6 +271,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _shippingZone->setEnabled(FALSE);
       _saleType->setEnabled(FALSE);
       _documents->setReadOnly(TRUE);
+      _newCharacteristic->setEnabled(FALSE);
 
       disconnect(_invcitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       disconnect(_invcitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -895,6 +907,7 @@ void invoice::populate()
 
     _loading = false;
 
+    sFillCharacteristic();
     sFillItemList();
   }
   if (invoicepopulate.lastError().type() != QSqlError::NoError)
@@ -902,6 +915,62 @@ void invoice::populate()
     systemError(this, invoicepopulate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void invoice::sNewCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("invchead_id", _invcheadid);
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void invoice::sEditCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void invoice::sDeleteCharacteristic()
+{
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM charass "
+                     "WHERE (charass_id=:charass_id);" );
+  itemDelete.bindValue(":charass_id", _charass->id());
+  itemDelete.exec();
+  
+  sFillCharacteristic();
+}
+
+void invoice::sFillCharacteristic()
+{
+  XSqlQuery charassq;
+  charassq.prepare( "SELECT charass_id, char_name, "
+                   " CASE WHEN char_type < 2 THEN "
+                   "   charass_value "
+                   " ELSE "
+                   "   formatDate(charass_value::date) "
+                   "END AS charass_value "
+                   "FROM charass JOIN char ON (char_id=charass_char_id) "
+                   "WHERE ( (charass_target_type=:target_type)"
+                   "  AND   (charass_target_id=:target_id) ) "
+                   "ORDER BY char_order, char_name;" );
+  charassq.bindValue(":target_id", _invcheadid);
+  charassq.bindValue(":target_type", "INV");
+  charassq.exec();
+  _charass->populate(charassq);
 }
 
 void invoice::sFillItemList()

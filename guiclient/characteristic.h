@@ -29,15 +29,21 @@ public:
 
     enum Type { Text, List, Date };
 
-    enum Use { Addresses     = 0x00000001,
-               Contacts      = 0x00000002,
-               CRMAccounts   = 0x00000004,
-               Customers     = 0x00000008,
-               Employees     = 0x00000010,
-               Incidents     = 0x00000020,
-               Items         = 0x00000040,
-               LotSerial     = 0x00000080,
-               Opportunities = 0x00000100,
+    enum Use { Addresses      = 0x00000001,
+               Contacts       = 0x00000002,
+               CRMAccounts    = 0x00000004,
+               Customers      = 0x00000008,
+               Employees      = 0x00000010,
+               Incidents      = 0x00000020,
+               Items          = 0x00000040,
+               LotSerial      = 0x00000080,
+               Opportunities  = 0x00000100,
+               Quotes         = 0x00000200,
+               SalesOrders    = 0x00000400,
+               Invoices       = 0x00000800,
+               Vendors        = 0x00001000,
+               PurchaseOrders = 0x00002000,
+               Vouchers       = 0x00004000,
              };
 
 public slots:

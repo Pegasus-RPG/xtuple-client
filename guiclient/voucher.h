@@ -41,6 +41,10 @@ public slots:
     virtual void sNewMiscDistribution();
     virtual void sEditMiscDistribution();
     virtual void sDeleteMiscDistribution();
+    virtual void sNewCharacteristic();
+    virtual void sEditCharacteristic();
+    virtual void sDeleteCharacteristic();
+    virtual void sFillCharacteristic();
     virtual void sFillList();
     virtual void sFillMiscList();
     virtual void sPopulatePoInfo();

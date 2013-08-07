@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1015</width>
+    <width>1066</width>
     <height>696</height>
    </rect>
   </property>
@@ -1646,17 +1646,67 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_orderCommentsPage">
+     <widget class="QWidget" name="_characteristicsPage">
       <attribute name="title">
-       <string>&amp;Order Notes</string>
+       <string>&amp;Characteristics</string>
       </attribute>
-      <layout class="QGridLayout">
-       <item row="0" column="0">
-        <widget class="XTextEdit" name="_orderComments">
+      <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <item>
+        <widget class="XTreeWidget" name="_charass">
          <property name="focusPolicy">
-          <enum>Qt::StrongFocus</enum>
+          <enum>Qt::ClickFocus</enum>
          </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="_9">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_newCharacteristic">
+           <property name="text">
+            <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_editCharacteristic">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_deleteCharacteristic">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1674,12 +1724,67 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_shippingCommentsPage">
+     <widget class="QWidget" name="_notesPage">
       <attribute name="title">
-       <string>Shippin&amp;g Notes</string>
+       <string>&amp;Notes</string>
       </attribute>
-      <layout class="QGridLayout">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="_orderCommentsLit">
+           <property name="text">
+            <string>Order Notes:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="XTextEdit" name="_orderComments">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="_shippingCommentsLit">
+           <property name="text">
+            <string>Shipping Notes:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="XTextEdit" name="_shippingComments">
          <property name="focusPolicy">
           <enum>Qt::StrongFocus</enum>
@@ -2419,7 +2524,6 @@ to be bound by its terms.</comment>
   <tabstop>_balance</tabstop>
   <tabstop>_project</tabstop>
   <tabstop>_opportunity</tabstop>
-  <tabstop>_orderComments</tabstop>
   <tabstop>_shippingComments</tabstop>
   <tabstop>_newCC</tabstop>
   <tabstop>_editCC</tabstop>

@@ -14,6 +14,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "characteristic.h"
 #include "copySalesOrder.h"
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
@@ -51,6 +52,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char*, Qt::WFlags fl)
   parameterWidget()->append(tr("Customer Type Pattern"), "custtype_pattern", ParameterWidget::Text);
   parameterWidget()->append(tr("P/O Number"), "poNumber", ParameterWidget::Text);
   parameterWidget()->appendComboBox(tr("Sales Rep."), "salesrep_id", XComboBox::SalesRepsActive);
+  setupCharacteristics(characteristic::SalesOrders);
 
   list()->addColumn(tr("Order #"),         _orderColumn, Qt::AlignLeft,  true, "cohead_number");
   list()->addColumn(tr("Cust. #"),         _orderColumn, Qt::AlignLeft,  true, "cust_number");

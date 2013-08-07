@@ -22,6 +22,7 @@
 
 #include <metasql.h>
 
+#include "characteristicAssignment.h"
 #include "creditCard.h"
 #include "creditcardprocessor.h"
 #include "crmacctcluster.h"
@@ -141,6 +142,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_shipDate,            SIGNAL(newDate(QDate)),                         this,         SLOT(sShipDateChanged()));
   connect(_cust,                SIGNAL(newCrmacctId(int)),                      _billToAddr,  SLOT(setSearchAcct(int)));
   connect(_cust,                SIGNAL(newCrmacctId(int)),                      _shipToAddr,  SLOT(setSearchAcct(int)));
+  connect(_newCharacteristic,   SIGNAL(clicked()),                              this,         SLOT(sNewCharacteristic()));
+  connect(_editCharacteristic,  SIGNAL(clicked()),                              this,         SLOT(sEditCharacteristic()));
+  connect(_deleteCharacteristic,SIGNAL(clicked()),                              this,         SLOT(sDeleteCharacteristic()));
 
   connect(_billToAddr,          SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _billToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -211,6 +215,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
     _soitem->addColumn(tr("Reservable"),_qtyColumn, Qt::AlignCenter, true, "reservable");
   }
 
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
+  
   _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
   _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
   _cc->addColumn(tr("Number"),  _itemColumn, Qt::AlignRight,true, "f_number");
@@ -310,6 +317,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _calcfreight = _metrics->boolean("CalculateFreight");
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "newQuote")
     {
@@ -338,6 +347,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _quotestaus->setText("Open");
 
       connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "edit")
     {
@@ -354,6 +365,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _cust->setType(CLineEdit::AllCustomers);
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "editQuote")
     {
@@ -380,6 +393,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _quotestaus->show();
 
       connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -426,6 +441,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _documents->setReadOnly(true);
       _copyToShipto->setEnabled(FALSE);
       _orderCurrency->setEnabled(FALSE);
+      _newCharacteristic->setEnabled(FALSE);
       _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
       _save->hide();
       _clear->hide();
@@ -2504,6 +2520,7 @@ void salesOrder::populate()
         }
       }
       sPopulateShipments();
+      sFillCharacteristic();
       emit populated();
       sFillItemList();
     }
@@ -2663,6 +2680,7 @@ void salesOrder::populate()
 
       _comments->setId(_soheadid);
       _documents->setId(_soheadid);
+      sFillCharacteristic();
       sFillItemList();
       emit populated();
       // TODO - a partial save is not saving everything
@@ -3082,6 +3100,7 @@ void salesOrder::clear()
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
   _orderComments->clear();
   _shippingComments->clear();
+  _charass->clear();
   _custPONumber->clear();
   _miscCharge->clear();
   _miscChargeDescription->clear();
@@ -3355,6 +3374,7 @@ void salesOrder::setViewMode()
   _printSO->setEnabled(FALSE);
   _shippingZone->setEnabled(FALSE);
   _saleType->setEnabled(FALSE);
+  _newCharacteristic->setEnabled(FALSE);
   _save->hide();
   _clear->hide();
   _project->setReadOnly(true);
@@ -3660,6 +3680,68 @@ void salesOrder::viewSalesOrder( int pId, QWidget *parent )
   salesOrder *newdlg = new salesOrder(parent);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void salesOrder::sNewCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  if (ISQUOTE(_mode))
+    params.append("quhead_id", _soheadid);
+  else
+    params.append("cohead_id", _soheadid);
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void salesOrder::sEditCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void salesOrder::sDeleteCharacteristic()
+{
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM charass "
+                     "WHERE (charass_id=:charass_id);" );
+  itemDelete.bindValue(":charass_id", _charass->id());
+  itemDelete.exec();
+  
+  sFillCharacteristic();
+}
+
+void salesOrder::sFillCharacteristic()
+{
+  XSqlQuery charassq;
+  charassq.prepare( "SELECT charass_id, char_name, "
+                    " CASE WHEN char_type < 2 THEN "
+                    "   charass_value "
+                    " ELSE "
+                    "   formatDate(charass_value::date) "
+                    "END AS charass_value "
+                    "FROM charass JOIN char ON (char_id=charass_char_id) "
+                    "WHERE ( (charass_target_type=:target_type)"
+                    "  AND   (charass_target_id=:target_id) ) "
+                    "ORDER BY char_order, char_name;" );
+  charassq.bindValue(":target_id", _soheadid);
+  if (ISQUOTE(_mode))
+    charassq.bindValue(":target_type", "QU");
+  else
+    charassq.bindValue(":target_type", "SO");
+  charassq.exec();
+  _charass->populate(charassq);
 }
 
 void salesOrder::populateCMInfo()

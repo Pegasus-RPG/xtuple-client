@@ -15,6 +15,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include "characteristic.h"
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "parameterwidget.h"
@@ -48,6 +49,7 @@ dspBacklog::dspBacklog(QWidget* parent, const char*, Qt::WFlags fl)
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
   parameterWidget()->applyDefaultFilterSet();
+  setupCharacteristics(characteristic::SalesOrders);
 
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 

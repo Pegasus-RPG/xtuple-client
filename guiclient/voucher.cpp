@@ -21,6 +21,7 @@
 #include <QValidator>
 #include <QVariant>
 
+#include "characteristicAssignment.h"
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
 #include "purchaseOrderList.h"
@@ -34,23 +35,26 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_save,          SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_distributions, SIGNAL(clicked()), this, SLOT(sDistributions()));
-  connect(_distributeline, SIGNAL(clicked()), this, SLOT(sDistributeLine()));
-  connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
-  connect(_distributeall, SIGNAL(clicked()), this, SLOT(sDistributeAll()));
-  connect(_voucherNumber, SIGNAL(editingFinished()), this, SLOT(sHandleVoucherNumber()));
-  connect(_poNumber, SIGNAL(newId(int, const QString&)), this, SLOT(sFillList()));
-  connect(_poNumber, SIGNAL(newId(int, const QString&)), this, SLOT(sPopulatePoInfo()));
-  connect(_amountToDistribute, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNewMiscDistribution()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEditMiscDistribution()));
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDeleteMiscDistribution()));
-  connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDistDate()));
-  connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
-  connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_amountToDistribute, SIGNAL(idChanged(int)), this, SLOT(sFillList()));
-  connect(_amountDistributed, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
+  connect(_save,                     SIGNAL(clicked()),                                 this,          SLOT(sSave()));
+  connect(_distributions,            SIGNAL(clicked()),                                 this,          SLOT(sDistributions()));
+  connect(_distributeline,           SIGNAL(clicked()),                                 this,          SLOT(sDistributeLine()));
+  connect(_clear,                    SIGNAL(clicked()),                                 this,          SLOT(sClear()));
+  connect(_distributeall,            SIGNAL(clicked()),                                 this,          SLOT(sDistributeAll()));
+  connect(_voucherNumber,            SIGNAL(editingFinished()),                         this,          SLOT(sHandleVoucherNumber()));
+  connect(_poNumber,                 SIGNAL(newId(int, const QString&)),                this,          SLOT(sFillList()));
+  connect(_poNumber,                 SIGNAL(newId(int, const QString&)),                this,          SLOT(sPopulatePoInfo()));
+  connect(_amountToDistribute,       SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
+  connect(_new,                      SIGNAL(clicked()),                                 this,          SLOT(sNewMiscDistribution()));
+  connect(_edit,                     SIGNAL(clicked()),                                 this,          SLOT(sEditMiscDistribution()));
+  connect(_delete,                   SIGNAL(clicked()),                                 this,          SLOT(sDeleteMiscDistribution()));
+  connect(_invoiceDate,              SIGNAL(newDate(const QDate&)),                     this,          SLOT(sPopulateDistDate()));
+  connect(_terms,                    SIGNAL(newID(int)),                                this,          SLOT(sPopulateDueDate()));
+  connect(_poitem,                   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this,          SLOT(sPopulateMenu(QMenu*)));
+  connect(_amountToDistribute,       SIGNAL(idChanged(int)),                            this,          SLOT(sFillList()));
+  connect(_amountDistributed,        SIGNAL(valueChanged()),                            this,          SLOT(sPopulateBalanceDue()));
+  connect(_newCharacteristic,        SIGNAL(clicked()),                                 this,          SLOT(sNewCharacteristic()));
+  connect(_editCharacteristic,       SIGNAL(clicked()),                                 this,          SLOT(sEditCharacteristic()));
+  connect(_deleteCharacteristic,     SIGNAL(clicked()),                                 this,          SLOT(sDeleteCharacteristic()));
 
   _terms->setType(XComboBox::APTerms);
   _poNumber->setAllowedStatuses(OrderLineEdit::Open);
@@ -83,6 +87,9 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _miscDistrib->addColumn(tr("Account"),    -1,           Qt::AlignLeft,   true,  "account"  );
   _miscDistrib->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" );
 
+  _charass->addColumn(tr("Characteristic"), _itemColumn,  Qt::AlignLeft,   true,  "char_name" );
+  _charass->addColumn(tr("Value"),          -1,           Qt::AlignLeft,   true,  "charass_value" );
+  
   _vendid = -1;
 
   setWindowModified(false);
@@ -124,6 +131,8 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       {
         _voheadid = insq.value("vohead_id").toInt();
         _documents->setId(_voheadid);
+        connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+        connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       }
       else if (ErrorReporter::error(QtCriticalMsg, this, tr("Inserting Voucher"),
                                     insq, __FILE__, __LINE__))
@@ -137,6 +146,8 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
       _voucherNumber->setEnabled(FALSE);
       _poNumber->setEnabled(FALSE);
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -162,6 +173,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _distributeall->setEnabled(FALSE);
       _notes->setEnabled(false);
       _documents->setReadOnly(TRUE);
+      _newCharacteristic->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -564,6 +576,62 @@ void voucher::sDeleteMiscDistribution()
   sPopulateDistributed();
 }
 
+void voucher::sNewCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("vohead_id", _voheadid);
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void voucher::sEditCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void voucher::sDeleteCharacteristic()
+{
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM charass "
+                     "WHERE (charass_id=:charass_id);" );
+  itemDelete.bindValue(":charass_id", _charass->id());
+  itemDelete.exec();
+  
+  sFillCharacteristic();
+}
+
+void voucher::sFillCharacteristic()
+{
+  XSqlQuery charassq;
+  charassq.prepare( "SELECT charass_id, char_name, "
+                   " CASE WHEN char_type < 2 THEN "
+                   "   charass_value "
+                   " ELSE "
+                   "   formatDate(charass_value::date) "
+                   "END AS charass_value "
+                   "FROM charass JOIN char ON (char_id=charass_char_id) "
+                   "WHERE ( (charass_target_type=:target_type)"
+                   "  AND   (charass_target_id=:target_id) ) "
+                   "ORDER BY char_order, char_name;" );
+  charassq.bindValue(":target_id", _voheadid);
+  charassq.bindValue(":target_type", "VCH");
+  charassq.exec();
+  _charass->populate(charassq);
+}
+
 void voucher::sFillList()
 {
   if (_poNumber->isValid())
@@ -806,6 +874,7 @@ void voucher::populate()
     sFillList();
     sFillMiscList();
     sPopulateDistributed();
+    sFillCharacteristic();
   }
   else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting Voucher"),
                                 vohead, __FILE__, __LINE__))
