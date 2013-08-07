@@ -468,6 +468,7 @@
 #include "purgeInvoices.h"
 #include "purgePostedCounts.h"
 #include "purgePostedCountSlips.h"
+#include "quickRelocateLot.h"
 #include "quotes.h"
 #include "reasonCode.h"
 #include "reasonCodes.h"
