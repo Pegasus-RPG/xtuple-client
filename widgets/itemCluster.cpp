@@ -494,6 +494,28 @@ void ItemLineEdit::sInfo()
   _guiClientInterface->openWindow("itemAvailabilityWorkbench", params, parentWidget()->window() , Qt::NonModal, Qt::Window);
 }
 
+void ItemLineEdit::sCopy()
+{
+  ParameterList params;
+  params.append("item_id", id());
+  
+  QString uiName = "copyItem";
+
+  QWidget* w = 0;
+  w = _guiClientInterface->openWindow(uiName, params, parentWidget()->window() , Qt::WindowModal, Qt::Dialog);
+  
+  QDialog* newdlg = qobject_cast<QDialog*>(w);
+  int id = newdlg->exec();
+  if (id != QDialog::Rejected)
+  {
+    silentSetId(id);
+    emit newId(_id);
+    emit valid(_id != -1);
+  }
+  
+  return;
+}
+
 void ItemLineEdit::sHandleCompleter()
 {
   if (DEBUG) qDebug("%s::sHandleCompleter() entered", qPrintable(objectName()));
