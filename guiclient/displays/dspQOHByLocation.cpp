@@ -35,17 +35,22 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char*, Qt::WFlags fl)
   _asOf->setDate(omfgThis->dbDate(), true);
 
   list()->setRootIsDecorated(true);
-  list()->addColumn(tr("Site"),         _itemColumn, Qt::AlignLeft,   true,  "warehous_code"   );
-  list()->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
-  list()->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "f_descrip"   );
-  list()->addColumn(tr("Lot/Serial #"), 150,         Qt::AlignLeft,   true,  "f_lotserial"   );
-  list()->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
-  list()->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
-  list()->addColumn(tr("Reserved"),     _qtyColumn,  Qt::AlignRight,  false, "reservedqty"  );
+  list()->addColumn(tr("Site"),                _itemColumn, Qt::AlignLeft,   true,  "warehous_code"   );
+  list()->addColumn(tr("Item Number"),         _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  list()->addColumn(tr("Description/Demand"),  -1,          Qt::AlignLeft,   true,  "f_descrip"   );
+  list()->addColumn(tr("Lot/Serial #"),        150,         Qt::AlignLeft,   true,  "f_lotserial"   );
+  list()->addColumn(tr("UOM"),                 _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  list()->addColumn(tr("Qty"),                 _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
+  list()->addColumn(tr("Reserved"),            _qtyColumn,  Qt::AlignRight,  false, "reservedqty"  );
   
   if(_metrics->boolean("EnableSOReservationsByLocation"))
     list()->showColumn(6);
 
+  list()->setPopulateLinear();
+
+  if (_metrics->boolean("EnableSOReservationsByLocation"))
+    _showDemand->hide();
+  
   _asofGroup->hide();; // Issue #11793 - Not ready for this yet.
 
   sPopulateLocations();
@@ -158,6 +163,7 @@ void dspQOHByLocation::sFillList()
     }
 
     display::sFillList();
+    list()->expandAll();
   }
   else
   {
@@ -173,6 +179,9 @@ bool dspQOHByLocation::setParams(ParameterList &params)
   params.append("asOf", _asOf->date());
 
   params.append("na", tr("N/A"));
+  params.append("so", tr("S/O"));
+  params.append("wo", tr("W/O"));
+  params.append("to", tr("T/O"));
 
   _warehouse->appendValue(params);
 
@@ -181,6 +190,8 @@ bool dspQOHByLocation::setParams(ParameterList &params)
 
   if (_metrics->boolean("EnableSOReservationsByLocation"))
     params.append("EnableSOReservationsByLocation");
+  else if (_showDemand->isChecked())
+    params.append("ShowDemand", true);
 
   return true;
 }
