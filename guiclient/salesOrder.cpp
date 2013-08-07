@@ -779,7 +779,7 @@ bool salesOrder::save(bool partial)
                              "indicating the G/L Sales Account number for the "
                              "charge.  Please set the Misc. Charge amount to 0 "
                              "or select a Misc. Charge Sales Account." ) )
-         << GuiErrorCheck(_received->localValue() > 0.0, _postCash,
+         << GuiErrorCheck(_cashReceived->localValue() > 0.0, _postCash,
                           tr( "<p>You must Post Cash Payment before you may save it." ) )
   ;
   
@@ -2909,12 +2909,15 @@ void salesOrder::sFillItemList()
 
 void salesOrder::sCalculateTotal()
 {
-  _total->setLocalValue(_subtotal->localValue() + _tax->localValue() + _miscCharge->localValue() + _freight->localValue());
+  double total = _subtotal->localValue() + _tax->localValue() + _miscCharge->localValue() + _freight->localValue();
+  _total->setLocalValue(total);
+  _cashTotal->setLocalValue(total);
 
-  double balance = _total->localValue() - _allocatedCM->localValue() - _authCC->localValue() - _amountOutstanding;
+  double balance = total - _allocatedCM->localValue() - _authCC->localValue() - _amountOutstanding;
   if (balance < 0)
     balance = 0;
   _balance->setLocalValue(balance);
+  _cashBalance->setLocalValue(balance);
   _CCAmount->setLocalValue(balance);
   if (ISVIEW(_mode) || balance==0)
   {
@@ -3109,6 +3112,7 @@ void salesOrder::clear()
   _tax->clear();
   _miscCharge->clear();
   _total->clear();
+  _cashTotal->clear();
   _orderCurrency->setCurrentIndex(0);
   _orderCurrency->setEnabled(true);
   _weight->clear();
@@ -3116,6 +3120,7 @@ void salesOrder::clear()
   _outstandingCM->clear();
   _authCC->clear();
   _balance->clear();
+  _cashBalance->clear();
   _CCAmount->clear();
   _CCCVV->clear();
   _project->setId(-1);
@@ -4501,7 +4506,7 @@ void salesOrder::sEnterCashPayment()
 {
   XSqlQuery cashsave;
 
-  if (_received->localValue() >  _balance->localValue() &&
+  if (_cashReceived->localValue() >  _balance->localValue() &&
       QMessageBox::question(this, tr("Overapplied?"),
                             tr("The Cash Payment is more than the Balance.  Do you want to continue?"),
                             QMessageBox::Yes,
@@ -4527,14 +4532,14 @@ void salesOrder::sEnterCashPayment()
     return;
   }
   
-  if (_received->currencyEnabled() && _received->id() != _bankaccnt_curr_id &&
+  if (_cashReceived->currencyEnabled() && _cashReceived->id() != _bankaccnt_curr_id &&
       QMessageBox::question(this, tr("Bank Currency?"),
                             tr("<p>This Sales Order is specified in %1 while the "
                                "Bank Account is specified in %2. Do you wish to "
                                "convert at the current Exchange Rate?"
                                "<p>If not, click NO "
                                "and change the Bank Account in the POST TO field.")
-                            .arg(_received->currAbbr())
+                            .arg(_cashReceived->currAbbr())
                             .arg(_bankaccnt_currAbbr),
                             QMessageBox::Yes|QMessageBox::Escape,
                             QMessageBox::No |QMessageBox::Default) != QMessageBox::Yes)
@@ -4571,7 +4576,7 @@ void salesOrder::sEnterCashPayment()
   cashsave.bindValue(":cashrcpt_id", _cashrcptid);
   cashsave.bindValue(":cashrcpt_number", _cashrcptnumber);
   cashsave.bindValue(":cashrcpt_cust_id", _cust->id());
-  cashsave.bindValue(":cashrcpt_amount", _received->localValue());
+  cashsave.bindValue(":cashrcpt_amount", _cashReceived->localValue());
   cashsave.bindValue(":cashrcpt_fundstype", _fundsType->code());
   cashsave.bindValue(":cashrcpt_docnumber", _docNumber->text());
   cashsave.bindValue(":cashrcpt_docdate", _docDate->date());
@@ -4581,7 +4586,7 @@ void salesOrder::sEnterCashPayment()
   cashsave.bindValue(":cashrcpt_notes", "Sales Order Cash Payment");
   cashsave.bindValue(":cashrcpt_usecustdeposit", true);
   cashsave.bindValue(":cashrcpt_discount", 0.0);
-  cashsave.bindValue(":cashrcpt_curr_id", _received->id());
+  cashsave.bindValue(":cashrcpt_curr_id", _cashReceived->id());
   if(_altAccnt->isChecked())
     cashsave.bindValue(":cashrcpt_salescat_id", _salescat->id());
   else
@@ -4639,11 +4644,11 @@ void salesOrder::sEnterCashPayment()
                      "VALUES(:aropen_id, 'S', :doc_id, :amount, :curr_id);");
     cashPost.bindValue(":doc_id", _soheadid);
     cashPost.bindValue(":aropen_id", aropenid);
-    if (_received->localValue() >  _balance->localValue())
+    if (_cashReceived->localValue() >  _balance->localValue())
       cashPost.bindValue(":amount", _balance->localValue());
     else
-      cashPost.bindValue(":amount", _received->localValue());
-    cashPost.bindValue(":curr_id", _received->id());
+      cashPost.bindValue(":amount", _cashReceived->localValue());
+    cashPost.bindValue(":curr_id", _cashReceived->id());
     cashPost.exec();
     if (cashPost.lastError().type() != QSqlError::NoError)
     {
@@ -4657,7 +4662,7 @@ void salesOrder::sEnterCashPayment()
     return;
   }
   
-  _received->clear();
+  _cashReceived->clear();
   populateCMInfo();
 }
 
