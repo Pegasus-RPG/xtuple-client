@@ -24,8 +24,8 @@
   <height>55</height>
   <label>
    <rect>
-    <x>397</x>
-    <y>5.85</y>
+    <x>395</x>
+    <y>5</y>
     <width>350</width>
     <height>38</height>
    </rect>
@@ -38,13 +38,6 @@
    <vcenter/>
    <string>Project List</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>50</ystart>
-   <xend>745</xend>
-   <yend>50</yend>
-   <weight>2</weight>
-  </line>
  </rpthead>
  <section>
   <name>section</name>
@@ -52,7 +45,7 @@
    <name>project</name>
    <column>project</column>
    <head>
-    <height>100</height>
+    <height>55</height>
     <label>
      <rect>
       <x>0</x>
@@ -73,7 +66,7 @@
      <rect>
       <x>115</x>
       <y>25</y>
-      <width>509</width>
+      <width>415</width>
       <height>20</height>
      </rect>
      <font>
@@ -92,7 +85,7 @@
      <rect>
       <x>115</x>
       <y>5</y>
-      <width>200</width>
+      <width>300</width>
       <height>20</height>
      </rect>
      <font>
@@ -125,8 +118,8 @@
     </label>
     <label>
      <rect>
-      <x>25</x>
-      <y>45</y>
+      <x>545</x>
+      <y>5</y>
       <width>80</width>
       <height>20</height>
      </rect>
@@ -141,9 +134,9 @@
     </label>
     <field>
      <rect>
-      <x>115</x>
-      <y>45</y>
-      <width>235</width>
+      <x>630</x>
+      <y>5</y>
+      <width>115</width>
       <height>20</height>
      </rect>
      <font>
@@ -160,9 +153,9 @@
     </field>
     <field>
      <rect>
-      <x>115</x>
-      <y>65</y>
-      <width>235</width>
+      <x>630</x>
+      <y>25</y>
+      <width>110</width>
       <height>20</height>
      </rect>
      <font>
@@ -179,8 +172,8 @@
     </field>
     <label>
      <rect>
-      <x>10</x>
-      <y>65</y>
+      <x>530</x>
+      <y>25</y>
       <width>95</width>
       <height>20</height>
      </rect>
@@ -193,6 +186,20 @@
      <vcenter/>
      <string>Project Status:</string>
     </label>
+    <line>
+     <xstart>0</xstart>
+     <ystart>5</ystart>
+     <xend>750</xend>
+     <yend>5</yend>
+     <weight>2</weight>
+    </line>
+    <line>
+     <xstart>0</xstart>
+     <ystart>50</ystart>
+     <xend>750</xend>
+     <yend>50</yend>
+     <weight>2</weight>
+    </line>
    </head>
   </group>
   <group>
@@ -423,7 +430,7 @@
    </field>
    <field>
     <rect>
-     <x>209</x>
+     <x>210</x>
      <y>0</y>
      <width>85</width>
      <height>15</height>
@@ -442,7 +449,7 @@
    </field>
    <field>
     <rect>
-     <x>444</x>
+     <x>445</x>
      <y>0</y>
      <width>85</width>
      <height>15</height>
@@ -461,7 +468,7 @@
    </field>
    <field>
     <rect>
-     <x>544</x>
+     <x>545</x>
      <y>0</y>
      <width>165</width>
      <height>15</height>
@@ -485,7 +492,7 @@
   <label>
    <rect>
     <x>610</x>
-    <y>15</y>
+    <y>16</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -501,7 +508,7 @@
   <field>
    <rect>
     <x>700</x>
-    <y>15</y>
+    <y>16</y>
     <width>40</width>
     <height>15</height>
    </rect>
@@ -520,7 +527,7 @@
   <label>
    <rect>
     <x>0</x>
-    <y>15</y>
+    <y>16</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -543,7 +550,7 @@
   <field>
    <rect>
     <x>75</x>
-    <y>15</y>
+    <y>16</y>
     <width>100</width>
     <height>15</height>
    </rect>

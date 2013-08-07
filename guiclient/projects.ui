@@ -61,6 +61,13 @@ to be bound by its terms.</comment>
         </property>
        </spacer>
       </item>
+      <item>
+       <widget class="QCheckBox" name="_showHierarchy">
+        <property name="text">
+         <string>Export View</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

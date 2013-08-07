@@ -56,7 +56,7 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
       SalesOrderItem,   ShipTo,             TimeExpense,
       Todo,             TransferOrder,      TransferOrderItem,
       Vendor,           Voucher,            Warehouse,
-      WorkOrder			ProjectTask
+      WorkOrder,			ProjectTask
     };
 
     static GuiClientInterface *_guiClientInterface;

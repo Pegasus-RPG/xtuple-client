@@ -54,7 +54,6 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_editCharacteristic, SIGNAL(clicked()),    this, SLOT(sEdit()));
   connect(_deleteCharacteristic, SIGNAL(clicked()),  this, SLOT(sDelete()));
   connect(_prjtask, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-  connect(_showHierarchy, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
@@ -85,8 +84,6 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _prjtask->addColumn(tr("Exp. Actual"),      _priceColumn,   Qt::AlignRight,  true,  "exp_actual"  );
   _prjtask->addColumn(tr("Exp. Balance"),      _priceColumn,   Qt::AlignRight,  true,  "exp_balance"  );
 
-  
-  _showHierarchy->setChecked(true);
   _showSo->setChecked(false);
   _showWo->setChecked(false);
   _showPo->setChecked(false);
@@ -778,9 +775,6 @@ void project::sFillTaskList()
 
   if(_showPo->isChecked())
     params.append("showPo");
-
-  if(_showHierarchy->isChecked())
-    params.append("showHierarchy");
 
   if (! _privileges->check("ViewAllProjects") && ! _privileges->check("MaintainAllProjects"))
     params.append("owner_username", omfgThis->username());

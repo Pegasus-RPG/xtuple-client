@@ -28,8 +28,9 @@ public slots:
     virtual void sDelete();
     virtual void sCopy();
     virtual void sOpen();
-    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem *, int);
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
     virtual bool setParams(ParameterList &);
+    virtual void sBuildList();	
 };
 
 #endif // PROJECTS_H

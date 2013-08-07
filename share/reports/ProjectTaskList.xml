@@ -3,6 +3,12 @@
  <title>ProjectTaskList</title>
  <name>ProjectTaskList</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -11,16 +17,23 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT prjtask_number, prjtask_name, prjtask_descrip
+  <sql>SELECT prjtask_number, prjtask_name, prjtask_descrip,
+       CASE WHEN (prjtask_status='P') THEN 'Planning'
+	  WHEN (prjtask_status='O') THEN 'In-Process'
+	  ELSE 'Completed' END as status,
+       formatDate(prjtask_start_date) as f_start,
+       formatDate(prjtask_due_date) as f_due,
+       formatDate(prjtask_assigned_date) as f_assigned,
+       formatDate(prjtask_completed_date) as f_completed
   FROM prjtask
- WHERE (prjtask_prj_id=&lt;?value(&quot;prj_id&quot;)?>)
+ WHERE (prjtask_prj_id=&lt;?value("prj_id")?>)
  ORDER BY prjtask_number;</sql>
  </querysource>
  <querysource>
   <name>head</name>
   <sql>SELECT (prj_number||'-'||prj_name) AS project
   FROM prj
- WHERE (prj_id=&lt;? value(&quot;prj_id&quot;) ?>);</sql>
+ WHERE (prj_id=&lt;? value("prj_id") ?>);</sql>
  </querysource>
  <rpthead>
   <height>102</height>
@@ -42,7 +55,7 @@
   </label>
   <label>
    <rect>
-    <x>60</x>
+    <x>10</x>
     <y>50</y>
     <width>50</width>
     <height>15</height>
@@ -58,7 +71,7 @@
   </label>
   <field>
    <rect>
-    <x>120</x>
+    <x>70</x>
     <y>50</y>
     <width>450</width>
     <height>15</height>
@@ -77,7 +90,7 @@
   </field>
   <label>
    <rect>
-    <x>285</x>
+    <x>355</x>
     <y>80</y>
     <width>100</width>
     <height>15</height>
@@ -93,7 +106,7 @@
   </label>
   <label>
    <rect>
-    <x>70</x>
+    <x>140</x>
     <y>80</y>
     <width>100</width>
     <height>15</height>
@@ -137,12 +150,12 @@
    <key>
     <query>detail</query>
    </key>
-   <height>17</height>
+   <height>43</height>
    <field>
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>50</width>
+     <width>120</width>
      <height>15</height>
     </rect>
     <font>
@@ -159,10 +172,169 @@
    </field>
    <field>
     <rect>
-     <x>285</x>
-     <y>0</y>
-     <width>450</width>
-     <height>15</height>
+     <x>70</x>
+     <y>18</y>
+     <width>70</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_start</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>225</x>
+     <y>18</y>
+     <width>70</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_start</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>375</x>
+     <y>18</y>
+     <width>70</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_start</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>525</x>
+     <y>18</y>
+     <width>70</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_start</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>460</x>
+     <y>18</y>
+     <width>60</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Completed:</string>
+   </label>
+   <label>
+    <rect>
+     <x>5</x>
+     <y>18</y>
+     <width>60</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Start Date:</string>
+   </label>
+   <label>
+    <rect>
+     <x>310</x>
+     <y>18</y>
+     <width>60</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Due Date:</string>
+   </label>
+   <label>
+    <rect>
+     <x>160</x>
+     <y>18</y>
+     <width>60</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Assigned:</string>
+   </label>
+   <field>
+    <rect>
+     <x>140</x>
+     <y>-2</y>
+     <width>200</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>prjtask_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>355</x>
+     <y>-2</y>
+     <width>385</width>
+     <height>20</height>
     </rect>
     <font>
      <face>Arial</face>
@@ -178,23 +350,39 @@
    </field>
    <field>
     <rect>
-     <x>70</x>
-     <y>0</y>
-     <width>200</width>
-     <height>15</height>
+     <x>660</x>
+     <y>18</y>
+     <width>90</width>
+     <height>20</height>
     </rect>
     <font>
      <face>Arial</face>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>prjtask_name</column>
+     <column>status</column>
     </data>
    </field>
+   <label>
+    <rect>
+     <x>615</x>
+     <y>18</y>
+     <width>45</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Status:</string>
+   </label>
   </detail>
  </section>
  <pgfoot>

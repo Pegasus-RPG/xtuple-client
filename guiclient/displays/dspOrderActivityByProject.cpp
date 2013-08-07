@@ -471,7 +471,6 @@ bool dspOrderActivityByProject::setParams(ParameterList &params)
   params.append("complete", tr("Complete"));
   params.append("unreleased", tr("Unreleased"));
   params.append("total", tr("Total"));
-  params.append("showHierarchy");
 
   if(_showSo->isChecked())
     params.append("showSo");
