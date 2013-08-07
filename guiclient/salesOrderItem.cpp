@@ -46,6 +46,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
 
   connect(_item,              SIGNAL(privateIdChanged(int)),        this, SLOT(sFindSellingWarehouseItemsites(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemInfo(int)));
+  connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemsiteInfo()));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSources(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSubs(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateHistory()));
@@ -60,7 +61,6 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_scheduledDate,     SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleScheduleDate()));
   connect(_showAvailability,  SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
   connect(_showIndented,      SIGNAL(toggled(bool)),                this, SLOT(sDetermineAvailability()));
-  connect(_item,              SIGNAL(privateIdChanged(int)),        this, SLOT(sPopulateItemsiteInfo()));
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemsiteInfo()));
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sDetermineAvailability()));
   connect(_warehouse,         SIGNAL(newID(int)),                   this, SLOT(sPopulateItemSubs(int)));
@@ -506,7 +506,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
       connect(_qtyOrdered,        SIGNAL(editingFinished()),    this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice,      SIGNAL(editingFinished()),    this, SLOT(sCalculateDiscountPrcnt()));
       connect(_discountFromCust,  SIGNAL(editingFinished()),    this, SLOT(sCalculateFromDiscount()));
-      connect(_unitCost,          SIGNAL(editingFinished()),    this, SLOT(sCalculateFrom()));
+      connect(_unitCost,          SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_markupFromUnitCost,SIGNAL(editingFinished()),    this, SLOT(sCalculateFromMarkup()));
       connect(_createSupplyOrder, SIGNAL(toggled(bool)),        this, SLOT(sHandleWo(bool)));
     }
