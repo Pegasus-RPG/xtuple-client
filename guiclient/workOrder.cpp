@@ -79,7 +79,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _lastWarehousid = _warehouse->id();
   _lastItemid = -1;
   _comments->setReadOnly(TRUE);
-  _documents->setReadOnly(TRUE);
+//  _documents->setReadOnly(TRUE);
   _woNumber->setValidator(omfgThis->orderVal());
   _qty->setValidator(omfgThis->qtyVal());
   _qtyReceived->setPrecision(omfgThis->qtyVal());
