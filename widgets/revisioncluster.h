@@ -37,7 +37,7 @@ class XTUPLEWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 
     enum Modes { View, Use, Maintain };
     enum RevisionTypes { All, BOM, BOO };
-    enum Statuses { Active, Pending, Inactive };
+    enum Statuses { Active, Substitute, Pending, Inactive };
     virtual Modes mode();
     virtual RevisionTypes type();
     virtual QString typeText();
@@ -50,6 +50,7 @@ class XTUPLEWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 
   public slots:
     void activate();
+    void deactivate();
     void setActive();
     void setMode(QString);
     void setMode(Modes);
@@ -68,9 +69,12 @@ class XTUPLEWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
     Statuses _status;
     QAction *_activateSep;
     QAction *_activateAct;
+    QAction *_deactivateSep;
+    QAction *_deactivateAct;
 
   signals:
     void canActivate(bool);
+    void canDeactivate(bool);
     void modeChanged();
 
 };
@@ -93,10 +97,12 @@ class XTUPLEWIDGETS_EXPORT RevisionCluster : public VirtualCluster
   private slots:
     void sModeChanged();
     void sCanActivate(bool p);
+    void sCanDeactivate(bool p);
     void setActive();
 
   public slots:
     void activate();
+    void deactivate();
     virtual void setMode(QString);
     virtual void setMode(RevisionLineEdit::Modes);
     virtual void setType(QString);
@@ -105,6 +111,7 @@ class XTUPLEWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 
   signals:
     void canActivate(bool);
+    void canDeactivate(bool);
 };
 
 #endif

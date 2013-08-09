@@ -575,6 +575,23 @@ bool workOrder::sSave()
                               "Please correct before updating this Work Order"  ) )
      ;
 
+  if (_metrics->boolean("RevControl"))
+  {
+    workSave.prepare("SELECT rev_status"
+                     "  FROM rev"
+                     " WHERE (rev_id=:boo_rev_id); ");
+    workSave.bindValue(":boo_rev_id", _booRevision->id());
+    workSave.exec();
+    if (workSave.first())
+    {
+      QString revstatus = workSave.value("rev_status").toString();
+      if ((revstatus != "A") && (revstatus != "S"))
+        errors << GuiErrorCheck(true, _booRevision,
+                                tr( "You have selected an invalid BOO Revision.\n"
+                                   "Please correct before creating this Work Order"  ) );
+    }
+  }
+
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Work Order"), errors))
     return false;
 
