@@ -2050,6 +2050,7 @@ to be bound by its terms.</comment>
  <tabstops>
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
+  <tabstop>_customerPN</tabstop>
   <tabstop>_subItem</tabstop>
   <tabstop>_qtyOrdered</tabstop>
   <tabstop>_qtyUOM</tabstop>
