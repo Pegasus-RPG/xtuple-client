@@ -993,7 +993,7 @@ void salesOrderItem::sSave()
                "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
                "       :soitem_unitcost, :soitem_custprice, :soitem_pricemode,"
                "       :soitem_price, :price_uom_id, :price_invuomratio,"
-               "       '', -1,"
+               "       :soitem_order_type, :soitem_order_id,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
                "       :soitem_prcost, :soitem_taxtype_id, :soitem_warranty, "
                "       :soitem_cos_accnt_id, :soitem_rev_accnt_id "
@@ -1028,6 +1028,8 @@ void salesOrderItem::sSave()
     if (_altRevAccnt->isValid())
       salesSave.bindValue(":soitem_rev_accnt_id", _altRevAccnt->id());
     salesSave.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
+    salesSave.bindValue(":soitem_order_type", _supplyOrderType);
+    salesSave.bindValue(":soitem_order_id", _supplyOrderId);
     salesSave.exec();
     if (salesSave.lastError().type() != QSqlError::NoError)
     {
@@ -1074,8 +1076,7 @@ void salesOrderItem::sSave()
     salesSave.bindValue(":price_invuomratio", _priceinvuomratio);
     salesSave.bindValue(":soitem_prcost", _supplyOverridePrice->localValue());
     salesSave.bindValue(":soitem_memo", _notes->toPlainText());
-    if (_supplyOrderId != -1)
-      salesSave.bindValue(":soitem_order_type", _supplyOrderType);
+    salesSave.bindValue(":soitem_order_type", _supplyOrderType);
     salesSave.bindValue(":soitem_order_id", _supplyOrderId);
     salesSave.bindValue(":soitem_id", _soitemid);
     if (_sub->isChecked())
@@ -3290,7 +3291,13 @@ void salesOrderItem::populate()
     }
   }
   else if (ISORDER(_mode))
+  {
     _createSupplyOrder->setChecked(FALSE);
+    _supplyOrderQtyCache = _qtyOrdered->toDouble();
+    _supplyOrderQty->setDouble(_qtyOrdered->toDouble());
+    _supplyOrderDueDateCache = _scheduledDate->date();
+    _supplyOrderDueDate->setDate(_scheduledDate->date());
+  }
 
   // _warehouse is populated with active records. append if this one is inactive
   if (ISORDER(_mode))
