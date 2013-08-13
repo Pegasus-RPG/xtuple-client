@@ -367,6 +367,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 //  Start to create the new Poitem
           ParameterList newItemParams;
           newItemParams.append("mode", "new");
+          newItemParams.append("captive", true);
           newItemParams.append("pohead_id", _poheadid);
           newItemParams.append("itemsite_id", itemsiteid);
           newItemParams.append("itemsrc_id", itemsrcid);
