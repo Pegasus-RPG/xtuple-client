@@ -570,6 +570,29 @@ void user::sCheck()
     else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting User"),
                                   usrq, __FILE__, __LINE__))
       return;
+    
+    XSqlQuery dupq;
+    dupq.prepare("SELECT crmacct_id"
+                 "  FROM crmacct "
+                 " WHERE (UPPER(crmacct_number)=UPPER(:username));");
+    dupq.bindValue(":username", _cUsername);
+    dupq.exec();
+    if (dupq.first())
+    {
+      if (QMessageBox::question(this, tr("Convert"),
+                                tr("<p>This number is currently assigned to CRM Account. "
+                                   "Do you want to convert the CRM Account to a User?"),
+                                QMessageBox::Yes,
+                                QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      {
+        _username->clear();
+        _username->setFocus();
+        return;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Getting User CRM"),
+                                  dupq, __FILE__, __LINE__))
+      return;
   }
 }
 
