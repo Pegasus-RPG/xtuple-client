@@ -476,8 +476,10 @@ void dspGLTransactions::sViewDocument()
       dspViewDocument.prepare("SELECT apopen_id"
                 "  FROM apopen"
                 " WHERE ( (apopen_docnumber=:docnumber) "
+                "  AND (apopen_journalnumber=:journalnumber)"
                 "  AND (apopen_doctype IN ('C', 'D')) );");
       dspViewDocument.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      dspViewDocument.bindValue(":journalnumber", item->rawValue("gltrans_journalnumber").toString());
       dspViewDocument.exec();
       if(!dspViewDocument.first())
         return;
