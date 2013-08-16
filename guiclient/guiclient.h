@@ -218,8 +218,6 @@ class GUIClient : public QMainWindow
     Q_INVOKABLE void populateCustomMenu(QMenu*, const QString &);
 
     Q_INVOKABLE void handleNewWindow(QWidget *, Qt::WindowModality = Qt::NonModal, bool forceFloat = false);
-    Q_INVOKABLE bool saveWidgetSizePos(QWidget *pWidget);
-    Q_INVOKABLE bool restoreWidgetSizePos(QWidget *pWidget, bool forceFloat = false);
     Q_INVOKABLE QMenuBar *menuBar();
 
     // Used by scripting

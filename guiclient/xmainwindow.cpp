@@ -112,7 +112,15 @@ void XMainWindow::closeEvent(QCloseEvent *event)
   event->accept(); // we have no reason not to accept and let the script change it if needed
   _private->callCloseEvent(event);
 
-  omfgThis->saveWidgetSizePos(this);
+  if(event->isAccepted())
+  {
+    QString objName = objectName();
+    xtsettingsSetValue(objName + "/geometry/size", size());
+    if(omfgThis->showTopLevel() || isModal())
+      xtsettingsSetValue(objName + "/geometry/pos", pos());
+    else
+      xtsettingsSetValue(objName + "/geometry/pos", parentWidget()->pos());
+  }
 }
 
 void XMainWindow::showEvent(QShowEvent *event)
@@ -121,7 +129,38 @@ void XMainWindow::showEvent(QShowEvent *event)
   {
     _private->_shown = true;
 
-    omfgThis->restoreWidgetSizePos(this);
+    QRect availableGeometry = QApplication::desktop()->availableGeometry();
+    if(!omfgThis->showTopLevel() && !isModal())
+      availableGeometry = omfgThis->workspace()->geometry();
+
+    QString objName = objectName();
+    QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
+    QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
+
+    if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
+      resize(lsize);
+
+    setAttribute(Qt::WA_DeleteOnClose);
+    if(omfgThis->showTopLevel() || isModal())
+    {
+      omfgThis->_windowList.append(this);
+      statusBar()->show();
+      QRect r(pos, size());
+      if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
+        move(pos);
+    }
+    else
+    {
+      QWidget * fw = focusWidget();
+      QMdiSubWindow *subwin = omfgThis->workspace()->addSubWindow(this);
+      omfgThis->workspace()->setActiveSubWindow(subwin);
+      QRect r(pos, size());
+      if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
+        move(pos);
+      // This originally had to be after the show? Will it work here?
+      if(fw)
+        fw->setFocus();
+    }
 
     _private->loadScriptEngine();
 
