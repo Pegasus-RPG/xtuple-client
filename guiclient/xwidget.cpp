@@ -128,6 +128,7 @@ void XWidget::showEvent(QShowEvent *event)
         QWidget * fw = focusWidget();
         QMdiSubWindow *subwin = omfgThis->workspace()->addSubWindow(this);
         omfgThis->workspace()->setActiveSubWindow(subwin);
+        connect(this, SIGNAL(destroyed(QObject*)), subwin, SLOT(close()));
         if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
           subwin->resize(lsize);
         QRect r(pos, lsize);

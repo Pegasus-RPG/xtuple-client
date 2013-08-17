@@ -1718,7 +1718,7 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
     w->resize(size);
 
   bool wIsModal = w->isModal();
-  if(_showTopLevel || wIsModal)
+  if(_showTopLevel || wIsModal || forceFloat)
   {
     _windowList.append(w);
     w->setAttribute(Qt::WA_DeleteOnClose);
@@ -1736,6 +1736,7 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
     w->setAttribute(Qt::WA_DeleteOnClose);
     QMdiSubWindow *subwin = _workspace->addSubWindow(w);
     _workspace->setActiveSubWindow(subwin);
+    connect(w, SIGNAL(destroyed(QObject*)), subwin, SLOT(close()));
     QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       w->move(pos);
