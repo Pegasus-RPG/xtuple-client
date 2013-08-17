@@ -14,6 +14,7 @@
 #include <QCloseEvent>
 #include <QDesktopWidget>
 #include <QShowEvent>
+#include <QMdiSubWindow>
 
 #include "xcheckbox.h"
 #include "xtsettings.h"
@@ -112,15 +113,14 @@ void XWidget::showEvent(QShowEvent *event)
       QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
       QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
 
-      if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
-        resize(lsize);
-
       setAttribute(Qt::WA_DeleteOnClose);
       if(omfgThis->showTopLevel() || isModal())
       {
+        if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
+          resize(lsize);
         omfgThis->_windowList.append(this);
         QRect r(pos, size());
-        if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
+        if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberSizemberPos", true).toBool())
           move(pos);
       }
       else
@@ -128,7 +128,9 @@ void XWidget::showEvent(QShowEvent *event)
         QWidget * fw = focusWidget();
         QMdiSubWindow *subwin = omfgThis->workspace()->addSubWindow(this);
         omfgThis->workspace()->setActiveSubWindow(subwin);
-        QRect r(pos, size());
+        if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
+          subwin->resize(lsize);
+        QRect r(pos, lsize);
         if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool() && parentWidget())
           parentWidget()->move(pos);
         // This originally had to be after the show? Will it work here?

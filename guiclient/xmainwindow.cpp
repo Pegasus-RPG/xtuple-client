@@ -137,12 +137,11 @@ void XMainWindow::showEvent(QShowEvent *event)
     QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
     QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
 
-    if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
-      resize(lsize);
-
     setAttribute(Qt::WA_DeleteOnClose);
     if(omfgThis->showTopLevel() || isModal())
     {
+      if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool() && (metaObject()->className() != QString("xTupleDesigner")))
+        resize(lsize);
       omfgThis->_windowList.append(this);
       statusBar()->show();
       QRect r(pos, size());
@@ -154,7 +153,9 @@ void XMainWindow::showEvent(QShowEvent *event)
       QWidget * fw = focusWidget();
       QMdiSubWindow *subwin = omfgThis->workspace()->addSubWindow(this);
       omfgThis->workspace()->setActiveSubWindow(subwin);
-      QRect r(pos, size());
+      if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
+          subwin->resize(lsize);
+      QRect r(pos, lsize);
       if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
         move(pos);
       // This originally had to be after the show? Will it work here?
