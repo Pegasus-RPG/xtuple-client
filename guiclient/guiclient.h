@@ -168,12 +168,6 @@ class GUIClient : public QMainWindow
       Unknown, X11, WIN, MAC, QWS, WINCE, S60
     };
 
-    enum xtViewMode {
-      FreeFloatingView = -1,    // don't conflict with QMdiArea::ViewMode
-      SubWindowView    = QMdiArea::SubWindowView,
-      TabbedView       = QMdiArea::TabbedView
-    };
-
     GUIClient(const QString &, const QString &);
     virtual ~GUIClient();
 
@@ -213,7 +207,6 @@ class GUIClient : public QMainWindow
 
     Q_INVOKABLE bool singleCurrency();
     Q_INVOKABLE bool showTopLevel() const { return _showTopLevel; }
-    Q_INVOKABLE xtViewMode viewMode() const;
     Q_INVOKABLE QWidgetList windowList();
     Q_INVOKABLE void populateCustomMenu(QMenu*, const QString &);
 
@@ -239,6 +232,7 @@ class GUIClient : public QMainWindow
     QString _singleWindow;
 
     Q_INVOKABLE        void  launchBrowser(QWidget*, const QString &);
+    Q_INVOKABLE     QWidget *myActiveWindow();
     Q_INVOKABLE inline bool  shuttingDown() { return _shuttingDown; }
 
     void loadScriptGlobals(QScriptEngine * engine);
@@ -307,6 +301,8 @@ class GUIClient : public QMainWindow
     void sWorkOrdersUpdated(int, bool);
 
     void sIdleTimeout();
+
+    void sFocusChanged(QWidget* old, QWidget* now);
 
     void sClearErrorMessages();
     void sNewErrorMessage();
@@ -388,6 +384,7 @@ class GUIClient : public QMainWindow
     bool         _showTopLevel;
     QWidgetList  _windowList;
     QMenuBar	*_menuBar;
+    QWidget     *_activeWindow;
 
     InputManager   *_inputManager;
 

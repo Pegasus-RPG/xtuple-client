@@ -85,7 +85,6 @@ XDialog::~XDialog()
     delete _private;
 }
 
-// TODO: why isn't closeEvent sufficient?
 void XDialog::saveSize()
 {
   xtsettingsSetValue(objectName() + "/geometry/size", size());

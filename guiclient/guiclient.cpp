@@ -350,6 +350,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
   XSqlQuery _GGUIClient;
   _menuBar = 0;
+  _activeWindow = 0;
   _shown = false;
   _shuttingDown = false;
 
@@ -400,19 +401,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _systemFont = new QFont(qApp->font());
 
   _workspace = new QMdiArea();
-  xtViewMode prevmode = (xtViewMode)(xtsettingsValue("GUIClient/viewMode",
-                                                     SubWindowView).toInt());
-  if (FreeFloatingView == prevmode)
-    _workspace->setViewMode(QMdiArea::SubWindowView);
-  else
-    _workspace->setViewMode((QMdiArea::ViewMode)(prevmode));
 
-  _workspace->setOption(QMdiArea::DontMaximizeSubWindowOnActivation, false);
   _workspace->setWindowIcon(QIcon(":/images/clear.png"));
   _workspace->setActivationOrder(QMdiArea::ActivationHistoryOrder);
-#if defined Q_WS_MACX
-  _workspace->setDocumentMode(true);
-#endif
+
   setCentralWidget(_workspace);
   _workspace->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   _workspace->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -471,7 +463,6 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
       background.loadFromData(QUUDecode(_GGUIClient.value("image_data").toString()));
       _workspace->setBackground(QBrush(QPixmap::fromImage(background)));
-      //_workspace->setBackgroundMode(Qt::FixedPixmap);
     }
   }
 
@@ -506,15 +497,13 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   qApp->processEvents();
   _splash->finish(this);
 
+  connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*))); // Need this?
+
   //Restore Window Size Saved on Close
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
 
-  QSize defsize = QSize();
-#if defined Q_WS_MACX
-  defsize = QSize(1000, 650);
-#endif
   QPoint pos = xtsettingsValue("GUIClient/geometry/pos", QPoint()).toPoint();
-  QSize size = xtsettingsValue("GUIClient/geometry/size", defsize).toSize();
+  QSize size = xtsettingsValue("GUIClient/geometry/size", QSize()).toSize();
   int mainXMax = availableGeometry.bottomRight().x();
   int mainYMax = availableGeometry.bottomRight().y();
 
@@ -584,18 +573,6 @@ GUIClient::WindowSystem GUIClient::getWindowSystem()
 #else
   return Unknown;
 #endif
-}
-
-// TODO: can we get rid of _showTopLevel altogether?
-GUIClient::xtViewMode GUIClient::viewMode() const
-{
-  if (_showTopLevel)
-    return FreeFloatingView;
-  else if (_workspace)
-    return (GUIClient::xtViewMode)(_workspace->viewMode());
-
-  qWarning("GUIClient:: Don't know what viewMode I'm in");
-  return FreeFloatingView;
 }
 
 bool GUIClient::singleCurrency()
@@ -824,7 +801,6 @@ void GUIClient::closeEvent(QCloseEvent *event)
   // save main window info for next login
   xtsettingsSetValue("GUIClient/geometry/pos",  pos());
   xtsettingsSetValue("GUIClient/geometry/size", size());
-  xtsettingsSetValue("GUIClient/viewMode",      viewMode());
 
   // save state of any main window children
   QList<QMainWindow*> windows = findChildren<QMainWindow*>();
@@ -1760,7 +1736,6 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
     w->setAttribute(Qt::WA_DeleteOnClose);
     QMdiSubWindow *subwin = _workspace->addSubWindow(w);
     _workspace->setActiveSubWindow(subwin);
-    //_workspace->addWindow(w);
     QRect r(pos, w->size());
     if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
       w->move(pos);
@@ -1771,35 +1746,6 @@ void GUIClient::handleNewWindow(QWidget *w, Qt::WindowModality m, bool forceFloa
 
   if(!wIsModal)
     w->installEventFilter(__saveSizePositionEventFilter);
-  /*
-
-  w->setAttribute(Qt::WA_DeleteOnClose);
-  _windowList.append(w);
-
-  if (! forceFloat && ! w->isModal() && ! showTopLevel())
-  {
-    QMdiSubWindow *subwin = _workspace->addSubWindow(w);
-    _workspace->setActiveSubWindow(subwin);
-
-    if (QDialog *dlg = qobject_cast<QDialog*>(w)) // not ==
-      connect(dlg, SIGNAL(finished(int)), subwin, SLOT(hide()));
-
-    connect(w, SIGNAL(destroyed(QObject*)), subwin, SLOT(close()));
-  }
-
-  // TODO: why do {XDialog,XMainWindow,XWidget}::showEvent call restoreWidgetSizePos?
-  if (! w->inherits("XDialog") && ! w->inherits("XMainWindow") && ! w->inherits("XWidget"))
-  {
-    restoreWidgetSizePos(w, forceFloat);
-    if (! w->isModal())
-      w->installEventFilter(__saveSizePositionEventFilter);
-  }
-
-  w->show();
-
-  if (showTopLevel())
-    w->activateWindow();
-  */
 }
 
 QMenuBar *GUIClient::menuBar()
@@ -1870,6 +1816,23 @@ void GUIClient::tabifyDockWidget ( QDockWidget * first, QDockWidget * second )
 void GUIClient::setCentralWidget(QWidget * widget)
 {
   QMainWindow::setCentralWidget(widget);
+}
+
+void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
+{
+  QWidget * thisActive = workspace()->activeSubWindow();
+  if(omfgThis->showTopLevel())
+    thisActive = qApp->activeWindow();
+  if(thisActive == this)
+    return;
+  if(thisActive && thisActive->inherits("QMessageBox"))
+    return;
+  _activeWindow = thisActive;
+}
+
+QWidget * GUIClient::myActiveWindow()
+{
+  return _activeWindow;
 }
 
 // TODO: when std edition is extracted, replace this with a script include()
