@@ -36,7 +36,9 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
                  "      item_sold, item_active "
                  "   FROM item "
                  "   UNION "
-                 "   SELECT item_id, itemalias_number, itemalias_descrip1, itemalias_descrip2, "
+                 "   SELECT item_id, itemalias_number, "
+                 "     CASE WHEN LENGTH(itemalias_descrip1) > 1 THEN itemalias_descrip1 ELSE item_descrip1 END, "
+                 "     CASE WHEN LENGTH(itemalias_descrip2) > 1 THEN itemalias_descrip1 ELSE item_descrip2 END, "
                  "      item_upccode, item_type, item_fractional, item_config, item_inv_uom_id,"
                  "      item_sold, item_active "
                  "   FROM item "
@@ -826,7 +828,7 @@ void ItemLineEdit::sParse()
       clauses = _extraClauses;
       clauses << "((POSITION(:searchString IN item_number) = 1)"
               " OR (POSITION(:searchString IN item_upccode) = 1))";
-      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, false)
+      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, true)
                                .replace(";"," ORDER BY item_number LIMIT 1;"));
       item.bindValue(":searchString", QString(text().trimmed().toUpper()));
       item.exec();
