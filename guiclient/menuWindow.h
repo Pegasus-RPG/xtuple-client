@@ -34,7 +34,6 @@ class menuWindow : public QObject
     void sPrepareWindowMenu();
     void sRememberPositionToggle();
     void sRememberSizeToggle();
-    void sRestoreTabbedMode();
     void sTile();
 
   private:

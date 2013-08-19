@@ -85,10 +85,10 @@ XDialog::~XDialog()
     delete _private;
 }
 
-// TODO: why isn't closeEvent sufficient?
 void XDialog::saveSize()
 {
-  omfgThis->saveWidgetSizePos(this);
+  xtsettingsSetValue(objectName() + "/geometry/size", size());
+  xtsettingsSetValue(objectName() + "/geometry/pos", pos());
 }
 
 void XDialog::closeEvent(QCloseEvent * event)
@@ -109,7 +109,20 @@ void XDialog::showEvent(QShowEvent *event)
   {
     _private->_shown = true;
 
-    omfgThis->restoreWidgetSizePos(this);
+    QRect availableGeometry = QApplication::desktop()->availableGeometry();
+
+    QString objName = objectName();
+    QPoint pos = xtsettingsValue(objName + "/geometry/pos").toPoint();
+    QSize lsize = xtsettingsValue(objName + "/geometry/size").toSize();
+
+    if(lsize.isValid() && xtsettingsValue(objName + "/geometry/rememberSize", true).toBool())
+      resize(lsize);
+
+    // do I want to do this for a dialog?
+    //_windowList.append(w);
+    QRect r(pos, size());
+    if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
+      move(pos);
 
     _private->_rememberPos = new QAction(tr("Remember Position"), this);
     _private->_rememberPos->setCheckable(true);
