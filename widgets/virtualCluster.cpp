@@ -915,11 +915,7 @@ void VirtualClusterLineEdit::sOpen()
 
 void VirtualClusterLineEdit::sCopy()
 {
-  ParameterList params;
-  params.append(_idColName, id());
-  
-  if (_uiName == "item")
-    sOpenWindow("copyItem", params);
+  return;
 }
 
 QWidget* VirtualClusterLineEdit::sOpenWindow(const QString &uiName, ParameterList &params)

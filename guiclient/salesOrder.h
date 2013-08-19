@@ -68,6 +68,10 @@ class salesOrder : public XWidget, public Ui::salesOrder
     virtual void        sTaxDetail();
     virtual void        sFreightDetail();
     virtual void        setFreeFormShipto( bool pFreeForm );
+    virtual void        sNewCharacteristic();
+    virtual void        sEditCharacteristic();
+    virtual void        sDeleteCharacteristic();
+    virtual void        sFillCharacteristic();
     virtual void        populateCMInfo();
     virtual void        populateCCInfo();
     virtual void        sNewCreditCard();

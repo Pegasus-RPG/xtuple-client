@@ -45,6 +45,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   _maxCost = 0.0;
   _dropship = false;
   _costmethod = "";
+  _captive = false;
 
   connect(_ordered, SIGNAL(editingFinished()), this, SLOT(sDeterminePrice()));
   connect(_inventoryItem, SIGNAL(toggled(bool)), this, SLOT(sInventoryItemToggled(bool)));
@@ -411,6 +412,10 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
     }
   }
 
+  param = pParams.value("captive", &valid);
+  if (valid)
+    _captive = true;
+  
   return NoError;
 }
 
@@ -868,7 +873,7 @@ void purchaseOrderItem::sSave()
   }
 
   
-  if (cNew == _mode)
+  if (cNew == _mode && !_captive)
   {
     clear();
     prepare();

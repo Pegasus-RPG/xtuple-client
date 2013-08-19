@@ -8,6 +8,7 @@
  * to be bound by its terms.
  */
 
+#include "characteristic.h"
 #include "dspBookings.h"
 #include "salesOrder.h"
 #include "salesOrderItem.h"
@@ -44,6 +45,7 @@ dspBookings::dspBookings(QWidget* parent, const char*, Qt::WFlags fl)
     parameterWidget()->append(tr("Site"), "warehous_id", ParameterWidget::Site);
 
   parameterWidget()->applyDefaultFilterSet();
+  setupCharacteristics(characteristic::SalesOrders);
 
   list()->addColumn(tr("Order #"),          _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );
   list()->addColumn(tr("Line #"),           _seqColumn,      Qt::AlignLeft,   true,  "f_linenumber"  );

@@ -108,7 +108,7 @@ enum SetResponse contract::set(const ParameterList &pParams)
       _dates->setEnabled(FALSE);
       _number->setEnabled(FALSE);
       _descrip->setEnabled(FALSE);
-      _documents->setReadOnly(true);
+//      _documents->setReadOnly(true);
       _close->setText(tr("&Close"));
       _save->hide();
     }

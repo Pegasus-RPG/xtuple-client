@@ -95,10 +95,11 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   contractsMenu = new QMenu(parent);
   itemSourcesMenu = new QMenu(parent);
   vendorMenu = new QMenu(parent);
+  lookupMenu = new QMenu(parent);
+  lookupPoMenu = new QMenu(parent);
+  lookupPoItemsMenu = new QMenu(parent);
   formsMenu = new QMenu(parent);
   reportsMenu = new QMenu(parent);
-  reportsPoMenu = new QMenu(parent);
-  reportsPoItemsMenu = new QMenu(parent);
   reportsRcptRtrnMenu = new QMenu(parent);
   reportsPriceVarMenu = new QMenu(parent);
   reportsDelvVarMenu = new QMenu(parent);
@@ -111,10 +112,11 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   contractsMenu->setObjectName("menu.purch.contracts");
   itemSourcesMenu->setObjectName("menu.purch.itemsources");
   vendorMenu->setObjectName("menu.purch.vendor");
+  lookupMenu->setObjectName("menu.purch.lookup");
+  lookupPoMenu->setObjectName("menu.purch.lookuppo");
+  lookupPoItemsMenu->setObjectName("menu.purch.lookuppoitems");
   formsMenu->setObjectName("menu.purch.forms");
   reportsMenu->setObjectName("menu.purch.reports");
-  reportsPoMenu->setObjectName("menu.purch.reportspo");
-  reportsPoItemsMenu->setObjectName("menu.purch.reportpoitems");
   reportsRcptRtrnMenu->setObjectName("menu.purch.reportsrcptrtrn");
   reportsPriceVarMenu->setObjectName("menu.purch.reportspricevar");
   reportsDelvVarMenu->setObjectName("menu.purch.reportsdelvvar");
@@ -148,6 +150,24 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.postVouchers", tr("&Post..."), SLOT(sPostVouchers()), vouchersMenu, "PostVouchers", NULL, NULL, true , NULL },
     { "separator", NULL, NULL, mainMenu, "true", NULL, NULL, true , NULL },
 
+    // Purchasing | Lookup
+    { "menu",	tr("&Lookup"),           (char*)lookupMenu,	mainMenu,	"true",	NULL, NULL, true, NULL },
+    
+    //  Purchasing | Lookup | P/Os
+    { "menu", tr("&Purchase Orders"), (char*)lookupPoMenu, lookupMenu, "true", NULL, NULL, true , NULL },
+    { "po.dspPOsByVendor", tr("by &Vendor..."), SLOT(sDspPOsByVendor()), lookupPoMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
+    { "po.dspPOsByDate", tr("by &Date..."), SLOT(sDspPOsByDate()), lookupPoMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
+    
+    //  Purchasing | Reports | P/O Items
+    { "menu", tr("Purchase &Order Items"), (char*)lookupPoItemsMenu, lookupMenu, "true", NULL, NULL, true , NULL },
+    { "po.dspPoLineItemsByVendor", tr("by &Vendor..."), SLOT(sDspPoItemsByVendor()), lookupPoItemsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
+    { "po.dspPoLineItemsByDate", tr("by &Date..."), SLOT(sDspPoItemsByDate()), lookupPoItemsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
+    { "po.dspPoLineItemsByItem", tr("by &Item..."), SLOT(sDspPoItemsByItem()), lookupPoItemsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
+    
+    { "separator", NULL, NULL, lookupMenu, "true", NULL, NULL, true , NULL },
+    
+    { "po.dspPoHistory", tr("Purchase Order &History..."), SLOT(sDspPoHistory()), lookupMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
+    
     // Purchasing | Forms
     { "menu", tr("&Forms"), (char*)formsMenu, mainMenu, "true", NULL, NULL, true , NULL },
     { "po.printPurchaseOrder", tr("Print Purchase &Order..."), SLOT(sPrintPurchaseOrder()), formsMenu, "PrintPurchaseOrders", NULL, NULL, true , NULL },
@@ -169,21 +189,6 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     //  Purchasing | Reports | Purchase Requests
     // { "menu", tr("Purchase Re&quests"), (char*)requestMenu, reportsMenu, "true", NULL, NULL, true , NULL },
     // { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
-    
-    //  Purchasing | Reports | P/Os
-    { "menu", tr("&Purchase Orders"), (char*)reportsPoMenu, reportsMenu, "true", NULL, NULL, true , NULL },
-    { "po.dspPOsByVendor", tr("by &Vendor..."), SLOT(sDspPOsByVendor()), reportsPoMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
-    { "po.dspPOsByDate", tr("by &Date..."), SLOT(sDspPOsByDate()), reportsPoMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
-    
-    //  Purchasing | Reports | P/O Items
-    { "menu", tr("Purchase &Order Items"), (char*)reportsPoItemsMenu, reportsMenu, "true", NULL, NULL, true , NULL },
-    { "po.dspPoLineItemsByVendor", tr("by &Vendor..."), SLOT(sDspPoItemsByVendor()), reportsPoItemsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
-    { "po.dspPoLineItemsByDate", tr("by &Date..."), SLOT(sDspPoItemsByDate()), reportsPoItemsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
-    { "po.dspPoLineItemsByItem", tr("by &Item..."), SLOT(sDspPoItemsByItem()), reportsPoItemsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
-    
-    { "po.dspPoHistory", tr("Purchase Order &History..."), SLOT(sDspPoHistory()), reportsMenu, "ViewPurchaseOrders", NULL, NULL, true , NULL },
-
-    { "separator", NULL, NULL, reportsMenu, "true", NULL, NULL, true , NULL },
     
     //  Purchasing | Reports | Receipts and Returns
     { "menu", tr("&Receipts and Returns"), (char*)reportsRcptRtrnMenu, reportsMenu, "true", NULL, NULL, true , NULL },

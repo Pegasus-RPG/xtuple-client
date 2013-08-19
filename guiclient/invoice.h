@@ -44,6 +44,10 @@ public slots:
     virtual void sView();
     virtual void sDelete();
     virtual void populate();
+    virtual void sNewCharacteristic();
+    virtual void sEditCharacteristic();
+    virtual void sDeleteCharacteristic();
+    virtual void sFillCharacteristic();
     virtual void sFillItemList();
     virtual void sCalculateTotal();
     virtual void sCalculateTax();

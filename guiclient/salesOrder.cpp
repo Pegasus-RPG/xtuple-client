@@ -22,6 +22,7 @@
 
 #include <metasql.h>
 
+#include "characteristicAssignment.h"
 #include "creditCard.h"
 #include "creditcardprocessor.h"
 #include "crmacctcluster.h"
@@ -141,6 +142,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   connect(_shipDate,            SIGNAL(newDate(QDate)),                         this,         SLOT(sShipDateChanged()));
   connect(_cust,                SIGNAL(newCrmacctId(int)),                      _billToAddr,  SLOT(setSearchAcct(int)));
   connect(_cust,                SIGNAL(newCrmacctId(int)),                      _shipToAddr,  SLOT(setSearchAcct(int)));
+  connect(_newCharacteristic,   SIGNAL(clicked()),                              this,         SLOT(sNewCharacteristic()));
+  connect(_editCharacteristic,  SIGNAL(clicked()),                              this,         SLOT(sEditCharacteristic()));
+  connect(_deleteCharacteristic,SIGNAL(clicked()),                              this,         SLOT(sDeleteCharacteristic()));
 
   connect(_billToAddr,          SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _billToCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -211,6 +215,9 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
     _soitem->addColumn(tr("Reservable"),_qtyColumn, Qt::AlignCenter, true, "reservable");
   }
 
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
+  
   _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
   _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
   _cc->addColumn(tr("Number"),  _itemColumn, Qt::AlignRight,true, "f_number");
@@ -310,6 +317,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _calcfreight = _metrics->boolean("CalculateFreight");
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "newQuote")
     {
@@ -338,6 +347,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _quotestaus->setText("Open");
 
       connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "edit")
     {
@@ -354,6 +365,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _cust->setType(CLineEdit::AllCustomers);
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "editQuote")
     {
@@ -380,6 +393,8 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _quotestaus->show();
 
       connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "view")
     {
@@ -423,9 +438,10 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _edit->setText(tr("View"));
       _cust->setType(CLineEdit::AllCustomersAndProspects);
       _comments->setReadOnly(true);
-      _documents->setReadOnly(true);
+//      _documents->setReadOnly(true);
       _copyToShipto->setEnabled(FALSE);
       _orderCurrency->setEnabled(FALSE);
+      _newCharacteristic->setEnabled(FALSE);
       _paymentInformation->removeTab(_paymentInformation->indexOf(_cashPage));
       _save->hide();
       _clear->hide();
@@ -770,7 +786,7 @@ bool salesOrder::save(bool partial)
                              "indicating the G/L Sales Account number for the "
                              "charge.  Please set the Misc. Charge amount to 0 "
                              "or select a Misc. Charge Sales Account." ) )
-         << GuiErrorCheck(_received->localValue() > 0.0, _postCash,
+         << GuiErrorCheck(_cashReceived->localValue() > 0.0, _postCash,
                           tr( "<p>You must Post Cash Payment before you may save it." ) )
          << GuiErrorCheck(!partial && !_project->isValid() && _metrics->boolean("RequireProjectAssignment"), _project,
                           tr("<p>You must enter a Project for this order before you may save it."))
@@ -2513,6 +2529,7 @@ void salesOrder::populate()
         }
       }
       sPopulateShipments();
+      sFillCharacteristic();
       emit populated();
       sFillItemList();
     }
@@ -2672,6 +2689,7 @@ void salesOrder::populate()
 
       _comments->setId(_soheadid);
       _documents->setId(_soheadid);
+      sFillCharacteristic();
       sFillItemList();
       emit populated();
       // TODO - a partial save is not saving everything
@@ -2900,12 +2918,15 @@ void salesOrder::sFillItemList()
 
 void salesOrder::sCalculateTotal()
 {
-  _total->setLocalValue(_subtotal->localValue() + _tax->localValue() + _miscCharge->localValue() + _freight->localValue());
+  double total = _subtotal->localValue() + _tax->localValue() + _miscCharge->localValue() + _freight->localValue();
+  _total->setLocalValue(total);
+  _cashTotal->setLocalValue(total);
 
-  double balance = _total->localValue() - _allocatedCM->localValue() - _authCC->localValue() - _amountOutstanding;
+  double balance = total - _allocatedCM->localValue() - _authCC->localValue() - _amountOutstanding;
   if (balance < 0)
     balance = 0;
   _balance->setLocalValue(balance);
+  _cashBalance->setLocalValue(balance);
   _CCAmount->setLocalValue(balance);
   if (ISVIEW(_mode) || balance==0)
   {
@@ -3091,6 +3112,7 @@ void salesOrder::clear()
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
   _orderComments->clear();
   _shippingComments->clear();
+  _charass->clear();
   _custPONumber->clear();
   _miscCharge->clear();
   _miscChargeDescription->clear();
@@ -3099,6 +3121,7 @@ void salesOrder::clear()
   _tax->clear();
   _miscCharge->clear();
   _total->clear();
+  _cashTotal->clear();
   _orderCurrency->setCurrentIndex(0);
   _orderCurrency->setEnabled(true);
   _weight->clear();
@@ -3106,6 +3129,7 @@ void salesOrder::clear()
   _outstandingCM->clear();
   _authCC->clear();
   _balance->clear();
+  _cashBalance->clear();
   _CCAmount->clear();
   _CCCVV->clear();
   _project->setId(-1);
@@ -3364,6 +3388,7 @@ void salesOrder::setViewMode()
   _printSO->setEnabled(FALSE);
   _shippingZone->setEnabled(FALSE);
   _saleType->setEnabled(FALSE);
+  _newCharacteristic->setEnabled(FALSE);
   _save->hide();
   _clear->hide();
   _project->setReadOnly(true);
@@ -3669,6 +3694,68 @@ void salesOrder::viewSalesOrder( int pId, QWidget *parent )
   salesOrder *newdlg = new salesOrder(parent);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void salesOrder::sNewCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  if (ISQUOTE(_mode))
+    params.append("quhead_id", _soheadid);
+  else
+    params.append("cohead_id", _soheadid);
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void salesOrder::sEditCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void salesOrder::sDeleteCharacteristic()
+{
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM charass "
+                     "WHERE (charass_id=:charass_id);" );
+  itemDelete.bindValue(":charass_id", _charass->id());
+  itemDelete.exec();
+  
+  sFillCharacteristic();
+}
+
+void salesOrder::sFillCharacteristic()
+{
+  XSqlQuery charassq;
+  charassq.prepare( "SELECT charass_id, char_name, "
+                    " CASE WHEN char_type < 2 THEN "
+                    "   charass_value "
+                    " ELSE "
+                    "   formatDate(charass_value::date) "
+                    "END AS charass_value "
+                    "FROM charass JOIN char ON (char_id=charass_char_id) "
+                    "WHERE ( (charass_target_type=:target_type)"
+                    "  AND   (charass_target_id=:target_id) ) "
+                    "ORDER BY char_order, char_name;" );
+  charassq.bindValue(":target_id", _soheadid);
+  if (ISQUOTE(_mode))
+    charassq.bindValue(":target_type", "QU");
+  else
+    charassq.bindValue(":target_type", "SO");
+  charassq.exec();
+  _charass->populate(charassq);
 }
 
 void salesOrder::populateCMInfo()
@@ -4428,7 +4515,7 @@ void salesOrder::sEnterCashPayment()
 {
   XSqlQuery cashsave;
 
-  if (_received->localValue() >  _balance->localValue() &&
+  if (_cashReceived->localValue() >  _balance->localValue() &&
       QMessageBox::question(this, tr("Overapplied?"),
                             tr("The Cash Payment is more than the Balance.  Do you want to continue?"),
                             QMessageBox::Yes,
@@ -4454,14 +4541,14 @@ void salesOrder::sEnterCashPayment()
     return;
   }
   
-  if (_received->currencyEnabled() && _received->id() != _bankaccnt_curr_id &&
+  if (_cashReceived->currencyEnabled() && _cashReceived->id() != _bankaccnt_curr_id &&
       QMessageBox::question(this, tr("Bank Currency?"),
                             tr("<p>This Sales Order is specified in %1 while the "
                                "Bank Account is specified in %2. Do you wish to "
                                "convert at the current Exchange Rate?"
                                "<p>If not, click NO "
                                "and change the Bank Account in the POST TO field.")
-                            .arg(_received->currAbbr())
+                            .arg(_cashReceived->currAbbr())
                             .arg(_bankaccnt_currAbbr),
                             QMessageBox::Yes|QMessageBox::Escape,
                             QMessageBox::No |QMessageBox::Default) != QMessageBox::Yes)
@@ -4498,7 +4585,7 @@ void salesOrder::sEnterCashPayment()
   cashsave.bindValue(":cashrcpt_id", _cashrcptid);
   cashsave.bindValue(":cashrcpt_number", _cashrcptnumber);
   cashsave.bindValue(":cashrcpt_cust_id", _cust->id());
-  cashsave.bindValue(":cashrcpt_amount", _received->localValue());
+  cashsave.bindValue(":cashrcpt_amount", _cashReceived->localValue());
   cashsave.bindValue(":cashrcpt_fundstype", _fundsType->code());
   cashsave.bindValue(":cashrcpt_docnumber", _docNumber->text());
   cashsave.bindValue(":cashrcpt_docdate", _docDate->date());
@@ -4508,7 +4595,7 @@ void salesOrder::sEnterCashPayment()
   cashsave.bindValue(":cashrcpt_notes", "Sales Order Cash Payment");
   cashsave.bindValue(":cashrcpt_usecustdeposit", true);
   cashsave.bindValue(":cashrcpt_discount", 0.0);
-  cashsave.bindValue(":cashrcpt_curr_id", _received->id());
+  cashsave.bindValue(":cashrcpt_curr_id", _cashReceived->id());
   if(_altAccnt->isChecked())
     cashsave.bindValue(":cashrcpt_salescat_id", _salescat->id());
   else
@@ -4566,11 +4653,11 @@ void salesOrder::sEnterCashPayment()
                      "VALUES(:aropen_id, 'S', :doc_id, :amount, :curr_id);");
     cashPost.bindValue(":doc_id", _soheadid);
     cashPost.bindValue(":aropen_id", aropenid);
-    if (_received->localValue() >  _balance->localValue())
+    if (_cashReceived->localValue() >  _balance->localValue())
       cashPost.bindValue(":amount", _balance->localValue());
     else
-      cashPost.bindValue(":amount", _received->localValue());
-    cashPost.bindValue(":curr_id", _received->id());
+      cashPost.bindValue(":amount", _cashReceived->localValue());
+    cashPost.bindValue(":curr_id", _cashReceived->id());
     cashPost.exec();
     if (cashPost.lastError().type() != QSqlError::NoError)
     {
@@ -4584,7 +4671,7 @@ void salesOrder::sEnterCashPayment()
     return;
   }
   
-  _received->clear();
+  _cashReceived->clear();
   populateCMInfo();
 }
 

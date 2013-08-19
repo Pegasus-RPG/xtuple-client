@@ -104,10 +104,11 @@ class menuPurchase : public QObject
     QMenu *contractsMenu;
     QMenu *itemSourcesMenu;
     QMenu *vendorMenu;
+    QMenu *lookupMenu;
+    QMenu *lookupPoMenu;
+    QMenu *lookupPoItemsMenu;
     QMenu *formsMenu;
     QMenu *reportsMenu;
-    QMenu *reportsPoMenu;
-    QMenu *reportsPoItemsMenu;
     QMenu *reportsRcptRtrnMenu;
     QMenu *reportsPriceVarMenu;
     QMenu *reportsDelvVarMenu;

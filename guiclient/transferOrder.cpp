@@ -1660,7 +1660,7 @@ void transferOrder::setViewMode()
   _edit->setText(tr("View"));
   _comments->setReadOnly(true);
   _project->setReadOnly(true);
-  _documents->setReadOnly(true);
+//  _documents->setReadOnly(true);
   _shipComplete->setEnabled(false);
   _save->hide();
   _clear->hide();

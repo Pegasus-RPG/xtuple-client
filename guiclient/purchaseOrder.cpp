@@ -19,6 +19,7 @@
 
 #include "errorReporter.h"
 #include "guiErrorCheck.h"
+#include "characteristicAssignment.h"
 #include "comment.h"
 #include "itemSourceList.h"
 #include "mqlutil.h"
@@ -45,28 +46,31 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _orderNumber->setValidator(new QIntValidator(this));
 
-  connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTotals()));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_orderDate,   SIGNAL(newDate(QDate)), this, SLOT(sHandleOrderDate()));
-  connect(_orderNumber, SIGNAL(editingFinished()), this, SLOT(sHandleOrderNumber()));
-  connect(_orderNumber, SIGNAL(textChanged(const QString&)), this, SLOT(sSetUserOrderNumber()));
-  connect(_poCurrency,  SIGNAL(newID(int)),     this, SLOT(sCurrencyChanged()));
-  connect(_poitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleDeleteButton()));
-  connect(_purchaseOrderInformation, SIGNAL(currentChanged(int)), this, SLOT(sTabChanged(int)));
-  connect(_qecurrency,  SIGNAL(newID(int)),     this, SLOT(sCurrencyChanged()));
-  connect(_qedelete,    SIGNAL(clicked()),      this, SLOT(sQEDelete()));
-  connect(_qesave,      SIGNAL(clicked()),      this, SLOT(sQESave()));
-  connect(_save,        SIGNAL(clicked()),      this, SLOT(sSave()));
-  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_tax,          SIGNAL(valueChanged()), this, SLOT(sCalculateTotals()));
-  connect(_taxZone,      SIGNAL(newID(int)), this, SLOT(sTaxZoneChanged()));
-  connect(_vendaddrList, SIGNAL(clicked()),     this, SLOT(sVendaddrList()));
-  connect(_vendor,       SIGNAL(newId(int)),    this, SLOT(sHandleVendor(int)));
-  connect(_vendAddr,     SIGNAL(changed()),     _vendaddrCode, SLOT(clear()));
-  connect(_warehouse,    SIGNAL(newID(int)),    this, SLOT(sHandleShipTo()));
+  connect(_poitem,                   SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this,          SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_delete,                   SIGNAL(clicked()),                                 this,          SLOT(sDelete()));
+  connect(_edit,                     SIGNAL(clicked()),                                 this,          SLOT(sEdit()));
+  connect(_freight,                  SIGNAL(valueChanged()),                            this,          SLOT(sCalculateTotals()));
+  connect(_new,                      SIGNAL(clicked()),                                 this,          SLOT(sNew()));
+  connect(_orderDate,                SIGNAL(newDate(QDate)),                            this,          SLOT(sHandleOrderDate()));
+  connect(_orderNumber,              SIGNAL(editingFinished()),                         this,          SLOT(sHandleOrderNumber()));
+  connect(_orderNumber,              SIGNAL(textChanged(const QString&)),               this,          SLOT(sSetUserOrderNumber()));
+  connect(_poCurrency,               SIGNAL(newID(int)),                                this,          SLOT(sCurrencyChanged()));
+  connect(_poitem,                   SIGNAL(itemSelectionChanged()),                    this,          SLOT(sHandleDeleteButton()));
+  connect(_purchaseOrderInformation, SIGNAL(currentChanged(int)),                       this,          SLOT(sTabChanged(int)));
+  connect(_qecurrency,               SIGNAL(newID(int)),                                this,          SLOT(sCurrencyChanged()));
+  connect(_qedelete,                 SIGNAL(clicked()),                                 this,          SLOT(sQEDelete()));
+  connect(_qesave,                   SIGNAL(clicked()),                                 this,          SLOT(sQESave()));
+  connect(_save,                     SIGNAL(clicked()),                                 this,          SLOT(sSave()));
+  connect(_taxLit,                   SIGNAL(leftClickedURL(const QString&)),            this,          SLOT(sTaxDetail()));
+  connect(_tax,                      SIGNAL(valueChanged()),                            this,          SLOT(sCalculateTotals()));
+  connect(_taxZone,                  SIGNAL(newID(int)),                                this,          SLOT(sTaxZoneChanged()));
+  connect(_vendaddrList,             SIGNAL(clicked()),                                 this,          SLOT(sVendaddrList()));
+  connect(_vendor,                   SIGNAL(newId(int)),                                this,          SLOT(sHandleVendor(int)));
+  connect(_vendAddr,                 SIGNAL(changed()),                                 _vendaddrCode, SLOT(clear()));
+  connect(_warehouse,                SIGNAL(newID(int)),                                this,          SLOT(sHandleShipTo()));
+  connect(_newCharacteristic,        SIGNAL(clicked()),                                 this,          SLOT(sNewCharacteristic()));
+  connect(_editCharacteristic,       SIGNAL(clicked()),                                 this,          SLOT(sEditCharacteristic()));
+  connect(_deleteCharacteristic,     SIGNAL(clicked()),                                 this,          SLOT(sDeleteCharacteristic()));
 
   connect(_vendAddr, SIGNAL(addressChanged(QString,QString,QString,QString,QString,QString, QString)),
           _vendCntct, SLOT(setNewAddr(QString,QString,QString,QString,QString,QString, QString)));
@@ -103,6 +107,9 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Demand Type"),    _itemColumn,   Qt::AlignCenter,false, "demand_type");
   _poitem->addColumn(tr("Order"),          _itemColumn,   Qt::AlignRight, false, "order_number");
 
+  _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
+  _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
+  
   _qeitem = new PoitemTableModel(this);
   _qeitemView->setModel(_qeitem);
   _qeitem->select();
@@ -201,6 +208,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     if ( (param.toString() == "new") || (param.toString() == "releasePr") )
     {
       _mode = cNew;
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       if (param.toString() == "releasePr")
       {
@@ -360,6 +369,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 //  Start to create the new Poitem
           ParameterList newItemParams;
           newItemParams.append("mode", "new");
+          newItemParams.append("captive", true);
           newItemParams.append("pohead_id", _poheadid);
           newItemParams.append("itemsite_id", itemsiteid);
           newItemParams.append("itemsrc_id", itemsrcid);
@@ -431,6 +441,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 
       connect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
 
       _new->setEnabled(TRUE);
 
@@ -442,15 +454,15 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _orderNumber->setEnabled(FALSE);
       _orderDate->setEnabled(FALSE);
       _warehouse->setEnabled(FALSE);
-          _taxZone->setEnabled(FALSE);
+      _taxZone->setEnabled(FALSE);
       _agent->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
       _terms->setType(XComboBox::Terms);
       _vendor->setReadOnly(TRUE);
-          _vendCntct->setEnabled(FALSE);
-          _vendAddr->setEnabled(FALSE);
-          _shiptoCntct->setEnabled(FALSE);
-          _shiptoAddr->setEnabled(FALSE);
+      _vendCntct->setEnabled(FALSE);
+      _vendAddr->setEnabled(FALSE);
+      _shiptoCntct->setEnabled(FALSE);
+      _shiptoAddr->setEnabled(FALSE);
       _shipVia->setEnabled(FALSE);
       _fob->setEnabled(FALSE);
       _status->setEnabled(FALSE);
@@ -466,7 +478,8 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _qedelete->setEnabled(FALSE);
       _qecurrency->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
-      _documents->setReadOnly(TRUE);
+//      _documents->setReadOnly(TRUE);
+      _newCharacteristic->setEnabled(FALSE);
 
       _delete->hide();
       _edit->setText(tr("&View"));
@@ -675,6 +688,7 @@ void purchaseOrder::populate()
     _freight->setLocalValue(po.value("pohead_freight").toDouble());
   }
 
+  sFillCharacteristic();
   sFillList();
 }
 
@@ -989,6 +1003,62 @@ void purchaseOrder::sDelete()
   }
 
   sFillList();
+}
+
+void purchaseOrder::sNewCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("pohead_id", _poheadid);
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void purchaseOrder::sEditCharacteristic()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+  
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharacteristic();
+}
+
+void purchaseOrder::sDeleteCharacteristic()
+{
+  XSqlQuery itemDelete;
+  itemDelete.prepare( "DELETE FROM charass "
+                     "WHERE (charass_id=:charass_id);" );
+  itemDelete.bindValue(":charass_id", _charass->id());
+  itemDelete.exec();
+  
+  sFillCharacteristic();
+}
+
+void purchaseOrder::sFillCharacteristic()
+{
+  XSqlQuery charassq;
+  charassq.prepare( "SELECT charass_id, char_name, "
+                   " CASE WHEN char_type < 2 THEN "
+                   "   charass_value "
+                   " ELSE "
+                   "   formatDate(charass_value::date) "
+                   "END AS charass_value "
+                   "FROM charass JOIN char ON (char_id=charass_char_id) "
+                   "WHERE ( (charass_target_type=:target_type)"
+                   "  AND   (charass_target_id=:target_id) ) "
+                   "ORDER BY char_order, char_name;" );
+  charassq.bindValue(":target_id", _poheadid);
+  charassq.bindValue(":target_type", "PO");
+  charassq.exec();
+  _charass->populate(charassq);
 }
 
 void purchaseOrder::sVendaddrList()

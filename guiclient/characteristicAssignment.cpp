@@ -154,7 +154,53 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     handleTargetType();
   }
 
-
+  param = pParams.value("quhead_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "QU";
+    handleTargetType();
+  }
+  
+  param = pParams.value("cohead_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "SO";
+    handleTargetType();
+  }
+  
+  param = pParams.value("invchead_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "INV";
+    handleTargetType();
+  }
+  
+  param = pParams.value("vend_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "V";
+    handleTargetType();
+  }
+  
+  param = pParams.value("pohead_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "PO";
+    handleTargetType();
+  }
+  
+  param = pParams.value("vohead_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "VCH";
+    handleTargetType();
+  }
 
   param = pParams.value("charass_id", &valid);
   if (valid)
@@ -223,7 +269,7 @@ void characteristicAssignment::sSave()
   if (_char->model()->data(_char->model()->index(_char->currentIndex(), 0)) == -1)
   {
     QMessageBox::information( this, tr("No Characteristic Selected"),
-                              tr("You must select a Characteristic before saving this Item Characteristic.") );
+                              tr("You must select a Characteristic before saving this Characteristic Assignment.") );
     _char->setFocus();
     return;
   }
@@ -470,6 +516,36 @@ void characteristicAssignment::handleTargetType()
   {
     setWindowTitle(tr("Project Task Characteristic"));
     boolColumn = "char_tasks";
+  }
+  else if (_targetType == "QU")
+  {
+    setWindowTitle(tr("Quote Characteristic"));
+    boolColumn = "char_quotes";
+  }
+  else if (_targetType == "SO")
+  {
+    setWindowTitle(tr("Sales Order Characteristic"));
+    boolColumn = "char_salesorders";
+  }
+  else if (_targetType == "INV")
+  {
+    setWindowTitle(tr("Invoice Characteristic"));
+    boolColumn = "char_invoices";
+  }
+  else if (_targetType == "V")
+  {
+    setWindowTitle(tr("Vendor Characteristic"));
+    boolColumn = "char_vendors";
+  }
+  else if (_targetType == "PO")
+  {
+    setWindowTitle(tr("Purchase Order Characteristic"));
+    boolColumn = "char_purchaseorders";
+  }
+  else if (_targetType == "VCH")
+  {
+    setWindowTitle(tr("Voucher Characteristic"));
+    boolColumn = "char_vouchers";
   }
 
   QSqlTableModel *model = new QSqlTableModel;

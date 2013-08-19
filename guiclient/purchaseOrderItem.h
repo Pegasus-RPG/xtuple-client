@@ -70,6 +70,7 @@ private:
     double _maxCost;
     bool _overriddenUnitPrice;
     bool _dropship;
+    bool _captive;
     QString	_poStatus;
     QString	_costmethod;
     QStandardItemModel * _itemchar;
