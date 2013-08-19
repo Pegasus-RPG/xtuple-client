@@ -26,7 +26,7 @@ class MenuWindowPrivate
   public:
     MenuWindowPrivate() :
       _cascade(0),    _closeActive(0), _closeAll(0),     _geometryMenu(0),
-      _lastActive(0), _rememberPos(0), _rememberSize(0), _retab(), _tile(0)
+      _lastActive(0), _rememberPos(0), _rememberSize(0), _tile(0)
     {
     }
 
@@ -37,7 +37,6 @@ class MenuWindowPrivate
     QWidget   *_lastActive;
     Action    *_rememberPos;
     Action    *_rememberSize;
-    Action    *_retab;
     Action    *_tile;
 };
 
@@ -62,8 +61,6 @@ menuWindow::menuWindow(GUIClient *pParent) :
                                SLOT(sCascade()), _windowMenu, true);
   _data->_tile = new Action(_parent, "window.tile", tr("&Tile"), this,
                             SLOT(sTile()), _windowMenu, true);
-  _data->_retab = new Action(_parent, "window.retab", tr("T&ab View"), this,
-                             SLOT(sRestoreTabbedMode()), _windowMenu, false);
 
   _data->_rememberPos = new Action(_parent, "window.rememberPositionToggle",
                             tr("Remember Position"), this,
@@ -98,7 +95,6 @@ void menuWindow::sPrepareWindowMenu()
   {
     _windowMenu->addAction(_data->_cascade);
     _windowMenu->addAction(_data->_tile);
-    _windowMenu->addAction(_data->_retab);
 
     _windowMenu->addSeparator();
   }
@@ -112,8 +108,6 @@ void menuWindow::sPrepareWindowMenu()
 
   _data->_cascade->setEnabled(b);
   _data->_tile->setEnabled(b);
-  _data->_retab->setEnabled(b &&
-                      _parent->workspace()->viewMode() != QMdiArea::TabbedView);
 
   _data->_closeActive->setEnabled(b);
   _data->_closeAll->setEnabled(b);
@@ -163,7 +157,6 @@ void menuWindow::sHideWindowMenu()
 {
   _data->_cascade->setEnabled(true);
   _data->_tile->setEnabled(true);
-  _data->_retab->setEnabled(_parent->workspace()->viewMode() != QMdiArea::TabbedView);
   _data->_closeActive->setEnabled(true);
   _data->_closeAll->setEnabled(true);
 }
@@ -189,7 +182,6 @@ void menuWindow::sCascade()
   _parent->workspace()->setViewMode(QMdiArea::SubWindowView);
   _parent->workspace()->setOption(QMdiArea::DontMaximizeSubWindowOnActivation,
                                   true);
-  _data->_retab->setEnabled(true);
 }
 
 void menuWindow::sCloseActive()
@@ -232,26 +224,11 @@ void menuWindow::sRememberSizeToggle()
                      _data->_rememberSize->isChecked());
 }
 
-void menuWindow::sRestoreTabbedMode()
-{
-  QMdiSubWindow *last = _parent->workspace()->activeSubWindow();
-
-  _parent->workspace()->setViewMode(QMdiArea::TabbedView);
-  _parent->workspace()->setOption(QMdiArea::DontMaximizeSubWindowOnActivation,
-                                  false);
-  _data->_retab->setEnabled(false);
-  foreach (QWidget *wind, _parent->windowList())
-    wind->showMaximized();
-
-  _parent->workspace()->setActiveSubWindow(last);
-}
-
 void menuWindow::sTile()
 {
   _parent->workspace()->tileSubWindows();
   _parent->workspace()->setViewMode(QMdiArea::SubWindowView);
   _parent->workspace()->setOption(QMdiArea::DontMaximizeSubWindowOnActivation,
                                   true);
-  _data->_retab->setEnabled(true);
 }
 
