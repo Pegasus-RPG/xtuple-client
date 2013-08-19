@@ -21,16 +21,38 @@
 
 #define DEBUG false
 
-QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int);
+QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int, bool);
 QString buildItemLineEditTitle(const unsigned int, const QString);
 
-QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, const QString pPost, const unsigned int pType)
+QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, const QString pPost, const unsigned int pType, bool unionAlias)
 {
   QStringList clauses = pClauses;
-  QString sql = pPre + " FROM item "
-                       "      JOIN uom ON (uom_id=item_inv_uom_id)"
-                       "      LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id)"
-                       "      LEFT OUTER JOIN crmacct ON (crmacct_id=itemalias_crmacct_id)";
+  QString sql;
+  if (unionAlias) 
+  {
+    sql = pPre + " FROM ("
+                 "   SELECT item_id, item_number, item_descrip1, item_descrip2, "
+                 "      item_upccode, item_type, item_fractional, item_config, item_inv_uom_id, "
+                 "      item_sold, item_active "
+                 "   FROM item "
+                 "   UNION "
+                 "   SELECT item_id, itemalias_number, "
+                 "     CASE WHEN LENGTH(itemalias_descrip1) > 1 THEN itemalias_descrip1 ELSE item_descrip1 END, "
+                 "     CASE WHEN LENGTH(itemalias_descrip2) > 1 THEN itemalias_descrip1 ELSE item_descrip2 END, "
+                 "      item_upccode, item_type, item_fractional, item_config, item_inv_uom_id,"
+                 "      item_sold, item_active "
+                 "   FROM item "
+                 "     JOIN itemalias ON item_id = itemalias_item_id "
+                 ") AS item ";
+                 " JOIN uom ON (uom_id=item_inv_uom_id) ";
+  }
+  else
+  {
+    sql = pPre + " FROM item "
+                 "      JOIN uom ON (uom_id=item_inv_uom_id)"
+                 "      LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id)"
+                 "      LEFT OUTER JOIN crmacct ON (crmacct_id=itemalias_crmacct_id)";
+  }
 
   if (pType & (ItemLineEdit::cLocationControlled | ItemLineEdit::cLotSerialControlled | ItemLineEdit::cDefaultLocation | ItemLineEdit::cActive))
   {
@@ -289,7 +311,7 @@ void ItemLineEdit::setItemNumber(const QString& pNumber)
       clauses = _extraClauses;
       clauses << "(item_number=:item_number OR item_upccode=:item_number)";
 
-      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
+      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, false));
       item.bindValue(":item_number", pNumber);
       item.exec();
       
@@ -388,7 +410,7 @@ void ItemLineEdit::silentSetId(const int pId)
     clauses = _extraClauses;
     clauses << "(item_id=:item_id)";
 
-    item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
+    item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, false));
     item.bindValue(":item_id", pId);
     item.exec();
 
@@ -551,7 +573,7 @@ void ItemLineEdit::sHandleCompleter()
     clauses = _extraClauses;
     clauses << "((POSITION(:searchString IN item_number) = 1)"
             " OR (POSITION(:searchString IN item_upccode) = 1))";
-    numQ.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type)
+    numQ.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, true)
                               .replace(";"," ORDER BY item_number LIMIT 10;"));
     numQ.bindValue(":searchString", QString(text().trimmed().toUpper()));
   }
@@ -828,7 +850,7 @@ void ItemLineEdit::sParse()
       clauses = _extraClauses;
       clauses << "((POSITION(:searchString IN item_number) = 1)"
               " OR (POSITION(:searchString IN item_upccode) = 1))";
-      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type)
+      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, true)
                                .replace(";"," ORDER BY item_number LIMIT 1;"));
       item.bindValue(":searchString", QString(text().trimmed().toUpper()));
       item.exec();
@@ -1101,7 +1123,7 @@ void itemList::sFillList()
 
       setWindowTitle(buildItemLineEditTitle(_itemType, tr("Items")));
 
-      _listTab->populate(buildItemLineEditQuery(pre, clauses, post, _itemType), _itemid);
+      _listTab->populate(buildItemLineEditQuery(pre, clauses, post, _itemType, false), _itemid);
   }
 }
 
@@ -1302,7 +1324,7 @@ void itemSearch::sFillList()
     if(!subClauses.isEmpty())
       clauses << QString("( " + subClauses.join(" OR ") + " )");
 
-    sql = buildItemLineEditQuery(pre, clauses, post, _itemType);
+    sql = buildItemLineEditQuery(pre, clauses, post, _itemType, false);
   }
 
   XSqlQuery search;
