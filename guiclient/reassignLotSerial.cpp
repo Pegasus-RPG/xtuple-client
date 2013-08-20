@@ -90,7 +90,7 @@ enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
 
       for (int i = 0; i < _source->topLevelItemCount(); i++)
       {
-        if (((XTreeWidget*)(_source->topLevelItem(i)))->id() == param.toInt())
+        if (_source->topLevelItem(i)->id() == param.toInt())
           _source->setCurrentItem(_source->topLevelItem(i));
       }
     }
