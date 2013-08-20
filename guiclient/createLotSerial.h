@@ -14,6 +14,7 @@
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
+#include "lotSerialUtils.h"
 
 #include "ui_createLotSerial.h"
 
@@ -41,6 +42,10 @@ private:
     int  _itemsiteid;
     bool _serial;
     bool _preassigned;
+    LotSerialUtils _lschars;
+    QList<QWidget *> _charWidgets;
+    bool _lotsFound;
+
 };
 
 #endif // CREATELOTSERIAL_H

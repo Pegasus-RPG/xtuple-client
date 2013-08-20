@@ -14,6 +14,7 @@
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
+#include "lotSerialUtils.h"
 
 #include "ui_assignLotSerial.h"
 
@@ -45,6 +46,7 @@ private:
     int _itemlocSeries;
     int _itemlocdistid;
     bool _trapClose;
+    LotSerialUtils _lschars;
 };
 
 #endif // ASSIGNLOTSERIAL_H

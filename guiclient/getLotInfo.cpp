@@ -22,6 +22,9 @@ getLotInfo::getLotInfo(QWidget* parent, const char* name, bool modal, Qt::WFlags
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
+
+  _charWidgets =
+          LotSerialUtils::addLotCharsToGridLayout(this, gridLayout, _lschars);
 }
 
 getLotInfo::~getLotInfo()
@@ -90,6 +93,9 @@ void getLotInfo::sAssign()
     _expiration->setFocus();
     return;
   }
+
+  int next_ls_id = LotSerialUtils::getNextLotId() + 1;
+  _lschars.updateLotCharacteristics(next_ls_id, _charWidgets);
   
   accept();
 }
