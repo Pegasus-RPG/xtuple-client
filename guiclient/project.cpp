@@ -44,6 +44,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_buttonBox,     SIGNAL(rejected()),        this, SLOT(sClose()));
   connect(_buttonBox,     SIGNAL(accepted()),        this, SLOT(sSave()));
   connect(_printTasks,    SIGNAL(clicked()),         this, SLOT(sPrintTasks()));
+  connect(_queryTasks,    SIGNAL(clicked()),         this, SLOT(sFillTaskList()));
   connect(_newTask,       SIGNAL(clicked()),         this, SLOT(sNewTask()));
   connect(_editTask,      SIGNAL(clicked()),         this, SLOT(sEditTask()));
   connect(_viewTask,      SIGNAL(clicked()),         this, SLOT(sViewTask()));
