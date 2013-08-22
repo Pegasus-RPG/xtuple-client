@@ -41,7 +41,7 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     // if you add to this then add to the _documentMap[] below
     enum DocumentSources
     {
-      Uninitialized,
+       Uninitialized,
       Address,          BBOMHead,           BBOMItem,
       BOMHead,          BOMItem,            BOOHead,
       BOOItem,          CRMAccount,         Contact, 
@@ -56,7 +56,7 @@ class XTUPLEWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
       SalesOrderItem,   ShipTo,             TimeExpense,
       Todo,             TransferOrder,      TransferOrderItem,
       Vendor,           Voucher,            Warehouse,
-      WorkOrder
+      WorkOrder,			ProjectTask
     };
 
     static GuiClientInterface *_guiClientInterface;

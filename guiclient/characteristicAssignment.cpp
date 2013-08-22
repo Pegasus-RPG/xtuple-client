@@ -138,6 +138,22 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     handleTargetType();
   }
 
+  param = pParams.value("prj_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "PROJ";
+    handleTargetType();
+  }
+
+  param = pParams.value("prjtask_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "TASK";
+    handleTargetType();
+  }
+
   param = pParams.value("quhead_id", &valid);
   if (valid)
   {
@@ -185,8 +201,6 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     _targetType = "VCH";
     handleTargetType();
   }
-  
-
 
   param = pParams.value("charass_id", &valid);
   if (valid)
@@ -492,6 +506,16 @@ void characteristicAssignment::handleTargetType()
   {
     setWindowTitle(tr("Incident Characteristic"));
     boolColumn = "char_incidents";
+  }
+  else if (_targetType == "PROJ")
+  {
+    setWindowTitle(tr("Project Characteristic"));
+    boolColumn = "char_projects";
+  }
+  else if (_targetType == "TASK")
+  {
+    setWindowTitle(tr("Project Task Characteristic"));
+    boolColumn = "char_tasks";
   }
   else if (_targetType == "QU")
   {

@@ -27,6 +27,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sAssignedToChanged(const int);
     virtual void sStatusChanged(const int);
     virtual void sCRMAcctChanged(const int);
@@ -36,10 +37,18 @@ public slots:
     virtual void sNewTask();
     virtual void sEditTask();
     virtual void sViewTask();
+    virtual void sEditOrder();
+    virtual void sViewOrder();
     virtual void sDeleteTask();
     virtual void sFillTaskList();
+    virtual void sNewSalesOrder();
+    virtual void sNewPurchaseOrder();
+    virtual void sNewWorkOrder();
     virtual void sNumberChanged();
-    virtual void sActivity();
+    virtual void sNew();
+    virtual void sEdit();
+    virtual void sDelete();
+    virtual void sFillCharList();
 
 protected slots:
     virtual void languageChange();

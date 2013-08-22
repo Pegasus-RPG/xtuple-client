@@ -8,7 +8,14 @@
  * to be bound by its terms.
  */
 
+#include <QMessageBox>
+#include <QApplication>
+
+#include <xsqlquery.h>
 #include "projectcluster.h"
+#include "projectCopy.h"
+
+#define DEBUG true
 
 ProjectCluster::ProjectCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
@@ -31,6 +38,11 @@ ProjectLineEdit::ProjectStatuses ProjectCluster::allowedStatuses() const
 void ProjectCluster::setAllowedStatuses(const ProjectLineEdit::ProjectStatuses p)
 {
   ((ProjectLineEdit*)_number)->setAllowedStatuses(p);
+}
+
+void ProjectCluster::sCopy()
+{
+  ((ProjectLineEdit*)_number)->sCopy();
 }
 
 void ProjectCluster::setAllowedStatuses(const int p)
@@ -57,6 +69,12 @@ ProjectLineEdit::ProjectLineEdit(QWidget* pParent, const char* pName) :
   setViewOwnPriv("ViewPersonalProjects");
 
   _type = Undefined;
+
+  connect(_copyProject, SIGNAL(triggered()), this, SLOT(sCopy()));
+
+  // Add copy Project menu item
+  if (!_x_preferences->boolean("ClusterButtons"))
+    menu()->insertAction(menu()->actions().at(6),_copyProject);
 }
 
 ProjectLineEdit::ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, const char *pName) :
@@ -69,6 +87,7 @@ ProjectLineEdit::ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, co
 
   _type = pPrjType;
   _allowedStatuses = 0x00;
+
 }
 
 void ProjectLineEdit::buildExtraClause()
@@ -136,4 +155,26 @@ void ProjectLineEdit::setAllowedStatuses(const ProjectStatuses p)
 {
   _allowedStatuses = p;
   buildExtraClause();
+}
+
+void ProjectLineEdit::sCopy()
+{
+  if (DEBUG)
+    qDebug("ProjectLineEdit::sCopy() Project ID: %d)", id());  
+
+  if (id() == -1)
+  {
+    QMessageBox::information(this, tr("Project Copy"), tr("Please select a project to copy first"));
+    return;
+  }
+  
+  ParameterList params;
+  params.append("prj_id", id());
+  
+  projectCopy newdlg(parentWidget(), "", TRUE);
+  newdlg.set(params);
+  
+  int copiedProjectid;
+  if ((copiedProjectid = newdlg.exec()) != QDialog::Rejected)
+    setId(copiedProjectid);
 }

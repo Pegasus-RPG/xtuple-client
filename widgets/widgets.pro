@@ -160,6 +160,7 @@ SOURCES += widgets.cpp \
     parameterwidget.cpp \
     plCluster.cpp \
     projectCluster.cpp \
+    projectCopy.cpp \
     queryitem.cpp \
     queryset.cpp \
     quoteList.cpp \
@@ -250,6 +251,7 @@ HEADERS += widgets.h \
     parameterwidget.h \
     plCluster.h \
     projectcluster.h \
+    projectCopy.h \
     queryitem.h \
     queryset.h \
     quoteList.h \

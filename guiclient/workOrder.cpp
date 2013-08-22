@@ -317,6 +317,14 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       }
      }
    }
+
+  if (_mode == cNew)
+  {
+    param = pParams.value("prj_id", &valid);
+    if (valid)
+      _project->setId(param.toInt());
+  }
+
   return NoError;
 }
 
@@ -573,6 +581,8 @@ bool workOrder::sSave()
          << GuiErrorCheck(!_startDate->isValid(), _startDate,
                           tr( "You have entered an invalid Start Date.\n"
                               "Please correct before updating this Work Order"  ) )
+         << GuiErrorCheck(!_project->isValid() && _metrics->boolean("RequireProjectAssignment"), _project,
+                          tr("<p>You must enter a Project for this order before you may save it."))
      ;
 
   if (_metrics->boolean("RevControl"))

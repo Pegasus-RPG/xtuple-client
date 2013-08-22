@@ -8,29 +8,29 @@
  * to be bound by its terms.
  */
 
-#ifndef PROJECTS_H
-#define PROJECTS_H
+#ifndef PROJECTTYPES_H
+#define PROJECTTYPES_H
 
-#include "display.h"
-#include "ui_projects.h"
+#include "xwidget.h"
+#include "ui_projectTypes.h"
 
-class projects : public display, public Ui::projects
+class projectTypes : public XWidget, public Ui::projectTypes
 {
     Q_OBJECT
 
 public:
-    projects(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    projectTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    ~projectTypes();
 
 public slots:
+    virtual void sDelete();
     virtual void sNew();
     virtual void sEdit();
-    virtual void sView();
-    virtual void sDelete();
-    virtual void sCopy();
-    virtual void sOpen();
-    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem*, int);
-    virtual bool setParams(ParameterList &);
-    virtual void sBuildList();	
+    virtual void sFillList();
+
+protected slots:
+    virtual void languageChange();
+
 };
 
-#endif // PROJECTS_H
+#endif // PROJECTTYPES_H

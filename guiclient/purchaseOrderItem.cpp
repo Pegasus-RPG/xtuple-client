@@ -654,6 +654,8 @@ void purchaseOrderItem::sSave()
                           tr("<p>You must select a Tax Type before you may save." ))
          << GuiErrorCheck(_so->text().length() == 0 && _costmethod == "J", _item,
                           tr("<p>You may not purchase a Job Item without an associated demand."))
+         << GuiErrorCheck(!_project->isValid() && _metrics->boolean("RequireProjectAssignment"), _project,
+                          tr("<p>You must enter a Project for this order item before you may save it."))
      ;
 
   if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Purchase Order Item"), errors))

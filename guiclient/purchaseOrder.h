@@ -87,6 +87,7 @@ private:
     bool _printed;
     PoitemTableModel* _qeitem;
     int _NumberGen;
+    int _projectId;
 };
 
 #endif // PURCHASEORDER_H

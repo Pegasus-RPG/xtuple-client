@@ -146,6 +146,8 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   else
     _dropShip->hide();
   _so->setReadOnly(TRUE);
+
+  _projectId = -1;
 }
 
 void purchaseOrder::setPoheadid(const int pId)
@@ -508,10 +510,16 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     populate();
   }
 
+ if (cNew == _mode)
+  {
+    param = pParams.value("prj_id", &valid);
+    if (valid)
+      _projectId = param.toInt();
+  }
+
   param = pParams.value("vend_id", &valid);
   if (valid)
     _vendor->setId(param.toInt());
-  
   param = pParams.value("captive", &valid);
   if (valid)
     _captive = true;
@@ -919,6 +927,8 @@ void purchaseOrder::sNew()
   params.append("vend_id", _vendor->id());
   params.append("warehous_id", _warehouse->id());
   params.append("dropship", QVariant(_dropShip->isChecked()));
+  if (_projectId != -1)
+    params.append("prj_id", _projectId);
 
   purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);

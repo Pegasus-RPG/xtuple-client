@@ -61,6 +61,13 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   connect(_aliasAct, SIGNAL(triggered()), this, SIGNAL(requestAlias()));
   addAction(_aliasAct);
 
+  _copyProject = new QAction(tr("New From..."), this);
+  _copyProject->setShortcut(QKeySequence(tr("Ctrl+Shift+C")));
+  _copyProject->setShortcutContext(Qt::WidgetShortcut);
+  _copyProject->setToolTip(tr("Copy Project From Selected"));
+  connect(_copyProject, SIGNAL(triggered()), this, SIGNAL(requestCopy()));
+  addAction(_copyProject);
+
   _mapper = new XDataWidgetMapper(this);
 }
 

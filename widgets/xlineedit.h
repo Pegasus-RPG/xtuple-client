@@ -59,6 +59,7 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
     void requestSearch();
     void requestInfo();
     void requestAlias();
+    void requestCopy();
 
   protected slots:
     virtual void sHandleNullStr();
@@ -72,6 +73,7 @@ class XTUPLEWIDGETS_EXPORT XLineEdit : public QLineEdit
     QAction* _listAct;
     QAction* _searchAct;
     QAction* _aliasAct;
+    QAction* _copyProject;
     
     virtual void focusInEvent(QFocusEvent * event);
     virtual void focusOutEvent(QFocusEvent * event);

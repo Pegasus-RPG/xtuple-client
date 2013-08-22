@@ -32,6 +32,10 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sFillList();
+    virtual void sNewSalesOrder();
+    virtual void sNewPurchaseOrder();
+    virtual void sNewWorkOrder();
+    virtual void sNewProjectTask();
 
 protected slots:
     virtual void languageChange();
