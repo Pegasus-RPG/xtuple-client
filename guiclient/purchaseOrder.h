@@ -34,6 +34,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
+    virtual void setViewMode();
     virtual void populate();
     virtual void sSave();
     virtual void sNew();

@@ -2374,6 +2374,9 @@ void salesOrder::populate()
     so.exec();
     if (so.first())
     {
+      if (so.value("cohead_status").toString() == "C")
+        setViewMode();
+      
       _orderNumber->setText(so.value("cohead_number").toString());
       _orderNumber->setEnabled(FALSE);
 

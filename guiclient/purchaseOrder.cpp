@@ -449,45 +449,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
     {
-      _mode = cView;
-
-      _orderNumber->setEnabled(FALSE);
-      _orderDate->setEnabled(FALSE);
-      _warehouse->setEnabled(FALSE);
-      _taxZone->setEnabled(FALSE);
-      _agent->setEnabled(FALSE);
-      _terms->setEnabled(FALSE);
-      _terms->setType(XComboBox::Terms);
-      _vendor->setReadOnly(TRUE);
-      _vendCntct->setEnabled(FALSE);
-      _vendAddr->setEnabled(FALSE);
-      _shiptoCntct->setEnabled(FALSE);
-      _shiptoAddr->setEnabled(FALSE);
-      _shipVia->setEnabled(FALSE);
-      _fob->setEnabled(FALSE);
-      _status->setEnabled(FALSE);
-      _notes->setEnabled(FALSE);
-      _new->setEnabled(FALSE);
-      _freight->setEnabled(FALSE);
-      _tax->setEnabled(FALSE);
-      _vendaddrList->hide();
-      _purchaseOrderInformation->removeTab(_purchaseOrderInformation->indexOf(_quickEntryTab));
-      _poCurrency->setEnabled(FALSE);
-      _qeitemView->setEnabled(FALSE);
-      _qesave->setEnabled(FALSE);
-      _qedelete->setEnabled(FALSE);
-      _qecurrency->setEnabled(FALSE);
-      _comments->setReadOnly(TRUE);
-//      _documents->setReadOnly(TRUE);
-      _newCharacteristic->setEnabled(FALSE);
-
-      _delete->hide();
-      _edit->setText(tr("&View"));
-      _close->setText(tr("&Close"));
-      _save->hide();
-
-      connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-      connect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+      setViewMode();
     }
   }
 
@@ -525,6 +487,60 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     _captive = true;
 
   return NoError;
+}
+
+void purchaseOrder::setViewMode()
+{
+  if (cEdit == _mode)
+  {
+    // Undo some changes set for the edit mode
+    disconnect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    disconnect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    disconnect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+    disconnect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+
+    _new->setEnabled(FALSE);
+  }
+
+  _mode = cView;
+  
+  _orderNumber->setEnabled(FALSE);
+  _orderDate->setEnabled(FALSE);
+  _warehouse->setEnabled(FALSE);
+  _taxZone->setEnabled(FALSE);
+  _agent->setEnabled(FALSE);
+  _terms->setEnabled(FALSE);
+  _terms->setType(XComboBox::Terms);
+  _vendor->setReadOnly(TRUE);
+  _vendCntct->setEnabled(FALSE);
+  _vendAddr->setEnabled(FALSE);
+  _shiptoCntct->setEnabled(FALSE);
+  _shiptoAddr->setEnabled(FALSE);
+  _shipVia->setEnabled(FALSE);
+  _fob->setEnabled(FALSE);
+  _status->setEnabled(FALSE);
+  _notes->setEnabled(FALSE);
+  _new->setEnabled(FALSE);
+  _freight->setEnabled(FALSE);
+  _tax->setEnabled(FALSE);
+  _vendaddrList->hide();
+  _purchaseOrderInformation->removeTab(_purchaseOrderInformation->indexOf(_quickEntryTab));
+  _poCurrency->setEnabled(FALSE);
+  _qeitemView->setEnabled(FALSE);
+  _qesave->setEnabled(FALSE);
+  _qedelete->setEnabled(FALSE);
+  _qecurrency->setEnabled(FALSE);
+  _comments->setReadOnly(TRUE);
+  //      _documents->setReadOnly(TRUE);
+  _newCharacteristic->setEnabled(FALSE);
+  
+  _delete->hide();
+  _edit->setText(tr("&View"));
+  _close->setText(tr("&Close"));
+  _save->hide();
+  
+  connect(_poitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  connect(_poitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
 }
 
 void purchaseOrder::createHeader()
@@ -607,6 +623,9 @@ void purchaseOrder::populate()
   po.exec();
   if (po.first())
   {
+    if (po.value("pohead_status").toString() == "C")
+      setViewMode();
+    
     _orderNumber->setText(po.value("pohead_number"));
     _warehouse->setId(po.value("warehous_id").toInt());
     _orderDate->setDate(po.value("pohead_orderdate").toDate(), true);
