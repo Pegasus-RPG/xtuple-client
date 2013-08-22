@@ -131,6 +131,13 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   if (valid)
     _pickList->setChecked(param.toBool());
 
+  param = pParams.value("showPrice", &valid);
+  if (!valid)
+  {
+    _priceLit->hide();
+    _price->hide();
+  }
+
   param = pParams.value("womatl_id", &valid);
   if (valid)
   {
@@ -227,7 +234,8 @@ void woMaterialItem::sSave()
     woSave.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod,"
                    "                        :uom_id, :qtyFxd, :qtyPer,"
                    "                        :scrap, :bomitem_id, :notes,"
-                   "                        :ref, :wooper_id, :picklist) AS womatlid;");
+                   "                        :ref, :wooper_id, :picklist,"
+                   "                        :price) AS womatlid;");
     woSave.bindValue(":wo_id", _wo->id());
     woSave.bindValue(":itemsite_id", itemsiteid);
     woSave.bindValue(":issueMethod", issueMethod);
@@ -240,6 +248,7 @@ void woMaterialItem::sSave()
     woSave.bindValue(":ref",   _ref->toPlainText());
     woSave.bindValue(":wooper_id", _wooperid);
     woSave.bindValue(":picklist", QVariant(_pickList->isChecked()));
+    woSave.bindValue(":price", _price->baseValue());
     woSave.exec();
     if (woSave.first())
     {
@@ -263,7 +272,8 @@ void woMaterialItem::sSave()
                "    womatl_qtyreq=:qtyReq,"
                "    womatl_notes=:notes,"
                "    womatl_ref=:ref,"
-               "    womatl_picklist=:picklist "
+               "    womatl_picklist=:picklist,"
+               "    womatl_price=:price "
                "WHERE (womatl_id=:womatl_id);" );
     woSave.bindValue(":womatl_id", _womatlid);
     woSave.bindValue(":issueMethod", issueMethod);
@@ -275,6 +285,7 @@ void woMaterialItem::sSave()
     woSave.bindValue(":notes", _notes->toPlainText());
     woSave.bindValue(":ref",   _ref->toPlainText());
     woSave.bindValue(":picklist", QVariant(_pickList->isChecked()));
+    woSave.bindValue(":price", _price->baseValue());
     woSave.exec();
     if (woSave.lastError().type() != QSqlError::NoError)
     {
@@ -338,6 +349,7 @@ void woMaterialItem::populate()
     _notes->setText(wopopulate.value("womatl_notes").toString());
     _ref->setText(wopopulate.value("womatl_ref").toString());
     _pickList->setChecked(wopopulate.value("womatl_picklist").toBool());
+    _price->setBaseValue(wopopulate.value("womatl_price").toDouble());
 
     if (wopopulate.value("womatl_issuemethod").toString() == "S")
       _issueMethod->setCurrentIndex(0);
