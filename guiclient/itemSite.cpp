@@ -1731,6 +1731,22 @@ void itemSite::sDefaultLocChanged()
   if (_useDefaultLocation->isChecked())
   {
     _location->setChecked(_locationControl->isChecked());
+    if ( (_controlMethod->currentIndex() == 2) ||
+        (_controlMethod->currentIndex() == 3) )
+    {
+      _locations_dist->setEnabled(false);
+      _recvlocations_dist->setEnabled(false);
+      _issuelocations_dist->setEnabled(false);
+      _locations_dist->setChecked(false);
+      _recvlocations_dist->setChecked(false);
+      _issuelocations_dist->setChecked(false);
+    }
+    else
+    {
+      _locations_dist->setEnabled(_location->isChecked());
+      _recvlocations_dist->setEnabled(_location->isChecked());
+      _issuelocations_dist->setEnabled(_location->isChecked());
+    }
     _miscLocation->setEnabled(!_locationControl->isChecked());
     _miscLocationName->setEnabled(!_locationControl->isChecked());
   }
