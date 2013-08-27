@@ -198,7 +198,7 @@ void plannedOrder::sCreate()
   else
     plannedCreate.prepare( "SELECT createPlannedOrder( :planord_number, :planord_itemsite_id, :planord_qty, "
                "                   COALESCE(:planord_startdate, date(:planord_duedate) - :planord_leadtime), :planord_duedate, "
-               "                   :planord_type, :planord_supply_itemsite_id, :planord_notes) AS result;" );
+               "                   :planord_type, :planord_supply_itemsite_id, :planord_comments) AS result;" );
 
   plannedCreate.bindValue(":planord_number", _number->text().toInt());
   plannedCreate.bindValue(":planord_itemsite_id", itemsiteid);
