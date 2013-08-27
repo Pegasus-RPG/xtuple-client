@@ -361,7 +361,7 @@ const struct {
   { "crmacct_crmacct_emp_id_fkey",              Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot set the CRM Account to an invalid Employee.") },
   { "crmacct_crmacct_number_check",             Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "The CRM Account number is required.") },
   { "crmacct_crmacct_number_key",               Upsert, -1, "createCrmAcct" },
-  { "crmacct_crmacct_parent_id_fkey",           Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "The delete the CRM Account because it is the parent of another CRM Account.") },
+  { "crmacct_crmacct_parent_id_fkey",           Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot delete the CRM Account because it is the parent of another CRM Account.") },
   { "crmacct_crmacct_parent_id_fkey",           Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot save a CRM Account with an invalid parent CRM Account.") },
   { "crmacct_crmacct_prospect_id_fkey",         Delete,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot delete the CRM Account since it is still associated with a Prospect.") },
   { "crmacct_crmacct_prospect_id_fkey",         Upsert,  0, QT_TRANSLATE_NOOP("errorReporter", "Cannot set the CRM Account to an invalid Prospect.") },
