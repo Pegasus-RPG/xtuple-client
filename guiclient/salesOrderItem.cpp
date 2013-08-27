@@ -3297,7 +3297,10 @@ void salesOrderItem::sFillWoIndentedList()
               "    FROM indentedwo(:wo_id, :showops, :showmatl, :showindent) ");
   workFillList.prepare(sql);
   workFillList.bindValue(":wo_id", _supplyOrderId);
-  workFillList.bindValue(":showops", true);
+  if (_metrics->boolean("Routings"))
+    workFillList.bindValue(":showops", true);
+  else
+    workFillList.bindValue(":showops", false);
   workFillList.bindValue(":showmatl", true);
   workFillList.bindValue(":showindent", false);
   workFillList.exec();
