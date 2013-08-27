@@ -589,6 +589,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
     _amountAtShipping->hide();
     _soitem->hideColumn("qtyatshipping");
     _soitem->hideColumn("balance");
+    _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
   }
   else
     _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
