@@ -97,6 +97,9 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
 
 void postProduction::sHandleWoid(int pWoid)
 {
+  if(!_privileges->check("CloseWorkOrders"))
+    _closeWo->setChecked(false);
+
   XSqlQuery postHandleWoid;
   if (DEBUG)
     qDebug("postProduction::sHandleWoid(%d) entered with method %s",
