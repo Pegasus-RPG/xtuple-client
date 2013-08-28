@@ -44,6 +44,7 @@ printPurchaseOrder::printPurchaseOrder(QWidget* parent, const char* name, bool m
   connect(_po,  SIGNAL(newId(int, QString)),   this, SLOT(setId(int)));
   connect(this, SIGNAL(docUpdated(int)),       this, SLOT(sHandleDocUpdated(int)));
   connect(this, SIGNAL(populated(XSqlQuery*)), this, SLOT(sHandlePopulated(XSqlQuery*)));
+  connect(this, SIGNAL(finishedWithAll()),     this, SLOT(sFinishedWithAll()));
 }
 
 printPurchaseOrder::~printPurchaseOrder()
@@ -94,3 +95,9 @@ void printPurchaseOrder::sHandlePopulated(XSqlQuery *docq)
   if (docq && _po->id() != docq->value("docid").toInt())
     _po->setId(docq->value("docid").toInt());
 }
+
+void printPurchaseOrder::sFinishedWithAll()
+{
+  _po->setId(-1);
+}
+
