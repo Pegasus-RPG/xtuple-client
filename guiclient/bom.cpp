@@ -144,7 +144,7 @@ enum SetResponse BOM::set(const ParameterList &pParams)
       _new->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _documentNum->setEnabled(FALSE);
-      _revision->setEnabled(FALSE);
+//      _revision->setEnabled(FALSE);
       _revisionDate->setEnabled(FALSE);
       _batchSize->setEnabled(FALSE);
       _doRequireQtyPer->setEnabled(FALSE);
