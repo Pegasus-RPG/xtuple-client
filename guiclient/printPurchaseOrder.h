@@ -31,6 +31,7 @@ class printPurchaseOrder : public printMulticopyDocument,
     virtual void languageChange();
     virtual void sHandleDocUpdated(int docid);
     virtual void sHandlePopulated(XSqlQuery *docq);
+    virtual void sFinishedWithAll();
 
 };
 
