@@ -1056,8 +1056,9 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
                  "       (CURRENT_DATE + itemsrc_leadtime) AS earliestdate, "
                  "       itemsrc_manuf_name, "
                  "       itemsrc_manuf_item_number, "
-                 "       itemsrc_manuf_item_descrip "
-                 "FROM itemsrc "
+                 "       itemsrc_manuf_item_descrip, "
+                 "       contrct_number "
+				 "FROM itemsrc LEFT OUTER JOIN contrct ON (itemsrc_contrct_id = contrct_id) "
                  "WHERE (itemsrc_id=:itemsrc_id);" );
       src.bindValue(":itemsrc_id", pItemsrcid);
       src.exec();
@@ -1078,6 +1079,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemsrcid)
         _invVendUOMRatio = src.value("itemsrc_invvendoruomratio").toDouble();
         _minimumOrder = src.value("itemsrc_minordqty").toDouble();
         _orderMultiple = src.value("itemsrc_multordqty").toDouble();
+        _contrctNumber->setText(src.value("contrct_number").toString());
         
         _manufName->setCode(src.value("itemsrc_manuf_name").toString());
         _manufItemNumber->setText(src.value("itemsrc_manuf_item_number").toString());

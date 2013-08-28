@@ -274,8 +274,16 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
                 if (purchaseet.first())
                 {
                   XSqlQuery itemsrcdefault;
-                  itemsrcdefault.prepare("SELECT itemsrc_id FROM itemsrc "
-                                         "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) "); 
+                  itemsrcdefault.prepare("SELECT itemsrc_id FROM itemsrc, contrct "
+										 "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE') "
+										 "       AND (contrct_id = itemsrc_contrct_id)) "
+										 "UNION "
+										 "SELECT itemsrc_id FROM itemsrc, contrct "
+										 "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='FALSE') "
+										 "       AND (contrct_id = itemsrc_contrct_id)) "
+										 "UNION "
+										 "SELECT itemsrc_id FROM itemsrc "
+										 "WHERE ((itemsrc_item_id=:item_id) AND ( itemsrc_default='TRUE')) "); 
           itemsrcdefault.bindValue(":item_id", purchaseet.value("itemsite_item_id").toInt());
                   itemsrcdefault.exec();
                   if (itemsrcdefault.first())

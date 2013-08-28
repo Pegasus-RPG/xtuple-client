@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
-    <height>844</height>
+    <width>726</width>
+    <height>824</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -952,6 +952,23 @@ to be bound by its terms.</comment>
                 </item>
                 <item row="4" column="1">
                  <widget class="DLineEdit" name="_earliestDate">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QLabel" name="_contrctNumberLit">
+                  <property name="text">
+                   <string>Contract:</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
+                 <widget class="XLineEdit" name="_contrctNumber">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
