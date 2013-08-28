@@ -2901,6 +2901,8 @@ void salesOrderItem::sHandleSupplyOrder()
               _createSupplyOrder->setChecked(true);
               return;
             }
+            else
+              _supplyOrderId = -1;
           }
           else if (ordq.lastError().type() != QSqlError::NoError)
           {
@@ -2911,6 +2913,8 @@ void salesOrderItem::sHandleSupplyOrder()
           }
           omfgThis->sWorkOrdersUpdated(-1, TRUE);
         }
+        else
+          _createSupplyOrder->setChecked(true);
       }  // end work order
       else if (_supplyOrderType == "P")
       {  // purchase order
@@ -2937,6 +2941,8 @@ void salesOrderItem::sHandleSupplyOrder()
               _createSupplyOrder->setChecked(true);
               return;
             }
+            else
+              _supplyOrderId = -1;
           }
           else if (ordq.lastError().type() != QSqlError::NoError)
           {
@@ -2944,54 +2950,62 @@ void salesOrderItem::sHandleSupplyOrder()
             _createSupplyOrder->setChecked(true);
             return;
           }
-        }  // end purchase order
-        else if (_supplyOrderType == "R")
-        {  // purchase request
-          if (QMessageBox::question(this, tr("Delete Purchase Request"),
-                                    tr("<p>You are requesting to delete the "
-                                         "Purchase Request created for this Sales "
-                                         "Order Item.\n"
-                                         "Are you sure you want to do this?"),
-                                    QMessageBox::Yes | QMessageBox::Default,
-                                    QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
+        }
+        else
+          _createSupplyOrder->setChecked(true);
+      }  // end purchase order
+      else if (_supplyOrderType == "R")
+      {  // purchase request
+        if (QMessageBox::question(this, tr("Delete Purchase Request"),
+                                  tr("<p>You are requesting to delete the "
+                                     "Purchase Request created for this Sales "
+                                     "Order Item.\n"
+                                     "Are you sure you want to do this?"),
+                                  QMessageBox::Yes | QMessageBox::Default,
+                                  QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
+        {
+          ordq.prepare("SELECT deletePr(:pr_id) AS result;");
+          ordq.bindValue(":pr_id", _supplyOrderId);
+          ordq.exec();
+          if (ordq.first())
           {
-            ordq.prepare("SELECT deletePr(:pr_id) AS result;");
-            ordq.bindValue(":pr_id", _supplyOrderId);
-            ordq.exec();
-            if (ordq.first())
+            bool result = ordq.value("result").toBool();
+            if (!result)
             {
-              bool result = ordq.value("result").toBool();
-              if (!result)
-              {
-                systemError(this, tr("deletePr failed"), __FILE__, __LINE__);
-                _createSupplyOrder->setChecked(true);
-                return;
-              }
-            }
-            else if (ordq.lastError().type() != QSqlError::NoError)
-            {
-              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
+              systemError(this, tr("deletePr failed"), __FILE__, __LINE__);
+              _createSupplyOrder->setChecked(true);
               return;
             }
+            else
+              _supplyOrderId = -1;
+          }
+          else if (ordq.lastError().type() != QSqlError::NoError)
+          {
+            systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
+            return;
           }
         }
+        else
+          _createSupplyOrder->setChecked(true);
       }  // end purchase request
     }  // end supply order exists
-    
-    _supplyOrderId = -1;
-    _supplyOrder->clear();
-    _supplyOrderLine->clear();
-    _supplyOrderStatus->clear();
-    _supplyOrderQtyCache = 0.0;
-    _supplyOrderQtyOrderedCache = 0.0;
-    _supplyOrderQty->clear();
-    _supplyOrderDueDateCache = QDate();
-    _supplyOrderScheduledDateCache = QDate();
-    _supplyOrderDueDate->clear();
-    _supplyDropShip->setChecked(false);
-    _supplyRollupPrices->setChecked(false);
-    _supplyOverridePrice->clear();
-    _woIndentedList->clear();
+
+    if (_supplyOrderId == -1)
+    {
+      _supplyOrder->clear();
+      _supplyOrderLine->clear();
+      _supplyOrderStatus->clear();
+      _supplyOrderQtyCache = 0.0;
+      _supplyOrderQtyOrderedCache = 0.0;
+      _supplyOrderQty->clear();
+      _supplyOrderDueDateCache = QDate();
+      _supplyOrderScheduledDateCache = QDate();
+      _supplyOrderDueDate->clear();
+      _supplyDropShip->setChecked(false);
+      _supplyRollupPrices->setChecked(false);
+      _supplyOverridePrice->clear();
+      _woIndentedList->clear();
+    }
   }  // end createSupplyOrder is not checked
 }
 
@@ -3182,6 +3196,9 @@ void salesOrderItem::sPopulateOrderInfo()
       _createSupplyOrder->setChecked(FALSE);
     }
   }
+  
+  if (_costmethod == "J")
+    _createSupplyOrder->setEnabled(false);
   
   _supplyOrderQtyCache = _supplyOrderQty->toDouble();
   _supplyOrderDueDateCache = _supplyOrderDueDate->date();
