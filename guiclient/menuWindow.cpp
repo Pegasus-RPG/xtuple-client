@@ -104,7 +104,15 @@ void menuWindow::sPrepareWindowMenu()
 
   QWidgetList windows = _parent->windowList();
 
-  bool b = !windows.isEmpty();
+  bool b;
+  if(_preferences->value("InterfaceWindowOption") != "TopLevel")
+  {
+  b = windows.isEmpty();
+  }
+  else
+  {
+  b = !windows.isEmpty();
+  }
 
   _data->_cascade->setEnabled(b);
   _data->_tile->setEnabled(b);
