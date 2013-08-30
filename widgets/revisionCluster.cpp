@@ -94,7 +94,9 @@ void RevisionCluster::sModeChanged()
                    ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("MaintainRevisions") ||
                                                                                                         _x_privileges->check("ViewInactiveRevisions")));
 
-      (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privileges->check("MaintainRevisions")) ||
+      (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) &&
+                                                              !_x_privileges->check("MaintainRevisions") &&
+                                                              !_x_privileges->check("ViewInactiveRevisions")) ||
                                                              ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
                                                               (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));
     }
