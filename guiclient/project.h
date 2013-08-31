@@ -41,6 +41,7 @@ public slots:
     virtual void sViewOrder();
     virtual void sDeleteTask();
     virtual void sFillTaskList();
+    virtual void sNewQuotation();
     virtual void sNewSalesOrder();
     virtual void sNewPurchaseOrder();
     virtual void sNewWorkOrder();
@@ -49,6 +50,7 @@ public slots:
     virtual void sEdit();
     virtual void sDelete();
     virtual void sFillCharList();
+    virtual void sHandleButtons(bool valid = false);
 
 protected slots:
     virtual void languageChange();

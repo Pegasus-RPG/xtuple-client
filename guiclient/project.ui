@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1423</width>
-    <height>678</height>
+    <width>1405</width>
+    <height>681</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -398,6 +398,9 @@ to be bound by its terms.</comment>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::EditKeyPressed</set>
+           </property>
           </widget>
          </item>
          <item>
@@ -408,7 +411,7 @@ to be bound by its terms.</comment>
            <item>
             <widget class="QPushButton" name="_queryTasks">
              <property name="text">
-              <string>Query</string>
+              <string>Refresh</string>
              </property>
             </widget>
            </item>
@@ -586,7 +589,7 @@ to be bound by its terms.</comment>
           <item row="0" column="1">
            <widget class="XLabel" name="_totalHrBud">
             <property name="text">
-             <string>TextLabel</string>
+             <string>0.0</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -606,7 +609,7 @@ to be bound by its terms.</comment>
           <item row="1" column="1">
            <widget class="XLabel" name="_totalHrAct">
             <property name="text">
-             <string>TextLabel</string>
+             <string>0.0</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -626,7 +629,7 @@ to be bound by its terms.</comment>
           <item row="2" column="1">
            <widget class="XLabel" name="_totalHrBal">
             <property name="text">
-             <string>TextLabel</string>
+             <string>0.0</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -646,7 +649,7 @@ to be bound by its terms.</comment>
           <item row="0" column="3">
            <widget class="XLabel" name="_totalExpBud">
             <property name="text">
-             <string>TextLabel</string>
+             <string>0.0</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -666,7 +669,7 @@ to be bound by its terms.</comment>
           <item row="1" column="3">
            <widget class="XLabel" name="_totalExpAct">
             <property name="text">
-             <string>TextLabel</string>
+             <string>0.0</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -686,7 +689,7 @@ to be bound by its terms.</comment>
           <item row="2" column="3">
            <widget class="XLabel" name="_totalExpBal">
             <property name="text">
-             <string>TextLabel</string>
+             <string>0.0</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -891,11 +894,6 @@ to be bound by its terms.</comment>
    <class>UsernameCluster</class>
    <extends>QWidget</extends>
    <header>usernamecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>

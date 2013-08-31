@@ -451,7 +451,7 @@ enum SetResponse salesOrder:: set(const ParameterList &pParams)
       _quotestaus->show();
     }
 
-    if (_mode == cNew)
+    if (_mode == cNew || _mode == cNewQuote)
     {
        param = pParams.value("prj_id", &valid);
        if (valid)

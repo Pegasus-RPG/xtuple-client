@@ -85,9 +85,9 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _prjtask->addColumn(tr("Exp. Actual"),      _priceColumn,   Qt::AlignRight,  true,  "exp_actual"  );
   _prjtask->addColumn(tr("Exp. Balance"),      _priceColumn,   Qt::AlignRight,  true,  "exp_balance"  );
 
-  _showSo->setChecked(false);
-  _showWo->setChecked(false);
-  _showPo->setChecked(false);
+  _showSo->setChecked(true);
+  _showWo->setChecked(true);
+  _showPo->setChecked(true);
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
@@ -107,6 +107,8 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   QAction *menuItem;
   newMenu->addAction(tr("Task..."), this, SLOT(sNewTask()));
   newMenu->addSeparator();
+  menuItem = newMenu->addAction(tr("Quote"), this, SLOT(sNewQuotation()));
+  menuItem->setEnabled(_privileges->check("MaintainQuotes"));
   menuItem = newMenu->addAction(tr("Sales Order"), this, SLOT(sNewSalesOrder()));
   menuItem->setEnabled(_privileges->check("MaintainSalesOrders"));
   menuItem = newMenu->addAction(tr("Purchase Order"),   this, SLOT(sNewPurchaseOrder()));
@@ -168,8 +170,8 @@ enum SetResponse project::set(const ParameterList &pParams)
 
       connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
-      connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
-      connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
+      connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
+      connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
@@ -195,8 +197,8 @@ enum SetResponse project::set(const ParameterList &pParams)
 
       connect(_assignedTo, SIGNAL(newId(int)), this, SLOT(sAssignedToChanged(int)));
       connect(_status,  SIGNAL(currentIndexChanged(int)), this, SLOT(sStatusChanged(int)));
-      connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
-      connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
+      connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
+      connect(_prjtask, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
@@ -234,6 +236,20 @@ enum SetResponse project::set(const ParameterList &pParams)
   }
     
   return NoError;
+}
+
+void project::sHandleButtons(bool valid)
+{
+  if(_prjtask->altId() == 5)
+  {
+    _editTask->setEnabled(valid);
+    _deleteTask->setEnabled(valid);
+    _viewTask->setEnabled(valid);
+  } else {
+    _editTask->setEnabled(false);
+    _deleteTask->setEnabled(false);
+    _viewTask->setEnabled(false);
+  }
 }
 
 void project::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
@@ -592,6 +608,9 @@ void project::sNewTask()
 
 void project::sEditTask()
 {
+  if(_prjtask->altId() != 5)
+    return;
+
   ParameterList params;
   params.append("mode", "edit");
   params.append("prjtask_id", _prjtask->id());
@@ -604,6 +623,9 @@ void project::sEditTask()
 
 void project::sViewTask()
 {
+  if(_prjtask->altId() != 5)
+    return;
+
   ParameterList params;
   params.append("mode", "view");
   params.append("prjtask_id", _prjtask->id());
@@ -615,6 +637,9 @@ void project::sViewTask()
 
 void project::sDeleteTask()
 {
+  if(_prjtask->altId() != 5)
+    return;
+  
   XSqlQuery projectDeleteTask;
   projectDeleteTask.prepare("SELECT deleteProjectTask(:prjtask_id) AS result; ");
   projectDeleteTask.bindValue(":prjtask_id", _prjtask->id());
@@ -813,6 +838,17 @@ void project::sNumberChanged()
   }
 }
 
+void project::sNewQuotation()
+{
+  ParameterList params;
+  params.append("mode", "newQuote");
+  params.append("prj_id",  _prjid);
+
+  salesOrder *newdlg = new salesOrder(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  sFillTaskList();
+}
 
 void project::sNewSalesOrder()
 {

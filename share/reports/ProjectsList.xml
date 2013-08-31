@@ -118,7 +118,7 @@
     </label>
     <label>
      <rect>
-      <x>545</x>
+      <x>455</x>
       <y>5</y>
       <width>80</width>
       <height>20</height>
@@ -134,9 +134,9 @@
     </label>
     <field>
      <rect>
-      <x>630</x>
+      <x>540</x>
       <y>5</y>
-      <width>115</width>
+      <width>205</width>
       <height>20</height>
      </rect>
      <font>
@@ -144,7 +144,7 @@
       <size>10</size>
       <weight>bold</weight>
      </font>
-     <left/>
+     <right/>
      <vcenter/>
      <data>
       <query>detail</query>
@@ -153,7 +153,7 @@
     </field>
     <field>
      <rect>
-      <x>630</x>
+      <x>635</x>
       <y>25</y>
       <width>110</width>
       <height>20</height>
@@ -163,7 +163,7 @@
       <size>10</size>
       <weight>bold</weight>
      </font>
-     <left/>
+     <right/>
      <vcenter/>
      <data>
       <query>detail</query>
@@ -172,7 +172,7 @@
     </field>
     <label>
      <rect>
-      <x>530</x>
+      <x>535</x>
       <y>25</y>
       <width>95</width>
       <height>20</height>
@@ -378,7 +378,7 @@
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>ordertotal</column>
+      <column>f_value</column>
      </data>
      <format builtin="true">money</format>
      <tracktotal subtotal="true"/>
