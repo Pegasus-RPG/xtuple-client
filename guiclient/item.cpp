@@ -2070,7 +2070,7 @@ void item::sHandleRightButtons()
       else
         _workbench->show();
 
-    if(!_privileges->check("MaintainBOMs"))
+    if(!_privileges->check("MaintainBOMs") && !_privileges->check("ViewBOMs"))
       _materials->hide();
     else
       if (itemtype == "M" || // manufactured

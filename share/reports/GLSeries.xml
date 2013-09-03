@@ -116,6 +116,55 @@ SELECT sltrans_id AS gltrans_id,
 ORDER BY sltrans_date, sltrans_sequence, sltrans_amount DESC;
 &lt;? endif ?></sql>
  </querysource>
+ <querysource>
+  <name>summarized</name>
+  <sql>&lt;? if exists("gltrans") ?>
+SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,
+       formatMoney(SUM(CASE WHEN (gltrans_amount &lt; 0) THEN (gltrans_amount * -1)
+                            ELSE 0.0
+                       END)) AS f_debit,
+       formatMoney(SUM(CASE WHEN (gltrans_amount > 0) THEN (gltrans_amount)
+                            ELSE 0.0
+                       END)) AS f_credit
+  FROM gltrans, accnt
+ WHERE ((gltrans_accnt_id=accnt_id)
+   AND (NOT gltrans_deleted)
+&lt;? if exists("startDate") ?>
+   AND (gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("source") ?>
+   AND (gltrans_source=&lt;? value("source") ?>)
+&lt;? endif ?>
+&lt;? if exists("startJrnlnum") ?>
+   AND (gltrans_journalnumber BETWEEN &lt;? value("startJrnlnum") ?> AND &lt;? value("endJrnlnum") ?>)
+&lt;? endif ?>
+       )
+GROUP BY accnt_id
+ORDER BY formatGLAccount(accnt_id);
+&lt;? else ?>
+SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,
+       formatMoney(SUM(CASE WHEN (sltrans_amount &lt; 0) THEN (sltrans_amount * -1)
+                            ELSE 0.0
+                       END)) AS f_debit,
+       formatMoney(SUM(CASE WHEN (sltrans_amount > 0) THEN (sltrans_amount)
+                            ELSE 0.0
+                       END)) AS f_credit
+  FROM sltrans, accnt
+ WHERE ((sltrans_accnt_id=accnt_id)
+&lt;? if exists("startDate") ?>
+   AND (sltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("source") ?>
+   AND (sltrans_source=&lt;? value("source") ?>)
+&lt;? endif ?>
+&lt;? if exists("startJrnlnum") ?>
+   AND (sltrans_journalnumber BETWEEN &lt;? value("startJrnlnum") ?> AND &lt;? value("endJrnlnum") ?>)
+&lt;? endif ?>
+       )
+GROUP BY accnt_id
+ORDER BY formatGLAccount(accnt_id);
+&lt;? endif ?></sql>
+ </querysource>
  <rpthead>
   <height>206</height>
   <label>
@@ -742,7 +791,7 @@ ORDER BY sltrans_date, sltrans_sequence, sltrans_amount DESC;
    <key>
     <query>detail</query>
    </key>
-   <height>16</height>
+   <height>56</height>
    <field>
     <rect>
      <x>595</x>
@@ -798,6 +847,95 @@ ORDER BY sltrans_date, sltrans_sequence, sltrans_amount DESC;
     <data>
      <query>detail</query>
      <column>f_debit</column>
+    </data>
+   </field>
+  </detail>
+ </section>
+ <section>
+  <name>summarized</name>
+  <group>
+   <name>summarized header</name>
+   <column></column>
+   <head>
+    <height>35</height>
+    <label>
+     <rect>
+      <x>30</x>
+      <y>5</y>
+      <width>205</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Summarized Distributions:</string>
+    </label>
+   </head>
+  </group>
+  <detail>
+   <key>
+    <query>summarized</query>
+   </key>
+   <height>35</height>
+   <field>
+    <rect>
+     <x>330</x>
+     <y>5</y>
+     <width>175</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>summarized</query>
+     <column>account</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>510</x>
+     <y>5</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>summarized</query>
+     <column>f_debit</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>595</x>
+     <y>5</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>summarized</query>
+     <column>f_credit</column>
     </data>
    </field>
   </detail>
@@ -928,8 +1066,9 @@ ORDER BY sltrans_date, sltrans_sequence, sltrans_amount DESC;
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
+    <size>10</size>
     <weight>normal</weight>
+    <italic/>
    </font>
    <right/>
    <vcenter/>
