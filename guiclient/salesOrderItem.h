@@ -52,6 +52,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sPopulateHistory();
     virtual void        sCalculateDiscountPrcnt();
     virtual void        sCalculateExtendedPrice();
+    virtual void        sCheckSupplyOrder();
     virtual void        sHandleSupplyOrder();
     virtual void        sPopulateOrderInfo();
     virtual void        sRollupPrices();
