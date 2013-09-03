@@ -90,7 +90,7 @@ void XWidget::closeEvent(QCloseEvent *event)
   if(event->isAccepted())
   {
     QString objName = objectName();
-    xtsettingsSetValue(objName + "/geometry/size", size());
+    //xtsettingsSetValue(objName + "/geometry/size", size());
     if(omfgThis->showTopLevel() || isModal())
       xtsettingsSetValue(objName + "/geometry/pos", pos());
     else
@@ -120,7 +120,7 @@ void XWidget::showEvent(QShowEvent *event)
           resize(lsize);
         omfgThis->_windowList.append(this);
         QRect r(pos, size());
-        if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberSizemberPos", true).toBool())
+        if(!pos.isNull() && availableGeometry.contains(r) && xtsettingsValue(objName + "/geometry/rememberPos", true).toBool())
           move(pos);
       }
       else
