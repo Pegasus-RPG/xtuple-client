@@ -106,7 +106,7 @@ to be bound by its terms.</comment>
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
-          <cstring>_sales</cstring>
+          <cstring>_prepaid</cstring>
          </property>
         </widget>
        </item>
@@ -122,7 +122,7 @@ to be bound by its terms.</comment>
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
-          <cstring>_sales</cstring>
+          <cstring>_araccnt</cstring>
          </property>
         </widget>
        </item>
@@ -162,6 +162,7 @@ to be bound by its terms.</comment>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -171,6 +172,7 @@ to be bound by its terms.</comment>
   <tabstop>_sales</tabstop>
   <tabstop>_prepaid</tabstop>
   <tabstop>_araccnt</tabstop>
+  <tabstop>_buttonBox</tabstop>
  </tabstops>
  <includes>
   <include location="global">parameter.h</include>
