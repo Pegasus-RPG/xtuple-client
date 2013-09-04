@@ -577,6 +577,7 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
   if (viewMode)
   {
     _item->setReadOnly(viewMode);
+    _customerPN->setEnabled(!viewMode);
     _qtyOrdered->setEnabled(!viewMode);
     _netUnitPrice->setEnabled(!viewMode);
     _discountFromCust->setEnabled(!viewMode);
@@ -3057,13 +3058,6 @@ void salesOrderItem::sPopulateOrderInfo()
     return;
   }
 
-  if ((_mode != cNew) && (_mode != cEdit))
-  {
-    QMessageBox::critical(this, tr("Debug"),
-                          tr("sPopulateOrderInfo called with invalid status."));
-    return;
-  }
-
   if (_supplyOrderId == -1)
   {
     QMessageBox::critical(this, tr("Debug"),
@@ -3243,18 +3237,26 @@ void salesOrderItem::sPopulateOrderInfo()
   _supplyOrderQtyOrderedCache = _qtyOrdered->toDouble();
   _supplyOrderScheduledDateCache = _scheduledDate->date();
 
-  connect(_woIndentedList,    SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateWoMenu(QMenu*, QTreeWidgetItem*)));
-  connect(_woIndentedList,    SIGNAL(itemSelected(int)),            _supplyWoEdit, SLOT(animateClick()));
-  connect(_woIndentedList,    SIGNAL(valid(bool)),                  _supplyWoEdit, SLOT(setEnabled(bool)));
-  connect(_woIndentedList,    SIGNAL(valid(bool)),                  _supplyWoDelete, SLOT(setEnabled(bool)));
-  connect(_supplyWoNewMatl,   SIGNAL(clicked()),                    this, SLOT(sNewWoMatl()));
-  connect(_supplyWoEdit,      SIGNAL(clicked()),                    this, SLOT(sEditWoMatl()));
-  connect(_supplyWoDelete,    SIGNAL(clicked()),                    this, SLOT(sDeleteWoMatl()));
-  connect(_supplyRollupPrices,SIGNAL(toggled(bool)),                this, SLOT(sRollupPrices()));
-  connect(_supplyOrderQty,    SIGNAL(editingFinished()),            this, SLOT(sHandleSupplyOrder()));
-  //  connect(_supplyOrderDueDate,SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleSupplyOrder()));
-  connect(_supplyOverridePrice,SIGNAL(editingFinished()),           this, SLOT(sHandleSupplyOrder()));
-  connect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
+  if (_mode == cNew || _mode == cEdit)
+  {
+    _supplyWoNewMatl->setEnabled(true);
+    connect(_woIndentedList,    SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateWoMenu(QMenu*, QTreeWidgetItem*)));
+    connect(_woIndentedList,    SIGNAL(itemSelected(int)),            _supplyWoEdit, SLOT(animateClick()));
+    connect(_woIndentedList,    SIGNAL(valid(bool)),                  _supplyWoEdit, SLOT(setEnabled(bool)));
+    connect(_woIndentedList,    SIGNAL(valid(bool)),                  _supplyWoDelete, SLOT(setEnabled(bool)));
+    connect(_supplyWoNewMatl,   SIGNAL(clicked()),                    this, SLOT(sNewWoMatl()));
+    connect(_supplyWoEdit,      SIGNAL(clicked()),                    this, SLOT(sEditWoMatl()));
+    connect(_supplyWoDelete,    SIGNAL(clicked()),                    this, SLOT(sDeleteWoMatl()));
+    connect(_supplyRollupPrices,SIGNAL(toggled(bool)),                this, SLOT(sRollupPrices()));
+    connect(_supplyOrderQty,    SIGNAL(editingFinished()),            this, SLOT(sHandleSupplyOrder()));
+    //  connect(_supplyOrderDueDate,SIGNAL(newDate(const QDate &)),       this, SLOT(sHandleSupplyOrder()));
+    connect(_supplyOverridePrice,SIGNAL(editingFinished()),           this, SLOT(sHandleSupplyOrder()));
+    connect(_supplyDropShip,    SIGNAL(toggled(bool)),                this, SLOT(sHandleSupplyOrder()));
+  }
+  else
+  {
+    _supplyWoNewMatl->setEnabled(false);
+  }
 }
 
 void salesOrderItem::sRollupPrices()
