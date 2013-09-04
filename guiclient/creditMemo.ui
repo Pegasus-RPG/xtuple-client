@@ -54,7 +54,7 @@ to be bound by its terms.</comment>
        <item>
         <widget class="QPushButton" name="_close">
          <property name="text">
-          <string>&amp;Close</string>
+          <string>&amp;Cancel</string>
          </property>
         </widget>
        </item>
