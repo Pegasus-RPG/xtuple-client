@@ -1669,7 +1669,10 @@ void salesOrderItem::sDeterminePrice(bool force)
     if (itemprice.value("itemprice_price").toDouble() == -9999.0)
     {
       if (!_updatePrice)
+      {
+        sCheckSupplyOrder();
         return;
+      }
 
       // User expected an update, so let them know and reset
       QMessageBox::critical(this, tr("Customer Cannot Buy at Quantity"),
@@ -1717,6 +1720,8 @@ void salesOrderItem::sDeterminePrice(bool force)
   }
   else if (itemprice.lastError().type() != QSqlError::NoError)
             systemError(this, itemprice.lastError().databaseText(), __FILE__, __LINE__);
+
+  sCheckSupplyOrder();
 }
 
 void salesOrderItem::sPopulateItemInfo(int pItemid)
@@ -2341,6 +2346,22 @@ void salesOrderItem::sCalculateDiscountPrcnt()
 void salesOrderItem::sCalculateExtendedPrice()
 {
   _extendedPrice->setLocalValue(((_qtyOrdered->toDouble() * _qtyinvuomratio) / _priceinvuomratio) * _netUnitPrice->localValue());
+}
+
+void salesOrderItem::sCheckSupplyOrder()
+{
+  if ( (_item->isValid()) &&
+      (_warehouse->isValid()) &&
+      (_scheduledDate->isValid()) &&
+      (_qtyOrdered->toDouble() > 0.0) &&
+      (_supplyOrderType != "") )
+  {
+    if (_createSupplyOrder->isChecked())
+      sHandleSupplyOrder();
+    else
+      if ((_mode == cNew && !_stocked) || _supplyOrderId > -1)
+        _createSupplyOrder->setChecked(true);
+  }
 }
 
 void salesOrderItem::sHandleSupplyOrder()
@@ -3990,19 +4011,6 @@ void salesOrderItem::sPrev()
 void salesOrderItem::sChanged()
 {
   _modified = true;
-  
-  if ( (_item->isValid()) &&
-       (_warehouse->isValid()) &&
-       (_scheduledDate->isValid()) &&
-       (_qtyOrdered->toDouble() > 0.0) &&
-       (_supplyOrderType != "") )
-  {
-    if (_createSupplyOrder->isChecked())
-      sHandleSupplyOrder();
-    else
-      if ((_mode == cNew && !_stocked) || _supplyOrderId > -1)
-        _createSupplyOrder->setChecked(true);
-  }
   
 }
 
