@@ -207,6 +207,7 @@ void issueWoMaterialItem::sIssue()
     _close->setText(tr("Close"));
     _qtyToIssue->clear();
     _womatl->setId(-1);
+    _womatl->setWoid(_wo->id());
     _womatl->setFocus();
   }
 }
