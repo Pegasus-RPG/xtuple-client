@@ -1660,7 +1660,7 @@ bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
       xtsettingsSetValue(objName + "/geometry/size", w->size());
       if(omfgThis->showTopLevel())
         xtsettingsSetValue(objName + "/geometry/pos", w->pos());
-      else
+      else if (w->parentWidget() != 0)
         xtsettingsSetValue(objName + "/geometry/pos", w->parentWidget()->pos());
     }
   }
