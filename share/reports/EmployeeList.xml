@@ -3,57 +3,22 @@
  <title>Employee List</title>
  <name>EmployeeList</name>
  <description></description>
+ <grid>
+  <snap/>
+  <show/>
+  <x>0.05</x>
+  <y>0.05</y>
+ </grid>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
  <bottommargin>50</bottommargin>
  <rightmargin>50</rightmargin>
  <leftmargin>50</leftmargin>
- <querysource>
+ <querysource loadFromDb="true">
   <name>detail</name>
-  <sql>SELECT e.emp_id, m.emp_id, warehous_code, e.emp_code, e.emp_number,
-       cntct_first_name, cntct_last_name, 
-       m.emp_code AS mgr_code, dept_number, shift_number,
-       CASE WHEN (e.emp_active) THEN 'Yes'
-            ELSE 'No'
-       END AS f_active 
-FROM emp e 
-  LEFT OUTER JOIN cntct ON (emp_cntct_id=cntct_id) 
-  LEFT OUTER JOIN whsinfo ON (emp_warehous_id=warehous_id) 
-  LEFT OUTER JOIN emp m ON (e.emp_mgr_emp_id=m.emp_id) 
-  LEFT OUTER JOIN shift ON (e.emp_shift_id=shift_id) 
-  LEFT OUTER JOIN dept  ON (e.emp_dept_id=dept_id) 
-WHERE ((LENGTH(TRIM(COALESCE(&lt;? value("searchString") ?>,''))) = 0)
-&lt;? if exists("searchCode") ?>
-   OR (e.emp_code ~* &lt;? value("searchString") ?>)
-&lt;? endif ?>
-&lt;? if exists("searchDept") ?>
-   OR (dept_number ~* &lt;? value("searchString") ?>)
-   OR (dept_name   ~* &lt;? value("searchString") ?>)
-&lt;? endif ?>
-&lt;? if exists("searchMgr") ?>
-   OR (m.emp_code   ~* &lt;? value("searchString") ?>)
-   OR (m.emp_number ~* &lt;? value("searchString") ?>)
-&lt;? endif ?>
-&lt;? if exists("searchNumber") ?>
-   OR (e.emp_number ~* &lt;? value("searchString") ?>)
-&lt;? endif ?>
-&lt;? if exists("searchName") ?>
-   OR (cntct_first_name ~* &lt;? value("searchString") ?>)
-   OR (cntct_last_name   ~* &lt;? value("searchString") ?>)
-&lt;? endif ?>
-&lt;? if exists("searchShift") ?>
-   OR (shift_number ~* &lt;? value("searchString") ?>)
-   OR (shift_name   ~* &lt;? value("searchString") ?>)
-&lt;? endif ?>
-      )
-&lt;? if exists("activeOnly") ?>
-   AND e.emp_active 
-&lt;? endif ?>
-&lt;? if exists("warehouse_id") ?>
-   AND (warehous_id=&lt;? value("warehouse_id") ?>)
-&lt;? endif ?>
-ORDER BY emp_code; </sql>
+  <mqlgroup>employees</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <querysource>
   <name>head</name>
@@ -434,7 +399,7 @@ AS filter;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>dept_number</column>
+     <column>department</column>
     </data>
    </field>
    <field>
@@ -453,7 +418,7 @@ AS filter;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>shift_number</column>
+     <column>shift</column>
     </data>
    </field>
    <field>
@@ -491,7 +456,7 @@ AS filter;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>mgr_code</column>
+     <column>manager_code</column>
     </data>
    </field>
    <field>
@@ -529,7 +494,7 @@ AS filter;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_active</column>
+     <column>emp_active</column>
     </data>
    </field>
   </detail>
