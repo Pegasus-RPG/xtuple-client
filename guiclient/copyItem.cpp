@@ -190,16 +190,17 @@ void copyItem::sAddBomitem()
                    "   bomitem_uom_id, bomitem_rev_id, bomitem_booitem_seq_id,"
                    "   bomitem_char_id, bomitem_value, bomitem_notes,"
                    "   bomitem_ref, bomitem_qtyfxd, bomitem_issuewo )"
-                   " VALUES"
-                   " ( :targetitemid, 0,"
+                   " SELECT"
+                   "   :targetitemid, (MAX(bomitem_seqnumber) + 10),"
                    "   :bomitemid, :qtyper, 0.0,"
                    "   NULL, startOfTime(), endOfTime(),"
                    "   FALSE, 'M', TRUE,"
                    "   NULL, CURRENT_DATE, 'I',"
                    "   :uomid, -1, -1,"
                    "   NULL, NULL, NULL,"
-                   "   NULL, 0.0, FALSE )"
-                   ";" );
+                   "   NULL, 0.0, FALSE "
+                   " FROM bomitem "
+                   " WHERE (bomitem_parent_item_id=:targetitemid);" );
   bomitemq.bindValue(":targetitemid", _newitemid);
   bomitemq.bindValue(":bomitemid", _availablebomitems->id());
   bomitemq.bindValue(":qtyper", qtyper);

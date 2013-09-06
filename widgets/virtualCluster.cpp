@@ -467,7 +467,7 @@ void VirtualClusterLineEdit::sUpdateMenu()
                        _id != -1);
   _copyAct->setEnabled((_x_privileges->check(_editPriv) ||
                         _x_privileges->check(_newPriv)) &&
-                       _id != -1 && _uiName == "item");
+                       _id != -1 && isEnabled() && _uiName == "item");
   _newAct->setEnabled(_x_privileges->check(_newPriv) &&
                       isEnabled());
 
