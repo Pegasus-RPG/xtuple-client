@@ -818,6 +818,8 @@ void salesOrderItem::clear()
   _supplyOrderType = "";
   _supplyOrderId = -1;
   _createSupplyOrder->setChecked(FALSE);
+  _item->setReadOnly(FALSE);
+  _warehouse->setEnabled(TRUE);
   _item->setId(-1);
   _customerPN->clear();
   _qtyOrdered->clear();
@@ -1055,29 +1057,35 @@ void salesOrderItem::sSave(bool pPartial)
   }
   else if ( (_mode == cEdit) || ((_mode == cNew) && _partialsaved) )
   {
-    salesSave.prepare( "UPDATE coitem "
-               "SET coitem_scheddate=:soitem_scheddate,"
-               "    coitem_promdate=:soitem_promdate,"
-               "    coitem_qtyord=:soitem_qtyord,"
-               "    coitem_qty_uom_id=:qty_uom_id,"
-               "    coitem_qty_invuomratio=:qty_invuomratio,"
-               "    coitem_unitcost=:soitem_unitcost,"
-               "    coitem_custprice=:soitem_custprice,"
-               "    coitem_pricemode=:soitem_pricemode,"
-               "    coitem_price=:soitem_price,"
-               "    coitem_price_uom_id=:price_uom_id,"
-               "    coitem_price_invuomratio=:price_invuomratio,"
-               "    coitem_memo=:soitem_memo,"
-               "    coitem_order_type=:soitem_order_type,"
-               "    coitem_order_id=:soitem_order_id,"
-               "    coitem_substitute_item_id=:soitem_substitute_item_id,"
-               "    coitem_prcost=:soitem_prcost,"
-               "    coitem_taxtype_id=:soitem_taxtype_id, "
-               "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
-               "    coitem_rev_accnt_id=:soitem_rev_accnt_id, "
-               "    coitem_warranty=:soitem_warranty, "
-               "    coitem_custpn=:custpn "
-               "WHERE (coitem_id=:soitem_id);" );
+    salesSave.prepare("UPDATE coitem "
+                      "SET coitem_itemsite_id=(SELECT itemsite_id"
+                      "                        FROM itemsite"
+                      "                        WHERE (itemsite_item_id=:item_id)"
+                      "                          AND (itemsite_warehous_id=:warehous_id)),"
+                      "    coitem_scheddate=:soitem_scheddate,"
+                      "    coitem_promdate=:soitem_promdate,"
+                      "    coitem_qtyord=:soitem_qtyord,"
+                      "    coitem_qty_uom_id=:qty_uom_id,"
+                      "    coitem_qty_invuomratio=:qty_invuomratio,"
+                      "    coitem_unitcost=:soitem_unitcost,"
+                      "    coitem_custprice=:soitem_custprice,"
+                      "    coitem_pricemode=:soitem_pricemode,"
+                      "    coitem_price=:soitem_price,"
+                      "    coitem_price_uom_id=:price_uom_id,"
+                      "    coitem_price_invuomratio=:price_invuomratio,"
+                      "    coitem_memo=:soitem_memo,"
+                      "    coitem_order_type=:soitem_order_type,"
+                      "    coitem_order_id=:soitem_order_id,"
+                      "    coitem_substitute_item_id=:soitem_substitute_item_id,"
+                      "    coitem_prcost=:soitem_prcost,"
+                      "    coitem_taxtype_id=:soitem_taxtype_id, "
+                      "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
+                      "    coitem_rev_accnt_id=:soitem_rev_accnt_id, "
+                      "    coitem_warranty=:soitem_warranty, "
+                      "    coitem_custpn=:custpn "
+                      "WHERE (coitem_id=:soitem_id);" );
+    salesSave.bindValue(":item_id", _item->id());
+    salesSave.bindValue(":warehous_id", _warehouse->id());
     salesSave.bindValue(":soitem_scheddate", _scheduledDate->date());
     salesSave.bindValue(":soitem_promdate", promiseDate);
     salesSave.bindValue(":soitem_qtyord", _qtyOrdered->toDouble());
@@ -1300,27 +1308,33 @@ void salesOrderItem::sSave(bool pPartial)
   }
   else if ( (_mode == cEditQuote) || ((_mode == cNewQuote) && _partialsaved) )
   {
-    salesSave.prepare( "UPDATE quitem "
-               "SET quitem_scheddate=:quitem_scheddate,"
-               "    quitem_promdate=:quitem_promdate,"
-               "    quitem_qtyord=:quitem_qtyord,"
-               "    quitem_qty_uom_id=:qty_uom_id,"
-               "    quitem_qty_invuomratio=:qty_invuomratio,"
-               "    quitem_unitcost=:quitem_unitcost,"
-               "    quitem_custprice=:quitem_custprice,"
-               "    quitem_price=:quitem_price,"
-               "    quitem_pricemode=:quitem_pricemode,"
-               "    quitem_price_uom_id=:price_uom_id,"
-               "    quitem_price_invuomratio=:price_invuomratio,"
-               "    quitem_memo=:quitem_memo,"
-               "    quitem_createorder=:quitem_createorder,"
-               "    quitem_order_warehous_id=:quitem_order_warehous_id,"
-               "    quitem_prcost=:quitem_prcost,"
-               "    quitem_taxtype_id=:quitem_taxtype_id,"
-               "    quitem_dropship=:quitem_dropship,"
-               "    quitem_itemsrc_id=:quitem_itemsrc_id, "
-               "    quitem_custpn=:custpn "
-               "WHERE (quitem_id=:quitem_id);" );
+    salesSave.prepare("UPDATE quitem "
+                      "SET quitem_itemsite_id=(SELECT itemsite_id"
+                      "                        FROM itemsite"
+                      "                        WHERE (itemsite_item_id=:item_id)"
+                      "                          AND (itemsite_warehous_id=:warehous_id)),"
+                      "    quitem_scheddate=:quitem_scheddate,"
+                      "    quitem_promdate=:quitem_promdate,"
+                      "    quitem_qtyord=:quitem_qtyord,"
+                      "    quitem_qty_uom_id=:qty_uom_id,"
+                      "    quitem_qty_invuomratio=:qty_invuomratio,"
+                      "    quitem_unitcost=:quitem_unitcost,"
+                      "    quitem_custprice=:quitem_custprice,"
+                      "    quitem_price=:quitem_price,"
+                      "    quitem_pricemode=:quitem_pricemode,"
+                      "    quitem_price_uom_id=:price_uom_id,"
+                      "    quitem_price_invuomratio=:price_invuomratio,"
+                      "    quitem_memo=:quitem_memo,"
+                      "    quitem_createorder=:quitem_createorder,"
+                      "    quitem_order_warehous_id=:quitem_order_warehous_id,"
+                      "    quitem_prcost=:quitem_prcost,"
+                      "    quitem_taxtype_id=:quitem_taxtype_id,"
+                      "    quitem_dropship=:quitem_dropship,"
+                      "    quitem_itemsrc_id=:quitem_itemsrc_id, "
+                      "    quitem_custpn=:custpn "
+                      "WHERE (quitem_id=:quitem_id);" );
+    salesSave.bindValue(":item_id", _item->id());
+    salesSave.bindValue(":warehous_id", _warehouse->id());
     salesSave.bindValue(":quitem_scheddate", _scheduledDate->date());
     salesSave.bindValue(":quitem_promdate", promiseDate);
     salesSave.bindValue(":quitem_qtyord", _qtyOrdered->toDouble());
@@ -1420,8 +1434,10 @@ void salesOrderItem::sSave(bool pPartial)
   
   _modified = false;
 
-  if ( (pPartial) && (cNew == _mode) )
+  if ( (pPartial) && ((cNew == _mode) || (cNewQuote == _mode)) )
   {
+    _item->setReadOnly(TRUE);
+    _warehouse->setEnabled(FALSE);
     _partialsaved = true;
     return;
   }
@@ -2218,7 +2234,7 @@ void salesOrderItem::sPopulateItemSubs(int pItemid)
 
 void salesOrderItem::sPopulateSubMenu(QMenu *menu, QTreeWidgetItem*, int)
 {
-  if ((_mode == cNew) || (_mode == cNewQuote))
+  if ( !_partialsaved && ((_mode == cNew) || (_mode == cNewQuote)) )
   menu->addAction(tr("Substitute..."), this, SLOT(sSubstitute()));
 }
 
@@ -2959,7 +2975,14 @@ void salesOrderItem::sHandleSupplyOrder()
               return;
             }
             else
+            {
+              if ((cNew == _mode) || (cNewQuote == _mode))
+              {
+                _item->setReadOnly(FALSE);
+                _warehouse->setEnabled(TRUE);
+              }
               _supplyOrderId = -1;
+            }
           }
           else if (ordq.lastError().type() != QSqlError::NoError)
           {
@@ -2999,7 +3022,14 @@ void salesOrderItem::sHandleSupplyOrder()
               return;
             }
             else
+            {
+              if ((cNew == _mode) || (cNewQuote == _mode))
+              {
+                _item->setReadOnly(FALSE);
+                _warehouse->setEnabled(TRUE);
+              }
               _supplyOrderId = -1;
+            }
           }
           else if (ordq.lastError().type() != QSqlError::NoError)
           {
@@ -3034,7 +3064,14 @@ void salesOrderItem::sHandleSupplyOrder()
               return;
             }
             else
+            {
+              if ((cNew == _mode) || (cNewQuote == _mode))
+              {
+                _item->setReadOnly(FALSE);
+                _warehouse->setEnabled(TRUE);
+              }
               _supplyOrderId = -1;
+            }
           }
           else if (ordq.lastError().type() != QSqlError::NoError)
           {
