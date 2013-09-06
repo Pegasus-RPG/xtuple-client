@@ -51,6 +51,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSources(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateItemSubs(int)));
   connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sPopulateHistory()));
+  connect(_item,              SIGNAL(newId(int)),                   this, SLOT(sDetermineAvailability()));
   connect(_listPrices,        SIGNAL(clicked()),                    this, SLOT(sListPrices()));
   connect(_netUnitPrice,      SIGNAL(idChanged(int)),               this, SLOT(sPriceGroup()));
   connect(_netUnitPrice,      SIGNAL(valueChanged()),               this, SLOT(sCalculateExtendedPrice()));
