@@ -297,7 +297,8 @@ bool dspGLTransactions::setParams(ParameterList &params)
                   "FROM gltrans "
                   "  JOIN accnt ON (gltrans_accnt_id=accnt_id) "
                   "WHERE ((gltrans_date BETWEEN :periodstart AND date :querystart - interval '1 day')"
-                  "  AND  (gltrans_accnt_id=:accnt_id)) "
+                  "  AND  (gltrans_accnt_id=:accnt_id)"
+                  "  AND  (NOT gltrans_deleted)) "
                   "GROUP BY accnt_type;");
       glq.bindValue(":periodstart", periodStart);
       glq.bindValue(":querystart",  params.value("startDate").toDate());
