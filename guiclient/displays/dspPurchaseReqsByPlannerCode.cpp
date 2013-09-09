@@ -46,6 +46,8 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
   list()->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter, true,  "pr_duedate" );
   list()->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight,  true,  "pr_qtyreq"  );
   list()->addColumn(tr("Notes"),        -1,    Qt::AlignLeft,  true,  "pr_releasenote"  );
+
+  connect(omfgThis, SIGNAL(purchaseRequestsUpdated()), this, SLOT(sFillList()));
 }
 
 void dspPurchaseReqsByPlannerCode::languageChange()
