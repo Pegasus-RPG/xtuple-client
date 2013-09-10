@@ -271,9 +271,9 @@
     </line>
     <label>
      <rect>
-      <x>100</x>
+      <x>30</x>
       <y>30</y>
-      <width>104</width>
+      <width>174</width>
       <height>15</height>
      </rect>
      <font>
@@ -339,22 +339,6 @@
    </head>
    <foot>
     <height>33</height>
-    <label>
-     <rect>
-      <x>440</x>
-      <y>10</y>
-      <width>140</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>bold</weight>
-     </font>
-     <right/>
-     <top/>
-     <string>Section Total:</string>
-    </label>
     <line>
      <xstart>305</xstart>
      <ystart>5</ystart>
@@ -362,27 +346,6 @@
      <yend>5</yend>
      <weight>0</weight>
     </line>
-    <field>
-     <rect>
-      <x>610</x>
-      <y>10</y>
-      <width>100</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>bold</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>f_value</column>
-     </data>
-     <format builtin="true">money</format>
-     <tracktotal subtotal="true"/>
-    </field>
    </foot>
   </group>
   <detail>
@@ -393,7 +356,7 @@
    <field>
     <rect>
      <x>305</x>
-     <y>0</y>
+     <y>2</y>
      <width>135</width>
      <height>15</height>
     </rect>
@@ -411,27 +374,8 @@
    </field>
    <field>
     <rect>
-     <x>100</x>
-     <y>0</y>
-     <width>95</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>name</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>210</x>
-     <y>0</y>
+     <y>2</y>
      <width>85</width>
      <height>15</height>
     </rect>
@@ -450,7 +394,7 @@
    <field>
     <rect>
      <x>445</x>
-     <y>0</y>
+     <y>2</y>
      <width>85</width>
      <height>15</height>
     </rect>
@@ -469,7 +413,7 @@
    <field>
     <rect>
      <x>545</x>
-     <y>0</y>
+     <y>2</y>
      <width>165</width>
      <height>15</height>
     </rect>
@@ -483,6 +427,25 @@
     <data>
      <query>detail</query>
      <column>f_value</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>30</x>
+     <y>2</y>
+     <width>175</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>name</column>
     </data>
    </field>
   </detail>
@@ -542,9 +505,9 @@
   </label>
   <line>
    <xstart>0</xstart>
-   <ystart>5</ystart>
+   <ystart>-11</ystart>
    <xend>750</xend>
-   <yend>5</yend>
+   <yend>-11</yend>
    <weight>2</weight>
   </line>
   <field>
