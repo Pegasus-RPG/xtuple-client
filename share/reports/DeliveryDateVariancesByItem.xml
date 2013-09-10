@@ -793,7 +793,7 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_qty</column>
+     <column>recv_qty</column>
     </data>
    </field>
    <field>

@@ -52,6 +52,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sPopulateHistory();
     virtual void        sCalculateDiscountPrcnt();
     virtual void        sCalculateExtendedPrice();
+    virtual void        sCheckSupplyOrder();
     virtual void        sHandleSupplyOrder();
     virtual void        sPopulateOrderInfo();
     virtual void        sRollupPrices();
@@ -117,6 +118,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     double  _supplyOrderQtyOrderedCache;
     QDate   _supplyOrderDueDateCache;
     QDate   _supplyOrderScheduledDateCache;
+    bool    _supplyOrderDropShipCache;
     double  _cachedPct;
     double  _cachedRate;
     int     _taxzoneid;
