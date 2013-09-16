@@ -274,10 +274,11 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
                 if (purchaseet.first())
                 {
                   XSqlQuery itemsrcdefault;
-                  MetaSQLQuery mql = mqlLoad("itemSources", "default");
+                  MetaSQLQuery mql = mqlLoad("itemSources", "detail");
 
                   ParameterList paramsdft;
                   paramsdft.append("item_id", purchaseet.value("itemsite_item_id").toInt());
+				  paramsdft.append("defaultOnly", true);
                   itemsrcdefault = mql.toQuery(paramsdft);
                   itemsrcdefault.exec();
                   if (itemsrcdefault.first())
