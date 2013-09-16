@@ -186,33 +186,35 @@ salesOrder::salesOrder(QWidget *parent, const char *name, Qt::WFlags fl)
   _applDate->setDate(omfgThis->dbDate(), true);
   _distDate->setDate(omfgThis->dbDate(), true);
 
-  _soitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "f_linenumber");
-  _soitem->addColumn(tr("Kit Seq. #"),  _seqColumn, Qt::AlignRight, false,"coitem_subnumber");
-  _soitem->addColumn(tr("Item"),       _itemColumn, Qt::AlignLeft,  true, "item_number");
-  _soitem->addColumn(tr("Customer P/N"), _itemColumn, Qt::AlignLeft,  false, "item_number_cust");
-  _soitem->addColumn(tr("Type"),       _itemColumn, Qt::AlignLeft,  false,"item_type");
-  _soitem->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "description");
-  _soitem->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
-  _soitem->addColumn(tr("Status"),   _statusColumn, Qt::AlignCenter,true, "enhanced_status");
-  _soitem->addColumn(tr("Firm"),                 0, Qt::AlignCenter,false, "coitem_firm");
-  _soitem->addColumn(tr("Sched. Date"),_dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
-  _soitem->addColumn(tr("Ordered"),     _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
-  _soitem->addColumn(tr("Qty UOM"),     (int)(_uomColumn*1.5), Qt::AlignLeft,  true, "qty_uom");
-  _soitem->addColumn(tr("Shipped"),     _qtyColumn, Qt::AlignRight, true, "qtyshipped");
-  _soitem->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight, false, "qtyatshipping");
-  _soitem->addColumn(tr("Balance"),     _qtyColumn, Qt::AlignRight, false, "balance");
-  _soitem->addColumn(tr("Price UOM"),   _uomColumn, Qt::AlignLeft,  false, "price_uom");
-  _soitem->addColumn(tr("Price"),     _priceColumn, Qt::AlignRight, true, "coitem_price");
-  _soitem->addColumn(tr("Extended"),  _priceColumn, Qt::AlignRight, true, "extprice");
-  _soitem->addColumn(tr("Cust. Price"),     _priceColumn, Qt::AlignRight, false, "coitem_custprice");
-  _soitem->addColumn(tr("Cust. Discount"),  _priceColumn, Qt::AlignRight, false, "discountfromcust");
-  _soitem->addColumn(tr("Supply Type"), _itemColumn, Qt::AlignCenter, false, "spplytype");
-  _soitem->addColumn(tr("Order Number"),_itemColumn, Qt::AlignCenter, false, "ordrnumbr");
-  _soitem->addColumn(tr("On Hand"), _qtyColumn, Qt::AlignCenter, true, "itemsite_qtyonhand");
+  _soitem->addColumn(tr("#"),               _seqColumn,            Qt::AlignCenter, true,  "f_linenumber");
+  _soitem->addColumn(tr("Kit Seq. #"),      _seqColumn,            Qt::AlignRight,  false, "coitem_subnumber");
+  _soitem->addColumn(tr("Item"),            _itemColumn,           Qt::AlignLeft,   true,  "item_number");
+  _soitem->addColumn(tr("Customer P/N"),    _itemColumn,           Qt::AlignLeft,   false, "item_number_cust");
+  _soitem->addColumn(tr("Type"),            _itemColumn,           Qt::AlignLeft,   false, "item_type");
+  _soitem->addColumn(tr("Description"),     -1,                    Qt::AlignLeft,   true,  "description");
+  _soitem->addColumn(tr("Site"),            _whsColumn,            Qt::AlignCenter, true,  "warehous_code");
+  _soitem->addColumn(tr("Status"),          _statusColumn,         Qt::AlignCenter, true,  "enhanced_status");
+  _soitem->addColumn(tr("Firm"),            0,                     Qt::AlignCenter, false, "coitem_firm");
+  _soitem->addColumn(tr("Sched. Date"),     _dateColumn,           Qt::AlignCenter, true,  "coitem_scheddate");
+  _soitem->addColumn(tr("Ordered"),         _qtyColumn,            Qt::AlignRight,  true,  "coitem_qtyord");
+  _soitem->addColumn(tr("Qty UOM"),         (int)(_uomColumn*1.5), Qt::AlignLeft,   true,  "qty_uom");
+  _soitem->addColumn(tr("Shipped"),         _qtyColumn,            Qt::AlignRight,  true,  "qtyshipped");
+  _soitem->addColumn(tr("At Shipping"),     _qtyColumn,            Qt::AlignRight,  false, "qtyatshipping");
+  _soitem->addColumn(tr("Balance"),         _qtyColumn,            Qt::AlignRight,  false, "balance");
+  _soitem->addColumn(tr("Price UOM"),       _uomColumn,            Qt::AlignLeft,   false, "price_uom");
+  _soitem->addColumn(tr("Price"),           _priceColumn,          Qt::AlignRight,  true,  "coitem_price");
+  _soitem->addColumn(tr("Extended"),        _priceColumn,          Qt::AlignRight,  true,  "extprice");
+  _soitem->addColumn(tr("Cust. Price"),     _priceColumn,          Qt::AlignRight,  false, "coitem_custprice");
+  _soitem->addColumn(tr("Cust. Discount"),  _priceColumn,          Qt::AlignRight,  false, "discountfromcust");
+  _soitem->addColumn(tr("Prod. Weight"),    _qtyColumn,            Qt::AlignRight,  false, "prodweight");
+  _soitem->addColumn(tr("Pkg. Weight"),     _qtyColumn,            Qt::AlignRight,  false, "packweight");
+  _soitem->addColumn(tr("Supply Type"),     _itemColumn,           Qt::AlignCenter, false, "spplytype");
+  _soitem->addColumn(tr("Order Number"),    _itemColumn,           Qt::AlignCenter, false, "ordrnumbr");
+  _soitem->addColumn(tr("On Hand"),         _qtyColumn,            Qt::AlignCenter, true,  "itemsite_qtyonhand");
   if (_metrics->boolean("EnableSOReservations"))
   {
-    _soitem->addColumn(tr("Reserved"), _qtyColumn, Qt::AlignCenter, true, "reserved");
-    _soitem->addColumn(tr("Reservable"),_qtyColumn, Qt::AlignCenter, true, "reservable");
+    _soitem->addColumn(tr("Reserved"),      _qtyColumn,            Qt::AlignCenter, true,  "reserved");
+    _soitem->addColumn(tr("Reservable"),    _qtyColumn,            Qt::AlignCenter, true,  "reservable");
   }
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
