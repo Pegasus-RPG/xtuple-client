@@ -1155,7 +1155,7 @@ void salesOrderItem::sSave(bool pPartial)
       }
     }
 
-    if (_supplyOrderId != -1)
+    if (_supplyOrderId != -1 && !_item->isConfigured())
     {
       // Update Supply Order Characteristics
       if (_itemchar->rowCount() > 0)
@@ -1383,7 +1383,7 @@ void salesOrderItem::sSave(bool pPartial)
     }
   }
 
-  if ( (_mode != cView) && (_mode != cViewQuote) )
+  if ( (_mode != cView) && (_mode != cViewQuote) && (_supplyOrderId == -1) )
   {
     QString type = "SI";
     if (_mode & 0x20)
@@ -1580,7 +1580,10 @@ void salesOrderItem::sDeterminePrice(bool force)
            _metrics->value("soPriceEffective") != "ScheduleDate" || (
              !_scheduledDate->isValid() ||
              _scheduledDate->date() == _scheduledDateCache) ) ) )
+  {
+    sCheckSupplyOrder();
     return;
+  }
 
   double  charTotal  =0;
   bool    dateChanged =(_scheduledDateCache != _scheduledDate->date());
@@ -2368,6 +2371,8 @@ void salesOrderItem::sCalculateExtendedPrice()
 
 void salesOrderItem::sCheckSupplyOrder()
 {
+//  QMessageBox::critical(this, tr("Debug"),
+//                        tr("sCheckSupplyOrder called."));
   if ( (_item->isValid()) &&
       (_warehouse->isValid()) &&
       (_scheduledDate->isValid()) &&
@@ -2377,7 +2382,7 @@ void salesOrderItem::sCheckSupplyOrder()
     if (_createSupplyOrder->isChecked())
       sHandleSupplyOrder();
     else
-      if ((_mode == cNew && !_stocked) || _supplyOrderId > -1)
+      if ((_mode == cNew && !_stocked) || _costmethod == "J" || _supplyOrderId > -1)
         _createSupplyOrder->setChecked(true);
   }
 }
