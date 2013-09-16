@@ -148,6 +148,13 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
           FROM coitem
          WHERE (coitem_cohead_id=&lt;? value("sohead_id") ?>) ) AS data;</sql>
  </querysource>
+ <querysource>
+  <name>currency</name>
+  <sql>SELECT currConcat(curr_id) AS currConcat, curr_symbol
+FROM cohead, curr_symbol
+WHERE (cohead_id = &lt;? value("sohead_id") ?>)
+ AND  (cohead_curr_id = curr_id);</sql>
+ </querysource>
  <rpthead>
   <height>426</height>
   <image>
@@ -950,7 +957,7 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
   </label>
   <label>
    <rect>
-    <x>425</x>
+    <x>390</x>
     <y>138</y>
     <width>170</width>
     <height>30</height>
@@ -966,7 +973,7 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
   </label>
   <field>
    <rect>
-    <x>635</x>
+    <x>670</x>
     <y>28</y>
     <width>97</width>
     <height>16</height>
@@ -985,7 +992,7 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
   </field>
   <field>
    <rect>
-    <x>635</x>
+    <x>670</x>
     <y>48</y>
     <width>97</width>
     <height>17</height>
@@ -1021,7 +1028,7 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
   <field>
    <rect>
     <x>605</x>
-    <y>138</y>
+    <y>133</y>
     <width>172</width>
     <height>32</height>
    </rect>
@@ -1055,7 +1062,7 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
   </label>
   <field>
    <rect>
-    <x>640</x>
+    <x>675</x>
     <y>8</y>
     <width>92</width>
     <height>17</height>
@@ -1090,7 +1097,7 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
   </label>
   <field>
    <rect>
-    <x>635</x>
+    <x>670</x>
     <y>68</y>
     <width>97</width>
     <height>17</height>
@@ -1109,7 +1116,7 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
   </field>
   <field>
    <rect>
-    <x>630</x>
+    <x>665</x>
     <y>88</y>
     <width>102</width>
     <height>17</height>
@@ -1160,7 +1167,7 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
   </label>
   <field>
    <rect>
-    <x>630</x>
+    <x>665</x>
     <y>108</y>
     <width>102</width>
     <height>17</height>
@@ -1175,6 +1182,140 @@ WHERE (cohead_id=&lt;? value("sohead_id") ?>)
    <data>
     <query>footer</query>
     <column>f_credit</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>635</x>
+    <y>48</y>
+    <width>30</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>635</x>
+    <y>68</y>
+    <width>30</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>635</x>
+    <y>8</y>
+    <width>30</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>565</x>
+    <y>143</y>
+    <width>30</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+    <italic/>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>635</x>
+    <y>28</y>
+    <width>30</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>635</x>
+    <y>88</y>
+    <width>30</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>635</x>
+    <y>108</y>
+    <width>30</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
    </data>
   </field>
  </pgfoot>
