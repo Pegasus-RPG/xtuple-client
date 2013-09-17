@@ -26,6 +26,7 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char*, Qt::WFlags fl)
   setListLabel(tr("Location"));
   setReportName("QOHByLocation");
   setMetaSQLOptions("qoh", "detail");
+  setUseAltId(true);
 
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sPopulateLocations()));
 
@@ -131,14 +132,27 @@ void dspQOHByLocation::sRelocate()
     sFillList();
 }
 
+void dspQOHByLocation::sAddToPackingListBatch()
+{
+  XSqlQuery qq;
+  qq.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
+  qq.bindValue(":sohead_id", list()->altId());
+  qq.exec();
+  sFillList();
+}
+
 void dspQOHByLocation::sPopulateMenu(QMenu *menu, QTreeWidgetItem*, int)
 {
   QAction *menuItem;
 
-  if (list()->id() != -1)
+  if (list()->id() != -1 && list()->altId() == 0)
   {
     menuItem = menu->addAction(tr("Relocate..."), this, SLOT(sRelocate()));
     menuItem->setEnabled(_privileges->check("RelocateInventory"));
+  }
+  else if (list()->id() != -1 && list()->altId() > 0)
+  {
+    menuItem = menu->addAction(tr("Add to Packing List Batch"), this, SLOT(sAddToPackingListBatch()));
   }
 }
 
