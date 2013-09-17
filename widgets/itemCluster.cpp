@@ -43,7 +43,7 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
                  "      item_sold, item_active "
                  "   FROM item "
                  "     JOIN itemalias ON item_id = itemalias_item_id "
-                 ") AS item ";
+                 ") AS item "
                  " JOIN uom ON (uom_id=item_inv_uom_id) ";
   }
   else
@@ -847,11 +847,23 @@ void ItemLineEdit::sParse()
                    "item_upccode AS description " );
 
       QStringList clauses;
+      // first check item number
       clauses = _extraClauses;
-      clauses << "((POSITION(:searchString IN item_number) = 1)"
-              " OR (POSITION(:searchString IN item_upccode) = 1))";
+      clauses << "(POSITION(:searchString IN item_number) = 1)";
       item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, true)
                                .replace(";"," ORDER BY item_number LIMIT 1;"));
+      item.bindValue(":searchString", QString(text().trimmed().toUpper()));
+      item.exec();
+      if (item.first())
+      {
+        setId(item.value("item_id").toInt());
+        return;
+      }
+      // item number not found, check upccode
+      clauses = _extraClauses;
+      clauses << "(POSITION(:searchString IN item_upccode) = 1)";
+      item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type, true)
+                   .replace(";"," ORDER BY item_number LIMIT 1;"));
       item.bindValue(":searchString", QString(text().trimmed().toUpper()));
       item.exec();
       if (item.first())
