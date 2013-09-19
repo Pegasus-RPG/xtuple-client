@@ -29,6 +29,7 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_currency, SIGNAL(newID(int)), this, SLOT(sCheckCurrency()));
   connect(_currency, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillList()));
 
@@ -308,6 +309,28 @@ void itemPricingSchedule::sDelete()
   }
 
   sFillList();
+}
+
+void itemPricingSchedule::sCheckCurrency()
+{
+  XSqlQuery currCheck;
+  currCheck.prepare( "SELECT curr_rate "
+                     "FROM curr_rate "
+                     "WHERE ( (curr_id=:curr_id) "
+                     "  AND   (CURRENT_DATE BETWEEN curr_effective AND curr_expires) );" );
+  currCheck.bindValue(":curr_id", _currency->id());
+  currCheck.exec();
+  if (!currCheck.first())
+  {
+    QMessageBox::critical( this, tr("Currency Exchange Rate"),
+                          tr("Currency Exchange Rate not found.  You should correct before proceeding.") );
+  }
+  else if (currCheck.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, _rejectedMsg.arg(currCheck.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+  }
 }
 
 void itemPricingSchedule::sFillList()
