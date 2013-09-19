@@ -553,7 +553,7 @@ to be bound by its terms.</comment>
                   <item row="5" column="0">
                    <widget class="QCheckBox" name="_long30Markups">
                     <property name="text">
-                     <string>Use &quot;Long 30&quot; Method for Markups</string>
+                     <string>Use &quot;Gross Margin&quot; Method for Markups</string>
                     </property>
                    </widget>
                   </item>
