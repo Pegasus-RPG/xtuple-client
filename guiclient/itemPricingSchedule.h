@@ -33,6 +33,7 @@ public slots:
     virtual void sNew();
     virtual void sEdit();
     virtual void sDelete();
+    virtual void sCheckCurrency();
     virtual void sFillList();
     virtual void sFillList( int pIpsitemid );
     virtual void populate();
