@@ -140,19 +140,6 @@ to be bound by its terms.</comment>
              <widget class="DateCluster" name="_dates"/>
             </item>
             <item>
-             <widget class="QLabel" name="_warehouseLit">
-              <property name="text">
-               <string>Site:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="WComboBox" name="_warehouse"/>
-            </item>
-            <item>
              <layout class="QVBoxLayout">
               <property name="spacing">
                <number>5</number>
@@ -194,6 +181,19 @@ to be bound by its terms.</comment>
                </layout>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="_warehouseLit">
+              <property name="text">
+               <string>Calculate Net Price using Site:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="WComboBox" name="_warehouse"/>
             </item>
            </layout>
           </item>
@@ -358,6 +358,7 @@ to be bound by its terms.</comment>
   <tabstop>_descrip</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_currency</tabstop>
+  <tabstop>_warehouse</tabstop>
   <tabstop>_ipsitem</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
