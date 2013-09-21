@@ -1960,6 +1960,15 @@ void salesOrder::sNew()
     //  populate();
   }
 
+  // Double check some values
+  QList<GuiErrorCheck> errors;
+  errors << GuiErrorCheck((!_shipDate->isValid()) && (_metrics->value("soPriceEffective") == "ScheduleDate"), _shipDate,
+         tr("You must enter an Scheduled Date for this order before you may save it.") )
+  ;
+                          
+  if (GuiErrorCheck::reportErrors(this, tr("Cannot Save Sales Order"), errors))
+    return;
+  
   ParameterList params;
   params.append("sohead_id", _soheadid);
   params.append("cust_id", _cust->id());
