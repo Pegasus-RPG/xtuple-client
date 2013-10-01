@@ -40,6 +40,7 @@ void quickRelocateLot::sPost()
 {
     int ls_id = -1;
     int location_id = -1;
+    int qoh = -1;
     XSqlQuery lotQuery;
     lotQuery.prepare(QString("SELECT ls_id FROM ls WHERE (ls_number='%1');").arg(_lotSerial->text()));
     lotQuery.exec();
@@ -78,6 +79,23 @@ void quickRelocateLot::sPost()
                              tr("The specified location does not exist."));
         return;
     }
+
+    XSqlQuery qohQuery;
+    qohQuery.prepare(QString("SELECT itemloc_qty FROM itemloc WHERE "
+                             " itemloc_ls_id=%1;").arg(ls_id));
+    qohQuery.exec();
+    if (qohQuery.first())
+    {
+        qoh = qohQuery.value("itemloc_qty").toInt();
+    }
+    if (qoh <= 0)
+    {
+        QMessageBox::warning(this, tr("Unable to relocate lot"),
+                             QString("Current lot (%1) has no quantity available to relocate.\n\n"
+                                     "Please check quantities before attempting to relocate lot.").arg(_lotSerial->text()));
+        return;
+    }
+
 
     XSqlQuery updateQuery;
     updateQuery.prepare(QString("UPDATE itemloc SET itemloc_location_id=%1"
