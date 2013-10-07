@@ -407,6 +407,9 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
   if (valid)
     _scheduledDate->setDate(param.toDate());
 
+  if (_metrics->boolean("AllowASAPShipSchedules") && !_scheduledDate->isValid())
+    _scheduledDate->setDate(QDate::currentDate());
+  
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -878,9 +881,6 @@ void salesOrderItem::sSave(bool pPartial)
 {
   XSqlQuery salesSave;
   _save->setFocus();
-
-  if (_metrics->boolean("AllowASAPShipSchedules") && !_scheduledDate->isValid())
-    _scheduledDate->setDate(QDate::currentDate());
 
   _error = true;
   QList<GuiErrorCheck> errors;
