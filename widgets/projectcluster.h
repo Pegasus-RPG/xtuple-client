@@ -53,12 +53,9 @@ class XTUPLEWIDGETS_EXPORT ProjectLineEdit : public CrmClusterLineEdit
     protected:
       void buildExtraClause();
 
-      QAction* 	       _copyProj;
       QString          _prjExtraClause;
       ProjectStatuses  _allowedStatuses;
-      QLabel* 	       _menuLabel;
-      QMenu* 	       _menu;
-      
+  
     private:
       enum ProjectType _type;
 
@@ -83,12 +80,6 @@ class XTUPLEWIDGETS_EXPORT ProjectCluster : public VirtualCluster
       virtual void setAllowedStatuses(const ProjectLineEdit::ProjectStatuses);
       virtual void setAllowedStatuses(const int);
       virtual void setType(enum ProjectLineEdit::ProjectType ptype);
-      virtual void sCopy();
-
-    protected:
-      QAction* 	       _copyProj;
-      QLabel* 	       _menuLabel;
-      QMenu* 	       _menu;
 
 };
 
