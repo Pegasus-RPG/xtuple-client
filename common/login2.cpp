@@ -347,7 +347,7 @@ void login2::sLogin()
     if(checkVersion.first())
     {
       if(!(checkVersion.value("version").toString() < "8.4" ||
-        checkVersion.value("version").toString() > "9.1"))
+        checkVersion.value("version").toString() > "9.3"))
       {
         goodVersion = true;
       }
@@ -364,7 +364,7 @@ void login2::sLogin()
                              "<p>The server version %1 is not supported."
                              "<p>The minimum supported version is %2 and maximum is %3.")
                              .arg(checkVersion.value("version").toString())
-                             .arg("8.4").arg("9.1"));
+                             .arg("8.4").arg("9.3"));
       db.close();
       if (!_captive)
       {
