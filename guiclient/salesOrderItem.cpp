@@ -2956,6 +2956,7 @@ void salesOrderItem::sHandleSupplyOrder()
                 _warehouse->setEnabled(TRUE);
               }
               _supplyOrderId = -1;
+              _itemcharView->setEnabled(TRUE);
             }
           }
           else if (ordq.lastError().type() != QSqlError::NoError)
