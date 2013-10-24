@@ -24,17 +24,7 @@ to be bound by its terms.</comment>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="WarehouseGroup" name="_warehouse">
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
-       </property>
-       <property name="title">
-        <string/>
-       </property>
-       <property name="fixedSize">
-        <bool>false</bool>
-       </property>
-      </widget>
+      <widget class="ParameterWidget" name="_parameterWidget"/>
      </item>
      <item>
       <spacer>
@@ -138,9 +128,9 @@ to be bound by its terms.</comment>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
+   <class>ParameterWidget</class>
+   <extends>QWidget</extends>
+   <header>parameterwidget.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -150,7 +140,6 @@ to be bound by its terms.</comment>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_warehouse</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>

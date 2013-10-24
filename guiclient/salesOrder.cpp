@@ -4503,6 +4503,8 @@ void salesOrder::sUnreserveStock()
       return;
     }
   }
+  
+  sFillItemList();
 }
 
 void salesOrder::sShowReservations()
