@@ -93,7 +93,7 @@ suffix = "run";
 }
 void checkForUpdates::downloadButtonPressed()
 {
-      this->close();
+     // this->close();
       QUrl url(newurl);
       reply = NULL;
       filename = "xTuple-" + serverVersion + "-" + OS + "-installer."+ suffix;
@@ -190,6 +190,8 @@ void checkForUpdates::downloadFinished()
 }
 void checkForUpdates::startUpdate()
 {
+    this->close();
+    qDebug() <<"filename= " << filename;
     QFile *updater = new QFile(filename);
     if(updater->exists())
     {
@@ -215,6 +217,7 @@ void checkForUpdates::startUpdate()
         #endif
         #ifdef Q_OS_WIN
         int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
+        qDebug() << "result= " << result;
         if (SE_ERR_ACCESSDENIED== result)
         {
             result = (int)::ShellExecuteA(0, "runas", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
