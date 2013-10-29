@@ -2901,12 +2901,14 @@ void salesOrderItem::sHandleSupplyOrder()
             ordq.exec();
             if (ordq.first())
             {
-              int result = ordq.value("result").toInt();
-              if (result < 0)
+              _supplyOrderId = ordq.value("result").toInt();
+              if (_supplyOrderId < 0)
               {
-                systemError(this, storedProcErrorLookup("changePurchaseDropShip", result), __FILE__, __LINE__);
+                systemError(this, storedProcErrorLookup("changePurchaseDropShip", _supplyOrderId), __FILE__, __LINE__);
                 return;
               }
+              // save the sales order item again to capture the supply order id
+              sSave(true);
             }
             else if (ordq.lastError().type() != QSqlError::NoError)
             {
