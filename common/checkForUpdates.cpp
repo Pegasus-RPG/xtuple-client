@@ -95,6 +95,7 @@ void checkForUpdates::downloadButtonPressed()
 {
       this->close();
       QUrl url(newurl);
+      reply = NULL;
       filename = "xTuple-" + serverVersion + "-" + OS + "-installer."+ suffix;
 
       if(QFile::exists(filename))
@@ -125,7 +126,7 @@ void checkForUpdates::downloadButtonPressed()
       connect(reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
       connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
       connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
-      //connect(reply, SIGNAL(downloadComplete()), this, SLOT(startUpdate()));
+      connect(this, SIGNAL(done()), this, SLOT(startUpdate()));
 
       progressDialog->setLabelText(tr("Downloading %1...").arg(filename));
       _ok->setEnabled(false);
@@ -183,7 +184,9 @@ void checkForUpdates::downloadFinished()
     reply = NULL;
     delete file;
     file = NULL;
-    startUpdate();
+
+    if(reply == 0)
+        emit done();
 }
 void checkForUpdates::startUpdate()
 {
