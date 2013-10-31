@@ -52,6 +52,23 @@ void dspPricesByCustomer::languageChange()
   retranslateUi(this);
 }
 
+enum SetResponse dspPricesByCustomer::set(const ParameterList &pParams)
+{
+  XWidget::set(pParams);
+  QVariant param;
+  bool     valid;
+  
+  param = pParams.value("cust_id", &valid);
+  if (valid)
+    _cust->setId(param.toInt());
+  
+  param = pParams.value("item_id", &valid);
+  if (valid)
+    _item->setId(param.toInt());
+  
+  return NoError;
+}
+
 void dspPricesByCustomer::sHandleCosts(bool pShowCosts)
 {
   if (pShowCosts)
