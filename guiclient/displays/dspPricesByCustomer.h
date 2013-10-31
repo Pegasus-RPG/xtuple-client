@@ -25,6 +25,7 @@ public:
     virtual bool setParams(ParameterList &);
 
 public slots:
+    virtual SetResponse set(const ParameterList & pParams);
     virtual void sHandleCosts( bool pShowCosts );
 
 protected slots:
