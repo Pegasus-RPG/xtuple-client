@@ -335,47 +335,7 @@ void login2::sLogin()
       break;  // break instead of for-loop condition to preserve methodidx
   }
 
-  // Check that it is a supported PostgreSQL version
-  if (db.isOpen())
-  {
-    XSqlQuery checkVersion(QString("select supportedpgversion(8.4, 9.3);"));
-    bool goodVersion = false;
-    // added code to support PG 9.2+ Incident 21852
-    if(checkVersion.first())
-    {
-      if(checkVersion.value("supportedpgversion").toBool())
-      {
-        goodVersion = true;
-      }
-    }
-    if(!goodVersion)
-    {
-      if (_splash)
-        _splash->hide();       
-    
-      setCursor(QCursor(Qt::ArrowCursor));
-
-      QMessageBox::critical(this, tr("Cannot Connect to xTuple ERP Server"),
-                            tr("<p>Sorry, can't connect to the specified xTuple ERP server. "
-                             "<p>The server version %1 is not supported."
-                             "<p>The minimum supported version is %2 and maximum is %3.")
-                             .arg(checkVersion.value("version").toString())
-                             .arg("8.4").arg("9.3"));
-      db.close();
-      if (!_captive)
-      {
-        _username->setText("");
-        _username->setFocus();
-      }
-      else
-        _password->setFocus();
-
-      _password->setText("");
-      return;
-    }
-  }
-
-  // if connected using OpenMFG enhanced auth, remangle the password
+   // if connected using OpenMFG enhanced auth, remangle the password
   if (db.isOpen() && (methodidx == 2 || methodidx == 5))
       XSqlQuery chgpass(QString("ALTER USER \"%1\" WITH PASSWORD '%2'")
                       .arg(_cUsername, QMd5(QString(_cPassword + salt + _cUsername))));
