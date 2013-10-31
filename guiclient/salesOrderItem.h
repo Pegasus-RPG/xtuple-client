@@ -119,6 +119,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     QDate   _supplyOrderDueDateCache;
     QDate   _supplyOrderScheduledDateCache;
     bool    _supplyOrderDropShipCache;
+    double  _supplyOverridePriceCache;
     double  _cachedPct;
     double  _cachedRate;
     int     _taxzoneid;
