@@ -10,7 +10,6 @@
 
 #include "checkForUpdates.h"
 
-#include <QFile>
 #include <QSqlError>
 #include <QUrl>
 #include <QXmlQuery>
@@ -22,6 +21,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QTranslator>
 #include <QDialog>
 #include <QProcess>
@@ -200,13 +200,17 @@ void checkForUpdates::startUpdate()
         #ifdef Q_OS_MAC
         QProcess sh;
         sh.start("tar -xvf " + filename);
-        sh.waitForFinished();
+        if(sh.waitForFinished())
+        {
         sh.close();
         filename = "xTuple-" + serverVersion + "-" + OS + "-installer.app";
         QFileInfo *path2 = new QFileInfo(filename);
         QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/osx-intel";
+        QFile osxUpdate(filepath);
+        osxUpdate.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
         if(installer->startDetached(filepath, options))
             reject();
+        }
         #endif
         #ifdef Q_OS_LINUX
         QFile launch(filename);
