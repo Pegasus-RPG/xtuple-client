@@ -338,16 +338,12 @@ void login2::sLogin()
   // Check that it is a supported PostgreSQL version
   if (db.isOpen())
   {
-    XSqlQuery checkVersion(QString("select (regexp_matches(setting, '^(\\d+.\\d+).\\d+'))[1] as version from pg_settings where name = 'server_version'"));
+    XSqlQuery checkVersion(QString("select supportedpgversion(8.4, 9.3);"));
     bool goodVersion = false;
-    // FIXME:
-    // - should store the range in some constants
-    // - when version numbers use extra digits (e.g v10.1), must use a
-    //   version comparison algorithm
+    // added code to support PG 9.2+ Incident 21852
     if(checkVersion.first())
     {
-      if(!(checkVersion.value("version").toString() < "8.4" ||
-        checkVersion.value("version").toString() > "9.3"))
+      if(checkVersion.value("supportedpgversion").toBool())
       {
         goodVersion = true;
       }

@@ -324,12 +324,12 @@ int main(int argc, char *argv[])
     _splash->showMessage(QObject::tr("Checking License Key"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
 	
-	XSqlQuery checkVersion(QString("select split_part(version(), ' ', 2) as version;"));
-    // TODO:
-    // change to proper version checking algorithm once implemented
+	// PostgreSQL changed the column "procpid" to just "pid" in 9.2.0+ Incident #21852
+	XSqlQuery checkVersion(QString("select compareversion('9.2.0');"));
+
     if(checkVersion.first())
     {
-      if(checkVersion.value("version").toString() < "9.2")
+      if(checkVersion.value("compareversion").toInt() <= "0")
       {
 	   metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
 			"  FROM pg_stat_activity, pg_locks"
