@@ -13,8 +13,8 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>101</height>
+    <width>735</width>
+    <height>178</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,6 +25,9 @@ to be bound by its terms.</comment>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="CustCluster" name="_cust"/>
+     </item>
+     <item>
+      <widget class="ItemCluster" name="_item"/>
      </item>
      <item>
       <spacer name="verticalSpacer">
@@ -174,6 +177,12 @@ to be bound by its terms.</comment>
    <class>CustCluster</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XCheckBox</class>

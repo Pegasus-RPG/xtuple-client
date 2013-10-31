@@ -84,6 +84,8 @@ bool dspPricesByCustomer::setParams(ParameterList & params)
   params.append("sale", tr("Sale"));
   params.append("listPrice", tr("List Price"));
   params.append("cust_id", _cust->id());
+  if(_item->id() > 0)
+    params.append("item_id", _item->id());
   params.append("byCustomer");
 
   if (_showCosts->isChecked())
