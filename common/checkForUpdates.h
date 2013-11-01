@@ -50,7 +50,7 @@ private:
     QNetworkAccessManager manager;
     QFile *file;
     QProgressDialog *progressDialog;
-    QNetworkReply* reply;
+    QNetworkReply *reply;
     bool downloadRequestAborted;
     QString serverVersion;
     QString OS;
