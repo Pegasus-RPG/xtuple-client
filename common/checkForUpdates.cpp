@@ -51,7 +51,7 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
   connect(_ignore, SIGNAL(clicked()), this, SLOT (accept()));
 
 #ifdef Q_OS_MACX
-OS = "osx";
+OS = "OSX";
 suffix = "tar.gz";
 #endif
 #ifdef Q_OS_WIN
@@ -205,9 +205,9 @@ void checkForUpdates::startUpdate()
         if(sh.waitForFinished())
         {
         sh.close();
-        filename = "xTuple-" + serverVersion + "-" + OS + "-installer.app";
+        filename = "xTuple-" + serverVersion + ".app";
         QFileInfo *path2 = new QFileInfo(filename);
-        QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/osx-intel";
+        QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/xtuple";
         QFile osxUpdate(filepath);
         osxUpdate.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
         if(installer->startDetached(filepath, options))
