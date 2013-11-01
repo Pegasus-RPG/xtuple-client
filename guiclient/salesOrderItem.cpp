@@ -283,6 +283,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _supplyOrderDueDateCache = QDate();
   _supplyOrderScheduledDateCache = QDate();
   _supplyOrderDropShipCache = false;
+  _supplyOverridePriceCache = 0.0;
   _itemsrc = -1;
   _taxzoneid   = -1;
   _initialMode = -1;
@@ -1469,8 +1470,8 @@ void salesOrderItem::sPopulateItemsiteInfo()
       {
         _supplyOrderType = "R";
         _createSupplyOrder->setTitle(tr("Create Purchase Request"));
-        _supplyOverridePrice->hide();
-        _supplyOverridePriceLit->hide();
+        _supplyOverridePrice->show();
+        _supplyOverridePriceLit->show();
         _supplyDropShip->hide();
         _supplyDropShip->setChecked(false);
       }
@@ -2876,8 +2877,8 @@ void salesOrderItem::sHandleSupplyOrder()
           {
             QMessageBox::critical(this, tr("Cannot Update Supply Order"),
                                   tr("The Purchase Order Item this Sales Order Item is linked to is closed.\n"
-                                     "The due date may not be updated."));
-            _scheduledDate->setDate(_supplyOrderScheduledDateCache);
+                                     "The drop ship may not be updated."));
+            _supplyDropShip->setChecked(_supplyOrderDropShipCache);
             return;
           }
           
@@ -2918,6 +2919,40 @@ void salesOrderItem::sHandleSupplyOrder()
           }
         } // end PO drop ship change
       } // end drop ship changed
+
+      if (_supplyOverridePrice->localValue() != _supplyOverridePriceCache)
+      { // override price change
+        if (_supplyOrderType == "P")
+        { // PO override price change
+          if (_supplyOrderStatus->text() == "C")
+          {
+            QMessageBox::critical(this, tr("Cannot Update Supply Order"),
+                                  tr("The Purchase Order Item this Sales Order Item is linked to is closed.\n"
+                                     "The override price may not be updated."));
+            _supplyOverridePrice->setLocalValue(_supplyOverridePriceCache);
+            return;
+          }
+          
+          if (QMessageBox::question(this, tr("Override Price P/O?"),
+                                    tr("<p>The Override Price for this Line Item has changed."
+                                       "<p>Should the P/O Price for this Line Item be changed?"),
+                                    QMessageBox::Yes | QMessageBox::Default,
+                                    QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+          {
+            ordq.prepare("UPDATE poitem SET poitem_unitprice=:unitprice "
+                         "WHERE (poitem_id=:poitem_id);");
+            ordq.bindValue(":poitem_id", _supplyOrderId);
+            ordq.bindValue(":unitprice", _supplyOverridePrice->localValue());
+            ordq.exec();
+            if (ordq.lastError().type() != QSqlError::NoError)
+            {
+              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
+              return;
+            }
+          }
+        } // end PO override price change
+      } // end override price changed
+    
     }  // end supply order exists
     
     // Populate Supply Order info
@@ -3076,6 +3111,7 @@ void salesOrderItem::sHandleSupplyOrder()
 //      _supplyDropShip->setChecked(false);
       _supplyRollupPrices->setChecked(false);
       _supplyOverridePrice->clear();
+      _supplyOverridePriceCache = 0.0;
       _woIndentedList->clear();
     }
   }  // end createSupplyOrder is not checked
@@ -3242,14 +3278,14 @@ void salesOrderItem::sPopulateOrderInfo()
       _supplyOrderQtyLit->show();
       _supplyOrderDueDateLit->show();
       _supplyWarehouseLit->hide();
-      _supplyOverridePriceLit->hide();
+      _supplyOverridePriceLit->show();
       _supplyOrder->show();
       _supplyOrderLine->hide();
       _supplyOrderStatus->show();
       _supplyOrderQty->show();
       _supplyOrderDueDate->show();
       _supplyWarehouse->hide();
-      _supplyOverridePrice->hide();
+      _supplyOverridePrice->show();
       _supplyRollupPrices->hide();
       _supplyDropShip->hide();
       
@@ -3268,7 +3304,7 @@ void salesOrderItem::sPopulateOrderInfo()
   _supplyOrderQtyCache = _supplyOrderQty->toDouble();
   _supplyOrderDueDateCache = _supplyOrderDueDate->date();
   _supplyOrderDropShipCache = _supplyDropShip->isChecked();
-  
+  _supplyOverridePriceCache = _supplyOverridePrice->localValue();
   _supplyOrderQtyOrderedCache = _qtyOrdered->toDouble();
   _supplyOrderScheduledDateCache = _scheduledDate->date();
 
