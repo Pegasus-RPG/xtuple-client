@@ -637,6 +637,7 @@ void purchaseOrderItem::clear()
   _invVendUOMRatio = 1;
   _minimumOrder = 0;
   _orderMultiple = 0;
+  _save->setEnabled(false);
 }
 
 void purchaseOrderItem::sSave()
