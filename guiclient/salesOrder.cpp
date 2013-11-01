@@ -1887,7 +1887,7 @@ void salesOrder::populateShipto(int pShiptoid)
     XSqlQuery shipto;
     shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
                     "       cntct_phone, shipto_cntct_id, shipto_shipzone_id,"
-                    "       shipto_shipvia, shipto_shipcomments,"
+                    "       shipto_shipvia, shipto_shipcomments, shipto_comments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
                     "       COALESCE(shipto_taxzone_id, -1) AS shipto_taxzone_id,"
                     "       shipto_salesrep_id, shipto_commission AS commission "
@@ -1912,6 +1912,7 @@ void salesOrder::populateShipto(int pShiptoid)
       _shipVia->setText(shipto.value("shipto_shipvia"));
       _shippingZone->setId(shipto.value("shipto_shipzone_id").toInt());
       _shippingComments->setText(shipto.value("shipto_shipcomments").toString());
+      _orderComments->setText(shipto.value("shipto_comments").toString());
       if ( (ISNEW(_mode)) && (shipto.value("shipto_taxzone_id").toInt() > 0) )
         _taxZone->setId(shipto.value("shipto_taxzone_id").toInt());
       _ignoreSignals=false;
