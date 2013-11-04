@@ -54,13 +54,14 @@ quotes::quotes(QWidget* parent, const char *name, Qt::WFlags fl)
   parameterWidget()->append(tr("End Date"),   "endDate",   ParameterWidget::Date);
   setupCharacteristics(characteristic::Quotes);
 
-  list()->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight, true, "quhead_number");
-  list()->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,  true, "quhead_billtoname");
-  list()->addColumn(tr("P/O Number"), -1,           Qt::AlignLeft,  true, "quhead_custponumber");
-  list()->addColumn(tr("Status"),    _dateColumn,   Qt::AlignCenter,true, "quhead_status");
-  list()->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter,true, "quhead_quotedate");
-  list()->addColumn(tr("Expire Date"), _dateColumn,  Qt::AlignCenter,false, "quhead_expire");
-  list()->addColumn(tr("Notes"),      -1,           Qt::AlignCenter,true, "notes");
+  list()->addColumn(tr("Quote #"),     _orderColumn,  Qt::AlignLeft,  true,  "quhead_number");
+  list()->addColumn(tr("Customer"),    _itemColumn,   Qt::AlignLeft,  true,  "quhead_billtoname");
+  list()->addColumn(tr("P/O Number"),  _orderColumn,  Qt::AlignLeft,  true,  "quhead_custponumber");
+  list()->addColumn(tr("Status"),      _dateColumn,   Qt::AlignCenter,true,  "quhead_status");
+  list()->addColumn(tr("Quote Date"),  _dateColumn,   Qt::AlignCenter,true,  "quhead_quotedate");
+  list()->addColumn(tr("Expire Date"), _dateColumn,   Qt::AlignCenter,false, "quhead_expire");
+  list()->addColumn(tr("Total"),       _moneyColumn,  Qt::AlignRight, true,  "ordertotal");
+  list()->addColumn(tr("Notes"),       -1,            Qt::AlignLeft,  true,  "notes");
   list()->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (_privileges->check("MaintainQuotes"))
