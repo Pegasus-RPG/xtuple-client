@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
 
     if(checkVersion.first())
     {
-      if(checkVersion.value("compareversion").toInt() <= "0")
+      if(checkVersion.value("compareversion").toInt() <= 0)
       {
 	   metric.exec("SELECT count(*) AS registered, (SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()) AS total"
 			"  FROM pg_stat_activity, pg_locks"
