@@ -38,6 +38,7 @@ public slots:
 	  virtual void sOnHold();
 	  virtual void sOpen();
     virtual void sViewVoucher();
+    virtual void sVoidVoucher();
 
 protected:
     bool _ignoreUpdates;

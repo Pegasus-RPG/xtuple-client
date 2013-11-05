@@ -494,11 +494,18 @@ void selectPayments::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected)
 {
   QString status(selected->text(1));
   QAction *menuItem;
+  XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
 
   if (_apopen->currentItem()->text("doctype") == tr("Voucher"))
   {
     menuItem = pMenu->addAction(tr("View Voucher..."), this, SLOT(sViewVoucher()));
     menuItem->setEnabled(_privileges->check("ViewVouchers") || _privileges->check("MaintainVouchers"));
+
+    if(item->rawValue("selected") == 0.0)
+    {
+      menuItem = pMenu->addAction(tr("Void Voucher..."), this, SLOT(sVoidVoucher()));
+      menuItem->setEnabled(_privileges->check("VoidPostedVouchers"));
+    }
   }
   
   XSqlQuery menu;
@@ -587,6 +594,28 @@ void selectPayments::sViewVoucher()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
+}
+
+void selectPayments::sVoidVoucher()
+{
+  XSqlQuery dspVoidVoucher;
+  dspVoidVoucher.prepare("SELECT voidApopenVoucher(:apopen_id) AS result;");
+  dspVoidVoucher.bindValue(":apopen_id", _apopen->id());
+  dspVoidVoucher.exec();
+  
+  if(dspVoidVoucher.first())
+  {
+    if(dspVoidVoucher.value("result").toInt() < 0)
+      systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
+                  .arg(__FILE__)
+                  .arg(__LINE__)
+                  .arg(dspVoidVoucher.value("result").toInt()) );
+    else
+      sFillList();
+  }
+  else
+    systemError( this, dspVoidVoucher.lastError().databaseText(), __FILE__, __LINE__);
+  
 }
 
 bool selectPayments::checkSitePrivs(int orderid)
