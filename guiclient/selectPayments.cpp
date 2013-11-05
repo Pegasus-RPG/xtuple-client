@@ -18,10 +18,13 @@
 #include <parameter.h>
 #include <QMessageBox>
 
+#include "errorReporter.h"
 #include "guiclient.h"
 #include "selectBankAccount.h"
 #include "selectPayment.h"
 #include "storedProcErrorLookup.h"
+#include "miscVoucher.h"
+#include "voucher.h"
 
 selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl, bool pAutoFill)
     : XWidget(parent, name, fl)
@@ -491,6 +494,13 @@ void selectPayments::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected)
 {
   QString status(selected->text(1));
   QAction *menuItem;
+
+  if (_apopen->currentItem()->text("doctype") == tr("Voucher"))
+  {
+    menuItem = pMenu->addAction(tr("View Voucher..."), this, SLOT(sViewVoucher()));
+    menuItem->setEnabled(_privileges->check("ViewVouchers") || _privileges->check("MaintainVouchers"));
+  }
+  
   XSqlQuery menu;
   menu.prepare( "SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
   menu.bindValue(":apopen_id", _apopen->id());
@@ -538,4 +548,69 @@ void selectPayments::sOnHold()
   onhold.bindValue(":apopen_id", _apopen->id());
   onhold.exec();
   sFillList();
+}
+
+void selectPayments::sViewVoucher()
+{
+  int voheadid;
+  int poheadid;
+  XSqlQuery open;
+  open.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id "
+               "FROM vohead LEFT OUTER JOIN pohead ON (pohead_id=vohead_pohead_id) "
+               "WHERE vohead_number=:vohead_number;");
+  open.bindValue(":vohead_number", _apopen->currentItem()->text("apopen_docnumber"));
+  open.exec();
+  if (open.first())
+  {
+    voheadid = open.value("vohead_id").toInt();
+    poheadid = open.value("pohead_id").toInt();
+  }
+  else
+    return;
+  
+  if (!checkSitePrivs(voheadid))
+    return;
+  
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("vohead_id", voheadid);
+  
+  if (poheadid == -1)
+  {
+    miscVoucher *newdlg = new miscVoucher();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else
+  {
+    voucher *newdlg = new voucher();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+}
+
+bool selectPayments::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkVoucherSitePrivs(:voheadid) AS result;");
+    check.bindValue(":voheadid", orderid);
+    check.exec();
+    if (check.first())
+    {
+      if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                              tr("<p>You may not view or edit this Voucher as "
+                                 "it references a Site for which you have not "
+                                 "been granted privileges.")) ;
+        return false;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Privileges"),
+                                  check, __FILE__, __LINE__))
+      return false;
+  }
+  return true;
 }

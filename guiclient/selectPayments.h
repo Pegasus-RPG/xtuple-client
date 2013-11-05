@@ -22,6 +22,7 @@ public:
     selectPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window, bool pAutoFill = true);
     ~selectPayments();
     virtual bool setParams(ParameterList &);
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sPrint();
@@ -33,9 +34,10 @@ public slots:
     virtual void sClear();
     virtual void sApplyAllCredits();
     virtual void sFillList();
-	virtual void sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected);
-	virtual void sOnHold();
-	virtual void sOpen();
+  	virtual void sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected);
+	  virtual void sOnHold();
+	  virtual void sOpen();
+    virtual void sViewVoucher();
 
 protected:
     bool _ignoreUpdates;
