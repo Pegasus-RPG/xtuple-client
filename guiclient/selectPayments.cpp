@@ -18,12 +18,14 @@
 #include <parameter.h>
 #include <QMessageBox>
 
+#include "apOpenItem.h"
+#include "dspGLSeries.h"
 #include "errorReporter.h"
 #include "guiclient.h"
+#include "miscVoucher.h"
 #include "selectBankAccount.h"
 #include "selectPayment.h"
 #include "storedProcErrorLookup.h"
-#include "miscVoucher.h"
 #include "voucher.h"
 
 selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl, bool pAutoFill)
@@ -514,6 +516,14 @@ void selectPayments::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected)
   menu.exec();
   if (menu.first())
   {
+    menuItem = pMenu->addAction(tr("Edit A/P Open..."), this, SLOT(sEdit()));
+    menuItem->setEnabled(_privileges->check("EditAPOpenItem"));
+    
+    pMenu->addAction(tr("View A/P Open..."), this, SLOT(sView()));
+    
+    menuItem = pMenu->addAction(tr("View G/L Series..."), this, SLOT(sViewGLSeries()));
+    menuItem->setEnabled(_privileges->check("ViewGLTransactions"));
+
     if(menu.value("apopen_status").toString() == "O")
     {
       menuItem = pMenu->addAction(tr("On Hold"), this, SLOT(sOnHold()));
@@ -525,6 +535,53 @@ void selectPayments::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected)
       menuItem->setEnabled(_privileges->check("EditAPOpenItem"));
     }
   }
+}
+
+void selectPayments::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("apopen_id", _apopen->id());
+  
+  apOpenItem newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
+  
+  sFillList();
+}
+
+void selectPayments::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("apopen_id", _apopen->id());
+  
+  apOpenItem newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void selectPayments::sViewGLSeries()
+{
+  XSqlQuery dspViewGLSeries;
+  dspViewGLSeries.prepare("SELECT apopen_distdate, apopen_journalnumber"
+                          "  FROM apopen"
+                          " WHERE(apopen_id=:apopen_id);");
+  dspViewGLSeries.bindValue(":apopen_id", _apopen->id());
+  dspViewGLSeries.exec();
+  if(dspViewGLSeries.first())
+  {
+    ParameterList params;
+    params.append("startDate", dspViewGLSeries.value("apopen_distdate").toDate());
+    params.append("endDate", dspViewGLSeries.value("apopen_distdate").toDate());
+    params.append("journalnumber", dspViewGLSeries.value("apopen_journalnumber").toInt());
+    
+    dspGLSeries *newdlg = new dspGLSeries();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else
+    systemError( this, dspViewGLSeries.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void selectPayments::sOpen()

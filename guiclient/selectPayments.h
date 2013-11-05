@@ -35,6 +35,9 @@ public slots:
     virtual void sApplyAllCredits();
     virtual void sFillList();
   	virtual void sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected);
+    virtual void sEdit();
+    virtual void sView();
+    virtual void sViewGLSeries();
 	  virtual void sOnHold();
 	  virtual void sOpen();
     virtual void sViewVoucher();
