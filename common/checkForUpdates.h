@@ -43,6 +43,9 @@ public slots:
 protected slots:
     virtual void languageChange();
 
+signals:
+    void done();
+
 private:
     QNetworkAccessManager manager;
     QFile *file;

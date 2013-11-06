@@ -10,7 +10,6 @@
 
 #include "checkForUpdates.h"
 
-#include <QFile>
 #include <QSqlError>
 #include <QUrl>
 #include <QXmlQuery>
@@ -22,6 +21,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QTranslator>
 #include <QDialog>
 #include <QProcess>
@@ -40,7 +40,7 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
     : QDialog(parent, modal ? (fl | Qt::Dialog) : fl)
 {
   QString url = "http://updates.xtuple.com/updates";
-  //intended http://updates.xtuple.com/updates/xTuple-4.0.1-linux-installer.run
+  //intended http://updates.xtuple.com/updates/xTuple-4.2.0-Linux.tar.gz
 
   setupUi(this);
   progressDialog = new QProgressDialog(this);
@@ -51,16 +51,16 @@ checkForUpdates::checkForUpdates(QWidget* parent, const char* name, bool modal, 
   connect(_ignore, SIGNAL(clicked()), this, SLOT (accept()));
 
 #ifdef Q_OS_MACX
-OS = "osx";
+OS = "OSX";
 suffix = "tar.gz";
 #endif
 #ifdef Q_OS_WIN
-OS = "windows";
+OS = "Windows";
 suffix = "exe";
 #endif
 #ifdef Q_OS_LINUX
-OS = "linux";
-suffix = "run";
+OS = "Linux";
+suffix = "tar.gz";
 #endif
 
   XSqlQuery versions, metric;
@@ -71,7 +71,8 @@ suffix = "run";
   if(versions.first())
   {
     serverVersion = versions.value("dbver").toString();
-    newurl = url + "/xTuple-" + serverVersion + "-" + OS + "-installer." + suffix;
+    newurl = url + "/xTuple-" + serverVersion + "-" + OS +"."+ suffix;
+    qDebug() <<"newurl=" << newurl;
 
     _label->setText(tr("Your client does not match the server version: %1. Would you like to update?").arg(serverVersion));
 
@@ -93,9 +94,11 @@ suffix = "run";
 }
 void checkForUpdates::downloadButtonPressed()
 {
-      this->close();
+     // this->close();
       QUrl url(newurl);
-      filename = "xTuple-" + serverVersion + "-" + OS + "-installer."+ suffix;
+      reply = NULL;
+      filename = "xTuple-" + serverVersion + "-" + OS + "." + suffix;
+      //xTuple-4.2.0-Linux.tar.gz
 
       if(QFile::exists(filename))
       {
@@ -125,7 +128,7 @@ void checkForUpdates::downloadButtonPressed()
       connect(reply, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
       connect(reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
       connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
-      //connect(reply, SIGNAL(downloadComplete()), this, SLOT(startUpdate()));
+      connect(this, SIGNAL(done()), this, SLOT(startUpdate()));
 
       progressDialog->setLabelText(tr("Downloading %1...").arg(filename));
       _ok->setEnabled(false);
@@ -183,10 +186,14 @@ void checkForUpdates::downloadFinished()
     reply = NULL;
     delete file;
     file = NULL;
-    startUpdate();
+
+    if(reply == 0)
+        emit done();
 }
 void checkForUpdates::startUpdate()
 {
+    this->close();
+    qDebug() <<"filename= " << filename;
     QFile *updater = new QFile(filename);
     if(updater->exists())
     {
@@ -195,23 +202,35 @@ void checkForUpdates::startUpdate()
         #ifdef Q_OS_MAC
         QProcess sh;
         sh.start("tar -xvf " + filename);
-        sh.waitForFinished();
+        if(sh.waitForFinished())
+        {
         sh.close();
-        filename = "xTuple-" + serverVersion + "-" + OS + "-installer.app";
+        filename = "xTuple-" + serverVersion + ".app";
         QFileInfo *path2 = new QFileInfo(filename);
-        QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/osx-intel";
+        QString filepath = path2->absoluteFilePath() + "/Contents/MacOS/xtuple";
+        QFile osxUpdate(filepath);
+        osxUpdate.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
         if(installer->startDetached(filepath, options))
             reject();
+        }
         #endif
         #ifdef Q_OS_LINUX
+        QProcess sh2;
+        sh2.start("tar -xvf " + filename + " -C ../");
+        if(sh2.waitForFinished())
+        {
+        sh2.close();
+        filename = "../xTuple-" + serverVersion + "-" + OS + "/xtuple";
         QFile launch(filename);
         launch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner|QFile::ReadGroup|QFile::WriteGroup|QFile::ExeGroup|QFile::ReadOther|QFile::WriteOther|QFile::ExeOther);
         QFileInfo *path = new QFileInfo(filename);
         if(installer->startDetached(path->absoluteFilePath(), options))
              reject();
+        }
         #endif
         #ifdef Q_OS_WIN
         int result = (int)::ShellExecuteA(0, "open", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
+        qDebug() << "result= " << result;
         if (SE_ERR_ACCESSDENIED== result)
         {
             result = (int)::ShellExecuteA(0, "runas", filename.toUtf8().constData(), 0, 0, SW_SHOWNORMAL);
