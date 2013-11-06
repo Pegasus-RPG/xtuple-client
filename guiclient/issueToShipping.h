@@ -42,8 +42,12 @@ public slots:
     virtual void sIssueLineBalance();
     virtual bool sIssueLineBalance(int id, int altId);
     virtual void sIssueStock();
+    virtual void sPopulateMenu(QMenu *pMenu);
+    virtual void sReserveStock();
+    virtual void sReserveLineBalance();
     virtual void sReturnStock();
     virtual void sShip();
+    virtual void sUnreserveStock();
 
 protected slots:
     virtual void languageChange();

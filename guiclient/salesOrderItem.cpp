@@ -22,6 +22,7 @@
 #include "errorReporter.h"
 #include "itemCharacteristicDelegate.h"
 #include "priceList.h"
+#include "reserveSalesOrderItem.h"
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
 #include "xdoublevalidator.h"
@@ -252,6 +253,18 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _onOrder->setPrecision(omfgThis->qtyVal());
   _available->setPrecision(omfgThis->qtyVal());
 
+  if (_metrics->boolean("EnableSOReservations"))
+  {
+    _reserved->setPrecision(omfgThis->qtyVal());
+    _reservable->setPrecision(omfgThis->qtyVal());
+  }
+  else
+  {
+    _reserved->hide();
+    _reservable->hide();
+  }
+  _reserveOnSave->hide();
+
   //  Disable the Discount Percent stuff if we don't allow them
   if ((!_metrics->boolean("AllowDiscounts")) && (!_privileges->check("OverridePrice")))
   {
@@ -461,6 +474,9 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
         systemError(this, setSales.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
+
+      if (_metrics->boolean("EnableSOReservations"))
+        _reserveOnSave->show();
     }
     else if (param.toString() == "newQuote")
     {
@@ -847,6 +863,8 @@ void salesOrderItem::clear()
   _unallocated->clear();
   _onOrder->clear();
   _available->clear();
+  _reserved->clear();
+  _reservable->clear();
   _itemsrcp->clear();
   _subs->clear();
   _historyCosts->clear();
@@ -1414,6 +1432,8 @@ void salesOrderItem::sSave(bool pPartial)
 
   if ( (!_canceling) && (cNew == _mode || cNewQuote == _mode) )
   {
+    if (_metrics->boolean("EnableSOReservations") && _reserveOnSave->isChecked())
+      sReserveStock();
     clear();
     prepare();
     _prev->setEnabled(true);
@@ -1959,25 +1979,40 @@ void salesOrderItem::sDetermineAvailability( bool p )
   if ((_item->isValid()) && (_scheduledDate->isValid()) && (_showAvailability->isChecked()) )
   {
     XSqlQuery availability;
-    availability.prepare( "SELECT itemsite_id,"
-                          "       qoh,"
-                          "       allocated,"
-                          "       (noNeg(qoh - allocated)) AS unallocated,"
-                          "       ordered,"
-                          "       (qoh - allocated + ordered) AS available,"
-                          "       itemsite_leadtime "
-                          "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
-                          "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
-                          "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered, "
-                          "              itemsite_leadtime "
-                          "       FROM itemsite, item "
-                          "       WHERE ((itemsite_item_id=item_id)"
-                          "        AND (item_id=:item_id)"
-                          "        AND (itemsite_warehous_id=:warehous_id)) ) AS data;" );
-    availability.bindValue(":date", _scheduledDate->date());
-    availability.bindValue(":item_id", _item->id());
-    availability.bindValue(":warehous_id", _warehouse->id());
-    availability.exec();
+    QString sql = "SELECT itemsite_id,"
+                  "       qoh,"
+                  "       allocated,"
+                  "       (noNeg(qoh - allocated)) AS unallocated,"
+                  "       ordered,"
+                  "       (qoh - allocated + ordered) AS available,"
+                  "       reserved,"
+                  "       reservable,"
+                  "       itemsite_leadtime "
+                  "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
+                  "              qtyAllocated(itemsite_id, DATE(<? value('date') ?>)) AS allocated,"
+                  "              qtyOrdered(itemsite_id, DATE(<? value('date') ?>)) AS ordered, "
+                  "<? if exists('includeReservations') ?>"
+                  "              COALESCE((SELECT coitem_qtyreserved"
+                  "                        FROM coitem"
+                  "                        WHERE coitem_id=<? value('soitem_id') ?>), 0.0) AS reserved,"
+                  "              (itemsite_qtyonhand - qtyreserved(itemsite_id)) AS reservable,"
+                  "<? else ?>"
+                  "              0.0 AS reserved,"
+                  "              0.0 AS reservable,"
+                  "<? endif ?>"
+                  "              itemsite_leadtime "
+                  "       FROM itemsite, item "
+                  "       WHERE ((itemsite_item_id=item_id)"
+                  "        AND (item_id=<? value('item_id') ?>)"
+                  "        AND (itemsite_warehous_id=<? value('warehous_id') ?>)) ) AS data;";
+    ParameterList params;
+    params.append("date", _scheduledDate->date());
+    params.append("item_id", _item->id());
+    params.append("warehous_id", _warehouse->id());
+    params.append("soitem_id", _soitemid);
+    params.append("includeReservations", (ISORDER(_mode) && _metrics->boolean("EnableSOReservations")));
+    MetaSQLQuery mql(sql);
+    availability = mql.toQuery(params);
     if (availability.first())
     {
       _onHand->setDouble(availability.value("qoh").toDouble());
@@ -1985,6 +2020,8 @@ void salesOrderItem::sDetermineAvailability( bool p )
       _unallocated->setDouble(availability.value("unallocated").toDouble());
       _onOrder->setDouble(availability.value("ordered").toDouble());
       _available->setDouble(availability.value("available").toDouble());
+      _reserved->setDouble(availability.value("reserved").toDouble());
+      _reservable->setDouble(availability.value("reservable").toDouble());
       _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
       QString stylesheet;
@@ -2217,6 +2254,16 @@ void salesOrderItem::sSubstitute()
   _sub->setChecked(true);
   _subItem->setId(_item->id());
   _item->setItemsiteid(_itemsiteid);
+}
+
+void salesOrderItem::sReserveStock()
+{
+  ParameterList params;
+  params.append("soitem_id", _soitemid);
+  
+  reserveSalesOrderItem newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void salesOrderItem::sPopulateHistory()
