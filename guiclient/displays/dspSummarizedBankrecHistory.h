@@ -26,6 +26,8 @@ public:
 
 protected slots:
     virtual void languageChange();
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int);
+    virtual void sReopen();
 
 };
 
