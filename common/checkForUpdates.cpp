@@ -55,7 +55,7 @@ OS = "OSX";
 suffix = "tar.gz";
 #endif
 #ifdef Q_OS_WIN
-OS = "windows";
+OS = "Windows";
 suffix = "exe";
 #endif
 #ifdef Q_OS_LINUX
