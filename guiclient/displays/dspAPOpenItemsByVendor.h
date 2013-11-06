@@ -25,10 +25,12 @@ public:
     dspAPOpenItemsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
     virtual bool setParams(ParameterList&);
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int);
+    virtual void sViewVoucher();
     virtual void sEdit();
     virtual void sView();
     virtual void sOnHold();

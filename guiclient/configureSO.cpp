@@ -126,7 +126,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
 
   this->setWindowTitle("Sales Configuration");
 
-  //Set status of Returns Authorization based on context
+  //Set status of Returns Authorization and Reservations based on context
   if(_metrics->value("Application") == "PostBooks")
   {
     _authNumGenerationLit->setVisible(false);
@@ -142,6 +142,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _lowest->setChecked(false);
     _highest->setChecked(false);
     _alpha->setChecked(false);
+    _manualReservations->setChecked(false);
   }
   else
   {
@@ -209,6 +210,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool /*modal*/, Qt::
     _enableReservations->setChecked(_metrics->boolean("EnableSOReservations"));
 
     _locationGroup->setChecked(_metrics->boolean("EnableSOReservationsByLocation"));
+    _manualReservations->setChecked(_metrics->boolean("SOManualReservations"));
     if(_metrics->value("SOReservationLocationMethod").toInt() == 1)
       _lowest->setChecked(true);
     else if (_metrics->value("SOReservationLocationMethod").toInt() == 2)
@@ -242,15 +244,15 @@ bool configureSO::sSave()
        (!_locationGroup->isChecked()) )
   {
     if (QMessageBox::warning(this, tr("Reserve by Location Disabled"),
-                             tr("<p>All existing location reservations will be removed. Are you sure you want to continue?"),
+                             tr("<p>All existing Sales Order location reservations will be removed. Are you sure you want to continue?"),
                              QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     {
       return false;
     }
     else
     {
-      configureSave.prepare("DELETE FROM itemlocrsrv "
-                " WHERE (itemlocrsrv_source='SO');");
+      configureSave.prepare("DELETE FROM reserve "
+                " WHERE (reserve_demand_type='SO');");
       configureSave.exec();
     }	
   }
@@ -291,7 +293,8 @@ bool configureSO::sSave()
   _metrics->set("Long30Markups", _long30Markups->isChecked());
 
   _metrics->set("EnableSOReservationsByLocation", _locationGroup->isChecked());
-  //SOReservationLocationMethod are three Options Either 
+  _metrics->set("SOManualReservations", _manualReservations->isChecked());
+  //SOReservationLocationMethod are three Options Either
   // Lowest quantity first,
   // Highest quantity first,
   // Alpha by Location Name

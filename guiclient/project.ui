@@ -371,6 +371,16 @@ to be bound by its terms.</comment>
              </widget>
             </item>
             <item>
+             <widget class="QCheckBox" name="_showIn">
+              <property name="text">
+               <string>Incidents</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_4">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>

@@ -27,14 +27,27 @@ public:
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sIssue();
+    virtual void sSave();
+    virtual void reject();
+    virtual void sFillList();
+    virtual void sReserveLocation();
+    virtual void sUnreserveLocation();
+    virtual void sBcChanged(const QString);
+    virtual void sBcReserve();
+    virtual void sCatchLotSerialNumber(const QString);
 
 protected slots:
     virtual void languageChange();
     virtual void populate();
 
 private:
-    int _itemid;
+    QList<QVariant> _charidstext;
+    QList<QVariant> _charidslist;
+    QList<QVariant> _charidsdate;
+  
+    int _soitemid;
+    int _itemsiteid;
+    QString _controlMethod;
 
 };
 

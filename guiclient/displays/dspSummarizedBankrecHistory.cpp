@@ -10,8 +10,10 @@
 
 #include "dspSummarizedBankrecHistory.h"
 
+#include <QSqlError>
 #include <QVariant>
 #include "xtreewidget.h"
+#include "xmessagebox.h"
 
 dspSummarizedBankrecHistory::dspSummarizedBankrecHistory(QWidget* parent, const char*, Qt::WFlags fl)
   : display(parent, "dspSummarizedBankrecHistory", fl)
@@ -46,4 +48,60 @@ bool dspSummarizedBankrecHistory::setParams(ParameterList & params)
 {
   params.append("bankaccntid", _bankaccnt->id());
   return true;
+}
+
+void dspSummarizedBankrecHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected, int)
+{
+  QAction *menuItem;
+  XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
+  
+  if (item->rawValue("bankrec_posted").toBool())
+  {
+    XSqlQuery menu;
+    menu.prepare("SELECT bankrec_id "
+                 "FROM bankrec "
+                 "WHERE (bankrec_bankaccnt_id=:bankrec_bankaccnt_id) "
+                 "  AND (bankrec_opendate > :bankrec_enddate) "
+                 "  AND (bankrec_posted);");
+    menu.bindValue(":bankrec_bankaccnt_id", _bankaccnt->id());
+    menu.bindValue(":bankrec_enddate", item->rawValue("bankrec_enddate").toDate());
+    menu.exec();
+    if (!menu.first())
+    {
+      menuItem = pMenu->addAction(tr("Reopen..."), this, SLOT(sReopen()));
+      menuItem->setEnabled(_privileges->check("MaintainBankRec"));
+    }
+  }
+}
+
+void dspSummarizedBankrecHistory::sReopen()
+{
+  if (QMessageBox::question(this, tr("Reopen Bank Reconciliation?"),
+                            tr("Reopening a posted Bank Reconciliation "
+                               "will delete any unposted reconciliation entries."
+                               "<p>Are you sure you want to continue?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    XSqlQuery open;
+    open.prepare("SELECT reopenBankReconciliation(:bankrec_id) AS result;");
+    open.bindValue(":bankrec_id", list()->id());
+    open.exec();
+    if (open.first())
+    {
+      int result = open.value("result").toInt();
+      if (result < 0)
+      {
+        QMessageBox::critical(this, tr("Reopen Error"),
+                              tr("<p>reopenBankReconciliation failed, result=%1").arg(result));
+        return;
+      }
+    }
+    else if (open.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, open.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    sFillList();
+  }
 }

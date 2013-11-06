@@ -18,10 +18,15 @@
 #include <parameter.h>
 #include <QMessageBox>
 
+#include "apOpenItem.h"
+#include "dspGLSeries.h"
+#include "errorReporter.h"
 #include "guiclient.h"
+#include "miscVoucher.h"
 #include "selectBankAccount.h"
 #include "selectPayment.h"
 #include "storedProcErrorLookup.h"
+#include "voucher.h"
 
 selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl, bool pAutoFill)
     : XWidget(parent, name, fl)
@@ -491,12 +496,34 @@ void selectPayments::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected)
 {
   QString status(selected->text(1));
   QAction *menuItem;
+  XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
+
+  if (_apopen->currentItem()->text("doctype") == tr("Voucher"))
+  {
+    menuItem = pMenu->addAction(tr("View Voucher..."), this, SLOT(sViewVoucher()));
+    menuItem->setEnabled(_privileges->check("ViewVouchers") || _privileges->check("MaintainVouchers"));
+
+    if(item->rawValue("selected") == 0.0)
+    {
+      menuItem = pMenu->addAction(tr("Void Voucher..."), this, SLOT(sVoidVoucher()));
+      menuItem->setEnabled(_privileges->check("VoidPostedVouchers"));
+    }
+  }
+  
   XSqlQuery menu;
   menu.prepare( "SELECT apopen_status FROM apopen WHERE apopen_id=:apopen_id;");
   menu.bindValue(":apopen_id", _apopen->id());
   menu.exec();
   if (menu.first())
   {
+    menuItem = pMenu->addAction(tr("Edit A/P Open..."), this, SLOT(sEdit()));
+    menuItem->setEnabled(_privileges->check("EditAPOpenItem"));
+    
+    pMenu->addAction(tr("View A/P Open..."), this, SLOT(sView()));
+    
+    menuItem = pMenu->addAction(tr("View G/L Series..."), this, SLOT(sViewGLSeries()));
+    menuItem->setEnabled(_privileges->check("ViewGLTransactions"));
+
     if(menu.value("apopen_status").toString() == "O")
     {
       menuItem = pMenu->addAction(tr("On Hold"), this, SLOT(sOnHold()));
@@ -508,6 +535,53 @@ void selectPayments::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *selected)
       menuItem->setEnabled(_privileges->check("EditAPOpenItem"));
     }
   }
+}
+
+void selectPayments::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("apopen_id", _apopen->id());
+  
+  apOpenItem newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
+  
+  sFillList();
+}
+
+void selectPayments::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("apopen_id", _apopen->id());
+  
+  apOpenItem newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void selectPayments::sViewGLSeries()
+{
+  XSqlQuery dspViewGLSeries;
+  dspViewGLSeries.prepare("SELECT apopen_distdate, apopen_journalnumber"
+                          "  FROM apopen"
+                          " WHERE(apopen_id=:apopen_id);");
+  dspViewGLSeries.bindValue(":apopen_id", _apopen->id());
+  dspViewGLSeries.exec();
+  if(dspViewGLSeries.first())
+  {
+    ParameterList params;
+    params.append("startDate", dspViewGLSeries.value("apopen_distdate").toDate());
+    params.append("endDate", dspViewGLSeries.value("apopen_distdate").toDate());
+    params.append("journalnumber", dspViewGLSeries.value("apopen_journalnumber").toInt());
+    
+    dspGLSeries *newdlg = new dspGLSeries();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else
+    systemError( this, dspViewGLSeries.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void selectPayments::sOpen()
@@ -538,4 +612,91 @@ void selectPayments::sOnHold()
   onhold.bindValue(":apopen_id", _apopen->id());
   onhold.exec();
   sFillList();
+}
+
+void selectPayments::sViewVoucher()
+{
+  int voheadid;
+  int poheadid;
+  XSqlQuery open;
+  open.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id "
+               "FROM vohead LEFT OUTER JOIN pohead ON (pohead_id=vohead_pohead_id) "
+               "WHERE vohead_number=:vohead_number;");
+  open.bindValue(":vohead_number", _apopen->currentItem()->text("apopen_docnumber"));
+  open.exec();
+  if (open.first())
+  {
+    voheadid = open.value("vohead_id").toInt();
+    poheadid = open.value("pohead_id").toInt();
+  }
+  else
+    return;
+  
+  if (!checkSitePrivs(voheadid))
+    return;
+  
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("vohead_id", voheadid);
+  
+  if (poheadid == -1)
+  {
+    miscVoucher *newdlg = new miscVoucher();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else
+  {
+    voucher *newdlg = new voucher();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+}
+
+void selectPayments::sVoidVoucher()
+{
+  XSqlQuery dspVoidVoucher;
+  dspVoidVoucher.prepare("SELECT voidApopenVoucher(:apopen_id) AS result;");
+  dspVoidVoucher.bindValue(":apopen_id", _apopen->id());
+  dspVoidVoucher.exec();
+  
+  if(dspVoidVoucher.first())
+  {
+    if(dspVoidVoucher.value("result").toInt() < 0)
+      systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
+                  .arg(__FILE__)
+                  .arg(__LINE__)
+                  .arg(dspVoidVoucher.value("result").toInt()) );
+    else
+      sFillList();
+  }
+  else
+    systemError( this, dspVoidVoucher.lastError().databaseText(), __FILE__, __LINE__);
+  
+}
+
+bool selectPayments::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkVoucherSitePrivs(:voheadid) AS result;");
+    check.bindValue(":voheadid", orderid);
+    check.exec();
+    if (check.first())
+    {
+      if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                              tr("<p>You may not view or edit this Voucher as "
+                                 "it references a Site for which you have not "
+                                 "been granted privileges.")) ;
+        return false;
+      }
+    }
+    else if (ErrorReporter::error(QtCriticalMsg, this, tr("Checking Privileges"),
+                                  check, __FILE__, __LINE__))
+      return false;
+  }
+  return true;
 }

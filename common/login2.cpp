@@ -335,7 +335,8 @@ void login2::sLogin()
       break;  // break instead of for-loop condition to preserve methodidx
   }
 
-  // if connected using OpenMFG enhanced auth, remangle the password
+   // if connected using OpenMFG enhanced auth, remangle the password
+
   if (db.isOpen() && (methodidx == 2 || methodidx == 5))
       XSqlQuery chgpass(QString("ALTER USER \"%1\" WITH PASSWORD '%2'")
                       .arg(_cUsername, QMd5(QString(_cPassword + salt + _cUsername))));

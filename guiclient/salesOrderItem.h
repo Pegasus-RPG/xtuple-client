@@ -49,6 +49,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     virtual void        sPopulateItemSubs( int pItemid );
     virtual void        sPopulateSubMenu(QMenu *, QTreeWidgetItem *, int);
     virtual void        sSubstitute();
+    virtual void        sReserveStock();
     virtual void        sPopulateHistory();
     virtual void        sCalculateDiscountPrcnt();
     virtual void        sCalculateExtendedPrice();
@@ -119,6 +120,7 @@ class salesOrderItem : public XDialog, public Ui::salesOrderItem
     QDate   _supplyOrderDueDateCache;
     QDate   _supplyOrderScheduledDateCache;
     bool    _supplyOrderDropShipCache;
+    double  _supplyOverridePriceCache;
     double  _cachedPct;
     double  _cachedRate;
     int     _taxzoneid;

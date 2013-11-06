@@ -20,6 +20,7 @@
 #include "dspInventoryLocator.h"
 #include "dspPoItemsByItem.h"
 #include "dspPoItemReceivingsByItem.h"
+#include "dspPricesByCustomer.h"
 #include "dspQuotesByItem.h"
 #include "dspRunningAvailability.h"
 #include "dspSalesHistory.h"
@@ -55,6 +56,7 @@ protected:
   dspInventoryLocator *_dspInventoryLocator;
   dspPoItemsByItem *_dspPoItemsByItem;
   dspPoItemReceivingsByItem *_dspPoItemReceivingsByItem;
+  dspPricesByCustomer *_dspPricesByCustomer;
   dspQuotesByItem *_dspQuotesByItem;
   dspRunningAvailability *_dspRunningAvailability;
   dspSalesHistory *_dspSalesHistory;

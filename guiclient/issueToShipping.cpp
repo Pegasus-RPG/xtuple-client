@@ -21,6 +21,7 @@
 #include "distributeInventory.h"
 #include "issueLineToShipping.h"
 #include "mqlutil.h"
+#include "reserveSalesOrderItem.h"
 #include "shipOrder.h"
 #include "storedProcErrorLookup.h"
 
@@ -30,14 +31,15 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
 {
   setupUi(this);
 
-  connect(_ship, SIGNAL(clicked()), this, SLOT(sShip()));
-  connect(_issueLine, SIGNAL(clicked()), this, SLOT(sIssueLineBalance()));
-  connect(_issueAll, SIGNAL(clicked()), this, SLOT(sIssueAllBalance()));
-  connect(_issueStock, SIGNAL(clicked()), this, SLOT(sIssueStock()));
-  connect(_order,       SIGNAL(valid(bool)), this, SLOT(sFillList()));
-  connect(_returnStock, SIGNAL(clicked()), this, SLOT(sReturnStock()));
-  connect(_bcFind, SIGNAL(clicked()), this, SLOT(sBcFind()));
-  connect(_soitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
+  connect(_ship,        SIGNAL(clicked()),                              this,         SLOT(sShip()));
+  connect(_issueLine,   SIGNAL(clicked()),                              this,         SLOT(sIssueLineBalance()));
+  connect(_issueAll,    SIGNAL(clicked()),                              this,         SLOT(sIssueAllBalance()));
+  connect(_issueStock,  SIGNAL(clicked()),                              this,         SLOT(sIssueStock()));
+  connect(_order,       SIGNAL(valid(bool)),                            this,         SLOT(sFillList()));
+  connect(_returnStock, SIGNAL(clicked()),                              this,         SLOT(sReturnStock()));
+  connect(_bcFind,      SIGNAL(clicked()),                              this,         SLOT(sBcFind()));
+  connect(_soitem,      SIGNAL(itemSelectionChanged()),                 this,         SLOT(sHandleButtons()));
+  connect(_soitem,      SIGNAL(populateMenu(QMenu*,QTreeWidgetItem *)), this,         SLOT(sPopulateMenu(QMenu *)));
 
   _order->setAllowedStatuses(OrderLineEdit::Open);
   _order->setAllowedTypes(OrderLineEdit::Sales |
@@ -54,17 +56,37 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   omfgThis->inputManager()->notify(cBCTransferOrderLineItem, this, this, SLOT(sCatchToitemid(int)));
   omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
 
-  _soitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter, true, "linenumber");
-  _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true, "item_number");
-  _soitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true, "itemdescrip");
-  _soitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true, "warehous_code");
-  _soitem->addColumn(tr("Sched. Date"), _qtyColumn, Qt::AlignRight,  true, "scheddate");
-  _soitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true, "uom_name");
-  _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true, "qtyord");
-  _soitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight,  true, "qtyshipped");
-  _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  false, "qtyreturned");
-  _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight,  false, "balance");
-  _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight,  true, "atshipping");
+  if (_metrics->boolean("EnableSOReservationsByLocation"))
+  {
+    _lineItemsLit->setText("Line Items with Reservations:");
+
+    _soitem->addColumn(tr("#"),                _seqColumn,   Qt::AlignCenter, true,  "linenumber");
+    _soitem->addColumn(tr("Item/Location"),    _itemColumn,  Qt::AlignLeft,   true,  "item_number");
+    _soitem->addColumn(tr("Desc./LotSerial"),   -1,          Qt::AlignLeft,   true,  "itemdescrip");
+    _soitem->addColumn(tr("Site"),             _whsColumn,   Qt::AlignCenter, true,  "warehous_code");
+    _soitem->addColumn(tr("Sched. Date"),      _qtyColumn,   Qt::AlignRight,  true,  "scheddate");
+    _soitem->addColumn(tr("UOM"),              _uomColumn,   Qt::AlignLeft,   true,  "uom_name");
+    _soitem->addColumn(tr("Ordered/Reserved"), _qtyColumn,   Qt::AlignRight,  true,  "qtyord");
+    _soitem->addColumn(tr("Shipped"),          _qtyColumn,   Qt::AlignRight,  true,  "qtyshipped");
+    _soitem->addColumn(tr("Returned"),         _qtyColumn,   Qt::AlignRight,  false, "qtyreturned");
+    _soitem->addColumn(tr("Balance"),          _qtyColumn,   Qt::AlignRight,  false, "balance");
+    _soitem->addColumn(tr("At Shipping"),      _qtyColumn,   Qt::AlignRight,  true,  "atshipping");
+  }
+  else
+  {
+    _soitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter, true,  "linenumber");
+    _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number");
+    _soitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "itemdescrip");
+    _soitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehous_code");
+    _soitem->addColumn(tr("Sched. Date"), _qtyColumn,   Qt::AlignRight,  true,  "scheddate");
+    _soitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true,  "uom_name");
+    _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true,  "qtyord");
+    _soitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight,  true,  "qtyshipped");
+    _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  false, "qtyreturned");
+    _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight,  false, "balance");
+    _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight,  true,  "atshipping");
+  }
+
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _order->setFromSitePrivsEnforced(TRUE);
@@ -262,6 +284,20 @@ void issueToShipping::sCatchWoid(int pWoid)
   }
   else
     audioReject();
+}
+
+void issueToShipping::sPopulateMenu(QMenu *pMenu)
+{
+  if (_metrics->boolean("EnableSOReservations"))
+  {
+    QAction *menuItem;
+    menuItem = pMenu->addAction(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()));
+    menuItem->setEnabled(_privileges->check("MaintainReservations"));
+    menuItem = pMenu->addAction(tr("Reserve Stock..."), this, SLOT(sReserveStock()));
+    menuItem->setEnabled(_privileges->check("MaintainReservations"));
+    menuItem = pMenu->addAction(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()));
+    menuItem->setEnabled(_privileges->check("MaintainReservations"));
+  }
 }
 
 void issueToShipping::sIssueStock()
@@ -627,6 +663,84 @@ void issueToShipping::sShip()
     close();
 }
 
+void issueToShipping::sReserveStock()
+{
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
+    
+    reserveSalesOrderItem newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  
+  sFillList();
+}
+
+void issueToShipping::sReserveLineBalance()
+{
+  XSqlQuery reserveSales;
+  reserveSales.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    reserveSales.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
+    reserveSales.exec();
+    if (reserveSales.first())
+    {
+      int result = reserveSales.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("reserveSoLineBalance", result) +
+                    tr("<br>Line Item %1").arg(selected[i]->text(0)),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (reserveSales.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
+                  reserveSales.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  
+  sFillList();
+}
+
+void issueToShipping::sUnreserveStock()
+{
+  XSqlQuery unreserveSales;
+  unreserveSales.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
+  QList<XTreeWidgetItem *> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    unreserveSales.bindValue(":soitem_id", ((XTreeWidgetItem *)(selected[i]))->id());
+    unreserveSales.exec();
+    if (unreserveSales.first())
+    {
+      int result = unreserveSales.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("unreservedSoLineQty", result) +
+                    tr("<br>Line Item %1").arg(selected[i]->text(0)),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (unreserveSales.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
+                  unreserveSales.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  
+  sFillList();
+}
+
 void issueToShipping::sFillList()
 {
   XSqlQuery issueFillList;
@@ -695,9 +809,13 @@ void issueToShipping::sFillList()
 
   listp.append("ordertype", _order->type());
 
+  if (_metrics->boolean("EnableSOReservationsByLocation"))
+    listp.append("includeReservations");
+  
   MetaSQLQuery listm = mqlLoad("issueToShipping", "detail");
   XSqlQuery listq = listm.toQuery(listp);
   _soitem->populate(listq, true);
+  _soitem->expandAll();
 
   if (listq.first())
   {

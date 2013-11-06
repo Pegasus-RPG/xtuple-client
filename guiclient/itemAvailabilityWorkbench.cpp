@@ -24,6 +24,7 @@
 #include "dspInventoryLocator.h"
 #include "dspPoItemsByItem.h"
 #include "dspPoItemReceivingsByItem.h"
+#include "dspPricesByCustomer.h"
 #include "dspQuotesByItem.h"
 #include "dspRunningAvailability.h"
 #include "dspSalesHistory.h"
@@ -132,6 +133,13 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _dspQuotesByItem->setQueryOnStartEnabled(false);
   _dspQuotesByItem->findChild<QWidget*>("_item")->hide();
   
+  _dspPricesByCustomer = new dspPricesByCustomer(this, "dspPricesByCustomer", Qt::Widget);
+  _dspPricesByCustomer->setObjectName("dspPricesByCustomer");
+  _customerPricesPage->layout()->addWidget(_dspPricesByCustomer);
+  _dspPricesByCustomer->setCloseVisible(false);
+  _dspPricesByCustomer->setQueryOnStartEnabled(false);
+  _dspPricesByCustomer->findChild<QWidget*>("_item")->hide();
+  
   _itemMaster = new item(this, "item", Qt::Widget);
   _itemMaster->setObjectName("item");
   _itemPage->layout()->addWidget(_itemMaster);
@@ -185,6 +193,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   connect(_purchaseOrderItemsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_salesOrderItemsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_quoteItemsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_customerPricesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_item,	SIGNAL(newId(int)), this, SLOT(populate()));
 
   // General
@@ -289,6 +298,8 @@ void itemAvailabilityWorkbench::sHandleButtons()
     _ordersStack->setCurrentIndex(1);
   else if (_quoteItemsButton->isChecked())
     _ordersStack->setCurrentIndex(2);
+  else if (_customerPricesButton->isChecked())
+    _ordersStack->setCurrentIndex(3);
   
   sFillList();
 }
@@ -306,6 +317,7 @@ void itemAvailabilityWorkbench::populate()
   _dspPoItemsByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
   _dspSalesOrdersByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
   _dspQuotesByItem->findChild<ItemCluster*>("_item")->setId(_item->id());
+  _dspPricesByCustomer->findChild<ItemCluster*>("_item")->setId(_item->id());
   _itemMaster->setId(_item->id());
   _itemMaster->findChild<QWidget*>("_sold")->setEnabled(false);
   
@@ -347,5 +359,7 @@ void itemAvailabilityWorkbench::sFillList()
       _dspSalesOrdersByItem->sFillList();
     else if (_quoteItemsButton->isChecked())
       _dspQuotesByItem->sFillList();
+//    else if (_customerPricesButton->isChecked())
+//      _dspPricesByCustomer->sFillList();
   }
 }

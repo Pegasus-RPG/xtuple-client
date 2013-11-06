@@ -22,6 +22,7 @@
 #include "errorReporter.h"
 #include "itemCharacteristicDelegate.h"
 #include "priceList.h"
+#include "reserveSalesOrderItem.h"
 #include "storedProcErrorLookup.h"
 #include "taxDetail.h"
 #include "xdoublevalidator.h"
@@ -252,6 +253,18 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _onOrder->setPrecision(omfgThis->qtyVal());
   _available->setPrecision(omfgThis->qtyVal());
 
+  if (_metrics->boolean("EnableSOReservations"))
+  {
+    _reserved->setPrecision(omfgThis->qtyVal());
+    _reservable->setPrecision(omfgThis->qtyVal());
+  }
+  else
+  {
+    _reserved->hide();
+    _reservable->hide();
+  }
+  _reserveOnSave->hide();
+
   //  Disable the Discount Percent stuff if we don't allow them
   if ((!_metrics->boolean("AllowDiscounts")) && (!_privileges->check("OverridePrice")))
   {
@@ -283,6 +296,7 @@ salesOrderItem::salesOrderItem(QWidget *parent, const char *name, Qt::WindowFlag
   _supplyOrderDueDateCache = QDate();
   _supplyOrderScheduledDateCache = QDate();
   _supplyOrderDropShipCache = false;
+  _supplyOverridePriceCache = 0.0;
   _itemsrc = -1;
   _taxzoneid   = -1;
   _initialMode = -1;
@@ -460,6 +474,9 @@ enum SetResponse salesOrderItem:: set(const ParameterList &pParams)
         systemError(this, setSales.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
+
+      if (_metrics->boolean("EnableSOReservations"))
+        _reserveOnSave->show();
     }
     else if (param.toString() == "newQuote")
     {
@@ -846,6 +863,8 @@ void salesOrderItem::clear()
   _unallocated->clear();
   _onOrder->clear();
   _available->clear();
+  _reserved->clear();
+  _reservable->clear();
   _itemsrcp->clear();
   _subs->clear();
   _historyCosts->clear();
@@ -1413,6 +1432,8 @@ void salesOrderItem::sSave(bool pPartial)
 
   if ( (!_canceling) && (cNew == _mode || cNewQuote == _mode) )
   {
+    if (_metrics->boolean("EnableSOReservations") && _reserveOnSave->isChecked())
+      sReserveStock();
     clear();
     prepare();
     _prev->setEnabled(true);
@@ -1469,8 +1490,8 @@ void salesOrderItem::sPopulateItemsiteInfo()
       {
         _supplyOrderType = "R";
         _createSupplyOrder->setTitle(tr("Create Purchase Request"));
-        _supplyOverridePrice->hide();
-        _supplyOverridePriceLit->hide();
+        _supplyOverridePrice->show();
+        _supplyOverridePriceLit->show();
         _supplyDropShip->hide();
         _supplyDropShip->setChecked(false);
       }
@@ -1958,25 +1979,40 @@ void salesOrderItem::sDetermineAvailability( bool p )
   if ((_item->isValid()) && (_scheduledDate->isValid()) && (_showAvailability->isChecked()) )
   {
     XSqlQuery availability;
-    availability.prepare( "SELECT itemsite_id,"
-                          "       qoh,"
-                          "       allocated,"
-                          "       (noNeg(qoh - allocated)) AS unallocated,"
-                          "       ordered,"
-                          "       (qoh - allocated + ordered) AS available,"
-                          "       itemsite_leadtime "
-                          "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
-                          "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
-                          "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered, "
-                          "              itemsite_leadtime "
-                          "       FROM itemsite, item "
-                          "       WHERE ((itemsite_item_id=item_id)"
-                          "        AND (item_id=:item_id)"
-                          "        AND (itemsite_warehous_id=:warehous_id)) ) AS data;" );
-    availability.bindValue(":date", _scheduledDate->date());
-    availability.bindValue(":item_id", _item->id());
-    availability.bindValue(":warehous_id", _warehouse->id());
-    availability.exec();
+    QString sql = "SELECT itemsite_id,"
+                  "       qoh,"
+                  "       allocated,"
+                  "       (noNeg(qoh - allocated)) AS unallocated,"
+                  "       ordered,"
+                  "       (qoh - allocated + ordered) AS available,"
+                  "       reserved,"
+                  "       reservable,"
+                  "       itemsite_leadtime "
+                  "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
+                  "              qtyAllocated(itemsite_id, DATE(<? value('date') ?>)) AS allocated,"
+                  "              qtyOrdered(itemsite_id, DATE(<? value('date') ?>)) AS ordered, "
+                  "<? if exists('includeReservations') ?>"
+                  "              COALESCE((SELECT coitem_qtyreserved"
+                  "                        FROM coitem"
+                  "                        WHERE coitem_id=<? value('soitem_id') ?>), 0.0) AS reserved,"
+                  "              (itemsite_qtyonhand - qtyreserved(itemsite_id)) AS reservable,"
+                  "<? else ?>"
+                  "              0.0 AS reserved,"
+                  "              0.0 AS reservable,"
+                  "<? endif ?>"
+                  "              itemsite_leadtime "
+                  "       FROM itemsite, item "
+                  "       WHERE ((itemsite_item_id=item_id)"
+                  "        AND (item_id=<? value('item_id') ?>)"
+                  "        AND (itemsite_warehous_id=<? value('warehous_id') ?>)) ) AS data;";
+    ParameterList params;
+    params.append("date", _scheduledDate->date());
+    params.append("item_id", _item->id());
+    params.append("warehous_id", _warehouse->id());
+    params.append("soitem_id", _soitemid);
+    params.append("includeReservations", (ISORDER(_mode) && _metrics->boolean("EnableSOReservations")));
+    MetaSQLQuery mql(sql);
+    availability = mql.toQuery(params);
     if (availability.first())
     {
       _onHand->setDouble(availability.value("qoh").toDouble());
@@ -1984,6 +2020,8 @@ void salesOrderItem::sDetermineAvailability( bool p )
       _unallocated->setDouble(availability.value("unallocated").toDouble());
       _onOrder->setDouble(availability.value("ordered").toDouble());
       _available->setDouble(availability.value("available").toDouble());
+      _reserved->setDouble(availability.value("reserved").toDouble());
+      _reservable->setDouble(availability.value("reservable").toDouble());
       _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
       QString stylesheet;
@@ -2216,6 +2254,16 @@ void salesOrderItem::sSubstitute()
   _sub->setChecked(true);
   _subItem->setId(_item->id());
   _item->setItemsiteid(_itemsiteid);
+}
+
+void salesOrderItem::sReserveStock()
+{
+  ParameterList params;
+  params.append("soitem_id", _soitemid);
+  
+  reserveSalesOrderItem newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void salesOrderItem::sPopulateHistory()
@@ -2876,8 +2924,8 @@ void salesOrderItem::sHandleSupplyOrder()
           {
             QMessageBox::critical(this, tr("Cannot Update Supply Order"),
                                   tr("The Purchase Order Item this Sales Order Item is linked to is closed.\n"
-                                     "The due date may not be updated."));
-            _scheduledDate->setDate(_supplyOrderScheduledDateCache);
+                                     "The drop ship may not be updated."));
+            _supplyDropShip->setChecked(_supplyOrderDropShipCache);
             return;
           }
           
@@ -2901,12 +2949,14 @@ void salesOrderItem::sHandleSupplyOrder()
             ordq.exec();
             if (ordq.first())
             {
-              int result = ordq.value("result").toInt();
-              if (result < 0)
+              _supplyOrderId = ordq.value("result").toInt();
+              if (_supplyOrderId < 0)
               {
-                systemError(this, storedProcErrorLookup("changePurchaseDropShip", result), __FILE__, __LINE__);
+                systemError(this, storedProcErrorLookup("changePurchaseDropShip", _supplyOrderId), __FILE__, __LINE__);
                 return;
               }
+              // save the sales order item again to capture the supply order id
+              sSave(true);
             }
             else if (ordq.lastError().type() != QSqlError::NoError)
             {
@@ -2916,6 +2966,40 @@ void salesOrderItem::sHandleSupplyOrder()
           }
         } // end PO drop ship change
       } // end drop ship changed
+
+      if (_supplyOverridePrice->localValue() != _supplyOverridePriceCache)
+      { // override price change
+        if (_supplyOrderType == "P")
+        { // PO override price change
+          if (_supplyOrderStatus->text() == "C")
+          {
+            QMessageBox::critical(this, tr("Cannot Update Supply Order"),
+                                  tr("The Purchase Order Item this Sales Order Item is linked to is closed.\n"
+                                     "The override price may not be updated."));
+            _supplyOverridePrice->setLocalValue(_supplyOverridePriceCache);
+            return;
+          }
+          
+          if (QMessageBox::question(this, tr("Override Price P/O?"),
+                                    tr("<p>The Override Price for this Line Item has changed."
+                                       "<p>Should the P/O Price for this Line Item be changed?"),
+                                    QMessageBox::Yes | QMessageBox::Default,
+                                    QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+          {
+            ordq.prepare("UPDATE poitem SET poitem_unitprice=:unitprice "
+                         "WHERE (poitem_id=:poitem_id);");
+            ordq.bindValue(":poitem_id", _supplyOrderId);
+            ordq.bindValue(":unitprice", _supplyOverridePrice->localValue());
+            ordq.exec();
+            if (ordq.lastError().type() != QSqlError::NoError)
+            {
+              systemError(this, ordq.lastError().databaseText(), __FILE__, __LINE__);
+              return;
+            }
+          }
+        } // end PO override price change
+      } // end override price changed
+    
     }  // end supply order exists
     
     // Populate Supply Order info
@@ -3074,6 +3158,7 @@ void salesOrderItem::sHandleSupplyOrder()
 //      _supplyDropShip->setChecked(false);
       _supplyRollupPrices->setChecked(false);
       _supplyOverridePrice->clear();
+      _supplyOverridePriceCache = 0.0;
       _woIndentedList->clear();
     }
   }  // end createSupplyOrder is not checked
@@ -3240,14 +3325,14 @@ void salesOrderItem::sPopulateOrderInfo()
       _supplyOrderQtyLit->show();
       _supplyOrderDueDateLit->show();
       _supplyWarehouseLit->hide();
-      _supplyOverridePriceLit->hide();
+      _supplyOverridePriceLit->show();
       _supplyOrder->show();
       _supplyOrderLine->hide();
       _supplyOrderStatus->show();
       _supplyOrderQty->show();
       _supplyOrderDueDate->show();
       _supplyWarehouse->hide();
-      _supplyOverridePrice->hide();
+      _supplyOverridePrice->show();
       _supplyRollupPrices->hide();
       _supplyDropShip->hide();
       
@@ -3266,7 +3351,7 @@ void salesOrderItem::sPopulateOrderInfo()
   _supplyOrderQtyCache = _supplyOrderQty->toDouble();
   _supplyOrderDueDateCache = _supplyOrderDueDate->date();
   _supplyOrderDropShipCache = _supplyDropShip->isChecked();
-  
+  _supplyOverridePriceCache = _supplyOverridePrice->localValue();
   _supplyOrderQtyOrderedCache = _qtyOrdered->toDouble();
   _supplyOrderScheduledDateCache = _scheduledDate->date();
 
