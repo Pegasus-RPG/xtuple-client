@@ -31,6 +31,7 @@
 #include "purchaseRequest.h"
 #include "purchaseOrder.h"
 #include "purchaseOrderItem.h"
+#include "incident.h"
 
 const char *_projectStatuses[] = { "P", "O", "C" };
 
@@ -58,6 +59,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
   connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
+  connect(_showIn, SIGNAL(toggled(bool)), this, SLOT(sFillTaskList()));
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
@@ -88,6 +90,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _showSo->setChecked(true);
   _showWo->setChecked(true);
   _showPo->setChecked(true);
+  _showIn->setChecked(true);
 
   _owner->setUsername(omfgThis->username());
   _assignedTo->setUsername(omfgThis->username());
@@ -363,6 +366,19 @@ void project::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
     menuItem = pMenu->addAction(tr("View Purchase Order Item..."), this, SLOT(sViewOrder()));
     menuItem->setEnabled(_privileges->check("MaintainPurchaseOrders") ||
                          _privileges->check("ViewPurchaseOrders"));
+  }
+
+  if(_prjtask->altId() == 105)
+  {
+    menuItem = pMenu->addAction(tr("Edit Incident..."), this, SLOT(sEditOrder()));
+    menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
+			_privileges->check("MaintainAllIncidents"));
+
+    menuItem = pMenu->addAction(tr("View Incident..."), this, SLOT(sViewOrder()));
+    menuItem->setEnabled(_privileges->check("ViewPersonalIncidents") ||
+			_privileges->check("ViewAllIncidents") ||
+			_privileges->check("MaintainPersonalIncidents") ||
+			_privileges->check("MaintainAllIncidents"));
   }
 }
 
@@ -802,6 +818,9 @@ void project::sFillTaskList()
   if(_showPo->isChecked())
     params.append("showPo");
 
+  if(_showIn->isChecked())
+    params.append("showIn");
+
   if (! _privileges->check("ViewAllProjects") && ! _privileges->check("MaintainAllProjects"))
     params.append("owner_username", omfgThis->username());
 
@@ -967,6 +986,16 @@ void project::sEditOrder()
     newdlg.set(params);
     newdlg.exec();
   }
+  else if(_prjtask->altId() == 105)
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("incdt_id", _prjtask->id());
+
+    incident newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
 }
 
 void project::sViewOrder()
@@ -1064,6 +1093,16 @@ void project::sViewOrder()
     params.append("poitem_id", _prjtask->id());
 
     purchaseOrderItem newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  else if(_prjtask->altId() == 105)
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("incdt_id", _prjtask->id());
+
+    incident newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }

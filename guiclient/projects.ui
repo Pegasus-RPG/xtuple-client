@@ -49,6 +49,13 @@ to be bound by its terms.</comment>
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="_incidents">
+        <property name="text">
+         <string>Incidents</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>

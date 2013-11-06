@@ -31,6 +31,7 @@
 #include "purchaseRequest.h"
 #include "purchaseOrder.h"
 #include "purchaseOrderItem.h"
+#include "incident.h"
 
 #define DEBUG true
 
@@ -52,9 +53,10 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   if (!_privileges->check("MaintainAllProjects") && !_privileges->check("MaintainPersonalProjects"))
     newAction()->setEnabled(FALSE);
 
-  _salesOrders->setChecked(true);
-  _workOrders->setChecked(true);
-  _purchaseOrders->setChecked(true);
+  _salesOrders->setChecked(false);
+  _workOrders->setChecked(false);
+  _purchaseOrders->setChecked(false);
+  _incidents->setChecked(false);
   _showHierarchy->setChecked(false);
 
   connect(omfgThis, SIGNAL(projectsUpdated(int)), this, SLOT(sFillList()));
@@ -62,6 +64,7 @@ projects::projects(QWidget* parent, const char*, Qt::WFlags fl)
   connect(_salesOrders, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_workOrders, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_purchaseOrders, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_incidents, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_showHierarchy, SIGNAL(toggled(bool)), this, SLOT(sBuildList()));
 
   QString qryType = QString( "SELECT prjtype_id, prjtype_descr FROM prjtype " );
@@ -311,6 +314,19 @@ void projects::sPopulateMenu(QMenu * pMenu, QTreeWidgetItem*, int)
                          _privileges->check("ViewPurchaseOrders"));
   }
 
+  if(list()->altId() == 105)
+  {
+    menuItem = pMenu->addAction(tr("Edit Incident..."), this, SLOT(sEdit()));
+    menuItem->setEnabled(_privileges->check("MaintainPersonalIncidents") ||
+			_privileges->check("MaintainAllIncidents"));
+
+    menuItem = pMenu->addAction(tr("View Incident..."), this, SLOT(sView()));
+    menuItem->setEnabled(_privileges->check("ViewPersonalIncidents") ||
+			_privileges->check("ViewAllIncidents") ||
+			_privileges->check("MaintainPersonalIncidents") ||
+			_privileges->check("MaintainAllIncidents"));
+  }
+
 }
 
 void projects::sEdit()
@@ -411,6 +427,17 @@ void projects::sEdit()
     params.append("poitem_id", list()->id());
 
     purchaseOrderItem newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+
+  else if(list()->altId() == 105)
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("incdt_id", list()->id());
+
+    incident newdlg(this, "", true);
     newdlg.set(params);
     newdlg.exec();
   }
@@ -524,6 +551,16 @@ void projects::sView()
     newdlg.set(params);
     newdlg.exec();
   }
+  else if(list()->altId() == 105)
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("incdt_id", list()->id());
+
+    incident newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
 }
 
 void projects::sDelete()
@@ -611,6 +648,9 @@ bool projects::setParams(ParameterList &params)
 
   if (_purchaseOrders->isChecked())
     params.append("showPo", true);
+
+  if (_incidents->isChecked())
+    params.append("showIn", true);
 
   params.append("planning", tr("Concept"));
   params.append("open", tr("In-Process"));
