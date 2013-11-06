@@ -30,6 +30,7 @@
 #include "cashReceipt.h"
 #include "creditMemo.h"
 #include "creditcardprocessor.h"
+#include "customer.h"
 #include "distributeInventory.h"
 #include "dspInvoiceInformation.h"
 #include "dspSalesOrderStatus.h"
@@ -166,6 +167,9 @@ enum SetResponse dspAROpenItems::set(const ParameterList &pParams)
 void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
 {
   QAction *menuItem = 0;
+
+  if ( _privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters") )
+    menuItem = pMenu->addAction(tr("Open Customer..."), this, SLOT(sOpenCustomer()));
 
   if (((XTreeWidgetItem *)pItem)->altId() < 4)
   {
@@ -324,6 +328,49 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem, int)
       menuItem->setEnabled(false);
   }
 
+}
+
+void dspAROpenItems::sOpenCustomer()
+{
+  XSqlQuery customerq;
+  ParameterList params;
+  if ( _privileges->check("MaintainCustomerMasters") )
+    params.append("mode", "edit");
+  else
+    params.append("mode", "view");
+  
+  if (_customerSelector->isSelectedCust())
+    params.append("cust_id", _customerSelector->custId());
+  else if (list()->id() > -1)
+  {
+    customerq.prepare("SELECT aropen_cust_id FROM aropen WHERE aropen_id=:aropen_id;");
+    customerq.bindValue(":aropen_id", list()->id());
+    customerq.exec();
+    if (customerq.first())
+      params.append("cust_id", customerq.value("aropen_cust_id").toInt());
+  }
+  else if (list()->id() == -1 && list()->altId() == 0)
+  {
+    customerq.prepare("SELECT invchead_cust_id FROM invchead WHERE invchead_id=:invchead_id;");
+    customerq.bindValue(":invchead_id", list()->currentItem()->id("docnumber"));
+    customerq.exec();
+    if (customerq.first())
+      params.append("cust_id", customerq.value("invchead_cust_id").toInt());
+  }
+  else if (list()->id() == -1 && list()->altId() == 1)
+  {
+    customerq.prepare("SELECT cmhead_cust_id FROM cmhead WHERE cmhead_id=:cmhead_id;");
+    customerq.bindValue(":cmhead_id", list()->currentItem()->id("docnumber"));
+    customerq.exec();
+    if (customerq.first())
+      params.append("cust_id", customerq.value("cmhead_cust_id").toInt());
+  }
+  else
+    return;
+
+  customer *newdlg = new customer();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspAROpenItems::sApplyAropenCM()
