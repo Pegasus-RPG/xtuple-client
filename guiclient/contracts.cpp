@@ -88,11 +88,15 @@ void contracts::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  contract newdlg(this, "", TRUE);
-  newdlg.set(params);
+  contract *newdlg = new contract();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+//  contract newdlg(this, "", false);
+//  newdlg.set(params);
+
+//  newdlg.exec();
+  sFillList();
 }
 
 void contracts::sEdit()
@@ -101,10 +105,14 @@ void contracts::sEdit()
   params.append("mode", "edit");
   params.append("contrct_id", list()->id());
 
-  contract newdlg(this, "", TRUE);
-  newdlg.set(params);
+  contract *newdlg = new contract();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 
-  if (newdlg.exec() != XDialog::Rejected)
+//  contract newdlg(this, "", TRUE);
+//  newdlg.set(params);
+
+//  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -114,9 +122,13 @@ void contracts::sView()
   params.append("mode", "view");
   params.append("contrct_id", list()->id());
 
-  contract newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
+  contract *newdlg = new contract();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+
+//  contract newdlg(this, "", TRUE);
+//  newdlg.set(params);
+//  newdlg.exec();
 }
 
 void contracts::sCopy()

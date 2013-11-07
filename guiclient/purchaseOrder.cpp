@@ -107,6 +107,9 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Demand Type"),    _itemColumn,   Qt::AlignCenter,false, "demand_type");
   _poitem->addColumn(tr("Order"),          _itemColumn,   Qt::AlignRight, false, "order_number");
 
+  if (_metrics->value("Application") == "Standard")
+	_poitem->addColumn(tr("Contract"),                -1,   Qt::AlignLeft,   true, "contrct_number");
+
   _charass->addColumn(tr("Characteristic"), _itemColumn,     Qt::AlignLeft,   true,  "char_name" );
   _charass->addColumn(tr("Value"),          -1,              Qt::AlignLeft,   true,  "charass_value" );
   

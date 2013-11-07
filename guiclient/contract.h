@@ -12,23 +12,35 @@
 #define CONTRACT_H
 
 #include "guiclient.h"
-#include "xdialog.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_contract.h"
 
-class contract : public XDialog, public Ui::contract
+class contract : public XWidget, public Ui::contract
 {
     Q_OBJECT
 
 public:
-    contract(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+//    contract(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+	contract(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~contract();
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual bool sSave();
     virtual void sSaveClicked();
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sNewItemSrc();
+    virtual void sNewPo();
+    virtual void sEditPo();
+    virtual void sViewPo();
+    virtual void sDeletePo();
+    virtual void sNewRcpt();
+    virtual void sNewRtrn();
+    virtual void sPrint();
+	virtual void sHandleButtons(XTreeWidgetItem *pItem, int pCol);
+	virtual void sFillList();
     virtual void populate();
     virtual void sRejected();
 

@@ -481,7 +481,7 @@ void purchaseOrderItem::populate()
     {
       _inventoryItem->setChecked(TRUE);
       _item->setItemsiteid(purchasepopulate.value("poitem_itemsite_id").toInt());
-      sPopulateItemSourceInfo(_item->id());
+      sPopulateItemSourceInfo(purchasepopulate.value("poitem_itemsrc_id").toInt());
       if (_metrics->boolean("RevControl"))
       {
         _bomRevision->setId(purchasepopulate.value("poitem_bom_rev_id").toInt());
@@ -492,6 +492,7 @@ void purchaseOrderItem::populate()
     }
 
     _itemsrcid = purchasepopulate.value("poitem_itemsrc_id").toInt();
+    _contrctNumber->setText(purchasepopulate.value("contrct_number").toString());
     _vendorItemNumber->setText(purchasepopulate.value("poitem_vend_item_number").toString());
     _vendorDescrip->setText(purchasepopulate.value("poitem_vend_item_descrip").toString());
     _vendorUOM->setText(purchasepopulate.value("poitem_vend_uom").toString());
@@ -1165,7 +1166,7 @@ void purchaseOrderItem::sDeterminePrice()
 void purchaseOrderItem::sInventoryItemToggled( bool yes )
 {
   if(yes)
-    sPopulateItemSourceInfo(_item->id());
+    sPopulateItemSourceInfo(_itemsrcid);
   else
     sPopulateItemSourceInfo(-1);
 }
