@@ -13,7 +13,7 @@ to be bound by its terms.</comment>
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1021</width>
+    <width>1013</width>
     <height>657</height>
    </rect>
   </property>
@@ -795,6 +795,29 @@ to be bound by its terms.</comment>
          <widget class="DateCluster" name="_dates">
           <property name="focusPolicy">
            <enum>Qt::StrongFocus</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="_contractedQtyLit">
+          <property name="text">
+           <string>Contracted Qty:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="XLineEdit" name="_contractedQty">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight</set>
           </property>
          </widget>
         </item>

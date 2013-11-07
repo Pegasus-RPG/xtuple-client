@@ -421,9 +421,13 @@ void menuPurchase::sNewContract()
   ParameterList params;
   params.append("mode", "new");
 
-  contract newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
+  contract *newdlg = new contract();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+
+//  contract newdlg(parent, "", TRUE);
+//  newdlg.set(params);
+//  newdlg.exec();
 }
 
 void menuPurchase::sContracts()

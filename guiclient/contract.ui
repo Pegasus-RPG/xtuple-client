@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <comment>This file is part of the xTuple ERP: PostBooks Edition, a free and
-open source Enterprise Resource Planning software suite,
-Copyright (c) 1999-2011 by OpenMFG LLC, d/b/a xTuple.
-It is licensed to you under the Common Public Attribution License
-version 1.0, the full text of which (including xTuple-specific Exhibits)
-is available at www.xtuple.com/CPAL.  By using this software, you agree
-to be bound by its terms.</comment>
  <class>contract</class>
- <widget class="QDialog" name="contract">
+ <widget class="QWidget" name="contract">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>636</width>
-    <height>524</height>
+    <width>568</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -156,7 +149,7 @@ to be bound by its terms.</comment>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout">
+      <layout class="QHBoxLayout" name="_2">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -177,12 +170,12 @@ to be bound by its terms.</comment>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout">
+        <layout class="QVBoxLayout" name="_3">
          <property name="spacing">
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout">
+          <layout class="QVBoxLayout" name="_4">
            <property name="spacing">
             <number>5</number>
            </property>
@@ -272,12 +265,131 @@ to be bound by its terms.</comment>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_itemSrcTab">
+      <attribute name="title">
+       <string>Item Sources</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="XTreeWidget" name="_itemSource"/>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QPushButton" name="_print">
+             <property name="text">
+              <string>Print</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_newItemSrc">
+             <property name="text">
+              <string>New Item Src</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="QPushButton" name="_newPo">
+               <property name="text">
+                <string>New PO</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_editPo">
+               <property name="text">
+                <string>Edit PO</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_viewPo">
+               <property name="text">
+                <string>View PO</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_deletePo">
+               <property name="text">
+                <string>Delete PO</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QPushButton" name="_newRcpt">
+               <property name="text">
+                <string>New Receipt</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_newRtrn">
+               <property name="text">
+                <string>New Return</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="5"/>
- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>DateCluster</class>
@@ -301,21 +413,34 @@ to be bound by its terms.</comment>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>XTextEdit</class>
    <extends>QTextEdit</extends>
    <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>_vendor</tabstop>
-  <tabstop>_number</tabstop>
-  <tabstop>_descrip</tabstop>
-  <tabstop>_dates</tabstop>
-  <tabstop>_tab</tabstop>
-  <tabstop>_notes</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
- </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>contract</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>283</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

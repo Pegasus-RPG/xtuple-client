@@ -91,6 +91,8 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _invVendorUOMRatio->setValidator(omfgThis->ratioVal());
   _minOrderQty->setValidator(omfgThis->qtyVal());
   _multOrderQty->setValidator(omfgThis->qtyVal());
+  _contractedQty->setValidator(omfgThis->qtyVal());
+  _contractedQty->setAlignment(Qt::AlignRight);
 
   _vendorCurrency->setType(XComboBox::Currencies);
   _vendorCurrency->setLabel(_vendorCurrencyLit);
@@ -238,6 +240,12 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
     }
   }
 
+  if (_metrics->value("Application") != "Standard")
+  {
+    _contractedQtyLit->hide();
+    _contractedQty->hide();
+  }
+
   return NoError;
 }
 
@@ -260,6 +268,7 @@ void itemSource::sSaveClicked()
 bool itemSource::sSave()
 {
   XSqlQuery itemSave;
+  XSqlQuery contSave;
 
   QList<GuiErrorCheck> errors;
   errors << GuiErrorCheck(!_item->isValid(), _item,
@@ -358,6 +367,7 @@ bool itemSource::sSave()
     return false;
 
   if (_mode == cNew || _mode == cCopy)
+  {
     itemSave.prepare( "INSERT INTO itemsrc "
                "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_default, itemsrc_vend_id,"
                "  itemsrc_contrct_id, itemsrc_effective, itemsrc_expires,"
@@ -376,7 +386,13 @@ bool itemSource::sSave()
                "  :itemsrc_leadtime, :itemsrc_ranking,"
                "  :itemsrc_comments, :itemsrc_manuf_name, "
                "  :itemsrc_manuf_item_number, :itemsrc_manuf_item_descrip );" );
+    contSave.prepare( "INSERT INTO contisrc "
+			   "( contisrc_itemsrc_id, contisrc_min ) "
+               "VALUES "
+               "( :contisrc_itemsrc_id, :contisrc_min );" );
+  }
   if (_mode == cEdit)
+  {
     itemSave.prepare( "UPDATE itemsrc "
                "SET itemsrc_active=:itemsrc_active,"
                "    itemsrc_default=:itemsrc_default,"
@@ -395,6 +411,25 @@ bool itemSource::sSave()
                "    itemsrc_manuf_item_number=:itemsrc_manuf_item_number, "
                "    itemsrc_manuf_item_descrip=:itemsrc_manuf_item_descrip "
                "WHERE (itemsrc_id=:itemsrc_id);" );
+	contSave.prepare( "SELECT contisrc_id FROM contisrc "
+		       "WHERE (contisrc_itemsrc_id=:contisrc_itemsrc_id);" );
+    contSave.bindValue(":contisrc_itemsrc_id", _itemsrcid);
+	contSave.exec();
+    if(contSave.first())
+	  contSave.prepare( "UPDATE contisrc "
+		         "SET contisrc_min=:contisrc_min "
+			     "WHERE (contisrc_itemsrc_id=:contisrc_itemsrc_id);" );
+    else if (contSave.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+	else
+      contSave.prepare( "INSERT INTO contisrc "
+	  		     "( contisrc_itemsrc_id, contisrc_min ) "
+                 "VALUES "
+                 "( :contisrc_itemsrc_id, :contisrc_min );" );
+  }
 
   itemSave.bindValue(":itemsrc_id", _itemsrcid);
   itemSave.bindValue(":itemsrc_item_id", _item->id());
@@ -422,6 +457,14 @@ bool itemSource::sSave()
   if (itemSave.lastError().type() != QSqlError::NoError)
   {
     systemError(this, itemSave.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  contSave.bindValue(":contisrc_itemsrc_id", _itemsrcid);
+  contSave.bindValue(":contisrc_min", _contractedQty->toDouble());
+  contSave.exec();
+  if (contSave.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, contSave.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
 
@@ -531,7 +574,8 @@ void itemSource::populate()
 {
   XSqlQuery itemsrcQ;
   itemsrcQ.prepare( "SELECT * "
-                    "FROM itemsrc "
+					"FROM itemsrc "
+					"  LEFT OUTER JOIN contisrc ON (contisrc_itemsrc_id=itemsrc_id)"
                     "WHERE (itemsrc_id=:itemsrc_id);" );
   itemsrcQ.bindValue(":itemsrc_id", _itemsrcid);
   itemsrcQ.exec();
@@ -557,6 +601,23 @@ void itemSource::populate()
     _manufName->setCode(itemsrcQ.value("itemsrc_manuf_name").toString());
     _manufItemNumber->setText(itemsrcQ.value("itemsrc_manuf_item_number").toString());
     _manufItemDescrip->setText(itemsrcQ.value("itemsrc_manuf_item_descrip").toString());
+
+    if (_metrics->value("Application") == "Standard")
+    {
+	  if (_contract->id() > 0)
+	  {
+        _contractedQty->setDouble(itemsrcQ.value("contisrc_min").toDouble());
+		_contractedQty->setDisabled(false);
+		_contractedQtyLit->setDisabled(false);
+	  }
+	  else
+	  {
+	    _contractedQty->setDouble(0.00);
+		_contractedQty->setDisabled(true);
+		_contractedQtyLit->setDisabled(true);
+	  }
+    }
+
     sFillPriceList();
   }
   else if (itemsrcQ.lastError().type() != QSqlError::NoError)
@@ -627,6 +688,8 @@ void itemSource::sContractChanged( int pId )
     _dates->setStartDate(contractChanged.value("contrct_effective").toDate());
     _dates->setEndDate(contractChanged.value("contrct_expires").toDate());
     _dates->setEnabled(false);
+	_contractedQty->setDisabled(false);
+	_contractedQtyLit->setDisabled(false);
   }
   else if (contractChanged.lastError().type() != QSqlError::NoError)
   {
@@ -634,5 +697,9 @@ void itemSource::sContractChanged( int pId )
     return;
   }
   else
-    _dates->setEnabled(true);
+  {   
+	_dates->setEnabled(true);
+	_contractedQty->setDisabled(true);
+	_contractedQtyLit->setDisabled(true);
+  }
 }

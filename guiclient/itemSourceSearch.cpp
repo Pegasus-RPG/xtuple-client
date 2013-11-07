@@ -38,14 +38,15 @@ itemSourceSearch::itemSourceSearch(QWidget* parent, const char* name, bool modal
   connect(_searchVendDescrip, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_search, SIGNAL(textChanged(QString)), this, SLOT(sFillList()));
 
-  _itemsrc->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft, true, "item_number" );
-  _itemsrc->addColumn(tr("Description"),    -1,          Qt::AlignLeft, true, "item_descrip" );
-  _itemsrc->addColumn(tr("Vendor"),         _itemColumn, Qt::AlignLeft, true, "vend_name" );
-  _itemsrc->addColumn(tr("Vendor Item"),    _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
-  _itemsrc->addColumn(tr("Vendor Descrip"), _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_descrip" );
-  _itemsrc->addColumn(tr("Manufacturer"),   _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_name" );
-  _itemsrc->addColumn(tr("Manuf. Item#"),   _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_item_number" );
-  _itemsrc->addColumn(tr("Manuf. Descrip."),   _itemColumn, Qt::AlignLeft, false, "itemsrc_manuf_item_descrip" );
+  _itemsrc->addColumn(tr("Item Number"),     _itemColumn, Qt::AlignLeft, true, "item_number" );
+  _itemsrc->addColumn(tr("Description"),              -1, Qt::AlignLeft, true, "item_descrip" );
+  _itemsrc->addColumn(tr("Vendor"),          _itemColumn, Qt::AlignLeft, true, "vend_name" );
+  _itemsrc->addColumn(tr("Vendor Item"),     _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
+  _itemsrc->addColumn(tr("Vendor Descrip"),  _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_descrip" );
+  _itemsrc->addColumn(tr("Manufacturer"),    _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_name" );
+  _itemsrc->addColumn(tr("Manuf. Item#"),    _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_item_number" );
+  _itemsrc->addColumn(tr("Manuf. Descrip."), _itemColumn, Qt::AlignLeft,false, "itemsrc_manuf_item_descrip" );
+  _itemsrc->addColumn(tr("Contract"),                 -1, Qt::AlignLeft, true, "contrct_number");
 
 }
 
