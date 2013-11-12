@@ -1135,23 +1135,6 @@ void salesOrderItem::sSave(bool pPartial)
   }
   else if (_mode == cNewQuote && !_partialsaved)
   {
-    //  Grab the next quitem_id
-    salesSave.exec("SELECT NEXTVAL('quitem_quitem_id_seq') AS _quitem_id");
-    if (salesSave.first())
-      _soitemid = salesSave.value("_quitem_id").toInt();
-    else if (salesSave.lastError().type() != QSqlError::NoError)
-    {
-      rollback.exec();
-                  systemError(this, salesSave.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-    else
-    {
-      rollback.exec();
-      reject();
-      return;
-    }
-
     salesSave.prepare( "INSERT INTO quitem "
                "( quitem_id, quitem_quhead_id, quitem_linenumber, quitem_itemsite_id,"
                "  quitem_item_id, quitem_scheddate, quitem_promdate, quitem_qtyord,"
